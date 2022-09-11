@@ -14,6 +14,7 @@ import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import logger from 'src/utils/logger'
 
 export default function useResubmitApplication(
 	data: GrantApplicationUpdate,
@@ -134,6 +135,7 @@ export default function useResubmitApplication(
 
 
 				setLoading(false)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
 				const message = getErrorMessage(e)
 				setError(message)
@@ -171,6 +173,7 @@ export default function useResubmitApplication(
 
 			if(!currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-resubmit-application.tsx 1): ', chainId)
 					switchNetwork(chainId)
 				}
 
@@ -181,6 +184,7 @@ export default function useResubmitApplication(
 
 			if(chainId !== currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-resubmit-application.tsx 2): ', chainId)
 					switchNetwork(chainId)
 				}
 
@@ -202,6 +206,7 @@ export default function useResubmitApplication(
 			}
 
 			validate()
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			const message = getErrorMessage(e)
 			setError(message)

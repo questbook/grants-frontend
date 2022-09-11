@@ -122,18 +122,18 @@ function Content({
 									direction='row'
 									flex={tableHeadersFlexReviewer[0]}
 									align='center'>
-									<Tooltip label={item?.applicant_address}>
+									<Tooltip label={item?.applicantAddress}>
 										<Text
 											ml='19px'
 											mr='-19px'
 											variant='tableBody'
 										>
 											{'     '}
-											{`${item.applicant_address.substring(0, 4)}...${item.applicant_address.substring(item.applicant_address.length - 4)}`}
+											{`${item.applicantAddress.substring(0, 4)}...${item.applicantAddress.substring(item.applicantAddress.length - 4)}`}
 										</Text>
 									</Tooltip>
 									<Box mr={8} />
-									<CopyIcon text={item?.applicant_address} />
+									<CopyIcon text={item?.applicantAddress} />
 								</Flex>
 
 								<Text
@@ -141,7 +141,7 @@ function Content({
 									color='#717A7C'
 									variant='tableBody'
 								>
-									{item.sent_on}
+									{item.sentOn}
 								</Text>
 								<Text
 									textAlign='left'
@@ -149,7 +149,7 @@ function Content({
 									variant='tableBody'
 									fontWeight='400'
 								>
-									{item.project_name}
+									{item.projectName}
 								</Text>
 								<Flex
 									flex={tableHeadersFlexReviewer[3]}
@@ -160,7 +160,7 @@ function Content({
 									<Image
 										h={5}
 										w={5}
-										src={item.funding_asked.icon} />
+										src={item.fundingAsked.icon} />
 									<Box mr={3} />
 									<Text
 										whiteSpace='nowrap'
@@ -170,9 +170,9 @@ function Content({
 										fontWeight='700'
 										letterSpacing={0.5}
 									>
-										{item.funding_asked.amount}
+										{item.fundingAsked.amount}
 										{' '}
-										{item.funding_asked.symbol}
+										{item.fundingAsked.symbol}
 									</Text>
 								</Flex>
 								<Flex
@@ -285,18 +285,18 @@ function Content({
 								direction='row'
 								flex={tableHeadersFlex[0]}
 								align='center'>
-								<Tooltip label={item?.applicant_address}>
+								<Tooltip label={item?.applicantAddress}>
 									<Text
 										ml='19px'
 										mr='-19px'
 										variant='tableBody'
 									>
 										{'     '}
-										{`${item.applicant_address.substring(0, 4)}...${item.applicant_address.substring(item.applicant_address.length - 4)}`}
+										{`${item.applicantAddress.substring(0, 4)}...${item.applicantAddress.substring(item.applicantAddress.length - 4)}`}
 									</Text>
 								</Tooltip>
 								<Box mr={8} />
-								<CopyIcon text={item?.applicant_address} />
+								<CopyIcon text={item?.applicantAddress} />
 							</Flex>
 
 							<Text
@@ -304,7 +304,7 @@ function Content({
 								color='#122224'
 								variant='tableBody'
 							>
-								{item.project_name}
+								{item.projectName}
 							</Text>
 							<Flex
 								flex={tableHeadersFlex[2]}
@@ -315,7 +315,7 @@ function Content({
 								<Image
 									h={5}
 									w={5}
-									src={item.funding_asked.icon} />
+									src={item.fundingAsked.icon} />
 								<Box mr={3} />
 								<Text
 									whiteSpace='nowrap'
@@ -325,13 +325,13 @@ function Content({
 									fontWeight='700'
 									letterSpacing={0.2}
 								>
-									{item.amount_paid}
+									{item.amountPaid}
 									{' '}
 									/
 									{' '}
-									{item.funding_asked.amount}
+									{item.fundingAsked.amount}
 									{' '}
-									{item.funding_asked.symbol}
+									{item.fundingAsked.symbol}
 								</Text>
 							</Flex>
 							<Flex
@@ -405,7 +405,7 @@ function Content({
 								justifyContent='center'
 								color='#717A7C'
 								flex={tableHeadersFlex[5]}>
-								{item.status === 0 ? item.sent_on : item.updated_on}
+								{item.status === 0 ? item.sentOn : item.updatedOn}
 							</Flex>
 							<Flex
 								display='flex'

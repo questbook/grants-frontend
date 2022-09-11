@@ -150,6 +150,7 @@ function Form({
 				const o = JSON.parse(projectDetails)
 				setProjectDetails(EditorState.createWithContent(convertFromRaw(o)))
 			}
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			if(projectDetails) {
 				setProjectDetails(
@@ -714,7 +715,7 @@ function Form({
 							}
 						</Container>
 
-						{
+						{/* {
 							onEdit && (
 								<Text
 									mt={10}
@@ -752,7 +753,7 @@ function Form({
 									/>
 								</Text>
 							)
-						}
+						} */}
 
 						{
 							onEdit ? (

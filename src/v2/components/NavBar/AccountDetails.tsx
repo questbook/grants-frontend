@@ -1,136 +1,55 @@
 import React, { useContext } from 'react'
 import {
-	Button,
+	Flex,
 	Image,
-	Menu,
-	MenuButton,
 	Text,
 } from '@chakra-ui/react'
-import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import copy from 'copy-to-clipboard'
+import { WebwalletContext } from 'pages/_app'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import { useConnect } from 'wagmi'
+import getAvatar from 'src/utils/avatarUtils'
+import { formatAddress } from 'src/utils/formattingUtils'
 
 function AccountDetails() {
 	const { nonce } = useQuestbookAccount()
 	const { scwAddress } = useContext(WebwalletContext)!
-	const { isDisconnected } = useConnect() // @TODO: change the way we see if a user is connect or not
-	// cause now it's only with metmask
-	const { connected } = useContext(ApiClientsContext)!
 
-	const formatAddress = (address: string) => `${address.substring(0, 4)}......${address.substring(address.length - 4)}`
-
-	const buttonRef = React.useRef<HTMLButtonElement>(null)
-
-	React.useEffect(() => {
-		// console.log('SCW Address: ', scwAddress)
-	}, [scwAddress])
 	return (
-		<Menu>
-			{/* {
-				!nonce && (
-					<Button
-						px={2.5}
-						borderRadius="2px"
-						marginLeft="12px"
-						onClick={
-							() => {
-								if(!webwallet) {
-									setWebwallet(Wallet.createRandom())
-								}
-							}
-						}
-					>
-						Create Webwallet
-					</Button>
-				)
-			} */}
-			{/* {
-				isLoggedIn && (
-					<Button
-						px={2.5}
-						borderRadius="2px"
-						marginLeft="12px"
-						onClick={
-							() => {
-								setIsLoggedIn(false)
-								setNonce(undefined)
-							}
-						}
-					>
-				GitHub Logout
-					</Button>
-				)
-			} */}
-
+		<Flex
+			bg='gray.2'
+			p={2}
+			align='center'
+			borderRadius='2px'>
 			{
-				nonce && scwAddress &&
-				(
-					<MenuButton
-						ref={buttonRef}
-						as={Button}
-						variant='solid'
-						px={2.5}
-						py={2}
-						ml={3}
-						borderRadius='2px'
-						rightIcon={
-							!(connected && isDisconnected) && (
-								<Image
-									mr={2}
-									src='/ui_icons/arrow-drop-down-line.svg'
-									alt='options' />
-							)
-						}
-						w={connected && isDisconnected ? buttonRef.current?.offsetWidth : 'auto'}
-					>
-						{
-						// @TODO-gasless: FIX HERE
-						// connected && isDisconnected  ? (
-						// 	<Loader />
-						// ) : (
-						// 	<Text
-						// 		color="#122224"
-						// 		fontWeight="500"
-						// 		fontSize="14px"
-						// 		lineHeight="20px"
-						// 	>
-						// 		{formatAddress(scwAddress ?? (accountData?.address ?? ''))}
-						// 	</Text>
-						// )
-							(
-								<Text
-									color='#122224'
-									fontWeight='500'
-									fontSize='14px'
-									lineHeight='20px'
-								>
-									{formatAddress(scwAddress ? scwAddress : 'xxxx')}
-								</Text>
-							)
-						}
-					</MenuButton>
+				nonce && scwAddress && (
+					<Image
+						borderRadius='3xl'
+						src={getAvatar(scwAddress)}
+						boxSize='24px' />
 				)
 			}
-			{/* {
-				(!(connected && isDisconnected) || (nonce && nonce !== 'Token expired')) && (
-					<MenuList>
-						<MenuItem
-							onClick={
-								() => {
-									setConnected(false)
-									disconnect()
-									setNonce(undefined)
-									router.replace('/')
+			{
+				nonce && scwAddress && (
+					<Text
+						onClick={
+							() => {
+								// This is for debug purposes only
+								const data1 = localStorage.getItem('webwalletPrivateKey')
+								const data2 = localStorage.getItem('scwAddress')
+								const data = { 'webwalletPrivateKey': data1, 'scwAddress': data2 }
+								if(data1 !== null && data2 !== null) {
+									copy(JSON.stringify(data))
 								}
 							}
-							icon={<Image src="/ui_icons/logout.svg" />}
-						>
-							Logout
-						</MenuItem>
-					</MenuList>
+						}
+						ml={2}
+						variant='v2_body'
+						fontWeight='500'>
+						{formatAddress(scwAddress)}
+					</Text>
 				)
-			} */}
-		</Menu>
+			}
+		</Flex>
 	)
 }
 

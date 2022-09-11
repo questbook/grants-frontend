@@ -1,10 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { Badge, Box, Button, ButtonProps, Checkbox, Flex, forwardRef, Grid, GridItem, HStack, Menu, MenuButton, MenuItem, MenuList, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalOverlay, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { ApiClientsContext } from 'pages/_app'
+import { defaultChainId } from 'src/constants/chains'
 import { GetGrantDetailsQuery } from 'src/generated/graphql'
 import useBatchUpdateApplicationState from 'src/hooks/useBatchUpdateApplicationState'
-import { formatAddress } from 'src/utils/formattingUtils'
+import { IApplicantData } from 'src/types'
+import { formatAddress, getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { AcceptApplication } from 'src/v2/assets/custom chakra icons/AcceptApplication'
 import { RejectApplication } from 'src/v2/assets/custom chakra icons/RejectApplication'
 import { ResubmitApplication } from 'src/v2/assets/custom chakra icons/ResubmitApplication'
@@ -16,9 +20,8 @@ const InReviewPanel = ({
 	applicantsData,
 	grantData,
 }: {
-  applicantsData: any[]
+  applicantsData: IApplicantData[]
   grantData?: GetGrantDetailsQuery
-
 }) => {
 	const [checkedItems, setCheckedItems] = useState<boolean[]>(applicantsData.filter((item) => (0 === item.status)).map(() => false))
 	const [checkedApplicationsIds, setCheckedApplicationsIds] = useState<number[]>([])
@@ -27,9 +30,11 @@ const InReviewPanel = ({
 	const [isResubmitClicked, setIsResubmitClicked] = useState<boolean>(false)
 	const [isConfirmClicked, setIsConfirmClicked] = useState<boolean>(false)
 
+	const { workspace } = useContext(ApiClientsContext)!
+
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 	const [state, setState] = useState<number>(5)
-	const [inReviewApplications, setInReviewApplications] = useState<any[]>([])
+	const [inReviewApplications, setInReviewApplications] = useState<IApplicantData[]>([])
 
 	const someChecked = checkedItems.some((element) => {
 		return element
@@ -59,7 +64,7 @@ const InReviewPanel = ({
 	}, [isAcceptClicked, isRejectClicked, isResubmitClicked])
 
 	useEffect(() => {
-		const inReviewApplications = applicantsData?.filter((item: any) => (0 === item.status))
+		const inReviewApplications = applicantsData?.filter((item) => (0 === item.status))
 
 		if(checkedItems.length === 0) {
 			return
@@ -91,12 +96,14 @@ const InReviewPanel = ({
 		 }
 	}, [isAcceptClicked, isRejectClicked, isResubmitClicked, isConfirmClicked])
 
-	const [txn,, loading, isBiconomyInitialised, error, networkTransactionModalStep] = useBatchUpdateApplicationState(
+	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
+
+	const [txn,, loading, isBiconomyInitialised, error] = useBatchUpdateApplicationState(
 		'',
 		checkedApplicationsIds,
 		state,
 		isConfirmClicked,
-		setIsConfirmClicked
+		setIsConfirmClicked, setNetworkTransactionModalStep
 	)
 
 	useEffect(() => {
@@ -124,7 +131,7 @@ const InReviewPanel = ({
 	}
 
 
-	if(applicantsData?.filter((item: any) => (0 === item.status)).length === 0) {
+	if(applicantsData?.filter((item) => (0 === item.status)).length === 0) {
 		return (
 			<ZeroState />
 		)
@@ -278,7 +285,7 @@ const InReviewPanel = ({
 						// defaultChecked={false}
 						isChecked={checkedItems.length > 0 && allChecked}
 						onChange={
-							(e: any) => {
+							(e) => {
 								const tempArr = Array(inReviewApplications.length).fill(e.target.checked)
 								setCheckedItems(tempArr)
 							}
@@ -331,13 +338,13 @@ const InReviewPanel = ({
 				{/* new ro */}
 
 				{
-					applicantsData?.filter((item: any) => (0 === item.status)).map((applicantData: any, i) => (
+					applicantsData?.filter((item) => (0 === item.status)).map((applicantData, i) => (
 						<InReviewRow
 							key={`inreview-${i}`}
 							applicantData={applicantData}
 							isChecked={checkedItems[i]}
 							onChange={
-								(e: any) => {
+								(e) => {
 									const tempArr: boolean[] = []
 									tempArr.push(...checkedItems)
 									tempArr[i] = e.target.checked
@@ -497,6 +504,12 @@ const InReviewPanel = ({
 						'Waiting for transaction to index',
 						'Application(s) state updated',
 					]
+				}
+				viewLink={getExplorerUrlForTxHash(getSupportedChainIdFromWorkspace(workspace) || defaultChainId, txn?.transactionHash)}
+				onClose={
+					() => {
+						setNetworkTransactionModalStep(undefined)
+					}
 				} />
 		</>
 	)

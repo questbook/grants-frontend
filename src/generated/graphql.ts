@@ -4275,6 +4275,16 @@ export type GetDaoNameQueryVariables = Exact<{
 
 export type GetDaoNameQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null } | null };
 
+export type GetDaOsForExploreQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+  orderBy: Workspace_OrderBy;
+  filter: Workspace_Filter;
+}>;
+
+
+export type GetDaOsForExploreQuery = { __typename?: 'Query', workspaces: Array<{ __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, createdAtS: number, mostRecentGrantPostedAtS: number, numberOfApplications: number, numberOfApplicationsSelected: number, totalGrantFundingDisbursedUSD: number }> };
+
 export type GetFundSentforReviewerQueryVariables = Exact<{
   type?: InputMaybe<FundsTransferType>;
   to?: InputMaybe<Scalars['Bytes']>;
@@ -4493,6 +4503,13 @@ export type GetWorkspaceMembersPublicKeysQueryVariables = Exact<{
 
 
 export type GetWorkspaceMembersPublicKeysQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', actorId: string, publicKey?: string | null }> };
+
+export type GetWorkspacesOwnedQueryVariables = Exact<{
+  actorId: Scalars['Bytes'];
+}>;
+
+
+export type GetWorkspacesOwnedQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string }> };
 
 
 export const GetAllGrantsDocument = gql`
@@ -5522,6 +5539,58 @@ export function useGetDaoNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetDaoNameQueryHookResult = ReturnType<typeof useGetDaoNameQuery>;
 export type GetDaoNameLazyQueryHookResult = ReturnType<typeof useGetDaoNameLazyQuery>;
 export type GetDaoNameQueryResult = Apollo.QueryResult<GetDaoNameQuery, GetDaoNameQueryVariables>;
+export const GetDaOsForExploreDocument = gql`
+    query getDAOsForExplore($first: Int, $skip: Int, $orderBy: Workspace_orderBy!, $filter: Workspace_filter!) {
+  workspaces(
+    first: $first
+    skip: $skip
+    orderBy: $orderBy
+    orderDirection: desc
+    where: $filter
+  ) {
+    id
+    title
+    logoIpfsHash
+    supportedNetworks
+    createdAtS
+    mostRecentGrantPostedAtS
+    numberOfApplications
+    numberOfApplicationsSelected
+    totalGrantFundingDisbursedUSD
+  }
+}
+    `;
+
+/**
+ * __useGetDaOsForExploreQuery__
+ *
+ * To run a query within a React component, call `useGetDaOsForExploreQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDaOsForExploreQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDaOsForExploreQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *      orderBy: // value for 'orderBy'
+ *      filter: // value for 'filter'
+ *   },
+ * });
+ */
+export function useGetDaOsForExploreQuery(baseOptions: Apollo.QueryHookOptions<GetDaOsForExploreQuery, GetDaOsForExploreQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDaOsForExploreQuery, GetDaOsForExploreQueryVariables>(GetDaOsForExploreDocument, options);
+      }
+export function useGetDaOsForExploreLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDaOsForExploreQuery, GetDaOsForExploreQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDaOsForExploreQuery, GetDaOsForExploreQueryVariables>(GetDaOsForExploreDocument, options);
+        }
+export type GetDaOsForExploreQueryHookResult = ReturnType<typeof useGetDaOsForExploreQuery>;
+export type GetDaOsForExploreLazyQueryHookResult = ReturnType<typeof useGetDaOsForExploreLazyQuery>;
+export type GetDaOsForExploreQueryResult = Apollo.QueryResult<GetDaOsForExploreQuery, GetDaOsForExploreQueryVariables>;
 export const GetFundSentforReviewerDocument = gql`
     query getFundSentforReviewer($type: FundsTransferType, $to: Bytes) {
   fundsTransfers(
@@ -6985,3 +7054,38 @@ export function useGetWorkspaceMembersPublicKeysLazyQuery(baseOptions?: Apollo.L
 export type GetWorkspaceMembersPublicKeysQueryHookResult = ReturnType<typeof useGetWorkspaceMembersPublicKeysQuery>;
 export type GetWorkspaceMembersPublicKeysLazyQueryHookResult = ReturnType<typeof useGetWorkspaceMembersPublicKeysLazyQuery>;
 export type GetWorkspaceMembersPublicKeysQueryResult = Apollo.QueryResult<GetWorkspaceMembersPublicKeysQuery, GetWorkspaceMembersPublicKeysQueryVariables>;
+export const GetWorkspacesOwnedDocument = gql`
+    query GetWorkspacesOwned($actorId: Bytes!) {
+  workspaceMembers(where: {actorId: $actorId, accessLevel: owner}, first: 1) {
+    id
+  }
+}
+    `;
+
+/**
+ * __useGetWorkspacesOwnedQuery__
+ *
+ * To run a query within a React component, call `useGetWorkspacesOwnedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetWorkspacesOwnedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetWorkspacesOwnedQuery({
+ *   variables: {
+ *      actorId: // value for 'actorId'
+ *   },
+ * });
+ */
+export function useGetWorkspacesOwnedQuery(baseOptions: Apollo.QueryHookOptions<GetWorkspacesOwnedQuery, GetWorkspacesOwnedQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetWorkspacesOwnedQuery, GetWorkspacesOwnedQueryVariables>(GetWorkspacesOwnedDocument, options);
+      }
+export function useGetWorkspacesOwnedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetWorkspacesOwnedQuery, GetWorkspacesOwnedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetWorkspacesOwnedQuery, GetWorkspacesOwnedQueryVariables>(GetWorkspacesOwnedDocument, options);
+        }
+export type GetWorkspacesOwnedQueryHookResult = ReturnType<typeof useGetWorkspacesOwnedQuery>;
+export type GetWorkspacesOwnedLazyQueryHookResult = ReturnType<typeof useGetWorkspacesOwnedLazyQuery>;
+export type GetWorkspacesOwnedQueryResult = Apollo.QueryResult<GetWorkspacesOwnedQuery, GetWorkspacesOwnedQueryVariables>;

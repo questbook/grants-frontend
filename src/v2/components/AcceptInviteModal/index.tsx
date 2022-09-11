@@ -1,11 +1,13 @@
-import { createElement, useContext, useEffect, useRef, useState } from 'react'
+import { ChangeEvent, createElement, useContext, useEffect, useRef, useState } from 'react'
 import { Box, Button, HStack, Image, Input, Modal, ModalCloseButton, ModalContent, ModalOverlay, Progress, Spacer, Text, useToast, VStack } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import { WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { ROLES } from 'src/constants'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useDAOName from 'src/hooks/useDAOName'
+import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { addAuthorizedUser } from 'src/utils/gaslessUtils'
 import { delay } from 'src/utils/generics'
 import { InviteInfo, useJoinInvite } from 'src/utils/invite'
@@ -55,6 +57,9 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 	const { joinInvite, getJoinInviteGasEstimate, isBiconomyInitialised } = useJoinInvite(inviteInfo!, profile, shouldRefreshNonce)
 
 	const { data: accountData, nonce } = useQuestbookAccount(shouldRefreshNonce)
+	const { activeChain } = useNetwork()
+
+	const [transactionHash, setTransactionHash] = useState<string>()
 
 	useEffect(() => {
 
@@ -112,7 +117,7 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 				} else if(step === 'tx-confirmed') {
 					setInviteJoinStep(3)
 				}
-			})
+			}, setTransactionHash)
 
 			setInviteJoinStep(5)
 
@@ -124,12 +129,12 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 			})
 
 			onClose()
-		} catch(error: any) {
+		} catch(error) {
 			// console.error('error in join ', error)
 
 			const toastId = toast({
 				render: () => ErrorToast({
-					content: `Error in joining the DAO: "${error.message}"`,
+					content: `Error in joining the DAO: "${(error as Error).message}"`,
 					close: () => {
 						toast.close(toastId!)
 					},
@@ -225,6 +230,12 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 						'Profile created on-chain'
 					]
 				}
+				viewLink={getExplorerUrlForTxHash(activeChain, transactionHash)}
+				onClose={
+					() => {
+						setInviteJoinStep(undefined)
+					}
+				}
 			/>
 			{/* <ConnectWalletModal
 				isOpen={isDisconnected && !!inviteInfo}
@@ -296,7 +307,7 @@ const Step2LeftDisplay = ({ role, profile }: DisplayProps) => {
 	const [profileImageUrl, setProfileImageUrl] = useState(profile.profileImageUrl)
 	const imageUploadRef = useRef<HTMLInputElement>(null)
 
-	const onImageUpdate = (event: React.ChangeEvent<HTMLInputElement>) => {
+	const onImageUpdate = (event: ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0]
 		if(file) {
 			const imgUrl = URL.createObjectURL(file)

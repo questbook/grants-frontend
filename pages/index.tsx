@@ -102,6 +102,7 @@ function BrowseGrants() {
 				setCurrentPage(firstTime ? 1 : currentPage + 1)
 				// @TODO: Handle the case where a lot of the grants are filtered out.
 			})
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			// // console.log(e);
 			toast({

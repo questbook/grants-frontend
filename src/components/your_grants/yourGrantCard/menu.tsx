@@ -20,8 +20,6 @@ interface Props {
   onViewApplicantsClick: (() => void) | undefined
   onEditClick: (() => void) | undefined
   isAdmin: boolean
-  setRubricDrawerOpen: (arg0: boolean) => void
-  initialRubricAvailable: boolean
 }
 
 interface MenuItemProps {
@@ -41,8 +39,6 @@ function YourGrantMenu({
 	onViewApplicantsClick,
 	onEditClick,
 	isAdmin,
-	setRubricDrawerOpen,
-	initialRubricAvailable,
 }: Props) {
 	const [copied, setCopied] = React.useState(false)
 
@@ -65,15 +61,6 @@ function YourGrantMenu({
 	]
 
 	const adminItems: MenuItemProps[] = [
-		{
-			iconPath: '/ui_icons/eval_setup.svg',
-			iconWidth: '24px',
-			iconHeight: '24px',
-			text: initialRubricAvailable
-				? 'Edit evaluation score'
-				: 'Setup evaluation score',
-			onClick: () => setRubricDrawerOpen(true),
-		},
 	]
 
 	const archivedItems: MenuItemProps[] = [
@@ -81,15 +68,15 @@ function YourGrantMenu({
 			iconPath: '/ui_icons/view_applicants.svg',
 			text: numOfApplicants > 0 ? 'View applicants' : 'Edit grant',
 			onClick: () => (numOfApplicants > 0
-				? onViewApplicantsClick && onViewApplicantsClick()
-				: onEditClick && onEditClick()),
+				? onViewApplicantsClick?.()
+				: onEditClick?.()),
 		},
 	]
 	const nonArchivedItems: MenuItemProps[] = [
 		{
 			iconPath: '/ui_icons/archive_grant.svg',
 			text: 'Archive grant',
-			onClick: () => onArchiveGrantClick && onArchiveGrantClick(),
+			onClick: () => onArchiveGrantClick?.(),
 		},
 	]
 

@@ -1,8 +1,9 @@
 import { useState } from 'react'
+import { QueryResult } from '@apollo/client'
 import { Box, Button, Container, Drawer, DrawerContent, DrawerOverlay, Flex, Text } from '@chakra-ui/react'
+import { GetGrantDetailsQuery, GetGrantDetailsQueryVariables } from 'src/generated/graphql'
 import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
 import { SetupEvaluation } from 'src/v2/assets/custom chakra icons/SetupEvaluation'
-// import AssignReviewers from './AssignReviewers'
 import RubricsView from 'src/v2/payouts/ViewEvaluationDrawer/RubricsView'
 
 const ViewEvaluationDrawer = ({
@@ -14,7 +15,7 @@ const ViewEvaluationDrawer = ({
   isOpen: boolean
   onClose: () => void
 	onComplete: () => void
-  grantData: any
+  grantData: QueryResult<GetGrantDetailsQuery, GetGrantDetailsQueryVariables>['data']
 }) => {
 	// The will be required while implementing edit rubrics
 	const [step, setStep] = useState(0)
@@ -116,7 +117,7 @@ const ViewEvaluationDrawer = ({
 
 						{
 							step === 0 ? (
-								<RubricsView rubrics={grantData?.grants.length > 0 ? grantData.grants[0]?.rubric?.items : undefined} />
+								<RubricsView rubrics={grantData?.grants && grantData?.grants?.length > 0 ? grantData?.grants[0]?.rubric?.items : undefined} />
 							) : <></>
 						}
 					</Flex>

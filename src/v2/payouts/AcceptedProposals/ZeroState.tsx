@@ -1,9 +1,13 @@
+import { QueryResult } from '@apollo/client'
 import { Button, Flex, Text } from '@chakra-ui/react'
+import { GetGrantDetailsQuery, GetGrantDetailsQueryVariables } from 'src/generated/graphql'
 
 const ZeroState = ({
-	grantData
+	grantData,
+	onSetupApplicantEvaluationClicked
 }: {
-	grantData: any
+	grantData: QueryResult<GetGrantDetailsQuery, GetGrantDetailsQueryVariables>['data']
+	onSetupApplicantEvaluationClicked: () => void
 }) => {
 	return (
 		<Flex
@@ -42,6 +46,7 @@ const ZeroState = ({
 				colorScheme='brandv2'
 				fontSize='14px'
 				h={9}
+				onClick={onSetupApplicantEvaluationClicked}
 			>
 				{(grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ? 'View scoring rubric' : 'Setup applicant evaluation'}
 

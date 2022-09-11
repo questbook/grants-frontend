@@ -3,9 +3,9 @@ import Safe from '@gnosis.pm/safe-core-sdk'
 import EthersAdapter from '@gnosis.pm/safe-ethers-lib'
 import SafeServiceClient from '@gnosis.pm/safe-service-client'
 import { ethers } from 'ethers'
-import { MetaTransaction, Safe as GnosisSafe, TransactionType } from 'src/v2/types/safe'
+import { MetaTransaction, Safe as _GnosisSafe, TransactionType } from 'src/v2/types/safe'
 
-export class Gnosis_Safe implements GnosisSafe {
+export class GnosisSafe implements _GnosisSafe {
 	id: string
 	name: string
 	description: string
@@ -61,7 +61,8 @@ export class Gnosis_Safe implements GnosisSafe {
     		})
 
     		return safeTxHash
-    	} catch(e: any) {
+    	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+} catch(e: any) {
     		return undefined
     		// console.log(e)
     	}
@@ -87,9 +88,7 @@ export class Gnosis_Safe implements GnosisSafe {
     	const safeSdk = await Safe.create({ ethAdapter, safeAddress })
 
     	const userAddress = await signer.getAddress()
-    	const isOwner = await safeSdk.isOwner(userAddress)
-
-    	return isOwner
+      return await safeSdk.isOwner(userAddress)
 	}
 
 	getTransactionHashStatus(proposalPublicKeys: string): any {

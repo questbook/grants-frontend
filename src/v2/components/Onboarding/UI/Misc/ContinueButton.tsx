@@ -10,7 +10,7 @@ const ContinueButton = ({
 }: {
   onClick: () => void
   disabled: boolean
-  props?: any
+  props?: { [_ in string]: string }
 	content?: ReactElement
 }) => (
 	<Button

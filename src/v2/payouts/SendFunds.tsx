@@ -9,8 +9,8 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { isPlausibleSolanaAddress } from 'src/utils/generics'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { Gnosis_Safe } from 'src/v2/constants/safe/gnosis_safe'
-import { Realms_Solana, usdToSolana } from 'src/v2/constants/safe/realms_solana'
+import { Gnosis_Safe, GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
+import { Realms_Solana, RealmsSolana, usdToSolana } from 'src/v2/constants/safe/realms_solana'
 import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import SendFundsDrawer from 'src/v2/payouts/SendFundsDrawer/SendFundsDrawer'
@@ -87,10 +87,10 @@ export default function SendFunds({
 	const currentSafe = useMemo(() => {
 		if(isEvmChain) {
 			const txnServiceURL = safeServicesInfo[workspaceSafeChainId]
-			return new Gnosis_Safe(workspaceSafeChainId, txnServiceURL, workspaceSafe)
+			return new GnosisSafe(workspaceSafeChainId, txnServiceURL, workspaceSafe)
 		} else {
 			if(isPlausibleSolanaAddress(workspaceSafe)) {
-				return new Realms_Solana(workspaceSafe)
+				return new RealmsSolana(workspaceSafe)
 			}
 		}
 	}, [workspaceSafe])

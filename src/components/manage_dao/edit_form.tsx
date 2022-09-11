@@ -261,21 +261,6 @@ function EditForm({ workspaceData }: EditFormProps) {
 				}
 			</Grid>
 			<Grid
-				w='100%'
-				gridTemplateColumns='4fr 1fr'
-				justifyItems='space-between'
-				mt={8}
-			>
-				<SingleLineInput
-					label='Network'
-					placeholder='Network'
-					value={supportedNetwork}
-					onChange={() => {}}
-					isError={false}
-					disabled
-				/>
-			</Grid>
-			<Grid
 				w='80%'
 				gridTemplateColumns='5fr 1fr'
 				justifyItems='space-between'
@@ -610,7 +595,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 					isError={hasError('telegramChannel')}
 				/>
 			</Flex>
-			<Flex
+			{/* <Flex
 				direction='row'
 				mt={4}>
 				<Text
@@ -643,7 +628,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 						w='10px'
 					/>
 				</Text>
-			</Flex>
+			</Flex> */}
 
 			<Flex
 				direction='row'

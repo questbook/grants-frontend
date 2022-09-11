@@ -13,6 +13,7 @@ import useChainId from 'src/hooks/utils/useChainId'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import logger from 'src/utils/logger'
 
 export default function useRequestMilestoneApproval(
 	data: any,
@@ -132,6 +133,7 @@ export default function useRequestMilestoneApproval(
 				}
 
 				setLoading(false)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
 				const message = getErrorMessage(e)
 				setError(message)
@@ -181,6 +183,7 @@ export default function useRequestMilestoneApproval(
 
 			if(!currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-request-milestone-approval.tsx 1): ', chainId)
 					switchNetwork(chainId)
 				}
 
@@ -191,6 +194,7 @@ export default function useRequestMilestoneApproval(
 
 			if(chainId !== currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-request-milestone-approval.tsx 2): ', chainId)
 					switchNetwork(chainId)
 				}
 
@@ -212,6 +216,7 @@ export default function useRequestMilestoneApproval(
 			}
 
 			validate()
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			const message = getErrorMessage(e)
 			setError(message)

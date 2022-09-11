@@ -11,6 +11,7 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useChainId from 'src/hooks/utils/useChainId'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import logger from 'src/utils/logger'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
@@ -128,6 +129,7 @@ export default function useUpdateWorkspacePublicKeys(
 				}
 
 				setLoading(false)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
 				// console.log(e)
 				setError(e.message)
@@ -169,6 +171,7 @@ export default function useUpdateWorkspacePublicKeys(
 
 			if(!currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-update-workspace-pkey.tsx 1): ', chainId)
 					switchNetwork(chainId)
 				}
 
@@ -179,6 +182,7 @@ export default function useUpdateWorkspacePublicKeys(
 
 			if(chainId !== currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-update-workspace-pkey.tsx 2): ', chainId)
 					switchNetwork(chainId)
 				}
 
@@ -200,6 +204,7 @@ export default function useUpdateWorkspacePublicKeys(
 			}
 
 			validate()
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			setError(e.message)
 			setLoading(false)

@@ -22,15 +22,12 @@ import {
 	useGetReviewersForAWorkspaceQuery,
 	useGetSafeForAWorkspaceQuery,
 } from 'src/generated/graphql'
-import useQBContract from 'src/hooks/contracts/useQBContract'
-import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { ApplicationMilestone } from 'src/types'
-import { formatAddress, formatAmount, getFieldString } from 'src/utils/formattingUtils'
-import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { formatAddress, formatAmount, getExplorerUrlForTxHash, getFieldString, getRewardAmount, getRewardAmountMilestones, getRewardAmountMilestonesUSD } from 'src/utils/formattingUtils'
 import { isPlausibleSolanaAddress } from 'src/utils/generics'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
@@ -44,8 +41,8 @@ import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import StyledTab from 'src/v2/components/StyledTab'
 import NoReviewerBanner from 'src/v2/components/ViewApplicants/NoReviewerBanner'
 import RubricNotSetBanner from 'src/v2/components/ViewApplicants/RubricNotSetBanner'
-import { Gnosis_Safe } from 'src/v2/constants/safe/gnosis_safe'
-import { Realms_Solana, solanaToUsd, solanaToUsdOnDate, usdToSolana } from 'src/v2/constants/safe/realms_solana'
+import { Gnosis_Safe, GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
+import { Realms_Solana, RealmsSolana, solanaToUsd, solanaToUsdOnDate, usdToSolana } from 'src/v2/constants/safe/realms_solana'
 import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import AcceptedProposalsPanel from 'src/v2/payouts/AcceptedProposals/AcceptedProposalPanel'
@@ -54,7 +51,7 @@ import RejectedPanel from 'src/v2/payouts/RejectedProposals/RejectedPanel'
 import ResubmitPanel from 'src/v2/payouts/ResubmitProposals/ResubmitPanel'
 import SendFunds from 'src/v2/payouts/SendFunds'
 import SendFundsDrawer from 'src/v2/payouts/SendFundsDrawer/SendFundsDrawer'
-import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
+import SendFundsModal, { MODAL_STATE_INDEXES, ModalStateType } from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEvaluationDrawer'
 import StatsBanner from 'src/v2/payouts/StatsBanner'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
@@ -97,7 +94,7 @@ function ViewApplicants() {
 	const [listOfApplicationToTxnsHash, setListOfApplicationToTxnsHash] = useState({})
 	const [applicationStatuses, setApplicationStatuses] = useState({})
 	const [totalFundDisbursed, setTotalFundDisbursed] = useState (0)
-	const [totalMilestonesAmt, setTotalMilestonesAmt] = useState({})
+	// const [totalMilestonesAmt, setTotalMilestonesAmt] = useState({})
 	const [rubricDrawerOpen, setRubricDrawerOpen] = useState(false)
 	const [viewRubricDrawerOpen, setViewRubricDrawerOpen] = useState(false)
 
@@ -125,16 +122,13 @@ function ViewApplicants() {
 
 	// useEffect(() => {
 	// 	if(applicantsData.length > 0 && rewardAssetDecimals) {
-	// 		const applicationMilestones = {}
+	// 		const totalRequestedAmt = {}
 	// 		applicantsData.map(application => {
-	// 			applicationMilestones[application.applicationId] = (application.milestones || []).reduce(
-	// 				(previousValue, currentValue) => (Number(previousValue.amount || '0') / 10 ** rewardAssetDecimals) + (Number(currentValue.amount || '0') / 10 ** rewardAssetDecimals),
-	// 				0
-	// 			  )
+	// 			if(application) {
+	// 				totalRequestedAmt[application.applicationId] = getRewardAmountMilestones(rewardAssetDecimals, application)
+	// 			}
 	// 		})
-	// 		setTotalMilestonesAmt(applicationMilestones)
-	// 		console.log('applicationMilestones', applicationMilestones, applicantsData, rewardAssetDecimals || '')
-
+	// 		setTotalMilestonesAmt(totalRequestedAmt)
 	// 	}
 	// }, [ applicantsData, rewardAssetDecimals])
 
@@ -303,12 +297,12 @@ function ViewApplicants() {
 					applicationId: applicant.id,
 					applicantName: getFieldString(applicant, 'applicantName'),
 					applicantEmail: getFieldString(applicant, 'applicantEmail'),
-					applicant_address: getFieldString(applicant, 'applicantAddress'),
-					sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
-					updated_on: moment.unix(applicant.updatedAtS).format('DD MMM YYYY'),
+					applicantAddress: getFieldString(applicant, 'applicantAddress') || applicant.applicantId,
+					sentOn: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
+					updatedOn: moment.unix(applicant.updatedAtS).format('DD MMM YYYY'),
 					// applicant_name: getFieldString('applicantName'),
-					project_name: getFieldString(applicant, 'projectName'),
-					funding_asked: {
+					projectName: getFieldString(applicant, 'projectName'),
+					fundingAsked: {
 						// amount: formatAmount(
 						//   getFieldString('fundingAsk') || '0',
 						// ),
@@ -324,7 +318,7 @@ function ViewApplicants() {
 					status: TableFilters[applicant?.state],
 					milestones: applicant.milestones,
 					reviewers: applicant.applicationReviewers,
-					amount_paid: formatAmount(
+					amountPaid: formatAmount(
 						getTotalFundingRecv(
 							applicant.milestones as unknown as ApplicationMilestone[],
 						).toString(),
@@ -377,10 +371,10 @@ function ViewApplicants() {
 	const currentSafe = useMemo(() => {
 		if(isEvmChain) {
 			const txnServiceURL = safeServicesInfo[workspaceSafeChainId]
-			return new Gnosis_Safe(workspaceSafeChainId, txnServiceURL, workspaceSafe)
+			return new GnosisSafe(workspaceSafeChainId, txnServiceURL, workspaceSafe)
 		} else {
 			if(isPlausibleSolanaAddress(workspaceSafe)) {
-				return new Realms_Solana(workspaceSafe)
+				return new RealmsSolana(workspaceSafe)
 			}
 		}
 	}, [workspaceSafe])
@@ -489,6 +483,8 @@ function ViewApplicants() {
 			setAreRubricsSet(false)
 		}
 	}, [grantData])
+
+	const [transactionHash, setTransactionHash] = useState<string>()
 
 	return (
 		<Container
@@ -673,12 +669,14 @@ function ViewApplicants() {
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7' >
 							<AcceptedProposalsPanel
 								isEvmChain={isEvmChain}
-								totalMilestonesAmount={totalMilestonesAmt}
+								// totalMilestonesAmount={totalMilestonesAmt}
 								applicationStatuses={applicationStatuses}
 								applicantsData={applicantsData}
 								onSendFundsClicked={onSendFundsButtonClicked}
 								onBulkSendFundsClicked={onSendFundsButtonClicked}
+								onSetupApplicantEvaluationClicked={() => setRubricDrawerOpen(true)}
 								grantData={grantData}
+								rewardAssetDecimals={rewardAssetDecimals}
 							/>
 						</TabPanel>
 
@@ -727,6 +725,7 @@ function ViewApplicants() {
 					grantAddress={grantID}
 					chainId={getSupportedChainIdFromWorkspace(workspace) || defaultChainId}
 					setNetworkTransactionModalStep={setNetworkTransactionModalStep}
+					setTransactionHash={setTransactionHash}
 					data={reviewersForAWorkspaceData}
 				/>
 
@@ -778,7 +777,9 @@ function ViewApplicants() {
 							'Completing indexing',
 							'Rubric created and Reviewers assigned',
 						]
-					} />
+					}
+					viewLink={getExplorerUrlForTxHash(getSupportedChainIdFromWorkspace(workspace) || defaultChainId, transactionHash)}
+					onClose={() => setNetworkTransactionModalStep(undefined)} />
 
 			</Container>
 			<Modal

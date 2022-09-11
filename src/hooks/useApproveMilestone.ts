@@ -15,6 +15,7 @@ import {
 	getTransactionDetails,
 	sendGaslessTransaction
 } from 'src/utils/gaslessUtils'
+import logger from 'src/utils/logger'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
@@ -125,6 +126,7 @@ export default function useApproveMilestone(
 
 				setTransactionData(receipt)
 				setLoading(false)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
 				const message = getErrorMessage(e)
 				setError(message)
@@ -174,6 +176,7 @@ export default function useApproveMilestone(
 
 			if(!currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-approve-milestone.tsx 1): ', chainId)
 					switchNetwork(chainId)
 				}
 
@@ -184,6 +187,7 @@ export default function useApproveMilestone(
 
 			if(chainId !== currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-approve-milestone.tsx 2): ', chainId)
 					switchNetwork(chainId)
 				}
 
@@ -205,6 +209,7 @@ export default function useApproveMilestone(
 			}
 
 			validate()
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			const message = getErrorMessage(e)
 			setError(message)

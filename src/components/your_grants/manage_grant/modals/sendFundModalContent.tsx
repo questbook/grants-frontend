@@ -25,6 +25,7 @@ import useDisburseP2PReward from 'src/hooks/useDisburseP2PReward'
 import useDisburseReward from 'src/hooks/useDisburseReward'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { formatAmount, parseAmount } from 'src/utils/formattingUtils'
+import logger from 'src/utils/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useContract, useNetwork, useSigner } from 'wagmi'
 
@@ -96,6 +97,7 @@ function ModalContent({
 	useEffect(() => {
 		if(workspace && switchNetwork && isOpen) {
 			const chainId = getSupportedChainIdFromWorkspace(workspace)
+			logger.info('SWITCH NETWORK (send-fund-modal.tsx 1): ', chainId!)
 			switchNetwork(chainId!)
 		}
 	}, [isOpen, switchNetwork, workspace])
@@ -206,6 +208,7 @@ function ModalContent({
 				// // console.log('tempAddress', tempAddress);
 				// // console.log(tempWalletBalance);
 				setWalletBalance(tempWalletBalance)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
 				// console.error(e)
 			}

@@ -224,7 +224,7 @@ const VerifySignerModal = ({
 															if(connector) {
 																try {
 																	await connectAsync(connector)
-																} catch(e: any) {
+																} catch(_) {
 																	// console.log('evm error', e)
 																}
 

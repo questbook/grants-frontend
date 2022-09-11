@@ -10,6 +10,7 @@ import useChainId from 'src/hooks/utils/useChainId'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import logger from 'src/utils/logger'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
@@ -20,6 +21,7 @@ export default function useBatchUpdateApplicationState(
 	state: number,
 	submitClicked: boolean,
 	setSubmitClicked: React.Dispatch<React.SetStateAction<boolean>>,
+	setNetworkTransactionModalStep: (step: number | undefined) => void
 ) {
 	const [error, setError] = React.useState<string>()
 	const [loading, setLoading] = React.useState(false)
@@ -35,7 +37,6 @@ export default function useBatchUpdateApplicationState(
 	const applicationContract = useQBContract('applications', chainId)
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
-	const [networkTransactionModalStep, setNetworkTransactionModalStep] = React.useState<number>()
 
 	const { webwallet } = useContext(WebwalletContext)!
 
@@ -159,6 +160,7 @@ export default function useBatchUpdateApplicationState(
 				setTimeout(() => {
 					setNetworkTransactionModalStep(undefined)
 				}, 2000)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
 				const message = getErrorMessage(e)
 				setError(message)
@@ -208,6 +210,7 @@ export default function useBatchUpdateApplicationState(
 
 			if(!currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-batch-update-application-state.tsx 1): ', chainId)
 					switchNetwork(chainId)
 				}
 
@@ -218,6 +221,7 @@ export default function useBatchUpdateApplicationState(
 
 			if(chainId !== currentChainId) {
 				if(switchNetwork && chainId) {
+					logger.info('SWITCH NETWORK (use-batch-update-application-state.tsx 2): ', chainId)
 					switchNetwork(chainId)
 				}
 
@@ -240,6 +244,7 @@ export default function useBatchUpdateApplicationState(
 
 
 			validate()
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			const message = getErrorMessage(e)
 			setError(message)
@@ -280,7 +285,6 @@ export default function useBatchUpdateApplicationState(
 		getExplorerUrlForTxHash(currentChainId, transactionData?.transactionHash),
 		loading,
 		isBiconomyInitialised,
-		error,
-		networkTransactionModalStep
+		error
 	]
 }

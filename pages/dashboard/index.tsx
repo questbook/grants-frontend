@@ -16,7 +16,6 @@ import {
 import NavbarLayout from 'src/layout/navbarLayout'
 import { UNIX_TIMESTAMP_MAX, UNIX_TIMESTAMP_MIN } from 'src/utils/generics'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import InviteModal from 'src/v2/components/InviteModal'
 
 // const Tabledata = [
 // 	{
@@ -74,7 +73,6 @@ import InviteModal from 'src/v2/components/InviteModal'
 function DaoDashboard() {
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
 
-	const [isInviteModalOpen, setIsInviteModalOpen] = useState(false)
 	const [chainID, setChainId] = React.useState<SupportedChainId>()
 	const [daoID, setDaoId] = React.useState<string>()
 
@@ -225,6 +223,7 @@ function DaoDashboard() {
 				grantsPending,
 				grantsTat
 			})
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			// console.log(e)
 		}
@@ -357,12 +356,6 @@ function DaoDashboard() {
 							DAO Stats
 						</Text>
 						<Spacer />
-						<Button
-							onClick={() => setIsInviteModalOpen(true)}
-							leftIcon={<LinkIcon />}
-							variant='primaryV2' >
-							Create invite link
-						</Button>
 						{/* <Menu
 							placement="bottom"
 							// align="right"
@@ -519,9 +512,6 @@ function DaoDashboard() {
 					</Flex>
 				</Container>
 			</Container>
-			<InviteModal
-				isOpen={isInviteModalOpen}
-				onClose={() => setIsInviteModalOpen(false)} />
 		</>
 	)
 }

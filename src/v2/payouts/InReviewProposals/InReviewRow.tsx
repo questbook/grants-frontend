@@ -1,9 +1,24 @@
-import { useContext, useEffect, useMemo, useState } from 'react'
-import { Button, Checkbox, Fade, Flex, forwardRef, GridItem, Image, Menu, MenuButton, MenuItem, MenuList, Text, TextProps } from '@chakra-ui/react'
+import React, { MouseEventHandler, useContext, useEffect, useMemo, useState } from 'react'
+import {
+	Button,
+	Checkbox,
+	Fade,
+	Flex,
+	forwardRef,
+	GridItem,
+	Image,
+	Menu,
+	MenuButton,
+	MenuItem,
+	MenuList,
+	Text,
+	TextProps,
+	Tooltip,
+} from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import { defaultChainId } from 'src/constants/chains'
-import { IReview, IReviewFeedback } from 'src/types'
+import { IApplicantData, IReviewFeedback } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
 import { useLoadReview } from 'src/utils/reviews'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -20,13 +35,13 @@ const InReviewRow = ({
 	onRejectClicked,
 	onResubmitClicked,
 }: {
-	applicantData: any
+	applicantData: IApplicantData
 	isChecked: boolean
-	onChange: (e: any) => void
+	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 	someChecked: boolean
-	onAcceptClicked: (e: any) => void
-	onRejectClicked: (e: any) => void
-	onResubmitClicked: (e: any) => void
+	onAcceptClicked: MouseEventHandler | undefined
+	onRejectClicked: MouseEventHandler | undefined
+	onResubmitClicked: MouseEventHandler | undefined
 }) => {
 	const { workspace } = useContext(ApiClientsContext)!
  	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
@@ -44,11 +59,12 @@ const InReviewRow = ({
 	), [reviews])
 
 	const getReviews = async() => {
-		const reviewsDataMap: typeof reviews = { }
+		const reviewsDataMap: {[_ in string]: IReviewFeedback} = {}
 
 		await Promise.all(
-			submittedReviews!.map(async(review: IReview) => {
+			submittedReviews!.map(async(review) => {
 				try {
+					// @ts-ignore
 					const reviewData = await loadReview(review, applicantData!.applicationId)
 					const [, reviewerAddress] = review.reviewer!.id.split('.')
 					reviewsDataMap[reviewerAddress] = reviewData
@@ -105,7 +121,7 @@ const InReviewRow = ({
 					>
 						<Image
 							borderRadius='3xl'
-							src={getAvatar(applicantData?.applicant_address)}
+							src={getAvatar(applicantData?.applicantAddress)}
 						/>
 					</Flex>
 
@@ -131,7 +147,7 @@ const InReviewRow = ({
 								})
 							}
 						>
-							{applicantData?.project_name}
+							{applicantData?.projectName}
 						</Text>
 						<Text
 							fontSize='12px'
@@ -155,17 +171,17 @@ const InReviewRow = ({
 							display={'flex'}
 							alignItems='center'
 						>
-							<Tooltip label={applicantData?.applicant_address}>
+							<Tooltip label={applicantData?.applicantAddress}>
 
 
-								{`${applicantData?.applicant_address?.substring(0, 6)}...`}
+								{`${applicantData?.applicantAddress?.substring(0, 6)}...`}
 
 							</Tooltip>
 							<Flex
 								display="inline-block"
 								ml={2}
 							>
-								<CopyIcon text={applicantData?.applicant_address!} />
+								<CopyIcon text={applicantData?.applicantAddress!} />
 							</Flex>
 						</Text> */}
 					</Flex>
@@ -226,7 +242,7 @@ const InReviewRow = ({
 						</Flex>
 
 						{
-							applicantData?.reviewers?.map((reviewer: any, i: number) => {
+							applicantData?.reviewers?.map((reviewer, i) => {
 								const reviewerIdSplit = reviewer?.id.split('.')
 								const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
 								return (
@@ -347,13 +363,13 @@ const InReviewRow = ({
 													</Text>
 												</Flex>
 												{
-													[applicantData?.reviewers?.find((reviewer: any) => {
+													[applicantData?.reviewers?.find((reviewer) => {
 														const reviewerIdSplit = reviewer?.id.split('.')
 														const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
 														return reviewerId === reviewKey
-													})].map((reviewer: any, i: number) => {
+													})].map((reviewer, i) => {
 														const reviewerIdSplit = reviewer?.id.split('.')
-														const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
+														const reviewerId = reviewerIdSplit ? reviewerIdSplit[reviewerIdSplit.length - 1] : undefined
 														// console.log(reviewerId)
 														return (
 															<>
@@ -406,7 +422,7 @@ const InReviewRow = ({
 																			color='#7D7DA0'
 																			ml='auto'
 																		>
-																			{reviews[reviewerId] ? totalScore(reviews[reviewerId]) : 0}
+																			{reviewerId && reviews[reviewerId] ? totalScore(reviews[reviewerId]) : 0}
 																		</Text>
 																	</Flex>
 																</MenuItem>
@@ -493,45 +509,51 @@ const InReviewRow = ({
 
 
 					<Fade in={!someChecked && isHovering}>
-						<Button
-							px={3}
-							py='6px'
-							minW={0}
-							minH={0}
-							h='auto'
-							borderRadius='2px'
-							mr={4}
-							ml='auto'
-							onClick={(e) => onAcceptClicked(e)}
-						>
-							<AcceptApplication />
-						</Button>
+						<Tooltip label='Accept application'>
+							<Button
+								px={3}
+								py='6px'
+								minW={0}
+								minH={0}
+								h='auto'
+								borderRadius='2px'
+								mr={4}
+								ml='auto'
+								onClick={onAcceptClicked}
+							>
+								<AcceptApplication />
+							</Button>
+						</Tooltip>
 
-						<Button
-							px={3}
-							py='6px'
-							minW={0}
-							minH={0}
-							h='auto'
-							borderRadius='2px'
-							mr={4}
-							onClick={(e) => onResubmitClicked(e)}
-						>
-							<ResubmitApplication />
-						</Button>
+						<Tooltip label='Ask for resubmission'>
+							<Button
+								px={3}
+								py='6px'
+								minW={0}
+								minH={0}
+								h='auto'
+								borderRadius='2px'
+								mr={4}
+								onClick={onResubmitClicked}
+							>
+								<ResubmitApplication />
+							</Button>
+						</Tooltip>
 
-						<Button
-							px={3}
-							py='6px'
-							minW={0}
-							minH={0}
-							h='auto'
-							borderRadius='2px'
-							mr='auto'
-							onClick={(e) => onRejectClicked(e)}
-						>
-							<RejectApplication />
-						</Button>
+						<Tooltip label='Reject Application'>
+							<Button
+								px={3}
+								py='6px'
+								minW={0}
+								minH={0}
+								h='auto'
+								borderRadius='2px'
+								mr='auto'
+								onClick={onRejectClicked}
+							>
+								<RejectApplication />
+							</Button>
+						</Tooltip>
 					</Fade>
 
 				</Flex>

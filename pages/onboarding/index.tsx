@@ -68,8 +68,8 @@ const Onboarding = () => {
 				props={
 					{
 						pos: 'absolute',
-						bottom: 5,
-						right: 5,
+						bottom: '5px',
+						right: '5px',
 					}
 				}
 				onClick={nextClick}

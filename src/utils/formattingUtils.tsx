@@ -1,9 +1,9 @@
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import moment from 'moment'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
-import { CHAIN_INFO, SupportedChainId } from 'src/constants/chains'
-import { ALL_SUPPORTED_CHAIN_IDS } from 'src/constants/chains'
-import { FundTransfer } from 'src/types'
+import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO, SupportedChainId } from 'src/constants/chains'
+import { ChainInfo, FundTransfer } from 'src/types'
+import { InitialApplicationType } from 'src/v2/components/Dashboard/ReviewerDashboard/ApplicationsTable'
 
 export function timeToString(
 	timestamp: number,
@@ -100,17 +100,17 @@ function truncateTo(number: string, digits = 3) {
 	for(
 		let i = decimalIndex + 1;
 		i
-		< Math.min(
-			decimalIndex + digits + 1,
-			containsSymbol ? number.length - 1 : number.length,
-		);
+    < Math.min(
+    	decimalIndex + digits + 1,
+    	containsSymbol ? number.length - 1 : number.length,
+    );
 		i += 1
 	) {
 		ret += number.charAt(i)
 	}
 
 	return (isEntirelyZeroAfterDecimal ? ret.substring(0, decimalIndex) : ret)
-		+ (containsSymbol ? number.charAt(number.length - 1) : '')
+    + (containsSymbol ? number.charAt(number.length - 1) : '')
 }
 
 export const extractDate = (date: string) => date.substring(0, 10)
@@ -198,10 +198,36 @@ export const getExplorerUrlForAddress = (chainId: SupportedChainId | undefined, 
 	return CHAIN_INFO[chainId!]?.explorer.address.replace('{{address}}', address) || ''
 }
 
-export const getExplorerUrlForTxHash = (chainId: SupportedChainId | undefined, tx: string) => {
-	return CHAIN_INFO[chainId!]?.explorer.transactionHash.replace('{{tx}}', tx) || ''
+export const getExplorerUrlForTxHash = (chainId: SupportedChainId | undefined, tx: string | undefined) => {
+	return tx ? CHAIN_INFO[chainId!]?.explorer.transactionHash.replace('{{tx}}', tx) : ''
 }
 
 export const formatAddress = (address: string) => `${address.substring(0, 4)}......${address.substring(address.length - 4)}`
 
 export const getFieldString = (applicationData: any, name: string) => applicationData?.fields?.find((field: any) => field?.id?.includes(`.${name}`))?.values[0]?.value
+
+export const getRewardAmount = (decimals: number, application: {
+  fields: InitialApplicationType['fields']
+  milestones: InitialApplicationType['milestones']
+}) => {
+	const fundingAskField = getFieldString(application, 'fundingAsk')
+	if(fundingAskField) {
+		return formatAmount(fundingAskField, decimals)
+	} else {
+		let sum = BigNumber.from(0)
+		application?.milestones?.forEach(
+			(milestone) => sum = sum.add(milestone.amount))
+		return formatAmount(sum.toString())
+	}
+}
+
+export const getRewardAmountMilestones = (decimals: number, application: {
+	fields: InitialApplicationType['fields']
+	milestones: InitialApplicationType['milestones']
+  }) => {
+	let sum = BigNumber.from(0)
+
+	application?.milestones?.forEach(
+		(milestone) => sum = sum.add(milestone.amount))
+	return ethers.utils.formatUnits(sum.toString(), decimals).toString()?.split('.')[0]
+}

@@ -434,6 +434,24 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "fromWallet",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "toWallet",
+        type: "address",
+      },
+    ],
+    name: "migrateWallet",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "owner",
     outputs: [

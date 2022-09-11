@@ -73,21 +73,22 @@ const OnboardingCreateDomain = () => {
 	const { data: accountDataWebwallet, nonce } = useQuestbookAccount(shouldRefreshNonce)
 	const { webwallet } = useContext(WebwalletContext)!
 	// console.log('safeSelected', safeSelected)
+
+
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: safeSelected?.networkId ? networksMapping[safeSelected?.networkId?.toString()] : '',
 		shouldRefreshNonce: shouldRefreshNonce
 	})
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
 
+
 	useEffect(() => {
-		// const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
-		// console.log('rree', isBiconomyLoading, biconomyLoading)
-		// console.log('networks 2:', biconomy?.networkId?.toString(), safeSelected?.networkId, safeSelected?.networkId ?
-		//	networksMapping[safeSelected?.networkId?.toString()] : undefined)
+
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && safeSelected?.networkId &&
-			biconomy.networkId && biconomy.networkId?.toString() === networksMapping[safeSelected?.networkId?.toString()]) {
+			biconomy.networkId && biconomy.networkId.toString() === networksMapping[safeSelected?.networkId?.toString()]) {
 			setIsBiconomyInitialised(true)
 		}
+
 	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, safeSelected?.networkId])
 
 	useEffect(() => {
@@ -248,6 +249,7 @@ const OnboardingCreateDomain = () => {
 			setTxHash(txHash)
 			setIsDomainCreationSuccessful(true)
 			setCurrentStep(undefined)
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			setCurrentStep(undefined)
 			const message = getErrorMessage(e)
@@ -464,7 +466,9 @@ const OnboardingCreateDomain = () => {
 						'Create domain on the network',
 						'Your domain is now on-chain'
 					]
-				} />
+				}
+				viewLink={getExplorerUrlForTxHash(network, txHash)}
+				onClose={() => setCurrentStep(undefined)} />
 			<VerifySignerModal
 				setOwnerAddress={(newOwnerAddress) => setOwnerAddress(newOwnerAddress)}
 				networkType={safeSelected?.networkType ?? NetworkType.EVM}

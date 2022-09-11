@@ -30,7 +30,6 @@ interface YourGrantCardProps {
   state: 'processing' | 'done'
   onEditClick?: () => void
   onViewApplicantsClick?: () => void
-  onAddFundsClick?: () => void
   acceptingApplications: boolean
   chainId: SupportedChainId | undefined
   isAdmin: boolean
@@ -51,7 +50,6 @@ function YourGrantCard({
 	state,
 	onEditClick,
 	onViewApplicantsClick,
-	onAddFundsClick,
 	chainId,
 	acceptingApplications,
 	isAdmin,
@@ -204,25 +202,10 @@ function YourGrantCard({
 										onViewApplicantsClick={onViewApplicantsClick}
 										onEditClick={onEditClick}
 										isAdmin={isAdmin}
-										setRubricDrawerOpen={setRubricDrawerOpen}
-										initialRubricAvailable={initialRubrics?.items.length > 0 || false}
 									/>
-									{
-										acceptingApplications && isAdmin && (
-											<Button
-												mr={2}
-												ml={5}
-												isDisabled={state === 'processing'}
-												variant={state === 'processing' ? 'primaryCta' : 'outline'}
-												color='brand.500'
-												borderColor='brand.500'
-												h='32px'
-												onClick={onAddFundsClick || (() => {})}
-											>
-												Add funds
-											</Button>
-										)
-									}
+
+									<Box mr='1' />
+
 									{
 										acceptingApplications && (
 											<Button
@@ -341,8 +324,6 @@ function YourGrantCard({
 										onViewApplicantsClick={onViewApplicantsClick}
 										onEditClick={onEditClick}
 										isAdmin={isAdmin}
-										setRubricDrawerOpen={setRubricDrawerOpen}
-										initialRubricAvailable={initialRubrics?.items.length > 0 || false}
 									/>
 									{
 										acceptingApplications && (
@@ -425,6 +406,5 @@ function YourGrantCard({
 YourGrantCard.defaultProps = {
 	onEditClick: () => {},
 	onViewApplicantsClick: () => {},
-	onAddFundsClick: () => {},
 }
 export default YourGrantCard

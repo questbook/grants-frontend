@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
+import { QueryResult } from '@apollo/client'
 import { Button, Checkbox, Flex, Grid, GridItem, Text } from '@chakra-ui/react'
+import { GetGrantDetailsQuery, GetGrantDetailsQueryVariables } from 'src/generated/graphql'
+import { IApplicantData } from 'src/types'
 import AcceptedRow from 'src/v2/payouts/AcceptedProposals/AcceptedRow'
 import ZeroState from 'src/v2/payouts/AcceptedProposals/ZeroState'
 
@@ -10,17 +13,20 @@ const AcceptedProposalsPanel = ({
 	applicantsData,
 	onSendFundsClicked,
 	onBulkSendFundsClicked,
+	onSetupApplicantEvaluationClicked,
 	grantData,
+	rewardAssetDecimals,
 }: {
-	applicationStatuses: {[applicationId: string]: [{transactionHash: string, status: number, amount: number}]}
-  applicantsData: any[]
-  onSendFundsClicked: (state: boolean, checkedItems: any[]) => void
-  onBulkSendFundsClicked: (state: boolean, checkedItems: any[]) => void
-  grantData: any
+	applicationStatuses: {[_: string]: {transactionHash: string, status: number, amount: number}}
+  applicantsData: IApplicantData[]
+  onSendFundsClicked: (state: boolean, checkedItems: IApplicantData[]) => void
+  onBulkSendFundsClicked: (state: boolean, checkedItems: IApplicantData[]) => void
+  onSetupApplicantEvaluationClicked: () => void
+	grantData: QueryResult<GetGrantDetailsQuery, GetGrantDetailsQueryVariables>['data']
 }) => {
 	console.log('accepted proposal panel', applicationStatuses['0xad'], applicationStatuses['0xad']?.reduce((partialSum, a) => partialSum + a.amount, 0))
 	const [checkedItems, setCheckedItems] = useState<boolean[]>(applicantsData.filter((item) => (2 === item.status)).map(() => false))
-	const [acceptedApplications, setAcceptedApplications] = useState<any[]>([])
+	const [acceptedApplications, setAcceptedApplications] = useState<IApplicantData[]>([])
 
 	const someChecked = checkedItems.some((element) => {
 		return element
@@ -44,7 +50,7 @@ const AcceptedProposalsPanel = ({
 	// }, [isBulkSendFundsClicked, isConfirmClicked])
 
 	useEffect(() => {
-		const inReviewApplications = applicantsData?.filter((item: any) => (0 === item.status))
+		const inReviewApplications = applicantsData?.filter((item) => (0 === item.status))
 
 		if(checkedItems.length === 0) {
 			return
@@ -64,9 +70,12 @@ const AcceptedProposalsPanel = ({
 		checkedItems
 	])
 
-	if(applicantsData?.filter((item: any) => (2 === item.status)).length === 0) {
+	if(applicantsData?.filter((item) => (2 === item.status)).length === 0) {
 		return (
-			<ZeroState grantData={grantData} />
+			<ZeroState
+				grantData={grantData}
+				onSetupApplicantEvaluationClicked={onSetupApplicantEvaluationClicked}
+			/>
 		)
 	}
 
@@ -130,7 +139,7 @@ const AcceptedProposalsPanel = ({
 						// defaultChecked={false}
 						isChecked={checkedItems.length > 0 && allChecked}
 						onChange={
-							(e: any) => {
+							(e) => {
 								const tempArr = Array(acceptedApplications.length).fill(e.target.checked)
 								setCheckedItems(tempArr)
 							}
@@ -183,17 +192,17 @@ const AcceptedProposalsPanel = ({
 				{/* new ro */}
 
 				{
-					applicantsData?.filter((item: any) => (2 === item.status)).map((applicantData: any, i) => (
+					applicantsData?.filter((item) => (2 === item.status)).map((applicantData, i) => (
 						<AcceptedRow
 							key={`accepted-${i}`}
 							isEvmChain={isEvmChain}
 							applicationStatus={applicationStatuses[applicantData.applicationId]?.reduce((partialStatus, a) => partialStatus && a.status, 1)}
 							applicationAmount={applicationStatuses[applicantData.applicationId]?.reduce((partialSum, a) => partialSum + a.amount, 0)}
-							totalMilestonesAmount={totalMilestonesAmount[applicantData.applicationId]}
 							applicantData={applicantData}
+							rewardAssetDecimals={rewardAssetDecimals}
 							isChecked={checkedItems[i]}
 							onChange={
-								(e: any) => {
+								(e) => {
 									const tempArr: boolean[] = []
 									tempArr.push(...checkedItems)
 									tempArr[i] = e.target.checked

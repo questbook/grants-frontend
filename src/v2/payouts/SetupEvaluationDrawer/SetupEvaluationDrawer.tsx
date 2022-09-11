@@ -3,8 +3,8 @@ import { Box, Button, Container, Drawer, DrawerContent, DrawerOverlay, Flex, Tex
 import router from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
-import { defaultChainId, SupportedChainId } from 'src/constants/chains'
-import { GetReviewersForAWorkspaceQuery, useGetReviewersForAWorkspaceQuery } from 'src/generated/graphql'
+import { SupportedChainId } from 'src/constants/chains'
+import { GetReviewersForAWorkspaceQuery, RubricItem } from 'src/generated/graphql'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
@@ -25,6 +25,7 @@ const SetupEvaluationDrawer = ({
 	grantAddress,
 	chainId,
 	setNetworkTransactionModalStep,
+	setTransactionHash,
 	data,
 }: {
 	isOpen: boolean
@@ -33,6 +34,7 @@ const SetupEvaluationDrawer = ({
 	grantAddress: string
 	chainId?: SupportedChainId
 	setNetworkTransactionModalStep: (step: number | undefined) => void
+	setTransactionHash: (hash: string) => void
 	data: GetReviewersForAWorkspaceQuery | undefined
 }) => {
 	const [step, setStep] = useState(0)
@@ -82,7 +84,7 @@ const SetupEvaluationDrawer = ({
 	useEffect(() => {
 		const temp: SidebarReviewer[] = []
 		let i = 0
-		data?.workspaces[0].members.forEach((member: any) => {
+		data?.workspaces[0].members.forEach((member) => {
 			temp.push({ isSelected: false, data: member, index: i })
 			++i
 		}
@@ -143,7 +145,11 @@ const SetupEvaluationDrawer = ({
 			// 	return
 			// }
 
-			const rubric = {} as any
+			const rubric: {[_ in string]: {
+				title: SidebarRubrics['criteria']
+				details: SidebarRubrics['description']
+				maximumPoints: RubricItem['maximumPoints']
+			}} = {}
 
 			if(rubrics.length > 0) {
 				rubrics.forEach((r: SidebarRubrics, index) => {
@@ -226,6 +232,7 @@ const SetupEvaluationDrawer = ({
 
 			setNetworkTransactionModalStep(3)
 			const { txFee, receipt } = await getTransactionDetails(response, chainId.toString())
+			setTransactionHash(receipt?.transactionHash)
 			await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
 
 			await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee))
@@ -236,9 +243,9 @@ const SetupEvaluationDrawer = ({
 				router.reload()
 			}, 3000)
 			// setTransactionData(transactionData)
-		} catch(e: any) {
+		} catch(e) {
 			setNetworkTransactionModalStep(undefined)
-			const message = getErrorMessage(e)
+			const message = getErrorMessage(e as Error)
 			toastRef.current = toast({
 				position: 'top',
 				render: () => ErrorToast({
