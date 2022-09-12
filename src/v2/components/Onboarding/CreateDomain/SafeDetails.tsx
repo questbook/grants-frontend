@@ -6,9 +6,7 @@ interface Props {
 	safesOptions: SafeSelectOption[]
 	step: number
 	safeAddress: string
-	isPasted?: boolean
 	isVerified?: boolean
-	isSafeAddressError?: boolean
 	safeAddressErrorText?: string
 	isLoading?: boolean
 	safeSelected: SafeSelectOption
@@ -17,7 +15,7 @@ interface Props {
 	onContinue: () => void
 }
 
-function SafeDetails({ safesOptions, step, safeAddress, isPasted, isVerified, isLoading, safeSelected, setValue, onSelectedSafeChange, onContinue, isSafeAddressError, safeAddressErrorText }: Props) {
+function SafeDetails({ safesOptions, step, safeAddress, isVerified, isLoading, safeSelected, setValue, onSelectedSafeChange, onContinue, safeAddressErrorText }: Props) {
 	return (
 		<>
 			<Text
@@ -45,11 +43,8 @@ function SafeDetails({ safesOptions, step, safeAddress, isPasted, isVerified, is
 				placeholder='Ethereum or Solana address'
 				value={safeAddress}
 				onChange={(e) => setValue(e.target.value)}
-				// setValue={setValue}
-				isPasted={isPasted}
 				isVerified={isVerified}
 				isDisabled={step === 1}
-				isError={isSafeAddressError}
 				errorText={safeAddressErrorText}
 			/>
 			{

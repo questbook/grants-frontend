@@ -52,6 +52,9 @@ import SendFunds from 'src/v2/payouts/SendFunds'
 import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEvaluationDrawer'
 import StatsBanner from 'src/v2/payouts/StatsBanner'
 import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
+import getGnosisTansactionLink from 'src/v2/utils/gnosisUtils'
+import getProposalUrl from 'src/v2/utils/phantomUtils'
+import { erc20ABI, useAccount } from 'wagmi'
 
 
 const PAGE_SIZE = 500

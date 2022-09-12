@@ -120,7 +120,7 @@ const ConnectWalletModal = ({
 														const connector = connectors.find((x) => x.id === wallet.id)
 														if(connector) {
 															try {
-																await connectAsync(connector)
+																await connectAsync({ connector })
 																// eslint-disable-next-line @typescript-eslint/no-explicit-any
 															} catch(e: any) {
 																// console.log('evm error', e)

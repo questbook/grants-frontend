@@ -27,7 +27,7 @@ function ModalContent({ milestone, done }: Props) {
 	const [detailsError, setDetailsError] = useState(false)
 
 	const { milestoneIndex, applicationId } = getMilestoneMetadata(milestone)!
-	const [milestoneUpdate, setMilestoneUpdate] = useState<any>()
+	const [milestoneUpdate, setMilestoneUpdate] = useState<{text: string}>()
 	const [txn, txnLink, loading] = useApproveMilestone(
 		milestoneUpdate,
 		applicationId,

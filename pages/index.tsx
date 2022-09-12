@@ -26,14 +26,12 @@ import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import { useConnect } from 'wagmi'
 
 const PAGE_SIZE = 40
 
 function BrowseGrants() {
 	const containerRef = useRef(null)
 	const { data: accountData } = useQuestbookAccount()
-	const { isDisconnected } = useConnect()
 	const router = useRouter()
 	const { subgraphClients, connected } = useContext(ApiClientsContext)!
 
@@ -63,7 +61,7 @@ function BrowseGrants() {
 								minDeadline: unixTimestampSeconds(),
 							},
 						})
-						if(data && data.grants) {
+						if(data?.grants) {
 							const filteredGrants = data.grants.filter(
 								(grant) => grant.applications.length === 0
 							)
@@ -262,7 +260,7 @@ function BrowseGrants() {
 				}
 			</Flex>
 			{
-				!connected && isDisconnected && (
+				!connected && (
 					<Flex
 						w='26%'
 						pos='sticky'

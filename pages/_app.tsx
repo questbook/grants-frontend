@@ -71,7 +71,7 @@ const { chains, provider } = configureChains(allChains, [
 		},
 	}),
 	publicProvider(),
-	infuraProvider({ infuraId })
+	infuraProvider({ apiKey: infuraId })
 ])
 
 // Set up client

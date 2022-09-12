@@ -74,7 +74,6 @@ function ManageGrant() {
 
 	const [selected, setSelected] = React.useState(0)
 	const [isGrantCompleteModelOpen, setIsGrantCompleteModalOpen] = React.useState(false)
-	const [isSendFundModalOpen, setIsSendFundModalOpen] = useState(false)
 	const [isAdmin, setIsAdmin] = React.useState<boolean>(false)
 	const [rewardDisbursed, setRewardDisbursed] = useState<any>()
 
@@ -217,7 +216,7 @@ function ManageGrant() {
 	)
 
 	useEffect(() => {
-		if(appDetailsResult && appDetailsResult.grantApplication) {
+		if(appDetailsResult?.grantApplication) {
 			setApplicationData(appDetailsResult.grantApplication)
 		}
 	}, [appDetailsResult])
@@ -244,8 +243,11 @@ function ManageGrant() {
 	const fundingIcon = assetInfo.icon
 
 	useEffect(() => {
-		setApplicationID(router?.query?.applicationId || '')
-		refetchApplicationDetails()
+		const { applicationId } = router?.query
+		if(typeof applicationId === 'string') {
+			setApplicationID(applicationId || '')
+			refetchApplicationDetails()
+		}
 	}, [router, accountData, refetchApplicationDetails])
 
 
@@ -261,7 +263,6 @@ function ManageGrant() {
 					milestones={milestones}
 					rewardAssetId={rewardAsset}
 					decimals={decimals}
-					sendFundOpen={() => setIsSendFundModalOpen(true)}
 					chainId={getSupportedChainIdFromWorkspace(workspace)}
 					rewardToken={rewardToken}
 				/>
@@ -300,7 +301,7 @@ function ManageGrant() {
 		},
 	]
 
-	const [update, setUpdate] = useState<any>()
+	const [update, setUpdate] = useState<{text: string}>()
 	const [txn, txnLink, isBiconomyInitialised, loading] = useCompleteApplication(update, applicationData?.id)
 
 	const { setRefresh } = useCustomToast(txnLink, 6000)
@@ -320,8 +321,8 @@ function ManageGrant() {
 	}
 
 	useEffect(() => {
-		if(workspace && workspace.members
-      && workspace.members.length > 0 && accountData && accountData.address) {
+		if(workspace?.members
+      && workspace?.members.length > 0 && accountData?.address) {
 			const tempMember = workspace.members.find(
 				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 			)
@@ -639,7 +640,7 @@ function ManageGrant() {
 					}
 				</Flex>
 			</Container>
-			{
+			{/* {
 				applicationData?.state !== 'completed' && isAdmin && (
 					<Button
 						mt='22px'
@@ -665,7 +666,7 @@ function ManageGrant() {
 					// 	decimals={decimals}
 					// />
 				)
-			}
+			} */}
 
 			<Modal
 				isOpen={isGrantCompleteModelOpen}
@@ -696,6 +697,8 @@ function ManageGrant() {
 				rewardAssetDecimals={applicationData?.grant?.reward?.token?.decimal}
 				grantData={applicationData?.grant} />
 
+=======
+>>>>>>> gasless-testing
 			{renderModal()}
 		</Container>
 	)
