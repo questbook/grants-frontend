@@ -5,7 +5,6 @@ import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { DEFAULT_NOTE, INSUFFICIENT_FUNDS_NOTE, USD_THRESHOLD } from 'src/constants'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
-import { CHAIN_INFO } from 'src/constants/chains'
 import { NetworkType } from 'src/constants/Networks'
 import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
 import SupportedChainId from 'src/generated/SupportedChainId'
@@ -40,7 +39,6 @@ const OnboardingCreateDomain = () => {
 
 	// State variables for step 0 and 1
 	const [safeAddress, setSafeAddress] = useState('')
-	const [isSafeAddressPasted, setIsSafeAddressPasted] = useState(false)
 	const [isSafeAddressVerified, setIsSafeAddressVerified] = useState(false)
 	const { data: safesUSDBalance, loaded: loadedSafesUSDBalance } = useSafeUSDBalances({ safeAddress })
 	const [safeSelected, setSafeSelected] = useState<SafeSelectOption>()
@@ -132,12 +130,10 @@ const OnboardingCreateDomain = () => {
 		if(Object.keys(safesUSDBalance).length > 0) {
 			// console.log('safe address verified!')
 			setIsSafeAddressVerified(true)
-			setIsSafeAddressPasted(true)
 			setStep(1)
 		} else {
 			// console.log('safe address not verified!')
 			setIsSafeAddressVerified(false)
-			setIsSafeAddressPasted(false)
 		}
 	}, [safesUSDBalance])
 
@@ -277,10 +273,8 @@ const OnboardingCreateDomain = () => {
 			key={0}
 			step={step}
 			safeAddress={safeAddress}
-			isPasted={isSafeAddressPasted}
 			isVerified={isSafeAddressVerified}
-			isLoading={!loadedSafesUSDBalance}
-			isSafeAddressError={safeAddressError !== ''}
+			isLoading={!loadedSafesUSDBalance && safeAddress !== ''}
 			safeAddressErrorText={safeAddressError}
 			setValue={
 				(newValue) => {
@@ -316,8 +310,6 @@ const OnboardingCreateDomain = () => {
 			safeAddress={safeAddress}
 			safeChainIcon='/ui_icons/gnosis.svg'
 			domainName={domainName}
-			domainNetwork={network ? CHAIN_INFO[network].name : 'Polygon'}
-			domainNetworkIcon={network ? CHAIN_INFO[network].icon : CHAIN_INFO[137].icon} // polygon is the default network
 			domainImageFile={daoImageFile}
 			isBiconomyInitialised={isBiconomyInitialised}
 			onImageFileChange={(image) => setDaoImageFile(image)}
