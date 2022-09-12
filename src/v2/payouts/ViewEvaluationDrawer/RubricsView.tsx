@@ -1,6 +1,7 @@
 import { Box, Flex, Text } from '@chakra-ui/react'
+import { RubricItem } from 'src/generated/graphql'
 
-const RubricsView = ({ rubrics }: {rubrics: any[]}) => {
+const RubricsView = ({ rubrics }: {rubrics: RubricItem[] | undefined}) => {
 	return (
 		<>
 			<Flex

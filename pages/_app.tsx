@@ -1,4 +1,5 @@
-import React, { createContext, ReactElement, ReactNode, useEffect, useMemo, useRef } from 'react'
+import React, { createContext, ReactElement, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Biconomy } from '@biconomy/mexa'
 import { ChakraProvider } from '@chakra-ui/react'
 import { ChatWidget } from '@papercups-io/chat-widget'
 // import dynamic from 'next/dynamic';
@@ -22,6 +23,7 @@ import SubgraphClient from 'src/graphql/subgraph'
 import theme from 'src/theme'
 import { MinimalWorkspace } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
+import { bicoDapps, deploySCW, jsonRpcProviders, networksMapping } from 'src/utils/gaslessUtils'
 import { delay } from 'src/utils/generics'
 import logger from 'src/utils/logger'
 import getSeo from 'src/utils/seo'
@@ -115,6 +117,7 @@ export const ApiClientsContext = createContext<{
 export const WebwalletContext = createContext<{
 	webwallet?: Wallet
 	setWebwallet: (webwallet?: Wallet) => void
+
 	network?: SupportedChainId
 	switchNetwork: (newNetwork?: SupportedChainId) => void
 	scwAddress?: string
@@ -131,6 +134,8 @@ export const WebwalletContext = createContext<{
 export const BiconomyContext = createContext<{
 	biconomyDaoObj?: any
 	setBiconomyDaoObj: (biconomyDaoObj: any) => void
+	initiateBiconomy: (chainId: string) => Promise<void>
+	isInitiatingBiconomy: (chainId: string) => boolean
 	biconomyWalletClient?: BiconomyWalletClient
 	setBiconomyWalletClient: (biconomyWalletClient?: BiconomyWalletClient) => void
 		} | null>(null)
@@ -145,9 +150,85 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [nonce, setNonce] = React.useState<string>()
 	const [loadingNonce, setLoadingNonce] = React.useState<boolean>(false)
 
+	const biconomyInitPromisesRef = useRef<{ [chainId: string]: Promise<void> | undefined }>({})
+	const [biconomyLoading, setBiconomyLoading] = useState<{ [chainId: string]: boolean }>({})
+
 	// reference to scw address
 	// used to poll for scwAddress in "waitForScwAddress"
 	const scwAddressRef = useRef(scwAddress)
+
+	const initiateBiconomyUnsafe = useCallback(async(chainId: string) => {
+		if(!webwallet) {
+			throw new Error('Attempted init without webwallet')
+		}
+
+		if(!nonce) {
+			throw new Error('Attempted init without nonce')
+		}
+
+		chainId = networksMapping[chainId]
+
+		const _biconomy = new Biconomy(
+			jsonRpcProviders[chainId],
+			{
+				apiKey: bicoDapps[chainId].apiKey,
+				debug: true
+			}
+		)
+		logger.info('initializing biconomy')
+
+		let _biconomyWalletClient: BiconomyWalletClient
+		const scwAddress = await new Promise<string>((resolve, reject) => {
+			_biconomy.onEvent(_biconomy.READY, async() => {
+				logger.info('biconomy ready')
+
+				_biconomyWalletClient = await _biconomy.biconomyWalletClient
+
+				const { doesWalletExist, walletAddress } = await _biconomyWalletClient.checkIfWalletExists({ eoa: webwallet.address })
+
+				if(doesWalletExist) {
+					resolve(walletAddress)
+				}
+
+				const newWalletAddress = await deploySCW(webwallet, _biconomyWalletClient, chainId, nonce!)
+
+				logger.info({ newWalletAddress, chainId }, 'scw deployed')
+
+				resolve(newWalletAddress)
+			})
+
+			_biconomy.onEvent(_biconomy.ERROR, (err: Error) => {
+				logger.error({ err }, 'biconomy error')
+				reject(err)
+			})
+		})
+
+		setScwAddress(scwAddress)
+		setBiconomyWalletClient(_biconomyWalletClient!)
+		setBiconomyDaoObj(_biconomy)
+		const chain = parseInt(chainId)
+		logger.info('SWITCH NETWORK (use-biconomy.tsx 1): ', chain)
+		switchNetwork(chain)
+	}, [webwallet, nonce])
+
+	const initiateBiconomy = useCallback(
+		async(chainId: string) => {
+			let task = biconomyInitPromisesRef.current[chainId]
+			if(!task) {
+				task = initiateBiconomyUnsafe(chainId)
+					.catch(() => {
+						biconomyInitPromisesRef.current[chainId] = undefined
+					})
+					.finally(() => {
+						setBiconomyLoading(prev => ({ ...prev, [chainId]: false }))
+					})
+				biconomyInitPromisesRef.current[chainId] = task
+				setBiconomyLoading(prev => ({ ...prev, [chainId]: true }))
+			}
+
+			return task
+		}, [setBiconomyLoading, biconomyInitPromisesRef, initiateBiconomyUnsafe]
+	)
 
 	useEffect(() => {
 		setWebwallet(createWebWallet())
@@ -239,7 +320,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		() => ({
 			webwallet: webwallet,
 			setWebwallet: (newWebwallet?: Wallet) => {
-				// console.log('rrrrrrr')
 				if(newWebwallet) {
 					localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
 				} else {
@@ -298,11 +378,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const biconomyDaoObjContextValue = useMemo(
 		() => ({
 			biconomyDaoObj,
+			isInitiatingBiconomy: (chainId: string) => !!biconomyLoading[chainId],
+			initiateBiconomy,
 			setBiconomyDaoObj,
 			biconomyWalletClient,
 			setBiconomyWalletClient,
 		}),
-		[biconomyDaoObj, setBiconomyDaoObj, biconomyWalletClient, setBiconomyWalletClient]
+		[biconomyDaoObj, biconomyLoading, setBiconomyDaoObj, initiateBiconomy, biconomyWalletClient, setBiconomyWalletClient]
 	)
 
 	const clients = useMemo(() => {

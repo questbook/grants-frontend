@@ -7,6 +7,7 @@ import {
 	Token,
 	WorkspaceUpdateRequest,
 } from '@questbook/service-validator-client'
+import axios from 'axios'
 import { ApiClientsContext } from 'pages/_app'
 import Datepicker from 'src/components/ui/forms/datepicker'
 import Dropdown from 'src/components/ui/forms/dropdown'
@@ -15,14 +16,20 @@ import Loader from 'src/components/ui/loader'
 import CustomTokenModal from 'src/components/ui/submitCustomTokenModal'
 import Tooltip from 'src/components/ui/tooltip'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
+import SAFES_ENDPOINTS_MAINNETS from 'src/constants/safesEndpoints.json'
+import SAFES_ENDPOINTS_TESTNETS from 'src/constants/safesEndpointsTest.json'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'
 import useChainId from 'src/hooks/utils/useChainId'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import useEncryption from 'src/hooks/utils/useEncryption'
+import { SafeToken } from 'src/types'
 import logger from 'src/utils/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import 'react-datepicker/dist/react-datepicker.css'
+
+const SAFES_ENDPOINTS = { ...SAFES_ENDPOINTS_MAINNETS, ...SAFES_ENDPOINTS_TESTNETS }
+type ValidChainID = keyof typeof SAFES_ENDPOINTS;
 
 interface Props {
 	onSubmit: (data: any) => void
@@ -57,19 +64,30 @@ function GrantRewardsInput({
 
 	const currentChain = useChainId() || defaultChainId
 
-	const supportedCurrencies = Object.keys(
-		CHAIN_INFO[currentChain].supportedCurrencies,
-	)
-		.map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
-		.map((currency) => ({ ...currency, id: currency.address }))
+	// const supportedCurrencies = Object.keys(
+	// 	CHAIN_INFO[currentChain].supportedCurrencies,
+	// )
+	// 	.map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
+	// 	.map((currency) => ({ ...currency, id: currency.address }))
 
-	const [rewardCurrency, setRewardCurrency] = React.useState(
-		supportedCurrencies[0].label,
-	)
+	// const [rewardCurrency, setRewardCurrency] = React.useState(
+	// 	supportedCurrencies[0].label,
+	// )
 
-	const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
-		supportedCurrencies[0].address,
-	)
+	// const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
+	// 	supportedCurrencies[0].address,
+	// )
+
+	const safeAddress = workspace?.safe?.address
+	const safeNetwork = workspace?.safe?.chainId as ValidChainID
+	const isEVM = parseInt(safeNetwork) !== 900001
+	let transactionServiceURL
+	// let supportedCurrencies: [] = []
+	const [supportedCurrencies, setSupportedCurrencies] = useState([])
+
+	const [rewardCurrency, setRewardCurrency] = React.useState('')
+	const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState('')
+
 
 	// eslint-disable-next-line max-len
 	const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState<
@@ -109,15 +127,42 @@ function GrantRewardsInput({
 	useEffect(() => {
 		// console.log(currentChain)
 		if(currentChain) {
-			const currencies = Object.keys(
-				CHAIN_INFO[currentChain].supportedCurrencies,
-			)
-				.map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
-				.map((currency) => ({ ...currency, id: currency.address }))
-			// // console.log('Reward Currency', rewardCurrency);
-			setSupportedCurrenciesList(currencies)
-			setRewardCurrency(currencies[0].label)
-			setRewardCurrencyAddress(currencies[0].address)
+			// const currencies = Object.keys(
+			// 	CHAIN_INFO[currentChain].supportedCurrencies,
+			// )
+			// 	.map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
+			// 	.map((currency) => ({ ...currency, id: currency.address }))
+			// // // console.log('Reward Currency', rewardCurrency);
+			// setSupportedCurrenciesList(currencies)
+			// setRewardCurrency(currencies[0].label)
+			// setRewardCurrencyAddress(currencies[0].address)
+			if(safeNetwork) {
+				transactionServiceURL = SAFES_ENDPOINTS[safeNetwork]
+				// console.log('transaction service url', safeNetwork, transactionServiceURL)
+				const gnosisUrl = `${transactionServiceURL}/v1/safes/${safeAddress}/balances/`
+				axios.get(gnosisUrl).then(res => {
+					// console.log(res.data)
+					const tokens = res.data.filter((token: SafeToken) => token.tokenAddress).map((token: SafeToken) => {
+						if(token.tokenAddress) {
+							const currency = {
+								'id': token.tokenAddress,
+								'address': token.tokenAddress,
+								'decimals': token.token.decimals,
+								'icon': token.token.logoUri,
+								'label': token.token.symbol,
+								'pair': ''
+							}
+							return currency
+						}
+					})
+					setSupportedCurrencies(tokens)
+					setSupportedCurrenciesList(tokens)
+					// console.log('balances', supportedCurrencies)
+					setRewardCurrency(tokens[0]?.label)
+					setRewardToken({ address: tokens[0].address, decimal: tokens[0].decimals.toString(), label: tokens[0].label, iconHash: tokens[0].icon })
+					setRewardCurrencyAddress(tokens[0].address)
+				})
+			}
 		}
 
 	}, [currentChain])
@@ -299,14 +344,15 @@ function GrantRewardsInput({
 						mt={5}
 						ml={4}
 						minW='132px'
-						flex={0}>
-						<Dropdown
+						flex={0}
+						alignSelf='center'>
+						{isEVM ? <Dropdown
 							listItemsMinWidth='132px'
 							listItems={supportedCurrenciesList}
 							value={rewardCurrency}
 							onChange={
 								(data: any) => {
-									// // console.log('data while signing up:', data);
+									// console.log('data while signing up:', data)
 									if(data === 'addERCToken') {
 										setIsModalOpen(true)
 									}
@@ -323,16 +369,26 @@ function GrantRewardsInput({
 										})
 									} else {
 										setRewardToken({
-											label: '',
-											address: '',
-											decimal: '18',
-											iconHash: '',
+											label: data.label,
+											address: data.address,
+											decimal: data.decimals.toString(),
+											iconHash: data.icon,
 										})
 									}
 								}
 							}
 							addERC={addERC}
-						/>
+						/>: <Dropdown
+						listItemsMinWidth='132px'
+						listItems={
+							[
+								{
+									icon: '',
+									label: 'SOL',
+								},
+							]
+						}
+					/>}
 					</Box>
 				</Flex>
 
@@ -368,7 +424,7 @@ function GrantRewardsInput({
 					</Text>
 				</Flex>
 
-				<Flex
+				{/* <Flex
 					mt={8}
 					gap='2'>
 					<Flex
@@ -415,7 +471,7 @@ function GrantRewardsInput({
 							{`${shouldEncrypt ? 'YES' : 'NO'}`}
 						</Text>
 					</Flex>
-				</Flex>
+				</Flex> */}
 
 				<Flex
 					mt={8}
@@ -463,7 +519,7 @@ function GrantRewardsInput({
 					</Flex>
 				</Flex>
 
-				<Text
+				{/* <Text
 					variant='footer'
 					mt={8}
 					mb={7}
@@ -491,7 +547,7 @@ function GrantRewardsInput({
 						w='10px'
 						src='/ui_icons/link.svg'
 					/>
-				</Text>
+				</Text> */}
 			</Flex>
 
 			<Button

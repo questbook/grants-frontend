@@ -715,7 +715,7 @@ function Form({
 							}
 						</Container>
 
-						{
+						{/* {
 							onEdit && (
 								<Text
 									mt={10}
@@ -753,7 +753,7 @@ function Form({
 									/>
 								</Text>
 							)
-						}
+						} */}
 
 						{
 							onEdit ? (

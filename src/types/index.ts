@@ -7,7 +7,7 @@ import {
 	WorkspaceRegistryAbi,
 } from 'src/generated/contracts'
 import {
-	GetAllGrantsForADaoQuery,
+	GetAllGrantsForADaoQuery, GetApplicantsForAGrantQuery,
 	GetApplicationDetailsQuery,
 	GetApplicationMilestonesQuery,
 	GetDaoDetailsQuery,
@@ -32,6 +32,30 @@ export type Workspace = Exclude<
 >;
 export type DAOWorkspace = GetDaoDetailsQuery['workspace'];
 export type DAOGrant = GetDaoDetailsQuery['grants'];
+
+export type IApplicantData = {
+  grantTitle?: string
+  applicationId: string
+  applicantName?: string
+  applicantEmail?: string
+  applicantAddress?: string
+  sentOn: string
+  updatedOn: string
+  projectName?: string
+  fundingAsked: {
+    amount: string
+    symbol: string
+    icon: string
+  }
+  grant?: {
+    id: string
+  }
+  status: number
+  amountPaid: string
+  reviews: GetApplicantsForAGrantQuery['grantApplications'][number]['reviews']
+  milestones: GetApplicantsForAGrantQuery['grantApplications'][number]['milestones']
+  reviewers: GetApplicantsForAGrantQuery['grantApplications'][number]['applicationReviewers']
+}
 
 export type IReview = Exclude<Exclude<GetApplicationDetailsQuery['grantApplication'], null>, undefined>['reviews'][0];
 
@@ -115,4 +139,14 @@ export interface SidebarReviewer {
   data: GetReviewersForAWorkspaceQuery['workspaces'][number]['members'][number]
   isSelected: boolean
   index: number
+}
+
+
+export type SafeToken = {
+  tokenAddress: string
+  token: {
+    decimals: number
+    logoUri: string
+    symbol: string
+  }
 }

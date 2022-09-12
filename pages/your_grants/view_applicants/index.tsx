@@ -185,12 +185,12 @@ function ViewApplicants() {
 				return {
 					grantTitle: applicant?.grant?.title,
 					applicationId: applicant.id,
-					applicant_address: getFieldString(applicant, 'applicantAddress'),
-					sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
-					updated_on: moment.unix(applicant.updatedAtS).format('DD MMM YYYY'),
+					applicantAddress: getFieldString(applicant, 'applicantAddress'),
+					sentOn: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
+					updatedOn: moment.unix(applicant.updatedAtS).format('DD MMM YYYY'),
 					// applicant_name: getFieldString('applicantName'),
-					project_name: getFieldString(applicant, 'projectName'),
-					funding_asked: {
+					projectName: getFieldString(applicant, 'projectName'),
+					fundingAsked: {
 						// amount: formatAmount(
 						//   getFieldString('fundingAsk') || '0',
 						// ),
@@ -205,7 +205,7 @@ function ViewApplicants() {
 					// status: applicationStatuses.indexOf(applicant?.state),
 					status: TableFilters[applicant?.state],
 					reviewers: applicant.applicationReviewers,
-					amount_paid: formatAmount(
+					amountPaid: formatAmount(
 						getTotalFundingRecv(
               applicant.milestones as unknown as ApplicationMilestone[],
 						).toString(),
@@ -253,10 +253,10 @@ function ViewApplicants() {
 				return {
 					grantTitle: applicant?.grant?.title,
 					applicationId: applicant.id,
-					applicant_address: getFieldString(applicant, 'applicantAddress'),
-					sent_on: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
-					project_name: getFieldString(applicant, 'projectName'),
-					funding_asked: {
+					applicantAddress: getFieldString(applicant, 'applicantAddress'),
+					sentOn: moment.unix(applicant.createdAtS).format('DD MMM YYYY'),
+					projectName: getFieldString(applicant, 'projectName'),
+					fundingAsked: {
 						// amount: formatAmount(
 						//   getFieldString('fundingAsk') || '0',
 						// ),

@@ -710,7 +710,7 @@ function Form({
 				}
 			</Container>
 
-			{
+			{/* {
 				acceptingApplications && (
 					<Text
 						mt={10}
@@ -744,13 +744,14 @@ function Form({
 						/>
 					</Text>
 				)
-			}
+			} */}
 
 			<Box mt={5} />
 
 			{
 				acceptingApplications && (
 					<Button
+						mt={10}
 						disabled={!isBiconomyInitialised}
 						onClick={loading ? () => {} : handleOnSubmit}
 						mx={10}

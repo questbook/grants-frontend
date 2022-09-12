@@ -27,7 +27,7 @@ function ModalContent({ milestone, done }: Props) {
 	const [detailsError, setDetailsError] = useState(false)
 
 	const { milestoneIndex, applicationId } = getMilestoneMetadata(milestone)!
-	const [milestoneUpdate, setMilestoneUpdate] = useState<any>()
+	const [milestoneUpdate, setMilestoneUpdate] = useState<{text: string}>()
 	const [txn, txnLink, loading] = useApproveMilestone(
 		milestoneUpdate,
 		applicationId,
@@ -150,7 +150,7 @@ function ModalContent({ milestone, done }: Props) {
 						maxLength={300}
 					/>
 				</Flex>
-				<Flex
+				{/* <Flex
 					direction='row'
 					w='100%'
 					align='start'
@@ -180,7 +180,7 @@ function ModalContent({ milestone, done }: Props) {
 							</Text>
 						</Button>
 					</Text>
-				</Flex>
+				</Flex> */}
 				<Button
 					w='100%'
 					variant='primary'

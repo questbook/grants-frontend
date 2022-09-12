@@ -1,14 +1,14 @@
 import { Flex, Grid, GridItem, Text } from '@chakra-ui/react'
+import { IApplicantData } from 'src/types'
 import ResubmitRow from 'src/v2/payouts/ResubmitProposals/ResubmitRow'
 import ZeroState from 'src/v2/payouts/ResubmitProposals/ZeroState'
 
 const ResubmitPanel = ({
 	applicantsData,
 }: {
-  applicantsData: any[]
-
+  applicantsData: IApplicantData[]
 }) => {
-	if(applicantsData?.filter((item: any) => (1 === item.status)).length === 0) {
+	if(applicantsData?.filter((item) => (1 === item.status)).length === 0) {
 		return (
 			<ZeroState />
 		)
@@ -90,7 +90,7 @@ const ResubmitPanel = ({
 				{/* new ro */}
 
 				{
-					applicantsData?.filter((item: any) => (1 === item.status)).map((applicantData: any, i) => (
+					applicantsData?.filter((item) => (1 === item.status)).map((applicantData, i) => (
 						<ResubmitRow
 							key={`inreview-${i}`}
 							applicantData={applicantData}

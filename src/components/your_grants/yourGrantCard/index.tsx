@@ -36,7 +36,7 @@ interface YourGrantCardProps {
   workspaceId: string
 }
 
-function YourGrantCard({
+function YourGrantCard(this: any, {
 	grantID,
 	daoIcon,
 	grantTitle,
@@ -176,6 +176,8 @@ function YourGrantCard({
 									w='full'>
 									<Image
 										src={grantCurrencyIcon}
+										alt='token icon'
+										fallbackSrc='/images/dummy/Ethereum Icon.svg'
 										boxSize='36px' />
 									<Text
 										ml={2}
@@ -202,6 +204,9 @@ function YourGrantCard({
 										onEditClick={onEditClick}
 										isAdmin={isAdmin}
 									/>
+
+									<Box mr='1' />
+
 									{
 										acceptingApplications && (
 											<Button
@@ -388,6 +393,5 @@ function YourGrantCard({
 YourGrantCard.defaultProps = {
 	onEditClick: () => {},
 	onViewApplicantsClick: () => {},
-	onAddFundsClick: () => {},
 }
 export default YourGrantCard

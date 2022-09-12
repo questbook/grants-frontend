@@ -26,10 +26,10 @@ const EIP712_WALLET_TX_TYPE = {
 
 export const jsonRpcProviders: { [key: string]: ethers.providers.JsonRpcProvider } =
 {
-	'80001': new ethers.providers.JsonRpcProvider('https://polygon-mumbai.g.alchemy.com/v2/X6pnQlJfJq00b8MT53QihWBINEgHZHGp'),
-	'5': new ethers.providers.JsonRpcProvider('https://eth-goerli.g.alchemy.com/v2/Hr6VkBfmbJIhEW3fHJnl0ujE0xmWxcqH'),
-	'137': new ethers.providers.JsonRpcProvider('https://polygon-mainnet.g.alchemy.com/v2/mmBX0eNrvs0k7UpEMwi0eIH6hC4Dqoss'),
-	'10': new ethers.providers.JsonRpcProvider('https://opt-mainnet.g.alchemy.com/v2/Frv-KL7os-J7EV9e34WA0b0ayG5i1vNN')
+	'5': new ethers.providers.JsonRpcProvider('https://eth-goerli.g.alchemy.com/v2/c7FL3Wd0zxt_DtjeN1wqMWtCFVUTV_sP'),
+	'137': new ethers.providers.JsonRpcProvider('https://polygon-mainnet.g.alchemy.com/v2/zcWxjKH0Sif5PLp-b-vxP_M1JYF1aoPG'),
+	'10': new ethers.providers.JsonRpcProvider('https://opt-mainnet.g.alchemy.com/v2/8iYVobmm24k85ejRIS0fd8sBzSVbQtZv'),
+	'42220': new ethers.providers.JsonRpcProvider('https://forno.celo.org/'),
 }
 
 export const bicoDapps: { [key: string]: { apiKey: string, webHookId: string } } = {
@@ -44,12 +44,17 @@ export const bicoDapps: { [key: string]: { apiKey: string, webHookId: string } }
 	'10': {
 		apiKey: 'xc_x_i8x3.7002d254-03f5-427e-b25f-400b52d1d4c9',
 		webHookId: '105f79a9-eab0-4f8c-aa44-877ffc3f9c67'
+	},
+	'42220': {
+		apiKey: 'Ihl5vFVvY.b7fd1559-e1de-4500-9b88-c47728b94a4c',
+		webHookId: 'f7c6b8fd-8ee9-4bce-b238-93138d3457e3',
 	}
 }
 
 export const networksMapping: { [key: string]: string } = {
 	'137': '137',
 	'10': '10',
+	'42220': '42220',
 
 	// goerli
 	'5': '5',
@@ -62,7 +67,6 @@ export const networksMapping: { [key: string]: string } = {
 	'1313161554': '5',
 	'56': '5',
 	'246': '5',
-	'42220': '5',
 }
 
 export const signNonce = async(webwallet: Wallet, nonce: string) => {

@@ -9,6 +9,7 @@ import {
 	ModalOverlay,
 	Text,
 } from '@chakra-ui/react'
+import { IApplicantData } from 'src/types'
 import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
 import { FishEye } from 'src/v2/assets/custom chakra icons/FishEye'
 import { FundsCircle } from 'src/v2/assets/custom chakra icons/Your Grants/FundsCircle'
@@ -21,22 +22,26 @@ interface Props {
 	isOpen: boolean
 	onClose: () => void
 	safeAddress: string
-	proposals: any[]
-	onChangeRecepientDetails: (applicationId: any, fieldName: string, fieldValue: any) => void
+	proposals: IApplicantData[]
+	onChangeRecepientDetails: (applicationId: string, fieldName: string, fieldValue: string|number) => void
 	phantomWallet: PhantomProvider | undefined
 	isEvmChain: boolean
 	signerVerified: boolean
 	initiateTransactionData: TransactionType[]
 	onModalStepChange: (value: number) => Promise<void>
-	step: ModalState
+	step: ModalStateType
 }
 
-enum ModalState {
-	RECEIPT_DETAILS,
-	CONNECT_WALLET,
-	VERIFIED_OWNER,
-	TRANSATION_INITIATED
+export type ModalState = 'RECEIPT_DETAILS' | 'CONNECT_WALLET' | 'VERIFIED_OWNER' | 'TRANSATION_INITIATED'
+
+export const MODAL_STATE_INDEXES: {[_ in ModalState]: number} = {
+	RECEIPT_DETAILS: 0,
+	CONNECT_WALLET: 1,
+	VERIFIED_OWNER: 2,
+	TRANSATION_INITIATED: 3,
 }
+
+export type ModalStateType = keyof typeof MODAL_STATE_INDEXES
 
 function SendFundsModal({
 	isOpen,
@@ -150,16 +155,16 @@ function SendFundsModal({
 									direction='column'
 								>
 									<Box
-										bg={step === 0 ? '#785EF0' : '#E0E0EC'}
+										bg={MODAL_STATE_INDEXES[step] === 0 ? '#785EF0' : '#E0E0EC'}
 										borderRadius='20px'
 										height={1}
 									/>
 
 									<Flex
 										mt={2}
-										color={step === 0 ? '#785EF0' : '#E0E0EC'}>
+										color={MODAL_STATE_INDEXES[step] === 0 ? '#785EF0' : '#E0E0EC'}>
 										{
-											step === 0 ? (
+											MODAL_STATE_INDEXES[step] === 0 ? (
 												<FishEye
 													h='14px'
 													w='14px' />
@@ -177,7 +182,7 @@ function SendFundsModal({
 											lineHeight='16px'
 											fontWeight='500'
 											ml={1}
-											color={step === 0 ? '#785EF0' : '#1F1F33'}
+											color={MODAL_STATE_INDEXES[step] === 0 ? '#785EF0' : '#1F1F33'}
 										>
 											Recipient Details
 										</Text>
@@ -189,16 +194,16 @@ function SendFundsModal({
 									direction='column'
 								>
 									<Box
-										bg={step === 1 || step === 2 ? '#785EF0' : '#E0E0EC'}
+										bg={MODAL_STATE_INDEXES[step] === 1 || MODAL_STATE_INDEXES[step] === 2 ? '#785EF0' : '#E0E0EC'}
 										borderRadius='20px'
 										height={1}
 									/>
 
 									<Flex
 										mt={2}
-										color={step === 1 || step === 2 ? '#785EF0' : '#E0E0EC'}>
+										color={MODAL_STATE_INDEXES[step] === 1 || MODAL_STATE_INDEXES[step] === 2 ? '#785EF0' : '#E0E0EC'}>
 										{
-											step === 1 || step === 2 ? (
+											MODAL_STATE_INDEXES[step] === 1 || MODAL_STATE_INDEXES[step] === 2 ? (
 												<FishEye
 													h='14px'
 													w='14px' />
@@ -216,7 +221,7 @@ function SendFundsModal({
 											lineHeight='16px'
 											fontWeight='500'
 											ml={1}
-											color={step === 1 || step === 2 ? '#785EF0' : '#1F1F33'}
+											color={MODAL_STATE_INDEXES[step] === 1 || MODAL_STATE_INDEXES[step] === 2 ? '#785EF0' : '#1F1F33'}
 										>
 											Verify as a safe owner
 										</Text>
@@ -225,7 +230,7 @@ function SendFundsModal({
 							</Flex>
 
 							{
-								step === ModalState.RECEIPT_DETAILS ? (
+								step === 'RECEIPT_DETAILS' ? (
 									<RecipientDetails
 										applicantData={proposals[0]}
 										initiateTransactionData={initiateTransactionData?.length > 0 ? initiateTransactionData[0] : undefined}
@@ -254,7 +259,7 @@ function SendFundsModal({
 
 
 							{
-								step === ModalState.RECEIPT_DETAILS ? (
+								step === 'RECEIPT_DETAILS' ? (
 									<Button
 										ml='auto'
 										colorScheme='brandv2'
@@ -265,7 +270,7 @@ function SendFundsModal({
 										}
 										onClick={
 											async() => {
-												onModalStepChange(step)
+												onModalStepChange(MODAL_STATE_INDEXES[step])
 											}
 										}>
 										Continue
@@ -275,14 +280,14 @@ function SendFundsModal({
 
 
 							{
-								step === ModalState.CONNECT_WALLET || step === ModalState.VERIFIED_OWNER ? (
+								step === 'CONNECT_WALLET' || step === 'VERIFIED_OWNER' ? (
 									<Button
 										ml='auto'
 										colorScheme='brandv2'
 										disabled={!signerVerified}
 										onClick={
 											async() => {
-												onModalStepChange(step)
+												onModalStepChange(MODAL_STATE_INDEXES[step])
 											}
 										}>
 										Initiate Transaction

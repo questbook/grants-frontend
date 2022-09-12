@@ -8,7 +8,6 @@ import {
 } from 'react'
 import * as Apollo from '@apollo/client'
 import { Button, Center, Flex, Text } from '@chakra-ui/react'
-import { BigNumber } from '@ethersproject/bignumber'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
@@ -33,7 +32,6 @@ import NavbarLayout from 'src/layout/navbarLayout'
 import { formatAmount } from 'src/utils/formattingUtils'
 import { UNIX_TIMESTAMP_MAX, unixTimestampSeconds } from 'src/utils/generics'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
-import { getChainInfo } from 'src/utils/tokenUtils'
 import {
 	getSupportedChainIdFromSupportedNetwork,
 	getSupportedChainIdFromWorkspace,
@@ -41,13 +39,6 @@ import {
 import ReviewerDashboard from 'src/v2/components/Dashboard/ReviewerDashboard'
 
 const PAGE_SIZE = 5
-
-type GrantRewardType = {
-	address: string
-	committed: BigNumber
-	label: string
-	icon: string
-};
 
 const TABS = [
 	{
@@ -353,31 +344,6 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 		}
 	}, [allGrantsReviewerData])
 
-	const [addFundsIsOpen, setAddFundsIsOpen] = useState(false)
-	const [grantForFunding, setGrantForFunding] = useState<string>()
-	const [grantRewardAsset, setGrantRewardAsset] = useState<GrantRewardType>()
-
-	const initialiseFundModal = async(grant: GetAllGrantsForReviewerQuery['grantApplications'][0]['grant']) => {
-		setAddFundsIsOpen(true)
-		setGrantForFunding(grant.id)
-		const chainId = getSupportedChainIdFromSupportedNetwork(
-			grant.workspace.supportedNetworks[0],
-		)
-		const chainInfo = getChainInfo(grant, chainId)
-
-		// const chainInfo = CHAIN_INFO[
-		//   getSupportedChainIdFromSupportedNetwork(
-		//     grant.workspace.supportedNetworks[0],
-		//   )
-		// ]?.supportedCurrencies[grant.reward.asset.toLowerCase()];
-		setGrantRewardAsset({
-			address: grant.reward.asset,
-			committed: BigNumber.from(grant.reward.committed),
-			label: chainInfo?.label || 'LOL',
-			icon: chainInfo?.icon || '/images/dummy/Ethereum Icon.svg',
-		})
-	}
-
 	const handleScroll = useCallback(() => {
 		const { current } = containerRef
 		if(!current) {
@@ -518,10 +484,10 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 							let icon
 							let label
 							if(grant.reward.token) {
-								// // console.log('Reward has token')
+								// console.log('Reward has token')
 								decimals = grant.reward.token.decimal
 								label = grant.reward.token.label
-								icon = getUrlForIPFSHash(grant.reward.token.iconHash)
+								icon = grant.reward.token.iconHash
 							} else {
 								decimals =
 									CHAIN_INFO[
@@ -572,7 +538,6 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 											},
 										})
 									}
-									onAddFundsClick={() => initialiseFundModal(grant)}
 									onViewApplicantsClick={
 										() => router.push({
 											pathname: '/v2/your_grants/view_applicants/',
@@ -627,7 +592,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 							}
 
             	return (
-	<YourGrantCard
+								<YourGrantCard
             			grantID={grant.grant.id}
             			key={grant.grant.id}
             			daoIcon={
@@ -648,7 +613,6 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
             					grant.grant.workspace.supportedNetworks[0],
             				)
             			}
-            			onAddFundsClick={() => initialiseFundModal(grant.grant)}
             			onViewApplicantsClick={
             				() => router.push({
             					pathname: '/v2/your_grants/view_applicants/',
@@ -705,27 +669,6 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 					/>
 				</Flex>
 			</Flex>
-
-			{/* Removing Public Key Modal Temporarily */}
-			{/* <AllowAccessToPublicKeyModal
-				hiddenModalOpen={
-					(isAdmin && (
-						(allGrantsCountData !== undefined && grantCount[0] && grantCount[1])
-          && (!ignorePkModal && pk.length === 0)))
-          || (!isAdmin && (!ignorePkModal && pk.length === 0))
-				}
-				isAdmin={isAdmin}
-				setIgnorePkModal={
-					(val: boolean) => {
-						setIgnorePkModal(val)
-					}
-				}
-				setHiddenModalOpen={
-					() => {
-						window.location.reload()
-					}
-				}
-			/> */}
 		</>
 	)
 }

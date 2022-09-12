@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Box, Flex, Input, Text } from '@chakra-ui/react'
+import { IApplicantData } from 'src/types'
 import { ArrowDownCircle } from 'src/v2/assets/custom chakra icons/Arrows/ArrowDownCircle'
 import { ExternalLink } from 'src/v2/assets/custom chakra icons/ExternalLink'
-import { getSafeDetails, usdToSolana } from 'src/v2/constants/safe/realms_solana'
+import { getSafeDetails } from 'src/v2/constants/safe/realms_solana'
 import AlertBanner from 'src/v2/payouts/SendFundsModal/AlertBanner'
 import MilestoneSelect from 'src/v2/payouts/SendFundsModal/MilestoneSelect'
 import { TransactionType } from 'src/v2/types/safe'
@@ -12,9 +13,9 @@ const RecipientDetails = ({
 	initiateTransactionData,
 	onChangeRecepientDetails,
 }: {
-	applicantData: any
+	applicantData: IApplicantData
 	initiateTransactionData: TransactionType | undefined
-	onChangeRecepientDetails: (applicationId: any, fieldName: string, fieldValue: any) => void
+	onChangeRecepientDetails: (applicationId: string, fieldName: string, fieldValue: string | number) => void
 }) => {
 	const [balance, setBalance] = useState(0)
 	useEffect(() => {
@@ -99,7 +100,7 @@ const RecipientDetails = ({
 					color='#7D7DA0'
 					mt='2px'
 				>
-					{applicantData?.project_name}
+					{applicantData?.projectName}
 					{' '}
 					•
 					{' '}

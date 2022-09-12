@@ -1,8 +1,9 @@
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import moment from 'moment'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
 import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO, SupportedChainId } from 'src/constants/chains'
 import { ChainInfo, FundTransfer } from 'src/types'
+import { InitialApplicationType } from 'src/v2/components/Dashboard/ReviewerDashboard/ApplicationsTable'
 
 export function timeToString(
 	timestamp: number,
@@ -99,17 +100,17 @@ function truncateTo(number: string, digits = 3) {
 	for(
 		let i = decimalIndex + 1;
 		i
-		< Math.min(
-			decimalIndex + digits + 1,
-			containsSymbol ? number.length - 1 : number.length,
-		);
+    < Math.min(
+    	decimalIndex + digits + 1,
+    	containsSymbol ? number.length - 1 : number.length,
+    );
 		i += 1
 	) {
 		ret += number.charAt(i)
 	}
 
 	return (isEntirelyZeroAfterDecimal ? ret.substring(0, decimalIndex) : ret)
-		+ (containsSymbol ? number.charAt(number.length - 1) : '')
+    + (containsSymbol ? number.charAt(number.length - 1) : '')
 }
 
 export const extractDate = (date: string) => date.substring(0, 10)
@@ -204,3 +205,18 @@ export const getExplorerUrlForTxHash = (chainId: SupportedChainId | undefined, t
 export const formatAddress = (address: string) => `${address.substring(0, 4)}......${address.substring(address.length - 4)}`
 
 export const getFieldString = (applicationData: any, name: string) => applicationData?.fields?.find((field: any) => field?.id?.includes(`.${name}`))?.values[0]?.value
+
+export const getRewardAmount = (decimals: number, application: {
+  fields: InitialApplicationType['fields']
+  milestones: InitialApplicationType['milestones']
+}) => {
+	const fundingAskField = getFieldString(application, 'fundingAsk')
+	if(fundingAskField) {
+		return formatAmount(fundingAskField, decimals)
+	} else {
+		let sum = BigNumber.from(0)
+		application.milestones.forEach(
+			(milestone) => sum = sum.add(milestone.amount))
+		return formatAmount(sum.toString())
+	}
+}

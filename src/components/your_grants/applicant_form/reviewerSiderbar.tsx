@@ -140,7 +140,7 @@ function ReviewerSidebar({ applicationData }: ReviewerSidebarProps) {
 									fontSize='16px'
 									lineHeight='12px'
 								>
-									{feedback.rating}
+									{`Score: ${feedback.rating}`}
 								</Text>
 								{
 									feedback.comment && (
@@ -149,7 +149,7 @@ function ReviewerSidebar({ applicationData }: ReviewerSidebarProps) {
 											<Text
 												color='#122224'
 												fontSize='16px'
-												lineHeight='12px'
+												lineHeight='20px'
 											>
 												{`Comments: ${feedback.comment}`}
 											</Text>

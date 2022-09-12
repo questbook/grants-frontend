@@ -1,8 +1,14 @@
 import { Box, Flex, Image, Text } from '@chakra-ui/react'
 import getAvatar from 'src/utils/avatarUtils'
 
-const RubricsView = ({ rubrics, reviewer }: {rubrics?: any, reviewer: any}) => {
-	const totalScore = (items?: any[]) => {
+const RubricsView = ({ rubrics, reviewer }: {
+	rubrics?: {
+		items?: {rating?: number, comment?: string, rubric: {title: string}}[]
+		createdAtS: number
+	}
+	reviewer?: { id: string, name: string }
+}) => {
+	const totalScore = (items?: {rating?: number}[]) => {
 		// console.log(items)
 		let s = 0
 		items?.forEach((item) => {
@@ -60,7 +66,7 @@ const RubricsView = ({ rubrics, reviewer }: {rubrics?: any, reviewer: any}) => {
 						noOfLines={1}
 						textOverflow='ellipsis'
 					>
-						{reviewer.name}
+						{reviewer?.name}
 					</Text>
 					<Text
 						fontSize='12px'
@@ -71,7 +77,7 @@ const RubricsView = ({ rubrics, reviewer }: {rubrics?: any, reviewer: any}) => {
 						display='flex'
 						alignItems='center'
 					>
-						{formatCreatedAt(rubrics.createdAtS)}
+						{rubrics && formatCreatedAt(rubrics.createdAtS)}
 					</Text>
 				</Flex>
 
@@ -108,7 +114,7 @@ const RubricsView = ({ rubrics, reviewer }: {rubrics?: any, reviewer: any}) => {
 				flexDirection='column'
 			>
 				{
-					rubrics?.items?.map((rubric: any, i: number) => {
+					rubrics?.items?.map((rubric, i) => {
 						return (
 							<Flex key={`rubric-${i}`}>
 								<Box

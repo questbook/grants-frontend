@@ -26,7 +26,11 @@ import {
 } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { IReview, IReviewFeedback } from 'src/types'
-import { formatAmount, getFieldString, getFormattedDateFromUnixTimestampWithYear } from 'src/utils/formattingUtils'
+import {
+	getFieldString,
+	getFormattedDateFromUnixTimestampWithYear,
+	getRewardAmount,
+} from 'src/utils/formattingUtils'
 import { capitalizeFirstLetter } from 'src/utils/generics'
 import { useLoadReview } from 'src/utils/reviews'
 import { getAssetInfo } from 'src/utils/tokenUtils'
@@ -51,7 +55,7 @@ const STATUS_COLORS: { [key in ApplicationState]?: { 'text': string, 'bg': strin
 	},
 }
 
-type InitialApplicationType = GetInitialToBeReviewedApplicationGrantsQuery['grantReviewerCounters'][0]['grant']['applications'][0]
+export type InitialApplicationType = GetInitialToBeReviewedApplicationGrantsQuery['grantReviewerCounters'][0]['grant']['applications'][0]
 
 type ReviewType = InitialApplicationType['reviews'][0]
 
@@ -92,19 +96,7 @@ function ApplicationsTable({
 		]?.supportedCurrencies[grant.reward!.asset.toLowerCase()]
 			?.decimals || 18
 
-		let rewardAmount: number
-
-		const fundingAskField = getFieldString(application, 'fundingAsk')
-		if(fundingAskField) {
-			rewardAmount = +formatAmount(fundingAskField, decimals)
-		} else {
-			rewardAmount = 0
-			application.milestones.forEach(
-				(milestone) => rewardAmount += +formatAmount(
-					milestone.amount,
-					decimals,
-				))
-		}
+		const rewardAmount = getRewardAmount(decimals, application)
 
 		const tokenLabel = getAssetInfo(
 			grant?.reward?.asset?.toLowerCase(),
@@ -294,7 +286,10 @@ function ApplicationsTable({
 	)
 }
 
-const ReviewTableData = ({ application, loadReview }: { application: Application, loadReview: (r: IReview) => Promise<IReviewFeedback> }) => {
+const ReviewTableData = ({
+	application,
+	loadReview,
+}: { application: Application, loadReview: (r: IReview) => Promise<IReviewFeedback> }) => {
 	const [reviewSum, setReviewSum] = useState<number>()
 
 	const { scwAddress } = useContext(WebwalletContext)!
