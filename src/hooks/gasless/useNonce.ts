@@ -1,66 +1,76 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { WebwalletContext } from 'pages/_app'
-import { getNonce } from 'src/utils/gaslessUtils'
+import { addAuthorizedUser, getNonce } from 'src/utils/gaslessUtils'
 
 export const useNonce = (shouldRefreshNonce?: boolean) => {
-	const { webwallet, nonce, setNonce } = useContext(WebwalletContext)!
-	const [shouldRefresh, setShouldRefresh] = useState<boolean>(false)
+	const { nonce} = useContext(WebwalletContext)!
+	// const [shouldRefresh, setShouldRefresh] = useState<boolean>(false)
 
-	const getUseNonce = useCallback(async() => {
-		// console.log('rerewq', webwallet)
-		const _nonce = await getNonce(webwallet)
-		return _nonce
-	}, [webwallet])
+	// const getUseNonce = useCallback(async() => {
+	// 	const _nonce = await getNonce(webwallet)
+	// 	return _nonce
+	// }, [webwallet])
+
 
 	// useEffect(() => {
-	// 	console.log("nonce", nonce)
-	// }, [nonce])
+	// 	if(!webwallet) {
+	// 		return
+	// 	}
 
-	useEffect(() => {
-		if(typeof window !== 'undefined') {
-			localStorage.setItem('loadingNonce', 'false')
-		}
+	// 	if(nonce && nonce !== 'Token expired') {
+	// 		return
+	// 	}
 
-		setShouldRefresh(true)
-	}, [])
+	// 	addAuthorizedUser(webwallet?.address)
+	// 	 .then(() => { 
+	// 		getUseNonce()
+	// 		 .then(_nonce => {
+	// 			setNonce(_nonce)
+	// 		 })
+	// 	 })
+	// }, [webwallet, nonce])
 
-	useEffect(() => {
-		const loadingNonce = localStorage.getItem('loadingNonce') === 'true'
-		// console.log('GOT NONCE', webwallet, nonce, shouldRefreshNonce, loadingNonce)
-		if(!webwallet || loadingNonce || nonce) {
-			return
-		}
+	// useEffect(() => {
+	// 	if(typeof window !== 'undefined') {
+	// 		localStorage.setItem('loadingNonce', 'false')
+	// 	}
 
-		// console.log('GOT NONCE 255')
-		localStorage.setItem('loadingNonce', 'true')
+	// 	setShouldRefresh(true)
+	// }, [])
 
-		getUseNonce()
-			.then(_nonce => {
-				// console.log('GOT NONCE', webwallet.address, _nonce, nonce)
-				if(!_nonce) {
-					setNonce(undefined)
-				} else {
-					if(_nonce === 'Token expired') {
-						setNonce(undefined)
-					} else {
-						setNonce(_nonce)
-					}
-				}
+	// useEffect(() => {
+	// 	const loadingNonce = localStorage.getItem('loadingNonce') === 'true'
+	// 	if(!webwallet || loadingNonce || nonce) {
+	// 		return
+	// 	}
 
-				localStorage.setItem('loadingNonce', 'false')
-			})
-			.catch((err) => {
-				console.log('err', err)
-			})
+	// 	localStorage.setItem('loadingNonce', 'true')
 
-		return (() => {
-			if(typeof window !== 'undefined') {
-				// console.log('hasan')
-				localStorage.setItem('loadingNonce', 'false')
-			}
-		})
+	// 	getUseNonce()
+	// 		.then(_nonce => {
+	// 			if(!_nonce) {
+	// 				setNonce(undefined)
+	// 			} else {
+	// 				if(_nonce === 'Token expired') {
+	// 					setNonce(undefined)
+	// 				} else {
+	// 					setNonce(_nonce)
+	// 				}
+	// 			}
 
-	}, [webwallet, nonce, shouldRefreshNonce])
+	// 			localStorage.setItem('loadingNonce', 'false')
+	// 		})
+	// 		.catch((err) => {
+	// 			console.log('err', err)
+	// 		})
+
+	// 	return (() => {
+	// 		if(typeof window !== 'undefined') {
+	// 			localStorage.setItem('loadingNonce', 'false')
+	// 		}
+	// 	})
+
+	// }, [webwallet, nonce, shouldRefreshNonce])
 
 	return nonce
 }
