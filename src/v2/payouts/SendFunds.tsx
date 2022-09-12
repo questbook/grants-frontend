@@ -191,6 +191,7 @@ export default function SendFunds({
 		if(isEvmChain) {
 			const readyToExecuteTxs = createEVMMetaTransactions()
 			const safeTxHash = await currentSafe?.createMultiTransaction(readyToExecuteTxs, workspaceSafe)
+			console.log('safe txn hash', safeTxHash)
 			if(safeTxHash) {
 				proposaladdress = safeTxHash
 				setProposalAddr(safeTxHash)

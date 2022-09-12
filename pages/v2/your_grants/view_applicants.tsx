@@ -89,7 +89,7 @@ function ViewApplicants() {
 
 	const [listOfApplicationToTxnsHash, setListOfApplicationToTxnsHash] = useState({})
 	const [applicationStatuses, setApplicationStatuses] = useState({})
-	const [totalFundDisbursed, setTotalFundDisbursed] = useState (0)
+	const [totalFundDisbursed, setTotalFundDisbursed] = useState(0)
 	// const [totalMilestonesAmt, setTotalMilestonesAmt] = useState({})
 	const [rubricDrawerOpen, setRubricDrawerOpen] = useState(false)
 	const [viewRubricDrawerOpen, setViewRubricDrawerOpen] = useState(false)
@@ -117,7 +117,7 @@ function ViewApplicants() {
 	const [realmsQueryParams, setRealmsQueryParams] = useState<any>({ client })
 
 	useEffect(() => {
-		if(!grantID || !workspace) {
+		if (!grantID || !workspace) {
 			return
 		}
 
@@ -131,16 +131,16 @@ function ViewApplicants() {
 	const { data: realmsFundTransferData } = useGetRealmsFundTransferDataQuery(realmsQueryParams)
 
 	useEffect(() => {
-		const applicationToTxnHashMap: {[applicationId: string]: [{transactionHash: string, amount: number}]} = {}
+		const applicationToTxnHashMap: { [applicationId: string]: [{ transactionHash: string, amount: number }] } = {}
 
-		if(!realmsFundTransferData) {
+		if (!realmsFundTransferData) {
 			return
 		}
 
 		realmsFundTransferData?.grants[0]?.fundTransfers?.forEach((fundTransfer,) => {
 			// console.log('TX HASH - ', i, fundTransfer.transactionHash)
-			if(!applicationToTxnHashMap[fundTransfer?.application?.id!]) {
-				applicationToTxnHashMap[fundTransfer?.application?.id!] = [ {
+			if (!applicationToTxnHashMap[fundTransfer?.application?.id!]) {
+				applicationToTxnHashMap[fundTransfer?.application?.id!] = [{
 					transactionHash: fundTransfer?.transactionHash!,
 					amount: parseFloat(fundTransfer?.amount),
 				}]
@@ -161,7 +161,7 @@ function ViewApplicants() {
 
 
 	useEffect(() => {
-		if(safeAddressData) {
+		if (safeAddressData) {
 			const { workspaceSafes } = safeAddressData
 			const safeAddress = workspaceSafes[0]?.address
 			setWorkspaceSafe(safeAddress)
@@ -171,7 +171,7 @@ function ViewApplicants() {
 
 
 	useEffect(() => {
-		if(router?.query) {
+		if (router?.query) {
 			const { grantId: gId } = router.query
 			// console.log('fetch 100: ', gId)
 			setGrantID(gId)
@@ -187,7 +187,7 @@ function ViewApplicants() {
 
 
 	useEffect(() => {
-		if((workspace?.members?.length || 0) > 0
+		if ((workspace?.members?.length || 0) > 0
 			&& accountData
 			&& accountData.address
 		) {
@@ -206,18 +206,18 @@ function ViewApplicants() {
 	}, [accountData, workspace])
 
 	useEffect(() => {
-		if(!workspace) {
+		if (!workspace) {
 			return
 		}
 
-		if(!grantID) {
+		if (!grantID) {
 			return
 		}
 
 		// console.log('Grant ID: ', grantID)
 		// console.log('isUser: ', isUser)
 		// console.log('fetch: ', isAdmin, isReviewer)
-		if(isAdmin) {
+		if (isAdmin) {
 			// console.log('Setting query params')
 			setQueryParams({
 				client:
@@ -234,9 +234,9 @@ function ViewApplicants() {
 	const { data, error, loading } = useGetApplicantsForAGrantQuery(queryParams)
 	const { data: grantData } = useGetGrantDetailsQuery(queryParams)
 	useEffect(() => {
-		if((data?.grantApplications?.length || 0) > 0) {
+		if ((data?.grantApplications?.length || 0) > 0) {
 			setRewardAssetAddress(data?.grantApplications[0]?.grant?.reward?.asset!)
-			if(data?.grantApplications[0].grant.reward.token) {
+			if (data?.grantApplications[0].grant.reward.token) {
 				setRewardAssetDecimals(data?.grantApplications[0].grant.reward.token.decimal)
 			} else {
 				setRewardAssetDecimals(CHAIN_INFO[
@@ -252,11 +252,11 @@ function ViewApplicants() {
 				let decimal
 				let label
 				let icon
-				if(!(grantData?.grants[0].rubric?.items.length ?? true)) {
+				if (!(grantData?.grants[0].rubric?.items.length ?? true)) {
 					setSetupRubricBannerCancelled(false)
 				}
 
-				if(grantData?.grants[0].reward.token) {
+				if (grantData?.grants[0].reward.token) {
 					decimal = grantData?.grants[0].reward.token.decimal
 					label = grantData?.grants[0].reward.token.label
 					icon = getUrlForIPFSHash(grantData?.grants[0].reward.token.iconHash)
@@ -335,7 +335,7 @@ function ViewApplicants() {
 
 	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
-		if(transactionData) {
+		if (transactionData) {
 			setIsModalOpen(false)
 			setRefresh(true)
 		}
@@ -354,23 +354,24 @@ function ViewApplicants() {
 	const isEvmChain = workspaceSafeChainId !== 900001
 
 	const currentSafe = useMemo(() => {
-		if(isEvmChain) {
+		if (isEvmChain) {
 			const txnServiceURL = safeServicesInfo[workspaceSafeChainId]
 			return new GnosisSafe(workspaceSafeChainId, txnServiceURL, workspaceSafe)
 		} else {
-			if(isPlausibleSolanaAddress(workspaceSafe)) {
+			if (isPlausibleSolanaAddress(workspaceSafe)) {
 				return new RealmsSolana(workspaceSafe)
 			}
 		}
 	}, [workspaceSafe])
 
 	async function getAllStatus(applicationToTxnHashMap: any) {
-		var statuses: {[applicationId: string]: [{transactionHash: string, status: number, amount: number}]} = {}
+		var statuses: { [applicationId: string]: [{ transactionHash: string, status: number, amount: number }] } = {}
 
-		const getEachStatus = async(transaction: any, applicationId: any) => {
+		const getEachStatus = async (transaction: any, applicationId: any) => {
+			console.log('transaction hash', transaction)
 			const status = await currentSafe?.getTransactionHashStatus(transaction?.transactionHash)
-			if(transaction && status) {
-				if(!statuses[applicationId]) {
+			if (transaction && status) {
+				if (!statuses[applicationId]) {
 					statuses[applicationId] = [{
 						transactionHash: '',
 						status: -1,
@@ -389,14 +390,15 @@ function ViewApplicants() {
 				return status
 			}
 		}
+		if (!isEvmChain) {
+			await currentSafe?.initialiseAllProposals()
+		}
 
-		await currentSafe?.initialiseAllProposals()
-
-		Promise.all((Object.keys(applicationToTxnHashMap || {}) || []).map(async(applicationId) => {
+		Promise.all((Object.keys(applicationToTxnHashMap || {}) || []).map(async (applicationId) => {
 			const transactions = applicationToTxnHashMap[applicationId]
 
-			return Promise.all(transactions.map(async(transaction: any) => {
-				return new Promise(async(res, rej) => {
+			return Promise.all(transactions.map(async (transaction: any) => {
+				return new Promise(async (res, rej) => {
 
 					const status = await getEachStatus(transaction, applicationId)
 					res(status)
@@ -404,11 +406,11 @@ function ViewApplicants() {
 
 				})
 			})).then((done) => done)
-		})).then(async() => {
+		})).then(async () => {
 			let totalFundDisbursed = 0
-			for(const txns of Object.values(statuses)) {
+			for (const txns of Object.values(statuses)) {
 				txns.map(txn => {
-					if(txn.status === 1) {
+					if (txn.status === 1) {
 						totalFundDisbursed += (txn.amount)
 					}
 				})
@@ -419,16 +421,46 @@ function ViewApplicants() {
 		})
 	}
 
+	async function getEVMtxStats(applicationToTxnHashMap: any) {
+		console.log('transaction map -->', applicationToTxnHashMap)
+		let txnStatus: { [applicationId: string]: [{ transactionHash: string, status: number, amount: number }] } = {}
+
+		const getEachStatus = async (transaction: { transactionHash: string, amount: number }, applicationId: string) => {
+			console.log('transaction', transaction)
+			const details = await currentSafe?.getTransactionHashStatus(transaction.transactionHash)
+			if (details) {
+				if (transaction && details) {
+					if (!txnStatus[applicationId]) {
+						txnStatus[applicationId] = [{
+							transactionHash: '',
+							status: -1,
+							amount: 0
+						}]
+					}
+					txnStatus[applicationId].push({ transactionHash: transaction.transactionHash, status: 1, amount: transaction.amount })
+				}
+			}
+			console.log('txn status map', txnStatus)
+		}
+
+		const stats = await getEachStatus({ transactionHash: applicationToTxnHashMap['0xc7'][2].transactionHash, amount: applicationToTxnHashMap['0xc7'][2].amount }, '0xc7')
+		console.log('status', stats)
+	}
+
 	useEffect(() => {
-		if((Object.keys(listOfApplicationToTxnsHash) || []).length > 0) {
-			getAllStatus((listOfApplicationToTxnsHash) || [])
+		if ((Object.keys(listOfApplicationToTxnsHash) || []).length > 0) {
+			if (!isEvmChain) {
+				getAllStatus((listOfApplicationToTxnsHash) || [])
+			} else {
+				getEVMtxStats(listOfApplicationToTxnsHash)
+			}
 		}
 
 	}, [listOfApplicationToTxnsHash])
 
 	//getting transaction hash status end
 
-	const onSendFundsButtonClicked = async(state: boolean, selectedApplicants: any[]) => {
+	const onSendFundsButtonClicked = async (state: boolean, selectedApplicants: any[]) => {
 		setSendFundsTo(selectedApplicants)
 	}
 
@@ -441,7 +473,7 @@ function ViewApplicants() {
 	})
 	const { data: reviewersForAWorkspaceData } = useGetReviewersForAWorkspaceQuery(getReviewersForAWorkspaceParams)
 	useEffect(() => {
-		if(!workspace) {
+		if (!workspace) {
 			return
 		}
 
@@ -458,9 +490,9 @@ function ViewApplicants() {
 	const [areRubricsSet, setAreRubricsSet] = useState<boolean>(false)
 
 	useEffect(() => {
-		if(!reviewersForAWorkspaceData) {
+		if (!reviewersForAWorkspaceData) {
 			setAreReviewersAdded(true)
-		} else if(reviewersForAWorkspaceData?.workspaces[0]?.members.length) {
+		} else if (reviewersForAWorkspaceData?.workspaces[0]?.members.length) {
 			setAreReviewersAdded(reviewersForAWorkspaceData?.workspaces[0]?.members.length > 0)
 		} else {
 			setAreReviewersAdded(false)
@@ -468,9 +500,9 @@ function ViewApplicants() {
 	}, [reviewersForAWorkspaceData])
 
 	useEffect(() => {
-		if(!grantData) {
+		if (!grantData) {
 			setAreRubricsSet(true)
-		} else if(grantData?.grants[0].rubric?.items.length) {
+		} else if (grantData?.grants[0].rubric?.items.length) {
 			setAreRubricsSet(grantData?.grants[0].rubric?.items.length > 0)
 		} else {
 			setAreRubricsSet(false)
@@ -803,7 +835,7 @@ function ViewApplicants() {
 	)
 }
 
-ViewApplicants.getLayout = function(page: ReactElement) {
+ViewApplicants.getLayout = function (page: ReactElement) {
 	return (
 		<NavbarLayout>
 			{page}
