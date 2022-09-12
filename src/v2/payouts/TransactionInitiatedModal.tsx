@@ -186,13 +186,7 @@ function TransactionInitiatedModal({
 							href={proposalUrl}
 							rel='noreferrer'>
 							<Button
-								colorScheme='brandv2'
-								onClick={
-									() => {
-
-
-									}
-								}>
+								colorScheme='brandv2'>
 								Open Safe
 							</Button>
 						</a>

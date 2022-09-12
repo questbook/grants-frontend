@@ -70,7 +70,7 @@ const { chains, provider } = configureChains(allChains, [
 		},
 	}),
 	publicProvider(),
-	infuraProvider({ infuraId })
+	infuraProvider({ apiKey: infuraId! })
 ])
 
 // Set up client
@@ -208,19 +208,25 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			_biconomy.onEvent(_biconomy.READY, async() => {
 				logger.info('biconomy ready')
 
-				_biconomyWalletClient = await _biconomy.biconomyWalletClient
+				try {
+					_biconomyWalletClient = await _biconomy.biconomyWalletClient
 
-				const { doesWalletExist, walletAddress } = await _biconomyWalletClient.checkIfWalletExists({ eoa: webwallet.address })
+					const { doesWalletExist, walletAddress } = await _biconomyWalletClient
+						.checkIfWalletExists({ eoa: webwallet.address })
 
-				if(doesWalletExist) {
-					resolve(walletAddress)
+					if(doesWalletExist) {
+						resolve(walletAddress)
+					}
+
+					const newWalletAddress = await deploySCW(webwallet, _biconomyWalletClient, chainId, nonce!)
+
+					logger.info({ newWalletAddress, chainId }, 'scw deployed')
+
+					resolve(newWalletAddress)
+				} catch(err) {
+					logger.error({ err }, 'error in scw deployment')
+					reject(err)
 				}
-
-				const newWalletAddress = await deploySCW(webwallet, _biconomyWalletClient, chainId, nonce!)
-
-				logger.info({ newWalletAddress, chainId }, 'scw deployed')
-
-				resolve(newWalletAddress)
 			})
 
 			_biconomy.onEvent(_biconomy.ERROR, (err: Error) => {
@@ -232,8 +238,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		setScwAddress(scwAddress)
 		setBiconomyWalletClient(_biconomyWalletClient!)
 		setBiconomyDaoObj(_biconomy)
+
 		const chain = parseInt(chainId)
 		logger.info('SWITCH NETWORK (use-biconomy.tsx 1): ', chain)
+
 		switchNetwork(chain)
 	}, [webwallet, nonce])
 
@@ -241,6 +249,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		async(chainId: string) => {
 			let task = biconomyInitPromisesRef.current[chainId]
 			if(!task) {
+				setBiconomyLoading(prev => ({ ...prev, [chainId]: true }))
+
 				task = initiateBiconomyUnsafe(chainId)
 					.catch(() => {
 						biconomyInitPromisesRef.current[chainId] = undefined
@@ -249,7 +259,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 						setBiconomyLoading(prev => ({ ...prev, [chainId]: false }))
 					})
 				biconomyInitPromisesRef.current[chainId] = task
-				setBiconomyLoading(prev => ({ ...prev, [chainId]: true }))
 			}
 
 			return task
@@ -349,7 +358,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		() => ({
 			webwallet: webwallet,
 			setWebwallet: (newWebwallet?: Wallet) => {
-				// console.log('rrrrrrr')
 				if(newWebwallet) {
 					localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
 				} else {

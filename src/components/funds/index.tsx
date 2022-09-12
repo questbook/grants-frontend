@@ -15,8 +15,8 @@ import {
 import { BigNumber } from '@ethersproject/bignumber'
 import { ethers } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
-import AddFunds from 'src/components/funds/add_funds_modal'
-import WithdrawFunds from 'src/components/funds/withdraw_funds_modal'
+// import AddFunds from 'src/components/funds/add_funds_modal'
+// import WithdrawFunds from 'src/components/funds/withdraw_funds_modal'
 import Funding from 'src/components/your_grants/manage_grant/tables/funding'
 import { defaultChainId } from 'src/constants/chains'
 import ERC20ABI from 'src/contracts/abi/ERC20.json'
@@ -210,7 +210,7 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
 			<Funding
 				fundTransfers={
 					data?.fundsTransfers?.filter(
-						(d) => d.type === TABS_MAP[selected].type,
+						(d) => d.type === TABS_MAP[selected].type
 					) || []
 				}
 				assetId={grant.reward.asset}
@@ -219,10 +219,11 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
 				grantId={grant.id}
 				type={TABS_MAP[selected].type}
 				chainId={getSupportedChainIdFromSupportedNetwork(grant.workspace.supportedNetworks[0])}
-			/>
+				transactionStatus={undefined}
+				isEvmChain={undefined}			/>
 
 			{/* Modals */}
-			<AddFunds
+			{/* <AddFunds
 				isOpen={isAddFundsModalOpen}
 				onClose={() => setIsAddFundsModalOpen(false)}
 				grantAddress={grant.id}
@@ -234,8 +235,8 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
 						icon: assetInfo?.icon,
 					}
 				}
-			/>
-			<WithdrawFunds
+			/> */}
+			{/* <WithdrawFunds
 				isOpen={isWithdrawFundsModalOpen}
 				onClose={() => setIsWithdrawFundsModalOpen(false)}
 				grantAddress={grant.id}
@@ -247,7 +248,7 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
 						icon: assetInfo?.icon,
 					}
 				}
-			/>
+			/> */}
 		</Flex>
 	)
 }

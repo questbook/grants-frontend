@@ -215,8 +215,16 @@ export const getRewardAmount = (decimals: number, application: {
 		return formatAmount(fundingAskField, decimals)
 	} else {
 		let sum = BigNumber.from(0)
-		application.milestones.forEach(
+		application?.milestones?.forEach(
 			(milestone) => sum = sum.add(milestone.amount))
 		return formatAmount(sum.toString())
 	}
+}
+
+export const getRewardAmountMilestones = (decimals: number, application: any) => {
+	let sum = BigNumber.from(0)
+
+	application?.milestones?.forEach(
+		(milestone: any) => sum = sum.add(milestone.amount))
+	return ethers.utils.formatUnits(sum.toString(), decimals).toString()?.split('.')[0]
 }

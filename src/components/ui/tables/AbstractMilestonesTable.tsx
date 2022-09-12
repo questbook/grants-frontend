@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
 	Flex,
 	Image, Text, } from '@chakra-ui/react'
@@ -6,6 +6,7 @@ import { SupportedChainId } from 'src/constants/chains'
 import { ApplicationMilestone } from 'src/types'
 import { formatAmount } from 'src/utils/formattingUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
+import { solanaToUsdOnDate } from 'src/v2/constants/safe/realms_solana'
 
 const TABLE_HEADERS = [
 	{
@@ -34,6 +35,8 @@ type Token = {
 };
 
 export type AbstractMilestonesTableProps = {
+	transactionStatus: any | undefined
+	isEvmChain: boolean | undefined
   milestones: ApplicationMilestone[]
   rewardAssetId: string
   refetch: () => void
@@ -47,7 +50,15 @@ export type AbstractMilestonesTableProps = {
 
 function AbstractMilestonesTable(
 	{
-		milestones, rewardAssetId, renderStatus, chainId, decimals, rewardToken,
+		transactionStatus,
+		isEvmChain,
+		milestones,
+		rewardAssetId,
+		renderStatus,
+		chainId,
+		decimals,
+		rewardToken,
+
 	}: AbstractMilestonesTableProps,
 ) {
 	let rewardIcon: string
@@ -61,7 +72,15 @@ function AbstractMilestonesTable(
 		rewardIcon = asset.icon
 	}
 
-	// const { icon: rewardIcon, label: rewardSymbol } = getAssetInfo(rewardAssetId, chainId);
+	const getTotalReward = (milestone: any) => {
+		const milestoneTrxns = transactionStatus?.filter((obj: any) => obj.milestoneId === milestone.id)
+		var total = 0
+		for(var i in milestoneTrxns) {
+			total += milestoneTrxns[i].amount
+		}
+
+		return Math.floor(total)
+	}
 
 	return (
 		<Flex
@@ -150,6 +169,7 @@ function AbstractMilestonesTable(
 								<Image
 									display='inline-block'
 									src={rewardIcon}
+									fallbackSrc='/images/dummy/Ethereum Icon.svg'
 									mr={2}
 									boxSize='27px' />
 								<Text
@@ -159,13 +179,16 @@ function AbstractMilestonesTable(
 									fontWeight='700'
 									color='#122224'
 								>
-									{formatAmount(item.amountPaid.toString(), decimals)}
+									{
+										isEvmChain ? formatAmount(item.amountPaid.toString(), decimals) :
+											getTotalReward(item)
+									}
 									{' '}
 									/
 									{' '}
 									{formatAmount(item.amount.toString(), decimals)}
 									{' '}
-									{rewardSymbol}
+									{isEvmChain ? rewardSymbol : 'USD'}
 								</Text>
 							</Flex>
 							<Flex

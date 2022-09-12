@@ -7,6 +7,8 @@ import AcceptedRow from 'src/v2/payouts/AcceptedProposals/AcceptedRow'
 import ZeroState from 'src/v2/payouts/AcceptedProposals/ZeroState'
 
 const AcceptedProposalsPanel = ({
+	isEvmChain,
+	rewardAssetDecimals,
 	applicationStatuses,
 	applicantsData,
 	onSendFundsClicked,
@@ -14,7 +16,9 @@ const AcceptedProposalsPanel = ({
 	onSetupApplicantEvaluationClicked,
 	grantData,
 }: {
-	applicationStatuses: {[_: string]: {transactionHash: string, status: number, amount: number}}
+	isEvmChain: boolean
+	rewardAssetDecimals: any
+	applicationStatuses: any
   applicantsData: IApplicantData[]
   onSendFundsClicked: (state: boolean, checkedItems: IApplicantData[]) => void
   onBulkSendFundsClicked: (state: boolean, checkedItems: IApplicantData[]) => void
@@ -191,8 +195,11 @@ const AcceptedProposalsPanel = ({
 					applicantsData?.filter((item) => (2 === item.status)).map((applicantData, i) => (
 						<AcceptedRow
 							key={`accepted-${i}`}
-							applicationStatus={applicationStatuses[applicantData.applicationId]?.status}
+							isEvmChain={isEvmChain}
+							applicationStatus={applicationStatuses[applicantData.applicationId]?.reduce((partialStatus: any, a: any) => partialStatus && a.status, 1)}
+							applicationAmount={applicationStatuses[applicantData.applicationId]?.reduce((partialSum: any, a: any) => partialSum + a.amount, 0)}
 							applicantData={applicantData}
+							rewardAssetDecimals={rewardAssetDecimals}
 							isChecked={checkedItems[i]}
 							onChange={
 								(e) => {

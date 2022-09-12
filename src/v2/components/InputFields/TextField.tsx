@@ -1,9 +1,9 @@
 import { ChangeEventHandler } from 'react'
 import React from 'react'
 import { CheckIcon } from '@chakra-ui/icons'
-import { Box, Flex, Input, InputGroup, InputRightElement, Link, Text } from '@chakra-ui/react'
+import { Box, Flex, FlexProps, Input, InputGroup, InputRightElement, Link, Text } from '@chakra-ui/react'
 
-interface Props {
+interface Props extends FlexProps {
 	label?: string
 	optionalText?: string
 	helperText?: string
@@ -13,14 +13,13 @@ interface Props {
 	maxLength?: number
 	value: string | number
 	onChange: ChangeEventHandler<HTMLInputElement>
-	isError?: boolean
 	errorText?: string
-	isPasted?: boolean
+	onPasteClick?: () => void
 	isVerified?: boolean
 	isDisabled?: boolean
 }
 
-function TextField({ label, optionalText, helperText, helperLinkText, helperLinkUrl, placeholder, maxLength, value, onChange, isPasted, isVerified, isDisabled, isError, errorText }: Props) {
+function TextField({ label, optionalText, helperText, helperLinkText, helperLinkUrl, placeholder, maxLength, value, onChange, isVerified, isDisabled, errorText, onPasteClick, ...props }: Props) {
 	const [currentLength, setCurrentLength] = React.useState(value?.toString().length)
 
 	React.useEffect(() => {
@@ -28,7 +27,10 @@ function TextField({ label, optionalText, helperText, helperLinkText, helperLink
 	}, [value])
 
 	return (
-		<Flex direction='column'>
+		<Flex
+			direction='column'
+			{...props}
+		>
 			<Flex>
 				{
 					label && (
@@ -83,16 +85,28 @@ function TextField({ label, optionalText, helperText, helperLinkText, helperLink
 					value={value}
 					errorBorderColor='orange.2'
 					isDisabled={isDisabled}
+					onWheel={(e) => (e.target as HTMLElement).blur()}
+					onPaste={
+						(e) => {
+							if(onPasteClick) {
+								e.preventDefault()
+								return false
+							}
+
+							return true
+					  }
+					}
 				/>
 				<InputRightElement>
 					{
-						isPasted !== undefined && !isPasted && (
+						!isVerified && onPasteClick && (
 							<Text
 								variant='v2_title'
 								color='violet.2'
 								fontWeight='500'
 								cursor='pointer'
-								onClick={() => { }}>
+								transition='font-weight .4s ease-in-out'
+								onClick={onPasteClick}>
 								Paste
 							</Text>
 						)
@@ -102,7 +116,7 @@ function TextField({ label, optionalText, helperText, helperLinkText, helperLink
 			</InputGroup>
 			<Flex mt={1}>
 				{
-					isError && (
+					errorText && errorText !== '' && (
 						<Text
 							variant='v2_metadata'
 							color='orange.2'>

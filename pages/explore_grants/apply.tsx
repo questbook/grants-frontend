@@ -137,7 +137,7 @@ function ApplyGrant() {
 		let supportedCurrencyObj
 		if(grantData.reward.token) {
 			setRewardCurrency(chainInfo.label)
-			setRewardCurrencyCoin(chainInfo.icon)
+			setRewardCurrencyCoin(grantData.reward.token.iconHash)
 			setRewardDecimal(chainInfo.decimals)
 		} else {
 			supportedCurrencyObj = getAssetInfo(

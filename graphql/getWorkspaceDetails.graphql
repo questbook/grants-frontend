@@ -7,6 +7,10 @@ query getWorkspaceDetails($workspaceID: ID!) {
         logoIpfsHash
         coverImageIpfsHash
         supportedNetworks
+        safe {
+          address
+          chainId
+        }
         partners {
           name
           industry

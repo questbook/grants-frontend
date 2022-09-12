@@ -1,7 +1,8 @@
 
 import { useEffect, useMemo, useState } from 'react'
+import { logger } from 'ethers'
 import { USD_THRESHOLD } from 'src/constants'
-import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId, SupportedChainId } from 'src/constants/chains'
 import { NetworkType } from 'src/constants/Networks'
 import SAFES_ENPOINTS_MAINNETS from 'src/constants/safesEndpoints.json'
 import SAFES_ENPOINTS_TESTNETS from 'src/constants/safesEndpointsTest.json'
@@ -21,6 +22,7 @@ const DEFAULT_ERROR_MESSAGE = 'Could not fetch data'
 
 interface Props {
     safeAddress: string
+	chainId?: SupportedChainId
 }
 
 interface SingleTokenData {
@@ -31,16 +33,27 @@ type ValidChainID = keyof typeof CHAIN_INFO;
 
 interface AllTokensData extends Array<SingleTokenData> { }
 
-function useSafeUSDBalances({ safeAddress }: Props) {
+function useSafeUSDBalances({ safeAddress, chainId }: Props) {
 	const gnosisUrls = useMemo(() => {
 		if(safeAddress === '') {
 			return []
 		}
 
+		if(chainId) {
+			const index = SAFES_BALANCES_CHAIN_ID.indexOf(chainId.toString())
+			logger.info({ index }, 'index')
+			if(index === -1) {
+				return []
+			} else {
+				logger.info({ url: SAFES_BALANCES_ENPOINTS[index], URL_PREFIX, safeAddress, URL_SUFFIX }, 'url')
+				return [SAFES_BALANCES_ENPOINTS[index] + URL_PREFIX + safeAddress + URL_SUFFIX]
+			}
+		}
+
 		// console.log('Inside safe usd balance', safeAddress)
 		// console.log('API url', SAFES_BALANCES_ENPOINTS[0] + URL_PREFIX + safeAddress + URL_SUFFIX)
 		return SAFES_BALANCES_ENPOINTS.map(element => element + URL_PREFIX + safeAddress + URL_SUFFIX)
-	}, [safeAddress])
+	}, [safeAddress, chainId])
 
 	const { data: gnosisRawData, error: gnosisError, loaded: gnosisLoaded } = useAxiosMulti({
 		urls: gnosisUrls,
@@ -70,14 +83,14 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 				const newSplGovSafe = await getSafeDetails(safeAddress)
 				setSplGovSafe(newSplGovSafe)
 				setSplGovError('')
-			} catch(error: any) {
+			} catch(error) {
 				// console.log(error)
 				if(typeof error === 'string') {
 					setSplGovError(error)
 				}
 
-				if(typeof error?.message === 'string') {
-					setSplGovError(error.message)
+				if(typeof (error as Error)?.message === 'string') {
+					setSplGovError((error as Error).message)
 				} else {
 					setSplGovError(DEFAULT_ERROR_MESSAGE)
 				}
@@ -87,7 +100,7 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 
 			setSplGovLoaded(true)
 		})()
-	}, [safeAddress])
+	}, [safeAddress, chainId])
 
 	const getTokensSum = (tokensData: AllTokensData) => {
 		return tokensData.reduce((partialSum: number, item) => partialSum + parseFloat(item?.fiatBalance || '0'), 0)
@@ -96,7 +109,7 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 	useEffect(() => {
 		if(gnosisLoaded && !gnosisError) {
 			const newData: SafeSelectOption[] = []
-			console.log('gnosis raw data: ', gnosisRawData)
+			logger.info({ gnosisRawData }, 'gnosis raw data: ')
 			gnosisRawData.forEach((allTokensData: AllTokensData, index) => {
 				const currentChainID = SAFES_BALANCES_CHAIN_ID[index] as unknown as ValidChainID
 				const tokensSum = getTokensSum(allTokensData)
@@ -119,7 +132,7 @@ function useSafeUSDBalances({ safeAddress }: Props) {
 			// console.log('Final Safe', newData)
 			setGnosisData(newData)
 		}
-	}, [gnosisRawData, gnosisLoaded, gnosisError, safeAddress])
+	}, [gnosisRawData, gnosisLoaded, gnosisError, safeAddress, chainId])
 
 	return { gnosisError, splGovError, loaded: gnosisLoaded && splGovLoaded, data }
 }

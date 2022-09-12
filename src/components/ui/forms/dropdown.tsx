@@ -109,6 +109,7 @@ function Dropdown({
 												h='24px'
 												w='24px'
 												src={listItems.find(({ label: text }) => text === value)?.icon}
+												fallbackSrc='/images/dummy/Ethereum Icon.svg'
 											/>
 										) : null
 									}
@@ -127,7 +128,9 @@ function Dropdown({
 												mr={3}
 												h='24px'
 												w='24px'
-												src={selected.icon} />
+												src={selected.icon}
+												alt='token icon'
+												fallbackSrc='/images/dummy/Ethereum Icon.svg' />
 										) : null
 									}
 									<Text
@@ -196,12 +199,14 @@ function Dropdown({
 									justifyContent='flex-start'
 								>
 									{
+
 										icon && icon.length ? (
 											<Image
 												mr={3}
 												h='24px'
 												w='24px'
-												src={icon} />
+												src={icon}
+												fallbackSrc='/images/dummy/Ethereum Icon.svg' />
 										) : null
 									}
 									<Text

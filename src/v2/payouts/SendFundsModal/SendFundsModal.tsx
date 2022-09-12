@@ -28,20 +28,20 @@ interface Props {
 	isEvmChain: boolean
 	signerVerified: boolean
 	initiateTransactionData: TransactionType[]
-	onModalStepChange: (value: number) => Promise<void>
-	step: ModalStateType
+	onModalStepChange: (value: string) => Promise<void>
+	step: string
 }
 
-export type ModalState = 'RECEIPT_DETAILS' | 'CONNECT_WALLET' | 'VERIFIED_OWNER' | 'TRANSATION_INITIATED'
+// export type ModalState = 'RECEIPT_DETAILS' | 'CONNECT_WALLET' | 'VERIFIED_OWNER' | 'TRANSATION_INITIATED'
 
-export const MODAL_STATE_INDEXES: {[_ in ModalState]: number} = {
-	RECEIPT_DETAILS: 0,
-	CONNECT_WALLET: 1,
-	VERIFIED_OWNER: 2,
-	TRANSATION_INITIATED: 3,
-}
+// export const MODAL_STATE_INDEXES: {[_ in ModalState]: number} = {
+// 	RECEIPT_DETAILS: 0,
+// 	CONNECT_WALLET: 1,
+// 	VERIFIED_OWNER: 2,
+// 	TRANSATION_INITIATED: 3,
+// }
 
-export type ModalStateType = keyof typeof MODAL_STATE_INDEXES
+// export type ModalStateType = keyof typeof MODAL_STATE_INDEXES
 
 function SendFundsModal({
 	isOpen,
@@ -56,21 +56,6 @@ function SendFundsModal({
 	onModalStepChange,
 	step,
 }: Props) {
-
-	// console.log('step', step)
-
-	// const [step, setStep] = useState(0)
-	// const [toAddressIsFocused, setToAddressIsFocused] = useState(false)
-	// const [txnInitModalIsOpen, setTxnInitModalIsOpen] = useState(false)
-
-
-	// const {
-	// 	isError: isErrorConnecting,
-	// 	connect,
-	// 	connectors
-	// } = useConnect()
-
-
 	return (
 		<>
 			<ModalComponent
@@ -155,16 +140,16 @@ function SendFundsModal({
 									direction='column'
 								>
 									<Box
-										bg={MODAL_STATE_INDEXES[step] === 0 ? '#785EF0' : '#E0E0EC'}
+										bg={step === 'RECEIPT_DETAILS' ? '#785EF0' : '#E0E0EC'}
 										borderRadius='20px'
 										height={1}
 									/>
 
 									<Flex
 										mt={2}
-										color={MODAL_STATE_INDEXES[step] === 0 ? '#785EF0' : '#E0E0EC'}>
+										color={step === 'RECEIPT_DETAILS' ? '#785EF0' : '#E0E0EC'}>
 										{
-											MODAL_STATE_INDEXES[step] === 0 ? (
+											step === 'RECEIPT_DETAILS' ? (
 												<FishEye
 													h='14px'
 													w='14px' />
@@ -182,7 +167,7 @@ function SendFundsModal({
 											lineHeight='16px'
 											fontWeight='500'
 											ml={1}
-											color={MODAL_STATE_INDEXES[step] === 0 ? '#785EF0' : '#1F1F33'}
+											color={step === 'RECEIPT_DETAILS' ? '#785EF0' : '#1F1F33'}
 										>
 											Recipient Details
 										</Text>
@@ -194,16 +179,16 @@ function SendFundsModal({
 									direction='column'
 								>
 									<Box
-										bg={MODAL_STATE_INDEXES[step] === 1 || MODAL_STATE_INDEXES[step] === 2 ? '#785EF0' : '#E0E0EC'}
+										bg={step === 'VERIFIED_OWNER' || step === 'VERIFIED_OWNER' ? '#785EF0' : '#E0E0EC'}
 										borderRadius='20px'
 										height={1}
 									/>
 
 									<Flex
 										mt={2}
-										color={MODAL_STATE_INDEXES[step] === 1 || MODAL_STATE_INDEXES[step] === 2 ? '#785EF0' : '#E0E0EC'}>
+										color={step === 'CONNECT_WALLET' || step === 'VERIFIED_OWNER' ? '#785EF0' : '#E0E0EC'}>
 										{
-											MODAL_STATE_INDEXES[step] === 1 || MODAL_STATE_INDEXES[step] === 2 ? (
+											step === 'CONNECT_WALLET' || step === 'VERIFIED_OWNER' ? (
 												<FishEye
 													h='14px'
 													w='14px' />
@@ -221,7 +206,7 @@ function SendFundsModal({
 											lineHeight='16px'
 											fontWeight='500'
 											ml={1}
-											color={MODAL_STATE_INDEXES[step] === 1 || MODAL_STATE_INDEXES[step] === 2 ? '#785EF0' : '#1F1F33'}
+											color={step === 'CONNECT_WALLET' || step === 'VERIFIED_OWNER' ? '#785EF0' : '#1F1F33'}
 										>
 											Verify as a safe owner
 										</Text>
@@ -232,6 +217,7 @@ function SendFundsModal({
 							{
 								step === 'RECEIPT_DETAILS' ? (
 									<RecipientDetails
+										isEvmChain={isEvmChain}
 										applicantData={proposals[0]}
 										initiateTransactionData={initiateTransactionData?.length > 0 ? initiateTransactionData[0] : undefined}
 										onChangeRecepientDetails={onChangeRecepientDetails} />
@@ -270,7 +256,7 @@ function SendFundsModal({
 										}
 										onClick={
 											async() => {
-												onModalStepChange(MODAL_STATE_INDEXES[step])
+												onModalStepChange(step)
 											}
 										}>
 										Continue
@@ -287,7 +273,7 @@ function SendFundsModal({
 										disabled={!signerVerified}
 										onClick={
 											async() => {
-												onModalStepChange(MODAL_STATE_INDEXES[step])
+												onModalStepChange(step)
 											}
 										}>
 										Initiate Transaction

@@ -484,10 +484,10 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 							let icon
 							let label
 							if(grant.reward.token) {
-								// // console.log('Reward has token')
+								// console.log('Reward has token')
 								decimals = grant.reward.token.decimal
 								label = grant.reward.token.label
-								icon = getUrlForIPFSHash(grant.reward.token.iconHash)
+								icon = grant.reward.token.iconHash
 							} else {
 								decimals =
 									CHAIN_INFO[
@@ -592,7 +592,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 							}
 
             	return (
-	<YourGrantCard
+								<YourGrantCard
             			grantID={grant.grant.id}
             			key={grant.grant.id}
             			daoIcon={

@@ -4,10 +4,10 @@ import { NetworkType } from 'src/constants/Networks'
 import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
 import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/PhantomLogo'
 import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
+import ConnectWalletButton from 'src/v2/components/ConnectWalletModal/ConnectWalletButton'
 import ErrorToast from 'src/v2/components/Toasts/errorToast'
 import SuccessToast from 'src/v2/components/Toasts/successToast'
 import VerifySignerErrorState from 'src/v2/components/VerifySignerModal/VeirfySignerErrorState'
-import VerifyWalletButton from 'src/v2/components/VerifySignerModal/VerifySignerButton'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 
@@ -38,11 +38,11 @@ const VerifySignerModal = ({
 	const {
 		isError: isErrorConnecting,
 		connectAsync,
-		connectors
+		connectors,
 	} = useConnect()
 
 	const {
-		data: accountData
+		address
 	} = useAccount()
 
 	const availableWallets = [{
@@ -84,20 +84,20 @@ const VerifySignerModal = ({
 
 	useEffect(() => {
 		// console.log(accountData)
-		if(accountData) {
+		if(address) {
 			if(!redirectInitiated && redirect && connectClicked) {
 				setRedirectInitiated(true)
 				setConnectClicked(false)
 				redirect()
 			}
 		}
-	}, [accountData])
+	}, [address])
 
 	useEffect(() => {
 		if(isOpen && walletClicked) {
-			if(networkType === NetworkType.EVM && accountData?.address && owners.includes(accountData?.address)) {
+			if(networkType === NetworkType.EVM && address && owners.includes(address)) {
 				setIsOwner(true)
-				setOwnerAddress(accountData.address)
+				setOwnerAddress(address)
 				// alert('Your safe ownership is proved.')
 				toast.closeAll()
 				toast({
@@ -123,9 +123,9 @@ const VerifySignerModal = ({
 						close: () => { }
 					}),
 				})
-			} else if(phantomWallet?.publicKey || accountData?.address) {
+			} else if(phantomWallet?.publicKey || address) {
 				// setIsOwner(false)
-				if(accountData?.address) {
+				if(address) {
 					disconnectAsync()
 				}
 
@@ -146,7 +146,7 @@ const VerifySignerModal = ({
 
 			setWalletClicked(false)
 		}
-	}, [walletClicked, accountData, owners, toast, phantomWallet?.publicKey, isOpen, phantomWallet?.disconnect])
+	}, [walletClicked, address, owners, toast, phantomWallet?.publicKey, isOpen, phantomWallet?.disconnect])
 
 	return (
 		<Modal
@@ -210,44 +210,46 @@ const VerifySignerModal = ({
 									spacing={4}
 								>
 									{
-										networkType === NetworkType.EVM ? (
-											availableWallets.map((wallet, index) => (
-												<VerifyWalletButton
+										networkType === NetworkType.EVM
+											? (availableWallets.map((wallet) => (
+												<ConnectWalletButton
+													key={wallet.id}
+													icon={wallet.icon}
+													name={wallet.name}
+													isPopular={wallet.isPopular}
+													onClick={
+														async() => {
+															const connector = connectors.find((x) => x.id === wallet.id)!
+															// swallow error here so we don't fail the remaining logic
+															const isConnected = await connector.isAuthorized().catch(() => false)
+
+															setConnectClicked(true)
+															if(!isConnected) {
+																try {
+																	await connectAsync({ connector })
+																} catch(e) {
+																	// console.log('evm error', e)
+																}
+															}
+
+															setWalletClicked(true)
+														}
+													} />
+											)))
+											: (solanaWallets.map((wallet, index) => (
+												<ConnectWalletButton
 													key={index}
 													icon={wallet.icon}
 													name={wallet.name}
 													isPopular={wallet.isPopular}
 													onClick={
 														async() => {
-															const connector = connectors.find((x) => x.id === wallet.id)
-															setConnectClicked(true)
-															if(connector) {
-																try {
-																	await connectAsync(connector)
-																} catch(_) {
-																	// console.log('evm error', e)
-																}
-
-																setWalletClicked(true)
-															}
+															await phantomWallet?.connect()
+															setWalletClicked(true)
 															// showToast()
-															// onClose()
 														}
 													} />
-											))) : (solanaWallets.map((wallet, index) => (
-											<VerifyWalletButton
-												key={index}
-												icon={wallet.icon}
-												name={wallet.name}
-												isPopular={wallet.isPopular}
-												onClick={
-													async() => {
-														await phantomWallet?.connect()
-														setWalletClicked(true)
-														// showToast()
-													}
-												} />
-										)))
+											)))
 									}
 								</VStack>
 

@@ -15,12 +15,21 @@ query getWorkspaceMembers($actorId: Bytes!) {
       logoIpfsHash
       title
       supportedNetworks
+      safe {
+        id
+        chainId
+        address
+      }
       tokens {
         address
         label
         decimal
         iconHash
     }
+    safe {
+          address
+          chainId
+        }
       members {
         id
         actorId
