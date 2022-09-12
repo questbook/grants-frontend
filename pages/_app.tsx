@@ -134,7 +134,7 @@ export const BiconomyContext = createContext<{
 	biconomyDaoObj?: any
 	setBiconomyDaoObj: (biconomyDaoObj: any) => void
 	initiateBiconomy: (chainId: string) => Promise<void>
-	isInitiatingBiconomy: (chainId: string) => boolean
+	loadingBiconomyMap: { [_: string]: boolean }
 	biconomyWalletClient?: BiconomyWalletClient
 	setBiconomyWalletClient: (biconomyWalletClient?: BiconomyWalletClient) => void
 		} | null>(null)
@@ -416,7 +416,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const biconomyDaoObjContextValue = useMemo(
 		() => ({
 			biconomyDaoObj,
-			isInitiatingBiconomy: (chainId: string) => !!biconomyLoading[chainId],
+			loadingBiconomyMap: biconomyLoading,
 			initiateBiconomy,
 			setBiconomyDaoObj,
 			biconomyWalletClient,
