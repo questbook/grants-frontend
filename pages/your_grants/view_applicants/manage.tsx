@@ -156,24 +156,37 @@ function ManageGrant() {
 
 	const checkTransactionStatus = async() => {
 		var milestoneTrxnStatus = []
+		await currentSafe.initialiseAllProposals()
 		Promise.all(
 		 fundsDisbursed.fundsTransfers.map(async(transfer) => {
 				return new Promise(async(res, rej) => {
 					const status = await currentSafe.getTransactionHashStatus(transfer.transactionHash)
-					if(status && status[transfer.transactionHash].closedAtDate) {
+
+					if(status && status[transfer.transactionHash].closedAtDate !== '') {
 						const usdAmount = await solanaToUsdOnDate(transfer.amount, Object.values(status || {})[0]?.closedAtDate)
+						console.log('checkTransactionStatus - usdAmount', usdAmount)
 						milestoneTrxnStatus.push({
 							amount: (usdAmount || 0) / 10 ** 9,
-							txnHash: transfer.transactionHash,
-							milestoneId: transfer.milestone.id,
+							txnHash: transfer?.transactionHash,
+							milestoneId: transfer?.milestone?.id,
 							safeAddress: workspaceSafe,
 							...(Object.values(status || {})[0]) })
 						res(usdAmount)
+						console.log('checkTransactionStatus - milestoneTrxnStatus', milestoneTrxnStatus)
 					}
+
+					setTransactionStatus(milestoneTrxnStatus)
+					var total = 0
+					for(var i in milestoneTrxnStatus) {
+						total += milestoneTrxnStatus[i].amount
+					}
+
+					setRewardDisbursed(parseInt(total))
 
 				})
 			})
 		).then((res) => {
+
 			setTransactionStatus(milestoneTrxnStatus)
 			var total = 0
 			for(var i in milestoneTrxnStatus) {
@@ -185,10 +198,10 @@ function ManageGrant() {
 	}
 
 	useEffect(() => {
-		if(fundsDisbursed?.fundsTransfers) {
+		if(fundsDisbursed?.fundsTransfers && currentSafe?.id) {
 			checkTransactionStatus()
 		}
-	}, [fundsDisbursed, currentSafe])
+	}, [fundsDisbursed, currentSafe?.id])
 
 
 	const [applicationData, setApplicationData] = useState<GetApplicationDetailsQuery['grantApplication']>(null)
@@ -633,7 +646,12 @@ function ManageGrant() {
 						borderColor='brand.500'
 						h='48px'
 						w='340px'
-						onClick={() => setSendFundsTo([applicationData])}
+						onClick={
+							() => {
+								console.log('selectedApplicants', [applicationData])
+								setSendFundsTo([applicationData])
+							}
+						}
 					>
 						Send Funds
 					</Button>

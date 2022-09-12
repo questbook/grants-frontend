@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Box, Flex, Input, Text } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 import { IApplicantData } from 'src/types'
 import { ArrowDownCircle } from 'src/v2/assets/custom chakra icons/Arrows/ArrowDownCircle'
 import { ExternalLink } from 'src/v2/assets/custom chakra icons/ExternalLink'
@@ -17,6 +18,18 @@ const RecipientDetails = ({
 	initiateTransactionData: TransactionType | undefined
 	onChangeRecepientDetails: (applicationId: string, fieldName: string, fieldValue: string | number) => void
 }) => {
+
+	const router = useRouter()
+
+	const [applicationID, setApplicationId] = useState<any>('')
+
+	useEffect(() => {
+		if(router && router.query) {
+			const { applicationId: aId } = router.query
+			setApplicationId(aId)
+		}
+	}, [router])
+
 	const [balance, setBalance] = useState(0)
 	useEffect(() => {
 		async function getBalance() {
@@ -27,7 +40,6 @@ const RecipientDetails = ({
 		getBalance()
 	}, [])
 
-	console.log('initiateTransactionData', initiateTransactionData)
 	return (
 		<>
 			<Flex
@@ -204,7 +216,11 @@ const RecipientDetails = ({
 						errorBorderColor='red'
 						height='auto'
 						type='number'
-						onChange={async(e) => onChangeRecepientDetails(applicantData.applicationId, 'amount', parseFloat(e.target.value))}
+						onChange={
+							async(e) => {
+								onChangeRecepientDetails(applicantData.applicationId || applicationID, 'amount', parseFloat(e.target.value))
+							}
+						}
 					/>
 				</Flex>
 

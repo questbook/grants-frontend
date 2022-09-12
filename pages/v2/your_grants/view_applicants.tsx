@@ -385,20 +385,24 @@ function ViewApplicants() {
 					...(status[transaction.transactionHash] || {}),
 					amount: (status[transaction.transactionHash] || {}).closedAtDate !== '' ?
 						isEvmChain ? 0 :
-							await solanaToUsdOnDate(transaction.amount / 10 ** 9, status[transaction.transactionHash].closedAtDate) :
+							await solanaToUsdOnDate(transaction.amount / 10 ** 9, status[transaction.transactionHash]?.closedAtDate) :
 						0
 				})
 				return status
 			}
 		}
 
+		await currentSafe?.initialiseAllProposals()
+
 		Promise.all((Object.keys(applicationToTxnHashMap || {}) || []).map(async(applicationId) => {
 			const transactions = applicationToTxnHashMap[applicationId]
 
 			return Promise.all(transactions.map(async(transaction) => {
 				return new Promise(async(res, rej) => {
+
 					const status = await getEachStatus(transaction, applicationId)
 					res(status)
+
 
 				})
 			})).then((done) => done)

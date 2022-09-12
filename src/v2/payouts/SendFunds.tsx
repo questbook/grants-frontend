@@ -1,6 +1,7 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { Box } from '@chakra-ui/react'
 import { ethers } from 'ethers'
+import { useRouter } from 'next/router'
 import { WebwalletContext } from 'pages/_app'
 import { defaultChainId } from 'src/constants/chains'
 import useQBContract from 'src/hooks/contracts/useQBContract'
@@ -32,7 +33,16 @@ export default function SendFunds({
 	rewardAssetDecimals,
 	grantData, }) {
 
-	//Implementing the safe send
+	const router = useRouter()
+
+	const [applicationID, setApplicationId] = useState<any>('')
+
+	useEffect(() => {
+		if(router && router.query) {
+			const { applicationId: aId } = router.query
+			setApplicationId(aId)
+		}
+	}, [router])
 
 	const workspacechainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 
@@ -100,12 +110,11 @@ export default function SendFunds({
 
 
 	useEffect(() => {
-		console.log('sendFundsTo', sendFundsTo)
 		const formattedTrxnData = sendFundsTo?.map((recepient,) => (
 			{
 				from: currentSafe?.id?.toString(),
 				to:  recepient?.applicantAddress || getFieldString(recepient, 'applicantAddress') || recepient?.applicantId,
-				applicationId: recepient?.applicationId,
+				applicationId: recepient?.applicationId || applicationID,
 				selectedMilestone: recepient?.milestones[0]?.id,
 				amount: 0
 			})
@@ -279,9 +288,6 @@ export default function SendFunds({
 	}, [workspace, biconomyWalletClient, workspacechainId, biconomy, workspaceRegistryContract, scwAddress, webwallet, nonce, initiateTransactionData, proposalAddr])
 
 	const onChangeRecepientDetails = async(applicationId: any, fieldName: string, fieldValue: any) => {
-		// console.log('onChangeRecepientDetails', applicationId, fieldName, fieldValue)
-		// console.log('Gnosis Batch data', gnosisBatchData)
-
 		if(!isEvmChain && fieldName === 'amount') {
 			fieldValue = await usdToSolana(fieldValue)
 		}

@@ -73,7 +73,7 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 							variant='applicationText'
 							fontWeight='700'
 						>
-							{isEvmChain ? formatAmount(item.amount, assetDecimals) : parseInt(transactionStatus[0].amount)}
+							{isEvmChain ? formatAmount(item.amount, assetDecimals) : parseInt(transactionStatus[0]?.amount)}
 							{' '}
 							{isEvmChain ? label : 'USD'}
 						</Text>
@@ -128,7 +128,7 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 			<Link
 				href={
 					isEvmChain ? getExplorerUrlForTxHash(chainId, item.id)
-						: getProposalUrl(transactionStatus[0].safeAddress, transactionStatus[0].txnHash)
+						: getProposalUrl(transactionStatus[0]?.safeAddress, transactionStatus[0]?.txnHash)
 				}
 				isExternal
 			>
@@ -156,7 +156,7 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 				<Text
 					variant='applicationText'
 					color='#122224'>
-					{isEvmChain ? getTextWithEllipses(item.sender) : getTextWithEllipses(transactionStatus[0].safeAddress)}
+					{isEvmChain ? getTextWithEllipses(item.sender) : getTextWithEllipses(transactionStatus[0]?.safeAddress)}
 					{' '}
 					{item.sender === grantId ? ' (Grant)' : ''}
 				</Text>
@@ -290,8 +290,9 @@ function Funding({
 							{
 								fundTransfers.map((item, index) => {
 
-									const txnStatus = transactionStatus.filter((obj) => obj.txnHash === item.transactionHash)
-									if(txnStatus[0] && txnStatus[0].closedAtDate !== '') {
+									const txnStatus = transactionStatus?.filter((obj) => obj.txnHash === item.transactionHash)
+									console.log('txnStatus', txnStatus[0]?.closedAtDate)
+									if(txnStatus && txnStatus[0]?.closedAtDate) {
 										return (
 											<Flex
 												key={item.id}

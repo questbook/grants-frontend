@@ -6,6 +6,7 @@ import {
 	getNativeTreasuryAddress,
 	getRealm,
 	Governance,
+	ProgramAccount,
 	Proposal,
 	pubkeyFilter,
 	VoteType,
@@ -30,6 +31,7 @@ export class RealmsSolana implements Safe {
 
 	connection: Connection
 	programId: PublicKey
+	allProposals: ProgramAccount<Proposal>[]
 	constructor(realmsId: string) {
     	this.id = realmsId ? new PublicKey(realmsId) : undefined // devnet realmPK
     	this.name = 'Realms on Solana'
@@ -170,8 +172,8 @@ export class RealmsSolana implements Safe {
     	await getGovernanceAccounts(this.connection, this.programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
 	}
 
-	async getTransactionHashStatus(proposalPublicKey: string): Promise<any> {
-    	const realmData = await getRealm(this.connection, new PublicKey(this.id!))
+	async initialiseAllProposals(): Promise<any>{
+		const realmData = await getRealm(this.connection, new PublicKey(this.id!))
     	const governances = await getGovernanceAccounts(this.connection, this.programId, Governance, [
 			pubkeyFilter(1, this.id)!,
 		])
@@ -181,10 +183,15 @@ export class RealmsSolana implements Safe {
                     pubkeyFilter(1, governance.pubkey)!,
     	])
 
+		this.allProposals = proposals;
+	}
+
+	async getTransactionHashStatus(proposalPublicKey: string): Promise<any> {
+    
     	const propsalsToSend: {[proposalKey: string]: {status: number, closedAtDate: string}} = {};
 
-    	(proposals
-    		.filter((proposal) => proposalPublicKey.includes(proposal.pubkey.toString())) || [])
+    	(this.allProposals
+    		?.filter((proposal) => proposalPublicKey.includes(proposal.pubkey.toString())) || [])
     		.map((proposal) => {
 				let closedAtDate = ''
 				if(proposal.account.state===5){
