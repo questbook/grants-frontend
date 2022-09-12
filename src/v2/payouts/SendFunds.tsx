@@ -1,13 +1,13 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { Box } from '@chakra-ui/react'
-import { ethers } from 'ethers'
+import { ethers, logger } from 'ethers'
 import { useRouter } from 'next/router'
 import { WebwalletContext } from 'pages/_app'
 import { defaultChainId } from 'src/constants/chains'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import { getFieldString } from 'src/utils/formattingUtils'
+import { getFieldString, parseAmount } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { isPlausibleSolanaAddress } from 'src/utils/generics'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -157,7 +157,7 @@ export default function SendFunds({
 	function encodeTransactionData(recipientAddress: string, fundAmount: string) {
 		const txData = ERC20Interface.encodeFunctionData('transfer', [
 			recipientAddress,
-			ethers.utils.parseUnits(fundAmount, rewardAssetDecimals)
+			parseAmount(fundAmount, '', rewardAssetDecimals)
 		])
 
 		return txData
@@ -243,7 +243,7 @@ export default function SendFunds({
 				return
 			}
 
-			console.log('initiateTransactionData', initiateTransactionData)
+			logger.info({ initiateTransactionData }, 'initiateTransactionData')
 
 
 			const methodArgs = [
@@ -251,12 +251,12 @@ export default function SendFunds({
 				initiateTransactionData.map((element: any) => (parseInt(element.selectedMilestone?.split('.')[1]))),
 				rewardAssetAddress,
 				'nonEvmAssetAddress-toBeChanged',
-				initiateTransactionData.map((element: any) => isEvmChain ? (ethers.utils.parseEther(element.amount.toString())) : Math.floor(element.amount.toFixed(9) * 1000000000)),
+				initiateTransactionData.map((element: any) => isEvmChain ? (parseAmount(element.amount.toString(), '', rewardAssetDecimals)) : Math.floor(element.amount.toFixed(9) * 1000000000)),
 				workspace.id,
 				proposaladdress
 			]
 
-			console.log('methodArgs', methodArgs)
+			logger.info({ methodArgs }, 'methodArgs')
 
 			const transactionHash = await sendGaslessTransaction(
 				biconomy,
@@ -282,7 +282,7 @@ export default function SendFunds({
 			// console.log('receipt: ', receipt)
 			await chargeGas(Number(workspace.id), Number(txFee))
 
-		} catch(e: any) {
+		} catch(e) {
 			// console.log('disburse error', e)
 		}
 	}, [workspace, biconomyWalletClient, workspacechainId, biconomy, workspaceRegistryContract, scwAddress, webwallet, nonce, initiateTransactionData, proposalAddr])
