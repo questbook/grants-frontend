@@ -4321,7 +4321,7 @@ export type GetFundSentForApplicationQueryVariables = Exact<{
 }>;
 
 
-export type GetFundSentForApplicationQuery = { __typename?: 'Query', fundsTransfers: Array<{ __typename?: 'FundsTransfer', id: string, amount: string, sender: string, to: string, createdAtS: number, type: FundsTransferType, application?: { __typename?: 'GrantApplication', id: string } | null, milestone?: { __typename?: 'ApplicationMilestone', id: string, title: string } | null }> };
+export type GetFundSentForApplicationQuery = { __typename?: 'Query', fundsTransfers: Array<{ __typename?: 'FundsTransfer', transactionHash?: string | null, id: string, amount: string, sender: string, to: string, createdAtS: number, type: FundsTransferType, application?: { __typename?: 'GrantApplication', id: string } | null, milestone?: { __typename?: 'ApplicationMilestone', id: string, title: string } | null }> };
 
 export type GetFundingQueryVariables = Exact<{
   grantId?: InputMaybe<Scalars['String']>;
@@ -5796,6 +5796,7 @@ export const GetFundSentForApplicationDocument = gql`
     application {
       id
     }
+    transactionHash
     milestone {
       id
       title

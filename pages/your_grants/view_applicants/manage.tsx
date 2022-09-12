@@ -27,6 +27,9 @@ import {
 	GetApplicationDetailsQuery,
 	useGetApplicationDetailsQuery,
 	useGetFundSentForApplicationQuery,
+	useGetGrantDetailsQuery,
+	useGetRealmsFundTransferDataQuery,
+	useGetSafeForAWorkspaceQuery,
 } from 'src/generated/graphql'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
@@ -39,9 +42,15 @@ import {
 	getFieldString,
 	getFormattedDateFromUnixTimestampWithYear,
 } from 'src/utils/formattingUtils'
+import { isPlausibleSolanaAddress } from 'src/utils/generics'
 import useApplicationMilestones from 'src/utils/queryUtil'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
+import { getDateInDDMMYYYY, RealmsSolana, solanaToUsdOnDate } from 'src/v2/constants/safe/realms_solana'
+import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
+import SendFunds from 'src/v2/payouts/SendFunds'
+import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 	let val = BigNumber.from(0)
@@ -66,11 +75,51 @@ function ManageGrant() {
 	const [selected, setSelected] = React.useState(0)
 	const [isGrantCompleteModelOpen, setIsGrantCompleteModalOpen] = React.useState(false)
 	const [isAdmin, setIsAdmin] = React.useState<boolean>(false)
+	const [rewardDisbursed, setRewardDisbursed] = useState<any>()
 
-	const [applicationID, setApplicationID] = useState<string>('')
+	const [applicationID, setApplicationID] = useState<any>()
+	const [workspaceSafe, setWorkspaceSafe] = useState('')
+	const [workspaceSafeChainId, setWorkspaceSafeChainId] = useState(0)
+	const [currentSafe, setCurrentSafe] = useState<any>()
+	const [transactionStatus, setTransactionStatus] = useState<any>()
+	const [sendFundsTo, setSendFundsTo] = useState<any[]>([])
+
 	const router = useRouter()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
 	const { data: accountData } = useQuestbookAccount()
+	const workspacechainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+
+	const { client } = subgraphClients[workspacechainId]
+
+	const { data: safeAddressData } = useGetSafeForAWorkspaceQuery({
+		client,
+		variables: {
+			workspaceID: workspace?.id.toString()!,
+		},
+	})
+
+
+	useEffect(() => {
+		if(safeAddressData) {
+			const { workspaceSafes } = safeAddressData
+			const safeAddress = workspaceSafes[0]?.address
+			setWorkspaceSafe(safeAddress)
+			setWorkspaceSafeChainId(parseInt(workspaceSafes[0]?.chainId))
+		}
+	}, [safeAddressData])
+
+	const isEvmChain = workspaceSafeChainId !== 900001
+
+	 useEffect(() => {
+		if(isEvmChain) {
+			const txnServiceURL = safeServicesInfo[workspaceSafeChainId]
+			setCurrentSafe(new GnosisSafe(workspaceSafeChainId, txnServiceURL, workspaceSafe))
+		} else {
+			if(isPlausibleSolanaAddress(workspaceSafe)) {
+				setCurrentSafe(new RealmsSolana(workspaceSafe))
+			}
+		}
+	}, [workspaceSafe])
 
 	const {
 		data: {
@@ -104,7 +153,56 @@ function ManageGrant() {
 		},
 	})
 
-	// // console.log('Funds Disbursed', fundsDisbursed);
+	const checkTransactionStatus = async() => {
+		var milestoneTrxnStatus: any[] = []
+		if(!isEvmChain) {
+			await currentSafe.initialiseAllProposals()
+		}
+
+		Promise.all(
+		 fundsDisbursed!.fundsTransfers.map(async(transfer: any) => {
+		 	return new Promise(async(res, rej) => {
+		 		const status: any = await currentSafe.getTransactionHashStatus(transfer.transactionHash)
+		 		if(status && status[transfer.transactionHash]?.closedAtDate !== '') {
+		 			const usdAmount = await solanaToUsdOnDate(transfer.amount, status[transfer.transactionHash]?.closedAtDate)
+		 			milestoneTrxnStatus.push({
+		 				amount: (usdAmount || 0) / 10 ** 9,
+		 				txnHash: transfer?.transactionHash,
+		 				milestoneId: transfer?.milestone?.id,
+		 				safeAddress: workspaceSafe,
+		 				...status[transfer.transactionHash]
+		 			})
+		 			res(usdAmount)
+		 		}
+
+		 		setTransactionStatus(milestoneTrxnStatus)
+		 		var total = 0
+		 		for(var i in milestoneTrxnStatus) {
+		 			total += milestoneTrxnStatus[i].amount
+		 		}
+
+		 		setRewardDisbursed(Math.floor(total))
+
+		 	})
+		 })
+		).then((res) => {
+
+			setTransactionStatus(milestoneTrxnStatus)
+			var total = 0
+			for(var i in milestoneTrxnStatus) {
+				total += milestoneTrxnStatus[i].amount
+			}
+
+			setRewardDisbursed(Math.floor(total))
+		})
+	}
+
+	useEffect(() => {
+		if(fundsDisbursed?.fundsTransfers && currentSafe?.id) {
+			checkTransactionStatus()
+		}
+	}, [fundsDisbursed, currentSafe?.id])
+
 
 	const [applicationData, setApplicationData] = useState<GetApplicationDetailsQuery['grantApplication']>(null)
 	const applicantEmail = useMemo(
@@ -152,12 +250,15 @@ function ManageGrant() {
 		}
 	}, [router, accountData, refetchApplicationDetails])
 
+
 	const tabs = [
 		{
 			title: milestones.length.toString(),
 			subtitle: milestones.length === 1 ? 'Milestone' : 'Milestones',
 			content: (
 				<Milestones
+					transactionStatus={transactionStatus}
+					isEvmChain={isEvmChain}
 					refetch={refetchMilestones}
 					milestones={milestones}
 					rewardAssetId={rewardAsset}
@@ -169,13 +270,15 @@ function ManageGrant() {
 		},
 		{
 			icon: fundingIcon,
-			title: formatAmount(getTotalFundingRecv(
+			title: !isEvmChain ? rewardDisbursed : formatAmount(getTotalFundingRecv(
         milestones as unknown as ApplicationMilestone[],
 			).toString(), decimals),
 			subtitle: 'Funding Sent',
 			content: (
 				<Funding
 					fundTransfers={fundsDisbursed?.fundsTransfers || []}
+					transactionStatus={transactionStatus}
+					isEvmChain={isEvmChain}
 					assetId={rewardAsset}
 					columns={['milestoneTitle', 'date', 'from', 'action']}
 					assetDecimals={decimals!}
@@ -495,6 +598,7 @@ function ManageGrant() {
 													h='26px'
 													w='26px'
 													src={tab.icon}
+													fallbackSrc='/images/dummy/Ethereum Icon.svg'
 													alt={tab.icon} />
 											)
 										}
@@ -536,15 +640,33 @@ function ManageGrant() {
 					}
 				</Flex>
 			</Container>
-			{/* {
+			{
 				applicationData?.state !== 'completed' && isAdmin && (
-					<Sidebar
-						assetInfo={assetInfo}
-						grant={applicationData?.grant}
-						decimals={decimals!}
-					/>
+					<Button
+						mt='22px'
+						variant='outline'
+						color='brand.500'
+						borderColor='brand.500'
+						h='48px'
+						w='340px'
+						onClick={
+							() => {
+								setSendFundsTo([applicationData])
+							}
+						}
+					>
+						Send Funds
+					</Button>
+					// <Sidebar
+					// 	milestones={milestones}
+					// 	assetInfo={assetInfo}
+					// 	grant={applicationData?.grant}
+					// 	applicationId={applicationID}
+					// 	applicantId={applicationData?.applicantId!}
+					// 	decimals={decimals}
+					// />
 				)
-			} */}
+			}
 
 			<Modal
 				isOpen={isGrantCompleteModelOpen}
@@ -554,9 +676,26 @@ function ManageGrant() {
 			>
 				<ModalContent
 					hasClicked={loading}
-					onClose={(details: string) => markApplicationComplete(details)}
+					onClose={(details: any) => markApplicationComplete(details)}
 				/>
 			</Modal>
+
+			{/* {
+				applicationData && applicationData.grant && (
+
+					<SendFundsModal />
+
+				)
+			} */}
+
+			<SendFunds
+				workspace={workspace}
+				workspaceSafe={workspaceSafe}
+				workspaceSafeChainId={workspaceSafeChainId}
+				sendFundsTo={sendFundsTo}
+				rewardAssetAddress={applicationData?.grant?.reward?.asset}
+				rewardAssetDecimals={applicationData?.grant?.reward?.token?.decimal}
+				grantData={applicationData?.grant} />
 
 			{renderModal()}
 		</Container>

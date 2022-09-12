@@ -6,6 +6,7 @@ import {
 	getNativeTreasuryAddress,
 	getRealm,
 	Governance,
+	ProgramAccount,
 	Proposal,
 	pubkeyFilter,
 	VoteType,
@@ -30,12 +31,14 @@ export class RealmsSolana implements Safe {
 
 	connection: Connection
 	programId: PublicKey
+	allProposals: ProgramAccount<Proposal>[]
 	constructor(realmsId: string) {
     	this.id = realmsId ? new PublicKey(realmsId) : undefined // devnet realmPK
     	this.name = 'Realms on Solana'
     	this.description = 'Realms on Solana'
     	this.image = ''
     	this.chainId = 9000001
+		this.allProposals = []
 
     	this.connection = new Connection(process.env.SOLANA_RPC!, 'recent')
     	//this.connection = new Connection('http://realms-realms-c335.mainnet.rpcpool.com/258d3727-bb96-409d-abea-0b1b4c48af29', 'recent')
@@ -89,7 +92,7 @@ export class RealmsSolana implements Safe {
     		const ins = SystemProgram.transfer({
     			fromPubkey: nativeTreasury,
     			toPubkey: new PublicKey(transactions[i].to),
-    			lamports: parseFloat(transactions[i].amount.toFixed(9)) * 1000000000,
+    			lamports: Math.floor(transactions[i].amount * 10**9),
     			programId: this.programId,
     		})
 
@@ -170,8 +173,8 @@ export class RealmsSolana implements Safe {
     	await getGovernanceAccounts(this.connection, this.programId, Governance, [pubkeyFilter(33, COUNCIL_MINT)!])
 	}
 
-	async getTransactionHashStatus(proposalPublicKey: string): Promise<any> {
-    	const realmData = await getRealm(this.connection, new PublicKey(this.id!))
+	async initialiseAllProposals(): Promise<any>{
+		const realmData = await getRealm(this.connection, new PublicKey(this.id!))
     	const governances = await getGovernanceAccounts(this.connection, this.programId, Governance, [
 			pubkeyFilter(1, this.id)!,
 		])
@@ -181,15 +184,43 @@ export class RealmsSolana implements Safe {
                     pubkeyFilter(1, governance.pubkey)!,
     	])
 
-    	const propsalsToSend: {[proposalKey: string]: number} = {};
+		this.allProposals = proposals;
+	}
 
-    	(proposals
-    		.filter((proposal) => proposalPublicKey.includes(proposal.pubkey.toString())) || [])
+	async getTransactionHashStatus(proposalPublicKey: string): Promise<any> {
+    
+    	const propsalsToSend: {[proposalKey: string]: {status: number, closedAtDate: string}} = {};
+
+    	(this.allProposals
+    		?.filter((proposal) => proposalPublicKey.includes(proposal.pubkey.toString())) || [])
     		.map((proposal) => {
-    			propsalsToSend[proposal.pubkey.toString()] = proposal.account.state < 5 ? 0 : proposal.account.state === 5 ? 1 : 2
+				let closedAtDate = ''
+				if(proposal.account.state===5){
+					const closedAt = new Date((Number(proposal?.account?.closedAt?.toString()||''))*1000);
+					closedAtDate = getDateInDDMMYYYY(closedAt);
+				}
+				
+    			propsalsToSend[proposal.pubkey.toString()] = {status:proposal.account.state < 5 ? 0 : proposal.account.state === 5 ? 1 : 2, 
+					closedAtDate}
     		})
     	return propsalsToSend
 	}
+}
+
+const getDateInDDMMYYYY = (date: Date) =>{
+	return `${date.getDate()+1<10?"0":""}${date.getDate()}`+"-"+ `${date.getMonth()+1<10?"0":""}${date.getMonth()+1}`+"-"+ date.getFullYear()
+}
+const solanaToUsdOnDate = async(solAmount: number, date:any) => {
+	let url = `https://api.coingecko.com/api/v3/coins/solana/history?date=${date}&localization=false`
+	let solToUsd = parseFloat((await axios.get(url)).data?.market_data?.current_price?.usd)
+	if(!solToUsd){
+		const presentDate : any = new Date(new Date(date));
+		const previousDay = new Date(presentDate - 864e5);
+		const previousDate = getDateInDDMMYYYY(previousDay)
+		url = `https://api.coingecko.com/api/v3/coins/solana/history?date=${previousDate}&localization=false`;
+		solToUsd = parseFloat((await axios.get(url)).data?.market_data?.current_price?.usd)
+			}
+	return Math.floor((solToUsd) * solAmount) 
 }
 
 const solanaToUsd = async(solAmount: number) => {
@@ -231,23 +262,6 @@ const getSafeDetails = async(realmsAddress: string): Promise<SafeSelectOption | 
 	}
 }
 
-// const isOwner = async(safeAddress: string, address: String): Promise<boolean> => {
-// 	const connection = new Connection(process.env.SOLANA_RPC!, 'recent')
-// 	const programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
-// 	const safeAddressPublicKey = new PublicKey(safeAddress)
-//
-// 	const tokenownerrecord = await getAllTokenOwnerRecords(connection, programId, safeAddressPublicKey)
-// 	let isOwner = false
-// 	for(let i = 0; i < tokenownerrecord.length; i++) {
-// 		if(tokenownerrecord[i].account.governingTokenOwner.toString() === address) {
-// 			isOwner = true
-// 			break
-// 		}
-// 	}
-//
-// 	return isOwner
-// }
-
 const getOwners = async(safeAddress: string): Promise<string[]> => {
 	const connection = new Connection(process.env.SOLANA_RPC!, 'recent')
 	const programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
@@ -262,4 +276,4 @@ const getOwners = async(safeAddress: string): Promise<string[]> => {
 }
 
 
-export { getSafeDetails, getOwners, solanaToUsd, usdToSolana }
+export { getSafeDetails, getOwners, solanaToUsd, usdToSolana, solanaToUsdOnDate,getDateInDDMMYYYY }

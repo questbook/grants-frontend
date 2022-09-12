@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Box, Flex, Input, Text } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 import { IApplicantData } from 'src/types'
 import { ArrowDownCircle } from 'src/v2/assets/custom chakra icons/Arrows/ArrowDownCircle'
 import { ExternalLink } from 'src/v2/assets/custom chakra icons/ExternalLink'
@@ -9,14 +10,28 @@ import MilestoneSelect from 'src/v2/payouts/SendFundsModal/MilestoneSelect'
 import { TransactionType } from 'src/v2/types/safe'
 
 const RecipientDetails = ({
+	isEvmChain,
 	applicantData,
 	initiateTransactionData,
 	onChangeRecepientDetails,
 }: {
+	isEvmChain: boolean
 	applicantData: IApplicantData
 	initiateTransactionData: TransactionType | undefined
 	onChangeRecepientDetails: (applicationId: string, fieldName: string, fieldValue: string | number) => void
 }) => {
+
+	const router = useRouter()
+
+	const [applicationID, setApplicationId] = useState<any>('')
+
+	useEffect(() => {
+		if(router && router.query) {
+			const { applicationId: aId } = router.query
+			setApplicationId(aId)
+		}
+	}, [router])
+
 	const [balance, setBalance] = useState(0)
 	useEffect(() => {
 		async function getBalance() {
@@ -24,8 +39,11 @@ const RecipientDetails = ({
 			setBalance(balance?.amount!)
 		}
 
-		getBalance()
+		if(!isEvmChain) {
+			getBalance()
+		}
 	}, [])
+
 	return (
 		<>
 			<Flex
@@ -155,8 +173,8 @@ const RecipientDetails = ({
 				<MilestoneSelect
 					placeholder='Select from the list'
 					value={initiateTransactionData?.selectedMilestone}
-					milestoneList={applicantData.milestones}
-					onChange={(value) => value && onChangeRecepientDetails(applicantData.applicationId, 'selectedMilestone', value?.id)} />
+					milestoneList={applicantData?.milestones}
+					onChange={(value) => value && onChangeRecepientDetails(applicantData?.applicationId, 'selectedMilestone', value?.id)} />
 
 				<Box h={6} />
 
@@ -202,7 +220,11 @@ const RecipientDetails = ({
 						errorBorderColor='red'
 						height='auto'
 						type='number'
-						onChange={async(e) => onChangeRecepientDetails(applicantData.applicationId, 'amount', parseFloat(e.target.value))}
+						onChange={
+							async(e) => {
+								onChangeRecepientDetails(applicantData.applicationId || applicationID, 'amount', parseFloat(e.target.value))
+							}
+						}
 					/>
 				</Flex>
 

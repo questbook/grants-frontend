@@ -4,20 +4,27 @@ import { useRouter } from 'next/router'
 import CopyIcon from 'src/components/ui/copy_icon'
 import { IApplicantData } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
+import { getRewardAmountMilestones } from 'src/utils/formattingUtils'
 import { FundsCircleFilled } from 'src/v2/assets/custom chakra icons/Your Grants/FundsCircleFilled'
 
 const AcceptedRow = ({
+	isEvmChain,
 	onSendFundsClicked,
 	applicationStatus,
+	applicationAmount,
 	applicantData,
 	isChecked,
 	onChange,
+	rewardAssetDecimals,
 }: {
+	isEvmChain: boolean
 	onSendFundsClicked: () => void
 	applicationStatus: number
+	applicationAmount: any
 	applicantData: IApplicantData
 	isChecked: boolean
 	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+	rewardAssetDecimals: any
 }) => {
 	const router = useRouter()
 	const [isHovering, setIsHovering] = useState(false)
@@ -138,23 +145,20 @@ const AcceptedRow = ({
 					lineHeight='20px'
 					fontWeight='500'
 				>
-					{applicantData.amountPaid}
+					{applicationAmount || 0}
 					{' '}
 					/
 					{' '}
-					{applicantData.fundingAsked?.amount}
+					{applicantData ? getRewardAmountMilestones(rewardAssetDecimals, applicantData) || applicantData.fundingAsked?.amount : 0}
 					{' '}
-					{applicantData.fundingAsked?.symbol}
+					{!isEvmChain ? 'USD' : applicantData.fundingAsked?.symbol}
 
 				</Text>
 
 				<Badge
 					variant='subtle'
 					color='#0F7ABC'>
-					{
-						applicationStatus === 0 ? 'Transaction in Queue' :
-							applicationStatus === 1 ? 'completed' : ''
-					}
+					{applicationStatus === 0 ? 'Transaction in Queue' : ''}
 				</Badge>
 
 			</GridItem>
