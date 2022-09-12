@@ -182,19 +182,25 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			_biconomy.onEvent(_biconomy.READY, async() => {
 				logger.info('biconomy ready')
 
-				_biconomyWalletClient = await _biconomy.biconomyWalletClient
+				try {
+					_biconomyWalletClient = await _biconomy.biconomyWalletClient
 
-				const { doesWalletExist, walletAddress } = await _biconomyWalletClient.checkIfWalletExists({ eoa: webwallet.address })
+					const { doesWalletExist, walletAddress } = await _biconomyWalletClient
+						.checkIfWalletExists({ eoa: webwallet.address })
 
-				if(doesWalletExist) {
-					resolve(walletAddress)
+					if(doesWalletExist) {
+						resolve(walletAddress)
+					}
+
+					const newWalletAddress = await deploySCW(webwallet, _biconomyWalletClient, chainId, nonce!)
+
+					logger.info({ newWalletAddress, chainId }, 'scw deployed')
+
+					resolve(newWalletAddress)
+				} catch(err) {
+					logger.error({ err }, 'error in scw deployment')
+					reject(err)
 				}
-
-				const newWalletAddress = await deploySCW(webwallet, _biconomyWalletClient, chainId, nonce!)
-
-				logger.info({ newWalletAddress, chainId }, 'scw deployed')
-
-				resolve(newWalletAddress)
 			})
 
 			_biconomy.onEvent(_biconomy.ERROR, (err: Error) => {
@@ -206,8 +212,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		setScwAddress(scwAddress)
 		setBiconomyWalletClient(_biconomyWalletClient!)
 		setBiconomyDaoObj(_biconomy)
+
 		const chain = parseInt(chainId)
 		logger.info('SWITCH NETWORK (use-biconomy.tsx 1): ', chain)
+
 		switchNetwork(chain)
 	}, [webwallet, nonce])
 
