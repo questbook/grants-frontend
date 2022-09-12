@@ -15,8 +15,8 @@ import {
 import { BigNumber } from '@ethersproject/bignumber'
 import { ethers } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
-import AddFunds from 'src/components/funds/add_funds_modal'
-import WithdrawFunds from 'src/components/funds/withdraw_funds_modal'
+// import AddFunds from 'src/components/funds/add_funds_modal'
+// import WithdrawFunds from 'src/components/funds/withdraw_funds_modal'
 import Funding from 'src/components/your_grants/manage_grant/tables/funding'
 import { defaultChainId } from 'src/constants/chains'
 import ERC20ABI from 'src/contracts/abi/ERC20.json'
@@ -223,7 +223,7 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
 				isEvmChain={undefined}			/>
 
 			{/* Modals */}
-			<AddFunds
+			{/* <AddFunds
 				isOpen={isAddFundsModalOpen}
 				onClose={() => setIsAddFundsModalOpen(false)}
 				grantAddress={grant.id}
@@ -235,8 +235,8 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
 						icon: assetInfo?.icon,
 					}
 				}
-			/>
-			<WithdrawFunds
+			/> */}
+			{/* <WithdrawFunds
 				isOpen={isWithdrawFundsModalOpen}
 				onClose={() => setIsWithdrawFundsModalOpen(false)}
 				grantAddress={grant.id}
@@ -248,7 +248,7 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
 						icon: assetInfo?.icon,
 					}
 				}
-			/>
+			/> */}
 		</Flex>
 	)
 }
