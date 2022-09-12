@@ -640,7 +640,7 @@ function ManageGrant() {
 					}
 				</Flex>
 			</Container>
-			{/* {
+			{
 				applicationData?.state !== 'completed' && isAdmin && (
 					<Button
 						mt='22px'
@@ -666,7 +666,7 @@ function ManageGrant() {
 					// 	decimals={decimals}
 					// />
 				)
-			} */}
+			}
 
 			<Modal
 				isOpen={isGrantCompleteModelOpen}
@@ -697,8 +697,6 @@ function ManageGrant() {
 				rewardAssetDecimals={applicationData?.grant?.reward?.token?.decimal}
 				grantData={applicationData?.grant} />
 
-=======
->>>>>>> gasless-testing
 			{renderModal()}
 		</Container>
 	)
