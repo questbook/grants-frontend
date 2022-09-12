@@ -23,7 +23,7 @@ import SubgraphClient from 'src/graphql/subgraph'
 import theme from 'src/theme'
 import { MinimalWorkspace } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
-import { bicoDapps, deploySCW, jsonRpcProviders, networksMapping } from 'src/utils/gaslessUtils'
+import { addAuthorizedUser, bicoDapps, deploySCW, getNonce, jsonRpcProviders, networksMapping } from 'src/utils/gaslessUtils'
 import { delay } from 'src/utils/generics'
 import logger from 'src/utils/logger'
 import getSeo from 'src/utils/seo'
@@ -44,7 +44,6 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { publicProvider } from 'wagmi/providers/public'
 import 'styles/globals.css'
 import 'draft-js/dist/Draft.css'
-
 
 type NextPageWithLayout = NextPage & {
 	getLayout?: (page: ReactElement) => ReactNode
@@ -157,6 +156,33 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	// used to poll for scwAddress in "waitForScwAddress"
 	const scwAddressRef = useRef(scwAddress)
 
+	const getUseNonce = useCallback(async() => {
+		const _nonce = await getNonce(webwallet)
+		return _nonce
+	}, [webwallet])
+
+
+	useEffect(() => {
+		if(!webwallet) {
+			return
+		}
+
+		if(nonce && nonce !== 'Token expired') {
+			return
+		}
+
+		addAuthorizedUser(webwallet?.address)
+		 .then(() => { 
+			getUseNonce()
+			 .then(_nonce => {
+				setNonce(_nonce)
+			 })
+			 .catch((err) => {logger.info({err}, 'Error getting nonce')})
+		 })
+		 .catch((err) => {logger.info({err}, 'Error adding authorized user')})
+	}, [webwallet, nonce])
+
+
 	const initiateBiconomyUnsafe = useCallback(async(chainId: string) => {
 		if(!webwallet) {
 			throw new Error('Attempted init without webwallet')
@@ -233,11 +259,16 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	useEffect(() => {
 		setWebwallet(createWebWallet())
 		setScwAddress(getScwAddress())
-		setNonce(getNonce())
+		setNonce(getLocalNonce())
 		const network = getNetwork()
 		logger.info('SWITCH NETWORK (_app.tsx 1): ', network)
 		switchNetwork(network)
 	}, [])
+
+	useEffect(() => {
+		if(webwallet && nonce && nonce !== "Token expired")
+			initiateBiconomy(network.toString())
+	}, [nonce, webwallet, network])
 
 	useEffect(() => {
 		// set the scwaddress ref whenever it changes
@@ -255,7 +286,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		return _scwAddress
 	}
 
-	const getNonce = () => {
+	const getLocalNonce = () => {
 
 		const _nonce = localStorage.getItem('nonce')
 
@@ -267,15 +298,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}
 
 	const getNetwork = () => {
-		return defaultChainId
+		const _network = localStorage.getItem('network')
 
-		// const _network = localStorage.getItem('network')
+		if(!_network) {
+			return defaultChainId;
+		}
 
-		// if(!_network) {
-		// 	return CHAIN_INFO['5'].id
-		// }
-
-		// return parseInt(_network)
+		return parseInt(_network)
 	}
 
 	const createWebWallet = () => {
