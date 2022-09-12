@@ -6,8 +6,9 @@ import { ApiClientsContext } from 'pages/_app'
 import { defaultChainId } from 'src/constants/chains'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useSafeUSDBalances from 'src/hooks/useSafeUSDBalances'
-import { getExplorerUrlForAddress } from 'src/utils/formattingUtils'
-import { isValidSolanaAddress } from 'src/utils/validationUtils'
+import { isValidEthereumAddress, isValidSolanaAddress } from 'src/utils/validationUtils'
+import getGnosisTansactionLink from 'src/v2/utils/gnosisUtils'
+import getProposalUrl from 'src/v2/utils/phantomUtils'
 
 function Dashboard() {
 	const [safeChainId, setSafeChainId] = useState<SupportedChainId>(defaultChainId)
@@ -24,6 +25,17 @@ function Dashboard() {
 	useEffect(() => {
 		logger.info({ safesUSDBalance }, 'safesUSDBalance')
 	}, [safesUSDBalance])
+
+	const openLink = () => {
+		const safe = workspace?.safe
+		if(!safe?.address) {
+			return
+		}
+
+		const link = isValidEthereumAddress(safe?.address) ? getGnosisTansactionLink(safe.id?.toString()!, safe?.chainId.toString()!) : getProposalUrl(safe?.id?.toString()!, safe?.address)
+		window.open(link, '_blank')
+	}
+
 	return (
 		<Flex
 			direction='column'
@@ -53,11 +65,7 @@ function Dashboard() {
 					mt={4}
 					variant='link'
 					rightIcon={<ExternalLinkIcon />}
-					onClick={
-						() => {
-							window.open(getExplorerUrlForAddress(safeChainId, workspace?.safe?.address ?? ''), '_blank')
-						}
-					}>
+					onClick={openLink}>
 					<Text
 						variant='v2_body'
 						fontWeight='500'>
@@ -79,7 +87,8 @@ function Dashboard() {
 				<Button
 					mt={8}
 					variant='primaryV2'
-					rightIcon={<ExternalLinkIcon />}>
+					rightIcon={<ExternalLinkIcon />}
+					onClick={openLink}>
 					Open Safe
 				</Button>
 				<Text

@@ -78,8 +78,14 @@ function AddToSafe() {
 	const { data: safesUSDBalance, loaded: loadedSafesUSDBalance } = useSafeUSDBalances({ safeAddress })
 
 	useEffect(() => {
+		const isValidEthAddress = isValidEthereumAddress(safeAddress)
+		const isValidSolAddress = isValidSolanaAddress(safeAddress)
+		logger.info({ isValidEthAddress, isValidSolAddress }, 'Is valid address')
+
 		if(step > 0 || safeAddress === '') {
 			setSafeAddressError('')
+		} else if(!isValidEthAddress && !isValidSolAddress) {
+			setSafeAddressError('Invalid address')
 		} else if(safesUSDBalance?.length === 0 && loadedSafesUSDBalance && safeAddressError === '') {
 			setSafeAddressError('No Safe found with this address')
 		} else {
@@ -181,12 +187,7 @@ function AddToSafe() {
 					const address = e.target.value
 					setSafeAddress(address)
 					if(!loadedSafesUSDBalance) {
-						const isValidEthAddress = isValidEthereumAddress(address)
-						const isValidSolAddress = isValidSolanaAddress(address)
-						logger.info({ isValidEthAddress, isValidSolAddress }, 'Is valid address')
-						if(!isValidEthAddress && !isValidSolAddress) {
-							setSafeAddressError('Invalid address')
-						}
+
 					}
 				}
 			}
