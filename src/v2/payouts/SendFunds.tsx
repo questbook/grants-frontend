@@ -290,7 +290,6 @@ export default function SendFunds({
 	const onChangeRecepientDetails = async(applicationId: any, fieldName: string, fieldValue: any) => {
 		if(!isEvmChain && fieldName === 'amount') {
 			fieldValue = await usdToSolana(fieldValue)
-			console.log('amount - fieldValue', fieldValue)
 		}
 
 		const tempData = initiateTransactionData.map((transactionData: any) => {
@@ -300,8 +299,6 @@ export default function SendFunds({
 
 			return transactionData
 		})
-
-		console.log('amount - initiateTransactionData', tempData)
 		setInitiateTransactionData(tempData)
 		setGnosisBatchData(tempData)
 	}
