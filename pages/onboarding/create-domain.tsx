@@ -261,8 +261,6 @@ const OnboardingCreateDomain = () => {
 			setSafeAddressError('Invalid address')
 		} else if(safesUSDBalance?.length === 0) {
 			setSafeAddressError('No Safe found with this address')
-		} else {
-			setSafeAddressError('Some unknown error occured')
 		}
 		//step === 0 && safeAddress !== '' && loadedSafesUSDBalance && safesUSDBalance?.length === 0
 	}, [step, safeAddress, loadedSafesUSDBalance, safesUSDBalance])
