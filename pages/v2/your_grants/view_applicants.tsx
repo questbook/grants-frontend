@@ -7,10 +7,10 @@ import {
 	Button,
 	Container, Flex, forwardRef, IconButton, IconButtonProps, Menu, MenuButton, MenuItem, MenuList, TabList, TabPanel, TabPanels, Tabs, Text
 } from '@chakra-ui/react'
-import { BigNumber, ethers } from 'ethers'
+import { BigNumber } from 'ethers'
 import moment from 'moment'
 import { useRouter } from 'next/router'
-import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { ApiClientsContext } from 'pages/_app'
 import Modal from 'src/components/ui/modal'
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
@@ -27,7 +27,7 @@ import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { ApplicationMilestone } from 'src/types'
-import { formatAddress, formatAmount, getExplorerUrlForTxHash, getFieldString, getRewardAmount, getRewardAmountMilestones, getRewardAmountMilestonesUSD } from 'src/utils/formattingUtils'
+import { formatAddress, formatAmount, getExplorerUrlForTxHash, getFieldString } from 'src/utils/formattingUtils'
 import { isPlausibleSolanaAddress } from 'src/utils/generics'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
@@ -41,24 +41,17 @@ import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import StyledTab from 'src/v2/components/StyledTab'
 import NoReviewerBanner from 'src/v2/components/ViewApplicants/NoReviewerBanner'
 import RubricNotSetBanner from 'src/v2/components/ViewApplicants/RubricNotSetBanner'
-import { Gnosis_Safe, GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
-import { Realms_Solana, RealmsSolana, solanaToUsd, solanaToUsdOnDate, usdToSolana } from 'src/v2/constants/safe/realms_solana'
+import { GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
+import { RealmsSolana, solanaToUsdOnDate } from 'src/v2/constants/safe/realms_solana'
 import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
-import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import AcceptedProposalsPanel from 'src/v2/payouts/AcceptedProposals/AcceptedProposalPanel'
 import InReviewPanel from 'src/v2/payouts/InReviewProposals/InReviewPanel'
 import RejectedPanel from 'src/v2/payouts/RejectedProposals/RejectedPanel'
 import ResubmitPanel from 'src/v2/payouts/ResubmitProposals/ResubmitPanel'
 import SendFunds from 'src/v2/payouts/SendFunds'
-import SendFundsDrawer from 'src/v2/payouts/SendFundsDrawer/SendFundsDrawer'
-import SendFundsModal, { MODAL_STATE_INDEXES, ModalStateType } from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEvaluationDrawer'
 import StatsBanner from 'src/v2/payouts/StatsBanner'
-import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
-import getGnosisTansactionLink from 'src/v2/utils/gnosisUtils'
-import getProposalUrl from 'src/v2/utils/phantomUtils'
-import { erc20ABI, useConnect, useDisconnect } from 'wagmi'
 
 
 const PAGE_SIZE = 500
@@ -147,13 +140,11 @@ function ViewApplicants() {
 				applicationToTxnHashMap[fundTransfer?.application?.id!] = [ {
 					transactionHash: fundTransfer?.transactionHash!,
 					amount: parseFloat(fundTransfer?.amount),
-					milestone: fundTransfer.milestone
 				}]
 			} else {
 				applicationToTxnHashMap[fundTransfer?.application?.id!].push({
 					transactionHash: fundTransfer?.transactionHash!,
 					amount: parseFloat(fundTransfer?.amount),
-					milestone: fundTransfer.milestone
 				})
 			}
 			// applicationToTxnHashMap[fundTransfer?.application?.id!] = {
