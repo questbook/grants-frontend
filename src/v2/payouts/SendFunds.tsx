@@ -20,7 +20,7 @@ import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import getGnosisTansactionLink from 'src/v2/utils/gnosisUtils'
 import getProposalUrl from 'src/v2/utils/phantomUtils'
-import { erc20ABI, useConnect, useDisconnect } from 'wagmi'
+import { erc20ABI, useAccount, useConnect, useDisconnect } from 'wagmi'
 
 const ERC20Interface = new ethers.utils.Interface(erc20ABI)
 
@@ -67,7 +67,7 @@ export default function SendFunds({
 		phantomWalletConnected,
 		setPhantomWalletConnected } = usePhantomWallet()
 
-	const { isConnected } = useConnect()
+	const { isConnected } = useAccount()
 	const { disconnect } = useDisconnect()
 
 	const [sendFundsModalIsOpen, setSendFundsModalIsOpen] = useState(false)
