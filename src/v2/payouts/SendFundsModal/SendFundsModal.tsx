@@ -217,6 +217,7 @@ function SendFundsModal({
 							{
 								step === 'RECEIPT_DETAILS' ? (
 									<RecipientDetails
+										isEvmChain={isEvmChain}
 										applicantData={proposals[0]}
 										initiateTransactionData={initiateTransactionData?.length > 0 ? initiateTransactionData[0] : undefined}
 										onChangeRecepientDetails={onChangeRecepientDetails} />

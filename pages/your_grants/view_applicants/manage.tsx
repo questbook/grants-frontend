@@ -156,7 +156,10 @@ function ManageGrant() {
 
 	const checkTransactionStatus = async() => {
 		var milestoneTrxnStatus = []
-		await currentSafe.initialiseAllProposals()
+		if(!isEvmChain) {
+			await currentSafe.initialiseAllProposals()
+		}
+
 		Promise.all(
 		 fundsDisbursed.fundsTransfers.map(async(transfer) => {
 				return new Promise(async(res, rej) => {
@@ -596,6 +599,7 @@ function ManageGrant() {
 													h='26px'
 													w='26px'
 													src={tab.icon}
+													fallbackSrc='/images/dummy/Ethereum Icon.svg'
 													alt={tab.icon} />
 											)
 										}
@@ -648,7 +652,6 @@ function ManageGrant() {
 						w='340px'
 						onClick={
 							() => {
-								console.log('selectedApplicants', [applicationData])
 								setSendFundsTo([applicationData])
 							}
 						}

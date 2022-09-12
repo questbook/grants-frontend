@@ -291,7 +291,6 @@ function Funding({
 								fundTransfers.map((item, index) => {
 
 									const txnStatus = transactionStatus?.filter((obj) => obj.txnHash === item.transactionHash)
-									console.log('txnStatus', txnStatus[0]?.closedAtDate)
 									if(txnStatus && txnStatus[0]?.closedAtDate) {
 										return (
 											<Flex

@@ -167,6 +167,7 @@ function AbstractMilestonesTable(
 								<Image
 									display='inline-block'
 									src={rewardIcon}
+									fallbackSrc='/images/dummy/Ethereum Icon.svg'
 									mr={2}
 									boxSize='27px' />
 								<Text

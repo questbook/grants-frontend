@@ -148,7 +148,7 @@ const AcceptedRow = ({
 					{' '}
 					{applicantData ? getRewardAmountMilestones(rewardAssetDecimals, applicantData) || applicantData.funding_asked?.amount : 0}
 					{' '}
-					{!isEvmChain ? 'USD' : applicantData.funding_asked?.symbol}
+					{!isEvmChain ? 'USD' : applicantData.fundingAsked?.symbol}
 
 				</Text>
 

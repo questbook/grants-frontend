@@ -10,6 +10,7 @@ import MilestoneSelect from 'src/v2/payouts/SendFundsModal/MilestoneSelect'
 import { TransactionType } from 'src/v2/types/safe'
 
 const RecipientDetails = ({
+	isEvmChain,
 	applicantData,
 	initiateTransactionData,
 	onChangeRecepientDetails,
@@ -37,7 +38,9 @@ const RecipientDetails = ({
 			setBalance(balance?.amount!)
 		}
 
-		getBalance()
+		if(!isEvmChain) {
+			getBalance()
+		}
 	}, [])
 
 	return (
