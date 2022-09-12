@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { Divider, Flex } from '@chakra-ui/react'
-import { switchNetwork } from '@wagmi/core'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import { GetWorkspaceMembersQuery, useGetWorkspaceMembersQuery } from 'src/generated/graphql'
