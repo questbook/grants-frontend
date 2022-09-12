@@ -60,8 +60,7 @@ function YourGrantMenu({
 		},
 	]
 
-	const adminItems: MenuItemProps[] = [
-	]
+	const adminItems: MenuItemProps[] = []
 
 	const archivedItems: MenuItemProps[] = [
 		{

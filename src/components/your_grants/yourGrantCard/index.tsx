@@ -8,7 +8,6 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import Modal from 'src/components/ui/modal'
-import RubricDrawer from 'src/components/your_grants/rubricDrawer'
 import Badge from 'src/components/your_grants/yourGrantCard/badge'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
 import YourGrantMenu from 'src/components/your_grants/yourGrantCard/menu'
@@ -387,20 +386,6 @@ function YourGrantCard(this: any, {
 					isBiconomyInitialised={isBiconomyInitialised}
 				/>
 			</Modal>
-
-			<RubricDrawer
-				rubricDrawerOpen={rubricDrawerOpen}
-				setRubricDrawerOpen={setRubricDrawerOpen}
-				rubricEditAllowed={rubricEditAllowed}
-				rubrics={rubrics}
-				setRubrics={setRubrics}
-				maximumPoints={maximumPoints}
-				setMaximumPoints={setMaximumPoints}
-				chainId={chainId}
-				grantAddress={grantID}
-				workspaceId={workspaceId}
-				initialIsPrivate={initialRubrics && initialRubrics.isPrivate}
-			/>
 		</>
 	)
 }

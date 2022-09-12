@@ -22,7 +22,6 @@ import config from 'src/constants/config.json'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useChainId from 'src/hooks/utils/useChainId'
-import logger from 'src/utils/logger'
 
 function Form({
 	onSubmit: onFormSubmit,
@@ -68,8 +67,8 @@ function Form({
 	const toastRef = React.useRef<ToastId>()
 	const maxImageSize = 2
 
-	const { data: accountData, nonce } = useQuestbookAccount()
-	const { data: networkData, switchNetwork } = useNetwork()
+	const { data: accountData } = useQuestbookAccount()
+	const { switchNetwork } = useNetwork()
 	const [defaultItem, setDefaultItem] = useState<{ icon?: string, label: string, id: number }>()
 
 	const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -3,7 +3,6 @@ import { Flex } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import NavBar from 'src/v2/components/NavBar'
 import Sidebar from 'src/v2/components/Sidebar'
-import { useConnect } from 'wagmi'
 
 interface Props {
   children: React.ReactNode
@@ -13,8 +12,6 @@ interface Props {
 }
 
 function NavbarLayout({ children, renderSidebar }: Props) {
-	const { isDisconnected, isConnected } = useConnect()
-
 	const { connected, setConnected } = useContext(ApiClientsContext)!
 
 	const [renderCount, setRenderCount] = useState(0)
@@ -39,7 +36,7 @@ function NavbarLayout({ children, renderSidebar }: Props) {
 		// 	setRenderCount(renderCount + 1)
 		// }
 
-	}, [isConnected, isDisconnected])
+	}, [])
 
 	return (
 		<>

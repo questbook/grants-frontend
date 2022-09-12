@@ -5,7 +5,6 @@ import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { DEFAULT_NOTE, INSUFFICIENT_FUNDS_NOTE, USD_THRESHOLD } from 'src/constants'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
-import { CHAIN_INFO } from 'src/constants/chains'
 import { NetworkType } from 'src/constants/Networks'
 import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
 import SupportedChainId from 'src/generated/SupportedChainId'
@@ -29,7 +28,6 @@ import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/Safe
 import SuccessfulDomainCreationModal from 'src/v2/components/Onboarding/CreateDomain/SuccessfulDomainCreationModal'
 import QuestbookLogo from 'src/v2/components/QuestbookLogo'
 import VerifySignerModal from 'src/v2/components/VerifySignerModal'
-import { useAccount, useDisconnect } from 'wagmi'
 
 
 const OnboardingCreateDomain = () => {
@@ -41,7 +39,6 @@ const OnboardingCreateDomain = () => {
 
 	// State variables for step 0 and 1
 	const [safeAddress, setSafeAddress] = useState('')
-	const [isSafeAddressPasted, setIsSafeAddressPasted] = useState(false)
 	const [isSafeAddressVerified, setIsSafeAddressVerified] = useState(false)
 	const { data: safesUSDBalance, loaded: loadedSafesUSDBalance } = useSafeUSDBalances({ safeAddress })
 	const [safeSelected, setSafeSelected] = useState<SafeSelectOption>()
@@ -60,10 +57,6 @@ const OnboardingCreateDomain = () => {
 	const [ownerAddress, setOwnerAddress] = useState('')
 
 	const [isDomainCreationSuccessful, setIsDomainCreationSuccessful] = useState(false)
-
-	// Wagmi
-	const { data: accountData } = useAccount()
-	const { disconnect } = useDisconnect()
 
 	// Solana
 	// const { phantomWallet } = usePhantomWallet()
@@ -92,10 +85,6 @@ const OnboardingCreateDomain = () => {
 	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, safeSelected?.networkId])
 
 	useEffect(() => {
-		disconnect()
-	}, [])
-
-	useEffect(() => {
 		if(isOwner) {
 			setIsVerifySignerModalOpen(false)
 		}
@@ -109,13 +98,13 @@ const OnboardingCreateDomain = () => {
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()
 
-	useEffect(() => {
-		// console.log('cur step', step)
-		if(step === 3 && !isOwner) {
+	// useEffect(() => {
+	// 	// console.log('cur step', step)
+	// 	if(step === 3 && !isOwner) {
 
-		}
+	// 	}
 
-	}, [accountData, safeOwners, step, isOwner])
+	// }, [accountData, safeOwners, step, isOwner])
 
 	useEffect(() => {
 		// console.log("add_user", nonce, webwallet)
@@ -141,12 +130,10 @@ const OnboardingCreateDomain = () => {
 		if(Object.keys(safesUSDBalance).length > 0) {
 			// console.log('safe address verified!')
 			setIsSafeAddressVerified(true)
-			setIsSafeAddressPasted(true)
 			setStep(1)
 		} else {
 			// console.log('safe address not verified!')
 			setIsSafeAddressVerified(false)
-			setIsSafeAddressPasted(false)
 		}
 	}, [safesUSDBalance])
 
@@ -274,8 +261,6 @@ const OnboardingCreateDomain = () => {
 			setSafeAddressError('Invalid address')
 		} else if(safesUSDBalance?.length === 0) {
 			setSafeAddressError('No Safe found with this address')
-		} else {
-			setSafeAddressError('Some unknown error occured')
 		}
 		//step === 0 && safeAddress !== '' && loadedSafesUSDBalance && safesUSDBalance?.length === 0
 	}, [step, safeAddress, loadedSafesUSDBalance, safesUSDBalance])
@@ -286,10 +271,8 @@ const OnboardingCreateDomain = () => {
 			key={0}
 			step={step}
 			safeAddress={safeAddress}
-			isPasted={isSafeAddressPasted}
 			isVerified={isSafeAddressVerified}
-			isLoading={!loadedSafesUSDBalance}
-			isSafeAddressError={safeAddressError !== ''}
+			isLoading={!loadedSafesUSDBalance && safeAddress !== ''}
 			safeAddressErrorText={safeAddressError}
 			setValue={
 				(newValue) => {
@@ -325,8 +308,6 @@ const OnboardingCreateDomain = () => {
 			safeAddress={safeAddress}
 			safeChainIcon='/ui_icons/gnosis.svg'
 			domainName={domainName}
-			domainNetwork={network ? CHAIN_INFO[network].name : 'Polygon'}
-			domainNetworkIcon={network ? CHAIN_INFO[network].icon : CHAIN_INFO[137].icon} // polygon is the default network
 			domainImageFile={daoImageFile}
 			isBiconomyInitialised={isBiconomyInitialised}
 			onImageFileChange={(image) => setDaoImageFile(image)}

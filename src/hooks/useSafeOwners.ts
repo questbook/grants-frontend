@@ -61,7 +61,6 @@ function useSafeOwners({ safeAddress, type, chainID }: Props) {
 	useEffect(() => {
 		// console.log(loaded, error)
 		if(loaded && !error) {
-			console.log('owners', rawData?.owners)
 			setData(rawData?.owners ?? [])
 		}
 	}, [rawData, loaded, error])

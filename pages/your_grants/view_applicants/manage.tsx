@@ -20,12 +20,9 @@ import CopyIcon from 'src/components/ui/copy_icon'
 import Heading from 'src/components/ui/heading'
 import Modal from 'src/components/ui/modal'
 import ModalContent from 'src/components/your_grants/manage_grant/modals/modalContentGrantComplete'
-import SendFundModalContent from 'src/components/your_grants/manage_grant/modals/sendFundModalContent'
-import Sidebar from 'src/components/your_grants/manage_grant/sidebar'
 import Funding from 'src/components/your_grants/manage_grant/tables/funding'
 import Milestones from 'src/components/your_grants/manage_grant/tables/milestones'
 import { defaultChainId } from 'src/constants/chains'
-import config from 'src/constants/config.json'
 import {
 	GetApplicationDetailsQuery,
 	useGetApplicationDetailsQuery,
@@ -68,10 +65,9 @@ function ManageGrant() {
 
 	const [selected, setSelected] = React.useState(0)
 	const [isGrantCompleteModelOpen, setIsGrantCompleteModalOpen] = React.useState(false)
-	const [isSendFundModalOpen, setIsSendFundModalOpen] = useState(false)
 	const [isAdmin, setIsAdmin] = React.useState<boolean>(false)
 
-	const [applicationID, setApplicationID] = useState<any>()
+	const [applicationID, setApplicationID] = useState<string>('')
 	const router = useRouter()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
 	const { data: accountData } = useQuestbookAccount()
@@ -122,7 +118,7 @@ function ManageGrant() {
 	)
 
 	useEffect(() => {
-		if(appDetailsResult && appDetailsResult.grantApplication) {
+		if(appDetailsResult?.grantApplication) {
 			setApplicationData(appDetailsResult.grantApplication)
 		}
 	}, [appDetailsResult])
@@ -149,8 +145,11 @@ function ManageGrant() {
 	const fundingIcon = assetInfo.icon
 
 	useEffect(() => {
-		setApplicationID(router?.query?.applicationId || '')
-		refetchApplicationDetails()
+		const { applicationId } = router?.query
+		if(typeof applicationId === 'string') {
+			setApplicationID(applicationId || '')
+			refetchApplicationDetails()
+		}
 	}, [router, accountData, refetchApplicationDetails])
 
 	const tabs = [
@@ -163,7 +162,6 @@ function ManageGrant() {
 					milestones={milestones}
 					rewardAssetId={rewardAsset}
 					decimals={decimals}
-					sendFundOpen={() => setIsSendFundModalOpen(true)}
 					chainId={getSupportedChainIdFromWorkspace(workspace)}
 					rewardToken={rewardToken}
 				/>
@@ -200,7 +198,7 @@ function ManageGrant() {
 		},
 	]
 
-	const [update, setUpdate] = useState<any>()
+	const [update, setUpdate] = useState<{text: string}>()
 	const [txn, txnLink, isBiconomyInitialised, loading] = useCompleteApplication(update, applicationData?.id)
 
 	const { setRefresh } = useCustomToast(txnLink, 6000)
@@ -220,8 +218,8 @@ function ManageGrant() {
 	}
 
 	useEffect(() => {
-		if(workspace && workspace.members
-      && workspace.members.length > 0 && accountData && accountData.address) {
+		if(workspace?.members
+      && workspace?.members.length > 0 && accountData?.address) {
 			const tempMember = workspace.members.find(
 				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
 			)
@@ -538,18 +536,15 @@ function ManageGrant() {
 					}
 				</Flex>
 			</Container>
-			{
+			{/* {
 				applicationData?.state !== 'completed' && isAdmin && (
 					<Sidebar
-						milestones={milestones}
 						assetInfo={assetInfo}
 						grant={applicationData?.grant}
-						applicationId={applicationID}
-						applicantId={applicationData?.applicantId!}
 						decimals={decimals!}
 					/>
 				)
-			}
+			} */}
 
 			<Modal
 				isOpen={isGrantCompleteModelOpen}
@@ -559,50 +554,9 @@ function ManageGrant() {
 			>
 				<ModalContent
 					hasClicked={loading}
-					onClose={(details: any) => markApplicationComplete(details)}
+					onClose={(details: string) => markApplicationComplete(details)}
 				/>
 			</Modal>
-
-			{
-				applicationData && applicationData.grant && (
-					<Modal
-						isOpen={isSendFundModalOpen}
-						onClose={() => setIsSendFundModalOpen(false)}
-						title='Send Funds'
-						rightIcon={
-							(
-								<Button
-									_focus={{}}
-									variant='link'
-									color='#AA82F0'
-									leftIcon={<Image src='/sidebar/discord_icon.svg' />}
-									onClick={() => window.open(config.supportLink)}
-								>
-									Support 24*7
-								</Button>
-							)
-						}
-					>
-						<SendFundModalContent
-							isOpen={isSendFundModalOpen}
-							milestones={milestones}
-							rewardAsset={
-								{
-									address: applicationData.grant.reward.asset,
-									committed: BigNumber.from(applicationData.grant.reward.committed),
-									label: assetInfo?.label,
-									icon: assetInfo?.icon,
-								}
-							}
-							contractFunding={applicationData.grant.funding}
-							onClose={() => setIsSendFundModalOpen(false)}
-							grantId={applicationData.grant.id}
-							applicantId={applicationData?.applicantId}
-							applicationId={applicationID}
-						/>
-					</Modal>
-				)
-			}
 
 			{renderModal()}
 		</Container>

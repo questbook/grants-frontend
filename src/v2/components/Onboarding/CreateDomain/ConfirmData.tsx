@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Button, Flex, Image, Spacer, Text } from '@chakra-ui/react'
+import { Button, Flex, Image, Spacer, Text } from '@chakra-ui/react'
 import DaoImageUpload from 'src/v2/components/Onboarding/UI/Misc/DaoImageUpload'
 
 interface Props {
@@ -8,15 +8,13 @@ interface Props {
 	safeAddress: string
 	safeChainIcon: string
 	domainName: string
-	domainNetwork: string
-	domainNetworkIcon: string
 	onCreateDomain: () => void
 	isVerified: boolean
 	signerAddress?: string
 	isBiconomyInitialised: boolean
 }
 
-function ConfirmData({ domainImageFile, safeAddress, safeChainIcon, domainName, domainNetwork, domainNetworkIcon, onCreateDomain, isVerified, signerAddress, isBiconomyInitialised }: Props) {
+function ConfirmData({ domainImageFile, safeAddress, safeChainIcon, domainName, onCreateDomain, isVerified, signerAddress, isBiconomyInitialised }: Props) {
 	const [newDomainImageFile, setNewDomainImageFile] = React.useState<File | null>(null)
 	const formatAddress = (address: string) => `${address.substring(0, 4)}......${address.substring(address.length - 4)}`
 
@@ -42,59 +40,44 @@ function ConfirmData({ domainImageFile, safeAddress, safeChainIcon, domainName, 
 			<Flex mt='70'>
 				<Flex
 					justify='space-between'>
-					<Flex direction='column'>
-
-						{/* <Flex mt={2}>
+					<Flex align='center'>
 						<Image
-							src={domainNetworkIcon}
+							src={safeChainIcon}
 							boxSize='24px' />
-						<Text
-							ml={1}
-							variant='v2_title'>
-							{domainNetwork}
-						</Text>
-					</Flex> */}
-						{/* <Spacer /> */}
-						<Flex mt={2}>
-							<Image
-								src={safeChainIcon}
-								boxSize='24px' />
-							{
-								isVerified && signerAddress && (
-									<Flex align='center'>
-										<Text
-											ml={1}
-											variant='v2_title'>
-											{formatAddress(safeAddress)}
-										</Text>
-										<Text
-											ml={2}
-											variant='v2_metadata'
-											fontWeight='500'>
-											(Verified signer:
-											{formatAddress(signerAddress)}
-											)
-										</Text>
-										<Image
-											ml={2}
-											src='/ui_icons/verified-signer.svg'
-											boxSize='16px' />
-									</Flex>
-								)
-							}
-							{
-								!isVerified && (
+						{
+							isVerified && signerAddress && (
+								<Flex align='center'>
 									<Text
 										ml={1}
 										variant='v2_title'>
-										{safeAddress}
+										{formatAddress(safeAddress)}
 									</Text>
-								)
-							}
-						</Flex>
-
-
+									<Text
+										ml={2}
+										variant='v2_metadata'
+										fontWeight='500'>
+										(Verified signer:
+										{formatAddress(signerAddress)}
+										)
+									</Text>
+									<Image
+										ml={2}
+										src='/ui_icons/verified-signer.svg'
+										boxSize='16px' />
+								</Flex>
+							)
+						}
+						{
+							!isVerified && (
+								<Text
+									ml={1}
+									variant='v2_title'>
+									{safeAddress}
+								</Text>
+							)
+						}
 					</Flex>
+
 
 				</Flex>
 				<Spacer />
