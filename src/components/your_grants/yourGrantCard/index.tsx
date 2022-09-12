@@ -37,7 +37,7 @@ interface YourGrantCardProps {
   workspaceId: string
 }
 
-function YourGrantCard({
+function YourGrantCard(this: any, {
 	grantID,
 	daoIcon,
 	grantTitle,
@@ -177,6 +177,8 @@ function YourGrantCard({
 									w='full'>
 									<Image
 										src={grantCurrencyIcon}
+										alt='token icon'
+										fallbackSrc='/images/dummy/Ethereum Icon.svg'
 										boxSize='36px' />
 									<Text
 										ml={2}

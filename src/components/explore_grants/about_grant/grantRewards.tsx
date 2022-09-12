@@ -221,7 +221,8 @@ function GrantRewards({
 					ml='auto'
 					h='45px'
 					w='45px'
-					src={rewardCurrencyCoin} />
+					src={rewardCurrencyCoin}
+					fallbackSrc='/images/dummy/Ethereum Icon.svg' />
 			</Flex>
 		</>
 	)

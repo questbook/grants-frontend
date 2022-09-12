@@ -175,7 +175,7 @@ function AboutGrant() {
 		let supportedCurrencyObj
 		if(grantData.reward.token) {
 			setRewardCurrency(chainInfo.label)
-			setRewardCurrencyCoin(chainInfo.icon)
+			setRewardCurrencyCoin(grantData.reward.token.iconHash)
 		} else {
 			supportedCurrencyObj = getAssetInfo(
 				grantData?.reward?.asset?.toLowerCase(),

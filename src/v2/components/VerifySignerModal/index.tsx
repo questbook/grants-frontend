@@ -83,7 +83,7 @@ const VerifySignerModal = ({
 	}, [isErrorConnecting])
 
 	useEffect(() => {
-		// console.log(accountData)
+		// console.log('account', accountData)
 		if(accountData) {
 			if(!redirectInitiated && redirect && connectClicked) {
 				setRedirectInitiated(true)
@@ -95,6 +95,7 @@ const VerifySignerModal = ({
 
 	useEffect(() => {
 		if(isOpen && walletClicked) {
+			// console.log(networkType, accountData, owners)
 			if(networkType === NetworkType.EVM && accountData?.address && owners.includes(accountData?.address)) {
 				setIsOwner(true)
 				setOwnerAddress(accountData.address)

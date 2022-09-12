@@ -82,6 +82,7 @@ function AboutProject({
 
   grantRequiredFields: string[]
 }) {
+	// console.log('Reward icon', rewardCurrency ,rewardCurrencyCoin)
 	return (
 		<>
 			<Text
