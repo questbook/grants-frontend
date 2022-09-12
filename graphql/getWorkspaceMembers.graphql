@@ -21,6 +21,10 @@ query getWorkspaceMembers($actorId: Bytes!) {
         decimal
         iconHash
     }
+    safe {
+          address
+          chainId
+        }
       members {
         id
         actorId

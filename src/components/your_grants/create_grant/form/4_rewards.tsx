@@ -31,6 +31,7 @@ function GrantRewardsInput({
 	setShouldEncrypt,
 	shouldEncryptReviews,
 	setShouldEncryptReviews,
+	isEVM
 }: {
   reward: string
   setReward: (rewards: string) => void
@@ -50,6 +51,7 @@ function GrantRewardsInput({
   setShouldEncrypt: (shouldEncrypt: boolean) => void
   shouldEncryptReviews: boolean
   setShouldEncryptReviews: (shouldEncryptReviews: boolean) => void
+  isEVM: boolean
 }) {
 	const [isModalOpen, setIsModalOpen] = React.useState(false)
 	const [oldDate, setOldDate] = React.useState(false)
@@ -104,8 +106,9 @@ function GrantRewardsInput({
 					mt={5}
 					ml={4}
 					minW='148px'
-					flex={0}>
-					<Dropdown
+					flex={0}
+					alignSelf='center'>
+					{isEVM ? <Dropdown
 						listItemsMinWidth='132px'
 						listItems={supportedCurrenciesList}
 						value={rewardCurrency}
@@ -119,7 +122,7 @@ function GrantRewardsInput({
 								setRewardCurrency(data.label)
 								setRewardCurrencyAddress(data.id)
 								if(data !== 'addERCToken' && !isJustAddedToken && data.icon.lastIndexOf('chain_assets') === -1) {
-									// // console.log('On selecting reward', data)
+									// console.log('On selecting reward', data)
 									setRewardToken({
 										iconHash: data.icon.substring(data.icon.lastIndexOf('=') + 1),
 										address: data.address,
@@ -127,17 +130,28 @@ function GrantRewardsInput({
 										decimal: data.decimals.toString(),
 									})
 								} else {
+									// console.log('On selecting reward else block', data)
 									setRewardToken({
-										label: '',
-										address: '',
-										decimal: '18',
-										iconHash: '',
+										label: data.label,
+										address: data.address,
+										decimal: data.decimals.toString(),
+										iconHash: data.icon,
 									})
 								}
 							}
 						}
 						addERC={addERC}
-					/>
+					/> : <Dropdown
+					listItemsMinWidth='132px'
+					listItems={
+						[
+							{
+								icon: '',
+								label: 'SOL',
+							},
+						]
+					}
+				/>}
 				</Box>
 			</Flex>
 

@@ -140,3 +140,13 @@ export interface SidebarReviewer {
   isSelected: boolean
   index: number
 }
+
+
+export type SafeToken = {
+  tokenAddress: string
+  token: {
+    decimals: number
+    logoUri: string
+    symbol: string
+  }
+}

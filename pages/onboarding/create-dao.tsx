@@ -177,7 +177,6 @@ const OnboardingCreateDao = () => {
 
 				await addAuthorizedOwner(workspaceId, webwallet?.address!, scwAddress, daoNetwork.id.toString(),
 					'this is the safe addres - to be updated in the new flow')
-				// console.log('fdsao')
 				await chargeGas(workspaceId, Number(txFee))
 			}
 
