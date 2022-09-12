@@ -83,14 +83,14 @@ function useSafeUSDBalances({ safeAddress, chainId }: Props) {
 				const newSplGovSafe = await getSafeDetails(safeAddress)
 				setSplGovSafe(newSplGovSafe)
 				setSplGovError('')
-			} catch(error: any) {
+			} catch(error) {
 				// console.log(error)
 				if(typeof error === 'string') {
 					setSplGovError(error)
 				}
 
-				if(typeof error?.message === 'string') {
-					setSplGovError(error.message)
+				if(typeof (error as Error)?.message === 'string') {
+					setSplGovError((error as Error).message)
 				} else {
 					setSplGovError(DEFAULT_ERROR_MESSAGE)
 				}
