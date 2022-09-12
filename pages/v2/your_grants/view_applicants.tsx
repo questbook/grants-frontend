@@ -361,14 +361,18 @@ function ViewApplicants() {
 		}
 	}, [workspaceSafe])
 
-	async function getAllStatus(applicationToTxnHashMap: {[applicationId: string]: {transactionHash: string, amount: number}}) {
+	async function getAllStatus(applicationToTxnHashMap: any) {
 		var statuses: {[applicationId: string]: [{transactionHash: string, status: number, amount: number}]} = {}
 
-		const getEachStatus = async(transaction, applicationId) => {
+		const getEachStatus = async(transaction: any, applicationId: any) => {
 			const status = await currentSafe?.getTransactionHashStatus(transaction?.transactionHash)
 			if(transaction && status) {
 				if(!statuses[applicationId]) {
-					statuses[applicationId] = []
+					statuses[applicationId] = [{
+						transactionHash: '',
+						status: -1,
+						amount: 0
+					}]
 				}
 
 				(statuses[applicationId]).push({
@@ -388,7 +392,7 @@ function ViewApplicants() {
 		Promise.all((Object.keys(applicationToTxnHashMap || {}) || []).map(async(applicationId) => {
 			const transactions = applicationToTxnHashMap[applicationId]
 
-			return Promise.all(transactions.map(async(transaction) => {
+			return Promise.all(transactions.map(async(transaction: any) => {
 				return new Promise(async(res, rej) => {
 
 					const status = await getEachStatus(transaction, applicationId)

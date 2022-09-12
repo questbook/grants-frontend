@@ -284,6 +284,8 @@ function ManageGrant() {
 				{
 					selected === 0 ? (
 						<MilestoneTable
+							transactionStatus={undefined}
+							isEvmChain={undefined}
 							refetch={refetch}
 							milestones={milestones}
 							rewardAssetId={rewardAsset}

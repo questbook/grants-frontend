@@ -8,23 +8,23 @@ import ZeroState from 'src/v2/payouts/AcceptedProposals/ZeroState'
 
 const AcceptedProposalsPanel = ({
 	isEvmChain,
-	totalMilestonesAmount,
+	rewardAssetDecimals,
 	applicationStatuses,
 	applicantsData,
 	onSendFundsClicked,
 	onBulkSendFundsClicked,
 	onSetupApplicantEvaluationClicked,
 	grantData,
-	rewardAssetDecimals,
 }: {
-	applicationStatuses: {[_: string]: {transactionHash: string, status: number, amount: number}}
+	isEvmChain: boolean
+	rewardAssetDecimals: any
+	applicationStatuses: any
   applicantsData: IApplicantData[]
   onSendFundsClicked: (state: boolean, checkedItems: IApplicantData[]) => void
   onBulkSendFundsClicked: (state: boolean, checkedItems: IApplicantData[]) => void
   onSetupApplicantEvaluationClicked: () => void
 	grantData: QueryResult<GetGrantDetailsQuery, GetGrantDetailsQueryVariables>['data']
 }) => {
-	console.log('accepted proposal panel', applicationStatuses['0xad'], applicationStatuses['0xad']?.reduce((partialSum, a) => partialSum + a.amount, 0))
 	const [checkedItems, setCheckedItems] = useState<boolean[]>(applicantsData.filter((item) => (2 === item.status)).map(() => false))
 	const [acceptedApplications, setAcceptedApplications] = useState<IApplicantData[]>([])
 
@@ -196,8 +196,8 @@ const AcceptedProposalsPanel = ({
 						<AcceptedRow
 							key={`accepted-${i}`}
 							isEvmChain={isEvmChain}
-							applicationStatus={applicationStatuses[applicantData.applicationId]?.reduce((partialStatus, a) => partialStatus && a.status, 1)}
-							applicationAmount={applicationStatuses[applicantData.applicationId]?.reduce((partialSum, a) => partialSum + a.amount, 0)}
+							applicationStatus={applicationStatuses[applicantData.applicationId]?.reduce((partialStatus: any, a: any) => partialStatus && a.status, 1)}
+							applicationAmount={applicationStatuses[applicantData.applicationId]?.reduce((partialSum: any, a: any) => partialSum + a.amount, 0)}
 							applicantData={applicantData}
 							rewardAssetDecimals={rewardAssetDecimals}
 							isChecked={checkedItems[i]}

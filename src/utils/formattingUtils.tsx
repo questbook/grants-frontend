@@ -221,13 +221,10 @@ export const getRewardAmount = (decimals: number, application: {
 	}
 }
 
-export const getRewardAmountMilestones = (decimals: number, application: {
-	fields: InitialApplicationType['fields']
-	milestones: InitialApplicationType['milestones']
-  }) => {
+export const getRewardAmountMilestones = (decimals: number, application: any) => {
 	let sum = BigNumber.from(0)
 
 	application?.milestones?.forEach(
-		(milestone) => sum = sum.add(milestone.amount))
+		(milestone: any) => sum = sum.add(milestone.amount))
 	return ethers.utils.formatUnits(sum.toString(), decimals).toString()?.split('.')[0]
 }

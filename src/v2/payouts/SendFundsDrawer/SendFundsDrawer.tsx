@@ -34,7 +34,7 @@ interface Props {
 	signerVerified: boolean
 	initiateTransaction: () => Promise<void>
 	initiateTransactionData: TransactionType[]
-	onModalStepChange: (value: number) => Promise<void>
+	onModalStepChange: (value: string) => Promise<void>
 	step: string
 }
 
@@ -269,7 +269,7 @@ function SendFundsDrawer({
 									disabled={validateReceipentInput()}
 									onClick={
 										async() => {
-											onModalStepChange(MODAL_STATE_INDEXES[step])
+											onModalStepChange(step)
 										}
 									}>
 									Continue
@@ -286,7 +286,7 @@ function SendFundsDrawer({
 									disabled={!signerVerified}
 									onClick={
 										async() => {
-											onModalStepChange(MODAL_STATE_INDEXES[step])
+											onModalStepChange(step)
 										}
 									}>
 									Initiate Transaction

@@ -21,6 +21,9 @@ export class GnosisSafe implements _GnosisSafe {
     	this.chainId = chainId
     	this.txnServiceURL = txnServiceURL
 	}
+	initialiseAllProposals(): void {
+		throw new Error('Method not implemented.')
+	}
 
 	proposeTransactions(grantName: string, transactions: TransactionType[], wallet: any): Promise<string> {
     	throw new Error('Method not implemented.')

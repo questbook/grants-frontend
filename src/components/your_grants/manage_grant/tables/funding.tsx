@@ -26,7 +26,9 @@ type TableContent = {
     assetDecimals: number,
     grantId: string,
     chainId?: SupportedChainId,
-    rewardToken?: Token
+    rewardToken?: Token,
+	transactionStatus?: any | undefined,
+	isEvmChain?: boolean | undefined
   ) => React.ReactChild
 };
 
@@ -180,6 +182,8 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 
 export type FundingProps = {
   fundTransfers: FundTransfer[]
+  transactionStatus: any | undefined
+isEvmChain: any | undefined
   assetId: string
   columns: (keyof typeof TABLE_HEADERS)[]
   assetDecimals: number
@@ -290,8 +294,8 @@ function Funding({
 							{
 								fundTransfers.map((item, index) => {
 
-									const txnStatus = transactionStatus?.filter((obj) => obj.txnHash === item.transactionHash)
-									if(txnStatus && txnStatus[0]?.closedAtDate) {
+									const txnStatus = transactionStatus?.filter((obj: any) => obj.txnHash === item.transactionHash)
+									if(txnStatus?.[0]?.closedAtDate) {
 										return (
 											<Flex
 												key={item.id}

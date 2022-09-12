@@ -35,6 +35,8 @@ type Token = {
 };
 
 export type AbstractMilestonesTableProps = {
+	transactionStatus: any | undefined
+	isEvmChain: boolean | undefined
   milestones: ApplicationMilestone[]
   rewardAssetId: string
   refetch: () => void
@@ -70,14 +72,14 @@ function AbstractMilestonesTable(
 		rewardIcon = asset.icon
 	}
 
-	const getTotalReward = (milestone) => {
-		const milestoneTrxns = transactionStatus?.filter((obj) => obj.milestoneId === milestone.id)
+	const getTotalReward = (milestone: any) => {
+		const milestoneTrxns = transactionStatus?.filter((obj: any) => obj.milestoneId === milestone.id)
 		var total = 0
 		for(var i in milestoneTrxns) {
 			total += milestoneTrxns[i].amount
 		}
 
-		return parseInt(total)
+		return Math.floor(total)
 	}
 
 	return (

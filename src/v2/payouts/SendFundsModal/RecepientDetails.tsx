@@ -15,6 +15,7 @@ const RecipientDetails = ({
 	initiateTransactionData,
 	onChangeRecepientDetails,
 }: {
+	isEvmChain: boolean
 	applicantData: IApplicantData
 	initiateTransactionData: TransactionType | undefined
 	onChangeRecepientDetails: (applicationId: string, fieldName: string, fieldValue: string | number) => void

@@ -210,7 +210,7 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
 			<Funding
 				fundTransfers={
 					data?.fundsTransfers?.filter(
-						(d) => d.type === TABS_MAP[selected].type,
+						(d) => d.type === TABS_MAP[selected].type
 					) || []
 				}
 				assetId={grant.reward.asset}
@@ -219,7 +219,8 @@ function FundForAGrant({ grant }: FundForAGrantProps) {
 				grantId={grant.id}
 				type={TABS_MAP[selected].type}
 				chainId={getSupportedChainIdFromSupportedNetwork(grant.workspace.supportedNetworks[0])}
-			/>
+				transactionStatus={undefined}
+				isEvmChain={undefined}			/>
 
 			{/* Modals */}
 			<AddFunds

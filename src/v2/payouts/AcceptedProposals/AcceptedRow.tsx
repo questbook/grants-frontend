@@ -17,11 +17,14 @@ const AcceptedRow = ({
 	onChange,
 	rewardAssetDecimals,
 }: {
+	isEvmChain: boolean
 	onSendFundsClicked: () => void
 	applicationStatus: number
+	applicationAmount: any
 	applicantData: IApplicantData
 	isChecked: boolean
 	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+	rewardAssetDecimals: any
 }) => {
 	const router = useRouter()
 	const [isHovering, setIsHovering] = useState(false)
@@ -146,7 +149,7 @@ const AcceptedRow = ({
 					{' '}
 					/
 					{' '}
-					{applicantData ? getRewardAmountMilestones(rewardAssetDecimals, applicantData) || applicantData.funding_asked?.amount : 0}
+					{applicantData ? getRewardAmountMilestones(rewardAssetDecimals, applicantData) || applicantData.fundingAsked?.amount : 0}
 					{' '}
 					{!isEvmChain ? 'USD' : applicantData.fundingAsked?.symbol}
 

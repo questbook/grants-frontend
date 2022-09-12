@@ -11,8 +11,8 @@ import { getFieldString } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { isPlausibleSolanaAddress } from 'src/utils/generics'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { Gnosis_Safe, GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
-import { Realms_Solana, RealmsSolana, usdToSolana } from 'src/v2/constants/safe/realms_solana'
+import { GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
+import { RealmsSolana, usdToSolana } from 'src/v2/constants/safe/realms_solana'
 import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import SendFundsDrawer from 'src/v2/payouts/SendFundsDrawer/SendFundsDrawer'
@@ -31,7 +31,7 @@ export default function SendFunds({
 	sendFundsTo,
 	rewardAssetAddress,
 	rewardAssetDecimals,
-	grantData, }) {
+	grantData, }: any) {
 
 	const router = useRouter()
 
@@ -110,7 +110,7 @@ export default function SendFunds({
 
 
 	useEffect(() => {
-		const formattedTrxnData = sendFundsTo?.map((recepient,) => (
+		const formattedTrxnData = sendFundsTo?.map((recepient: any,) => (
 			{
 				from: currentSafe?.id?.toString(),
 				to:  recepient?.applicantAddress || getFieldString(recepient, 'applicantAddress') || recepient?.applicantId,

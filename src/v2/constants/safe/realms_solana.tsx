@@ -38,6 +38,7 @@ export class RealmsSolana implements Safe {
     	this.description = 'Realms on Solana'
     	this.image = ''
     	this.chainId = 9000001
+		this.allProposals = []
 
     	this.connection = new Connection(process.env.SOLANA_RPC!, 'recent')
     	//this.connection = new Connection('http://realms-realms-c335.mainnet.rpcpool.com/258d3727-bb96-409d-abea-0b1b4c48af29', 'recent')
@@ -206,14 +207,15 @@ export class RealmsSolana implements Safe {
 	}
 }
 
-const getDateInDDMMYYYY = (date) =>{
+const getDateInDDMMYYYY = (date: Date) =>{
 	return `${date.getDate()+1<10?"0":""}${date.getDate()}`+"-"+ `${date.getMonth()+1<10?"0":""}${date.getMonth()+1}`+"-"+ date.getFullYear()
 }
-const solanaToUsdOnDate = async(solAmount: number, date:string) => {
+const solanaToUsdOnDate = async(solAmount: number, date:any) => {
 	let url = `https://api.coingecko.com/api/v3/coins/solana/history?date=${date}&localization=false`
 	let solToUsd = parseFloat((await axios.get(url)).data?.market_data?.current_price?.usd)
 	if(!solToUsd){
-		const previousDay = new Date(new Date(Date(date)) - 864e5);
+		const presentDate : any = new Date(new Date(date));
+		const previousDay = new Date(presentDate - 864e5);
 		const previousDate = getDateInDDMMYYYY(previousDay)
 		url = `https://api.coingecko.com/api/v3/coins/solana/history?date=${previousDate}&localization=false`;
 		solToUsd = parseFloat((await axios.get(url)).data?.market_data?.current_price?.usd)

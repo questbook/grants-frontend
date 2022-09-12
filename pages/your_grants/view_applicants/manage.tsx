@@ -76,14 +76,14 @@ function ManageGrant() {
 	const [isGrantCompleteModelOpen, setIsGrantCompleteModalOpen] = React.useState(false)
 	const [isSendFundModalOpen, setIsSendFundModalOpen] = useState(false)
 	const [isAdmin, setIsAdmin] = React.useState<boolean>(false)
-	const [rewardDisbursed, setRewardDisbursed] = useState(0)
+	const [rewardDisbursed, setRewardDisbursed] = useState<any>()
 
 	const [applicationID, setApplicationID] = useState<any>()
 	const [workspaceSafe, setWorkspaceSafe] = useState('')
 	const [workspaceSafeChainId, setWorkspaceSafeChainId] = useState(0)
-	const [currentSafe, setCurrentSafe] = useState()
-	const [transactionStatus, setTransactionStatus] = useState()
-	const [sendFundsTo, setSendFundsTo] = useState([])
+	const [currentSafe, setCurrentSafe] = useState<any>()
+	const [transactionStatus, setTransactionStatus] = useState<any>()
+	const [sendFundsTo, setSendFundsTo] = useState<any[]>([])
 
 	const router = useRouter()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
@@ -155,39 +155,37 @@ function ManageGrant() {
 	})
 
 	const checkTransactionStatus = async() => {
-		var milestoneTrxnStatus = []
+		var milestoneTrxnStatus: any[] = []
 		if(!isEvmChain) {
 			await currentSafe.initialiseAllProposals()
 		}
 
 		Promise.all(
-		 fundsDisbursed.fundsTransfers.map(async(transfer) => {
-				return new Promise(async(res, rej) => {
-					const status = await currentSafe.getTransactionHashStatus(transfer.transactionHash)
+		 fundsDisbursed!.fundsTransfers.map(async(transfer: any) => {
+		 	return new Promise(async(res, rej) => {
+		 		const status: any = await currentSafe.getTransactionHashStatus(transfer.transactionHash)
+		 		if(status && status[transfer.transactionHash]?.closedAtDate !== '') {
+		 			const usdAmount = await solanaToUsdOnDate(transfer.amount, status[transfer.transactionHash]?.closedAtDate)
+		 			milestoneTrxnStatus.push({
+		 				amount: (usdAmount || 0) / 10 ** 9,
+		 				txnHash: transfer?.transactionHash,
+		 				milestoneId: transfer?.milestone?.id,
+		 				safeAddress: workspaceSafe,
+		 				...status[transfer.transactionHash]
+		 			})
+		 			res(usdAmount)
+		 		}
 
-					if(status && status[transfer.transactionHash].closedAtDate !== '') {
-						const usdAmount = await solanaToUsdOnDate(transfer.amount, Object.values(status || {})[0]?.closedAtDate)
-						console.log('checkTransactionStatus - usdAmount', usdAmount)
-						milestoneTrxnStatus.push({
-							amount: (usdAmount || 0) / 10 ** 9,
-							txnHash: transfer?.transactionHash,
-							milestoneId: transfer?.milestone?.id,
-							safeAddress: workspaceSafe,
-							...(Object.values(status || {})[0]) })
-						res(usdAmount)
-						console.log('checkTransactionStatus - milestoneTrxnStatus', milestoneTrxnStatus)
-					}
+		 		setTransactionStatus(milestoneTrxnStatus)
+		 		var total = 0
+		 		for(var i in milestoneTrxnStatus) {
+		 			total += milestoneTrxnStatus[i].amount
+		 		}
 
-					setTransactionStatus(milestoneTrxnStatus)
-					var total = 0
-					for(var i in milestoneTrxnStatus) {
-						total += milestoneTrxnStatus[i].amount
-					}
+		 		setRewardDisbursed(Math.floor(total))
 
-					setRewardDisbursed(parseInt(total))
-
-				})
-			})
+		 	})
+		 })
 		).then((res) => {
 
 			setTransactionStatus(milestoneTrxnStatus)
@@ -196,7 +194,7 @@ function ManageGrant() {
 				total += milestoneTrxnStatus[i].amount
 			}
 
-			setRewardDisbursed(parseInt(total))
+			setRewardDisbursed(Math.floor(total))
 		})
 	}
 

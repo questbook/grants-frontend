@@ -104,4 +104,6 @@ export interface Safe {
      * Fetch the details of the transaction hashes from the appropriate api and return the status and amount transferred
      */
     getTransactionHashStatus(transactionHashes: string): Promise<TransactionHashStatus>
+
+    initialiseAllProposals(): void
 }
