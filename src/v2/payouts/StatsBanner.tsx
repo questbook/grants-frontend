@@ -4,15 +4,19 @@ import { Funds } from 'src/v2/assets/custom chakra icons/Your Grants/Funds'
 import { Reviews } from 'src/v2/assets/custom chakra icons/Your Grants/Reviews'
 
 const StatsBanner = ({
+	isEvmChain,
 	applicants,
 	reviews,
 	totalReviews,
 	funds,
+	tokenSymbol
 }: {
-  applicants: number
-  reviews: number
-  totalReviews: number
-  funds: number
+	isEvmChain: boolean
+	applicants: number
+	reviews: number
+	totalReviews: number
+	funds: number
+	tokenSymbol: string
 }) => {
 	return (
 		<Flex
@@ -99,7 +103,7 @@ const StatsBanner = ({
 				>
 					{funds}
 					{' '}
-					USD
+					{isEvmChain ? tokenSymbol ?? 'USD' : 'USD'}
 				</Text>
 				<Text
 					fontSize='14px'

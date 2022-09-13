@@ -49,15 +49,11 @@ export class GnosisSafe implements _GnosisSafe {
     	try {
     		const safeTransaction = await safeSdk.createTransaction(transactions)
 
-    		console.log(safeTransaction)
-
     		const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
-			console.log('safe txn hash', safeTxHash)
     		const senderSignature = await safeSdk.signTransactionHash(safeTxHash)
-			console.log('sender signature', senderSignature)
     		// console.log(await signer.getAddress())
 			
-			console.log('safe address', safeAddress, safeTransaction.data, safeTxHash, senderSignature.data)
+			// console.log('safe address', safeAddress, safeTransaction.data, safeTxHash, senderSignature.data)
 
     		await safeService.proposeTransaction({
     			safeAddress,
@@ -81,6 +77,7 @@ export class GnosisSafe implements _GnosisSafe {
     	return false
 	}
 
+
 	async isOwner(safeAddress: string): Promise<boolean> {
     	//@ts-ignore
     	const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -98,7 +95,7 @@ export class GnosisSafe implements _GnosisSafe {
       return await safeSdk.isOwner(userAddress)
 	}
 
-	async getTransactionHashStatus(safeTxHash: string): any {
+	async getTransactionHashStatus(safeTxHash: string): Promise<any> {
 
         const safeAddress = this.id
         // const safeTxnHash = "0x6b93a22e3929062eadf085a6a150d6bf59d0690ff93b0921cbe1c313708be83c"
@@ -116,7 +113,7 @@ export class GnosisSafe implements _GnosisSafe {
         const txnDetails = await safeService.getTransaction(safeTxHash)
         if(txnDetails.isExecuted) {
 			console.log('txn details', txnDetails)
-			return txnDetails
+			return {...txnDetails, status: 1}
 		} else {
 			console.log('txn not executed')
 			return null
@@ -124,8 +121,20 @@ export class GnosisSafe implements _GnosisSafe {
     }
 
 
-	getSafeDetails(address: String): any {
+	async getSafeDetails(address: String): Promise<any> {
+		//@ts-ignore
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        await provider.send('eth_requestAccounts', [])
 
+        const signer = provider.getSigner()
+        const ethAdapter = new EthersAdapter({
+            ethers,
+            signer,
+        })
+		console.log('eth adapter', ethAdapter)
+        const safeService = new SafeServiceClient({ txServiceUrl: this.txnServiceURL, ethAdapter })
+		const balanceInUsd = await safeService.getUsdBalances(this.id)
+		return balanceInUsd
 	}
 
 }

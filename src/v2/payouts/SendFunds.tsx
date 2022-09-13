@@ -157,7 +157,7 @@ export default function SendFunds({
 	function encodeTransactionData(recipientAddress: string, fundAmount: string) {
 		const txData = ERC20Interface.encodeFunctionData('transfer', [
 			recipientAddress,
-			parseAmount(fundAmount, '', rewardAssetDecimals)
+			ethers.utils.parseUnits(fundAmount, rewardAssetDecimals)
 		])
 
 		return txData

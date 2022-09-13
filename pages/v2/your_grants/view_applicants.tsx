@@ -7,7 +7,7 @@ import {
 	Button,
 	Container, Flex, forwardRef, IconButton, IconButtonProps, Menu, MenuButton, MenuItem, MenuList, TabList, TabPanel, TabPanels, Tabs, Text
 } from '@chakra-ui/react'
-import { BigNumber } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import moment from 'moment'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
@@ -52,6 +52,7 @@ import SendFunds from 'src/v2/payouts/SendFunds'
 import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEvaluationDrawer'
 import StatsBanner from 'src/v2/payouts/StatsBanner'
 import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
+import { tokenToUSD, loadAssetId } from 'src/v2/utils/tokenToUSDconverter'
 import getGnosisTansactionLink from 'src/v2/utils/gnosisUtils'
 import getProposalUrl from 'src/v2/utils/phantomUtils'
 import { erc20ABI, useAccount } from 'wagmi'
@@ -96,6 +97,7 @@ function ViewApplicants() {
 
 	const [rewardAssetAddress, setRewardAssetAddress] = useState('')
 	const [rewardAssetDecimals, setRewardAssetDecimals] = useState<number>()
+	const [rewardAssetSymbol, setRewardAssetSymbol] = useState<string>()
 
 	const [sendFundsTo, setSendFundsTo] = useState<any[]>()
 
@@ -115,6 +117,25 @@ function ViewApplicants() {
 	})
 
 	const [realmsQueryParams, setRealmsQueryParams] = useState<any>({ client })
+	// const [apiAssetId, setApiAssetId] = useState<string>()
+	// const [uintUSDvalue, setUnitUSDvalue] = useState<number>()
+
+	// useEffect(() => {
+	// 	if (isEvmChain && safeAddressData) {
+	// 		const { workspaceSafes } = safeAddressData
+	// 		console.log('safe address data', workspaceSafes[0].chainId)
+	// 		loadAssetId(safeAddressData.workspaceSafes[0].chainId).then(res => {
+	// 			console.log('returned', res[0])
+	// 			setApiAssetId(res[0].id)
+	// 		})
+	// 		if (apiAssetId) {
+	// 			tokenToUSD(apiAssetId, rewardAssetAddress).then(res => {
+	// 				console.log('Reward in usd', res.data[rewardAssetAddress])
+	// 				setUnitUSDvalue(res.data[rewardAssetAddress].usd)
+	// 			})
+	// 		}
+	// 	}
+	// }, [apiAssetId, safeAddressData])
 
 	useEffect(() => {
 		if (!grantID || !workspace) {
@@ -162,6 +183,7 @@ function ViewApplicants() {
 
 	useEffect(() => {
 		if (safeAddressData) {
+			// console.log('safe address data', safeAddressData)
 			const { workspaceSafes } = safeAddressData
 			const safeAddress = workspaceSafes[0]?.address
 			setWorkspaceSafe(safeAddress)
@@ -236,6 +258,8 @@ function ViewApplicants() {
 	useEffect(() => {
 		if ((data?.grantApplications?.length || 0) > 0) {
 			setRewardAssetAddress(data?.grantApplications[0]?.grant?.reward?.asset!)
+			console.log('token sybol', data?.grantApplications[0]?.grant?.reward )
+			setRewardAssetSymbol(data?.grantApplications[0]?.grant?.reward?.token.label)
 			if (data?.grantApplications[0].grant.reward.token) {
 				setRewardAssetDecimals(data?.grantApplications[0].grant.reward.token.decimal)
 			} else {
@@ -356,6 +380,7 @@ function ViewApplicants() {
 	const currentSafe = useMemo(() => {
 		if (isEvmChain) {
 			const txnServiceURL = safeServicesInfo[workspaceSafeChainId]
+			console.log('service url', txnServiceURL)
 			return new GnosisSafe(workspaceSafeChainId, txnServiceURL, workspaceSafe)
 		} else {
 			if (isPlausibleSolanaAddress(workspaceSafe)) {
@@ -378,15 +403,21 @@ function ViewApplicants() {
 						amount: 0
 					}]
 				}
-
-				(statuses[applicationId]).push({
-					transactionHash: transaction.transactionHash,
-					...(status[transaction.transactionHash] || {}),
-					amount: (status[transaction.transactionHash] || {}).closedAtDate !== '' ?
-						isEvmChain ? 0 :
-							await solanaToUsdOnDate(transaction.amount / 10 ** 9, status[transaction.transactionHash]?.closedAtDate) :
-						0
-				})
+				console.log('statuses', statuses)
+				{
+					!isEvmChain ? (statuses[applicationId]).push({
+						transactionHash: transaction.transactionHash,
+						...(status[transaction.transactionHash] || {}),
+						amount: (status[transaction.transactionHash] || {}).closedAtDate !== '' ?
+							isEvmChain ? 0 :
+								await solanaToUsdOnDate(transaction.amount / 10 ** 9, status[transaction.transactionHash]?.closedAtDate) :
+							0
+					}) : (statuses[applicationId].push({
+						transactionHash: transaction.transactionHash,
+						status: 1,
+						amount: parseFloat(ethers.utils.formatUnits(transaction.amount, rewardAssetDecimals))
+					}))
+				}
 				return status
 			}
 		}
@@ -408,9 +439,11 @@ function ViewApplicants() {
 			})).then((done) => done)
 		})).then(async () => {
 			let totalFundDisbursed = 0
+			console.log('statuses', statuses)
 			for (const txns of Object.values(statuses)) {
 				txns.map(txn => {
 					if (txn.status === 1) {
+						console.log('status 1')
 						totalFundDisbursed += (txn.amount)
 					}
 				})
@@ -437,19 +470,21 @@ function ViewApplicants() {
 							amount: 0
 						}]
 					}
-					txnStatus[applicationId].push({ transactionHash: transaction.transactionHash, status: 1, amount: transaction.amount })
+					const amount = parseFloat(ethers.utils.formatUnits(transaction.amount.toString(), rewardAssetDecimals)) * uintUSDvalue!
+
+					txnStatus[applicationId].push({ transactionHash: transaction.transactionHash, status: 1, amount: amount })
 				}
 			}
 			console.log('txn status map', txnStatus)
 		}
 
-		const stats = await getEachStatus({ transactionHash: applicationToTxnHashMap['0xc7'][2].transactionHash, amount: applicationToTxnHashMap['0xc7'][2].amount }, '0xc7')
+		const stats = await getEachStatus({ transactionHash: applicationToTxnHashMap['0x3e6'][1].transactionHash, amount: applicationToTxnHashMap['0x3e6'][1].amount }, '0x3e6')
 		console.log('status', stats)
 	}
 
 	useEffect(() => {
 		if ((Object.keys(listOfApplicationToTxnsHash) || []).length > 0) {
-			if (!isEvmChain) {
+			if (isEvmChain) {
 				getAllStatus((listOfApplicationToTxnsHash) || [])
 			} else {
 				getEVMtxStats(listOfApplicationToTxnsHash)
@@ -642,10 +677,12 @@ function ViewApplicants() {
 				<Box mt={4} />
 
 				<StatsBanner
+					isEvmChain={isEvmChain}
 					funds={totalFundDisbursed}
 					reviews={applicantsData.reduce((acc: any, curr: any) => acc + curr.reviews.length, 0)}
 					totalReviews={applicantsData.reduce((acc: any, curr: any) => acc + curr.reviewers.length, 0)}
 					applicants={applicantsData.length}
+					tokenSymbol={rewardAssetSymbol!}
 				/>
 
 				<Box mt={5} />
