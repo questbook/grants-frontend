@@ -215,18 +215,16 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				try {
 					_biconomyWalletClient = await _biconomy.biconomyWalletClient
 
-					const { doesWalletExist, walletAddress } = await _biconomyWalletClient
+					const result = await _biconomyWalletClient
 						.checkIfWalletExists({ eoa: webwallet.address })
 
-					if(doesWalletExist) {
-						resolve(walletAddress)
+					let walletAddress = result.walletAddress
+					if(!result.doesWalletExist) {
+						walletAddress = await deploySCW(webwallet, _biconomyWalletClient, chainId, nonce!)
+						logger.info({ walletAddress, chainId }, 'scw deployed')
 					}
 
-					const newWalletAddress = await deploySCW(webwallet, _biconomyWalletClient, chainId, nonce!)
-
-					logger.info({ newWalletAddress, chainId }, 'scw deployed')
-
-					resolve(newWalletAddress)
+					resolve(walletAddress)
 				} catch(err) {
 					logger.error({ err }, 'error in scw deployment')
 					reject(err)
