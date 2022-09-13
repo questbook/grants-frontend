@@ -120,8 +120,8 @@ function Sidebar({
 			const reviewerIdSplit = reviews[i]?.reviewer?.id.split('.')
 			const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
 			reviewsDataMap[reviewerId] = {
-				items: review.items,
-				createdAtS: reviews[i].createdAtS,
+				items: review?.items,
+				createdAtS: reviews[i]?.createdAtS,
 			}
 		})
 
@@ -141,7 +141,7 @@ function Sidebar({
 		// console.log(items)
 		let s = 0
 		items?.forEach((item) => {
-			s += item.rating ?? 0
+			s += item?.rating ?? 0
 		})
 
 		return s
@@ -476,7 +476,7 @@ Assign Reviewers
 												color='#717A7C'
 												fontSize='12px'
 												lineHeight='16px'>
-												{totalScore(reviews ? reviews[reviewerId].items : [])}
+												{totalScore(reviews ? reviews[reviewerId]?.items : [])}
 											</Text>
 										</Flex>
 
