@@ -3,7 +3,7 @@ import { WebwalletContext } from 'pages/_app'
 import { addAuthorizedUser, getNonce } from 'src/utils/gaslessUtils'
 
 export const useNonce = (shouldRefreshNonce?: boolean) => {
-	const { nonce} = useContext(WebwalletContext)!
+	const { nonce } = useContext(WebwalletContext)!
 	// const [shouldRefresh, setShouldRefresh] = useState<boolean>(false)
 
 	// const getUseNonce = useCallback(async() => {
@@ -22,7 +22,7 @@ export const useNonce = (shouldRefreshNonce?: boolean) => {
 	// 	}
 
 	// 	addAuthorizedUser(webwallet?.address)
-	// 	 .then(() => { 
+	// 	 .then(() => {
 	// 		getUseNonce()
 	// 		 .then(_nonce => {
 	// 			setNonce(_nonce)

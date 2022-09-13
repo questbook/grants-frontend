@@ -113,7 +113,7 @@ export default function useEditGrant(
 					}
 				} else {
 					reward = {
-						committed: parseAmount(data.reward, data.rewardToken.decimal),
+						committed: parseAmount(data.reward, undefined, data.rewardToken.decimal),
 						asset: data.rewardCurrencyAddress,
 						token: data.rewardToken,
 					}
@@ -133,20 +133,20 @@ export default function useEditGrant(
 					throw new Error('Error validating grant data')
 				}
 
-				let rubricHash = ''
-				if(data.rubric) {
-					const {
-						data: { ipfsHash: auxRubricHash },
-					} = await validatorApi.validateRubricSet({
-						rubric: data.rubric,
-					})
+				// let rubricHash = ''
+				// if(data.rubric) {
+				// 	const {
+				// 		data: { ipfsHash: auxRubricHash },
+				// 	} = await validatorApi.validateRubricSet({
+				// 		rubric: data.rubric,
+				// 	})
 
-					if(!auxRubricHash) {
-						throw new Error('Error validating rubric data')
-					}
+				// 	if(!auxRubricHash) {
+				// 		throw new Error('Error validating rubric data')
+				// 	}
 
-					rubricHash = auxRubricHash
-				}
+				// 	rubricHash = auxRubricHash
+				// }
 
 				// // console.log('rubricHash', rubricHash);
 
@@ -162,28 +162,28 @@ export default function useEditGrant(
 				// await rubricTxn.wait()
 				// const createGrantTransactionData = await createGrantTransaction.wait()
 				// console.log('rubric hash', grantId, grantFactoryContract.address)
-				const rubricTxn = await sendGaslessTransaction(
-					biconomy,
-					applicationReviewContract,
-					'setRubrics',
-					[workspace!.id,
-						grantId!,
-						rubricHash, ],
-					applicationReviewContract.address,
-					biconomyWalletClient,
-					scwAddress,
-					webwallet,
-					`${currentChainId}`,
-					bicoDapps[currentChainId].webHookId,
-					nonce
-				)
+				// const rubricTxn = await sendGaslessTransaction(
+				// 	biconomy,
+				// 	applicationReviewContract,
+				// 	'setRubrics',
+				// 	[workspace!.id,
+				// 		grantId!,
+				// 		rubricHash, ],
+				// 	applicationReviewContract.address,
+				// 	biconomyWalletClient,
+				// 	scwAddress,
+				// 	webwallet,
+				// 	`${currentChainId}`,
+				// 	bicoDapps[currentChainId].webHookId,
+				// 	nonce
+				// )
 
-				if(rubricTxn) {
-					const { txFee } = await getTransactionDetails(rubricTxn, currentChainId.toString())
-					await chargeGas(Number(workspace?.id), Number(txFee))
-				} else {
-					throw new Error("Transaction didn't go through")
-				}
+				// if(rubricTxn) {
+				// 	const { txFee } = await getTransactionDetails(rubricTxn, currentChainId.toString())
+				// 	await chargeGas(Number(workspace?.id), Number(txFee))
+				// } else {
+				// 	throw new Error("Transaction didn't go through")
+				// }
 
 				// console.log('YYTTE', ipfsHash)
 

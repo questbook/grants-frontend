@@ -72,7 +72,7 @@ function ApplicantForm() {
 	const [rejectionCommentError, setRejectionCommentError] = useState(false)
 
 	useEffect(() => {
-		if(router && router.query) {
+		if(router?.query) {
 			const { applicationId: aId } = router.query
 			setApplicationId(aId as string)
 		}
@@ -110,7 +110,7 @@ function ApplicantForm() {
 
 	useEffect(() => {
 		// console.log('ddddd', data, queryError, queryLoading)
-		if(data && data.grantApplication) {
+		if(data?.grantApplication) {
 			// console.log('grantApplication------>', data.grantApplication)
 			setApplicationData(data.grantApplication)
 		}
