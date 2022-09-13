@@ -211,14 +211,14 @@ function Form({
 			setShouldEncrypt(true)
 		}
 
-		const initialRubrics = formData.rubric
+		const initialRubrics = formData?.rubric
 		const newRubrics = [] as any[]
 		// console.log('initialRubrics', initialRubrics)
-		initialRubrics?.items.forEach((initalRubric: any) => {
+		initialRubrics?.items?.forEach((initalRubric: any) => {
 			newRubrics.push({
-				name: initalRubric.title,
+				name: initalRubric?.title,
 				nameError: false,
-				description: initalRubric.details,
+				description: initalRubric?.details,
 				descriptionError: false,
 			})
 		})
@@ -228,12 +228,12 @@ function Form({
 
 		setRubrics(newRubrics)
 		setRubricRequired(true)
-		if(formData.rubric.isPrivate) {
+		if(formData?.rubric?.isPrivate) {
 			setShouldEncryptReviews(true)
 		}
 
-		if(initialRubrics?.items[0].maximumPoints) {
-			setMaximumPoints(initialRubrics.items[0].maximumPoints)
+		if(initialRubrics?.items[0]?.maximumPoints) {
+			setMaximumPoints(initialRubrics?.items[0]?.maximumPoints)
 		}
 	}, [formData])
 
@@ -727,7 +727,7 @@ function Form({
 				rubrics={rubrics}
 				setRubrics={setRubrics}
 				// setMaximumPoints={setMaximumPoints}
-				defaultRubricsPresent={formData.rubric.items.length > 0}
+				defaultRubricsPresent={formData?.rubric.items.length > 0}
 			/>
 
 			<Text
@@ -758,7 +758,7 @@ function Form({
 				shouldEncrypt={shouldEncrypt}
 				setShouldEncrypt={setShouldEncrypt}
 				defaultShouldEncrypt={formData.isPii}
-				defaultShouldEncryptReviews={formData.rubric.isPrivate}
+				defaultShouldEncryptReviews={formData?.rubric.isPrivate}
 				shouldEncryptReviews={shouldEncryptReviews}
 				setShouldEncryptReviews={setShouldEncryptReviews}
 				isEVM={isEVM}

@@ -217,9 +217,9 @@ function ReviewerSidebar({ applicationData }: ReviewerSidebarProps) {
 					grantTitle={applicationData!.grant.title}
 					chainId={chainId}
 					workspaceId={applicationData!.grant.workspace.id}
-					rubrics={applicationData!.grant.rubric!.items}
+					rubrics={applicationData!.grant?.rubric!.items}
 					applicationId={applicationData!.id}
-					isPrivate={applicationData!.grant.rubric!.isPrivate}
+					isPrivate={applicationData!.grant?.rubric!.isPrivate}
 				/>
 			</>
 		)
