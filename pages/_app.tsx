@@ -172,14 +172,18 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		}
 
 		addAuthorizedUser(webwallet?.address)
-		 .then(() => { 
-			getUseNonce()
+		 .then(() => {
+				getUseNonce()
 			 .then(_nonce => {
-				setNonce(_nonce)
+						setNonce(_nonce)
 			 })
-			 .catch((err) => {logger.info({err}, 'Error getting nonce')})
+			 .catch((err) => {
+						logger.info({ err }, 'Error getting nonce')
+					})
 		 })
-		 .catch((err) => {logger.info({err}, 'Error adding authorized user')})
+		 .catch((err) => {
+				logger.info({ err }, 'Error adding authorized user')
+			})
 	}, [webwallet, nonce])
 
 
@@ -275,8 +279,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}, [])
 
 	useEffect(() => {
-		if(webwallet && nonce && nonce !== "Token expired")
+		if(webwallet && nonce && nonce !== 'Token expired') {
 			initiateBiconomy(network.toString())
+		}
 	}, [nonce, webwallet, network])
 
 	useEffect(() => {
@@ -310,7 +315,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		const _network = localStorage.getItem('network')
 
 		if(!_network) {
-			return defaultChainId;
+			return defaultChainId
 		}
 
 		return parseInt(_network)

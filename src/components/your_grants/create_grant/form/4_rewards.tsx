@@ -108,50 +108,56 @@ function GrantRewardsInput({
 					minW='148px'
 					flex={0}
 					alignSelf='center'>
-					{isEVM ? <Dropdown
-						listItemsMinWidth='132px'
-						listItems={supportedCurrenciesList}
-						value={rewardCurrency}
-						// eslint-disable-next-line react/no-unstable-nested-components
-						onChange={
-							(data: any) => {
-								if(data === 'addERCToken') {
-									setIsModalOpen(true)
-								}
+					{
+						isEVM ? (
+							<Dropdown
+								listItemsMinWidth='132px'
+								listItems={supportedCurrenciesList}
+								value={rewardCurrency}
+								// eslint-disable-next-line react/no-unstable-nested-components
+								onChange={
+									(data: any) => {
+										if(data === 'addERCToken') {
+											setIsModalOpen(true)
+										}
 
-								setRewardCurrency(data.label)
-								setRewardCurrencyAddress(data.id)
-								if(data !== 'addERCToken' && !isJustAddedToken && data.icon.lastIndexOf('chain_assets') === -1) {
-									// console.log('On selecting reward', data)
-									setRewardToken({
-										iconHash: data.icon.substring(data.icon.lastIndexOf('=') + 1),
-										address: data.address,
-										label: data.label,
-										decimal: data.decimals.toString(),
-									})
-								} else {
-									// console.log('On selecting reward else block', data)
-									setRewardToken({
-										label: data.label,
-										address: data.address,
-										decimal: data.decimals.toString(),
-										iconHash: data.icon,
-									})
+										setRewardCurrency(data.label)
+										setRewardCurrencyAddress(data.id)
+										if(data !== 'addERCToken' && !isJustAddedToken && data.icon.lastIndexOf('chain_assets') === -1) {
+											// console.log('On selecting reward', data)
+											setRewardToken({
+												iconHash: data.icon.substring(data.icon.lastIndexOf('=') + 1),
+												address: data.address,
+												label: data.label,
+												decimal: data.decimals.toString(),
+											})
+										} else {
+											// console.log('On selecting reward else block', data)
+											setRewardToken({
+												label: data.label,
+												address: data.address,
+												decimal: data.decimals.toString(),
+												iconHash: data.icon,
+											})
+										}
+									}
 								}
-							}
-						}
-						addERC={addERC}
-					/> : <Dropdown
-					listItemsMinWidth='132px'
-					listItems={
-						[
-							{
-								icon: '',
-								label: 'SOL',
-							},
-						]
+								addERC={addERC}
+							/>
+						) : (
+							<Dropdown
+								listItemsMinWidth='132px'
+								listItems={
+									[
+										{
+											icon: '',
+											label: 'SOL',
+										},
+									]
+								}
+							/>
+						)
 					}
-				/>}
 				</Box>
 			</Flex>
 

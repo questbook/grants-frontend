@@ -65,8 +65,8 @@ function Funding({
 					ml='auto'
 					h='45px'
 					w='45px'
-					src={rewardCurrencyCoin} 
-					fallbackSrc='/images/dummy/Ethereum Icon.svg'/>
+					src={rewardCurrencyCoin}
+					fallbackSrc='/images/dummy/Ethereum Icon.svg' />
 				<Flex
 					flex={1}
 					direction='column'
