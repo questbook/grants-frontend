@@ -159,8 +159,8 @@ function GrantRewardsInput({
 					setSupportedCurrenciesList(tokens)
 					// console.log('balances', supportedCurrencies)
 					setRewardCurrency(tokens[0]?.label)
-					setRewardToken({ address: tokens[0].address, decimal: tokens[0].decimals.toString(), label: tokens[0].label, iconHash: tokens[0].icon })
-					setRewardCurrencyAddress(tokens[0].address)
+					setRewardToken({ address: tokens[0]?.address, decimal: tokens[0]?.decimals.toString(), label: tokens[0]?.label, iconHash: tokens[0]?.icon })
+					setRewardCurrencyAddress(tokens[0]?.address)
 				})
 			}
 		}
