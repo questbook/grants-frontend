@@ -293,7 +293,7 @@ function ViewApplicants() {
 						// ),
 						amount:
 							applicant && getFieldString(applicant, 'fundingAsk') ? formatAmount(
-								getFieldString(applicant, 'fundingAsk')!,
+								getFieldString(applicant, 'fundingAsk'),
 								decimal || 18,
 							) : '1',
 						symbol: label,

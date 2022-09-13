@@ -130,7 +130,7 @@ export default function useEditGrant(
 					}
 				} else {
 					reward = {
-						committed: data.reward,
+						committed: parseAmount(data.reward, SOL_ADDRESS_ETH),
 						asset: SOL_ADDRESS_ETH,
 					}
 				}
