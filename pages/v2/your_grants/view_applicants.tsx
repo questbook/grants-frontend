@@ -14,7 +14,7 @@ import { ApiClientsContext } from 'pages/_app'
 import Modal from 'src/components/ui/modal'
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
-import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId, SupportedChainId } from 'src/constants/chains'
 import {
 	useGetApplicantsForAGrantQuery,
 	useGetGrantDetailsQuery,
@@ -55,6 +55,7 @@ import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvalua
 import getGnosisTansactionLink from 'src/v2/utils/gnosisUtils'
 import getProposalUrl from 'src/v2/utils/phantomUtils'
 import { loadAssetId, tokenToUSD } from 'src/v2/utils/tokenToUSDconverter'
+import rpcUrls from 'src/v2/constants/publicRpcUrlInfo'
 
 
 const PAGE_SIZE = 500
@@ -136,11 +137,12 @@ function ViewApplicants() {
 	// 	}
 	// }, [apiAssetId, safeAddressData])
 
-	const checkIfUserIsOnCorrectNetwork = async (safeNetwork: string) => {
+	const checkIfUserIsOnCorrectNetwork = async (_safeNetwork: string) => {
 		// @ts-ignore
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const { chainId: currentNetworkId } = await provider.getNetwork()
-		if (currentNetworkId !== parseInt(safeNetwork)) {
+		const safeNetwork = parseInt(_safeNetwork)
+		if (currentNetworkId !== safeNetwork) {
 			const ethereum = window.ethereum!
 			const chainId = ethers.utils.hexValue(ethers.BigNumber.from(safeNetwork))
 			try{
@@ -157,16 +159,19 @@ function ViewApplicants() {
 					  params: [
 						{
 						  chainId: chainId,
-						  chainName: '...',
-						  rpcUrls: ['https://...'] /* ... */,
+						  chainName: CHAIN_INFO[safeNetwork as SupportedChainId].name,
+						  rpcUrls: [rpcUrls[safeNetwork]],
+						  nativeCurrency: CHAIN_INFO[safeNetwork as SupportedChainId].nativeCurrency
 						},
 					  ],
 					});
 				  } catch (addError) {
 					// handle "add" error
+					logger.info(`ERROR: Add network failed for chain Id ${chainId}`)
 				  }
 				}
 				// handle other "switch" errors
+				logger.info(`ERROR: failed to switch network to ${safeNetwork}`)
 			  }
 			
 		}
