@@ -6040,7 +6040,7 @@ export const GetGrantDetailsDocument = gql`
     title
     summary
     details
-    fields(first: 20) {
+    fields(first: 30) {
       id
       title
       inputType

@@ -276,7 +276,7 @@ function ViewApplicants() {
 				let decimal
 				let label
 				let icon
-				if (!(grantData?.grants[0].rubric?.items.length ?? true)) {
+				if(!(grantData?.grants[0]?.rubric?.items.length ?? true)) {
 					setSetupRubricBannerCancelled(false)
 				}
 
@@ -317,7 +317,7 @@ function ViewApplicants() {
 						// ),
 						amount:
 							applicant && getFieldString(applicant, 'fundingAsk') ? formatAmount(
-								getFieldString(applicant, 'fundingAsk')!,
+								getFieldString(applicant, 'fundingAsk'),
 								decimal || 18,
 							) : '1',
 						symbol: label,
@@ -503,8 +503,8 @@ function ViewApplicants() {
 	useEffect(() => {
 		if (!grantData) {
 			setAreRubricsSet(true)
-		} else if (grantData?.grants[0].rubric?.items.length) {
-			setAreRubricsSet(grantData?.grants[0].rubric?.items.length > 0)
+		} else if(grantData?.grants[0]?.rubric?.items.length) {
+			setAreRubricsSet(grantData?.grants[0]?.rubric?.items.length > 0)
 		} else {
 			setAreRubricsSet(false)
 		}

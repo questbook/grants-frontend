@@ -134,7 +134,7 @@ export const BiconomyContext = createContext<{
 	biconomyDaoObj?: any
 	setBiconomyDaoObj: (biconomyDaoObj: any) => void
 	initiateBiconomy: (chainId: string) => Promise<void>
-	isInitiatingBiconomy: (chainId: string) => boolean
+	loadingBiconomyMap: { [_: string]: boolean }
 	biconomyWalletClient?: BiconomyWalletClient
 	setBiconomyWalletClient: (biconomyWalletClient?: BiconomyWalletClient) => void
 		} | null>(null)
@@ -172,14 +172,18 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		}
 
 		addAuthorizedUser(webwallet?.address)
-		 .then(() => { 
-			getUseNonce()
+		 .then(() => {
+				getUseNonce()
 			 .then(_nonce => {
-				setNonce(_nonce)
+						setNonce(_nonce)
 			 })
-			 .catch((err) => {logger.info({err}, 'Error getting nonce')})
+			 .catch((err) => {
+						logger.info({ err }, 'Error getting nonce')
+					})
 		 })
-		 .catch((err) => {logger.info({err}, 'Error adding authorized user')})
+		 .catch((err) => {
+				logger.info({ err }, 'Error adding authorized user')
+			})
 	}, [webwallet, nonce])
 
 
@@ -211,18 +215,16 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				try {
 					_biconomyWalletClient = await _biconomy.biconomyWalletClient
 
-					const { doesWalletExist, walletAddress } = await _biconomyWalletClient
+					const result = await _biconomyWalletClient
 						.checkIfWalletExists({ eoa: webwallet.address })
 
-					if(doesWalletExist) {
-						resolve(walletAddress)
+					let walletAddress = result.walletAddress
+					if(!result.doesWalletExist) {
+						walletAddress = await deploySCW(webwallet, _biconomyWalletClient, chainId, nonce!)
+						logger.info({ walletAddress, chainId }, 'scw deployed')
 					}
 
-					const newWalletAddress = await deploySCW(webwallet, _biconomyWalletClient, chainId, nonce!)
-
-					logger.info({ newWalletAddress, chainId }, 'scw deployed')
-
-					resolve(newWalletAddress)
+					resolve(walletAddress)
 				} catch(err) {
 					logger.error({ err }, 'error in scw deployment')
 					reject(err)
@@ -275,8 +277,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}, [])
 
 	useEffect(() => {
-		if(webwallet && nonce && nonce !== "Token expired")
+		if(webwallet && nonce && nonce !== 'Token expired') {
 			initiateBiconomy(network.toString())
+		}
 	}, [nonce, webwallet, network])
 
 	useEffect(() => {
@@ -310,7 +313,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		const _network = localStorage.getItem('network')
 
 		if(!_network) {
-			return defaultChainId;
+			return defaultChainId
 		}
 
 		return parseInt(_network)
@@ -416,7 +419,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const biconomyDaoObjContextValue = useMemo(
 		() => ({
 			biconomyDaoObj,
-			isInitiatingBiconomy: (chainId: string) => !!biconomyLoading[chainId],
+			loadingBiconomyMap: biconomyLoading,
 			initiateBiconomy,
 			setBiconomyDaoObj,
 			biconomyWalletClient,

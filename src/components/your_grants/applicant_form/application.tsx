@@ -17,7 +17,7 @@ import { ApiClientsContext } from 'pages/_app'
 import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { GetApplicationDetailsQuery } from 'src/generated/graphql'
-import { formatAmount } from 'src/utils/formattingUtils'
+import { formatAmount, getFieldString, getRewardAmount } from 'src/utils/formattingUtils'
 import { getFromIPFS, getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -73,16 +73,14 @@ function Application({ applicationData, showHiddenData }: Props) {
 			return
 		}
 
-		const getStringField = (fieldName: string) => applicationData?.fields?.find(({ id }) => id.split('.')[1] === fieldName)
-			?.values[0]?.value || ''
-		setProjectTitle(getStringField('projectName'))
+		setProjectTitle(getFieldString(applicationData, 'projectName'))
 		setProjectLink(
 			applicationData?.fields
 				?.find((fld: any) => fld?.id?.split('.')[1] === 'projectLink')
 				?.values.map((val) => ({ link: val.value })) || [],
 		)
 
-		const projectDetailsTemp = getStringField('projectDetails')
+		const projectDetailsTemp = getFieldString(applicationData, 'projectDetails')
 		if(projectDetailsTemp.startsWith('Qm') && projectDetailsTemp.length < 64) {
 			getDecodedDetails(projectDetailsTemp)
 		} else {
@@ -91,11 +89,11 @@ function Application({ applicationData, showHiddenData }: Props) {
 
 		// console.log(decodedDetails)
 
-		setProjectGoals(getStringField('projectGoals'))
+		setProjectGoals(getFieldString(applicationData, 'projectGoals'))
 		setProjectMilestones(applicationData?.milestones || [])
-		setFundingAsk(getStringField('fundingAsk'))
-		setFundingBreakdown(getStringField('fundingBreakdown'))
-		setTeamMembers(getStringField('teamMembers'))
+		setFundingAsk(getFieldString(applicationData, 'fundingAsk'))
+		setFundingBreakdown(getFieldString(applicationData, 'fundingBreakdown'))
+		setTeamMembers(getFieldString(applicationData, 'teamMembers'))
 		setMemberDetails(
 			applicationData?.fields
 				?.find((fld: any) => fld?.id?.split('.')[1] === 'memberDetails')
@@ -181,7 +179,7 @@ function Application({ applicationData, showHiddenData }: Props) {
 							{projectTitle}
 						</Text>
 					</Box>
-					<Box display={projectLink && projectLink.length ? '' : 'none'}>
+					<Box display={projectLink?.length ? '' : 'none'}>
 						<Heading
 							variant='applicationHeading'
 							mt={10}>
@@ -260,7 +258,7 @@ function Application({ applicationData, showHiddenData }: Props) {
 					</Box>
 
 					<Box
-						display={projectMilestones && projectMilestones.length ? '' : 'none'}
+						display={projectMilestones?.length ? '' : 'none'}
 					>
 						<Heading
 							variant='applicationHeading'
@@ -323,7 +321,7 @@ function Application({ applicationData, showHiddenData }: Props) {
 						</Flex>
 					</Box>
 
-					<Box display={fundingAsk && fundingAsk !== '' ? '' : 'none'}>
+					<Box>
 						<Heading variant='applicationHeading'>
 							Funding & Budget Breakdown
 						</Heading>
@@ -349,10 +347,7 @@ function Application({ applicationData, showHiddenData }: Props) {
 									color='brand.500'>
 									{
 										applicationData
-                    && fundingAsk && fundingAsk !== '' && formatAmount(
-                    	fundingAsk,
-                    	decimals || 18,
-										)
+                    && getRewardAmount(decimal || 18, { fields: applicationData?.fields, milestones: applicationData?.milestones })
 									}
 									{' '}
 									{label}

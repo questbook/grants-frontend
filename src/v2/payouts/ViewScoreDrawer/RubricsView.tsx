@@ -139,7 +139,7 @@ const RubricsView = ({ rubrics, reviewer }: {
 										lineHeight='20px'
 										fontWeight='500'
 									>
-										{rubric.rubric.title}
+										{rubric?.rubric?.title}
 									</Text>
 
 									<Text
