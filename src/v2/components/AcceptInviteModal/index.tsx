@@ -450,13 +450,6 @@ const FIELD_INPUTS = [
 		placeholder: 'John Doe',
 		editable: true
 	},
-	{
-		key: 'walletAddress',
-		label: 'Wallet Address',
-		description: 'Questbook wallet associated with your profile.',
-		placeholder: '',
-		editable: false
-	}
 ] as const
 
 const SECTIONS = [
