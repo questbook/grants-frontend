@@ -9,6 +9,7 @@ import {
 	ProgramAccount,
 	Proposal,
 	pubkeyFilter,
+	TokenOwnerRecord,
 	VoteType,
 	withCreateProposal,
 	withInsertTransaction,
@@ -58,14 +59,15 @@ export class RealmsSolana implements Safe {
 		])
 
 		const governance = governances.filter((gov)=>gov.pubkey.toString()===realmData.account.authority?.toString())[0]
-    	const payer = wallet.publicKey
+    	const payer : PublicKey = wallet.publicKey
 
-    	const tokenOwnerRecord = await getAllTokenOwnerRecords(
-    		this.connection,
-    		realmData.owner,
-    		realmData.pubkey
-    	)
-
+    	const tokenOwnerRecord  = await getGovernanceAccounts(
+			this.connection,
+			this.programId,
+			TokenOwnerRecord,
+			[pubkeyFilter(1, realmData.pubkey)!, pubkeyFilter(65, payer)!]
+		  );
+		  
     	const proposalInstructions: TransactionInstruction[] = []
 
     	const proposalAddress = await withCreateProposal(
