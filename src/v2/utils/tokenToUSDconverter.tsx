@@ -3,13 +3,17 @@ const API = 'https://api.coingecko.com/api/v3'
 
 // let allAssets
 
+type Asset = {
+    id: string
+    chain_identifier: number,
+    name: string,
+    shortname: string
+}
+
 export function loadAssetId(chainId: string){
     const url = `${API}/asset_platforms`
     return axios.get(url).then(res => {
-        console.log('chain Id', chainId )
-        console.log('all assets', res)
-        const result = res.data.filter((asset) => asset.chain_identifier === parseInt(chainId))
-        console.log('filtered assets', result)
+        const result = res.data.filter((asset: Asset) => asset.chain_identifier === parseInt(chainId))
         return result
     })
     

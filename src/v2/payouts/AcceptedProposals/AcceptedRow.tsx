@@ -28,7 +28,6 @@ const AcceptedRow = ({
 }) => {
 	const router = useRouter()
 	const [isHovering, setIsHovering] = useState(false)
-	console.log('application amount', applicationAmount)
 	return (
 		<>
 			<GridItem

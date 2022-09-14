@@ -7,7 +7,7 @@ import {
 	Button,
 	Container, Flex, forwardRef, IconButton, IconButtonProps, Menu, MenuButton, MenuItem, MenuList, TabList, TabPanel, TabPanels, Tabs, Text
 } from '@chakra-ui/react'
-import { BigNumber, ethers } from 'ethers'
+import { BigNumber, ethers, logger } from 'ethers'
 import moment from 'moment'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
@@ -258,9 +258,9 @@ function ViewApplicants() {
 	useEffect(() => {
 		if ((data?.grantApplications?.length || 0) > 0) {
 			setRewardAssetAddress(data?.grantApplications[0]?.grant?.reward?.asset!)
-			console.log('token sybol', data?.grantApplications[0]?.grant?.reward )
-			setRewardAssetSymbol(data?.grantApplications[0]?.grant?.reward?.token.label)
+			setRewardAssetSymbol(data?.grantApplications[0]?.grant?.reward?.token?.label!)
 			if (data?.grantApplications[0].grant.reward.token) {
+				logger.info('decimals', data?.grantApplications[0].grant.reward.token.decimal)
 				setRewardAssetDecimals(data?.grantApplications[0].grant.reward.token.decimal)
 			} else {
 				setRewardAssetDecimals(CHAIN_INFO[
@@ -380,7 +380,6 @@ function ViewApplicants() {
 	const currentSafe = useMemo(() => {
 		if (isEvmChain) {
 			const txnServiceURL = safeServicesInfo[workspaceSafeChainId]
-			console.log('service url', txnServiceURL)
 			return new GnosisSafe(workspaceSafeChainId, txnServiceURL, workspaceSafe)
 		} else {
 			if (isPlausibleSolanaAddress(workspaceSafe)) {
@@ -393,7 +392,8 @@ function ViewApplicants() {
 		var statuses: { [applicationId: string]: [{ transactionHash: string, status: number, amount: number }] } = {}
 
 		const getEachStatus = async (transaction: any, applicationId: any) => {
-			console.log('transaction hash', transaction)
+			logger.info('transaction hash', transaction)
+			logger.info('fund', ethers.utils.formatUnits(transaction.amount.toString(), rewardAssetDecimals))
 			const status = await currentSafe?.getTransactionHashStatus(transaction?.transactionHash)
 			if (transaction && status) {
 				if (!statuses[applicationId]) {
@@ -403,7 +403,6 @@ function ViewApplicants() {
 						amount: 0
 					}]
 				}
-				console.log('statuses', statuses)
 				{
 					!isEvmChain ? (statuses[applicationId]).push({
 						transactionHash: transaction.transactionHash,
@@ -415,7 +414,7 @@ function ViewApplicants() {
 					}) : (statuses[applicationId].push({
 						transactionHash: transaction.transactionHash,
 						status: 1,
-						amount: parseFloat(ethers.utils.formatUnits(transaction.amount, rewardAssetDecimals))
+						amount: parseInt(ethers.utils.formatUnits(transaction.amount.toString(), rewardAssetDecimals))
 					}))
 				}
 				return status
@@ -439,11 +438,10 @@ function ViewApplicants() {
 			})).then((done) => done)
 		})).then(async () => {
 			let totalFundDisbursed = 0
-			console.log('statuses', statuses)
 			for (const txns of Object.values(statuses)) {
 				txns.map(txn => {
 					if (txn.status === 1) {
-						console.log('status 1')
+						logger.info('status --> 1')
 						totalFundDisbursed += (txn.amount)
 					}
 				})
@@ -454,44 +452,12 @@ function ViewApplicants() {
 		})
 	}
 
-	async function getEVMtxStats(applicationToTxnHashMap: any) {
-		console.log('transaction map -->', applicationToTxnHashMap)
-		let txnStatus: { [applicationId: string]: [{ transactionHash: string, status: number, amount: number }] } = {}
-
-		const getEachStatus = async (transaction: { transactionHash: string, amount: number }, applicationId: string) => {
-			console.log('transaction', transaction)
-			const details = await currentSafe?.getTransactionHashStatus(transaction.transactionHash)
-			if (details) {
-				if (transaction && details) {
-					if (!txnStatus[applicationId]) {
-						txnStatus[applicationId] = [{
-							transactionHash: '',
-							status: -1,
-							amount: 0
-						}]
-					}
-					const amount = parseFloat(ethers.utils.formatUnits(transaction.amount.toString(), rewardAssetDecimals)) * uintUSDvalue!
-
-					txnStatus[applicationId].push({ transactionHash: transaction.transactionHash, status: 1, amount: amount })
-				}
-			}
-			console.log('txn status map', txnStatus)
-		}
-
-		const stats = await getEachStatus({ transactionHash: applicationToTxnHashMap['0x3e6'][1].transactionHash, amount: applicationToTxnHashMap['0x3e6'][1].amount }, '0x3e6')
-		console.log('status', stats)
-	}
-
 	useEffect(() => {
 		if ((Object.keys(listOfApplicationToTxnsHash) || []).length > 0) {
-			if (isEvmChain) {
-				getAllStatus((listOfApplicationToTxnsHash) || [])
-			} else {
-				getEVMtxStats(listOfApplicationToTxnsHash)
-			}
+			getAllStatus((listOfApplicationToTxnsHash) || [])
 		}
 
-	}, [listOfApplicationToTxnsHash])
+	}, [listOfApplicationToTxnsHash, rewardAssetDecimals])
 
 	//getting transaction hash status end
 

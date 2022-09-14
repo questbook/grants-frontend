@@ -108,14 +108,11 @@ export class GnosisSafe implements _GnosisSafe {
             ethers,
             signer,
         })
-		console.log('eth adapter', ethAdapter)
         const safeService = new SafeServiceClient({ txServiceUrl: this.txnServiceURL, ethAdapter })
         const txnDetails = await safeService.getTransaction(safeTxHash)
         if(txnDetails.isExecuted) {
-			console.log('txn details', txnDetails)
 			return {...txnDetails, status: 1}
 		} else {
-			console.log('txn not executed')
 			return null
 		}
     }
@@ -131,7 +128,6 @@ export class GnosisSafe implements _GnosisSafe {
             ethers,
             signer,
         })
-		console.log('eth adapter', ethAdapter)
         const safeService = new SafeServiceClient({ txServiceUrl: this.txnServiceURL, ethAdapter })
 		const balanceInUsd = await safeService.getUsdBalances(this.id)
 		return balanceInUsd
