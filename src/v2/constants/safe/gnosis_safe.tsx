@@ -49,25 +49,25 @@ export class GnosisSafe implements _GnosisSafe {
     	try {
     		const safeTransaction = await safeSdk.createTransaction(transactions)
 
-    		// console.log(safeTransaction)
-
     		const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
     		const senderSignature = await safeSdk.signTransactionHash(safeTxHash)
     		// console.log(await signer.getAddress())
+			
+			// console.log('safe address', safeAddress, safeTransaction.data, safeTxHash, senderSignature.data)
+
     		await safeService.proposeTransaction({
     			safeAddress,
     			safeTransactionData: safeTransaction.data,
     			safeTxHash,
-    			senderAddress: await signer.getAddress(),
-    			senderSignature: senderSignature.data,
-    			origin
+    			senderAddress: senderSignature.signer,
+    			senderSignature: senderSignature.data
     		})
 
     		return safeTxHash
     	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 } catch(e: any) {
-    		return undefined
-    		// console.log(e)
+    		// return undefined
+    		console.log(e)
     	}
 
 
@@ -76,6 +76,7 @@ export class GnosisSafe implements _GnosisSafe {
 	async isValidSafeAddress(address: String) {
     	return false
 	}
+
 
 	async isOwner(safeAddress: string): Promise<boolean> {
     	//@ts-ignore
@@ -94,12 +95,42 @@ export class GnosisSafe implements _GnosisSafe {
       return await safeSdk.isOwner(userAddress)
 	}
 
-	getTransactionHashStatus(proposalPublicKeys: string): any {
+	async getTransactionHashStatus(safeTxHash: string): Promise<any> {
 
-	}
+        const safeAddress = this.id
+        // const safeTxnHash = "0x6b93a22e3929062eadf085a6a150d6bf59d0690ff93b0921cbe1c313708be83c"
+        //@ts-ignore
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        await provider.send('eth_requestAccounts', [])
 
-	getSafeDetails(address: String): any {
+        const signer = provider.getSigner()
+        const ethAdapter = new EthersAdapter({
+            ethers,
+            signer,
+        })
+        const safeService = new SafeServiceClient({ txServiceUrl: this.txnServiceURL, ethAdapter })
+        const txnDetails = await safeService.getTransaction(safeTxHash)
+        if(txnDetails.isExecuted) {
+			return {...txnDetails, status: 1}
+		} else {
+			return null
+		}
+    }
 
+
+	async getSafeDetails(address: String): Promise<any> {
+		//@ts-ignore
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        await provider.send('eth_requestAccounts', [])
+
+        const signer = provider.getSigner()
+        const ethAdapter = new EthersAdapter({
+            ethers,
+            signer,
+        })
+        const safeService = new SafeServiceClient({ txServiceUrl: this.txnServiceURL, ethAdapter })
+		const balanceInUsd = await safeService.getUsdBalances(this.id)
+		return balanceInUsd
 	}
 
 }

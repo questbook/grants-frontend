@@ -1,11 +1,12 @@
 
 import { Flex, Image, Text, VStack } from '@chakra-ui/react'
+import { useEffect } from 'react'
 import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
 import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/PhantomLogo'
 import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
 import ConnectWalletButton from 'src/v2/components/ConnectWalletModal/ConnectWalletButton'
 import { PhantomProvider } from 'src/v2/types/phantom'
-import { useAccount, useConnect } from 'wagmi'
+import { useAccount, useConnect, useDisconnect } from 'wagmi'
 const availableWallets = [{
 	name: 'Metamask',
 	icon: <MetamaskFox
@@ -42,6 +43,13 @@ interface Props {
 const SafeOwner = ({ isEvmChain, phantomWallet, signerVerified, gnosisSafeAddress }: Props) => {
 	const { connectAsync, connectors } = useConnect()
 	const { isConnected } = useAccount()
+	const {disconnect} = useDisconnect()
+
+	useEffect(() => {
+		if(isConnected) {
+			disconnect()
+		}
+	}, [isConnected])
 
 	if(!signerVerified) {
 		return (

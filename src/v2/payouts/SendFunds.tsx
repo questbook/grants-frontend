@@ -157,7 +157,7 @@ export default function SendFunds({
 	function encodeTransactionData(recipientAddress: string, fundAmount: string) {
 		const txData = ERC20Interface.encodeFunctionData('transfer', [
 			recipientAddress,
-			parseAmount(fundAmount, '', rewardAssetDecimals)
+			ethers.utils.parseUnits(fundAmount, rewardAssetDecimals)
 		])
 
 		return txData
@@ -191,6 +191,7 @@ export default function SendFunds({
 		if(isEvmChain) {
 			const readyToExecuteTxs = createEVMMetaTransactions()
 			const safeTxHash = await currentSafe?.createMultiTransaction(readyToExecuteTxs, workspaceSafe)
+			console.log('safe txn hash', safeTxHash)
 			if(safeTxHash) {
 				proposaladdress = safeTxHash
 				setProposalAddr(safeTxHash)
