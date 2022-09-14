@@ -214,12 +214,25 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		_logger.info('initializing biconomy')
 
 		let _biconomyWalletClient: BiconomyWalletClient
+		let readyCalled = false
 		const scwAddress = await new Promise<string>((resolve, reject) => {
 			_biconomy.onEvent(_biconomy.READY, async() => {
-				_logger.info('biconomy ready')
+				if(readyCalled) {
+					_logger.warn('ready called multiple times')
+					return
+				}
+
+				_logger.info({ clientExists: !!_biconomy.biconomyWalletClient }, 'biconomy ready')
+				readyCalled = true
 
 				try {
-					_biconomyWalletClient = await _biconomy.biconomyWalletClient
+					do {
+						_biconomyWalletClient = _biconomy.biconomyWalletClient
+						if(!_biconomyWalletClient) {
+							_logger.warn('biconomyWalletClient does not exist')
+							await delay(500)
+						}
+					} while(!_biconomyWalletClient)
 
 					const result = await _biconomyWalletClient
 						.checkIfWalletExists({ eoa: webwallet.address })
@@ -318,7 +331,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}
 
 	const getNetwork = () => {
-		return defaultChainId;
+		return defaultChainId
 
 		// const _network = localStorage.getItem('network')
 
