@@ -200,6 +200,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			throw new Error('Attempted init without nonce')
 		}
 
+		const _logger = logger.child({ chainId })
+
 		chainId = networksMapping[chainId]
 
 		const _biconomy = new Biconomy(
@@ -209,12 +211,12 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				debug: true
 			}
 		)
-		logger.info({ chainId }, 'initializing biconomy')
+		_logger.info('initializing biconomy')
 
 		let _biconomyWalletClient: BiconomyWalletClient
 		const scwAddress = await new Promise<string>((resolve, reject) => {
 			_biconomy.onEvent(_biconomy.READY, async() => {
-				logger.info('biconomy ready')
+				_logger.info('biconomy ready')
 
 				try {
 					_biconomyWalletClient = await _biconomy.biconomyWalletClient
@@ -225,18 +227,18 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 					let walletAddress = result.walletAddress
 					if(!result.doesWalletExist) {
 						walletAddress = await deploySCW(webwallet, _biconomyWalletClient, chainId, nonce!)
-						logger.info({ walletAddress, chainId }, 'scw deployed')
+						_logger.info({ walletAddress }, 'scw deployed')
 					}
 
 					resolve(walletAddress)
 				} catch(err) {
-					logger.error({ err }, 'error in scw deployment')
+					_logger.error({ err }, 'error in scw deployment')
 					reject(err)
 				}
 			})
 
 			_biconomy.onEvent(_biconomy.ERROR, (err: Error) => {
-				logger.error({ err }, 'biconomy error')
+				_logger.error({ err }, 'biconomy error')
 				reject(err)
 			})
 		})
@@ -246,7 +248,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			setBiconomyWalletClient(_biconomyWalletClient!)
 			setBiconomyDaoObj(_biconomy)
 
-			logger.info({ chainId }, 'switched chain after init')
+			_logger.info('switched chain after init')
 			const chain = parseInt(chainId)
 			switchNetwork(chain)
 		}
