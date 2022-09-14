@@ -17,7 +17,7 @@ import {
 } from 'src/generated/graphql'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { GrantApplicationProps } from 'src/types/application'
-import { formatAmount } from 'src/utils/formattingUtils'
+import { formatAmount, getFieldString } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
@@ -82,11 +82,6 @@ function ViewApplication() {
 			return
 		}
 
-		const getStringField = (fieldName: string) => (
-			application?.fields
-				?.find(({ id }) => id.split('.')[1] === fieldName)
-				?.values[0]?.value || ''
-		)
 		let decimals: number
 		if(application.grant.reward.token) {
 			// console.log('Application milestone ', application.milestones[0])
@@ -103,21 +98,21 @@ function ViewApplication() {
 
 		const fields = application?.fields
 		const fd: GrantApplicationProps = {
-			applicantName: getStringField('applicantName'),
-			applicantEmail: getStringField('applicantEmail'),
-			applicantAddress: getStringField('applicantAddress'),
-			teamMembers: +(getStringField('teamMembers') || '1'),
+			applicantName: getFieldString(application, 'applicantName'),
+			applicantEmail: getFieldString(application, 'applicantEmail'),
+			applicantAddress: getFieldString(application, 'applicantAddress'),
+			teamMembers: +(getFieldString(application, 'teamMembers') || '1'),
 			membersDescription:
         fields
         	.find((f: any) => f.id.split('.')[1] === 'memberDetails')
         	?.values.map((val) => ({ description: val.value })) || [],
-			projectName: getStringField('projectName'),
+			projectName: getFieldString(application, 'projectName'),
 			projectLinks:
         fields
         	.find((f: any) => f.id.split('.')[1] === 'projectLink')
         	?.values.map((val) => ({ link: val.value })) || [],
-			projectDetails: getStringField('projectDetails'),
-			projectGoal: getStringField('projectGoals'),
+			projectDetails: getFieldString(application, 'projectDetails'),
+			projectGoal: getFieldString(application, 'projectGoals'),
 			projectMilestones:
         application.milestones.map((ms: any) => {
         	// console.log('milestone', ms.amount)
@@ -136,12 +131,12 @@ function ViewApplication() {
         }) || [],
 			// fundingAsk: ethers.utils.formatEther(getStringField('fundingAsk') || '0'),
 			fundingAsk:
-        application && getStringField('fundingAsk') !== '' ? formatAmount(
-        	getStringField('fundingAsk'),
+        application && getFieldString(application, 'fundingAsk') ? formatAmount(
+        	getFieldString(application, 'fundingAsk'),
         	decimals || 18,
         	true,
         ) : '1',
-			fundingBreakdown: getStringField('fundingBreakdown'),
+			fundingBreakdown: getFieldString(application, 'fundingBreakdown'),
 		}
 
 		// console.log('fd', fd.projectMilestones[0].milestoneReward)

@@ -297,7 +297,7 @@ function ViewApplicants() {
 	// const { data: grantData } = useGetGrantDetailsQuery(queryParams);
 	useEffect(() => {
 		// console.log('grantData', grantData)
-		const initialRubrics = grantData?.grants[0].rubric
+		const initialRubrics = grantData?.grants[0]?.rubric
 		const newRubrics = [] as any[]
 		// console.log('initialRubrics', initialRubrics)
 		initialRubrics?.items.forEach((initalRubric) => {
@@ -385,7 +385,7 @@ function ViewApplicants() {
 							<Button
 								variant='primary'
 								onClick={() => setRubricDrawerOpen(true)}>
-								{(grantData?.grants[0].rubric?.items.length || 0) > 0 || false ? 'Edit Evaluation Rubric' : 'Setup Evaluation Rubric'}
+								{(grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ? 'Edit Evaluation Rubric' : 'Setup Evaluation Rubric'}
 							</Button>
 						</Box>
 					)
@@ -402,7 +402,7 @@ function ViewApplicants() {
 					chainId={getSupportedChainIdFromWorkspace(workspace) || defaultChainId}
 					grantAddress={grantID}
 					workspaceId={workspace?.id || ''}
-					initialIsPrivate={grantData?.grants[0].rubric?.isPrivate || false}
+					initialIsPrivate={grantData?.grants[0]?.rubric?.isPrivate || false}
 				/>
 
 				{

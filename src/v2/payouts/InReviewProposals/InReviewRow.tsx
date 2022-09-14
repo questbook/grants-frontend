@@ -564,7 +564,7 @@ const InReviewRow = ({
 
 const totalScore = (feedback: IReviewFeedback) => {
 	let s = 0
-	feedback.items?.forEach((item) => {
+	feedback?.items?.forEach((item) => {
 		s += item.rating ?? 0
 	})
 

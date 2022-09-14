@@ -3,7 +3,7 @@ import { BiconomyContext, WebwalletContext } from 'pages/_app'
 
 export const useBiconomy = (data: { chainId?: string, shouldRefreshNonce?: boolean }) => {
 	const { webwallet, scwAddress, nonce } = useContext(WebwalletContext)!
-	const { biconomyDaoObj, biconomyWalletClient, initiateBiconomy, isInitiatingBiconomy } = useContext(BiconomyContext)!
+	const { biconomyDaoObj, biconomyWalletClient, loadingBiconomyMap, initiateBiconomy } = useContext(BiconomyContext)!
 
 	useEffect(() => {
 		if(typeof window === 'undefined') {
@@ -23,6 +23,6 @@ export const useBiconomy = (data: { chainId?: string, shouldRefreshNonce?: boole
 		biconomyDaoObj: biconomyDaoObj,
 		biconomyWalletClient: biconomyWalletClient,
 		scwAddress: scwAddress,
-		loading: isInitiatingBiconomy(data.chainId!),
+		loading: !!loadingBiconomyMap[data.chainId!],
 	}
 }

@@ -42,6 +42,8 @@ const InReviewPanel = ({
 	const allChecked = checkedItems.length > 0 && checkedItems.every((element) => element === true)
 	const router = useRouter()
 
+	const isPrivate = !!grantData?.grants?.[0]?.rubric?.isPrivate
+
 	useEffect(() => {
 		setCheckedItems(applicantsData.filter((item) => (0 === item.status)).map(() => false))
 	}, [applicantsData])
@@ -154,9 +156,13 @@ const InReviewPanel = ({
 						In Review
 					</Text>
 
-					<Badge fontSize='x-small'>
-						Private
-					</Badge>
+					{
+						isPrivate && (
+							<Badge fontSize='x-small'>
+								Private
+							</Badge>
+						)
+					}
 				</HStack>
 
 				<Box mx='auto' />

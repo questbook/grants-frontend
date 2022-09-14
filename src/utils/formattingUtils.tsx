@@ -217,7 +217,7 @@ export const getRewardAmount = (decimals: number, application: {
 		let sum = BigNumber.from(0)
 		application?.milestones?.forEach(
 			(milestone) => sum = sum.add(milestone.amount))
-		return formatAmount(sum.toString())
+		return formatAmount(sum.toString(), decimals)
 	}
 }
 
