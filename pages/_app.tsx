@@ -28,6 +28,7 @@ import { delay } from 'src/utils/generics'
 import logger from 'src/utils/logger'
 import getSeo from 'src/utils/seo'
 import MigrateToGasless from 'src/v2/components/MigrateToGasless'
+import { makeMutex } from 'src/v2/utils/make-mutex'
 import {
 	allChains,
 	Chain,
@@ -139,6 +140,8 @@ export const BiconomyContext = createContext<{
 	setBiconomyWalletClient: (biconomyWalletClient?: BiconomyWalletClient) => void
 		} | null>(null)
 
+const biconomyInitMutex = makeMutex()
+
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [network, switchNetwork] = React.useState<SupportedChainId>(defaultChainId)
 	const [webwallet, setWebwallet] = React.useState<Wallet>()
@@ -224,6 +227,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 						logger.info({ walletAddress, chainId }, 'scw deployed')
 					}
 
+					logger.info({ chainId, walletAddress }, 'got wallet address')
+
 					resolve(walletAddress)
 				} catch(err) {
 					logger.error({ err }, 'error in scw deployment')
@@ -253,9 +258,12 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			if(!task) {
 				setBiconomyLoading(prev => ({ ...prev, [chainId]: true }))
 
-				task = initiateBiconomyUnsafe(chainId)
-					.catch(() => {
+				task = biconomyInitMutex.mutex(
+					() => initiateBiconomyUnsafe(chainId)
+				)
+					.catch((err) => {
 						biconomyInitPromisesRef.current[chainId] = undefined
+						throw err
 					})
 					.finally(() => {
 						setBiconomyLoading(prev => ({ ...prev, [chainId]: false }))
