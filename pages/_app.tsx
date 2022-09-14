@@ -209,7 +209,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				debug: true
 			}
 		)
-		logger.info('initializing biconomy')
+		logger.info({ chainId }, 'initializing biconomy')
 
 		let _biconomyWalletClient: BiconomyWalletClient
 		const scwAddress = await new Promise<string>((resolve, reject) => {
@@ -241,11 +241,11 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			})
 		})
 
-		setScwAddress(scwAddress)
-		setBiconomyWalletClient(_biconomyWalletClient!)
-		setBiconomyDaoObj(_biconomy)
-
 		if(mostRecentInitChainId.current === chainId) {
+			setScwAddress(scwAddress)
+			setBiconomyWalletClient(_biconomyWalletClient!)
+			setBiconomyDaoObj(_biconomy)
+
 			logger.info({ chainId }, 'switched chain after init')
 			const chain = parseInt(chainId)
 			switchNetwork(chain)
