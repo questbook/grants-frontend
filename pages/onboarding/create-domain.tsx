@@ -303,12 +303,14 @@ const OnboardingCreateDomain = () => {
 				() => {
 					setStep(3)
 				}
-			} />, <ConfirmData
+			} />,
+		<ConfirmData
 			key={2}
 			safeAddress={safeAddress}
 			safeChainIcon='/ui_icons/gnosis.svg'
 			domainName={domainName}
 			domainImageFile={daoImageFile}
+			isBiconomyLoading={biconomyLoading}
 			isBiconomyInitialised={isBiconomyInitialised}
 			onImageFileChange={(image) => setDaoImageFile(image)}
 			onCreateDomain={
