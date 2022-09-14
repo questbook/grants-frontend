@@ -149,9 +149,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [nonce, setNonce] = React.useState<string>()
 	const [loadingNonce, setLoadingNonce] = React.useState<boolean>(false)
 
-	const biconomyInitPromisesRef = useRef<{ [chainId: string]: Promise<void> | undefined }>({})
 	const [biconomyLoading, setBiconomyLoading] = useState<{ [chainId: string]: boolean }>({})
 
+	// store the chainId that was most recently asked to be init
+	const mostRecentInitChainId = useRef<string>()
+	// ref to store all the chains that are loading biconomy
+	// this is used to prevent multiple calls to biconomy init
+	const biconomyInitPromisesRef = useRef<{ [chainId: string]: Promise<void> | undefined }>({})
 	// reference to scw address
 	// used to poll for scwAddress in "waitForScwAddress"
 	const scwAddressRef = useRef(scwAddress)
@@ -241,16 +245,18 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		setBiconomyWalletClient(_biconomyWalletClient!)
 		setBiconomyDaoObj(_biconomy)
 
-		const chain = parseInt(chainId)
-		logger.info('SWITCH NETWORK (use-biconomy.tsx 1): ', chain)
-
-		switchNetwork(chain)
+		if(mostRecentInitChainId.current === chainId) {
+			logger.info({ chainId }, 'switched chain after init')
+			const chain = parseInt(chainId)
+			switchNetwork(chain)
+		}
 	}, [webwallet, nonce])
 
 	const initiateBiconomy = useCallback(
 		async(chainId: string) => {
 			let task = biconomyInitPromisesRef.current[chainId]
 			if(!task) {
+				mostRecentInitChainId.current = chainId
 				setBiconomyLoading(prev => ({ ...prev, [chainId]: true }))
 
 				task = initiateBiconomyUnsafe(chainId)
