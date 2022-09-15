@@ -49,7 +49,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 
 	useEffect(() => {
 		if(walletAddress && walletChain?.id) {
-			setHasDAO(results.length > 0)
+			setHasDAO(results.length > 0 && walletChain?.id in SupportedChainId)
 		}
 	}, [results])
 
@@ -82,9 +82,9 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 				return
 			}
 
-			if(!(walletChain?.id in SupportedChainId)) {
-				throw new Error('Connected chain not supported!')
-			}
+			// if(!(walletChain?.id in SupportedChainId)) {
+			// 	throw new Error('Switch your wallet\'s chain!')
+			// }
 
 			setNetworkModalStep(0)
 
@@ -118,7 +118,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 			logger.error({ err }, 'Error migrating wallet')
 			toast({
 				title: `Migration error "${(err as Error)?.message}"`,
-				status: 'error',
+				status: 'warning',
 				duration: 9000,
 				isClosable: true,
 			})
