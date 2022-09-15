@@ -14,7 +14,7 @@ import { ApiClientsContext } from 'pages/_app'
 import Modal from 'src/components/ui/modal'
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
-import { CHAIN_INFO, defaultChainId, SOL_ETH_DECIMALS, SupportedChainId, USD_DECIMALS } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId, SupportedChainId, USD_DECIMALS } from 'src/constants/chains'
 import {
 	useGetApplicantsForAGrantQuery,
 	useGetGrantDetailsQuery,
@@ -53,9 +53,6 @@ import SendFunds from 'src/v2/payouts/SendFunds'
 import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEvaluationDrawer'
 import StatsBanner from 'src/v2/payouts/StatsBanner'
 import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
-import getGnosisTansactionLink from 'src/v2/utils/gnosisUtils'
-import getProposalUrl from 'src/v2/utils/phantomUtils'
-import { loadAssetId, tokenToUSD } from 'src/v2/utils/tokenToUSDconverter'
 
 
 const PAGE_SIZE = 500
@@ -200,6 +197,8 @@ function ViewApplicants() {
 		if(!realmsFundTransferData) {
 			return
 		}
+
+		logger.info({ realmsFundTransferData }, 'Realms Fund Transfer Data')
 
 		realmsFundTransferData?.grants[0]?.fundTransfers?.forEach((fundTransfer,) => {
 			// console.log('TX HASH - ', i, fundTransfer.transactionHash)
@@ -469,11 +468,9 @@ function ViewApplicants() {
 			const status = await currentSafe?.getTransactionHashStatus(transaction?.transactionHash)
 			logger.info({ status }, 'status')
 			if(transaction && status) {
-				statuses[applicationId] = [{
-					transactionHash: '',
-					status: -1,
-					amount: 0
-				}]
+				if(!statuses[applicationId]) {
+					statuses[applicationId] = []
+				}
 
 				const txHash = transaction?.transactionHash
 				logger.info({ txHash, status }, 'Hashes')
@@ -482,7 +479,7 @@ function ViewApplicants() {
 					const solObj = {
 						transactionHash: transaction.transactionHash,
 						...(status[transaction.transactionHash] || {}),
-						amount: status[transaction.transactionHash]?.closedAtDate !== '' ? await solanaToUsdOnDate(transaction.amount / 10 ** SOL_ETH_DECIMALS, status[transaction.transactionHash]?.closedAtDate) : 0
+						amount: status[transaction.transactionHash]?.closedAtDate !== '' ? transaction.amount : 0
 					}
 					logger.info({ obj: solObj }, 'Pushed object (Realms)')
 					statuses[applicationId].push(solObj)
@@ -506,24 +503,24 @@ function ViewApplicants() {
 			await currentSafe?.initialiseAllProposals()
 		}
 
+		logger.info({ applicationToTxnHashMap }, 'applicationToTxnHashMap before Promise')
 		Promise.all((Object.keys(applicationToTxnHashMap || {}) || []).map(async(applicationId) => {
 			const transactions = applicationToTxnHashMap[applicationId]
 
 			return Promise.all(transactions.map(async(transaction: any) => {
 				return new Promise(async(res, rej) => {
-
 					const status = await getEachStatus(transaction, applicationId)
 					res(status)
-
-
 				})
 			})).then((done) => done)
 		})).then(async() => {
 			let totalFundDisbursed = 0
+			logger.info({ statuses }, 'Statuses before loop')
 			for(const txns of Object.values(statuses)) {
 				txns.map(txn => {
 					if(txn.status === 1) {
 						logger.info('status --> 1')
+						logger.info({ txn }, 'txn')
 						totalFundDisbursed += (txn.amount)
 					}
 				})

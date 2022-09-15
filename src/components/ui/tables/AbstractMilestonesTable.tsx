@@ -76,7 +76,7 @@ function AbstractMilestonesTable(
 		const milestoneTrxns = transactionStatus?.filter((obj: any) => obj.milestoneId === milestone.id)
 		var total = 0
 		for(var i in milestoneTrxns) {
-			total += milestoneTrxns[i].amount
+			total += parseFloat(milestoneTrxns[i].amount || '0.0')
 		}
 
 		return Math.floor(total)

@@ -152,7 +152,7 @@ function GrantRewardsInput({
 									[
 										{
 											icon: '',
-											label: 'SOL',
+											label: 'USD',
 										},
 									]
 								}

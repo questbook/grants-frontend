@@ -252,7 +252,7 @@ export default function SendFunds({
 				initiateTransactionData.map((element: any) => (parseInt(element.selectedMilestone?.split('.')[1]))),
 				rewardAssetAddress,
 				'nonEvmAssetAddress-toBeChanged',
-				initiateTransactionData.map((element: any) => isEvmChain ? (parseAmount(element.amount.toString(), '', rewardAssetDecimals)) : Math.floor(element.amount.toFixed(9) * 1000000000)),
+				initiateTransactionData.map((element: any) => isEvmChain ? (parseAmount(element.amount.toString(), '', rewardAssetDecimals)) : Math.floor(element.amount)),
 				workspace.id,
 				proposaladdress
 			]
@@ -289,10 +289,6 @@ export default function SendFunds({
 	}, [workspace, biconomyWalletClient, workspacechainId, biconomy, workspaceRegistryContract, scwAddress, webwallet, nonce, initiateTransactionData, proposalAddr])
 
 	const onChangeRecepientDetails = async(applicationId: any, fieldName: string, fieldValue: any) => {
-		if(!isEvmChain && fieldName === 'amount') {
-			fieldValue = await usdToSolana(fieldValue)
-		}
-
 		const tempData = initiateTransactionData.map((transactionData: any) => {
 			if(transactionData.applicationId === applicationId) {
 				return { ...transactionData, [fieldName]: fieldValue }

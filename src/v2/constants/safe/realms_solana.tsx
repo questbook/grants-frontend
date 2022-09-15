@@ -20,6 +20,7 @@ import assert from 'assert';
 import axios from 'axios';
 import { USD_THRESHOLD } from 'src/constants';
 import { NetworkType } from 'src/constants/Networks';
+import logger from 'src/utils/logger';
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect';
 import { MetaTransaction, Safe, TransactionType } from 'src/v2/types/safe';
 
@@ -91,12 +92,18 @@ export class RealmsSolana implements Safe {
     	const nativeTreasury = await getNativeTreasuryAddress(this.programId, governance.pubkey)
 
     	for(let i = 0; i < transactions.length; i++) {
-    		const ins = SystemProgram.transfer({
+			logger.info({ txAmount: transactions[i].amount}, 'txAmount')
+			const solanaAmount = await usdToSolana(transactions[i].amount)
+			logger.info({solAmount: solanaAmount}, 'Solana amount')
+			const obj = {
     			fromPubkey: nativeTreasury,
     			toPubkey: new PublicKey(transactions[i].to),
-    			lamports: Math.floor(transactions[i].amount * 10**9),
+    			lamports: Math.floor(solanaAmount * 10**9),
     			programId: this.programId,
-    		})
+    		}
+    		const ins = SystemProgram.transfer(obj)
+
+			logger.info({obj}, 'INS object')
 
     		const instructionData = createInstructionData(ins)
 
@@ -213,6 +220,7 @@ const getDateInDDMMYYYY = (date: Date) =>{
 	return `${date.getDate()+1<10?"0":""}${date.getDate()}`+"-"+ `${date.getMonth()+1<10?"0":""}${date.getMonth()+1}`+"-"+ date.getFullYear()
 }
 const solanaToUsdOnDate = async(solAmount: number, date:any) => {
+	if (!date) return 0
 	let url = `https://api.coingecko.com/api/v3/coins/solana/history?date=${date}&localization=false`
 	let solToUsd = parseFloat((await axios.get(url)).data?.market_data?.current_price?.usd)
 	if(!solToUsd){

@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
-import { SOL_ETH_ASSET, SOL_ETH_DECIMALS } from 'src/constants/chains'
+import { USD_ASSET, USD_DECIMALS } from 'src/constants/chains'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
@@ -126,8 +126,8 @@ export default function useEditGrant(
 					}
 				} else {
 					reward = {
-						committed: parseAmount(data.reward, undefined, SOL_ETH_DECIMALS),
-						asset: SOL_ETH_ASSET
+						committed: parseAmount(data.reward, undefined, USD_DECIMALS),
+						asset: USD_ASSET
 					}
 				}
 
