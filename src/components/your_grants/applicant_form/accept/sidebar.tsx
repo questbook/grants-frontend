@@ -76,7 +76,7 @@ function Sidebar(
 					<Heading
 						variant='applicationHeading'
 						lineHeight='32px'>
-						{getFieldString(applicationData, 'applicantName')}
+						{applicationData?.fields?.find((fld: any) => fld?.id?.split('.')[1] === 'applicantName')?.values[0]?.value}
 					</Heading>
 				</Flex>
 				<Flex
@@ -93,9 +93,13 @@ function Sidebar(
 						variant='applicationHeading'
 						lineHeight='32px'>
 						{
-							getFieldString(applicationData, 'applicantEmail') ? (
+							(applicationData?.fields?.find((fld: any) => fld?.id?.split('.')[1] === 'applicantEmail')) ? (
 								<>
-									{getFieldString(applicationData, 'applicantEmail')}
+									{
+										applicationData?.fields?.find(
+											(fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
+										)?.values[0]?.value
+									}
 									<MailTo applicantEmail={applicantEmail} />
 								</>
 							) : (
