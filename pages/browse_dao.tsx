@@ -1,15 +1,15 @@
 import { ReactElement, useEffect, useState } from 'react'
 import { Box, Button, Container, Divider, Flex, HStack, Image, Menu, MenuButton, MenuItem, MenuList, Text, useToast } from '@chakra-ui/react'
-import { logger } from 'ethers'
 import AllDaosGrid from 'src/components/browse_daos/all_daos'
 import { GetDaOsForExploreQuery, useGetDaOsForExploreQuery, Workspace_Filter as WorkspaceFilter, Workspace_OrderBy as WorkspaceOrderBy } from 'src/generated/graphql'
 import { useMultiChainPaginatedQuery } from 'src/hooks/useMultiChainPaginatedQuery'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { extractInviteInfo, InviteInfo } from 'src/utils/invite'
+import logger from 'src/utils/logger'
 import { mergeSortedArrays } from 'src/utils/mergeSortedArrays'
 import AcceptInviteModal from 'src/v2/components/AcceptInviteModal'
 
-const PAGE_SIZE = 20
+const PAGE_SIZE = 2
 
 /**
  * Ah the browse DAOs page.
@@ -24,18 +24,30 @@ function BrowseDao() {
 	const [sort, setSort] = useState<SortingOption>(WorkspaceOrderBy.TotalGrantFundingDisbursedUsd)
 	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
 
-	const {
-		combinedResults: newDaos,
-		fetchMore: fetchMoreNewDaos
-	} = useMultiChainDaosForExplore(WorkspaceOrderBy.CreatedAtS, { })
+	const [newDaos, setNewDaos] = useState<GetDaOsForExploreQuery['workspaces']>([])
+	const [popularDaos, setPopularDaos] = useState<GetDaOsForExploreQuery['workspaces']>([])
 
 	const {
-		combinedResults: popularDaos,
+		combinedResults: newDaosResult,
+		hasMore: hasMoreNewDaos,
+		fetchMore: fetchMoreNewDaos,
+	} = useMultiChainDaosForExplore(WorkspaceOrderBy.CreatedAtS, { }, newDaos)
+
+	const {
+		combinedResults: popularDaosResult,
 		fetchMore: fetchMorePopularDaos
 	} = useMultiChainDaosForExplore(
 		sort,
-		SORTING_OPTIONS.find(s => s.id === sort)!.filter
+		SORTING_OPTIONS.find(s => s.id === sort)!.filter,
 	)
+
+	useEffect(() => {
+		setNewDaos(newDaosResult)
+	}, [newDaosResult])
+
+	useEffect(() => {
+		setPopularDaos(popularDaosResult)
+	}, [popularDaosResult])
 
 	useEffect(() => {
 		try {
@@ -58,8 +70,9 @@ function BrowseDao() {
 	}, [sort])
 
 	useEffect(() => {
-		fetchMoreNewDaos()
-		fetchMorePopularDaos()
+		logger.info('Fetching  daos')
+		fetchMoreNewDaos(true)
+		fetchMorePopularDaos(true)
 	}, [])
 
 	return (
@@ -127,7 +140,9 @@ function BrowseDao() {
 
 				<AllDaosGrid
 					renderGetStarted={false}
-					workspaces={newDaos} />
+					workspaces={newDaos}
+					hasMore={hasMoreNewDaos}
+					fetchMore={() => fetchMoreNewDaos()} />
 			</Container>
 			<AcceptInviteModal
 				inviteInfo={inviteInfo}
@@ -169,13 +184,14 @@ type SortingOption = typeof SORTING_OPTIONS[number]['id']
 function useMultiChainDaosForExplore(
 	orderBy: WorkspaceOrderBy,
 	filter: WorkspaceFilter,
+	currentData?: GetDaOsForExploreQuery['workspaces']
 ) {
 	return useMultiChainPaginatedQuery({
 		useQuery: useGetDaOsForExploreQuery,
 		pageSize: PAGE_SIZE,
 		variables: { orderBy, filter },
 		mergeResults(results) {
-			let final: GetDaOsForExploreQuery['workspaces'] = []
+			let final: GetDaOsForExploreQuery['workspaces'] = currentData ?? []
 			for(const { workspaces } of results) {
 				// logger.info({ workspaces }, 'Browse DAO Workspaces')
 				final = mergeSortedArrays(final, workspaces, (a, b) => {
@@ -186,6 +202,7 @@ function useMultiChainDaosForExplore(
 				})
 			}
 
+			final = Array.from(new Set(final))
 			return final.filter((workspace) => {
 				return workspace.id !== '0xe9' && workspace.supportedNetworks[0] !== 'chain_5'
 			})
