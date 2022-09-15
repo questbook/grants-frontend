@@ -7,12 +7,11 @@ import {
 import { Wallet } from 'ethers'
 import { BiconomyContext, WebwalletContext } from 'pages/_app'
 import NavbarLayout from 'src/layout/navbarLayout'
-import { registerWebHook } from 'src/utils/gaslessUtils'
 
 function SignupWebwallet() {
 
-	const { setWebwallet, setScwAddress, setNonce, switchNetwork } = useContext(WebwalletContext)!
-	const { setBiconomyDaoObj } = useContext(BiconomyContext)!
+	const { setWebwallet, setScwAddress, setNonce } = useContext(WebwalletContext)!
+	const { setBiconomyDaoObjs } = useContext(BiconomyContext)!
 
 	useEffect(() => {
 		// localStorage.setItem('isBiconomyLoading', 'false');
@@ -24,7 +23,7 @@ function SignupWebwallet() {
 		setNonce(undefined)
 		setWebwallet(Wallet.createRandom())
 		setScwAddress(undefined)
-		setBiconomyDaoObj(undefined)
+		setBiconomyDaoObjs(undefined)
 	}
 
 	return (
