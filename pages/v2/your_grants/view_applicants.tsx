@@ -468,11 +468,9 @@ function ViewApplicants() {
 			const status = await currentSafe?.getTransactionHashStatus(transaction?.transactionHash)
 			logger.info({ status }, 'status')
 			if(transaction && status) {
-				statuses[applicationId] = [{
-					transactionHash: '',
-					status: -1,
-					amount: 0
-				}]
+				if(!statuses[applicationId]) {
+					statuses[applicationId] = []
+				}
 
 				const txHash = transaction?.transactionHash
 				logger.info({ txHash, status }, 'Hashes')

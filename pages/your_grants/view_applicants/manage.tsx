@@ -161,36 +161,26 @@ function ManageGrant() {
 
 		Promise.all(
 		 fundsDisbursed!.fundsTransfers.map(async(transfer: any) => {
-		 	return new Promise(async(res, rej) => {
-		 		const status: any = await currentSafe.getTransactionHashStatus(transfer.transactionHash)
-		 		if(status && status[transfer.transactionHash]?.closedAtDate !== '') {
-		 			const usdAmount = await solanaToUsdOnDate(transfer.amount, status[transfer.transactionHash]?.closedAtDate)
-		 			milestoneTrxnStatus.push({
-		 				amount: (usdAmount || 0) / 10 ** 9,
-		 				txnHash: transfer?.transactionHash,
-		 				milestoneId: transfer?.milestone?.id,
-		 				safeAddress: workspaceSafe,
-		 				...status[transfer.transactionHash]
-		 			})
-		 			res(usdAmount)
-		 		}
+		 	const status: any = await currentSafe.getTransactionHashStatus(transfer.transactionHash)
+		 	if(status && status[transfer.transactionHash]?.closedAtDate !== '') {
+		 		const usdAmount = transfer.amount
 
-		 		setTransactionStatus(milestoneTrxnStatus)
-		 		var total = 0
-		 		for(var i in milestoneTrxnStatus) {
-		 			total += milestoneTrxnStatus[i].amount
-		 		}
+		 		milestoneTrxnStatus.push({
+		 			amount: (usdAmount || 0),
+		 			txnHash: transfer?.transactionHash,
+		 			milestoneId: transfer?.milestone?.id,
+		 			safeAddress: workspaceSafe,
+		 			...status[transfer.transactionHash]
+		 		})
 
-		 		setRewardDisbursed(Math.floor(total))
-
-		 	})
+		 	}
 		 })
 		).then((res) => {
 
 			setTransactionStatus(milestoneTrxnStatus)
 			var total = 0
 			for(var i in milestoneTrxnStatus) {
-				total += milestoneTrxnStatus[i].amount
+				total += parseFloat(milestoneTrxnStatus[i].amount || '0.0')
 			}
 
 			setRewardDisbursed(Math.floor(total))
