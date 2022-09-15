@@ -9,8 +9,6 @@ export const defaultChainId = process.env.NEXT_PUBLIC_IS_TEST === 'true'
 	? SupportedChainId.GOERLI_TESTNET
 	: SupportedChainId.OPTIMISM_MAINNET
 export const CHAIN_INFO = chainInfo as ChainInfoMap
-export const SOL_ADDRESS_ETH = '0x0000000000000000000000000000000000000002'
-export const SOL_DECIMALS_ETH = 9
 
 // when SHOW_TEST_NETS = true, we show every chain
 // otherwise only use mainnets
