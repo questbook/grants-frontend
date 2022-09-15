@@ -1,11 +1,11 @@
 import React, {
-	ReactElement, useCallback, useContext, useEffect, useMemo, useState,
+	ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState,
 } from 'react'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import {
 	Box,
 	Button,
-	Container, Flex, forwardRef, IconButton, IconButtonProps, Menu, MenuButton, MenuItem, MenuList, TabList, TabPanel, TabPanels, Tabs, Text
+	Container, Flex, forwardRef, IconButton, IconButtonProps, Menu, MenuButton, MenuItem, MenuList, TabList, TabPanel, TabPanels, Tabs, Text, ToastId, useToast
 } from '@chakra-ui/react'
 import { BigNumber, ethers, logger } from 'ethers'
 import moment from 'moment'
@@ -14,7 +14,7 @@ import { ApiClientsContext } from 'pages/_app'
 import Modal from 'src/components/ui/modal'
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
-import { CHAIN_INFO, defaultChainId, USD_DECIMALS } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId, SupportedChainId, USD_DECIMALS } from 'src/constants/chains'
 import {
 	useGetApplicantsForAGrantQuery,
 	useGetGrantDetailsQuery,
@@ -41,6 +41,7 @@ import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import StyledTab from 'src/v2/components/StyledTab'
 import NoReviewerBanner from 'src/v2/components/ViewApplicants/NoReviewerBanner'
 import RubricNotSetBanner from 'src/v2/components/ViewApplicants/RubricNotSetBanner'
+import rpcUrls from 'src/v2/constants/publicRpcUrlInfo'
 import { GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
 import { RealmsSolana, solanaToUsdOnDate } from 'src/v2/constants/safe/realms_solana'
 import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
@@ -55,7 +56,6 @@ import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvalua
 import getGnosisTansactionLink from 'src/v2/utils/gnosisUtils'
 import getProposalUrl from 'src/v2/utils/phantomUtils'
 import { loadAssetId, tokenToUSD } from 'src/v2/utils/tokenToUSDconverter'
-import { erc20ABI, useAccount } from 'wagmi'
 
 
 const PAGE_SIZE = 500
@@ -102,7 +102,7 @@ function ViewApplicants() {
 	const [sendFundsTo, setSendFundsTo] = useState<any[]>()
 
 
-	const { data: accountData, nonce } = useQuestbookAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const router = useRouter()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
 
@@ -136,6 +136,49 @@ function ViewApplicants() {
 	// 		}
 	// 	}
 	// }, [apiAssetId, safeAddressData])
+
+	const checkIfUserIsOnCorrectNetwork = async(_safeNetwork: string) => {
+		// @ts-ignore
+		const provider = new ethers.providers.Web3Provider(window.ethereum)
+		const { chainId: currentNetworkId } = await provider.getNetwork()
+		const safeNetwork = parseInt(_safeNetwork)
+		logger.info({ safeNetwork }, 'Safe Network')
+		if(currentNetworkId !== safeNetwork) {
+			const ethereum = window.ethereum!
+			const chainId = ethers.utils.hexValue(ethers.BigNumber.from(safeNetwork))
+			try {
+				await ethereum.request({
+					method: 'wallet_switchEthereumChain',
+					params: [{ chainId: chainId }],
+				})
+			} catch(switchError: any) {
+				// This error code indicates that the chain has not been added to MetaMask.
+				if(switchError.code === 4902) {
+				  try {
+						await ethereum.request({
+					  method: 'wallet_addEthereumChain',
+					  params: [
+								{
+						  chainId: chainId,
+						  chainName: CHAIN_INFO[safeNetwork as SupportedChainId].name,
+						  rpcUrls: [rpcUrls[safeNetwork]],
+						  nativeCurrency: CHAIN_INFO[safeNetwork as SupportedChainId].nativeCurrency
+								},
+					  ],
+						})
+				  } catch(addError) {
+					// handle "add" error
+						logger.info(`ERROR: Add network failed for chain Id ${chainId}`)
+				  }
+				}
+
+				// handle other "switch" errors
+				logger.info(`ERROR: failed to switch network to ${safeNetwork}`)
+			  }
+
+		}
+
+	}
 
 	useEffect(() => {
 		if(!grantID || !workspace) {
@@ -181,14 +224,29 @@ function ViewApplicants() {
 
 	}, [realmsFundTransferData])
 
+	const toast = useToast()
+	const toastRef = useRef<ToastId>()
 
 	useEffect(() => {
 		if(safeAddressData) {
 			// console.log('safe address data', safeAddressData)
 			const { workspaceSafes } = safeAddressData
+			if(workspaceSafes.length === 0) {
+				toastRef.current = toast({
+					title: 'No Safe Found',
+					description: 'Please add a Safe Address to your workspace',
+					status: 'warning',
+					position: 'top-right',
+					duration: 10000,
+				})
+				return
+			}
+
 			const safeAddress = workspaceSafes[0]?.address
+			const safeNetwork = workspaceSafes[0]?.chainId
 			setWorkspaceSafe(safeAddress)
 			setWorkspaceSafeChainId(parseInt(workspaceSafes[0]?.chainId))
+			checkIfUserIsOnCorrectNetwork(safeNetwork)
 		}
 	}, [safeAddressData])
 
@@ -258,8 +316,19 @@ function ViewApplicants() {
 	const { data: grantData } = useGetGrantDetailsQuery(queryParams)
 	useEffect(() => {
 		if((data?.grantApplications?.length || 0) > 0) {
+			const reward = data?.grantApplications[0]?.grant?.reward
+			logger.info({ reward }, 'Reward')
 			setRewardAssetAddress(data?.grantApplications[0]?.grant?.reward?.asset!)
-			setRewardAssetSymbol(data?.grantApplications[0]?.grant?.reward?.token?.label!)
+			if(reward?.token) {
+				setRewardAssetSymbol(data?.grantApplications[0]?.grant?.reward?.token?.label!)
+			} else {
+				const assetInfo = getAssetInfo(
+					data?.grantApplications[0]?.grant?.reward?.asset?.toLowerCase(),
+					getSupportedChainIdFromWorkspace(workspace),
+				)
+				setRewardAssetSymbol(assetInfo?.label)
+			}
+
 			if(data?.grantApplications[0].grant.reward.token) {
 				logger.info('decimals', data?.grantApplications[0].grant.reward.token.decimal)
 				setRewardAssetDecimals(data?.grantApplications[0].grant.reward.token.decimal)
@@ -473,7 +542,13 @@ function ViewApplicants() {
 	//getting transaction hash status end
 
 	const onSendFundsButtonClicked = async(state: boolean, selectedApplicants: any[]) => {
-		setSendFundsTo(selectedApplicants)
+		if(workspace?.safe) {
+			setSendFundsTo(selectedApplicants)
+		} else {
+			router.push({ pathname: '/safe', query: {
+				'show_toast': true,
+			} })
+		}
 	}
 
 

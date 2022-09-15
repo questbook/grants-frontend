@@ -6,7 +6,6 @@ const safeServicesInfo: {[key: number]: string} = {
 	100: 'https://safe-transaction.xdai.gnosis.io/',
 	137: 'https://safe-transaction.polygon.gnosis.io/',
 	42220: 'https://transaction-service.gnosis-safe-staging.celo-networks-dev.org',
-
 }
 
 export default safeServicesInfo
