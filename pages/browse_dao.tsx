@@ -9,7 +9,7 @@ import logger from 'src/utils/logger'
 import { mergeSortedArrays } from 'src/utils/mergeSortedArrays'
 import AcceptInviteModal from 'src/v2/components/AcceptInviteModal'
 
-const PAGE_SIZE = 2
+const PAGE_SIZE = 6
 
 /**
  * Ah the browse DAOs page.
