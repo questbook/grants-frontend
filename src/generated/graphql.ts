@@ -4154,6 +4154,13 @@ export enum _SubgraphErrorPolicy_ {
   Deny = 'deny'
 }
 
+export type GetProfileDetailsQueryVariables = Exact<{
+  actorId: Scalars['Bytes'];
+}>;
+
+
+export type GetProfileDetailsQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork> } }>, grantApplications: Array<{ __typename?: 'GrantApplication', id: string, grant: { __typename?: 'Grant', workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork> } } }> };
+
 export type GetAllGrantsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
@@ -4505,14 +4512,53 @@ export type GetWorkspaceMembersPublicKeysQueryVariables = Exact<{
 
 export type GetWorkspaceMembersPublicKeysQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', actorId: string, publicKey?: string | null }> };
 
-export type GetWorkspacesOwnedQueryVariables = Exact<{
-  actorId: Scalars['Bytes'];
-}>;
 
+export const GetProfileDetailsDocument = gql`
+    query GetProfileDetails($actorId: Bytes!) {
+  workspaceMembers(where: {actorId: $actorId, accessLevel: owner}, first: 1) {
+    id
+    workspace {
+      supportedNetworks
+    }
+  }
+  grantApplications(where: {applicantId: $actorId}, first: 1) {
+    id
+    grant {
+      workspace {
+        supportedNetworks
+      }
+    }
+  }
+}
+    `;
 
-export type GetWorkspacesOwnedQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork> } }> };
-
-
+/**
+ * __useGetProfileDetailsQuery__
+ *
+ * To run a query within a React component, call `useGetProfileDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProfileDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetProfileDetailsQuery({
+ *   variables: {
+ *      actorId: // value for 'actorId'
+ *   },
+ * });
+ */
+export function useGetProfileDetailsQuery(baseOptions: Apollo.QueryHookOptions<GetProfileDetailsQuery, GetProfileDetailsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetProfileDetailsQuery, GetProfileDetailsQueryVariables>(GetProfileDetailsDocument, options);
+      }
+export function useGetProfileDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProfileDetailsQuery, GetProfileDetailsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetProfileDetailsQuery, GetProfileDetailsQueryVariables>(GetProfileDetailsDocument, options);
+        }
+export type GetProfileDetailsQueryHookResult = ReturnType<typeof useGetProfileDetailsQuery>;
+export type GetProfileDetailsLazyQueryHookResult = ReturnType<typeof useGetProfileDetailsLazyQuery>;
+export type GetProfileDetailsQueryResult = Apollo.QueryResult<GetProfileDetailsQuery, GetProfileDetailsQueryVariables>;
 export const GetAllGrantsDocument = gql`
     query getAllGrants($first: Int, $skip: Int, $applicantId: Bytes!, $minDeadline: Int!) {
   grants(
@@ -7069,41 +7115,3 @@ export function useGetWorkspaceMembersPublicKeysLazyQuery(baseOptions?: Apollo.L
 export type GetWorkspaceMembersPublicKeysQueryHookResult = ReturnType<typeof useGetWorkspaceMembersPublicKeysQuery>;
 export type GetWorkspaceMembersPublicKeysLazyQueryHookResult = ReturnType<typeof useGetWorkspaceMembersPublicKeysLazyQuery>;
 export type GetWorkspaceMembersPublicKeysQueryResult = Apollo.QueryResult<GetWorkspaceMembersPublicKeysQuery, GetWorkspaceMembersPublicKeysQueryVariables>;
-export const GetWorkspacesOwnedDocument = gql`
-    query GetWorkspacesOwned($actorId: Bytes!) {
-  workspaceMembers(where: {actorId: $actorId, accessLevel: owner}, first: 1) {
-    id
-    workspace {
-      supportedNetworks
-    }
-  }
-}
-    `;
-
-/**
- * __useGetWorkspacesOwnedQuery__
- *
- * To run a query within a React component, call `useGetWorkspacesOwnedQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetWorkspacesOwnedQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetWorkspacesOwnedQuery({
- *   variables: {
- *      actorId: // value for 'actorId'
- *   },
- * });
- */
-export function useGetWorkspacesOwnedQuery(baseOptions: Apollo.QueryHookOptions<GetWorkspacesOwnedQuery, GetWorkspacesOwnedQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetWorkspacesOwnedQuery, GetWorkspacesOwnedQueryVariables>(GetWorkspacesOwnedDocument, options);
-      }
-export function useGetWorkspacesOwnedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetWorkspacesOwnedQuery, GetWorkspacesOwnedQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetWorkspacesOwnedQuery, GetWorkspacesOwnedQueryVariables>(GetWorkspacesOwnedDocument, options);
-        }
-export type GetWorkspacesOwnedQueryHookResult = ReturnType<typeof useGetWorkspacesOwnedQuery>;
-export type GetWorkspacesOwnedLazyQueryHookResult = ReturnType<typeof useGetWorkspacesOwnedLazyQuery>;
-export type GetWorkspacesOwnedQueryResult = Apollo.QueryResult<GetWorkspacesOwnedQuery, GetWorkspacesOwnedQueryVariables>;
