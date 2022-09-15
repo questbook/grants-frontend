@@ -189,6 +189,7 @@ function useMultiChainDaosForExplore(
 			return final.filter((workspace) => {
 				return workspace.id !== '0xe9' && workspace.supportedNetworks[0] !== 'chain_5'
 			})
+			// return final
 		}
 	})
 }

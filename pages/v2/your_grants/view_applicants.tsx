@@ -14,7 +14,7 @@ import { ApiClientsContext } from 'pages/_app'
 import Modal from 'src/components/ui/modal'
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
-import { CHAIN_INFO, defaultChainId, SupportedChainId, USD_DECIMALS } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId, SOL_ETH_DECIMALS, SupportedChainId, USD_DECIMALS } from 'src/constants/chains'
 import {
 	useGetApplicantsForAGrantQuery,
 	useGetGrantDetailsQuery,
@@ -482,7 +482,7 @@ function ViewApplicants() {
 					const solObj = {
 						transactionHash: transaction.transactionHash,
 						...(status[transaction.transactionHash] || {}),
-						amount: status[transaction.transactionHash]?.closedAtDate !== '' ? await solanaToUsdOnDate(transaction.amount / 10 ** USD_DECIMALS, status[transaction.transactionHash]?.closedAtDate) : 0
+						amount: status[transaction.transactionHash]?.closedAtDate !== '' ? await solanaToUsdOnDate(transaction.amount / 10 ** SOL_ETH_DECIMALS, status[transaction.transactionHash]?.closedAtDate) : 0
 					}
 					logger.info({ obj: solObj }, 'Pushed object (Realms)')
 					statuses[applicationId].push(solObj)
