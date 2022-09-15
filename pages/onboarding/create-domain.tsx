@@ -444,9 +444,9 @@ const OnboardingCreateDomain = () => {
 				steps={
 					[
 						'Confirming Transaction',
-						'Complete Transaction',
-						'Complete Indexing',
-						'Create domain on the network',
+						'Completing Transaction',
+						'Completing Indexing',
+						'Creating domain on the network',
 						'Your domain is now on-chain'
 					]
 				}

@@ -293,8 +293,8 @@ function AddToSafe() {
 				steps={
 					[
 						'Confirming Transaction',
-						'Complete Transaction',
-						'Complete Indexing',
+						'Completing Transaction',
+						'Completing Indexing',
 						'Adding safe to your domain on the network',
 					]
 				}
