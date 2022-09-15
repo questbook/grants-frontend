@@ -7,7 +7,7 @@ import {
 	APPLICATION_REGISTRY_ADDRESS,
 	WORKSPACE_REGISTRY_ADDRESS,
 } from 'src/constants/addresses'
-import { SOL_ETH_ASSET, SOL_ETH_DECIMALS, SupportedChainId } from 'src/constants/chains'
+import { SupportedChainId, USD_ASSET, USD_DECIMALS } from 'src/constants/chains'
 import strings from 'src/constants/strings.json'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
@@ -125,8 +125,8 @@ export default function useCreateGrant(
 					}
 				} else {
 					reward = {
-						committed: parseAmount(data.reward, undefined, SOL_ETH_DECIMALS),
-						asset: SOL_ETH_ASSET
+						committed: parseAmount(data.reward, undefined, USD_DECIMALS),
+						asset: USD_ASSET
 					}
 				}
 
