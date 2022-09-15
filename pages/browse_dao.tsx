@@ -1,5 +1,6 @@
 import { ReactElement, useEffect, useState } from 'react'
 import { Box, Button, Container, Divider, Flex, HStack, Image, Menu, MenuButton, MenuItem, MenuList, Text, useToast } from '@chakra-ui/react'
+import { logger } from 'ethers'
 import AllDaosGrid from 'src/components/browse_daos/all_daos'
 import { GetDaOsForExploreQuery, useGetDaOsForExploreQuery, Workspace_Filter as WorkspaceFilter, Workspace_OrderBy as WorkspaceOrderBy } from 'src/generated/graphql'
 import { useMultiChainPaginatedQuery } from 'src/hooks/useMultiChainPaginatedQuery'
@@ -176,6 +177,7 @@ function useMultiChainDaosForExplore(
 		mergeResults(results) {
 			let final: GetDaOsForExploreQuery['workspaces'] = []
 			for(const { workspaces } of results) {
+				logger.info({ workspaces }, 'Browse DAO Workspaces')
 				final = mergeSortedArrays(final, workspaces, (a, b) => {
 					// @ts-ignore
 					// basically, we use the order key to fetch the sorting property

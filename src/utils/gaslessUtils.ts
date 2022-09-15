@@ -52,21 +52,25 @@ export const bicoDapps: { [key: string]: { apiKey: string, webHookId: string } }
 }
 
 export const networksMapping: { [key: string]: string } = {
-	'137': '137',
+	'1': '10',
 	'10': '10',
-	'42220': '42220',
+	'56': '10',
+	'100': '10',
+	'246': '10',
+	'42161': '10',
+	'43114': '10',
+	'1313161554': '10',
 
-	// goerli
+	'137': '137',
+	
+	'42220': '42220',
+	
+	// testnets
 	'5': '5',
 	'4': '5',
-	'900001': '5', // This is for solana.
-	'1': '5',
-	'100': '5',
-	'42161': '5',
-	'43114': '5',
-	'1313161554': '5',
-	'56': '5',
-	'246': '5',
+	'900001': process.env.NEXT_PUBLIC_IS_TEST === 'true'
+				? SupportedChainId.GOERLI_TESTNET.toString()
+				: SupportedChainId.OPTIMISM_MAINNET.toString(), // This is for solana.
 }
 
 export const signNonce = async(webwallet: Wallet, nonce: string) => {

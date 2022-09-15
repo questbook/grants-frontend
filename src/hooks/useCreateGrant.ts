@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import { WebwalletContext } from 'pages/_app'
@@ -7,7 +7,7 @@ import {
 	APPLICATION_REGISTRY_ADDRESS,
 	WORKSPACE_REGISTRY_ADDRESS,
 } from 'src/constants/addresses'
-import { SOL_ADDRESS_ETH, SupportedChainId } from 'src/constants/chains'
+import { SupportedChainId, USD_ASSET, USD_DECIMALS } from 'src/constants/chains'
 import strings from 'src/constants/strings.json'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
@@ -29,7 +29,7 @@ import {
 export default function useCreateGrant(
 	data: any,
 	chainId?: SupportedChainId,
-	workspaceId?: string
+	workspaceId?: string,
 ) {
 
 	const { webwallet } = useContext(WebwalletContext)!
@@ -58,16 +58,6 @@ export default function useCreateGrant(
 
 	const apiClients = useContext(ApiClientsContext)!
 	const { validatorApi, workspace } = apiClients
-
-	const [isEVM, setIsEVM] = useState(false)
-	useEffect(() => {
-		if(!workspace) {
-			return
-		}
-
-		const safeNetwork = workspace?.safe?.chainId
-		setIsEVM(safeNetwork !== '900001')
-	}, [workspace])
 
 	if(!chainId) {
 		// eslint-disable-next-line no-param-reassign
@@ -114,8 +104,9 @@ export default function useCreateGrant(
 			setLoading(true)
 			// console.log('calling validate')
 			try {
+				const isEVM = workspace?.safe?.chainId !== '900001'
+				const detailsHash = (await uploadToIPFS(data.details)).hash
 				let reward
-				logger.info({ data }, 'Create grant Data')
 				if(isEVM) {
 					if(data.rewardToken.address === '') {
 					// console.log('grant data', data)
@@ -134,14 +125,10 @@ export default function useCreateGrant(
 					}
 				} else {
 					reward = {
-						committed: parseAmount(data.reward, SOL_ADDRESS_ETH),
-						asset: SOL_ADDRESS_ETH,
+						committed: parseAmount(data.reward, undefined, USD_DECIMALS),
+						asset: USD_ASSET
 					}
 				}
-
-
-				logger.info({ reward }, 'Reward when creating grant!')
-				const detailsHash = (await uploadToIPFS(data.details)).hash
 
 				const {
 					data: { ipfsHash },

@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
-import { SOL_ADDRESS_ETH } from 'src/constants/chains'
+import { USD_ASSET, USD_DECIMALS } from 'src/constants/chains'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
@@ -56,15 +56,10 @@ export default function useEditGrant(
 		}
 	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, chainId])
 
-	const [isEVM, setIsEVM] = useState(false)
-	useEffect(() => {
-		if(!workspace) {
-			return
-		}
 
-		const safeNetwork = workspace?.safe?.chainId
-		setIsEVM(safeNetwork !== '900001')
-	}, [workspace])
+	// useEffect(() => {
+	// 	console.count("I'm inside")
+	// }, [])
 
 	useEffect(() => {
 		if(data) {
@@ -110,6 +105,7 @@ export default function useEditGrant(
 					throw new Error('Zero wallet is not ready')
 				}
 
+				const isEVM = workspace?.safe?.chainId !== '900001'
 				const detailsHash = (await uploadToIPFS(data.details)).hash
 				let reward
 				if(isEVM) {
@@ -130,8 +126,8 @@ export default function useEditGrant(
 					}
 				} else {
 					reward = {
-						committed: parseAmount(data.reward, SOL_ADDRESS_ETH),
-						asset: SOL_ADDRESS_ETH,
+						committed: parseAmount(data.reward, undefined, USD_DECIMALS),
+						asset: USD_ASSET
 					}
 				}
 

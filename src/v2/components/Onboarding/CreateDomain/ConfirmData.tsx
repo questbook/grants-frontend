@@ -1,5 +1,6 @@
 import React from 'react'
-import { Button, Flex, Image, Spacer, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Image, Spacer, Text } from '@chakra-ui/react'
+import Loader from 'src/components/ui/loader'
 import DaoImageUpload from 'src/v2/components/Onboarding/UI/Misc/DaoImageUpload'
 
 interface Props {
@@ -11,10 +12,11 @@ interface Props {
 	onCreateDomain: () => void
 	isVerified: boolean
 	signerAddress?: string
+	isBiconomyLoading: boolean
 	isBiconomyInitialised: boolean
 }
 
-function ConfirmData({ domainImageFile, safeAddress, safeChainIcon, domainName, onCreateDomain, isVerified, signerAddress, isBiconomyInitialised }: Props) {
+function ConfirmData({ domainImageFile, safeAddress, safeChainIcon, domainName, onCreateDomain, isVerified, signerAddress, isBiconomyInitialised, isBiconomyLoading }: Props) {
 	const [newDomainImageFile, setNewDomainImageFile] = React.useState<File | null>(null)
 	const formatAddress = (address: string) => `${address.substring(0, 4)}......${address.substring(address.length - 4)}`
 
@@ -99,6 +101,12 @@ function ConfirmData({ domainImageFile, safeAddress, safeChainIcon, domainName, 
 				w='53%'
 				onClick={onCreateDomain}>
 				Create Domain
+				<Box w={2} />
+				{
+					isBiconomyLoading && (
+						<Loader size={5} />
+					)
+				}
 			</Button>
 			{
 				!isVerified && (

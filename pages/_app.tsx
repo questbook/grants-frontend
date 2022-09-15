@@ -149,9 +149,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [nonce, setNonce] = React.useState<string>()
 	const [loadingNonce, setLoadingNonce] = React.useState<boolean>(false)
 
-	const biconomyInitPromisesRef = useRef<{ [chainId: string]: Promise<void> | undefined }>({})
 	const [biconomyLoading, setBiconomyLoading] = useState<{ [chainId: string]: boolean }>({})
 
+	// store the chainId that was most recently asked to be init
+	const mostRecentInitChainId = useRef<string>()
+	// ref to store all the chains that are loading biconomy
+	// this is used to prevent multiple calls to biconomy init
+	const biconomyInitPromisesRef = useRef<{ [chainId: string]: Promise<void> | undefined }>({})
 	// reference to scw address
 	// used to poll for scwAddress in "waitForScwAddress"
 	const scwAddressRef = useRef(scwAddress)
@@ -196,6 +200,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			throw new Error('Attempted init without nonce')
 		}
 
+		const _logger = logger.child({ chainId })
+
 		chainId = networksMapping[chainId]
 
 		const _biconomy = new Biconomy(
@@ -205,15 +211,28 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				debug: true
 			}
 		)
-		logger.info('initializing biconomy')
+		_logger.info('initializing biconomy')
 
 		let _biconomyWalletClient: BiconomyWalletClient
+		let readyCalled = false
 		const scwAddress = await new Promise<string>((resolve, reject) => {
 			_biconomy.onEvent(_biconomy.READY, async() => {
-				logger.info('biconomy ready')
+				if(readyCalled) {
+					_logger.warn('ready called multiple times')
+					return
+				}
+
+				_logger.info({ clientExists: !!_biconomy.biconomyWalletClient }, 'biconomy ready')
+				readyCalled = true
 
 				try {
-					_biconomyWalletClient = await _biconomy.biconomyWalletClient
+					do {
+						_biconomyWalletClient = _biconomy.biconomyWalletClient
+						if(!_biconomyWalletClient) {
+							_logger.warn('biconomyWalletClient does not exist')
+							await delay(500)
+						}
+					} while(!_biconomyWalletClient)
 
 					const result = await _biconomyWalletClient
 						.checkIfWalletExists({ eoa: webwallet.address })
@@ -221,36 +240,38 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 					let walletAddress = result.walletAddress
 					if(!result.doesWalletExist) {
 						walletAddress = await deploySCW(webwallet, _biconomyWalletClient, chainId, nonce!)
-						logger.info({ walletAddress, chainId }, 'scw deployed')
+						_logger.info({ walletAddress }, 'scw deployed')
 					}
 
 					resolve(walletAddress)
 				} catch(err) {
-					logger.error({ err }, 'error in scw deployment')
+					_logger.error({ err }, 'error in scw deployment')
 					reject(err)
 				}
 			})
 
 			_biconomy.onEvent(_biconomy.ERROR, (err: Error) => {
-				logger.error({ err }, 'biconomy error')
+				_logger.error({ err }, 'biconomy error')
 				reject(err)
 			})
 		})
 
-		setScwAddress(scwAddress)
-		setBiconomyWalletClient(_biconomyWalletClient!)
-		setBiconomyDaoObj(_biconomy)
+		if(mostRecentInitChainId.current === chainId) {
+			setScwAddress(scwAddress)
+			setBiconomyWalletClient(_biconomyWalletClient!)
+			setBiconomyDaoObj(_biconomy)
 
-		const chain = parseInt(chainId)
-		logger.info('SWITCH NETWORK (use-biconomy.tsx 1): ', chain)
-
-		switchNetwork(chain)
+			_logger.info('switched chain after init')
+			const chain = parseInt(chainId)
+			switchNetwork(chain)
+		}
 	}, [webwallet, nonce])
 
 	const initiateBiconomy = useCallback(
 		async(chainId: string) => {
 			let task = biconomyInitPromisesRef.current[chainId]
 			if(!task) {
+				mostRecentInitChainId.current = chainId
 				setBiconomyLoading(prev => ({ ...prev, [chainId]: true }))
 
 				task = initiateBiconomyUnsafe(chainId)
@@ -310,13 +331,15 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}
 
 	const getNetwork = () => {
-		const _network = localStorage.getItem('network')
+		return defaultChainId
 
-		if(!_network) {
-			return defaultChainId
-		}
+		// const _network = localStorage.getItem('network')
 
-		return parseInt(_network)
+		// if(!_network) {
+		// 	return defaultChainId
+		// }
+
+		// return parseInt(_network)
 	}
 
 	const createWebWallet = () => {
