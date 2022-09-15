@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
+import { USD_ASSET, USD_DECIMALS } from 'src/constants/chains'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
@@ -104,18 +105,29 @@ export default function useEditGrant(
 					throw new Error('Zero wallet is not ready')
 				}
 
+				const isEVM = workspace?.safe?.chainId !== '900001'
 				const detailsHash = (await uploadToIPFS(data.details)).hash
 				let reward
-				if(data.rewardToken.address === '') {
-					reward = {
-						committed: parseAmount(data.reward, data.rewardCurrencyAddress),
-						asset: data.rewardCurrencyAddress,
+				if(isEVM) {
+					if(data.rewardToken.address === '') {
+					// console.log('grant data', data)
+						reward = {
+							committed: parseAmount(data.reward, data.rewardCurrencyAddress),
+							asset: data.rewardCurrencyAddress,
+						}
+					} else {
+					// console.log('Reward before parsing', data.reward, data.rewardToken.decimal)
+						reward = {
+							committed: parseAmount(data.reward, undefined, data.rewardToken.decimal),
+							asset: data.rewardCurrencyAddress,
+							token: data.rewardToken,
+						}
+					// console.log('Reward after parsing', reward)
 					}
 				} else {
 					reward = {
-						committed: parseAmount(data.reward, undefined, data.rewardToken.decimal),
-						asset: data.rewardCurrencyAddress,
-						token: data.rewardToken,
+						committed: parseAmount(data.reward, undefined, USD_DECIMALS),
+						asset: USD_ASSET
 					}
 				}
 
