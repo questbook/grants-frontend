@@ -68,7 +68,7 @@ export const networksMapping: { [key: string]: string } = {
 	// testnets
 	'5': '5',
 	'4': '5',
-	'900001': defaultChainId.toString(), // This is for solana.
+	'900001': SupportedChainId.OPTIMISM_MAINNET.toString(), // This is for solana.
 }
 
 export const signNonce = async(webwallet: Wallet, nonce: string) => {
