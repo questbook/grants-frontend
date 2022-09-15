@@ -23,7 +23,7 @@ function DomainName({ domainName, setValue, isVerified, onContinue }: Props) {
 				helperText='Domain is a workspace where you can post your grants, invite members, and fund builders.'
 				helperLinkText='Learn about domains'
 				helperLinkUrl='https://blog.questbook.xyz/posts/delegated-domain-allocators/'
-				placeholder='Ethereum Developer Relations'
+				placeholder='Developer Tools'
 				value={domainName}
 				onChange={(e) => setValue(e.target.value)}
 				// setValue={setValue}
