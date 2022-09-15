@@ -460,7 +460,7 @@ function ViewApplicants() {
 	}, [workspaceSafe])
 
 	async function getAllStatus(applicationToTxnHashMap: any) {
-		var statuses: { [applicationId: string]: [{ transactionHash: string, status: number, amount: number }] } = {}
+		var statuses: any = {}
 
 		const getEachStatus = async(transaction: any, applicationId: any) => {
 			logger.info('transaction hash', transaction)
@@ -516,8 +516,9 @@ function ViewApplicants() {
 		})).then(async() => {
 			let totalFundDisbursed = 0
 			logger.info({ statuses }, 'Statuses before loop')
-			for(const txns of Object.values(statuses)) {
-				txns.map(txn => {
+			var valuesOfStatus: any = Object.values(statuses)
+			for(const txns of valuesOfStatus) {
+				txns.map((txn: any) => {
 					if(txn.status === 1) {
 						logger.info('status --> 1')
 						logger.info({ txn }, 'txn')
