@@ -38,6 +38,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 	const [networkModalStep, setNetworkModalStep] = useState<number>()
 	const [transactionHash, setTransactionHash] = useState<string>()
 	const [shouldMigrate, setShouldMigrate] = useState<{state: number, chainId?: SupportedChainId}>()
+	const [ownedWorkspacesIds, setOwnedWorkspacesIds] = useState<string[]>([]);
 
 	const { results, fetchMore } = useMultiChainQuery({
 		useQuery: useGetProfileDetailsQuery,
@@ -48,6 +49,9 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 		}
 	})
 
+	useEffect(() => {})
+	
+
 	useEffect(() => {
 		if(walletAddress && walletChain?.id) {
 			fetchMore({
@@ -55,6 +59,8 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 			}, true)
 		}
 	}, [walletAddress, walletChain?.id])
+
+
 
 	useEffect(() => {
 		logger.info({ results, walletAddress, walletChain })

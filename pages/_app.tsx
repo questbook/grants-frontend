@@ -131,12 +131,12 @@ export const WebwalletContext = createContext<{
 		} | null>(null)
 
 export const BiconomyContext = createContext<{
-	biconomyDaoObj?: any
-	setBiconomyDaoObj: (biconomyDaoObj: any) => void
+	biconomyDaoObjs?: { [key: string]: any }
+	setBiconomyDaoObjs: (biconomyDaoObjs: any) => void
 	initiateBiconomy: (chainId: string) => Promise<void>
 	loadingBiconomyMap: { [_: string]: boolean }
-	biconomyWalletClient?: BiconomyWalletClient
-	setBiconomyWalletClient: (biconomyWalletClient?: BiconomyWalletClient) => void
+	biconomyWalletClients?: {[key: string]: BiconomyWalletClient}
+	setBiconomyWalletClients: (biconomyWalletClients?: {[key: string]: BiconomyWalletClient}) => void
 		} | null>(null)
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
@@ -144,8 +144,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [webwallet, setWebwallet] = React.useState<Wallet>()
 	const [workspace, setWorkspace] = React.useState<MinimalWorkspace>()
 	const [scwAddress, setScwAddress] = React.useState<string>()
-	const [biconomyDaoObj, setBiconomyDaoObj] = React.useState<any>()
-	const [biconomyWalletClient, setBiconomyWalletClient] = React.useState<BiconomyWalletClient>()
+	const [biconomyDaoObjs, setBiconomyDaoObjs] = React.useState<any>()
+	const [biconomyWalletClients, setBiconomyWalletClients] = React.useState<{[key: string]: BiconomyWalletClient}>()
 	const [nonce, setNonce] = React.useState<string>()
 	const [loadingNonce, setLoadingNonce] = React.useState<boolean>(false)
 
@@ -217,6 +217,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		let readyCalled = false
 		const scwAddress = await new Promise<string>((resolve, reject) => {
 			_biconomy.onEvent(_biconomy.READY, async() => {
+
 				if(readyCalled) {
 					_logger.warn('ready called multiple times')
 					return
@@ -256,15 +257,14 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			})
 		})
 
-		if(mostRecentInitChainId.current === chainId) {
-			setScwAddress(scwAddress)
-			setBiconomyWalletClient(_biconomyWalletClient!)
-			setBiconomyDaoObj(_biconomy)
+		setScwAddress(scwAddress)
+		setBiconomyWalletClients(prev => ({...prev, [chainId]: _biconomyWalletClient}))
+		setBiconomyDaoObjs((prev: any) => ({...prev, [chainId]: _biconomy}))
 
-			_logger.info('switched chain after init')
-			const chain = parseInt(chainId)
-			switchNetwork(chain)
-		}
+		_logger.info('switched chain after init')
+		const chain = parseInt(chainId)
+		switchNetwork(chain)
+	
 	}, [webwallet, nonce])
 
 	const initiateBiconomy = useCallback(
@@ -441,14 +441,14 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 	const biconomyDaoObjContextValue = useMemo(
 		() => ({
-			biconomyDaoObj,
+			biconomyDaoObjs,
 			loadingBiconomyMap: biconomyLoading,
 			initiateBiconomy,
-			setBiconomyDaoObj,
-			biconomyWalletClient,
-			setBiconomyWalletClient,
+			setBiconomyDaoObjs,
+			biconomyWalletClients,
+			setBiconomyWalletClients,
 		}),
-		[biconomyDaoObj, biconomyLoading, setBiconomyDaoObj, initiateBiconomy, biconomyWalletClient, setBiconomyWalletClient]
+		[biconomyDaoObjs, biconomyLoading, setBiconomyDaoObjs, initiateBiconomy, biconomyWalletClients, setBiconomyWalletClients]
 	)
 
 	const clients = useMemo(() => {
