@@ -410,7 +410,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 				justify='center'>
 				<Flex
 					direction='column'
-					w='55%'
+					w='65%'
 					alignItems='stretch'
 					pb={8}
 					px={10}>
@@ -657,7 +657,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 						<AssignedGrantEmptyState />
 					}
 				</Flex>
-				<Flex
+				{/* <Flex
 					w='26%'
 					pos='sticky'
 					minH='calc(100vh - 64px)'
@@ -667,7 +667,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 						isReviewer={isReviewer}
 						showCreateGrantItem={!grantCount[0] && !grantCount[1]}
 					/>
-				</Flex>
+				</Flex> */}
 			</Flex>
 		</>
 	)

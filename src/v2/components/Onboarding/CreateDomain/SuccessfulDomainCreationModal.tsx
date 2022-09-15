@@ -1,7 +1,6 @@
 import React from 'react'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { AlertDialogOverlay, Button, Flex, Image, Link, Modal, ModalBody, ModalContent, Text } from '@chakra-ui/react'
-import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 
 const SuccessfulDomainCreationModal = ({
@@ -62,28 +61,23 @@ const SuccessfulDomainCreationModal = ({
 						justify='center'
 						w='100%'
 						mt={2}>
-						<NextLink
-							href={daoLink ?? '#'}
-							passHref>
-
-							<Link isExternal>
-								<Flex>
-									<Text
-										variant='v2_body'
-										fontWeight='500'>
-										{domainName ?? 'Unknown'}
-										{' '}
-										DAO
-									</Text>
-									<ExternalLinkIcon
-										color='black.1'
-										boxSize='15px'
-										mx='2px' />
-								</Flex>
-
-							</Link>
-
-						</NextLink>
+						<Link
+							href={daoLink}
+							isExternal>
+							<Flex>
+								<Text
+									variant='v2_body'
+									fontWeight='500'>
+									{domainName ?? 'Unknown'}
+									{' '}
+									DAO
+								</Text>
+								<ExternalLinkIcon
+									color='black.1'
+									boxSize='15px'
+									mx='2px' />
+							</Flex>
+						</Link>
 						<Text
 							ml={1}
 							variant='v2_body'
@@ -116,7 +110,8 @@ const SuccessfulDomainCreationModal = ({
 							onClick={
 								() => {
 									router.push({
-										pathname: '/your_grants/',
+										pathname: '/signup',
+										query: { create_grant: true },
 									})
 								}
 							}>

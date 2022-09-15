@@ -1,5 +1,6 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Box, Flex, HStack, IconButton, Image, Spacer, Text, ToastId, useToast } from '@chakra-ui/react'
+import { logger } from 'ethers'
 import { useRouter } from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
@@ -223,6 +224,9 @@ const OnboardingCreateDomain = () => {
 				const workspaceId = Number(event.args[0].toBigInt())
 				// console.log('workspace_id', workspace_id)
 
+				const newWorkspace = `chain_${network}-0x${workspaceId.toString(16)}`
+				logger.info({ newWorkspace }, 'New workspace created')
+				localStorage.setItem('currentWorkspace', newWorkspace)
 				await addAuthorizedOwner(workspaceId, webwallet?.address!, scwAddress, network.toString(),
 					'this is the safe addres - to be updated in the new flow')
 				// console.log('fdsao')
