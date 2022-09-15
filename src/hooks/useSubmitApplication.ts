@@ -19,6 +19,7 @@ import logger from 'src/utils/logger'
 
 export default function useSubmitApplication(
 	data: GrantApplicationRequest,
+	setCurrentStep: (step: number) => void,
 	chainId?: SupportedChainId,
 	grantId?: string,
 	workspaceId?: string,
@@ -32,7 +33,7 @@ export default function useSubmitApplication(
 	const { data: accountData, nonce } = useQuestbookAccount(shouldRefreshNonce)
 
 	const apiClients = useContext(ApiClientsContext)!
-	const { validatorApi } = apiClients
+	const { validatorApi, subgraphClients } = apiClients
 
 	const currentChainId = useChainId()
 	const applicationRegistryContract = useQBContract('applications', chainId)
@@ -118,10 +119,11 @@ export default function useSubmitApplication(
 			setLoading(true)
 			// // console.log('calling validate');
 			try {
-
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
 					throw new Error('Zero wallet is not ready')
 				}
+
+				setCurrentStep(0)
 
 				const detailsHash = (
 					await uploadToIPFS(data.fields.projectDetails[0].value)
@@ -136,6 +138,8 @@ export default function useSubmitApplication(
 				if(!ipfsHash) {
 					throw new Error('Error validating grant data')
 				}
+
+				setCurrentStep(1)
 
 				const response = await sendGaslessTransaction(
 					biconomy,
@@ -154,10 +158,18 @@ export default function useSubmitApplication(
 					nonce
 				)
 
+				setCurrentStep(2)
+
 				if(response) {
 					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+					await subgraphClients[currentChainId].waitForBlock(receipt?.blockNumber)
+
+					setCurrentStep(3)
+
 					setTransactionData(receipt)
 					await chargeGas(Number(workspaceId), Number(txFee))
+
+					setCurrentStep(4)
 				}
 
 				const CACHE_KEY = strings.cache.apply_grant
@@ -168,6 +180,7 @@ export default function useSubmitApplication(
 				}
 
 				setLoading(false)
+				setCurrentStep(5)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
 				const message = getErrorMessage(e)

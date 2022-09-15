@@ -15,17 +15,20 @@ import Form from 'src/components/your_grants/create_grant/form'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import useCreateGrant from 'src/hooks/useCreateGrant'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 import useIntersection from 'src/hooks/utils/useIntersection'
 import NavbarLayout from 'src/layout/navbarLayout'
+import { delay } from 'src/utils/generics'
 import logger from 'src/utils/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
 function CreateGrant() {
 	const apiClients = useContext(ApiClientsContext)!
 	const { workspace } = apiClients
 	const { switchNetwork } = useNetwork()
+
 	const router = useRouter()
+	const [currentStep, setCurrentStep] = useState<number>()
 
 	const grantInfoRef = useRef(null)
 	const detailsRef = useRef(null)
@@ -73,7 +76,7 @@ function CreateGrant() {
 	] as const
 
 	const [formData, setFormData] = useState<any>()
-	const [transactionData, blockExplorerLink, loading] = useCreateGrant(formData)
+	const [, blockExplorerLink, loading] = useCreateGrant(formData, setCurrentStep)
 
 	useEffect(() => {
 		if(workspace) {
@@ -83,17 +86,6 @@ function CreateGrant() {
 			switchNetwork(chainId!.toString() as unknown as SupportedChainId)
 		}
 	}, [workspace])
-
-	const { setRefresh } = useCustomToast(blockExplorerLink)
-
-	useEffect(() => {
-		// // console.log(transactionData);
-		if(transactionData) {
-			router.replace({ pathname: '/your_grants', query: { done: 'yes' } })
-			setRefresh(true)
-		}
-
-	}, [transactionData, router])
 
 	const getColor = (index: number, color2: string, color1: string) => {
 		if(index === 3) {
@@ -214,6 +206,40 @@ function CreateGrant() {
 					}
 				</Flex>
 			</Box>
+			<NetworkTransactionModal
+				isOpen={currentStep !== undefined}
+				subtitle='Creating a grant'
+				description={
+					<Flex direction='column'>
+						<Text
+							variant='v2_title'
+							fontWeight='500'
+						>
+							{formData?.title}
+						</Text>
+						<Text
+							variant='v2_body'
+						>
+							{workspace?.title}
+						</Text>
+					</Flex>
+				}
+				currentStepIndex={currentStep || 0}
+				steps={
+					[
+						'Uploading data to IPFS',
+						'Sign transaction',
+						'Waiting for transaction to complete',
+						'Waiting for transaction to be indexed',
+						'Grant created on-chain',
+					]
+				}
+				viewLink={blockExplorerLink}
+				onClose={
+					async() => {
+						router.replace({ pathname: '/your_grants' })
+					}
+				} />
 		</Container>
 	)
 }

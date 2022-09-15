@@ -19,6 +19,7 @@ import {
 
 export default function useEditGrant(
 	data: any,
+	setCurrentStep: (step: number) => void,
 	grantId?: string,
 ) {
 	// console.log(grantId)
@@ -30,7 +31,7 @@ export default function useEditGrant(
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
-	const { validatorApi, workspace } = apiClients
+	const { validatorApi, workspace, subgraphClients } = apiClients
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
 	const currentChainId = useChainId()
@@ -101,6 +102,7 @@ export default function useEditGrant(
 			setLoading(true)
 			// console.log('calling validate', data)
 			try {
+				setCurrentStep(0)
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
 					throw new Error('Zero wallet is not ready')
 				}
@@ -144,6 +146,8 @@ export default function useEditGrant(
 				if(!ipfsHash) {
 					throw new Error('Error validating grant data')
 				}
+
+				setCurrentStep(1)
 
 				// let rubricHash = ''
 				// if(data.rubric) {
@@ -213,11 +217,21 @@ export default function useEditGrant(
 					nonce
 				)
 
+				setCurrentStep(2)
+
 				if(createGrantTransaction) {
 					const { receipt, txFee } = await getTransactionDetails(createGrantTransaction, currentChainId.toString())
+					await subgraphClients[currentChainId].waitForBlock(receipt?.blockNumber)
+
+					setCurrentStep(3)
+
 					setTransactionData(receipt)
 					await chargeGas(Number(workspace?.id), Number(txFee))
+
+					setCurrentStep(4)
 				}
+
+				setCurrentStep(5)
 
 				setLoading(false)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any

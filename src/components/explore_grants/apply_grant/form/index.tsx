@@ -6,7 +6,6 @@ import {
 	Container,
 	Flex,
 	Image,
-	Link,
 	Text,
 } from '@chakra-ui/react'
 import { GrantApplicationRequest } from '@questbook/service-validator-client'
@@ -25,11 +24,12 @@ import strings from 'src/constants/strings.json'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useSubmitApplication from 'src/hooks/useSubmitApplication'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { GrantApplicationFieldsSubgraph } from 'src/types/application'
 import { parseAmount } from 'src/utils/formattingUtils'
 import { addAuthorizedUser } from 'src/utils/gaslessUtils'
+import { delay } from 'src/utils/generics'
 import { isValidEmail } from 'src/utils/validationUtils'
+import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
 interface Props {
   // onSubmit: (data: any) => void;
@@ -81,6 +81,7 @@ function Form({
 	const getKey = `${chainId}-${CACHE_KEY}-${grantId}`
 
 	const [shouldRefreshNonce, setShouldRefreshNonce] = React.useState<boolean>()
+	const [networkTransactionModalStep, setNetworkTransactionModalStep] = React.useState<number>()
 
 	const { data: accountData, nonce } = useQuestbookAccount(shouldRefreshNonce)
 
@@ -184,8 +185,9 @@ function Form({
 	const router = useRouter()
 
 	const [formData, setFormData] = React.useState<GrantApplicationRequest>()
-	const [txnData, txnLink, loading, isBiconomyInitialised] = useSubmitApplication(
+	const [, txnLink, loading, isBiconomyInitialised] = useSubmitApplication(
     formData!,
+    setNetworkTransactionModalStep,
     chainId,
     grantId,
     workspaceId,
@@ -205,17 +207,6 @@ function Form({
 				// .catch((err) => console.log("Couldn't add authorized user", err))
 		}
 	}, [signer, nonce])
-
-	const { setRefresh } = useCustomToast(txnLink)
-	React.useEffect(() => {
-		if(txnData) {
-			router.replace({
-				pathname: '/your_applications',
-			})
-			setRefresh(true)
-		}
-
-	}, [router, txnData])
 
 	const handleOnSubmit = async() => {
 		// console.log(grantRequiredFields)
@@ -710,42 +701,6 @@ function Form({
 				}
 			</Container>
 
-			{/* {
-				acceptingApplications && (
-					<Text
-						mt={10}
-						textAlign='center'
-						variant='footer'
-						fontSize='12px'>
-						<Image
-							display='inline-block'
-							src='/ui_icons/info.svg'
-							alt='pro tip'
-							mb='-2px'
-						/>
-						{' '}
-						By pressing Submit Application you&apos;ll have to approve this
-						transaction in your wallet.
-						{' '}
-						<Link
-							href='https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46'
-							isExternal
-						>
-							Learn more
-						</Link>
-						{' '}
-						<Image
-							display='inline-block'
-							src='/ui_icons/link.svg'
-							alt='pro tip'
-							mb='-1px'
-							h='10px'
-							w='10px'
-						/>
-					</Text>
-				)
-			} */}
-
 			<Box mt={5} />
 
 			{
@@ -763,6 +718,41 @@ function Form({
 					</Button>
 				)
 			}
+
+			<NetworkTransactionModal
+				isOpen={networkTransactionModalStep !== undefined}
+				subtitle='Submitting Application'
+				description={
+					<Flex direction='column'>
+						<Text
+							variant='v2_title'
+							fontWeight='500'
+						>
+							{title}
+						</Text>
+						<Text
+							variant='v2_body'
+						>
+							{applicantAddress}
+						</Text>
+					</Flex>
+				}
+				currentStepIndex={networkTransactionModalStep || 0}
+				steps={
+					[
+						'Uploading data to IPFS',
+						'Sign transaction',
+						'Waiting for transaction to complete',
+						'Waiting for transaction to be indexed',
+						'Application submitted on-chain',
+					]
+				}
+				viewLink={txnLink}
+				onClose={
+					async() => {
+						router.push({ pathname: '/your_applications' })
+					}
+				} />
 		</Flex>
 	)
 }
