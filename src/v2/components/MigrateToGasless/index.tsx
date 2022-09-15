@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Box, Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text, useToast } from '@chakra-ui/react'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
-import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
-import { useGetWorkspacesOwnedQuery } from 'src/generated/graphql'
+import { CHAIN_INFO } from 'src/constants/chains'
+import { useGetProfileDetailsQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
@@ -19,7 +19,7 @@ interface Props {
     onClose: () => void
 }
 
-const POINTERS = ['Zero gas fee across the app', 'Secure transactions', 'Seamless user experience']
+const POINTERS = ['Zero gas fee across the app', 'No annoying sign transaction pop-ups']
 
 function MigrateToGasless({ isOpen, onClose }: Props) {
 	const toast = useToast()
@@ -39,7 +39,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 	const [transactionHash, setTransactionHash] = useState<string>()
 
 	const { results, fetchMore } = useMultiChainQuery({
-		useQuery: useGetWorkspacesOwnedQuery,
+		useQuery: useGetProfileDetailsQuery,
 		options: {
 			variables: {
 				actorId: walletAddress ?? ''
@@ -59,20 +59,47 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 		if(walletAddress && walletChain?.id && switchNetwork) {
 			logger.info({ results }, 'DAOs owned')
 			if(!(walletChain?.id in SupportedChainId)) {
-				const workspace = results.find((result) => (result?.workspaceMembers?.length || 0) > 0)?.workspaceMembers[0]?.workspace
-				logger.info({ workspace }, 'DAO to migrate')
-				const chainId = getSupportedChainIdFromWorkspace(workspace)
-				logger.info({ chainId }, 'DAO chainId')
-				if(chainId) {
+				const workspaceFromMember = results.find((result) => (result?.workspaceMembers?.length || 0) > 0)?.workspaceMembers[0]?.workspace
+				const workspaceFromApplication = results.find((result) => (result?.grantApplications.length || 0) > 0)?.grantApplications[0]?.grant?.workspace
+				logger.info({ workspaceFromMember, workspaceFromApplication }, 'DAOs owned')
+				if(workspaceFromMember) {
+					logger.info({ workspaceFromMember }, 'DAO to migrate')
+					const chainId = getSupportedChainIdFromWorkspace(workspaceFromMember)
+					logger.info({ chainId }, 'DAO chainId')
+					if(chainId) {
+						toast({
+							title: 'No DAO found to migrate',
+							description: `The current network (${walletChain?.name}) your wallet is connected to has no DAO. Please switch your network to ${CHAIN_INFO[chainId].name} where you have DAOs`,
+							status: 'warning',
+							duration: 9000,
+							isClosable: true,
+						})
+						switchNetwork(chainId)
+					}
+				} else if(workspaceFromApplication) {
+					logger.info({ workspaceFromApplication }, 'DAO to migrate')
+					const chainId = getSupportedChainIdFromWorkspace(workspaceFromApplication)
+					logger.info({ chainId }, 'DAO chainId')
+					if(chainId) {
+						toast({
+							title: 'No applications found to migrate',
+							description: `The current network (${walletChain?.name}) your wallet is connected to has no applications. Please switch your network to ${CHAIN_INFO[chainId].name} where you have applications`,
+							status: 'warning',
+							duration: 9000,
+							isClosable: true,
+						})
+						switchNetwork(chainId)
+					}
+				} else {
 					toast({
-						title: 'No DAO found to migrate',
-						description: `The current network (${walletChain?.name}) your wallet is connected to has no DAO. Please switch your network to ${CHAIN_INFO[chainId].name} where you have DAOs`,
+						title: 'No profile found to migrate',
+						description: `No profile was found on questbook that mapped to the address ${walletAddress} on ${walletChain?.name}`,
 						status: 'warning',
 						duration: 9000,
 						isClosable: true,
 					})
-					switchNetwork(chainId)
 				}
+
 				// setHasDAO(results.length > 0 && walletChain?.id in SupportedChainId)
 			}
 		}
@@ -173,7 +200,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 								mt={6}
 								variant='v2_title'
 								fontWeight='500'>
-								Questbook has launched a new Zero wallet
+								Questbook is moving to it’s own in-app wallet.
 							</Text>
 							<Flex
 								direction='column'
@@ -218,7 +245,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 								<Text
 									variant='v2_body'
 									ml={4}>
-									To access Questbook, move your Questbook data from connected wallet to Zero wallet. You will no longer need your wallet to access Questbook. This is a secure transaction.
+									To continue using Questbook without losing any data, migrate to the in-app wallet.
 								</Text>
 							</Flex>
 							<Box mt={6} />
@@ -235,7 +262,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 								}
 								mt='auto'
 								onClick={migrate}>
-								Migrate to Gasless
+								Migrate to In-App Wallet
 							</Button>
 						</Flex>
 					</Flex>
@@ -262,7 +289,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 							noOfLines={1}
 							fontSize='sm'
 							color='#3F8792'>
-							{walletAddress ?? 'Not connected'}
+							{walletAddress ?? ''}
 						</Text>
 					</Flex>
 				}

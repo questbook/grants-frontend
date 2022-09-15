@@ -1,0 +1,16 @@
+query GetProfileDetails($actorId: Bytes!) {
+   workspaceMembers(where: {actorId: $actorId, accessLevel: owner}, first: 1) {
+    id
+    workspace {
+      supportedNetworks
+    }
+  }
+  grantApplications(where: {applicantId: $actorId}, first: 1) {
+    id
+    grant {
+      workspace {
+        supportedNetworks
+      }
+    }
+  } 
+}
