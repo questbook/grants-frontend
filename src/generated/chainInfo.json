@@ -92,6 +92,13 @@
 				"address": "0x0000000000000000000000000000000000000001",
 				"pair": "0x0",
 				"decimals": 9
+			},
+			"0x0000000000000000000000000000000000000002": {
+				"icon": "/chain_assets/solana.png",
+				"label": "SOL",
+				"address": "0x0000000000000000000000000000000000000002",
+				"pair": "0x0",
+				"decimals": 9
 			}
 		},
 		"qbContracts": {
@@ -170,6 +177,13 @@
 				"icon": "/chain_assets/usdc.svg",
 				"label": "USD",
 				"address": "0x0000000000000000000000000000000000000001",
+				"pair": "0x0",
+				"decimals": 9
+			},
+			"0x0000000000000000000000000000000000000002": {
+				"icon": "/chain_assets/solana.png",
+				"label": "SOL",
+				"address": "0x0000000000000000000000000000000000000002",
 				"pair": "0x0",
 				"decimals": 9
 			}
@@ -540,6 +554,13 @@
 				"address": "0x0000000000000000000000000000000000000001",
 				"pair": "0x0",
 				"decimals": 9
+			},
+			"0x0000000000000000000000000000000000000002": {
+				"icon": "/chain_assets/solana.png",
+				"label": "SOL",
+				"address": "0x0000000000000000000000000000000000000002",
+				"pair": "0x0",
+				"decimals": 9
 			}
 		},
 		"qbContracts": {
@@ -857,6 +878,13 @@
 				"icon": "/chain_assets/usdc.svg",
 				"label": "USD",
 				"address": "0x0000000000000000000000000000000000000001",
+				"pair": "0x0",
+				"decimals": 9
+			},
+			"0x0000000000000000000000000000000000000002": {
+				"icon": "/chain_assets/solana.png",
+				"label": "SOL",
+				"address": "0x0000000000000000000000000000000000000002",
 				"pair": "0x0",
 				"decimals": 9
 			}
