@@ -142,6 +142,7 @@ function ViewApplicants() {
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const { chainId: currentNetworkId } = await provider.getNetwork()
 		const safeNetwork = parseInt(_safeNetwork)
+		logger.info({ safeNetwork }, 'Safe Network')
 		if(currentNetworkId !== safeNetwork) {
 			const ethereum = window.ethereum!
 			const chainId = ethers.utils.hexValue(ethers.BigNumber.from(safeNetwork))
@@ -302,8 +303,19 @@ function ViewApplicants() {
 	const { data: grantData } = useGetGrantDetailsQuery(queryParams)
 	useEffect(() => {
 		if((data?.grantApplications?.length || 0) > 0) {
+			const reward = data?.grantApplications[0]?.grant?.reward
+			logger.info({ reward }, 'Reward')
 			setRewardAssetAddress(data?.grantApplications[0]?.grant?.reward?.asset!)
-			setRewardAssetSymbol(data?.grantApplications[0]?.grant?.reward?.token?.label!)
+			if(reward?.token) {
+				setRewardAssetSymbol(data?.grantApplications[0]?.grant?.reward?.token?.label!)
+			} else {
+				const assetInfo = getAssetInfo(
+					data?.grantApplications[0]?.grant?.reward?.asset?.toLowerCase(),
+					getSupportedChainIdFromWorkspace(workspace),
+				)
+				setRewardAssetSymbol(assetInfo?.label)
+			}
+
 			if(data?.grantApplications[0].grant.reward.token) {
 				logger.info('decimals', data?.grantApplications[0].grant.reward.token.decimal)
 				setRewardAssetDecimals(data?.grantApplications[0].grant.reward.token.decimal)
