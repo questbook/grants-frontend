@@ -4510,7 +4510,7 @@ export type GetWorkspacesOwnedQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspacesOwnedQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string }> };
+export type GetWorkspacesOwnedQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork> } }> };
 
 
 export const GetAllGrantsDocument = gql`
@@ -7073,6 +7073,9 @@ export const GetWorkspacesOwnedDocument = gql`
     query GetWorkspacesOwned($actorId: Bytes!) {
   workspaceMembers(where: {actorId: $actorId, accessLevel: owner}, first: 1) {
     id
+    workspace {
+      supportedNetworks
+    }
   }
 }
     `;

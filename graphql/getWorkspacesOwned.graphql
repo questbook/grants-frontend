@@ -1,5 +1,8 @@
 query GetWorkspacesOwned($actorId: Bytes!) {
    workspaceMembers(where: {actorId: $actorId, accessLevel: owner}, first: 1) {
     id
+    workspace {
+      supportedNetworks
+    }
   }
 }

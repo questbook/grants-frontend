@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Box, Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text, useToast } from '@chakra-ui/react'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
-import { defaultChainId } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import { useGetWorkspacesOwnedQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useQBContract from 'src/hooks/contracts/useQBContract'
@@ -9,9 +9,10 @@ import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { delay } from 'src/utils/generics'
 import logger from 'src/utils/logger'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import ConnectWalletModal from 'src/v2/components/ConnectWalletModal'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
-import { useAccount, useNetwork, useSigner } from 'wagmi'
+import { useAccount, useNetwork, useSigner, useSwitchNetwork } from 'wagmi'
 
 interface Props {
     isOpen: boolean
@@ -28,9 +29,9 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 	const { address: walletAddress } = useAccount()
 	const { data: signer } = useSigner()
 	const { chain: walletChain } = useNetwork()
+	const { switchNetwork } = useSwitchNetwork()
 
 	const [isConnectWalletModalOpen, setIsConnectWalletModalOpen] = useState(false)
-	const [hasDAO, setHasDAO] = useState(false)
 
 	const workspaceContract = useQBContract('workspace', walletChain?.id as SupportedChainId, false)
 
@@ -43,23 +44,39 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 			variables: {
 				actorId: walletAddress ?? ''
 			}
-		},
-		chains: [walletChain?.id! in SupportedChainId ? walletChain?.id! : defaultChainId]
+		}
 	})
 
 	useEffect(() => {
 		if(walletAddress && walletChain?.id) {
-			setHasDAO(results.length > 0 && walletChain?.id in SupportedChainId)
-		}
-	}, [results])
-
-	useEffect(() => {
-		if(walletAddress && walletChain?.id) {
 			fetchMore({
-				actorId: walletAddress ?? ''
+				actorId: walletAddress
 			}, true)
 		}
 	}, [walletAddress, walletChain?.id])
+
+	useEffect(() => {
+		if(walletAddress && walletChain?.id && switchNetwork) {
+			logger.info({ results }, 'DAOs owned')
+			if(!(walletChain?.id in SupportedChainId)) {
+				const workspace = results.find((result) => (result?.workspaceMembers?.length || 0) > 0)?.workspaceMembers[0]?.workspace
+				logger.info({ workspace }, 'DAO to migrate')
+				const chainId = getSupportedChainIdFromWorkspace(workspace)
+				logger.info({ chainId }, 'DAO chainId')
+				if(chainId) {
+					toast({
+						title: 'No DAO found to migrate',
+						description: `The current network (${walletChain?.name}) your wallet is connected to has no DAO. Please switch your network to ${CHAIN_INFO[chainId].name} where you have DAOs`,
+						status: 'warning',
+						duration: 9000,
+						isClosable: true,
+					})
+					switchNetwork(chainId)
+				}
+				// setHasDAO(results.length > 0 && walletChain?.id in SupportedChainId)
+			}
+		}
+	}, [results, switchNetwork])
 
 	useEffect(() => {
 		if(walletAddress) {
@@ -72,10 +89,6 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 			if(!walletAddress) {
 				setIsConnectWalletModalOpen(true)
 				return
-			}
-
-			if(!hasDAO) {
-				throw new Error('No DAO on this network! Try switching network')
 			}
 
 			if(!walletChain) {
