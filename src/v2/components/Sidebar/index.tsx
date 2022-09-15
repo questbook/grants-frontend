@@ -92,21 +92,8 @@ function Sidebar() {
 						workspaces={workspaces}
 						onWorkspaceClick={
 							(index, onComplete: () => void) => {
-								const members = workspaces[index]?.members
-								logger.info({ members }, 'Workspace members')
-								const member = workspaces[index].members.find((member) => {
-									const actorId = member?.actorId
-									const address = accountData?.address
-									logger.info({ actorId, address, isEqual: actorId === address.toLowerCase() }, 'Comparing actorId and address')
-									return member.actorId === accountData?.address?.toLowerCase()
-								})
-								logger.info({ member }, 'Member')
 								setWorkspace(workspaces[index])
-								if(member?.accessLevel === 'reviewer') {
-									router.push('/your_grants').then(onComplete)
-								} else {
-									router.push('/dashboard').then(onComplete)
-								}
+								router.push('/your_grants').then(onComplete)
 
 								const workspaceChainID = getSupportedChainIdFromWorkspace(workspaces[index])
 								if(network !== workspaceChainID) {

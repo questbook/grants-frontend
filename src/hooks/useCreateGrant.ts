@@ -28,6 +28,7 @@ import {
 
 export default function useCreateGrant(
 	data: any,
+	setCurrentStep: (step: number) => void,
 	chainId?: SupportedChainId,
 	workspaceId?: string,
 ) {
@@ -57,7 +58,7 @@ export default function useCreateGrant(
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
-	const { validatorApi, workspace } = apiClients
+	const { validatorApi, workspace, subgraphClients } = apiClients
 
 	if(!chainId) {
 		// eslint-disable-next-line no-param-reassign
@@ -104,6 +105,11 @@ export default function useCreateGrant(
 			setLoading(true)
 			// console.log('calling validate')
 			try {
+				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+					throw new Error('Zero wallet is not ready')
+				}
+
+				setCurrentStep(0)
 				const isEVM = workspace?.safe?.chainId !== '900001'
 				const detailsHash = (await uploadToIPFS(data.details)).hash
 				let reward
@@ -167,17 +173,7 @@ export default function useCreateGrant(
 					rubricHash = auxRubricHash
 				}
 
-				// console.log('rubric hash', GRANT_FACTORY_ADDRESS[currentChainId], grantContract.address, WORKSPACE_REGISTRY_ADDRESS[currentChainId], APPLICATION_REGISTRY_ADDRESS[currentChainId])
-
-				// console.log('WHAT IS THIS', biconomyWalletClient, scwAddress)
-				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
-					throw new Error('Zero wallet is not ready')
-				}
-
-				// let transactionHash: string | undefined | boolean
-				// console.log('THIS IS ADDRESS', GRANT_FACTORY_ADDRESS[currentChainId!], currentChainId)
-
-				// console.log('ENTERING', ipfsHash)
+				setCurrentStep(1)
 
 				const methodArgs = [
 					workspaceId || Number(workspace?.id).toString(),
@@ -207,7 +203,11 @@ export default function useCreateGrant(
 					return
 				}
 
+				setCurrentStep(2)
 				const { txFee, receipt } = await getTransactionDetails(response, currentChainId.toString())
+				await subgraphClients[currentChainId].waitForBlock(receipt?.blockNumber)
+
+				setCurrentStep(3)
 
 				await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee))
 
@@ -220,6 +220,7 @@ export default function useCreateGrant(
 
 				setTransactionData(receipt)
 				setLoading(false)
+				setCurrentStep(5)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
 				const message = getErrorMessage(e)

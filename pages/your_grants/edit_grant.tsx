@@ -5,7 +5,7 @@ import React, {
 	useRef,
 	useState,
 } from 'react'
-import { Container } from '@chakra-ui/react'
+import { Container, Flex, Text } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
@@ -15,11 +15,12 @@ import Sidebar from 'src/components/your_grants/edit_grant/sidebar'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import { useGetGrantDetailsQuery } from 'src/generated/graphql'
 import useEditGrant from 'src/hooks/useEditGrant'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { formatAmount } from 'src/utils/formattingUtils'
+import { delay } from 'src/utils/generics'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
 function EditGrant() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
@@ -31,6 +32,7 @@ function EditGrant() {
 	const applicationDetailsRef = useRef(null)
 	const grantRewardsRef = useRef(null)
 
+	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
 	const [currentStep, setCurrentStep] = useState(0)
 	const [grantID, setGrantID] = useState<string>()
 
@@ -279,17 +281,7 @@ function EditGrant() {
 	}
 
 	const [editData, setEditData] = useState<any>()
-	const [transactionData, txnLink, loading] = useEditGrant(editData, grantID)
-
-	const { setRefresh } = useCustomToast(txnLink)
-	useEffect(() => {
-		// // console.log(transactionData);
-		if(transactionData) {
-			router.replace({ pathname: '/your_grants', query: { done: 'yes' } })
-			setRefresh(true)
-		}
-
-	}, [transactionData, router])
+	const [, txnLink, loading] = useEditGrant(editData, setNetworkTransactionModalStep, grantID)
 
 	useEffect(() => {
 		setGrantID(router?.query?.grantId?.toString())
@@ -332,6 +324,40 @@ function EditGrant() {
 				currentStep={currentStep}
 				scrollTo={scroll}
 			/>
+			<NetworkTransactionModal
+				isOpen={networkTransactionModalStep !== undefined}
+				subtitle='Editing a grant'
+				description={
+					<Flex direction='column'>
+						<Text
+							variant='v2_title'
+							fontWeight='500'
+						>
+							{formData?.title}
+						</Text>
+						<Text
+							variant='v2_body'
+						>
+							{workspace?.title}
+						</Text>
+					</Flex>
+				}
+				currentStepIndex={networkTransactionModalStep || 0}
+				steps={
+					[
+						'Uploading data to IPFS',
+						'Sign transaction',
+						'Waiting for transaction to complete',
+						'Waiting for transaction to be indexed',
+						'Grant edited on-chain',
+					]
+				}
+				viewLink={txnLink}
+				onClose={
+					async() => {
+						router.push({ pathname: '/your_grants' })
+					}
+				} />
 		</Container>
 	)
 }
