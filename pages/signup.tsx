@@ -1,6 +1,6 @@
 import React, { ReactElement, useContext, useEffect } from 'react'
 import {
-	Container, Text
+	Container, Flex, Text
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
@@ -12,15 +12,16 @@ import { SupportedChainId } from 'src/constants/chains'
 import { SupportedNetwork } from 'src/generated/graphql'
 import useCreateGrant from 'src/hooks/useCreateGrant'
 import useCreateWorkspace from 'src/hooks/useCreateWorkspace'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
+import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
 function SignupDao() {
 	const router = useRouter()
 
-	const { setWorkspace } = useContext(ApiClientsContext)!
+	const { workspace, setWorkspace } = useContext(ApiClientsContext)!
 
 	const [daoCreated, setDaoCreated] = React.useState(false)
+	const [currentStep, setCurrentStep] = React.useState<number>()
 
 	const [creatingGrant, setCreatingGrant] = React.useState(router.query.create_grant === 'true')
 
@@ -85,9 +86,8 @@ function SignupDao() {
 		grantTransactionData,
 		transactionLink,
 		createGrantLoading,
-	] = useCreateGrant(grantData, workspaceData?.network, daoData?.id)
+	] = useCreateGrant(grantData, setCurrentStep, workspaceData?.network, daoData?.id)
 
-	const { setRefresh } = useCustomToast(transactionLink)
 	useEffect(() => {
 		// // console.log(grantTransactionData);
 		if(grantTransactionData) {
@@ -106,30 +106,64 @@ function SignupDao() {
 				}]
 				setWorkspace(w)
 			}
-
-			router.replace({ pathname: '/your_grants', query: { done: 'yes' } })
-
-			setRefresh(true)
 		}
 
 	}, [grantTransactionData, router])
 
 	if(creatingGrant) {
 		return (
-			<CreateGrant
-				hasClicked={createGrantLoading}
-				onSubmit={
-					(data) => {
-						const dataCopy = { ...data }
-						if(data.publicKey) {
-							setNewPublicKey(data.publicKey)
-							delete dataCopy.publicKey
-						}
+			<>
+				<CreateGrant
+					hasClicked={createGrantLoading}
+					onSubmit={
+						(data) => {
+							const dataCopy = { ...data }
+							if(data.publicKey) {
+								setNewPublicKey(data.publicKey)
+								delete dataCopy.publicKey
+							}
 
-						setGrantData(dataCopy)
+							setGrantData(dataCopy)
+						}
 					}
-				}
-			/>
+				/>
+				<NetworkTransactionModal
+					isOpen={currentStep !== undefined}
+					subtitle='Creating a grant'
+					description={
+						<Flex direction='column'>
+							<Text
+								variant='v2_title'
+								fontWeight='500'
+							>
+								{grantData?.title}
+							</Text>
+							<Text
+								variant='v2_body'
+							>
+								{workspace?.title}
+							</Text>
+						</Flex>
+					}
+					currentStepIndex={currentStep || 0}
+					steps={
+						[
+							'Uploading data to IPFS',
+							'Sign transaction',
+							'Waiting for transaction to complete',
+							'Waiting for transaction to be indexed',
+							'Grant created on-chain',
+						]
+					}
+					viewLink={transactionLink}
+					onClose={
+						async() => {
+							router.replace({ pathname: '/your_grants' })
+						}
+					} />
+
+			</>
+
 		)
 	}
 

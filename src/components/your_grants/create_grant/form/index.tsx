@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import React, { useEffect, useState } from 'react'
 import {
-	Box, Button, Flex,
-	Image, Link, Text, } from '@chakra-ui/react'
+	Box, Button, Flex, Text } from '@chakra-ui/react'
 import {
 	Token,
 	WorkspaceUpdateRequest,
@@ -17,17 +16,13 @@ import Details from 'src/components/your_grants/create_grant/form/2_details'
 import ApplicantDetails from 'src/components/your_grants/create_grant/form/3_applicantDetails'
 import GrantRewardsInput from 'src/components/your_grants/create_grant/form/4_rewards'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
-import { CHAIN_INFO } from 'src/constants/chains'
 import SAFES_ENDPOINTS_MAINNETS from 'src/constants/safesEndpoints.json'
 import SAFES_ENDPOINTS_TESTNETS from 'src/constants/safesEndpointsTest.json'
 import strings from 'src/constants/strings.json'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'
-import useAxios from 'src/hooks/utils/useAxios'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { SafeToken } from 'src/types'
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 const SAFES_ENDPOINTS = { ...SAFES_ENDPOINTS_MAINNETS, ...SAFES_ENDPOINTS_TESTNETS }
@@ -112,9 +107,8 @@ function Form({
 	const [publicKey] = React.useState<WorkspaceUpdateRequest>({
 		publicKey: '',
 	})
-	const [transactionData, transactionLink, , isBiconomyInitialised] = useUpdateWorkspacePublicKeys(publicKey)
+	const [transactionData, , , isBiconomyInitialised] = useUpdateWorkspacePublicKeys(publicKey)
 
-	const { setRefresh } = useCustomToast(transactionLink)
 	const [admins, setAdmins] = React.useState<any[]>([])
 	const [maximumPoints, setMaximumPoints] = React.useState(5)
 
@@ -130,8 +124,6 @@ function Form({
 	React.useEffect(() => {
 		if(transactionData) {
 			setKeySubmitted(true)
-			// console.log('transactionData-----', transactionData)
-			setRefresh(true)
 		}
 	}, [transactionData])
 
