@@ -4,7 +4,7 @@ const rpcUrls: {[key: number]: string} = {
 	5: 'https://goerli.infura.io/v3/',
 	10: 'https://mainnet.optimism.io',
 	100: 'https://rpc.gnosischain.com/',
-	137: "https://polygon-rpc.com/",
+	137: 'https://polygon-rpc.com/',
 	42220: 'https://forno.celo.org',
 }
 

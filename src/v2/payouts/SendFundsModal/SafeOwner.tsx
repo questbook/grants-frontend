@@ -1,6 +1,6 @@
 
-import { Flex, Image, Text, VStack } from '@chakra-ui/react'
 import { useEffect } from 'react'
+import { Flex, Image, Text, VStack } from '@chakra-ui/react'
 import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
 import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/PhantomLogo'
 import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
@@ -43,7 +43,7 @@ interface Props {
 const SafeOwner = ({ isEvmChain, phantomWallet, signerVerified, gnosisSafeAddress }: Props) => {
 	const { connectAsync, connectors } = useConnect()
 	const { isConnected } = useAccount()
-	const {disconnect} = useDisconnect()
+	const { disconnect } = useDisconnect()
 
 	useEffect(() => {
 		if(isConnected) {

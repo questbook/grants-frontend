@@ -1,11 +1,11 @@
 import React, {
-	ReactElement, useCallback, useContext, useEffect, useMemo, useState,
+	ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState,
 } from 'react'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import {
 	Box,
 	Button,
-	Container, Flex, forwardRef, IconButton, IconButtonProps, Menu, MenuButton, MenuItem, MenuList, TabList, TabPanel, TabPanels, Tabs, Text
+	Container, Flex, forwardRef, IconButton, IconButtonProps, Menu, MenuButton, MenuItem, MenuList, TabList, TabPanel, TabPanels, Tabs, Text, ToastId, useToast
 } from '@chakra-ui/react'
 import { BigNumber, ethers, logger } from 'ethers'
 import moment from 'moment'
@@ -102,7 +102,7 @@ function ViewApplicants() {
 	const [sendFundsTo, setSendFundsTo] = useState<any[]>()
 
 
-	const { data: accountData, nonce } = useQuestbookAccount()
+	const { data: accountData } = useQuestbookAccount()
 	const router = useRouter()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
 
@@ -224,11 +224,24 @@ function ViewApplicants() {
 
 	}, [realmsFundTransferData])
 
+	const toast = useToast()
+	const toastRef = useRef<ToastId>()
 
 	useEffect(() => {
 		if(safeAddressData) {
 			// console.log('safe address data', safeAddressData)
 			const { workspaceSafes } = safeAddressData
+			if(workspaceSafes.length === 0) {
+				toastRef.current = toast({
+					title: 'No Safe Found',
+					description: 'Please add a Safe Address to your workspace',
+					status: 'warning',
+					position: 'top-right',
+					duration: 10000,
+				})
+				return
+			}
+
 			const safeAddress = workspaceSafes[0]?.address
 			const safeNetwork = workspaceSafes[0]?.chainId
 			setWorkspaceSafe(safeAddress)
@@ -529,7 +542,13 @@ function ViewApplicants() {
 	//getting transaction hash status end
 
 	const onSendFundsButtonClicked = async(state: boolean, selectedApplicants: any[]) => {
-		setSendFundsTo(selectedApplicants)
+		if(workspace?.safe) {
+			setSendFundsTo(selectedApplicants)
+		} else {
+			router.push({ pathname: '/safe', query: {
+				'show_toast': true,
+			} })
+		}
 	}
 
 

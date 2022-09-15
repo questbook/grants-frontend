@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Box, Flex, Input, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import useSafeUSDBalances from 'src/hooks/useSafeUSDBalances'
 import { IApplicantData } from 'src/types'
 import { ArrowDownCircle } from 'src/v2/assets/custom chakra icons/Arrows/ArrowDownCircle'
 import { ExternalLink } from 'src/v2/assets/custom chakra icons/ExternalLink'
@@ -8,7 +9,6 @@ import { getSafeDetails } from 'src/v2/constants/safe/realms_solana'
 import AlertBanner from 'src/v2/payouts/SendFundsModal/AlertBanner'
 import MilestoneSelect from 'src/v2/payouts/SendFundsModal/MilestoneSelect'
 import { TransactionType } from 'src/v2/types/safe'
-import useSafeUSDBalances from 'src/hooks/useSafeUSDBalances'
 
 const RecipientDetails = ({
 	isEvmChain,
