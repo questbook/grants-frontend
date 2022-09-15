@@ -246,7 +246,9 @@ function ViewApplicants() {
 			const safeNetwork = workspaceSafes[0]?.chainId
 			setWorkspaceSafe(safeAddress)
 			setWorkspaceSafeChainId(parseInt(workspaceSafes[0]?.chainId))
-			checkIfUserIsOnCorrectNetwork(safeNetwork)
+			if(isEvmChain) {
+				checkIfUserIsOnCorrectNetwork(safeNetwork)
+			}
 		}
 	}, [safeAddressData])
 
