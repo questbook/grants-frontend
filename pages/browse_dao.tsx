@@ -177,7 +177,7 @@ function useMultiChainDaosForExplore(
 		mergeResults(results) {
 			let final: GetDaOsForExploreQuery['workspaces'] = []
 			for(const { workspaces } of results) {
-				logger.info({ workspaces }, 'Browse DAO Workspaces')
+				// logger.info({ workspaces }, 'Browse DAO Workspaces')
 				final = mergeSortedArrays(final, workspaces, (a, b) => {
 					// @ts-ignore
 					// basically, we use the order key to fetch the sorting property

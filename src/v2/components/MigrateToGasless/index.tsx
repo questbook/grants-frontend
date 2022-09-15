@@ -37,6 +37,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 
 	const [networkModalStep, setNetworkModalStep] = useState<number>()
 	const [transactionHash, setTransactionHash] = useState<string>()
+	const [shouldMigrate, setShouldMigrate] = useState<{state: number, chainId?: SupportedChainId}>()
 
 	const { results, fetchMore } = useMultiChainQuery({
 		useQuery: useGetProfileDetailsQuery,
@@ -56,54 +57,39 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 	}, [walletAddress, walletChain?.id])
 
 	useEffect(() => {
-		if(walletAddress && walletChain?.id && switchNetwork) {
-			logger.info({ results }, 'DAOs owned')
+		logger.info({ results, walletAddress, walletChain })
+		if(walletAddress && walletChain?.id) {
+			const workspaceFromMember = results.find((result) => (result?.workspaceMembers?.length || 0) > 0)?.workspaceMembers[0]?.workspace
+			const workspaceFromApplication = results.find((result) => (result?.grantApplications.length || 0) > 0)?.grantApplications[0]?.grant?.workspace
+			logger.info({ workspaceFromMember, workspaceFromApplication }, 'DAOs owned')
+			const chainIdFromMemberWorkspace = getSupportedChainIdFromWorkspace(workspaceFromMember)
+			const chainIdFromApplicationWorkspace = getSupportedChainIdFromWorkspace(workspaceFromApplication)
+
+			if(chainIdFromMemberWorkspace === walletChain?.id || chainIdFromApplicationWorkspace === walletChain?.id) {
+				return
+			}
+
 			if(!(walletChain?.id in SupportedChainId)) {
-				const workspaceFromMember = results.find((result) => (result?.workspaceMembers?.length || 0) > 0)?.workspaceMembers[0]?.workspace
-				const workspaceFromApplication = results.find((result) => (result?.grantApplications.length || 0) > 0)?.grantApplications[0]?.grant?.workspace
-				logger.info({ workspaceFromMember, workspaceFromApplication }, 'DAOs owned')
 				if(workspaceFromMember) {
 					logger.info({ workspaceFromMember }, 'DAO to migrate')
-					const chainId = getSupportedChainIdFromWorkspace(workspaceFromMember)
-					logger.info({ chainId }, 'DAO chainId')
-					if(chainId) {
-						toast({
-							title: 'No DAO found to migrate',
-							description: `The current network (${walletChain?.name}) your wallet is connected to has no DAO. Please switch your network to ${CHAIN_INFO[chainId].name} where you have DAOs`,
-							status: 'warning',
-							duration: 9000,
-							isClosable: true,
-						})
-						switchNetwork(chainId)
+					logger.info({ chainIdFromMemberWorkspace }, 'DAO chainId')
+					if(chainIdFromMemberWorkspace) {
+						setShouldMigrate({ state: 0, chainId: chainIdFromMemberWorkspace })
 					}
-				} else if(workspaceFromApplication) {
+				} else if(!workspaceFromMember && workspaceFromApplication) {
 					logger.info({ workspaceFromApplication }, 'DAO to migrate')
-					const chainId = getSupportedChainIdFromWorkspace(workspaceFromApplication)
-					logger.info({ chainId }, 'DAO chainId')
-					if(chainId) {
-						toast({
-							title: 'No applications found to migrate',
-							description: `The current network (${walletChain?.name}) your wallet is connected to has no applications. Please switch your network to ${CHAIN_INFO[chainId].name} where you have applications`,
-							status: 'warning',
-							duration: 9000,
-							isClosable: true,
-						})
-						switchNetwork(chainId)
+					logger.info({ chainIdFromApplicationWorkspace }, 'DAO chainId')
+					if(chainIdFromApplicationWorkspace) {
+						setShouldMigrate({ state: 1, chainId: chainIdFromApplicationWorkspace })
 					}
 				} else {
-					toast({
-						title: 'No profile found to migrate',
-						description: `No profile was found on questbook that mapped to the address ${walletAddress} on ${walletChain?.name}`,
-						status: 'warning',
-						duration: 9000,
-						isClosable: true,
-					})
+					setShouldMigrate({ state: 2 })
 				}
-
-				// setHasDAO(results.length > 0 && walletChain?.id in SupportedChainId)
+			} else {
+				setShouldMigrate({ state: 3 })
 			}
 		}
-	}, [results, switchNetwork])
+	}, [results])
 
 	useEffect(() => {
 		if(walletAddress) {
@@ -118,8 +104,44 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 				return
 			}
 
-			if(!walletChain) {
+			if(!walletChain || !shouldMigrate || !switchNetwork) {
 				return
+			}
+
+			if(!(walletChain?.id in SupportedChainId)) {
+				const { state, chainId } = shouldMigrate
+
+				if(state === 0 && chainId) {
+					toast({
+						title: 'No DAO found to migrate',
+						description: `The current network (${walletChain?.name}) your wallet is connected to has no DAO. Please switch your network to ${CHAIN_INFO[chainId].name} (or some other network) where you have DAOs`,
+						status: 'warning',
+						duration: 9000,
+						isClosable: true,
+					})
+					switchNetwork(chainId)
+					return
+				} else if(state === 1 && chainId) {
+					toast({
+						title: 'No applications found to migrate',
+						description: `The current network (${walletChain?.name}) your wallet is connected to has no applications. Please switch your network to ${CHAIN_INFO[chainId].name} (or some other network) where you have applications`,
+						status: 'warning',
+						duration: 9000,
+						isClosable: true,
+					})
+					switchNetwork(chainId)
+					return
+				} else if(state === 2) {
+					toast({
+						title: 'No profile found to migrate',
+						description: `No profile was found on questbook that mapped to the address ${walletAddress} on ${walletChain?.name}`,
+						status: 'warning',
+						duration: 9000,
+						isClosable: true,
+					})
+				} else if(state !== 3) {
+					return
+				}
 			}
 
 			// if(!(walletChain?.id in SupportedChainId)) {
@@ -254,6 +276,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 								ml='auto'
 								px={4}
 								py={2}
+								// disabled={!shouldMigrate}
 								variant='primaryV2'
 								rightIcon={
 									<Image
