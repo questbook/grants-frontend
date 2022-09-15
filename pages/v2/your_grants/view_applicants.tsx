@@ -14,7 +14,7 @@ import { ApiClientsContext } from 'pages/_app'
 import Modal from 'src/components/ui/modal'
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
-import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId, USD_DECIMALS } from 'src/constants/chains'
 import {
 	useGetApplicantsForAGrantQuery,
 	useGetGrantDetailsQuery,
@@ -318,7 +318,7 @@ function ViewApplicants() {
 						// ),
 						amount:
 							applicant && getFieldString(applicant, 'fundingAsk') ? formatAmount(
-								getFieldString(applicant, 'fundingAsk')!,
+								getFieldString(applicant, 'fundingAsk'),
 								decimal || 18,
 							) : '1',
 						symbol: label,
@@ -396,29 +396,36 @@ function ViewApplicants() {
 			logger.info('transaction hash', transaction)
 			logger.info('fund', ethers.utils.formatUnits(transaction.amount.toString(), rewardAssetDecimals))
 			const status = await currentSafe?.getTransactionHashStatus(transaction?.transactionHash)
+			logger.info({ status }, 'status')
 			if(transaction && status) {
-				if(!statuses[applicationId]) {
-					statuses[applicationId] = [{
-						transactionHash: '',
-						status: -1,
-						amount: 0
-					}]
-				}
+				statuses[applicationId] = [{
+					transactionHash: '',
+					status: -1,
+					amount: 0
+				}]
 
-				{
-					!isEvmChain ? (statuses[applicationId]).push({
+				const txHash = transaction?.transactionHash
+				logger.info({ txHash, status }, 'Hashes')
+
+				if(!isEvmChain) {
+					const solObj = {
 						transactionHash: transaction.transactionHash,
 						...(status[transaction.transactionHash] || {}),
-						amount: (status[transaction.transactionHash] || {}).closedAtDate !== '' ?
-							isEvmChain ? 0 :
-								await solanaToUsdOnDate(transaction.amount / 10 ** 9, status[transaction.transactionHash]?.closedAtDate) :
-							0
-					}) : (statuses[applicationId].push({
+						amount: status[transaction.transactionHash]?.closedAtDate !== '' ? await solanaToUsdOnDate(transaction.amount / 10 ** USD_DECIMALS, status[transaction.transactionHash]?.closedAtDate) : 0
+					}
+					logger.info({ obj: solObj }, 'Pushed object (Realms)')
+					statuses[applicationId].push(solObj)
+				} else {
+					const evmObj = {
 						transactionHash: transaction.transactionHash,
 						status: 1,
 						amount: parseInt(ethers.utils.formatUnits(transaction.amount.toString(), rewardAssetDecimals))
-					}))
+					}
+					logger.info({ evmObj }, 'Pushed object (EVM)')
+					statuses[applicationId].push(evmObj)
 				}
+
+				logger.info({ statuses, isEvmChain, workspace }, 'Solana debug')
 
 				return status
 			}
