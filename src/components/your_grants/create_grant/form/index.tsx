@@ -279,18 +279,21 @@ function Form({
 				// console.log(res.data)
 				let tokens
 				if (safeNetwork === "42220"){
-					// console.log('reward currency', tokens)
+					console.log('reward currency', tokens)
 					let localTokenData: {icon: string, label: string, address: string, decimals: number, pair?: string}
 					
 					tokens = res.data.filter((token: SafeToken) => token.tokenAddress).map((token: SafeToken) => {
 						if(token.tokenAddress) {
-							localTokenData = CHAIN_INFO[safeNetwork].supportedCurrencies[token.tokenAddress.toLowerCase()]
+							if(CHAIN_INFO[safeNetwork].supportedCurrencies.hasOwnProperty(token.tokenAddress.toLowerCase())){
+								localTokenData = CHAIN_INFO[safeNetwork].supportedCurrencies[token.tokenAddress.toLowerCase()]
+							}
+							
 							console.log('currency', localTokenData)
 							const currency = {
 								'id': token.tokenAddress,
 								'address': token.tokenAddress,
 								'decimals': token.token.decimals,
-								'icon': localTokenData.icon,
+								'icon': localTokenData ? localTokenData.icon : token.token.logoUri,
 								'label': token.token.symbol,
 								'pair': ''
 							}

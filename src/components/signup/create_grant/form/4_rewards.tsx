@@ -149,13 +149,16 @@ function GrantRewardsInput({
 						
 						tokens = res.data.filter((token: SafeToken) => token.tokenAddress).map((token: SafeToken) => {
 							if(token.tokenAddress) {
-								localTokenData = CHAIN_INFO[safeNetwork].supportedCurrencies[token.tokenAddress.toLowerCase()]
+								if(CHAIN_INFO[safeNetwork].supportedCurrencies.hasOwnProperty(token.tokenAddress.toLowerCase())){
+									localTokenData = CHAIN_INFO[safeNetwork].supportedCurrencies[token.tokenAddress.toLowerCase()]
+								}
+								
 								console.log('currency', localTokenData)
 								const currency = {
 									'id': token.tokenAddress,
 									'address': token.tokenAddress,
 									'decimals': token.token.decimals,
-									'icon': localTokenData.icon,
+									'icon': localTokenData ? localTokenData.icon : token.token.logoUri,
 									'label': token.token.symbol,
 									'pair': ''
 								}
@@ -181,7 +184,6 @@ function GrantRewardsInput({
 					setRewardToken({ address: tokens[0]?.address, decimal: tokens[0]?.decimals.toString(), label: tokens[0]?.label, iconHash: tokens[0]?.icon })
 					}
 					setSupportedCurrencies(tokens)
-					setSupportedCurrenciesList(tokens)
 					// console.log('balances', supportedCurrencies)
 					setRewardCurrency(tokens[0]?.label)
 					
@@ -189,6 +191,7 @@ function GrantRewardsInput({
 				})
 			}
 		}
+			
 
 	}, [currentChain])
 
