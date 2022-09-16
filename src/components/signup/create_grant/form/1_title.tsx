@@ -77,7 +77,7 @@ function Title({ onSubmit, constructCache, cacheKey }: Props) {
 					variant='heading'
 					fontSize='36px'
 					lineHeight='48px'>
-					What&apos;s your grant about?
+					Give instructions to applicants
 				</Text>
 
 				<Box mt={12} />

@@ -16,7 +16,6 @@ import AssignedGrantEmptyState from 'src/components/your_grants/empty_states/ass
 import ExpiredGrantEmptyState from 'src/components/your_grants/empty_states/expired_grant'
 import FirstGrantEmptyState from 'src/components/your_grants/empty_states/first_grant'
 import LiveGrantEmptyState from 'src/components/your_grants/empty_states/live_grants'
-import Sidebar from 'src/components/your_grants/sidebar/sidebar'
 import YourGrantCard from 'src/components/your_grants/yourGrantCard'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import {
@@ -592,7 +591,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 							}
 
             	return (
-	<YourGrantCard
+								<YourGrantCard
             			grantID={grant.grant.id}
             			key={grant.grant.id}
             			daoIcon={

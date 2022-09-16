@@ -115,7 +115,7 @@ function ConfirmData({ domainImageFile, safeAddress, safeChainIcon, domainName, 
 						color='black.2'
 						mt={2}
 						textAlign='center'>
-						You will be asked to verify that you’re a signer on the safe.
+						You will be asked to verify that you’re a safe owner.
 						{' '}
 					</Text>
 				)
