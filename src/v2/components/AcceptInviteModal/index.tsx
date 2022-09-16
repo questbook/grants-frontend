@@ -1,6 +1,6 @@
 import { ChangeEvent, createElement, useContext, useEffect, useRef, useState } from 'react'
 import { Box, Button, HStack, Image, Input, Modal, ModalCloseButton, ModalContent, ModalOverlay, Progress, Spacer, Text, useToast, VStack } from '@chakra-ui/react'
-import { BigNumber } from 'ethers'
+import { BigNumber, logger } from 'ethers'
 import { WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { ROLES } from 'src/constants'
@@ -40,6 +40,7 @@ type DisplayProps = {
 
 export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 	const daoName = useDAOName(inviteInfo?.workspaceId, inviteInfo?.chainId)
+
 	const { webwallet } = useContext(WebwalletContext)!
 
 	const toast = useToast()
@@ -118,6 +119,12 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 					setInviteJoinStep(3)
 				}
 			}, setTransactionHash)
+
+			if(inviteInfo?.chainId && inviteInfo?.workspaceId) {
+				const newWorkspace = `chain_${inviteInfo?.chainId.toString()}-0x${inviteInfo?.workspaceId.toString(16)}`
+				logger.info({ newWorkspace }, 'Setting workspace in cache')
+				localStorage.setItem('currentWorkspace', newWorkspace)
+			}
 
 			setInviteJoinStep(5)
 

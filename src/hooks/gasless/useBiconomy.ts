@@ -1,5 +1,6 @@
 import { useContext, useEffect } from 'react'
 import { BiconomyContext, WebwalletContext } from 'pages/_app'
+import logger from 'src/utils/logger'
 
 export const useBiconomy = (props: { chainId?: string, shouldRefreshNonce?: boolean }) => {
 	const { webwallet, scwAddress, nonce } = useContext(WebwalletContext)!
@@ -18,6 +19,10 @@ export const useBiconomy = (props: { chainId?: string, shouldRefreshNonce?: bool
 
 		initiateBiconomy(chainId)
 	}, [initiateBiconomy, props.chainId, nonce])
+
+	useEffect(() => {
+		logger.info({ biconomyWalletClients, isPresent: biconomyWalletClients?.[props.chainId!], chainId: props.chainId, isPresentInt: biconomyWalletClients?.[parseInt(props.chainId!)] }, 'Biconomy Wallet Client')
+	}, [biconomyWalletClients])
 
 	return {
 		biconomyDaoObj: (!!biconomyDaoObjs && props.chainId) ? biconomyDaoObjs[props.chainId] : undefined,
