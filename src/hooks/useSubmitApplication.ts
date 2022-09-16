@@ -19,7 +19,7 @@ import logger from 'src/utils/logger'
 
 export default function useSubmitApplication(
 	data: GrantApplicationRequest,
-	setCurrentStep: (step: number) => void,
+	setCurrentStep: (step: number | undefined) => void,
 	chainId?: SupportedChainId,
 	grantId?: string,
 	workspaceId?: string,
@@ -186,6 +186,7 @@ export default function useSubmitApplication(
 				const message = getErrorMessage(e)
 				setError(message)
 				setLoading(false)
+				setCurrentStep(undefined)
 				toastRef.current = toast({
 					position: 'top',
 					render: () => ErrorToast({
