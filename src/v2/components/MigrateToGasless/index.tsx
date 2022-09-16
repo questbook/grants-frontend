@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Box, Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text, useToast } from '@chakra-ui/react'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import { CHAIN_INFO } from 'src/constants/chains'
-import { useGetProfileDetailsQuery } from 'src/generated/graphql'
+import { GetWorkspaceMembersQuery, useGetProfileDetailsQuery, useGetWorkspaceMembersQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
@@ -13,6 +13,7 @@ import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import ConnectWalletModal from 'src/v2/components/ConnectWalletModal'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import { useAccount, useNetwork, useSigner, useSwitchNetwork } from 'wagmi'
+import { addAuthorizedOwner } from 'src/utils/gaslessUtils'
 
 interface Props {
     isOpen: boolean
@@ -23,7 +24,7 @@ const POINTERS = ['Zero gas fee across the app', 'No annoying sign transaction p
 
 function MigrateToGasless({ isOpen, onClose }: Props) {
 	const toast = useToast()
-	const { waitForScwAddress } = useContext(WebwalletContext)!
+	const { waitForScwAddress, webwallet } = useContext(WebwalletContext)!
 	const { subgraphClients } = useContext(ApiClientsContext)!
 
 	const { address: walletAddress } = useAccount()
@@ -38,7 +39,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 	const [networkModalStep, setNetworkModalStep] = useState<number>()
 	const [transactionHash, setTransactionHash] = useState<string>()
 	const [shouldMigrate, setShouldMigrate] = useState<{state: number, chainId?: SupportedChainId}>()
-	const [ownedWorkspacesIds, setOwnedWorkspacesIds] = useState<string[]>([])
+	const [ownedWorkspaces, setOwnedWorkspaces] = useState<any>([])
 
 	const { results, fetchMore } = useMultiChainQuery({
 		useQuery: useGetProfileDetailsQuery,
@@ -49,17 +50,45 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 		}
 	})
 
-	useEffect(() => {})
-
+	const { results: ownedWorkspacesResults, fetchMore: fetchMoreOwnedWorkspaces } = useMultiChainQuery({
+		useQuery: useGetWorkspaceMembersQuery,
+		options: {
+			variables: {
+				actorId: walletAddress ?? ''
+			}
+		}
+	})
 
 	useEffect(() => {
 		if(walletAddress && walletChain?.id) {
 			fetchMore({
 				actorId: walletAddress
 			}, true)
+
+			fetchMoreOwnedWorkspaces({
+				actorId: walletAddress
+			}, true)
 		}
 	}, [walletAddress, walletChain?.id])
 
+
+	useEffect(() => {
+		if(!ownedWorkspacesResults)
+			return
+		
+		const filteredOwnedWorkspaces: any = [] 
+
+		if(walletAddress && walletChain?.id){
+			logger.info('ownedWorkspacesResults', ownedWorkspacesResults)
+			const _ownedWorkspaces = ownedWorkspacesResults
+				.filter(result => (result?.workspaceMembers?.length || 0) > 0)
+				.reduce((prev, curr) => prev.concat(curr?.workspaceMembers ?? []), filteredOwnedWorkspaces)
+				.map((prev: any) => prev.workspace)
+			
+			logger.info({_ownedWorkspaces}, 'ownedWorkspaces');
+			setOwnedWorkspaces(_ownedWorkspaces);
+		}
+	}, [ownedWorkspacesResults])
 
 	useEffect(() => {
 		logger.info({ results, walletAddress, walletChain })
@@ -109,7 +138,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 				return
 			}
 
-			if(!walletChain || !shouldMigrate || !switchNetwork) {
+			if(!walletChain || !shouldMigrate || !switchNetwork || !webwallet) {
 				return
 			}
 
@@ -173,6 +202,33 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 
 			setNetworkModalStep(3)
 			await subgraphClients[walletChain?.id].waitForBlock(transactionData.blockNumber)
+
+			// adding the details of all workspaces owned by the user to the database
+			
+			try {
+				await Promise.all(ownedWorkspaces.map((ownedWorkspace: any) => new Promise<void>(async (resolve, reject) => {
+				try{
+					logger.info({ ownedWorkspace: ownedWorkspace.id }, 'Migrating workspace')
+					await addAuthorizedOwner(
+						Number(ownedWorkspace.id), 
+						webwallet?.address, 
+						scwAddress, 
+						getSupportedChainIdFromWorkspace(ownedWorkspace)?.toString()!, 
+						'TO_BE_MODIFIED_SAFE_ADDRESS_JUST_PLACE_HOLDER'
+					);
+					logger.info({ ownedWorkspace: ownedWorkspace.id }, 'Migrated workspace')
+					resolve()
+				}
+				catch{
+					logger.info(
+						{ ownedWorkspace: ownedWorkspace.id, chainId: getSupportedChainIdFromWorkspace(ownedWorkspace)?.toString()! }, 
+						'Failed to migrate workspace - unsupported chain');
+					reject()
+				}
+			})))
+			} catch {
+				logger.info({ ownedWorkspaces }, 'Failed to migrate workspaces on unsupported networks')
+			}
 
 			setNetworkModalStep(5)
 
