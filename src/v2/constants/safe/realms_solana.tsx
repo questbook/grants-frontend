@@ -54,13 +54,13 @@ export class RealmsSolana implements Safe {
 	}
 
 	async solTokenTrxn (
-		transactions: TransactionType[], 
-		nativeTreasury, 
-		proposalInstructions, 
-		governance, 
-		proposalAddress,
-		tokenOwnerRecord ,
-		payer):any{
+		transactions: any, 
+		nativeTreasury: any, 
+		proposalInstructions: any, 
+		governance: any, 
+		proposalAddress: any,
+		tokenOwnerRecord:any ,
+		payer: any): Promise<any>{
 
 		for(let i = 0; i < transactions.length; i++) {
 			logger.info({ txAmount: transactions[i].amount}, 'txAmount')
@@ -127,14 +127,14 @@ export class RealmsSolana implements Safe {
 	}
 
 	async splTokenTrxn(
-		wallet,
-		transactions: TransactionType[], 
-		nativeTreasury, 
-		proposalInstructions, 
-		governance, 
-		proposalAddress,
-		tokenOwnerRecord ,
-		payer):any{
+		wallet: any,
+		transactions: any, 
+		nativeTreasury: any, 
+		proposalInstructions: any, 
+		governance: any, 
+		proposalAddress: any,
+		tokenOwnerRecord:any ,
+		payer: any): Promise<any>{
 			const accountCreationInstruction: TransactionInstruction[] = []
 
 			for(let i = 0; i < transactions.length; i++) {
@@ -471,7 +471,7 @@ const getTokenAndbalance = async(realmAddress: string): Promise<any> =>{
 	 ];
 	const treasuryAccInfo = await connection.getParsedProgramAccounts(TOKEN_PROGRAM_ID, {filters:filters})
 
-	treasuryAccInfo.map((info)=>{
+	treasuryAccInfo.map((info: any)=>{
 		const tokenInfo = info.account.data?.parsed?.info;
 		if(tokenInfo?.mint === "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"){
 			tokenList.push( {

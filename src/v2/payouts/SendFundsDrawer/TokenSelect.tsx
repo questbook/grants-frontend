@@ -68,8 +68,8 @@ const TokenSelect = ({
 	placeholder,
 }: {
 	safeTokenList: any[]
-  value: MilestoneSelectOption | undefined
-  onChange: (value: MilestoneSelectOption | undefined) => void
+  value: any
+  onChange: (value: any) => void
   placeholder: string
 }) => {
 	let selected = undefined

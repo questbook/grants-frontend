@@ -23,6 +23,7 @@ interface Props {
 	onClose: () => void
 	safeAddress: string
 	proposals: IApplicantData[]
+	safeTokenList: any
 	onChangeRecepientDetails: (applicationId: string, fieldName: string, fieldValue: string|number) => void
 	phantomWallet: PhantomProvider | undefined
 	isEvmChain: boolean

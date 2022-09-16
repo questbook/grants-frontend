@@ -4,7 +4,7 @@ import { PlaceholderProps, Select, SelectComponentsConfig } from 'chakra-react-s
 import { SelectDropdownArrow } from 'src/v2/assets/custom chakra icons/Arrows/SelectDropdownArrow'
 
 type DropdownSelectProps<T> = {
-	options: T[]
+	options: any
 	placeholder?: ReactNode
 	makeOption: SelectComponentsConfig<T, any, any>['Option']
 	singleValue?: SelectComponentsConfig<T, any, any>['SingleValue']

@@ -14,9 +14,11 @@ const RecipientDetails = ({
 	initiateTransactionData,
 	onChangeRecepientDetails,
 }: {
+	isEvmChain: boolean
 	applicantData: IApplicantData[]
+	safeTokenList: any
 	initiateTransactionData: TransactionType[] | undefined
-	onChangeRecepientDetails: (applicationId: string, fieldName: string, fieldValue: string | number) => void
+	onChangeRecepientDetails: (applicationId: string, fieldName: string, fieldValue: any) => void
 }) => {
 	return (
 		<>
@@ -43,12 +45,11 @@ const RecipientDetails = ({
 
 							<TokenSelect
 								placeholder='Select a token from the list'
-								value={initiateTransactionData[0]?.selectedToken}
+								value={initiateTransactionData![0]?.selectedToken}
 								safeTokenList={safeTokenList}
 								onChange={
 									(value) => {
-										console.log('value', value)
-										onChangeRecepientDetails(applicantData?.applicationId, 'selectedToken', { name: value?.id, info: value?.info })
+										onChangeRecepientDetails('', 'selectedToken', { name: value?.id, info: value?.info })
 									}
 								} />
 

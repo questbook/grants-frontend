@@ -20,8 +20,9 @@ const RecipientDetails = ({
 }: {
 	isEvmChain: boolean
 	applicantData: IApplicantData
+	safeTokenList: any
 	initiateTransactionData: TransactionType | undefined
-	onChangeRecepientDetails: (applicationId: string, fieldName: string, fieldValue: string | number) => void
+	onChangeRecepientDetails: (applicationId: string, fieldName: string, fieldValue: any) => void
 }) => {
 
 	console.log('safeTokenList - modal', safeTokenList)
@@ -201,7 +202,6 @@ const RecipientDetails = ({
 								safeTokenList={safeTokenList}
 								onChange={
 									(value) => {
-										console.log('value', value)
 										onChangeRecepientDetails(applicantData?.applicationId, 'selectedToken', { name: value?.id, info: value?.info })
 									}
 								} />
