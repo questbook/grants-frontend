@@ -38,7 +38,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 	const [networkModalStep, setNetworkModalStep] = useState<number>()
 	const [transactionHash, setTransactionHash] = useState<string>()
 	const [shouldMigrate, setShouldMigrate] = useState<{state: number, chainId?: SupportedChainId}>()
-	const [ownedWorkspacesIds, setOwnedWorkspacesIds] = useState<string[]>([]);
+	const [ownedWorkspacesIds, setOwnedWorkspacesIds] = useState<string[]>([])
 
 	const { results, fetchMore } = useMultiChainQuery({
 		useQuery: useGetProfileDetailsQuery,
@@ -50,7 +50,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 	})
 
 	useEffect(() => {})
-	
+
 
 	useEffect(() => {
 		if(walletAddress && walletChain?.id) {
@@ -59,7 +59,6 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 			}, true)
 		}
 	}, [walletAddress, walletChain?.id])
-
 
 
 	useEffect(() => {
@@ -228,7 +227,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 								mt={6}
 								variant='v2_title'
 								fontWeight='500'>
-								Questbook is moving to it’s own in-app wallet.
+								Questbook is moving to in-app wallet.
 							</Text>
 							<Flex
 								direction='column'
@@ -327,7 +326,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 						'Setting up ZeroWallet',
 						'Sign Migration Transaction',
 						'Waiting for confirmation',
-						'Wait for indexing to complete',
+						'Waiting for indexing to complete',
 						'Migration successful'
 					]
 				}
