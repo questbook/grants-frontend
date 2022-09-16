@@ -21,6 +21,7 @@ import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import getGnosisTansactionLink from 'src/v2/utils/gnosisUtils'
 import getProposalUrl from 'src/v2/utils/phantomUtils'
 import { erc20ABI, useAccount, useConnect, useDisconnect } from 'wagmi'
+import { getTokenUSDRate, loadAssetId } from '../utils/tokenToUSDconverter'
 
 const ERC20Interface = new ethers.utils.Interface(erc20ABI)
 
@@ -82,14 +83,42 @@ export default function SendFunds({
 	const [, setGnosisReadyToExecuteTxns] = useState<any>([])
 	const [step, setStep] = useState('RECEIPT_DETAILS')
 
+	const [assetId, setAssetId] = useState<string>('')
+	const [tokenUSDRate, setTokenUSDRate] = useState<number>()
+
 	const isEvmChain = workspaceSafeChainId !== 900001
 
 	const workspaceRegistryContract = useQBContract('workspace', workspacechainId)
 	const { webwallet } = useContext(WebwalletContext)!
 
+	const loadAssetIdFromCoinGecko = () => {
+		loadAssetId(workspaceSafeChainId).then(response => {
+			console.log('safe id', workspaceSafeChainId)
+			console.log('fetched asset id', response[0].id)
+			setAssetId(response[0].id)
+		})
+	}
+
+	function getUSDRate() {
+		getTokenUSDRate(assetId, rewardAssetAddress).then(response => {
+			console.log('usd rate', response.data[rewardAssetAddress].usd)
+			setTokenUSDRate(response.data[rewardAssetAddress].usd)
+		})
+		
+	}
+
+	// useEffect(() => {
+	// 	loadAssetIdFromCoinGecko()
+	// }, [workspaceSafe])
+
+	useEffect(() => {
+		getUSDRate()
+	}, [rewardAssetAddress])
+
 	const currentSafe = useMemo(() => {
 		if(isEvmChain && workspaceSafe) {
 			const txnServiceURL = safeServicesInfo[workspaceSafeChainId]
+			loadAssetIdFromCoinGecko()
 			return new GnosisSafe(workspaceSafeChainId, txnServiceURL, workspaceSafe)
 		} else {
 			if(isPlausibleSolanaAddress(workspaceSafe)) {
@@ -139,21 +168,6 @@ export default function SendFunds({
 		}
 	}, [signerVerified])
 
-
-	function createEVMMetaTransactions() {
-		const readyTxs = gnosisBatchData.map((data: any) => {
-			const txData = encodeTransactionData(data.to, (data.amount.toString()))
-			const tx = {
-				to: ethers.utils.getAddress(rewardAssetAddress),
-				data: txData,
-				value: '0'
-			}
-			return tx
-		})
-		setGnosisReadyToExecuteTxns(readyTxs)
-		return readyTxs
-	}
-
 	function encodeTransactionData(recipientAddress: string, fundAmount: string) {
 		const txData = ERC20Interface.encodeFunctionData('transfer', [
 			recipientAddress,
@@ -184,7 +198,22 @@ export default function SendFunds({
 		}
 	}
 
-
+	const createEVMMetaTransactions = () => {
+		const readyTxs = gnosisBatchData.map((data: any) => {
+			// TODO: convert amount from USD to ERC 20
+			const usdToToken = (data.amount / tokenUSDRate!).toFixed(rewardAssetDecimals)
+			console.log('usd -> token', data.amount, usdToToken, tokenUSDRate)
+			const txData = encodeTransactionData(data.to, (usdToToken.toString()))
+			const tx = {
+				to: ethers.utils.getAddress(rewardAssetAddress),
+				data: txData,
+				value: '0'
+			}
+			return tx
+		})
+		setGnosisReadyToExecuteTxns(readyTxs)
+		return readyTxs
+	}
 	const initiateTransaction = async() => {
 		// console.log('initiate transaction called')
 		let proposaladdress: string | undefined

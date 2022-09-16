@@ -189,6 +189,7 @@ function ManageGrant() {
 
 	useEffect(() => {
 		if(fundsDisbursed?.fundsTransfers && currentSafe?.id) {
+			console.log('funds disbursed', fundsDisbursed)
 			checkTransactionStatus()
 		}
 	}, [fundsDisbursed, currentSafe?.id])
