@@ -4,16 +4,21 @@ import { ArrowDownCircle } from 'src/v2/assets/custom chakra icons/Arrows/ArrowD
 import { ExternalLink } from 'src/v2/assets/custom chakra icons/ExternalLink'
 import AlertBanner from 'src/v2/payouts/SendFundsDrawer/AlertBanner'
 import MilestoneSelect from 'src/v2/payouts/SendFundsDrawer/MilestoneSelect'
+import TokenSelect from 'src/v2/payouts/SendFundsDrawer/TokenSelect'
 import { TransactionType } from 'src/v2/types/safe'
 
 const RecipientDetails = ({
+	isEvmChain,
 	applicantData,
+	safeTokenList,
 	initiateTransactionData,
 	onChangeRecepientDetails,
 }: {
+	isEvmChain: boolean
 	applicantData: IApplicantData[]
+	safeTokenList: any
 	initiateTransactionData: TransactionType[] | undefined
-	onChangeRecepientDetails: (applicationId: string, fieldName: string, fieldValue: string | number) => void
+	onChangeRecepientDetails: (applicationId: string, fieldName: string, fieldValue: any) => void
 }) => {
 	return (
 		<>
@@ -24,6 +29,35 @@ const RecipientDetails = ({
 				boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'
 				flexDirection='column'
 			>
+
+				{
+					!isEvmChain ? (
+						<>
+							<Text
+								fontSize='14px'
+								lineHeight='20px'
+								fontWeight='500'
+							>
+								Tokens sent to recipient
+							</Text>
+
+							<Box h={2} />
+
+							<TokenSelect
+								placeholder='Select a token from the list'
+								value={initiateTransactionData![0]?.selectedToken}
+								safeTokenList={safeTokenList}
+								onChange={
+									(value) => {
+										onChangeRecepientDetails('', 'selectedToken', { name: value?.id, info: value?.info })
+									}
+								} />
+
+							<Box h={6} />
+						</>
+					) : null
+				}
+
 				<Text
 					fontSize='14px'
 					lineHeight='20px'
