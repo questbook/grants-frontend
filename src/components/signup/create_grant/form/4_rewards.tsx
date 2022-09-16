@@ -373,7 +373,7 @@ function GrantRewardsInput({
 												setRewardToken({
 													label: data.label,
 													address: data.address,
-													decimal: data.decimals.toString(),
+													decimal: data.decimals?.toString(),
 													iconHash: data.icon,
 												})
 											}
