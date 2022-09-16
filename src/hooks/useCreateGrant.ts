@@ -33,6 +33,8 @@ export default function useCreateGrant(
 	workspaceId?: string,
 ) {
 
+	logger.info({ data, chainId, workspaceId }, 'Biconomy Wallet Client (useCreateGrant)')
+
 	const { webwallet } = useContext(WebwalletContext)!
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
