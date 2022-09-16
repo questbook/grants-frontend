@@ -94,7 +94,7 @@ const SuccessfulDomainCreationModal = ({
 							variant='secondaryV2'
 							onClick={
 								() => {
-									router.push({ pathname: '/' })
+									router.push({ pathname: '/your_grants' })
 								}
 							}>
 							I’ll do it later
@@ -106,7 +106,7 @@ const SuccessfulDomainCreationModal = ({
 								() => {
 									router.push({
 										pathname: '/signup',
-										query: { create_grant: true },
+										query: { createGrant: true },
 									})
 								}
 							}>

@@ -23,7 +23,7 @@ function SignupDao() {
 	const [daoCreated, setDaoCreated] = React.useState(false)
 	const [currentStep, setCurrentStep] = React.useState<number>()
 
-	const [creatingGrant, setCreatingGrant] = React.useState(router.query.create_grant === 'true')
+	const [creatingGrant, setCreatingGrant] = React.useState(router.query.createGrant === 'true')
 
 	const [newWorkspaceObject, setNewWorkspaceObject] = React.useState<any>({})
 	const [newPublicKey, setNewPublicKey] = React.useState()
