@@ -320,24 +320,49 @@ function Form({
 			const gnosisUrl = `${transactionServiceURL}/v1/safes/${safeAddress}/balances/`
 			axios.get(gnosisUrl).then(res => {
 				// console.log(res.data)
-				const tokens = res.data.filter((token: SafeToken) => token.tokenAddress).map((token: SafeToken) => {
-					if(token.tokenAddress) {
-						const currency = {
-							'id': token.tokenAddress,
-							'address': token.tokenAddress,
-							'decimals': token.token.decimals,
-							'icon': token.token.logoUri,
-							'label': token.token.symbol,
-							'pair': ''
+				let tokens
+				if (safeNetwork === "42220"){
+					console.log('reward currency', tokens)
+					let localTokenData: {icon: string, label: string, address: string, decimals: number, pair?: string}
+					
+					tokens = res.data.filter((token: SafeToken) => token.tokenAddress).map((token: SafeToken) => {
+						if(token.tokenAddress) {
+							localTokenData = CHAIN_INFO[safeNetwork].supportedCurrencies[token.tokenAddress.toLowerCase()]
+							console.log('currency', localTokenData)
+							const currency = {
+								'id': token.tokenAddress,
+								'address': token.tokenAddress,
+								'decimals': token.token.decimals,
+								'icon': localTokenData.icon,
+								'label': token.token.symbol,
+								'pair': ''
+							}
+							return currency
 						}
-						return currency
-					}
-				})
+					})
+					
+						
+				} else {
+					tokens = res.data.filter((token: SafeToken) => token.tokenAddress).map((token: SafeToken) => {
+						if(token.tokenAddress) {
+							const currency = {
+								'id': token.tokenAddress,
+								'address': token.tokenAddress,
+								'decimals': token.token.decimals,
+								'icon': token.token.logoUri,
+								'label': token.token.symbol,
+								'pair': ''
+							}
+							return currency
+						}
+					})
+				setRewardToken({ address: tokens[0]?.address, decimal: tokens[0]?.decimals.toString(), label: tokens[0]?.label, iconHash: tokens[0]?.icon })
+				}
 				setSupportedCurrencies(tokens)
 				// console.log('balances', supportedCurrencies)
 				setRewardCurrency(tokens[0]?.label)
-				setRewardToken({ address: tokens[0].address, decimal: tokens[0].decimals.toString(), label: tokens[0].label, iconHash: tokens[0].icon })
-				setRewardCurrencyAddress(tokens[0].address)
+				
+				setRewardCurrencyAddress(tokens[0]?.address)
 			})
 		}
 
