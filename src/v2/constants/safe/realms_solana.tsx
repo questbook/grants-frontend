@@ -6,6 +6,7 @@ import {
 	getNativeTreasuryAddress,
 	getRealm,
 	Governance,
+	InstructionData,
 	ProgramAccount,
 	Proposal,
 	pubkeyFilter,
@@ -15,7 +16,7 @@ import {
 	withInsertTransaction,
 	withSignOffProposal,
 } from '@solana/spl-governance';
-import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
+import { Connection, GetProgramAccountsConfig, GetProgramAccountsFilter, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import assert from 'assert';
 import axios from 'axios';
 import { USD_THRESHOLD } from 'src/constants';
@@ -23,6 +24,7 @@ import { NetworkType } from 'src/constants/Networks';
 import logger from 'src/utils/logger';
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect';
 import { MetaTransaction, Safe, TransactionType } from 'src/v2/types/safe';
+import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from "@solana/spl-token"
 
 export class RealmsSolana implements Safe {
 	id: PublicKey | undefined
@@ -51,47 +53,16 @@ export class RealmsSolana implements Safe {
     	throw new Error('Method not implemented.')
 	}
 
+	async solTokenTrxn (
+		transactions: TransactionType[], 
+		nativeTreasury, 
+		proposalInstructions, 
+		governance, 
+		proposalAddress,
+		tokenOwnerRecord ,
+		payer):any{
 
-	async proposeTransactions(grantname: string, transactions: TransactionType[], wallet: any): Promise<string> {
-
-    	const realmData = await getRealm(this.connection, this.id!)
-    	const governances = await getGovernanceAccounts(this.connection, this.programId, Governance, [
-			pubkeyFilter(1, this.id)!,
-		])
-
-		const governance = governances.filter((gov)=>gov.pubkey.toString()===realmData.account.authority?.toString())[0]
-    	const payer : PublicKey = wallet.publicKey
-
-    	const tokenOwnerRecord  = await getGovernanceAccounts(
-			this.connection,
-			this.programId,
-			TokenOwnerRecord,
-			[pubkeyFilter(1, realmData.pubkey)!, pubkeyFilter(65, payer)!]
-		  );
-		  
-    	const proposalInstructions: TransactionInstruction[] = []
-
-    	const proposalAddress = await withCreateProposal(
-    		proposalInstructions,
-    		this.programId,
-    		2,
-    		this.id!,
-    		governance.pubkey,
-    		tokenOwnerRecord[0].pubkey,
-    		`${transactions.length > 1 ? 'Batched Payout - ' : ''} ${grantname} - ${new Date().toDateString()}`,
-    		`${grantname}`,
-    		tokenOwnerRecord[0].account.governingTokenMint,
-            payer!,
-            governance.account.proposalCount,
-            VoteType.SINGLE_CHOICE,
-            ['Approve'],
-            true,
-            payer!
-    	)
-
-    	const nativeTreasury = await getNativeTreasuryAddress(this.programId, governance.pubkey)
-
-    	for(let i = 0; i < transactions.length; i++) {
+		for(let i = 0; i < transactions.length; i++) {
 			logger.info({ txAmount: transactions[i].amount}, 'txAmount')
 			const solanaAmount = await usdToSolana(transactions[i].amount)
 			logger.info({solAmount: solanaAmount}, 'Solana amount')
@@ -153,6 +124,181 @@ export class RealmsSolana implements Safe {
     	transaction.feePayer = payer!
     	transaction.add(...proposalInstructions)
     	await getProvider().signAndSendTransaction(transaction)
+	}
+
+	async splTokenTrxn(
+		wallet,
+		transactions: TransactionType[], 
+		nativeTreasury, 
+		proposalInstructions, 
+		governance, 
+		proposalAddress,
+		tokenOwnerRecord ,
+		payer):any{
+			const accountCreationInstruction: TransactionInstruction[] = []
+
+			for(let i = 0; i < transactions.length; i++) {
+				const mintPublicKey = new PublicKey(transactions[i]?.selectedToken.info.mint);  
+				const mintToken = new Token(
+					this.connection,
+					mintPublicKey,
+					TOKEN_PROGRAM_ID,
+					wallet// the wallet owner will pay to transfer and to create recipients associated token account if it does not yet exist.
+				);
+
+				const [fromAddress] = await PublicKey.findProgramAddress(
+					[nativeTreasury.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), mintPublicKey.toBuffer()],
+					ASSOCIATED_TOKEN_PROGRAM_ID
+				);
+		
+				const [toAddress] = await PublicKey.findProgramAddress(
+					[new PublicKey(transactions[i].to).toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), mintPublicKey.toBuffer()],
+					ASSOCIATED_TOKEN_PROGRAM_ID
+				);
+
+				const receiverAccount = await this.connection.getAccountInfo(toAddress);
+
+				if (receiverAccount === null) {
+					accountCreationInstruction.push(
+							Token.createAssociatedTokenAccountInstruction(
+								mintToken.associatedProgramId,
+								mintToken.programId,
+								mintPublicKey,
+								toAddress,
+								new PublicKey(transactions[i].to),
+								wallet.publicKey
+							)
+					)
+				}
+
+				const instructions: InstructionData[] = []; 
+
+				instructions.push(
+					createInstructionData(
+						Token.createTransferInstruction(
+							TOKEN_PROGRAM_ID,
+							fromAddress,
+							toAddress,
+							nativeTreasury,
+							[],
+							transactions[i].amount*10**transactions[0]?.selectedToken.info.tokenAmount.decimals
+						)
+					)
+				);
+	
+				await withInsertTransaction(
+					proposalInstructions,
+					this.programId,
+					2,
+					governance.pubkey,
+					proposalAddress,
+					tokenOwnerRecord[0].pubkey,
+					payer!,
+					i,
+					0,
+					0,
+					instructions,
+					payer!
+				)
+			}
+	
+			withSignOffProposal(
+				proposalInstructions,
+				this.programId,
+				2,
+				this.id!,
+				governance.pubkey,
+				proposalAddress,
+				payer!,
+				undefined,
+				tokenOwnerRecord[0].pubkey
+			)
+	
+			const getProvider = (): any => {
+				if('solana' in window) {
+					// @ts-ignore
+					const provider = window.solana as any
+					if(provider.isPhantom) {
+						return provider as any
+					}
+				}
+			}
+	
+			console.log('create New proposal - getProvider', getProvider())
+	
+			const block = await this.connection.getLatestBlockhash('confirmed')
+			const transaction = new Transaction()
+			transaction.recentBlockhash = block.blockhash
+			transaction.feePayer = payer!
+			if(accountCreationInstruction.length>0) {
+				transaction.add(...accountCreationInstruction)
+			}
+			transaction.add(...proposalInstructions)
+			await getProvider().signAndSendTransaction(transaction)
+	}
+
+
+	async proposeTransactions(grantname: string, transactions: TransactionType[], wallet: any): Promise<string> {
+
+		console.log('transactions', transactions)
+
+    	const realmData = await getRealm(this.connection, this.id!)
+    	const governances = await getGovernanceAccounts(this.connection, this.programId, Governance, [
+			pubkeyFilter(1, this.id)!,
+		])
+
+		const governance = governances.filter((gov)=>gov.pubkey.toString()===realmData.account.authority?.toString())[0]
+    	const payer : PublicKey = wallet.publicKey
+
+    	const tokenOwnerRecord  = await getGovernanceAccounts(
+			this.connection,
+			this.programId,
+			TokenOwnerRecord,
+			[pubkeyFilter(1, realmData.pubkey)!, pubkeyFilter(65, payer)!]
+		  );
+		  
+    	const proposalInstructions: TransactionInstruction[] = []
+
+    	const proposalAddress = await withCreateProposal(
+    		proposalInstructions,
+    		this.programId,
+    		2,
+    		this.id!,
+    		governance.pubkey,
+    		tokenOwnerRecord[0].pubkey,
+    		`${transactions.length > 1 ? 'Batched Payout - ' : ''} ${grantname} - ${new Date().toDateString()}`,
+    		`${grantname}`,
+    		tokenOwnerRecord[0].account.governingTokenMint,
+            payer!,
+            governance.account.proposalCount,
+            VoteType.SINGLE_CHOICE,
+            ['Approve'],
+            true,
+            payer!
+    	)
+
+    	const nativeTreasury = await getNativeTreasuryAddress(this.programId, governance.pubkey)
+
+		if(transactions[0].selectedToken.name==="SOL"){
+			await this.solTokenTrxn(
+				transactions, 
+				nativeTreasury, 
+				proposalInstructions, 
+				governance, 
+				proposalAddress,
+				tokenOwnerRecord,
+				payer)
+    	}else{
+			await this.splTokenTrxn(
+				wallet,
+				transactions, 
+				nativeTreasury, 
+				proposalInstructions, 
+				governance, 
+				proposalAddress,
+				tokenOwnerRecord,
+				payer)
+		}
 
     	return proposalAddress.toString()
 	}
@@ -246,6 +392,7 @@ const usdToSolana = async(usdAmount: number) => {
 }
 
 const getSafeDetails = async(realmsAddress: string): Promise<SafeSelectOption | null> => {
+	
 	const connection = new Connection(process.env.SOLANA_RPC!, 'recent')
 	const programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
 	const realmsPublicKey = new PublicKey(realmsAddress)
@@ -285,5 +432,62 @@ const getOwners = async(safeAddress: string): Promise<string[]> => {
 	}
 }
 
+const getTokenAndbalance = async(realmAddress: string): Promise<any> =>{
 
-export { getSafeDetails, getOwners, solanaToUsd, usdToSolana, solanaToUsdOnDate,getDateInDDMMYYYY }
+	let tokenList = [];
+
+	const connection = new Connection(process.env.SOLANA_RPC!, 'recent')
+	const programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
+	const realmsPublicKey = new PublicKey(realmAddress)
+	const realmData = await getRealm(connection, realmsPublicKey)
+	const governances = await getGovernanceAccounts(connection, programId, Governance, [
+		pubkeyFilter(1, new PublicKey(realmAddress))!,
+	])
+	const governance = governances.filter((gov)=>gov.pubkey.toString()===realmData.account.authority?.toString())[0]
+	const nativeTreasuryAddress = await getNativeTreasuryAddress(programId, governance.pubkey)
+	assert(realmData.account.name)
+	const solAmount = (await connection.getAccountInfo(nativeTreasuryAddress))!.lamports / 1000000000
+	const usdAmount = await solanaToUsd(solAmount)
+
+	tokenList.push( {
+		tokenIcon: '/network_icons/solana.svg',
+		tokenName: 'SOL',
+		tokenValueAmount: solAmount,
+		usdValueAmount: usdAmount, 
+		mintAddress: nativeTreasuryAddress,
+		info: undefined,
+	})
+
+	const filters:GetProgramAccountsFilter[] = [
+		{
+		  dataSize: 165,    //size of account (bytes)
+		},
+		{
+		  memcmp: {
+			offset: 32,     //location of our query in the account (bytes)
+			bytes: nativeTreasuryAddress.toString(),  //our search criteria, a base58 encoded string
+		  }            
+		}
+	 ];
+	const treasuryAccInfo = await connection.getParsedProgramAccounts(TOKEN_PROGRAM_ID, {filters:filters})
+
+	treasuryAccInfo.map((info)=>{
+		const tokenInfo = info.account.data?.parsed?.info;
+		if(tokenInfo?.mint === "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"){
+			tokenList.push( {
+				tokenIcon: '/chain_assets/usdc.svg',
+				tokenName: 'USDC',
+				tokenValueAmount: tokenInfo?.tokenAmount?.uiAmount,
+				usdValueAmount: undefined, 
+				mintAddress: tokenInfo?.mint,
+				info: tokenInfo,
+			})	
+		}
+	})
+
+	console.log('tokenList', tokenList);
+	return tokenList;
+}
+
+
+export { getSafeDetails, getOwners, solanaToUsd, usdToSolana, solanaToUsdOnDate,getDateInDDMMYYYY, getTokenAndbalance }

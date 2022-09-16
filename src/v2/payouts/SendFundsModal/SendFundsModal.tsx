@@ -48,6 +48,7 @@ function SendFundsModal({
 	onClose,
 	safeAddress,
 	proposals,
+	safeTokenList,
 	onChangeRecepientDetails,
 	phantomWallet,
 	isEvmChain,
@@ -217,6 +218,7 @@ function SendFundsModal({
 							{
 								step === 'RECEIPT_DETAILS' ? (
 									<RecipientDetails
+										safeTokenList={safeTokenList}
 										isEvmChain={isEvmChain}
 										applicantData={proposals[0]}
 										initiateTransactionData={initiateTransactionData?.length > 0 ? initiateTransactionData[0] : undefined}

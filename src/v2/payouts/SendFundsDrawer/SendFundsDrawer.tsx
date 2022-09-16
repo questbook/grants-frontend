@@ -51,6 +51,7 @@ function SendFundsDrawer({
 	initiateTransactionData,
 	onModalStepChange,
 	step,
+	safeTokenList,
 }: Props) {
 
 	// const {
@@ -234,6 +235,7 @@ function SendFundsDrawer({
 							step === 'RECEIPT_DETAILS' ? (
 								<RecipientDetails
 									applicantData={proposals}
+									safeTokenList={safeTokenList}
 									onChangeRecepientDetails={onChangeRecepientDetails}
 									initiateTransactionData={initiateTransactionData} />
 							) : (
