@@ -33,10 +33,11 @@ const TipsContainer = ({ currentTip }: Props) => {
 			key={2}
 		/>,
 		<TipsList
-			tipsHeading='Tips to set reward and add funds'
+			tipsHeading='Tips for setting the grant reward'
 			tips={
 				[
-					'Your funds are not stored with us. They are in a smart contract.',
+					'Grant reward is used by applicants to give them a ball park figure about the grant',
+					'All the funds will be on your multi-sig safe, completely in your control'
 				]
 			}
 			icon='/illustrations/grant_reward.svg'

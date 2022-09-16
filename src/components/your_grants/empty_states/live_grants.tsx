@@ -30,7 +30,7 @@ function LiveGrantEmptyState() {
 						() => {
 							router.push({
 								pathname: '/signup',
-								query: { create_grant: true },
+								query: { createGrant: true },
 							})
 
 						}
