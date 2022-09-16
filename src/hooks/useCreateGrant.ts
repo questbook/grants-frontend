@@ -32,10 +32,10 @@ export default function useCreateGrant(
 	chainId?: SupportedChainId,
 	workspaceId?: string,
 ) {
-
-	logger.info({ data, chainId, workspaceId }, 'Biconomy Wallet Client (useCreateGrant)')
-
+	const { validatorApi, workspace, subgraphClients } = useContext(ApiClientsContext)!
 	const { webwallet } = useContext(WebwalletContext)!
+
+	chainId = chainId || getSupportedChainIdFromWorkspace(workspace)
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: chainId?.toString()!
@@ -44,34 +44,24 @@ export default function useCreateGrant(
 
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = React.useState(false)
 
-	useEffect(() => {
-		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
-			biconomy.networkId.toString() === chainId.toString()) {
-			setIsBiconomyInitialised(true)
-		}
-	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, chainId])
-
-
 	const [error, setError] = React.useState<string>()
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	const [transactionData, setTransactionData] = React.useState<any>()
 	const { data: accountData, nonce } = useQuestbookAccount()
 	const { data: networkData, switchNetwork } = useNetwork()
-
-	const apiClients = useContext(ApiClientsContext)!
-	const { validatorApi, workspace, subgraphClients } = apiClients
-
-	if(!chainId) {
-		// eslint-disable-next-line no-param-reassign
-		chainId = getSupportedChainIdFromWorkspace(workspace)
-	}
-
 	const grantContract = useQBContract('grantFactory', chainId)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
 	const currentChainId = useChainId()
+
+	useEffect(() => {
+		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
+			biconomy.networkId.toString() === chainId.toString()) {
+			setIsBiconomyInitialised(true)
+		}
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, chainId])
 
 	useEffect(() => {
 		// console.log('data', data)
@@ -334,6 +324,8 @@ export default function useCreateGrant(
 		accountData,
 		networkData,
 		currentChainId,
+		biconomyWalletClient,
+		scwAddress,
 		chainId,
 		workspaceId,
 		data,
