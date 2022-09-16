@@ -871,7 +871,7 @@ function ViewApplicants() {
 								fontWeight='500'
 								fontSize='17px'
 							>
-								{grantData && grantData?.grants && grantData?.grants.length > 0 && grantData?.grants[0].title}
+								{grantData?.grants && grantData?.grants.length > 0 && grantData?.grants[0].title}
 							</Text>
 
 							<Button
