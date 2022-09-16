@@ -271,7 +271,7 @@ const OnboardingCreateDomain = () => {
 
 	const steps = [
 		<SafeDetails
-			safesOptions={[safesUSDBalance?.some((safe: SafeSelectOption) => safe.amount >= USD_THRESHOLD) ? DEFAULT_NOTE : INSUFFICIENT_FUNDS_NOTE, ...safesUSDBalance!]}
+			safesOptions={safesUSDBalance}
 			key={0}
 			step={step}
 			safeAddress={safeAddress}
@@ -479,7 +479,6 @@ const OnboardingCreateDomain = () => {
 					}
 				}
 				domainName={domainName}
-				daoLink={network && txHash ? getExplorerUrlForTxHash(network, txHash) : undefined}
 			/>
 		</>
 	)
