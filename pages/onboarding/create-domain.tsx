@@ -311,7 +311,7 @@ const OnboardingCreateDomain = () => {
 		<ConfirmData
 			key={2}
 			safeAddress={safeAddress}
-			safeChainIcon='/ui_icons/gnosis.svg'
+			safeChainIcon={isValidEthereumAddress(safeAddress) ? '/safes_icons/gnosis.svg' : '/safes_icons/realms.svg'}
 			domainName={domainName}
 			domainImageFile={daoImageFile}
 			isBiconomyLoading={biconomyLoading}

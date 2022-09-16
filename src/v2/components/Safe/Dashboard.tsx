@@ -60,7 +60,7 @@ function Dashboard() {
 			 >
 				<Image
 					boxSize='60px'
-					src={isValidSolanaAddress(workspace?.safe?.address ?? '') ? '/safes_icons/realms.svg' : '/safes_icons/gnosis.svg'} />
+					src={isValidEthereumAddress(workspace?.safe?.address ?? '') ? '/safes_icons/gnosis.svg' : '/safes_icons/realms.svg'} />
 				<Button
 					mt={4}
 					variant='link'
