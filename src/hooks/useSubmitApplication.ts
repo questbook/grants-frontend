@@ -19,7 +19,7 @@ import logger from 'src/utils/logger'
 
 export default function useSubmitApplication(
 	data: GrantApplicationRequest,
-	setCurrentStep: (step: number) => void,
+	setCurrentStep: (step: number | undefined) => void,
 	chainId?: SupportedChainId,
 	grantId?: string,
 	workspaceId?: string,
@@ -183,6 +183,7 @@ export default function useSubmitApplication(
 				setCurrentStep(5)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
+				setCurrentStep(undefined)
 				const message = getErrorMessage(e)
 				setError(message)
 				setLoading(false)
