@@ -13,6 +13,7 @@ import { SupportedNetwork } from 'src/generated/graphql'
 import useCreateGrant from 'src/hooks/useCreateGrant'
 import useCreateWorkspace from 'src/hooks/useCreateWorkspace'
 import NavbarLayout from 'src/layout/navbarLayout'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
 function SignupDao() {
@@ -86,7 +87,7 @@ function SignupDao() {
 		grantTransactionData,
 		transactionLink,
 		createGrantLoading,
-	] = useCreateGrant(grantData, setCurrentStep, workspaceData?.network, daoData?.id)
+	] = useCreateGrant(grantData, setCurrentStep, getSupportedChainIdFromWorkspace(workspace), workspace?.id)
 
 	useEffect(() => {
 		// // console.log(grantTransactionData);
