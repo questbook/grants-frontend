@@ -165,7 +165,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		return _nonce
 	}, [webwallet])
 
-
 	useEffect(() => {
 		if(!webwallet) {
 			return
@@ -257,14 +256,18 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			})
 		})
 
-		setScwAddress(scwAddress)
-		setBiconomyWalletClients(prev => ({...prev, [chainId]: _biconomyWalletClient}))
-		setBiconomyDaoObjs((prev: any) => ({...prev, [chainId]: _biconomy}))
+		setBiconomyWalletClients(prev => ({ ...prev, [chainId]: _biconomyWalletClient }))
+		setBiconomyDaoObjs((prev: any) => ({ ...prev, [chainId]: _biconomy }))
 
-		_logger.info('switched chain after init')
-		const chain = parseInt(chainId)
-		switchNetwork(chain)
-	
+		// only switch the chainId if it's the most recently requested one
+		// this prevents race conditions when inititialisation of multiple chains is requested
+		// and the most recently requested one finishes later
+		if(mostRecentInitChainId.current === chainId) {
+			setScwAddress(scwAddress)
+			_logger.info('switched chain after init')
+			const chain = parseInt(chainId)
+			switchNetwork(chain)
+		}
 	}, [webwallet, nonce])
 
 	const initiateBiconomy = useCallback(
