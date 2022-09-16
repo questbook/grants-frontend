@@ -265,7 +265,7 @@ const getSafeDetails = async(realmsAddress: string): Promise<SafeSelectOption | 
 		networkId: '900001', // A costum value for Solana as it's not EVM.
 		networkName: 'Solana',
 		networkIcon: '/network_icons/solana.svg',
-		safeType: 'SPL-GOV',
+		safeType: 'Realms',
 		safeIcon: '/safes_icons/realms.svg',
 		amount: usdAmount, // 1000
 		isDisabled: usdAmount < USD_THRESHOLD

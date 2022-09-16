@@ -71,9 +71,9 @@ function SafeDetails({ safesOptions, step, safeAddress, isVerified, isLoading, s
 					<SafeSelect
 						safesOptions={safesOptions}
 						label='Safes Found'
-						helperText='Associated with this address on all networks.'
+						helperText='Safes found on the address'
 						helperLinkText='Learn about supported networks'
-						helperLinkUrl='https://www.notion.so/questbook/Supported-Safes-on-Questbook-20d76804bf8a4ef8a17d2e5b85d3421c'
+						helperLinkUrl='https://www.notion.so/questbook/Supported-Networks-on-Questbook-20d76804bf8a4ef8a17d2e5b85d3421c'
 						value={safeSelected}
 						onChange={
 							(safeSelected: SafeSelectOption | undefined) => {

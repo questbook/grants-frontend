@@ -1,18 +1,15 @@
 import React from 'react'
-import { ExternalLinkIcon } from '@chakra-ui/icons'
-import { AlertDialogOverlay, Button, Flex, Image, Link, Modal, ModalBody, ModalContent, Text } from '@chakra-ui/react'
+import { AlertDialogOverlay, Button, Flex, Image, Modal, ModalBody, ModalContent, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 
 const SuccessfulDomainCreationModal = ({
 	isOpen,
 	onClose,
 	domainName,
-	daoLink
 }: {
 	isOpen: boolean
 	onClose: () => void
 	redirect?: () => void
-	daoLink?: string
 	domainName?: string
 }) => {
 	const router = useRouter()
@@ -54,30 +51,28 @@ const SuccessfulDomainCreationModal = ({
 						variant='v2_subheading'
 						fontWeight='500'
 						textAlign='center'>
-						Success! Your DAO is created
+						Success! Your Domain is created
 					</Text>
 					<Flex
 						align='center'
 						justify='center'
 						w='100%'
 						mt={2}>
-						<Link
-							href={daoLink}
-							isExternal>
-							<Flex>
-								<Text
-									variant='v2_body'
-									fontWeight='500'>
-									{domainName ?? 'Unknown'}
-									{' '}
-									DAO
-								</Text>
-								<ExternalLinkIcon
-									color='black.1'
-									boxSize='15px'
-									mx='2px' />
-							</Flex>
-						</Link>
+						<Button
+							variant='link'
+							onClick={
+								() => {
+									router.replace({ pathname: '/your_grants' })
+								}
+							}>
+							<Text
+								variant='v2_body'
+								fontWeight='500'>
+								{domainName ?? 'Unknown'}
+								{' '}
+								DAO
+							</Text>
+						</Button>
 						<Text
 							ml={1}
 							variant='v2_body'
