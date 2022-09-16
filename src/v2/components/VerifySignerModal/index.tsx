@@ -10,6 +10,7 @@ import SuccessToast from 'src/v2/components/Toasts/successToast'
 import VerifySignerErrorState from 'src/v2/components/VerifySignerModal/VeirfySignerErrorState'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import { Papercups } from '@papercups-io/chat-widget'
 
 const VerifySignerModal = ({
 	owners,
@@ -256,18 +257,12 @@ const VerifySignerModal = ({
 								<Text
 									mt={6}
 									variant='v2_body'>
-									Need help? Join our
-									<Link
-										mx={0.25}
-										fontWeight='500'
-										color='black.1'
-										isExternal
-										href='https://discord.gg/questbook'>
-										Discord
-									</Link>
-									{' '}
-									to get instant support.
-								</Text>
+									Need help? 
+									</Text>
+									<Text mt={2} as='u' cursor='pointer' variant='v2_body' onClick={Papercups.open}>
+									 Get instant support. 
+									</Text>
+								
 
 								<Box h={5} />
 

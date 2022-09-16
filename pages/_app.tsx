@@ -256,6 +256,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			})
 		})
 
+		_logger.info({ scwAddress }, 'got scw address')
+
 		setBiconomyWalletClients(prev => ({ ...prev, [chainId]: _biconomyWalletClient }))
 		setBiconomyDaoObjs((prev: any) => ({ ...prev, [chainId]: _biconomy }))
 

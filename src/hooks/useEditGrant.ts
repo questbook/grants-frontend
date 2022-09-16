@@ -19,7 +19,7 @@ import {
 
 export default function useEditGrant(
 	data: any,
-	setCurrentStep: (step: number) => void,
+	setCurrentStep: (step: number | undefined) => void,
 	grantId?: string,
 ) {
 	// console.log(grantId)
@@ -236,7 +236,7 @@ export default function useEditGrant(
 				setLoading(false)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
-
+				setCurrentStep(undefined)
 				const message = getErrorMessage(e)
 				setError(message)
 				setLoading(false)

@@ -1,55 +1,105 @@
 import React, { useContext } from 'react'
+import { ChevronDownIcon } from '@chakra-ui/icons'
 import {
-	Flex,
+	Box,
+	Button,
+	HStack,
 	Image,
+	Link,
+	Menu,
+	MenuButton,
+	MenuList,
 	Text,
+	useToast,
+	VStack,
 } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import { WebwalletContext } from 'pages/_app'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import getAvatar from 'src/utils/avatarUtils'
-import { formatAddress } from 'src/utils/formattingUtils'
+
+const IN_APP_WALLET_LEARN_MORE_URL = 'https://blog.questbook.xyz/posts/aug-2022-release/#:~:text=App%20Specific%20Wallet%20%2D%20Zero%20Wallet'
 
 function AccountDetails() {
-	const { nonce } = useQuestbookAccount()
-	const { scwAddress } = useContext(WebwalletContext)!
+	const { webwallet, scwAddress } = useContext(WebwalletContext)!
+	const { network } = useNetwork()
+
+	const toast = useToast()
+
+	const isConnected = !!scwAddress
+	const isConnecting = !scwAddress && !!webwallet?.address
+
+	function copyScwAddress() {
+		copy(scwAddress!)
+		toast({
+			title: 'Copied in-app wallet address successfully',
+			status: 'success',
+			duration: 2500
+		})
+	}
+
+	if(!isConnected && !isConnecting) {
+		return <Box />
+	}
 
 	return (
-		<Flex
-			bg='gray.2'
-			p={2}
-			align='center'
-			borderRadius='2px'>
-			{
-				nonce && scwAddress && (
+		<Menu>
+			<MenuButton
+				background='#F0F0F7'
+				disabled={isConnecting}
+				as={Button}
+				rightIcon={<ChevronDownIcon />}>
+				<HStack>
 					<Image
 						borderRadius='3xl'
-						src={getAvatar(scwAddress)}
+						src={getAvatar(webwallet!.address)}
 						boxSize='24px' />
-				)
-			}
-			{
-				nonce && scwAddress && (
-					<Text
-						onClick={
-							() => {
-								// This is for debug purposes only
-								const data1 = localStorage.getItem('webwalletPrivateKey')
-								const data2 = localStorage.getItem('scwAddress')
-								const data = { 'webwalletPrivateKey': data1, 'scwAddress': data2 }
-								if(data1 !== null && data2 !== null) {
-									copy(JSON.stringify(data))
-								}
-							}
+					<Text color={isConnected ? 'brandv2' : 'grey'}>
+						{
+							isConnected
+								? 'Connected with in-app wallet'
+								: 'Connecting your in-app wallet...'
 						}
-						ml={2}
-						variant='v2_body'
-						fontWeight='500'>
-						{formatAddress(scwAddress)}
 					</Text>
-				)
-			}
-		</Flex>
+				</HStack>
+			</MenuButton>
+			<MenuList p={0}>
+				<VStack p={3}>
+					<HStack
+						fontSize={15}
+						w='100%'
+						justify='space-between'
+						color='v2Grey'>
+						<Text fontWeight='bold'>
+							YOUR IN-APP WALLET
+						</Text>
+
+						<Link
+							fontWeight='bold'
+							color='v2Grey'
+							target='_blank'
+							href={IN_APP_WALLET_LEARN_MORE_URL}>
+							Learn More
+						</Link>
+					</HStack>
+
+					<HStack fontSize='sm'>
+						<Link
+							onClick={copyScwAddress}
+							fontWeight='bold'
+							color='brandv2'>
+							{scwAddress}
+						</Link>
+
+						<Box w={3} />
+
+						<Text color='v2Grey'>
+							{network}
+						</Text>
+					</HStack>
+				</VStack>
+			</MenuList>
+		</Menu>
 	)
 }
 
