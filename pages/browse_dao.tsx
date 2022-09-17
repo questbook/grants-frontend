@@ -9,6 +9,7 @@ import { extractInviteInfo, InviteInfo } from 'src/utils/invite'
 import logger from 'src/utils/logger'
 import { mergeSortedArrays } from 'src/utils/mergeSortedArrays'
 import AcceptInviteModal from 'src/v2/components/AcceptInviteModal'
+import { useTranslation } from 'react-i18next';
 
 const PAGE_SIZE = 2
 
@@ -42,6 +43,8 @@ function BrowseDao() {
 		sort,
 		SORTING_OPTIONS.find(s => s.id === sort)!.filter,
 	)
+
+	const { t } = useTranslation();
 
 	useEffect(() => {
 		setNewDaos(newDaosResult)
@@ -88,7 +91,7 @@ function BrowseDao() {
 					<Text
 						fontSize='24px'
 						fontWeight='700'>
-						Popular
+						{t('browse_dao.section_1.title')}
 					</Text>
 					<Box marginLeft='auto'>
 						<Menu>
