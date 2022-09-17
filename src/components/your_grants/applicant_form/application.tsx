@@ -18,16 +18,15 @@ import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { GetApplicationDetailsQuery } from 'src/generated/graphql'
 import { formatAmount, getFieldString, getRewardAmount } from 'src/utils/formattingUtils'
-import { getFromIPFS, getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 interface Props {
   applicationData: GetApplicationDetailsQuery['grantApplication']
-  showHiddenData: () => void
 }
 
-function Application({ applicationData, showHiddenData }: Props) {
+function Application({ applicationData }: Props) {
 	const { workspace } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
 	const refs = [useRef(null), useRef(null), useRef(null), useRef(null)]
@@ -389,64 +388,24 @@ function Application({ applicationData, showHiddenData }: Props) {
 							</Heading>
 						</Heading>
 						{
-							!!memberDetails?.length ? (
-								memberDetails.map((memberDetail: any, index: number) => (
-									<Box key={index}>
-										<Heading
-											variant='applicationHeading'
-											color='brand.500'
-											mt={5}
-										>
-											Member
-											{' '}
-											{index + 1}
-										</Heading>
-										<Text
-											variant='applicationText'
-											mt={2}>
-											{memberDetail}
-										</Text>
-									</Box>
-								))
-							) : (
-								<Box
-									backdropBlur='base'
-									border='1px'
-									borderColor='#D0D3D3'
-									rounded='md'
-									py='5'
-									mt='2'
-									display='flex'
-									justifyContent='center'
-								>
-									<Flex
-										direction='column'
-										justifyContent='center'
-										alignItems='center'
-										maxW='480px'
+							memberDetails.map((memberDetail: any, index: number) => (
+								<Box key={index}>
+									<Heading
+										variant='applicationHeading'
+										color='brand.500'
+										mt={5}
 									>
-										<Image
-											h='77px'
-											w='89px'
-											src='/illustrations/disburse_grants.svg' />
-										<Text
-											textAlign='center'
-											variant='applicationText'
-											mt={2}>
-											Team member details are hidden, and can be viewed only if
-											you have specific access.
-										</Text>
-										<Button
-											onClick={showHiddenData}
-											variant='primary'
-											mt={7}
-											w='269px'
-										>
-											View Details
-										</Button>
-									</Flex>
+										Member
+										{' '}
+										{index + 1}
+									</Heading>
+									<Text
+										variant='applicationText'
+										mt={2}>
+										{memberDetail}
+									</Text>
 								</Box>
-							)
+							))
 						}
 					</Box>
 

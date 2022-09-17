@@ -10,15 +10,7 @@ import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
-function Sidebar(
-	{
-		applicationData,
-		showHiddenData,
-	}: {
-    applicationData: any
-    showHiddenData: () => void
-  },
-) {
+function Sidebar({ applicationData }: any) {
 	const { workspace } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
 	const applicantEmail = getFieldString(applicationData, 'applicantEmail')
@@ -93,25 +85,11 @@ function Sidebar(
 						variant='applicationHeading'
 						lineHeight='32px'>
 						{
-							getFieldString(applicationData, 'applicantEmail') ? (
+							getFieldString(applicationData, 'applicantEmail') && (
 								<>
 									{getFieldString(applicationData, 'applicantEmail')}
 									<MailTo applicantEmail={applicantEmail} />
 								</>
-							) : (
-								<Heading
-									variant='applicationHeading'
-									lineHeight='32px'
-									onClick={showHiddenData}
-									cursor='pointer'>
-									Hidden
-									{' '}
-									<Text
-										color='#6200EE'
-										display='inline'>
-										View
-									</Text>
-								</Heading>
 							)
 						}
 					</Heading>

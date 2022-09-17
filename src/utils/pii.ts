@@ -1,5 +1,5 @@
 import { useCallback, useContext, useMemo } from 'react'
-import { GrantApplicationRequest } from '@questbook/service-validator-client'
+import { GrantApplicationRequest, GrantApplicationUpdate } from '@questbook/service-validator-client'
 import { ec as EC } from 'elliptic'
 import { Wallet } from 'ethers'
 import {
@@ -7,7 +7,7 @@ import {
 	keccak256,
 } from 'ethers/lib/utils'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
-import { useGetGrantManagersWithPublicKeyQuery } from 'src/generated/graphql'
+import { GetApplicationDetailsQuery, useGetGrantManagersWithPublicKeyQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import MAIN_LOGGER from 'src/utils/logger'
@@ -149,7 +149,7 @@ export function useEncryptPiiForApplication(
 	 * @param data All the fields to encrypt
 	 * @returns The ready to push PII data
 	 */
-	const encrypt = useCallback(
+	const encryptPii = useCallback(
 		async(piiFields: GrantApplicationRequest['fields']) => {
 			if(!webwallet || !scwAddress) {
 				throw new Error('Zero Wallet not connected')
@@ -216,7 +216,7 @@ export function useEncryptPiiForApplication(
 	 * @param piiData the enc data
 	 * @returns Decrypted fields data
 	 */
-	const decrypt = useCallback(
+	const decryptPii = useCallback(
 		async(piiData: string) => {
 			if(!webwallet) {
 				throw new Error('Zero Wallet not connected')
@@ -242,6 +242,74 @@ export function useEncryptPiiForApplication(
 
 			return json
 		}, [webwallet, grantId, applicantPublicKey, logger]
+	)
+
+	const encrypt = useCallback(
+		async(
+			data: Pick<GrantApplicationUpdate, 'fields' | 'pii'>,
+			piiFields: string[]
+		) => {
+			if(data.fields) {
+				const piiFieldMap = Object.entries(data.fields).reduce(
+					(prev, [key, value]) => {
+						if(piiFields.includes(key)) {
+							prev[key] = value
+							delete data.fields![key]
+						}
+
+						return prev
+					}, { } as GrantApplicationRequest['fields']
+				)
+				data.pii = await encryptPii(piiFieldMap)
+			}
+		}, [encryptPii]
+	)
+
+	/**
+	 * decrypt a grant application if it has PII;
+	 * otherwise return as is
+	 */
+	const decrypt = useCallback(
+		async(app: GetApplicationDetailsQuery['grantApplication']) => {
+			if(app?.pii?.length) {
+				if(!scwAddress) {
+					logger.debug('skipping decryption, as scw not present')
+					return
+				}
+
+				const piiData = app.pii.find(p => {
+					return p.id.endsWith(webwallet!.address)
+						|| p.id.endsWith(scwAddress.toLowerCase())
+				})
+				if(piiData) {
+					try {
+						const fields = await decryptPii(piiData.data)
+						// hacky way to copy the object
+						app = JSON.parse(JSON.stringify({
+							...app,
+							// also remove PII from the application
+							// since we don't require that anymore
+							pii: undefined
+						}))
+
+						// add all PII fields to the application
+						for(const id in fields) {
+							app!.fields.push({
+								id: `${app!.id}.${id}`,
+								values: fields[id]
+							})
+						}
+
+					} catch(err) {
+						logger.error({ err }, 'error in decrypting PII')
+					}
+				} else {
+					logger.warn('app has PII, but not encrypted for user')
+				}
+			}
+
+			return app
+		}, [scwAddress, webwallet, decryptPii]
 	)
 
 	return {

@@ -1,16 +1,14 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
 	Box,
 	Button,
 	Container,
 	Flex,
 	Image,
-	Link,
 	Text,
 } from '@chakra-ui/react'
 import {
-	GrantApplicationRequest,
 	GrantApplicationUpdate,
 } from '@questbook/service-validator-client'
 import {
@@ -20,14 +18,14 @@ import {
 	EditorState,
 } from 'draft-js'
 import { useRouter } from 'next/router'
+import { WebwalletContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
 import ApplicantDetails from 'src/components/your_applications/grant_application/form/1_applicantDetails'
 import AboutTeam from 'src/components/your_applications/grant_application/form/2_aboutTeam'
 import AboutProject from 'src/components/your_applications/grant_application/form/3_aboutProject'
 import Funding from 'src/components/your_applications/grant_application/form/4_funding'
 import CustomFields from 'src/components/your_applications/grant_application/form/5_customFields'
-import { SupportedChainId } from 'src/constants/chains'
-import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
+import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import useResubmitApplication from 'src/hooks/useResubmitApplication'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import {
@@ -38,7 +36,8 @@ import {
 	getFormattedFullDateFromUnixTimestamp,
 	parseAmount,
 } from 'src/utils/formattingUtils'
-import { getFromIPFS } from 'src/utils/ipfsUtils'
+import { getFromIPFS, isIpfsHash } from 'src/utils/ipfsUtils'
+import { useEncryptPiiForApplication } from 'src/utils/pii'
 import { isValidEmail } from 'src/utils/validationUtils'
 
 function Form({
@@ -56,31 +55,32 @@ function Form({
 	feedback,
 	grantRequiredFields,
 	applicationID,
-	workspace,
 	piiFields,
 	application,
+	grantID,
 }: // grantID,
-{
-  chainId: SupportedChainId | undefined
-  onSubmit: null | ((data: any) => void)
-  rewardAmount: string
-  rewardCurrency: string
-  rewardCurrencyCoin: string
-  rewardCurrencyAddress: string | undefined
-  formData: GrantApplicationProps | null
-  grantTitle: string
-  sentDate: string
-  daoLogo: string
-  state: string
-  feedback: string
-  grantRequiredFields: string[]
-  applicationID: string
-  workspace: any
-  piiFields: string[]
-  application: any
-  // grantID: string;
-}) {
-	const { encryptApplicationPII } = useApplicationEncryption()
+	{
+		chainId: SupportedChainId | undefined
+		onSubmit: null | ((data: any) => void)
+		rewardAmount: string
+		rewardCurrency: string
+		rewardCurrencyCoin: string
+		rewardCurrencyAddress: string | undefined
+		formData: GrantApplicationProps | null
+		grantTitle: string
+		sentDate: string
+		daoLogo: string
+		state: string
+		feedback: string
+		grantRequiredFields: string[]
+		applicationID: string
+		workspace: any
+		piiFields: string[]
+		application: any
+		grantID: string | undefined
+	}) {
+	const { webwallet } = useContext(WebwalletContext)!
+
 	const router = useRouter()
 	const [onEdit, setOnEdit] = useState<boolean>(false)
 	const [loadedData, setLoadedData] = useState<boolean>(false)
@@ -127,6 +127,12 @@ function Form({
 	const [fundingBreakdownError, setFundingBreakdownError] = useState(false)
 
 	const [customFields, setCustomFields] = useState<any[]>([])
+
+	const { encrypt } = useEncryptPiiForApplication(
+		grantID,
+		webwallet?.publicKey,
+		chainId || defaultChainId
+	)
 	// useEffect(() => {
 	//   if (customFields.length > 0) return;
 	//   setCustomFields(grantRequiredFields
@@ -141,7 +147,7 @@ function Form({
 
 	const getProjectDetails = async(projectDetails: string) => {
 		try {
-			if(projectDetails.startsWith('Qm') && projectDetails.length < 64) {
+			if(isIpfsHash(projectDetails)) {
 				const o = await getFromIPFS(projectDetails)
 				// console.log('From IPFS: ', o)
 				setProjectDetails(EditorState.createWithContent(convertFromRaw(JSON.parse(o))))
@@ -150,7 +156,7 @@ function Form({
 				const o = JSON.parse(projectDetails)
 				setProjectDetails(EditorState.createWithContent(convertFromRaw(o)))
 			}
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			if(projectDetails) {
 				setProjectDetails(
@@ -248,7 +254,7 @@ function Form({
 
 		if(
 			(applicantEmail === '' || !isValidEmail(applicantEmail))
-      && grantRequiredFields.includes('applicantEmail')
+			&& grantRequiredFields.includes('applicantEmail')
 		) {
 			setApplicantEmailError(true)
 			error = true
@@ -261,7 +267,7 @@ function Form({
 
 		if(
 			(!teamMembers || teamMembers <= 0)
-      && grantRequiredFields.includes('teamMembers')
+			&& grantRequiredFields.includes('teamMembers')
 		) {
 			setTeamMembersError(true)
 			error = true
@@ -272,7 +278,7 @@ function Form({
 		membersDescription.forEach((member, index) => {
 			if(
 				member.description === ''
-        && grantRequiredFields.includes('memberDetails')
+				&& grantRequiredFields.includes('memberDetails')
 			) {
 				newMembersDescriptionArray[index].isError = true
 				membersDescriptionError = true
@@ -339,7 +345,7 @@ function Form({
 
 		if(
 			fundingBreakdown === ''
-      && grantRequiredFields.includes('fundingBreakdown')
+			&& grantRequiredFields.includes('fundingBreakdown')
 		) {
 			setFundingBreakdownError(true)
 			error = true
@@ -403,22 +409,14 @@ function Form({
 		})
 
 		customFields.forEach((customField) => {
-      data.fields![customField.title] = [{ value: customField.value }]
+			data.fields![customField.title] = [{ value: customField.value }]
 		})
 
-		let encryptedData
-
-		if(piiFields.length > 0 && workspace && workspace.members) {
-			encryptedData = await encryptApplicationPII(
-        data as GrantApplicationRequest,
-        piiFields,
-        workspace.members,
-			)
-
-			// console.log('encryptedData -----', encryptedData)
+		if(piiFields.length) {
+			await encrypt(data, piiFields)
 		}
 
-		setUpdateData(encryptedData || data)
+		setUpdateData(data)
 	}
 
 	return (
@@ -599,7 +597,7 @@ function Form({
 						{
 							onEdit ? (
 								<Button
-									onClick={loading ? () => {} : handleOnSubmit}
+									onClick={loading ? () => { } : handleOnSubmit}
 									py={loading ? 2 : 0}
 									mt={8}
 									mb={4}
@@ -758,7 +756,7 @@ function Form({
 						{
 							onEdit ? (
 								<Button
-									onClick={loading ? () => {} : handleOnSubmit}
+									onClick={loading ? () => { } : handleOnSubmit}
 									py={loading ? 2 : 0}
 									mt={8}
 									mb={4}

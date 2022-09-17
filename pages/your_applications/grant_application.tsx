@@ -19,7 +19,6 @@ import NavbarLayout from 'src/layout/navbarLayout'
 import { GrantApplicationProps } from 'src/types/application'
 import { formatAmount, getFieldString } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
-import logger from 'src/utils/logger'
 import { useEncryptPiiForApplication } from 'src/utils/pii'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
@@ -82,50 +81,10 @@ function ViewApplication() {
 	}, [chainId, applicationID])
 
 	useEffect(() => {
-		let { grantApplication: app } = data || { }
-		if(app) {
-			(async() => {
-				if(app.pii?.length) {
-					if(!scwAddress) {
-						return
-					}
-
-					const piiData = app.pii.find(p => {
-						return p.id.endsWith(webwallet!.address)
-							|| p.id.endsWith(scwAddress)
-					})
-					if(piiData) {
-						try {
-							const fields = await decrypt(piiData.data)
-							// hacky way to copy the object
-							app = JSON.parse(JSON.stringify({
-								...app,
-								// also remove PII from the application
-								// since we don't require that anymore
-								pii: undefined
-							}))
-
-							// add all PII fields to the application
-							for(const id in fields) {
-								app!.fields.push({
-									id: `${app!.id}.${id}`,
-									values: fields[id]
-								})
-							}
-
-						} catch(err) {
-							logger.error({ err }, 'error in decrypting PII')
-						}
-					} else {
-						logger.warn('app has PII, but not encrypted for user')
-					}
-				}
-
-				setApplication(app)
-			})()
-		}
-
-	}, [data, scwAddress, decrypt])
+		// decrypt grant application if required and set it
+		decrypt(data?.grantApplication)
+			.then(setApplication)
+	}, [data, decrypt])
 
 	useEffect(() => {
 		if(!application || !application?.fields?.length) {
@@ -231,6 +190,7 @@ function ViewApplication() {
 			>
 				<Breadcrumbs path={['My Applications', 'Grant Application']} />
 				<Form
+					grantID={application?.grant.id}
 					chainId={
 						application ? getSupportedChainIdFromSupportedNetwork(
             application!.grant.workspace.supportedNetworks[0],

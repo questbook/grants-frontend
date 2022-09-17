@@ -85,7 +85,6 @@ function Form({
 
 	const { data: accountData, nonce } = useQuestbookAccount(shouldRefreshNonce)
 
-	// const { encryptApplicationPII } = useApplicationEncryption()
 	const [applicantName, setApplicantName] = React.useState('')
 	const [applicantNameError, setApplicantNameError] = React.useState(false)
 
@@ -409,17 +408,7 @@ function Form({
 		})
 
 		if(piiFields.length) {
-			const piiFieldMap = Object.entries(data.fields).reduce(
-				(prev, [key, value]) => {
-					if(piiFields.includes(key)) {
-						prev[key] = value
-						delete data.fields[key]
-					}
-
-					return prev
-				}, { } as GrantApplicationRequest['fields']
-			)
-			data.pii = await encrypt(piiFieldMap)
+			await encrypt(data, piiFields)
 		}
 
 		setFormData(data)
