@@ -78,7 +78,7 @@ function GrantRewardsInput({
 					minW='160px'
 					flex={1}>
 					<SingleLineInput
-						label='Grant Reward'
+						label='Grant Reward (In USD)'
 						placeholder='e.g. 100'
 						value={reward}
 						onChange={
@@ -95,7 +95,7 @@ function GrantRewardsInput({
 						type='number'
 					/>
 				</Box>
-				<CustomTokenModal
+				{/* <CustomTokenModal
 					isModalOpen={isModalOpen}
 					setIsModalOpen={setIsModalOpen}
 					setRewardCurrency={setRewardCurrency}
@@ -161,7 +161,7 @@ function GrantRewardsInput({
 							/>
 						)
 					}
-				</Box>
+				</Box> */}
 			</Flex>
 
 			<Box mt={12} />
