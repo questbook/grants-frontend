@@ -150,9 +150,9 @@ function SignupDao() {
 					steps={
 						[
 							'Uploading data to IPFS',
-							'Sign transaction',
-							'Waiting for transaction to complete',
-							'Waiting for transaction to be indexed',
+							'Signing transaction with in-app wallet',
+							'Waiting for transaction to complete on chain',
+							'Indexing transaction on graph protocol',
 							'Grant created on-chain',
 						]
 					}

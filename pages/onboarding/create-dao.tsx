@@ -348,8 +348,8 @@ const OnboardingCreateDao = () => {
 					[
 						'Connect your wallet',
 						'Uploading data to IPFS',
-						'Sign transaction',
-						'Waiting for transaction to complete',
+						'Signing transaction with in-app wallet',
+						'Waiting for transaction to complete on chain',
 						'DAO created on-chain',
 					]
 				}

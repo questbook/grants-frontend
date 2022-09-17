@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { AlertDialogOverlay, Box, Flex, Image, Link, Modal, ModalBody, ModalContent, Text, useToast, VStack } from '@chakra-ui/react'
+import { Papercups } from '@papercups-io/chat-widget'
 import { NetworkType } from 'src/constants/Networks'
 import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
 import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/PhantomLogo'
@@ -10,7 +11,6 @@ import SuccessToast from 'src/v2/components/Toasts/successToast'
 import VerifySignerErrorState from 'src/v2/components/VerifySignerModal/VeirfySignerErrorState'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
-import { Papercups } from '@papercups-io/chat-widget'
 
 const VerifySignerModal = ({
 	owners,
@@ -67,7 +67,7 @@ const VerifySignerModal = ({
 		icon: <PhantomLogo
 			h={8}
 			w='33px' />,
-		isPopular: true,
+		isPopular: false,
 		id: 'phantom',
 	}]
 
@@ -257,12 +257,17 @@ const VerifySignerModal = ({
 								<Text
 									mt={6}
 									variant='v2_body'>
-									Need help? 
-									</Text>
-									<Text mt={2} as='u' cursor='pointer' variant='v2_body' onClick={Papercups.open}>
-									 Get instant support. 
-									</Text>
-								
+									Need help?
+								</Text>
+								<Text
+									mt={2}
+									as='u'
+									cursor='pointer'
+									variant='v2_body'
+									onClick={Papercups.open}>
+									Get instant support.
+								</Text>
+
 
 								<Box h={5} />
 

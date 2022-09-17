@@ -166,7 +166,7 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 				}
 				steps={
 					[
-						'Sign transaction',
+						'Signing transaction with in-app wallet',
 						'Wait for confirmation',
 						'Invite link created on-chain'
 					]

@@ -231,9 +231,9 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 				steps={
 					[
 						'Uploading data to IPFS',
-						'Sign transaction',
+						'Signing transaction with in-app wallet',
 						'Wait for confirmation',
-						'Waiting for transaction to index',
+						'Indexing transaction on graph protocol',
 						'Profile created on-chain'
 					]
 				}
