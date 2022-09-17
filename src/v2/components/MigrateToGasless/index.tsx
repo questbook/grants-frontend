@@ -3,7 +3,7 @@ import { Box, Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalO
 import { useRouter } from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import { CHAIN_INFO } from 'src/constants/chains'
-import { GetWorkspaceMembersQuery, useGetProfileDetailsQuery, useGetWorkspaceMembersQuery } from 'src/generated/graphql'
+import { useGetProfileDetailsQuery, useGetWorkspaceMembersQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'

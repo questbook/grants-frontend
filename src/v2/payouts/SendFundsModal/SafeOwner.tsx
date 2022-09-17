@@ -28,7 +28,7 @@ const solanaWallets = [{
 	icon: <PhantomLogo
 		h={8}
 		w='33px' />,
-	isPopular: true,
+	isPopular: false,
 	id: 'phantom',
 }]
 

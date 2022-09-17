@@ -170,7 +170,6 @@ function Form({
 				// console.log(res.data)
 				let tokens
 				if(safeNetwork === '42220') {
-
 					console.log('reward currency', tokens)
 					let localTokenData: {icon: string, label: string, address: string, decimals: number, pair?: string}
 
@@ -247,6 +246,13 @@ function Form({
 
 		if(date.length <= 0) {
 			setDateError(true)
+			error = true
+		}
+
+		const today = new Date()
+		if(new Date(date) <= today) {
+			setDateError(true)
+			setOldDate(true)
 			error = true
 		}
 
@@ -650,6 +656,8 @@ function Form({
 				shouldEncryptReviews={shouldEncryptReviews}
 				setShouldEncryptReviews={setShouldEncryptReviews}
 				isEVM={isEVM}
+				oldDate={oldDate}
+				setOldDate={setOldDate}
 			/>
 
 			<Button

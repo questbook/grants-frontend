@@ -506,8 +506,8 @@ const InReviewPanel = ({
 				steps={
 					[
 						`Updating application${checkedApplicationsIds.length === 1 ? '' : 's'} state`,
-						'Waiting for transaction to complete',
-						'Waiting for transaction to index',
+						'Waiting for transaction to complete on chain',
+						'Indexing transaction on graph protocol',
 						`Application${checkedApplicationsIds.length === 1 ? '' : 's'} state updated`,
 					]
 				}
