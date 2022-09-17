@@ -135,7 +135,7 @@ export function useGetPublicKeysOfGrantManagers(grantId: string | undefined, cha
 
 export function useEncryptPiiForApplication(
 	grantId: string | undefined,
-	applicantPublicKey: string | undefined,
+	applicantPublicKey: string | undefined | null,
 	chainId: SupportedChainId,
 ) {
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
