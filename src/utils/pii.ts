@@ -1,13 +1,16 @@
-import { useContext } from 'react'
+import { useCallback, useContext, useMemo } from 'react'
+import { GrantApplicationRequest } from '@questbook/service-validator-client'
 import { ec as EC } from 'elliptic'
 import { Wallet } from 'ethers'
 import {
 	arrayify,
 	keccak256,
 } from 'ethers/lib/utils'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import { useGetGrantManagersWithPublicKeyQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
+import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import MAIN_LOGGER from 'src/utils/logger'
 
 const ec = new EC('secp256k1')
 
@@ -130,6 +133,88 @@ export function useGetPublicKeysOfGrantManagers(grantId: string | undefined, cha
 	}
 }
 
+export function useEncryptPiiForApplication(
+	grantId: string | undefined,
+	chainId: SupportedChainId,
+) {
+	const { webwallet } = useContext(WebwalletContext)!
+	const { fetch } = useGetPublicKeysOfGrantManagers(grantId, chainId)
+	const logger = useMemo(
+		() => MAIN_LOGGER.child({ grantId, 'pii': true }),
+		[grantId],
+	)
+
+	/**
+	 * @param data All the fields to encrypt
+	 * @returns The ready to push PII data
+	 */
+	const encrypt = useCallback(
+		async(piiFields: GrantApplicationRequest['fields']) => {
+			if(!webwallet) {
+				throw new Error('Zero Wallet not connected')
+			}
+
+			if(!grantId) {
+				throw new Error('Grant ID not provided')
+			}
+
+			// JSON serialize the data for it to be encrypted
+			const piiFieldsJson = JSON.stringify(piiFields)
+			const piiMap: GrantApplicationRequest['pii'] = {}
+			let publicKeys = await fetch()
+			// add our wallet's public key
+			// so we can access the sent information too
+			publicKeys = {
+				...publicKeys,
+				[webwallet.address]: webwallet.publicKey,
+			}
+
+			logger.info({
+				fields: Object.keys(piiFields).length,
+				members: Object.keys(publicKeys).length,
+			}, 'encrypting fields')
+
+			await Promise.all(
+				Object.entries(publicKeys).map(async([address, pubKey]) => {
+					if(!pubKey) {
+						logger.info({ address }, 'pub key not present, ignoring...')
+						return
+					}
+
+					const secureChannel = await getSecureChannelFromPublicKey(
+						webwallet,
+						pubKey,
+						getKeyForGrantPii(grantId)
+					)
+					const data = await secureChannel.encrypt(piiFieldsJson)
+
+					logger.info({ address }, 'encrypted data')
+					// the subgraph can handle about 7000 bytes in a single field
+					// so if the data is too big, we upload it to IPFS, and set the hash
+					// we can unambigously determine if the encrypted data is an IPFS hash or not
+					// using a simple isIpfsHash function
+					if(data.length < 7000) {
+						piiMap[address] = data
+					} else {
+						logger.info(
+							{ data: data.length },
+							'data too large, uploading to IPFS...'
+						)
+						const { hash: ipfsHash } = await uploadToIPFS(data)
+						piiMap[address] = ipfsHash
+					}
+				})
+			)
+
+			return piiMap
+		}, [webwallet, grantId, fetch, logger]
+	)
+
+	return {
+		encrypt
+	}
+}
+
 // /**
 //  * retreives the public key from a transaction
 //  * from: https://ethereum.stackexchange.com/questions/78815/ethers-js-recover-public-key-from-contract-deployment-via-v-r-s-values
@@ -158,6 +243,12 @@ export function useGetPublicKeysOfGrantManagers(grantId: string | undefined, cha
 // 	const msgBytes = arrayify(msgHash) // create binary hash
 // 	return recoverPublicKey(msgBytes, signature)
 // }
+
+/** key of a grant for encrypting PII; can pass as "extraInfo" when generating shared key */
+export function getKeyForGrantPii(grantId: string) {
+	return `grant:${grantId}`
+}
+
 
 /** key of an application; can pass as "extraInfo" when generating shared key */
 export function getKeyForApplication(applicationId: string) {
