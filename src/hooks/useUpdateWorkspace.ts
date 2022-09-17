@@ -19,6 +19,7 @@ import {
 
 export default function useUpdateWorkspace(
 	data: WorkspaceUpdateRequest,
+	setCurrentStep: (step: number | undefined) => void
 ) {
 	const [error, setError] = React.useState<string>()
 	const [loading, setLoading] = React.useState(false)
@@ -28,7 +29,7 @@ export default function useUpdateWorkspace(
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
-	const { validatorApi, workspace } = apiClients
+	const { validatorApi, workspace, subgraphClients } = apiClients
 
 	const currentChainId = useChainId()
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
@@ -85,7 +86,7 @@ export default function useUpdateWorkspace(
 			setLoading(true)
 			// console.log(data)
 			try {
-
+				setCurrentStep(0)
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
 					throw new Error('Zero wallet is not ready')
 				}
@@ -96,6 +97,8 @@ export default function useUpdateWorkspace(
 				if(!ipfsHash) {
 					throw new Error('Error validating grant data')
 				}
+
+				setCurrentStep(1)
 
 				// const updateTransaction1 = await workspaceRegistryContract.updateWorkspaceMetadata(
 				// 	+workspace!.id,
@@ -118,15 +121,26 @@ export default function useUpdateWorkspace(
 					nonce
 				)
 
+				setCurrentStep(2)
+
 				if(response) {
 					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
 					setTransactionData(receipt)
+
+					setCurrentStep(3)
+
+					await subgraphClients[currentChainId].waitForBlock(receipt?.blockNumber)
+
+					setCurrentStep(4)
 					await chargeGas(Number(workspace?.id), Number(txFee))
 				}
+
+				setCurrentStep(5)
 
 				setLoading(false)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
+				setCurrentStep(undefined)
 				const message = getErrorMessage(e)
 				setError(message)
 				setLoading(false)

@@ -57,7 +57,8 @@ function CustomTokenModal({
 	const [imageFile, setImageFile] = useState<File | null>(null)
 
 	const [tokenData, setTokenData] = useState<WorkspaceUpdateRequest | any>()
-	const [txnData, txnLink, loading, isBiconomyInitialised] = useUpdateWorkspace(tokenData)
+	const [, setNetworkTransactionModalStep] = useState<number>()
+	const [txnData, txnLink, loading, isBiconomyInitialised] = useUpdateWorkspace(tokenData, setNetworkTransactionModalStep)
 
 	const toast = useToast()
 	const toastRef = React.useRef<ToastId>()
