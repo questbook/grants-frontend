@@ -87,12 +87,12 @@ const RejectedPanel = ({
 					</Text>
 				</GridItem>
 
-				<GridItem colSpan={4}>
+				{/* <GridItem colSpan={4}>
 					<Flex
 						bg='#F0F0F7'
 						h='1px'
 					/>
-				</GridItem>
+				</GridItem> */}
 
 				{/* new ro */}
 

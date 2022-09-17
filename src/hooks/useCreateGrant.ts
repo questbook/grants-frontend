@@ -28,7 +28,7 @@ import {
 
 export default function useCreateGrant(
 	data: any,
-	setCurrentStep: (step: number) => void,
+	setCurrentStep: (step: number | undefined) => void,
 	chainId?: SupportedChainId,
 	workspaceId?: string,
 ) {
@@ -215,6 +215,7 @@ export default function useCreateGrant(
 				setCurrentStep(5)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
+				setCurrentStep(undefined)
 				const message = getErrorMessage(e)
 				setError(message)
 				setLoading(false)

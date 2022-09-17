@@ -15,6 +15,7 @@ import {
 	SliderTrack, Spacer,
 	Text,
 } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import Loader from 'src/components/ui/loader'
 import { SupportedChainId } from 'src/constants/chains'
@@ -52,6 +53,7 @@ function FeedbackDrawer({
 	applicationId: string
 	isPrivate: boolean
 }) {
+	const router = useRouter()
 	const [feedbackData, setFeedbackData] = useState<FeedbackType[]>()
 	const [editedFeedbackData, setEditedFeedbackData] = useState<{ items?: Array<FeedbackType> }>()
 	const [currentStep, setCurrentStep] = useState<number>()
@@ -274,6 +276,7 @@ function FeedbackDrawer({
 				onClose={
 					() => {
 						setCurrentStep(undefined)
+						router.reload()
 					}
 				} />
 		</>

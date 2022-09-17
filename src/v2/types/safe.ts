@@ -7,6 +7,7 @@ export interface TransactionType {
     data: string
     metadata: any
     selectedMilestone: any
+    selectedToken: any
 }
 
 export enum OperationType {

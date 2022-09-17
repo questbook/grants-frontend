@@ -23,6 +23,7 @@ interface Props {
 	onClose: () => void
 	safeAddress: string
 	proposals: IApplicantData[]
+	safeTokenList: any
 	onChangeRecepientDetails: (applicationId: string, fieldName: string, fieldValue: string|number) => void
 	phantomWallet: PhantomProvider | undefined
 	isEvmChain: boolean
@@ -48,6 +49,7 @@ function SendFundsModal({
 	onClose,
 	safeAddress,
 	proposals,
+	safeTokenList,
 	onChangeRecepientDetails,
 	phantomWallet,
 	isEvmChain,
@@ -217,6 +219,7 @@ function SendFundsModal({
 							{
 								step === 'RECEIPT_DETAILS' ? (
 									<RecipientDetails
+										safeTokenList={safeTokenList}
 										isEvmChain={isEvmChain}
 										applicantData={proposals[0]}
 										initiateTransactionData={initiateTransactionData?.length > 0 ? initiateTransactionData[0] : undefined}

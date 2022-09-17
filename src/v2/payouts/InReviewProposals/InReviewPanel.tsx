@@ -515,6 +515,7 @@ const InReviewPanel = ({
 				onClose={
 					() => {
 						setNetworkTransactionModalStep(undefined)
+						router.reload()
 					}
 				} />
 		</>

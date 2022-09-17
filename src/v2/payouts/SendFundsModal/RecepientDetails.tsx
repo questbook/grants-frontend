@@ -8,20 +8,24 @@ import { ExternalLink } from 'src/v2/assets/custom chakra icons/ExternalLink'
 import { getSafeDetails } from 'src/v2/constants/safe/realms_solana'
 import AlertBanner from 'src/v2/payouts/SendFundsModal/AlertBanner'
 import MilestoneSelect from 'src/v2/payouts/SendFundsModal/MilestoneSelect'
+import TokenSelect from 'src/v2/payouts/SendFundsModal/TokenSelect'
 import { TransactionType } from 'src/v2/types/safe'
 
 const RecipientDetails = ({
 	isEvmChain,
 	applicantData,
+	safeTokenList,
 	initiateTransactionData,
 	onChangeRecepientDetails,
 }: {
 	isEvmChain: boolean
 	applicantData: IApplicantData
+	safeTokenList: any
 	initiateTransactionData: TransactionType | undefined
-	onChangeRecepientDetails: (applicationId: string, fieldName: string, fieldValue: string | number) => void
+	onChangeRecepientDetails: (applicationId: string, fieldName: string, fieldValue: any) => void
 }) => {
 
+	console.log('safeTokenList - modal', safeTokenList)
 	const router = useRouter()
 
 	const [applicationID, setApplicationId] = useState<any>('')
@@ -33,17 +37,17 @@ const RecipientDetails = ({
 		}
 	}, [router])
 
-	const [balance, setBalance] = useState(0)
-	useEffect(() => {
-		async function getBalance() {
-			const balance = await getSafeDetails(initiateTransactionData?.from!)
-			setBalance(balance?.amount!)
-		}
+	// const [balance, setBalance] = useState(0)
+	// useEffect(() => {
+	// 	async function getBalance() {
+	// 		// const balance = await getSafeDetails(initiateTransactionData?.from!)
+	// 		// setBalance(balance?.amount!)
+	// 	}
 
-		if(!isEvmChain) {
-			getBalance()
-		}
-	}, [])
+	// 	if(!isEvmChain) {
+	// 		getBalance()
+	// 	}
+	// }, [])
 
 	return (
 		<>
@@ -179,6 +183,34 @@ const RecipientDetails = ({
 
 				<Box h={6} />
 
+				{
+					!isEvmChain ? (
+						<>
+							<Text
+								fontSize='14px'
+								lineHeight='20px'
+								fontWeight='500'
+							>
+								Tokens sent to recipient
+							</Text>
+
+							<Box h={2} />
+
+							<TokenSelect
+								placeholder='Select a token from the list'
+								value={initiateTransactionData?.selectedToken}
+								safeTokenList={safeTokenList}
+								onChange={
+									(value) => {
+										onChangeRecepientDetails(applicantData?.applicationId, 'selectedToken', { name: value?.id, info: value?.info })
+									}
+								} />
+
+							<Box h={6} />
+						</>
+					) : null
+				}
+
 				<Text
 					fontSize='14px'
 					lineHeight='20px'
@@ -187,7 +219,7 @@ const RecipientDetails = ({
 					Amount (in USD)
 				</Text>
 
-				<Text
+				{/* <Text
 					fontSize='12px'
 					lineHeight='16px'
 					fontWeight='400'
@@ -199,7 +231,7 @@ const RecipientDetails = ({
 					{balance}
 					{' '}
 					USD
-				</Text>
+				</Text> */}
 
 
 				<Flex

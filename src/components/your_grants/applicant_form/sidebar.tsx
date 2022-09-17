@@ -151,7 +151,7 @@ function Sidebar({
 	let label
 	let decimals
 	if(applicationData?.grant.reward.token) {
-		icon = getUrlForIPFSHash(applicationData.grant.reward.token.iconHash)
+		icon = applicationData.grant.reward.token.iconHash
 		label = applicationData.grant.reward.token.label
 		decimals = applicationData.grant.reward.token.decimal
 	} else {
