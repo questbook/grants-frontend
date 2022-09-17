@@ -12,7 +12,7 @@ import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } f
 import { isPlausibleSolanaAddress } from 'src/utils/generics'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
-import { RealmsSolana, usdToSolana } from 'src/v2/constants/safe/realms_solana'
+import { getTokenAndbalance, RealmsSolana, usdToSolana } from 'src/v2/constants/safe/realms_solana'
 import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import SendFundsDrawer from 'src/v2/payouts/SendFundsDrawer/SendFundsDrawer'
@@ -76,6 +76,7 @@ export default function SendFunds({
 
 	const [signerVerified, setSignerVerififed] = useState(false)
 	const [proposalAddr, setProposalAddr] = useState('')
+	const [safeTokenList, setSafeTokenList] = useState<any>([])
 
 	const [initiateTransactionData, setInitiateTransactionData] = useState<any>([])
 	const [gnosisBatchData, setGnosisBatchData] = useState<any>([])
@@ -93,10 +94,22 @@ export default function SendFunds({
 			return new GnosisSafe(workspaceSafeChainId, txnServiceURL, workspaceSafe)
 		} else {
 			if(isPlausibleSolanaAddress(workspaceSafe)) {
+
 				return new RealmsSolana(workspaceSafe)
 			}
 		}
 	}, [workspaceSafe])
+
+	useEffect(() => {
+		const getToken = async() => {
+			console.log('get token called')
+			setSafeTokenList(await getTokenAndbalance(workspaceSafe))
+		}
+
+		if(isPlausibleSolanaAddress(workspaceSafe) && currentSafe) {
+			getToken()
+		}
+	}, [currentSafe])
 
 	useEffect(() => {
 		if(sendFundsTo?.length > 0) {
@@ -116,6 +129,7 @@ export default function SendFunds({
 				to:  recepient?.applicantAddress || getFieldString(recepient, 'applicantAddress') || recepient?.applicantId,
 				applicationId: recepient?.applicationId || applicationID,
 				selectedMilestone: recepient?.milestones[0]?.id,
+				selectedToken: { name: safeTokenList[0]?.tokenName, info: safeTokenList[0]?.tokenInfo },
 				amount: 0
 			})
 		)
@@ -191,7 +205,6 @@ export default function SendFunds({
 		if(isEvmChain) {
 			const readyToExecuteTxs = createEVMMetaTransactions()
 			const safeTxHash = await currentSafe?.createMultiTransaction(readyToExecuteTxs, workspaceSafe)
-			console.log('safe txn hash', safeTxHash)
 			if(safeTxHash) {
 				proposaladdress = safeTxHash
 				setProposalAddr(safeTxHash)
@@ -289,15 +302,24 @@ export default function SendFunds({
 	}, [workspace, biconomyWalletClient, workspacechainId, biconomy, workspaceRegistryContract, scwAddress, webwallet, nonce, initiateTransactionData, proposalAddr])
 
 	const onChangeRecepientDetails = async(applicationId: any, fieldName: string, fieldValue: any) => {
-		const tempData = initiateTransactionData.map((transactionData: any) => {
-			if(transactionData.applicationId === applicationId) {
-				return { ...transactionData, [fieldName]: fieldValue }
-			}
 
-			return transactionData
-		})
-		setInitiateTransactionData(tempData)
-		setGnosisBatchData(tempData)
+		if(fieldName === 'selectedToken') {
+			const tempData = initiateTransactionData.map((transactionData: any) => {
+				return { ...transactionData, [fieldName]: fieldValue }
+			})
+			setInitiateTransactionData(tempData)
+			setGnosisBatchData(tempData)
+		} else {
+			const tempData = initiateTransactionData.map((transactionData: any) => {
+				if(transactionData.applicationId === applicationId) {
+					return { ...transactionData, [fieldName]: fieldValue }
+				}
+
+				return transactionData
+			})
+			setInitiateTransactionData(tempData)
+			setGnosisBatchData(tempData)
+		}
 	}
 
 	const onModalStepChange = async(currentState: string) => {
@@ -348,6 +370,7 @@ export default function SendFunds({
 				safeAddress={workspaceSafe}
 				proposals={sendFundsTo ?? []}
 
+				safeTokenList={safeTokenList}
 				onChangeRecepientDetails={onChangeRecepientDetails}
 				phantomWallet={phantomWallet}
 				isEvmChain={isEvmChain}
@@ -360,7 +383,7 @@ export default function SendFunds({
 			<TransactionInitiatedModal
 				isOpen={!!(txnInitModalIsOpen && proposalAddr)}
 				onClose={onModalClose}
-				proposalUrl={isEvmChain ? getGnosisTansactionLink(currentSafe?.id?.toString()!, currentSafe?.chainId.toString()!) : getProposalUrl(currentSafe?.id?.toString()!, proposalAddr)}
+				proposalUrl={isEvmChain ? getGnosisTansactionLink(currentSafe?.id?.toString()!, currentSafe?.chainId?.toString()!) : getProposalUrl(currentSafe?.id?.toString()!, proposalAddr)}
 			/>
 
 			<SendFundsDrawer
@@ -368,6 +391,8 @@ export default function SendFunds({
 				onClose={onModalClose}
 				safeAddress={workspaceSafe}
 				proposals={sendFundsTo ?? []}
+
+				safeTokenList={safeTokenList}
 				onChangeRecepientDetails={onChangeRecepientDetails}
 				phantomWallet={phantomWallet}
 				setPhantomWalletConnected={setPhantomWalletConnected}

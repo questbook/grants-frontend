@@ -1,5 +1,6 @@
 import { ReactElement, useEffect, useState } from 'react'
 import { Box, Button, Container, Divider, Flex, HStack, Image, Menu, MenuButton, MenuItem, MenuList, Text, useToast } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 import AllDaosGrid from 'src/components/browse_daos/all_daos'
 import { GetDaOsForExploreQuery, useGetDaOsForExploreQuery, Workspace_Filter as WorkspaceFilter, Workspace_OrderBy as WorkspaceOrderBy } from 'src/generated/graphql'
 import { useMultiChainPaginatedQuery } from 'src/hooks/useMultiChainPaginatedQuery'
@@ -20,6 +21,7 @@ const PAGE_SIZE = 2
  */
 function BrowseDao() {
 	const toast = useToast()
+	const router = useRouter()
 
 	const [sort, setSort] = useState<SortingOption>(WorkspaceOrderBy.TotalGrantFundingDisbursedUsd)
 	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
@@ -150,6 +152,7 @@ function BrowseDao() {
 					() => {
 						setInviteInfo(undefined)
 						window.history.pushState(undefined, '', '/')
+						router.reload()
 					}
 				} />
 		</>

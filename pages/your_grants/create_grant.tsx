@@ -237,7 +237,7 @@ function CreateGrant() {
 				viewLink={blockExplorerLink}
 				onClose={
 					async() => {
-						router.replace({ pathname: '/your_grants' })
+						router.push({ pathname: '/your_grants' })
 					}
 				} />
 		</Container>

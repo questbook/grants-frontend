@@ -133,6 +133,7 @@ const OnboardingCreateDomain = () => {
 			setIsSafeAddressVerified(true)
 			setStep(1)
 		} else {
+			setStep(0)
 			// console.log('safe address not verified!')
 			setIsSafeAddressVerified(false)
 		}

@@ -13,6 +13,7 @@ import type { AppContext, AppProps } from 'next/app'
 import App from 'next/app'
 import Head from 'next/head'
 import { DefaultSeo } from 'next-seo'
+import favIcon from 'public/favicon.ico'
 import {
 	ALL_SUPPORTED_CHAIN_IDS,
 	CHAIN_INFO,
@@ -255,6 +256,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				reject(err)
 			})
 		})
+
+		_logger.info({ scwAddress }, 'got scw address')
 
 		setBiconomyWalletClients(prev => ({ ...prev, [chainId]: _biconomyWalletClient }))
 		setBiconomyDaoObjs((prev: any) => ({ ...prev, [chainId]: _biconomy }))
@@ -522,6 +525,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		<>
 			<DefaultSeo {...seo} />
 			<Head>
+				<link
+					rel='shortcut icon'
+					href={favIcon.src}
+					type='image/x-icon' />
 				<script
 					async
 					src='https://www.googletagmanager.com/gtag/js?id=G-N9KVED0HQZ'

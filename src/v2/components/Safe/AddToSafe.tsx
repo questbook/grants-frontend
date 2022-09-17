@@ -1,6 +1,7 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { Flex, Image, Text, ToastId, useToast } from '@chakra-ui/react'
 import { logger } from 'ethers'
+import { useRouter } from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import { DEFAULT_NOTE, INSUFFICIENT_FUNDS_NOTE, USD_THRESHOLD } from 'src/constants'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
@@ -22,6 +23,7 @@ import ErrorToast from 'src/v2/components/Toasts/errorToast'
 import VerifySignerModal from 'src/v2/components/VerifySignerModal'
 
 function AddToSafe() {
+	const router = useRouter()
 	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
 	const [step, setStep] = useState<number>(0)
 
@@ -299,7 +301,12 @@ function AddToSafe() {
 					]
 				}
 				viewLink={getExplorerUrlForTxHash(getSupportedChainIdFromWorkspace(workspace), transactionHash)}
-				onClose={() => setNetworkTransactionModalStep(undefined)} />
+				onClose={
+					() => {
+						setNetworkTransactionModalStep(undefined)
+						router.reload()
+					}
+				} />
 		</Flex>
 	)
 }
