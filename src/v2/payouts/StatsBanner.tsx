@@ -103,7 +103,7 @@ const StatsBanner = ({
 				>
 					{funds}
 					{' '}
-					{isEvmChain ? tokenSymbol ?? 'USD' : 'USD'}
+					{isEvmChain ? 'USD' : 'USD'}
 				</Text>
 				<Text
 					fontSize='14px'

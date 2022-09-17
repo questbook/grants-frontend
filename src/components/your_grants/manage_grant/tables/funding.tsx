@@ -16,6 +16,8 @@ import {
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getDateInDDMMYYYY, solanaToUsdOnDate } from 'src/v2/constants/safe/realms_solana'
 import getProposalUrl from 'src/v2/utils/phantomUtils'
+import dollarIcon from 'src/v2/assets/currency_icon/dollar_icon.svg'
+import getGnosisTansactionLink from 'src/v2/utils/gnosisUtils'
 
 type TableContent = {
   title: string
@@ -47,18 +49,19 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 			let icon
 			let label
 			if(rewardToken) {
-				icon = rewardToken.icon
+				console.log('reward token', rewardToken)
+				icon = dollarIcon
 				label = rewardToken.label
 			} else {
-				icon = getAssetInfo(assetId, chainId)?.icon
+				icon = dollarIcon
 				label = getAssetInfo(assetId, chainId)?.label
 			}
-
+		
 			return (
 				<>
 					<Image
 						display='inline-block'
-						src={icon}
+						src='/dollar_icon.svg'
 						mr={2}
 						h='27px'
 						w='27px'
@@ -75,9 +78,9 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 							variant='applicationText'
 							fontWeight='700'
 						>
-							{isEvmChain ? formatAmount(item.amount, assetDecimals) : parseInt(transactionStatus[0]?.amount)}
+							{parseInt(transactionStatus[0]?.amount)}
 							{' '}
-							{isEvmChain ? label : 'USD'}
+							{'USD'}
 						</Text>
 					</Text>
 				</>
@@ -129,7 +132,7 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 		content: (item, _, __, ___, chainId, ____, transactionStatus, isEvmChain) => (
 			<Link
 				href={
-					isEvmChain ? getExplorerUrlForTxHash(chainId, item.id)
+					isEvmChain ? getGnosisTansactionLink(transactionStatus[0]?.safeAddress, chainId?.toString()!)
 						: getProposalUrl(transactionStatus[0]?.safeAddress, transactionStatus[0]?.txnHash)
 				}
 				isExternal
@@ -293,9 +296,10 @@ function Funding({
 						>
 							{
 								fundTransfers.map((item, index) => {
-
+									console.log('item.id', item)
 									const txnStatus = transactionStatus?.filter((obj: any) => obj.txnHash === item.transactionHash)
-									if(txnStatus?.[0]?.closedAtDate) {
+									console.log('txn status', txnStatus)
+									if(txnStatus?.[0]?.closedAtDate || txnStatus.length) {
 										return (
 											<Flex
 												key={item.id}

@@ -1,7 +1,8 @@
 const NETWORK_PREFIX: {[key: string]: string} = {
 	'4': 'rin',
 	'137': 'matic',
-	'1': 'eth'
+	'1': 'eth',
+	'10': 'opt'
 }
 
 export default function getGnosisTansactionLink(safeAddress: string, chainId: string) {
