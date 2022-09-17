@@ -78,7 +78,7 @@ function Form({
 	const getKey = `${chainId}-${CACHE_KEY}-${grantId}`
 
 	const { webwallet: signer } = useContext(WebwalletContext)!
-	const { encrypt } = useEncryptPiiForApplication(grantId, chainId!)
+	const { encrypt } = useEncryptPiiForApplication(grantId, signer?.publicKey, chainId!)
 
 	const [shouldRefreshNonce, setShouldRefreshNonce] = React.useState<boolean>()
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = React.useState<number | undefined>()
@@ -359,6 +359,7 @@ function Form({
 		const data: GrantApplicationRequest = {
 			grantId,
 			applicantId: await signer?.getAddress(),
+			applicantPublicKey: signer?.publicKey,
 			fields: {
 				applicantName: [{ value: applicantName }],
 				applicantEmail: [{ value: applicantEmail }],

@@ -6,7 +6,7 @@ import React, {
 } from 'react'
 import { Container } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import Breadcrumbs from 'src/components/ui/breadcrumbs'
 import Form from 'src/components/your_applications/grant_application/form'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
@@ -19,11 +19,14 @@ import NavbarLayout from 'src/layout/navbarLayout'
 import { GrantApplicationProps } from 'src/types/application'
 import { formatAmount, getFieldString } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import logger from 'src/utils/logger'
+import { useEncryptPiiForApplication } from 'src/utils/pii'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 
 function ViewApplication() {
 	const apiClients = useContext(ApiClientsContext)!
+	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 	const { subgraphClients } = apiClients
 
 	const router = useRouter()
@@ -33,20 +36,32 @@ function ViewApplication() {
 	const [formData, setFormData] = useState<GrantApplicationProps | null>(null)
 	const [chainId, setChainId] = useState<SupportedChainId>()
 
-	useEffect(() => {
-		if(router && router.query) {
-			const { chainId: cId, applicationId: aId } = router.query
-			setChainId(cId as unknown as SupportedChainId)
-			setApplicationId(aId)
-		}
-	}, [router])
-
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
       	chainId || defaultChainId
       ].client,
 	})
+
+	const { data } = useGetApplicationDetailsQuery(queryParams)
+	const grantId = data?.grantApplication?.grant?.id
+	const applicantPublicKey = scwAddress?.toLowerCase() === data?.grantApplication?.applicantId?.toLowerCase()
+		? webwallet?.publicKey
+		: data?.grantApplication?.applicantPublicKey || undefined
+
+	const { decrypt } = useEncryptPiiForApplication(
+		grantId,
+		applicantPublicKey,
+		chainId || defaultChainId
+	)
+
+	useEffect(() => {
+		if(router?.query) {
+			const { chainId: cId, applicationId: aId } = router.query
+			setChainId(cId as unknown as SupportedChainId)
+			setApplicationId(aId)
+		}
+	}, [router])
 
 	useEffect(() => {
 		if(!applicationID) {
@@ -58,8 +73,7 @@ function ViewApplication() {
 		}
 
 		setQueryParams({
-			client:
-        subgraphClients[chainId].client,
+			client: subgraphClients[chainId].client,
 			variables: {
 				applicationID,
 			},
@@ -67,15 +81,51 @@ function ViewApplication() {
 
 	}, [chainId, applicationID])
 
-	const { data, error, loading } = useGetApplicationDetailsQuery(queryParams)
-
 	useEffect(() => {
-		if(data) {
-			// console.log('data', data)
-			setApplication(data.grantApplication)
+		let { grantApplication: app } = data || { }
+		if(app) {
+			(async() => {
+				if(app.pii?.length) {
+					if(!scwAddress) {
+						return
+					}
+
+					const piiData = app.pii.find(p => {
+						return p.id.endsWith(webwallet!.address)
+							|| p.id.endsWith(scwAddress)
+					})
+					if(piiData) {
+						try {
+							const fields = await decrypt(piiData.data)
+							// hacky way to copy the object
+							app = JSON.parse(JSON.stringify({
+								...app,
+								// also remove PII from the application
+								// since we don't require that anymore
+								pii: undefined
+							}))
+
+							// add all PII fields to the application
+							for(const id in fields) {
+								app!.fields.push({
+									id: `${app!.id}.${id}`,
+									values: fields[id]
+								})
+							}
+
+						} catch(err) {
+							logger.error({ err }, 'error in decrypting PII')
+						}
+					} else {
+						logger.warn('app has PII, but not encrypted for user')
+					}
+				}
+
+				setApplication(app)
+			})()
 		}
 
-	}, [data, error, loading])
+	}, [data, scwAddress, decrypt])
 
 	useEffect(() => {
 		if(!application || !application?.fields?.length) {

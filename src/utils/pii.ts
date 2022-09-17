@@ -135,9 +135,10 @@ export function useGetPublicKeysOfGrantManagers(grantId: string | undefined, cha
 
 export function useEncryptPiiForApplication(
 	grantId: string | undefined,
+	applicantPublicKey: string | undefined,
 	chainId: SupportedChainId,
 ) {
-	const { webwallet } = useContext(WebwalletContext)!
+	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 	const { fetch } = useGetPublicKeysOfGrantManagers(grantId, chainId)
 	const logger = useMemo(
 		() => MAIN_LOGGER.child({ grantId, 'pii': true }),
@@ -150,7 +151,7 @@ export function useEncryptPiiForApplication(
 	 */
 	const encrypt = useCallback(
 		async(piiFields: GrantApplicationRequest['fields']) => {
-			if(!webwallet) {
+			if(!webwallet || !scwAddress) {
 				throw new Error('Zero Wallet not connected')
 			}
 
@@ -166,7 +167,7 @@ export function useEncryptPiiForApplication(
 			// so we can access the sent information too
 			publicKeys = {
 				...publicKeys,
-				[webwallet.address]: webwallet.publicKey,
+				[scwAddress]: applicantPublicKey!,
 			}
 
 			logger.info({
@@ -210,8 +211,42 @@ export function useEncryptPiiForApplication(
 		}, [webwallet, grantId, fetch, logger]
 	)
 
+	/**
+	 * decrypted encrypted PII data
+	 * @param piiData the enc data
+	 * @returns Decrypted fields data
+	 */
+	const decrypt = useCallback(
+		async(piiData: string) => {
+			if(!webwallet) {
+				throw new Error('Zero Wallet not connected')
+			}
+
+			if(!applicantPublicKey || !grantId) {
+				throw new Error('Grant ID or applicant public key not provided')
+			}
+
+			const secureChannel = await getSecureChannelFromPublicKey(
+				webwallet,
+				applicantPublicKey!,
+				getKeyForGrantPii(grantId!)
+			)
+
+			logger.info({ applicantPublicKey }, 'got secure channel with applicant')
+
+			const decrypted = await secureChannel.decrypt(piiData)
+
+			logger.info('decrypted PII data')
+
+			const json = JSON.parse(decrypted) as GrantApplicationRequest['fields']
+
+			return json
+		}, [webwallet, grantId, applicantPublicKey, logger]
+	)
+
 	return {
-		encrypt
+		encrypt,
+		decrypt,
 	}
 }
 
