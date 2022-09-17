@@ -55,7 +55,7 @@ function Application({ applicationData, showHiddenData }: Props) {
 	let decimals
 	if(applicationData?.grant.reward.token) {
 		label = applicationData.grant.reward.token.label
-		icon = getUrlForIPFSHash(applicationData.grant.reward.token.iconHash)
+		icon = applicationData.grant.reward.token.iconHash
 		decimals = applicationData.grant.reward.token.decimal
 	} else {
 		label = getAssetInfo(
