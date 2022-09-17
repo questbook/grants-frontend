@@ -127,10 +127,13 @@ function ApplyGrant() {
 		setDaoLogo(getUrlForIPFSHash(grantData?.workspace?.logoIpfsHash))
 		setRewardAmount(
 			grantData?.reward?.committed
-				? formatAmount(
-					grantData?.reward?.committed,
-					chainInfo?.decimals || 18,
-				)
+				? parseInt(
+					formatAmount(
+						grantData?.reward?.committed,
+						chainInfo?.decimals || 18,
+						false, false, false
+					)
+				).toString()
 				: '',
 		)
 

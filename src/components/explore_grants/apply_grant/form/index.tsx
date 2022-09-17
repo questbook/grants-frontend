@@ -145,6 +145,10 @@ function Form({
 		},
 	])
 
+	const totalMilestoneReward = projectMilestones.reduce((total, current) => {
+		return total + parseInt(current.milestoneReward === '' ? '0' : current.milestoneReward)
+	}, 0)
+
 	React.useEffect(() => {
 		if(defaultMilestoneFields && defaultMilestoneFields.length > 0) {
 			setProjectMilestones(
@@ -157,9 +161,6 @@ function Form({
 			)
 		}
 	}, [defaultMilestoneFields])
-
-	const [fundingAsk, setFundingAsk] = React.useState('')
-	const [fundingAskError, setFundingAskError] = React.useState(false)
 
 	const [fundingBreakdown, setFundingBreakdown] = React.useState('')
 	const [fundingBreakdownError, setFundingBreakdownError] = React.useState(false)
@@ -315,10 +316,10 @@ function Form({
 			error = true
 		}
 
-		if(fundingAsk === '' && grantRequiredFields.includes('fundingAsk')) {
-			setFundingAskError(true)
-			error = true
-		}
+		// if(fundingAsk === '' && grantRequiredFields.includes('fundingAsk')) {
+		// 	setFundingAskError(true)
+		// 	error = true
+		// }
 
 		if(
 			fundingBreakdown === ''
@@ -366,15 +367,7 @@ function Form({
 				applicantAddress: [{ value: applicantAddress }],
 				projectName: [{ value: projectName }],
 				projectDetails: [{ value: projectDetailsString }],
-				fundingAsk: fundingAsk !== '' ? [
-					{
-						value: parseAmount(
-							fundingAsk,
-							rewardCurrencyAddress,
-							rewardDecimal,
-						),
-					},
-				] : [],
+				fundingAsk: [],
 				fundingBreakdown: [{ value: fundingBreakdown }],
 				teamMembers: [{ value: Number(teamMembers).toString() }],
 				memberDetails: membersDescription.map((md) => ({
@@ -475,9 +468,9 @@ function Form({
 			setProjectMilestones(formDataLocal?.projectMilestones)
 		}
 
-		if(formDataLocal?.fundingAsk) {
-			setFundingAsk(formDataLocal?.fundingAsk)
-		}
+		// if(formDataLocal?.fundingAsk) {
+		// 	setFundingAsk(formDataLocal?.fundingAsk)
+		// }
 
 		if(formDataLocal?.fundingBreakdown) {
 			setFundingBreakdown(formDataLocal?.fundingBreakdown)
@@ -506,7 +499,7 @@ function Form({
 			projectDetails: convertToRaw(projectDetails.getCurrentContent()),
 			projectGoal,
 			projectMilestones,
-			fundingAsk,
+			// fundingAsk,
 			fundingBreakdown,
 			customFields,
 		}
@@ -526,7 +519,7 @@ function Form({
 		projectDetails,
 		projectGoal,
 		projectMilestones,
-		fundingAsk,
+		// fundingAsk,
 		fundingBreakdown,
 		customFields,
 	])
@@ -669,24 +662,17 @@ function Form({
 				/>
 
 				<Box mt='43px' />
-				{
-					grantRequiredFields.includes('fundingBreakdown') && (
-						<Funding
-							fundingAsk={fundingAsk}
-							setFundingAsk={setFundingAsk}
-							fundingAskError={fundingAskError}
-							setFundingAskError={setFundingAskError}
-							fundingBreakdown={fundingBreakdown}
-							setFundingBreakdown={setFundingBreakdown}
-							fundingBreakdownError={fundingBreakdownError}
-							setFundingBreakdownError={setFundingBreakdownError}
-							rewardAmount={rewardAmount}
-							rewardCurrency={rewardCurrency}
-							rewardCurrencyCoin={rewardCurrencyCoin}
-							grantRequiredFields={grantRequiredFields}
-						/>
-					)
-				}
+				<Funding
+					fundingBreakdown={fundingBreakdown}
+					setFundingBreakdown={setFundingBreakdown}
+					fundingBreakdownError={fundingBreakdownError}
+					setFundingBreakdownError={setFundingBreakdownError}
+					rewardAmount={rewardAmount}
+					rewardCurrency={rewardCurrency}
+					rewardCurrencyCoin={rewardCurrencyCoin}
+					grantRequiredFields={grantRequiredFields}
+					totalMilestoneReward={totalMilestoneReward}
+				/>
 
 				{
 					customFields && customFields.length > 0 && (

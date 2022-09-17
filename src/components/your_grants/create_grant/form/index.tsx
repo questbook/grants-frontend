@@ -16,6 +16,7 @@ import Details from 'src/components/your_grants/create_grant/form/2_details'
 import ApplicantDetails from 'src/components/your_grants/create_grant/form/3_applicantDetails'
 import GrantRewardsInput from 'src/components/your_grants/create_grant/form/4_rewards'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
+import { CHAIN_INFO } from 'src/constants/chains'
 import SAFES_ENDPOINTS_MAINNETS from 'src/constants/safesEndpoints.json'
 import SAFES_ENDPOINTS_TESTNETS from 'src/constants/safesEndpointsTest.json'
 import strings from 'src/constants/strings.json'
@@ -24,7 +25,6 @@ import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'
 import { SafeToken } from 'src/types'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { CHAIN_INFO } from 'src/constants/chains'
 
 const SAFES_ENDPOINTS = { ...SAFES_ENDPOINTS_MAINNETS, ...SAFES_ENDPOINTS_TESTNETS }
 type ValidChainID = keyof typeof SAFES_ENDPOINTS;
@@ -278,16 +278,16 @@ function Form({
 			axios.get(gnosisUrl).then(res => {
 				// console.log(res.data)
 				let tokens
-				if (safeNetwork === "42220"){
+				if(safeNetwork === '42220') {
 					console.log('reward currency', tokens)
 					let localTokenData: {icon: string, label: string, address: string, decimals: number, pair?: string}
-					
+
 					tokens = res.data.filter((token: SafeToken) => token.tokenAddress).map((token: SafeToken) => {
 						if(token.tokenAddress) {
-							if(CHAIN_INFO[safeNetwork].supportedCurrencies.hasOwnProperty(token.tokenAddress.toLowerCase())){
+							if(CHAIN_INFO[safeNetwork].supportedCurrencies.hasOwnProperty(token.tokenAddress.toLowerCase())) {
 								localTokenData = CHAIN_INFO[safeNetwork].supportedCurrencies[token.tokenAddress.toLowerCase()]
 							}
-							
+
 							console.log('currency', localTokenData)
 							const currency = {
 								'id': token.tokenAddress,
@@ -300,8 +300,8 @@ function Form({
 							return currency
 						}
 					})
-					
-						
+
+
 				} else {
 					tokens = res.data.filter((token: SafeToken) => token.tokenAddress).map((token: SafeToken) => {
 						if(token.tokenAddress) {
@@ -316,12 +316,13 @@ function Form({
 							return currency
 						}
 					})
-				setRewardToken({ address: tokens[0]?.address, decimal: tokens[0]?.decimals.toString(), label: tokens[0]?.label, iconHash: tokens[0]?.icon })
+					setRewardToken({ address: tokens[0]?.address, decimal: tokens[0]?.decimals.toString(), label: tokens[0]?.label, iconHash: tokens[0]?.icon })
 				}
+
 				setSupportedCurrencies(tokens)
 				// console.log('balances', supportedCurrencies)
 				setRewardCurrency(tokens[0]?.label)
-				
+
 				setRewardCurrencyAddress(tokens[0]?.address)
 			})
 		}
@@ -331,6 +332,7 @@ function Form({
 
 	const [date, setDate] = React.useState('')
 	const [dateError, setDateError] = React.useState(false)
+	const [oldDate, setOldDate] = React.useState(false)
 
 	const handleOnSubmit = () => {
 		let error = false
@@ -360,6 +362,13 @@ function Form({
 
 		if(date.length <= 0) {
 			setDateError(true)
+			error = true
+		}
+
+		const today = new Date()
+		if(new Date(date) <= today) {
+			setDateError(true)
+			setOldDate(true)
 			error = true
 		}
 
@@ -871,6 +880,8 @@ function Form({
 				shouldEncryptReviews={shouldEncryptReviews}
 				setShouldEncryptReviews={setShouldEncryptReviews}
 				isEVM={isEVM}
+				oldDate={oldDate}
+				setOldDate={setOldDate}
 			/>
 
 			{/* <Flex
