@@ -36,6 +36,7 @@ import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
 import ReviewerDashboard from 'src/v2/components/Dashboard/ReviewerDashboard'
+import { useTranslation } from 'react-i18next'
 
 const PAGE_SIZE = 5
 
@@ -87,9 +88,12 @@ function removeDuplicates<T extends { grant: { id: string } }>(array: Array<T>) 
 function YourGrants() {
 	const [isAdmin, setIsAdmin] = useState<boolean>()
 	const [isReviewer, setIsReviewer] = useState<boolean>()
+	const [isLoading, setIsLoading] = useState<boolean>(true)
 
 	const { workspace } = useContext(ApiClientsContext)!
 	const { data: accountData } = useQuestbookAccount()
+
+	const { t } = useTranslation()
 
 	useEffect(() => {
 		if(
@@ -110,11 +114,12 @@ function YourGrants() {
 			if(user !== undefined) {
 				localStorage.setItem('id', user)
 			}
+			setIsLoading(false)
 		}
 	}, [accountData, workspace])
 
 
-	if(isAdmin === undefined || isReviewer === undefined) {
+	if(isLoading || isAdmin === undefined || isReviewer === undefined) {
 		return (
 			<Center w='100%'>
 				<Loader />
@@ -186,6 +191,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 
 	const [selectedTab, setSelectedTab] = useState(0)
 	const [grantCount, setGrantCount] = useState([true, true])
+	const [isLoading, setIsLoading] = useState(true)
 
 	useEffect(() => {
 		setSelectedTab(
@@ -212,6 +218,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 			},
 			fetchPolicy: 'network-only',
 		})
+		setIsLoading(false)
 	}, [currentPage, workspace, accountData?.address])
 
 	useEffect(() => {
@@ -246,6 +253,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 			},
 			fetchPolicy: 'network-only',
 		})
+		setIsLoading(false)
 	}, [currentPage, workspace, accountData?.address, selectedTab])
 
 	// useEffect(() => {
@@ -343,6 +351,8 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 		}
 	}, [allGrantsReviewerData])
 
+	const { t } = useTranslation()
+
 	const handleScroll = useCallback(() => {
 		const { current } = containerRef
 		if(!current) {
@@ -375,7 +385,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 		return () => parentElement.removeEventListener('scroll', handleScroll)
 	}, [handleScroll])
 
-	if(isReviewer === undefined) {
+	if(isLoading || isReviewer === undefined) {
 		return <Loader />
 	}
 
@@ -434,7 +444,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 
 											}
 										}>
-										Post a Grant / Bounty
+										{t('/your-grant.post_grant')}
 									</Button>
 								)
 							}

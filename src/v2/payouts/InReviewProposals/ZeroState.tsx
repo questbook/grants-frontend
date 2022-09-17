@@ -1,6 +1,8 @@
 import { Flex, Text } from '@chakra-ui/react'
+import { useTranslation } from 'react-i18next'
 
 const ZeroState = () => {
+	const { t } = useTranslation()
 	return (
 		<Flex
 			h='calc(100vh - 352px)'
@@ -14,7 +16,7 @@ const ZeroState = () => {
 				fontWeight='500'
 				textAlign='center'
 			>
-				Nothing to review
+				{t('/your_grants/view_applicants.no_in_review')}
 			</Text>
 			<Text
 				mt={2}
@@ -26,7 +28,7 @@ const ZeroState = () => {
 				color='#7D7DA0'
 				maxW='754px'
 			>
-				There are no new applications to review, you can review or assign reviewers to them here as soon as they are submitted.
+				{t('/your_grants/view_applicants.no_in_review_description')}
 			</Text>
 
 		</Flex>

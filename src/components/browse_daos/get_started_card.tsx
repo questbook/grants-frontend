@@ -1,8 +1,10 @@
 import { Box, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next';
 
 function GetStartedCard() {
 	const router = useRouter()
+	const { t } = useTranslation();
 	return (
 		<Box
 			w='100%'
@@ -25,14 +27,14 @@ function GetStartedCard() {
 				fontWeight='700'
 				fontSize='20px'
 				mb='8px'>
-				Run your grants program
+				{t('/.get_started_card.title')}
 			</Text>
 			<Text
 				ml='3px'
 				color='#7D7DA0'
 				fontSize='14px'
 				mb='12px'>
-				Grow your ecosystem by providing incentives to builders through grants.
+				{t('/.get_started_card.description')}
 			</Text>
 			<Box
 				bg='#1F1F33'
@@ -44,7 +46,7 @@ function GetStartedCard() {
 					textAlign='center'
 					fontSize='14px'
 					fontWeight='500'>
-					Get Started
+					{t('/.get_started_card.cta')}
 				</Text>
 			</Box>
 

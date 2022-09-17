@@ -28,17 +28,16 @@ import useChainId from 'src/hooks/utils/useChainId'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { SafeToken } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { useTranslation } from 'react-i18next'
 
 const SAFES_ENDPOINTS = { ...SAFES_ENDPOINTS_MAINNETS, ...SAFES_ENDPOINTS_TESTNETS }
 type ValidChainID = keyof typeof SAFES_ENDPOINTS;
 
 function Form({
-	refs,
 	onSubmit,
 	formData,
 	hasClicked
 }: {
-  refs: any[]
   onSubmit: (data: any) => void
   formData: any
   hasClicked: boolean
@@ -56,6 +55,8 @@ function Form({
 		transactionData: newPkTransactionData,
 		publicKey: newPublicKey,
 	} = useSubmitPublicKey()
+
+	const { t } = useTranslation()
 
 	useEffect(() => {
 		/// // console.log(pk);
@@ -663,7 +664,7 @@ function Form({
 		<>
 			<Heading
 				mt='18px'
-				title='Edit your grant' />
+				title='Edit Grant' />
 
 			<Flex
 				mt='-73px'
@@ -680,17 +681,6 @@ function Form({
 				</Button>
 			</Flex>
 
-			<Text
-				ref={refs[0]}
-				fontSize='18px'
-				fontWeight='700'
-				lineHeight='26px'
-				letterSpacing={0}
-				mt='30px'
-			>
-				Grant Intro
-			</Text>
-			<Box mt='20px' />
 			<Title
 				title={title}
 				setTitle={setTitle}
@@ -703,17 +693,6 @@ function Form({
 				maxDescriptionLength={maxDescriptionLength}
 			/>
 
-			<Text
-				ref={refs[1]}
-				fontSize='18px'
-				fontWeight='700'
-				lineHeight='26px'
-				letterSpacing={0}
-				mt={4}
-			>
-				Grant Details
-			</Text>
-			<Box mt='20px' />
 			<Details
 				details={details}
 				setDetails={setDetails}
@@ -722,14 +701,13 @@ function Form({
 			/>
 
 			<Text
-				ref={refs[2]}
 				fontSize='18px'
 				fontWeight='700'
 				lineHeight='26px'
 				letterSpacing={0}
 				mt='40px'
 			>
-				Applicant Details
+				{t('/create-grant.proposal_form.title')}
 			</Text>
 			<Box mt='20px' />
 			<ApplicantDetails
@@ -758,17 +736,6 @@ function Form({
 				defaultRubricsPresent={formData?.rubric.items.length > 0}
 			/>
 
-			<Text
-				ref={refs[3]}
-				fontSize='18px'
-				fontWeight='700'
-				lineHeight='26px'
-				letterSpacing={0}
-				mt='40px'
-			>
-				Reward and Deadline
-			</Text>
-			<Box mt='20px' />
 			<GrantRewardsInput
 				reward={reward}
 				setReward={setReward}

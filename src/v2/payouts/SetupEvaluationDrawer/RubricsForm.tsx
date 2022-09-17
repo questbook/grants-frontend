@@ -2,6 +2,7 @@ import React from 'react'
 import { Box, Button, Flex, Image, Link, Text } from '@chakra-ui/react'
 import { SidebarRubrics } from 'src/types'
 import TextField from 'src/v2/components/InputFields/TextField'
+import { useTranslation } from 'react-i18next'
 
 interface Props {
 	rubrics: SidebarRubrics[]
@@ -11,34 +12,9 @@ interface Props {
 }
 
 const RubricsForm = ({ rubrics, onRubricChange, onRubricCriteriaAdd, onRubricCriteriaDelete }: Props) => {
+	const { t } = useTranslation()
 	return (
 		<>
-			<Text
-				fontSize='14px'
-				lineHeight='20px'
-				fontWeight='500'
-			>
-				Scoring quality
-			</Text>
-
-			<Text
-				fontSize='12px'
-				lineHeight='16px'
-				fontWeight='400'
-				color='#7D7DA0'
-				mt='2px'
-			>
-				Total score is the sum of quality scores.
-				{' '}
-				<Link
-					textDecoration='none'
-					fontWeight='500'
-					color='#1F1F33'
-				>
-					Learn more
-				</Link>
-			</Text>
-
 			<Flex
 				mt={4}
 				p={4}
@@ -87,7 +63,7 @@ const RubricsForm = ({ rubrics, onRubricChange, onRubricCriteriaAdd, onRubricCri
 								</Flex>
 
 								<TextField
-									placeholder='Criteria'
+									placeholder={t('/your_grants/view_applicants.reviewer_question')}
 									maxLength={30}
 									value={rubric.criteria}
 									onChange={
@@ -96,7 +72,7 @@ const RubricsForm = ({ rubrics, onRubricChange, onRubricCriteriaAdd, onRubricCri
 										}
 									} />
 								<TextField
-									placeholder='Description'
+									placeholder={t('/your_grants/view_applicants.reviewer_question_description')}
 									maxLength={80}
 									value={rubric.description}
 									onChange={
@@ -118,9 +94,7 @@ const RubricsForm = ({ rubrics, onRubricChange, onRubricCriteriaAdd, onRubricCri
 												variant='linkV2'
 												onClick={onRubricCriteriaAdd}
 											>
-												Add another
-												{' '}
-												{index === 0 && 'criterion'}
+												{t('/your_grants/view_applicants.add_question')}
 											</Button>
 										</Flex>
 									)

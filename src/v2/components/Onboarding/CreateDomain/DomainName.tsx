@@ -1,6 +1,8 @@
 import { Box, Button, Image, Text } from '@chakra-ui/react'
 import TextField from 'src/v2/components/InputFields/TextField'
 
+import { useTranslation } from 'react-i18next'
+
 interface Props {
     domainName: string
     setValue: (newValue: string) => void
@@ -10,20 +12,19 @@ interface Props {
 }
 
 function DomainName({ domainName, setValue, isVerified, onContinue }: Props) {
+	const { t } = useTranslation()
 	return (
 		<>
 			<Text
 				variant='v2_heading_3'
 				fontWeight='500'>
-				Give your domain a name
+				{t('/onboarding/create-domain.program_name_title')}
 			</Text>
 			<Box mt='auto' />
 			<TextField
-				label='Domain Name'
-				helperText='Domain is a workspace where you can post your grants, invite members, and fund builders.'
-				helperLinkText='Learn about domains'
-				helperLinkUrl='https://blog.questbook.xyz/posts/delegated-domain-allocators/'
-				placeholder='Developer Tools'
+				label={t('/onboarding/create-domain.program_name')}
+				helperText={t('/onboarding/create-domain.program_name_helper')}
+				placeholder={t('/onboarding/create-domain.program_name_placeholder')}
 				value={domainName}
 				onChange={(e) => setValue(e.target.value)}
 				// setValue={setValue}

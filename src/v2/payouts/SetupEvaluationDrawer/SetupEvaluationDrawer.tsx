@@ -17,6 +17,7 @@ import { FishEye } from 'src/v2/assets/custom chakra icons/FishEye'
 import { SetupEvaluation } from 'src/v2/assets/custom chakra icons/SetupEvaluation'
 import AssignReviewers from 'src/v2/payouts/SetupEvaluationDrawer/AssignReviewers'
 import RubricsForm from 'src/v2/payouts/SetupEvaluationDrawer/RubricsForm'
+import { useTranslation } from 'react-i18next'
 
 const SetupEvaluationDrawer = ({
 	isOpen,
@@ -64,6 +65,8 @@ const SetupEvaluationDrawer = ({
 	}
 
 	const [canContinue, setCanContinue] = useState(false)
+
+	const { t } = useTranslation()
 
 	useEffect(() => {
 		for(const rubric of rubrics) {
@@ -314,7 +317,7 @@ const SetupEvaluationDrawer = ({
 								lineHeight='24px'
 								fontWeight='500'
 							>
-								Setup applicant evaluation
+								{t('/your_grants/view_applicants.create_review_process')}
 							</Text>
 							<Text
 								fontSize='14px'
@@ -323,7 +326,7 @@ const SetupEvaluationDrawer = ({
 								mt={1}
 								color='#7D7DA0'
 							>
-								Define a scoring rubric and assign reviewers.
+								
 							</Text>
 						</Flex>
 
@@ -387,7 +390,7 @@ const SetupEvaluationDrawer = ({
 										ml={1}
 										color={step === 0 ? '#785EF0' : '#1F1F33'}
 									>
-										Scoring rubric
+										{t('/your_grants/view_applicants.review_questions')}
 									</Text>
 								</Flex>
 							</Flex>
@@ -426,7 +429,7 @@ const SetupEvaluationDrawer = ({
 										ml={1}
 										color={step === 1 || step === 2 ? '#785EF0' : '#1F1F33'}
 									>
-										Assign reviewers
+										{t('/your_grants/view_applicants.select_reviewers')}
 									</Text>
 								</Flex>
 							</Flex>
@@ -485,7 +488,7 @@ const SetupEvaluationDrawer = ({
 									}
 								}
 							}>
-							{step === 0 ? 'Continue' : 'Setup Evaluation'}
+							{step === 0 ? t('/your_grants/view_applicants.select_reviewers_next') : t('/your_grants/view_applicants.review_process_save')}
 						</Button>
 
 					</Flex>

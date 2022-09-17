@@ -91,7 +91,7 @@ function BrowseDao() {
 					<Text
 						fontSize='24px'
 						fontWeight='700'>
-						{t('browse_dao.section_1.title')}
+						{t('/.section_1.title')}
 					</Text>
 					<Box marginLeft='auto'>
 						<Menu>
@@ -137,7 +137,7 @@ function BrowseDao() {
 					<Text
 						fontSize='24px'
 						fontWeight='700'>
-						New
+						{t('/.section_2.title')}
 					</Text>
 
 					<Divider />
@@ -173,13 +173,13 @@ BrowseDao.getLayout = function(page: ReactElement) {
 const SORTING_OPTIONS = [
 	{
 		id: WorkspaceOrderBy.TotalGrantFundingDisbursedUsd,
-		name: 'Grant Rewards',
+		name: 'Grant Amount', //TODO : replace with i18n
 		// eslint-disable-next-line camelcase
 		filter: { totalGrantFundingDisbursedUSD_gte: 1000 } as WorkspaceFilter,
 	},
 	{
 		id: WorkspaceOrderBy.NumberOfApplications,
-		name: 'Number of Applicants',
+		name: 'Number of Proposals', //TODO : replace with i18n
 		// eslint-disable-next-line camelcase
 		filter: { numberOfApplications_gte: 1 } as WorkspaceFilter,
 	}

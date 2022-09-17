@@ -8,7 +8,7 @@ function getRole(workspace: MinimalWorkspace, address: string) {
 	switch (member?.accessLevel) {
 	case 'admin':
 	case 'owner':
-		return 'Administrator'
+		return 'Admin'
 	case 'reviewer':
 		return 'Reviewer'
 

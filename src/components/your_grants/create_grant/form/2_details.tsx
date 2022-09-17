@@ -17,7 +17,6 @@ function Details({
 	return (
 		<Flex direction='column'>
 			<RichTextEditor
-				label='Grant Details'
 				placeholder='Details about your grant - requirements, deliverables, and milestones'
 				value={details}
 				isError={detailsError}

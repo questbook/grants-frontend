@@ -22,15 +22,15 @@ import strings from 'src/constants/strings.json'
 import { SafeToken } from 'src/types'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
+import { useTranslation } from 'react-i18next'
+
 const SAFES_ENDPOINTS = { ...SAFES_ENDPOINTS_MAINNETS, ...SAFES_ENDPOINTS_TESTNETS }
 type ValidChainID = keyof typeof SAFES_ENDPOINTS;
 
 function Form({
-	refs,
 	onSubmit,
 	hasClicked,
 }: {
-  refs: any[]
   onSubmit: (data: any) => void
   hasClicked: boolean
 }) {
@@ -537,6 +537,8 @@ function Form({
 		milestoneSelectOptionIsVisible,
 	])
 
+	const { t } = useTranslation()
+
 	return (
 		<Flex
 			direction='column'
@@ -544,17 +546,7 @@ function Form({
 		>
 			<Heading
 				mt='18px'
-				title='Create a grant' />
-			<Text
-				ref={refs[0]}
-				fontSize='18px'
-				fontWeight='700'
-				lineHeight='26px'
-				letterSpacing={0}
-				mt='30px'
-			>
-				Grant Intro
-			</Text>
+				title='Create a new Grant' />
 			<Box mt='20px' />
 			<Title
 				title={title}
@@ -569,14 +561,13 @@ function Form({
 			/>
 
 			<Text
-				ref={refs[1]}
 				fontSize='18px'
 				fontWeight='700'
 				lineHeight='26px'
 				letterSpacing={0}
 				mt={4}
 			>
-				Grant Details
+				{t('/create-grant.instructions_title')}
 			</Text>
 			<Box mt='20px' />
 			<Details
@@ -587,14 +578,13 @@ function Form({
 			/>
 
 			<Text
-				ref={refs[2]}
 				fontSize='18px'
 				fontWeight='700'
 				lineHeight='26px'
 				letterSpacing={0}
 				mt='40px'
 			>
-				Applicant Details
+				{t('/create-grant.proposal_form.title')}
 			</Text>
 			<Box mt='20px' />
 			<ApplicantDetails
@@ -623,16 +613,6 @@ function Form({
 				// setMaximumPoints={setMaximumPoints}
 			/>
 
-			<Text
-				ref={refs[3]}
-				fontSize='18px'
-				fontWeight='700'
-				lineHeight='26px'
-				letterSpacing={0}
-				mt='40px'
-			>
-				Reward and Deadline
-			</Text>
 			<GrantRewardsInput
 				reward={reward}
 				setReward={setReward}

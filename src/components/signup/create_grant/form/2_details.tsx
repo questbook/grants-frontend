@@ -72,7 +72,6 @@ function Details({ onSubmit, constructCache, cacheKey }: Props) {
 				<Box mt={12} />
 
 				<RichTextEditor
-					label='Grant Details'
 					placeholder='Details about your grant - requirements, deliverables, and milestones'
 					value={details}
 					isError={detailsError}

@@ -35,6 +35,7 @@ import {
 } from 'src/utils/settingsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
+import { useTranslation } from 'react-i18next'
 
 type EditFormProps = {
   workspaceData: Workspace | undefined
@@ -63,6 +64,8 @@ function EditForm({ workspaceData }: EditFormProps) {
 
 	const [txnData, txnLink, loading, isBiconomyInitialised] = useUpdateWorkspace(editData as any, setNetworkTransactionModalStep)
 
+	const { t } = useTranslation()
+	
 	const supportedNetwork = useMemo(() => {
 		if(editedFormData) {
 			const supportedChainId = getSupportedChainIdFromSupportedNetwork(
@@ -211,8 +214,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 				alignItems='flex-start'
 			>
 				<SingleLineInput
-					label='Grants DAO Name'
-					placeholder='Nouns DAO'
+					label={t('/manage_dao.ecosystem_growth_program_name')}
 					subtext='Letters, spaces, and numbers are allowed.'
 					value={editedFormData?.name}
 					onChange={(e) => updateFormData({ name: e.target.value })}
@@ -247,8 +249,8 @@ function EditForm({ workspaceData }: EditFormProps) {
 					editedFormData?.about
 						? (
 							<RichTextEditor
-								label='About your Grants DAO'
-								placeholder='Write details about your grants, bounty, and other projects.'
+								label={t('/manage_dao.about')}
+								placeholder={t('/manage_dao.about_description')}
 								value={editedFormData!.about!}
 								onChange={about => updateFormData({ about })}
 								isError={hasError('about')}

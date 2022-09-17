@@ -5,6 +5,7 @@ import Badge from 'src/components/browse_grants/grantCard/badge'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import { calculateUSDValue, useTimeDifference } from 'src/utils/calculatingUtils'
 import { nFormatter } from 'src/utils/formattingUtils'
+import { useTranslation } from 'react-i18next'
 
 interface BrowseGrantCardProps {
   grantTitle: string
@@ -49,6 +50,8 @@ function BrowseGrantCard({
 	const [grantReward, setGrantReward] = useState<number>(0)
 
 	const currentDate = new Date().getTime()
+	
+	const { t } = useTranslation()
 
 	useEffect(() => {
 		if(grantReward === 0) {
@@ -101,7 +104,7 @@ function BrowseGrantCard({
 							fontWeight='700'
 							color='#8C8C8C'
 						>
-							{useTimeDifference(currentDate, createdAt * 1000)}
+							{t('/profile.cards.created_ago').replace('TIME_DIFF',useTimeDifference(currentDate, createdAt * 1000))}
 						</Text>
 
 						<Box mr='auto' />
@@ -138,10 +141,11 @@ function BrowseGrantCard({
 								color='#373737'
 							>
 								<b>
-
-									{grantReward !== 0 ? `$${nFormatter(grantReward.toFixed(0))}` : grantAmount}
+									{'$'}
+									{grantReward !== 0 ? `$${Math.floor(nFormatter(grantReward.toFixed(0)))}` : grantAmount}
 								</b>
-								/grantee
+								{' '}
+								{t('/profile.cards.per_proposal')}
 								{
 									isGrantVerified && (
 										<VerifiedBadge
@@ -161,27 +165,6 @@ function BrowseGrantCard({
 							src='/ui_icons/green_dot.svg'
 							display='inline-block'
 						/>
-						<Image
-							boxSize={4}
-							src={grantCurrencyIcon} />
-						<Text
-							ml={2}
-							fontSize={{ base: '12px', md: '0.85rem' }}
-							lineHeight='1rem'
-							fontWeight='400'
-							color='#373737'
-						>
-							Paid in
-							{' '}
-							<b>
-								{grantCurrency}
-							</b>
-						</Text>
-						<Image
-							mx={{ base: '8px', md: 4 }}
-							src='/ui_icons/green_dot.svg'
-							display='inline-block'
-						/>
 
 						<Image
 							mr='6px'
@@ -193,10 +176,10 @@ function BrowseGrantCard({
 							fontSize={{ base: '12px', md: '0.85rem' }}
 							lineHeight='1rem'
 							display='inline-block'>
-							Ends on
+							{t('/profile.cards.accepting_proposals_until')}
 							{' '}
 							<b>
-								{moment(endTimestamp).format('MMMM D')}
+								{moment(endTimestamp).format('MMM D')}
 							</b>
 						</Text>
 						<Spacer/>
@@ -204,7 +187,7 @@ function BrowseGrantCard({
 							onClick={onClick}
 							variant='primaryCta'
 							h='105px'>
-							Apply Now
+							{t('/profile.cards.submit_proposal')}
 						</Button>
 					</Flex>
 				</Flex>

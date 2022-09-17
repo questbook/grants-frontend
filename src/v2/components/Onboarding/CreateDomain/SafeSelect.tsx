@@ -4,6 +4,8 @@ import { GroupBase, OptionBase, OptionProps, SingleValueProps } from 'chakra-rea
 import { NetworkType } from 'src/constants/Networks'
 import DropdownSelect from 'src/v2/components/DropdownSelect'
 
+import { useTranslation } from 'react-i18next'
+
 interface Props {
 	label: string
 	optionalText?: string
@@ -199,6 +201,7 @@ function SafeSelect({ label, optionalText, helperText, helperLinkText, helperLin
 	useEffect(() => {
 		// console.log('SELECTED DROPDOWN: ', value)
 	}, [value])
+	const { t } = useTranslation()
 	return (
 		<Flex direction='column'>
 			<Flex>
@@ -244,7 +247,7 @@ function SafeSelect({ label, optionalText, helperText, helperLinkText, helperLin
 				options={safesOptions ?? []}
 				makeOption={Option}
 				singleValue={SingleValue}
-				placeholder='Select from the list'
+				placeholder={t('/onboarding/create-domain.pick_network_placeholder')}
 				selected={value}
 				setSelected={onChange} />
 		</Flex>

@@ -3,10 +3,10 @@ import { Flex, ResponsiveValue, Text } from '@chakra-ui/react'
 
 
 const TableHeader = [
-	'Name',
-	'Pending applications',
-	'$ Disbursed',
-	'Response TAT',
+	'Project Name',
+	'Pending Proposals',
+	'Amount Sent',
+	'TAT',
 	'Action'
 ]
 
@@ -21,6 +21,7 @@ const tableHeadersAlign = [
 
 
 const tableHeadersflex = [0.20, 0.40, 0.10, 0.20, 0.17]
+
 
 function Header() {
 
