@@ -276,8 +276,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const initiateBiconomy = useCallback(
 		async(chainId: string) => {
 			let task = biconomyInitPromisesRef.current[chainId]
+
+			mostRecentInitChainId.current = chainId
 			if(!task) {
-				mostRecentInitChainId.current = chainId
 				setBiconomyLoading(prev => ({ ...prev, [chainId]: true }))
 
 				task = initiateBiconomyUnsafe(chainId)
@@ -288,6 +289,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 						setBiconomyLoading(prev => ({ ...prev, [chainId]: false }))
 					})
 				biconomyInitPromisesRef.current[chainId] = task
+			}
+			else{
+				switchNetwork(parseInt(chainId))
 			}
 
 			return task
