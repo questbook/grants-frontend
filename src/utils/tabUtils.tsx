@@ -3,6 +3,8 @@ import { TABS, TabType } from 'src/v2/components/Sidebar/Tabs'
 export default function getTabFromPath(path: string): TabType {
 	if(path === '/') {
 		return 'DISCOVER'
+	} else if(path === '/signup') {
+		return 'GRANTS_AND_BOUNTIES'
 	}
 
 	const a = path.slice(1)

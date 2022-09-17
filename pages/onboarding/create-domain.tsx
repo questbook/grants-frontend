@@ -447,11 +447,11 @@ const OnboardingCreateDomain = () => {
 				currentStepIndex={currentStep || 0}
 				steps={
 					[
-						'Confirming Transaction',
-						'Completing Transaction',
-						'Completing Indexing',
-						'Creating domain on the network',
-						'Your domain is now on-chain'
+						'Uploading data to IPFS',
+						'Signing transaction with in-app wallet',
+						'Waiting for transaction to complete on chain',
+						'Indexing transaction on graph protocol',
+						'Your domain is ready for use'
 					]
 				}
 				viewLink={getExplorerUrlForTxHash(network, txHash)}

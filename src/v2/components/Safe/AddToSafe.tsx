@@ -293,9 +293,9 @@ function AddToSafe() {
 				currentStepIndex={networkTransactionModalStep || 0}
 				steps={
 					[
-						'Confirming Transaction',
-						'Completing Transaction',
-						'Completing Indexing',
+						'Signing transaction with in-app wallet',
+						'Waiting for transaction to complete on chain',
+						'Indexing transaction on graph protocol',
 						'Adding safe to your domain on the network',
 					]
 				}

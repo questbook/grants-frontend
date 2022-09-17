@@ -19,7 +19,7 @@ import SendFundsDrawer from 'src/v2/payouts/SendFundsDrawer/SendFundsDrawer'
 import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import getGnosisTansactionLink from 'src/v2/utils/gnosisUtils'
-import getProposalUrl from 'src/v2/utils/phantomUtils'
+import { getProposalUrl } from 'src/v2/utils/phantomUtils'
 import { erc20ABI, useAccount, useConnect, useDisconnect } from 'wagmi'
 
 const ERC20Interface = new ethers.utils.Interface(erc20ABI)
