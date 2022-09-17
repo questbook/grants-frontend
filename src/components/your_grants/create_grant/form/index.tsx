@@ -144,6 +144,7 @@ function Form({
 
 	const safeAddress = workspace?.safe?.address
 	const safeNetwork = workspace?.safe?.chainId as ValidChainID
+	const [oldDate, setOldDate] = React.useState(false)
 	const isEVM = parseInt(safeNetwork) !== 900001
 	let transactionServiceURL
 
@@ -170,7 +171,6 @@ function Form({
 				// console.log(res.data)
 				let tokens
 				if(safeNetwork === '42220') {
-					console.log('reward currency', tokens)
 					let localTokenData: {icon: string, label: string, address: string, decimals: number, pair?: string}
 
 					tokens = res.data.filter((token: SafeToken) => token.tokenAddress).map((token: SafeToken) => {
@@ -179,7 +179,6 @@ function Form({
 								localTokenData = CHAIN_INFO[safeNetwork].supportedCurrencies[token.tokenAddress.toLowerCase()]
 							}
 
-							console.log('currency', localTokenData)
 							const currency = {
 								'id': token.tokenAddress,
 								'address': token.tokenAddress,
