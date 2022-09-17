@@ -893,7 +893,12 @@ function ViewApplicants() {
 						]
 					}
 					viewLink={getExplorerUrlForTxHash(getSupportedChainIdFromWorkspace(workspace) || defaultChainId, transactionHash)}
-					onClose={() => setNetworkTransactionModalStep(undefined)} />
+					onClose={
+						() => {
+							setNetworkTransactionModalStep(undefined)
+							router.reload()
+						}
+					} />
 
 			</Container>
 			<Modal
