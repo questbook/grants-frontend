@@ -14,6 +14,7 @@ import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGran
 import { defaultChainId } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import {
+	GetGrantDetailsQuery,
 	useGetGrantDetailsQuery,
 	useGetGrantsAppliedToQuery,
 } from 'src/generated/graphql'
@@ -23,11 +24,12 @@ import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
 import {
 	formatAmount,
-	getFieldLabelFromFieldTitle,
 } from 'src/utils/formattingUtils'
 import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo, getChainInfo } from 'src/utils/tokenUtils'
+
+type GrantDetails = GetGrantDetailsQuery['grants'][number]
 
 function AboutGrant() {
 	const { data: accountData } = useQuestbookAccount()
@@ -35,7 +37,7 @@ function AboutGrant() {
 
 	const router = useRouter()
 
-	const [grantData, setGrantData] = useState<any>(null)
+	const [grantData, setGrantData] = useState<GrantDetails>()
 	const [userGrants, setUserGrants] = useState<any>([])
 	const [grantID, setGrantID] = useState<any>(null)
 	const [title, setTitle] = useState('')
@@ -50,7 +52,7 @@ function AboutGrant() {
 	const [payoutDescription, setPayoutDescription] = useState('')
 	const [grantDetails, setGrantDetails] = useState('')
 	const [grantSummary, setGrantSummary] = useState('')
-	const [grantRequiredFields, setGrantRequiredFields] = useState([])
+	const [grantRequiredFields, setGrantRequiredFields] = useState<GrantDetails['fields']>([])
 	const [chainId, setChainId] = useState<SupportedChainId>()
 	const [funding, setFunding] = useState('')
 	const [acceptingApplications, setAcceptingApplications] = useState(true)
@@ -99,17 +101,13 @@ function AboutGrant() {
 
 	useEffect(() => {
 		// // console.log('data', data);
-		if(data && data.grants && data.grants.length > 0) {
+		if(data?.grants?.length) {
 			setGrantData(data.grants[0])
 		}
 	}, [data, error, loading])
 
 	useEffect(() => {
-		if(
-			accountData &&
-      accountData?.address &&
-      accountData?.address?.length > 0
-		) {
+		if(accountData?.address?.length) {
 			setAccount(accountData.address)
 		}
 	}, [accountData])
@@ -162,14 +160,14 @@ function AboutGrant() {
 
 		setFunding(localFunding)
 		setIsGrantVerified(localIsGrantVerified)
-		setDeadline(new Date(grantData?.deadline))
-		setTitle(grantData?.title)
-		setDaoId(grantData?.workspace?.id)
-		setDaoName(grantData?.workspace?.title)
-		setDaoLogo(getUrlForIPFSHash(grantData?.workspace?.logoIpfsHash))
+		setDeadline(new Date(grantData.deadline ?? 0))
+		setTitle(grantData.title)
+		setDaoId(grantData.workspace?.id)
+		setDaoName(grantData.workspace?.title)
+		setDaoLogo(getUrlForIPFSHash(grantData.workspace?.logoIpfsHash))
 		setRewardAmount(
-			grantData?.reward?.committed
-				? formatAmount(grantData?.reward?.committed, chainInfo?.decimals || 18)
+			grantData.reward?.committed
+				? formatAmount(grantData.reward?.committed, chainInfo.decimals || 18)
 				: ''
 		)
 		let supportedCurrencyObj
@@ -188,48 +186,15 @@ function AboutGrant() {
 			setRewardCurrencyCoin(supportedCurrencyObj?.icon)
 		}
 
-		// // console.log(grantData?.fields);
-
-		if(
-			grantData?.fields.length &&
-      grantData?.fields?.some((fd: any) => fd.title === 'isMultipleMilestones')
-		) {
+		if(grantData?.fields?.some(fd => fd.title === 'isMultipleMilestones')) {
 			setPayoutDescription('Multiple')
 		} else {
 			setPayoutDescription('Single')
 		}
 
-		setGrantDetails(grantData?.details)
-		setGrantSummary(grantData?.summary)
-		setGrantRequiredFields(
-			grantData?.fields
-				?.map((field: any) => {
-					// console.log(field)
-					// console.log(field.title.startsWith('defaultMilestone'))
-					if(field.title.startsWith('defaultMilestone')) {
-						return null
-					}
-
-					if(field.title.startsWith('customField')) {
-						const i = field.title.indexOf('-')
-						if(i !== -1) {
-							return {
-								detail: field.title
-									.substring(i + 1)
-									.split('\\s')
-									.join(' '),
-							}
-						}
-					}
-
-					return {
-						detail: getFieldLabelFromFieldTitle(field.title) || 'Invalid Field',
-						// detail: field.title,
-					}
-				})
-				.filter((field: any) => field !== null)
-		)
-
+		setGrantDetails(grantData.details)
+		setGrantSummary(grantData.summary)
+		setGrantRequiredFields(grantData.fields)
 		setAcceptingApplications(grantData?.acceptingApplications)
 	}, [grantData, chainId])
 
@@ -393,7 +358,7 @@ function AboutGrant() {
 						chainId={chainId}
 						defaultMilestoneFields={
 							grantData?.fields
-								?.map((field: any) => {
+								?.map((field) => {
 								// // console.log(field);
 								// // console.log(field.title.startsWith('defaultMilestone'));
 									if(field.title.startsWith('defaultMilestone')) {
@@ -410,7 +375,8 @@ function AboutGrant() {
 
 									return null
 								})
-								.filter((field: any) => field !== null)
+								.filter(Boolean)
+							|| []
 						}
 					/>
 
@@ -427,7 +393,7 @@ function AboutGrant() {
 					w='32%'>
 					<Sidebar
 						chainId={chainId}
-						grantID={grantData?.id}
+						grantID={grantData?.id || ''}
 						grantRequiredFields={grantRequiredFields}
 						acceptingApplications={acceptingApplications}
 						alreadyApplied={alreadyApplied}

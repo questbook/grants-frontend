@@ -19,15 +19,14 @@ import Funding from 'src/components/explore_grants/apply_grant/form/4_funding'
 import CustomFields from 'src/components/explore_grants/apply_grant/form/5_customFields'
 import Loader from 'src/components/ui/loader'
 import VerifiedBadge from 'src/components/ui/verified_badge'
-import { SupportedChainId } from 'src/constants/chains'
+import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import strings from 'src/constants/strings.json'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useSubmitApplication from 'src/hooks/useSubmitApplication'
 import { GrantApplicationFieldsSubgraph } from 'src/types/application'
 import { parseAmount } from 'src/utils/formattingUtils'
 import { addAuthorizedUser } from 'src/utils/gaslessUtils'
-import { delay } from 'src/utils/generics'
+import { useEncryptPiiForApplication } from 'src/utils/pii'
 import { isValidEmail } from 'src/utils/validationUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
@@ -47,7 +46,6 @@ interface Props {
   rewardCurrencyAddress: string | undefined
   grantRequiredFields: string[]
   piiFields: string[]
-  members: any[]
   acceptingApplications: boolean
   shouldShowButton: boolean
   defaultMilestoneFields: any[]
@@ -72,7 +70,6 @@ function Form({
 	rewardCurrencyAddress,
 	grantRequiredFields,
 	piiFields,
-	members,
 	acceptingApplications,
 	shouldShowButton,
 	defaultMilestoneFields
@@ -80,13 +77,14 @@ function Form({
 	const CACHE_KEY = strings.cache.apply_grant
 	const getKey = `${chainId}-${CACHE_KEY}-${grantId}`
 
+	const { webwallet: signer } = useContext(WebwalletContext)!
+	const { encrypt } = useEncryptPiiForApplication(grantId, signer?.publicKey, chainId || defaultChainId)
+
 	const [shouldRefreshNonce, setShouldRefreshNonce] = React.useState<boolean>()
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = React.useState<number | undefined>()
 
 	const { data: accountData, nonce } = useQuestbookAccount(shouldRefreshNonce)
 
-	const { encryptApplicationPII } = useApplicationEncryption()
-	const { webwallet: signer } = useContext(WebwalletContext)!
 	const [applicantName, setApplicantName] = React.useState('')
 	const [applicantNameError, setApplicantNameError] = React.useState(false)
 
@@ -187,11 +185,11 @@ function Form({
 
 	const [formData, setFormData] = React.useState<GrantApplicationRequest>()
 	const [, txnLink, loading, isBiconomyInitialised] = useSubmitApplication(
-    formData!,
-    setNetworkTransactionModalStep,
-    chainId,
-    grantId,
-    workspaceId,
+		formData!,
+		setNetworkTransactionModalStep,
+		chainId,
+		grantId,
+		workspaceId,
 	)
 
 	React.useEffect(() => {
@@ -361,6 +359,7 @@ function Form({
 		const data: GrantApplicationRequest = {
 			grantId,
 			applicantId: await signer?.getAddress(),
+			applicantPublicKey: signer?.publicKey,
 			fields: {
 				applicantName: [{ value: applicantName }],
 				applicantEmail: [{ value: applicantEmail }],
@@ -400,15 +399,12 @@ function Form({
 		customFields.forEach((customField) => {
 			data.fields[customField.title] = [{ value: customField.value }]
 		})
-		// console.log(data)
-		let encryptedData
-		if(piiFields.length > 0 && members) {
-			encryptedData = await encryptApplicationPII(data, piiFields, members)
 
-			// console.log('encryptedData -----', encryptedData)
+		if(piiFields.length) {
+			await encrypt(data, piiFields)
 		}
 
-		setFormData(encryptedData || data)
+		setFormData(data)
 	}
 
 	React.useEffect(() => {

@@ -97,7 +97,7 @@ function ApplyGrant() {
 	}, [network, grantData])
 
 	useEffect(() => {
-		if(data && data.grants && data.grants.length > 0) {
+		if(data?.grants?.length) {
 			setGrantData(data.grants[0])
 		}
 
@@ -194,7 +194,6 @@ function ApplyGrant() {
 					workspaceId={workspaceId}
 					grantRequiredFields={grantRequiredFields.map((field: any) => field.id.split('.')[1])}
 					piiFields={grantRequiredFields.filter((field: any) => field.isPii).map((field: any) => field.id.split('.')[1])}
-					members={grantData?.workspace?.members}
 					acceptingApplications={acceptingApplications}
 					shouldShowButton={shouldShowButton}
 					defaultMilestoneFields={

@@ -18,7 +18,7 @@ import {
 	getFormattedFullDateFromUnixTimestamp, getRewardAmount,
 	truncateStringFromMiddle,
 } from 'src/utils/formattingUtils'
-import { getFromIPFS, getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import {
 	getSupportedChainIdFromSupportedNetwork,
@@ -27,14 +27,12 @@ import {
 import ViewScoreDrawer from 'src/v2/payouts/ViewScoreDrawer/ViewScoreDrawer'
 
 function Sidebar({
-	showHiddenData,
 	onAcceptApplicationClick,
 	onRejectApplicationClick,
 	onResubmitApplicationClick,
 	applicationData,
 	isBiconomyInitialised,
 }: {
-  showHiddenData: () => void
   onAcceptApplicationClick: () => void
   onRejectApplicationClick: () => void
   onResubmitApplicationClick: () => void
@@ -234,28 +232,12 @@ function Sidebar({
 						variant='applicationHeading'
 						lineHeight='32px'>
 						{
-							applicantEmail
-								? (
-									<>
-										{applicantEmail}
-										<MailTo applicantEmail={applicantEmail} />
-									</>
-								) : (
-									<Heading
-										variant='applicationHeading'
-										lineHeight='32px'
-										onClick={showHiddenData}
-										cursor='pointer'
-									>
-										Hidden
-										{' '}
-										<Text
-											color='#6200EE'
-											display='inline'>
-											View
-										</Text>
-									</Heading>
-								)
+							applicantEmail && (
+								<>
+									{applicantEmail}
+									<MailTo applicantEmail={applicantEmail} />
+								</>
+							)
 						}
 					</Heading>
 				</Flex>

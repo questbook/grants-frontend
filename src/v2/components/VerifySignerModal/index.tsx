@@ -94,6 +94,8 @@ const VerifySignerModal = ({
 		}
 	}, [address])
 
+	console.log(owners, phantomWallet?.publicKey)
+
 	useEffect(() => {
 		if(isOpen && walletClicked) {
 			if(networkType === NetworkType.EVM && address && owners.includes(address)) {

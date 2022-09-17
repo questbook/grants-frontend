@@ -1,14 +1,19 @@
 import React from 'react'
 import {
-	Box, Button, Text,
+	Badge,
+	Box, Button, HStack, Text,
+	Tooltip,
 	VStack, } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import FloatingSidebar from 'src/components/ui/sidebar/floatingSidebar2'
-import Tooltip from 'src/components/ui/tooltip'
 import { SupportedChainId } from 'src/constants/chains'
+import type { GetGrantDetailsQuery } from 'src/generated/graphql'
+import { getFieldLabelFromFieldTitle } from 'src/utils/formattingUtils'
+
+type GrantRequiredFields = GetGrantDetailsQuery['grants'][number]['fields']
 
 interface Props {
-  grantRequiredFields: any[]
+  grantRequiredFields: GrantRequiredFields
   grantID: string
   chainId: SupportedChainId | undefined
   acceptingApplications: boolean
@@ -16,7 +21,11 @@ interface Props {
 }
 
 function Sidebar({
-	grantRequiredFields, grantID, chainId, acceptingApplications, alreadyApplied,
+	grantRequiredFields,
+	grantID,
+	chainId,
+	acceptingApplications,
+	alreadyApplied,
 }: Props) {
 	const router = useRouter()
 	return (
@@ -37,27 +46,29 @@ function Sidebar({
 					p={0}
 					spacing={4}>
 					{
-						grantRequiredFields?.map(({ detail, tooltip }) => {
-							if(!detail) {
-								return null
-							}
-
+						grantRequiredFields?.map(({ id, title, isPii }) => {
+							const formattedTitle = getFieldLabelFromFieldTitle(title)
 							return (
-								<Text
-									fontWeight='400'
-									fontSize='16px'
-									lineHeight='20px'
-									key={`grant-required-field-${detail}`}
-								>
-									{detail}
+								<HStack key={id}>
+									<Text
+										fontWeight='400'
+										fontSize='16px'
+										lineHeight='20px'>
+										{formattedTitle}
+									</Text>
+									<Box w={0.5} />
 									{
-										tooltip?.length ? (
-											<Tooltip
-												icon='/ui_icons/tooltip_grey.svg'
-												label={tooltip} />
-										) : null
+										isPii && (
+											<Tooltip label='Only you & the grant managers can see this data'>
+												<Badge
+													fontSize='x-small'
+													bg='v2LightGrey'>
+													Private
+												</Badge>
+											</Tooltip>
+										)
 									}
-								</Text>
+								</HStack>
 							)
 						})
 					}

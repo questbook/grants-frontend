@@ -209,7 +209,7 @@ function GrantRewardsInput({
 				</Text>
 			</Flex>
 
-			{/* <Flex
+			<Flex
 				mt={8}
 				gap='2'
 				justifyContent='space-between'>
@@ -255,7 +255,7 @@ function GrantRewardsInput({
 						{`${shouldEncrypt ? 'YES' : 'NO'}`}
 					</Text>
 				</Flex>
-			</Flex> */}
+			</Flex>
 
 			<Flex
 				mt={8}

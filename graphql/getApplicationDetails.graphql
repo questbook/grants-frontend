@@ -11,9 +11,6 @@ query getApplicationDetails($applicationID: ID!) {
     }
     pii {
       id
-      manager {
-        id
-      }
       data
     }
     milestones {
@@ -87,6 +84,7 @@ query getApplicationDetails($applicationID: ID!) {
       fullName
     }
     applicantId
+    applicantPublicKey
     state
     feedbackDao,
     feedbackDev,
