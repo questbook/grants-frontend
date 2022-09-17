@@ -1,6 +1,7 @@
 import { Checkbox, Flex, Image, Link, Slider, SliderFilledTrack, SliderMark, SliderThumb, SliderTrack, Switch, Text, Tooltip } from '@chakra-ui/react'
 import CopyIcon from 'src/components/ui/copy_icon'
 import { SidebarReviewer } from 'src/types'
+import getAvatar from 'src/utils/avatarUtils'
 import { formatAddress } from 'src/utils/formattingUtils'
 
 interface Props {
@@ -153,6 +154,8 @@ const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, 
 									ml='12px'
 								>
 									<Image
+										borderRadius='3xl'
+										src={getAvatar(reviewer.data?.actorId)}
 									/>
 								</Flex>
 

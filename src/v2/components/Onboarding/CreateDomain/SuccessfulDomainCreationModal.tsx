@@ -68,9 +68,7 @@ const SuccessfulDomainCreationModal = ({
 							<Text
 								variant='v2_body'
 								fontWeight='500'>
-								{domainName ?? 'Unknown'}
-								{' '}
-								DAO
+								{domainName}
 							</Text>
 						</Button>
 						<Text

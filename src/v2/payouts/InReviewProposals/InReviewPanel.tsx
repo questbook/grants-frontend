@@ -505,10 +505,10 @@ const InReviewPanel = ({
 				currentStepIndex={networkTransactionModalStep || 0}
 				steps={
 					[
-						'Updating application(s) state',
+						`Updating application${checkedApplicationsIds.length === 1 ? '' : 's'} state`,
 						'Waiting for transaction to complete',
 						'Waiting for transaction to index',
-						'Application(s) state updated',
+						`Application${checkedApplicationsIds.length === 1 ? '' : 's'} state updated`,
 					]
 				}
 				viewLink={getExplorerUrlForTxHash(getSupportedChainIdFromWorkspace(workspace) || defaultChainId, txn?.transactionHash)}
