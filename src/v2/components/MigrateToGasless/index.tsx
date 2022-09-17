@@ -21,7 +21,7 @@ interface Props {
     onClose: () => void
 }
 
-const POINTERS = ['Zero gas fee across the app', 'No annoying sign transaction pop-ups']
+const POINTERS = ['Zero gas-fee across the app', 'No annoying sign transaction pop-ups']
 
 function MigrateToGasless({ isOpen, onClose }: Props) {
 	const router = useRouter()

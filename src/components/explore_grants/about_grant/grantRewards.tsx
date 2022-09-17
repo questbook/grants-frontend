@@ -66,15 +66,6 @@ function GrantRewards({
 					>
 						{daoName}
 					</Button>
-					<Text
-						fontSize='16px'
-						display='inline'
-						color='#717A7C'
-						fontWeight='400'
-						lineHeight='24px'
-						ml={2}>
-						{`• ${CHAIN_INFO[chainId!]?.name}`}
-					</Text>
 				</Text>
 				<Image
 					objectFit='cover'
