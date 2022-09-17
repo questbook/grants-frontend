@@ -77,7 +77,7 @@ const SetupEvaluationDrawer = ({
 	}, [rubrics])
 
 	// Assigning reviewers
-	const defaultSliderValue = 2
+	const defaultSliderValue = 1
 	const [numOfReviewersPerApplication, setNumOfReviewersPerApplication] = useState(defaultSliderValue)
 	const [reviewers, setReviewers] = useState<SidebarReviewer[]>([])
 
@@ -472,7 +472,6 @@ const SetupEvaluationDrawer = ({
 						align='center'>
 
 						<Button
-							ml='auto'
 							colorScheme='brandv2'
 							disabled={(step === 0 && !canContinue) || step === 1 && reviewers.filter(r => r.isSelected).length === 0}
 							onClick={

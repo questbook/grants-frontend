@@ -3,7 +3,6 @@ import { Flex, Image, Text, ToastId, useToast } from '@chakra-ui/react'
 import { logger } from 'ethers'
 import { useRouter } from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
-import { DEFAULT_NOTE, INSUFFICIENT_FUNDS_NOTE, USD_THRESHOLD } from 'src/constants'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { NetworkType } from 'src/constants/Networks'
 import useQBContract from 'src/hooks/contracts/useQBContract'
@@ -215,7 +214,7 @@ function AddToSafe() {
 				}
 			}
 			isLoading={!loadedSafesUSDBalance && safeAddress !== ''}
-			safesOptions={[safesUSDBalance?.some((safe: SafeSelectOption) => safe.amount >= USD_THRESHOLD) ? DEFAULT_NOTE : INSUFFICIENT_FUNDS_NOTE, ...safesUSDBalance!]}
+			safesOptions={safesUSDBalance}
 			selectedSafe={selectedSafe}
 			onSelectedSafeChange={
 				(safe) => {
