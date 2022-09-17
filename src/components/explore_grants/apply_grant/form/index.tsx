@@ -19,7 +19,7 @@ import Funding from 'src/components/explore_grants/apply_grant/form/4_funding'
 import CustomFields from 'src/components/explore_grants/apply_grant/form/5_customFields'
 import Loader from 'src/components/ui/loader'
 import VerifiedBadge from 'src/components/ui/verified_badge'
-import { SupportedChainId } from 'src/constants/chains'
+import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import strings from 'src/constants/strings.json'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSubmitApplication from 'src/hooks/useSubmitApplication'
@@ -78,7 +78,7 @@ function Form({
 	const getKey = `${chainId}-${CACHE_KEY}-${grantId}`
 
 	const { webwallet: signer } = useContext(WebwalletContext)!
-	const { encrypt } = useEncryptPiiForApplication(grantId, signer?.publicKey, chainId!)
+	const { encrypt } = useEncryptPiiForApplication(grantId, signer?.publicKey, chainId || defaultChainId)
 
 	const [shouldRefreshNonce, setShouldRefreshNonce] = React.useState<boolean>()
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = React.useState<number | undefined>()

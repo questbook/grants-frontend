@@ -212,8 +212,6 @@ function Form({
 				setRewardCurrency(tokens[0]?.label)
 				setRewardCurrencyAddress(tokens[0]?.address)
 			})
-		} else {
-			setSupportedCurrencies(getSupportedCurrencies(currentChain))
 		}
 	}, [currentChain, safeNetwork])
 

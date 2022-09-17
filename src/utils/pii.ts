@@ -208,7 +208,7 @@ export function useEncryptPiiForApplication(
 			)
 
 			return piiMap
-		}, [webwallet, grantId, fetch, logger]
+		}, [webwallet, grantId, fetch, scwAddress, logger]
 	)
 
 	/**
@@ -278,8 +278,9 @@ export function useEncryptPiiForApplication(
 				}
 
 				const piiData = app.pii.find(p => {
-					return p.id.endsWith(webwallet!.address)
-						|| p.id.endsWith(scwAddress.toLowerCase())
+					const idLowerCase = p.id.toLowerCase()
+					return idLowerCase.endsWith(webwallet!.address.toLowerCase())
+						|| idLowerCase.endsWith(scwAddress.toLowerCase())
 				})
 				if(piiData) {
 					try {
