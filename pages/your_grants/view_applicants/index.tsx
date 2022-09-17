@@ -30,6 +30,7 @@ import { formatAmount, getFieldString } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { useTranslation } from 'react-i18next'
 
 const PAGE_SIZE = 500
 
@@ -69,6 +70,8 @@ function ViewApplicants() {
 			descriptionError: false,
 		},
 	])
+
+	const { t } = useTranslation()
 
 	useEffect(() => {
 		if(router && router.query) {
@@ -385,7 +388,7 @@ function ViewApplicants() {
 							<Button
 								variant='primary'
 								onClick={() => setRubricDrawerOpen(true)}>
-								{(grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ? 'Edit Evaluation Rubric' : 'Setup Evaluation Rubric'}
+								{(grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ? t('/your_grants/view_applicants.edit_review_process') : t('/your_grants/view_applicants.create_review_process')}
 							</Button>
 						</Box>
 					)
@@ -461,7 +464,7 @@ function ViewApplicants() {
 												color='#717A7C'
 												fontWeight='400'
 												mt={2}>
-												New applicants cannot apply to an archived grant.
+												{t('/your_grants/view_applicants.no_proposals_on_archived')}
 											</Text>
 										</Flex>
 										<Box mr='auto' />

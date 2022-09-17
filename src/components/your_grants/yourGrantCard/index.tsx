@@ -15,6 +15,7 @@ import { SupportedChainId } from 'src/constants/chains'
 import { Rubric } from 'src/generated/graphql'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
+import { useTranslation } from 'react-i18next'
 
 interface YourGrantCardProps {
   grantID: string
@@ -83,6 +84,7 @@ function YourGrantCard(this: any, {
 		},
 	])
 
+	const { t } = useTranslation()
 	useEffect(() => {
 		const newRubrics = [] as any[]
 		// console.log('initialRubrics', initialRubrics)
@@ -224,7 +226,7 @@ function YourGrantCard(this: any, {
 												}
 												display={isAdmin || numOfApplicants > 0 ? undefined : 'none'}
 											>
-												{numOfApplicants > 0 ? 'View applicants' : 'Edit grant'}
+												{numOfApplicants > 0 ? 'View Proposals' : 'Edit grant'}
 											</Button>
 										)
 									}

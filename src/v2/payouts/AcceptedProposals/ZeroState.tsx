@@ -1,6 +1,7 @@
 import { QueryResult } from '@apollo/client'
 import { Button, Flex, Text } from '@chakra-ui/react'
 import { GetGrantDetailsQuery, GetGrantDetailsQueryVariables } from 'src/generated/graphql'
+import { useTranslation } from 'react-i18next'
 
 const ZeroState = ({
 	grantData,
@@ -9,6 +10,7 @@ const ZeroState = ({
 	grantData: QueryResult<GetGrantDetailsQuery, GetGrantDetailsQueryVariables>['data']
 	onSetupApplicantEvaluationClicked: () => void
 }) => {
+	const { t } = useTranslation()
 	return (
 		<Flex
 			h='calc(100vh - 352px)'
@@ -22,7 +24,7 @@ const ZeroState = ({
 				fontWeight='500'
 				textAlign='center'
 			>
-				No Applicants yet
+				{t('/your_grants/view_applicants.no_accepted')}
 			</Text>
 			<Text
 				mt={2}
@@ -34,23 +36,8 @@ const ZeroState = ({
 				color='#7D7DA0'
 				maxW='754px'
 			>
-				{
-					(grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ?
-						'' :
-						'In the meantime, you can set up applicant evaluation - define a scoring rubric and assign reviewers to evaluate the applicants.'
-
-				}
+				{t('/your_grants/view_applicants.no_accepted_description')}
 			</Text>
-
-			<Button
-				colorScheme='brandv2'
-				fontSize='14px'
-				h={9}
-				onClick={onSetupApplicantEvaluationClicked}
-			>
-				{(grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ? 'View scoring rubric' : 'Setup applicant evaluation'}
-
-			</Button>
 		</Flex>
 	)
 }

@@ -4,6 +4,7 @@ import {
 } from '@chakra-ui/react'
 import { EditorState } from 'draft-js'
 import RichTextEditor from 'src/components/ui/forms/richTextEditor'
+import { useTranslation } from 'react-i18next'
 
 function Details({
 	details,
@@ -16,10 +17,11 @@ function Details({
   detailsError: boolean
   setDetailsError: (detailsError: boolean) => void
 }) {
+	const { t } = useTranslation('common')
 	return (
 		<Flex direction='column'>
 			<RichTextEditor
-				label='Grant Details'
+				label={t('/create-grant.instructions_title')}
 				placeholder='Details about your grant - requirements, deliverables, and milestones'
 				value={details}
 				isError={detailsError}

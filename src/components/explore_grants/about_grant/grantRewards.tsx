@@ -5,6 +5,7 @@ import {
 import { useRouter } from 'next/router'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
+import { useTranslation } from 'react-i18next'
 
 function GrantRewards({
 	daoId,
@@ -34,6 +35,8 @@ function GrantRewards({
 	const theme = useTheme()
 	const router = useRouter()
 
+	const { t } = useTranslation()
+
 	return (
 		<>
 			<Flex
@@ -44,7 +47,7 @@ function GrantRewards({
 					lineHeight='24px'
 					fontSize='18px'
 					fontWeight='400'>
-					Grant posted by
+					{ t('/explore_grants/about_grant.by')}
 					{' '}
 					<Button
 						variant='link'
@@ -93,7 +96,7 @@ function GrantRewards({
 							direction='column'
 							ml={3}>
 							<Text fontWeight='500'>
-								Reward
+								{ t('/explore_grants/about_grant.grant_amount')}
 							</Text>
 							<Text
 								mt='1px'
@@ -116,7 +119,7 @@ function GrantRewards({
 							direction='column'
 							ml={3}>
 							<Text fontWeight='500'>
-								Milestones
+								{ t('/explore_grants/about_grant.payouts')}
 							</Text>
 							<Text
 								mt='1px'

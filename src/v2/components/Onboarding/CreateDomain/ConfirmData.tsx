@@ -3,6 +3,8 @@ import { Box, Button, Flex, Image, Spacer, Text } from '@chakra-ui/react'
 import Loader from 'src/components/ui/loader'
 import DaoImageUpload from 'src/v2/components/Onboarding/UI/Misc/DaoImageUpload'
 
+import { useTranslation } from 'react-i18next'
+
 interface Props {
 	domainImageFile: File | null
 	onImageFileChange: (image: File | null) => void
@@ -19,6 +21,7 @@ interface Props {
 function ConfirmData({ domainImageFile, safeAddress, safeChainIcon, domainName, onCreateDomain, isVerified, signerAddress, isBiconomyInitialised, isBiconomyLoading }: Props) {
 	const [newDomainImageFile, setNewDomainImageFile] = React.useState<File | null>(null)
 	const formatAddress = (address: string) => `${address.substring(0, 4)}......${address.substring(address.length - 4)}`
+	const { t } = useTranslation()
 
 	React.useEffect(() => {
 		if(domainImageFile && !newDomainImageFile) {
@@ -28,11 +31,6 @@ function ConfirmData({ domainImageFile, safeAddress, safeChainIcon, domainName, 
 
 	return (
 		<>
-			<Text
-				variant='v2_heading_3'
-				fontWeight='500'>
-				My domain
-			</Text>
 			<Text
 				mt='2'
 				variant='v2_heading_3'
@@ -100,7 +98,7 @@ function ConfirmData({ domainImageFile, safeAddress, safeChainIcon, domainName, 
 				mt={6}
 				w='53%'
 				onClick={onCreateDomain}>
-				Create Domain
+					{t('/onboarding/create-domain.create')}
 				<Box w={2} />
 				{
 					isBiconomyLoading && (
@@ -108,14 +106,18 @@ function ConfirmData({ domainImageFile, safeAddress, safeChainIcon, domainName, 
 					)
 				}
 			</Button>
-			<Text
-				variant='v2_body'
-				color='black.2'
-				mt={2}
-				textAlign='center'>
-				{isVerified ? 'You are authorised to create a domain using this multi - sig wallet' : 'You will be asked to verify that you’re a safe owner.'}
-				{' '}
-			</Text>
+			{
+				!isVerified && (
+					<Text
+						variant='v2_body'
+						color='black.2'
+						mt={2}
+						textAlign='center'>
+						{isVerified ? 'You have verified ownership of the multi-sig wallet' : t('/onboarding/create-domain.verify_signer')}
+						{' '}
+					</Text>
+				)
+			}
 		</>
 	)
 }

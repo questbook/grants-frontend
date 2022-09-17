@@ -30,6 +30,8 @@ import { useEncryptPiiForApplication } from 'src/utils/pii'
 import { isValidEmail } from 'src/utils/validationUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
+import { useTranslation } from 'react-i18next'
+
 interface Props {
   // onSubmit: (data: any) => void;
   chainId: SupportedChainId | undefined
@@ -147,6 +149,8 @@ function Form({
 		return total + parseInt(current.milestoneReward === '' ? '0' : current.milestoneReward)
 	}, 0)
 
+	const { t } = useTranslation()
+	
 	React.useEffect(() => {
 		if(defaultMilestoneFields && defaultMilestoneFields.length > 0) {
 			setProjectMilestones(
@@ -599,7 +603,7 @@ function Form({
 				fontSize='18px'
 				fontWeight='500'
 			>
-				Your Application Form
+				{t('/explore_grants/apply.your_proposal')}
 			</Text>
 			<Container
 				mt='-12px'
@@ -621,6 +625,7 @@ function Form({
 					setApplicantAddress={setApplicantAddress}
 					setApplicantAddressError={setApplicantAddressError}
 					grantRequiredFields={grantRequiredFields}
+					chainId={chainId!}
 				/>
 
 				<Box mt='43px' />

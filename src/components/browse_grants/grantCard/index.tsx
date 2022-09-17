@@ -11,6 +11,7 @@ import {
 	useTimeDifference,
 } from 'src/utils/calculatingUtils'
 import { nFormatter } from 'src/utils/formattingUtils'
+import { useTranslation } from 'react-i18next'
 
 interface GrantCardProps {
   daoID: string
@@ -68,6 +69,8 @@ function GrantCard({
 	const [grantReward, setGrantReward] = useState<number>(0)
 
 	const currentDate = new Date().getTime()
+
+	const { t } = useTranslation()
 
 	useEffect(() => {
 		if(grantReward === 0) {
@@ -252,7 +255,7 @@ function GrantCard({
 							fontSize='0.85rem'
 							lineHeight='1rem'
 							display='inline-block'>
-							Ends on
+							{t('/explore_grants/about_grant.accepting_proposals_till')}
 							{' '}
 							<b>
 								{moment(endTimestamp).format('MMMM D')}

@@ -11,6 +11,7 @@ import SuccessToast from 'src/v2/components/Toasts/successToast'
 import VerifySignerErrorState from 'src/v2/components/VerifySignerModal/VeirfySignerErrorState'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import { useTranslation } from 'react-i18next'
 
 const VerifySignerModal = ({
 	owners,
@@ -35,6 +36,7 @@ const VerifySignerModal = ({
 	const { phantomWallet } = usePhantomWallet()
 	const { disconnectAsync } = useDisconnect()
 	const toast = useToast()
+	const { t } = useTranslation()
 
 	const {
 		isError: isErrorConnecting,
@@ -197,12 +199,12 @@ const VerifySignerModal = ({
 									variant='v2_heading_3'
 									fontWeight='500'
 								>
-									Verify you’re a signer
+									{t('/onboarding/create-domain.verify_signer_title')}
 								</Text>
 								<Text
 									variant='v2_body'
 									color='black.3'>
-									Connect your wallet which is a signer on the safe.
+									{t('/onboarding/create-domain.verify_signer_desc')}
 								</Text>
 
 								<VStack

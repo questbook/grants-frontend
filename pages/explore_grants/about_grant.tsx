@@ -29,6 +29,8 @@ import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo, getChainInfo } from 'src/utils/tokenUtils'
 
+import { useTranslation } from 'react-i18next'
+
 type GrantDetails = GetGrantDetailsQuery['grants'][number]
 
 function AboutGrant() {
@@ -60,6 +62,8 @@ function AboutGrant() {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [alreadyApplied, setAlreadyApplied] = useState(false)
 	const [account, setAccount] = useState<any>(null)
+
+	const { t } = useTranslation()
 
 	useEffect(() => {
 		// // console.log(router.query);
@@ -187,9 +191,9 @@ function AboutGrant() {
 		}
 
 		if(grantData?.fields?.some(fd => fd.title === 'isMultipleMilestones')) {
-			setPayoutDescription('Multiple')
+			setPayoutDescription(t('/explore_grants/about_grant.multiple_payouts'))
 		} else {
-			setPayoutDescription('Single')
+			setPayoutDescription(t('/explore_grants/about_grant.single_payout'))
 		}
 
 		setGrantDetails(grantData.details)

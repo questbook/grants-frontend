@@ -4,6 +4,8 @@ import {
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 
+import { useTranslation } from 'react-i18next'
+
 function Funding({
 	fundingBreakdown,
 	setFundingBreakdown,
@@ -32,6 +34,8 @@ function Funding({
 	totalMilestoneReward: number
 }) {
 
+	const { t } = useTranslation()
+
 	const totalFundingSubtext = [
 		`Maximum reward for the grant is ${rewardAmount} ${rewardCurrency}.`,
 		`Your total funding ask is within the grant reward (${rewardAmount} ${rewardCurrency}).`,
@@ -44,7 +48,7 @@ function Funding({
 				totalMilestoneReward === 0 ? (
 					<SingleLineInput
 						key='lol'
-						label='Total funding ask'
+						label={t('/explore_grants/apply.funding_ask')}
 						value={undefined}
 						placeholder={rewardAmount}
 						disabled
@@ -55,7 +59,7 @@ function Funding({
 				) : (
 					<SingleLineInput
 						key='lol1'
-						label='Total funding ask'
+						label={t('/explore_grants/apply.funding_ask')}
 						value={totalMilestoneReward.toString()}
 						placeholder={rewardAmount}
 						disabled
@@ -160,8 +164,8 @@ function Funding({
 			<Box mt={8} />
 
 			<MultiLineInput
-				placeholder='Write about how you plan to use the funds for your project - hiring, marketing etc.'
-				label='Funding Breakdown'
+				placeholder={t('/explore_grants/apply.funding_breakdown_placeholder')}
+				label={t('/explore_grants/apply.funding_breakdown')}
 				maxLength={1000}
 				value={fundingBreakdown}
 				onChange={
@@ -175,7 +179,6 @@ function Funding({
 				}
 				isError={fundingBreakdownError}
 				errorText='Required'
-				tooltip='Details on how the project will use funding to achieve goals..'
 				visible={grantRequiredFields.includes('fundingBreakdown')}
 			/>
 		</>
