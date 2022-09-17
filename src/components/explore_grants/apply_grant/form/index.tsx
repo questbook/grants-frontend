@@ -81,7 +81,7 @@ function Form({
 	const getKey = `${chainId}-${CACHE_KEY}-${grantId}`
 
 	const [shouldRefreshNonce, setShouldRefreshNonce] = React.useState<boolean>()
-	const [networkTransactionModalStep, setNetworkTransactionModalStep] = React.useState<number>()
+	const [networkTransactionModalStep, setNetworkTransactionModalStep] = React.useState<number | undefined>()
 
 	const { data: accountData, nonce } = useQuestbookAccount(shouldRefreshNonce)
 

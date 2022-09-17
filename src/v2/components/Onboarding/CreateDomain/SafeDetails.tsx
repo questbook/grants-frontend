@@ -44,7 +44,7 @@ function SafeDetails({ safesOptions, step, safeAddress, isVerified, isLoading, s
 				value={safeAddress}
 				onChange={(e) => setValue(e.target.value)}
 				isVerified={isVerified}
-				isDisabled={step === 1}
+				// isDisabled={step === 1}
 				errorText={safeAddressErrorText}
 			/>
 			{

@@ -34,7 +34,7 @@
     "@questbook/anon-authoriser": "git+https://github.com/questbook/anon-authoriser",
     "@questbook/service-validator-client": "git+https://github.com/questbook/service-validator-typescript-client",
     "@solana/spl-governance": "^0.0.34",
-    "@solana/spl-token": "^0.3.2",
+    "@solana/spl-token": "^0.1.8",
     "@solana/wallet-adapter-base": "^0.9.5",
     "@solana/wallet-adapter-react": "^0.15.9",
     "@solana/wallet-adapter-react-ui": "^0.9.12",
