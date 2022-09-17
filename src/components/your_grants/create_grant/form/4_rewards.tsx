@@ -67,7 +67,15 @@ function GrantRewardsInput({
 	}, [supportedCurrencies])
 
 	const [isJustAddedToken, setIsJustAddedToken] = React.useState<boolean>(false)
-	const addERC = true
+	const addERC = false
+
+	const [showDropdown, setShowDropdown] = React.useState(false)
+
+	useEffect(() => {
+		const CurrenciesList = supportedCurrenciesList.filter((currencyItem) => currencyItem.length > 0);
+		setShowDropdown(CurrenciesList.length > 0);
+	}, [supportedCurrenciesList])
+	
 	return (
 		<Flex direction='column'>
 
@@ -95,7 +103,7 @@ function GrantRewardsInput({
 						type='number'
 					/>
 				</Box>
-				{/* <CustomTokenModal
+				<CustomTokenModal
 					isModalOpen={isModalOpen}
 					setIsModalOpen={setIsModalOpen}
 					setRewardCurrency={setRewardCurrency}
@@ -112,7 +120,7 @@ function GrantRewardsInput({
 					flex={0}
 					alignSelf='center'>
 					{
-						isEVM ? (
+						(isEVM && supportedCurrenciesList.length > 0) ? (
 							<Dropdown
 								listItemsMinWidth='132px'
 								listItems={supportedCurrenciesList}
@@ -161,7 +169,7 @@ function GrantRewardsInput({
 							/>
 						)
 					}
-				</Box> */}
+				</Box>
 			</Flex>
 
 			<Box mt={12} />

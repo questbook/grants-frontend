@@ -60,7 +60,7 @@ function GrantRewardsInput({
 	const [isJustAddedToken, setIsJustAddedToken] = React.useState<boolean>(false)
 	// const [supportedCurrencies, setSupportedCurrencies] = React.useState([]);
 
-	const addERC = true
+	const addERC = false
 
 	const currentChain = useChainId() || defaultChainId
 
@@ -212,6 +212,7 @@ function GrantRewardsInput({
 
 	const { setRefresh } = useCustomToast(transactionLink)
 	const [shouldEncryptReviews, setShouldEncryptReviews] = useState(false)
+	const [showDropdown, setShowDropdown] = useState(false)
 
 	useEffect(() => {
 		if(transactionData) {
@@ -323,6 +324,11 @@ function GrantRewardsInput({
 		shouldEncryptReviews,
 	])
 
+	useEffect(() => {
+		const CurrenciesList = supportedCurrenciesList.filter((currencyItem) => currencyItem.length > 0);
+		setShowDropdown(CurrenciesList.length > 0);
+	}, [supportedCurrenciesList])
+
 	return (
 		<>
 			<Flex
@@ -359,7 +365,7 @@ function GrantRewardsInput({
 							type='number'
 						/>
 					</Box>
-					{/* <CustomTokenModal
+					<CustomTokenModal
 						isModalOpen={isModalOpen}
 						setIsModalOpen={setIsModalOpen}
 						setRewardCurrency={setRewardCurrency}
@@ -376,7 +382,7 @@ function GrantRewardsInput({
 						flex={0}
 						alignSelf='center'>
 						{
-							isEVM ? (
+							(isEVM && showDropdown) ? (
 								<Dropdown
 									listItemsMinWidth='132px'
 									listItems={supportedCurrenciesList}
@@ -424,7 +430,7 @@ function GrantRewardsInput({
 								/>
 							)
 						}
-					</Box> */}
+					</Box>
 				</Flex>
 
 				<Box mt={12} />
