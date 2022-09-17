@@ -40,6 +40,7 @@ import {
 } from 'src/utils/formattingUtils'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { isValidEmail } from 'src/utils/validationUtils'
+import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
 function Form({
 	chainId,
@@ -217,22 +218,13 @@ function Form({
 	}, [formData, application])
 
 	const [updateData, setUpdateData] = React.useState<any>()
-	const [txnData, txnLink, loading, isBiconomyInitialised] = useResubmitApplication(
+	const [networkTransactionModalStep, setNetworkTransactionModalStep] = React.useState<number>()
+	const [, txnLink, loading, isBiconomyInitialised] = useResubmitApplication(
 		updateData,
+		setNetworkTransactionModalStep,
 		chainId,
 		applicationID,
 	)
-
-	const { setRefresh } = useCustomToast(txnLink)
-	useEffect(() => {
-		if(txnData) {
-			router.push({
-				pathname: '/your_applications',
-			})
-			setRefresh(true)
-		}
-
-	}, [router, txnData])
 
 	const handleOnSubmit = async() => {
 		// // console.log(onEdit);
@@ -788,6 +780,40 @@ function Form({
 					</>
 				)
 			}
+			<NetworkTransactionModal
+				isOpen={networkTransactionModalStep !== undefined}
+				subtitle='Resubmitting Application'
+				description={
+					<Flex direction='column'>
+						<Text
+							variant='v2_title'
+							fontWeight='500'
+						>
+							{grantTitle}
+						</Text>
+						<Text
+							variant='v2_body'
+						>
+							{applicantAddress}
+						</Text>
+					</Flex>
+				}
+				currentStepIndex={networkTransactionModalStep || 0}
+				steps={
+					[
+						'Uploading data to IPFS',
+						'Sign transaction',
+						'Waiting for transaction to complete',
+						'Waiting for transaction to be indexed',
+						'Application resubmitted on-chain',
+					]
+				}
+				viewLink={txnLink}
+				onClose={
+					async() => {
+						router.push({ pathname: '/your_applications' })
+					}
+				} />
 		</Flex>
 	)
 }

@@ -143,16 +143,16 @@ function GrantRewardsInput({
 				axios.get(gnosisUrl).then(res => {
 					// console.log(res.data)
 					let tokens
-					if (safeNetwork === "42220"){
+					if(safeNetwork === '42220') {
 						console.log('reward currency', tokens)
 						let localTokenData: {icon: string, label: string, address: string, decimals: number, pair?: string}
-						
+
 						tokens = res.data.filter((token: SafeToken) => token.tokenAddress).map((token: SafeToken) => {
 							if(token.tokenAddress) {
-								if(CHAIN_INFO[safeNetwork].supportedCurrencies.hasOwnProperty(token.tokenAddress.toLowerCase())){
+								if(CHAIN_INFO[safeNetwork].supportedCurrencies.hasOwnProperty(token.tokenAddress.toLowerCase())) {
 									localTokenData = CHAIN_INFO[safeNetwork].supportedCurrencies[token.tokenAddress.toLowerCase()]
 								}
-								
+
 								console.log('currency', localTokenData)
 								const currency = {
 									'id': token.tokenAddress,
@@ -165,8 +165,8 @@ function GrantRewardsInput({
 								return currency
 							}
 						})
-						
-							
+
+
 					} else {
 						tokens = res.data.filter((token: SafeToken) => token.tokenAddress).map((token: SafeToken) => {
 							if(token.tokenAddress) {
@@ -181,17 +181,18 @@ function GrantRewardsInput({
 								return currency
 							}
 						})
-					setRewardToken({ address: tokens[0]?.address, decimal: tokens[0]?.decimals.toString(), label: tokens[0]?.label, iconHash: tokens[0]?.icon })
+						setRewardToken({ address: tokens[0]?.address, decimal: tokens[0]?.decimals.toString(), label: tokens[0]?.label, iconHash: tokens[0]?.icon })
 					}
+
 					setSupportedCurrencies(tokens)
 					// console.log('balances', supportedCurrencies)
 					setRewardCurrency(tokens[0]?.label)
-					
+
 					setRewardCurrencyAddress(tokens[0]?.address)
 				})
 			}
 		}
-			
+
 
 	}, [currentChain])
 

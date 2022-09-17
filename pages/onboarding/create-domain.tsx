@@ -411,7 +411,7 @@ const OnboardingCreateDomain = () => {
 			</Flex>
 			<NetworkTransactionModal
 				isOpen={currentStep !== undefined}
-				subtitle='creating DAO'
+				subtitle='Creating Domain'
 				description={
 					<HStack w='100%'>
 						<Text

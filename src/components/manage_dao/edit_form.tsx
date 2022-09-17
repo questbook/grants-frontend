@@ -13,6 +13,7 @@ import {
 	useToast,
 } from '@chakra-ui/react'
 import { WorkspaceUpdateRequest } from '@questbook/service-validator-client'
+import { useRouter } from 'next/router'
 import CoverUpload from 'src/components/ui/forms/coverUpload'
 import ImageUpload from 'src/components/ui/forms/imageUpload'
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
@@ -33,6 +34,7 @@ import {
 	workspaceDataToSettingsForm,
 } from 'src/utils/settingsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
+import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
 type EditFormProps = {
   workspaceData: Workspace | undefined
@@ -43,6 +45,7 @@ type EditErrors = { [K in keyof SettingsForm]?: { error: string } };
 const MAX_IMAGE_SIZE_MB = 2
 
 function EditForm({ workspaceData }: EditFormProps) {
+	const router = useRouter()
 	const toast = useToast()
 
 	const [editedFormData, setEditedFormData] = useState<SettingsForm>()
@@ -56,7 +59,9 @@ function EditForm({ workspaceData }: EditFormProps) {
 		website: ''
 	}])
 
-	const [txnData, txnLink, loading, isBiconomyInitialised] = useUpdateWorkspace(editData as any)
+	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
+
+	const [txnData, txnLink, loading, isBiconomyInitialised] = useUpdateWorkspace(editData as any, setNetworkTransactionModalStep)
 
 	const supportedNetwork = useMemo(() => {
 		if(editedFormData) {
@@ -195,12 +200,6 @@ function EditForm({ workspaceData }: EditFormProps) {
 		}
 
 	}, [workspaceData])
-
-	useEffect(() => {
-		if(txnData) {
-			showInfoToast(txnLink)
-		}
-	}, [toast, txnData])
 
 	return (
 		<>
@@ -645,6 +644,36 @@ function EditForm({ workspaceData }: EditFormProps) {
 					{loading ? <Loader /> : 'Save changes'}
 				</Button>
 			</Flex>
+
+			<NetworkTransactionModal
+				isOpen={networkTransactionModalStep !== undefined}
+				subtitle='Updating Workspace Details'
+				description={
+					<Flex direction='column'>
+						<Text
+							variant='v2_title'
+							fontWeight='500'
+						>
+							{workspaceData?.title}
+						</Text>
+					</Flex>
+				}
+				currentStepIndex={networkTransactionModalStep || 0}
+				steps={
+					[
+						'Uploading data to IPFS',
+						'Sign transaction',
+						'Waiting for transaction to complete',
+						'Waiting for transaction to be indexed',
+						'Workspace Details updated',
+					]
+				}
+				viewLink={txnLink}
+				onClose={
+					async() => {
+						router.reload()
+					}
+				} />
 		</>
 	)
 }
