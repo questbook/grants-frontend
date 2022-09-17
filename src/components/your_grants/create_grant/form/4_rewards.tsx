@@ -31,7 +31,9 @@ function GrantRewardsInput({
 	setShouldEncrypt,
 	shouldEncryptReviews,
 	setShouldEncryptReviews,
-	isEVM
+	isEVM,
+	oldDate,
+	setOldDate,
 }: {
   reward: string
   setReward: (rewards: string) => void
@@ -52,9 +54,10 @@ function GrantRewardsInput({
   shouldEncryptReviews: boolean
   setShouldEncryptReviews: (shouldEncryptReviews: boolean) => void
   isEVM: boolean
+	oldDate: boolean
+	setOldDate: (oldDate: boolean) => void
 }) {
 	const [isModalOpen, setIsModalOpen] = React.useState(false)
-	const [oldDate, setOldDate] = React.useState(false)
 	const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState<any[]>([])
 
 	useEffect(() => {
@@ -170,13 +173,20 @@ function GrantRewardsInput({
 							setDateError(false)
 						}
 
-						const date = new Date()
-						if(new Date(e.target.value) <= date) {
-							setOldDate(true)
-							setDateError(true)
-						} else {
-							setDate(e.target.value)
+						if(oldDate) {
+							setOldDate(false)
 						}
+
+						setDate(e.target.value)
+
+
+						// const date = new Date()
+						// if(new Date(e.target.value) <= date) {
+						// 	setOldDate(true)
+						// 	setDateError(true)
+						// } else {
+						// 	setDate(e.target.value)
+						// }
 					}
 				}
 				value={date}
