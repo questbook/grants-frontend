@@ -76,7 +76,6 @@ function GrantRewardsInput({
 		const CurrenciesList = supportedCurrenciesList.filter((currencyItem) => currencyItem.length > 0)
 		setShowDropdown(CurrenciesList.length > 0)
 	}, [supportedCurrenciesList])
-
 	const { t } = useTranslation()
 	return (
 		<Flex direction='column'>
