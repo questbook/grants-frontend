@@ -22,7 +22,7 @@ function ApplicantDetails({
 	grantRequiredFields,
 	applicantAddressError,
 	setApplicantAddressError,
-	chainId,
+	safeNetwork
 }: {
   applicantName: string
   setApplicantName: (applicantName: string) => void
@@ -37,17 +37,20 @@ function ApplicantDetails({
   applicantAddressError: boolean
   setApplicantAddressError: (applicantAddressError: boolean) => void
   grantRequiredFields: string[]
-  chainId: number
+  safeNetwork: string
 }) {
 	const { workspace } = useContext(ApiClientsContext)!
-	console.log('workspace', workspace)
+	console.log('safe network', safeNetwork)
 	const { t } = useTranslation()
-	const chainNames = new Map<number, String>([
-		[1, 'Ethereum Mainnet'],
-		[5, 'Goerli Testnet'],
-		[10, 'Optimism Mainnet'],
-		[137, 'Polygon Mainnet'],
-		[42220, 'Celo Mainnet'],
+	const chainNames = new Map<String, String>([
+		["1", 'Ethereum Mainnet'],
+		["5", 'Goerli Testnet'],
+		["10", 'Optimism Mainnet'],
+		["137", 'Polygon Mainnet'],
+		["42220", 'Celo Mainnet'],
+		["9001", "Solana"],
+		["90001", "Solana"],
+		["900001", "Solana"],
 	])
 	return (
 		<>
@@ -96,8 +99,8 @@ function ApplicantDetails({
 			<Box mt={6} />
 			<SingleLineInput
 				label={t('/explore_grants/apply.address')}
-				placeholder={chainId != 900001 ? '0xa2dD...' : '5yDU...'} //TODO : remove hardcoding of chainId
-				subtext={`${t('/explore_grants/apply.your_address_on')} ${chainNames.get(chainId)}`}
+				placeholder={((safeNetwork != "900001") && (safeNetwork != "90001")&& (safeNetwork != "9001")) ? '0xa2dD...' : '5yDU...'} //TODO : remove hardcoding of chainId
+				subtext={`${t('/explore_grants/apply.your_address_on')} ${chainNames.get(safeNetwork)}`}
 				onChange={
 					(e) => {
 						if(applicantAddress) {
