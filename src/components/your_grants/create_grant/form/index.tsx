@@ -126,14 +126,7 @@ function Form({
 
 	// Grant Rewards and Deadline
 	const [reward, setReward] = useState('')
-	const [rewardToken, setRewardToken] = useState<Token>({
-		label: '',
-		address: '',
-		decimal: '18',
-		iconHash: '',
-	})
 	const [rewardError, setRewardError] = useState(false)
-	const [supportedCurrencies, setSupportedCurrencies] = useState(getSupportedCurrencies(currentChain))
 
 	const [rewardCurrency, setRewardCurrency] = useState('')
 	const [rewardCurrencyAddress, setRewardCurrencyAddress] = useState('')
@@ -160,59 +153,6 @@ function Form({
 			setAdmins(adminAddresses)
 		}
 	}, [workspace])
-
-	useEffect(() => {
-		if(safeNetwork) {
-			transactionServiceURL = SAFES_ENDPOINTS[safeNetwork]
-			// console.log('transaction service url', safeNetwork, transactionServiceURL)
-			const gnosisUrl = `${transactionServiceURL}/v1/safes/${safeAddress}/balances/`
-			axios.get(gnosisUrl).then(res => {
-				// console.log(res.data)
-				let tokens
-				if(safeNetwork === '42220') {
-					let localTokenData: {icon: string, label: string, address: string, decimals: number, pair?: string}
-
-					tokens = res.data.filter((token: SafeToken) => token.tokenAddress).map((token: SafeToken) => {
-						if(token.tokenAddress) {
-							if(CHAIN_INFO[safeNetwork].supportedCurrencies.hasOwnProperty(token.tokenAddress.toLowerCase())) {
-								localTokenData = CHAIN_INFO[safeNetwork].supportedCurrencies[token.tokenAddress.toLowerCase()]
-							}
-
-							const currency = {
-								'id': token.tokenAddress,
-								'address': token.tokenAddress,
-								'decimals': token.token.decimals,
-								'icon': localTokenData ? localTokenData.icon : token.token.logoUri,
-								'label': token.token.symbol,
-								'pair': ''
-							}
-							return currency
-						}
-					})
-				} else {
-					tokens = res.data.filter((token: SafeToken) => token.tokenAddress).map((token: SafeToken) => {
-						if(token.tokenAddress) {
-							const currency = {
-								'id': token.tokenAddress,
-								'address': token.tokenAddress,
-								'decimals': token.token.decimals,
-								'icon': token.token.logoUri,
-								'label': token.token.symbol,
-								'pair': ''
-							}
-							return currency
-						}
-					})
-					setRewardToken({ address: tokens[0]?.address, decimal: tokens[0]?.decimals.toString(), label: tokens[0]?.label, iconHash: tokens[0]?.icon })
-				}
-
-				setSupportedCurrencies(tokens)
-				// console.log('balances', supportedCurrencies)
-				setRewardCurrency(tokens[0]?.label)
-				setRewardCurrencyAddress(tokens[0]?.address)
-			})
-		}
-	}, [currentChain, safeNetwork])
 
 	const handleOnSubmit = () => {
 		let error = false
@@ -394,7 +334,6 @@ function Form({
 				fields,
 				reward,
 				rewardCurrencyAddress,
-				rewardToken,
 				date,
 				grantManagers: admins,
 				rubric: {
@@ -464,16 +403,8 @@ function Form({
 			setReward(formData?.reward)
 		}
 
-		if(formData?.rewardToken) {
-			setRewardToken(formData?.rewardToken)
-		}
-
 		if(formData?.rewardCurrency) {
 			setRewardCurrency(formData?.rewardCurrency)
-		}
-
-		if(formData?.rewardCurrencyAddress) {
-			setRewardCurrencyAddress(formData?.rewardCurrencyAddress)
 		}
 
 		if(formData?.date) {
@@ -508,7 +439,6 @@ function Form({
 			rubrics,
 			maximumPoints,
 			reward,
-			rewardToken,
 			rewardCurrency,
 			rewardCurrencyAddress,
 			date,
@@ -522,7 +452,6 @@ function Form({
 		details,
 		reward,
 		rewardCurrencyAddress,
-		rewardToken,
 		summary,
 		detailsRequired,
 		rubricRequired,
@@ -618,22 +547,16 @@ function Form({
 				reward={reward}
 				setReward={setReward}
 				// rewardToken={rewardToken}
-				setRewardToken={setRewardToken}
 				rewardError={rewardError}
 				setRewardError={setRewardError}
-				rewardCurrency={rewardCurrency}
-				setRewardCurrency={setRewardCurrency}
-				setRewardCurrencyAddress={setRewardCurrencyAddress}
 				date={date}
 				setDate={setDate}
 				dateError={dateError}
 				setDateError={setDateError}
-				supportedCurrencies={supportedCurrencies}
 				shouldEncrypt={shouldEncrypt}
 				setShouldEncrypt={setShouldEncrypt}
 				shouldEncryptReviews={shouldEncryptReviews}
 				setShouldEncryptReviews={setShouldEncryptReviews}
-				isEVM={isEVM}
 				oldDate={oldDate}
 				setOldDate={setOldDate}
 			/>
@@ -648,13 +571,6 @@ function Form({
 			</Button>
 		</Flex>
 	)
-}
-
-function getSupportedCurrencies(chainId: SupportedChainId) {
-	return Object.values(CHAIN_INFO[chainId]?.supportedCurrencies || { })
-		.map(
-			t => ({ id: t.address, ...t })
-		)
 }
 
 export default Form

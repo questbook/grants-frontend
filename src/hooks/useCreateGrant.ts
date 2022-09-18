@@ -106,20 +106,9 @@ export default function useCreateGrant(
 				const detailsHash = (await uploadToIPFS(data.details)).hash
 				let reward
 				if(isEVM) {
-					if(data.rewardToken.address === '') {
-					// console.log('grant data', data)
-						reward = {
-							committed: parseAmount(data.reward, data.rewardCurrencyAddress),
-							asset: data.rewardCurrencyAddress,
-						}
-					} else {
-					// console.log('Reward before parsing', data.reward, data.rewardToken.decimal)
-						reward = {
-							committed: parseAmount(data.reward, undefined, data.rewardToken.decimal),
-							asset: data.rewardCurrencyAddress,
-							token: data.rewardToken,
-						}
-					// console.log('Reward after parsing', reward)
+					reward = {
+						committed: data.reward,
+						asset: USD_ASSET
 					}
 				} else {
 					reward = {
