@@ -141,7 +141,7 @@ function BrowseGrantCard({
 								color='#373737'
 							>
 								<b>
-									{grantReward !== 0 ? `$${nFormatter(grantReward.toFixed(0))}` : grantAmount}
+									${grantAmount}
 								</b>
 								{' '}
 								{t('/profile.cards.per_proposal')}
