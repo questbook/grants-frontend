@@ -94,7 +94,6 @@ function CreateGrant() {
 				pb={8}
 				px={10}
 			>
-				<Breadcrumbs path={['My Grants', 'Create grant']} />
 				<Form
 					onSubmit={(data: any) => setFormData(data)}
 					hasClicked={loading}

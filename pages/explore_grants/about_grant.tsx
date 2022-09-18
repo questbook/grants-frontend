@@ -6,7 +6,6 @@ import { ApiClientsContext } from 'pages/_app'
 import GrantDetails from 'src/components/explore_grants/about_grant/grantDetails'
 import GrantRewards from 'src/components/explore_grants/about_grant/grantRewards'
 import Sidebar from 'src/components/explore_grants/about_grant/sidebar'
-import Breadcrumbs from 'src/components/ui/breadcrumbs'
 import Deadline from 'src/components/ui/deadline'
 import GrantShare from 'src/components/ui/grantShare'
 import Modal from 'src/components/ui/modal'
@@ -301,9 +300,6 @@ function AboutGrant() {
 					direction='column'
 					w='54%'
 					ml='80px'>
-					<Breadcrumbs
-						path={['Explore Grants', 'About Grant']}
-						 />
 					<Text
 						variant='heading'
 						mt='18px'>

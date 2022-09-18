@@ -227,13 +227,6 @@ function ApplicantForm() {
 						mx='44px'
 						p={0}
 						h='100%'>
-						<Box ml='30px'>
-							<Breadcrumbs
-								path={['Your Grants', 'View Applicants', 'Applicant Form']}
-								id={applicationData?.grant?.id}
-							/>
-						</Box>
-
 						<Text
 							mt='18px'
 							mb={6}
@@ -413,10 +406,6 @@ function ApplicantForm() {
 					direction='column'
 					mx={10}
 					w='100%'>
-					<Breadcrumbs
-						path={['My Grants', 'View Applicants', 'Applicant Form']}
-						id={applicationData?.grant?.id}
-					/>
 					<Text
 						mt={4}
 						mb={4}

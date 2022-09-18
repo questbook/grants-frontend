@@ -87,6 +87,12 @@ export interface Safe {
     isValidSafeAddress(address: String): Promise<boolean>
 
     /**
+     * @param address : Address of the wallet
+     * Can this address be sent money from this safe?
+     */
+    isValidRecipientAddress(address: String): Promise<boolean>
+
+    /**
      * @param address : Address of the safe
      *
      * This should pop up metamask/walletconnect/phantom etc to allow the user to sign a message and then check if the signer address is owner on the safe

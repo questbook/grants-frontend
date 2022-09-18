@@ -86,6 +86,7 @@ i18next.use(initReactI18next).init({
 					'funding_ask': 'Funding Ask',
 					'funding_breakdown': 'Funding Breakdown',
 					'funding_breakdown_placeholder': 'Where will you likely be spending this grant?',
+					'invalid_address_on_chain': 'Invalid address on %CHAIN',
 				},
 				'/onboarding/create-domain': {
 					'attach_safe':'Link a funding source',

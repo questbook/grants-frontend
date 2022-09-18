@@ -620,8 +620,6 @@ function ViewApplicants() {
 				pt={6}
 				pos='relative'
 			>
-				<Breadcrumbs path={['My Grants', 'View Applicants']} />
-
 				<Flex>
 					<Text
 						mt={1}

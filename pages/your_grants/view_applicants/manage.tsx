@@ -317,9 +317,6 @@ function ManageGrant() {
 				pb={8}
 				px={10}
 			>
-				<Breadcrumbs
-					path={path}
-					id={applicationData?.id} />
 				<Heading
 					mt='12px'
 					title={applicationData?.grant?.title || ''}

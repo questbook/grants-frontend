@@ -271,7 +271,6 @@ function EditGrant() {
 				pb={8}
 				px={10}
 			>
-				<Breadcrumbs path={['Your Grants', 'Edit grant']} />
 				{
 					formData && (
 						<Form
