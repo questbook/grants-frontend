@@ -51,11 +51,22 @@ const TABS = [
 			minDeadline: unixTimestampSeconds(),
 			maxDeadline: UNIX_TIMESTAMP_MAX,
 		},
-		label: 'Live Grants',
+		label: 'Live',
 		emptyState: () => <LiveGrantEmptyState />,
 	},
 	{
 		index: 1,
+		query: {
+			// fetch all expired (including archived) grants
+			acceptingApplications: [true, false],
+			minDeadline: 0,
+			maxDeadline: unixTimestampSeconds(),
+		},
+		label: 'Deadline Past',
+		emptyState: () => <ExpiredGrantEmptyState />,
+	},
+	{
+		index: 2,
 		query: {
 			// fetch all non-expired archived grants
 			acceptingApplications: [false],
@@ -65,17 +76,7 @@ const TABS = [
 		label: 'Archived',
 		emptyState: () => <ArchivedGrantEmptyState />,
 	},
-	{
-		index: 2,
-		query: {
-			// fetch all expired (including archived) grants
-			acceptingApplications: [true, false],
-			minDeadline: 0,
-			maxDeadline: unixTimestampSeconds(),
-		},
-		label: 'Expired Grants',
-		emptyState: () => <ExpiredGrantEmptyState />,
-	},
+
 ]
 
 function removeDuplicates<T extends { grant: { id: string } }>(array: Array<T>) {
