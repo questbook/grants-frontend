@@ -20,6 +20,7 @@ import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import getGnosisTansactionLink from 'src/v2/utils/gnosisUtils'
 import { getProposalUrl } from 'src/v2/utils/phantomUtils'
 import { erc20ABI, useAccount, useDisconnect } from 'wagmi'
+import { Safe } from '../types/safe'
 
 const ERC20Interface = new ethers.utils.Interface(erc20ABI)
 
@@ -384,8 +385,9 @@ export default function SendFunds({
 			<TransactionInitiatedModal
 				isOpen={!!(txnInitModalIsOpen && proposalAddr)}
 				onClose={onModalClose}
-				numOfTransactionsInitiated={sendFundsTo.length}
+				numOfTransactionsInitiated={sendFundsTo?.length}
 				proposalUrl={isEvmChain ? getGnosisTansactionLink(currentSafe?.id?.toString()!, currentSafe?.chainId?.toString()!) : getProposalUrl(currentSafe?.id?.toString()!, proposalAddr)}
+				safe={currentSafe as Safe}
 			/>
 
 			<SendFundsDrawer
