@@ -32,7 +32,7 @@ function Dashboard() {
 			return
 		}
 
-		const link = isValidEthereumAddress(safe?.address) ? getGnosisTansactionLink(safe.id?.toString()!, safe?.chainId.toString()!) : getDaoUrl(safe?.id?.toString()!)
+		const link = isValidEthereumAddress(safe?.address) ? getGnosisTansactionLink(safe.id?.toString()!, safe?.chainId.toString()!) : getDaoUrl(safe?.address?.toString()!)
 		window.open(link, '_blank')
 	}
 
