@@ -53,7 +53,7 @@ function ApplicantDetails({
 		["90001", "Solana"],
 		["900001", "Solana"],
 	])
-	const isSafeOnSolana = (safeNetwork == "9001" || safeNetwork == "90001" || safeNetwork == "900001")
+	const isSafeOnSolana = (safeNetwork == "9001" || safeNetwork == "90001" || safeNetwork == "900001" || safeNetwork == "9000001")
 	return (
 		<>
 			<Text
