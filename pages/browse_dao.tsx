@@ -35,7 +35,13 @@ function BrowseDao() {
 		results: newDaos,
 		hasMore: hasMoreNewDaos,
 		fetchMore: fetchMoreNewDaos,
-	} = useMultiChainDaosForExplore(WorkspaceOrderBy.CreatedAtS, { })
+	} = useMultiChainDaosForExplore(
+		WorkspaceOrderBy.CreatedAtS,
+		// only show DAOs that have created at least one grant
+		// with at least 1 USD in funding promised
+		// eslint-disable-next-line camelcase
+		{ totalGrantFundingCommittedUSD_gt: 0 }
+	)
 
 	const {
 		results: popularDaos,
