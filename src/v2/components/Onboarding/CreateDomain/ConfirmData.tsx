@@ -97,7 +97,7 @@ function ConfirmData({ domainImageFile, safeAddress, safeChainIcon, domainName, 
 				disabled={!isBiconomyInitialised}
 				variant='primaryV2'
 				mx='auto'
-				mt='auto'
+				mt={6}
 				w='53%'
 				onClick={onCreateDomain}>
 				Create Domain
@@ -108,18 +108,14 @@ function ConfirmData({ domainImageFile, safeAddress, safeChainIcon, domainName, 
 					)
 				}
 			</Button>
-			{
-				!isVerified && (
-					<Text
-						variant='v2_body'
-						color='black.2'
-						mt={2}
-						textAlign='center'>
-						You will be asked to verify that you’re a safe owner.
-						{' '}
-					</Text>
-				)
-			}
+			<Text
+				variant='v2_body'
+				color='black.2'
+				mt={2}
+				textAlign='center'>
+				{isVerified ? 'You are authorised to create a domain using this multi - sig wallet' : 'You will be asked to verify that you’re a safe owner.'}
+				{' '}
+			</Text>
 		</>
 	)
 }

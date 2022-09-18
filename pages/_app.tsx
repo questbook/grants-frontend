@@ -289,8 +289,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 						setBiconomyLoading(prev => ({ ...prev, [chainId]: false }))
 					})
 				biconomyInitPromisesRef.current[chainId] = task
-			}
-			else{
+			} else {
 				switchNetwork(parseInt(chainId))
 			}
 

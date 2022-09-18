@@ -199,7 +199,7 @@ function BrowseGrantCard({
 								{moment(endTimestamp).format('MMMM D')}
 							</b>
 						</Text>
-						<Spacer/>
+						<Spacer />
 						<Button
 							onClick={onClick}
 							variant='primaryCta'
