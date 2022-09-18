@@ -216,12 +216,12 @@ function Form({
 
 	const handleOnSubmit = () => {
 		let error = false
-		if(title.length <= 0) {
+		if(!title || title.length <= 0) {
 			setTitleError(true)
 			error = true
 		}
 
-		if(summary.length <= 0) {
+		if(!summary || summary.length <= 0) {
 			setSummaryError(true)
 			error = true
 		}
@@ -235,18 +235,20 @@ function Form({
 		//   setExtraFieldError(true);
 		//   error = true;
 		// }
-		if(reward.length <= 0) {
+		if(!reward || reward.length <= 0) {
 			setRewardError(true)
 			error = true
 		}
 
-		if(date.length <= 0) {
+		if(!date || date.length <= 0) {
 			setDateError(true)
 			error = true
 		}
 
-		const today = new Date()
-		if(new Date(date) <= today) {
+		const now = new Date()
+		const todayDateString = `${now.getFullYear()}-${now.getMonth() + 1 < 10 ? '0' : ''}${now.getMonth() + 1}-${now.getDate()}`
+		const today = new Date(todayDateString)
+		if(new Date(date) < today) {
 			setDateError(true)
 			setOldDate(true)
 			error = true

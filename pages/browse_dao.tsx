@@ -1,7 +1,8 @@
-import { ReactElement, useEffect, useState } from 'react'
+import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Box, Button, Container, Divider, Flex, HStack, Image, Menu, MenuButton, MenuItem, MenuList, Text, useToast } from '@chakra-ui/react'
+import { Container, Divider, Flex, HStack, Text, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { WebwalletContext } from 'pages/_app'
 import AllDaosGrid from 'src/components/browse_daos/all_daos'
 import { GetDaOsForExploreQuery, useGetDaOsForExploreQuery, Workspace_Filter as WorkspaceFilter, Workspace_OrderBy as WorkspaceOrderBy } from 'src/generated/graphql'
 import { useMultiChainPaginatedQuery } from 'src/hooks/useMultiChainPaginatedQuery'
@@ -21,27 +22,48 @@ const PAGE_SIZE = 3
  * @returns
  */
 function BrowseDao() {
+	const { scwAddress } = useContext(WebwalletContext)!
+
 	const toast = useToast()
 	const router = useRouter()
 
-	const [sort, setSort] = useState<SortingOption>(WorkspaceOrderBy.TotalGrantFundingDisbursedUsd)
 	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
+
+	const { t } = useTranslation()
 
 	const {
 		results: newDaos,
 		hasMore: hasMoreNewDaos,
 		fetchMore: fetchMoreNewDaos,
-	} = useMultiChainDaosForExplore(WorkspaceOrderBy.CreatedAtS, { })
+	} = useMultiChainDaosForExplore(
+		WorkspaceOrderBy.CreatedAtS,
+		// only show DAOs that have created at least one grant
+		// with at least 1 USD in funding promised
+		// eslint-disable-next-line camelcase
+		{ totalGrantFundingCommittedUSD_gt: 0 }
+	)
 
 	const {
 		results: popularDaos,
 		fetchMore: fetchMorePopularDaos
 	} = useMultiChainDaosForExplore(
-		sort,
-		SORTING_OPTIONS.find(s => s.id === sort)!.filter,
+		WorkspaceOrderBy.TotalGrantFundingDisbursedUsd,
+		// eslint-disable-next-line camelcase
+		{ totalGrantFundingDisbursedUSD_gte: 1000 },
 	)
 
-	const { t } = useTranslation()
+	const {
+		results: myDaos,
+		fetchMore: fetchMoreMyDaos
+	} = useMultiChainDaosForExplore(
+		WorkspaceOrderBy.TotalGrantFundingDisbursedUsd,
+		{ members_: { actorId: scwAddress } },
+	)
+
+	const totalDaos = useMemo(() => [
+		...myDaos,
+		...popularDaos,
+	], [myDaos, popularDaos])
 
 	useEffect(() => {
 		try {
@@ -60,14 +82,15 @@ function BrowseDao() {
 	}, [])
 
 	useEffect(() => {
-		fetchMorePopularDaos(true)
-	}, [sort])
-
-	useEffect(() => {
 		logger.info('fetching daos')
 		fetchMoreNewDaos(true)
 		fetchMorePopularDaos(true)
+		fetchMoreMyDaos(true)
 	}, [])
+
+	useEffect(() => {
+		fetchMoreMyDaos(true)
+	}, [scwAddress])
 
 	return (
 		<>
@@ -82,41 +105,11 @@ function BrowseDao() {
 						fontWeight='700'>
 						{t('/.section_1.title')}
 					</Text>
-					<Box marginLeft='auto'>
-						<Menu>
-							<MenuButton
-								as={Button}
-								rightIcon={<Image src='/ui_icons/black_down.svg' />}>
-								Sort by
-							</MenuButton>
-							<MenuList>
-								{
-									SORTING_OPTIONS.map(({ id, name }) => (
-										<MenuItem
-											key={id}
-											onClick={() => setSort(id)}>
-											<Flex>
-												<Image
-													src={
-														sort === id
-															? '/ui_icons/sorting_checked.svg'
-															: '/ui_icons/sorting_unchecked.svg'
-													} />
-												<Text ml='10px'>
-													{name}
-												</Text>
-											</Flex>
-										</MenuItem>
-									))
-								}
-							</MenuList>
-						</Menu>
-					</Box>
 				</Flex>
 
 				<AllDaosGrid
 					renderGetStarted
-					workspaces={popularDaos} />
+					workspaces={totalDaos} />
 
 				<HStack
 					align='center'
@@ -158,23 +151,6 @@ BrowseDao.getLayout = function(page: ReactElement) {
 		</NavbarLayout>
 	)
 }
-
-const SORTING_OPTIONS = [
-	{
-		id: WorkspaceOrderBy.TotalGrantFundingDisbursedUsd,
-		name: 'Grant Amount', //TODO : replace with i18n
-		// eslint-disable-next-line camelcase
-		filter: { totalGrantFundingDisbursedUSD_gte: 1000 } as WorkspaceFilter,
-	},
-	{
-		id: WorkspaceOrderBy.NumberOfApplications,
-		name: 'Number of Proposals', //TODO : replace with i18n
-		// eslint-disable-next-line camelcase
-		filter: { numberOfApplications_gte: 1 } as WorkspaceFilter,
-	}
-] as const
-
-type SortingOption = typeof SORTING_OPTIONS[number]['id']
 
 function useMultiChainDaosForExplore(
 	orderBy: WorkspaceOrderBy,
