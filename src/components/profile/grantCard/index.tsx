@@ -141,7 +141,9 @@ function BrowseGrantCard({
 								color='#373737'
 							>
 								<b>
-									${grantAmount}
+									{grantCurrency == 'USD'? '$' : grantCurrency}
+									{' '}
+									{grantAmount}
 								</b>
 								{' '}
 								{t('/profile.cards.per_proposal')}
