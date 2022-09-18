@@ -13,9 +13,10 @@ interface Props {
 	onSelectedSafeChange: (e: SafeSelectOption) => void
 	setValue: (newValue: string) => void
 	onContinue: () => void
+	onPasteClick: () => void
 }
 
-function SafeDetails({ safesOptions, step, safeAddress, isVerified, isLoading, safeSelected, setValue, onSelectedSafeChange, onContinue, safeAddressErrorText }: Props) {
+function SafeDetails({ safesOptions, step, safeAddress, isVerified, isLoading, safeSelected, setValue, onSelectedSafeChange, onContinue, safeAddressErrorText, onPasteClick }: Props) {
 	return (
 		<>
 			<Text
@@ -46,6 +47,7 @@ function SafeDetails({ safesOptions, step, safeAddress, isVerified, isLoading, s
 				isVerified={isVerified}
 				// isDisabled={step === 1}
 				errorText={safeAddressErrorText}
+				onPasteClick={onPasteClick}
 			/>
 			{
 				isLoading && (

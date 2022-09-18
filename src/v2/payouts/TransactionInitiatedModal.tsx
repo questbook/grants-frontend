@@ -16,12 +16,14 @@ interface Props {
 	isOpen: boolean
 	onClose: () => void
 	proposalUrl: string
+	numOfTransactionsInitiated: number
 }
 
 function TransactionInitiatedModal({
 	isOpen,
 	onClose,
-	proposalUrl
+	proposalUrl,
+	numOfTransactionsInitiated
 }: Props) {
 
 	return (
@@ -139,7 +141,15 @@ function TransactionInitiatedModal({
 							lineHeight='20px'
 							fontWeight='400'
 						>
-							Confirm the transaction which is in “Queue”.
+							Confirm the transaction
+							{' '}
+							{`${numOfTransactionsInitiated === 1 ? '' : 's'}`}
+							{' '}
+							which
+							{' '}
+							{`${numOfTransactionsInitiated === 1 ? 'is' : 'are'}`}
+							{' '}
+							in “Queue”.
 						</Text>
 					</Flex>
 
