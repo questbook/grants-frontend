@@ -380,7 +380,6 @@ export default function SendFunds({
 
 				safeTokenList={safeTokenList}
 				onChangeRecepientDetails={onChangeRecepientDetails}
-				onChangeRecepientError={onChangeRecepientError}
 				phantomWallet={phantomWallet}
 				isEvmChain={isEvmChain}
 				signerVerified={signerVerified}

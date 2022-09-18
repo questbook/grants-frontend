@@ -173,7 +173,8 @@ i18next.use(initReactI18next).init({
 					'send_funds_milestone': 'Milestone Completed',
 					'send_funds_milestone_description': 'Select the milestone you are sending this grant for',
 					'send_funds_verification_message': 'You will be asked to verify that you are a signer on the multisig wallet. This will ensure we don’t have impersonation.',
-
+					'send_funds_next_steps': 'Here are the next steps',
+                    'send_funds_open_txn': 'Open the transaction in multi-sig',
 				},
 				'/manage_dao': {
 					'create_link': 'Create invite link',
@@ -193,7 +194,6 @@ i18next.use(initReactI18next).init({
 					'proposals_received': 'Proposals Received',
 					'amount_sent': 'Amount Sent',
 				},
-
 			},
 		},
 	},
