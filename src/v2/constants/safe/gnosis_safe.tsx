@@ -20,14 +20,10 @@ export class GnosisSafe implements _GnosisSafe {
     	this.image = ''
     	this.chainId = chainId
     	this.txnServiceURL = txnServiceURL
-	}
-<<<<<<< HEAD
-	
+	}	
 	isValidRecipientAddress(address: String): Promise<boolean> {
 		return new Promise((resolve, reject) => resolve(ethers.utils.isAddress(address.toString())))
 	}
-=======
->>>>>>> Different next steps for realms and gnosis
 	getNextSteps(): string[] {
 		return ['Open the transaction on Gnosis Safe', 'Sign the transaction created under the Queue section', 'Ask the other multi-sig signers to sign this transaction too']
 	}

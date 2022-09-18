@@ -53,7 +53,7 @@ const RecipientDetails = ({
 		})
 	}, [])
 
-	const isSafeOnSolana = (safeNetwork == "9001" || safeNetwork == "90001" || safeNetwork == "900001")
+	const isSafeOnSolana = (safeNetwork == "9001" || safeNetwork == "90001" || safeNetwork == "900001" || safeNetwork == "9000001")
 
 	// const [balance, setBalance] = useState(0)
 	// useEffect(() => {
@@ -76,6 +76,7 @@ const RecipientDetails = ({
 		['9001', 'Solana'],
 		['90001', 'Solana'],
 		['900001', 'Solana'],
+		['9000001', 'Solana'],
 	])
 	const isInvalidAddress = async (address: string | undefined) => {
 		if(!address) return true
@@ -178,7 +179,7 @@ const RecipientDetails = ({
 				>
 					<Input
 						variant='brandFlushed'
-						placeholder={t('/your_grants/view_applicants.address_on_chain').replace('%CHAIN', chainNames.get(safeNetwork)!.toString())} 
+						placeholder={t('/your_grants/view_applicants.address_on_chain').replace('%CHAIN', chainNames.get(safeNetwork)!)} 
 						_placeholder={
 							{
 								color: 'blue.100',
