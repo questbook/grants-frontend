@@ -325,8 +325,8 @@ function GrantRewardsInput({
 	])
 
 	useEffect(() => {
-		const CurrenciesList = supportedCurrenciesList.filter((currencyItem) => currencyItem.length > 0);
-		setShowDropdown(CurrenciesList.length > 0);
+		const CurrenciesList = supportedCurrenciesList.filter((currencyItem) => currencyItem.length > 0)
+		setShowDropdown(CurrenciesList.length > 0)
 	}, [supportedCurrenciesList])
 
 	return (

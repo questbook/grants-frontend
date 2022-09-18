@@ -84,7 +84,6 @@ function SafeDetails({ safesOptions, step, safeAddress, isVerified, isLoading, s
 						} />
 				)
 			}
-			<Box m='auto' />
 			<Button
 				variant='primaryV2'
 				ml='auto'

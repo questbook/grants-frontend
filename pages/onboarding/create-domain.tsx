@@ -398,7 +398,7 @@ const OnboardingCreateDomain = () => {
 				<Flex
 					key={step}
 					w='47%'
-					h={step === 0 ? '43%' : (step === 1 ? '55%' : (step === 2 ? '38%' : (isOwner ? '36%' : '40%')))}
+					// h={step === 0 ? '43%' : (step === 1 ? '55%' : (step === 2 ? '38%' : (isOwner ? '36%' : '40%')))}
 					mx='auto'
 					mt='15vh'
 					bg='white'

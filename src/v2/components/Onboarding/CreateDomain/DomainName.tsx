@@ -1,4 +1,4 @@
-import { Box, Button, Image, Text } from '@chakra-ui/react'
+import { Button, Image, Text } from '@chakra-ui/react'
 import TextField from 'src/v2/components/InputFields/TextField'
 
 interface Props {
@@ -17,8 +17,8 @@ function DomainName({ domainName, setValue, isVerified, onContinue }: Props) {
 				fontWeight='500'>
 				Give your domain a name
 			</Text>
-			<Box mt='auto' />
 			<TextField
+				mt={6}
 				label='Domain Name'
 				helperText='Domain is a workspace where you can post your grants, invite members, and fund builders.'
 				helperLinkText='Learn about domains'

@@ -72,10 +72,10 @@ function GrantRewardsInput({
 	const [showDropdown, setShowDropdown] = React.useState(false)
 
 	useEffect(() => {
-		const CurrenciesList = supportedCurrenciesList.filter((currencyItem) => currencyItem.length > 0);
-		setShowDropdown(CurrenciesList.length > 0);
+		const CurrenciesList = supportedCurrenciesList.filter((currencyItem) => currencyItem.length > 0)
+		setShowDropdown(CurrenciesList.length > 0)
 	}, [supportedCurrenciesList])
-	
+
 	return (
 		<Flex direction='column'>
 
