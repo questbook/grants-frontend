@@ -264,6 +264,7 @@ const RecipientDetails = ({
 								safeTokenList={safeTokenList}
 								onChange={
 									(value) => {
+										console.log('change', value)
 										onChangeRecepientDetails(applicantData?.applicationId, 'selectedToken', { name: value?.id, info: value?.info })
 									}
 								} />

@@ -495,8 +495,8 @@ function ViewApplicants() {
 					const evmObj = {
 						transactionHash: transaction.transactionHash,
 						status: status.status,
-						amount: parseInt(ethers.utils.formatUnits(transaction.amount.toString(), rewardAssetDecimals))
-						// amount: transaction.amount
+						// amount: parseInt(ethers.utils.formatUnits(transaction.amount.toString(), rewardAssetDecimals))
+						amount: transaction.amount
 					}
 					logger.info({ evmObj }, 'Pushed object (EVM)')
 					statuses[applicationId].push(evmObj)

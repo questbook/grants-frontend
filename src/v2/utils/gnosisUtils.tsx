@@ -5,19 +5,11 @@ import SAFES_ENDPOINTS_TESTNETS from 'src/constants/safesEndpointsTest.json'
 const SAFES_ENDPOINTS = { ...SAFES_ENDPOINTS_MAINNETS, ...SAFES_ENDPOINTS_TESTNETS }
 type ValidChainID = keyof typeof SAFES_ENDPOINTS;
 
-import axios from "axios"
-import SAFES_ENDPOINTS_MAINNETS from 'src/constants/safesEndpoints.json'
-import SAFES_ENDPOINTS_TESTNETS from 'src/constants/safesEndpointsTest.json'
-
-const SAFES_ENDPOINTS = { ...SAFES_ENDPOINTS_MAINNETS, ...SAFES_ENDPOINTS_TESTNETS }
-type ValidChainID = keyof typeof SAFES_ENDPOINTS;
-
 const NETWORK_PREFIX: {[key: string]: string} = {
 	'4': 'rin',
 	'137': 'matic',
 	'1': 'eth',
 	'10': 'opt',
-	'10': 'opt'
 }
 
 export function getGnosisTansactionLink(safeAddress: string, chainId: string) {

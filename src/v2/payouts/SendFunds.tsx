@@ -134,9 +134,27 @@ export default function SendFunds({
 	}, [workspaceSafe])
 
 	const getTokensFromSafe = () => {
+		const tokenList = []
 		getTokenBalance(workspaceSafeChainId, workspaceSafe).then((res) => {
 			console.log('tokens response', res.data)
+			const tokensFetched = res.data
+			tokensFetched.filter(token => token.token ).map((token: any) => {
+				console.log('token fetch', token)
+				const am = (ethers.utils.formatUnits(token.balance, token.token.decimals) ).toString()
+				tokenList.push( {
+					tokenIcon: token.token.logoUri,
+					tokenName: token.token.symbol,
+					tokenValueAmount: am,
+					usdValueAmount: token.fiatBalance, 
+					mintAddress: '',
+					info: {
+						decimals: token.token.decimals,
+						tokenAddress: token.tokenAddress
+					},
+				})
+			})
 		})
+		setSafeTokenList(tokenList)
 	}
 
 	useEffect(() => {
@@ -170,7 +188,7 @@ export default function SendFunds({
 				to:  recepient?.applicantAddress || getFieldString(recepient, 'applicantAddress') || recepient?.applicantId,
 				applicationId: recepient?.applicationId || applicationID,
 				selectedMilestone: recepient?.milestones[0]?.id,
-				selectedToken: { name: safeTokenList[0]?.tokenName, info: safeTokenList[0]?.tokenInfo },
+				selectedToken: { name: safeTokenList[0]?.tokenName,  info: safeTokenList[0]?.tokenInfo },
 				amount: 0
 			})
 		)
@@ -195,6 +213,7 @@ export default function SendFunds({
 	}, [signerVerified])
 
 	function encodeTransactionData(recipientAddress: string, fundAmount: string) {
+		console.log('encoding tx', recipientAddress, fundAmount)
 		const txData = ERC20Interface.encodeFunctionData('transfer', [
 			recipientAddress,
 			ethers.utils.parseUnits(fundAmount, rewardAssetDecimals)
@@ -227,6 +246,7 @@ export default function SendFunds({
 	const createEVMMetaTransactions = () => {
 		const readyTxs = gnosisBatchData.map((data: any) => {
 			// TODO: convert amount from USD to ERC 20
+			console.log('gnosis batxh data', gnosisBatchData)
 			const usdToToken = (data.amount / tokenUSDRate!).toFixed(rewardAssetDecimals)
 			console.log('usd -> token', data.amount, usdToToken, tokenUSDRate)
 			const txData = encodeTransactionData(data.to, (usdToToken.toString()))
