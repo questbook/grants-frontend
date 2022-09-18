@@ -163,6 +163,9 @@ i18next.use(initReactI18next).init({
                     'pick_reviewers': 'Pick reviewers who will review proposals for this grant',
                     'make_reviews_private': 'Make reviews private',
                     'make_reviews_private_description': 'Reviews and comments by your team will be kept private to you and the reviewers',
+                    'send_funds_next_steps': 'Here are the next steps',
+                    'send_funds_open_txn': 'Open the transaction in multi-sig',
+                    
                 },
                 '/manage_dao': {
                     'create_link': 'Create invite link',

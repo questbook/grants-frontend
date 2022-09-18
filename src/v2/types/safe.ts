@@ -107,4 +107,9 @@ export interface Safe {
     getTransactionHashStatus(transactionHashes: string): Promise<TransactionHashStatus>
 
     initialiseAllProposals(): void
+
+    /**
+     * After initiating a transaction, popup that should be shown
+     */
+    getNextSteps() : string[]
 }
