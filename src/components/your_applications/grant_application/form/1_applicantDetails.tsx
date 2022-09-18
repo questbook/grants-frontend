@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import {
 	Box, Text,
 } from '@chakra-ui/react'
+import { ApiClientsContext } from 'pages/_app'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
+import { isValidEthereumAddress } from 'src/utils/validationUtils'
 
 function ApplicantDetails({
 	applicantName,
@@ -35,6 +37,7 @@ function ApplicantDetails({
   readOnly?: boolean
   grantRequiredFields: string[]
 }) {
+	const { workspace } = useContext(ApiClientsContext)!
 	return (
 		<>
 			<Text
@@ -70,7 +73,7 @@ function ApplicantDetails({
 				placeholder='name@sample.com'
 				value={applicantEmail}
 				onChange={
-					(e: any) => {
+					(e) => {
 						if(applicantEmailError) {
 							setApplicantEmailError(false)
 						}
@@ -87,7 +90,7 @@ function ApplicantDetails({
 			<Box mt={6} />
 			<SingleLineInput
 				label='Applicant Address'
-				placeholder='Ethereum or Solana address'
+				placeholder={isValidEthereumAddress(workspace?.safe?.address ?? '') ? 'Ethereum Address' : 'Solana Address'}
 				subtext='Your wallet address where you would like to receive funds'
 				onChange={
 					(e) => {

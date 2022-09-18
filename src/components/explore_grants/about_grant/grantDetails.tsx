@@ -1,6 +1,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 // @TODO: Fix this ESLint issue
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import Linkify from 'react-linkify'
 import {
 	Box, Link, Skeleton,
@@ -22,6 +23,8 @@ function GrantDetails({
 		setDecodedDetails(d)
 	}
 
+	const { t } = useTranslation()
+
 	useEffect(() => {
 		if(!grantDetails) {
 			return
@@ -42,9 +45,7 @@ function GrantDetails({
 				fontSize='18px'
 				lineHeight='26px'
 				color='#8347E5'
-			>
-				About Grant
-			</Text>
+			 />
 
 			<Text
 				mt={4}

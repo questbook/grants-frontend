@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Box, Text } from '@chakra-ui/react'
 
 function LoadMoreCard({
@@ -5,6 +6,7 @@ function LoadMoreCard({
 }: {
   onClick: () => void
 }) {
+	const { t } = useTranslation()
 	return (
 		<Box
 			w='100%'
@@ -29,7 +31,7 @@ function LoadMoreCard({
 					textAlign='center'
 					fontSize='14px'
 					fontWeight='500'>
-					Load More
+					{t('/.show_more')}
 				</Text>
 			</Box>
 

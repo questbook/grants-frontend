@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box,
 	Flex,
@@ -66,7 +67,16 @@ function GrantRewardsInput({
 	}, [supportedCurrencies])
 
 	const [isJustAddedToken, setIsJustAddedToken] = React.useState<boolean>(false)
-	const addERC = true
+	const addERC = false
+
+	const [showDropdown, setShowDropdown] = React.useState(false)
+
+	useEffect(() => {
+		const CurrenciesList = supportedCurrenciesList.filter((currencyItem) => currencyItem.length > 0)
+		setShowDropdown(CurrenciesList.length > 0)
+	}, [supportedCurrenciesList])
+
+	const { t } = useTranslation()
 	return (
 		<Flex direction='column'>
 
@@ -77,7 +87,7 @@ function GrantRewardsInput({
 					minW='160px'
 					flex={1}>
 					<SingleLineInput
-						label='Grant Reward'
+						label={t('/create-grant.amount')}
 						placeholder='100'
 						errorText='Required'
 						onChange={
@@ -111,7 +121,7 @@ function GrantRewardsInput({
 					flex={0}
 					alignSelf='center'>
 					{
-						isEVM ? (
+						(isEVM && supportedCurrenciesList.length > 0) ? (
 							<Dropdown
 								listItemsMinWidth='132px'
 								listItems={supportedCurrenciesList}
@@ -177,23 +187,8 @@ function GrantRewardsInput({
 				value={extractDate(date)}
 				isError={dateError}
 				errorText='Required'
-				label='Grant Deadline'
-				tooltip='This is the last date on/before which grantees can apply'
+				label='Proposal Deadline'
 			/>
-
-			<Flex
-				direction='column'
-				mt={12}>
-				<Text
-					fontSize='18px'
-					fontWeight='700'
-					lineHeight='26px'
-					letterSpacing={0}
-				>
-					Grant privacy
-				</Text>
-			</Flex>
-
 			{/* <Flex
 				mt={8}
 				gap='2'
@@ -253,14 +248,14 @@ function GrantRewardsInput({
 						fontSize='16px'
 						lineHeight='20px'
 					>
-						Keep applicant reviews private
+						{t('/create-grant.private_review')}
 					</Text>
 					<Flex>
 						<Text
 							color='#717A7C'
 							fontSize='14px'
 							lineHeight='20px'>
-							Private review is only visible to reviewers, DAO members.
+							{t('/create-grant.private_review_desc')}
 						</Text>
 					</Flex>
 				</Flex>

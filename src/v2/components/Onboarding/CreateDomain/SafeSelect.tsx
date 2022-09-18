@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Box, Flex, Image, Link, Text } from '@chakra-ui/react'
 import { GroupBase, OptionBase, OptionProps, SingleValueProps } from 'chakra-react-select'
 import { NetworkType } from 'src/constants/Networks'
@@ -199,6 +200,7 @@ function SafeSelect({ label, optionalText, helperText, helperLinkText, helperLin
 	useEffect(() => {
 		// console.log('SELECTED DROPDOWN: ', value)
 	}, [value])
+	const { t } = useTranslation()
 	return (
 		<Flex direction='column'>
 			<Flex>
@@ -244,7 +246,7 @@ function SafeSelect({ label, optionalText, helperText, helperLinkText, helperLin
 				options={safesOptions ?? []}
 				makeOption={Option}
 				singleValue={SingleValue}
-				placeholder='Select from the list'
+				placeholder={t('/onboarding/create-domain.pick_network_placeholder')}
 				selected={value}
 				setSelected={onChange} />
 		</Flex>

@@ -266,8 +266,8 @@ function FeedbackDrawer({
 				steps={
 					[
 						'Uploading data to IPFS',
-						'Sign transaction',
-						'Waiting for transaction to complete',
+						'Signing transaction with in-app wallet',
+						'Waiting for transaction to complete on chain',
 						'Waiting for transaction indexing',
 						'Review pushed on-chain',
 					]

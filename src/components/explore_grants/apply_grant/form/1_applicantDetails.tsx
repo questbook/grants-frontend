@@ -1,8 +1,13 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box, Text,
 } from '@chakra-ui/react'
+import { ApiClientsContext } from 'pages/_app'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
+import SupportedChainId from 'src/generated/SupportedChainId'
+import { isValidEthereumAddress } from 'src/utils/validationUtils'
+import { RealmsSolana } from 'src/v2/constants/safe/realms_solana'
 
 function ApplicantDetails({
 	applicantName,
@@ -18,6 +23,7 @@ function ApplicantDetails({
 	grantRequiredFields,
 	applicantAddressError,
 	setApplicantAddressError,
+	safeNetwork
 }: {
   applicantName: string
   setApplicantName: (applicantName: string) => void
@@ -32,7 +38,22 @@ function ApplicantDetails({
   applicantAddressError: boolean
   setApplicantAddressError: (applicantAddressError: boolean) => void
   grantRequiredFields: string[]
+  safeNetwork: string
 }) {
+	const { workspace } = useContext(ApiClientsContext)!
+	console.log('safe network', safeNetwork)
+	const { t } = useTranslation()
+	const chainNames = new Map<String, String>([
+		["1", 'Ethereum Mainnet'],
+		["5", 'Goerli Testnet'],
+		["10", 'Optimism Mainnet'],
+		["137", 'Polygon Mainnet'],
+		["42220", 'Celo Mainnet'],
+		["9001", "Solana"],
+		["90001", "Solana"],
+		["900001", "Solana"],
+	])
+	const isSafeOnSolana = (safeNetwork == "9001" || safeNetwork == "90001" || safeNetwork == "900001" || safeNetwork == "9000001")
 	return (
 		<>
 			<Text
@@ -40,13 +61,11 @@ function ApplicantDetails({
 				fontSize='16px'
 				lineHeight='20px'
 				color='#8850EA'>
-				Applicant Details
+				{t('/explore_grants/apply.proposer_details')}
 			</Text>
 			<Box mt={6} />
 			<SingleLineInput
-				label='Applicant Name'
-				placeholder='John Doe'
-				subtext='Full names are preferred.'
+				label={t('/explore_grants/apply.name')}
 				onChange={
 					(e) => {
 						if(applicantNameError) {
@@ -63,8 +82,7 @@ function ApplicantDetails({
 			/>
 			<Box mt={6} />
 			<SingleLineInput
-				label='Applicant Email'
-				placeholder='name@sample.com'
+				label={t('/explore_grants/apply.email')}
 				value={applicantEmail}
 				onChange={
 					(e) => {
@@ -82,20 +100,25 @@ function ApplicantDetails({
 			/>
 			<Box mt={6} />
 			<SingleLineInput
-				label='Applicant Address'
-				placeholder='Ethereum or Solana address'
-				subtext='Your wallet address where you would like to receive funds'
+				label={t('/explore_grants/apply.address')}
+				placeholder={isSafeOnSolana ? '5yDU...' : '0xa2dD...' } //TODO : remove hardcoding of chainId
+				subtext={`${t('/explore_grants/apply.your_address_on')} ${chainNames.get(safeNetwork)}`}
 				onChange={
-					(e) => {
-						if(applicantAddress) {
-							 setApplicantAddressError(false)
-						}
-
+					async (e) => {
 						setApplicantAddress(e.target.value)
+						let safeAddressValid = false;
+						if(isSafeOnSolana) {
+							const realms = new RealmsSolana('')
+							safeAddressValid = await realms.isValidRecipientAddress(e.target.value)
+						} else {
+							safeAddressValid = await isValidEthereumAddress(e.target.value)
+						}
+						console.log('safe address', e.target.value, safeAddressValid)
+						setApplicantAddressError(!safeAddressValid)
 					}
 				}
 				isError={applicantAddressError}
-				errorText='Required'
+				errorText={t('/explore_grants/apply.invalid_address_on_chain').replace('%CHAIN', chainNames.get(safeNetwork)!.toString())}
 				value={applicantAddress}
 				visible={grantRequiredFields.includes('applicantAddress')}
 			/>

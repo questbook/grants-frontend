@@ -1,6 +1,7 @@
 import React from 'react'
-import { Box, Checkbox, Circle, Flex, Grid, GridItem, Image, Tag, Td, Tr } from '@chakra-ui/react'
+import { Box, Checkbox, Flex, Grid, GridItem, Image, Tag, Td, Tr } from '@chakra-ui/react'
 import { WorkspaceMember, WorkspaceMemberAccessLevel } from 'src/generated/graphql'
+import getAvatar from 'src/utils/avatarUtils'
 import { getFormattedDateFromUnixTimestampWithYear } from 'src/utils/formattingUtils'
 import { capitalizeFirstLetter } from 'src/utils/generics'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
@@ -18,20 +19,11 @@ function MemberRow({ member }: Props) {
 			<Td>
 				<Flex direction='row'>
 					<>
-						{
-							member.profilePictureIpfsHash ? (
-								<Image
-									src={getUrlForIPFSHash(member.profilePictureIpfsHash)}
-									borderRadius='50%'
-									boxSize='40px'
-								/>
-							) : (
-								<Circle
-									bg='grey'
-									size='40px'
-								/>
-							)
-						}
+						<Image
+							src={member.profilePictureIpfsHash ? getUrlForIPFSHash(member.profilePictureIpfsHash) : getAvatar(member.actorId)}
+							borderRadius='50%'
+							boxSize='40px'
+						/>
 						<Box w={2} />
 					</>
 					<Grid>

@@ -1,6 +1,7 @@
 import React, {
-	ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState,
+	ReactElement, useContext, useEffect, useMemo, useRef, useState,
 } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import {
 	Box,
@@ -14,7 +15,7 @@ import { ApiClientsContext } from 'pages/_app'
 import Modal from 'src/components/ui/modal'
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
-import { CHAIN_INFO, defaultChainId, SupportedChainId, USD_DECIMALS } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId, SupportedChainId } from 'src/constants/chains'
 import {
 	useGetApplicantsForAGrantQuery,
 	useGetGrantDetailsQuery,
@@ -43,7 +44,7 @@ import NoReviewerBanner from 'src/v2/components/ViewApplicants/NoReviewerBanner'
 import RubricNotSetBanner from 'src/v2/components/ViewApplicants/RubricNotSetBanner'
 import rpcUrls from 'src/v2/constants/publicRpcUrlInfo'
 import { GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
-import { RealmsSolana, solanaToUsdOnDate } from 'src/v2/constants/safe/realms_solana'
+import { RealmsSolana } from 'src/v2/constants/safe/realms_solana'
 import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
 import AcceptedProposalsPanel from 'src/v2/payouts/AcceptedProposals/AcceptedProposalPanel'
 import InReviewPanel from 'src/v2/payouts/InReviewProposals/InReviewPanel'
@@ -53,7 +54,7 @@ import SendFunds from 'src/v2/payouts/SendFunds'
 import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEvaluationDrawer'
 import StatsBanner from 'src/v2/payouts/StatsBanner'
 import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
-
+import { getTransactionHashStatus } from 'src/v2/utils/gnosisUtils'
 
 const PAGE_SIZE = 500
 
@@ -133,6 +134,8 @@ function ViewApplicants() {
 	// 		}
 	// 	}
 	// }, [apiAssetId, safeAddressData])
+
+	const { t } = useTranslation()
 
 	const checkIfUserIsOnCorrectNetwork = async(_safeNetwork: string) => {
 		// @ts-ignore
@@ -246,7 +249,7 @@ function ViewApplicants() {
 			setWorkspaceSafe(safeAddress)
 			setWorkspaceSafeChainId(parseInt(workspaceSafes[0]?.chainId))
 			if(isEvmChain) {
-				checkIfUserIsOnCorrectNetwork(safeNetwork)
+				// checkIfUserIsOnCorrectNetwork(safeNetwork)
 			}
 		}
 	}, [safeAddressData])
@@ -465,7 +468,12 @@ function ViewApplicants() {
 		const getEachStatus = async(transaction: any, applicationId: any) => {
 			logger.info('transaction hash', transaction)
 			logger.info('fund', ethers.utils.formatUnits(transaction.amount.toString(), rewardAssetDecimals))
-			const status = await currentSafe?.getTransactionHashStatus(transaction?.transactionHash)
+			let status
+			if(isEvmChain) {
+				status = await getTransactionHashStatus(workspaceSafeChainId.toString(), transaction.transactionHash)
+			} else {
+				status = await currentSafe?.getTransactionHashStatus(transaction?.transactionHash)
+			}
 			logger.info({ status }, 'status')
 			if(transaction && status) {
 				if(!statuses[applicationId]) {
@@ -486,9 +494,9 @@ function ViewApplicants() {
 				} else {
 					const evmObj = {
 						transactionHash: transaction.transactionHash,
-						status: 1,
-						// amount: parseInt(ethers.utils.formatUnits(transaction.amount.toString(), rewardAssetDecimals))
-						amount: transaction.amount
+						status: status.status,
+						amount: parseInt(ethers.utils.formatUnits(transaction.amount.toString(), rewardAssetDecimals))
+						// amount: transaction.amount
 					}
 					logger.info({ evmObj }, 'Pushed object (EVM)')
 					statuses[applicationId].push(evmObj)
@@ -543,6 +551,9 @@ function ViewApplicants() {
 	//getting transaction hash status end
 
 	const onSendFundsButtonClicked = async(state: boolean, selectedApplicants: any[]) => {
+		if(isEvmChain && workspaceSafeChainId) {
+			checkIfUserIsOnCorrectNetwork(workspaceSafeChainId.toString())
+		}
 		if(workspace?.safe) {
 			setSendFundsTo(selectedApplicants)
 		} else {
@@ -619,8 +630,6 @@ function ViewApplicants() {
 				pt={6}
 				pos='relative'
 			>
-				<Breadcrumbs path={['My Grants', 'View Applicants']} />
-
 				<Flex>
 					<Text
 						mt={1}
@@ -629,7 +638,7 @@ function ViewApplicants() {
 						lineHeight='32px'
 						fontWeight='500'
 					>
-						{applicantsData[0]?.grantTitle || 'Grant Title'}
+						{applicantsData[0]?.grantTitle || 'Loading...'}
 					</Text>
 
 					{
@@ -660,21 +669,6 @@ function ViewApplicants() {
 								<MenuList
 									minW='240px'
 									py={0}>
-									<Flex
-										bg='#F0F0F7'
-										px={4}
-										py={2}
-									>
-										<Text
-											fontSize='14px'
-											lineHeight='20px'
-											fontWeight='500'
-											textAlign='center'
-											color='#555570'
-										>
-											Grant options
-										</Text>
-									</Flex>
 									<MenuItem
 										px='19px'
 										py='10px'
@@ -701,7 +695,7 @@ function ViewApplicants() {
 											textAlign='center'
 											color='#555570'
 										>
-											{(grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ? 'View scoring rubric' : 'Setup applicant evaluation'}
+											{(grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ? t('/your_grants/view_applicants.view_review_process') : t('/your_grants/view_applicants.create_review_process')}
 										</Text>
 									</MenuItem>
 									<MenuItem
@@ -718,7 +712,7 @@ function ViewApplicants() {
 											textAlign='center'
 											color='#555570'
 										>
-											Archive grant
+											{t('/your_grants/view_applicants.archive_grant')}
 										</Text>
 									</MenuItem>
 								</MenuList>
@@ -872,7 +866,7 @@ function ViewApplicants() {
 								fontWeight='500'
 								fontSize='17px'
 							>
-								{grantData && grantData?.grants && grantData?.grants.length > 0 && grantData?.grants[0].title}
+								{grantData?.grants && grantData?.grants.length > 0 && grantData?.grants[0].title}
 							</Text>
 
 							<Button

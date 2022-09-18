@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Box, Button, Flex, Image, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react'
 import dynamic from 'next/dynamic'
-
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false })
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -98,6 +98,8 @@ function BarGraph({
 	const [seriesOptions, setSeriesOptions] = useState<any>(barChartOptionsDashboard)
 
 	const [currentMonth, setCurrentMonth] = useState(1)
+
+	const { t } = useTranslation()
 
 	useEffect(() => {
 		// console.log(applications)
@@ -225,7 +227,7 @@ function BarGraph({
 								<Text
 									fontSize='16px'
 								>
-									Applications Recieved
+									{t('/dashboard.proposals_received')}
 								</Text>
 
 							</Flex>
@@ -264,7 +266,7 @@ function BarGraph({
 										fontSize='16px'
 										mr='auto'
 									>
-										Applications Recieved
+										{t('/dashboard.proposals_received')}
 									</Text>
 									<Menu
 										placement='bottom'

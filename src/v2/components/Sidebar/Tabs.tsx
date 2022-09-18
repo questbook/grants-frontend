@@ -21,12 +21,12 @@ export type TabType = keyof typeof TAB_INDEXES
 
 const TABS = [
 	{ id: 'discover', index: TAB_INDEXES.DISCOVER, name: 'Discover', path: '/browse_dao' },
-	{ id: 'my_applications', index: TAB_INDEXES.MY_APPLICATIONS, name: 'My Applications', path: '/your_applications' },
-	{ id: 'dashboard', index: TAB_INDEXES.DASHBOARD, name: 'Dashboard', path: '/dashboard' },
-	{ id: 'grants_and_bounties', index: TAB_INDEXES.GRANTS_AND_BOUNTIES, name: 'Grants And Bounties', path: '/your_grants' },
-	{ id: 'safe', index: TAB_INDEXES.SAFE, name: 'Safe', path: '/safe' },
+	{ id: 'my_applications', index: TAB_INDEXES.MY_APPLICATIONS, name: 'My Proposals', path: '/your_applications' },
+	{ id: 'dashboard', index: TAB_INDEXES.DASHBOARD, name: 'Stats', path: '/dashboard' },
+	{ id: 'grants_and_bounties', index: TAB_INDEXES.GRANTS_AND_BOUNTIES, name: 'Grants', path: '/your_grants' },
+	{ id: 'safe', index: TAB_INDEXES.SAFE, name: 'Multisig Wallet', path: '/safe' },
 	{ id: 'apps', index: TAB_INDEXES.APPS, name: 'Apps', path: '/apps' },
-	{ id: 'settings', index: TAB_INDEXES.SETTINGS, name: 'Settings', path: '/manage_dao' },
+	{ id: 'settings', index: TAB_INDEXES.SETTINGS, name: 'Profile', path: '/manage_dao' },
 	{ id: 'payouts', index: TAB_INDEXES.PAYOUTS, name: 'Payouts', path: '/payouts' }
 ]
 

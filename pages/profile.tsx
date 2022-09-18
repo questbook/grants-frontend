@@ -1,5 +1,6 @@
 // UI Components
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box,
 	Button,
@@ -59,12 +60,15 @@ function Profile() {
 	const [applicationTime, setApplicationTime] = React.useState<any>([])
 	const { network, switchNetwork } = useNetwork()
 
+	const { t } = useTranslation()
+
 	//Tab section
-	const tabs = ['Browse Grants', 'About']
+	const tabs = [t('/profile.browse'), t('/profile.more_info')]
 	const [selected, setSelected] = useState(0)
 	const switchTab = (to: number) => {
 		setSelected(to)
 	}
+
 
 	useEffect(() => {
 		if(router?.query) {
@@ -350,7 +354,7 @@ function Profile() {
 						>
 							{'</>'}
 							{' '}
-							Embed profile stats
+							{t('/profile.embed_stats')}
 						</Button>
 					</Stack>
 
@@ -383,7 +387,7 @@ function Profile() {
 								>
 									{tab}
 									{' '}
-									{tab === 'Browse Grants' && `(${allDaoData?.grants.length})`}
+									{tab === t('/profile.browse') && `(${allDaoData?.grants.length})`}
 								</Button>
 							))
 						}
@@ -512,7 +516,7 @@ function Profile() {
 								lineHeight='1.5rem'
 								color='#1F1F33'
 							>
-								Embed profile stats
+								{t('/profile.embed_stats')}
 							</Heading>
 							<Text
 								fontFamily='DM Sans'

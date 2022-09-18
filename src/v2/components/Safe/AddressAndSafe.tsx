@@ -8,7 +8,6 @@ interface Props {
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
     onPasteClick: () => void
     isVerified: boolean
-    isDisabled: boolean
 	isLoading: boolean
     safeAddressError?: string
 
@@ -18,7 +17,7 @@ interface Props {
     onContinue: () => void
 }
 
-function AddressAndSafe({ step, safeAddress, safeAddressError, onChange, onPasteClick, isVerified, isDisabled, isLoading, safesOptions, selectedSafe, onSelectedSafeChange, onContinue }: Props) {
+function AddressAndSafe({ step, safeAddress, safeAddressError, onChange, onPasteClick, isVerified, isLoading, safesOptions, selectedSafe, onSelectedSafeChange, onContinue }: Props) {
 	return (
 		<Flex
 			my='auto'
@@ -36,7 +35,7 @@ function AddressAndSafe({ step, safeAddress, safeAddressError, onChange, onPaste
 				onChange={onChange}
 				onPasteClick={onPasteClick}
 				isVerified={isVerified}
-				isDisabled={isDisabled}
+				// isDisabled={isDisabled}
 				errorText={safeAddressError}
 						 />
 			{

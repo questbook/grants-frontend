@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Flex, Text } from '@chakra-ui/react'
 import { formatMinutes } from 'src/utils/dashboardFormating'
 
@@ -18,6 +19,7 @@ function DaoStatBoard({
 	useEffect(() => {
 		formatMinutes(tat)
 	}, [tat])
+	const { t } = useTranslation()
 	return (
 		<>
 			{
@@ -58,7 +60,7 @@ function DaoStatBoard({
 										fontWeight='400'
 										lineHeight='24px'
 									>
-										Total Applicants
+										{t('/dashboard.proposals')}
 									</Text>
 								</Flex>
 
@@ -84,7 +86,7 @@ function DaoStatBoard({
 										fontWeight='400'
 										lineHeight='24px'
 									>
-										Unique Applicants
+										{t('/dashboard.unique_teams')}
 									</Text>
 								</Flex>
 
@@ -110,7 +112,7 @@ function DaoStatBoard({
 										fontWeight='400'
 										lineHeight='24px'
 									>
-										Repeats Applicants
+										{t('/dashboard.repeat_teams')}
 									</Text>
 								</Flex>
 
@@ -136,7 +138,7 @@ function DaoStatBoard({
 										fontWeight='400'
 										lineHeight='24px'
 									>
-										Grant winners
+										{t('/dashboard.accepted_proposals')}
 									</Text>
 								</Flex>
 
@@ -162,7 +164,7 @@ function DaoStatBoard({
 										fontWeight='400'
 										lineHeight='24px'
 									>
-										TAT for disburdal
+										{t('/dashboard.tat')}
 									</Text>
 								</Flex>
 							</Flex>
@@ -212,7 +214,7 @@ function DaoStatBoard({
 										fontWeight='400'
 										lineHeight='24px'
 									>
-										Total Applicants
+										{t('/dashboard.proposals')}
 									</Text>
 								</Flex>
 
@@ -245,7 +247,7 @@ function DaoStatBoard({
 										fontWeight='400'
 										lineHeight='24px'
 									>
-										Unique Applicants
+										{t('/dashboard.unique_teams')}
 									</Text>
 								</Flex>
 
@@ -278,7 +280,7 @@ function DaoStatBoard({
 										fontWeight='400'
 										lineHeight='24px'
 									>
-										Repeat Applicants
+										{t('/dashboard.repeat_teams')}
 									</Text>
 								</Flex>
 
@@ -311,7 +313,7 @@ function DaoStatBoard({
 										fontWeight='400'
 										lineHeight='24px'
 									>
-										Grant Winners
+										{t('/dashboard.accepted_proposals')}
 									</Text>
 								</Flex>
 
@@ -344,7 +346,7 @@ function DaoStatBoard({
 										fontWeight='400'
 										lineHeight='24px'
 									>
-										TAT for Disbursal
+										{t('/dashboard.tat')}
 									</Text>
 								</Flex>
 							</Flex>

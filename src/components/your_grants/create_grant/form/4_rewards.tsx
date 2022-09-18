@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box,
 	Flex,
@@ -31,7 +32,9 @@ function GrantRewardsInput({
 	setShouldEncrypt,
 	shouldEncryptReviews,
 	setShouldEncryptReviews,
-	isEVM
+	isEVM,
+	oldDate,
+	setOldDate,
 }: {
   reward: string
   setReward: (rewards: string) => void
@@ -52,9 +55,10 @@ function GrantRewardsInput({
   shouldEncryptReviews: boolean
   setShouldEncryptReviews: (shouldEncryptReviews: boolean) => void
   isEVM: boolean
+	oldDate: boolean
+	setOldDate: (oldDate: boolean) => void
 }) {
 	const [isModalOpen, setIsModalOpen] = React.useState(false)
-	const [oldDate, setOldDate] = React.useState(false)
 	const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState<any[]>([])
 
 	useEffect(() => {
@@ -64,7 +68,15 @@ function GrantRewardsInput({
 	}, [supportedCurrencies])
 
 	const [isJustAddedToken, setIsJustAddedToken] = React.useState<boolean>(false)
-	const addERC = true
+	const addERC = false
+
+	const [showDropdown, setShowDropdown] = React.useState(false)
+
+	useEffect(() => {
+		const CurrenciesList = supportedCurrenciesList.filter((currencyItem) => currencyItem.length > 0)
+		setShowDropdown(CurrenciesList.length > 0)
+	}, [supportedCurrenciesList])
+	const { t } = useTranslation()
 	return (
 		<Flex direction='column'>
 
@@ -75,7 +87,7 @@ function GrantRewardsInput({
 					minW='160px'
 					flex={1}>
 					<SingleLineInput
-						label='Grant Reward'
+						label={t('/create-grant.amount')}
 						placeholder='e.g. 100'
 						value={reward}
 						onChange={
@@ -109,7 +121,7 @@ function GrantRewardsInput({
 					flex={0}
 					alignSelf='center'>
 					{
-						isEVM ? (
+						(isEVM && supportedCurrenciesList.length > 0) ? (
 							<Dropdown
 								listItemsMinWidth='132px'
 								listItems={supportedCurrenciesList}
@@ -170,36 +182,29 @@ function GrantRewardsInput({
 							setDateError(false)
 						}
 
-						const date = new Date()
-						if(new Date(e.target.value) <= date) {
-							setOldDate(true)
-							setDateError(true)
-						} else {
-							setDate(e.target.value)
+						if(oldDate) {
+							setOldDate(false)
 						}
+
+						setDate(e.target.value)
+
+
+						// const date = new Date()
+						// if(new Date(e.target.value) <= date) {
+						// 	setOldDate(true)
+						// 	setDateError(true)
+						// } else {
+						// 	setDate(e.target.value)
+						// }
 					}
 				}
 				value={date}
 				isError={dateError}
 				errorText={oldDate ? 'Choose a date in the future' : 'Date is Required'}
-				tooltip='This is the last date on/before which grantees can apply'
-				label='Grant Deadline'
+				label={t('/create-grant.deadline')}
 			/>
 
 			<Flex
-				direction='column'
-				mt={12}>
-				<Text
-					fontSize='18px'
-					fontWeight='700'
-					lineHeight='26px'
-					letterSpacing={0}
-				>
-					Grant privacy
-				</Text>
-			</Flex>
-
-			{/* <Flex
 				mt={8}
 				gap='2'
 				justifyContent='space-between'>
@@ -245,7 +250,7 @@ function GrantRewardsInput({
 						{`${shouldEncrypt ? 'YES' : 'NO'}`}
 					</Text>
 				</Flex>
-			</Flex> */}
+			</Flex>
 
 			<Flex
 				mt={8}
@@ -258,14 +263,14 @@ function GrantRewardsInput({
 						fontSize='16px'
 						lineHeight='20px'
 					>
-						Keep applicant reviews private
+						{t('/create-grant.private_review')}
 					</Text>
 					<Flex>
 						<Text
 							color='#717A7C'
 							fontSize='14px'
 							lineHeight='20px'>
-							Private review is only visible to reviewers, DAO members.
+							{t('/create-grant.private_review_desc')}
 						</Text>
 					</Flex>
 				</Flex>

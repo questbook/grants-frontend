@@ -7,6 +7,7 @@ interface Props {
 }
 
 const TipsContainer = ({ currentTip }: Props) => {
+	return <></>
 	const tips = [
 		<HeroTip key={0} />,
 		<TipsList

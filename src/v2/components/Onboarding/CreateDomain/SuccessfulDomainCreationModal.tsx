@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { AlertDialogOverlay, Button, Flex, Image, Modal, ModalBody, ModalContent, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 
@@ -13,6 +14,7 @@ const SuccessfulDomainCreationModal = ({
 	domainName?: string
 }) => {
 	const router = useRouter()
+	const { t } = useTranslation()
 	return (
 		<Modal
 			isOpen={isOpen}
@@ -51,7 +53,7 @@ const SuccessfulDomainCreationModal = ({
 						variant='v2_subheading'
 						fontWeight='500'
 						textAlign='center'>
-						Success! Your Domain is created
+						{t('/onboarding/create-domain.success')}
 					</Text>
 					<Flex
 						align='center'
@@ -68,9 +70,7 @@ const SuccessfulDomainCreationModal = ({
 							<Text
 								variant='v2_body'
 								fontWeight='500'>
-								{domainName ?? 'Unknown'}
-								{' '}
-								DAO
+								{domainName}
 							</Text>
 						</Button>
 						<Text
@@ -83,7 +83,7 @@ const SuccessfulDomainCreationModal = ({
 					<Text
 						mt={12}
 						textAlign='center'>
-						Next create a grant or bounty to attract builders
+						{t('/onboarding/create-domain.next_create_grant')}
 					</Text>
 					<Flex
 						align='center'
@@ -110,7 +110,7 @@ const SuccessfulDomainCreationModal = ({
 									})
 								}
 							}>
-							Create a grant
+							{t('/onboarding/create-domain.create')}
 						</Button>
 					</Flex>
 				</ModalBody>

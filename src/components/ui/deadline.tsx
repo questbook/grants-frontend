@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { getFormattedDate } from 'src/utils/formattingUtils'
 
 export type DeadlineProps = {
@@ -5,6 +6,7 @@ export type DeadlineProps = {
 }
 
 export default ({ date }: DeadlineProps) => {
+	const { t } = useTranslation()
 	if(!date) {
 		return (
 			<>
@@ -16,7 +18,7 @@ export default ({ date }: DeadlineProps) => {
 	const isExpired = date.getTime() < Date.now()
 	return (
 		<>
-			{(isExpired ? 'Ended on' : 'Ends on') + ' ' + getFormattedDate(date.getTime())}
+			{(isExpired ? t('/explore_grants/about_grant.was_accepting_proposals_till') : t('/explore_grants/about_grant.accepting_proposals_till')) + ' ' + getFormattedDate(date.getTime())}
 		</>
 	)
 }

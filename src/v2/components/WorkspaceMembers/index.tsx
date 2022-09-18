@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { LinkIcon } from '@chakra-ui/icons'
 import {
 	Box,
@@ -37,7 +38,7 @@ const USER_TYPES = [
 		'accessLevels': Object.values(WorkspaceMemberAccessLevel),
 	},
 	{
-		'name': 'Administrators',
+		'name': 'Admins',
 		'accessLevels': [WorkspaceMemberAccessLevel['Owner'], WorkspaceMemberAccessLevel['Admin']],
 	},
 	{
@@ -71,6 +72,8 @@ function WorkspaceMembers() {
 			accessLevelsIn: USER_TYPES[selectedUserTypeIdx].accessLevels,
 		},
 	})
+
+	const { t } = useTranslation()
 
 	useEffect(() => {
 		if(!data) {
@@ -113,7 +116,7 @@ function WorkspaceMembers() {
 						onClick={() => setIsInviteModalOpen(true)}
 						leftIcon={<LinkIcon />}
 						variant='primaryV2' >
-						Create invite link
+						{t('/manage_dao.create_link')}
 					</Button>
 				</Flex>
 				<Box h={5} />

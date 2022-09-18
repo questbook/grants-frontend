@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Box, Button, Flex, Image, Link, Stack, Text } from '@chakra-ui/react'
 import moment from 'moment'
 import { useRouter } from 'next/router'
@@ -68,6 +69,8 @@ function GrantCard({
 	const [grantReward, setGrantReward] = useState<number>(0)
 
 	const currentDate = new Date().getTime()
+
+	const { t } = useTranslation()
 
 	useEffect(() => {
 		if(grantReward === 0) {
@@ -252,7 +255,7 @@ function GrantCard({
 							fontSize='0.85rem'
 							lineHeight='1rem'
 							display='inline-block'>
-							Ends on
+							{t('/explore_grants/about_grant.accepting_proposals_till')}
 							{' '}
 							<b>
 								{moment(endTimestamp).format('MMMM D')}

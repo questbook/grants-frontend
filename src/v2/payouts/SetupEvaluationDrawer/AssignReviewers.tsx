@@ -1,7 +1,10 @@
-import { Checkbox, Flex, Image, Link, Slider, SliderFilledTrack, SliderMark, SliderThumb, SliderTrack, Switch, Text, Tooltip } from '@chakra-ui/react'
+import { useTranslation } from 'react-i18next'
+import { Checkbox, Flex, Image, Slider, SliderFilledTrack, SliderMark, SliderThumb, SliderTrack, Switch, Text, Tooltip } from '@chakra-ui/react'
 import CopyIcon from 'src/components/ui/copy_icon'
 import { SidebarReviewer } from 'src/types'
+import getAvatar from 'src/utils/avatarUtils'
 import { formatAddress } from 'src/utils/formattingUtils'
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 interface Props {
 	minCount: number
@@ -14,34 +17,9 @@ interface Props {
 }
 
 const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, onSlide, reviewers, onReviewerChange }: Props) => {
+	const { t } = useTranslation()
 	return (
 		<>
-			<Text
-				fontSize='14px'
-				lineHeight='20px'
-				fontWeight='500'
-			>
-				Assign Reviewers
-			</Text>
-
-			<Text
-				fontSize='12px'
-				lineHeight='16px'
-				fontWeight='400'
-				color='#7D7DA0'
-				mt='2px'
-			>
-				Reviewers are auto assigned equally.
-				{' '}
-				<Link
-					textDecoration='none'
-					fontWeight='500'
-					color='#1F1F33'
-				>
-					Learn more
-				</Link>
-			</Text>
-
 			<Flex
 				mt={4}
 				p={4}
@@ -55,7 +33,7 @@ const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, 
 					lineHeight='20px'
 					fontWeight='500'
 				>
-					Select the number of reviewers to be auto assigned per application
+					{t('/your_grants/view_applicants.how_many_reviewers')}
 				</Text>
 
 				<Flex
@@ -106,7 +84,7 @@ const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, 
 				>
 					{sliderValue}
 					{' '}
-					reviewers will be chosen randomly and assigned to each application
+					{t('/your_grants/view_applicants.how_many_reviewers_description')}
 
 				</Text>
 			</Flex>
@@ -128,7 +106,7 @@ const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, 
 					fontWeight='500'
 					mb={6}
 				>
-					Select reviewers to be auto - assigned
+					{t('/your_grants/view_applicants.pick_reviewers')}
 				</Text>
 
 				{
@@ -153,6 +131,8 @@ const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, 
 									ml='12px'
 								>
 									<Image
+										borderRadius='3xl'
+										src={reviewer.data?.profilePictureIpfsHash ? getUrlForIPFSHash(reviewer.data.profilePictureIpfsHash) : getAvatar(reviewer.data?.actorId)}
 									/>
 								</Flex>
 
@@ -209,26 +189,7 @@ const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, 
 					lineHeight='20px'
 					fontWeight='500'
 				>
-					Make reviews private
-				</Text>
-
-				<Text
-					fontSize='12px'
-					lineHeight='16px'
-					fontWeight='400'
-					color='#7D7DA0'
-					mt='2px'
-				>
-					The reviews will be encrypted on-chain if enabled.
-				</Text>
-
-				<Text
-					fontSize='14px'
-					lineHeight='20px'
-					fontWeight='500'
-					mt={6}
-				>
-					Hide scoring rubric & reviews
+					{t('/your_grants/view_applicants.make_reviews_private')}
 				</Text>
 
 				<Flex>
@@ -240,7 +201,7 @@ const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, 
 						mt='2px'
 						mr='auto'
 					>
-						The reviews will be encrypted on-chain if enabled.
+						{t('/your_grants/view_applicants.make_reviews_private_description')}
 					</Text>
 					<Switch
 						id='encrypt'

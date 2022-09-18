@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Box, Button, Container, Drawer, DrawerContent, DrawerOverlay, Flex, Text, ToastId, useToast } from '@chakra-ui/react'
-import router from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { SupportedChainId } from 'src/constants/chains'
@@ -65,6 +65,8 @@ const SetupEvaluationDrawer = ({
 
 	const [canContinue, setCanContinue] = useState(false)
 
+	const { t } = useTranslation()
+
 	useEffect(() => {
 		for(const rubric of rubrics) {
 			if(!rubric.criteria || rubric.criteria.length === 0 || !rubric.description || rubric.description.length === 0) {
@@ -77,7 +79,7 @@ const SetupEvaluationDrawer = ({
 	}, [rubrics])
 
 	// Assigning reviewers
-	const defaultSliderValue = 2
+	const defaultSliderValue = 1
 	const [numOfReviewersPerApplication, setNumOfReviewersPerApplication] = useState(defaultSliderValue)
 	const [reviewers, setReviewers] = useState<SidebarReviewer[]>([])
 
@@ -234,15 +236,10 @@ const SetupEvaluationDrawer = ({
 			const { txFee, receipt } = await getTransactionDetails(response, chainId.toString())
 			setTransactionHash(receipt?.transactionHash)
 			await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
+			setNetworkTransactionModalStep(4)
 
 			await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee))
-			setNetworkTransactionModalStep(4)
-			setTimeout(() => {
-				setNetworkTransactionModalStep(undefined)
-				// router.push({ pathname: '/v2/your_grants/view_applicants/', query: { grantId: grantAddress } })
-				router.reload()
-			}, 3000)
-			// setTransactionData(transactionData)
+			setNetworkTransactionModalStep(5)
 		} catch(e) {
 			setNetworkTransactionModalStep(undefined)
 			const message = getErrorMessage(e as Error)
@@ -314,7 +311,7 @@ const SetupEvaluationDrawer = ({
 								lineHeight='24px'
 								fontWeight='500'
 							>
-								Setup applicant evaluation
+								{t('/your_grants/view_applicants.create_review_process')}
 							</Text>
 							<Text
 								fontSize='14px'
@@ -322,9 +319,7 @@ const SetupEvaluationDrawer = ({
 								fontWeight='400'
 								mt={1}
 								color='#7D7DA0'
-							>
-								Define a scoring rubric and assign reviewers.
-							</Text>
+							 />
 						</Flex>
 
 						<CancelCircleFilled
@@ -387,7 +382,7 @@ const SetupEvaluationDrawer = ({
 										ml={1}
 										color={step === 0 ? '#785EF0' : '#1F1F33'}
 									>
-										Scoring rubric
+										{t('/your_grants/view_applicants.review_questions')}
 									</Text>
 								</Flex>
 							</Flex>
@@ -426,7 +421,7 @@ const SetupEvaluationDrawer = ({
 										ml={1}
 										color={step === 1 || step === 2 ? '#785EF0' : '#1F1F33'}
 									>
-										Assign reviewers
+										{t('/your_grants/view_applicants.select_reviewers')}
 									</Text>
 								</Flex>
 							</Flex>
@@ -472,7 +467,6 @@ const SetupEvaluationDrawer = ({
 						align='center'>
 
 						<Button
-							ml='auto'
 							colorScheme='brandv2'
 							disabled={(step === 0 && !canContinue) || step === 1 && reviewers.filter(r => r.isSelected).length === 0}
 							onClick={
@@ -486,7 +480,7 @@ const SetupEvaluationDrawer = ({
 									}
 								}
 							}>
-							{step === 0 ? 'Continue' : 'Setup Evaluation'}
+							{step === 0 ? t('/your_grants/view_applicants.select_reviewers_next') : t('/your_grants/view_applicants.review_process_save')}
 						</Button>
 
 					</Flex>

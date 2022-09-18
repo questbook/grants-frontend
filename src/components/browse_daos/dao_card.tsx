@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Box, Flex, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import SupportedChainId from 'src/generated/SupportedChainId'
@@ -15,6 +16,7 @@ type DaoCardProps = {
 function DaoCard({ logo, name, daoId, chainId, noOfApplicants, totalAmount }: DaoCardProps) {
 	const router = useRouter()
 	const [isActive, setIsActive] = useState(false)
+	const { t } = useTranslation()
 	return (
 		<Box
 			w='100%'
@@ -64,7 +66,7 @@ function DaoCard({ logo, name, daoId, chainId, noOfApplicants, totalAmount }: Da
 					ml='3px'
 					color='#555570'
 					fontSize='12px'>
-					Applicants
+					{t('/.cards.proposals')}
 				</Text>
 			</Flex>
 			<Text
@@ -85,7 +87,7 @@ function DaoCard({ logo, name, daoId, chainId, noOfApplicants, totalAmount }: Da
 					ml='5px'
 					fontSize='14px'
 					color='#555570'>
-					grants
+					{t('/.cards.in_grants')}
 				</Text>
 			</Flex>
 			{
@@ -105,7 +107,7 @@ function DaoCard({ logo, name, daoId, chainId, noOfApplicants, totalAmount }: Da
 							fontWeight='500'
 							color='#1F1F33'
 							mr='8px'>
-							Apply for grants
+							{t('/.cards.submit_proposal')}
 						</Text>
 						<Image src='/ui_icons/black_right_arrow.svg' />
 					</Box>

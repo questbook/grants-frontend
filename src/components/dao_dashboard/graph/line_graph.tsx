@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Box, Button, Flex, Image, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react'
 import dynamic from 'next/dynamic'
-
+import { useTranslation } from 'react-i18next'
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
@@ -98,6 +98,8 @@ function LineGraph({
 	const [seriesOptions, setSeriesOptions] = useState<any>(lineChartOptionsProfile2)
 
 	const [currentMonth, setCurrentMonth] = useState(1)
+
+	const { t } = useTranslation()
 
 	useEffect(() => {
 
@@ -238,7 +240,7 @@ function LineGraph({
 								<Text
 									fontSize='16px'
 								>
-									Total Funds Disbursed
+									{t('/dashboard.amount_sent')}
 								</Text>
 
 							</Flex>

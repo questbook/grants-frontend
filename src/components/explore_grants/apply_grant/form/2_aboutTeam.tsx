@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box, Text,
 } from '@chakra-ui/react'
@@ -26,6 +27,7 @@ function AboutTeam({
   setMembersDescription: (membersDescription: { description: string, isError: boolean }[]) => void
   grantRequiredFields: string[]
 }) {
+	const { t } = useTranslation()
 	return (
 
 		<Box display={grantRequiredFields.includes('teamMembers') || grantRequiredFields.includes('memberDetails') ? '' : 'none'}>
@@ -34,7 +36,7 @@ function AboutTeam({
 				fontSize='16px'
 				lineHeight='20px'
 				color='#8850EA'>
-				About Team
+				{t('/explore_grants/apply.team')}
 				<Tooltip
 					icon='/ui_icons/tooltip_questionmark_brand.svg'
 					label='Write about the team members working on the project.'
@@ -58,7 +60,7 @@ function AboutTeam({
 								setMembersDescription(Array(value).fill({ description: '', isError: false }))
 							}
 						}
-						label='Team Members'
+						label={t('/explore_grants/apply.num_team_members')}
 						options={Array.from(Array(11).keys()).slice(1)}
 					/>
 				)
@@ -90,7 +92,7 @@ function AboutTeam({
 					<MultiLineInput
 						key={index}
 						placeholder='Write about team member - education, work experience with portfolio link, and side projects.'
-						label={`Member ${index + 1}`}
+						label={`${t('/explore_grants/apply.member')} ${index + 1}`}
 						maxLength={300}
 						value={description}
 						onChange={

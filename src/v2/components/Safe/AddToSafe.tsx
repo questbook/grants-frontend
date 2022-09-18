@@ -3,7 +3,6 @@ import { Flex, Image, Text, ToastId, useToast } from '@chakra-ui/react'
 import { logger } from 'ethers'
 import { useRouter } from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
-import { DEFAULT_NOTE, INSUFFICIENT_FUNDS_NOTE, USD_THRESHOLD } from 'src/constants'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { NetworkType } from 'src/constants/Networks'
 import useQBContract from 'src/hooks/contracts/useQBContract'
@@ -186,11 +185,14 @@ function AddToSafe() {
 			safeAddress={safeAddress}
 			onChange={
 				(e) => {
+					if(step === 1) {
+						setStep(0)
+						setIsVerified(false)
+						setSelectedSafe(undefined)
+					}
+
 					const address = e.target.value
 					setSafeAddress(address)
-					if(!loadedSafesUSDBalance) {
-
-					}
 				}
 			}
 			onPasteClick={
@@ -203,7 +205,6 @@ function AddToSafe() {
 				}
 			}
 			isVerified={isVerified !== undefined && safesUSDBalance?.length > 0 && selectedSafe !== undefined}
-			isDisabled={step !== 0}
 			safeAddressError={safeAddressError}
 			onContinue={
 				() => {
@@ -215,7 +216,7 @@ function AddToSafe() {
 				}
 			}
 			isLoading={!loadedSafesUSDBalance && safeAddress !== ''}
-			safesOptions={[safesUSDBalance?.some((safe: SafeSelectOption) => safe.amount >= USD_THRESHOLD) ? DEFAULT_NOTE : INSUFFICIENT_FUNDS_NOTE, ...safesUSDBalance!]}
+			safesOptions={safesUSDBalance}
 			selectedSafe={selectedSafe}
 			onSelectedSafeChange={
 				(safe) => {
@@ -294,9 +295,9 @@ function AddToSafe() {
 				currentStepIndex={networkTransactionModalStep || 0}
 				steps={
 					[
-						'Confirming Transaction',
-						'Completing Transaction',
-						'Completing Indexing',
+						'Signing transaction with in-app wallet',
+						'Waiting for transaction to complete on chain',
+						'Indexing transaction on graph protocol',
 						'Adding safe to your domain on the network',
 					]
 				}

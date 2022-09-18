@@ -1,31 +1,31 @@
 export default [
 	{
-		title: 'Applicant Name',
+		title: 'Name',
 		id: 'applicantName',
 		inputType: 'short-form',
 		isRequired: true,
 	},
 	{
-		title: 'Applicant Email',
+		title: 'Email',
 		id: 'applicantEmail',
 		inputType: 'short-form',
 		isRequired: true,
 	},
 	{
-		title: 'Applicant Address',
+		title: 'Wallet Address',
 		id: 'applicantAddress',
 		inputType: 'short-form',
 		isRequired: true
 	},
 	{
-		title: 'Team Members',
+		title: 'Team',
 		id: 'teamMembers',
 		inputType: 'long-form',
 		isRequired: false,
 	},
 	{
-		title: 'Funding Breakdown',
-		tooltip: 'Details on how the project will use funding to achieve goals.',
+		title: 'Usage of Grant',
+		tooltip: 'Details on how the grant will be used to achieve the proposal goals',
 		id: 'fundingBreakdown',
 		inputType: 'long-form',
 		isRequired: false,
@@ -37,7 +37,7 @@ export default [
 		isRequired: true,
 	},
 	{
-		title: 'Project Link',
+		title: 'Project Links',
 		id: 'projectLink',
 		inputType: 'array',
 		isRequired: false,
@@ -55,14 +55,14 @@ export default [
 		isRequired: false,
 	},
 	{
-		title: 'Custom Fields',
-		id: 'customFields',
+		title: 'Milestones',
+		id: 'isMultipleMilestones',
 		inputType: 'array',
 		isRequired: false,
 	},
 	{
-		title: 'Milestones',
-		id: 'isMultipleMilestones',
+		title: 'Add more questions',
+		id: 'customFields',
 		inputType: 'array',
 		isRequired: false,
 	},

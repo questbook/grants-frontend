@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Button,
 	Divider, Flex, Image, Text, useTheme, } from '@chakra-ui/react'
@@ -34,6 +35,8 @@ function GrantRewards({
 	const theme = useTheme()
 	const router = useRouter()
 
+	const { t } = useTranslation()
+
 	return (
 		<>
 			<Flex
@@ -44,7 +47,7 @@ function GrantRewards({
 					lineHeight='24px'
 					fontSize='18px'
 					fontWeight='400'>
-					Grant posted by
+					{ t('/explore_grants/about_grant.by')}
 					{' '}
 					<Button
 						variant='link'
@@ -66,15 +69,6 @@ function GrantRewards({
 					>
 						{daoName}
 					</Button>
-					<Text
-						fontSize='16px'
-						display='inline'
-						color='#717A7C'
-						fontWeight='400'
-						lineHeight='24px'
-						ml={2}>
-						{`• ${CHAIN_INFO[chainId!]?.name}`}
-					</Text>
 				</Text>
 				<Image
 					objectFit='cover'
@@ -102,7 +96,7 @@ function GrantRewards({
 							direction='column'
 							ml={3}>
 							<Text fontWeight='500'>
-								Reward
+								{ t('/explore_grants/about_grant.grant_amount')}
 							</Text>
 							<Text
 								mt='1px'
@@ -125,7 +119,7 @@ function GrantRewards({
 							direction='column'
 							ml={3}>
 							<Text fontWeight='500'>
-								Milestones
+								{ t('/explore_grants/about_grant.payouts')}
 							</Text>
 							<Text
 								mt='1px'

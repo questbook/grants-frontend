@@ -6,7 +6,7 @@ import React, {
 } from 'react'
 import { Container } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import Breadcrumbs from 'src/components/ui/breadcrumbs'
 import Form from 'src/components/your_applications/grant_application/form'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
@@ -19,11 +19,13 @@ import NavbarLayout from 'src/layout/navbarLayout'
 import { GrantApplicationProps } from 'src/types/application'
 import { formatAmount, getFieldString } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { useEncryptPiiForApplication } from 'src/utils/pii'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 
 function ViewApplication() {
 	const apiClients = useContext(ApiClientsContext)!
+	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 	const { subgraphClients } = apiClients
 
 	const router = useRouter()
@@ -33,20 +35,32 @@ function ViewApplication() {
 	const [formData, setFormData] = useState<GrantApplicationProps | null>(null)
 	const [chainId, setChainId] = useState<SupportedChainId>()
 
-	useEffect(() => {
-		if(router && router.query) {
-			const { chainId: cId, applicationId: aId } = router.query
-			setChainId(cId as unknown as SupportedChainId)
-			setApplicationId(aId)
-		}
-	}, [router])
-
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
       subgraphClients[
       	chainId || defaultChainId
       ].client,
 	})
+
+	const { data } = useGetApplicationDetailsQuery(queryParams)
+	const grantId = data?.grantApplication?.grant?.id
+	const applicantPublicKey = scwAddress?.toLowerCase() === data?.grantApplication?.applicantId?.toLowerCase()
+		? webwallet?.publicKey
+		: data?.grantApplication?.applicantPublicKey || undefined
+
+	const { decrypt } = useEncryptPiiForApplication(
+		grantId,
+		applicantPublicKey,
+		chainId || defaultChainId
+	)
+
+	useEffect(() => {
+		if(router?.query) {
+			const { chainId: cId, applicationId: aId } = router.query
+			setChainId(cId as unknown as SupportedChainId)
+			setApplicationId(aId)
+		}
+	}, [router])
 
 	useEffect(() => {
 		if(!applicationID) {
@@ -58,8 +72,7 @@ function ViewApplication() {
 		}
 
 		setQueryParams({
-			client:
-        subgraphClients[chainId].client,
+			client: subgraphClients[chainId].client,
 			variables: {
 				applicationID,
 			},
@@ -67,15 +80,11 @@ function ViewApplication() {
 
 	}, [chainId, applicationID])
 
-	const { data, error, loading } = useGetApplicationDetailsQuery(queryParams)
-
 	useEffect(() => {
-		if(data) {
-			// console.log('data', data)
-			setApplication(data.grantApplication)
-		}
-
-	}, [data, error, loading])
+		// decrypt grant application if required and set it
+		decrypt(data?.grantApplication)
+			.then(setApplication)
+	}, [data, decrypt])
 
 	useEffect(() => {
 		if(!application || !application?.fields?.length) {
@@ -179,8 +188,8 @@ function ViewApplication() {
 				pb={8}
 				px={10}
 			>
-				<Breadcrumbs path={['My Applications', 'Grant Application']} />
 				<Form
+					grantID={application?.grant.id}
 					chainId={
 						application ? getSupportedChainIdFromSupportedNetwork(
             application!.grant.workspace.supportedNetworks[0],

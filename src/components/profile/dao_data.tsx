@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Flex, Grid, Heading, Text } from '@chakra-ui/react'
 import { getAverageTime } from 'src/utils/calculatingUtils'
 
@@ -11,7 +12,7 @@ interface Props {
 }
 
 function DaoData({ disbursed, applicants, winners, fundTimes, applicationTime }: Props) {
-
+	const { t } = useTranslation()
 	return (
 		<Grid
 			gap='1rem'
@@ -39,7 +40,7 @@ function DaoData({ disbursed, applicants, winners, fundTimes, applicationTime }:
 					color='#AAAAAA'
 					width='150px'
 				>
-					Grants Disbursed
+					{t('/profile.grants_disbursed')}
 				</Text>
 			</Flex>
 
@@ -56,7 +57,7 @@ function DaoData({ disbursed, applicants, winners, fundTimes, applicationTime }:
 					fontWeight='400'
 					color='#AAAAAA'
 				>
-					Applicants
+					{t('/profile.proposals')}
 				</Text>
 			</Flex>
 
@@ -73,7 +74,7 @@ function DaoData({ disbursed, applicants, winners, fundTimes, applicationTime }:
 					fontWeight='400'
 					color='#AAAAAA'
 				>
-					Winners
+					{t('/profile.accepted')}
 				</Text>
 			</Flex>
 

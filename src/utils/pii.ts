@@ -1,13 +1,16 @@
-import { useContext } from 'react'
+import { useCallback, useContext, useMemo } from 'react'
+import { GrantApplicationRequest, GrantApplicationUpdate } from '@questbook/service-validator-client'
 import { ec as EC } from 'elliptic'
 import { Wallet } from 'ethers'
 import {
 	arrayify,
 	keccak256,
 } from 'ethers/lib/utils'
-import { ApiClientsContext } from 'pages/_app'
-import { useGetGrantManagersWithPublicKeyQuery } from 'src/generated/graphql'
+import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { GetApplicationDetailsQuery, useGetGrantManagersWithPublicKeyQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
+import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import MAIN_LOGGER from 'src/utils/logger'
 
 const ec = new EC('secp256k1')
 
@@ -130,6 +133,192 @@ export function useGetPublicKeysOfGrantManagers(grantId: string | undefined, cha
 	}
 }
 
+export function useEncryptPiiForApplication(
+	grantId: string | undefined,
+	applicantPublicKey: string | undefined | null,
+	chainId: SupportedChainId,
+) {
+	const { webwallet, scwAddress } = useContext(WebwalletContext)!
+	const { fetch } = useGetPublicKeysOfGrantManagers(grantId, chainId)
+	const logger = useMemo(
+		() => MAIN_LOGGER.child({ grantId, 'pii': true }),
+		[grantId],
+	)
+
+	/**
+	 * @param data All the fields to encrypt
+	 * @returns The ready to push PII data
+	 */
+	const encryptPii = useCallback(
+		async(piiFields: GrantApplicationRequest['fields']) => {
+			if(!webwallet || !scwAddress) {
+				throw new Error('Zero Wallet not connected')
+			}
+
+			if(!grantId) {
+				throw new Error('Grant ID not provided')
+			}
+
+			// JSON serialize the data for it to be encrypted
+			const piiFieldsJson = JSON.stringify(piiFields)
+			const piiMap: GrantApplicationRequest['pii'] = {}
+			let publicKeys = await fetch()
+			// add our wallet's public key
+			// so we can access the sent information too
+			publicKeys = {
+				...publicKeys,
+				[scwAddress]: applicantPublicKey!,
+			}
+
+			logger.info({
+				fields: Object.keys(piiFields).length,
+				members: Object.keys(publicKeys).length,
+			}, 'encrypting fields')
+
+			await Promise.all(
+				Object.entries(publicKeys).map(async([address, pubKey]) => {
+					if(!pubKey) {
+						logger.info({ address }, 'pub key not present, ignoring...')
+						return
+					}
+
+					const secureChannel = await getSecureChannelFromPublicKey(
+						webwallet,
+						pubKey,
+						getKeyForGrantPii(grantId)
+					)
+					const data = await secureChannel.encrypt(piiFieldsJson)
+
+					logger.info({ address }, 'encrypted data')
+					// the subgraph can handle about 7000 bytes in a single field
+					// so if the data is too big, we upload it to IPFS, and set the hash
+					// we can unambigously determine if the encrypted data is an IPFS hash or not
+					// using a simple isIpfsHash function
+					if(data.length < 7000) {
+						piiMap[address] = data
+					} else {
+						logger.info(
+							{ data: data.length },
+							'data too large, uploading to IPFS...'
+						)
+						const { hash: ipfsHash } = await uploadToIPFS(data)
+						piiMap[address] = ipfsHash
+					}
+				})
+			)
+
+			return piiMap
+		}, [webwallet, grantId, fetch, scwAddress, logger]
+	)
+
+	/**
+	 * decrypted encrypted PII data
+	 * @param piiData the enc data
+	 * @returns Decrypted fields data
+	 */
+	const decryptPii = useCallback(
+		async(piiData: string) => {
+			if(!webwallet) {
+				throw new Error('Zero Wallet not connected')
+			}
+
+			if(!applicantPublicKey || !grantId) {
+				throw new Error('Grant ID or applicant public key not provided')
+			}
+
+			const secureChannel = await getSecureChannelFromPublicKey(
+				webwallet,
+				applicantPublicKey!,
+				getKeyForGrantPii(grantId!)
+			)
+
+			logger.info({ applicantPublicKey }, 'got secure channel with applicant')
+
+			const decrypted = await secureChannel.decrypt(piiData)
+
+			logger.info('decrypted PII data')
+
+			const json = JSON.parse(decrypted) as GrantApplicationRequest['fields']
+
+			return json
+		}, [webwallet, grantId, applicantPublicKey, logger]
+	)
+
+	const encrypt = useCallback(
+		async(
+			data: Pick<GrantApplicationUpdate, 'fields' | 'pii'>,
+			piiFields: string[]
+		) => {
+			if(data.fields) {
+				const piiFieldMap = Object.entries(data.fields).reduce(
+					(prev, [key, value]) => {
+						if(piiFields.includes(key)) {
+							prev[key] = value
+							delete data.fields![key]
+						}
+
+						return prev
+					}, { } as GrantApplicationRequest['fields']
+				)
+				data.pii = await encryptPii(piiFieldMap)
+			}
+		}, [encryptPii]
+	)
+
+	/**
+	 * decrypt a grant application if it has PII;
+	 * otherwise return as is
+	 */
+	const decrypt = useCallback(
+		async(app: GetApplicationDetailsQuery['grantApplication']) => {
+			if(app?.pii?.length) {
+				if(!scwAddress) {
+					logger.debug('skipping decryption, as scw not present')
+					return
+				}
+
+				const piiData = app.pii.find(p => {
+					const idLowerCase = p.id.toLowerCase()
+					return idLowerCase.endsWith(webwallet!.address.toLowerCase())
+						|| idLowerCase.endsWith(scwAddress.toLowerCase())
+				})
+				if(piiData) {
+					try {
+						const fields = await decryptPii(piiData.data)
+						// hacky way to copy the object
+						app = JSON.parse(JSON.stringify({
+							...app,
+							// also remove PII from the application
+							// since we don't require that anymore
+							pii: undefined
+						}))
+
+						// add all PII fields to the application
+						for(const id in fields) {
+							app!.fields.push({
+								id: `${app!.id}.${id}`,
+								values: fields[id]
+							})
+						}
+
+					} catch(err) {
+						logger.error({ err }, 'error in decrypting PII')
+					}
+				} else {
+					logger.warn('app has PII, but not encrypted for user')
+				}
+			}
+
+			return app
+		}, [scwAddress, webwallet, decryptPii]
+	)
+
+	return {
+		encrypt,
+		decrypt,
+	}
+}
+
 // /**
 //  * retreives the public key from a transaction
 //  * from: https://ethereum.stackexchange.com/questions/78815/ethers-js-recover-public-key-from-contract-deployment-via-v-r-s-values
@@ -158,6 +347,12 @@ export function useGetPublicKeysOfGrantManagers(grantId: string | undefined, cha
 // 	const msgBytes = arrayify(msgHash) // create binary hash
 // 	return recoverPublicKey(msgBytes, signature)
 // }
+
+/** key of a grant for encrypting PII; can pass as "extraInfo" when generating shared key */
+export function getKeyForGrantPii(grantId: string) {
+	return `grant:${grantId}`
+}
+
 
 /** key of an application; can pass as "extraInfo" when generating shared key */
 export function getKeyForApplication(applicationId: string) {

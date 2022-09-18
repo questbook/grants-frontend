@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button, Divider, HStack, Image, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, Spacer, Text, useToast, VStack } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
@@ -24,6 +25,7 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 	const { makeInvite, isBiconomyInitialised } = useMakeInvite(selectedRole || 0)
 
 	const [transactionHash, setTransactionHash] = useState<string>()
+	const { t } = useTranslation()
 	useEffect(() => {
 		if(router.query.tab === 'members') {
 			setSelectedRole(0x1)
@@ -69,14 +71,13 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 							align='left'
 							spacing='0'>
 							<Text fontSize='xl'>
-								Create Invite Link
+								{t('/manage_dao.create_link')}
 							</Text>
 							<Text
 								color='v2Grey'
 								fontWeight='light'
 								fontSize='0.8rem'>
-								An invite link will be created.
-								Share it only with your domain member.
+								{t('/manage_dao.create_link_description')}
 							</Text>
 						</VStack>
 					</HStack>
@@ -97,7 +98,7 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 							color='v2Grey'
 							fontWeight='light'
 							fontSize='0.8rem'>
-							Level of access the invited member will have to your domain
+							{t('/manage_dao.role_info')}
 						</Text>
 					</VStack>
 
@@ -133,7 +134,7 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 							onClick={createLink}
 							colorScheme='brandv2'
 							variant='primaryV2'>
-							Create invite link
+							{t('/manage_dao.create_link')}
 						</Button>
 					</HStack>
 				</ModalFooter>
@@ -166,7 +167,7 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 				}
 				steps={
 					[
-						'Sign transaction',
+						'Signing transaction with in-app wallet',
 						'Wait for confirmation',
 						'Invite link created on-chain'
 					]

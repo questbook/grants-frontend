@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Box, Flex, Text } from '@chakra-ui/react'
 import { Applicants } from 'src/v2/assets/custom chakra icons/Your Grants/Applicants'
 import { Funds } from 'src/v2/assets/custom chakra icons/Your Grants/Funds'
@@ -18,6 +19,7 @@ const StatsBanner = ({
 	funds: number
 	tokenSymbol: string
 }) => {
+	const { t } = useTranslation()
 	return (
 		<Flex
 			bg='white'
@@ -47,7 +49,7 @@ const StatsBanner = ({
 					fontSize='14px'
 					lineHeight='20px'
 					fontWeight='400'>
-					Applicants
+					{t('/your_grants/view_applicants.proposals')}
 				</Text>
 			</Flex>
 
@@ -79,7 +81,7 @@ const StatsBanner = ({
 					fontSize='14px'
 					lineHeight='20px'
 					fontWeight='400'>
-					Reviews
+					{t('/your_grants/view_applicants.reviews_completed')}
 				</Text>
 			</Flex>
 
@@ -109,7 +111,7 @@ const StatsBanner = ({
 					fontSize='14px'
 					lineHeight='20px'
 					fontWeight='400'>
-					Disbursed
+					{t('/your_grants/view_applicants.sent')}
 				</Text>
 			</Flex>
 		</Flex>

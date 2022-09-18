@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box, Button, Flex, Text } from '@chakra-ui/react'
 import {
 	Token,
-	WorkspaceUpdateRequest,
 } from '@questbook/service-validator-client'
 import axios from 'axios'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
@@ -16,77 +16,35 @@ import Details from 'src/components/your_grants/create_grant/form/2_details'
 import ApplicantDetails from 'src/components/your_grants/create_grant/form/3_applicantDetails'
 import GrantRewardsInput from 'src/components/your_grants/create_grant/form/4_rewards'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
+import { CHAIN_INFO, SupportedChainId } from 'src/constants/chains'
 import SAFES_ENDPOINTS_MAINNETS from 'src/constants/safesEndpoints.json'
 import SAFES_ENDPOINTS_TESTNETS from 'src/constants/safesEndpointsTest.json'
 import strings from 'src/constants/strings.json'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
-import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'
 import { SafeToken } from 'src/types'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { CHAIN_INFO } from 'src/constants/chains'
 
 const SAFES_ENDPOINTS = { ...SAFES_ENDPOINTS_MAINNETS, ...SAFES_ENDPOINTS_TESTNETS }
 type ValidChainID = keyof typeof SAFES_ENDPOINTS;
 
 function Form({
-	refs,
 	onSubmit,
 	hasClicked,
 }: {
-  refs: any[]
   onSubmit: (data: any) => void
   hasClicked: boolean
 }) {
 	const CACHE_KEY = strings.cache.create_grant
-	const { workspace } = React.useContext(ApiClientsContext)!
+	const { workspace } = useContext(ApiClientsContext)!
 
-	const [currentChain, setCurrentChain] = React.useState(
-    getSupportedChainIdFromWorkspace(workspace)!,
+	const [currentChain, setCurrentChain] = useState(
+    	getSupportedChainIdFromWorkspace(workspace)!,
 	)
 
-	const [getKey, setGetKey] = React.useState(`${currentChain}-${CACHE_KEY}-${workspace?.id}`)
+	const [getKey, setGetKey] = useState(`${currentChain}-${CACHE_KEY}-${workspace?.id}`)
 
-	React.useEffect(() => {
-		setCurrentChain(getSupportedChainIdFromWorkspace(workspace)!)
-		setGetKey(`${currentChain}-${CACHE_KEY}-${workspace?.id}`)
-
-	}, [workspace, currentChain])
-
-	const { data: accountData } = useQuestbookAccount()
 	const maxDescriptionLength = 300
 	const [title, setTitle] = useState('')
 	const [summary, setSummary] = useState('')
-
-	const [pk, setPk] = React.useState<string>('*')
-	const {
-		RenderModal,
-		setHiddenModalOpen: setHiddenPkModalOpen,
-		transactionData: newPkTransactionData,
-		publicKey: newPublicKey,
-	} = useSubmitPublicKey()
-
-	useEffect(() => {
-		/// // console.log(pk);
-		if(!accountData?.address) {
-			return
-		}
-
-		if(!workspace) {
-			return
-		}
-
-		const k = workspace?.members?.find(
-			(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
-		)?.publicKey?.toString()
-		// // console.log(k);
-		if(k && k.length > 0) {
-			setPk(k)
-		} else {
-			setPk('')
-		}
-
-	}, [workspace, accountData])
 
 	const [titleError, setTitleError] = useState(false)
 	const [summaryError, setSummaryError] = useState(false)
@@ -103,51 +61,8 @@ function Form({
 	const [detailsError, setDetailsError] = useState(false)
 
 	const [shouldEncrypt, setShouldEncrypt] = useState(false)
-	const [hasOwnerPublicKey, setHasOwnerPublicKey] = useState(false)
-	const [keySubmitted, setKeySubmitted] = useState(false)
-	const [publicKey] = React.useState<WorkspaceUpdateRequest>({
-		publicKey: '',
-	})
-	const [transactionData, , , isBiconomyInitialised] = useUpdateWorkspacePublicKeys(publicKey)
-
-	const [admins, setAdmins] = React.useState<any[]>([])
-	const [maximumPoints, setMaximumPoints] = React.useState(5)
-
-	// [TODO] : if different grantManagers are required for different grants
-	// const [grantManagers, setGrantManagers] = useState<any[]>([accountData?.address]);
-	// const toggleGrantManager = (address: string) => {
-	//   const newGrantManagers = grantManagers.includes(address)
-	//     ? grantManagers.filter((grantManager) => grantManager !== address)
-	//     : [...grantManagers, address];
-	//   setGrantManagers(newGrantManagers);
-	// };
-
-	React.useEffect(() => {
-		if(transactionData) {
-			setKeySubmitted(true)
-		}
-	}, [transactionData])
-
-	React.useEffect(() => {
-		if(workspace && workspace.members && accountData && accountData.address) {
-			const hasPubKey = workspace.members.some(
-				(member) => member.actorId.toLowerCase() === accountData?.address?.toLowerCase()
-          && member.publicKey
-          && member.publicKey !== '',
-			)
-			// console.log('Workspace', workspace)
-			setHasOwnerPublicKey(hasPubKey)
-		}
-	}, [accountData, workspace])
-
-	React.useEffect(() => {
-		if(workspace && workspace.members) {
-			const adminAddresses = workspace.members
-				.filter((member) => member.publicKey && member.publicKey !== '')
-				.map((member) => member.actorId)
-			setAdmins(adminAddresses)
-		}
-	}, [workspace])
+	const [admins, setAdmins] = useState<any[]>([])
+	const [maximumPoints, setMaximumPoints] = useState(5)
 
 	const applicantDetails = applicantDetailsList
 		.map(({
@@ -171,21 +86,19 @@ function Form({
 			}
 		})
 		.filter((obj) => obj !== null)
-	const [detailsRequired, setDetailsRequired] = React.useState(applicantDetails)
+	const [detailsRequired, setDetailsRequired] = useState(applicantDetails)
 	// const [extraField, setExtraField] = useState(false);
 
-	const [customFieldsOptionIsVisible, setCustomFieldsOptionIsVisible] = React.useState(false)
-	const [customFields, setCustomFields] = React.useState<any[]>([
+	const [customFieldsOptionIsVisible, setCustomFieldsOptionIsVisible] = useState(false)
+	const [customFields, setCustomFields] = useState<any[]>([
 		{
 			value: '',
 			isError: false,
 		},
 	])
-	const [multipleMilestones, setMultipleMilestones] = React.useState(false)
-	const [milestoneSelectOptionIsVisible, setMilestoneSelectOptionIsVisible] = React.useState(false)
-	const [defaultMilestoneFields, setDefaultMilestoneFields] = React.useState<
-  any[]
-  >([])
+	const [multipleMilestones, setMultipleMilestones] = useState(false)
+	const [milestoneSelectOptionIsVisible, setMilestoneSelectOptionIsVisible] = useState(false)
+	const [defaultMilestoneFields, setDefaultMilestoneFields] = useState<any[]>([])
 
 	const toggleDetailsRequired = (index: number) => {
 		const newDetailsRequired = [...detailsRequired];
@@ -196,8 +109,8 @@ function Form({
 		setDetailsRequired(newDetailsRequired)
 	}
 
-	const [rubricRequired, setRubricRequired] = React.useState(false)
-	const [rubrics, setRubrics] = React.useState<any>([
+	const [rubricRequired, setRubricRequired] = useState(false)
+	const [rubrics, setRubrics] = useState<any>([
 		{
 			name: '',
 			nameError: false,
@@ -206,71 +119,49 @@ function Form({
 		},
 	])
 
-	const [shouldEncryptReviews, setShouldEncryptReviews] = React.useState(false)
+	const [shouldEncryptReviews, setShouldEncryptReviews] = useState(false)
 
 	// const [extraFieldDetails, setExtraFieldDetails] = useState('');
 	// const [extraFieldError, setExtraFieldError] = useState(false);
 
 	// Grant Rewards and Deadline
-	const [reward, setReward] = React.useState('')
-	const [rewardToken, setRewardToken] = React.useState<Token>({
+	const [reward, setReward] = useState('')
+	const [rewardToken, setRewardToken] = useState<Token>({
 		label: '',
 		address: '',
 		decimal: '18',
 		iconHash: '',
 	})
-	const [rewardError, setRewardError] = React.useState(false)
+	const [rewardError, setRewardError] = useState(false)
+	const [supportedCurrencies, setSupportedCurrencies] = useState(getSupportedCurrencies(currentChain))
 
-	// const [supportCurrencies, setsupportCurrencies] = useState([{}]);
+	const [rewardCurrency, setRewardCurrency] = useState('')
+	const [rewardCurrencyAddress, setRewardCurrencyAddress] = useState('')
 
-	// const supportedCurrencies = Object.keys(
-	// 	CHAIN_INFO[currentChain]?.supportedCurrencies || [],
-	// )
-	// 	.map((address) => CHAIN_INFO[currentChain]?.supportedCurrencies[address])
-	// 	.map((currency) => ({ ...currency, id: currency.address }))
-
-	// const [rewardCurrency, setRewardCurrency] = React.useState(supportedCurrencies.length > 0
-	// 	? supportedCurrencies[0].label : '')
-	// const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState(
-	// 	supportedCurrencies.length > 0 ? supportedCurrencies[0].id : '',
-	// )
-	// console.log(supportedCurrencies)
+	const [date, setDate] = useState('')
+	const [dateError, setDateError] = useState(false)
 
 	const safeAddress = workspace?.safe?.address
 	const safeNetwork = workspace?.safe?.chainId as ValidChainID
+	const [oldDate, setOldDate] = React.useState(false)
 	const isEVM = parseInt(safeNetwork) !== 900001
 	let transactionServiceURL
-	// let supportedCurrencies: [] = []
-	const [supportedCurrencies, setSupportedCurrencies] = useState([])
 
-	const [rewardCurrency, setRewardCurrency] = React.useState('')
-	const [rewardCurrencyAddress, setRewardCurrencyAddress] = React.useState('')
+	useEffect(() => {
+		setCurrentChain(getSupportedChainIdFromWorkspace(workspace)!)
+		setGetKey(`${currentChain}-${CACHE_KEY}-${workspace?.id}`)
+	}, [workspace, currentChain])
 
-	/**
-   * checks if the workspace already has custom tokens added
-   * if custom tokens found, append it to supportedCurrencies
-   */
-	// if(workspace?.tokens) {
-	// 	for(let i = 0; i < workspace.tokens.length; i += 1) {
-	// 		supportedCurrencies.push({
-	// 			id: workspace.tokens[i].address,
-	// 			address: workspace.tokens[i].address,
-	// 			decimals: workspace.tokens[i].decimal,
-	// 			pair: '',
-	// 			label: workspace.tokens[i].label,
-	// 			icon: getUrlForIPFSHash(workspace.tokens[i].iconHash),
-	// 		})
-	// 	}
-	// }
+	useEffect(() => {
+		if(workspace?.members) {
+			const adminAddresses = workspace.members
+				.filter((member) => member.publicKey && member.publicKey !== '')
+				.map((member) => member.actorId)
+			setAdmins(adminAddresses)
+		}
+	}, [workspace])
 
-	React.useEffect(() => {
-		// // console.log(currentChain);
-		// if(currentChain) {
-		// 	const supportedCurrencies = Object.keys(
-		// 		CHAIN_INFO[currentChain].supportedCurrencies,
-		// 	)
-		// 		.map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
-		// 		.map((currency) => ({ ...currency, id: currency.address }))
+	useEffect(() => {
 		if(safeNetwork) {
 			transactionServiceURL = SAFES_ENDPOINTS[safeNetwork]
 			// console.log('transaction service url', safeNetwork, transactionServiceURL)
@@ -278,17 +169,15 @@ function Form({
 			axios.get(gnosisUrl).then(res => {
 				// console.log(res.data)
 				let tokens
-				if (safeNetwork === "42220"){
-					console.log('reward currency', tokens)
+				if(safeNetwork === '42220') {
 					let localTokenData: {icon: string, label: string, address: string, decimals: number, pair?: string}
-					
+
 					tokens = res.data.filter((token: SafeToken) => token.tokenAddress).map((token: SafeToken) => {
 						if(token.tokenAddress) {
-							if(CHAIN_INFO[safeNetwork].supportedCurrencies.hasOwnProperty(token.tokenAddress.toLowerCase())){
+							if(CHAIN_INFO[safeNetwork].supportedCurrencies.hasOwnProperty(token.tokenAddress.toLowerCase())) {
 								localTokenData = CHAIN_INFO[safeNetwork].supportedCurrencies[token.tokenAddress.toLowerCase()]
 							}
-							
-							console.log('currency', localTokenData)
+
 							const currency = {
 								'id': token.tokenAddress,
 								'address': token.tokenAddress,
@@ -300,8 +189,6 @@ function Form({
 							return currency
 						}
 					})
-					
-						
 				} else {
 					tokens = res.data.filter((token: SafeToken) => token.tokenAddress).map((token: SafeToken) => {
 						if(token.tokenAddress) {
@@ -316,30 +203,25 @@ function Form({
 							return currency
 						}
 					})
-				setRewardToken({ address: tokens[0]?.address, decimal: tokens[0]?.decimals.toString(), label: tokens[0]?.label, iconHash: tokens[0]?.icon })
+					setRewardToken({ address: tokens[0]?.address, decimal: tokens[0]?.decimals.toString(), label: tokens[0]?.label, iconHash: tokens[0]?.icon })
 				}
+
 				setSupportedCurrencies(tokens)
 				// console.log('balances', supportedCurrencies)
 				setRewardCurrency(tokens[0]?.label)
-				
 				setRewardCurrencyAddress(tokens[0]?.address)
 			})
 		}
-
-
-	}, [currentChain])
-
-	const [date, setDate] = React.useState('')
-	const [dateError, setDateError] = React.useState(false)
+	}, [currentChain, safeNetwork])
 
 	const handleOnSubmit = () => {
 		let error = false
-		if(title.length <= 0) {
+		if(!title || title.length <= 0) {
 			setTitleError(true)
 			error = true
 		}
 
-		if(summary.length <= 0) {
+		if(!summary || summary.length <= 0) {
 			setSummaryError(true)
 			error = true
 		}
@@ -353,13 +235,22 @@ function Form({
 		//   setExtraFieldError(true);
 		//   error = true;
 		// }
-		if(reward.length <= 0) {
+		if(!reward || reward.length <= 0) {
 			setRewardError(true)
 			error = true
 		}
 
-		if(date.length <= 0) {
+		if(!date || date.length <= 0) {
 			setDateError(true)
+			error = true
+		}
+
+		const now = new Date()
+		const todayDateString = `${now.getFullYear()}-${now.getMonth() + 1 < 10 ? '0' : ''}${now.getMonth() + 1}-${now.getDate()}`
+		const today = new Date(todayDateString)
+		if(new Date(date) < today) {
+			setDateError(true)
+			setOldDate(true)
 			error = true
 		}
 
@@ -418,7 +309,7 @@ function Form({
 
 			const requiredDetails = {} as any
 			detailsRequired.forEach((detail) => {
-				if(detail && detail.required) {
+				if(detail?.required) {
 					requiredDetails[detail.id] = {
 						title: detail.title,
 						inputType: detail.inputType,
@@ -460,7 +351,7 @@ function Form({
 				}
 			}
 
-			if(shouldEncrypt && (keySubmitted || hasOwnerPublicKey)) {
+			if(shouldEncrypt) {
 				if(fields.applicantEmail) {
 					fields.applicantEmail = { ...fields.applicantEmail, pii: true }
 				}
@@ -512,119 +403,11 @@ function Form({
 				},
 			}
 
-			if((shouldEncrypt || shouldEncryptReviews) && (!pk || pk === '*')) {
-				setHiddenPkModalOpen(true)
-				return
-			}
-
 			onSubmit(s)
 		}
 	}
 
 	useEffect(() => {
-		if(newPkTransactionData && newPublicKey && newPublicKey.publicKey) {
-			// // console.log(newPublicKey);
-			setPk(newPublicKey.publicKey)
-			const detailsString = JSON.stringify(
-				convertToRaw(details.getCurrentContent()),
-			)
-
-			const requiredDetails = {} as any
-			detailsRequired.forEach((detail) => {
-				if(detail && detail.required) {
-					requiredDetails[detail.id] = {
-						title: detail.title,
-						inputType: detail.inputType,
-					}
-				}
-			})
-			const fields = { ...requiredDetails }
-
-			const rubric = {} as any
-
-			if(rubricRequired) {
-				rubrics.forEach((r: any, index: number) => {
-					rubric[index.toString()] = {
-						title: r.name,
-						details: r.description,
-						maximumPoints,
-					}
-				})
-			}
-
-			if(multipleMilestones) {
-				fields.isMultipleMilestones = {
-					title: 'Milestones',
-					inputType: 'array',
-				}
-			}
-
-			if(fields.teamMembers) {
-				fields.memberDetails = {
-					title: 'Member Details',
-					inputType: 'array',
-				}
-			}
-
-			if(fields.fundingBreakdown) {
-				fields.fundingAsk = {
-					title: 'Funding Ask',
-					inputType: 'short-form',
-				}
-			}
-
-			if(shouldEncrypt && (keySubmitted || hasOwnerPublicKey)) {
-				if(fields.applicantEmail) {
-					fields.applicantEmail = { ...fields.applicantEmail, pii: true }
-				}
-
-				if(fields.memberDetails) {
-					fields.memberDetails = { ...fields.memberDetails, pii: true }
-				}
-			}
-
-			if(customFieldsOptionIsVisible && customFields.length > 0) {
-				customFields.forEach((customField: any, index: number) => {
-					const santizedCustomFieldValue = customField.value.split(' ').join('\\s')
-					fields[`customField${index}-${santizedCustomFieldValue}`] = {
-						title: customField.value,
-						inputType: 'short-form',
-					}
-				})
-			}
-
-			if(defaultMilestoneFields.length > 0) {
-				defaultMilestoneFields.forEach((defaultMilestoneField: any, index: number) => {
-					const santizedDefaultMilestoneFieldValue = defaultMilestoneField.value.split(' ').join('\\s')
-					fields[`defaultMilestone${index}-${santizedDefaultMilestoneFieldValue}`] = {
-						title: defaultMilestoneField.value,
-						inputType: 'short-form',
-					}
-				})
-			}
-
-			const s = {
-				title,
-				summary,
-				details: detailsString,
-				fields,
-				reward,
-				rewardCurrencyAddress,
-				rewardToken,
-				date,
-				grantManagers: admins,
-				rubric: {
-					isPrivate: shouldEncryptReviews,
-					rubric,
-				},
-			}
-
-			onSubmit(s)
-		}
-
-	}, [newPkTransactionData, newPublicKey])
-	React.useEffect(() => {
-		// console.log('Key: ', getKey)
 		if(getKey.includes('undefined') || typeof window === 'undefined') {
 			return
 		}
@@ -707,7 +490,7 @@ function Form({
 
 	}, [getKey])
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if(getKey.includes('undefined') || typeof window === 'undefined') {
 			return
 		}
@@ -755,6 +538,8 @@ function Form({
 		milestoneSelectOptionIsVisible,
 	])
 
+	const { t } = useTranslation()
+
 	return (
 		<Flex
 			direction='column'
@@ -762,17 +547,7 @@ function Form({
 		>
 			<Heading
 				mt='18px'
-				title='Create a grant' />
-			<Text
-				ref={refs[0]}
-				fontSize='18px'
-				fontWeight='700'
-				lineHeight='26px'
-				letterSpacing={0}
-				mt='30px'
-			>
-				Grant Intro
-			</Text>
+				title='Create a new Grant' />
 			<Box mt='20px' />
 			<Title
 				title={title}
@@ -787,14 +562,13 @@ function Form({
 			/>
 
 			<Text
-				ref={refs[1]}
 				fontSize='18px'
 				fontWeight='700'
 				lineHeight='26px'
 				letterSpacing={0}
 				mt={4}
 			>
-				Grant Details
+				{t('/create-grant.instructions_title')}
 			</Text>
 			<Box mt='20px' />
 			<Details
@@ -805,14 +579,13 @@ function Form({
 			/>
 
 			<Text
-				ref={refs[2]}
 				fontSize='18px'
 				fontWeight='700'
 				lineHeight='26px'
 				letterSpacing={0}
 				mt='40px'
 			>
-				Applicant Details
+				{t('/create-grant.proposal_form.title')}
 			</Text>
 			<Box mt='20px' />
 			<ApplicantDetails
@@ -841,16 +614,6 @@ function Form({
 				// setMaximumPoints={setMaximumPoints}
 			/>
 
-			<Text
-				ref={refs[3]}
-				fontSize='18px'
-				fontWeight='700'
-				lineHeight='26px'
-				letterSpacing={0}
-				mt='40px'
-			>
-				Reward and Deadline
-			</Text>
 			<GrantRewardsInput
 				reward={reward}
 				setReward={setReward}
@@ -871,57 +634,27 @@ function Form({
 				shouldEncryptReviews={shouldEncryptReviews}
 				setShouldEncryptReviews={setShouldEncryptReviews}
 				isEVM={isEVM}
+				oldDate={oldDate}
+				setOldDate={setOldDate}
 			/>
-
-			{/* <Flex
-				alignItems='flex-start'
-				mt={8}
-				mb={10}
-				justify='stretch'>
-				<Image
-					display='inline-block'
-					h='10px'
-					w='10px'
-					src='/ui_icons/info_brand.svg'
-					mt={1}
-					mr={2}
-				/>
-				{' '}
-				<Text
-					variant='footer'
-					w='100%'>
-					By clicking Create Grant you&apos;ll have to approve this transaction
-					in your wallet.
-					{' '}
-					<Link
-						href='https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46'
-						isExternal
-					>
-						Learn more
-					</Link>
-					{' '}
-					<Image
-						display='inline-block'
-						h='10px'
-						w='10px'
-						src='/ui_icons/link.svg'
-					/>
-				</Text>
-			</Flex> */}
 
 			<Button
 				mt={8}
-				disabled={!isBiconomyInitialised}
 				py={hasClicked ? 2 : 0}
 				onClick={hasClicked ? () => {} : handleOnSubmit}
 				variant='primary'
 			>
 				{hasClicked ? <Loader /> : 'Create Grant'}
 			</Button>
-
-			<RenderModal />
 		</Flex>
 	)
+}
+
+function getSupportedCurrencies(chainId: SupportedChainId) {
+	return Object.values(CHAIN_INFO[chainId]?.supportedCurrencies || { })
+		.map(
+			t => ({ id: t.address, ...t })
+		)
 }
 
 export default Form

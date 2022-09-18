@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import React, { useContext } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box,
 	Button,
@@ -7,6 +8,7 @@ import {
 	Flex,
 	Image,
 	Text,
+	Tooltip,
 } from '@chakra-ui/react'
 import { GrantApplicationRequest } from '@questbook/service-validator-client'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
@@ -19,15 +21,14 @@ import Funding from 'src/components/explore_grants/apply_grant/form/4_funding'
 import CustomFields from 'src/components/explore_grants/apply_grant/form/5_customFields'
 import Loader from 'src/components/ui/loader'
 import VerifiedBadge from 'src/components/ui/verified_badge'
-import { SupportedChainId } from 'src/constants/chains'
+import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import strings from 'src/constants/strings.json'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useSubmitApplication from 'src/hooks/useSubmitApplication'
 import { GrantApplicationFieldsSubgraph } from 'src/types/application'
 import { parseAmount } from 'src/utils/formattingUtils'
 import { addAuthorizedUser } from 'src/utils/gaslessUtils'
-import { delay } from 'src/utils/generics'
+import { useEncryptPiiForApplication } from 'src/utils/pii'
 import { isValidEmail } from 'src/utils/validationUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
@@ -38,6 +39,7 @@ interface Props {
   grantId: string
   daoLogo: string
   workspaceId: string
+  safeNetwork: string
   isGrantVerified: boolean
   funding: string
   rewardAmount: string
@@ -47,7 +49,6 @@ interface Props {
   rewardCurrencyAddress: string | undefined
   grantRequiredFields: string[]
   piiFields: string[]
-  members: any[]
   acceptingApplications: boolean
   shouldShowButton: boolean
   defaultMilestoneFields: any[]
@@ -63,6 +64,7 @@ function Form({
 	grantId,
 	daoLogo,
 	workspaceId,
+	safeNetwork,
 	isGrantVerified,
 	funding,
 	rewardAmount,
@@ -72,7 +74,6 @@ function Form({
 	rewardCurrencyAddress,
 	grantRequiredFields,
 	piiFields,
-	members,
 	acceptingApplications,
 	shouldShowButton,
 	defaultMilestoneFields
@@ -80,13 +81,14 @@ function Form({
 	const CACHE_KEY = strings.cache.apply_grant
 	const getKey = `${chainId}-${CACHE_KEY}-${grantId}`
 
+	const { webwallet: signer } = useContext(WebwalletContext)!
+	const { encrypt } = useEncryptPiiForApplication(grantId, signer?.publicKey, chainId || defaultChainId)
+
 	const [shouldRefreshNonce, setShouldRefreshNonce] = React.useState<boolean>()
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = React.useState<number | undefined>()
 
 	const { data: accountData, nonce } = useQuestbookAccount(shouldRefreshNonce)
 
-	const { encryptApplicationPII } = useApplicationEncryption()
-	const { webwallet: signer } = useContext(WebwalletContext)!
 	const [applicantName, setApplicantName] = React.useState('')
 	const [applicantNameError, setApplicantNameError] = React.useState(false)
 
@@ -145,6 +147,12 @@ function Form({
 		},
 	])
 
+	const totalMilestoneReward = projectMilestones.reduce((total, current) => {
+		return total + parseInt(current.milestoneReward === '' ? '0' : current.milestoneReward)
+	}, 0)
+
+	const { t } = useTranslation()
+
 	React.useEffect(() => {
 		if(defaultMilestoneFields && defaultMilestoneFields.length > 0) {
 			setProjectMilestones(
@@ -157,9 +165,6 @@ function Form({
 			)
 		}
 	}, [defaultMilestoneFields])
-
-	const [fundingAsk, setFundingAsk] = React.useState('')
-	const [fundingAskError, setFundingAskError] = React.useState(false)
 
 	const [fundingBreakdown, setFundingBreakdown] = React.useState('')
 	const [fundingBreakdownError, setFundingBreakdownError] = React.useState(false)
@@ -186,11 +191,11 @@ function Form({
 
 	const [formData, setFormData] = React.useState<GrantApplicationRequest>()
 	const [, txnLink, loading, isBiconomyInitialised] = useSubmitApplication(
-    formData!,
-    setNetworkTransactionModalStep,
-    chainId,
-    grantId,
-    workspaceId,
+		formData!,
+		setNetworkTransactionModalStep,
+		chainId,
+		grantId,
+		workspaceId,
 	)
 
 	React.useEffect(() => {
@@ -315,10 +320,10 @@ function Form({
 			error = true
 		}
 
-		if(fundingAsk === '' && grantRequiredFields.includes('fundingAsk')) {
-			setFundingAskError(true)
-			error = true
-		}
+		// if(fundingAsk === '' && grantRequiredFields.includes('fundingAsk')) {
+		// 	setFundingAskError(true)
+		// 	error = true
+		// }
 
 		if(
 			fundingBreakdown === ''
@@ -360,21 +365,14 @@ function Form({
 		const data: GrantApplicationRequest = {
 			grantId,
 			applicantId: await signer?.getAddress(),
+			applicantPublicKey: signer?.publicKey,
 			fields: {
 				applicantName: [{ value: applicantName }],
 				applicantEmail: [{ value: applicantEmail }],
 				applicantAddress: [{ value: applicantAddress }],
 				projectName: [{ value: projectName }],
 				projectDetails: [{ value: projectDetailsString }],
-				fundingAsk: fundingAsk !== '' ? [
-					{
-						value: parseAmount(
-							fundingAsk,
-							rewardCurrencyAddress,
-							rewardDecimal,
-						),
-					},
-				] : [],
+				fundingAsk: [],
 				fundingBreakdown: [{ value: fundingBreakdown }],
 				teamMembers: [{ value: Number(teamMembers).toString() }],
 				memberDetails: membersDescription.map((md) => ({
@@ -407,15 +405,12 @@ function Form({
 		customFields.forEach((customField) => {
 			data.fields[customField.title] = [{ value: customField.value }]
 		})
-		// console.log(data)
-		let encryptedData
-		if(piiFields.length > 0 && members) {
-			encryptedData = await encryptApplicationPII(data, piiFields, members)
 
-			// console.log('encryptedData -----', encryptedData)
+		if(piiFields.length) {
+			await encrypt(data, piiFields)
 		}
 
-		setFormData(encryptedData || data)
+		setFormData(data)
 	}
 
 	React.useEffect(() => {
@@ -475,9 +470,9 @@ function Form({
 			setProjectMilestones(formDataLocal?.projectMilestones)
 		}
 
-		if(formDataLocal?.fundingAsk) {
-			setFundingAsk(formDataLocal?.fundingAsk)
-		}
+		// if(formDataLocal?.fundingAsk) {
+		// 	setFundingAsk(formDataLocal?.fundingAsk)
+		// }
 
 		if(formDataLocal?.fundingBreakdown) {
 			setFundingBreakdown(formDataLocal?.fundingBreakdown)
@@ -506,7 +501,7 @@ function Form({
 			projectDetails: convertToRaw(projectDetails.getCurrentContent()),
 			projectGoal,
 			projectMilestones,
-			fundingAsk,
+			// fundingAsk,
 			fundingBreakdown,
 			customFields,
 		}
@@ -526,7 +521,7 @@ function Form({
 		projectDetails,
 		projectGoal,
 		projectMilestones,
-		fundingAsk,
+		// fundingAsk,
 		fundingBreakdown,
 		customFields,
 	])
@@ -610,7 +605,7 @@ function Form({
 				fontSize='18px'
 				fontWeight='500'
 			>
-				Your Application Form
+				{t('/explore_grants/apply.your_proposal')}
 			</Text>
 			<Container
 				mt='-12px'
@@ -632,6 +627,7 @@ function Form({
 					setApplicantAddress={setApplicantAddress}
 					setApplicantAddressError={setApplicantAddressError}
 					grantRequiredFields={grantRequiredFields}
+					safeNetwork={safeNetwork!}
 				/>
 
 				<Box mt='43px' />
@@ -669,24 +665,17 @@ function Form({
 				/>
 
 				<Box mt='43px' />
-				{
-					grantRequiredFields.includes('fundingBreakdown') && (
-						<Funding
-							fundingAsk={fundingAsk}
-							setFundingAsk={setFundingAsk}
-							fundingAskError={fundingAskError}
-							setFundingAskError={setFundingAskError}
-							fundingBreakdown={fundingBreakdown}
-							setFundingBreakdown={setFundingBreakdown}
-							fundingBreakdownError={fundingBreakdownError}
-							setFundingBreakdownError={setFundingBreakdownError}
-							rewardAmount={rewardAmount}
-							rewardCurrency={rewardCurrency}
-							rewardCurrencyCoin={rewardCurrencyCoin}
-							grantRequiredFields={grantRequiredFields}
-						/>
-					)
-				}
+				<Funding
+					fundingBreakdown={fundingBreakdown}
+					setFundingBreakdown={setFundingBreakdown}
+					fundingBreakdownError={fundingBreakdownError}
+					setFundingBreakdownError={setFundingBreakdownError}
+					rewardAmount={rewardAmount}
+					rewardCurrency={rewardCurrency}
+					rewardCurrencyCoin={rewardCurrencyCoin}
+					grantRequiredFields={grantRequiredFields}
+					totalMilestoneReward={totalMilestoneReward}
+				/>
 
 				{
 					customFields && customFields.length > 0 && (
@@ -724,16 +713,36 @@ function Form({
 				subtitle='Submitting Application'
 				description={
 					<Flex direction='column'>
+						{
+							title.length > 30 ? (
+								<Tooltip label={title}>
+									<Text
+										variant='v2_title'
+										fontWeight='500'
+									>
+										{`${title?.substring(0, 30)}...`}
+
+									</Text>
+								</Tooltip>
+							) : (
+								<Text
+									variant='v2_title'
+									fontWeight='500'
+								>
+									{ title }
+								</Text>
+							)
+						}
 						<Text
-							variant='v2_title'
-							fontWeight='500'
+							variant='v2_metadata'
 						>
-							{title}
-						</Text>
-						<Text
-							variant='v2_body'
-						>
+							Payout address:
+							{' '}
 							{applicantAddress}
+							{' '}
+						</Text>
+						<Text variant='v2_metadata'>
+							Funds will be sent to this address.
 						</Text>
 					</Flex>
 				}
@@ -741,9 +750,9 @@ function Form({
 				steps={
 					[
 						'Uploading data to IPFS',
-						'Sign transaction',
-						'Waiting for transaction to complete',
-						'Waiting for transaction to be indexed',
+						'Signing transaction with in-app wallet',
+						'Waiting for transaction to complete on chain',
+						'Indexing transaction on graph protocol',
 						'Application submitted on-chain',
 					]
 				}

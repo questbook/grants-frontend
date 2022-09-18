@@ -1,6 +1,7 @@
 import React, {
 	ReactElement, useContext, useEffect, useState,
 } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box, Button,
 	Container, Flex, Image, Text } from '@chakra-ui/react'
@@ -69,6 +70,8 @@ function ViewApplicants() {
 			descriptionError: false,
 		},
 	])
+
+	const { t } = useTranslation()
 
 	useEffect(() => {
 		if(router && router.query) {
@@ -374,8 +377,6 @@ function ViewApplicants() {
 				px={10}
 				pos='relative'
 			>
-				<Breadcrumbs path={['My Grants', 'View Applicants']} />
-
 				{
 					isAdmin && (
 						<Box
@@ -385,7 +386,7 @@ function ViewApplicants() {
 							<Button
 								variant='primary'
 								onClick={() => setRubricDrawerOpen(true)}>
-								{(grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ? 'Edit Evaluation Rubric' : 'Setup Evaluation Rubric'}
+								{(grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ? t('/your_grants/view_applicants.edit_review_process') : t('/your_grants/view_applicants.create_review_process')}
 							</Button>
 						</Box>
 					)
@@ -461,7 +462,7 @@ function ViewApplicants() {
 												color='#717A7C'
 												fontWeight='400'
 												mt={2}>
-												New applicants cannot apply to an archived grant.
+												{t('/your_grants/view_applicants.no_proposals_on_archived')}
 											</Text>
 										</Flex>
 										<Box mr='auto' />

@@ -18,6 +18,7 @@ import logger from 'src/utils/logger'
 
 export default function useResubmitApplication(
 	data: GrantApplicationUpdate,
+	setCurrentStep: (step: number | undefined) => void,
 	chainId?: SupportedChainId,
 	applicationId?: string,
 ) {
@@ -29,7 +30,7 @@ export default function useResubmitApplication(
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
-	const { validatorApi, workspace } = apiClients
+	const { validatorApi, workspace, subgraphClients } = apiClients
 
 	const currentChainId = useChainId()
 	const applicationRegistryContract = useQBContract('applications', chainId)
@@ -86,6 +87,7 @@ export default function useResubmitApplication(
 			setLoading(true)
 			// // console.log('calling validate');
 			try {
+				setCurrentStep(0)
 
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
 					throw new Error('Zero wallet is not ready')
@@ -103,6 +105,8 @@ export default function useResubmitApplication(
 				if(!ipfsHash) {
 					throw new Error('Error validating grant data')
 				}
+
+				setCurrentStep(1)
 
 				// const txn = await applicationRegistryContract.updateApplicationMetadata(
 				// 	applicationId!,
@@ -127,16 +131,26 @@ export default function useResubmitApplication(
 					nonce
 				)
 
+				setCurrentStep(2)
+
 				if(response) {
 					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
 					setTransactionData(receipt)
+
+					setCurrentStep(3)
+
+					await subgraphClients[currentChainId].waitForBlock(receipt?.blockNumber)
+
+					setCurrentStep(4)
 					await chargeGas(Number(workspace?.id), Number(txFee))
 				}
 
+				setCurrentStep(5)
 
 				setLoading(false)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
+				setCurrentStep(undefined)
 				const message = getErrorMessage(e)
 				setError(message)
 				setLoading(false)

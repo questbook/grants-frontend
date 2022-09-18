@@ -1,18 +1,11 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import {
-	Box, Flex, Image,
-	Text, } from '@chakra-ui/react'
-import Dropdown from 'src/components/ui/forms/dropdown'
+	Box, } from '@chakra-ui/react'
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
-import Tooltip from 'src/components/ui/tooltip'
 
 function Funding({
-	fundingAsk,
-	setFundingAsk,
-	fundingAskError,
-	setFundingAskError,
-
 	fundingBreakdown,
 	setFundingBreakdown,
 	fundingBreakdownError,
@@ -23,12 +16,9 @@ function Funding({
 	rewardCurrencyCoin,
 
 	grantRequiredFields,
-}: {
-  fundingAsk: string
-  setFundingAsk: (fundingAsk: string) => void
-  fundingAskError: boolean
-  setFundingAskError: (fundingAskError: boolean) => void
 
+	totalMilestoneReward,
+}: {
   fundingBreakdown: string
   setFundingBreakdown: (fundingBreakdown: string) => void
   fundingBreakdownError: boolean
@@ -39,10 +29,48 @@ function Funding({
   rewardCurrencyCoin: string
 
   grantRequiredFields: string[]
+
+	totalMilestoneReward: number
 }) {
+
+	const { t } = useTranslation()
+
+	const totalFundingSubtext = [
+		`Maximum reward for the grant is ${rewardAmount} ${rewardCurrency}.`,
+		`Your total funding ask is within the grant reward (${rewardAmount} ${rewardCurrency}).`,
+		`Your total funding ask is more than grant reward (${rewardAmount} ${rewardCurrency}).`
+	]
+
 	return (
 		<>
-			<Text
+			{
+				totalMilestoneReward === 0 ? (
+					<SingleLineInput
+						key='lol'
+						label={t('/explore_grants/apply.funding_ask')}
+						value={undefined}
+						placeholder={rewardAmount}
+						disabled
+						onChange={() => {}}
+						type='number'
+						subtext={totalMilestoneReward === 0 ? totalFundingSubtext[0] : totalMilestoneReward < parseInt(rewardAmount) ? totalFundingSubtext[1] : totalFundingSubtext[2]}
+					/>
+				) : (
+					<SingleLineInput
+						key='lol1'
+						label={t('/explore_grants/apply.funding_ask')}
+						value={totalMilestoneReward.toString()}
+						placeholder={rewardAmount}
+						disabled
+						onChange={() => {}}
+						type='number'
+						subtext={totalMilestoneReward === 0 ? totalFundingSubtext[0] : totalMilestoneReward < parseInt(rewardAmount) ? totalFundingSubtext[1] : totalFundingSubtext[2]}
+					/>
+				)
+			}
+
+
+			{/* <Text
 				fontWeight='700'
 				fontSize='16px'
 				lineHeight='20px'
@@ -81,7 +109,7 @@ function Funding({
 						fontWeight='400'>
 						{`${rewardAmount} ${rewardCurrency}`}
 						{' '}
-						{/* ≈ 2500 USD */}
+						≈ 2500 USD
 					</Text>
 				</Flex>
 			</Flex>
@@ -130,13 +158,13 @@ function Funding({
 						}
 					/>
 				</Box>
-			</Flex>
+			</Flex> */}
 
 			<Box mt={8} />
 
 			<MultiLineInput
-				placeholder='Write about how you plan to use the funds for your project - hiring, marketing etc.'
-				label='Funding Breakdown'
+				placeholder={t('/explore_grants/apply.funding_breakdown_placeholder')}
+				label={t('/explore_grants/apply.funding_breakdown')}
 				maxLength={1000}
 				value={fundingBreakdown}
 				onChange={
@@ -150,7 +178,6 @@ function Funding({
 				}
 				isError={fundingBreakdownError}
 				errorText='Required'
-				tooltip='Details on how the project will use funding to achieve goals..'
 				visible={grantRequiredFields.includes('fundingBreakdown')}
 			/>
 		</>

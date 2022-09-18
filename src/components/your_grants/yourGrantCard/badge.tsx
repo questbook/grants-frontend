@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Flex, Image, Text } from '@chakra-ui/react'
 import Deadline from 'src/components/ui/deadline'
 
@@ -9,6 +10,7 @@ function Badge({
   numOfApplicants: number
   endTimestamp: number
 }) {
+	const { t } = useTranslation()
 	return (
 		<Flex
 			direction='row'
@@ -22,7 +24,7 @@ function Badge({
 			<Text fontSize='xs'>
 				{numOfApplicants}
 				{' '}
-				Applicant
+				{t('/your-grant.cards.proposals')}
 				{numOfApplicants > 1 || numOfApplicants === 0 ? 's' : ''}
 			</Text>
 			<Image

@@ -249,36 +249,6 @@ function EditGrant() {
 
 	}, [data, error, queryLoading])
 
-	const sideBarDetails = [
-		['Grant Intro', 'Grant title, and summary', grantInfoRef],
-		[
-			'Grant Details',
-			'Requirements, expected deliverables, and milestones',
-			detailsRef,
-		],
-		[
-			'Applicant Details',
-			'About team, project, and funding breakdown.',
-			applicationDetailsRef,
-		],
-		[
-			'Reward and Deadline',
-			'Amount, type of payout & submission deadline',
-			grantRewardsRef,
-		],
-	]
-
-	const scroll = (ref: any, step: number) => {
-		if(!ref.current) {
-			return
-		}
-
-		ref.current.scrollIntoView({
-			behavior: 'smooth',
-			block: 'start',
-		})
-		setCurrentStep(step)
-	}
 
 	const [editData, setEditData] = useState<any>()
 	const [, txnLink, loading] = useEditGrant(editData, setNetworkTransactionModalStep, grantID)
@@ -301,7 +271,6 @@ function EditGrant() {
 				pb={8}
 				px={10}
 			>
-				<Breadcrumbs path={['Your Grants', 'Edit grant']} />
 				{
 					formData && (
 						<Form
@@ -313,17 +282,11 @@ function EditGrant() {
 									setEditData(editdata)
 								}
 							}
-							refs={sideBarDetails.map((detail) => detail[2])}
 						/>
 					)
 				}
 			</Container>
 
-			<Sidebar
-				sidebarDetails={sideBarDetails}
-				currentStep={currentStep}
-				scrollTo={scroll}
-			/>
 			<NetworkTransactionModal
 				isOpen={networkTransactionModalStep !== undefined}
 				subtitle='Editing a grant'
@@ -346,9 +309,9 @@ function EditGrant() {
 				steps={
 					[
 						'Uploading data to IPFS',
-						'Sign transaction',
-						'Waiting for transaction to complete',
-						'Waiting for transaction to be indexed',
+						'Signing transaction with in-app wallet',
+						'Waiting for transaction to complete on chain',
+						'Indexing transaction on graph protocol',
 						'Grant edited on-chain',
 					]
 				}

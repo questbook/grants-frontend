@@ -17,11 +17,13 @@ import RecipientDetails from 'src/v2/payouts/SendFundsModal/RecepientDetails'
 import SafeOwner from 'src/v2/payouts/SendFundsModal/SafeOwner'
 import { PhantomProvider } from 'src/v2/types/phantom'
 import { TransactionType } from 'src/v2/types/safe'
+import { useTranslation } from 'react-i18next'
 
 interface Props {
 	isOpen: boolean
 	onClose: () => void
 	safeAddress: string
+	safeNetwork: string
 	proposals: IApplicantData[]
 	safeTokenList: any
 	onChangeRecepientDetails: (applicationId: string, fieldName: string, fieldValue: string|number) => void
@@ -48,6 +50,7 @@ function SendFundsModal({
 	isOpen,
 	onClose,
 	safeAddress,
+	safeNetwork, 
 	proposals,
 	safeTokenList,
 	onChangeRecepientDetails,
@@ -58,6 +61,8 @@ function SendFundsModal({
 	onModalStepChange,
 	step,
 }: Props) {
+	const { t } = useTranslation()
+	const [recepientError, setRecepientError] = React.useState('')
 	return (
 		<>
 			<ModalComponent
@@ -102,7 +107,7 @@ function SendFundsModal({
 									lineHeight='24px'
 									fontWeight='500'
 								>
-									Send funds
+									{t('/your_grants/view_applicants.send_funds')}
 								</Text>
 								<Text
 									fontSize='14px'
@@ -111,7 +116,7 @@ function SendFundsModal({
 									mt={1}
 									color='#7D7DA0'
 								>
-									Use your safe to send funds to the applicant.
+									{t('/your_grants/view_applicants.send_funds_description')}
 								</Text>
 							</Flex>
 
@@ -171,7 +176,7 @@ function SendFundsModal({
 											ml={1}
 											color={step === 'RECEIPT_DETAILS' ? '#785EF0' : '#1F1F33'}
 										>
-											Recipient Details
+											{t('/your_grants/view_applicants.send_funds_recipient')}
 										</Text>
 									</Flex>
 								</Flex>
@@ -210,7 +215,7 @@ function SendFundsModal({
 											ml={1}
 											color={step === 'CONNECT_WALLET' || step === 'VERIFIED_OWNER' ? '#785EF0' : '#1F1F33'}
 										>
-											Verify as a safe owner
+											{t('/your_grants/view_applicants.send_funds_verify')}
 										</Text>
 									</Flex>
 								</Flex>
@@ -219,10 +224,12 @@ function SendFundsModal({
 							{
 								step === 'RECEIPT_DETAILS' ? (
 									<RecipientDetails
+										safeNetwork={safeNetwork}
 										safeTokenList={safeTokenList}
 										isEvmChain={isEvmChain}
 										applicantData={proposals[0]}
 										initiateTransactionData={initiateTransactionData?.length > 0 ? initiateTransactionData[0] : undefined}
+										onChangeRecepientError={setRecepientError}
 										onChangeRecepientDetails={onChangeRecepientDetails} />
 								) : (
 									<SafeOwner
@@ -253,9 +260,11 @@ function SendFundsModal({
 										ml='auto'
 										colorScheme='brandv2'
 										disabled={
-											initiateTransactionData?.length > 0 ?
+											(initiateTransactionData?.length > 0 ?
 												initiateTransactionData[0]?.selectedMilestone === undefined
-											|| initiateTransactionData[0]?.amount === undefined : false
+											|| initiateTransactionData[0]?.amount === undefined : false) || (
+												recepientError != '' 
+											)
 										}
 										onClick={
 											async() => {

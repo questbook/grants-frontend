@@ -11,19 +11,25 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
+import { useTranslation } from 'react-i18next'
+import { Safe } from '../types/safe'
 
 interface Props {
 	isOpen: boolean
 	onClose: () => void
 	proposalUrl: string
+	numOfTransactionsInitiated: number,
+	safe: Safe
 }
 
 function TransactionInitiatedModal({
 	isOpen,
 	onClose,
-	proposalUrl
+	proposalUrl,
+	numOfTransactionsInitiated,
+	safe
 }: Props) {
-
+	const { t } = useTranslation()
 	return (
 		<ModalComponent
 			isCentered
@@ -92,10 +98,11 @@ function TransactionInitiatedModal({
 						lineHeight='20px'
 						fontWeight='500'
 					>
-						Here’s what you can do next:
+						{t('/your_grants/view_applicants.send_funds_next_steps')}
 					</Text>
 
-					<Flex mt={6}>
+					{safe?.getNextSteps()?.map((step, index) => (
+						<Flex mt={4}>
 						<Box
 							fontSize='14px'
 							lineHeight='20px'
@@ -108,66 +115,17 @@ function TransactionInitiatedModal({
 							alignItems='center'
 							mr={4}
 						>
-							1
+							{index + 1}
 						</Box>
 						<Text
 							fontSize='14px'
 							lineHeight='20px'
 							fontWeight='400'
 						>
-							Open safe.
+							{step}
 						</Text>
 					</Flex>
-
-					<Flex mt={4}>
-						<Box
-							fontSize='14px'
-							lineHeight='20px'
-							fontWeight='400'
-							h='20px'
-							w='20px'
-							bg='#F0F0F7'
-							display='flex'
-							justifyContent='center'
-							alignItems='center'
-							mr={4}
-						>
-							2
-						</Box>
-						<Text
-							fontSize='14px'
-							lineHeight='20px'
-							fontWeight='400'
-						>
-							Confirm the transaction which is in “Queue”.
-						</Text>
-					</Flex>
-
-					<Flex my={4}>
-						<Box
-							fontSize='14px'
-							lineHeight='20px'
-							fontWeight='400'
-							h='20px'
-							w='20px'
-							bg='#F0F0F7'
-							display='flex'
-							justifyContent='center'
-							alignItems='center'
-							mr={4}
-						>
-							3
-						</Box>
-						<Text
-							fontSize='14px'
-							lineHeight='20px'
-							fontWeight='400'
-						>
-							Notify other owners on the safe to confirm the
-							transaction.
-						</Text>
-					</Flex>
-
+					))}
 
 					<Flex
 						bg='#F0F0F7'
@@ -187,7 +145,7 @@ function TransactionInitiatedModal({
 							rel='noreferrer'>
 							<Button
 								colorScheme='brandv2'>
-								Open Safe
+								{t('/your_grants/view_applicants.send_funds_open_txn')}
 							</Button>
 						</a>
 

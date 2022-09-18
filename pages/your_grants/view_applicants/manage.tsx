@@ -8,7 +8,6 @@ import {
 	Flex,
 	Image,
 	Link,
-	ModalBody,
 	Text,
 	Tooltip,
 } from '@chakra-ui/react'
@@ -27,12 +26,9 @@ import {
 	GetApplicationDetailsQuery,
 	useGetApplicationDetailsQuery,
 	useGetFundSentForApplicationQuery,
-	useGetGrantDetailsQuery,
-	useGetRealmsFundTransferDataQuery,
 	useGetSafeForAWorkspaceQuery,
 } from 'src/generated/graphql'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useCompleteApplication from 'src/hooks/useCompleteApplication'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
@@ -47,7 +43,7 @@ import useApplicationMilestones from 'src/utils/queryUtil'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
-import { getDateInDDMMYYYY, RealmsSolana, solanaToUsdOnDate } from 'src/v2/constants/safe/realms_solana'
+import { RealmsSolana } from 'src/v2/constants/safe/realms_solana'
 import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
 import SendFunds from 'src/v2/payouts/SendFunds'
 import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
@@ -70,7 +66,6 @@ function getTotalFundingAsked(milestones: ApplicationMilestone[]) {
 }
 
 function ManageGrant() {
-	const { decryptApplicationPII } = useApplicationEncryption()
 	const path = ['My Grants', 'View Application', 'Manage']
 
 	const [selected, setSelected] = React.useState(0)
@@ -232,17 +227,6 @@ function ManageGrant() {
 		}
 	}, [appDetailsResult])
 
-	const [hiddenModalOpen, setHiddenModalOpen] = useState(false)
-	const showHiddenData = async() => {
-		if(applicationData) {
-			setHiddenModalOpen(true)
-			const decryptedApplicationData = await decryptApplicationPII(applicationData)
-			if(decryptedApplicationData) {
-				setApplicationData(decryptedApplicationData)
-			}
-		}
-	}
-
 	let assetInfo
 
 	if(rewardToken) {
@@ -339,77 +323,6 @@ function ManageGrant() {
 		}
 	}, [accountData, workspace])
 
-	function renderModal() {
-		return (
-			<Modal
-				isOpen={hiddenModalOpen}
-				onClose={() => setHiddenModalOpen(false)}
-				title='View Details with your Wallet'
-				modalWidth={566}
-			>
-				<ModalBody px={10}>
-					<Flex direction='column'>
-						<Flex mt='36px'>
-							<Text
-								fontWeight='bold'
-								fontSize='18px'>
-								How does this work?
-							</Text>
-						</Flex>
-						<Flex
-							mt='28px'
-							alignItems='center'>
-							<Box
-								bg='#8850EA'
-								color='#fff'
-								h={10}
-								w={10}
-								display='flex'
-								alignItems='center'
-								justifyContent='center'
-								borderRadius='50%'
-								mr='19px'
-							>
-								1
-							</Box>
-							<Text>
-								Open your wallet
-							</Text>
-						</Flex>
-						<Flex
-							alignItems='center'
-							mt='35px'
-							mb='40px'>
-							<Box
-								bg='#8850EA'
-								color='#fff'
-								h={10}
-								w={10}
-								display='flex'
-								alignItems='center'
-								justifyContent='center'
-								borderRadius='50%'
-								mr='19px'
-							>
-								2
-							</Box>
-							<Text>
-								Click on ‘Decrypt’ to view the details.
-							</Text>
-						</Flex>
-
-						<Button
-							mb={10}
-							variant='primary'
-							onClick={() => setHiddenModalOpen(false)}>
-							ok
-						</Button>
-					</Flex>
-				</ModalBody>
-			</Modal>
-		)
-	}
-
 	return (
 		<Container
 			maxW='100%'
@@ -424,9 +337,6 @@ function ManageGrant() {
 				pb={8}
 				px={10}
 			>
-				<Breadcrumbs
-					path={path}
-					id={applicationData?.id} />
 				<Heading
 					mt='12px'
 					title={applicationData?.grant?.title || ''}
@@ -470,24 +380,7 @@ function ManageGrant() {
 							src='/ui_icons/mail_icon.svg'
 							mr={2}
 						/>
-						{
-							applicantEmail || (
-								<Text
-									display='inline'
-									variant='applicationHeading'
-									lineHeight='32px'
-									onClick={showHiddenData}
-									cursor='pointer'>
-									Hidden
-									{' '}
-									<Text
-										color='#6200EE'
-										display='inline'>
-										View
-									</Text>
-								</Text>
-							)
-						}
+						{applicantEmail}
 					</Text>
 					<Box mr={6} />
 					<Text
@@ -705,8 +598,6 @@ function ManageGrant() {
 				rewardAssetAddress={applicationData?.grant?.reward?.asset}
 				rewardAssetDecimals={applicationData?.grant?.reward?.token?.decimal}
 				grantData={applicationData?.grant} />
-
-			{renderModal()}
 		</Container>
 	)
 }

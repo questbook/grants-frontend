@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Box, Button, Text, VStack } from '@chakra-ui/react'
 import { GroupBase, OptionProps } from 'chakra-react-select'
 import DropdownSelect from 'src/v2/components/DropdownSelect'
@@ -14,6 +15,7 @@ type RoleSelectProps = {
 }
 
 const RoleSelect = ({ selectedRole, setSelectedRole }: RoleSelectProps) => {
+	const { t } = useTranslation()
 	return (
 		<DropdownSelect
 			options={ROLES}
@@ -64,13 +66,13 @@ const Option = ({ innerProps, data }: OptionProps<Role, boolean, GroupBase<Role>
 const ROLES: Role[] = [
 	{
 		id: 0x0,
-		label: 'Administrator',
-		detail: 'Has complete access to your domain'
+		label: 'Admin',
+		detail: 'Has complete access, can send funds, and add/remove members.',
 	},
 	{
 		id: 0x1,
 		label: 'Reviewer',
-		detail: 'Can only access applications assigned'
+		detail: 'Can only access proposals to review them'
 	}
 ]
 

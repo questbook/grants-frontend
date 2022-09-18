@@ -48,6 +48,16 @@ export class RealmsSolana implements Safe {
     	//this.connection = new Connection('http://realms-realms-c335.mainnet.rpcpool.com/258d3727-bb96-409d-abea-0b1b4c48af29', 'recent')
     	this.programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
 	}
+	isValidRecipientAddress(address: String): Promise<boolean> {
+		return new Promise((resolve, reject) => {
+			try {
+				resolve(PublicKey.isOnCurve(new PublicKey(address).toBuffer()));
+			}
+			catch(e){
+				resolve(false);
+			}
+		})
+	}
 
 	createMultiTransaction(transactions: MetaTransaction[], safeAddress: string): void {
     	throw new Error('Method not implemented.')
@@ -359,6 +369,10 @@ export class RealmsSolana implements Safe {
 					closedAtDate}
     		})
     	return propsalsToSend
+	}
+
+	getNextSteps(): string[] {
+		return ['Open the transaction on Realms', 'Sign the newly created proposal', 'Ask all the multi-sig signers to sign the proposal']
 	}
 }
 

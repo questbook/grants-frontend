@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { AlertDialogOverlay, Box, Flex, Image, Link, Modal, ModalBody, ModalContent, Text, useToast, VStack } from '@chakra-ui/react'
+import { useTranslation } from 'react-i18next'
+import { AlertDialogOverlay, Box, Flex, Image, Modal, ModalBody, ModalContent, Text, useToast, VStack } from '@chakra-ui/react'
+import { Papercups } from '@papercups-io/chat-widget'
 import { NetworkType } from 'src/constants/Networks'
 import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
 import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/PhantomLogo'
@@ -10,7 +12,6 @@ import SuccessToast from 'src/v2/components/Toasts/successToast'
 import VerifySignerErrorState from 'src/v2/components/VerifySignerModal/VeirfySignerErrorState'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
-import { Papercups } from '@papercups-io/chat-widget'
 
 const VerifySignerModal = ({
 	owners,
@@ -35,6 +36,7 @@ const VerifySignerModal = ({
 	const { phantomWallet } = usePhantomWallet()
 	const { disconnectAsync } = useDisconnect()
 	const toast = useToast()
+	const { t } = useTranslation()
 
 	const {
 		isError: isErrorConnecting,
@@ -67,7 +69,7 @@ const VerifySignerModal = ({
 		icon: <PhantomLogo
 			h={8}
 			w='33px' />,
-		isPopular: true,
+		isPopular: false,
 		id: 'phantom',
 	}]
 
@@ -94,6 +96,8 @@ const VerifySignerModal = ({
 		}
 	}, [address])
 
+	console.log(owners, phantomWallet?.publicKey)
+
 	useEffect(() => {
 		if(isOpen && walletClicked) {
 			if(networkType === NetworkType.EVM && address && owners.includes(address)) {
@@ -106,7 +110,7 @@ const VerifySignerModal = ({
 					isClosable: true,
 					position: 'top-right',
 					render: () => SuccessToast({
-						content: 'Gotcha! You are one of the safe\'s owners.',
+						content: t('/onboarding/create-domain.successful_verification'),
 						close: () => { }
 					}),
 				})
@@ -120,7 +124,7 @@ const VerifySignerModal = ({
 					isClosable: true,
 					position: 'top-right',
 					render: () => SuccessToast({
-						content: 'Gotcha! You are one of the safe\'s owners.',
+						content: t('/onboarding/create-domain.successful_verification'),
 						close: () => { }
 					}),
 				})
@@ -195,12 +199,12 @@ const VerifySignerModal = ({
 									variant='v2_heading_3'
 									fontWeight='500'
 								>
-									Verify you’re a signer
+									{t('/onboarding/create-domain.verify_signer_title')}
 								</Text>
 								<Text
 									variant='v2_body'
 									color='black.3'>
-									Connect your wallet which is a signer on the safe.
+									{t('/onboarding/create-domain.verify_signer_desc')}
 								</Text>
 
 								<VStack
@@ -257,12 +261,17 @@ const VerifySignerModal = ({
 								<Text
 									mt={6}
 									variant='v2_body'>
-									Need help? 
-									</Text>
-									<Text mt={2} as='u' cursor='pointer' variant='v2_body' onClick={Papercups.open}>
-									 Get instant support. 
-									</Text>
-								
+									Need help?
+								</Text>
+								<Text
+									mt={2}
+									as='u'
+									cursor='pointer'
+									variant='v2_body'
+									onClick={Papercups.open}>
+									Get instant support.
+								</Text>
+
 
 								<Box h={5} />
 

@@ -45,6 +45,7 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { publicProvider } from 'wagmi/providers/public'
 import 'styles/globals.css'
 import 'draft-js/dist/Draft.css'
+import 'src/utils/appCopy'
 
 type NextPageWithLayout = NextPage & {
 	getLayout?: (page: ReactElement) => ReactNode
@@ -276,8 +277,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const initiateBiconomy = useCallback(
 		async(chainId: string) => {
 			let task = biconomyInitPromisesRef.current[chainId]
+
+			mostRecentInitChainId.current = chainId
 			if(!task) {
-				mostRecentInitChainId.current = chainId
 				setBiconomyLoading(prev => ({ ...prev, [chainId]: true }))
 
 				task = initiateBiconomyUnsafe(chainId)
@@ -288,6 +290,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 						setBiconomyLoading(prev => ({ ...prev, [chainId]: false }))
 					})
 				biconomyInitPromisesRef.current[chainId] = task
+			} else {
+				switchNetwork(parseInt(chainId))
 			}
 
 			return task

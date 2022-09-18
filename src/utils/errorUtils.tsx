@@ -16,7 +16,16 @@ The transaction was unexpectedly dropped by the blockchain! 😢 <br />
 Please try again 
 `
 
-function getErrorMessage(e: RpcError<{ message?: string }> | Error | { error: RpcError<{ message?: string }> }) {
+/**
+ * Extract the true error message from an error
+ * @param e the error
+ * @param gasEstimationFailMessage message to show when gas estimation fails
+ * @returns the real error message
+ */
+function getErrorMessage(
+	e: RpcError<{ message?: string }> | Error | { error: RpcError<{ message?: string }> },
+	gasEstimationFailMessage = 'An Internal Smart Contract Error Occurred'
+) {
 	if('error' in e) {
 		e = e.error
 	}
@@ -36,6 +45,8 @@ function getErrorMessage(e: RpcError<{ message?: string }> | Error | { error: Rp
 			} else if(e.message.includes('transaction was replaced')) {
 				message = TRANSACTION_REPLACED_MSG
 			}
+		} else if(e.message.includes('Error while gas estimation')) {
+			message = gasEstimationFailMessage
 		} else {
 			message = getMessageFromCode(e?.code, e?.message)
 		}

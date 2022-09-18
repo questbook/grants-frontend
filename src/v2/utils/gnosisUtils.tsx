@@ -5,10 +5,18 @@ import SAFES_ENDPOINTS_TESTNETS from 'src/constants/safesEndpointsTest.json'
 const SAFES_ENDPOINTS = { ...SAFES_ENDPOINTS_MAINNETS, ...SAFES_ENDPOINTS_TESTNETS }
 type ValidChainID = keyof typeof SAFES_ENDPOINTS;
 
+import axios from "axios"
+import SAFES_ENDPOINTS_MAINNETS from 'src/constants/safesEndpoints.json'
+import SAFES_ENDPOINTS_TESTNETS from 'src/constants/safesEndpointsTest.json'
+
+const SAFES_ENDPOINTS = { ...SAFES_ENDPOINTS_MAINNETS, ...SAFES_ENDPOINTS_TESTNETS }
+type ValidChainID = keyof typeof SAFES_ENDPOINTS;
+
 const NETWORK_PREFIX: {[key: string]: string} = {
 	'4': 'rin',
 	'137': 'matic',
 	'1': 'eth',
+	'10': 'opt',
 	'10': 'opt'
 }
 
@@ -29,3 +37,14 @@ export async function getTokenBalance(safeNetworkId: string, safeAddress: string
 } 
 
 
+export async function getTransactionHashStatus(safeNetworkId: string, transactionHash: string) {
+	const API_URL = `${SAFES_ENDPOINTS[safeNetworkId as ValidChainID]}/v1/multisig-transactions/${transactionHash}/`
+	const response = await axios.get(API_URL)
+	console.log('transaction status', response.data)
+	const txnDetails = response.data
+	if(txnDetails.isExecuted) {
+		return {...txnDetails, status: 1}
+	} else {
+		return null
+	}
+}

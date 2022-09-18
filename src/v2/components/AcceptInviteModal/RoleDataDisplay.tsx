@@ -1,9 +1,10 @@
+import { useTranslation } from 'react-i18next'
 import { HStack, Image, Text, VStack } from '@chakra-ui/react'
 import { ROLES } from 'src/constants'
 
 const RoleDataDisplay = ({ role }: { role: number }) => {
 	const roleData = ROLE_DATA[role]
-
+	const { t } = useTranslation()
 	return (
 		<VStack
 			align='start'
@@ -49,23 +50,19 @@ export const getRoleTitle = (role: number) => ROLE_DATA[role]?.title
 const ROLE_DATA = {
 	[ROLES.admin]: {
 		vowelStart: true,
-		title: 'Administrator',
+		title: 'Admin',
 		thingsCanDo: [
 			{
 				icon: 'role_icons/admin0.svg',
-				label: 'Pick your adventure - run grant and bounty programs.'
-			},
-			{
-				icon: 'role_icons/admin1.svg',
-				label: 'Review applications'
+				label: 'Create new grants'
 			},
 			{
 				icon: 'role_icons/admin2.svg',
-				label: 'Disburse funds'
+				label: 'Send money'
 			},
 			{
 				icon: 'role_icons/admin3.svg',
-				label: 'Invite members to your domain'
+				label: 'Invite members to the team'
 			}
 		]
 	},
@@ -75,11 +72,11 @@ const ROLE_DATA = {
 		thingsCanDo: [
 			{
 				icon: 'role_icons/reviewer0.svg',
-				label: 'Pick your adventure - review grant applications.'
+				label: 'Review proposal\'s impact on ecosystem growth'
 			},
 			{
 				icon: 'role_icons/reviewer1.svg',
-				label: 'Get paid for it.'
+				label: 'Recommend whether or not to give grant to the proposal'
 			}
 		]
 	}

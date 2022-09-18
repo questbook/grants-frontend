@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box,
 	Button,
@@ -79,6 +80,8 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 
 	// const [extraFieldDetails, setExtraFieldDetails] = useState('');
 	// const [extraFieldError, setExtraFieldError] = useState(false);
+
+	const { t } = useTranslation()
 
 	const handleOnSubmit = () => {
 		let error = false
@@ -277,7 +280,7 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 					variant='heading'
 					fontSize='36px'
 					lineHeight='48px'>
-					What details should the applicants provide?
+					{t('/create-grant.proposal_form.title')}
 				</Text>
 
 				<Grid
@@ -308,7 +311,7 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 												}
 											}
 											label='Add Custom Field'
-											tooltip='Get additional details in your application form.'
+											tooltip='Add a custom field to your proposal form'
 										/>
 									</GridItem>
 								)

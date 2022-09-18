@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box,
 	Button, Flex, ModalBody, Text, } from '@chakra-ui/react'
@@ -13,6 +14,8 @@ interface Props {
 function ModalContent({ onClose, hasClicked }: Props) {
 	const [details, setDetails] = useState('')
 	const [detailsError, setDetailsError] = useState(false)
+
+	const { t } = useTranslation()
 
 	return (
 		<ModalBody

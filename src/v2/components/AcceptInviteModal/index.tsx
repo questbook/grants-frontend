@@ -1,16 +1,18 @@
 import { ChangeEvent, createElement, useContext, useEffect, useRef, useState } from 'react'
 import { Box, Button, HStack, Image, Input, Modal, ModalCloseButton, ModalContent, ModalOverlay, Progress, Spacer, Text, useToast, VStack } from '@chakra-ui/react'
-import { BigNumber, logger } from 'ethers'
+import { BigNumber } from 'ethers'
 import { WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { ROLES } from 'src/constants'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useDAOName from 'src/hooks/useDAOName'
+import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { addAuthorizedUser } from 'src/utils/gaslessUtils'
 import { delay } from 'src/utils/generics'
 import { InviteInfo, useJoinInvite } from 'src/utils/invite'
+import logger from 'src/utils/logger'
 import { ForwardArrow } from 'src/v2/assets/custom chakra icons/Arrows/ForwardArrow'
 import RoleDataDisplay from 'src/v2/components/AcceptInviteModal/RoleDataDisplay'
 import ControlBar from 'src/v2/components/ControlBar'
@@ -137,11 +139,16 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 
 			onClose()
 		} catch(error) {
-			// console.error('error in join ', error)
+			logger.error({ error }, 'error in joining invite link')
 
+			const msg = getErrorMessage(
+				error as Error,
+				'The invite link is invalid, has expired or already been used'
+			)
 			const toastId = toast({
 				render: () => ErrorToast({
-					content: `Error in joining the DAO: "${(error as Error).message}"`,
+					title: `Failed to join "${daoName}"`,
+					content: msg,
 					close: () => {
 						toast.close(toastId!)
 					},
@@ -231,9 +238,9 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 				steps={
 					[
 						'Uploading data to IPFS',
-						'Sign transaction',
+						'Signing transaction with in-app wallet',
 						'Wait for confirmation',
-						'Waiting for transaction to index',
+						'Indexing transaction on graph protocol',
 						'Profile created on-chain'
 					]
 				}

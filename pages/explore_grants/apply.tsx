@@ -8,7 +8,7 @@ import Form from 'src/components/explore_grants/apply_grant/form'
 import Sidebar from 'src/components/explore_grants/apply_grant/sidebar'
 import { defaultChainId } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
-import { useGetGrantDetailsQuery } from 'src/generated/graphql'
+import { useGetGrantDetailsQuery, useGetSafeForAWorkspaceQuery } from 'src/generated/graphql'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { formatAmount } from 'src/utils/formattingUtils'
@@ -37,6 +37,7 @@ function ApplyGrant() {
 	const [grantDetails, setGrantDetails] = useState('')
 	const [grantSummary, setGrantSummary] = useState('')
 	const [workspaceId, setWorkspaceId] = useState('')
+	const [safeChainId, setSafeChainId] = useState<string | undefined>(defaultChainId.toString())
 	const [grantRequiredFields, setGrantRequiredFields] = useState<any[]>([])
 	const [chainId, setChainId] = useState<SupportedChainId>()
 	const [acceptingApplications, setAcceptingApplications] = useState(true)
@@ -57,6 +58,7 @@ function ApplyGrant() {
       	chainId || defaultChainId
       ].client,
 	})
+
 
 	useEffect(() => {
 		if(!grantID) {
@@ -96,8 +98,33 @@ function ApplyGrant() {
 
 	}, [network, grantData])
 
+	const { data: safeAddressData } = useGetSafeForAWorkspaceQuery({
+		client: subgraphClients[chainId || defaultChainId].client,
+		variables: {
+			workspaceID: workspace?.id.toString()!,
+		},
+	})
 	useEffect(() => {
-		if(data && data.grants && data.grants.length > 0) {
+		console.log("Safe address", safeAddressData)
+		setSafeChainId(safeAddressData?.workspaceSafes[0]?.chainId)
+		if(safeAddressData) {
+			// console.log('safe address data', safeAddressData)
+			// const { workspaceSafes } = safeAddressData
+
+
+			// const safeAddress = workspaceSafes[0]?.address
+			// const safeNetwork = workspaceSafes[0]?.chainId
+			// setWorkspaceSafe(safeAddress)
+			// setWorkspaceSafeChainId(parseInt(workspaceSafes[0]?.chainId))
+			// if(isEvmChain) {
+			// 	checkIfUserIsOnCorrectNetwork(safeNetwork)
+			// }
+		}
+	}, [safeAddressData])
+
+
+	useEffect(() => {
+		if(data?.grants?.length) {
 			setGrantData(data.grants[0])
 		}
 
@@ -123,14 +150,19 @@ function ApplyGrant() {
 		setChainId(localChainId)
 		setTitle(grantData?.title)
 		setWorkspaceId(grantData?.workspace?.id)
+		console.log("safe chainid", grantData?.workspace?.safeChainId, grantData)
+		setSafeChainId(grantData?.workspace?.safe?.ChainId)
 		setDaoId(grantData?.workspace?.id)
 		setDaoLogo(getUrlForIPFSHash(grantData?.workspace?.logoIpfsHash))
 		setRewardAmount(
 			grantData?.reward?.committed
-				? formatAmount(
-					grantData?.reward?.committed,
-					chainInfo?.decimals || 18,
-				)
+				? parseInt(
+					formatAmount(
+						grantData?.reward?.committed,
+						chainInfo?.decimals || 18,
+						false, false, false
+					)
+				).toString()
 				: '',
 		)
 
@@ -189,9 +221,9 @@ function ApplyGrant() {
 					rewardCurrencyCoin={rewardCurrencyCoin}
 					rewardCurrencyAddress={rewardCurrencyAddress}
 					workspaceId={workspaceId}
+					safeNetwork={safeChainId || defaultChainId.toString()}
 					grantRequiredFields={grantRequiredFields.map((field: any) => field.id.split('.')[1])}
 					piiFields={grantRequiredFields.filter((field: any) => field.isPii).map((field: any) => field.id.split('.')[1])}
-					members={grantData?.workspace?.members}
 					acceptingApplications={acceptingApplications}
 					shouldShowButton={shouldShowButton}
 					defaultMilestoneFields={

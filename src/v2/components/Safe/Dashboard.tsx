@@ -8,7 +8,7 @@ import SupportedChainId from 'src/generated/SupportedChainId'
 import useSafeUSDBalances from 'src/hooks/useSafeUSDBalances'
 import { isValidEthereumAddress } from 'src/utils/validationUtils'
 import {getGnosisTansactionLink} from 'src/v2/utils/gnosisUtils'
-import getProposalUrl from 'src/v2/utils/phantomUtils'
+import { getDaoUrl } from 'src/v2/utils/phantomUtils'
 
 function Dashboard() {
 	const [safeChainId, setSafeChainId] = useState<SupportedChainId>(defaultChainId)
@@ -32,7 +32,7 @@ function Dashboard() {
 			return
 		}
 
-		const link = isValidEthereumAddress(safe?.address) ? getGnosisTansactionLink(safe.id?.toString()!, safe?.chainId.toString()!) : getProposalUrl(safe?.id?.toString()!, safe?.address)
+		const link = isValidEthereumAddress(safe?.address) ? getGnosisTansactionLink(safe.id?.toString()!, safe?.chainId.toString()!) : getDaoUrl(safe?.address?.toString()!)
 		window.open(link, '_blank')
 	}
 
@@ -82,7 +82,7 @@ function Dashboard() {
 					mt={1}
 					variant='v2_heading_3'
 					fontWeight='500'>
-					{loadedSafesUSDBalance ? `\$${safesUSDBalance[0]?.amount}` : 'Loading...'}
+					{loadedSafesUSDBalance ? (safesUSDBalance[0]?.amount ? `\$${safesUSDBalance[0].amount}` : 'Could not fetch value') : 'Loading...'}
 				</Text>
 				<Button
 					mt={8}

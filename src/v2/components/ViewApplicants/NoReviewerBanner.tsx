@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Flex, Text } from '@chakra-ui/react'
 import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
 import { ErrorAlert } from 'src/v2/assets/custom chakra icons/ErrorAlertV2'
@@ -8,6 +9,7 @@ interface Props {
 }
 
 function NoReviewerBanner({ onSetup, onClose }: Props) {
+	const { t } = useTranslation()
 	return (
 		<Flex
 			px='18px'
@@ -32,7 +34,7 @@ function NoReviewerBanner({ onSetup, onClose }: Props) {
 					lineHeight='24px'
 					fontWeight='500'
 				>
-					Setup evaluation criteria
+					{t('/your_grants/view_applicants.create_review_process')}
 				</Text>
 
 				<Text
@@ -41,7 +43,7 @@ function NoReviewerBanner({ onSetup, onClose }: Props) {
 					lineHeight='20px'
 					fontWeight='400'
 				>
-					You have no reviewers in your domain. To auto - assign reviewers and create an evaluation rubric, invite members to your domain.
+					{t('/your_grants/view_applicants.create_review_no_reviewers')}
 				</Text>
 
 				<Text
@@ -53,7 +55,7 @@ function NoReviewerBanner({ onSetup, onClose }: Props) {
 					cursor='pointer'
 					onClick={onSetup}
 				>
-					Invite members
+					{t('/your_grants/view_applicants.invite_reviewers')}
 				</Text>
 			</Flex>
 

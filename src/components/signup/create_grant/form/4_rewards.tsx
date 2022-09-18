@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box, Button, Flex, Image, Link, Switch,
 	Text,
@@ -60,7 +61,7 @@ function GrantRewardsInput({
 	const [isJustAddedToken, setIsJustAddedToken] = React.useState<boolean>(false)
 	// const [supportedCurrencies, setSupportedCurrencies] = React.useState([]);
 
-	const addERC = true
+	const addERC = false
 
 	const currentChain = useChainId() || defaultChainId
 
@@ -93,6 +94,8 @@ function GrantRewardsInput({
 	const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState<
 		any[]
 	>([supportedCurrencies])
+
+	const { t } = useTranslation()
 
 	useEffect(() => {
 		if(supportedCurrencies && supportedCurrencies.length > 0) {
@@ -143,16 +146,16 @@ function GrantRewardsInput({
 				axios.get(gnosisUrl).then(res => {
 					// console.log(res.data)
 					let tokens
-					if (safeNetwork === "42220"){
+					if(safeNetwork === '42220') {
 						console.log('reward currency', tokens)
 						let localTokenData: {icon: string, label: string, address: string, decimals: number, pair?: string}
-						
+
 						tokens = res.data.filter((token: SafeToken) => token.tokenAddress).map((token: SafeToken) => {
 							if(token.tokenAddress) {
-								if(CHAIN_INFO[safeNetwork].supportedCurrencies.hasOwnProperty(token.tokenAddress.toLowerCase())){
+								if(CHAIN_INFO[safeNetwork].supportedCurrencies.hasOwnProperty(token.tokenAddress.toLowerCase())) {
 									localTokenData = CHAIN_INFO[safeNetwork].supportedCurrencies[token.tokenAddress.toLowerCase()]
 								}
-								
+
 								console.log('currency', localTokenData)
 								const currency = {
 									'id': token.tokenAddress,
@@ -165,8 +168,8 @@ function GrantRewardsInput({
 								return currency
 							}
 						})
-						
-							
+
+
 					} else {
 						tokens = res.data.filter((token: SafeToken) => token.tokenAddress).map((token: SafeToken) => {
 							if(token.tokenAddress) {
@@ -181,17 +184,18 @@ function GrantRewardsInput({
 								return currency
 							}
 						})
-					setRewardToken({ address: tokens[0]?.address, decimal: tokens[0]?.decimals.toString(), label: tokens[0]?.label, iconHash: tokens[0]?.icon })
+						setRewardToken({ address: tokens[0]?.address, decimal: tokens[0]?.decimals.toString(), label: tokens[0]?.label, iconHash: tokens[0]?.icon })
 					}
+
 					setSupportedCurrencies(tokens)
 					// console.log('balances', supportedCurrencies)
 					setRewardCurrency(tokens[0]?.label)
-					
+
 					setRewardCurrencyAddress(tokens[0]?.address)
 				})
 			}
 		}
-			
+
 
 	}, [currentChain])
 
@@ -211,6 +215,7 @@ function GrantRewardsInput({
 
 	const { setRefresh } = useCustomToast(transactionLink)
 	const [shouldEncryptReviews, setShouldEncryptReviews] = useState(false)
+	const [showDropdown, setShowDropdown] = useState(false)
 
 	useEffect(() => {
 		if(transactionData) {
@@ -322,18 +327,16 @@ function GrantRewardsInput({
 		shouldEncryptReviews,
 	])
 
+	useEffect(() => {
+		const CurrenciesList = supportedCurrenciesList.filter((currencyItem) => currencyItem.length > 0)
+		setShowDropdown(CurrenciesList.length > 0)
+	}, [supportedCurrenciesList])
+
 	return (
 		<>
 			<Flex
 				py={12}
 				direction='column'>
-				<Text
-					variant='heading'
-					fontSize='36px'
-					lineHeight='48px'>
-					What&apos;s the reward and deadline for the grant?
-				</Text>
-
 				<Flex
 					direction='row'
 					mt={12}>
@@ -341,7 +344,7 @@ function GrantRewardsInput({
 						minW='160px'
 						flex={1}>
 						<SingleLineInput
-							label='Grant Reward'
+							label={t('/create-grant.amount')}
 							placeholder='100'
 							value={reward}
 							onChange={
@@ -375,7 +378,7 @@ function GrantRewardsInput({
 						flex={0}
 						alignSelf='center'>
 						{
-							isEVM ? (
+							(isEVM && showDropdown) ? (
 								<Dropdown
 									listItemsMinWidth='132px'
 									listItems={supportedCurrenciesList}
@@ -441,22 +444,9 @@ function GrantRewardsInput({
 					value={date}
 					isError={dateError}
 					errorText='Required'
-					label='Grant Deadline'
-					tooltip='This is the last date on/before which grantees can apply'
+					label='Proposal Deadline'
 				/>
 
-				<Flex
-					direction='column'
-					mt={12}>
-					<Text
-						fontSize='18px'
-						fontWeight='700'
-						lineHeight='26px'
-						letterSpacing={0}
-					>
-						Grant privacy
-					</Text>
-				</Flex>
 
 				{/* <Flex
 					mt={8}
@@ -520,14 +510,14 @@ function GrantRewardsInput({
 							fontSize='16px'
 							lineHeight='20px'
 						>
-							Keep applicant reviews private
+							{t('/create-grant.private_review')}
 						</Text>
 						<Flex>
 							<Text
 								color='#717A7C'
 								fontSize='14px'
 								lineHeight='20px'>
-								Private review is only visible to reviewers, DAO members.
+								{t('/create-grant.private_review_desc')}
 							</Text>
 						</Flex>
 					</Flex>

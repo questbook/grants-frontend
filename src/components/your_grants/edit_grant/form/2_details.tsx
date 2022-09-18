@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Flex,
 } from '@chakra-ui/react'
@@ -16,10 +17,11 @@ function Details({
   detailsError: boolean
   setDetailsError: (detailsError: boolean) => void
 }) {
+	const { t } = useTranslation('common')
 	return (
 		<Flex direction='column'>
 			<RichTextEditor
-				label='Grant Details'
+				label={t('/create-grant.instructions_title')}
 				placeholder='Details about your grant - requirements, deliverables, and milestones'
 				value={details}
 				isError={detailsError}

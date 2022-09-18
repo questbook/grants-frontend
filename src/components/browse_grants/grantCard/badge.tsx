@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Image, Text } from '@chakra-ui/react'
 
 function Badge({
@@ -6,6 +7,7 @@ function Badge({
 }: {
   numOfApplicants: number
 }) {
+	const { t } = useTranslation()
 	return (
 		<Text
 			display='flex'
@@ -24,7 +26,7 @@ function Badge({
 				display='inline-block'>
 				{numOfApplicants}
 				{' '}
-				Applicant
+				{t('/profile.cards.proposal')}
 				{numOfApplicants > 1 || numOfApplicants === 0 ? 's' : ''}
 			</Text>
 		</Text>

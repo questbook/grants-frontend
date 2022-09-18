@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box,
 	Button,
@@ -83,6 +84,7 @@ function YourGrantCard(this: any, {
 		},
 	])
 
+	const { t } = useTranslation()
 	useEffect(() => {
 		const newRubrics = [] as any[]
 		// console.log('initialRubrics', initialRubrics)
@@ -224,7 +226,7 @@ function YourGrantCard(this: any, {
 												}
 												display={isAdmin || numOfApplicants > 0 ? undefined : 'none'}
 											>
-												{numOfApplicants > 0 ? 'View applicants' : 'Edit grant'}
+												{numOfApplicants > 0 ? 'View Proposals' : 'Edit grant'}
 											</Button>
 										)
 									}

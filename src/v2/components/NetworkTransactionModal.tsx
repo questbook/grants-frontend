@@ -78,7 +78,7 @@ export default ({
 				<ModalBody p='5'>
 					<VStack align='stretch'>
 						<Flex
-							p='3'
+							p='2'
 							borderRadius='base'
 							bg='#D5F1EB'
 						>

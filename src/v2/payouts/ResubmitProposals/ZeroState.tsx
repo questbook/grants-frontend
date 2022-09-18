@@ -1,6 +1,8 @@
+import { useTranslation } from 'react-i18next'
 import { Flex, Text } from '@chakra-ui/react'
 
 const ZeroState = () => {
+	const { t } = useTranslation()
 	return (
 		<Flex
 			h='calc(100vh - 352px)'
@@ -14,7 +16,7 @@ const ZeroState = () => {
 				fontWeight='500'
 				textAlign='center'
 			>
-				Nothing to be resubmitted
+				{t('/your_grants/view_applicants.no_resubmissions')}
 			</Text>
 			<Text
 				mt={2}
@@ -26,7 +28,7 @@ const ZeroState = () => {
 				color='#7D7DA0'
 				maxW='754px'
 			>
-				There are no applications awaiting resubmission, they will come here as soon as they are asked to be resubmitted.
+				{t('/your_grants/view_applicants.no_resubmissions_description')}
 			</Text>
 
 		</Flex>

@@ -2,11 +2,9 @@ import { ReactElement, useContext, useEffect, useRef, useState } from 'react'
 import * as Apollo from '@apollo/client'
 import {
 	Box,
-	Button,
 	Divider,
 	Flex,
 	Image,
-	ModalBody,
 	Text,
 	ToastId,
 	useToast,
@@ -14,7 +12,6 @@ import {
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import Breadcrumbs from 'src/components/ui/breadcrumbs'
-import Modal from 'src/components/ui/modal'
 import Accept from 'src/components/your_grants/applicant_form/accept/accept'
 import AcceptSidebar from 'src/components/your_grants/applicant_form/accept/sidebar'
 import Application from 'src/components/your_grants/applicant_form/application'
@@ -30,15 +27,14 @@ import {
 	useGetApplicationDetailsQuery,
 } from 'src/generated/graphql'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import useApplicationEncryption from 'src/hooks/useApplicationEncryption'
 import useUpdateApplicationState from 'src/hooks/useUpdateApplicationState'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
+import { useEncryptPiiForApplication } from 'src/utils/pii'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function ApplicantForm() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
-	const { decryptApplicationPII } = useApplicationEncryption()
 
 	const toastRef = useRef<ToastId>()
 
@@ -48,21 +44,10 @@ function ApplicantForm() {
 
 	const [isAdmin, setIsAdmin] = useState(false)
 	const { data: accountData } = useQuestbookAccount()
-	useEffect(() => {
-		if(workspace?.members && workspace.members.length > 0) {
-			const tempMember = workspace.members.find(
-				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
-			)
-			setIsAdmin(
-				tempMember?.accessLevel === 'admin' ||
-        tempMember?.accessLevel === 'owner',
-			)
-		}
-	}, [accountData?.address, workspace])
 
 	const [applicationId, setApplicationId] = useState<string>('')
 	const [applicationData, setApplicationData] =
-    useState<GetApplicationDetailsQuery['grantApplication']>(null)
+		useState<GetApplicationDetailsQuery['grantApplication']>(null)
 	const [submitClicked, setSubmitClicked] = useState(false)
 
 	const [resubmitComment, setResubmitComment] = useState('')
@@ -71,18 +56,36 @@ function ApplicantForm() {
 	const [rejectionComment, setRejectionComment] = useState('')
 	const [rejectionCommentError, setRejectionCommentError] = useState(false)
 
+	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+
+	const client = subgraphClients[chainId].client
+
+	const [queryParams, setQueryParams] = useState<Apollo.QueryHookOptions<GetApplicationDetailsQuery, GetApplicationDetailsQueryVariables>>({ client })
+
+	const { decrypt } = useEncryptPiiForApplication(
+		applicationData?.grant?.id,
+		applicationData?.applicantPublicKey,
+		chainId
+	)
+
+	useEffect(() => {
+		if(workspace?.members && workspace.members.length > 0) {
+			const tempMember = workspace.members.find(
+				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
+			)
+			setIsAdmin(
+				tempMember?.accessLevel === 'admin' ||
+				tempMember?.accessLevel === 'owner',
+			)
+		}
+	}, [accountData?.address, workspace])
+
 	useEffect(() => {
 		if(router?.query) {
 			const { applicationId: aId } = router.query
 			setApplicationId(aId as string)
 		}
 	}, [router])
-
-	const client = subgraphClients[
-		getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-	].client
-
-	const [queryParams, setQueryParams] = useState<Apollo.QueryHookOptions<GetApplicationDetailsQuery, GetApplicationDetailsQueryVariables>>({ client })
 
 	useEffect(() => {
 		if(!workspace) {
@@ -95,26 +98,18 @@ function ApplicantForm() {
 
 		setQueryParams({
 			client:
-      subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+				subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
 			variables: {
 				applicationID: applicationId,
 			},
 		})
 	}, [workspace, applicationId])
 
-	const {
-		data,
-		error: queryError,
-		loading: queryLoading,
-	} = useGetApplicationDetailsQuery(queryParams)
+	const { data, } = useGetApplicationDetailsQuery(queryParams)
 
 	useEffect(() => {
-		// console.log('ddddd', data, queryError, queryLoading)
-		if(data?.grantApplication) {
-			// console.log('grantApplication------>', data.grantApplication)
-			setApplicationData(data.grantApplication)
-		}
-	}, [data, queryError, queryLoading, applicationData])
+		decrypt(data?.grantApplication).then(setApplicationData)
+	}, [data?.grantApplication, setApplicationData, decrypt])
 
 	useEffect(() => {
 		if(router.query.flow === 'approved') {
@@ -149,20 +144,6 @@ function ApplicantForm() {
 		}
 	}, [toastRef, toast, router, applicationData, txn, error])
 
-	const [hiddenModalOpen, setHiddenModalOpen] = useState(false)
-
-	const showHiddenData = async() => {
-		if(applicationData) {
-			setHiddenModalOpen(true)
-			const decryptedApplicationData = await decryptApplicationPII(
-				applicationData,
-			)
-			if(decryptedApplicationData) {
-				setApplicationData(decryptedApplicationData)
-			}
-		}
-	}
-
 	const handleApplicationStateUpdate = async(st: number) => {
 		// // console.log('unsetting state');
 		setState(undefined)
@@ -181,78 +162,6 @@ function ApplicantForm() {
 		setState(st)
 	}
 
-	function renderModal() {
-		return (
-			<Modal
-				isOpen={hiddenModalOpen}
-				onClose={() => setHiddenModalOpen(false)}
-				title='View Details with your Wallet'
-				modalWidth={566}
-			>
-				<ModalBody px={10}>
-					<Flex direction='column'>
-						<Flex mt='36px'>
-							<Text
-								fontWeight='bold'
-								fontSize='18px'>
-								How does this work?
-							</Text>
-						</Flex>
-						<Flex
-							mt='28px'
-							alignItems='center'>
-							<Box
-								bg='#8850EA'
-								color='#fff'
-								h={10}
-								w={10}
-								display='flex'
-								alignItems='center'
-								justifyContent='center'
-								borderRadius='50%'
-								mr='19px'
-							>
-								1
-							</Box>
-							<Text>
-								Open your wallet
-							</Text>
-						</Flex>
-						<Flex
-							alignItems='center'
-							mt='35px'
-							mb='40px'>
-							<Box
-								bg='#8850EA'
-								color='#fff'
-								h={10}
-								w={10}
-								display='flex'
-								alignItems='center'
-								justifyContent='center'
-								borderRadius='50%'
-								mr='19px'
-							>
-								2
-							</Box>
-							<Text>
-								Click on ‘Decrypt’ to view the details.
-							</Text>
-						</Flex>
-
-						<Button
-							mb={10}
-							variant='primary'
-							onClick={() => setHiddenModalOpen(false)}
-						>
-							ok
-						</Button>
-					</Flex>
-				</ModalBody>
-			</Modal>
-		)
-	}
-
 	function renderContent(currentStep: number) {
 		if(currentStep === 1) {
 			return (
@@ -265,7 +174,6 @@ function ApplicantForm() {
 					/>
 					<AcceptSidebar
 						applicationData={applicationData}
-						showHiddenData={showHiddenData}
 					/>
 				</>
 			)
@@ -284,7 +192,6 @@ function ApplicantForm() {
 					/>
 					<RejectSidebar
 						applicationData={applicationData}
-						showHiddenData={showHiddenData}
 					/>
 				</>
 			)
@@ -302,7 +209,6 @@ function ApplicantForm() {
 				/>
 				<ResubmitSidebar
 					applicationData={applicationData}
-					showHiddenData={showHiddenData}
 				/>
 			</>
 		)
@@ -321,13 +227,6 @@ function ApplicantForm() {
 						mx='44px'
 						p={0}
 						h='100%'>
-						<Box ml='30px'>
-							<Breadcrumbs
-								path={['Your Grants', 'View Applicants', 'Applicant Form']}
-								id={applicationData?.grant?.id}
-							/>
-						</Box>
-
 						<Text
 							mt='18px'
 							mb={6}
@@ -455,7 +354,6 @@ function ApplicantForm() {
 									<Flex direction='column'>
 										<Application
 											applicationData={applicationData}
-											showHiddenData={showHiddenData}
 										/>
 									</Flex>
 								</Flex>
@@ -475,7 +373,7 @@ function ApplicantForm() {
 										...applicationData?.doneReviewerAddresses ?? [],
 									].find(
 										(pendingReviewer) => pendingReviewer.toLowerCase() ===
-                      accountData?.address?.toLowerCase(),
+											accountData?.address?.toLowerCase(),
 									) !== undefined && (
 										<ReviewerSidebar applicationData={applicationData} />
 									)
@@ -484,7 +382,6 @@ function ApplicantForm() {
 									isAdmin && (
 										<Sidebar
 											isBiconomyInitialised={isBiconomyInitialised}
-											showHiddenData={showHiddenData}
 											applicationData={applicationData}
 											onAcceptApplicationClick={() => setStep(1)}
 											onRejectApplicationClick={() => setStep(2)}
@@ -496,7 +393,6 @@ function ApplicantForm() {
 						</Flex>
 					</Flex>
 				</Flex>
-				{renderModal()}
 			</>
 		)
 	}
@@ -510,10 +406,6 @@ function ApplicantForm() {
 					direction='column'
 					mx={10}
 					w='100%'>
-					<Breadcrumbs
-						path={['My Grants', 'View Applicants', 'Applicant Form']}
-						id={applicationData?.grant?.id}
-					/>
 					<Text
 						mt={4}
 						mb={4}
@@ -529,7 +421,6 @@ function ApplicantForm() {
 					</Flex>
 				</Flex>
 			</Flex>
-			{renderModal()}
 		</>
 	)
 }

@@ -4,7 +4,6 @@ import { logger } from 'ethers'
 import { useRouter } from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
-import { DEFAULT_NOTE, INSUFFICIENT_FUNDS_NOTE, USD_THRESHOLD } from 'src/constants'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { NetworkType } from 'src/constants/Networks'
 import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
@@ -294,7 +293,16 @@ const OnboardingCreateDomain = () => {
 				}
 			}
 			safeSelected={safeSelected!}
-			onSelectedSafeChange={(newSafe) => setSafeSelected(newSafe)} />, <DomainName
+			onSelectedSafeChange={(newSafe) => setSafeSelected(newSafe)}
+			onPasteClick={
+				async() => {
+					let clipboardContent = await navigator.clipboard.readText()
+					logger.info({ clipboardContent }, 'Clipboard content')
+					clipboardContent = clipboardContent.substring(clipboardContent.indexOf(':') + 1)
+					logger.info({ clipboardContent }, 'Clipboard content (formatted)')
+					setSafeAddress(clipboardContent)
+				}
+			} />, <DomainName
 			key={1}
 			domainName={domainName}
 			setValue={
@@ -399,7 +407,7 @@ const OnboardingCreateDomain = () => {
 				<Flex
 					key={step}
 					w='47%'
-					h={step === 0 ? '43%' : (step === 1 ? '55%' : (step === 2 ? '38%' : (isOwner ? '36%' : '40%')))}
+					// h={step === 0 ? '43%' : (step === 1 ? '55%' : (step === 2 ? '38%' : (isOwner ? '36%' : '40%')))}
 					mx='auto'
 					mt='15vh'
 					bg='white'
@@ -412,7 +420,7 @@ const OnboardingCreateDomain = () => {
 			</Flex>
 			<NetworkTransactionModal
 				isOpen={currentStep !== undefined}
-				subtitle='creating DAO'
+				subtitle='Creating Domain'
 				description={
 					<HStack w='100%'>
 						<Text
@@ -448,11 +456,11 @@ const OnboardingCreateDomain = () => {
 				currentStepIndex={currentStep || 0}
 				steps={
 					[
-						'Confirming Transaction',
-						'Completing Transaction',
-						'Completing Indexing',
-						'Creating domain on the network',
-						'Your domain is now on-chain'
+						'Uploading data to IPFS',
+						'Signing transaction with in-app wallet',
+						'Waiting for transaction to complete on chain',
+						'Indexing transaction on graph protocol',
+						'Your domain is ready for use'
 					]
 				}
 				viewLink={getExplorerUrlForTxHash(network, txHash)}

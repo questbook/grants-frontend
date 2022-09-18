@@ -1,5 +1,4 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { Box } from '@chakra-ui/react'
 import { ethers, logger } from 'ethers'
 import { useRouter } from 'next/router'
 import { WebwalletContext } from 'pages/_app'
@@ -12,15 +11,16 @@ import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } f
 import { isPlausibleSolanaAddress } from 'src/utils/generics'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
-import { getTokenAndbalance, RealmsSolana, usdToSolana } from 'src/v2/constants/safe/realms_solana'
+import { getTokenAndbalance, RealmsSolana } from 'src/v2/constants/safe/realms_solana'
 import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import SendFundsDrawer from 'src/v2/payouts/SendFundsDrawer/SendFundsDrawer'
 import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
 import {getGnosisTansactionLink, getTokenBalance } from 'src/v2/utils/gnosisUtils'
-import getProposalUrl from 'src/v2/utils/phantomUtils'
-import { erc20ABI, useAccount, useConnect, useDisconnect } from 'wagmi'
+import { getProposalUrl } from 'src/v2/utils/phantomUtils'
+import { erc20ABI, useAccount, useDisconnect } from 'wagmi'
+import { Safe } from '../types/safe'
 import { getTokenUSDRate, loadAssetId } from '../utils/tokenToUSDconverter'
 import axios from 'axios'
 
@@ -37,12 +37,14 @@ export default function SendFunds({
 
 	const router = useRouter()
 
-	const [applicationID, setApplicationId] = useState<any>('')
+	const [applicationID, setApplicationId] = useState<string>('')
 
 	useEffect(() => {
-		if(router && router.query) {
+		if(router?.query) {
 			const { applicationId: aId } = router.query
-			setApplicationId(aId)
+			if(typeof aId === 'string') {
+				setApplicationId(aId)
+			}
 		}
 	}, [router])
 
@@ -84,6 +86,7 @@ export default function SendFunds({
 	const [gnosisBatchData, setGnosisBatchData] = useState<any>([])
 	const [, setGnosisReadyToExecuteTxns] = useState<any>([])
 	const [step, setStep] = useState('RECEIPT_DETAILS')
+	const [recepientError, setRecepientError] = useState<string>('')
 
 	const [assetId, setAssetId] = useState<string>('')
 	const [tokenUSDRate, setTokenUSDRate] = useState<number>()
@@ -339,6 +342,10 @@ export default function SendFunds({
 		}
 	}, [workspace, biconomyWalletClient, workspacechainId, biconomy, workspaceRegistryContract, scwAddress, webwallet, nonce, initiateTransactionData, proposalAddr])
 
+	const onChangeRecepientError = (error: string) => {
+		setRecepientError(error)
+	}
+
 	const onChangeRecepientDetails = async(applicationId: any, fieldName: string, fieldValue: any) => {
 
 		if(fieldName === 'selectedToken') {
@@ -406,6 +413,7 @@ export default function SendFunds({
 				isOpen={sendFundsModalIsOpen}
 				onClose={onModalClose}
 				safeAddress={workspaceSafe}
+				safeNetwork={currentSafe?.chainId.toString()!}
 				proposals={sendFundsTo ?? []}
 
 				safeTokenList={safeTokenList}
@@ -421,7 +429,9 @@ export default function SendFunds({
 			<TransactionInitiatedModal
 				isOpen={!!(txnInitModalIsOpen && proposalAddr)}
 				onClose={onModalClose}
+				numOfTransactionsInitiated={sendFundsTo?.length || 0}
 				proposalUrl={isEvmChain ? getGnosisTansactionLink(currentSafe?.id?.toString()!, currentSafe?.chainId?.toString()!) : getProposalUrl(currentSafe?.id?.toString()!, proposalAddr)}
+				safe={currentSafe as Safe}
 			/>
 
 			<SendFundsDrawer

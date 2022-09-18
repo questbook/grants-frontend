@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Box, Flex } from '@chakra-ui/react'
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
@@ -24,12 +25,13 @@ function Title({
   setSummaryError: (summaryError: boolean) => void
   maxDescriptionLength: number
 }) {
+	const { t } = useTranslation()
 	return (
 		<Flex
 			direction='column'
 			w='100%'>
 			<SingleLineInput
-				label='Grant Title'
+				label={t('/create-grant.title_label')}
 				value={title}
 				onChange={
 					(e) => {
@@ -37,7 +39,7 @@ function Title({
 						setTitle(e.target.value)
 					}
 				}
-				placeholder='Decentralized batching contract'
+				placeholder={t('/create-grant.title_placeholder')}
 				subtext='Letters, spaces, and numbers are allowed.'
 				isError={titleError}
 				errorText='Required'
@@ -46,8 +48,8 @@ function Title({
 			<Box mt={8} />
 
 			<MultiLineInput
-				label='Grant Summary'
-				placeholder='A tool, script or tutorial to set up monitoring for miner GPU, CPU, & memory.'
+				label={t('/create-grant.summary_label')}
+				placeholder={t('/create-grant.summary_placeholder')}
 				value={summary}
 				onChange={
 					(e) => {
