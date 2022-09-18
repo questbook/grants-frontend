@@ -576,7 +576,7 @@ function Profile() {
 
 Profile.getLayout = function(page: React.ReactElement) {
 	return (
-		<NavbarLayout renderGetStarted>
+		<NavbarLayout>
 			{page}
 		</NavbarLayout>
 	)

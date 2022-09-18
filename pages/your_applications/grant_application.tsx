@@ -7,7 +7,6 @@ import React, {
 import { Container } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
-import Breadcrumbs from 'src/components/ui/breadcrumbs'
 import Form from 'src/components/your_applications/grant_application/form'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'

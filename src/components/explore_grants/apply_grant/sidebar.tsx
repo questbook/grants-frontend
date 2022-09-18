@@ -29,7 +29,7 @@ function Sidebar({
 				w='100%'
 				maxW='calc(40vw - 64px)'
 				overflowY='scroll'
-				position='absolute'
+				position='sticky'
 				maxH='calc(100vh - 150px)'
 			>
 				<GrantDetails

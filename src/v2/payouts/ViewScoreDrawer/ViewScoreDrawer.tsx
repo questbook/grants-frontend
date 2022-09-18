@@ -113,8 +113,6 @@ const ViewScoreDrawer = ({
 						maxH='calc(100vh - 32px)'
 						overflowY='scroll'
 						direction='column'>
-
-
 						<Box mt={4} />
 
 						{/* {
