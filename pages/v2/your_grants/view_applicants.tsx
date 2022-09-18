@@ -248,7 +248,7 @@ function ViewApplicants() {
 			setWorkspaceSafe(safeAddress)
 			setWorkspaceSafeChainId(parseInt(workspaceSafes[0]?.chainId))
 			if(isEvmChain) {
-				checkIfUserIsOnCorrectNetwork(safeNetwork)
+				// checkIfUserIsOnCorrectNetwork(safeNetwork)
 			}
 		}
 	}, [safeAddressData])
@@ -544,6 +544,9 @@ function ViewApplicants() {
 	//getting transaction hash status end
 
 	const onSendFundsButtonClicked = async(state: boolean, selectedApplicants: any[]) => {
+		if(isEvmChain && workspaceSafeChainId) {
+			checkIfUserIsOnCorrectNetwork(workspaceSafeChainId.toString())
+		}
 		if(workspace?.safe) {
 			setSendFundsTo(selectedApplicants)
 		} else {

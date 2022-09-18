@@ -11,3 +11,8 @@ export default function getGnosisTansactionLink(safeAddress: string, chainId: st
 		return `https://gnosis-safe.io/app/${NETWORK_PREFIX[chainId]}:${safeAddress}/transactions/queue`
 	}
 }
+
+
+export function getTransactionHashStatus () {
+	
+}
