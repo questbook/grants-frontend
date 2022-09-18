@@ -192,7 +192,23 @@ i18next.use(initReactI18next).init({
                     'proposals_received': 'Proposals Received',
                     'amount_sent': 'Amount Sent',
                 },
-
+				'/safe': {
+					'balance': 'Balance',
+					'could_not_fetch': 'Could not fetch balance',
+					'open': 'Open multisig wallet',
+					'note': 'All grants will be paid out from this multisig wallet.',
+					'learn_more': 'Learn more about multisig wallets',
+				},
+				'/your_applications': {
+					'your_proposals': 'My Proposals',
+					'submit_milestone': 'Submit Milestones',
+					'view_application': 'View Proposal',
+				},
+				'/your_applications/manage_grant': {
+					'open_application': 'Open My Proposal',
+					'mark_as_done' : 'Submit milestone for review',
+					'mark_as_done_description': 'Add what you achieved as part of this milestone along with links'
+				}
             },
 
         },

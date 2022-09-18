@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import {
 	Box, Button,
-	Container, Flex, Image, Text, } from '@chakra-ui/react'
+	Container, Flex, Image, Link, Text, } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import moment from 'moment'
 import { useRouter } from 'next/router'
@@ -23,6 +23,8 @@ import { formatAmount } from 'src/utils/formattingUtils'
 import verify from 'src/utils/grantUtils'
 import useApplicationMilestones from 'src/utils/queryUtil'
 import { getChainInfo } from 'src/utils/tokenUtils'
+import Heading from 'src/components/ui/heading'
+import { useTranslation } from 'react-i18next'
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 	let val = BigNumber.from(0)
@@ -54,6 +56,8 @@ function ManageGrant() {
 	const [applicationID, setApplicationID] = useState<any>('')
 	const [selected, setSelected] = React.useState(0)
 	const [chainId, setChainId] = useState<SupportedChainId>()
+	const { t }	= useTranslation()
+
 
 	useEffect(() => {
 		if(router && router.query) {
@@ -280,6 +284,14 @@ function ManageGrant() {
 					}
 				</Flex>
 
+				<Heading title='Submit Milestones'/>
+
+				<Link href={`/your_applications/grant_application?applicationId=${applicationID}&chainId=${chainId}`}>
+					<Text>
+						{t('/your_applications/manage_grant.open_application')}
+					</Text>
+				</Link>
+
 				{
 					selected === 0 ? (
 						<MilestoneTable
@@ -305,11 +317,6 @@ function ManageGrant() {
 					)
 				}
 			</Container>
-
-			<Sidebar
-				chainId={chainId}
-				applicationData={applicationData}
-				assetInfo={assetInfo} />
 		</Container>
 	)
 }
