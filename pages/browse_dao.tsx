@@ -1,7 +1,8 @@
-import { ReactElement, useEffect, useState } from 'react'
+import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Container, Divider, Flex, HStack, Text, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { WebwalletContext } from 'pages/_app'
 import AllDaosGrid from 'src/components/browse_daos/all_daos'
 import { GetDaOsForExploreQuery, useGetDaOsForExploreQuery, Workspace_Filter as WorkspaceFilter, Workspace_OrderBy as WorkspaceOrderBy } from 'src/generated/graphql'
 import { useMultiChainPaginatedQuery } from 'src/hooks/useMultiChainPaginatedQuery'
@@ -21,10 +22,14 @@ const PAGE_SIZE = 3
  * @returns
  */
 function BrowseDao() {
+	const { scwAddress } = useContext(WebwalletContext)!
+
 	const toast = useToast()
 	const router = useRouter()
 
 	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
+
+	const { t } = useTranslation()
 
 	const {
 		results: newDaos,
@@ -41,7 +46,18 @@ function BrowseDao() {
 		{ totalGrantFundingDisbursedUSD_gte: 1000 },
 	)
 
-	const { t } = useTranslation()
+	const {
+		results: myDaos,
+		fetchMore: fetchMoreMyDaos
+	} = useMultiChainDaosForExplore(
+		WorkspaceOrderBy.TotalGrantFundingDisbursedUsd,
+		{ members_: { actorId: scwAddress } },
+	)
+
+	const totalDaos = useMemo(() => [
+		...myDaos,
+		...popularDaos,
+	], [myDaos, popularDaos])
 
 	useEffect(() => {
 		try {
@@ -63,7 +79,12 @@ function BrowseDao() {
 		logger.info('fetching daos')
 		fetchMoreNewDaos(true)
 		fetchMorePopularDaos(true)
+		fetchMoreMyDaos(true)
 	}, [])
+
+	useEffect(() => {
+		fetchMoreMyDaos(true)
+	}, [scwAddress])
 
 	return (
 		<>
@@ -82,7 +103,7 @@ function BrowseDao() {
 
 				<AllDaosGrid
 					renderGetStarted
-					workspaces={popularDaos} />
+					workspaces={totalDaos} />
 
 				<HStack
 					align='center'
