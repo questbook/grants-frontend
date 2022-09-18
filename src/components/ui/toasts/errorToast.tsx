@@ -1,14 +1,15 @@
-import React from 'react'
+import { ReactNode } from 'react'
 import {
 	Flex, IconButton, Image, Text,
 } from '@chakra-ui/react'
 
 interface Props {
-  content: React.ReactNode
-  close: () => void
+	title?: ReactNode
+	content: ReactNode
+	close: () => void
 }
 
-function ErrorToast({ content, close }: Props) {
+function ErrorToast({ title, content, close }: Props) {
 	// basically we check, if an HTML string is provided to us
 	// then we set it dangerously inside -- so the HTML gets displayed correctly
 	// otherwise just display it as a regular react child
@@ -58,7 +59,7 @@ function ErrorToast({ content, close }: Props) {
 					fontWeight='700'
 					color='#7B4646'
 				>
-					Error Message
+					{title || 'An Error Occurred'}
 				</Text>
 				<Text
 					fontSize='16px'
