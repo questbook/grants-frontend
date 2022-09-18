@@ -370,6 +370,10 @@ export class RealmsSolana implements Safe {
     		})
     	return propsalsToSend
 	}
+
+	getNextSteps(): string[] {
+		return ['Open the transaction on Realms', 'Sign the newly created proposal', 'Ask all the multi-sig signers to sign the proposal']
+	}
 }
 
 const getDateInDDMMYYYY = (date: Date) =>{

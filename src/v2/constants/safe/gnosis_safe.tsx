@@ -21,10 +21,12 @@ export class GnosisSafe implements _GnosisSafe {
     	this.chainId = chainId
     	this.txnServiceURL = txnServiceURL
 	}
-
 	
 	isValidRecipientAddress(address: String): Promise<boolean> {
 		return new Promise((resolve, reject) => resolve(ethers.utils.isAddress(address.toString())))
+	}
+	getNextSteps(): string[] {
+		return ['Open the transaction on Gnosis Safe', 'Sign the transaction created under the Queue section', 'Ask the other multi-sig signers to sign this transaction too']
 	}
 	initialiseAllProposals(): void {
 		throw new Error('Method not implemented.')
