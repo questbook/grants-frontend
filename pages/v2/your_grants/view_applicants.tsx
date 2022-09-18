@@ -471,7 +471,6 @@ function ViewApplicants() {
 			let status
 			if(isEvmChain) {
 				status = await getTransactionHashStatus(workspaceSafeChainId.toString(), transaction.transactionHash)
-				console.log('status received', status)
 			} else {
 				status = await currentSafe?.getTransactionHashStatus(transaction?.transactionHash)
 			}
