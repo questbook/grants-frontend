@@ -484,7 +484,7 @@ const getTokenAndbalance = async(realmAddress: string): Promise<any> =>{
 			const tokenCoinGeckoInfo = allTokenList.find((x)=>x.address===tokenInfo?.mint)
 			// console.log('tokenListAndBalance - tokenCoinGeckoInfo', tokenCoinGeckoInfo)
 			const tokenUsdValue = await axios.get(
-				`https://api.coingecko.com/api/v3/simple/price?ids=${tokenCoinGeckoInfo.extensions?.coingeckoId}&vs_currencies=usd`
+				`https://api.coingecko.com/api/v3/simple/price?ids=${tokenCoinGeckoInfo?.extensions?.coingeckoId}&vs_currencies=usd`
 			)
 			
 			// console.log('tokenListAndBalance - tokenUsdValue', tokenUsdValue?.data[tokenCoinGeckoInfo.extensions?.coingeckoId])
