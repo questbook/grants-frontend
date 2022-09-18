@@ -1,15 +1,16 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useContext, useMemo, useRef, useState } from 'react'
 import { QueryHookOptions, QueryResult } from '@apollo/client'
+import { ApiClientsContext } from 'pages/_app'
 import { InputMaybe, Scalars } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
-import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 
 type PaginationVariables = {
 	skip?: InputMaybe<Scalars['Int']>
 	first?: InputMaybe<Scalars['Int']>
 }
 
-export type UseMultiChainPaginatedQuery<Q, K, V> = {
+export type UseMultiChainPaginatedQueryOptions<Q, K, V> = {
+	/** specify chains to query from, set undefined to query all */
 	chains?: SupportedChainId[]
 	pageSize: number
 	variables: V
@@ -18,69 +19,82 @@ export type UseMultiChainPaginatedQuery<Q, K, V> = {
 }
 
 /**
- * Query paginated data from mutliple chains
+ * Queries from multiple chains simulataneously.
+ * @returns
  */
 export function useMultiChainPaginatedQuery<Q, K, V extends PaginationVariables>({
 	chains,
-	pageSize,
 	variables,
+	pageSize,
+	useQuery,
 	mergeResults,
-	useQuery
-}: UseMultiChainPaginatedQuery<Q, K, V>) {
-	const { results, fetchMore } = useMultiChainQuery({
-		chains,
-		options: {
-			fetchPolicy: 'cache-first',
-			variables: { ...variables, first: pageSize, skip: 0 }
-		},
-		useQuery
-	})
+}: UseMultiChainPaginatedQueryOptions<Q, K, V>) {
+	const { subgraphClients } = useContext(ApiClientsContext)!
 
-	const [page, setPage] = useState(0)
-	const [hasMore, setHasMore] = useState(true)
+	const [results, setResults] = useState<K[]>([])
+	const [loading, setLoading] = useState(false)
 
-	const combineResults = useCallback((results: (Q | undefined)[]) => {
-		// remove all failed results and merged
-		const filtered: Q[] = []
-		for(const result of results) {
-			if(result) {
-				filtered.push(result)
-			}
-		}
+	const pageRef = useRef(0)
+	const hasMoreRef = useRef(true)
 
-		return mergeResults(filtered)
-	}, [mergeResults])
+	const subgraphClientList = useMemo(
+		() => chains ? chains.map(chainId => subgraphClients[chainId]) : Object.values(subgraphClients),
+		[chains, subgraphClients]
+	)
 
-	const combinedResults = useMemo(() => combineResults(results), [results])
+	const allQueryFuncs = subgraphClientList.map(({ client }) => (
+		useQuery({
+			variables,
+			client,
+			skip: true,
+		})
+	))
 
 	return {
-		combinedResults,
-		hasMore,
+		results,
+		loading,
+		hasMore: hasMoreRef.current,
 		async fetchMore(reset?: boolean) {
-			if(!hasMore && !reset) {
-				return combinedResults
+			if(!hasMoreRef.current && !reset) {
+				return results
 			}
 
-			const prevTotal = combinedResults.length
-			const newResults = await fetchMore(
-				{ skip: (reset ? 0 : page) * pageSize } as V,
-				reset
+			if(reset) {
+				pageRef.current = 0
+				hasMoreRef.current = true
+			}
+
+			const vars = {
+				skip: (reset ? 0 : pageRef.current) * pageSize,
+				first: pageSize
+			} as Partial<V>
+
+			setLoading(true)
+
+			const queryResults: Q[] = []
+			await Promise.allSettled(
+				allQueryFuncs.map(async query => {
+					const result = await query.fetchMore({ variables: vars })
+					if(result.data) {
+						queryResults.push(result.data)
+					}
+				})
 			)
 
-			const merged = combineResults(newResults)
-			if(!reset) {
-				const newHasMore = merged.length > prevTotal
-				// keep fetching till nothing new is fetched
-				setHasMore(newHasMore)
-				if(newHasMore) {
-					setPage(page + 1)
-				}
-			} else {
-				setHasMore(true)
-				setPage(1)
+			const newMergedResults = mergeResults(queryResults)
+
+			pageRef.current += 1
+			if(!newMergedResults.length) {
+				hasMoreRef.current = false
 			}
 
-			return merged
+			setLoading(false)
+			setResults(results => [
+				...(reset ? [] : results),
+				...newMergedResults
+			])
+
+			return results
 		}
 	}
 }

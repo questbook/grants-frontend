@@ -10,7 +10,7 @@ import logger from 'src/utils/logger'
 import { mergeSortedArrays } from 'src/utils/mergeSortedArrays'
 import AcceptInviteModal from 'src/v2/components/AcceptInviteModal'
 
-const PAGE_SIZE = 2
+const PAGE_SIZE = 3
 
 /**
  * Ah the browse DAOs page.
@@ -26,30 +26,19 @@ function BrowseDao() {
 	const [sort, setSort] = useState<SortingOption>(WorkspaceOrderBy.TotalGrantFundingDisbursedUsd)
 	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
 
-	const [newDaos, setNewDaos] = useState<GetDaOsForExploreQuery['workspaces']>([])
-	const [popularDaos, setPopularDaos] = useState<GetDaOsForExploreQuery['workspaces']>([])
-
 	const {
-		combinedResults: newDaosResult,
+		results: newDaos,
 		hasMore: hasMoreNewDaos,
 		fetchMore: fetchMoreNewDaos,
-	} = useMultiChainDaosForExplore(WorkspaceOrderBy.CreatedAtS, { }, newDaos)
+	} = useMultiChainDaosForExplore(WorkspaceOrderBy.CreatedAtS, { })
 
 	const {
-		combinedResults: popularDaosResult,
+		results: popularDaos,
 		fetchMore: fetchMorePopularDaos
 	} = useMultiChainDaosForExplore(
 		sort,
 		SORTING_OPTIONS.find(s => s.id === sort)!.filter,
 	)
-
-	useEffect(() => {
-		setNewDaos(newDaosResult)
-	}, [newDaosResult])
-
-	useEffect(() => {
-		setPopularDaos(popularDaosResult)
-	}, [popularDaosResult])
 
 	useEffect(() => {
 		try {
@@ -72,7 +61,7 @@ function BrowseDao() {
 	}, [sort])
 
 	useEffect(() => {
-		logger.info('Fetching  daos')
+		logger.info('fetching daos')
 		fetchMoreNewDaos(true)
 		fetchMorePopularDaos(true)
 	}, [])
@@ -186,15 +175,14 @@ type SortingOption = typeof SORTING_OPTIONS[number]['id']
 
 function useMultiChainDaosForExplore(
 	orderBy: WorkspaceOrderBy,
-	filter: WorkspaceFilter,
-	currentData?: GetDaOsForExploreQuery['workspaces']
+	filter: WorkspaceFilter
 ) {
 	return useMultiChainPaginatedQuery({
 		useQuery: useGetDaOsForExploreQuery,
 		pageSize: PAGE_SIZE,
 		variables: { orderBy, filter },
 		mergeResults(results) {
-			let final: GetDaOsForExploreQuery['workspaces'] = currentData ?? []
+			let final: GetDaOsForExploreQuery['workspaces'] = []
 			for(const { workspaces } of results) {
 				// logger.info({ workspaces }, 'Browse DAO Workspaces')
 				final = mergeSortedArrays(final, workspaces, (a, b) => {
@@ -205,13 +193,14 @@ function useMultiChainDaosForExplore(
 				})
 			}
 
-			final = Array.from(new Set(final))
 			return final.filter((workspace) => {
-				return workspace.id !== '0xe9' && workspace.supportedNetworks[0] !== 'chain_5'
+				return !DAOS_TO_IGNORE.includes(workspace.id)
+					&& workspace.supportedNetworks[0] !== 'chain_5'
 			})
-			// return final
 		}
 	})
 }
+
+const DAOS_TO_IGNORE = [ '0xe9' ]
 
 export default BrowseDao
