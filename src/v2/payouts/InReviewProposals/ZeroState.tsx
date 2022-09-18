@@ -1,5 +1,5 @@
-import { Flex, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
+import { Flex, Text } from '@chakra-ui/react'
 
 const ZeroState = () => {
 	const { t } = useTranslation()

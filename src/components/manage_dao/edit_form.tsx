@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 // UI AND COMPONENTS
 import {
 	Box,
@@ -35,7 +36,6 @@ import {
 } from 'src/utils/settingsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
-import { useTranslation } from 'react-i18next'
 
 type EditFormProps = {
   workspaceData: Workspace | undefined
@@ -65,7 +65,7 @@ function EditForm({ workspaceData }: EditFormProps) {
 	const [txnData, txnLink, loading, isBiconomyInitialised] = useUpdateWorkspace(editData as any, setNetworkTransactionModalStep)
 
 	const { t } = useTranslation()
-	
+
 	const supportedNetwork = useMemo(() => {
 		if(editedFormData) {
 			const supportedChainId = getSupportedChainIdFromSupportedNetwork(

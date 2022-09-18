@@ -1,7 +1,7 @@
-import { QueryResult } from '@apollo/client'
-import { Button, Flex, Text } from '@chakra-ui/react'
-import { GetGrantDetailsQuery, GetGrantDetailsQueryVariables } from 'src/generated/graphql'
 import { useTranslation } from 'react-i18next'
+import { QueryResult } from '@apollo/client'
+import { Flex, Text } from '@chakra-ui/react'
+import { GetGrantDetailsQuery, GetGrantDetailsQueryVariables } from 'src/generated/graphql'
 
 const ZeroState = ({
 	grantData,

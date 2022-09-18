@@ -1,7 +1,6 @@
+import { useTranslation } from 'react-i18next'
 import { Button, Image, Text } from '@chakra-ui/react'
 import TextField from 'src/v2/components/InputFields/TextField'
-
-import { useTranslation } from 'react-i18next'
 
 interface Props {
     domainName: string

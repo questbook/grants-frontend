@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { LinkIcon } from '@chakra-ui/icons'
 import {
 	Box,
@@ -28,7 +29,6 @@ import InviteModal from 'src/v2/components/InviteModal'
 import AccessLevelTab from 'src/v2/components/WorkspaceMembers/AccessLevelTab'
 import MemberRow from 'src/v2/components/WorkspaceMembers/MemberRow'
 import PaginatorView from 'src/v2/components/WorkspaceMembers/PaginatorView'
-import { useTranslation } from 'react-i18next'
 
 const PAGE_SIZE = 7
 

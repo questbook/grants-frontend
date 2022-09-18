@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box, Button, Flex, Text,
 } from '@chakra-ui/react'
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
-import { useTranslation } from 'react-i18next'
 
 interface Props {
   onSubmit: (data: any) => void

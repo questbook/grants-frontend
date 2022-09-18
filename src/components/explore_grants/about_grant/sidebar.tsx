@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Badge,
 	Box, Button, HStack, Text,
@@ -9,8 +10,6 @@ import FloatingSidebar from 'src/components/ui/sidebar/floatingSidebar2'
 import { SupportedChainId } from 'src/constants/chains'
 import type { GetGrantDetailsQuery } from 'src/generated/graphql'
 import { getFieldLabelFromFieldTitle } from 'src/utils/formattingUtils'
-
-import { useTranslation } from 'react-i18next'
 
 type GrantRequiredFields = GetGrantDetailsQuery['grants'][number]['fields']
 

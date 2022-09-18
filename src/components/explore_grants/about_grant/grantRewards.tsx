@@ -1,11 +1,11 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Button,
 	Divider, Flex, Image, Text, useTheme, } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
-import { useTranslation } from 'react-i18next'
 
 function GrantRewards({
 	daoId,

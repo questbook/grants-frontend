@@ -6,6 +6,7 @@ import {
 	useRef,
 	useState,
 } from 'react'
+import { useTranslation } from 'react-i18next'
 import * as Apollo from '@apollo/client'
 import { Button, Center, Flex, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
@@ -36,7 +37,6 @@ import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
 import ReviewerDashboard from 'src/v2/components/Dashboard/ReviewerDashboard'
-import { useTranslation } from 'react-i18next'
 
 const PAGE_SIZE = 5
 
@@ -114,6 +114,7 @@ function YourGrants() {
 			if(user !== undefined) {
 				localStorage.setItem('id', user)
 			}
+
 			setIsLoading(false)
 		}
 	}, [accountData, workspace])

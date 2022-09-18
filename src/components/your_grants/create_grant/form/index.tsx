@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import React, { useContext, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box, Button, Flex, Text } from '@chakra-ui/react'
 import {
@@ -21,8 +22,6 @@ import SAFES_ENDPOINTS_TESTNETS from 'src/constants/safesEndpointsTest.json'
 import strings from 'src/constants/strings.json'
 import { SafeToken } from 'src/types'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-
-import { useTranslation } from 'react-i18next'
 
 const SAFES_ENDPOINTS = { ...SAFES_ENDPOINTS_MAINNETS, ...SAFES_ENDPOINTS_TESTNETS }
 type ValidChainID = keyof typeof SAFES_ENDPOINTS;

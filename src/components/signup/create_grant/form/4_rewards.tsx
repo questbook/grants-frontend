@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box, Button, Flex, Image, Link, Switch,
 	Text,
@@ -27,7 +28,6 @@ import { SafeToken } from 'src/types'
 import logger from 'src/utils/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import 'react-datepicker/dist/react-datepicker.css'
-import { useTranslation } from 'react-i18next'
 
 const SAFES_ENDPOINTS = { ...SAFES_ENDPOINTS_MAINNETS, ...SAFES_ENDPOINTS_TESTNETS }
 type ValidChainID = keyof typeof SAFES_ENDPOINTS;

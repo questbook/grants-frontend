@@ -1,4 +1,5 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { LinkIcon } from '@chakra-ui/icons'
 import { Button, Container, Flex, Heading, Spacer, Text } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
@@ -16,7 +17,6 @@ import {
 import NavbarLayout from 'src/layout/navbarLayout'
 import { UNIX_TIMESTAMP_MAX, UNIX_TIMESTAMP_MIN } from 'src/utils/generics'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useTranslation } from 'react-i18next'
 
 // const Tabledata = [
 // 	{

@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Box, Flex, Image, Link, Text } from '@chakra-ui/react'
 import { GroupBase, OptionBase, OptionProps, SingleValueProps } from 'chakra-react-select'
 import { NetworkType } from 'src/constants/Networks'
 import DropdownSelect from 'src/v2/components/DropdownSelect'
-
-import { useTranslation } from 'react-i18next'
 
 interface Props {
 	label: string

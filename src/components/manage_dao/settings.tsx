@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box,
 	Flex,
@@ -9,7 +10,6 @@ import {
 import EditForm from 'src/components/manage_dao/edit_form'
 import { Workspace } from 'src/types'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import { useTranslation } from 'react-i18next'
 
 interface Props {
   workspaceData: Workspace

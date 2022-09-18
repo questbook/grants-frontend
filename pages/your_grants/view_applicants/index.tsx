@@ -1,6 +1,7 @@
 import React, {
 	ReactElement, useContext, useEffect, useState,
 } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box, Button,
 	Container, Flex, Image, Text } from '@chakra-ui/react'
@@ -30,7 +31,6 @@ import { formatAmount, getFieldString } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useTranslation } from 'react-i18next'
 
 const PAGE_SIZE = 500
 

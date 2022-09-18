@@ -1,8 +1,8 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Box, Flex, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import SupportedChainId from 'src/generated/SupportedChainId'
-import { useTranslation } from 'react-i18next';
 
 type DaoCardProps = {
 	logo: string
@@ -16,7 +16,7 @@ type DaoCardProps = {
 function DaoCard({ logo, name, daoId, chainId, noOfApplicants, totalAmount }: DaoCardProps) {
 	const router = useRouter()
 	const [isActive, setIsActive] = useState(false)
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 	return (
 		<Box
 			w='100%'

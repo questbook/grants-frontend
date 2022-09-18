@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Flex, Text } from '@chakra-ui/react'
 import Content from 'src/components/your_grants/view_applicants/table/content'
 import Filter from 'src/components/your_grants/view_applicants/table/filter'
 import Headers from 'src/components/your_grants/view_applicants/table/headers'
-import { useTranslation } from 'react-i18next'
 
 function Table({
 	onViewApplicantFormClick,
@@ -32,7 +32,7 @@ function Table({
 	useEffect(() => {
 		// console.log(filter)
 	}, [filter])
-  const { t } = useTranslation('common')
+	const { t } = useTranslation('common')
 	return (
 		<>
 			<Flex

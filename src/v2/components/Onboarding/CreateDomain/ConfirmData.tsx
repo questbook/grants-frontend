@@ -1,9 +1,8 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Box, Button, Flex, Image, Spacer, Text } from '@chakra-ui/react'
 import Loader from 'src/components/ui/loader'
 import DaoImageUpload from 'src/v2/components/Onboarding/UI/Misc/DaoImageUpload'
-
-import { useTranslation } from 'react-i18next'
 
 interface Props {
 	domainImageFile: File | null
@@ -98,7 +97,7 @@ function ConfirmData({ domainImageFile, safeAddress, safeChainIcon, domainName, 
 				mt={6}
 				w='53%'
 				onClick={onCreateDomain}>
-					{t('/onboarding/create-domain.create')}
+				{t('/onboarding/create-domain.create')}
 				<Box w={2} />
 				{
 					isBiconomyLoading && (

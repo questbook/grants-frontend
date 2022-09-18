@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { AlertDialogOverlay, Box, Flex, Image, Link, Modal, ModalBody, ModalContent, Text, useToast, VStack } from '@chakra-ui/react'
+import { useTranslation } from 'react-i18next'
+import { AlertDialogOverlay, Box, Flex, Image, Modal, ModalBody, ModalContent, Text, useToast, VStack } from '@chakra-ui/react'
 import { Papercups } from '@papercups-io/chat-widget'
 import { NetworkType } from 'src/constants/Networks'
 import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
@@ -11,7 +12,6 @@ import SuccessToast from 'src/v2/components/Toasts/successToast'
 import VerifySignerErrorState from 'src/v2/components/VerifySignerModal/VeirfySignerErrorState'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
-import { useTranslation } from 'react-i18next'
 
 const VerifySignerModal = ({
 	owners,

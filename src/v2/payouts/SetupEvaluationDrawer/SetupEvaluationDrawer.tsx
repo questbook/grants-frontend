@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Box, Button, Container, Drawer, DrawerContent, DrawerOverlay, Flex, Text, ToastId, useToast } from '@chakra-ui/react'
-import router from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { SupportedChainId } from 'src/constants/chains'
@@ -17,7 +17,6 @@ import { FishEye } from 'src/v2/assets/custom chakra icons/FishEye'
 import { SetupEvaluation } from 'src/v2/assets/custom chakra icons/SetupEvaluation'
 import AssignReviewers from 'src/v2/payouts/SetupEvaluationDrawer/AssignReviewers'
 import RubricsForm from 'src/v2/payouts/SetupEvaluationDrawer/RubricsForm'
-import { useTranslation } from 'react-i18next'
 
 const SetupEvaluationDrawer = ({
 	isOpen,
@@ -237,15 +236,10 @@ const SetupEvaluationDrawer = ({
 			const { txFee, receipt } = await getTransactionDetails(response, chainId.toString())
 			setTransactionHash(receipt?.transactionHash)
 			await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
+			setNetworkTransactionModalStep(4)
 
 			await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee))
-			setNetworkTransactionModalStep(4)
-			setTimeout(() => {
-				setNetworkTransactionModalStep(undefined)
-				// router.push({ pathname: '/v2/your_grants/view_applicants/', query: { grantId: grantAddress } })
-				router.reload()
-			}, 3000)
-			// setTransactionData(transactionData)
+			setNetworkTransactionModalStep(5)
 		} catch(e) {
 			setNetworkTransactionModalStep(undefined)
 			const message = getErrorMessage(e as Error)
@@ -325,9 +319,7 @@ const SetupEvaluationDrawer = ({
 								fontWeight='400'
 								mt={1}
 								color='#7D7DA0'
-							>
-								
-							</Text>
+							 />
 						</Flex>
 
 						<CancelCircleFilled

@@ -1,14 +1,13 @@
 /* eslint-disable react/no-unstable-nested-components */
 // @TODO: Fix this ESLint issue
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import Linkify from 'react-linkify'
 import {
 	Box, Link, Skeleton,
 	Text, } from '@chakra-ui/react'
 import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
-
-import { useTranslation } from 'react-i18next'
 
 function GrantDetails({
 	grantSummary,
@@ -46,8 +45,7 @@ function GrantDetails({
 				fontSize='18px'
 				lineHeight='26px'
 				color='#8347E5'
-			>
-			</Text>
+			 />
 
 			<Text
 				mt={4}

@@ -1,7 +1,8 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Flex, Image, Text } from '@chakra-ui/react'
 import Deadline from 'src/components/ui/deadline'
-import { useTranslation } from 'react-i18next'
+
 function Badge({
 	numOfApplicants,
 	endTimestamp,

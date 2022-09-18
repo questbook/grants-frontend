@@ -1,7 +1,7 @@
+import { useTranslation } from 'react-i18next'
 import { Box, Button, Text, VStack } from '@chakra-ui/react'
 import { GroupBase, OptionProps } from 'chakra-react-select'
 import DropdownSelect from 'src/v2/components/DropdownSelect'
-import { useTranslation } from 'react-i18next'
 
 type Role = {
 	id: number

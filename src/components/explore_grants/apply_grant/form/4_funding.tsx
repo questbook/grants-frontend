@@ -1,10 +1,9 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box, } from '@chakra-ui/react'
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
-
-import { useTranslation } from 'react-i18next'
 
 function Funding({
 	fundingBreakdown,

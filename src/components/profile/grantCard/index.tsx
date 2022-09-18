@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Box, Button, Flex, Image, Link, Spacer, Stack, Text } from '@chakra-ui/react'
 import moment from 'moment'
 import Badge from 'src/components/browse_grants/grantCard/badge'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import { calculateUSDValue, useTimeDifference } from 'src/utils/calculatingUtils'
 import { nFormatter } from 'src/utils/formattingUtils'
-import { useTranslation } from 'react-i18next'
 
 interface BrowseGrantCardProps {
   grantTitle: string
@@ -50,7 +50,7 @@ function BrowseGrantCard({
 	const [grantReward, setGrantReward] = useState<number>(0)
 
 	const currentDate = new Date().getTime()
-	
+
 	const { t } = useTranslation()
 
 	useEffect(() => {
@@ -104,7 +104,7 @@ function BrowseGrantCard({
 							fontWeight='700'
 							color='#8C8C8C'
 						>
-							{t('/profile.cards.created_ago').replace('TIME_DIFF',useTimeDifference(currentDate, createdAt * 1000))}
+							{t('/profile.cards.created_ago').replace('TIME_DIFF', useTimeDifference(currentDate, createdAt * 1000))}
 						</Text>
 
 						<Box mr='auto' />
@@ -141,7 +141,7 @@ function BrowseGrantCard({
 								color='#373737'
 							>
 								<b>
-									{'$'}
+									$
 									{grantReward !== 0 ? `$${nFormatter(grantReward.toFixed(0))}` : grantAmount}
 								</b>
 								{' '}

@@ -1,5 +1,5 @@
-import { getFormattedDate } from 'src/utils/formattingUtils'
 import { useTranslation } from 'react-i18next'
+import { getFormattedDate } from 'src/utils/formattingUtils'
 
 export type DeadlineProps = {
 	date: Date | undefined

@@ -1,6 +1,6 @@
 import React from 'react'
-import { Image, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
+import { Image, Text } from '@chakra-ui/react'
 
 function Badge({
 	numOfApplicants,
