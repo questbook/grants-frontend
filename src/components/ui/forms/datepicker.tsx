@@ -50,6 +50,9 @@ function DateInput({
 	inputRightElement,
 }: SingleLineInputProps) {
 	const theme = useTheme()
+	const today = new Date()
+	const todayDateString = `${today.getFullYear()}-${today.getMonth() + 1 < 10 ? '0' : ''}${today.getMonth() + 1}-${today.getDate()}`
+
 	return (
 		<Flex
 			flex={1}
@@ -82,8 +85,8 @@ function DateInput({
 					focusBorderColor={theme.colors.brand[500]}
 					h={12}
 					type='date'
-					// adding a min amount is causing a bad user experience while entering date using keyboard
-					// min={new Date().toString()}
+					// cannot pass js date object here, needs to be of form yyyy-mm-dd
+					min={todayDateString}
 				/>
 				{
 					inputRightElement && (
