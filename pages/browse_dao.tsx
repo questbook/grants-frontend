@@ -1,5 +1,6 @@
 import { ReactElement, useEffect, useState } from 'react'
-import { Box, Button, Container, Divider, Flex, HStack, Image, Menu, MenuButton, MenuItem, MenuList, Text, useToast } from '@chakra-ui/react'
+import { useTranslation } from 'react-i18next'
+import { Container, Divider, Flex, HStack, Text, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import AllDaosGrid from 'src/components/browse_daos/all_daos'
 import { GetDaOsForExploreQuery, useGetDaOsForExploreQuery, Workspace_Filter as WorkspaceFilter, Workspace_OrderBy as WorkspaceOrderBy } from 'src/generated/graphql'
@@ -9,7 +10,6 @@ import { extractInviteInfo, InviteInfo } from 'src/utils/invite'
 import logger from 'src/utils/logger'
 import { mergeSortedArrays } from 'src/utils/mergeSortedArrays'
 import AcceptInviteModal from 'src/v2/components/AcceptInviteModal'
-import { useTranslation } from 'react-i18next';
 
 const PAGE_SIZE = 3
 
@@ -24,7 +24,6 @@ function BrowseDao() {
 	const toast = useToast()
 	const router = useRouter()
 
-	const [sort, setSort] = useState<SortingOption>(WorkspaceOrderBy.TotalGrantFundingDisbursedUsd)
 	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
 
 	const {
@@ -37,11 +36,12 @@ function BrowseDao() {
 		results: popularDaos,
 		fetchMore: fetchMorePopularDaos
 	} = useMultiChainDaosForExplore(
-		sort,
-		SORTING_OPTIONS.find(s => s.id === sort)!.filter,
+		WorkspaceOrderBy.TotalGrantFundingDisbursedUsd,
+		// eslint-disable-next-line camelcase
+		{ totalGrantFundingDisbursedUSD_gte: 1000 },
 	)
 
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	useEffect(() => {
 		try {
@@ -58,10 +58,6 @@ function BrowseDao() {
 			})
 		}
 	}, [])
-
-	useEffect(() => {
-		fetchMorePopularDaos(true)
-	}, [sort])
 
 	useEffect(() => {
 		logger.info('fetching daos')
@@ -82,36 +78,6 @@ function BrowseDao() {
 						fontWeight='700'>
 						{t('/.section_1.title')}
 					</Text>
-					<Box marginLeft='auto'>
-						<Menu>
-							<MenuButton
-								as={Button}
-								rightIcon={<Image src='/ui_icons/black_down.svg' />}>
-								Sort by
-							</MenuButton>
-							<MenuList>
-								{
-									SORTING_OPTIONS.map(({ id, name }) => (
-										<MenuItem
-											key={id}
-											onClick={() => setSort(id)}>
-											<Flex>
-												<Image
-													src={
-														sort === id
-															? '/ui_icons/sorting_checked.svg'
-															: '/ui_icons/sorting_unchecked.svg'
-													} />
-												<Text ml='10px'>
-													{name}
-												</Text>
-											</Flex>
-										</MenuItem>
-									))
-								}
-							</MenuList>
-						</Menu>
-					</Box>
 				</Flex>
 
 				<AllDaosGrid
@@ -158,23 +124,6 @@ BrowseDao.getLayout = function(page: ReactElement) {
 		</NavbarLayout>
 	)
 }
-
-const SORTING_OPTIONS = [
-	{
-		id: WorkspaceOrderBy.TotalGrantFundingDisbursedUsd,
-		name: 'Grant Amount', //TODO : replace with i18n
-		// eslint-disable-next-line camelcase
-		filter: { totalGrantFundingDisbursedUSD_gte: 1000 } as WorkspaceFilter,
-	},
-	{
-		id: WorkspaceOrderBy.NumberOfApplications,
-		name: 'Number of Proposals', //TODO : replace with i18n
-		// eslint-disable-next-line camelcase
-		filter: { numberOfApplications_gte: 1 } as WorkspaceFilter,
-	}
-] as const
-
-type SortingOption = typeof SORTING_OPTIONS[number]['id']
 
 function useMultiChainDaosForExplore(
 	orderBy: WorkspaceOrderBy,
