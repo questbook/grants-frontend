@@ -107,6 +107,7 @@ i18next.use(initReactI18next).init({
 					'verify_signer_desc': 'Connect your wallet which is a signer on the multisig wallet.',
 					'success': 'Success',
 					'next_create_grant': 'Next create a grant to invite proposals from builders',
+                    'successful_verification': 'Verification successful. You are a signer on the multisig wallet.',
 				},
 				'/create-grant' : {
 					'title': 'Create a Grant to attract builders',
