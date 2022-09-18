@@ -142,7 +142,7 @@ function BrowseGrantCard({
 							>
 								<b>
 									{'$'}
-									{grantReward !== 0 ? `$${nFormatter(grantReward.toFixed(0)))}` : grantAmount}
+									{grantReward !== 0 ? `$${nFormatter(grantReward.toFixed(0))}` : grantAmount}
 								</b>
 								{' '}
 								{t('/profile.cards.per_proposal')}
