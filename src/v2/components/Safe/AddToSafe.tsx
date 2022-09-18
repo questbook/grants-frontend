@@ -185,11 +185,14 @@ function AddToSafe() {
 			safeAddress={safeAddress}
 			onChange={
 				(e) => {
+					if(step === 1) {
+						setStep(0)
+						setIsVerified(false)
+						setSelectedSafe(undefined)
+					}
+
 					const address = e.target.value
 					setSafeAddress(address)
-					if(!loadedSafesUSDBalance) {
-
-					}
 				}
 			}
 			onPasteClick={
@@ -202,7 +205,6 @@ function AddToSafe() {
 				}
 			}
 			isVerified={isVerified !== undefined && safesUSDBalance?.length > 0 && selectedSafe !== undefined}
-			isDisabled={step !== 0}
 			safeAddressError={safeAddressError}
 			onContinue={
 				() => {
