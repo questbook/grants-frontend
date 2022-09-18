@@ -160,13 +160,20 @@ i18next.use(initReactI18next).init({
                     'add_question': 'Add another question',
                     'how_many_reviewers': 'How many reviewers do you want to review each proposal?',
                     'how_many_reviewers_description': ' reviewer will be randomly assigned to each proposal',
-                    'pick_reviewers': 'Pick reviewers who will review proposals for this grant',
-                    'make_reviews_private': 'Make reviews private',
-                    'make_reviews_private_description': 'Reviews and comments by your team will be kept private to you and the reviewers',
-                    'send_funds_next_steps': 'Here are the next steps',
-                    'send_funds_open_txn': 'Open the transaction in multi-sig',
-                    
-                },
+					'pick_reviewers': 'Pick reviewers who will review proposals for this grant',
+					'make_reviews_private': 'Make reviews private',
+					'make_reviews_private_description': 'Reviews and comments by your team will be kept private to you and the reviewers',
+					'send_funds': 'Send Grant',
+					'send_funds_description': 'Send money from your multisig wallet',
+					'send_funds_recipient' : 'Grant Details',
+					'send_funds_verify': 'Verify ownership of multisig wallet',
+					'address_on_chain': 'Address on %CHAIN',
+					'invalid_address_on_chain': 'Invalid address on %CHAIN',
+					'send_funds_milestone': 'Milestone Completed',
+					'send_funds_milestone_description': 'Select the milestone you are sending this grant for',
+					'send_funds_verification_message': 'You will be asked to verify that you are a signer on the multisig wallet. This will ensure we don’t have impersonation.',
+					'send_funds_next_steps': 'Here are the next steps',
+                    'send_funds_open_txn': 'Open the transaction in multi-sig',                },
                 '/manage_dao': {
                     'create_link': 'Create invite link',
                     'create_link_description': 'Share this link only with your team member. One invite link can be used exactly once.',
@@ -191,4 +198,3 @@ i18next.use(initReactI18next).init({
         },
     },
 });
-
