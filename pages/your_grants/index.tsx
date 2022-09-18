@@ -62,7 +62,7 @@ const TABS = [
 			minDeadline: 0,
 			maxDeadline: unixTimestampSeconds(),
 		},
-		label: 'Deadline Past',
+		label: 'Past Deadline',
 		emptyState: () => <ExpiredGrantEmptyState />,
 	},
 	{

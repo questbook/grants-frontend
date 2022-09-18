@@ -16,6 +16,7 @@ import NavbarLayout from 'src/layout/navbarLayout'
 import { formatAmount, getChainIdFromResponse, getFormattedDateFromUnixTimestamp } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
+import { useTranslation } from 'react-i18next'
 
 const PAGE_SIZE = 20
 
@@ -25,6 +26,7 @@ function YourApplications() {
 	// const subgraphClient = useContext(ApiClientsContext)?.subgraphClient;
 	const { subgraphClients } = useContext(ApiClientsContext)!
 	const [myApplications, setMyApplications] = React.useState<any>([])
+	const { t } = useTranslation()
 
 	const containerRef = useRef(null)
 	const { data: accountData } = useQuestbookAccount()
@@ -124,7 +126,7 @@ function YourApplications() {
 				px={10}
 				mx='auto'
 			>
-				<Heading title='My Applications' />
+				<Heading title={t('/your_applications.your_proposals')} />
 
 				{
 					myApplications.length > 0

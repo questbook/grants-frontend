@@ -42,7 +42,18 @@ function ViewApplication() {
       ].client,
 	})
 
-	const { data } = useGetApplicationDetailsQuery(queryParams)
+	const {
+		data: data,
+		refetch: refetchApplicationDetails,
+	} = useGetApplicationDetailsQuery({
+		client:
+        subgraphClients[
+        	chainId || defaultChainId
+        ].client,
+		variables: {
+			applicationID,
+		},
+	})
 	const grantId = data?.grantApplication?.grant?.id
 	const applicantPublicKey = scwAddress?.toLowerCase() === data?.grantApplication?.applicantId?.toLowerCase()
 		? webwallet?.publicKey

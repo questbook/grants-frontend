@@ -9,12 +9,14 @@ import MilestoneDoneCheckModalContent from 'src/components/your_applications/man
 import MilestoneDoneConfirmationModalContent from 'src/components/your_applications/manage_grant/modals/modalContentMilestoneDoneConfirmation'
 import { ApplicationMilestone } from 'src/types'
 import { getMilestoneTitle, timeToString } from 'src/utils/formattingUtils'
+import { useTranslation } from 'react-i18next'
 
 type OpenedModalType = 'milestone-done' | 'milestone-view' | 'milestone-confirm';
 type OpenedModal = { type: OpenedModalType, milestone: ApplicationMilestone };
 
 function Table(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
 	const [openedModal, setOpenedModal] = useState<OpenedModal>()
+	const { t } = useTranslation()
 
 	const renderStatus = (milestone: ApplicationMilestone) => {
 		const status = milestone.state
@@ -33,7 +35,7 @@ function Table(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
 					height='32px'
 					onClick={() => setOpenedModal({ type: 'milestone-done', milestone })}
 				>
-					Mark as Done
+					Submit Milestone
 				</Button>
 			)
 		}
@@ -129,7 +131,7 @@ function Table(props: Omit<AbstractMilestonesTableProps, 'renderStatus'>) {
 			<Modal
 				isOpen={openedModal?.type === 'milestone-done'}
 				onClose={() => setOpenedModal(undefined)}
-				title={`Mark ${getMilestoneTitle(openedModal?.milestone)} as Done`}
+				title={`Submit ${getMilestoneTitle(openedModal?.milestone)}`}
 				alignTitle='center'
 			>
 				<MilestoneDoneModalContent
