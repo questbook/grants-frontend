@@ -377,8 +377,6 @@ function ViewApplicants() {
 				px={10}
 				pos='relative'
 			>
-				<Breadcrumbs path={['My Grants', 'View Applicants']} />
-
 				{
 					isAdmin && (
 						<Box

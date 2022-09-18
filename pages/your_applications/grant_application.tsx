@@ -188,7 +188,6 @@ function ViewApplication() {
 				pb={8}
 				px={10}
 			>
-				<Breadcrumbs path={['My Applications', 'Grant Application']} />
 				<Form
 					grantID={application?.grant.id}
 					chainId={

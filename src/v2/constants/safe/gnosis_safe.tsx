@@ -21,6 +21,9 @@ export class GnosisSafe implements _GnosisSafe {
     	this.chainId = chainId
     	this.txnServiceURL = txnServiceURL
 	}
+	isValidRecipientAddress(address: String): Promise<boolean> {
+		return new Promise((resolve, reject) => resolve(ethers.utils.isAddress(address.toString())))
+	}
 	initialiseAllProposals(): void {
 		throw new Error('Method not implemented.')
 	}

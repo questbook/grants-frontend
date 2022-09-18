@@ -39,6 +39,7 @@ interface Props {
   grantId: string
   daoLogo: string
   workspaceId: string
+  safeNetwork: string
   isGrantVerified: boolean
   funding: string
   rewardAmount: string
@@ -63,6 +64,7 @@ function Form({
 	grantId,
 	daoLogo,
 	workspaceId,
+	safeNetwork,
 	isGrantVerified,
 	funding,
 	rewardAmount,
@@ -625,7 +627,7 @@ function Form({
 					setApplicantAddress={setApplicantAddress}
 					setApplicantAddressError={setApplicantAddressError}
 					grantRequiredFields={grantRequiredFields}
-					chainId={chainId!}
+					safeNetwork={safeNetwork!}
 				/>
 
 				<Box mt='43px' />

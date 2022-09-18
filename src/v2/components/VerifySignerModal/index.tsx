@@ -110,7 +110,7 @@ const VerifySignerModal = ({
 					isClosable: true,
 					position: 'top-right',
 					render: () => SuccessToast({
-						content: 'Gotcha! You are one of the safe\'s owners.',
+						content: t('/onboarding/create-domain.successful_verification'),
 						close: () => { }
 					}),
 				})
@@ -124,7 +124,7 @@ const VerifySignerModal = ({
 					isClosable: true,
 					position: 'top-right',
 					render: () => SuccessToast({
-						content: 'Gotcha! You are one of the safe\'s owners.',
+						content: t('/onboarding/create-domain.successful_verification'),
 						close: () => { }
 					}),
 				})

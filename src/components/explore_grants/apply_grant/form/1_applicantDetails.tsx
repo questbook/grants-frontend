@@ -7,6 +7,7 @@ import { ApiClientsContext } from 'pages/_app'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { isValidEthereumAddress } from 'src/utils/validationUtils'
+import { RealmsSolana } from 'src/v2/constants/safe/realms_solana'
 
 function ApplicantDetails({
 	applicantName,
@@ -22,7 +23,7 @@ function ApplicantDetails({
 	grantRequiredFields,
 	applicantAddressError,
 	setApplicantAddressError,
-	chainId,
+	safeNetwork
 }: {
   applicantName: string
   setApplicantName: (applicantName: string) => void
@@ -37,18 +38,22 @@ function ApplicantDetails({
   applicantAddressError: boolean
   setApplicantAddressError: (applicantAddressError: boolean) => void
   grantRequiredFields: string[]
-  chainId: number
+  safeNetwork: string
 }) {
 	const { workspace } = useContext(ApiClientsContext)!
-	console.log('workspace', workspace)
+	console.log('safe network', safeNetwork)
 	const { t } = useTranslation()
-	const chainNames = new Map<number, String>([
-		[1, 'Ethereum Mainnet'],
-		[5, 'Goerli Testnet'],
-		[10, 'Optimism Mainnet'],
-		[137, 'Polygon Mainnet'],
-		[42220, 'Celo Mainnet'],
+	const chainNames = new Map<String, String>([
+		["1", 'Ethereum Mainnet'],
+		["5", 'Goerli Testnet'],
+		["10", 'Optimism Mainnet'],
+		["137", 'Polygon Mainnet'],
+		["42220", 'Celo Mainnet'],
+		["9001", "Solana"],
+		["90001", "Solana"],
+		["900001", "Solana"],
 	])
+	const isSafeOnSolana = (safeNetwork == "9001" || safeNetwork == "90001" || safeNetwork == "900001")
 	return (
 		<>
 			<Text
@@ -96,19 +101,24 @@ function ApplicantDetails({
 			<Box mt={6} />
 			<SingleLineInput
 				label={t('/explore_grants/apply.address')}
-				placeholder={chainId != 900001 ? '0xa2dD...' : '5yDU...'} //TODO : remove hardcoding of chainId
-				subtext={`${t('/explore_grants/apply.your_address_on')} ${chainNames.get(chainId)}`}
+				placeholder={isSafeOnSolana ? '5yDU...' : '0xa2dD...' } //TODO : remove hardcoding of chainId
+				subtext={`${t('/explore_grants/apply.your_address_on')} ${chainNames.get(safeNetwork)}`}
 				onChange={
-					(e) => {
-						if(applicantAddress) {
-							 setApplicantAddressError(false)
-						}
-
+					async (e) => {
 						setApplicantAddress(e.target.value)
+						let safeAddressValid = false;
+						if(isSafeOnSolana) {
+							const realms = new RealmsSolana('')
+							safeAddressValid = await realms.isValidRecipientAddress(e.target.value)
+						} else {
+							safeAddressValid = await isValidEthereumAddress(e.target.value)
+						}
+						console.log('safe address', e.target.value, safeAddressValid)
+						setApplicantAddressError(!safeAddressValid)
 					}
 				}
 				isError={applicantAddressError}
-				errorText='Required'
+				errorText={t('/explore_grants/apply.invalid_address_on_chain').replace('%CHAIN', chainNames.get(safeNetwork)!.toString())}
 				value={applicantAddress}
 				visible={grantRequiredFields.includes('applicantAddress')}
 			/>

@@ -189,7 +189,6 @@ function ManageGrant() {
 				pb={8}
 				px={10}
 			>
-				<Breadcrumbs path={['My Applications', 'Manage Grant']} />
 				<Text
 					variant='heading'
 					mt='18px'>
