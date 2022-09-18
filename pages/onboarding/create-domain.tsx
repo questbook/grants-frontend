@@ -293,7 +293,16 @@ const OnboardingCreateDomain = () => {
 				}
 			}
 			safeSelected={safeSelected!}
-			onSelectedSafeChange={(newSafe) => setSafeSelected(newSafe)} />, <DomainName
+			onSelectedSafeChange={(newSafe) => setSafeSelected(newSafe)}
+			onPasteClick={
+				async() => {
+					let clipboardContent = await navigator.clipboard.readText()
+					logger.info({ clipboardContent }, 'Clipboard content')
+					clipboardContent = clipboardContent.substring(clipboardContent.indexOf(':') + 1)
+					logger.info({ clipboardContent }, 'Clipboard content (formatted)')
+					setSafeAddress(clipboardContent)
+				}
+			} />, <DomainName
 			key={1}
 			domainName={domainName}
 			setValue={

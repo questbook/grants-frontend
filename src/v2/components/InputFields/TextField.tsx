@@ -86,16 +86,16 @@ function TextField({ label, optionalText, helperText, helperLinkText, helperLink
 					errorBorderColor='orange.2'
 					isDisabled={isDisabled}
 					onWheel={(e) => (e.target as HTMLElement).blur()}
-					onPaste={
-						(e) => {
-							if(onPasteClick) {
-								e.preventDefault()
-								return false
-							}
+					// onPaste={
+					// 	(e) => {
+					// 		if(onPasteClick) {
+					// 			e.preventDefault()
+					// 			return false
+					// 		}
 
-							return true
-					  }
-					}
+					// 		return true
+					//   }
+					// }
 				/>
 				<InputRightElement>
 					{
