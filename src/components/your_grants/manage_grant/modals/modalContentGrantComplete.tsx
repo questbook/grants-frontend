@@ -4,6 +4,7 @@ import {
 	Button, Flex, ModalBody, Text, } from '@chakra-ui/react'
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import Loader from 'src/components/ui/loader'
+import { useTranslation } from 'react-i18next'
 
 interface Props {
   onClose: (details: string) => void
@@ -13,6 +14,8 @@ interface Props {
 function ModalContent({ onClose, hasClicked }: Props) {
 	const [details, setDetails] = useState('')
 	const [detailsError, setDetailsError] = useState(false)
+
+	const { t } = useTranslation()
 
 	return (
 		<ModalBody

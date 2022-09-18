@@ -5,6 +5,8 @@ import {
 import { ApiClientsContext } from 'pages/_app'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import { isValidEthereumAddress } from 'src/utils/validationUtils'
+import { useTranslation } from 'react-i18next'
+import SupportedChainId from 'src/generated/SupportedChainId'
 
 function ApplicantDetails({
 	applicantName,
@@ -20,6 +22,7 @@ function ApplicantDetails({
 	grantRequiredFields,
 	applicantAddressError,
 	setApplicantAddressError,
+	chainId,
 }: {
   applicantName: string
   setApplicantName: (applicantName: string) => void
@@ -33,9 +36,19 @@ function ApplicantDetails({
   setApplicantEmailError: (applicantEmailError: boolean) => void
   applicantAddressError: boolean
   setApplicantAddressError: (applicantAddressError: boolean) => void
-  grantRequiredFields: string[]
+  grantRequiredFields: string[],
+  chainId: number
 }) {
 	const { workspace } = useContext(ApiClientsContext)!
+	console.log("workspace", workspace)
+	const { t } = useTranslation()
+	const chainNames = new Map<number, String>([
+		[1, "Ethereum Mainnet"],
+		[5, "Goerli Testnet"],
+		[10, "Optimism Mainnet"],
+		[137, "Polygon Mainnet"],
+		[42220, "Celo Mainnet"],
+	])
 	return (
 		<>
 			<Text
@@ -43,13 +56,11 @@ function ApplicantDetails({
 				fontSize='16px'
 				lineHeight='20px'
 				color='#8850EA'>
-				Applicant Details
+				{t('/explore_grants/apply.proposer_details')}
 			</Text>
 			<Box mt={6} />
 			<SingleLineInput
-				label='Applicant Name'
-				placeholder='John Doe'
-				subtext='Full names are preferred.'
+				label={t('/explore_grants/apply.name')}
 				onChange={
 					(e) => {
 						if(applicantNameError) {
@@ -66,8 +77,7 @@ function ApplicantDetails({
 			/>
 			<Box mt={6} />
 			<SingleLineInput
-				label='Applicant Email'
-				placeholder='name@sample.com'
+				label={t('/explore_grants/apply.email')}
 				value={applicantEmail}
 				onChange={
 					(e) => {
@@ -85,9 +95,9 @@ function ApplicantDetails({
 			/>
 			<Box mt={6} />
 			<SingleLineInput
-				label='Applicant Address'
-				placeholder={isValidEthereumAddress(workspace?.safe?.address ?? '') ? 'Ethereum Address' : 'Solana Address'}
-				subtext='Your wallet address where you would like to receive funds'
+				label={t('/explore_grants/apply.address')}
+				placeholder={chainId != 900001 ? '0xa2dD...' : '5yDU...'} //TODO : remove hardcoding of chainId
+				subtext={`${t('/explore_grants/apply.your_address_on')} ${chainNames.get(chainId)}`}
 				onChange={
 					(e) => {
 						if(applicantAddress) {

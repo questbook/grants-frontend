@@ -9,6 +9,7 @@ import { extractInviteInfo, InviteInfo } from 'src/utils/invite'
 import logger from 'src/utils/logger'
 import { mergeSortedArrays } from 'src/utils/mergeSortedArrays'
 import AcceptInviteModal from 'src/v2/components/AcceptInviteModal'
+import { useTranslation } from 'react-i18next';
 
 const PAGE_SIZE = 3
 
@@ -39,6 +40,8 @@ function BrowseDao() {
 		sort,
 		SORTING_OPTIONS.find(s => s.id === sort)!.filter,
 	)
+
+	const { t } = useTranslation();
 
 	useEffect(() => {
 		try {
@@ -77,7 +80,7 @@ function BrowseDao() {
 					<Text
 						fontSize='24px'
 						fontWeight='700'>
-						Popular
+						{t('/.section_1.title')}
 					</Text>
 					<Box marginLeft='auto'>
 						<Menu>
@@ -123,7 +126,7 @@ function BrowseDao() {
 					<Text
 						fontSize='24px'
 						fontWeight='700'>
-						New
+						{t('/.section_2.title')}
 					</Text>
 
 					<Divider />
@@ -159,13 +162,13 @@ BrowseDao.getLayout = function(page: ReactElement) {
 const SORTING_OPTIONS = [
 	{
 		id: WorkspaceOrderBy.TotalGrantFundingDisbursedUsd,
-		name: 'Grant Rewards',
+		name: 'Grant Amount', //TODO : replace with i18n
 		// eslint-disable-next-line camelcase
 		filter: { totalGrantFundingDisbursedUSD_gte: 1000 } as WorkspaceFilter,
 	},
 	{
 		id: WorkspaceOrderBy.NumberOfApplications,
-		name: 'Number of Applicants',
+		name: 'Number of Proposals', //TODO : replace with i18n
 		// eslint-disable-next-line camelcase
 		filter: { numberOfApplications_gte: 1 } as WorkspaceFilter,
 	}

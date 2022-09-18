@@ -7,6 +7,7 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { MinimalWorkspace } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import getRole from 'src/utils/memberUtils'
+import { useTranslation } from 'react-i18next'
 
 interface Props {
   workspaces: MinimalWorkspace[]
@@ -20,7 +21,7 @@ function Domains({ workspaces, onWorkspaceClick }: Props) {
 	// const { network, switchNetwork } = useNetwork()
 
 	const router = useRouter()
-
+	const { t } = useTranslation()
 	// useEffect(() => {
 	// 	if(!workspace) {
 	// 		return
@@ -98,13 +99,6 @@ function Domains({ workspaces, onWorkspaceClick }: Props) {
 				direction='column'
 				ml={6}
 				mr={3}>
-				<Text
-					variant='v2_metadata'
-					fontWeight='500'
-					color='black.3'
-				>
-					DOMAINS
-				</Text>
 				<Image
 					mt={2}
 					src={getUrlForIPFSHash(workspace!.logoIpfsHash)}
@@ -182,7 +176,7 @@ function Domains({ workspaces, onWorkspaceClick }: Props) {
 						variant='v2_metadata'
 						_hover={{ fontWeight: 700 }}
 						fontWeight='500' >
-						Create New Domain
+						{t('/.create-program')}
 					</Text>
 				</Button>
 			</Flex>

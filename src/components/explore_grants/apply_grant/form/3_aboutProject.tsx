@@ -9,6 +9,8 @@ import RichTextEditor from 'src/components/ui/forms/richTextEditor'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import Tooltip from 'src/components/ui/tooltip'
 
+import { useTranslation } from 'react-i18next'
+
 function AboutProject({
 	projectName,
 	setProjectName,
@@ -82,7 +84,7 @@ function AboutProject({
 
   grantRequiredFields: string[]
 }) {
-	// console.log('Reward icon', rewardCurrency ,rewardCurrencyCoin)
+	const { t } = useTranslation()
 	return (
 		<>
 			<Text
@@ -90,7 +92,7 @@ function AboutProject({
 				fontSize='16px'
 				lineHeight='20px'
 				color='#8850EA'>
-				About Project
+				{t('/explore_grants/apply.about_proposal')}
 				<Tooltip
 					icon='/ui_icons/tooltip_questionmark_brand.svg'
 					label='Write about your project - idea, use cases, process, goals, and how it helps our ecosystem.'
@@ -100,8 +102,8 @@ function AboutProject({
 
 			<Box mt={6} />
 			<SingleLineInput
-				label='Project Name'
-				placeholder='NFT marketplace'
+				label={t('/explore_grants/apply.proposal_title')}
+				placeholder=''
 				value={projectName}
 				onChange={
 					(e) => {
@@ -123,8 +125,8 @@ function AboutProject({
 					<>
 						<Box mt={7} />
 						<SingleLineInput
-							label={`Project Link ${index + 1}`}
-							placeholder='www.project.com'
+							label={`${t('/explore_grants/apply.supporting_link')} #${index + 1}`}
+							placeholder=''
 							value={project.link}
 							onChange={
 								(e) => {
@@ -204,14 +206,14 @@ function AboutProject({
 					src='/ui_icons/plus_circle.svg'
 					alt='link'
 				/>
-				Add another project link
+				{t('/explore_grants/apply.add_link')}
 			</Text>
 
 			<Box mt={8} />
 
 			<RichTextEditor
-				label='Project Details'
-				placeholder='Write details about your project - requirements, deliverables, and milestones - as detailed as possible.'
+				label={t('/explore_grants/apply.proposal_details')}
+				placeholder={t('/explore_grants/apply.proposal_details_placeholder')}
 				value={projectDetails}
 				onChange={
 					(e: EditorState) => {
@@ -230,8 +232,8 @@ function AboutProject({
 
 			<Box mt={8} />
 			<MultiLineInput
-				placeholder='Write about what your team plans to achieve with this project'
-				label='Project Goals'
+				label={t('/explore_grants/apply.goals')}
+				placeholder={t('/explore_grants/apply.goals_placeholder')}
 				maxLength={1000}
 				value={projectGoal}
 				onChange={
@@ -263,8 +265,8 @@ function AboutProject({
 						<>
 							<Box mt={8} />
 							<SingleLineInput
-								label={`Project Milestone ${index + 1}`}
-								placeholder='App Launch on November 30'
+								label={`${t('/explore_grants/apply.milestone')} #${index + 1}`}
+								placeholder=''
 								value={milestone}
 								onChange={
 									(e) => {
@@ -322,9 +324,9 @@ function AboutProject({
 									minW='160px'
 									flex={1}>
 									<SingleLineInput
-										label='Expected Milestone Reward'
+										label={`${t('/explore_grants/apply.milestone_payout')}`}
 										placeholder='100'
-										tooltip='How much money would you need to complete this milestone'
+										tooltip={t('/explore_grants/apply.milestone_payout_tooltip')}
 										tooltipPlacement='bottom-start'
 										value={milestoneReward}
 										onChange={
@@ -346,23 +348,6 @@ function AboutProject({
 										isError={milestoneRewardIsError}
 										errorText='Required'
 										type='number'
-									/>
-								</Box>
-								<Box
-									ml={4}
-									mt={5}
-									minW='132px'
-									flex={0}>
-									<Dropdown
-										listItemsMinWidth='132px'
-										listItems={
-											[
-												{
-													icon: rewardCurrencyCoin,
-													label: rewardCurrency,
-												},
-											]
-										}
 									/>
 								</Box>
 							</Flex>
@@ -403,7 +388,7 @@ function AboutProject({
 					src='/ui_icons/plus_circle.svg'
 					alt='link'
 				/>
-				Add a milestone
+				{t('/explore_grants/apply.add_milestone')}
 			</Text>
 		</>
 	)

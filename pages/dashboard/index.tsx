@@ -16,6 +16,7 @@ import {
 import NavbarLayout from 'src/layout/navbarLayout'
 import { UNIX_TIMESTAMP_MAX, UNIX_TIMESTAMP_MIN } from 'src/utils/generics'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { useTranslation } from 'react-i18next'
 
 // const Tabledata = [
 // 	{
@@ -162,6 +163,7 @@ function DaoDashboard() {
 			}
 		}
 	}, [data])
+	const { t } = useTranslation()
 
 	const getAnalyticsData = async() => {
 		// console.log('calling analytics')
@@ -353,7 +355,7 @@ function DaoDashboard() {
 						<Text
 							variant='heading'
 							mr='14'>
-							DAO Stats
+							{t('/dashboard.title')}
 						</Text>
 						<Spacer />
 						{/* <Menu
@@ -452,18 +454,6 @@ function DaoDashboard() {
 							/>
 						</Flex>
 					</Flex>
-
-					<Heading
-						fontSize='24px'
-						fontWeight='700'
-						mt='10'>
-						{
-							!grants || grants.filter(item => !daoStats?.grantsPending[item.id] || daoStats?.grantsPending[item.id] === 0).length > 0 ?
-								'Grants' :
-								`Grants (${grants.length})`
-						}
-					</Heading>
-
 					<Flex mt='2'>
 						<Flex
 							direction='column'

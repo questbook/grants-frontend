@@ -8,6 +8,8 @@ import {
 import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 
+import { useTranslation } from 'react-i18next'
+
 function GrantDetails({
 	grantSummary,
 	grantDetails,
@@ -21,6 +23,8 @@ function GrantDetails({
 		const d = await getFromIPFS(detailsHash)
 		setDecodedDetails(d)
 	}
+
+	const { t } = useTranslation()
 
 	useEffect(() => {
 		if(!grantDetails) {
@@ -43,7 +47,6 @@ function GrantDetails({
 				lineHeight='26px'
 				color='#8347E5'
 			>
-				About Grant
 			</Text>
 
 			<Text

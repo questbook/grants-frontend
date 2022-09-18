@@ -4,6 +4,7 @@ import {
 } from '@chakra-ui/react'
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
+import { useTranslation } from 'react-i18next'
 
 interface Props {
   onSubmit: (data: any) => void
@@ -18,6 +19,8 @@ function Title({ onSubmit, constructCache, cacheKey }: Props) {
 
 	const [titleError, setTitleError] = useState(false)
 	const [summaryError, setSummaryError] = useState(false)
+
+	const { t } = useTranslation()
 
 	React.useEffect(() => {
 		if(cacheKey.includes('undefined') || typeof window === 'undefined') {
@@ -77,13 +80,13 @@ function Title({ onSubmit, constructCache, cacheKey }: Props) {
 					variant='heading'
 					fontSize='36px'
 					lineHeight='48px'>
-					Give instructions to applicants
+					{t('/create-grant.title')}
 				</Text>
 
 				<Box mt={12} />
 
 				<SingleLineInput
-					label='Grant Title'
+					label={t('/create-grant.title_label')}
 					value={title}
 					onChange={
 						(e) => {
@@ -91,7 +94,7 @@ function Title({ onSubmit, constructCache, cacheKey }: Props) {
 							setTitle(e.target.value)
 						}
 					}
-					placeholder='Decentralized batching contract'
+					placeholder={t('/create-grant.title_placeholder')}
 					subtext='Letters, spaces, and numbers are allowed.'
 					isError={titleError}
 					errorText='Required'
@@ -100,8 +103,8 @@ function Title({ onSubmit, constructCache, cacheKey }: Props) {
 				<Box mt={12} />
 
 				<MultiLineInput
-					label='Grant Summary'
-					placeholder='A tool, script or tutorial to set up monitoring for miner GPU, CPU, & memory.'
+					label={t('/create-grant.summary_label')}
+					placeholder={t('/create-grant.summary_placeholder')}
 					value={summary}
 					onChange={
 						(e) => {

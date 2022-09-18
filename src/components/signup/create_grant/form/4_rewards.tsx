@@ -27,6 +27,7 @@ import { SafeToken } from 'src/types'
 import logger from 'src/utils/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import 'react-datepicker/dist/react-datepicker.css'
+import { useTranslation } from 'react-i18next'
 
 const SAFES_ENDPOINTS = { ...SAFES_ENDPOINTS_MAINNETS, ...SAFES_ENDPOINTS_TESTNETS }
 type ValidChainID = keyof typeof SAFES_ENDPOINTS;
@@ -93,6 +94,8 @@ function GrantRewardsInput({
 	const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState<
 		any[]
 	>([supportedCurrencies])
+
+	const { t } = useTranslation()
 
 	useEffect(() => {
 		if(supportedCurrencies && supportedCurrencies.length > 0) {
@@ -334,13 +337,6 @@ function GrantRewardsInput({
 			<Flex
 				py={12}
 				direction='column'>
-				<Text
-					variant='heading'
-					fontSize='36px'
-					lineHeight='48px'>
-					What&apos;s the reward and deadline for the grant?
-				</Text>
-
 				<Flex
 					direction='row'
 					mt={12}>
@@ -348,8 +344,8 @@ function GrantRewardsInput({
 						minW='160px'
 						flex={1}>
 						<SingleLineInput
-							label='Grant Reward (In USD)'
-							placeholder='e.g. 100'
+							label={t('/create-grant.amount')}
+							placeholder='100'
 							value={reward}
 							onChange={
 								(e) => {
@@ -448,22 +444,9 @@ function GrantRewardsInput({
 					value={date}
 					isError={dateError}
 					errorText='Required'
-					label='Grant Deadline'
-					tooltip='This is the last date on/before which grantees can apply'
+					label='Proposal Deadline'
 				/>
 
-				<Flex
-					direction='column'
-					mt={12}>
-					<Text
-						fontSize='18px'
-						fontWeight='700'
-						lineHeight='26px'
-						letterSpacing={0}
-					>
-						Grant privacy
-					</Text>
-				</Flex>
 
 				{/* <Flex
 					mt={8}
@@ -527,14 +510,14 @@ function GrantRewardsInput({
 							fontSize='16px'
 							lineHeight='20px'
 						>
-							Keep applicant reviews private
+							{t('/create-grant.private_review')}
 						</Text>
 						<Flex>
 							<Text
 								color='#717A7C'
 								fontSize='14px'
 								lineHeight='20px'>
-								Private review is only visible to reviewers, DAO members.
+								{t('/create-grant.private_review_desc')}
 							</Text>
 						</Flex>
 					</Flex>

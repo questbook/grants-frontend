@@ -28,6 +28,7 @@ import InviteModal from 'src/v2/components/InviteModal'
 import AccessLevelTab from 'src/v2/components/WorkspaceMembers/AccessLevelTab'
 import MemberRow from 'src/v2/components/WorkspaceMembers/MemberRow'
 import PaginatorView from 'src/v2/components/WorkspaceMembers/PaginatorView'
+import { useTranslation } from 'react-i18next'
 
 const PAGE_SIZE = 7
 
@@ -37,7 +38,7 @@ const USER_TYPES = [
 		'accessLevels': Object.values(WorkspaceMemberAccessLevel),
 	},
 	{
-		'name': 'Administrators',
+		'name': 'Admins',
 		'accessLevels': [WorkspaceMemberAccessLevel['Owner'], WorkspaceMemberAccessLevel['Admin']],
 	},
 	{
@@ -71,6 +72,8 @@ function WorkspaceMembers() {
 			accessLevelsIn: USER_TYPES[selectedUserTypeIdx].accessLevels,
 		},
 	})
+
+	const { t } = useTranslation()
 
 	useEffect(() => {
 		if(!data) {
@@ -113,7 +116,7 @@ function WorkspaceMembers() {
 						onClick={() => setIsInviteModalOpen(true)}
 						leftIcon={<LinkIcon />}
 						variant='primaryV2' >
-						Create invite link
+						{t('/manage_dao.create_link')}
 					</Button>
 				</Flex>
 				<Box h={5} />

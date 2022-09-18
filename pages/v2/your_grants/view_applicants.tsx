@@ -53,7 +53,7 @@ import SendFunds from 'src/v2/payouts/SendFunds'
 import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEvaluationDrawer'
 import StatsBanner from 'src/v2/payouts/StatsBanner'
 import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
-
+import { useTranslation } from 'react-i18next'
 
 const PAGE_SIZE = 500
 
@@ -133,6 +133,8 @@ function ViewApplicants() {
 	// 		}
 	// 	}
 	// }, [apiAssetId, safeAddressData])
+
+	const { t } = useTranslation()
 
 	const checkIfUserIsOnCorrectNetwork = async(_safeNetwork: string) => {
 		// @ts-ignore
@@ -628,7 +630,7 @@ function ViewApplicants() {
 						lineHeight='32px'
 						fontWeight='500'
 					>
-						{applicantsData[0]?.grantTitle || 'Grant Title'}
+						{applicantsData[0]?.grantTitle || 'Loading...'}
 					</Text>
 
 					{
@@ -659,21 +661,6 @@ function ViewApplicants() {
 								<MenuList
 									minW='240px'
 									py={0}>
-									<Flex
-										bg='#F0F0F7'
-										px={4}
-										py={2}
-									>
-										<Text
-											fontSize='14px'
-											lineHeight='20px'
-											fontWeight='500'
-											textAlign='center'
-											color='#555570'
-										>
-											Grant options
-										</Text>
-									</Flex>
 									<MenuItem
 										px='19px'
 										py='10px'
@@ -700,7 +687,7 @@ function ViewApplicants() {
 											textAlign='center'
 											color='#555570'
 										>
-											{(grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ? 'View scoring rubric' : 'Setup applicant evaluation'}
+											{(grantData?.grants[0]?.rubric?.items.length || 0) > 0 || false ? t('/your_grants/view_applicants.view_review_process') : t('/your_grants/view_applicants.create_review_process')}
 										</Text>
 									</MenuItem>
 									<MenuItem
@@ -717,7 +704,7 @@ function ViewApplicants() {
 											textAlign='center'
 											color='#555570'
 										>
-											Archive grant
+											{t('/your_grants/view_applicants.archive_grant')}
 										</Text>
 									</MenuItem>
 								</MenuList>

@@ -11,6 +11,7 @@ import Dropdown from 'src/components/ui/forms/dropdown'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import CustomTokenModal from 'src/components/ui/submitCustomTokenModal'
 import 'react-datepicker/dist/react-datepicker.css'
+import { useTranslation } from 'react-i18next'
 
 function GrantRewardsInput({
 	reward,
@@ -75,7 +76,7 @@ function GrantRewardsInput({
 		const CurrenciesList = supportedCurrenciesList.filter((currencyItem) => currencyItem.length > 0)
 		setShowDropdown(CurrenciesList.length > 0)
 	}, [supportedCurrenciesList])
-
+	const { t } = useTranslation()
 	return (
 		<Flex direction='column'>
 
@@ -86,7 +87,7 @@ function GrantRewardsInput({
 					minW='160px'
 					flex={1}>
 					<SingleLineInput
-						label='Grant Reward (In USD)'
+						label={t('/create-grant.amount')}
 						placeholder='e.g. 100'
 						value={reward}
 						onChange={
@@ -200,22 +201,8 @@ function GrantRewardsInput({
 				value={date}
 				isError={dateError}
 				errorText={oldDate ? 'Choose a date in the future' : 'Date is Required'}
-				tooltip='This is the last date on/before which grantees can apply'
-				label='Grant Deadline'
+				label={t('/create-grant.deadline')}
 			/>
-
-			<Flex
-				direction='column'
-				mt={12}>
-				<Text
-					fontSize='18px'
-					fontWeight='700'
-					lineHeight='26px'
-					letterSpacing={0}
-				>
-					Grant privacy
-				</Text>
-			</Flex>
 
 			<Flex
 				mt={8}
@@ -276,14 +263,14 @@ function GrantRewardsInput({
 						fontSize='16px'
 						lineHeight='20px'
 					>
-						Keep applicant reviews private
+						{t('/create-grant.private_review')}
 					</Text>
 					<Flex>
 						<Text
 							color='#717A7C'
 							fontSize='14px'
 							lineHeight='20px'>
-							Private review is only visible to reviewers, DAO members.
+							{t('/create-grant.private_review_desc')}
 						</Text>
 					</Flex>
 				</Flex>
