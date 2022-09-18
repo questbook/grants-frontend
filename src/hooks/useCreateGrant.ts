@@ -106,6 +106,7 @@ export default function useCreateGrant(
 				const detailsHash = (await uploadToIPFS(data.details)).hash
 				let reward
 				if(isEVM) {
+					console.log('reward', data.reward)
 					reward = {
 						committed: data.reward,
 						asset: USD_ASSET

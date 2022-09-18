@@ -490,16 +490,19 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 						isAdmin &&
 						grants.length > 0 &&
 						grants.map((grant) => {
-							const grantAmount = grant.reward.committed
+							let grantAmount = grant.reward.committed
 							let decimals
 							let icon
 							let label
+							console.log('grant', grant)
+							
 							if(grant.reward.token) {
 								// console.log('Reward has token')
 								decimals = grant.reward.token.decimal
 								label = grant.reward.token.label
 								icon = grant.reward.token.iconHash
-							} else {
+							}
+							 else {
 								decimals =
 									CHAIN_INFO[
 										getSupportedChainIdFromSupportedNetwork(
@@ -532,9 +535,9 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 									grantDesc={grant.summary}
 									numOfApplicants={grant.numberOfApplications}
 									endTimestamp={new Date(grant.deadline!).getTime()}
-									grantAmount={formatAmount(grantAmount, decimals || 18)}
+									grantAmount={grant.reward.asset === "0x0000000000000000000000000000000000000001" ? grantAmount : formatAmount(grantAmount, decimals || 18)}
 									grantCurrency={label || 'LOL'}
-									grantCurrencyIcon={icon}
+									grantCurrencyIcon={grant.reward.asset === "0x0000000000000000000000000000000000000001" ? '/dollar_icon.svg' :icon}
 									state='done'
 									chainId={
 										getSupportedChainIdFromSupportedNetwork(

@@ -315,7 +315,8 @@ function Form({
 		// 	)
 		// 		.map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
 		// 		.map((currency) => ({ ...currency, id: currency.address }))
-		if(safeNetwork) {
+		if(safeNetwork && formData) {
+			console.log('form data', formData)
 			transactionServiceURL = SAFES_ENDPOINTS[safeNetwork]
 			// console.log('transaction service url', safeNetwork, transactionServiceURL)
 			const gnosisUrl = `${transactionServiceURL}/v1/safes/${safeAddress}/balances/`

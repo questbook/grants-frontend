@@ -27,13 +27,8 @@ function EditGrant() {
 
 	const router = useRouter()
 
-	const grantInfoRef = useRef(null)
-	const detailsRef = useRef(null)
-	const applicationDetailsRef = useRef(null)
-	const grantRewardsRef = useRef(null)
 
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
-	const [currentStep, setCurrentStep] = useState(0)
 	const [grantID, setGrantID] = useState<string>()
 
 	const [formData, setFormData] = useState<any>(null)
@@ -70,7 +65,8 @@ function EditGrant() {
 		let reward
 		let rewardCurrency
 		let rewardCurrencyAddress
-		// console.log('grant token while editing grant', grant)
+		console.log('grant token while editing grant', grant)
+	
 		if(grant.reward.token) {
 			reward = ethers.utils.formatUnits(
 				grant.reward.committed,
@@ -78,7 +74,9 @@ function EditGrant() {
 			).toString()
 			rewardCurrency = grant.reward.token.label
 			rewardCurrencyAddress = grant.reward.token.address
-		} else {
+		} else if(grant.reward.asset === "0x0000000000000000000000000000000000000001"){
+			reward = grant.reward.committed
+		} else{
 			reward = formatAmount(
 				grant.reward.committed,
 				CHAIN_INFO[
@@ -162,8 +160,8 @@ function EditGrant() {
 			}
 
 			let reward
-			let rewardCurrency
-			let rewardCurrencyAddress
+			// let rewardCurrency
+			// let rewardCurrencyAddress
 			// console.log('grant token while editing grant', grant)
 			if(grant.reward.token) {
 				// console.log('grant token while editing grant', grant)
@@ -171,8 +169,8 @@ function EditGrant() {
 					grant.reward.committed,
 					grant.reward.token.decimal,
 				).toString()
-				rewardCurrency = grant.reward.token.label
-				rewardCurrencyAddress = grant.reward.token.address
+				// rewardCurrency = grant.reward.token.label
+				// rewardCurrencyAddress = grant.reward.token.address
 			} else {
 				reward = formatAmount(
 					grant.reward.committed,
@@ -183,16 +181,16 @@ function EditGrant() {
 					]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
 						?.decimals || 18,
 				)
-				rewardCurrency = CHAIN_INFO[
-					getSupportedChainIdFromSupportedNetwork(
-						grant.workspace.supportedNetworks[0],
-					)
-				]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label || 'LOL'
-				rewardCurrencyAddress = CHAIN_INFO[
-					getSupportedChainIdFromSupportedNetwork(
-						grant.workspace.supportedNetworks[0],
-					)
-				]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.address
+				// rewardCurrency = CHAIN_INFO[
+				// 	getSupportedChainIdFromSupportedNetwork(
+				// 		grant.workspace.supportedNetworks[0],
+				// 	)
+				// ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label || 'LOL'
+				// rewardCurrencyAddress = CHAIN_INFO[
+				// 	getSupportedChainIdFromSupportedNetwork(
+				// 		grant.workspace.supportedNetworks[0],
+				// 	)
+				// ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.address
 			}
 
 			const fd = {
@@ -222,8 +220,6 @@ function EditGrant() {
           grant.fields.find((field: any) => field.id.includes('extraField'))
           !== undefined,
 				reward,
-				rewardCurrency,
-				rewardCurrencyAddress,
 				date: grant.deadline,
 				rubric: grant?.rubric,
 				isPii: grant.fields.some((field: any) => field.isPii),
