@@ -83,6 +83,7 @@ export default function SendFunds({
 	const [gnosisBatchData, setGnosisBatchData] = useState<any>([])
 	const [, setGnosisReadyToExecuteTxns] = useState<any>([])
 	const [step, setStep] = useState('RECEIPT_DETAILS')
+	const [recepientError, setRecepientError] = useState<string>('')
 
 	const isEvmChain = workspaceSafeChainId !== 900001
 
@@ -302,6 +303,10 @@ export default function SendFunds({
 		}
 	}, [workspace, biconomyWalletClient, workspacechainId, biconomy, workspaceRegistryContract, scwAddress, webwallet, nonce, initiateTransactionData, proposalAddr])
 
+	const onChangeRecepientError = (error: string) => {
+		setRecepientError(error)
+	}
+
 	const onChangeRecepientDetails = async(applicationId: any, fieldName: string, fieldValue: any) => {
 
 		if(fieldName === 'selectedToken') {
@@ -369,10 +374,12 @@ export default function SendFunds({
 				isOpen={sendFundsModalIsOpen}
 				onClose={onModalClose}
 				safeAddress={workspaceSafe}
+				safeNetwork={currentSafe?.chainId.toString()!}
 				proposals={sendFundsTo ?? []}
 
 				safeTokenList={safeTokenList}
 				onChangeRecepientDetails={onChangeRecepientDetails}
+				onChangeRecepientError={onChangeRecepientError}
 				phantomWallet={phantomWallet}
 				isEvmChain={isEvmChain}
 				signerVerified={signerVerified}

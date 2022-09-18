@@ -165,6 +165,16 @@ i18next.use(initReactI18next).init({
 					'pick_reviewers': 'Pick reviewers who will review proposals for this grant',
 					'make_reviews_private': 'Make reviews private',
 					'make_reviews_private_description': 'Reviews and comments by your team will be kept private to you and the reviewers',
+					'send_funds': 'Send Grant',
+					'send_funds_description': 'Send money from your multisig wallet',
+					'send_funds_recipient' : 'Grant Details',
+					'send_funds_verify': 'Verify ownership of multisig wallet',
+					'address_on_chain': 'Address on %CHAIN',
+					'invalid_address_on_chain': 'Invalid address on %CHAIN',
+					'send_funds_milestone': 'Milestone Completed',
+					'send_funds_milestone_description': 'Select the milestone you are sending this grant for',
+					'send_funds_verification_message': 'You will be asked to verify that you are a signer on the multisig wallet. This will ensure we don’t have impersonation.',
+
 				},
 				'/manage_dao': {
 					'create_link': 'Create invite link',
