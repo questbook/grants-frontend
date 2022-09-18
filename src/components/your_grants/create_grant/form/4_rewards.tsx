@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box,
 	Flex,
@@ -11,7 +12,6 @@ import Dropdown from 'src/components/ui/forms/dropdown'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import CustomTokenModal from 'src/components/ui/submitCustomTokenModal'
 import 'react-datepicker/dist/react-datepicker.css'
-import { useTranslation } from 'react-i18next'
 
 function GrantRewardsInput({
 	reward,

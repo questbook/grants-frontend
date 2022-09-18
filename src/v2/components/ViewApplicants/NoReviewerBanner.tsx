@@ -1,7 +1,7 @@
+import { useTranslation } from 'react-i18next'
 import { Flex, Text } from '@chakra-ui/react'
 import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
 import { ErrorAlert } from 'src/v2/assets/custom chakra icons/ErrorAlertV2'
-import { useTranslation } from 'react-i18next'
 
 interface Props {
     onSetup: () => void

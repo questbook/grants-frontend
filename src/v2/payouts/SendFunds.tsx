@@ -384,7 +384,7 @@ export default function SendFunds({
 			<TransactionInitiatedModal
 				isOpen={!!(txnInitModalIsOpen && proposalAddr)}
 				onClose={onModalClose}
-				numOfTransactionsInitiated={sendFundsTo.length}
+				numOfTransactionsInitiated={sendFundsTo?.length || 0}
 				proposalUrl={isEvmChain ? getGnosisTansactionLink(currentSafe?.id?.toString()!, currentSafe?.chainId?.toString()!) : getProposalUrl(currentSafe?.id?.toString()!, proposalAddr)}
 			/>
 

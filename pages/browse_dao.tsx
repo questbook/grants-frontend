@@ -1,4 +1,5 @@
 import { ReactElement, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Box, Button, Container, Divider, Flex, HStack, Image, Menu, MenuButton, MenuItem, MenuList, Text, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import AllDaosGrid from 'src/components/browse_daos/all_daos'
@@ -9,7 +10,6 @@ import { extractInviteInfo, InviteInfo } from 'src/utils/invite'
 import logger from 'src/utils/logger'
 import { mergeSortedArrays } from 'src/utils/mergeSortedArrays'
 import AcceptInviteModal from 'src/v2/components/AcceptInviteModal'
-import { useTranslation } from 'react-i18next';
 
 const PAGE_SIZE = 3
 
@@ -41,7 +41,7 @@ function BrowseDao() {
 		SORTING_OPTIONS.find(s => s.id === sort)!.filter,
 	)
 
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	useEffect(() => {
 		try {

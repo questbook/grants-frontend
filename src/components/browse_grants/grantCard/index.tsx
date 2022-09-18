@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Box, Button, Flex, Image, Link, Stack, Text } from '@chakra-ui/react'
 import moment from 'moment'
 import { useRouter } from 'next/router'
@@ -11,7 +12,6 @@ import {
 	useTimeDifference,
 } from 'src/utils/calculatingUtils'
 import { nFormatter } from 'src/utils/formattingUtils'
-import { useTranslation } from 'react-i18next'
 
 interface GrantCardProps {
   daoID: string

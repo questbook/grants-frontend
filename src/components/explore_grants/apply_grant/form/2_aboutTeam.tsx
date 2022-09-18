@@ -1,12 +1,11 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box, Text,
 } from '@chakra-ui/react'
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import MySelect from 'src/components/ui/forms/select'
 import Tooltip from 'src/components/ui/tooltip'
-
-import { useTranslation } from 'react-i18next'
 
 function AboutTeam({
 	teamMembers,

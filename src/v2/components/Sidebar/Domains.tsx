@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { CheckIcon } from '@chakra-ui/icons'
 import { Box, Button, Divider, Flex, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
@@ -7,7 +8,6 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { MinimalWorkspace } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import getRole from 'src/utils/memberUtils'
-import { useTranslation } from 'react-i18next'
 
 interface Props {
   workspaces: MinimalWorkspace[]

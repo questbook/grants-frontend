@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box, Flex, Image,
 	Text, } from '@chakra-ui/react'
@@ -8,8 +9,6 @@ import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import RichTextEditor from 'src/components/ui/forms/richTextEditor'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import Tooltip from 'src/components/ui/tooltip'
-
-import { useTranslation } from 'react-i18next'
 
 function AboutProject({
 	projectName,

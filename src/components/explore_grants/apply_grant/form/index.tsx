@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import React, { useContext } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box,
 	Button,
@@ -7,6 +8,7 @@ import {
 	Flex,
 	Image,
 	Text,
+	Tooltip,
 } from '@chakra-ui/react'
 import { GrantApplicationRequest } from '@questbook/service-validator-client'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
@@ -29,8 +31,6 @@ import { addAuthorizedUser } from 'src/utils/gaslessUtils'
 import { useEncryptPiiForApplication } from 'src/utils/pii'
 import { isValidEmail } from 'src/utils/validationUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
-
-import { useTranslation } from 'react-i18next'
 
 interface Props {
   // onSubmit: (data: any) => void;
@@ -150,7 +150,7 @@ function Form({
 	}, 0)
 
 	const { t } = useTranslation()
-	
+
 	React.useEffect(() => {
 		if(defaultMilestoneFields && defaultMilestoneFields.length > 0) {
 			setProjectMilestones(
@@ -711,16 +711,36 @@ function Form({
 				subtitle='Submitting Application'
 				description={
 					<Flex direction='column'>
+						{
+							title.length > 30 ? (
+								<Tooltip label={title}>
+									<Text
+										variant='v2_title'
+										fontWeight='500'
+									>
+										{`${title?.substring(0, 30)}...`}
+
+									</Text>
+								</Tooltip>
+							) : (
+								<Text
+									variant='v2_title'
+									fontWeight='500'
+								>
+									{ title }
+								</Text>
+							)
+						}
 						<Text
-							variant='v2_title'
-							fontWeight='500'
+							variant='v2_metadata'
 						>
-							{title}
-						</Text>
-						<Text
-							variant='v2_body'
-						>
+							Payout address:
+							{' '}
 							{applicantAddress}
+							{' '}
+						</Text>
+						<Text variant='v2_metadata'>
+							Funds will be sent to this address.
 						</Text>
 					</Flex>
 				}

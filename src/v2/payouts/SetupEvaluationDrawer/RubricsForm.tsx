@@ -1,8 +1,8 @@
 import React from 'react'
-import { Box, Button, Flex, Image, Link, Text } from '@chakra-ui/react'
+import { useTranslation } from 'react-i18next'
+import { Box, Button, Flex, Image, Text } from '@chakra-ui/react'
 import { SidebarRubrics } from 'src/types'
 import TextField from 'src/v2/components/InputFields/TextField'
-import { useTranslation } from 'react-i18next'
 
 interface Props {
 	rubrics: SidebarRubrics[]

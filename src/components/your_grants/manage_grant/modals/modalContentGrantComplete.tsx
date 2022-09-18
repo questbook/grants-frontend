@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box,
 	Button, Flex, ModalBody, Text, } from '@chakra-ui/react'
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import Loader from 'src/components/ui/loader'
-import { useTranslation } from 'react-i18next'
 
 interface Props {
   onClose: (details: string) => void

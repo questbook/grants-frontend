@@ -1,7 +1,7 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Flex, Grid, Heading, Text } from '@chakra-ui/react'
 import { getAverageTime } from 'src/utils/calculatingUtils'
-import { useTranslation } from 'react-i18next'
 
 interface Props {
   disbursed: Array<number>

@@ -7,6 +7,7 @@ import {
 	Flex,
 	Image,
 	Text,
+	Tooltip,
 } from '@chakra-ui/react'
 import {
 	GrantApplicationUpdate,
@@ -33,6 +34,7 @@ import {
 	GrantApplicationProps,
 } from 'src/types/application'
 import {
+	formatAddress,
 	getFormattedFullDateFromUnixTimestamp,
 	parseAmount,
 } from 'src/utils/formattingUtils'
@@ -783,16 +785,36 @@ function Form({
 				subtitle='Resubmitting Application'
 				description={
 					<Flex direction='column'>
+						{
+							grantTitle.length > 30 ? (
+								<Tooltip label={grantTitle}>
+									<Text
+										variant='v2_title'
+										fontWeight='500'
+									>
+										{`${grantTitle?.substring(0, 30)}...`}
+
+									</Text>
+								</Tooltip>
+							) : (
+								<Text
+									variant='v2_title'
+									fontWeight='500'
+								>
+									{ grantTitle }
+								</Text>
+							)
+						}
 						<Text
-							variant='v2_title'
-							fontWeight='500'
+							variant='v2_metadata'
 						>
-							{grantTitle}
-						</Text>
-						<Text
-							variant='v2_body'
-						>
+							Payout address:
+							{' '}
 							{applicantAddress}
+							{' '}
+						</Text>
+						<Text variant='v2_metadata'>
+							Funds will be sent to this address.
 						</Text>
 					</Flex>
 				}

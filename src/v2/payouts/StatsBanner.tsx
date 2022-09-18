@@ -1,8 +1,8 @@
+import { useTranslation } from 'react-i18next'
 import { Box, Flex, Text } from '@chakra-ui/react'
 import { Applicants } from 'src/v2/assets/custom chakra icons/Your Grants/Applicants'
 import { Funds } from 'src/v2/assets/custom chakra icons/Your Grants/Funds'
 import { Reviews } from 'src/v2/assets/custom chakra icons/Your Grants/Reviews'
-import { useTranslation } from 'react-i18next'
 
 const StatsBanner = ({
 	isEvmChain,

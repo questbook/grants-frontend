@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box,
 	Button,
@@ -15,7 +16,6 @@ import { SupportedChainId } from 'src/constants/chains'
 import { Rubric } from 'src/generated/graphql'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
-import { useTranslation } from 'react-i18next'
 
 interface YourGrantCardProps {
   grantID: string

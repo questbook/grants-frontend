@@ -1,6 +1,6 @@
+import { useTranslation } from 'react-i18next'
 import { HStack, Image, Text, VStack } from '@chakra-ui/react'
 import { ROLES } from 'src/constants'
-import { useTranslation } from 'react-i18next'
 
 const RoleDataDisplay = ({ role }: { role: number }) => {
 	const roleData = ROLE_DATA[role]
@@ -72,7 +72,7 @@ const ROLE_DATA = {
 		thingsCanDo: [
 			{
 				icon: 'role_icons/reviewer0.svg',
-				label: 'Review proposal\'s impact on ecosystem growth' 
+				label: 'Review proposal\'s impact on ecosystem growth'
 			},
 			{
 				icon: 'role_icons/reviewer1.svg',

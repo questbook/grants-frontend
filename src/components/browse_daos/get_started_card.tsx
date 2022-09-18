@@ -1,10 +1,10 @@
+import { useTranslation } from 'react-i18next'
 import { Box, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'react-i18next';
 
 function GetStartedCard() {
 	const router = useRouter()
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 	return (
 		<Box
 			w='100%'

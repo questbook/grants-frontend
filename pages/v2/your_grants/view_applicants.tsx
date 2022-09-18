@@ -1,6 +1,7 @@
 import React, {
-	ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState,
+	ReactElement, useContext, useEffect, useMemo, useRef, useState,
 } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import {
 	Box,
@@ -14,7 +15,7 @@ import { ApiClientsContext } from 'pages/_app'
 import Modal from 'src/components/ui/modal'
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
-import { CHAIN_INFO, defaultChainId, SupportedChainId, USD_DECIMALS } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId, SupportedChainId } from 'src/constants/chains'
 import {
 	useGetApplicantsForAGrantQuery,
 	useGetGrantDetailsQuery,
@@ -43,7 +44,7 @@ import NoReviewerBanner from 'src/v2/components/ViewApplicants/NoReviewerBanner'
 import RubricNotSetBanner from 'src/v2/components/ViewApplicants/RubricNotSetBanner'
 import rpcUrls from 'src/v2/constants/publicRpcUrlInfo'
 import { GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
-import { RealmsSolana, solanaToUsdOnDate } from 'src/v2/constants/safe/realms_solana'
+import { RealmsSolana } from 'src/v2/constants/safe/realms_solana'
 import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
 import AcceptedProposalsPanel from 'src/v2/payouts/AcceptedProposals/AcceptedProposalPanel'
 import InReviewPanel from 'src/v2/payouts/InReviewProposals/InReviewPanel'
@@ -53,7 +54,6 @@ import SendFunds from 'src/v2/payouts/SendFunds'
 import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEvaluationDrawer'
 import StatsBanner from 'src/v2/payouts/StatsBanner'
 import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
-import { useTranslation } from 'react-i18next'
 
 const PAGE_SIZE = 500
 

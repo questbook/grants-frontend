@@ -1,8 +1,7 @@
+import { useTranslation } from 'react-i18next'
 import { Box, Button, CircularProgress, Flex, Image, Text } from '@chakra-ui/react'
 import TextField from 'src/v2/components/InputFields/TextField'
 import SafeSelect, { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
-
-import { useTranslation } from 'react-i18next'
 
 interface Props {
 	safesOptions: SafeSelectOption[]

@@ -1,10 +1,10 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Flex,
 } from '@chakra-ui/react'
 import { EditorState } from 'draft-js'
 import RichTextEditor from 'src/components/ui/forms/richTextEditor'
-import { useTranslation } from 'react-i18next'
 
 function Details({
 	details,

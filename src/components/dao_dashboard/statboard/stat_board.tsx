@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Flex, Text } from '@chakra-ui/react'
 import { formatMinutes } from 'src/utils/dashboardFormating'
-import { useTranslation } from 'react-i18next'
 
 function DaoStatBoard({
 	totalApplicants,

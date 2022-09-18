@@ -1,5 +1,6 @@
 // UI Components
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box,
 	Button,
@@ -41,7 +42,6 @@ import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import logger from 'src/utils/logger'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import { useTranslation } from 'react-i18next'
 
 function Profile() {
 	const router = useRouter()

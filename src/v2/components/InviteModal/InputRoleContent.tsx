@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button, Divider, HStack, Image, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, Spacer, Text, useToast, VStack } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
@@ -7,7 +8,6 @@ import { serialiseInviteInfoIntoUrl, useMakeInvite } from 'src/utils/invite'
 import { getRoleTitle } from 'src/v2/components/AcceptInviteModal/RoleDataDisplay'
 import RoleSelect from 'src/v2/components/InviteModal/RoleSelect'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
-import { useTranslation } from 'react-i18next'
 
 export type InputRoleContentProps = {
 	onLinkCreated: (link: string) => void

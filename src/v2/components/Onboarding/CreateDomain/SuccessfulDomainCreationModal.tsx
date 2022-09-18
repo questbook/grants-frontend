@@ -1,7 +1,7 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { AlertDialogOverlay, Button, Flex, Image, Modal, ModalBody, ModalContent, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'react-i18next'
 
 const SuccessfulDomainCreationModal = ({
 	isOpen,

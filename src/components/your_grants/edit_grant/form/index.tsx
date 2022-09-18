@@ -2,6 +2,7 @@
 import React, {
 	useContext, useEffect, useMemo, useState,
 } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box, Button, Flex,
 	Image, Link, Text, } from '@chakra-ui/react'
@@ -28,7 +29,6 @@ import useChainId from 'src/hooks/utils/useChainId'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { SafeToken } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
-import { useTranslation } from 'react-i18next'
 
 const SAFES_ENDPOINTS = { ...SAFES_ENDPOINTS_MAINNETS, ...SAFES_ENDPOINTS_TESTNETS }
 type ValidChainID = keyof typeof SAFES_ENDPOINTS;

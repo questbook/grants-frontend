@@ -1,9 +1,10 @@
-import { Checkbox, Flex, Image, Link, Slider, SliderFilledTrack, SliderMark, SliderThumb, SliderTrack, Switch, Text, Tooltip } from '@chakra-ui/react'
+import { useTranslation } from 'react-i18next'
+import { Checkbox, Flex, Image, Slider, SliderFilledTrack, SliderMark, SliderThumb, SliderTrack, Switch, Text, Tooltip } from '@chakra-ui/react'
 import CopyIcon from 'src/components/ui/copy_icon'
 import { SidebarReviewer } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAddress } from 'src/utils/formattingUtils'
-import { useTranslation } from 'react-i18next'
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 interface Props {
 	minCount: number
@@ -131,7 +132,7 @@ const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, 
 								>
 									<Image
 										borderRadius='3xl'
-										src={getAvatar(reviewer.data?.actorId)}
+										src={reviewer.data?.profilePictureIpfsHash ? getUrlForIPFSHash(reviewer.data.profilePictureIpfsHash) : getAvatar(reviewer.data?.actorId)}
 									/>
 								</Flex>
 
