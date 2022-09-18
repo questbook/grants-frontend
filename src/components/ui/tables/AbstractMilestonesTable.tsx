@@ -169,7 +169,7 @@ console.log('transaction status', transactionStatus)
 							>
 								<Image
 									display='inline-block'
-									src={rewardIcon}
+									src='/dollar_icon.svg'
 									fallbackSrc='/images/dummy/Ethereum Icon.svg'
 									mr={2}
 									boxSize='27px' />

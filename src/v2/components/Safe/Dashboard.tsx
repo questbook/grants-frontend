@@ -7,7 +7,7 @@ import { defaultChainId } from 'src/constants/chains'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useSafeUSDBalances from 'src/hooks/useSafeUSDBalances'
 import { isValidEthereumAddress } from 'src/utils/validationUtils'
-import getGnosisTansactionLink from 'src/v2/utils/gnosisUtils'
+import {getGnosisTansactionLink} from 'src/v2/utils/gnosisUtils'
 import getProposalUrl from 'src/v2/utils/phantomUtils'
 
 function Dashboard() {

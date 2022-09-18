@@ -183,8 +183,7 @@ const RecipientDetails = ({
 
 				<Box h={6} />
 
-				{
-					!isEvmChain ? (
+				
 						<>
 							<Text
 								fontSize='14px'
@@ -208,8 +207,7 @@ const RecipientDetails = ({
 
 							<Box h={6} />
 						</>
-					) : null
-				}
+					
 
 				<Text
 					fontSize='14px'
