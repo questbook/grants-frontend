@@ -17,7 +17,7 @@ import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import SendFundsDrawer from 'src/v2/payouts/SendFundsDrawer/SendFundsDrawer'
 import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
-import getGnosisTansactionLink from 'src/v2/utils/gnosisUtils'
+import {getGnosisTansactionLink} from 'src/v2/utils/gnosisUtils'
 import { getProposalUrl } from 'src/v2/utils/phantomUtils'
 import { erc20ABI, useAccount, useDisconnect } from 'wagmi'
 
