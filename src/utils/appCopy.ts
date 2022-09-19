@@ -86,6 +86,7 @@ i18next.use(initReactI18next).init({
 					'funding_ask': 'Funding Ask',
 					'funding_breakdown': 'Funding Breakdown',
 					'funding_breakdown_placeholder': 'Where will you likely be spending this grant?',
+					'invalid_address_on_chain': 'Invalid address on %CHAIN',
 				},
 				'/onboarding/create-domain': {
 					'attach_safe':'Link a funding source',
@@ -107,6 +108,7 @@ i18next.use(initReactI18next).init({
 					'verify_signer_desc': 'Connect your wallet which is a signer on the multi-sig safe.',
 					'success': 'Success',
 					'next_create_grant': 'Next create a grant to invite proposals from builders',
+					'successful_verification' : 'You\'ve successfully verified you\'re a signer on this multisig wallet.',
 				},
 				'/create-grant' : {
 					'title': 'Create a Grant to attract builders',

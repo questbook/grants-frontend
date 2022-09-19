@@ -23,6 +23,10 @@ query getGrantDetails($grantID: ID!) {
                 publicKey
                 email
             }
+            safe {
+                address
+                chainId
+            }
         }, 
         deadline,
         funding,

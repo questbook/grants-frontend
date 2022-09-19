@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Box, Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
-import { CHAIN_INFO } from 'src/constants/chains'
+import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO } from 'src/constants/chains'
 import { useGetProfileDetailsQuery, useGetWorkspaceMembersQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useQBContract from 'src/hooks/contracts/useQBContract'
@@ -21,7 +21,7 @@ interface Props {
     onClose: () => void
 }
 
-const POINTERS = ['Zero gas-fee across the app', 'No annoying sign transaction pop-ups']
+const POINTERS = ['Zero gas fee across the app', 'No annoying sign transaction pop-ups']
 
 function MigrateToGasless({ isOpen, onClose }: Props) {
 	const router = useRouter()
@@ -106,7 +106,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 				return
 			}
 
-			if(!(walletChain?.id in SupportedChainId)) {
+			if(!(walletChain?.id in ALL_SUPPORTED_CHAIN_IDS)) {
 				if(workspaceFromMember) {
 					logger.info({ workspaceFromMember }, 'DAO to migrate')
 					logger.info({ chainIdFromMemberWorkspace }, 'DAO chainId')
