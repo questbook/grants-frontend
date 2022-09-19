@@ -710,29 +710,21 @@ function Form({
 
 			<NetworkTransactionModal
 				isOpen={networkTransactionModalStep !== undefined}
-				subtitle='Submitting Application'
+				subtitle={`Submitting ${projectName}`}
 				description={
 					<Flex direction='column'>
-						{
-							title.length > 30 ? (
-								<Tooltip label={title}>
-									<Text
-										variant='v2_title'
-										fontWeight='500'
-									>
-										{`${title?.substring(0, 30)}...`}
 
-									</Text>
-								</Tooltip>
-							) : (
-								<Text
-									variant='v2_title'
-									fontWeight='500'
-								>
-									{ title }
-								</Text>
-							)
-						}
+						<Text
+							variant='v2_title'
+							fontWeight='500'
+						>
+							Funding Requested:
+							{' '}
+							{totalMilestoneReward}
+							{' '}
+							USD
+						</Text>
+
 						<Text
 							variant='v2_metadata'
 						>
