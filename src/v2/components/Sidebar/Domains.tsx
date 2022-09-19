@@ -1,7 +1,7 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { CheckIcon } from '@chakra-ui/icons'
-import { Box, Button, Divider, Flex, Image, Text } from '@chakra-ui/react'
+import { Box, Button, Divider, Flex, HStack, Image, Text, VStack } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
@@ -18,23 +18,12 @@ function Domains({ workspaces, onWorkspaceClick }: Props) {
 	const { workspace } = React.useContext(ApiClientsContext)!
 	const { data: accountData } = useQuestbookAccount()
 	const [expanded, setExpanded] = React.useState(false)
-	// const { network, switchNetwork } = useNetwork()
 
 	const router = useRouter()
 	const { t } = useTranslation()
-	// useEffect(() => {
-	// 	if(!workspace) {
-	// 		return
-	// 	}
 
-	// 	const currentChainId = getSupportedChainIdFromSupportedNetwork(workspace.supportedNetworks[0])
-
-	// 	if(network !== currentChainId) {
-	// 		logger.info('SWITCH NETWORK (domains.tsx 1): ', currentChainId)
-	// 		switchNetwork(currentChainId)
-	// 	}
-
-	// }, [network, workspace])
+	// only expand if there are more workspaces to show
+	const expandable = workspaces.length > 1
 
 	const areWorkspaceEqual = (workspace1: MinimalWorkspace, workspace2: MinimalWorkspace) => workspace1?.id === workspace2?.id && workspace1?.supportedNetworks[0] === workspace2?.supportedNetworks[0]
 
@@ -104,38 +93,44 @@ function Domains({ workspaces, onWorkspaceClick }: Props) {
 					src={getUrlForIPFSHash(workspace!.logoIpfsHash)}
 					boxSize='40px'
 				/>
-				<Flex mt={2}>
-					<Flex direction='column'>
-						<Text
-							fontWeight='500'
-							variant='v2_title'>
-							{workspace!.title}
-						</Text>
-						<Text
-							variant='v2_body'
-							fontWeight='500'
-							color='black.3'
-						>
-							{getRole(workspace!, accountData?.address!)}
-						</Text>
-					</Flex>
-					<Box mx='auto' />
-					{
-						workspaces.length > 0 && (
-							<Image
-								mr={2}
-								src={expanded ? '/ui_icons/arrow-drop-down-line-gray-expanded.svg' : '/ui_icons/arrow-drop-down-line-gray.svg'}
-								alt='options'
-								onClick={
-									() => {
-										setExpanded(!expanded)
-									}
-								}
-								cursor='pointer'
-							/>
-						)
-					}
-				</Flex>
+				<Button
+					mt={2}
+					p={0}
+					variant='subtle'
+					pointerEvents={expandable ? undefined : 'none'}
+					onClick={() => setExpanded(!expanded)}>
+					<HStack
+						w='100%'
+						justify='space-between'>
+						<VStack
+							spacing={0}
+							align='start'>
+							<Text
+								fontWeight='500'
+								variant='v2_title'>
+								{workspace!.title}
+							</Text>
+							<Text
+								variant='v2_body'
+								fontWeight='500'
+								color='black.3'
+							>
+								{getRole(workspace!, accountData?.address!)}
+							</Text>
+						</VStack>
+
+						{
+							expandable && (
+								<Image
+									mr={2}
+									src={expanded ? '/ui_icons/arrow-drop-down-line-gray-expanded.svg' : '/ui_icons/arrow-drop-down-line-gray.svg'}
+									alt='options'
+									cursor='pointer'
+								/>
+							)
+						}
+					</HStack>
+				</Button>
 			</Flex>
 			<Divider
 				variant='sidebar'
