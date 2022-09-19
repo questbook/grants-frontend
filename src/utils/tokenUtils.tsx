@@ -45,3 +45,17 @@ export function getChainInfo(grant: { reward: Grant['reward'] }, chainId: Suppor
 
 	return chainInfo
 }
+
+export function getSafeIcon(safeChainId: string | undefined) {
+	if(!safeChainId) {
+		return ''
+	}
+
+	if(safeChainId === '900001') {
+		return '/safes_icons/realms.svg'
+	} else if(safeChainId === '42220') {
+		return '/safes_icons/celo.svg'
+	} else {
+		return '/safes_icons/gnosis.svg'
+	}
+}
