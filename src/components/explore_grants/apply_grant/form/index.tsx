@@ -8,7 +8,6 @@ import {
 	Flex,
 	Image,
 	Text,
-	Tooltip,
 } from '@chakra-ui/react'
 import { GrantApplicationRequest } from '@questbook/service-validator-client'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
@@ -81,7 +80,7 @@ function Form({
 	const CACHE_KEY = strings.cache.apply_grant
 	const getKey = `${chainId}-${CACHE_KEY}-${grantId}`
 
-	const { webwallet: signer } = useContext(WebwalletContext)!
+	const { webwallet: signer, scwAddress } = useContext(WebwalletContext)!
 	const { encrypt } = useEncryptPiiForApplication(grantId, signer?.publicKey, chainId || defaultChainId)
 
 	const [shouldRefreshNonce, setShouldRefreshNonce] = React.useState<boolean>()
@@ -730,7 +729,7 @@ function Form({
 						>
 							Payout address:
 							{' '}
-							{applicantAddress}
+							{applicantAddress ?? scwAddress}
 							{' '}
 						</Text>
 						<Text variant='v2_metadata'>

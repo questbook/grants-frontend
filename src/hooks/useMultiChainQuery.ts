@@ -1,6 +1,7 @@
 import { useCallback, useContext, useMemo, useState } from 'react'
 import { QueryHookOptions, QueryResult } from '@apollo/client'
 import { ApiClientsContext } from 'pages/_app'
+import { ALL_SUPPORTED_CHAIN_IDS } from 'src/constants/chains'
 import SupportedChainId from 'src/generated/SupportedChainId'
 
 export type UseMultiChainQueryOptions<Q, V> = {
@@ -24,7 +25,7 @@ export function useMultiChainQuery<Q, V>({
 	const [results, setResults] = useState<(Q | undefined)[]>([])
 
 	const subgraphClientList = useMemo(
-		() => chains ? chains.map(chainId => subgraphClients[chainId]) : Object.values(subgraphClients),
+		() => chains ? chains.map(chainId => subgraphClients[chainId]) : ALL_SUPPORTED_CHAIN_IDS.map(chainId => subgraphClients[chainId]),
 		[chains, subgraphClients]
 	)
 
