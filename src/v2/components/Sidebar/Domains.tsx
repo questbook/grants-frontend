@@ -1,7 +1,7 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { CheckIcon } from '@chakra-ui/icons'
-import { Box, Button, Divider, Flex, HStack, Image, Text, VStack } from '@chakra-ui/react'
+import { Button, Divider, Flex, HStack, Image, Text, VStack } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
@@ -119,16 +119,12 @@ function Domains({ workspaces, onWorkspaceClick }: Props) {
 							</Text>
 						</VStack>
 
-						{
-							expandable && (
-								<Image
-									mr={2}
-									src={expanded ? '/ui_icons/arrow-drop-down-line-gray-expanded.svg' : '/ui_icons/arrow-drop-down-line-gray.svg'}
-									alt='options'
-									cursor='pointer'
-								/>
-							)
-						}
+						<Image
+							mr={2}
+							src={expanded ? '/ui_icons/arrow-drop-down-line-gray-expanded.svg' : '/ui_icons/arrow-drop-down-line-gray.svg'}
+							alt='options'
+							cursor='pointer'
+						/>
 					</HStack>
 				</Button>
 			</Flex>

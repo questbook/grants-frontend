@@ -7,9 +7,9 @@ import { ApiClientsContext } from 'pages/_app'
 import { defaultChainId } from 'src/constants/chains'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useSafeUSDBalances from 'src/hooks/useSafeUSDBalances'
-import { isValidEthereumAddress } from 'src/utils/validationUtils'
-import { getGnosisTansactionLink } from 'src/v2/utils/gnosisUtils'
-import { getDaoUrl } from 'src/v2/utils/phantomUtils'
+import { getSafeIcon } from 'src/utils/tokenUtils'
+import { getSafeURL } from 'src/v2/utils/gnosisUtils'
+import { getSafeURL as getRealmsURL } from 'src/v2/utils/phantomUtils'
 
 function Dashboard() {
 	const [safeChainId, setSafeChainId] = useState<SupportedChainId>(defaultChainId)
@@ -29,11 +29,19 @@ function Dashboard() {
 
 	const openLink = () => {
 		const safe = workspace?.safe
-		if(!safe?.address) {
+		if(!safe?.address || !safe.chainId) {
 			return
 		}
 
-		const link = isValidEthereumAddress(safe?.address) ? getGnosisTansactionLink(safe.id?.toString()!, safe?.chainId.toString()!) : getDaoUrl(safe?.address?.toString()!)
+		let link = ''
+		if(safe.chainId === '900001') {
+			// Open Realms
+			link = getRealmsURL(safe.address)
+		} else {
+			// Open celo safe or Gnosis
+			link = getSafeURL(safe.address, safe.chainId)
+		}
+
 		window.open(link, '_blank')
 	}
 
@@ -61,7 +69,7 @@ function Dashboard() {
 			 >
 				<Image
 					boxSize='60px'
-					src={isValidEthereumAddress(workspace?.safe?.address ?? '') ? '/safes_icons/gnosis.svg' : '/safes_icons/realms.svg'} />
+					src={getSafeIcon(workspace?.safe?.chainId)} />
 				<Button
 					mt={4}
 					variant='link'
