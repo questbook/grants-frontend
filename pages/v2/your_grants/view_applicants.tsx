@@ -464,7 +464,7 @@ function ViewApplicants() {
 
 	async function getAllStatus(applicationToTxnHashMap: any) {
 		var statuses: any = {}
-
+		console.log('application to txn map', applicationToTxnHashMap)
 		const getEachStatus = async(transaction: any, applicationId: any) => {
 			logger.info('transaction hash', transaction)
 			logger.info('fund', ethers.utils.formatUnits(transaction.amount.toString(), rewardAssetDecimals))
@@ -496,8 +496,8 @@ function ViewApplicants() {
 					const evmObj = {
 						transactionHash: transaction.transactionHash,
 						status: status.status,
-						amount: parseInt(ethers.utils.formatUnits(transaction.amount.toString(), rewardAssetDecimals))
-						// amount: transaction.amount
+						// amount: parseInt(ethers.utils.formatUnits(transaction.amount.toString(), rewardAssetDecimals))
+						amount: transaction.amount
 					}
 					logger.info({ evmObj }, 'Pushed object (EVM)')
 					statuses[applicationId].push(evmObj)

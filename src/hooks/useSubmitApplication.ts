@@ -24,6 +24,7 @@ export default function useSubmitApplication(
 	grantId?: string,
 	workspaceId?: string,
 ) {
+	console.log('application data', data)
 	const [error, setError] = React.useState<string>()
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
@@ -130,7 +131,7 @@ export default function useSubmitApplication(
 				).hash
 				// eslint-disable-next-line no-param-reassign
 				data.fields.projectDetails[0].value = detailsHash
-				// console.log('Details hash: ', detailsHash)
+				console.log('Details hash: ', data)
 				const {
 					data: { ipfsHash },
 				} = await validatorApi.validateGrantApplicationCreate(data)

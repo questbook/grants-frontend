@@ -35,7 +35,7 @@
 				"decimals": 6
 			},
 			"0x0000000000000000000000000000000000000001": {
-				"icon": "/chain_assets/usdc.svg",
+				"icon": "/dollar_icon.svg",
 				"label": "USD",
 				"address": "0x0000000000000000000000000000000000000001",
 				"pair": "0x0",
@@ -122,7 +122,7 @@
 				"decimals": 18
 			},
 			"0x0000000000000000000000000000000000000001": {
-				"icon": "/chain_assets/usdc.svg",
+				"icon": "/dollar_icon.svg",
 				"label": "USD",
 				"address": "0x0000000000000000000000000000000000000001",
 				"pair": "0x0",
@@ -294,7 +294,7 @@
 				"decimals": 18
 			},
 			"0x0000000000000000000000000000000000000001": {
-				"icon": "/chain_assets/usdc.svg",
+				"icon": "/dollar_icon.svg",
 				"label": "USD",
 				"address": "0x0000000000000000000000000000000000000001",
 				"pair": "0x0",
@@ -352,7 +352,7 @@
 				"decimals": 18
 			},
 			"0x0000000000000000000000000000000000000001": {
-				"icon": "/chain_assets/usdc.svg",
+				"icon": "/dollar_icon.svg",
 				"label": "USD",
 				"address": "0x0000000000000000000000000000000000000001",
 				"pair": "0x0",

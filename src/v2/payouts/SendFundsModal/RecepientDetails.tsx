@@ -30,8 +30,6 @@ const RecipientDetails = ({
 	onChangeRecepientDetails: (applicationId: string, fieldName: string, fieldValue: any) => void
 	onChangeRecepientError: (error: string) => void
 }) => {
-
-	console.log('safeTokenList - modal', safeTokenList)
 	const router = useRouter()
 	const { t } = useTranslation()
 	const [applicationID, setApplicationId] = useState<any>('')
@@ -255,8 +253,7 @@ const RecipientDetails = ({
 
 				<Box h={6} />
 
-				{
-					!isEvmChain ? (
+				
 						<>
 							<Text
 								fontSize='14px'
@@ -274,14 +271,14 @@ const RecipientDetails = ({
 								safeTokenList={safeTokenList}
 								onChange={
 									(value) => {
+										console.log('change', value)
 										onChangeRecepientDetails(applicantData?.applicationId, 'selectedToken', { name: value?.id, info: value?.info })
 									}
 								} />
 
 							<Box h={6} />
 						</>
-					) : null
-				}
+					
 
 				<Text
 					fontSize='14px'

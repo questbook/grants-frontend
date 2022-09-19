@@ -8,7 +8,7 @@ import { Container } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import Form from 'src/components/your_applications/grant_application/form'
-import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId, USD_ASSET, USD_ICON } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import {
 	GetApplicationDetailsQuery,
@@ -100,7 +100,7 @@ function ViewApplication() {
 		if(!application || !application?.fields?.length) {
 			return
 		}
-
+		console.log('application data', application)
 		let decimals: number
 		if(application.grant.reward.token) {
 			// console.log('Application milestone ', application.milestones[0])
@@ -134,7 +134,6 @@ function ViewApplication() {
 			projectGoal: getFieldString(application, 'projectGoals'),
 			projectMilestones:
         application.milestones.map((ms: any) => {
-        	// console.log('milestone', ms.amount)
         	return (
         		{
         			milestone: ms.title,
@@ -158,7 +157,6 @@ function ViewApplication() {
 			fundingBreakdown: getFieldString(application, 'fundingBreakdown'),
 		}
 
-		// console.log('fd', fd.projectMilestones[0].milestoneReward)
 		if(application?.grant?.fields?.find((field: any) => field.title === 'memberDetails') && !fd.membersDescription.length) {
 			fd.membersDescription = [...Array(fd.teamMembers)].map(() => ({ description: '' }))
 		}
@@ -169,6 +167,10 @@ function ViewApplication() {
 	let label
 	let icon
 	let decimals
+	if(application?.grant.reward.asset === USD_ASSET){
+		label = 'USD'
+		icon = USD_ICON
+	}
 	if(application?.grant.reward.token) {
 		decimals = application.grant.reward.token.decimal
 		label = application.grant.reward.token.label
