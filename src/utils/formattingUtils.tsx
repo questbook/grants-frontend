@@ -51,7 +51,7 @@ export function parseAmount(number: string, contractAddress?: string, decimal?: 
 		})
 
 		decimals = allCurrencies.find((currency) => currency.address === contractAddress)
-			?.decimals || 18
+			?.decimals
 
 		return ethers.utils.parseUnits(number, decimals).toString()
 	}
@@ -115,7 +115,12 @@ function truncateTo(number: string, digits = 3) {
 
 export const extractDate = (date: string) => date.substring(0, 10)
 
-export function formatAmount(number: string, decimals = 18, isEditable = false, isBig = false, returnTruncated = true) {
+export function formatAmount(number: string, decimals: number | undefined = 18, isEditable = false, isBig = false, returnTruncated = true) {
+	// no need to do any calcs
+	if(decimals === 0) {
+		return number
+	}
+
 	const value = ethers.utils.formatUnits(number, decimals).toString()
 
 	if(!returnTruncated) {

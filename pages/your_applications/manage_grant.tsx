@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box, Button,
 	Container, Flex, Image, Link, Text, } from '@chakra-ui/react'
@@ -7,6 +8,7 @@ import moment from 'moment'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import Breadcrumbs from 'src/components/ui/breadcrumbs'
+import Heading from 'src/components/ui/heading'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import Funding from 'src/components/your_applications/manage_grant/fundingRequestedTable'
 import MilestoneTable from 'src/components/your_applications/manage_grant/milestoneTable'
@@ -23,8 +25,6 @@ import { formatAmount } from 'src/utils/formattingUtils'
 import verify from 'src/utils/grantUtils'
 import useApplicationMilestones from 'src/utils/queryUtil'
 import { getChainInfo } from 'src/utils/tokenUtils'
-import Heading from 'src/components/ui/heading'
-import { useTranslation } from 'react-i18next'
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 	let val = BigNumber.from(0)
@@ -284,7 +284,7 @@ function ManageGrant() {
 					}
 				</Flex>
 
-				<Heading title='Submit Milestones'/>
+				<Heading title='Submit Milestones' />
 
 				<Link href={`/your_applications/grant_application?applicationId=${applicationID}&chainId=${chainId}`}>
 					<Text>

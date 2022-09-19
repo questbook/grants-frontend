@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Box, Flex, Input, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import useSafeUSDBalances from 'src/hooks/useSafeUSDBalances'
 import { IApplicantData } from 'src/types'
 import { ArrowDownCircle } from 'src/v2/assets/custom chakra icons/Arrows/ArrowDownCircle'
 import { ExternalLink } from 'src/v2/assets/custom chakra icons/ExternalLink'
+import { GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
 import { getSafeDetails, RealmsSolana } from 'src/v2/constants/safe/realms_solana'
 import AlertBanner from 'src/v2/payouts/SendFundsModal/AlertBanner'
 import MilestoneSelect from 'src/v2/payouts/SendFundsModal/MilestoneSelect'
 import TokenSelect from 'src/v2/payouts/SendFundsModal/TokenSelect'
 import { TransactionType } from 'src/v2/types/safe'
-import { GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
-import { useTranslation } from 'react-i18next'
 
 const RecipientDetails = ({
 	safeNetwork,
@@ -22,7 +22,7 @@ const RecipientDetails = ({
 	onChangeRecepientDetails,
 	onChangeRecepientError,
 }: {
-	safeNetwork: string,
+	safeNetwork: string
 	isEvmChain: boolean
 	applicantData: IApplicantData
 	safeTokenList: any
@@ -53,7 +53,7 @@ const RecipientDetails = ({
 		})
 	}, [])
 
-	const isSafeOnSolana = (safeNetwork == "9001" || safeNetwork == "90001" || safeNetwork == "900001" || safeNetwork == "9000001")
+	const isSafeOnSolana = (safeNetwork == '9001' || safeNetwork == '90001' || safeNetwork == '900001' || safeNetwork == '9000001')
 
 	// const [balance, setBalance] = useState(0)
 	// useEffect(() => {
@@ -78,17 +78,21 @@ const RecipientDetails = ({
 		['900001', 'Solana'],
 		['9000001', 'Solana'],
 	])
-	const isInvalidAddress = async (address: string | undefined) => {
-		if(!address) return true
-		let invalidRecipientAddress = false;
+	const isInvalidAddress = async(address: string | undefined) => {
+		if(!address) {
+			return true
+		}
+
+		let invalidRecipientAddress = false
 		if(isSafeOnSolana) {
-			const realms = new RealmsSolana('');
+			const realms = new RealmsSolana('')
 			invalidRecipientAddress = (!await realms.isValidRecipientAddress(address))
 		} else {
-			const gnosis = new GnosisSafe(1,'','');
+			const gnosis = new GnosisSafe(1, '', '')
 			invalidRecipientAddress = (!await gnosis.isValidRecipientAddress(address))
 		}
-		return invalidRecipientAddress;
+
+		return invalidRecipientAddress
 	}
 
 	return (
@@ -179,7 +183,7 @@ const RecipientDetails = ({
 				>
 					<Input
 						variant='brandFlushed'
-						placeholder={t('/your_grants/view_applicants.address_on_chain').replace('%CHAIN', chainNames.get(safeNetwork)!)} 
+						placeholder={t('/your_grants/view_applicants.address_on_chain').replace('%CHAIN', chainNames.get(safeNetwork)!)}
 						_placeholder={
 							{
 								color: 'blue.100',
@@ -191,29 +195,34 @@ const RecipientDetails = ({
 						defaultValue={initiateTransactionData?.to}
 						errorBorderColor='red'
 						height='auto'
-						onChange={async (e) => {
-							if(await isInvalidAddress(e.target.value)){
-								setInvalidRecipientAddress(true)
-								onChangeRecepientError(t('/your_grants/view_applicants.invalid_address_on_chain').replace('%CHAIN', chainNames.get(safeNetwork)!))
+						onChange={
+							async(e) => {
+								if(await isInvalidAddress(e.target.value)) {
+									setInvalidRecipientAddress(true)
+									onChangeRecepientError(t('/your_grants/view_applicants.invalid_address_on_chain').replace('%CHAIN', chainNames.get(safeNetwork)!))
+								} else {
+									setInvalidRecipientAddress(false)
+									onChangeRecepientError('')
+								}
+
+								onChangeRecepientDetails(applicantData.applicationId, 'to', e.target.value)
 							}
-							else {
-								setInvalidRecipientAddress(false)
-								onChangeRecepientError('')
-							}
-							onChangeRecepientDetails(applicantData.applicationId, 'to', e.target.value)
-						}}
+						}
 					/>
 
 				</Flex>
 				<Flex>
-					{invalidRecipientAddress?(
-						<Text 
-							fontSize='12px'
-							variant='error'
-							textColor={'red'}>{t('/your_grants/view_applicants.invalid_address_on_chain').replace('%CHAIN', chainNames.get(safeNetwork)!)}</Text>
-					): null}
+					{
+						invalidRecipientAddress ? (
+							<Text
+								fontSize='12px'
+								variant='error'
+								textColor='red'>
+								{t('/your_grants/view_applicants.invalid_address_on_chain').replace('%CHAIN', chainNames.get(safeNetwork)!)}
+							</Text>
+						) : null
+					}
 				</Flex>
-
 
 
 				<Box h={6} />
@@ -223,7 +232,7 @@ const RecipientDetails = ({
 					lineHeight='20px'
 					fontWeight='500'
 				>
-					{t('/your_grants/view_applicants.send_funds_milestone')} 
+					{t('/your_grants/view_applicants.send_funds_milestone')}
 				</Text>
 
 				<Text
@@ -233,7 +242,7 @@ const RecipientDetails = ({
 					color='#7D7DA0'
 					mt='2px'
 				>
-					{t('/your_grants/view_applicants.send_funds_milestone_description')} 
+					{t('/your_grants/view_applicants.send_funds_milestone_description')}
 				</Text>
 
 				<Box h={2} />

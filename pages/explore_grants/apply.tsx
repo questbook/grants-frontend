@@ -105,7 +105,7 @@ function ApplyGrant() {
 		},
 	})
 	useEffect(() => {
-		console.log("Safe address", safeAddressData)
+		console.log('Safe address', safeAddressData)
 		setSafeChainId(safeAddressData?.workspaceSafes[0]?.chainId)
 		if(safeAddressData) {
 			// console.log('safe address data', safeAddressData)
@@ -150,7 +150,7 @@ function ApplyGrant() {
 		setChainId(localChainId)
 		setTitle(grantData?.title)
 		setWorkspaceId(grantData?.workspace?.id)
-		console.log("safe chainid", grantData?.workspace?.safeChainId, grantData)
+		console.log('safe chainid', grantData?.workspace?.safeChainId, grantData)
 		setSafeChainId(grantData?.workspace?.safe?.ChainId)
 		setDaoId(grantData?.workspace?.id)
 		setDaoLogo(getUrlForIPFSHash(grantData?.workspace?.logoIpfsHash))
@@ -159,7 +159,7 @@ function ApplyGrant() {
 				? parseInt(
 					formatAmount(
 						grantData?.reward?.committed,
-						chainInfo?.decimals || 18,
+						chainInfo?.decimals,
 						false, false, false
 					)
 				).toString()

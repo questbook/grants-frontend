@@ -13,7 +13,7 @@ function isValid(funding: string, decimals?: number) {
 function verify(funding: string, decimals?: number): [boolean, string] {
 	return [
 		isValid(funding, decimals) && BigNumber.from(funding).gt(0),
-		formatAmount(funding, decimals || 18),
+		formatAmount(funding, decimals),
 	]
 }
 

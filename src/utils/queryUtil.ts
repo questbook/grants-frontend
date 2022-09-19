@@ -53,7 +53,7 @@ const useApplicationMilestones = (grantId: string, chainId?: SupportedChainId) =
 		})
 
 		decimals = allCurrencies
-			.find((currency) => currency.address === rewardAsset)?.decimals || 18
+			.find((currency) => currency.address === rewardAsset)?.decimals
 	}
 
 	return {

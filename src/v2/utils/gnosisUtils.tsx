@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios from 'axios'
 import SAFES_ENDPOINTS_MAINNETS from 'src/constants/safesEndpoints.json'
 import SAFES_ENDPOINTS_TESTNETS from 'src/constants/safesEndpointsTest.json'
 
@@ -23,10 +23,10 @@ export function getGnosisTansactionLink(safeAddress: string, chainId: string) {
 export async function getTokenBalance(safeNetworkId: string, safeAddress: string) {
 	const gnosisUrl = `${SAFES_ENDPOINTS[safeNetworkId as ValidChainID]}/v1/safes/${safeAddress}/balances/usd`
 	const response = await axios.get(gnosisUrl)
-	
+
 	return response
 
-} 
+}
 
 
 export async function getTransactionHashStatus(safeNetworkId: string, transactionHash: string) {
@@ -35,7 +35,7 @@ export async function getTransactionHashStatus(safeNetworkId: string, transactio
 	console.log('transaction status', response.data)
 	const txnDetails = response.data
 	if(txnDetails.isExecuted) {
-		return {...txnDetails, status: 1}
+		return { ...txnDetails, status: 1 }
 	} else {
 		return null
 	}

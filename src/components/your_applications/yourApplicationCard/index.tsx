@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box,
 	Button,
@@ -11,7 +12,6 @@ import {
 } from '@chakra-ui/react'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import CheckPoint from 'src/components/your_applications/yourApplicationCard/checkPoint'
-import { useTranslation } from 'react-i18next'
 
 interface Props {
   grantTitle: string

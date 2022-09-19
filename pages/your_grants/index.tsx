@@ -532,7 +532,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 									grantDesc={grant.summary}
 									numOfApplicants={grant.numberOfApplications}
 									endTimestamp={new Date(grant.deadline!).getTime()}
-									grantAmount={formatAmount(grantAmount, decimals || 18)}
+									grantAmount={formatAmount(grantAmount, decimals)}
 									grantCurrency={label || 'LOL'}
 									grantCurrencyIcon={icon}
 									state='done'
@@ -603,7 +603,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 							}
 
             	return (
-								<YourGrantCard
+	<YourGrantCard
             			grantID={grant.grant.id}
             			key={grant.grant.id}
             			daoIcon={
@@ -615,7 +615,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
             			grantDesc={grant.grant.summary}
             			numOfApplicants={grant.grant.numberOfApplications}
             			endTimestamp={new Date(grant.grant.deadline!).getTime()}
-            			grantAmount={formatAmount(grantAmount, decimals || 18)}
+            			grantAmount={formatAmount(grantAmount, decimals)}
             			grantCurrency={label || 'LOL'}
             			grantCurrencyIcon={icon}
             			state='done'

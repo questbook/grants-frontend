@@ -169,7 +169,7 @@ function AboutGrant() {
 		setDaoLogo(getUrlForIPFSHash(grantData.workspace?.logoIpfsHash))
 		setRewardAmount(
 			grantData.reward?.committed
-				? formatAmount(grantData.reward?.committed, chainInfo.decimals || 18)
+				? formatAmount(grantData.reward?.committed, chainInfo.decimals)
 				: ''
 		)
 		let supportedCurrencyObj

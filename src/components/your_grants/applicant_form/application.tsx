@@ -305,7 +305,7 @@ function Application({ applicationData }: Props) {
 														milestone?.amount && applicationData
                           && formatAmount(
                           	milestone?.amount,
-                          	decimal || 18,
+                          	decimal,
                           )
 													}
 													{' '}
@@ -346,7 +346,7 @@ function Application({ applicationData }: Props) {
 									color='brand.500'>
 									{
 										applicationData
-                    && getRewardAmount(decimal || 18, { fields: applicationData?.fields, milestones: applicationData?.milestones })
+                    && getRewardAmount(decimal, { fields: applicationData?.fields, milestones: applicationData?.milestones })
 									}
 									{' '}
 									{label}

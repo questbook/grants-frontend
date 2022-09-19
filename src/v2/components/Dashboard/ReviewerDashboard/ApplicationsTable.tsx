@@ -94,7 +94,7 @@ function ApplicationsTable({
 				grant.workspace?.supportedNetworks[0],
 			)
 		]?.supportedCurrencies[grant.reward!.asset.toLowerCase()]
-			?.decimals || 18
+			?.decimals
 
 		const rewardAmount = getRewardAmount(decimals, application)
 

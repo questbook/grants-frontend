@@ -42,7 +42,7 @@ function Accept({
 			)
 		]?.supportedCurrencies[
 			applicationData.grant.reward.asset.toLowerCase()
-		]?.decimals || 18
+		]?.decimals
 		label = getAssetInfo(applicationData?.grant?.reward?.asset, chainId)
 			?.label
 		icon = getAssetInfo(applicationData?.grant?.reward?.asset, chainId)

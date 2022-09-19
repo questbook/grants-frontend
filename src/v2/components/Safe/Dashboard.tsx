@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { Button, Flex, Image, Link, Text } from '@chakra-ui/react'
 import { logger } from 'ethers'
@@ -7,9 +8,8 @@ import { defaultChainId } from 'src/constants/chains'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useSafeUSDBalances from 'src/hooks/useSafeUSDBalances'
 import { isValidEthereumAddress } from 'src/utils/validationUtils'
-import {getGnosisTansactionLink} from 'src/v2/utils/gnosisUtils'
+import { getGnosisTansactionLink } from 'src/v2/utils/gnosisUtils'
 import { getDaoUrl } from 'src/v2/utils/phantomUtils'
-import { useTranslation } from 'react-i18next'
 
 function Dashboard() {
 	const [safeChainId, setSafeChainId] = useState<SupportedChainId>(defaultChainId)

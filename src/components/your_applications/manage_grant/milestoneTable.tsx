@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Button,
 	Flex, Text, } from '@chakra-ui/react'
@@ -9,7 +10,6 @@ import MilestoneDoneCheckModalContent from 'src/components/your_applications/man
 import MilestoneDoneConfirmationModalContent from 'src/components/your_applications/manage_grant/modals/modalContentMilestoneDoneConfirmation'
 import { ApplicationMilestone } from 'src/types'
 import { getMilestoneTitle, timeToString } from 'src/utils/formattingUtils'
-import { useTranslation } from 'react-i18next'
 
 type OpenedModalType = 'milestone-done' | 'milestone-view' | 'milestone-confirm';
 type OpenedModal = { type: OpenedModalType, milestone: ApplicationMilestone };

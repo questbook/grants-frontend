@@ -117,5 +117,5 @@ export interface Safe {
     /**
      * After initiating a transaction, popup that should be shown
      */
-    getNextSteps() : string[]
+    getNextSteps(): string[]
 }
