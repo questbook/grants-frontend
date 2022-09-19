@@ -333,7 +333,6 @@ function Form({
 				details: detailsString,
 				fields,
 				reward,
-				rewardCurrencyAddress,
 				date,
 				grantManagers: admins,
 				rubric: {

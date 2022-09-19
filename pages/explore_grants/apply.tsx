@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import Form from 'src/components/explore_grants/apply_grant/form'
 import Sidebar from 'src/components/explore_grants/apply_grant/sidebar'
-import { defaultChainId } from 'src/constants/chains'
+import { defaultChainId, USD_ASSET } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import { useGetGrantDetailsQuery, useGetSafeForAWorkspaceQuery } from 'src/generated/graphql'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
@@ -155,15 +155,9 @@ function ApplyGrant() {
 		setDaoId(grantData?.workspace?.id)
 		setDaoLogo(getUrlForIPFSHash(grantData?.workspace?.logoIpfsHash))
 		setRewardAmount(
-			grantData?.reward?.committed
-				? parseInt(
-					formatAmount(
-						grantData?.reward?.committed,
-						chainInfo?.decimals || 18,
-						false, false, false
-					)
-				).toString()
-				: '',
+			(grantData.reward?.committed && grantData.reward.asset === USD_ASSET) ? grantData.reward?.committed :
+				(grantData.reward?.committed) ? formatAmount(grantData.reward?.committed, chainInfo.decimals || 18)
+				: ''
 		)
 
 		let supportedCurrencyObj

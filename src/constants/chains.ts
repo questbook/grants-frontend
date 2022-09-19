@@ -10,6 +10,7 @@ export const defaultChainId = process.env.NEXT_PUBLIC_IS_TEST === 'true'
 	: SupportedChainId.OPTIMISM_MAINNET
 export const CHAIN_INFO = chainInfo as ChainInfoMap
 export const USD_ASSET = '0x0000000000000000000000000000000000000001'
+export const USD_ICON = '/dollar_icon.svg'
 export const SOL_ETH_ASSET = '0x0000000000000000000000000000000000000002'
 export const USD_DECIMALS = 9
 export const SOL_ETH_DECIMALS = 9

@@ -11,7 +11,7 @@ import GrantShare from 'src/components/ui/grantShare'
 import Modal from 'src/components/ui/modal'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
-import { defaultChainId } from 'src/constants/chains'
+import { defaultChainId, USD_ASSET, USD_ICON } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import {
 	GetGrantDetailsQuery,
@@ -168,12 +168,15 @@ function AboutGrant() {
 		setDaoName(grantData.workspace?.title)
 		setDaoLogo(getUrlForIPFSHash(grantData.workspace?.logoIpfsHash))
 		setRewardAmount(
-			grantData.reward?.committed
-				? formatAmount(grantData.reward?.committed, chainInfo.decimals || 18)
+			(grantData.reward?.committed && grantData.reward.asset === USD_ASSET) ? grantData.reward?.committed :
+				(grantData.reward?.committed) ? formatAmount(grantData.reward?.committed, chainInfo.decimals || 18)
 				: ''
 		)
 		let supportedCurrencyObj
-		if(grantData.reward.token) {
+		if(grantData.reward.asset === USD_ASSET) {
+			setRewardCurrencyCoin(USD_ICON)
+		}
+		else if(grantData.reward.token) {
 			setRewardCurrency(chainInfo.label)
 			setRewardCurrencyCoin(grantData.reward.token.iconHash)
 		} else {

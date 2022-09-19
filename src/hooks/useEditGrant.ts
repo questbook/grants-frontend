@@ -100,7 +100,7 @@ export default function useEditGrant(
 
 		async function validate() {
 			setLoading(true)
-			// console.log('calling validate', data)
+			console.log('calling validate', data)
 			try {
 				setCurrentStep(0)
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
@@ -110,15 +110,15 @@ export default function useEditGrant(
 				const isEVM = workspace?.safe?.chainId !== '900001'
 				const detailsHash = (await uploadToIPFS(data.details)).hash
 				let reward
-				if(isEVM) {
-					if(data.rewardToken.address === '') {
-					// console.log('grant data', data)
+				if(isEVM && data.rewardCurrencyAddress) {
+					if(data.rewardToken?.address === '') {
+					console.log('grant data', data)
 						reward = {
 							committed: parseAmount(data.reward, data.rewardCurrencyAddress),
 							asset: data.rewardCurrencyAddress,
 						}
 					} else {
-					// console.log('Reward before parsing', data.reward, data.rewardToken.decimal)
+					console.log('Reward before parsing', data.reward, data.rewardToken.decimal)
 						reward = {
 							committed: parseAmount(data.reward, undefined, data.rewardToken.decimal),
 							asset: data.rewardCurrencyAddress,
@@ -127,8 +127,9 @@ export default function useEditGrant(
 					// console.log('Reward after parsing', reward)
 					}
 				} else {
+					console.log('USD reward', data.reward)
 					reward = {
-						committed: parseAmount(data.reward, undefined, USD_DECIMALS),
+						committed: data.reward,
 						asset: USD_ASSET
 					}
 				}

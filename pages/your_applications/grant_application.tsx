@@ -9,7 +9,7 @@ import { useRouter } from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import Breadcrumbs from 'src/components/ui/breadcrumbs'
 import Form from 'src/components/your_applications/grant_application/form'
-import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId, USD_ASSET, USD_ICON } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import {
 	GetApplicationDetailsQuery,
@@ -90,7 +90,7 @@ function ViewApplication() {
 		if(!application || !application?.fields?.length) {
 			return
 		}
-
+		console.log('application data', application)
 		let decimals: number
 		if(application.grant.reward.token) {
 			// console.log('Application milestone ', application.milestones[0])
@@ -130,11 +130,7 @@ function ViewApplication() {
         			milestone: ms.title,
         			// milestoneReward: ethers.utils.formatEther(ms.amount || '0'),
         			milestoneReward:
-                application ? formatAmount(
-                	ms.amount,
-                	decimals || 18,
-                	true,
-                ) : '1'
+                application ? ms.amount : '1'
         			,
         		})
         }) || [],
@@ -148,7 +144,7 @@ function ViewApplication() {
 			fundingBreakdown: getFieldString(application, 'fundingBreakdown'),
 		}
 
-		// console.log('fd', fd.projectMilestones[0].milestoneReward)
+		console.log('fd', fd.projectMilestones[0].milestoneReward)
 		if(application?.grant?.fields?.find((field: any) => field.title === 'memberDetails') && !fd.membersDescription.length) {
 			fd.membersDescription = [...Array(fd.teamMembers)].map(() => ({ description: '' }))
 		}
@@ -159,6 +155,10 @@ function ViewApplication() {
 	let label
 	let icon
 	let decimals
+	if(application?.grant.reward.asset === USD_ASSET){
+		label = 'USD'
+		icon = USD_ICON
+	}
 	if(application?.grant.reward.token) {
 		decimals = application.grant.reward.token.decimal
 		label = application.grant.reward.token.label
@@ -210,8 +210,8 @@ function ViewApplication() {
 							}
 					}
 					rewardAmount={
-						application ? formatAmount(
-							application.grant.reward.committed,
+						application?.grant.reward.asset === USD_ASSET ? application.grant.reward.committed : application?.grant.reward.committed ? formatAmount(
+							application?.grant.reward.committed,
 							decimals || 18,
 						) : '1'
 					}
