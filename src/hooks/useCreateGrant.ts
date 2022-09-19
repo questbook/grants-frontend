@@ -225,30 +225,21 @@ export default function useCreateGrant(
 		}
 
 		try {
-			// console.log('O')
 			if(!data) {
 				return
 			}
-
-			// console.log('OO')
 
 			if(transactionData) {
 				return
 			}
 
-			// console.log('OOO')
-
 			if(!accountData || !accountData.address) {
 				throw new Error('not connected to wallet')
 			}
 
-			// console.log('OOOO')
-
 			if(!workspace) {
 				throw new Error('not connected to workspace')
 			}
-
-			// console.log('OOOOO')
 
 			if(!currentChainId) {
 				if(switchNetwork && chainId) {

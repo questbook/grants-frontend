@@ -30,8 +30,6 @@ const RecipientDetails = ({
 	onChangeRecepientDetails: (applicationId: string, fieldName: string, fieldValue: any) => void
 	onChangeRecepientError: (error: string) => void
 }) => {
-
-	console.log('safeTokenList - modal', safeTokenList)
 	const router = useRouter()
 	const { t } = useTranslation()
 	const [applicationID, setApplicationId] = useState<any>('')

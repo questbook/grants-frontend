@@ -10,6 +10,15 @@ const NETWORK_PREFIX: {[key: string]: string} = {
 	'137': 'matic',
 	'1': 'eth',
 	'10': 'opt',
+	'5': 'gor'
+}
+
+export function getSafeURL(safeAddress: string, chainId: string) {
+	if(chainId === '42220') {
+		return `https://safe.celo.org/#/safes/${safeAddress}`
+	} else {
+		return `https://gnosis-safe.io/app/${NETWORK_PREFIX[chainId]}:${safeAddress}`
+	}
 }
 
 export function getGnosisTansactionLink(safeAddress: string, chainId: string) {

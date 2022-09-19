@@ -134,7 +134,6 @@ function ViewApplication() {
 			projectGoal: getFieldString(application, 'projectGoals'),
 			projectMilestones:
         application.milestones.map((ms: any) => {
-        	// console.log('milestone', ms.amount)
         	return (
         		{
         			milestone: ms.title,
@@ -158,7 +157,6 @@ function ViewApplication() {
 			fundingBreakdown: getFieldString(application, 'fundingBreakdown'),
 		}
 
-		console.log('fd', fd.projectMilestones[0].milestoneReward)
 		if(application?.grant?.fields?.find((field: any) => field.title === 'memberDetails') && !fd.membersDescription.length) {
 			fd.membersDescription = [...Array(fd.teamMembers)].map(() => ({ description: '' }))
 		}

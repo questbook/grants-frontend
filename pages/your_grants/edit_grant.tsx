@@ -65,7 +65,6 @@ function EditGrant() {
 		let reward
 		let rewardCurrency
 		let rewardCurrencyAddress
-		console.log('grant token fetched while editing grant', grant)
 
 		if (grant.reward.token) {
 			reward = ethers.utils.formatUnits(
@@ -75,10 +74,8 @@ function EditGrant() {
 			rewardCurrency = grant.reward.token.label
 			rewardCurrencyAddress = grant.reward.token.address
 		} else if (grant.reward.asset === "0x0000000000000000000000000000000000000001") {
-			console.log('here')
 			reward = grant.reward.committed
 		} else {
-			console.log('not here')
 			reward = formatAmount(
 				grant.reward.committed,
 				CHAIN_INFO[
@@ -164,9 +161,7 @@ function EditGrant() {
 			let reward
 			// let rewardCurrency
 			// let rewardCurrencyAddress
-			console.log('grant token while editing grant', grant)
 			if (grant.reward.token) {
-				console.log('grant token inside if', grant)
 				reward = ethers.utils.formatUnits(
 					grant.reward.committed,
 					grant.reward.token.decimal,
@@ -174,11 +169,9 @@ function EditGrant() {
 				// rewardCurrency = grant.reward.token.label
 				// rewardCurrencyAddress = grant.reward.token.address
 			} else if (grant.reward.asset === USD_ASSET) {
-				console.log('here')
 				reward = grant.reward.committed
 			}
 			else {
-				console.log('not here')
 				reward = formatAmount(
 					grant.reward.committed,
 					CHAIN_INFO[
@@ -281,7 +274,6 @@ function EditGrant() {
 							formData={formData}
 							onSubmit={
 								(editdata: any) => {
-									console.log('editdata', editdata)
 									setEditData(editdata)
 								}
 							}

@@ -21,7 +21,7 @@ import Funding from 'src/components/explore_grants/apply_grant/form/4_funding'
 import CustomFields from 'src/components/explore_grants/apply_grant/form/5_customFields'
 import Loader from 'src/components/ui/loader'
 import VerifiedBadge from 'src/components/ui/verified_badge'
-import { defaultChainId, SupportedChainId } from 'src/constants/chains'
+import { defaultChainId, SupportedChainId, USD_ASSET } from 'src/constants/chains'
 import strings from 'src/constants/strings.json'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSubmitApplication from 'src/hooks/useSubmitApplication'
@@ -303,6 +303,7 @@ function Form({
 
 		let projectMilestonesError = false
 		const newProjectMilestones = [...projectMilestones]
+		console.log('project milestones', newProjectMilestones)
 		projectMilestones.forEach((project, index) => {
 			if(project.milestone === '') {
 				newProjectMilestones[index].milestoneIsError = true
@@ -360,8 +361,7 @@ function Form({
 			return
 		}
 
-		// console.log('Funding asked: ', fundingAsk)
-
+		
 		const data: GrantApplicationRequest = {
 			grantId,
 			applicantId: await signer?.getAddress(),
@@ -390,7 +390,7 @@ function Form({
 			},
 			milestones: projectMilestones.map((pm) => ({
 				title: pm.milestone,
-				amount: parseAmount(
+				amount: rewardCurrencyAddress === USD_ASSET ? pm.milestoneReward : parseAmount(
 					pm.milestoneReward,
 					rewardCurrencyAddress,
 					rewardDecimal,
@@ -409,7 +409,7 @@ function Form({
 		if(piiFields.length) {
 			await encrypt(data, piiFields)
 		}
-
+		console.log('application data final', data)
 		setFormData(data)
 	}
 

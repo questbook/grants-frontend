@@ -494,7 +494,6 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 							let decimals
 							let icon
 							let label
-							console.log('grant', grant)
 							
 							if(grant.reward.token) {
 								// console.log('Reward has token')

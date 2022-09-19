@@ -157,7 +157,6 @@ function ManageGrant() {
 
 		Promise.all(
 		 fundsDisbursed!.fundsTransfers.map(async(transfer: any) => {
-			console.log('transfer data', transfer)
 		 	const status: any = await currentSafe.getTransactionHashStatus(transfer.transactionHash)
 			if(!isEvmChain) {
 				if(status && status[transfer.transactionHash]?.closedAtDate !== '') {
@@ -173,9 +172,7 @@ function ManageGrant() {
    
 				}
 			} else if(isEvmChain) {
-				console.log('status outside if', status)
 				if(status) {
-					console.log('status', status)
 					const usdAmount = transfer.amount
    
 					milestoneTrxnStatus.push({
@@ -185,7 +182,6 @@ function ManageGrant() {
 						safeAddress: workspaceSafe,
 						...status[transfer.transactionHash]
 					})
-					console.log(milestoneTrxnStatus)
 				}
 			}
 		 	
@@ -204,7 +200,6 @@ function ManageGrant() {
 
 	useEffect(() => {
 		if(fundsDisbursed?.fundsTransfers && currentSafe?.id) {
-			console.log('funds disbursed', fundsDisbursed)
 			checkTransactionStatus()
 		}
 	}, [fundsDisbursed, currentSafe?.id])

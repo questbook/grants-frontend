@@ -100,7 +100,6 @@ export default function useEditGrant(
 
 		async function validate() {
 			setLoading(true)
-			console.log('calling validate', data)
 			try {
 				setCurrentStep(0)
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
@@ -112,13 +111,11 @@ export default function useEditGrant(
 				let reward
 				if(isEVM && data.rewardCurrencyAddress) {
 					if(data.rewardToken?.address === '') {
-					console.log('grant data', data)
 						reward = {
 							committed: parseAmount(data.reward, data.rewardCurrencyAddress),
 							asset: data.rewardCurrencyAddress,
 						}
 					} else {
-					console.log('Reward before parsing', data.reward, data.rewardToken.decimal)
 						reward = {
 							committed: parseAmount(data.reward, undefined, data.rewardToken.decimal),
 							asset: data.rewardCurrencyAddress,
@@ -127,7 +124,7 @@ export default function useEditGrant(
 					// console.log('Reward after parsing', reward)
 					}
 				} else {
-					console.log('USD reward', data.reward)
+					logger.info('USD reward', data.reward)
 					reward = {
 						committed: data.reward,
 						asset: USD_ASSET

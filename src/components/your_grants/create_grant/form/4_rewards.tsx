@@ -17,6 +17,9 @@ function GrantRewardsInput({
 	setReward,
 	rewardError,
 	setRewardError,
+	rewardCurrency,
+	setRewardCurrency,
+	setRewardCurrencyAddress,
 	date,
 	setDate,
 	dateError,
@@ -25,6 +28,7 @@ function GrantRewardsInput({
 	setShouldEncrypt,
 	shouldEncryptReviews,
 	setShouldEncryptReviews,
+	isEVM,
 	oldDate,
 	setOldDate,
 }: {
@@ -32,6 +36,9 @@ function GrantRewardsInput({
   setReward: (rewards: string) => void
   rewardError: boolean
   setRewardError: (rewardError: boolean) => void
+  rewardCurrency: string
+  setRewardCurrency: (rewardCurrency: string) => void
+  setRewardCurrencyAddress: (rewardCurrencyAddress: string) => void
   date: string
   setDate: (date: string) => void
   dateError: boolean
@@ -40,18 +47,13 @@ function GrantRewardsInput({
   setShouldEncrypt: (shouldEncrypt: boolean) => void
   shouldEncryptReviews: boolean
   setShouldEncryptReviews: (shouldEncryptReviews: boolean) => void
+  isEVM: boolean
 	oldDate: boolean
 	setOldDate: (oldDate: boolean) => void
 }) {
 	const [isModalOpen, setIsModalOpen] = React.useState(false)
 	const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState<any[]>([])
-
-	useEffect(() => {
-		if(supportedCurrencies && supportedCurrencies.length > 0) {
-			setSupportedCurrenciesList(supportedCurrencies)
-		}
-	}, [supportedCurrencies])
-
+	
 	const [isJustAddedToken, setIsJustAddedToken] = React.useState<boolean>(false)
 	const addERC = false
 	const showSupportedCurrencies = isEVM && supportedCurrenciesList.length > 0

@@ -554,6 +554,9 @@ function Form({
 				// rewardToken={rewardToken}
 				rewardError={rewardError}
 				setRewardError={setRewardError}
+				rewardCurrency={rewardCurrency}
+				setRewardCurrency={setRewardCurrency}
+				setRewardCurrencyAddress={setRewardCurrencyAddress}
 				date={date}
 				setDate={setDate}
 				dateError={dateError}
@@ -562,6 +565,7 @@ function Form({
 				setShouldEncrypt={setShouldEncrypt}
 				shouldEncryptReviews={shouldEncryptReviews}
 				setShouldEncryptReviews={setShouldEncryptReviews}
+				isEVM={isEVM}
 				oldDate={oldDate}
 				setOldDate={setOldDate}
 			/>

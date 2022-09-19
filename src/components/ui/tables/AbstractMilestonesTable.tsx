@@ -72,7 +72,6 @@ function AbstractMilestonesTable(
 		rewardSymbol = asset.label
 		rewardIcon = dollarIcon
 	}
-console.log('transaction status', transactionStatus)
 	const getTotalReward = (milestone: any) => {
 		const milestoneTrxns = transactionStatus?.filter((obj: any) => obj.milestoneId === milestone.id)
 		var total = 0
