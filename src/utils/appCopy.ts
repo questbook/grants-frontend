@@ -74,7 +74,7 @@ i18next.use(initReactI18next).init({
 					'about_proposal': 'About Proposal',
 					'proposal_title': 'Proposal Title',
 					'supporting_link': 'Supporting Link',
-					'add_link': 'Add another l  ink',
+					'add_link': 'Add Another Link',
 					'proposal_details': 'Details',
 					'proposal_details_placeholder': 'Effective proposals include mocks, key considerations, impact on the ecosystem and any other detail relevant to the proposal.',
 					'goals': 'Goals',
