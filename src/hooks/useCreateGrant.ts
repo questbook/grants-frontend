@@ -105,9 +105,9 @@ export default function useCreateGrant(
 				const isEVM = workspace?.safe?.chainId !== '900001'
 				const detailsHash = (await uploadToIPFS(data.details)).hash
 				let reward
+
 				if(isEVM) {
-					if(data.rewardToken.address === '') {
-					// console.log('grant data', data)
+					if(!data.rewardToken.address) {
 						reward = {
 							committed: parseAmount(data.reward, data.rewardCurrencyAddress),
 							asset: data.rewardCurrencyAddress,

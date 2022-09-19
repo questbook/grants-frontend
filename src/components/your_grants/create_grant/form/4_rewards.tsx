@@ -11,6 +11,7 @@ import Datepicker from 'src/components/ui/forms/datepicker'
 import Dropdown from 'src/components/ui/forms/dropdown'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import CustomTokenModal from 'src/components/ui/submitCustomTokenModal'
+import { USD_ASSET, USD_DECIMALS } from 'src/constants/chains'
 import 'react-datepicker/dist/react-datepicker.css'
 
 function GrantRewardsInput({
@@ -69,6 +70,7 @@ function GrantRewardsInput({
 
 	const [isJustAddedToken, setIsJustAddedToken] = React.useState<boolean>(false)
 	const addERC = false
+	const showSupportedCurrencies = isEVM && supportedCurrenciesList.length > 0
 
 	const [showDropdown, setShowDropdown] = React.useState(false)
 
@@ -76,6 +78,13 @@ function GrantRewardsInput({
 		const CurrenciesList = supportedCurrenciesList.filter((currencyItem) => currencyItem.length > 0)
 		setShowDropdown(CurrenciesList.length > 0)
 	}, [supportedCurrenciesList])
+
+	useEffect(() => {
+		if(!showSupportedCurrencies) {
+			setRewardCurrencyAddress(USD_ASSET)
+		}
+	}, [showSupportedCurrencies])
+
 	const { t } = useTranslation()
 	return (
 		<Flex direction='column'>
@@ -121,7 +130,7 @@ function GrantRewardsInput({
 					flex={0}
 					alignSelf='center'>
 					{
-						(isEVM && supportedCurrenciesList.length > 0) ? (
+						showSupportedCurrencies ? (
 							<Dropdown
 								listItemsMinWidth='132px'
 								listItems={supportedCurrenciesList}
@@ -163,6 +172,9 @@ function GrantRewardsInput({
 									[
 										{
 											icon: '',
+											id: USD_ASSET,
+											address: USD_ASSET,
+											decimals: USD_DECIMALS,
 											label: 'USD',
 										},
 									]
