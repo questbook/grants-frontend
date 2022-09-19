@@ -61,7 +61,7 @@ function BrowseDao() {
 	)
 
 	const totalDaos = useMemo(() => [
-		...myDaos,
+		...(scwAddress ? myDaos : []),
 		...popularDaos,
 	], [myDaos, popularDaos])
 
