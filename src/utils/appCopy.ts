@@ -119,7 +119,7 @@ i18next.use(initReactI18next).init({
 					'proposal_form': {
 						'title': 'What details are required in a Proposal?',
 					},
-					'amount': 'Recommended Grant Amount',
+					'amount': 'Recommended Grant Amount (in USD)',
 					'deadline': 'Accepting Proposals till',
 					'private_review': 'Keep proposal reviews private',
 					'private_review_desc': 'Reviews and comments by your team will be kept private to you and the reviewers',

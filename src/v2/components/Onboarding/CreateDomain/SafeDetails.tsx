@@ -46,7 +46,11 @@ function SafeDetails({ safesOptions, step, safeAddress, isVerified, isLoading, s
 				helperLinkUrl='https://www.notion.so/questbook/Connecting-your-Safe-with-Questbook-3a3be08527b54f87b9d71a7332b108ac'
 				placeholder='0x4ad2... / 5D4u...'
 				value={safeAddress}
-				onChange={(e) => setValue(e.target.value)}
+				onChange={(e) => {
+					if (e.target.value.includes(':')) {
+						setValue(e.target.value.split(':')[1])
+					} else { setValue(e.target.value) }
+				}}
 				isVerified={isVerified}
 				// isDisabled={step === 1}
 				errorText={safeAddressErrorText}
@@ -80,7 +84,7 @@ function SafeDetails({ safesOptions, step, safeAddress, isVerified, isLoading, s
 						value={safeSelected}
 						onChange={
 							(safeSelected: SafeSelectOption | undefined) => {
-								if(safeSelected) {
+								if (safeSelected) {
 									onSelectedSafeChange(safeSelected)
 								}
 							}

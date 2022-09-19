@@ -30,19 +30,6 @@ function CreateGrant() {
 	const router = useRouter()
 	const [currentStep, setCurrentStep] = useState<number>()
 
-	const grantInfoRef = useRef(null)
-	const detailsRef = useRef(null)
-	const applicationDetailsRef = useRef(null)
-	const grantRewardsRef = useRef(null)
-
-	const grantInfoInViewport = useIntersection(grantInfoRef, '0px')
-	const detailsInfoInViewport = useIntersection(detailsRef, '0px')
-	const applicationDetailsInViewport = useIntersection(
-		applicationDetailsRef,
-		'0px',
-	)
-	const grantRewardsInViewport = useIntersection(grantRewardsRef, '0px')
-
 	const [formData, setFormData] = useState<any>()
 	const [, blockExplorerLink, loading] = useCreateGrant(formData, setCurrentStep)
 
@@ -54,31 +41,6 @@ function CreateGrant() {
 			switchNetwork(chainId!.toString() as unknown as SupportedChainId)
 		}
 	}, [workspace])
-
-	const getColor = (index: number, color2: string, color1: string) => {
-		if(index === 3) {
-			return grantRewardsInViewport
-        && !grantInfoInViewport
-        && !detailsInfoInViewport
-        && !applicationDetailsInViewport
-				? color1
-				: color2
-		}
-
-		if(index === 2) {
-			return applicationDetailsInViewport
-        && !detailsInfoInViewport
-        && !grantInfoInViewport
-				? color1
-				: color2
-		}
-
-		if(index === 1) {
-			return detailsInfoInViewport && !grantInfoInViewport ? color1 : color2
-		}
-
-		return grantInfoInViewport ? color1 : color2
-	}
 
 	return (
 		<Container
