@@ -129,7 +129,7 @@ function Form({
 	const [rewardToken, setRewardToken] = useState<Token>({
 		label: '',
 		address: '',
-		decimal: 0,
+		decimal: '0',
 		iconHash: '',
 	})
 	const [rewardError, setRewardError] = useState(false)
