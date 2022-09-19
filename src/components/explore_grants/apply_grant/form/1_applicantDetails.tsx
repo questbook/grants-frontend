@@ -5,7 +5,6 @@ import {
 } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
-import SupportedChainId from 'src/generated/SupportedChainId'
 import { isValidEthereumAddress } from 'src/utils/validationUtils'
 import { RealmsSolana } from 'src/v2/constants/safe/realms_solana'
 
