@@ -4,12 +4,12 @@ import React, {
 import { useTranslation } from 'react-i18next'
 import {
 	Box, Button,
-	Container, Flex, Image, Text } from '@chakra-ui/react'
+	Container, Flex, Image, Text
+} from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import moment from 'moment'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
-import Breadcrumbs from 'src/components/ui/breadcrumbs'
 import Modal from 'src/components/ui/modal'
 import AppplicationTableEmptyState from 'src/components/your_applications/empty_states/applicantions_table'
 import RubricDrawer from 'src/components/your_grants/rubricDrawer'
@@ -74,7 +74,7 @@ function ViewApplicants() {
 	const { t } = useTranslation()
 
 	useEffect(() => {
-		if(router && router.query) {
+		if(router?.query) {
 			const { grantId: gId } = router.query
 			setGrantID(gId)
 		}
@@ -82,25 +82,23 @@ function ViewApplicants() {
 
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
-      subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-      ].client,
+			subgraphClients[
+				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+			].client,
 	})
 
 	const [queryReviewerParams, setQueryReviewerParams] = useState<any>({
 		client:
-      subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-      ].client,
+			subgraphClients[
+				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+			].client,
 	})
 
 	useEffect(() => {
 		if(
-			workspace
-      && workspace.members
-      && workspace.members.length > 0
-      && accountData
-      && accountData.address
+			workspace?.members?.length
+			&& accountData
+			&& accountData.address
 		) {
 			const tempMember = workspace.members.find(
 				(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
@@ -108,7 +106,7 @@ function ViewApplicants() {
 			// console.log(tempMember)
 			setIsAdmin(
 				tempMember?.accessLevel === 'admin'
-        || tempMember?.accessLevel === 'owner',
+				|| tempMember?.accessLevel === 'owner',
 			)
 
 			setIsReviewer(tempMember?.accessLevel === 'reviewer')
@@ -131,7 +129,7 @@ function ViewApplicants() {
 		if(isAdmin) {
 			setQueryParams({
 				client:
-          subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+					subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
 				variables: {
 					grantID,
 					first: PAGE_SIZE,
@@ -144,7 +142,7 @@ function ViewApplicants() {
 			// console.log('reviewer', isUser)
 			setQueryReviewerParams({
 				client:
-        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+					subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
 				variables: {
 					grantID,
 					reviewerIDs: [isUser],
@@ -159,7 +157,7 @@ function ViewApplicants() {
 	const { data, error, loading } = useGetApplicantsForAGrantQuery(queryParams)
 	const { data: grantData } = useGetGrantDetailsQuery(queryParams)
 	useEffect(() => {
-		if(data && data.grantApplications.length) {
+		if(data?.grantApplications?.length) {
 			const fetchedApplicantsData = data.grantApplications.map((applicant) => {
 				let decimal
 				let label
@@ -198,10 +196,10 @@ function ViewApplicants() {
 						//   getFieldString('fundingAsk') || '0',
 						// ),
 						amount:
-              applicant && getFieldString(applicant, 'fundingAsk') ? formatAmount(
-                getFieldString(applicant, 'fundingAsk')!,
-                decimal,
-              ) : '1',
+							applicant && getFieldString(applicant, 'fundingAsk') ? formatAmount(
+								getFieldString(applicant, 'fundingAsk')!,
+								decimal,
+							) : '1',
 						symbol: label,
 						icon,
 					},
@@ -210,7 +208,7 @@ function ViewApplicants() {
 					reviewers: applicant.applicationReviewers,
 					amountPaid: formatAmount(
 						getTotalFundingRecv(
-              applicant.milestones as unknown as ApplicationMilestone[],
+							applicant.milestones as unknown as ApplicationMilestone[],
 						).toString(),
 						decimal,
 					),
@@ -250,7 +248,7 @@ function ViewApplicants() {
 
 	useEffect(() => {
 		// console.log('Raw reviewer data: ', reviewData)
-		if(reviewData.data && reviewData.data.grantApplications.length) {
+		if(reviewData?.data?.grantApplications.length) {
 			// console.log('Reviewer Applications: ', reviewData.data)
 			const fetchedApplicantsData = reviewData.data.grantApplications.map((applicant) => {
 				return {
@@ -264,15 +262,15 @@ function ViewApplicants() {
 						//   getFieldString('fundingAsk') || '0',
 						// ),
 						amount:
-              applicant && getFieldString(applicant, 'fundingAsk') ? formatAmount(
-                getFieldString(applicant, 'fundingAsk')!,
-                CHAIN_INFO[
-                	getSupportedChainIdFromSupportedNetwork(
-                		applicant.grant.workspace.supportedNetworks[0],
-                	)
-                ]?.supportedCurrencies[applicant.grant.reward.asset.toLowerCase()]
-                	?.decimals,
-              ) : '1',
+							applicant && getFieldString(applicant, 'fundingAsk') ? formatAmount(
+								getFieldString(applicant, 'fundingAsk')!,
+								CHAIN_INFO[
+									getSupportedChainIdFromSupportedNetwork(
+										applicant.grant.workspace.supportedNetworks[0],
+									)
+								]?.supportedCurrencies[applicant.grant.reward.asset.toLowerCase()]
+									?.decimals,
+							) : '1',
 						symbol: getAssetInfo(
 							applicant?.grant?.reward?.asset?.toLowerCase(),
 							getSupportedChainIdFromWorkspace(workspace),
@@ -326,8 +324,8 @@ function ViewApplicants() {
 	}, [workspace, accountData, daoId])
 
 	const [isAcceptingApplications, setIsAcceptingApplications] = React.useState<
-  [boolean, number]
-  >([acceptingApplications, 0])
+		[boolean, number]
+	>([acceptingApplications, 0])
 
 	useEffect(() => {
 		setIsAcceptingApplications([acceptingApplications, 0])

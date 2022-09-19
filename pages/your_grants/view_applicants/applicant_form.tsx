@@ -1,7 +1,6 @@
 import { ReactElement, useContext, useEffect, useRef, useState } from 'react'
 import * as Apollo from '@apollo/client'
 import {
-	Box,
 	Divider,
 	Flex,
 	Image,
@@ -11,7 +10,6 @@ import {
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
-import Breadcrumbs from 'src/components/ui/breadcrumbs'
 import Accept from 'src/components/your_grants/applicant_form/accept/accept'
 import AcceptSidebar from 'src/components/your_grants/applicant_form/accept/sidebar'
 import Application from 'src/components/your_grants/applicant_form/application'
@@ -61,10 +59,22 @@ function ApplicantForm() {
 	const client = subgraphClients[chainId].client
 
 	const [queryParams, setQueryParams] = useState<Apollo.QueryHookOptions<GetApplicationDetailsQuery, GetApplicationDetailsQueryVariables>>({ client })
+	const { data, } = useGetApplicationDetailsQuery(queryParams)
+
+	const [state, setState] = useState<number>()
+	const [txn, txnLink, loading, isBiconomyInitialised, error] = useUpdateApplicationState(
+		state === 1 ? resubmitComment : rejectionComment,
+		applicationData?.id,
+		state,
+		submitClicked,
+		setSubmitClicked,
+	)
+
+	const { setRefresh } = useCustomToast(txnLink)
 
 	const { decrypt } = useEncryptPiiForApplication(
-		applicationData?.grant?.id,
-		applicationData?.applicantPublicKey,
+		data?.grantApplication?.grant?.id,
+		data?.grantApplication?.applicantPublicKey,
 		chainId
 	)
 
@@ -105,8 +115,6 @@ function ApplicantForm() {
 		})
 	}, [workspace, applicationId])
 
-	const { data, } = useGetApplicationDetailsQuery(queryParams)
-
 	useEffect(() => {
 		decrypt(data?.grantApplication).then(setApplicationData)
 	}, [data?.grantApplication, setApplicationData, decrypt])
@@ -119,16 +127,6 @@ function ApplicantForm() {
 		}
 	}, [router])
 
-	const [state, setState] = useState<number>()
-	const [txn, txnLink, loading, isBiconomyInitialised, error] = useUpdateApplicationState(
-		state === 1 ? resubmitComment : rejectionComment,
-		applicationData?.id,
-		state,
-		submitClicked,
-		setSubmitClicked,
-	)
-
-	const { setRefresh } = useCustomToast(txnLink)
 	useEffect(() => {
 		if(txn) {
 			setState(undefined)

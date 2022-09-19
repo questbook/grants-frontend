@@ -272,8 +272,8 @@ export function useEncryptPiiForApplication(
 	const decrypt = useCallback(
 		async(app: GetApplicationDetailsQuery['grantApplication']) => {
 			if(app?.pii?.length) {
-				if(!scwAddress) {
-					logger.debug('skipping decryption, as scw not present')
+				if(!scwAddress || !applicantPublicKey || !grantId) {
+					logger.debug('skipping decryption, as details not present')
 					return
 				}
 
@@ -290,17 +290,18 @@ export function useEncryptPiiForApplication(
 							...app,
 							// also remove PII from the application
 							// since we don't require that anymore
-							pii: undefined
+							pii: undefined,
+							fields: [
+								...app.fields,
+								// add all PII fields to the application
+								...Object.entries(fields).map(([id, value]) => {
+									return {
+										id: `${app!.id}.${id}`,
+										values: value
+									}
+								})
+							]
 						}))
-
-						// add all PII fields to the application
-						for(const id in fields) {
-							app!.fields.push({
-								id: `${app!.id}.${id}`,
-								values: fields[id]
-							})
-						}
-
 					} catch(err) {
 						logger.error({ err }, 'error in decrypting PII')
 					}
@@ -310,7 +311,7 @@ export function useEncryptPiiForApplication(
 			}
 
 			return app
-		}, [scwAddress, webwallet, decryptPii]
+		}, [scwAddress, webwallet, applicantPublicKey, grantId, decryptPii]
 	)
 
 	return {
