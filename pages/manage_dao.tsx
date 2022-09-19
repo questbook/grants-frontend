@@ -86,7 +86,6 @@ function ManageDAO() {
 			px={10}
 			bg='#F5F5FA'
 			// overflowY='auto'
-			overscrollBehavior='contain'
 			mb={4}>
 			{
 				isAdmin ? (

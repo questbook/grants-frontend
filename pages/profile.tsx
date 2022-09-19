@@ -211,6 +211,7 @@ function Profile() {
 			mx='auto'
 			mb='1rem'
 			pb='1rem'
+			maxW='75%'
 			borderX='1px solid #E8E9E9'
 			// borderBottom="1px solid #E8E9E9"
 		>
