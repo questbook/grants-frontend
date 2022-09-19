@@ -22,14 +22,6 @@ export function getSafeURL(safeAddress: string, chainId: string) {
 	}
 }
 
-export function getSafeURL(safeAddress: string, chainId: string) {
-	if(chainId === '42220') {
-		return `https://safe.celo.org/#/safes/${safeAddress}`
-	} else {
-		return `https://gnosis-safe.io/app/${NETWORK_PREFIX[chainId]}:${safeAddress}`
-	}
-}
-
 export function getGnosisTansactionLink(safeAddress: string, chainId: string) {
 	if(chainId === '42220') {
 		return `https://safe.celo.org/#/safes/${safeAddress}/transactions`
