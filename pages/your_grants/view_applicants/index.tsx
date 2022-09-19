@@ -200,7 +200,7 @@ function ViewApplicants() {
 						amount:
               applicant && getFieldString(applicant, 'fundingAsk') ? formatAmount(
                 getFieldString(applicant, 'fundingAsk')!,
-                decimal || 18,
+                decimal,
               ) : '1',
 						symbol: label,
 						icon,
@@ -212,7 +212,7 @@ function ViewApplicants() {
 						getTotalFundingRecv(
               applicant.milestones as unknown as ApplicationMilestone[],
 						).toString(),
-						decimal || 18,
+						decimal,
 					),
 				}
 			})
@@ -271,7 +271,7 @@ function ViewApplicants() {
                 		applicant.grant.workspace.supportedNetworks[0],
                 	)
                 ]?.supportedCurrencies[applicant.grant.reward.asset.toLowerCase()]
-                	?.decimals || 18,
+                	?.decimals,
               ) : '1',
 						symbol: getAssetInfo(
 							applicant?.grant?.reward?.asset?.toLowerCase(),

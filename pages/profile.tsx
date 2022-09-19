@@ -421,7 +421,7 @@ function Profile() {
               			grantAmount={
               				formatAmount(
               					grant.reward.committed,
-              					chainInfo?.decimals || 18,
+              					chainInfo?.decimals,
               					false,
               					true
               				)
@@ -429,7 +429,7 @@ function Profile() {
               			disbursedAmount={
               				formatAmount(
               					grant.funding,
-              					chainInfo?.decimals || 18
+              					chainInfo?.decimals
               				)
               			}
               			grantCurrency={chainInfo?.label || 'LOL'}

@@ -54,6 +54,7 @@ import SendFunds from 'src/v2/payouts/SendFunds'
 import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEvaluationDrawer'
 import StatsBanner from 'src/v2/payouts/StatsBanner'
 import ViewEvaluationDrawer from 'src/v2/payouts/ViewEvaluationDrawer/ViewEvaluationDrawer'
+import { getTransactionHashStatus } from 'src/v2/utils/gnosisUtils'
 
 const PAGE_SIZE = 500
 
@@ -248,7 +249,7 @@ function ViewApplicants() {
 			setWorkspaceSafe(safeAddress)
 			setWorkspaceSafeChainId(parseInt(workspaceSafes[0]?.chainId))
 			if(isEvmChain) {
-				checkIfUserIsOnCorrectNetwork(safeNetwork)
+				// checkIfUserIsOnCorrectNetwork(safeNetwork)
 			}
 		}
 	}, [safeAddressData])
@@ -391,7 +392,7 @@ function ViewApplicants() {
 						amount:
 							applicant && getFieldString(applicant, 'fundingAsk') ? formatAmount(
 								getFieldString(applicant, 'fundingAsk'),
-								decimal || 18,
+								decimal,
 							) : '1',
 						symbol: label,
 						icon,
@@ -404,7 +405,7 @@ function ViewApplicants() {
 						getTotalFundingRecv(
 							applicant.milestones as unknown as ApplicationMilestone[],
 						).toString(),
-						decimal || 18,
+						decimal,
 					),
 					reviews: applicant.reviews
 				}
@@ -467,7 +468,13 @@ function ViewApplicants() {
 		const getEachStatus = async(transaction: any, applicationId: any) => {
 			logger.info('transaction hash', transaction)
 			logger.info('fund', ethers.utils.formatUnits(transaction.amount.toString(), rewardAssetDecimals))
-			const status = await currentSafe?.getTransactionHashStatus(transaction?.transactionHash)
+			let status
+			if(isEvmChain) {
+				status = await getTransactionHashStatus(workspaceSafeChainId.toString(), transaction.transactionHash)
+			} else {
+				status = await currentSafe?.getTransactionHashStatus(transaction?.transactionHash)
+			}
+
 			logger.info({ status }, 'status')
 			if(transaction && status) {
 				if(!statuses[applicationId]) {
@@ -488,8 +495,9 @@ function ViewApplicants() {
 				} else {
 					const evmObj = {
 						transactionHash: transaction.transactionHash,
-						status: 1,
+						status: status.status,
 						amount: parseInt(ethers.utils.formatUnits(transaction.amount.toString(), rewardAssetDecimals))
+						// amount: transaction.amount
 					}
 					logger.info({ evmObj }, 'Pushed object (EVM)')
 					statuses[applicationId].push(evmObj)
@@ -544,6 +552,10 @@ function ViewApplicants() {
 	//getting transaction hash status end
 
 	const onSendFundsButtonClicked = async(state: boolean, selectedApplicants: any[]) => {
+		if(isEvmChain && workspaceSafeChainId) {
+			checkIfUserIsOnCorrectNetwork(workspaceSafeChainId.toString())
+		}
+
 		if(workspace?.safe) {
 			setSendFundsTo(selectedApplicants)
 		} else {

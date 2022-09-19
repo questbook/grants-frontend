@@ -130,7 +130,7 @@ export default function Embed() {
 
 				const tokenValue = formatAmount(
 					grant.funding,
-					tokenInfo?.decimals || 18
+					tokenInfo?.decimals
 				)
 
 				if(tokenInfo !== undefined && tokenValue !== '0') {

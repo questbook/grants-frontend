@@ -44,16 +44,16 @@ function ApplicantDetails({
 	console.log('safe network', safeNetwork)
 	const { t } = useTranslation()
 	const chainNames = new Map<String, String>([
-		["1", 'Ethereum Mainnet'],
-		["5", 'Goerli Testnet'],
-		["10", 'Optimism Mainnet'],
-		["137", 'Polygon Mainnet'],
-		["42220", 'Celo Mainnet'],
-		["9001", "Solana"],
-		["90001", "Solana"],
-		["900001", "Solana"],
+		['1', 'Ethereum Mainnet'],
+		['5', 'Goerli Testnet'],
+		['10', 'Optimism Mainnet'],
+		['137', 'Polygon Mainnet'],
+		['42220', 'Celo Mainnet'],
+		['9001', 'Solana'],
+		['90001', 'Solana'],
+		['900001', 'Solana'],
 	])
-	const isSafeOnSolana = (safeNetwork == "9001" || safeNetwork == "90001" || safeNetwork == "900001" || safeNetwork == "9000001")
+	const isSafeOnSolana = (safeNetwork == '9001' || safeNetwork == '90001' || safeNetwork == '900001' || safeNetwork == '9000001')
 	return (
 		<>
 			<Text
@@ -104,15 +104,16 @@ function ApplicantDetails({
 				placeholder={isSafeOnSolana ? '5yDU...' : '0xa2dD...' } //TODO : remove hardcoding of chainId
 				subtext={`${t('/explore_grants/apply.your_address_on')} ${chainNames.get(safeNetwork)}`}
 				onChange={
-					async (e) => {
+					async(e) => {
 						setApplicantAddress(e.target.value)
-						let safeAddressValid = false;
+						let safeAddressValid = false
 						if(isSafeOnSolana) {
 							const realms = new RealmsSolana('')
 							safeAddressValid = await realms.isValidRecipientAddress(e.target.value)
 						} else {
 							safeAddressValid = await isValidEthereumAddress(e.target.value)
 						}
+
 						console.log('safe address', e.target.value, safeAddressValid)
 						setApplicantAddressError(!safeAddressValid)
 					}

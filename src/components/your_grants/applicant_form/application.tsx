@@ -305,7 +305,7 @@ function Application({ applicationData }: Props) {
 														milestone?.amount && applicationData
                           && formatAmount(
                           	milestone?.amount,
-                          	decimal || 18,
+                          	decimal,
                           )
 													}
 													{' '}

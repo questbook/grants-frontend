@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {
 	Flex,
-	Image, Text, } from '@chakra-ui/react'
+	Image, Link, Text, } from '@chakra-ui/react'
 import { SupportedChainId } from 'src/constants/chains'
 import { ApplicationMilestone } from 'src/types'
 import { formatAmount } from 'src/utils/formattingUtils'
@@ -91,29 +91,6 @@ function AbstractMilestonesTable(
 			flex={1}
 		>
 			<Flex
-				direction='row'
-				w='100%'
-				justify='strech'
-				align='center'
-				mt='32px'
-				mb='9px'
-			>
-				{
-					TABLE_HEADERS.map((header) => (
-						<Text
-							key={header.title}
-							justifyContent={header.justifyContent}
-							flex={header.flex ? header.flex : 1}
-							variant='tableHeader'
-							display='flex'
-							minW='180px'
-						>
-							{header.title}
-						</Text>
-					))
-				}
-			</Flex>
-			<Flex
 				direction='column'
 				w='100%'
 				border='1px solid #D0D3D3'
@@ -166,12 +143,6 @@ function AbstractMilestonesTable(
 								align='center'
 								flex={TABLE_HEADERS[1].flex}
 							>
-								<Image
-									display='inline-block'
-									src={rewardIcon}
-									fallbackSrc='/images/dummy/Ethereum Icon.svg'
-									mr={2}
-									boxSize='27px' />
 								<Text
 									textAlign='center'
 									fontSize='14px'
@@ -179,17 +150,20 @@ function AbstractMilestonesTable(
 									fontWeight='700'
 									color='#122224'
 								>
+									$
 									{
 										isEvmChain ? formatAmount(item.amountPaid.toString(), decimals) :
 											getTotalReward(item)
 									}
 									{' '}
-									/
+									of
 									{' '}
 									{formatAmount(item.amount.toString(), decimals)}
-									{' '}
-									{isEvmChain ? rewardSymbol : 'USD'}
 								</Text>
+								<Text fontSize={12}>
+&nbsp; &nbsp; Received
+								</Text>
+
 							</Flex>
 							<Flex
 								flex={TABLE_HEADERS[2].flex}

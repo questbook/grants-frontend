@@ -175,6 +175,7 @@ function Form({
 
 	useEffect(() => {
 		try {
+			console.log('LoadedData', formData, loadedData)
 			if(formData && !loadedData) {
 				setApplicantName(formData.applicantName)
 				setApplicantEmail(formData.applicantEmail)

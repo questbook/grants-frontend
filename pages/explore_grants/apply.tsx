@@ -161,7 +161,7 @@ function ApplyGrant() {
 				? parseInt(
 					formatAmount(
 						grantData?.reward?.committed,
-						chainInfo?.decimals || 18,
+						chainInfo?.decimals,
 						false, false, false
 					)
 				).toString()

@@ -1,6 +1,7 @@
 import React, {
 	ReactElement, useCallback, useContext, useEffect, useRef,
 } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Flex,
 } from '@chakra-ui/react'
 import BN from 'bn.js'
@@ -25,6 +26,7 @@ function YourApplications() {
 	// const subgraphClient = useContext(ApiClientsContext)?.subgraphClient;
 	const { subgraphClients } = useContext(ApiClientsContext)!
 	const [myApplications, setMyApplications] = React.useState<any>([])
+	const { t } = useTranslation()
 
 	const containerRef = useRef(null)
 	const { data: accountData } = useQuestbookAccount()
@@ -124,13 +126,13 @@ function YourApplications() {
 				px={10}
 				mx='auto'
 			>
-				<Heading title='My Applications' />
+				<Heading title={t('/your_applications.your_proposals')} />
 
 				{
 					myApplications.length > 0
           && myApplications.map((application: any) => (
           	(
-	<YourApplicationCard
+          		<YourApplicationCard
           			key={application.id}
           			grantTitle={application.grant.title}
           			daoName={application.grant.workspace.title}
@@ -144,7 +146,7 @@ function YourApplications() {
           						application.grant.workspace.supportedNetworks[0],
           					)
           				]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
-          					?.decimals || 18,
+          					?.decimals,
           			)
           			}
           			currency={

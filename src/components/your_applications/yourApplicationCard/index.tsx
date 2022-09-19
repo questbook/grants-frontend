@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box,
 	Button,
@@ -56,6 +57,7 @@ function YourApplicationCard({
 	funding,
 	currency,
 }: Props) {
+	const { t } = useTranslation()
 	return (
 		<Flex direction='column'>
 			<Flex
@@ -165,19 +167,6 @@ function YourApplicationCard({
 				mt={2}
 				alignItems='center'>
 				<Box mr='auto' />
-				<Link
-					onClick={() => (onViewGrantClick ? onViewGrantClick() : null)}
-					fontWeight='700'>
-					View Grant
-					<Image
-						ml={2}
-						display='inline-block'
-						src='/ui_icons/link.svg'
-						alt='pro tip'
-						h='10px'
-						w='10px'
-					/>
-				</Link>
 				{
 					['approved', 'completed'].includes(status) ? (
 						<Button
@@ -185,7 +174,7 @@ function YourApplicationCard({
 							ml='30px'
 							variant='primaryCta'
 						>
-							Manage Grant
+							{t('/your_applications.submit_milestone')}
 						</Button>
 					) : (
 						<Button
@@ -193,7 +182,7 @@ function YourApplicationCard({
 							ml='30px'
 							variant='primaryCta'
 						>
-							View Application
+							{t('/your_applications.view_application')}
 						</Button>
 					)
 				}

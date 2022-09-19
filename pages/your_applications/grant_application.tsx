@@ -41,7 +41,18 @@ function ViewApplication() {
       ].client,
 	})
 
-	const { data } = useGetApplicationDetailsQuery(queryParams)
+	const {
+		data: data,
+		refetch: refetchApplicationDetails,
+	} = useGetApplicationDetailsQuery({
+		client:
+        subgraphClients[
+        	chainId || defaultChainId
+        ].client,
+		variables: {
+			applicationID,
+		},
+	})
 	const grantId = data?.grantApplication?.grant?.id
 	const applicantPublicKey = scwAddress?.toLowerCase() === data?.grantApplication?.applicantId?.toLowerCase()
 		? webwallet?.publicKey
@@ -131,7 +142,7 @@ function ViewApplication() {
         			milestoneReward:
                 application ? formatAmount(
                 	ms.amount,
-                	decimals || 18,
+                	decimals,
                 	true,
                 ) : '1'
         			,
@@ -141,7 +152,7 @@ function ViewApplication() {
 			fundingAsk:
         application && getFieldString(application, 'fundingAsk') ? formatAmount(
         	getFieldString(application, 'fundingAsk'),
-        	decimals || 18,
+        	decimals,
         	true,
         ) : '1',
 			fundingBreakdown: getFieldString(application, 'fundingBreakdown'),
@@ -211,7 +222,7 @@ function ViewApplication() {
 					rewardAmount={
 						application ? formatAmount(
 							application.grant.reward.committed,
-							decimals || 18,
+							decimals,
 						) : '1'
 					}
 					rewardCurrency={label}
