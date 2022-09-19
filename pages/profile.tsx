@@ -411,7 +411,7 @@ function Profile() {
               		chainInfo?.decimals
               	)
               	return (
-									<BrowseGrantCard
+	<BrowseGrantCard
               			key={grant.id}
               			isDaoVerified={false}
               			createdAt={grant.createdAtS}
