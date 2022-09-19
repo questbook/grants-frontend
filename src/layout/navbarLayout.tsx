@@ -34,13 +34,14 @@ function NavbarLayout({ children, renderNavbar, renderSidebar }: Props) {
 					/>
 				)
 			}
-			<Flex direction='row'>
+			<Flex
+				direction='row'
+				maxH='calc(100vh - 64px)'>
 				{
 					renderSidebar && connected && (
 						<Flex
 							display={{ base: 'none', lg: 'flex' }}
 							w='20%'
-							h='calc(100% - 64px)'
 							pos='sticky'
 							top='64px'
 							left={0}
@@ -53,8 +54,7 @@ function NavbarLayout({ children, renderNavbar, renderSidebar }: Props) {
 				<Flex
 					zIndex={0}
 					w={renderSidebar && connected ? '80%' : '100%'}
-					maxH='calc(100% - 64px)'
-					overflowY='scroll'
+					overflowY='auto'
 					overscrollBehavior='none'>
 					{children}
 				</Flex>

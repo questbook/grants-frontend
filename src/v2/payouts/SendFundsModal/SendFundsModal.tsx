@@ -139,7 +139,7 @@ function SendFundsModal({
 
 						<Flex
 							maxH='412px'
-							overflowY='scroll'
+							overflowY='auto'
 							direction='column'>
 							<Flex>
 								<Flex

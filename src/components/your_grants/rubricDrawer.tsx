@@ -185,7 +185,7 @@ function RubricDrawer({
 
 					<Flex
 						direction='column'
-						overflow='scroll'
+						overflow='auto'
 						p={8}>
 						<Flex
 							mb={8}

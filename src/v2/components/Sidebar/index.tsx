@@ -83,7 +83,7 @@ function Sidebar() {
 			w='25vw'
 			bg='white'
 			direction='column'
-			overflowY='scroll'
+			overflowY='auto'
 			border='1px solid #E0E0EC'
 		>
 			{

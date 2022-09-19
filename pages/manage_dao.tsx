@@ -85,7 +85,7 @@ function ManageDAO() {
 			w='100%'
 			px={10}
 			bg='#F5F5FA'
-			// overflowY='scroll'
+			// overflowY='auto'
 			overscrollBehavior='contain'
 			mb={4}>
 			{

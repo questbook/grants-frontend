@@ -373,7 +373,7 @@ function Content({
 										</Heading>
 										<PopoverBody
 											overflowX='hidden'
-											overflowY='scroll'
+											overflowY='auto'
 											scrollBehavior='smooth'>
 											{
 												item.reviewers.map((reviewer: { member: { email: string } }) => (

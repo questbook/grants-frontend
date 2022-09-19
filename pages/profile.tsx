@@ -208,13 +208,6 @@ function Profile() {
 	return (
 		<Flex
 			direction='column'
-			w={
-				{
-					base: '100%',
-					sm: '70%',
-					lg: '52%',
-				}
-			}
 			mx='auto'
 			mb='1rem'
 			pb='1rem'
@@ -417,7 +410,7 @@ function Profile() {
               		chainInfo?.decimals
               	)
               	return (
-	<BrowseGrantCard
+									<BrowseGrantCard
               			key={grant.id}
               			isDaoVerified={false}
               			createdAt={grant.createdAtS}

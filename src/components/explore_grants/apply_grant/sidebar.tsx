@@ -28,7 +28,7 @@ function Sidebar({
 				direction='column'
 				w='100%'
 				maxW='calc(40vw - 64px)'
-				overflowY='scroll'
+				overflowY='auto'
 				position='sticky'
 				maxH='calc(100vh - 150px)'
 			>

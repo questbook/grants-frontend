@@ -148,7 +148,7 @@ function Dropdown({
 					minW={0}
 					py={0}
 					maxH='250px'
-					overflowY='scroll'
+					overflowY='auto'
 					sx={
 						{
 							'&::-webkit-scrollbar': {
