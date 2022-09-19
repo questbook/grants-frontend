@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { ReactElement, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Box, Flex, HStack, IconButton, Image, Spacer, Text, ToastId, useToast } from '@chakra-ui/react'
 import { logger } from 'ethers'
 import { useRouter } from 'next/router'
@@ -14,6 +14,7 @@ import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSafeOwners from 'src/hooks/useSafeOwners'
 import useSafeUSDBalances from 'src/hooks/useSafeUSDBalances'
+import NavbarLayout from 'src/layout/navbarLayout'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { addAuthorizedOwner, addAuthorizedUser, bicoDapps, chargeGas, getEventData, getTransactionDetails, networksMapping, sendGaslessTransaction } from 'src/utils/gaslessUtils'
@@ -493,12 +494,14 @@ const OnboardingCreateDomain = () => {
 	)
 }
 
-// OnboardingCreateDomain.getLayout = function(page: ReactElement) {
-// 	return (
-// 		<NavbarLayout renderSidebar={false}>
-// 			{page}
-// 		</NavbarLayout>
-// 	)
-// }
+OnboardingCreateDomain.getLayout = function(page: ReactElement) {
+	return (
+		<NavbarLayout
+			renderSidebar={false}
+			renderNavbar={false}>
+			{page}
+		</NavbarLayout>
+	)
+}
 
 export default OnboardingCreateDomain

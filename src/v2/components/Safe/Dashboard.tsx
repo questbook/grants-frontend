@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { Button, Flex, Image, Link, Text } from '@chakra-ui/react'
 import { logger } from 'ethers'
@@ -7,12 +8,12 @@ import { defaultChainId } from 'src/constants/chains'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useSafeUSDBalances from 'src/hooks/useSafeUSDBalances'
 import { isValidEthereumAddress } from 'src/utils/validationUtils'
-import {getGnosisTansactionLink} from 'src/v2/utils/gnosisUtils'
+import { getGnosisTansactionLink } from 'src/v2/utils/gnosisUtils'
 import { getDaoUrl } from 'src/v2/utils/phantomUtils'
 
 function Dashboard() {
 	const [safeChainId, setSafeChainId] = useState<SupportedChainId>(defaultChainId)
-
+	const { t } = useTranslation()
 	const { workspace } = useContext(ApiClientsContext)!
 
 	useEffect(() => {
@@ -76,26 +77,26 @@ function Dashboard() {
 					mt={8}
 					variant='v2_body'
 					color='black.3'>
-					Balance
+					{t('/safe.balance')}
 				</Text>
 				<Text
 					mt={1}
 					variant='v2_heading_3'
 					fontWeight='500'>
-					{loadedSafesUSDBalance ? (safesUSDBalance[0]?.amount ? `\$${safesUSDBalance[0].amount}` : 'Could not fetch value') : 'Loading...'}
+					{loadedSafesUSDBalance ? (safesUSDBalance[0]?.amount ? `\$${safesUSDBalance[0].amount}` : t('/safe.could_not_fetch')) : 'Loading...'}
 				</Text>
 				<Button
 					mt={8}
 					variant='primaryV2'
 					rightIcon={<ExternalLinkIcon />}
 					onClick={openLink}>
-					Open Safe
+					{t('/safe.open')}
 				</Button>
 				<Text
 					mt={8}
 					variant='v2_metadata'
 					color='black.3'>
-					Your safe can be used to do payouts on Questbook.
+					{t('/safe.note')}
 					{' '}
 					<Link
 						display='inline-block'
@@ -103,7 +104,7 @@ function Dashboard() {
 						color='black.3'
 						isExternal
 						href='https://www.notion.so/questbook/Connecting-your-Safe-with-Questbook-3a3be08527b54f87b9d71a7332b108ac'>
-						Learn about safe and supported safes
+						{t('/safe.learn_more')}
 					</Link>
 
 

@@ -208,16 +208,10 @@ function Profile() {
 	return (
 		<Flex
 			direction='column'
-			w={
-				{
-					base: '100%',
-					sm: '70%',
-					lg: '52%',
-				}
-			}
 			mx='auto'
 			mb='1rem'
 			pb='1rem'
+			maxW='75%'
 			borderX='1px solid #E8E9E9'
 			// borderBottom="1px solid #E8E9E9"
 		>
@@ -428,7 +422,7 @@ function Profile() {
               			grantAmount={
               				formatAmount(
               					grant.reward.committed,
-              					chainInfo?.decimals || 18,
+              					chainInfo?.decimals,
               					false,
               					true
               				)
@@ -436,7 +430,7 @@ function Profile() {
               			disbursedAmount={
               				formatAmount(
               					grant.funding,
-              					chainInfo?.decimals || 18
+              					chainInfo?.decimals
               				)
               			}
               			grantCurrency={chainInfo?.label || 'LOL'}
@@ -576,7 +570,7 @@ function Profile() {
 
 Profile.getLayout = function(page: React.ReactElement) {
 	return (
-		<NavbarLayout renderGetStarted>
+		<NavbarLayout>
 			{page}
 		</NavbarLayout>
 	)

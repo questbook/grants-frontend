@@ -126,6 +126,12 @@ function Form({
 
 	// Grant Rewards and Deadline
 	const [reward, setReward] = useState('')
+	const [rewardToken, setRewardToken] = useState<Token>({
+		label: '',
+		address: '',
+		decimal: '0',
+		iconHash: '',
+	})
 	const [rewardError, setRewardError] = useState(false)
 
 	const [rewardCurrency, setRewardCurrency] = useState('')

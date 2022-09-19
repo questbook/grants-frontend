@@ -12,7 +12,7 @@ export const CHAIN_INFO = chainInfo as ChainInfoMap
 export const USD_ASSET = '0x0000000000000000000000000000000000000001'
 export const USD_ICON = '/dollar_icon.svg'
 export const SOL_ETH_ASSET = '0x0000000000000000000000000000000000000002'
-export const USD_DECIMALS = 9
+export const USD_DECIMALS = 0
 export const SOL_ETH_DECIMALS = 9
 
 // when SHOW_TEST_NETS = true, we show every chain

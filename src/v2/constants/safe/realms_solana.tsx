@@ -25,7 +25,7 @@ import logger from 'src/utils/logger';
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect';
 import { MetaTransaction, Safe, TransactionType } from 'src/v2/types/safe';
 import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from "@solana/spl-token"
-
+import { TokenListProvider } from '@solana/spl-token-registry'
 export class RealmsSolana implements Safe {
 	id: PublicKey | undefined
 	name: string
@@ -406,20 +406,11 @@ const usdToSolana = async(usdAmount: number) => {
 }
 
 const getSafeDetails = async(realmsAddress: string): Promise<SafeSelectOption | null> => {
-	
-	const connection = new Connection(process.env.SOLANA_RPC!, 'recent')
-	const programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw')
-	const realmsPublicKey = new PublicKey(realmsAddress)
-	const realmData = await getRealm(connection, realmsPublicKey)
-	const governances = await getGovernanceAccounts(connection, programId, Governance, [
-		pubkeyFilter(1, new PublicKey(realmsAddress))!,
-	])
-	const governance = governances.filter((gov)=>gov.pubkey.toString()===realmData.account.authority?.toString())[0]
-	const nativeTreasuryAddress = await getNativeTreasuryAddress(programId, governance.pubkey)
-	assert(realmData.account.name)
-	const solAmount = (await connection.getAccountInfo(nativeTreasuryAddress))!.lamports / 1000000000
-	const usdAmount = await solanaToUsd(solAmount)
-
+	const tokenListAndBalance = await getTokenAndbalance(realmsAddress);
+	let usdAmount = 0;
+	tokenListAndBalance.map((obj:any)=>{
+		usdAmount += obj.usdValueAmount
+	})
 	return {
 		safeAddress: realmsAddress,
 		networkType: NetworkType.Solana,
@@ -485,22 +476,34 @@ const getTokenAndbalance = async(realmAddress: string): Promise<any> =>{
 	 ];
 	const treasuryAccInfo = await connection.getParsedProgramAccounts(TOKEN_PROGRAM_ID, {filters:filters})
 
-	treasuryAccInfo.map((info: any)=>{
-		const tokenInfo = info.account.data?.parsed?.info;
-		if(tokenInfo?.mint === "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"){
-			tokenList.push( {
-				tokenIcon: '/chain_assets/usdc.svg',
-				tokenName: 'USDC',
-				tokenValueAmount: tokenInfo?.tokenAmount?.uiAmount,
-				usdValueAmount: undefined, 
-				mintAddress: tokenInfo?.mint,
-				info: tokenInfo,
-			})	
-		}
-	})
+	const allTokens = await new TokenListProvider().resolve()
+    const allTokenList = allTokens.filterByClusterSlug('mainnet-beta').getList()
+	
+	await Promise.all(treasuryAccInfo.map(async (info: any)=>{
+			const tokenInfo = info.account.data?.parsed?.info;
+			const tokenCoinGeckoInfo = allTokenList.find((x)=>x.address===tokenInfo?.mint)
+			// console.log('tokenListAndBalance - tokenCoinGeckoInfo', tokenCoinGeckoInfo)
+			const tokenUsdValue = await axios.get(
+				`https://api.coingecko.com/api/v3/simple/price?ids=${tokenCoinGeckoInfo?.extensions?.coingeckoId}&vs_currencies=usd`
+			)
+			
+			// console.log('tokenListAndBalance - tokenUsdValue', tokenUsdValue?.data[tokenCoinGeckoInfo.extensions?.coingeckoId])
+			if(tokenInfo?.mint && tokenCoinGeckoInfo && tokenUsdValue?.data){
+				tokenList.push( {
+					tokenIcon: tokenCoinGeckoInfo.logoURI,
+					tokenName: tokenCoinGeckoInfo.name,
+					symbol: tokenCoinGeckoInfo.name, 
+					tokenValueAmount: tokenInfo?.tokenAmount?.uiAmount,
+					usdValueAmount: tokenInfo?.tokenAmount?.uiAmount * tokenUsdValue?.data[tokenCoinGeckoInfo.extensions?.coingeckoId!]?.usd, 
+					mintAddress: tokenInfo?.mint,
+					info: tokenInfo,
+				})	
+			}
+		}))
+	
 
-	console.log('tokenList', tokenList);
 	return tokenList;
+
 }
 
 

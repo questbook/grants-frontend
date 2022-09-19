@@ -303,7 +303,7 @@ function BarGraph({
 										<MenuList
 											minW='164px'
 											maxH='120px'
-											overflow='scroll'
+											overflow='auto'
 											p={0}>
 											{
 												Array(12).fill(0).map((_, i) => {

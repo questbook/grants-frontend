@@ -218,7 +218,7 @@ function SignupDao() {
 
 SignupDao.getLayout = function(page: ReactElement) {
 	return (
-		<NavbarLayout renderTabs={false}>
+		<NavbarLayout>
 			{page}
 		</NavbarLayout>
 	)

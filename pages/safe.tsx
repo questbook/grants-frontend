@@ -15,7 +15,7 @@ function Safe() {
 
 Safe.getLayout = function(page: React.ReactElement) {
 	return (
-		<NavbarLayout renderGetStarted>
+		<NavbarLayout>
 			{page}
 		</NavbarLayout>
 	)

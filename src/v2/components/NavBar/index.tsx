@@ -9,6 +9,10 @@ function NavBar() {
 
 	return (
 		<Container
+			position='sticky'
+			top={0}
+			left={0}
+			right={0}
 			zIndex={1}
 			variant='header-container'
 			maxH='64px'

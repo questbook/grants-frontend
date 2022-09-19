@@ -105,6 +105,7 @@ export default function useCreateGrant(
 				const isEVM = workspace?.safe?.chainId !== '900001'
 				const detailsHash = (await uploadToIPFS(data.details)).hash
 				let reward
+
 				if(isEVM) {
 					console.log('reward', data.reward)
 					reward = {

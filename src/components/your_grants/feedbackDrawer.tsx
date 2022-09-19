@@ -128,7 +128,7 @@ function FeedbackDrawer({
 					<Flex
 						bg='#f5f5fa'
 						direction='column'
-						overflow='scroll'
+						overflow='auto'
 						p={8}>
 						<Flex
 							mb={8}

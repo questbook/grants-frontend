@@ -45,10 +45,12 @@ function ApplyGrant() {
 	const { network, switchNetwork } = useNetwork()
 
 	useEffect(() => {
-		if(router && router.query) {
+		if(router?.query) {
 			const { chainId: cId, grantId: gId } = router.query
-			setChainId(cId as unknown as SupportedChainId)
-			setGrantID(gId)
+			if(typeof cId === 'string' && typeof gId === 'string') {
+				setChainId(cId as unknown as SupportedChainId)
+				setGrantID(gId)
+			}
 		}
 	}, [router])
 
@@ -105,7 +107,7 @@ function ApplyGrant() {
 		},
 	})
 	useEffect(() => {
-		console.log("Safe address", safeAddressData)
+		logger.info({ safeAddressData }, 'Safe address')
 		setSafeChainId(safeAddressData?.workspaceSafes[0]?.chainId)
 		if(safeAddressData) {
 			// console.log('safe address data', safeAddressData)
@@ -150,14 +152,20 @@ function ApplyGrant() {
 		setChainId(localChainId)
 		setTitle(grantData?.title)
 		setWorkspaceId(grantData?.workspace?.id)
-		console.log("safe chainid", grantData?.workspace?.safeChainId, grantData)
+		logger.info({ chainId: grantData?.workspace?.safeChainId, grantData }, 'safe chainid')
 		setSafeChainId(grantData?.workspace?.safe?.ChainId)
 		setDaoId(grantData?.workspace?.id)
 		setDaoLogo(getUrlForIPFSHash(grantData?.workspace?.logoIpfsHash))
 		setRewardAmount(
-			(grantData.reward?.committed && grantData.reward.asset === USD_ASSET) ? grantData.reward?.committed :
-				(grantData.reward?.committed) ? formatAmount(grantData.reward?.committed, chainInfo.decimals || 18)
-				: ''
+			grantData?.reward?.committed
+				? parseInt(
+					formatAmount(
+						grantData?.reward?.committed,
+						chainInfo?.decimals,
+						false, false, false
+					)
+				).toString()
+				: '',
 		)
 
 		let supportedCurrencyObj
@@ -201,7 +209,7 @@ function ApplyGrant() {
 			<Flex
 				direction='column'
 				w='50%'
-				h='100%'>
+			>
 				<Form
 					chainId={chainId}
 					title={title}

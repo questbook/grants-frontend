@@ -8,6 +8,8 @@ import {
 } from '@chakra-ui/react'
 import Datepicker from 'src/components/ui/forms/datepicker'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
+import CustomTokenModal from 'src/components/ui/submitCustomTokenModal'
+import { USD_ASSET, USD_DECIMALS } from 'src/constants/chains'
 import 'react-datepicker/dist/react-datepicker.css'
 
 function GrantRewardsInput({
@@ -41,6 +43,31 @@ function GrantRewardsInput({
 	oldDate: boolean
 	setOldDate: (oldDate: boolean) => void
 }) {
+	const [isModalOpen, setIsModalOpen] = React.useState(false)
+	const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState<any[]>([])
+
+	useEffect(() => {
+		if(supportedCurrencies && supportedCurrencies.length > 0) {
+			setSupportedCurrenciesList(supportedCurrencies)
+		}
+	}, [supportedCurrencies])
+
+	const [isJustAddedToken, setIsJustAddedToken] = React.useState<boolean>(false)
+	const addERC = false
+	const showSupportedCurrencies = isEVM && supportedCurrenciesList.length > 0
+
+	const [showDropdown, setShowDropdown] = React.useState(false)
+
+	useEffect(() => {
+		const CurrenciesList = supportedCurrenciesList.filter((currencyItem) => currencyItem.length > 0)
+		setShowDropdown(CurrenciesList.length > 0)
+	}, [supportedCurrenciesList])
+
+	useEffect(() => {
+		if(!showSupportedCurrencies) {
+			setRewardCurrencyAddress(USD_ASSET)
+		}
+	}, [showSupportedCurrencies])
 
 	const { t } = useTranslation()
 	return (

@@ -7,7 +7,6 @@ import React, {
 import { Container } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
-import Breadcrumbs from 'src/components/ui/breadcrumbs'
 import Form from 'src/components/your_applications/grant_application/form'
 import { CHAIN_INFO, defaultChainId, USD_ASSET, USD_ICON } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
@@ -42,7 +41,18 @@ function ViewApplication() {
       ].client,
 	})
 
-	const { data } = useGetApplicationDetailsQuery(queryParams)
+	const {
+		data: data,
+		refetch: refetchApplicationDetails,
+	} = useGetApplicationDetailsQuery({
+		client:
+        subgraphClients[
+        	chainId || defaultChainId
+        ].client,
+		variables: {
+			applicationID,
+		},
+	})
 	const grantId = data?.grantApplication?.grant?.id
 	const applicantPublicKey = scwAddress?.toLowerCase() === data?.grantApplication?.applicantId?.toLowerCase()
 		? webwallet?.publicKey
@@ -130,7 +140,11 @@ function ViewApplication() {
         			milestone: ms.title,
         			// milestoneReward: ethers.utils.formatEther(ms.amount || '0'),
         			milestoneReward:
-                application ? ms.amount : '1'
+                application ? formatAmount(
+                	ms.amount,
+                	decimals,
+                	true,
+                ) : '1'
         			,
         		})
         }) || [],
@@ -138,7 +152,7 @@ function ViewApplication() {
 			fundingAsk:
         application && getFieldString(application, 'fundingAsk') ? formatAmount(
         	getFieldString(application, 'fundingAsk'),
-        	decimals || 18,
+        	decimals,
         	true,
         ) : '1',
 			fundingBreakdown: getFieldString(application, 'fundingBreakdown'),
@@ -210,9 +224,9 @@ function ViewApplication() {
 							}
 					}
 					rewardAmount={
-						application?.grant.reward.asset === USD_ASSET ? application.grant.reward.committed : application?.grant.reward.committed ? formatAmount(
-							application?.grant.reward.committed,
-							decimals || 18,
+						application ? formatAmount(
+							application.grant.reward.committed,
+							decimals,
 						) : '1'
 					}
 					rewardCurrency={label}

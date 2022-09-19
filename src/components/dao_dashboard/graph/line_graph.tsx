@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Box, Button, Flex, Image, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react'
 import dynamic from 'next/dynamic'
-import { useTranslation } from 'react-i18next'
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
@@ -323,7 +323,7 @@ function LineGraph({
 										<MenuList
 											minW='164px'
 											maxH='120px'
-											overflow='scroll'
+											overflow='auto'
 											p={0}>
 											{
 												Array(12).fill(0).map((_, i) => {

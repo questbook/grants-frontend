@@ -1,7 +1,7 @@
 import { BigNumber, ethers } from 'ethers'
 import moment from 'moment'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
-import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO, SupportedChainId } from 'src/constants/chains'
+import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO, SupportedChainId, USD_ASSET } from 'src/constants/chains'
 import { ChainInfo, FundTransfer } from 'src/types'
 import { InitialApplicationType } from 'src/v2/components/Dashboard/ReviewerDashboard/ApplicationsTable'
 
@@ -39,24 +39,19 @@ export function parseAmount(number: string, contractAddress?: string, decimal?: 
 		return ethers.utils.parseUnits(number, decimal).toString()
 	}
 
-	let decimals = 18
-	if(contractAddress) {
-		let allCurrencies: ChainInfo['supportedCurrencies'][string][] = []
-		ALL_SUPPORTED_CHAIN_IDS.forEach((id) => {
-			const { supportedCurrencies } = CHAIN_INFO[id]
-			const supportedCurrenciesArray = Object.keys(supportedCurrencies).map(
-				(i) => supportedCurrencies[i],
-			)
-			allCurrencies = [...allCurrencies, ...supportedCurrenciesArray]
-		})
+	let allCurrencies: ChainInfo['supportedCurrencies'][string][] = []
+	ALL_SUPPORTED_CHAIN_IDS.forEach((id) => {
+		const { supportedCurrencies } = CHAIN_INFO[id]
+		const supportedCurrenciesArray = Object.keys(supportedCurrencies).map(
+			(i) => supportedCurrencies[i],
+		)
+		allCurrencies = [...allCurrencies, ...supportedCurrenciesArray]
+	})
 
-		decimals = allCurrencies.find((currency) => currency.address === contractAddress)
-			?.decimals || 18
+	decimal = allCurrencies.find((currency) => currency.address === contractAddress)
+		?.decimals || decimal
 
-		return ethers.utils.parseUnits(number, decimals).toString()
-	}
-
-	return ethers.utils.parseUnits(number, 18).toString()
+	return ethers.utils.parseUnits(number, decimal).toString()
 }
 
 export function nFormatter(value: string, digits = 3) {
@@ -115,7 +110,12 @@ function truncateTo(number: string, digits = 3) {
 
 export const extractDate = (date: string) => date.substring(0, 10)
 
-export function formatAmount(number: string, decimals = 18, isEditable = false, isBig = false, returnTruncated = true) {
+export function formatAmount(number: string, decimals: number | undefined = 18, isEditable = false, isBig = false, returnTruncated = true) {
+	// no need to do any calcs
+	if(decimals === 0) {
+		return number
+	}
+
 	const value = ethers.utils.formatUnits(number, decimals).toString()
 
 	if(!returnTruncated) {
@@ -211,10 +211,14 @@ export const formatAddress = (address: string) => `${address.substring(0, 4)}...
 
 export const getFieldString = (applicationData: any, name: string) => applicationData?.fields?.find((field: any) => field?.id?.includes(`.${name}`))?.values[0]?.value
 
-export const getRewardAmount = (decimals: number, application: {
+export const getRewardAmount = (decimals: number | undefined, application: {
   fields: InitialApplicationType['fields']
   milestones: InitialApplicationType['milestones']
 }) => {
+	if(typeof decimals === 'undefined') {
+		decimals = 18
+	}
+
 	const fundingAskField = getFieldString(application, 'fundingAsk')
 	if(fundingAskField) {
 		return formatAmount(fundingAskField, decimals)

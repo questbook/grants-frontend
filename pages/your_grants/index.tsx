@@ -62,7 +62,7 @@ const TABS = [
 			minDeadline: 0,
 			maxDeadline: unixTimestampSeconds(),
 		},
-		label: 'Deadline Past',
+		label: 'Past Deadline',
 		emptyState: () => <ExpiredGrantEmptyState />,
 	},
 	{
@@ -535,7 +535,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 									grantDesc={grant.summary}
 									numOfApplicants={grant.numberOfApplications}
 									endTimestamp={new Date(grant.deadline!).getTime()}
-									grantAmount={grant.reward.asset === "0x0000000000000000000000000000000000000001" ? grantAmount : formatAmount(grantAmount, decimals || 18)}
+									grantAmount={formatAmount(grantAmount, decimals)}
 									grantCurrency={label || 'LOL'}
 									grantCurrencyIcon={grant.reward.asset === "0x0000000000000000000000000000000000000001" ? '/dollar_icon.svg' :icon}
 									state='done'
@@ -606,7 +606,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 							}
 
             	return (
-								<YourGrantCard
+	<YourGrantCard
             			grantID={grant.grant.id}
             			key={grant.grant.id}
             			daoIcon={
@@ -618,7 +618,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
             			grantDesc={grant.grant.summary}
             			numOfApplicants={grant.grant.numberOfApplications}
             			endTimestamp={new Date(grant.grant.deadline!).getTime()}
-            			grantAmount={formatAmount(grantAmount, decimals || 18)}
+            			grantAmount={formatAmount(grantAmount, decimals)}
             			grantCurrency={label || 'LOL'}
             			grantCurrencyIcon={icon}
             			state='done'
@@ -689,7 +689,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 
 YourGrants.getLayout = function(page: ReactElement) {
 	return (
-		<NavbarLayout renderGetStarted>
+		<NavbarLayout>
 			{page}
 		</NavbarLayout>
 	)

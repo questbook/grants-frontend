@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box, Button, Flex, Image, ModalBody, Text, } from '@chakra-ui/react'
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
@@ -29,6 +30,9 @@ function ModalContent({ milestone, onClose, chainId }: Props) {
 	)
 
 	const { setRefresh } = useCustomToast(txnLink)
+
+	const { t } = useTranslation()
+
 	useEffect(() => {
 		if(txn) {
 			setMilestoneUpdate(undefined)
@@ -53,21 +57,11 @@ function ModalContent({ milestone, onClose, chainId }: Props) {
 				direction='column'
 				justify='start'
 				align='center'>
-				<Image
-					src='/ui_icons/milestone_complete.svg'
-					mt={6} />
 				<Text
 					textAlign='center'
 					variant='applicationText'
 					mt={6}>
-					Add a brief summary of what was achieved in the milestone, timelines
-					and links to show your proof of work.
-				</Text>
-				<Text
-					mt={8}
-					textAlign='center'
-					variant='applicationText'>
-					The grantor can see your summary.
+					{t('/your_applications/manage_grant.mark_as_done_description')}
 				</Text>
 				<Flex
 					mt={6}
@@ -128,7 +122,7 @@ function ModalContent({ milestone, onClose, chainId }: Props) {
 					mt={8}
 					py={loading ? 2 : 0}
 					onClick={loading ? () => {} : markAsDone}>
-					{loading ? <Loader /> : 'Mark as Done'}
+					{loading ? <Loader /> : t('/your_applications/manage_grant.mark_as_done')}
 				</Button>
 				<Box mb={4} />
 			</Flex>

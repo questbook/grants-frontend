@@ -221,7 +221,7 @@ const InReviewRow = ({
 						}
 					/>
 					<MenuList
-						overflow='scroll'
+						overflow='auto'
 						minW='240px'
 						maxH='156px'
 						py={0}>
@@ -343,7 +343,7 @@ const InReviewRow = ({
 												}
 											/>
 											<MenuList
-												overflow='scroll'
+												overflow='auto'
 												minW='240px'
 												maxH='156px'
 												py={0}>

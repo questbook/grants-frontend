@@ -212,7 +212,7 @@ const ResubmitRow = ({
 						}
 					/>
 					<MenuList
-						overflow='scroll'
+						overflow='auto'
 						minW='240px'
 						maxH='156px'
 						py={0}>

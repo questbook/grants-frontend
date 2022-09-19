@@ -1,5 +1,5 @@
 
-import React, { useContext, useEffect } from 'react'
+import React, { ReactElement, useContext, useEffect } from 'react'
 import {
 	Button,
 	Flex
@@ -17,9 +17,7 @@ function SignupWebwallet() {
 		// localStorage.setItem('isBiconomyLoading', 'false');
 	}, [])
 
-	const handleReset = async(e: any) => {
-		e.preventDefault()
-
+	const handleReset = async() => {
 		setNonce(undefined)
 		setWebwallet(Wallet.createRandom())
 		setScwAddress(undefined)
@@ -44,21 +42,19 @@ function SignupWebwallet() {
 					flexDir='row'
 					justifyContent='center'>
 
-					<form onSubmit={handleReset}>
-						<Button
-							mt={4}
-							colorScheme='teal'
-							type='submit'>
-							Reset
-						</Button>
-					</form>
+					<Button
+						mt={4}
+						onClick={handleReset}
+						colorScheme='teal'>
+						Reset
+					</Button>
 				</Flex>
 			</Flex>
 		</>
 	)
 }
 
-SignupWebwallet.getLayout = function(page: any) {
+SignupWebwallet.getLayout = function(page: ReactElement) {
 	return (
 		<NavbarLayout>
 			{page}

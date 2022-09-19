@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box,
 	Button,
@@ -11,14 +12,13 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
-import { useTranslation } from 'react-i18next'
-import { Safe } from '../types/safe'
+import { Safe } from 'src/v2/types/safe'
 
 interface Props {
 	isOpen: boolean
 	onClose: () => void
 	proposalUrl: string
-	numOfTransactionsInitiated: number,
+	numOfTransactionsInitiated: number
 	safe: Safe
 }
 
@@ -101,31 +101,33 @@ function TransactionInitiatedModal({
 						{t('/your_grants/view_applicants.send_funds_next_steps')}
 					</Text>
 
-					{safe?.getNextSteps()?.map((step, index) => (
-						<Flex mt={4}>
-						<Box
-							fontSize='14px'
-							lineHeight='20px'
-							fontWeight='400'
-							h='20px'
-							w='20px'
-							bg='#F0F0F7'
-							display='flex'
-							justifyContent='center'
-							alignItems='center'
-							mr={4}
-						>
-							{index + 1}
-						</Box>
-						<Text
-							fontSize='14px'
-							lineHeight='20px'
-							fontWeight='400'
-						>
-							{step}
-						</Text>
-					</Flex>
-					))}
+					{
+						safe?.getNextSteps()?.map((step, index) => (
+							<Flex mt={4}>
+								<Box
+									fontSize='14px'
+									lineHeight='20px'
+									fontWeight='400'
+									h='20px'
+									w='20px'
+									bg='#F0F0F7'
+									display='flex'
+									justifyContent='center'
+									alignItems='center'
+									mr={4}
+								>
+									{index + 1}
+								</Box>
+								<Text
+									fontSize='14px'
+									lineHeight='20px'
+									fontWeight='400'
+								>
+									{step}
+								</Text>
+							</Flex>
+						))
+					}
 
 					<Flex
 						bg='#F0F0F7'

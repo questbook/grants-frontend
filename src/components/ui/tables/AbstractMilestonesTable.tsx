@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {
 	Flex,
-	Image, Text, } from '@chakra-ui/react'
+	Image, Link, Text, } from '@chakra-ui/react'
 import { SupportedChainId } from 'src/constants/chains'
 import { ApplicationMilestone } from 'src/types'
 import { formatAmount } from 'src/utils/formattingUtils'
@@ -92,29 +92,6 @@ console.log('transaction status', transactionStatus)
 			flex={1}
 		>
 			<Flex
-				direction='row'
-				w='100%'
-				justify='strech'
-				align='center'
-				mt='32px'
-				mb='9px'
-			>
-				{
-					TABLE_HEADERS.map((header) => (
-						<Text
-							key={header.title}
-							justifyContent={header.justifyContent}
-							flex={header.flex ? header.flex : 1}
-							variant='tableHeader'
-							display='flex'
-							minW='180px'
-						>
-							{header.title}
-						</Text>
-					))
-				}
-			</Flex>
-			<Flex
 				direction='column'
 				w='100%'
 				border='1px solid #D0D3D3'
@@ -167,12 +144,6 @@ console.log('transaction status', transactionStatus)
 								align='center'
 								flex={TABLE_HEADERS[1].flex}
 							>
-								<Image
-									display='inline-block'
-									src='/dollar_icon.svg'
-									fallbackSrc='/images/dummy/Ethereum Icon.svg'
-									mr={2}
-									boxSize='27px' />
 								<Text
 									textAlign='center'
 									fontSize='14px'
@@ -180,16 +151,19 @@ console.log('transaction status', transactionStatus)
 									fontWeight='700'
 									color='#122224'
 								>
+									$
 									{
 											getTotalReward(item)
 									}
 									{' '}
-									/
+									of
 									{' '}
 									{formatAmount(item.amount.toString(), decimals)}
-									{' '}
-									{'USD'}
 								</Text>
+								<Text fontSize={12}>
+&nbsp; &nbsp; Received
+								</Text>
+
 							</Flex>
 							<Flex
 								flex={TABLE_HEADERS[2].flex}

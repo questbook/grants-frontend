@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box,
 	Button,
@@ -17,7 +18,6 @@ import RecipientDetails from 'src/v2/payouts/SendFundsModal/RecepientDetails'
 import SafeOwner from 'src/v2/payouts/SendFundsModal/SafeOwner'
 import { PhantomProvider } from 'src/v2/types/phantom'
 import { TransactionType } from 'src/v2/types/safe'
-import { useTranslation } from 'react-i18next'
 
 interface Props {
 	isOpen: boolean
@@ -50,7 +50,7 @@ function SendFundsModal({
 	isOpen,
 	onClose,
 	safeAddress,
-	safeNetwork, 
+	safeNetwork,
 	proposals,
 	safeTokenList,
 	onChangeRecepientDetails,
@@ -139,7 +139,7 @@ function SendFundsModal({
 
 						<Flex
 							maxH='412px'
-							overflowY='scroll'
+							overflowY='auto'
 							direction='column'>
 							<Flex>
 								<Flex
@@ -263,7 +263,7 @@ function SendFundsModal({
 											(initiateTransactionData?.length > 0 ?
 												initiateTransactionData[0]?.selectedMilestone === undefined
 											|| initiateTransactionData[0]?.amount === undefined : false) || (
-												recepientError != '' 
+												recepientError != ''
 											)
 										}
 										onClick={
