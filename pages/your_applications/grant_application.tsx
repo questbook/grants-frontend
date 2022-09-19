@@ -143,7 +143,7 @@ function ViewApplication() {
         			milestoneReward:
                 application ? formatAmount(
                 	ms.amount,
-                	decimals || 18,
+                	decimals,
                 	true,
                 ) : '1'
         			,
@@ -153,7 +153,7 @@ function ViewApplication() {
 			fundingAsk:
         application && getFieldString(application, 'fundingAsk') ? formatAmount(
         	getFieldString(application, 'fundingAsk'),
-        	decimals || 18,
+        	decimals,
         	true,
         ) : '1',
 			fundingBreakdown: getFieldString(application, 'fundingBreakdown'),
@@ -223,7 +223,7 @@ function ViewApplication() {
 					rewardAmount={
 						application ? formatAmount(
 							application.grant.reward.committed,
-							decimals || 18,
+							decimals,
 						) : '1'
 					}
 					rewardCurrency={label}

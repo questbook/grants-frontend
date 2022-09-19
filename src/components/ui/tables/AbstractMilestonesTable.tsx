@@ -150,7 +150,7 @@ function AbstractMilestonesTable(
 									fontWeight='700'
 									color='#122224'
 								>
-									{'$'}
+									$
 									{
 										isEvmChain ? formatAmount(item.amountPaid.toString(), decimals) :
 											getTotalReward(item)
@@ -160,7 +160,9 @@ function AbstractMilestonesTable(
 									{' '}
 									{formatAmount(item.amount.toString(), decimals)}
 								</Text>
-								<Text fontSize={12}>&nbsp; &nbsp; Received</Text>
+								<Text fontSize={12}>
+&nbsp; &nbsp; Received
+								</Text>
 
 							</Flex>
 							<Flex

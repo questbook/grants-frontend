@@ -392,7 +392,7 @@ function ViewApplicants() {
 						amount:
 							applicant && getFieldString(applicant, 'fundingAsk') ? formatAmount(
 								getFieldString(applicant, 'fundingAsk'),
-								decimal || 18,
+								decimal,
 							) : '1',
 						symbol: label,
 						icon,
@@ -405,7 +405,7 @@ function ViewApplicants() {
 						getTotalFundingRecv(
 							applicant.milestones as unknown as ApplicationMilestone[],
 						).toString(),
-						decimal || 18,
+						decimal,
 					),
 					reviews: applicant.reviews
 				}
@@ -474,6 +474,7 @@ function ViewApplicants() {
 			} else {
 				status = await currentSafe?.getTransactionHashStatus(transaction?.transactionHash)
 			}
+
 			logger.info({ status }, 'status')
 			if(transaction && status) {
 				if(!statuses[applicationId]) {
@@ -554,6 +555,7 @@ function ViewApplicants() {
 		if(isEvmChain && workspaceSafeChainId) {
 			checkIfUserIsOnCorrectNetwork(workspaceSafeChainId.toString())
 		}
+
 		if(workspace?.safe) {
 			setSendFundsTo(selectedApplicants)
 		} else {

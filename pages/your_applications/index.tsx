@@ -1,6 +1,7 @@
 import React, {
 	ReactElement, useCallback, useContext, useEffect, useRef,
 } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Flex,
 } from '@chakra-ui/react'
 import BN from 'bn.js'
@@ -16,7 +17,6 @@ import NavbarLayout from 'src/layout/navbarLayout'
 import { formatAmount, getChainIdFromResponse, getFormattedDateFromUnixTimestamp } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import { useTranslation } from 'react-i18next'
 
 const PAGE_SIZE = 20
 
@@ -132,7 +132,7 @@ function YourApplications() {
 					myApplications.length > 0
           && myApplications.map((application: any) => (
           	(
-	<YourApplicationCard
+          		<YourApplicationCard
           			key={application.id}
           			grantTitle={application.grant.title}
           			daoName={application.grant.workspace.title}
@@ -146,7 +146,7 @@ function YourApplications() {
           						application.grant.workspace.supportedNetworks[0],
           					)
           				]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
-          					?.decimals || 18,
+          					?.decimals,
           			)
           			}
           			currency={

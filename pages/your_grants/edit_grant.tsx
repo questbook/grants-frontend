@@ -86,7 +86,7 @@ function EditGrant() {
 						grant.workspace.supportedNetworks[0],
 					)
 				]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-					?.decimals || 18,
+					?.decimals,
 				true,
 			)
 			rewardCurrency = CHAIN_INFO[
@@ -181,7 +181,7 @@ function EditGrant() {
 							grant.workspace.supportedNetworks[0],
 						)
 					]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
-						?.decimals || 18,
+						?.decimals,
 				)
 				rewardCurrency = CHAIN_INFO[
 					getSupportedChainIdFromSupportedNetwork(

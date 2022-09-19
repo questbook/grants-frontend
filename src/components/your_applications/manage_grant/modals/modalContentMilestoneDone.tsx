@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
 	Box, Button, Flex, Image, ModalBody, Text, } from '@chakra-ui/react'
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
@@ -8,7 +9,6 @@ import useRequestMilestoneApproval from 'src/hooks/useRequestMilestoneApproval'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { ApplicationMilestone } from 'src/types'
 import { getMilestoneMetadata } from 'src/utils/formattingUtils'
-import { useTranslation } from 'react-i18next'
 
 interface Props {
   chainId: SupportedChainId | undefined

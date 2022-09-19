@@ -17,10 +17,10 @@ import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import SendFundsDrawer from 'src/v2/payouts/SendFundsDrawer/SendFundsDrawer'
 import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
-import {getGnosisTansactionLink} from 'src/v2/utils/gnosisUtils'
+import { Safe } from 'src/v2/types/safe'
+import { getGnosisTansactionLink } from 'src/v2/utils/gnosisUtils'
 import { getProposalUrl } from 'src/v2/utils/phantomUtils'
 import { erc20ABI, useAccount, useDisconnect } from 'wagmi'
-import { Safe } from '../types/safe'
 
 const ERC20Interface = new ethers.utils.Interface(erc20ABI)
 
