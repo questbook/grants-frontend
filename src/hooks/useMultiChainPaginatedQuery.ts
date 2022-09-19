@@ -1,4 +1,4 @@
-import { useContext, useMemo, useRef, useState } from 'react'
+import { useCallback, useContext, useMemo, useRef, useState } from 'react'
 import { QueryHookOptions, QueryResult } from '@apollo/client'
 import { ApiClientsContext } from 'pages/_app'
 import { InputMaybe, Scalars } from 'src/generated/graphql'
@@ -50,11 +50,8 @@ export function useMultiChainPaginatedQuery<Q, K, V extends PaginationVariables>
 		})
 	))
 
-	return {
-		results,
-		loading,
-		hasMore: hasMoreRef.current,
-		async fetchMore(reset?: boolean) {
+	const fetchMore = useCallback(
+		async(reset?: boolean) => {
 			if(!hasMoreRef.current && !reset) {
 				return results
 			}
@@ -95,6 +92,13 @@ export function useMultiChainPaginatedQuery<Q, K, V extends PaginationVariables>
 			])
 
 			return results
-		}
+		}, [loading, setLoading, setResults, pageSize, subgraphClientList]
+	)
+
+	return {
+		results,
+		loading,
+		hasMore: hasMoreRef.current,
+		fetchMore,
 	}
 }

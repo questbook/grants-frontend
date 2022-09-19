@@ -85,11 +85,15 @@ function BrowseDao() {
 		logger.info('fetching daos')
 		fetchMoreNewDaos(true)
 		fetchMorePopularDaos(true)
-		fetchMoreMyDaos(true)
+		if(scwAddress) {
+			fetchMoreMyDaos(true)
+		}
 	}, [])
 
 	useEffect(() => {
-		fetchMoreMyDaos(true)
+		if(scwAddress) {
+			fetchMoreMyDaos(true)
+		}
 	}, [scwAddress])
 
 	return (
