@@ -494,12 +494,12 @@ const InReviewPanel = ({
 							{(grantData?.grants?.length || 0) > 0 && grantData?.grants[0]?.title}
 						</Text>
 
-						<Button
+						{/* <Button
 							rightIcon={<ExternalLinkIcon />}
 							variant='linkV2'
 							bg='#D5F1EB'>
 							{(grantData?.grants?.length || 0) > 0 && formatAddress(grantData?.grants[0]?.id!)}
-						</Button>
+						</Button> */}
 					</Flex>
 				}
 				currentStepIndex={networkTransactionModalStep || 0}
