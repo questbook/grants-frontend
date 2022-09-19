@@ -51,7 +51,7 @@ export function parseAmount(number: string, contractAddress?: string, decimal?: 
 		})
 
 		decimals = allCurrencies.find((currency) => currency.address === contractAddress)
-			?.decimals
+			?.decimals ?? 18
 
 		return ethers.utils.parseUnits(number, decimals).toString()
 	}

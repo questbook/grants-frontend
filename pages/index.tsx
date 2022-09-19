@@ -275,7 +275,7 @@ function BrowseGrants() {
 
 BrowseGrants.getLayout = function(page: ReactElement) {
 	return (
-		<NavbarLayout renderGetStarted>
+		<NavbarLayout>
 			{page}
 		</NavbarLayout>
 	)

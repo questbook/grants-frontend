@@ -208,13 +208,6 @@ function Profile() {
 	return (
 		<Flex
 			direction='column'
-			w={
-				{
-					base: '100%',
-					sm: '70%',
-					lg: '52%',
-				}
-			}
 			mx='auto'
 			mb='1rem'
 			pb='1rem'
@@ -576,7 +569,7 @@ function Profile() {
 
 Profile.getLayout = function(page: React.ReactElement) {
 	return (
-		<NavbarLayout renderGetStarted>
+		<NavbarLayout>
 			{page}
 		</NavbarLayout>
 	)

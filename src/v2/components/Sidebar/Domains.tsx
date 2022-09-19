@@ -147,7 +147,7 @@ function Domains({ workspaces, onWorkspaceClick }: Props) {
 			>
 				<Flex
 					direction='column'
-					overflowY='scroll'
+					overflowY='auto'
 					maxH='80%'
 					w='100%'
 					px={6}

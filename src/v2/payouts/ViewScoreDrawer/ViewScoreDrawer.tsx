@@ -111,10 +111,8 @@ const ViewScoreDrawer = ({
 
 					<Flex
 						maxH='calc(100vh - 32px)'
-						overflowY='scroll'
+						overflowY='auto'
 						direction='column'>
-
-
 						<Box mt={4} />
 
 						{/* {

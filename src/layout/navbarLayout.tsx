@@ -1,89 +1,71 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Flex } from '@chakra-ui/react'
 import { ApiClientsContext } from 'pages/_app'
+import logger from 'src/utils/logger'
 import NavBar from 'src/v2/components/NavBar'
 import Sidebar from 'src/v2/components/Sidebar'
 
 interface Props {
   children: React.ReactNode
-  renderGetStarted?: boolean
-  renderTabs?: boolean
+  renderNavbar?: boolean
   renderSidebar?: boolean
 }
 
-function NavbarLayout({ children, renderSidebar }: Props) {
+function NavbarLayout({ children, renderNavbar, renderSidebar }: Props) {
 	const { connected, setConnected } = useContext(ApiClientsContext)!
 
 	const [renderCount, setRenderCount] = useState(0)
 
 	useEffect(() => {
-		// @TODO-gasless: FIX HERE
+		logger.info({ renderNavbar, renderSidebar }, 'Render Navbar Layout')
 		setConnected(true)
-		// if(!connected && isDisconnected) {
-		// 	setConnected(false)
-		// 	if(renderCount > 0) {
-		// 		toast({
-		// 			title: 'Disconnected',
-		// 			status: 'info',
-		// 		})
-		// 	}
-		// } else if(isConnected) {
-		// 	setConnected(true)
 		setRenderCount(renderCount + 1)
-		// } else if(connected && isDisconnected) {
-		// 	connect(connectors[0])
-		// 	setConnected(true)
-		// 	setRenderCount(renderCount + 1)
-		// }
-
 	}, [])
 
 	return (
-		<>
-			{/* {
-				connected ? (
-					<ConnectedNavbar renderTabs={renderTabs!} />
-				) : (
-					<SignInNavbar
-						renderGetStarted={renderGetStarted}
-						onGetStartedClick={() => setConnectWalletModalIsOpen(true)}
+		<Flex
+			direction='column'
+			w='100%'
+			h='100%'
+			overscrollBehavior='none'>
+			{
+				renderNavbar && (
+					<NavBar
 					/>
 				)
-			} */}
-			<NavBar
-			/>
+			}
 			<Flex
-				w='100vw'
-				h='100vh'
-				overflow='scroll'>
+				direction='row'
+				maxH='calc(100vh - 64px)'>
 				{
 					renderSidebar && connected && (
 						<Flex
 							display={{ base: 'none', lg: 'flex' }}
 							w='20%'
 							pos='sticky'
-							top={0}
+							top='64px'
+							left={0}
+							bottom={0}
 						>
 							<Sidebar />
 						</Flex>
 					)
 				}
-
-				{/* <Sidebar /> */}
-				{children}
+				<Flex
+					zIndex={0}
+					w={renderSidebar && connected ? '80%' : '100%'}
+					overflowY='auto'
+					overscrollBehavior='none'>
+					{children}
+				</Flex>
 			</Flex>
-			{/* <ConnectWalletModal
-				isOpen={connectWalletModalIsOpen}
-				onClose={() => setConnectWalletModalIsOpen(false)}
-				redirect={() => router.push({ pathname: '/onboarding' })}
-			/> */}
-		</>
+		</Flex>
 	)
 }
 
 NavbarLayout.defaultProps = {
-	renderGetStarted: false,
-	renderTabs: true,
-	renderSidebar: true
+	renderNavbar: true,
+	renderSidebar: true,
 }
+
 export default NavbarLayout

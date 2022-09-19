@@ -97,7 +97,7 @@ const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, 
 				flexDirection='column'
 				maxH='378px'
 				minH='240px'
-				overflow='scroll'
+				overflow='auto'
 			>
 
 				<Text
