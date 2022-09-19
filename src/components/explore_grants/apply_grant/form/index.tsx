@@ -425,6 +425,7 @@ function Form({
 		}
 
 		const formDataLocal = typeof window !== 'undefined' ? JSON.parse(data || '{}') : {}
+		console.log('form data local', formDataLocal)
 		if(formDataLocal?.applicantName) {
 			setApplicantName(formDataLocal?.applicantName)
 		}
@@ -467,6 +468,7 @@ function Form({
 		}
 
 		if(formDataLocal?.projectMilestones) {
+			console.log('project milestones', formDataLocal.projectMilestones)
 			setProjectMilestones(formDataLocal?.projectMilestones)
 		}
 
