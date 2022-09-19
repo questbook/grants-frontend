@@ -200,7 +200,7 @@ const OnboardingCreateDomain = () => {
 				targetContractObject,
 				'createWorkspace',
 				[ipfsHash, new Uint8Array(32), safeAddress, parseInt(safeSelected.networkId)],
-				WORKSPACE_REGISTRY_ADDRESS[network as unknown as SupportedChainId],
+				WORKSPACE_REGISTRY_ADDRESS[network],
 				biconomyWalletClient,
 				scwAddress,
 				webwallet,
@@ -216,7 +216,9 @@ const OnboardingCreateDomain = () => {
 			setCurrentStep(2)
 
 			const { txFee, receipt } = await getTransactionDetails(transactionHash, network.toString())
-			await subgraphClients[network].waitForBlock(receipt?.blockNumber)
+			setTxHash(receipt?.transactionHash)
+			logger.info({ network, subgraphClients }, 'Network and Client')
+			await subgraphClients[network]?.waitForBlock(receipt?.blockNumber)
 			// console.log('txFee', txFee)
 
 			setCurrentStep(3)
@@ -238,7 +240,6 @@ const OnboardingCreateDomain = () => {
 			// setTimeout(() => {
 			// 	router.push({ pathname: '/your_grants' })
 			// }, 2000)
-			setTxHash(txHash)
 			setIsDomainCreationSuccessful(true)
 			setCurrentStep(undefined)
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
