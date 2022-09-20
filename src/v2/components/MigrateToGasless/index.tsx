@@ -7,6 +7,7 @@ import { useGetProfileDetailsQuery, useGetWorkspaceMembersQuery } from 'src/gene
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
+import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { addAuthorizedOwner } from 'src/utils/gaslessUtils'
 import { delay } from 'src/utils/generics'
@@ -137,12 +138,18 @@ function MigrateToGasless() {
 		}
 	}, [isMigrateYes])
 
-	const onClose = () => {
-		const newQuery = { ...router.query }
-		delete newQuery.migrate
+	const onClose = (done?: boolean) => {
+		// if we're done
+		// reload the page to reflect the latest changes
+		if(done) {
+			window.location.href = window.location.pathname
+		} else {
+			const newQuery = { ...router.query }
+			delete newQuery.migrate
 
-		router.push({ query: newQuery })
-		setIsOpen(false)
+			router.push({ query: newQuery })
+			setIsOpen(false)
+		}
 	}
 
 	const migrate = async() => {
@@ -247,13 +254,14 @@ function MigrateToGasless() {
 
 			// set to ensure ensure migration doesn't occur again
 			localStorage.setItem('didMigrate', 'true')
-			onClose()
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} catch(err: any) {
+			onClose(true)
+		} catch(err) {
 			setNetworkModalStep(undefined)
 			logger.error({ err }, 'Error migrating wallet')
+
+			const msg = getErrorMessage(err as Error)
 			toast({
-				title: `Migration error "${(err as Error)?.message}"`,
+				title: `Migration error "${msg}"`,
 				status: 'warning',
 				duration: 9000,
 				isClosable: true,
@@ -269,7 +277,8 @@ function MigrateToGasless() {
 				size='3xl'
 				onClose={onClose}
 			>
-				<ModalOverlay />
+				<ModalOverlay
+					backdropFilter='blur(12px)' />
 				<ModalContent>
 					<ModalCloseButton />
 					<Flex>

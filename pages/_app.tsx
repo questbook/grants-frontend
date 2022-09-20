@@ -152,7 +152,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [loadingNonce, setLoadingNonce] = React.useState<boolean>(false)
 
 	const [biconomyLoading, setBiconomyLoading] = useState<{ [chainId: string]: boolean }>({})
-	const [requiresMigrate, setRequiresMigrate] = useState(false)
 
 	// store the chainId that was most recently asked to be init
 	const mostRecentInitChainId = useRef<string>()
@@ -476,22 +475,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		}),
 		[validatorApi, workspace, setWorkspace, clients, connected, setConnected]
 	)
-
-	useEffect(() => {
-		if(typeof window === 'undefined') {
-			return
-		}
-
-		const didHaveWallet = localStorage.getItem('wagmi.wallet')
-		const didMigrate = localStorage.getItem('didMigrate') === 'true'
-		if(!didHaveWallet && !didMigrate) {
-			localStorage.setItem('didMigrate', 'true')
-		}
-
-		if(didHaveWallet && !didMigrate) {
-			setRequiresMigrate(true)
-		}
-	}, [])
 
 	const seo = getSeo()
 
