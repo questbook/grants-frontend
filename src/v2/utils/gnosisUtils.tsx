@@ -10,7 +10,8 @@ const NETWORK_PREFIX: {[key: string]: string} = {
 	'4': 'rin',
 	'137': 'matic',
 	'1': 'eth',
-	'10': 'opt'
+	'10': 'opt',
+	'5': 'gor'
 }
 
 export function getSafeURL(safeAddress: string, chainId: string) {

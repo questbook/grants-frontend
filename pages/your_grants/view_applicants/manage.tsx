@@ -46,6 +46,8 @@ import { GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
 import { RealmsSolana } from 'src/v2/constants/safe/realms_solana'
 import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
 import SendFunds from 'src/v2/payouts/SendFunds'
+import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
+import dollarIcon from 'src/v2/assets/currency_icon/dollar_icon.svg'
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 	let val = BigNumber.from(0)
@@ -156,18 +158,33 @@ function ManageGrant() {
 		Promise.all(
 		 fundsDisbursed!.fundsTransfers.map(async(transfer: any) => {
 		 	const status: any = await currentSafe.getTransactionHashStatus(transfer.transactionHash)
-		 	if(status && status[transfer.transactionHash]?.closedAtDate !== '') {
-		 		const usdAmount = transfer.amount
-
-		 		milestoneTrxnStatus.push({
-		 			amount: (usdAmount || 0),
-		 			txnHash: transfer?.transactionHash,
-		 			milestoneId: transfer?.milestone?.id,
-		 			safeAddress: workspaceSafe,
-		 			...status[transfer.transactionHash]
-		 		})
-
-		 	}
+			if(!isEvmChain) {
+				if(status && status[transfer.transactionHash]?.closedAtDate !== '') {
+					const usdAmount = transfer.amount
+   
+					milestoneTrxnStatus.push({
+						amount: (usdAmount || 0),
+						txnHash: transfer?.transactionHash,
+						milestoneId: transfer?.milestone?.id,
+						safeAddress: workspaceSafe,
+						...status[transfer.transactionHash]
+					})
+   
+				}
+			} else if(isEvmChain) {
+				if(status) {
+					const usdAmount = transfer.amount
+   
+					milestoneTrxnStatus.push({
+						amount: (usdAmount || 0),
+						txnHash: transfer?.transactionHash,
+						milestoneId: transfer?.milestone?.id,
+						safeAddress: workspaceSafe,
+						...status[transfer.transactionHash]
+					})
+				}
+			}
+		 	
 		 })
 		).then((res) => {
 
@@ -243,9 +260,7 @@ function ManageGrant() {
 		},
 		{
 			icon: fundingIcon,
-			title: !isEvmChain ? rewardDisbursed : formatAmount(getTotalFundingRecv(
-        milestones as unknown as ApplicationMilestone[],
-			).toString(), decimals),
+			title: rewardDisbursed,
 			subtitle: 'Funding Sent',
 			content: (
 				<Funding
@@ -257,7 +272,7 @@ function ManageGrant() {
 					assetDecimals={decimals!}
 					grantId={applicationData?.grant?.id || ''}
 					type='funding_sent'
-					chainId={getSupportedChainIdFromWorkspace(workspace)}
+					chainId={workspaceSafeChainId}
 					rewardToken={rewardToken}
 				/>
 			),
@@ -479,7 +494,7 @@ function ManageGrant() {
 												<Image
 													h='26px'
 													w='26px'
-													src={tab.icon}
+													src='/dollar_icon.svg'
 													fallbackSrc='/images/dummy/Ethereum Icon.svg'
 													alt={tab.icon} />
 											)

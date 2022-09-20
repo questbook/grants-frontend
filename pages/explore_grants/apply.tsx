@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import Form from 'src/components/explore_grants/apply_grant/form'
 import Sidebar from 'src/components/explore_grants/apply_grant/sidebar'
-import { defaultChainId } from 'src/constants/chains'
+import { defaultChainId, USD_ASSET } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import { useGetGrantDetailsQuery } from 'src/generated/graphql'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
@@ -149,6 +149,7 @@ function ApplyGrant() {
 			setRewardCurrencyCoin(grantData.reward.token.iconHash)
 			setRewardDecimal(chainInfo.decimals)
 		} else {
+			
 			supportedCurrencyObj = getAssetInfo(
 				grantData?.reward?.asset?.toLowerCase(),
 				chainId,

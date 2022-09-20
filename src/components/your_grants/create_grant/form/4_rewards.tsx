@@ -6,9 +6,7 @@ import {
 	Switch,
 	Text,
 } from '@chakra-ui/react'
-import { Token } from '@questbook/service-validator-client'
 import Datepicker from 'src/components/ui/forms/datepicker'
-import Dropdown from 'src/components/ui/forms/dropdown'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import CustomTokenModal from 'src/components/ui/submitCustomTokenModal'
 import { USD_ASSET, USD_DECIMALS } from 'src/constants/chains'
@@ -17,8 +15,6 @@ import 'react-datepicker/dist/react-datepicker.css'
 function GrantRewardsInput({
 	reward,
 	setReward,
-	// rewardToken,
-	setRewardToken,
 	rewardError,
 	setRewardError,
 	rewardCurrency,
@@ -28,7 +24,6 @@ function GrantRewardsInput({
 	setDate,
 	dateError,
 	setDateError,
-	supportedCurrencies,
 	shouldEncrypt,
 	setShouldEncrypt,
 	shouldEncryptReviews,
@@ -39,8 +34,6 @@ function GrantRewardsInput({
 }: {
   reward: string
   setReward: (rewards: string) => void
-//   rewardToken: Token
-  setRewardToken: (rewardToken: Token) => void
   rewardError: boolean
   setRewardError: (rewardError: boolean) => void
   rewardCurrency: string
@@ -50,7 +43,6 @@ function GrantRewardsInput({
   setDate: (date: string) => void
   dateError: boolean
   setDateError: (dateError: boolean) => void
-  supportedCurrencies: any[]
   shouldEncrypt: boolean
   setShouldEncrypt: (shouldEncrypt: boolean) => void
   shouldEncryptReviews: boolean
@@ -61,13 +53,7 @@ function GrantRewardsInput({
 }) {
 	const [isModalOpen, setIsModalOpen] = React.useState(false)
 	const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState<any[]>([])
-
-	useEffect(() => {
-		if(supportedCurrencies && supportedCurrencies.length > 0) {
-			setSupportedCurrenciesList(supportedCurrencies)
-		}
-	}, [supportedCurrencies])
-
+	
 	const [isJustAddedToken, setIsJustAddedToken] = React.useState<boolean>(false)
 	const addERC = false
 	const showSupportedCurrencies = isEVM && supportedCurrenciesList.length > 0
@@ -112,76 +98,6 @@ function GrantRewardsInput({
 						errorText='Required'
 						type='number'
 					/>
-				</Box>
-				<CustomTokenModal
-					isModalOpen={isModalOpen}
-					setIsModalOpen={setIsModalOpen}
-					setRewardCurrency={setRewardCurrency}
-					setRewardCurrencyAddress={setRewardCurrencyAddress}
-					setRewardToken={setRewardToken}
-					supportedCurrenciesList={supportedCurrenciesList}
-					setSupportedCurrenciesList={setSupportedCurrenciesList}
-					setIsJustAddedToken={setIsJustAddedToken}
-				/>
-				<Box
-					mt={5}
-					ml={4}
-					minW='148px'
-					flex={0}
-					alignSelf='center'>
-					{
-						showSupportedCurrencies ? (
-							<Dropdown
-								listItemsMinWidth='132px'
-								listItems={supportedCurrenciesList}
-								value={rewardCurrency}
-								// eslint-disable-next-line react/no-unstable-nested-components
-								onChange={
-									(data: any) => {
-										if(data === 'addERCToken') {
-											setIsModalOpen(true)
-										}
-
-										setRewardCurrency(data.label)
-										setRewardCurrencyAddress(data.id)
-										if(data !== 'addERCToken' && !isJustAddedToken && data.icon.lastIndexOf('chain_assets') === -1) {
-											// console.log('On selecting reward', data)
-											setRewardToken({
-												iconHash: data.icon.substring(data.icon.lastIndexOf('=') + 1),
-												address: data.address,
-												label: data.label,
-												decimal: data.decimals.toString(),
-											})
-										} else {
-											// console.log('On selecting reward else block', data)
-											setRewardToken({
-												label: data.label,
-												address: data.address,
-												decimal: data.decimals.toString(),
-												iconHash: data.icon,
-											})
-										}
-									}
-								}
-								addERC={addERC}
-							/>
-						) : (
-							<Dropdown
-								listItemsMinWidth='132px'
-								listItems={
-									[
-										{
-											icon: '',
-											id: USD_ASSET,
-											address: USD_ASSET,
-											decimals: USD_DECIMALS,
-											label: 'USD',
-										},
-									]
-								}
-							/>
-						)
-					}
 				</Box>
 			</Flex>
 

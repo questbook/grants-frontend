@@ -7,6 +7,7 @@ import { ApplicationMilestone } from 'src/types'
 import { formatAmount } from 'src/utils/formattingUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { solanaToUsdOnDate } from 'src/v2/constants/safe/realms_solana'
+import dollarIcon from 'src/v2/assets/currency_icon/dollar_icon.svg'
 
 const TABLE_HEADERS = [
 	{
@@ -64,14 +65,13 @@ function AbstractMilestonesTable(
 	let rewardIcon: string
 	let rewardSymbol: string
 	if(rewardToken && rewardToken.icon !== '') {
-		rewardIcon = rewardToken.icon
+		rewardIcon = dollarIcon
 		rewardSymbol = rewardToken.label
 	} else {
 		const asset = getAssetInfo(rewardAssetId, chainId)
 		rewardSymbol = asset.label
-		rewardIcon = asset.icon
+		rewardIcon = dollarIcon
 	}
-
 	const getTotalReward = (milestone: any) => {
 		const milestoneTrxns = transactionStatus?.filter((obj: any) => obj.milestoneId === milestone.id)
 		var total = 0
@@ -152,7 +152,6 @@ function AbstractMilestonesTable(
 								>
 									$
 									{
-										isEvmChain ? formatAmount(item.amountPaid.toString(), decimals) :
 											getTotalReward(item)
 									}
 									{' '}

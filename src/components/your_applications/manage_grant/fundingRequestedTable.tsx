@@ -14,6 +14,7 @@ import {
 	getTextWithEllipses,
 } from 'src/utils/formattingUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
+import { getSafeURL } from 'src/v2/utils/gnosisUtils'
 
 type Token = {
   label: string
@@ -123,7 +124,7 @@ const TABLE_HEADERS = {
 		flex: 0.1,
 		content: (item: FundTransfer, _: any, __: any, ___: any, currentChainId: any) => (
 			<Link
-				href={getExplorerUrlForTxHash(currentChainId, item.id)}
+				href={`${getSafeURL(currentChainId, item.id)}/transactions`}
 				isExternal
 			>
 				<Text

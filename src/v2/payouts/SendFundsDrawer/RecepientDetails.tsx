@@ -30,33 +30,30 @@ const RecipientDetails = ({
 				flexDirection='column'
 			>
 
-				{
-					!isEvmChain ? (
-						<>
-							<Text
-								fontSize='14px'
-								lineHeight='20px'
-								fontWeight='500'
-							>
-								Tokens sent to recipient
-							</Text>
+				<>
+					<Text
+						fontSize='14px'
+						lineHeight='20px'
+						fontWeight='500'
+					>
+						Tokens sent to recipient
+					</Text>
 
-							<Box h={2} />
+					<Box h={2} />
 
-							<TokenSelect
-								placeholder='Select a token from the list'
-								value={initiateTransactionData![0]?.selectedToken}
-								safeTokenList={safeTokenList}
-								onChange={
-									(value) => {
-										onChangeRecepientDetails('', 'selectedToken', { name: value?.id, info: value?.info })
-									}
-								} />
+					<TokenSelect
+						placeholder='Select a token from the list'
+						value={initiateTransactionData![0]?.selectedToken}
+						safeTokenList={safeTokenList}
+						onChange={
+							(value) => {
+								onChangeRecepientDetails('', 'selectedToken', { name: value?.id, info: value?.info })
+							}
+						} />
 
-							<Box h={6} />
-						</>
-					) : null
-				}
+					<Box h={6} />
+				</>
+
 
 				<Text
 					fontSize='14px'
@@ -209,7 +206,7 @@ const RecipientDetails = ({
 										errorBorderColor='red'
 										height='auto'
 										type='number'
-										onChange={async(e) => onChangeRecepientDetails(data.applicationId, 'amount', parseFloat(e.target.value))}
+										onChange={async (e) => onChangeRecepientDetails(data.applicationId, 'amount', parseFloat(e.target.value))}
 									/>
 								</Flex>
 							</Flex>
