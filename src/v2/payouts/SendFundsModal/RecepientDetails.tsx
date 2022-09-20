@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Box, Flex, Input, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Image, Input, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { IApplicantData } from 'src/types'
 import { ArrowDownCircle } from 'src/v2/assets/custom chakra icons/Arrows/ArrowDownCircle'
@@ -109,25 +109,72 @@ const RecipientDetails = ({
 					From
 				</Text>
 
-				<Flex
-					alignItems='baseline'
-					mt={2}
-				>
-					<Text
-						fontSize='14px'
-						lineHeight='20px'
-						fontWeight='500'
-					>
-						{initiateTransactionData?.from}
-					</Text>
+				{
+					initiateTransactionData?.from ? (
+						<Flex
+							alignItems='baseline'
+							mt={2}
+						>
+							<Text
+								fontSize='14px'
+								lineHeight='20px'
+								fontWeight='500'
+							>
+								{initiateTransactionData?.from}
+							</Text>
 
-					<ExternalLink
-						ml={1}
-						h='12px'
-						w='12px'
-						cursor='pointer'
-					/>
-				</Flex>
+							<ExternalLink
+								ml={1}
+								h='12px'
+								w='12px'
+								cursor='pointer'
+							/>
+						</Flex>
+					) : (
+						<Flex
+							alignItems='baseline'
+							mt={2}
+							direction='column'
+					 	>
+							<Flex
+								mb='8px'
+								alignItems='flex-start'>
+								<Image
+									src='/ui_icons/info_orange.svg'
+									mr='1em'
+									pt='4px' />
+								<Text
+									fontSize='14px'
+									color='#FF7545'>
+									No multisig wallet found. Please add a multisig wallet to send funds
+								</Text>
+							</Flex>
+							<Button
+								px={3}
+								py='6px'
+								minW={0}
+								minH={0}
+								h='auto'
+								borderRadius='2px'
+								onClick={
+									() => {
+										router.push({ pathname: '/safe', query: {
+											'show_toast': true,
+										} })
+									}
+								}
+								fontSize='14px'
+								fontWeight='500'
+							>
+								<Image
+									src='/ui_icons/add_black.svg'
+									mr='0.5em' />
+
+								Add a multisig wallet
+							</Button>
+						</Flex>
+					)
+				}
 
 			</Flex>
 
@@ -155,6 +202,7 @@ const RecipientDetails = ({
 					fontSize='14px'
 					lineHeight='20px'
 					fontWeight='500'
+					color={initiateTransactionData?.from ? '' : ' #AFAFCC'}
 				>
 					To
 				</Text>
@@ -163,7 +211,7 @@ const RecipientDetails = ({
 					fontSize='12px'
 					lineHeight='16px'
 					fontWeight='400'
-					color='#7D7DA0'
+					color={initiateTransactionData?.from ? '#7D7DA0' : ' #AFAFCC'}
 					mt='2px'
 				>
 					{applicantData?.projectName}
@@ -179,6 +227,7 @@ const RecipientDetails = ({
 					mt={2}
 				>
 					<Input
+						disabled={!initiateTransactionData?.from}
 						variant='brandFlushed'
 						placeholder={t('/your_grants/view_applicants.address_on_chain').replace('%CHAIN', chainNames.get(safeNetwork)!)}
 						_placeholder={
@@ -205,6 +254,7 @@ const RecipientDetails = ({
 								onChangeRecepientDetails(applicantData.applicationId, 'to', e.target.value)
 							}
 						}
+						_disabled={{ color:' #AFAFCC', borderColor: ' #AFAFCC' }}
 					/>
 
 				</Flex>

@@ -557,13 +557,14 @@ function ViewApplicants() {
 			checkIfUserIsOnCorrectNetwork(workspaceSafeChainId.toString())
 		}
 
-		if(workspace?.safe) {
-			setSendFundsTo(selectedApplicants)
-		} else {
-			router.push({ pathname: '/safe', query: {
-				'show_toast': true,
-			} })
-		}
+		setSendFundsTo(selectedApplicants)
+		// if(workspace?.safe) {
+		// 	setSendFundsTo(selectedApplicants)
+		// } else {
+		// 	router.push({ pathname: '/safe', query: {
+		// 		'show_toast': true,
+		// 	} })
+		// }
 	}
 
 
