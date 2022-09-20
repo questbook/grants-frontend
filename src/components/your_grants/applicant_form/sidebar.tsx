@@ -13,7 +13,10 @@ import { ApiClientsContext } from 'pages/_app'
 import CopyIcon from 'src/components/ui/copy_icon'
 import MailTo from 'src/components/your_grants/mail_to/mailTo'
 import { CHAIN_INFO } from 'src/constants/chains'
+import { GetApplicationDetailsQuery } from 'src/generated/graphql'
+import getAvatar from 'src/utils/avatarUtils'
 import {
+	formatAddress,
 	getFieldString,
 	getFormattedFullDateFromUnixTimestamp, getRewardAmount,
 	truncateStringFromMiddle,
@@ -36,7 +39,7 @@ function Sidebar({
   onAcceptApplicationClick: () => void
   onRejectApplicationClick: () => void
   onResubmitApplicationClick: () => void
-  applicationData: any
+  applicationData: GetApplicationDetailsQuery['grantApplication']
   isBiconomyInitialised: boolean
 }) {
 	const { workspace } = useContext(ApiClientsContext)!
@@ -44,47 +47,6 @@ function Sidebar({
 
 	const applicantEmail = getFieldString(applicationData, 'applicantEmail')
 	const applicantAddress = getFieldString(applicationData, 'applicantAddress')
-
-	// console.log('Applicant address: ', applicantAddress)
-
-	// const [rubricDrawerOpen, setRubricDrawerOpen] = useState(false)
-	// const [maximumPoints, setMaximumPoints] = React.useState(5)
-	// const [rubricEditAllowed] = useState(true)
-	// const [rubrics, setRubrics] = useState<any[]>([
-	// 	{
-	// 		name: '',
-	// 		nameError: false,
-	// 		description: '',
-	// 		descriptionError: false,
-	// 	},
-	// ])
-
-	// useEffect(() => {
-	// 	if(!applicationData) {
-	// 		return
-	// 	}
-
-	// 	const initialRubrics = applicationData?.grant.rubric
-	// 	const newRubrics = [] as any[]
-	// 	// console.log('initialRubrics', initialRubrics)
-	// 	// console.log('application Data ', applicationData)
-	// 	initialRubrics?.items.forEach((initalRubric: any) => {
-	// 		newRubrics.push({
-	// 			name: initalRubric.title,
-	// 			nameError: false,
-	// 			description: initalRubric.details,
-	// 			descriptionError: false,
-	// 		})
-	// 	})
-	// 	if(newRubrics.length === 0) {
-	// 		return
-	// 	}
-
-	// 	setRubrics(newRubrics)
-	// 	if(initialRubrics?.items[0].maximumPoints) {
-	// 		setMaximumPoints(initialRubrics.items[0].maximumPoints)
-	// 	}
-	// }, [applicationData])
 
 	const [reviews, setReviews] = useState<any>()
 	const [selectedReview, setSelectedReview] = useState<any>()
@@ -160,7 +122,7 @@ function Sidebar({
 				applicationData?.grant.workspace.supportedNetworks[0],
 			)
 		]?.supportedCurrencies[
-			applicationData?.grant.reward.asset.toLowerCase()
+			applicationData?.grant.reward.asset.toLowerCase() || ''
 		]?.decimals
 	}
 
@@ -254,7 +216,7 @@ function Sidebar({
 					<Heading
 						variant='applicationHeading'
 						lineHeight='32px'>
-						{getFormattedFullDateFromUnixTimestamp(applicationData?.createdAtS)}
+						{getFormattedFullDateFromUnixTimestamp(applicationData?.createdAtS || 0)}
 					</Heading>
 				</Flex>
 				<Flex>
@@ -356,31 +318,6 @@ function Sidebar({
 
 			<Box mt={6} />
 
-			{/* <RubricSidebar
-				total={
-					applicationData
-						?.reviewers.length || 0
-				}
-				reviews={applicationData?.reviews}
-				rubric={applicationData?.grant.rubric}
-			/> */}
-
-			{/* <Flex
-				bg="white"
-				border="2px solid #D0D3D3"
-				borderRadius={8}
-				w={340}
-				direction="column"
-				alignItems="stretch"
-				px="23px"
-				py="17px"
-			>
-				<Flex direction="column">
-Score
-				</Flex>
-			</Flex> */}
-
-
 			<Flex
 				bg='white'
 				border='2px solid #D0D3D3'
@@ -395,16 +332,6 @@ Score
 					<Text fontWeight='700'>
 						Score
 					</Text>
-					{/* <Text mt={2}>
-Assign reviewers for application
-					</Text>
-					<Button
-						mt={4}
-						onClick={() => setReviewDrawerOpen(true)}>
-						<Text fontWeight="700">
-Assign Reviewers
-						</Text>
-					</Button> */}
 				</Flex>
 
 				<Flex direction='column'>
@@ -414,24 +341,21 @@ Assign Reviewers
 					{
 						applicationData
 							?.reviewers
-							?.map((r: any) => ({
-								name: r.fullName,
-								email: r.email,
-								address: r.id.split('.')[1],
-								id: r.id,
-							})).map((reviewer: any) => {
-								const reviewerIdSplit = reviewer?.id.split('.')
+							?.map((reviewer) => {
+								const reviewerIdSplit = reviewer.id.split('.')
 								const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
+								const review = reviews?.[reviewerId]
 
 								return (
 									<Flex
-										key={reviewer.email}
+										key={reviewer.id}
 										w='100%'
 										h='64px'
 										align='center'
 										mt={2}
 										py={3}
 										cursor='pointer'
+										pointerEvents={review ? undefined : 'none'}
 										onClick={
 											() => {
 												setSelectedReview(reviews[reviewerId])
@@ -440,7 +364,10 @@ Assign Reviewers
 											}
 										}
 									>
-										<Image src='/ui_icons/reviewer_account.svg' />
+										<Image
+											src={getAvatar(reviewerId)}
+											borderRadius='50%'
+											boxSize='40px' />
 										<Flex
 											direction='column'
 											ml={4}
@@ -451,25 +378,32 @@ Assign Reviewers
 												fontSize='14px'
 												lineHeight='16px'
 											>
-												{reviewer?.name}
+												{reviewer.fullName || formatAddress(reviewerId)}
 											</Text>
 											<Text
 												mt={1}
 												color='#717A7C'
 												fontSize='12px'
 												lineHeight='16px'>
-												{totalScore(reviews ? reviews[reviewerId]?.items : [])}
+												{
+													review
+														? totalScore(review.items)
+														: 'Not Reviewed'
+												}
 											</Text>
 										</Flex>
 
-
-										<ChevronRightIcon
-											ml='auto'
-											h='40px'
-											w='40px'
-											mr='-16px'
-											p={0}
-										/>
+										{
+											!!review && (
+												<ChevronRightIcon
+													ml='auto'
+													h='40px'
+													w='40px'
+													mr='-16px'
+													p={0}
+												/>
+											)
+										}
 									</Flex>
 								)
 							})
@@ -489,102 +423,6 @@ Assign Reviewers
 				score={selectedReview}
 				reviewer={selectedReviewer}
 			/>
-
-			{/* <ReviewDrawer
-				reviewDrawerOpen={reviewDrawerOpen}
-				setReviewDrawerOpen={setReviewDrawerOpen}
-				grantAddress={applicationData?.grant.id}
-				chainId={chainId}
-				workspaceId={applicationData?.grant.workspace.id}
-				initialReviewers={applicationData?.reviewers}
-				reviews={applicationData?.reviews}
-				applicationId={applicationData?.id}
-				onClose={() => setReviewDrawerOpen(false)}
-			/> */}
-
-			{/* <Flex
-				bg="white"
-				border="2px solid #D0D3D3"
-				borderRadius={8}
-				w={340}
-				direction="column"
-				alignItems="stretch"
-				px="28px"
-				py="22px"
-				mt={8}
-			>
-				<Flex direction="column">
-					<Flex
-						mb={
-							applicationData?.grant?.rubric && applicationData
-								?.grant
-								?.rubric
-								.items.length > 0 ? '14px' : '0'
-						}
-						alignItems="center"
-					>
-						<Text
-							mr="auto"
-							fontWeight="700">
-Evaluation Rubric
-						</Text>
-						<Text
-							color="#8850EA"
-							fontWeight="700"
-							cursor="pointer"
-							fontSize="12px"
-							onClick={() => setRubricDrawerOpen(true)}
-						>
-							{
-								applicationData?.grant?.rubric && applicationData
-									?.grant
-									?.rubric
-									.items.length > 0 ? 'Edit' : 'Add'
-							}
-						</Text>
-					</Flex>
-					{
-						applicationData?.grant?.rubric && applicationData
-							?.grant
-							?.rubric
-							.items.map((r: any) => ({
-								title: r.title,
-								description: r.details,
-							})).map((rubric: any) => (
-								<>
-									<Text
-										mt={2}
-										fontWeight="700"
-										color="#122224"
-										fontSize="14px">
-										{rubric.title}
-									</Text>
-									<Text
-										color="#717A7C"
-										fontSize="12px">
-										{rubric.description}
-									</Text>
-								</>
-							))
-					}
-				</Flex>
-			</Flex> */}
-
-			{/* <Box mb={8} />
-
-			<RubricDrawer
-				rubricDrawerOpen={rubricDrawerOpen}
-				setRubricDrawerOpen={setRubricDrawerOpen}
-				rubricEditAllowed={rubricEditAllowed}
-				rubrics={rubrics}
-				setRubrics={setRubrics}
-				maximumPoints={maximumPoints}
-				setMaximumPoints={setMaximumPoints}
-				chainId={getSupportedChainIdFromWorkspace(workspace) || defaultChainId}
-				grantAddress={applicationData?.grant.id}
-				workspaceId={workspace?.id || ''}
-				initialIsPrivate={applicationData?.grant.rubric?.isPrivate || false}
-			/> */}
 		</>
 	)
 }
