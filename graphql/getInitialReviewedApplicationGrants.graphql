@@ -2,8 +2,13 @@ query getInitialReviewedApplicationGrants(
     $reviewerAddress: Bytes!,
     $reviewerAddressStr: String!,
     $applicationsCount: Int!,
+    $workspaceId: String!,
 ) {
-    grantReviewerCounters(where: { reviewerAddress: $reviewerAddress, doneCounter_gt: 0 }) {
+    grantReviewerCounters(where: {
+        reviewerAddress: $reviewerAddress,
+        grant_: { workspace: $workspaceId },
+        doneCounter_gt: 0
+    }) {
         grant {
             id
             title
