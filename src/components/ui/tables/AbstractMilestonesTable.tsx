@@ -6,8 +6,8 @@ import { SupportedChainId } from 'src/constants/chains'
 import { ApplicationMilestone } from 'src/types'
 import { formatAmount } from 'src/utils/formattingUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
-import { solanaToUsdOnDate } from 'src/v2/constants/safe/realms_solana'
 import dollarIcon from 'src/v2/assets/currency_icon/dollar_icon.svg'
+import { solanaToUsdOnDate } from 'src/v2/constants/safe/realms_solana'
 
 const TABLE_HEADERS = [
 	{
@@ -72,6 +72,7 @@ function AbstractMilestonesTable(
 		rewardSymbol = asset.label
 		rewardIcon = dollarIcon
 	}
+
 	const getTotalReward = (milestone: any) => {
 		const milestoneTrxns = transactionStatus?.filter((obj: any) => obj.milestoneId === milestone.id)
 		var total = 0
@@ -151,9 +152,7 @@ function AbstractMilestonesTable(
 									color='#122224'
 								>
 									$
-									{
-											getTotalReward(item)
-									}
+									{getTotalReward(item)}
 									{' '}
 									of
 									{' '}

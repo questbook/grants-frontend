@@ -17,7 +17,7 @@ function Details({
   detailsError: boolean
   setDetailsError: (detailsError: boolean) => void
 }) {
-	const { t } = useTranslation('common')
+	const { t } = useTranslation()
 	return (
 		<Flex direction='column'>
 			<RichTextEditor

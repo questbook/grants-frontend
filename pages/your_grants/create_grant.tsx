@@ -57,9 +57,12 @@ function CreateGrant() {
 				px={10}
 			>
 				<Form
-					onSubmit={(data: any) => {
-						console.log('create grant form data', data)
-						setFormData(data)}}
+					onSubmit={
+						(data: any) => {
+							console.log('create grant form data', data)
+							setFormData(data)
+						}
+					}
 					hasClicked={loading}
 				/>
 			</Container>

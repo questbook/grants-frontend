@@ -20,6 +20,7 @@ function DomainName({ domainName, setValue, isVerified, onContinue }: Props) {
 				{t('/onboarding/create-domain.program_name_title')}
 			</Text>
 			<TextField
+				mt={6}
 				label={t('/onboarding/create-domain.program_name')}
 				helperText={t('/onboarding/create-domain.program_name_helper')}
 				placeholder={t('/onboarding/create-domain.program_name_placeholder')}

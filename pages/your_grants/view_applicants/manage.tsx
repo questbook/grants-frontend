@@ -42,12 +42,12 @@ import { isPlausibleSolanaAddress } from 'src/utils/generics'
 import useApplicationMilestones from 'src/utils/queryUtil'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import dollarIcon from 'src/v2/assets/currency_icon/dollar_icon.svg'
 import { GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
 import { RealmsSolana } from 'src/v2/constants/safe/realms_solana'
 import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
 import SendFunds from 'src/v2/payouts/SendFunds'
 import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
-import dollarIcon from 'src/v2/assets/currency_icon/dollar_icon.svg'
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 	let val = BigNumber.from(0)
@@ -158,33 +158,33 @@ function ManageGrant() {
 		Promise.all(
 		 fundsDisbursed!.fundsTransfers.map(async(transfer: any) => {
 		 	const status: any = await currentSafe.getTransactionHashStatus(transfer.transactionHash)
-			if(!isEvmChain) {
-				if(status && status[transfer.transactionHash]?.closedAtDate !== '') {
-					const usdAmount = transfer.amount
-   
-					milestoneTrxnStatus.push({
-						amount: (usdAmount || 0),
-						txnHash: transfer?.transactionHash,
-						milestoneId: transfer?.milestone?.id,
-						safeAddress: workspaceSafe,
-						...status[transfer.transactionHash]
-					})
-   
-				}
-			} else if(isEvmChain) {
-				if(status) {
-					const usdAmount = transfer.amount
-   
-					milestoneTrxnStatus.push({
-						amount: (usdAmount || 0),
-						txnHash: transfer?.transactionHash,
-						milestoneId: transfer?.milestone?.id,
-						safeAddress: workspaceSafe,
-						...status[transfer.transactionHash]
-					})
-				}
-			}
-		 	
+		 	if(!isEvmChain) {
+		 		if(status && status[transfer.transactionHash]?.closedAtDate !== '') {
+		 			const usdAmount = transfer.amount
+
+		 			milestoneTrxnStatus.push({
+		 				amount: (usdAmount || 0),
+		 				txnHash: transfer?.transactionHash,
+		 				milestoneId: transfer?.milestone?.id,
+		 				safeAddress: workspaceSafe,
+		 				...status[transfer.transactionHash]
+		 			})
+
+		 		}
+		 	} else if(isEvmChain) {
+		 		if(status) {
+		 			const usdAmount = transfer.amount
+
+		 			milestoneTrxnStatus.push({
+		 				amount: (usdAmount || 0),
+		 				txnHash: transfer?.transactionHash,
+		 				milestoneId: transfer?.milestone?.id,
+		 				safeAddress: workspaceSafe,
+		 				...status[transfer.transactionHash]
+		 			})
+		 		}
+		 	}
+
 		 })
 		).then((res) => {
 

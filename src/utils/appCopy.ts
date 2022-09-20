@@ -125,7 +125,6 @@ i18next.use(initReactI18next).init({
 					'deadline': 'Accepting Proposals till',
 					'private_review': 'Keep proposal reviews private',
 					'private_review_desc': 'Reviews and comments by your team will be kept private to you and the reviewers',
-
 				},
 				'/your-grant' : {
 					'post_grant': 'Post a new Grant',

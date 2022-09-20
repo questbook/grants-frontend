@@ -532,8 +532,9 @@ function Form({
 					}
 				})
 			}
-			let s 
-			if (rewardCurrencyAddress){
+
+			let s
+			if(rewardCurrencyAddress) {
 				s = {
 					title,
 					summary,
