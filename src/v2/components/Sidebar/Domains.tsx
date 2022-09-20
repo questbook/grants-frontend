@@ -134,13 +134,13 @@ function Domains({ workspaces, onWorkspaceClick }: Props) {
 				mt={2} />
 			<Flex
 				display={expanded ? 'block' : 'none'}
-				maxH='170px'
+				// maxH='170px'
 				w='100%'
 			>
 				<Flex
 					direction='column'
 					overflowY='auto'
-					maxH='80%'
+					// maxH='80%'
 					w='100%'
 					px={6}
 					pt={3}>

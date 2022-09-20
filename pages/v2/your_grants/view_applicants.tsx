@@ -69,7 +69,7 @@ function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 }
 
 function ViewApplicants() {
-	const [tabIndex, setTabIndex] = useState(1)
+	const [tabIndex, setTabIndex] = useState(0)
 	const [applicantsData, setApplicantsData] = useState<any>([])
 	// const [reviewerData, setReviewerData] = useState<any>([])
 	// const [daoId, setDaoId] = useState('')
