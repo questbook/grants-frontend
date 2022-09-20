@@ -43,7 +43,28 @@ const SetupEvaluationDrawer = ({
 	const { workspace, validatorApi, subgraphClients } = useContext(ApiClientsContext)!
 
 	// Setting up rubrics
+	const [isPrivateReviews, setIsPrivateReviews] = useState(false)
 	const [rubrics, setRubrics] = useState<SidebarRubrics[]>([{ index: 0, criteria: '', description: '' }])
+	const [canContinue, setCanContinue] = useState(false)
+	// Assigning reviewers
+	const defaultSliderValue = 1
+	const [numOfReviewersPerApplication, setNumOfReviewersPerApplication] = useState(defaultSliderValue)
+	const [reviewers, setReviewers] = useState<SidebarReviewer[]>([])
+
+	const { t } = useTranslation()
+
+	const toastRef = useRef<ToastId>()
+	const toast = useToast()
+
+	const applicationReviewContract = useQBContract('reviews', chainId)
+
+	const { webwallet } = useContext(WebwalletContext)!
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		chainId: chainId?.toString()!
+		// targetContractABI: GrantFactoryAbi,
+	})
+
+	const { nonce } = useQuestbookAccount()
 
 	const onRubricChange = (rubric: SidebarRubrics) => {
 		const temp = [...rubrics]
@@ -65,9 +86,11 @@ const SetupEvaluationDrawer = ({
 		}
 	}
 
-	const [canContinue, setCanContinue] = useState(false)
-
-	const { t } = useTranslation()
+	const onReviewerChange = (reviewer: SidebarReviewer) => {
+		const temp = [...reviewers]
+		temp[reviewer.index].isSelected = !temp[reviewer.index].isSelected
+		setReviewers(temp)
+	}
 
 	useEffect(() => {
 		for(const rubric of rubrics) {
@@ -80,11 +103,6 @@ const SetupEvaluationDrawer = ({
 		setCanContinue(true)
 	}, [rubrics])
 
-	// Assigning reviewers
-	const defaultSliderValue = 1
-	const [numOfReviewersPerApplication, setNumOfReviewersPerApplication] = useState(defaultSliderValue)
-	const [reviewers, setReviewers] = useState<SidebarReviewer[]>([])
-
 	useEffect(() => {
 		const temp: SidebarReviewer[] = []
 		let i = 0
@@ -96,30 +114,9 @@ const SetupEvaluationDrawer = ({
 		setReviewers(temp)
 	}, [data])
 
-	const onReviewerChange = (reviewer: SidebarReviewer) => {
-		const temp = [...reviewers]
-		temp[reviewer.index].isSelected = !temp[reviewer.index].isSelected
-		setReviewers(temp)
-	}
-
-	const toastRef = useRef<ToastId>()
-	const toast = useToast()
-
-	const applicationReviewContract = useQBContract('reviews', chainId)
-
-	const { webwallet } = useContext(WebwalletContext)!
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
-		chainId: chainId?.toString()!
-		// targetContractABI: GrantFactoryAbi,
-	})
-
-	const { nonce } = useQuestbookAccount()
-
-
 	const onInitiateTransaction = async() => {
 		setNetworkTransactionModalStep(0)
 
-		// console.log('Workspace: ', workspace)
 		if(!workspace || !workspace?.id || !grantAddress) {
 			return
 		}
@@ -133,21 +130,6 @@ const SetupEvaluationDrawer = ({
 			if(!chainId) {
 				return
 			}
-			// Commenting this to accommodate gasless
-			// // console.log('Chain ID: ', activeChain?.id, chainId)
-			// if(activeChain?.id !== chainId) {
-			// 	// console.log('switching')
-			// 	await switchNetwork!(chainId!)
-			// 	// console.log('create workspace again on contract object update')
-			// 	setCallOnContractChange(true)
-			// 	setTimeout(() => {
-			// 		if(callOnContractChange && activeChain?.id !== chainId) {
-			// 			setCallOnContractChange(false)
-			// 			throw new Error('Error switching network')
-			// 		}
-			// 	}, 60000)
-			// 	return
-			// }
 
 			const rubric: {[_ in string]: {
 				title: SidebarRubrics['criteria']
@@ -172,7 +154,7 @@ const SetupEvaluationDrawer = ({
 				data: { ipfsHash: auxRubricHash },
 			} = await validatorApi.validateRubricSet({
 				rubric: {
-					isPrivate: false,
+					isPrivate: isPrivateReviews,
 					rubric: rubric,
 				},
 			})
@@ -445,11 +427,9 @@ const SetupEvaluationDrawer = ({
 									maxCount={Math.min(reviewers.length, MAX_REVIEWER_COUNT)}
 									defaultSliderValue={defaultSliderValue}
 									sliderValue={numOfReviewersPerApplication}
-									onSlide={
-										(value: number) => {
-											setNumOfReviewersPerApplication(value)
-										}
-									}
+									isPrivateReviews={isPrivateReviews}
+									setIsPrivateReviews={setIsPrivateReviews}
+									onSlide={setNumOfReviewersPerApplication}
 									reviewers={reviewers}
 									onReviewerChange={onReviewerChange}
 								/>
