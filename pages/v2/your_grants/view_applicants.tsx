@@ -69,6 +69,7 @@ function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 }
 
 function ViewApplicants() {
+	const [tabIndex, setTabIndex] = useState(1)
 	const [applicantsData, setApplicantsData] = useState<any>([])
 	// const [reviewerData, setReviewerData] = useState<any>([])
 	// const [daoId, setDaoId] = useState('')
@@ -762,6 +763,8 @@ function ViewApplicants() {
 
 
 				<Tabs
+					index={tabIndex}
+					onChange={(i) => setTabIndex(i)}
 					h={8}
 					colorScheme='brandv2'>
 					<TabList>
