@@ -16,14 +16,9 @@ import ConnectWalletModal from 'src/v2/components/ConnectWalletModal'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import { useAccount, useNetwork, useSigner, useSwitchNetwork } from 'wagmi'
 
-interface Props {
-    isOpen: boolean
-    onClose: () => void
-}
-
 const POINTERS = ['Zero gas fee across the app', 'No annoying sign transaction pop-ups']
 
-function MigrateToGasless({ isOpen, onClose }: Props) {
+function MigrateToGasless() {
 	const router = useRouter()
 	const toast = useToast()
 	const { waitForScwAddress, webwallet } = useContext(WebwalletContext)!
@@ -34,6 +29,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 	const { chain: walletChain } = useNetwork()
 	const { switchNetwork } = useSwitchNetwork()
 
+	const [isOpen, setIsOpen] = useState(false)
 	const [isConnectWalletModalOpen, setIsConnectWalletModalOpen] = useState(false)
 
 	const workspaceContract = useQBContract('workspace', walletChain?.id as SupportedChainId, false)
@@ -42,6 +38,8 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 	const [transactionHash, setTransactionHash] = useState<string>()
 	const [shouldMigrate, setShouldMigrate] = useState<{state: number, chainId?: SupportedChainId}>()
 	const [ownedWorkspaces, setOwnedWorkspaces] = useState<any>([])
+
+	const isMigrateYes = router?.query?.migrate === 'yes'
 
 	const { results, fetchMore } = useMultiChainQuery({
 		useQuery: useGetProfileDetailsQuery,
@@ -72,7 +70,6 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 			}, true)
 		}
 	}, [walletAddress, walletChain?.id])
-
 
 	useEffect(() => {
 		if(!ownedWorkspacesResults) {
@@ -133,6 +130,20 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 			setIsConnectWalletModalOpen(false)
 		}
 	}, [walletAddress])
+
+	useEffect(() => {
+		if(isMigrateYes) {
+			setIsOpen(isMigrateYes)
+		}
+	}, [isMigrateYes])
+
+	const onClose = () => {
+		const newQuery = { ...router.query }
+		delete newQuery.migrate
+
+		router.push({ query: newQuery })
+		setIsOpen(false)
+	}
 
 	const migrate = async() => {
 		try {

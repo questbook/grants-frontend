@@ -152,6 +152,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [loadingNonce, setLoadingNonce] = React.useState<boolean>(false)
 
 	const [biconomyLoading, setBiconomyLoading] = useState<{ [chainId: string]: boolean }>({})
+	const [requiresMigrate, setRequiresMigrate] = useState(false)
 
 	// store the chainId that was most recently asked to be init
 	const mostRecentInitChainId = useRef<string>()
@@ -340,17 +341,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		return _nonce
 	}
 
-	const getNetwork = () => {
-		return defaultChainId
-
-		// const _network = localStorage.getItem('network')
-
-		// if(!_network) {
-		// 	return defaultChainId
-		// }
-
-		// return parseInt(_network)
-	}
+	const getNetwork = () => defaultChainId
 
 	const createWebWallet = () => {
 
@@ -371,24 +362,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			return newWebwallet
 		}
 	}
-
-	// const getBiconomyDaoObj = () => {
-	// 	if (typeof window === 'undefined') {
-	// 		return undefined
-	// 	}
-
-	// 	let _biconomyDaoObj = localStorage.getItem('biconomyDaoObj')
-	// 	if (!_biconomyDaoObj) {
-	// 		return undefined
-	// 	}
-
-	// 	try {
-	// 		_biconomyDaoObj = JSON.parse(_biconomyDaoObj)
-	// 		return _biconomyDaoObj
-	// 	} catch {
-	// 		return undefined
-	// 	}
-	// }
 
 	const webwalletContextValue = useMemo(
 		() => ({
@@ -504,8 +477,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		[validatorApi, workspace, setWorkspace, clients, connected, setConnected]
 	)
 
-	const [migrateModalOpen, setMigrateModalOpen] = React.useState(false)
-
 	useEffect(() => {
 		if(typeof window === 'undefined') {
 			return
@@ -518,7 +489,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		}
 
 		if(didHaveWallet && !didMigrate) {
-			setMigrateModalOpen(true)
+			setRequiresMigrate(true)
 		}
 	}, [])
 
@@ -559,9 +530,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 								{getLayout(<Component {...pageProps} />)}
 								{
 									typeof window !== 'undefined' && (
-										<MigrateToGasless
-											isOpen={migrateModalOpen}
-											onClose={() => setMigrateModalOpen(false)} />
+										<MigrateToGasless />
 									)
 								}
 							</ChakraProvider>
