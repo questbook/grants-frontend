@@ -86,13 +86,9 @@ function Sidebar({ applicationData }: any) {
 						variant='applicationHeading'
 						lineHeight='32px'>
 						{
-							(applicationData?.fields?.find((fld: any) => fld?.id?.split('.')[1] === 'applicantEmail')) && (
+							applicantEmail && (
 								<>
-									{
-										applicationData?.fields?.find(
-											(fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
-										)?.values[0]?.value
-									}
+									{applicantEmail}
 									<MailTo applicantEmail={applicantEmail} />
 								</>
 							)
