@@ -83,6 +83,7 @@ function Form({
 	const { webwallet: signer, scwAddress } = useContext(WebwalletContext)!
 	const { encrypt } = useEncryptPiiForApplication(grantId, signer?.publicKey, chainId || defaultChainId)
 
+	const [applicationError, setApplicationError] = React.useState<boolean>()
 	const [shouldRefreshNonce, setShouldRefreshNonce] = React.useState<boolean>()
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = React.useState<number | undefined>()
 
@@ -346,6 +347,7 @@ function Form({
 			setCustomFields(errorCheckedCustomFields)
 		}
 
+		setApplicationError(error)
 
 		if(error) {
 			return
@@ -695,9 +697,22 @@ function Form({
 			<Box mt={5} />
 
 			{
+				applicationError && (
+					<Text
+						mt={4}
+						fontWeight='500'
+						variant='v2_title'
+						color='orange.2'>
+						Missing Required fields
+					</Text>
+				)
+			}
+
+			{
 				acceptingApplications && (
 					<Button
 						mt={10}
+						mb={4}
 						disabled={!isBiconomyInitialised}
 						onClick={loading ? () => {} : handleOnSubmit}
 						mx={10}

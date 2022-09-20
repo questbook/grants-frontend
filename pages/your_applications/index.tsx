@@ -1,8 +1,11 @@
 import React, {
-	ReactElement, useCallback, useContext, useEffect, useRef,
+	ReactElement, useCallback, useContext, useEffect, useRef, useState,
 } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Flex,
+import { InfoIcon } from '@chakra-ui/icons'
+import {
+	Button,
+	Flex, HStack, Text, VStack,
 } from '@chakra-ui/react'
 import BN from 'bn.js'
 import { useRouter } from 'next/router'
@@ -24,15 +27,16 @@ const PAGE_SIZE = 20
 
 function YourApplications() {
 	const router = useRouter()
-	// const [applicantID, setApplicantId] = React.useState<any>('');
+	// const [applicantID, setApplicantId] = useState<any>('');
 	// const subgraphClient = useContext(ApiClientsContext)?.subgraphClient;
 	const { subgraphClients } = useContext(ApiClientsContext)!
-	const [myApplications, setMyApplications] = React.useState<any>([])
+	const [myApplications, setMyApplications] = useState<any>([])
+	const [requiresMigrate, setRequiresMigrate] = useState(false)
 	const { t } = useTranslation()
 
 	const containerRef = useRef(null)
 	const { data: accountData } = useQuestbookAccount()
-	const [currentPage, setCurrentPage] = React.useState(0)
+	const [currentPage, setCurrentPage] = useState(0)
 	// modified for testing
 	const allNetworkApplications = Object.keys(subgraphClients)!.map((key) => (
 
@@ -70,7 +74,7 @@ function YourApplications() {
 				setMyApplications([...myApplications, ...allApplicationsData])
 				setCurrentPage(currentPage + 1)
 			})
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			// console.log('error in fetching my applications ', e);
 		}
@@ -85,7 +89,7 @@ function YourApplications() {
 		const parentElement = (current as HTMLElement)?.parentNode as HTMLElement
 		const reachedBottom = Math.abs(
 			parentElement.scrollTop
-      - (parentElement.scrollHeight - parentElement.clientHeight),
+			- (parentElement.scrollHeight - parentElement.clientHeight),
 		) < 10
 		if(reachedBottom) {
 			getMyApplicationsData()
@@ -114,15 +118,34 @@ function YourApplications() {
 		return () => parentElement.removeEventListener('scroll', handleScroll)
 	}, [handleScroll])
 
+	useEffect(() => {
+		if(typeof window === 'undefined') {
+			return
+		}
+
+		const didHaveWallet = localStorage.getItem('wagmi.wallet')
+		const didMigrate = localStorage.getItem('didMigrate') === 'true'
+		if(!didHaveWallet && !didMigrate) {
+			localStorage.setItem('didMigrate', 'true')
+		}
+
+		if(didHaveWallet && !didMigrate) {
+			setRequiresMigrate(true)
+		}
+	}, [])
+
 	return (
-		<Flex
+		<VStack
 			ref={containerRef}
 			w='100%'
+			align='center'
 		>
+			{requiresMigrate && <MigrateToGaslessHeader />}
 			<Flex
 				flex={1}
 				direction='column'
-				maxW='65%'
+				maxW='70%'
+				minW='50%'
 				alignItems='stretch'
 				pb={8}
 				px={10}
@@ -132,75 +155,75 @@ function YourApplications() {
 
 				{
 					myApplications.length > 0
-          && myApplications.map((application: any) => (
-          	(
-          		<YourApplicationCard
-          			key={application.id}
-          			grantTitle={application.grant.title}
-          			daoName={application.grant.workspace.title}
-          			daoIcon={application.grant.workspace.logoIpfsHash === config.defaultDAOImageHash?
-						getAvatar(true, application.grant.workspace.title):
-						getUrlForIPFSHash(application.grant.workspace.logoIpfsHash)}
-          			isGrantVerified={(new BN(application.grant.funding)).gt(new BN(0))}
-          			funding={
-          				formatAmount(
-          				application.grant.funding,
-          				CHAIN_INFO[
-          					getSupportedChainIdFromSupportedNetwork(
-          						application.grant.workspace.supportedNetworks[0],
-          					)
-          				]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
-          					?.decimals,
-          			)
-          			}
-          			currency={
-          				CHAIN_INFO[
-          				getSupportedChainIdFromSupportedNetwork(
-          					application.grant.workspace.supportedNetworks[0],
-          				)
-          			]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
-          				?.label || 'LOL'
-          			}
-          			isDaoVerified={false}
-          			status={application.state}
-          			sentDate={getFormattedDateFromUnixTimestamp(application?.createdAtS)}
-          			updatedDate={getFormattedDateFromUnixTimestamp(application?.updatedAtS)}
-          			onViewGrantClick={
-          				() => router.push({
-          				pathname: '/explore_grants/about_grant',
-          				query: {
-          					grantId: application.grant.id,
-          					chainId: getChainIdFromResponse(
-          						application.grant.workspace.supportedNetworks[0],
-          					),
-          				},
-          			})
-          			}
-          			onViewApplicationClick={
-          				() => router.push({
-          				pathname: '/your_applications/grant_application',
-          				query: {
-          					applicationId: application.id,
-          					chainId: getChainIdFromResponse(
-          						application.grant.workspace.supportedNetworks[0],
-          					),
-          				},
-          			})
-          			}
-          			onManageGrantClick={
-          				() => router.push({
-          				pathname: '/your_applications/manage_grant',
-          				query: {
-          					applicationId: application.id,
-          					chainId: getChainIdFromResponse(
-          						application.grant.workspace.supportedNetworks[0],
-          					),
-          				},
-          			})
-          			}
-          		/>
-          	)
-          ))
+					&& myApplications.map((application: any) => (
+						(
+							<YourApplicationCard
+								key={application.id}
+								grantTitle={application.grant.title}
+								daoName={application.grant.workspace.title}
+								daoIcon={application.grant.workspace.logoIpfsHash === config.defaultDAOImageHash?
+									getAvatar(true, application.grant.workspace.title):
+									getUrlForIPFSHash(application.grant.workspace.logoIpfsHash)}
+								isGrantVerified={(new BN(application.grant.funding)).gt(new BN(0))}
+								funding={
+									formatAmount(
+										application.grant.funding,
+										CHAIN_INFO[
+											getSupportedChainIdFromSupportedNetwork(
+												application.grant.workspace.supportedNetworks[0],
+											)
+										]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
+											?.decimals,
+									)
+								}
+								currency={
+									CHAIN_INFO[
+										getSupportedChainIdFromSupportedNetwork(
+											application.grant.workspace.supportedNetworks[0],
+										)
+									]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
+										?.label || 'LOL'
+								}
+								isDaoVerified={false}
+								status={application.state}
+								sentDate={getFormattedDateFromUnixTimestamp(application?.createdAtS)}
+								updatedDate={getFormattedDateFromUnixTimestamp(application?.updatedAtS)}
+								onViewGrantClick={
+									() => router.push({
+										pathname: '/explore_grants/about_grant',
+										query: {
+											grantId: application.grant.id,
+											chainId: getChainIdFromResponse(
+												application.grant.workspace.supportedNetworks[0],
+											),
+										},
+									})
+								}
+								onViewApplicationClick={
+									() => router.push({
+										pathname: '/your_applications/grant_application',
+										query: {
+											applicationId: application.id,
+											chainId: getChainIdFromResponse(
+												application.grant.workspace.supportedNetworks[0],
+											),
+										},
+									})
+								}
+								onManageGrantClick={
+									() => router.push({
+										pathname: '/your_applications/manage_grant',
+										query: {
+											applicationId: application.id,
+											chainId: getChainIdFromResponse(
+												application.grant.workspace.supportedNetworks[0],
+											),
+										},
+									})
+								}
+							/>
+						)
+					))
 				}
 
 				{
@@ -221,7 +244,7 @@ function YourApplications() {
 				}
 
 			</Flex>
-		</Flex>
+		</VStack>
 	)
 }
 
@@ -230,6 +253,35 @@ YourApplications.getLayout = function(page: ReactElement) {
 		<NavbarLayout>
 			{page}
 		</NavbarLayout>
+	)
+}
+
+function MigrateToGaslessHeader() {
+	const router = useRouter()
+	const navigateToMigrateModal = () => router.push({ query: { migrate: 'yes' } })
+
+	return (
+		<HStack
+			w='full'
+			color='white'
+			justify='center'
+			p={3}
+			spacing={2}
+			bg='violet.2'>
+			<InfoIcon />
+			<Text>
+				Migrate to a gasless experience
+			</Text>
+			<Button
+				onClick={navigateToMigrateModal}
+				variant='solid'
+				borderRadius='12px'
+				h='30px'
+				w='20px'
+				color='violet.2'>
+				Go
+			</Button>
+		</HStack>
 	)
 }
 

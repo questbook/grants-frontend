@@ -25,9 +25,7 @@ const TABS = [
 	{ id: 'dashboard', index: TAB_INDEXES.DASHBOARD, name: 'Stats', path: '/dashboard' },
 	{ id: 'grants_and_bounties', index: TAB_INDEXES.GRANTS_AND_BOUNTIES, name: 'Grants', path: '/your_grants' },
 	{ id: 'safe', index: TAB_INDEXES.SAFE, name: 'Multisig Wallet', path: '/safe' },
-	{ id: 'apps', index: TAB_INDEXES.APPS, name: 'Apps', path: '/apps' },
 	{ id: 'settings', index: TAB_INDEXES.SETTINGS, name: 'Profile', path: '/manage_dao' },
-	{ id: 'payouts', index: TAB_INDEXES.PAYOUTS, name: 'Payouts', path: '/payouts' }
 ]
 
 function useGetTabs() {
@@ -57,11 +55,7 @@ function useGetTabs() {
 
 	if(!workspace || !workspace.id) {
 		// Pure applicant
-		if(applicationCount > 0) {
-			return [ [TABS[0], TABS[1]], [] ]
-		} else {
-			return [ [TABS[0]], [] ]
-		}
+		return [ [TABS[0], TABS[1]], [] ]
 	} else {
 		const member = workspace.members.find((m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase())
 		if(!member) {

@@ -69,7 +69,7 @@ function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 }
 
 function ViewApplicants() {
-	const [tabIndex, setTabIndex] = useState(1)
+	const [tabIndex, setTabIndex] = useState(0)
 	const [applicantsData, setApplicantsData] = useState<any>([])
 	// const [reviewerData, setReviewerData] = useState<any>([])
 	// const [daoId, setDaoId] = useState('')
@@ -99,7 +99,6 @@ function ViewApplicants() {
 	const [rewardAssetSymbol, setRewardAssetSymbol] = useState<string>()
 
 	const [sendFundsTo, setSendFundsTo] = useState<any[]>()
-
 
 	const { data: accountData } = useQuestbookAccount()
 	const router = useRouter()
@@ -265,10 +264,7 @@ function ViewApplicants() {
 	}, [router])
 
 	const [queryParams, setQueryParams] = useState<any>({
-		client:
-			subgraphClients[
-				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-			].client,
+		client: subgraphClients[workspacechainId].client,
 	})
 
 
@@ -378,6 +374,7 @@ function ViewApplicants() {
 
 				return {
 					grantTitle: applicant?.grant?.title,
+					grant: applicant?.grant,
 					applicationId: applicant.id,
 					applicantName: getFieldString(applicant, 'applicantName'),
 					applicantEmail: getFieldString(applicant, 'applicantEmail'),
@@ -557,21 +554,20 @@ function ViewApplicants() {
 			checkIfUserIsOnCorrectNetwork(workspaceSafeChainId.toString())
 		}
 
-		if(workspace?.safe) {
-			setSendFundsTo(selectedApplicants)
-		} else {
-			router.push({ pathname: '/safe', query: {
-				'show_toast': true,
-			} })
-		}
+		setSendFundsTo(selectedApplicants)
+		// if(workspace?.safe) {
+		// 	setSendFundsTo(selectedApplicants)
+		// } else {
+		// 	router.push({ pathname: '/safe', query: {
+		// 		'show_toast': true,
+		// 	} })
+		// }
 	}
 
 
 	const [getReviewersForAWorkspaceParams, setGetReviewersForAWorkspaceParams] = useState<any>({
 		client:
-			subgraphClients[
-				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-			].client,
+			subgraphClients[workspacechainId].client,
 	})
 	const { data: reviewersForAWorkspaceData } = useGetReviewersForAWorkspaceQuery(getReviewersForAWorkspaceParams)
 	useEffect(() => {
@@ -814,6 +810,7 @@ function ViewApplicants() {
 							bg='white'
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
 							<RejectedPanel
+								chainId={workspacechainId}
 								applicantsData={applicantsData} />
 						</TabPanel>
 
@@ -825,6 +822,7 @@ function ViewApplicants() {
 							bg='white'
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
 							<ResubmitPanel
+								chainId={workspacechainId}
 								applicantsData={applicantsData} />
 						</TabPanel>
 
@@ -837,7 +835,7 @@ function ViewApplicants() {
 					onClose={() => setRubricDrawerOpen(false)}
 					onComplete={() => setRubricDrawerOpen(false)}
 					grantAddress={grantID}
-					chainId={getSupportedChainIdFromWorkspace(workspace) || defaultChainId}
+					chainId={workspacechainId}
 					setNetworkTransactionModalStep={setNetworkTransactionModalStep}
 					setTransactionHash={setTransactionHash}
 					data={reviewersForAWorkspaceData}
@@ -892,7 +890,7 @@ function ViewApplicants() {
 							'Rubric created and Reviewers assigned',
 						]
 					}
-					viewLink={getExplorerUrlForTxHash(getSupportedChainIdFromWorkspace(workspace) || defaultChainId, transactionHash)}
+					viewLink={getExplorerUrlForTxHash(workspacechainId, transactionHash)}
 					onClose={
 						() => {
 							setNetworkTransactionModalStep(undefined)

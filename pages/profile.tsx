@@ -73,7 +73,7 @@ function Profile() {
 
 
 	useEffect(() => {
-		if(router?.query) {
+		if (router?.query) {
 			const { chainId: cId, daoId: dId } = router.query
 			setChainId((cId as unknown) as SupportedChainId)
 			setDaoId(dId?.toString())
@@ -87,11 +87,11 @@ function Profile() {
 	})
 
 	useEffect(() => {
-		if(!daoID) {
+		if (!daoID) {
 			return
 		}
 
-		if(!chainID) {
+		if (!chainID) {
 			return
 		}
 
@@ -109,23 +109,24 @@ function Profile() {
 	const { data, error, loading } = useGetDaoDetailsQuery(queryParams)
 
 	useEffect(() => {
-		if(data) {
+		if (data) {
+			// console.log('data', data)
 			setWorkspaceData(data?.workspace!)
 		}
 	}, [data, error, loading])
 
 	const { data: allDaoData } = useGetFundsAndProfileDataQuery({
 		client:
-      subgraphClients[
-      	getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) || defaultChainId
-      ].client,
-	  variables: {
+			subgraphClients[
+				getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) || defaultChainId
+			].client,
+		variables: {
 			workspaceId: workspaceData?.id || '',
 			acceptingApplications: true,
 		},
 	})
 
-	const getAnalyticsData = async() => {
+	const getAnalyticsData = async () => {
 		// console.log('calling analytics')
 		try {
 			//const res = await fetch('https://www.questbook-analytics.com/workspace-analytics', {
@@ -158,8 +159,8 @@ function Profile() {
 			setGrantsApplicants(data.totalApplicants)
 			setGrantWinners(data.winnerApplicants)
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} catch(e: any) {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		} catch (e: any) {
 			// console.log(e)
 		}
 	}
@@ -168,7 +169,7 @@ function Profile() {
 		const everydayFundings = data.everydayFunding
 		let totalFunding = 0
 
-		if(!everydayFundings || everydayFundings.length === 0) {
+		if (!everydayFundings || everydayFundings.length === 0) {
 			return totalFunding
 		}
 
@@ -182,7 +183,7 @@ function Profile() {
 	}
 
 	useEffect(() => {
-		if(allDaoData && fundingTime.length === 0) {
+		if (allDaoData && fundingTime.length === 0) {
 			allDaoData.fundsTransfers.forEach((created) => {
 				setFundingTime((array: any) => [...array, created.createdAtS])
 			})
@@ -190,7 +191,7 @@ function Profile() {
 	}, [allDaoData, fundingTime])
 
 	useEffect(() => {
-		if(allDaoData && allDaoData.grants.length >= 1) {
+		if (allDaoData && allDaoData.grants.length >= 1) {
 			allDaoData.grants.forEach((grant) => {
 				grant.applications.filter((app) => {
 					app.state === 'approved' && setApplicationTime((array: any) => [...array, app.updatedAtS])
@@ -215,7 +216,7 @@ function Profile() {
 			pb='1rem'
 			maxW='75%'
 			borderX='1px solid #E8E9E9'
-			// borderBottom="1px solid #E8E9E9"
+		// borderBottom="1px solid #E8E9E9"
 		>
 			<Stack w='full'>
 				<Flex
@@ -403,86 +404,86 @@ function Profile() {
 							allDaoData &&
 							allDaoData.grants.length > 0 &&
 							allDaoData.grants.map((grant) => {
-              	const chainId = getSupportedChainIdFromSupportedNetwork(
-              		grant.workspace.supportedNetworks[0]
-              	)
-              	const chainInfo =
-                  CHAIN_INFO[chainId]?.supportedCurrencies[
-                  	grant.reward.asset.toLowerCase()
-                  ]
-              	const [isGrantVerified, funding] = verify(
-              		grant.funding,
-              		chainInfo?.decimals
-              	)
-              	return (
-	<BrowseGrantCard
-              			key={grant.id}
-              			isDaoVerified={false}
-              			createdAt={grant.createdAtS}
-              			grantTitle={grant.title}
-              			grantDesc={grant.summary}
-              			numOfApplicants={grant.numberOfApplications}
-              			endTimestamp={new Date(grant.deadline!).getTime()}
-              			grantAmount={
-              				formatAmount(
-              					grant.reward.committed,
-              					chainInfo?.decimals,
-              					false,
-              					true
-              				)
-              			}
-              			disbursedAmount={
-              				formatAmount(
-              					grant.funding,
-              					chainInfo?.decimals
-              				)
-              			}
-              			grantCurrency={chainInfo?.label || 'LOL'}
-              			grantCurrencyIcon={chainInfo?.icon || '/images/dummy/Ethereum Icon.svg'}
-              			grantCurrencyPair={chainInfo?.pair || null}
-              			isGrantVerified={isGrantVerified}
-              			funding={funding}
-              			onClick={
-              				() => {
-              					// if(!(accountData && accountData.address)) {
-              					// 	router.push({
-              					// 		pathname: '/connect_wallet',
-              					// 		query: {
-              					// 			flow: '/',
-              					// 			grantId: grant.id,
-              					// 			chainId,
-              					// 		},
-              					// 	})
-              					// 	return
-              					// }
+								const chainId = getSupportedChainIdFromSupportedNetwork(
+									grant.workspace.supportedNetworks[0]
+								)
+								const chainInfo =
+									CHAIN_INFO[chainId]?.supportedCurrencies[
+									grant.reward.asset.toLowerCase()
+									]
+								const [isGrantVerified, funding] = verify(
+									grant.funding,
+									chainInfo?.decimals
+								)
+								return (
+									<BrowseGrantCard
+										key={grant.id}
+										isDaoVerified={false}
+										createdAt={grant.createdAtS}
+										grantTitle={grant.title}
+										grantDesc={grant.summary}
+										numOfApplicants={grant.numberOfApplications}
+										endTimestamp={new Date(grant.deadline!).getTime()}
+										grantAmount={
+											formatAmount(
+												grant.reward.committed,
+												chainInfo?.decimals,
+												false,
+												true
+											)
+										}
+										disbursedAmount={
+											formatAmount(
+												grant.funding,
+												chainInfo?.decimals
+											)
+										}
+										grantCurrency={chainInfo?.label || 'LOL'}
+										grantCurrencyIcon={chainInfo?.icon || '/images/dummy/Ethereum Icon.svg'}
+										grantCurrencyPair={chainInfo?.pair || null}
+										isGrantVerified={isGrantVerified}
+										funding={funding}
+										onClick={
+											() => {
+												// if(!(accountData && accountData.address)) {
+												// 	router.push({
+												// 		pathname: '/connect_wallet',
+												// 		query: {
+												// 			flow: '/',
+												// 			grantId: grant.id,
+												// 			chainId,
+												// 		},
+												// 	})
+												// 	return
+												// }
 
-              				router.push({
-              						pathname: '/explore_grants/about_grant',
-              						query: {
-              							grantId: grant.id,
-              							chainId,
-              						},
-              					})
-              				}
-              			}
-              			onTitleClick={
-              				() => {
-              					router.push({
-              						pathname: '/explore_grants/about_grant',
-              						query: {
-              							grantId: grant.id,
-              							chainId,
-              						},
-              					})
-              				}
-              			}
-              		/>
-              	)
+												router.push({
+													pathname: '/explore_grants/about_grant',
+													query: {
+														grantId: grant.id,
+														chainId,
+													},
+												})
+											}
+										}
+										onTitleClick={
+											() => {
+												router.push({
+													pathname: '/explore_grants/about_grant',
+													query: {
+														grantId: grant.id,
+														chainId,
+													},
+												})
+											}
+										}
+									/>
+								)
 							})
 						}
 					</>
 				) : (
-				// eslint-disable-next-line no-nested-ternary
+					// eslint-disable-next-line no-nested-ternary
 					selected === 1 && (
 						<DaoAbout
 							daoAbout={workspaceData?.about}
@@ -530,8 +531,8 @@ function Profile() {
 					</ModalHeader >
 					<ModalBody
 						gap='1rem'
-					 m='auto'
-					 >
+						m='auto'
+					>
 						{
 							!codeActive ? (
 								<Image
@@ -572,7 +573,7 @@ function Profile() {
 	)
 }
 
-Profile.getLayout = function(page: React.ReactElement) {
+Profile.getLayout = function (page: React.ReactElement) {
 	return (
 		<NavbarLayout>
 			{page}

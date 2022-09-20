@@ -1,6 +1,7 @@
 import { Flex, Link, Text } from '@chakra-ui/react'
 import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
 import { ErrorAlert } from 'src/v2/assets/custom chakra icons/ErrorAlertV2'
+import { useTranslation } from 'react-i18next'
 
 interface Props {
     onSetup: () => void
@@ -8,6 +9,7 @@ interface Props {
 }
 
 function RubricNotSetBanner({ onSetup, onClose }: Props) {
+	const { t } = useTranslation()
 	return (
 		<Flex
 			px='18px'
@@ -28,28 +30,12 @@ function RubricNotSetBanner({ onSetup, onClose }: Props) {
 				flex={1}
 			>
 				<Text
-					fontSize='16px'
-					lineHeight='24px'
-					fontWeight='500'
-				>
-					Setup applicant evaluation
-				</Text>
-
-				<Text
-					mt='8px'
 					fontSize='14px'
 					lineHeight='20px'
 					fontWeight='400'
 				>
-					On receiving applicants, define a scoring rubric and assign reviewers to evaluate the applicants.
+					{t('/your_grants/view_applicants.create_review_no_rubrics')}
 					{' '}
-					<Link
-						textDecoration='none'
-						fontWeight='500'
-						color='#1F1F33'
-					>
-						Learn more
-					</Link>
 				</Text>
 
 				<Text
@@ -61,7 +47,7 @@ function RubricNotSetBanner({ onSetup, onClose }: Props) {
 					cursor='pointer'
 					onClick={onSetup}
 				>
-					Setup now
+					{t('/your_grants/view_applicants.create_rubric')}
 				</Text>
 			</Flex>
 
