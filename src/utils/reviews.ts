@@ -36,10 +36,6 @@ export function useLoadReview(
 		client
 	})
 
-	const isReviewPrivate = (review: IReview) => {
-		return !review.publicReviewDataHash
-	}
-
 	const loadPrivateReviewDataForReviewer = async(review: IReview) => {
 		const meAddress = scwAddress?.toLocaleLowerCase()
 		const meData = review.data.find(d => {
@@ -134,13 +130,11 @@ export function useLoadReview(
 		}
 
 		data.total = totalScore(data.items)
+		data.createdAtS = review.createdAtS
 		return data
 	}
 
-	return {
-		loadReview,
-		isReviewPrivate
-	}
+	return { loadReview }
 }
 
 type ApplicationData = Pick<IApplicantData, 'applicationId' | 'reviews' | 'grant'>
@@ -259,6 +253,10 @@ export const useGenerateReviewData = ({
 	return {
 		generateReviewData
 	}
+}
+
+function isReviewPrivate(review: IReview) {
+	return !review.publicReviewDataHash
 }
 
 function totalScore(items: IReviewFeedback['items'] | undefined) {
