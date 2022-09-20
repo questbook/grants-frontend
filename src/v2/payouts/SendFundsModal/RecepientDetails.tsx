@@ -253,32 +253,32 @@ const RecipientDetails = ({
 
 				<Box h={6} />
 
-				
-						<>
-							<Text
-								fontSize='14px'
-								lineHeight='20px'
-								fontWeight='500'
-							>
-								Tokens sent to recipient
-							</Text>
 
-							<Box h={2} />
+				<>
+					<Text
+						fontSize='14px'
+						lineHeight='20px'
+						fontWeight='500'
+					>
+						Tokens sent to recipient
+					</Text>
 
-							<TokenSelect
-								placeholder='Select a token from the list'
-								value={initiateTransactionData?.selectedToken}
-								safeTokenList={safeTokenList}
-								onChange={
-									(value) => {
-										console.log('change', value)
-										onChangeRecepientDetails(applicantData?.applicationId, 'selectedToken', { name: value?.id, info: value?.info })
-									}
-								} />
+					<Box h={2} />
 
-							<Box h={6} />
-						</>
-					
+					<TokenSelect
+						placeholder='Select a token from the list'
+						value={initiateTransactionData?.selectedToken}
+						safeTokenList={safeTokenList}
+						onChange={
+							(value) => {
+								console.log('change', value)
+								onChangeRecepientDetails(applicantData?.applicationId, 'selectedToken', { name: value?.id, info: value?.info })
+							}
+						} />
+
+					<Box h={6} />
+				</>
+
 
 				<Text
 					fontSize='14px'
@@ -324,7 +324,7 @@ const RecipientDetails = ({
 						type='number'
 						onChange={
 							async(e) => {
-								onChangeRecepientDetails(applicantData.applicationId || applicationID, 'amount', parseFloat(e.target.value))
+								onChangeRecepientDetails(applicantData.applicationId || applicationID, 'amount', parseFloat(e.target.value?.length > 0 ? e.target.value : '0'))
 							}
 						}
 					/>

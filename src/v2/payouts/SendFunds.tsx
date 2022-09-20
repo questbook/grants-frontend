@@ -6,7 +6,7 @@ import { defaultChainId } from 'src/constants/chains'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import { getFieldString, parseAmount } from 'src/utils/formattingUtils'
+import { getFieldString } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { isPlausibleSolanaAddress } from 'src/utils/generics'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -17,12 +17,11 @@ import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import SendFundsDrawer from 'src/v2/payouts/SendFundsDrawer/SendFundsDrawer'
 import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 import TransactionInitiatedModal from 'src/v2/payouts/TransactionInitiatedModal'
+import { Safe } from 'src/v2/types/safe'
 import { getGnosisTansactionLink, getTokenBalance } from 'src/v2/utils/gnosisUtils'
 import { getProposalUrl } from 'src/v2/utils/phantomUtils'
+import { getCeloTokenUSDRate, loadAssetId } from 'src/v2/utils/tokenToUSDconverter'
 import { erc20ABI, useAccount, useDisconnect } from 'wagmi'
-import { Safe } from '../types/safe'
-import { getCeloTokenUSDRate, getTokenUSDRate, loadAssetId } from '../utils/tokenToUSDconverter'
-import axios from 'axios'
 
 const ERC20Interface = new ethers.utils.Interface(erc20ABI)
 
@@ -40,9 +39,9 @@ export default function SendFunds({
 	const [applicationID, setApplicationId] = useState<string>('')
 
 	useEffect(() => {
-		if (router?.query) {
+		if(router?.query) {
 			const { applicationId: aId } = router.query
-			if (typeof aId === 'string') {
+			if(typeof aId === 'string') {
 				setApplicationId(aId)
 			}
 		}
@@ -57,7 +56,7 @@ export default function SendFunds({
 
 	useEffect(() => {
 
-		if (biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && workspacechainId &&
+		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && workspacechainId &&
 			biconomy.networkId && biconomy.networkId?.toString() === workspacechainId.toString()) {
 			setIsBiconomyInitialisedDisburse(true)
 		}
@@ -110,24 +109,25 @@ export default function SendFunds({
 	}
 
 	useEffect(() => {
-		if (workspaceSafeChainId === 42220) {
+		if(workspaceSafeChainId === 42220) {
 			loadAssetIdFromCoinGecko()
 		}
 
 	}, [workspaceSafe])
 
 	useEffect(() => {
-		if (workspaceSafeChainId === 42220)
+		if(workspaceSafeChainId === 42220) {
 			getCeloUSDRate()
+		}
 	}, [safeTokenList])
 
 	const currentSafe = useMemo(() => {
-		if (isEvmChain && workspaceSafe) {
+		if(isEvmChain && workspaceSafe) {
 			const txnServiceURL = safeServicesInfo[workspaceSafeChainId]
 			// loadAssetIdFromCoinGecko()
 			return new GnosisSafe(workspaceSafeChainId, txnServiceURL, workspaceSafe)
 		} else {
-			if (isPlausibleSolanaAddress(workspaceSafe)) {
+			if(isPlausibleSolanaAddress(workspaceSafe)) {
 
 				return new RealmsSolana(workspaceSafe)
 			}
@@ -158,11 +158,11 @@ export default function SendFunds({
 	}
 
 	useEffect(() => {
-		const getToken = async () => {
+		const getToken = async() => {
 			setSafeTokenList(await getTokenAndbalance(workspaceSafe))
 		}
 
-		if (isPlausibleSolanaAddress(workspaceSafe) && currentSafe) {
+		if(isPlausibleSolanaAddress(workspaceSafe) && currentSafe) {
 			getToken()
 		} else {
 			getTokensFromSafe()
@@ -170,8 +170,8 @@ export default function SendFunds({
 	}, [currentSafe])
 
 	useEffect(() => {
-		if (sendFundsTo?.length > 0) {
-			if (sendFundsTo?.length === 1) {
+		if(sendFundsTo?.length > 0) {
+			if(sendFundsTo?.length === 1) {
 				setSendFundsModalIsOpen(true)
 			} else {
 				setSendFundsDrawerIsOpen(true)
@@ -197,9 +197,9 @@ export default function SendFunds({
 	}, [sendFundsTo])
 
 	useEffect(() => {
-		if (phantomWalletConnected) {
+		if(phantomWalletConnected) {
 			getRealmsVerification()
-		} else if (isConnected) {
+		} else if(isConnected) {
 			verifyGnosisOwner()
 		} else {
 			setSignerVerififed(false)
@@ -207,7 +207,7 @@ export default function SendFunds({
 	}, [phantomWalletConnected, isConnected])
 
 	useEffect(() => {
-		if (signerVerified) {
+		if(signerVerified) {
 			setStep('VERIFIED_OWNER')
 		}
 	}, [signerVerified])
@@ -221,19 +221,19 @@ export default function SendFunds({
 		return txData
 	}
 
-	const getRealmsVerification = async () => {
-		if (phantomWallet?.publicKey?.toString()) {
+	const getRealmsVerification = async() => {
+		if(phantomWallet?.publicKey?.toString()) {
 			const isVerified = await currentSafe?.isOwner(phantomWallet.publicKey?.toString())
-			if (isVerified) {
+			if(isVerified) {
 				setSignerVerififed(true)
 			}
 		}
 	}
 
-	const verifyGnosisOwner = async () => {
-		if (isConnected) {
+	const verifyGnosisOwner = async() => {
+		if(isConnected) {
 			const isVerified = await currentSafe?.isOwner(workspaceSafe)
-			if (isVerified) {
+			if(isVerified) {
 				setSignerVerififed(true)
 			} else {
 				// console.log('not a owner')
@@ -243,47 +243,49 @@ export default function SendFunds({
 	}
 
 	const createEVMMetaTransactions = () => {
-		
-			const readyTxs = gnosisBatchData.map((data: any) => {
-				let tokenUSDRate: number
-				if (workspaceSafeChainId === 42220) {
-					const tokenSelected = data.selectedToken.name.toLowerCase()
-					if (tokenSelected === 'cusd'){
-						tokenUSDRate = celoTokensUSDRateMapping['celo-dollar'].usd
-					} else if( tokenSelected === 'ceuro') {
-						tokenUSDRate = celoTokensUSDRateMapping['celo-euro'].usd
-					} else if(tokenSelected==='tether'){
-						tokenUSDRate = celoTokensUSDRateMapping['tether'].usd
-					}
-				} else {
-					tokenUSDRate =  data.selectedToken.info.fiatConversion
-				}
-				const rewardAssetDecimals = data.selectedToken.info.decimals
-				const rewardAssetAddress = data.selectedToken.info.tokenAddress
-				const usdToToken = (data.amount / tokenUSDRate!).toFixed(rewardAssetDecimals)
-				
-				logger.info('usd amount, usd rate, usd to token amount', data.amount, tokenUSDRate!, usdToToken)
-				const txData = encodeTransactionData(data.to, (usdToToken.toString()), rewardAssetDecimals)
-				const tx = {
-					to: ethers.utils.getAddress(rewardAssetAddress),
-					data: txData,
-					value: '0'
-				}
-				return tx
-			})
 
-			setGnosisReadyToExecuteTxns(readyTxs)
-			return readyTxs
-		
+		const readyTxs = gnosisBatchData.map((data: any) => {
+			let tokenUSDRate: number
+			if(workspaceSafeChainId === 42220) {
+				const tokenSelected = data.selectedToken.name.toLowerCase()
+				if(tokenSelected === 'cusd') {
+					tokenUSDRate = celoTokensUSDRateMapping['celo-dollar'].usd
+				} else if(tokenSelected === 'ceuro') {
+					tokenUSDRate = celoTokensUSDRateMapping['celo-euro'].usd
+				} else if(tokenSelected === 'tether') {
+					tokenUSDRate = celoTokensUSDRateMapping['tether'].usd
+				}
+			} else {
+				tokenUSDRate = data.selectedToken.info.fiatConversion
+			}
+
+			const rewardAssetDecimals = data.selectedToken.info.decimals
+			const rewardAssetAddress = data.selectedToken.info.tokenAddress
+			const usdToToken = (data.amount / tokenUSDRate!).toFixed(rewardAssetDecimals)
+
+			logger.info('usd amount, usd rate, usd to token amount', data.amount, tokenUSDRate!, usdToToken)
+			const txData = encodeTransactionData(data.to, (usdToToken.toString()), rewardAssetDecimals)
+			const tx = {
+				to: ethers.utils.getAddress(rewardAssetAddress),
+				data: txData,
+				value: '0'
+			}
+			return tx
+		})
+
+		setGnosisReadyToExecuteTxns(readyTxs)
+		return readyTxs
+
 	}
-	const initiateTransaction = async () => {
+
+	const initiateTransaction = async() => {
 		// console.log('initiate transaction called')
 		let proposaladdress: string | undefined
-		if (isEvmChain) {
+		if(isEvmChain) {
 			const readyToExecuteTxs = createEVMMetaTransactions()
 			const safeTxHash = await currentSafe?.createMultiTransaction(readyToExecuteTxs, workspaceSafe)
 			// console.log('safe tx hash', safeTxHash)
-			if (safeTxHash) {
+			if(safeTxHash) {
 				proposaladdress = safeTxHash
 				setProposalAddr(safeTxHash)
 			} else {
@@ -291,7 +293,7 @@ export default function SendFunds({
 			}
 		} else {
 			proposaladdress = await currentSafe?.proposeTransactions(grantData?.grants ? grantData?.grants[0].title! : grantData.title, initiateTransactionData, phantomWallet)
-			if (!proposaladdress) {
+			if(!proposaladdress) {
 				throw new Error('No proposal address found!')
 			}
 
@@ -308,30 +310,30 @@ export default function SendFunds({
 
 	}
 
-	const disburseRewardFromSafe = useCallback(async (proposaladdress: string) => {
+	const disburseRewardFromSafe = useCallback(async(proposaladdress: string) => {
 		// console.log(workspacechainId)
-		if (!workspacechainId) {
+		if(!workspacechainId) {
 			return
 		}
 
 		try {
-			if (!workspacechainId) {
+			if(!workspacechainId) {
 				throw new Error('No network specified')
 			}
 
-			if (!proposaladdress) {
+			if(!proposaladdress) {
 				throw new Error('No proposal Address specified')
 			}
 
-			if (!initiateTransactionData) {
+			if(!initiateTransactionData) {
 				throw new Error('No data provided!')
 			}
 
-			if (!workspace) {
+			if(!workspace) {
 				throw new Error('No workspace found!')
 			}
 
-			if (typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
+			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
 				return
 			}
 
@@ -364,7 +366,7 @@ export default function SendFunds({
 				nonce
 			)
 
-			if (!transactionHash) {
+			if(!transactionHash) {
 				throw new Error('No transaction hash found!')
 			}
 
@@ -374,7 +376,7 @@ export default function SendFunds({
 			// console.log('receipt: ', receipt)
 			await chargeGas(Number(workspace.id), Number(txFee))
 
-		} catch (e) {
+		} catch(e) {
 			console.log('disburse error', e)
 		}
 	}, [workspace, biconomyWalletClient, workspacechainId, biconomy, workspaceRegistryContract, scwAddress, webwallet, nonce, initiateTransactionData, proposalAddr])
@@ -383,9 +385,9 @@ export default function SendFunds({
 		setRecepientError(error)
 	}
 
-	const onChangeRecepientDetails = async (applicationId: any, fieldName: string, fieldValue: any) => {
+	const onChangeRecepientDetails = async(applicationId: any, fieldName: string, fieldValue: any) => {
 
-		if (fieldName === 'selectedToken') {
+		if(fieldName === 'selectedToken') {
 			const tempData = initiateTransactionData.map((transactionData: any) => {
 				return { ...transactionData, [fieldName]: fieldValue }
 			})
@@ -393,7 +395,7 @@ export default function SendFunds({
 			setGnosisBatchData(tempData)
 		} else {
 			const tempData = initiateTransactionData.map((transactionData: any) => {
-				if (transactionData.applicationId === applicationId) {
+				if(transactionData.applicationId === applicationId) {
 					return { ...transactionData, [fieldName]: fieldValue }
 				}
 
@@ -404,39 +406,39 @@ export default function SendFunds({
 		}
 	}
 
-	const onModalStepChange = async (currentState: string) => {
+	const onModalStepChange = async(currentState: string) => {
 		switch (currentState) {
-			case 'RECEIPT_DETAILS':
-				setStep('CONNECT_WALLET')
-				break
-			case 'CONNECT_WALLET':
-				if (signerVerified) {
-					setStep('VERIFIED_OWNER')
-				}
+		case 'RECEIPT_DETAILS':
+			setStep('CONNECT_WALLET')
+			break
+		case 'CONNECT_WALLET':
+			if(signerVerified) {
+				setStep('VERIFIED_OWNER')
+			}
 
-				break
-			case 'VERIFIED_OWNER':
-				setStep('TRANSATION_INITIATED')
-				initiateTransaction()
-				setSendFundsModalIsOpen(false)
-				setSendFundsDrawerIsOpen(false)
-				setTxnInitModalIsOpen(true)
+			break
+		case 'VERIFIED_OWNER':
+			setStep('TRANSATION_INITIATED')
+			initiateTransaction()
+			setSendFundsModalIsOpen(false)
+			setSendFundsDrawerIsOpen(false)
+			setTxnInitModalIsOpen(true)
 
-				break
+			break
 		}
 	}
 
-	const onModalClose = async () => {
+	const onModalClose = async() => {
 		setStep('RECEIPT_DETAILS')
 		setSendFundsModalIsOpen(false)
 		setSendFundsDrawerIsOpen(false)
 		setTxnInitModalIsOpen(false)
-		if (phantomWallet?.isConnected) {
+		if(phantomWallet?.isConnected) {
 			await phantomWallet.disconnect()
 			setPhantomWalletConnected(false)
 		}
 
-		if (isConnected) {
+		if(isConnected) {
 			disconnect()
 		}
 	}
