@@ -5,7 +5,7 @@ import {
 import { ApiClientsContext } from 'pages/_app'
 import FloatingSidebar from 'src/components/ui/sidebar/floatingSidebar'
 import MailTo from 'src/components/your_grants/mail_to/mailTo'
-import { getFormattedFullDateFromUnixTimestamp, truncateStringFromMiddle } from 'src/utils/formattingUtils'
+import { getFieldString, getFormattedFullDateFromUnixTimestamp, truncateStringFromMiddle } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -14,11 +14,7 @@ function Sidebar({ applicationData }: any) {
 	const { workspace } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
 
-	const applicantEmail = applicationData?.fields?.find(
-		(fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
-	) ? applicationData?.fields?.find(
-			(fld: any) => fld?.id?.split('.')[1] === 'applicantEmail',
-		)?.values[0]?.value : undefined
+	const applicantEmail = getFieldString(applicationData, 'applicantEmail')
 
 	let icon: string
 	if(applicationData.grant.reward.token) {
