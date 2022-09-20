@@ -1,23 +1,11 @@
 import { Box, Flex, Image, Text } from '@chakra-ui/react'
+import { IReviewer, IReviewFeedback } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
 
 const RubricsView = ({ rubrics, reviewer }: {
-	rubrics?: {
-		items?: {rating?: number, comment?: string, rubric: {title: string}}[]
-		createdAtS: number
-	}
-	reviewer?: { id: string, name: string }
+	rubrics?: IReviewFeedback
+	reviewer?: IReviewer
 }) => {
-	const totalScore = (items?: {rating?: number}[]) => {
-		// console.log(items)
-		let s = 0
-		items?.forEach((item) => {
-			s += item.rating ?? 0
-		})
-
-		return s
-	}
-
 	const formatCreatedAt = (s: number) => {
 		const d = new Date(s * 1000)
 		return `Reviewed on ${d.getDate()}/${d.getMonth()}, ${d.getFullYear()}`
@@ -66,7 +54,7 @@ const RubricsView = ({ rubrics, reviewer }: {
 						noOfLines={1}
 						textOverflow='ellipsis'
 					>
-						{reviewer?.name}
+						{reviewer?.fullName}
 					</Text>
 					<Text
 						fontSize='12px'
@@ -77,7 +65,7 @@ const RubricsView = ({ rubrics, reviewer }: {
 						display='flex'
 						alignItems='center'
 					>
-						{rubrics && formatCreatedAt(rubrics.createdAtS)}
+						{rubrics?.createdAtS && formatCreatedAt(rubrics.createdAtS)}
 					</Text>
 				</Flex>
 
@@ -93,7 +81,7 @@ const RubricsView = ({ rubrics, reviewer }: {
 					alignItems='center'
 					ml='auto'
 				>
-					{totalScore(rubrics?.items ?? [])}
+					{rubrics?.total}
 				</Box>
 			</Flex>
 

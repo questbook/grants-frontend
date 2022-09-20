@@ -100,7 +100,6 @@ function ViewApplicants() {
 
 	const [sendFundsTo, setSendFundsTo] = useState<any[]>()
 
-
 	const { data: accountData } = useQuestbookAccount()
 	const router = useRouter()
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
@@ -265,10 +264,7 @@ function ViewApplicants() {
 	}, [router])
 
 	const [queryParams, setQueryParams] = useState<any>({
-		client:
-			subgraphClients[
-				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-			].client,
+		client: subgraphClients[workspacechainId].client,
 	})
 
 
@@ -570,9 +566,7 @@ function ViewApplicants() {
 
 	const [getReviewersForAWorkspaceParams, setGetReviewersForAWorkspaceParams] = useState<any>({
 		client:
-			subgraphClients[
-				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-			].client,
+			subgraphClients[workspacechainId].client,
 	})
 	const { data: reviewersForAWorkspaceData } = useGetReviewersForAWorkspaceQuery(getReviewersForAWorkspaceParams)
 	useEffect(() => {
@@ -815,6 +809,7 @@ function ViewApplicants() {
 							bg='white'
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
 							<RejectedPanel
+								chainId={workspacechainId}
 								applicantsData={applicantsData} />
 						</TabPanel>
 
@@ -826,6 +821,7 @@ function ViewApplicants() {
 							bg='white'
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
 							<ResubmitPanel
+								chainId={workspacechainId}
 								applicantsData={applicantsData} />
 						</TabPanel>
 
@@ -838,7 +834,7 @@ function ViewApplicants() {
 					onClose={() => setRubricDrawerOpen(false)}
 					onComplete={() => setRubricDrawerOpen(false)}
 					grantAddress={grantID}
-					chainId={getSupportedChainIdFromWorkspace(workspace) || defaultChainId}
+					chainId={workspacechainId}
 					setNetworkTransactionModalStep={setNetworkTransactionModalStep}
 					setTransactionHash={setTransactionHash}
 					data={reviewersForAWorkspaceData}
@@ -893,7 +889,7 @@ function ViewApplicants() {
 							'Rubric created and Reviewers assigned',
 						]
 					}
-					viewLink={getExplorerUrlForTxHash(getSupportedChainIdFromWorkspace(workspace) || defaultChainId, transactionHash)}
+					viewLink={getExplorerUrlForTxHash(workspacechainId, transactionHash)}
 					onClose={
 						() => {
 							setNetworkTransactionModalStep(undefined)

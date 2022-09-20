@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { ChevronRightIcon } from '@chakra-ui/icons'
 import {
 	Box,
@@ -14,6 +14,7 @@ import CopyIcon from 'src/components/ui/copy_icon'
 import MailTo from 'src/components/your_grants/mail_to/mailTo'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { GetApplicationDetailsQuery } from 'src/generated/graphql'
+import { IReviewer, IReviewFeedback } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
 import {
 	formatAddress,
@@ -21,7 +22,7 @@ import {
 	getFormattedFullDateFromUnixTimestamp, getRewardAmount,
 	truncateStringFromMiddle,
 } from 'src/utils/formattingUtils'
-import { getFromIPFS } from 'src/utils/ipfsUtils'
+import { useLoadReviews } from 'src/utils/reviews'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import {
 	getSupportedChainIdFromSupportedNetwork,
@@ -48,64 +49,19 @@ function Sidebar({
 	const applicantEmail = getFieldString(applicationData, 'applicantEmail')
 	const applicantAddress = getFieldString(applicationData, 'applicantAddress')
 
-	const [reviews, setReviews] = useState<any>()
-	const [selectedReview, setSelectedReview] = useState<any>()
-	const [selectedReviewer, setSelectedReviewer] = useState<any>()
+	const [selectedReview, setSelectedReview] = useState<IReviewFeedback>()
+	const [selectedReviewer, setSelectedReviewer] = useState<IReviewer>()
 	const [scoreDrawerOpen, setScoreDrawerOpen] = useState(false)
 
-	const getReview = async(hash: string) => {
-		if(hash === '') {
-			return {}
-		}
-
-		const d = await getFromIPFS(hash)
-		try {
-			const data = JSON.parse(d)
-			return data
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} catch(e: any) {
-			// console.log('incorrect review', e)
-			return {}
-		}
-	}
-
-	const getReviews = async(reviews: any[]) => {
-		const reviewsDataMap = {} as any
-		const reviewsData = await Promise.all(reviews?.map(async(review) => {
-			const data = await getReview(review?.publicReviewDataHash)
-			return data
-		}))
-
-		reviewsData.forEach((review, i) => {
-			const reviewerIdSplit = reviews[i]?.reviewer?.id.split('.')
-			const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
-			reviewsDataMap[reviewerId] = {
-				items: review?.items,
-				createdAtS: reviews[i]?.createdAtS,
-			}
-		})
-
-		// console.log('reviewsData', reviewsData)
-		// console.log('reviewsData', reviewsDataMap)
-		setReviews(reviewsDataMap)
-	}
-
-	useEffect(() => {
-		// console.log('appl side', applicationData)
-		if(applicationData?.reviews?.length) {
-			getReviews(applicationData.reviews)
-		}
-	}, [applicationData])
-
-	const totalScore = (items?: any[]) => {
-		// console.log(items)
-		let s = 0
-		items?.forEach((item) => {
-			s += item?.rating ?? 0
-		})
-
-		return s
-	}
+	const { reviews } = useLoadReviews(
+		applicationData
+			? {
+				applicationId: applicationData.id,
+				reviews: applicationData.reviews,
+				grant: applicationData.grant
+			} : undefined,
+		chainId
+	)
 
 	let icon
 	let label
@@ -387,7 +343,7 @@ function Sidebar({
 												lineHeight='16px'>
 												{
 													review
-														? totalScore(review.items)
+														? review.total
 														: 'Not Reviewed'
 												}
 											</Text>

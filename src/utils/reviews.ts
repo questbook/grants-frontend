@@ -1,10 +1,12 @@
-import { useContext } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { ReviewSetRequest } from '@questbook/service-validator-client'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { defaultChainId } from 'src/constants/chains'
 import { useGetWorkspaceMembersPublicKeysQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
-import { IReview, IReviewFeedback } from 'src/types'
+import { IApplicantData, IReview, IReviewFeedback } from 'src/types'
 import { getFromIPFS, uploadToIPFS } from 'src/utils/ipfsUtils'
+import logger from 'src/utils/logger'
 import { getKeyForApplication, getSecureChannelFromPublicKey, useGetPublicKeysOfGrantManagers } from 'src/utils/pii'
 
 type PrivateReviewData = {
@@ -131,6 +133,7 @@ export function useLoadReview(
 			data = JSON.parse(ipfsData || '{}')
 		}
 
+		data.total = totalScore(data.items)
 		return data
 	}
 
@@ -138,6 +141,46 @@ export function useLoadReview(
 		loadReview,
 		isReviewPrivate
 	}
+}
+
+type ApplicationData = Pick<IApplicantData, 'applicationId' | 'reviews' | 'grant'>
+
+export const useLoadReviews = (
+	applicationData: ApplicationData | undefined,
+	chainId: SupportedChainId | undefined
+) => {
+	const submittedReviews = applicationData?.reviews
+
+	const [reviews, setReviews] = useState<{ [_id: string]: IReviewFeedback }>({ })
+	const { loadReview } = useLoadReview(applicationData?.grant?.id, chainId || defaultChainId)
+
+	const loadReviews = useCallback(
+		async() => {
+			const reviewsDataMap: typeof reviews = {}
+
+			await Promise.all(
+				submittedReviews!.map(async(review) => {
+					try {
+						const reviewData = await loadReview(review, applicationData!.applicationId)
+						const [, reviewerAddress] = review.reviewer!.id.split('.')
+						reviewsDataMap[reviewerAddress] = reviewData
+					} catch(err) {
+						logger.error({ err, review }, 'error in loading review')
+					}
+				})
+			)
+
+			setReviews(reviewsDataMap)
+		}, [setReviews, loadReview, submittedReviews, applicationData]
+	)
+
+	useEffect(() => {
+		if(submittedReviews?.length) {
+			loadReviews()
+		}
+	}, [submittedReviews])
+
+	return { reviews }
 }
 
 export const useGenerateReviewData = ({
@@ -216,4 +259,8 @@ export const useGenerateReviewData = ({
 	return {
 		generateReviewData
 	}
+}
+
+function totalScore(items: IReviewFeedback['items'] | undefined) {
+	return items?.reduce((acc, item) => acc + (item.rating || 0), 0) || 0
 }
