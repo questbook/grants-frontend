@@ -10,7 +10,6 @@ import { ApiClientsContext } from 'pages/_app'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import Funding from 'src/components/your_applications/manage_grant/fundingRequestedTable'
 import MilestoneTable from 'src/components/your_applications/manage_grant/milestoneTable'
-import Sidebar from 'src/components/your_applications/manage_grant/sidebar'
 import { defaultChainId } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import {
@@ -21,6 +20,7 @@ import NavbarLayout from 'src/layout/navbarLayout'
 import { ApplicationMilestone } from 'src/types'
 import { formatAmount } from 'src/utils/formattingUtils'
 import verify from 'src/utils/grantUtils'
+import logger from 'src/utils/logger'
 import useApplicationMilestones from 'src/utils/queryUtil'
 import { getChainInfo } from 'src/utils/tokenUtils'
 
@@ -58,11 +58,13 @@ function ManageGrant() {
 
 
 	useEffect(() => {
-		if(router && router.query) {
+		if(router?.query) {
 			// console.log(router.query)
 			const { chainId: cId, applicationId: aId } = router.query
-			setChainId(cId as unknown as SupportedChainId)
-			setApplicationID(aId)
+			if(typeof cId === 'string' && typeof aId === 'string') {
+				setChainId(cId as unknown as SupportedChainId)
+				setApplicationID(aId)
+			}
 		}
 	}, [router])
 
@@ -118,7 +120,7 @@ function ManageGrant() {
 	const [tabs, setTabs] = useState<{icon?: string, title: string, subtitle: string}[]>([])
 
 	useEffect(() => {
-		if(data && data.grantApplication && chainId) {
+		if(data?.grantApplication && chainId) {
 			const application = data.grantApplication
 			setApplicationData({
 				title: application.grant.title,
@@ -131,14 +133,22 @@ function ManageGrant() {
 				id: application.id,
 			})
 
+			logger.info({ grant: application.grant, chainId }, 'Manage Grant #1')
 			const chainInfo = getChainInfo(application.grant, chainId)
+			logger.info({ chainInfo }, 'Manage Grant #2')
 			// let assetInfo;
-			if(application.grant.reward.token) {
-				setRewardToken(chainInfo)
-			}
+			// if(application.grant.reward.token) {
+			// 	setRewardToken(chainInfo)
+			// 	setFundingIcon(chainInfo.icon)
+			// }
 
-			setAssetInfo(chainInfo)
+			// setAssetInfo(chainInfo)
+			// logger.info({ chainInfo }, 'Icon')
+			// setFundingIcon(chainInfo.icon)
+
+			setRewardToken(chainInfo)
 			setFundingIcon(chainInfo.icon)
+			setAssetInfo(chainInfo)
 
 			const [localIsGrantVerified, localFunding] = verify(
 				application.grant.funding,
@@ -214,6 +224,7 @@ function ManageGrant() {
 					{
 						tabs.map((tab, index) => {
 							// console.log('TAB: ', tab)
+							logger.info({ tab }, 'Tab')
 							return (
 								<Button
 									key={tab.title}
@@ -259,7 +270,7 @@ function ManageGrant() {
 														h='26px'
 														w='26px'
 														src={tab.icon}
-														alt={tab.icon} />
+														 />
 												)
 											}
 											<Box mx={1} />
