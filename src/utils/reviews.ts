@@ -196,7 +196,7 @@ export const useGenerateReviewData = ({
 	const { validatorApi } = useContext(ApiClientsContext)!
 	const { fetch: fetchPubKeys } = useGetPublicKeysOfGrantManagers(grantId, chainId)
 
-	const generateReviewData = async(data: IReviewFeedback) => {
+	const generateReviewData = async(data: Pick<IReviewFeedback, 'items'>) => {
 		if(!webwallet) {
 			throw new Error('Webwallet not initialized')
 		}
