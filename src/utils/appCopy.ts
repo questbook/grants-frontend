@@ -178,8 +178,8 @@ i18next.use(initReactI18next).init({
 				'/manage_dao': {
 					'create_link': 'Create invite link',
 					'create_link_description': 'Share this link only with your team member. One invite link can be used exactly once.',
-					'role_info': 'Admins have full access. Reviewers can only review applications, they can’t send funds.',
-					'ecosystem_growth_program_name': 'Ecosystem Growth Program Name',
+					'role_info': 'Admins have full access. Reviewers can only review proposals, they can’t send funds.',
+					'ecosystem_growth_program_name': 'Name',
 					'about': 'About',
 					'about_description': 'Write details about opportunities in your ecosystem for builders. Details of your grant, bounty and other programs.  your grants, bounty, and other projects.',
 				},
