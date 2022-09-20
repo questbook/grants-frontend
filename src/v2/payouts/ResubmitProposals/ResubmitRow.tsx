@@ -90,7 +90,7 @@ const ResubmitRow = ({
 					>
 						<Image
 							borderRadius='3xl'
-							src={getAvatar(applicantData?.applicantAddress)}
+							src={getAvatar(false, applicantData?.applicantAddress)}
 						/>
 					</Flex>
 
@@ -259,7 +259,7 @@ const ResubmitRow = ({
 												>
 													<Image
 														borderRadius='3xl'
-														src={getAvatar(reviewerId)}
+														src={getAvatar(false, reviewerId)}
 													/>
 												</Flex>
 

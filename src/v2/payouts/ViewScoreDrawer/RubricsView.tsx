@@ -49,7 +49,7 @@ const RubricsView = ({ rubrics, reviewer }: {
 				>
 					<Image
 						borderRadius='3xl'
-						src={getAvatar(reviewer?.id)}
+						src={getAvatar(false, reviewer?.id)}
 					/>
 				</Flex>
 

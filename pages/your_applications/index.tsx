@@ -17,6 +17,8 @@ import NavbarLayout from 'src/layout/navbarLayout'
 import { formatAmount, getChainIdFromResponse, getFormattedDateFromUnixTimestamp } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
+import getAvatar from 'src/utils/avatarUtils'
+import config from 'src/constants/config.json'
 
 const PAGE_SIZE = 20
 
@@ -136,7 +138,9 @@ function YourApplications() {
           			key={application.id}
           			grantTitle={application.grant.title}
           			daoName={application.grant.workspace.title}
-          			daoIcon={getUrlForIPFSHash(application.grant.workspace.logoIpfsHash)}
+          			daoIcon={application.grant.workspace.logoIpfsHash === config.defaultDAOImageHash?
+						getAvatar(true, application.grant.workspace.title):
+						getUrlForIPFSHash(application.grant.workspace.logoIpfsHash)}
           			isGrantVerified={(new BN(application.grant.funding)).gt(new BN(0))}
           			funding={
           				formatAmount(
