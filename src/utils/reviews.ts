@@ -112,7 +112,10 @@ export function useLoadReview(
 				reviewData = await loadPrivateReviewDataForReviewer(review)
 			}
 
-			// console.log(`decrypting "${review.id}" using "${reviewData.walletAddress}" shared key`)
+			logger.info(
+				{ reviewId: review.id, walletAddress: reviewData.walletAddress },
+				'decrypting review using shared key'
+			)
 
 			const ipfsData = await getFromIPFS(reviewData!.dataIpfsHash)
 			const { decrypt } = await getSecureChannelFromPublicKey(
@@ -121,7 +124,7 @@ export function useLoadReview(
 				getKeyForApplication(applicationId)
 			)
 
-			// console.log(`prepared secure channel for decryption with "${reviewData!.walletAddress}"`)
+			logger.info({ walletAddress: reviewData!.walletAddress }, 'prepared secure channel for decryption')
 			const jsonReview = await decrypt(ipfsData)
 			data = JSON.parse(jsonReview)
 		} else {
@@ -131,6 +134,7 @@ export function useLoadReview(
 
 		data.total = totalScore(data.items)
 		data.createdAtS = review.createdAtS
+
 		return data
 	}
 
@@ -203,8 +207,7 @@ export const useGenerateReviewData = ({
 				throw new Error('No grant managers on the grant. Please contact support')
 			}
 
-			// console.log(`encrypting review for ${managers.length} admins...`)
-
+			logger.info({ data, count: managers.length }, 'encrypting review for admins...')
 			// we go through all wallet addresses
 			// and upload the private review for each
 			await Promise.all(
@@ -212,7 +215,7 @@ export const useGenerateReviewData = ({
 					async walletAddress => {
 						const publicKey = grantManagerMap[walletAddress]
 						if(!publicKey) {
-							// console.log(`manager "${walletAddress}" does not have private key set, ignoring...`)
+							logger.warn(`manager "${walletAddress}" does not have private key set, ignoring...`)
 							return
 						}
 
@@ -231,7 +234,7 @@ export const useGenerateReviewData = ({
 				throw new Error('No valid managers to encrypt for!')
 			}
 
-			// console.log('generated encrypted reviews')
+			logger.info('generated encrypted reviews')
 		} else {
 			dataHash = (await uploadToIPFS(jsonReview)).hash
 		}
