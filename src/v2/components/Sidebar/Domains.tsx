@@ -23,7 +23,8 @@ function Domains({ workspaces, onWorkspaceClick }: Props) {
 	const { t } = useTranslation()
 
 	// only expand if there are more workspaces to show
-	const expandable = workspaces.length > 1
+	// const expandable = workspaces.length > 1
+	const expandable = true
 
 	const areWorkspaceEqual = (workspace1: MinimalWorkspace, workspace2: MinimalWorkspace) => workspace1?.id === workspace2?.id && workspace1?.supportedNetworks[0] === workspace2?.supportedNetworks[0]
 
@@ -51,8 +52,8 @@ function Domains({ workspaces, onWorkspaceClick }: Props) {
 				/>
 				<Flex
 					direction='column'
-					ml={2}
-					mr='auto'>
+					mx={2}
+					flex={1}>
 					<Text
 						variant='v2_body'
 						m={0}
