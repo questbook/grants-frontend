@@ -54,7 +54,9 @@ function BrowseGrantCard({
 	const { t } = useTranslation()
 
 	useEffect(() => {
-		if(grantReward === 0) {
+		if(grantReward === 0 && grantCurrency === 'USD') {
+			setGrantReward(parseInt(grantAmount))
+		}else if(grantCurrency!== 'USD'){
 			calculateUSDValue(grantAmount, grantCurrencyPair).then((promise: any) => {
 				setGrantReward(promise as number)
 			})
@@ -141,7 +143,7 @@ function BrowseGrantCard({
 								color='#373737'
 							>
 								<b>
-									{grantReward !== 0 ? `$${nFormatter(grantReward.toFixed(0))}` : grantAmount}
+									{grantReward !== 0 && `$${nFormatter(grantReward.toFixed(0))}`}
 								</b>
 								{' '}
 								{t('/profile.cards.per_proposal')}
