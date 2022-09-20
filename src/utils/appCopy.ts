@@ -100,7 +100,7 @@ i18next.use(initReactI18next).init({
 					'pick_network_placeholder' : 'Pick a network',
 					'program_name_title': '',
 					'program_name': 'Give it a name',
-					'program_name_helper': 'Typically the name is chosen to be an area of focus for your ecosystem growth',
+					'program_name_helper': 'Typically name reflects an area of focus for your ecosystem growth',
 					'program_name_placeholder': 'e.g. Compound Risk Parameter Research Grants',
 					'create': 'Create',
 					'verify_signer': 'Please verify you’re a signer on this SAFE. This will ensure we don’t have impersonation.',
