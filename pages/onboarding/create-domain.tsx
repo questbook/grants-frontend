@@ -282,6 +282,12 @@ const OnboardingCreateDomain = () => {
 			safeAddressErrorText={safeAddressError}
 			setValue={
 				(newValue) => {
+					if(step === 1) {
+						setStep(0)
+						setIsSafeAddressVerified(false)
+						setSafeSelected(undefined)
+					}
+
 					setSafeAddress(newValue)
 				}
 			}
