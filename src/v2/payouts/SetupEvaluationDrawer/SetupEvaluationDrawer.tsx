@@ -272,39 +272,8 @@ const SetupEvaluationDrawer = ({
 					<Flex
 						direction='row'
 						align='center'>
-						<Flex
-							bg='#D1D7F4'
-							h='48px'
-							w='48px'
-							borderRadius='2px'
-							alignItems='center'
-							justifyContent='center'
-						>
-							<SetupEvaluation
-								color='#036AFF'
-								h='28px'
-								w='28px' />
-						</Flex>
 
-						<Flex
-							ml={2}
-							mr='auto'
-							flexDirection='column'>
-							<Text
-								fontSize='20px'
-								lineHeight='24px'
-								fontWeight='500'
-							>
-								{t('/your_grants/view_applicants.create_review_process')}
-							</Text>
-							<Text
-								fontSize='14px'
-								lineHeight='20px'
-								fontWeight='400'
-								mt={1}
-								color='#7D7DA0'
-							 />
-						</Flex>
+
 
 						<CancelCircleFilled
 							mb='auto'
