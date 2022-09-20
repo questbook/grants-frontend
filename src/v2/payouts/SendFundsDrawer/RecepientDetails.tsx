@@ -206,7 +206,7 @@ const RecipientDetails = ({
 										errorBorderColor='red'
 										height='auto'
 										type='number'
-										onChange={async (e) => onChangeRecepientDetails(data.applicationId, 'amount', parseFloat(e.target.value))}
+										onChange={async(e) => onChangeRecepientDetails(data.applicationId, 'amount', parseFloat(e.target.value?.length > 0 ? e.target.value : '0'))}
 									/>
 								</Flex>
 							</Flex>

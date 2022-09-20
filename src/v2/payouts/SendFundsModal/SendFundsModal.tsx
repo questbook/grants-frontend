@@ -11,6 +11,7 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import { IApplicantData } from 'src/types'
+import logger from 'src/utils/logger'
 import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
 import { FishEye } from 'src/v2/assets/custom chakra icons/FishEye'
 import { FundsCircle } from 'src/v2/assets/custom chakra icons/Your Grants/FundsCircle'
@@ -260,11 +261,9 @@ function SendFundsModal({
 										ml='auto'
 										colorScheme='brandv2'
 										disabled={
-											(initiateTransactionData?.length > 0 ?
-												initiateTransactionData[0]?.selectedMilestone === undefined
-											|| initiateTransactionData[0]?.amount === undefined : false) || (
-												recepientError != ''
-											)
+											initiateTransactionData?.length === 0 || initiateTransactionData?.filter((item) => {
+												return item?.amount === 0
+											})?.length > 0
 										}
 										onClick={
 											async() => {

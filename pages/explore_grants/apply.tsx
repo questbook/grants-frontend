@@ -149,7 +149,7 @@ function ApplyGrant() {
 			setRewardCurrencyCoin(grantData.reward.token.iconHash)
 			setRewardDecimal(chainInfo.decimals)
 		} else {
-			
+
 			supportedCurrencyObj = getAssetInfo(
 				grantData?.reward?.asset?.toLowerCase(),
 				chainId,

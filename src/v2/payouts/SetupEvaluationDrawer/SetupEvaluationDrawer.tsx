@@ -440,7 +440,8 @@ const SetupEvaluationDrawer = ({
 									onRubricCriteriaDelete={onRubricCriteriaDelete} />
 							) : (
 								<AssignReviewers
-									minCount={1}
+									/** shouldn't be selecting more than 1 reviewer, if num of reviewers is 0 */
+									minCount={Math.min(1, reviewers.length)}
 									maxCount={Math.min(reviewers.length, MAX_REVIEWER_COUNT)}
 									defaultSliderValue={defaultSliderValue}
 									sliderValue={numOfReviewersPerApplication}
@@ -472,7 +473,7 @@ const SetupEvaluationDrawer = ({
 							colorScheme='brandv2'
 							disabled={
 								(step === 0 && !canContinue)
-								|| (step === 1 && reviewers.filter(r => r.isSelected).length < numOfReviewersPerApplication)
+								|| (step === 1 && (reviewers.filter(r => r.isSelected).length < numOfReviewersPerApplication || !numOfReviewersPerApplication))
 							}
 							onClick={
 								async() => {

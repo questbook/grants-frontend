@@ -41,7 +41,7 @@ function EditGrant() {
 	})
 
 	useEffect(() => {
-		if (!workspace) {
+		if(!workspace) {
 			return
 		}
 
@@ -59,21 +59,21 @@ function EditGrant() {
 		loading: queryLoading,
 	} = useGetGrantDetailsQuery(queryParams)
 
-	const getDecodedDetails = async (detailsHash: string, grant: any) => {
+	const getDecodedDetails = async(detailsHash: string, grant: any) => {
 		// console.log(detailsHash)
 		const d = await getFromIPFS(detailsHash)
 		let reward
 		let rewardCurrency
 		let rewardCurrencyAddress
 
-		if (grant.reward.token) {
+		if(grant.reward.token) {
 			reward = ethers.utils.formatUnits(
 				grant.reward.committed,
 				grant.reward.token.decimal,
 			).toString()
 			rewardCurrency = grant.reward.token.label
 			rewardCurrencyAddress = grant.reward.token.address
-		} else if (grant.reward.asset === "0x0000000000000000000000000000000000000001") {
+		} else if(grant.reward.asset === USD_ASSET) {
 			reward = grant.reward.committed
 		} else {
 			reward = formatAmount(
@@ -151,9 +151,9 @@ function EditGrant() {
 	}
 
 	useEffect(() => {
-		if (data && data.grants && data.grants.length > 0) {
+		if(data && data.grants && data.grants.length > 0) {
 			const grant = data.grants[0]
-			if (grant.details.startsWith('Qm') && grant.details.length < 64) {
+			if(grant.details.startsWith('Qm') && grant.details.length < 64) {
 				getDecodedDetails(grant.details, grant)
 				return
 			}
@@ -161,17 +161,16 @@ function EditGrant() {
 			let reward
 			// let rewardCurrency
 			// let rewardCurrencyAddress
-			if (grant.reward.token) {
+			if(grant.reward.token) {
 				reward = ethers.utils.formatUnits(
 					grant.reward.committed,
 					grant.reward.token.decimal,
 				).toString()
 				// rewardCurrency = grant.reward.token.label
 				// rewardCurrencyAddress = grant.reward.token.address
-			} else if (grant.reward.asset === USD_ASSET) {
+			} else if(grant.reward.asset === USD_ASSET) {
 				reward = grant.reward.committed
-			}
-			else {
+			} else {
 				reward = formatAmount(
 					grant.reward.committed,
 					CHAIN_INFO[
@@ -312,7 +311,7 @@ function EditGrant() {
 				}
 				viewLink={txnLink}
 				onClose={
-					async () => {
+					async() => {
 						router.push({ pathname: '/your_grants' })
 					}
 				} />
@@ -320,7 +319,7 @@ function EditGrant() {
 	)
 }
 
-EditGrant.getLayout = function (page: ReactElement) {
+EditGrant.getLayout = function(page: ReactElement) {
 	return (
 		<NavbarLayout>
 			{page}

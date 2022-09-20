@@ -53,7 +53,7 @@ function GrantRewardsInput({
 }) {
 	const [isModalOpen, setIsModalOpen] = React.useState(false)
 	const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState<any[]>([])
-	
+
 	const [isJustAddedToken, setIsJustAddedToken] = React.useState<boolean>(false)
 	const addERC = false
 	const showSupportedCurrencies = isEVM && supportedCurrenciesList.length > 0

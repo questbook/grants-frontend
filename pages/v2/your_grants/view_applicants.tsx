@@ -69,6 +69,7 @@ function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 }
 
 function ViewApplicants() {
+	const [tabIndex, setTabIndex] = useState(1)
 	const [applicantsData, setApplicantsData] = useState<any>([])
 	// const [reviewerData, setReviewerData] = useState<any>([])
 	// const [daoId, setDaoId] = useState('')
@@ -762,16 +763,30 @@ function ViewApplicants() {
 
 
 				<Tabs
+					index={tabIndex}
+					onChange={(i) => setTabIndex(i)}
 					h={8}
 					colorScheme='brandv2'>
 					<TabList>
-						<StyledTab label={`Accepted (${applicantsData.filter((item: any) => (2 === item.status)).length})`} />
 						<StyledTab label={`In Review (${applicantsData.filter((item: any) => (0 === item.status)).length})`} />
+						<StyledTab label={`Accepted (${applicantsData.filter((item: any) => (2 === item.status)).length})`} />
 						<StyledTab label={`Rejected (${applicantsData.filter((item: any) => (3 === item.status)).length})`} />
 						<StyledTab label={`Asked to Resubmit (${applicantsData.filter((item: any) => (1 === item.status)).length})`} />
 					</TabList>
 
 					<TabPanels>
+						<TabPanel
+							tabIndex={1}
+							borderRadius='2px'
+							p={0}
+							mt={5}
+							bg='white'
+							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
+							<InReviewPanel
+								applicantsData={applicantsData}
+								grantData={grantData} />
+						</TabPanel>
+
 						<TabPanel
 							borderRadius='2px'
 							p={0}
@@ -789,18 +804,6 @@ function ViewApplicants() {
 								grantData={grantData}
 								rewardAssetDecimals={rewardAssetDecimals}
 							/>
-						</TabPanel>
-
-						<TabPanel
-							tabIndex={1}
-							borderRadius='2px'
-							p={0}
-							mt={5}
-							bg='white'
-							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
-							<InReviewPanel
-								applicantsData={applicantsData}
-								grantData={grantData} />
 						</TabPanel>
 
 						<TabPanel

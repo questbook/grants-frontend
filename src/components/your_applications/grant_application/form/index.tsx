@@ -570,7 +570,7 @@ function Form({
 									mb={4}
 									variant='primary'
 								>
-									Edit Application for Resubmit
+									Edit Application for Resubmission
 								</Button>
 							) : null
 						}
@@ -774,7 +774,7 @@ function Form({
 									mb={4}
 									variant='primary'
 								>
-									Edit Application for Resubmit
+									Edit Application for Resubmission
 								</Button>
 							) : null
 						}

@@ -10,6 +10,7 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import { IApplicantData } from 'src/types'
+import logger from 'src/utils/logger'
 import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
 import { FishEye } from 'src/v2/assets/custom chakra icons/FishEye'
 import { FundsCircle } from 'src/v2/assets/custom chakra icons/Your Grants/FundsCircle'
@@ -64,7 +65,7 @@ function SendFundsDrawer({
 	const validateReceipentInput = () => {
 		let isNotValid = false
 		initiateTransactionData?.map((data,) => {
-			if(data.to === undefined || data.selectedMilestone === undefined || data.amount === undefined) {
+			if(data.to === undefined || data.selectedMilestone === undefined || data.amount === undefined || data.amount === 0) {
 				isNotValid = true
 			}
 		})
@@ -270,7 +271,14 @@ function SendFundsDrawer({
 								<Button
 									ml='auto'
 									colorScheme='brandv2'
-									disabled={validateReceipentInput()}
+									disabled={
+										initiateTransactionData?.filter((data) => {
+											logger.info({ data })
+											if(data.to === undefined || data.to === '' || data.selectedMilestone === undefined || data.amount === undefined || data.amount === 0) {
+												return true
+											}
+										})?.length > 0
+									}
 									onClick={
 										async() => {
 											onModalStepChange(step)

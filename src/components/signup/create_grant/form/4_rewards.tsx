@@ -295,7 +295,7 @@ function GrantRewardsInput({
 						setSupportedCurrenciesList={setSupportedCurrenciesList}
 						setIsJustAddedToken={setIsJustAddedToken}
 					/>
-					
+
 				</Flex>
 
 				<Box mt={12} />

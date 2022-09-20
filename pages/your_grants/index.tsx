@@ -196,12 +196,6 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 	const [isLoading, setIsLoading] = useState(true)
 
 	useEffect(() => {
-		setSelectedTab(
-			parseInt(localStorage.getItem('yourGrantsTabSelected') || '0'),
-		)
-	}, [])
-
-	useEffect(() => {
 		if(!workspace) {
 			return
 		}
@@ -466,10 +460,6 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 										onClick={
 											() => {
 												setSelectedTab(tab.index)
-												localStorage.setItem(
-													'yourGrantsTabSelected',
-													tab.index.toString(),
-												)
 											}
 										}
 										_hover={{}}
@@ -490,18 +480,17 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 						isAdmin &&
 						grants.length > 0 &&
 						grants.map((grant) => {
-							let grantAmount = grant.reward.committed
+							const grantAmount = grant.reward.committed
 							let decimals
 							let icon
 							let label
-							
+
 							if(grant.reward.token) {
 								// console.log('Reward has token')
 								decimals = grant.reward.token.decimal
 								label = grant.reward.token.label
 								icon = grant.reward.token.iconHash
-							}
-							 else {
+							} else {
 								decimals =
 									CHAIN_INFO[
 										getSupportedChainIdFromSupportedNetwork(
@@ -536,7 +525,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 									endTimestamp={new Date(grant.deadline!).getTime()}
 									grantAmount={formatAmount(grantAmount, decimals)}
 									grantCurrency={label || 'LOL'}
-									grantCurrencyIcon={grant.reward.asset === "0x0000000000000000000000000000000000000001" ? '/dollar_icon.svg' :icon}
+									grantCurrencyIcon={grant.reward.asset === '0x0000000000000000000000000000000000000001' ? '/dollar_icon.svg' : icon}
 									state='done'
 									chainId={
 										getSupportedChainIdFromSupportedNetwork(
@@ -605,7 +594,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 							}
 
             	return (
-	<YourGrantCard
+								<YourGrantCard
             			grantID={grant.grant.id}
             			key={grant.grant.id}
             			daoIcon={

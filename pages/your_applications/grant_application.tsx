@@ -100,6 +100,7 @@ function ViewApplication() {
 		if(!application || !application?.fields?.length) {
 			return
 		}
+
 		console.log('application data', application)
 		let decimals: number
 		if(application.grant.reward.token) {
@@ -167,10 +168,11 @@ function ViewApplication() {
 	let label
 	let icon
 	let decimals
-	if(application?.grant.reward.asset === USD_ASSET){
+	if(application?.grant.reward.asset === USD_ASSET) {
 		label = 'USD'
 		icon = USD_ICON
 	}
+
 	if(application?.grant.reward.token) {
 		decimals = application.grant.reward.token.decimal
 		label = application.grant.reward.token.label
