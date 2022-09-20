@@ -18,6 +18,8 @@ import { SetupEvaluation } from 'src/v2/assets/custom chakra icons/SetupEvaluati
 import AssignReviewers from 'src/v2/payouts/SetupEvaluationDrawer/AssignReviewers'
 import RubricsForm from 'src/v2/payouts/SetupEvaluationDrawer/RubricsForm'
 
+const MAX_REVIEWER_COUNT = 5
+
 const SetupEvaluationDrawer = ({
 	isOpen,
 	onClose,
@@ -439,7 +441,7 @@ const SetupEvaluationDrawer = ({
 							) : (
 								<AssignReviewers
 									minCount={1}
-									maxCount={5}
+									maxCount={Math.min(reviewers.length, MAX_REVIEWER_COUNT)}
 									defaultSliderValue={defaultSliderValue}
 									sliderValue={numOfReviewersPerApplication}
 									onSlide={
@@ -468,7 +470,10 @@ const SetupEvaluationDrawer = ({
 
 						<Button
 							colorScheme='brandv2'
-							disabled={(step === 0 && !canContinue) || step === 1 && reviewers.filter(r => r.isSelected).length === 0}
+							disabled={
+								(step === 0 && !canContinue)
+								|| (step === 1 && reviewers.filter(r => r.isSelected).length < numOfReviewersPerApplication)
+							}
 							onClick={
 								async() => {
 									if(step === 0) {
