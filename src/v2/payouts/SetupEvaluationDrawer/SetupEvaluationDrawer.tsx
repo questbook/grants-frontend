@@ -14,7 +14,6 @@ import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } f
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
 import { FishEye } from 'src/v2/assets/custom chakra icons/FishEye'
-import { SetupEvaluation } from 'src/v2/assets/custom chakra icons/SetupEvaluation'
 import AssignReviewers from 'src/v2/payouts/SetupEvaluationDrawer/AssignReviewers'
 import RubricsForm from 'src/v2/payouts/SetupEvaluationDrawer/RubricsForm'
 
@@ -243,6 +242,8 @@ const SetupEvaluationDrawer = ({
 		onComplete()
 	}
 
+	const TABS = [{ text: t('/your_grants/view_applicants.review_questions') }, { text: t('/your_grants/view_applicants.select_reviewers') }]
+
 	return (
 		<Drawer
 			placement='right'
@@ -274,7 +275,6 @@ const SetupEvaluationDrawer = ({
 						align='center'>
 
 
-
 						<CancelCircleFilled
 							mb='auto'
 							color='#7D7DA0'
@@ -300,84 +300,61 @@ const SetupEvaluationDrawer = ({
 						maxH='calc(100vh - 32px)'
 						overflowY='auto'
 						direction='column'>
-						<Flex>
-							<Flex
-								flex={1}
-								direction='column'
-							>
-								<Box
-									bg={step === 0 ? '#785EF0' : '#E0E0EC'}
-									borderRadius='20px'
-									height={1}
-								/>
-
-								<Flex
-									mt={2}
-									color={step === 0 ? '#785EF0' : '#E0E0EC'}>
-									{
-										step === 0 ? (
-											<FishEye
-												h='14px'
-												w='14px' />
-										) : (
+						<Flex justify='stretch'>
+							{
+								TABS.map((tab, index) => {
+									return (
+										<Flex
+											ml={index === 0 ? 0 : 1}
+											key={index}
+											direction='column'
+											w='100%'
+											align='start'
+										>
 											<Box
-												border='1px solid #E0E0EC'
+												w='100%'
+												bg={step === index ? '#785EF0' : '#E0E0EC'}
 												borderRadius='20px'
-												height='14px'
-												width='14px'
+												height={1}
 											/>
-										)
-									}
-									<Text
-										fontSize='12px'
-										lineHeight='16px'
-										fontWeight='500'
-										ml={1}
-										color={step === 0 ? '#785EF0' : '#1F1F33'}
-									>
-										{t('/your_grants/view_applicants.review_questions')}
-									</Text>
-								</Flex>
-							</Flex>
-							<Box w={1} />
-							<Flex
-								flex={1}
-								direction='column'
-							>
-								<Box
-									bg={step === 1 || step === 2 ? '#785EF0' : '#E0E0EC'}
-									borderRadius='20px'
-									height={1}
-								/>
 
-								<Flex
-									mt={2}
-									color={step === 1 || step === 2 ? '#785EF0' : '#E0E0EC'}>
-									{
-										step === 1 || step === 2 ? (
-											<FishEye
-												h='14px'
-												w='14px' />
-										) : (
-											<Box
-												border='1px solid #E0E0EC'
-												borderRadius='20px'
-												height='14px'
-												width='14px'
-											/>
-										)
-									}
-									<Text
-										fontSize='12px'
-										lineHeight='16px'
-										fontWeight='500'
-										ml={1}
-										color={step === 1 || step === 2 ? '#785EF0' : '#1F1F33'}
-									>
-										{t('/your_grants/view_applicants.select_reviewers')}
-									</Text>
-								</Flex>
-							</Flex>
+											<Button
+												onClick={
+													() => {
+														setStep(index)
+													}
+												}
+												mt={2}
+												variant='link'
+												leftIcon={
+													step === index ? (
+														<FishEye
+															h='14px'
+															w='14px'
+															color='#785EF0' />
+													) : (
+														<Box
+															border='1px solid #E0E0EC'
+															borderRadius='20px'
+															height='14px'
+															width='14px'
+														/>
+													)
+												}>
+												<Text
+													fontSize='12px'
+													lineHeight='16px'
+													fontWeight='500'
+													ml={1}
+													color={step === index ? '#785EF0' : '#1F1F33'}
+												>
+													{tab.text}
+												</Text>
+											</Button>
+										</Flex>
+									)
+								})
+							}
 						</Flex>
 
 						<Box mt={6} />

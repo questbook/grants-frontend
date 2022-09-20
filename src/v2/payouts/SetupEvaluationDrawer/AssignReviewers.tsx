@@ -52,7 +52,7 @@ const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, 
 						onChangeEnd={onSlide}
 					>
 						{
-							Array(6).fill(0).map((_, i) => i > 0 && (
+							Array(maxCount + 1).fill(0).map((_, i) => i > 0 && (
 								<SliderMark
 									key={`assignReviewmark-${i}`}
 									value={i}

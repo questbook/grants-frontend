@@ -33,7 +33,7 @@ const RecipientDetails = ({
 			>
 
 				{
-					initiateTransactionData?.from ? (
+					initiateTransactionData?.[0]?.from ? (
 						<>
 							<Text
 								fontSize='14px'
@@ -70,7 +70,7 @@ const RecipientDetails = ({
 				</Text>
 
 				{
-					initiateTransactionData?.from ? (
+					initiateTransactionData?.[0]?.from ? (
 						<Flex
 							alignItems='baseline'
 							mt={2}
@@ -80,7 +80,7 @@ const RecipientDetails = ({
 								lineHeight='20px'
 								fontWeight='500'
 							>
-								{initiateTransactionData?.from}
+								{initiateTransactionData?.[0]?.from}
 							</Text>
 
 							<ExternalLink
