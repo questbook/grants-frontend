@@ -17,6 +17,8 @@ import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import logger from 'src/utils/logger'
 import { getAssetInfo, getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
+import getAvatar from 'src/utils/avatarUtils'
+import config from 'src/constants/config.json'
 
 function ApplyGrant() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
@@ -130,7 +132,9 @@ function ApplyGrant() {
 		logger.info({ chainId: grantData?.workspace?.safeChainId, grantData }, 'safe chainid')
 		setSafeChainId(grantData?.workspace?.safe?.ChainId)
 		setDaoId(grantData?.workspace?.id)
-		setDaoLogo(getUrlForIPFSHash(grantData?.workspace?.logoIpfsHash))
+		setDaoLogo(grantData?.workspace?.logoIpfsHash === config.defaultDAOImageHash?
+			getAvatar(true, grantData?.workspace?.title):
+			getUrlForIPFSHash(grantData?.workspace?.logoIpfsHash))
 		setRewardAmount(
 			grantData?.reward?.committed
 				? parseInt(

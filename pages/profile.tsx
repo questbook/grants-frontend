@@ -42,6 +42,8 @@ import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import logger from 'src/utils/logger'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
+import getAvatar from 'src/utils/avatarUtils'
+import config from 'src/constants/config.json'
 
 function Profile() {
 	const router = useRouter()
@@ -228,7 +230,9 @@ function Profile() {
 								fit='contain'
 								alignSelf='flex-end'
 								justifySelf='flex-end'
-								src={getUrlForIPFSHash(workspaceData?.coverImageIpfsHash)}
+								src={workspaceData?.coverImageIpfsHash === config.defaultDAOImageHash?
+									getAvatar(true, workspaceData?.title!):
+									getUrlForIPFSHash(workspaceData?.coverImageIpfsHash)}
 							/>
 						)
 					}
@@ -247,7 +251,7 @@ function Profile() {
 						gap='1rem'
 					>
 						<Image
-							src={getUrlForIPFSHash(workspaceData?.logoIpfsHash!)}
+							src={workspaceData?.logoIpfsHash! === config.defaultDAOImageHash? getAvatar(true, workspaceData?.title) :getUrlForIPFSHash(workspaceData?.logoIpfsHash!)}
 							w='120px'
 							h='120px'
 							borderRadius='12px'

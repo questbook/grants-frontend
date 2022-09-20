@@ -134,7 +134,7 @@ const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, 
 								>
 									<Image
 										borderRadius='3xl'
-										src={reviewer.data?.profilePictureIpfsHash ? getUrlForIPFSHash(reviewer.data.profilePictureIpfsHash) : getAvatar(reviewer.data?.actorId)}
+										src={reviewer.data?.profilePictureIpfsHash ? getUrlForIPFSHash(reviewer.data.profilePictureIpfsHash) : getAvatar(false, reviewer.data?.actorId)}
 									/>
 								</Flex>
 

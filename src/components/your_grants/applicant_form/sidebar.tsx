@@ -321,7 +321,7 @@ function Sidebar({
 										}
 									>
 										<Image
-											src={getAvatar(reviewerId)}
+											src={getAvatar(false, reviewerId)}
 											borderRadius='50%'
 											boxSize='40px' />
 										<Flex

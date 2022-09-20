@@ -2,6 +2,8 @@ import { WorkspaceUpdateRequest } from '@questbook/service-validator-client'
 import { ContentState, convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import { PartnersProps, SettingsForm, Workspace } from 'src/types'
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
+import getAvatar from './avatarUtils'
+import config from 'src/constants/config.json'
 
 export const workspaceDataToSettingsForm = (
 	workspaceData: Workspace | undefined,
@@ -33,10 +35,14 @@ export const workspaceDataToSettingsForm = (
 		name: workspaceData.title,
 		about,
 		bio: workspaceData.bio,
-		image: getUrlForIPFSHash(workspaceData?.logoIpfsHash),
+		image: workspaceData?.logoIpfsHash === config.defaultDAOImageHash?
+		getAvatar(true, workspaceData?.title):
+		getUrlForIPFSHash(workspaceData?.logoIpfsHash),
 		supportedNetwork: workspaceData.supportedNetworks[0],
 		partners: workspaceData.partners,
-		coverImage: getUrlForIPFSHash(workspaceData.coverImageIpfsHash || ''),
+		coverImage: workspaceData?.logoIpfsHash === config.defaultDAOImageHash?
+		getAvatar(true, workspaceData?.title):
+		getUrlForIPFSHash(workspaceData.coverImageIpfsHash || ''),
 		twitterHandle,
 		discordHandle,
 		telegramChannel,

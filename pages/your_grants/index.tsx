@@ -38,6 +38,8 @@ import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
 import ReviewerDashboard from 'src/v2/components/Dashboard/ReviewerDashboard'
+import getAvatar from 'src/utils/avatarUtils'
+import config from 'src/constants/config.json'
 
 const PAGE_SIZE = 5
 
@@ -520,7 +522,9 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 								<YourGrantCard
 									grantID={grant.id}
 									key={grant.id}
-									daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
+									daoIcon={grant.workspace.logoIpfsHash === config.defaultDAOImageHash?
+										getAvatar(true, grant.workspace.title):
+										getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
 									grantTitle={grant.title}
 									grantDesc={grant.summary}
 									numOfApplicants={grant.numberOfApplications}

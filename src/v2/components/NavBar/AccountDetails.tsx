@@ -52,7 +52,7 @@ function AccountDetails() {
 				<HStack>
 					<Image
 						borderRadius='3xl'
-						src={getAvatar(webwallet!.address)}
+						src={getAvatar(false, webwallet!.address)}
 						boxSize='24px' />
 				</HStack>
 			</MenuButton>
