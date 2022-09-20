@@ -14,10 +14,10 @@ import {
 	getTextWithEllipses,
 } from 'src/utils/formattingUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
-import { getDateInDDMMYYYY, solanaToUsdOnDate } from 'src/v2/constants/safe/realms_solana'
-import { getProposalUrl } from 'src/v2/utils/phantomUtils'
 import dollarIcon from 'src/v2/assets/currency_icon/dollar_icon.svg'
-import {getGnosisTansactionLink, getSafeURL} from 'src/v2/utils/gnosisUtils'
+import { getDateInDDMMYYYY, solanaToUsdOnDate } from 'src/v2/constants/safe/realms_solana'
+import { getGnosisTansactionLink, getSafeURL } from 'src/v2/utils/gnosisUtils'
+import { getProposalUrl } from 'src/v2/utils/phantomUtils'
 
 type TableContent = {
   title: string
@@ -56,7 +56,7 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 				icon = dollarIcon
 				label = getAssetInfo(assetId, chainId)?.label
 			}
-		
+
 			return (
 				<>
 					<Image
@@ -80,7 +80,7 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 						>
 							{parseInt(transactionStatus[0]?.amount)}
 							{' '}
-							{'USD'}
+							USD
 						</Text>
 					</Text>
 				</>

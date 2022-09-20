@@ -360,7 +360,7 @@ function Form({
 			return
 		}
 
-		
+
 		const data: GrantApplicationRequest = {
 			grantId,
 			applicantId: await signer?.getAddress(),
@@ -408,6 +408,7 @@ function Form({
 		if(piiFields.length) {
 			await encrypt(data, piiFields)
 		}
+
 		console.log('application data final', data)
 		setFormData(data)
 	}

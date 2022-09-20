@@ -151,7 +151,7 @@ const AcceptedRow = ({
 					{' '}
 					{applicantData ? getRewardAmountMilestones(rewardAssetDecimals, applicantData) || applicantData.fundingAsked?.amount : 0}
 					{' '}
-					{'USD'}
+					USD
 
 				</Text>
 

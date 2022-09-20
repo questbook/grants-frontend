@@ -21,10 +21,10 @@ export function loadAssetId(chainId: string) {
 
 export function getCeloTokenUSDRate() {
 	return axios.get('https://api.coingecko.com/api/v3/simple/price?ids=celo-dollar%2Ctether%2Ccelo-euro&vs_currencies=usd')
-	.then(response => {
+		.then(response => {
 		// console.log('response celo', response)
-		return response
-	})
+			return response
+		})
 }
 
 export function getTokenUSDRate(assetId: string, contractAddress: string,) {
