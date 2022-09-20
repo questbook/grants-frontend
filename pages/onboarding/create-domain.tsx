@@ -282,6 +282,12 @@ const OnboardingCreateDomain = () => {
 			safeAddressErrorText={safeAddressError}
 			setValue={
 				(newValue) => {
+					if(step === 1) {
+						setStep(0)
+						setIsSafeAddressVerified(false)
+						setSafeSelected(undefined)
+					}
+
 					setSafeAddress(newValue)
 				}
 			}
@@ -349,7 +355,10 @@ const OnboardingCreateDomain = () => {
 	]
 
 	const onBackClick = () => {
-		if(step > 0) {
+		if(step === 1) {
+			setStep(step - 1)
+			setSafeAddress('')
+		} else if(step > 0) {
 			setStep(step - 1)
 		} else {
 			router.back()
@@ -369,13 +378,13 @@ const OnboardingCreateDomain = () => {
 				<Image
 					src='/background/create-domain.jpg'
 					w='100%'
-					h='100%' />
+					h='100vh' />
 			</Flex>
 
 			<Flex
 				direction='column'
 				w='100vw'
-				h='100vh'>
+				h='auto'>
 				<Flex
 					w='100vw'
 					h='64px'

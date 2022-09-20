@@ -8,7 +8,6 @@ import {
 	Flex,
 	Image,
 	Text,
-	Tooltip,
 } from '@chakra-ui/react'
 import { GrantApplicationRequest } from '@questbook/service-validator-client'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
@@ -21,7 +20,7 @@ import Funding from 'src/components/explore_grants/apply_grant/form/4_funding'
 import CustomFields from 'src/components/explore_grants/apply_grant/form/5_customFields'
 import Loader from 'src/components/ui/loader'
 import VerifiedBadge from 'src/components/ui/verified_badge'
-import { defaultChainId, SupportedChainId } from 'src/constants/chains'
+import { defaultChainId, SupportedChainId, USD_ASSET } from 'src/constants/chains'
 import strings from 'src/constants/strings.json'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSubmitApplication from 'src/hooks/useSubmitApplication'
@@ -81,9 +80,10 @@ function Form({
 	const CACHE_KEY = strings.cache.apply_grant
 	const getKey = `${chainId}-${CACHE_KEY}-${grantId}`
 
-	const { webwallet: signer } = useContext(WebwalletContext)!
+	const { webwallet: signer, scwAddress } = useContext(WebwalletContext)!
 	const { encrypt } = useEncryptPiiForApplication(grantId, signer?.publicKey, chainId || defaultChainId)
 
+	const [applicationError, setApplicationError] = React.useState<boolean>()
 	const [shouldRefreshNonce, setShouldRefreshNonce] = React.useState<boolean>()
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = React.useState<number | undefined>()
 
@@ -303,6 +303,7 @@ function Form({
 
 		let projectMilestonesError = false
 		const newProjectMilestones = [...projectMilestones]
+		console.log('project milestones', newProjectMilestones)
 		projectMilestones.forEach((project, index) => {
 			if(project.milestone === '') {
 				newProjectMilestones[index].milestoneIsError = true
@@ -346,6 +347,7 @@ function Form({
 			setCustomFields(errorCheckedCustomFields)
 		}
 
+		setApplicationError(error)
 
 		if(error) {
 			return
@@ -360,7 +362,6 @@ function Form({
 			return
 		}
 
-		// console.log('Funding asked: ', fundingAsk)
 
 		const data: GrantApplicationRequest = {
 			grantId,
@@ -390,7 +391,7 @@ function Form({
 			},
 			milestones: projectMilestones.map((pm) => ({
 				title: pm.milestone,
-				amount: parseAmount(
+				amount: rewardCurrencyAddress === USD_ASSET ? pm.milestoneReward : parseAmount(
 					pm.milestoneReward,
 					rewardCurrencyAddress,
 					rewardDecimal,
@@ -410,6 +411,7 @@ function Form({
 			await encrypt(data, piiFields)
 		}
 
+		console.log('application data final', data)
 		setFormData(data)
 	}
 
@@ -425,6 +427,7 @@ function Form({
 		}
 
 		const formDataLocal = typeof window !== 'undefined' ? JSON.parse(data || '{}') : {}
+		console.log('form data local', formDataLocal)
 		if(formDataLocal?.applicantName) {
 			setApplicantName(formDataLocal?.applicantName)
 		}
@@ -467,6 +470,7 @@ function Form({
 		}
 
 		if(formDataLocal?.projectMilestones) {
+			console.log('project milestones', formDataLocal.projectMilestones)
 			setProjectMilestones(formDataLocal?.projectMilestones)
 		}
 
@@ -693,9 +697,22 @@ function Form({
 			<Box mt={5} />
 
 			{
+				applicationError && (
+					<Text
+						mt={4}
+						fontWeight='500'
+						variant='v2_title'
+						color='orange.2'>
+						Missing Required fields
+					</Text>
+				)
+			}
+
+			{
 				acceptingApplications && (
 					<Button
 						mt={10}
+						mb={4}
 						disabled={!isBiconomyInitialised}
 						onClick={loading ? () => {} : handleOnSubmit}
 						mx={10}
@@ -730,7 +747,7 @@ function Form({
 						>
 							Payout address:
 							{' '}
-							{applicantAddress}
+							{applicantAddress ?? scwAddress}
 							{' '}
 						</Text>
 						<Text variant='v2_metadata'>

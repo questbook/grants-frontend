@@ -6,9 +6,9 @@ import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import Form from 'src/components/explore_grants/apply_grant/form'
 import Sidebar from 'src/components/explore_grants/apply_grant/sidebar'
-import { defaultChainId } from 'src/constants/chains'
+import { defaultChainId, USD_ASSET } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
-import { useGetGrantDetailsQuery, useGetSafeForAWorkspaceQuery } from 'src/generated/graphql'
+import { useGetGrantDetailsQuery } from 'src/generated/graphql'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { formatAmount } from 'src/utils/formattingUtils'
@@ -100,31 +100,6 @@ function ApplyGrant() {
 
 	}, [network, grantData])
 
-	const { data: safeAddressData } = useGetSafeForAWorkspaceQuery({
-		client: subgraphClients[chainId || defaultChainId].client,
-		variables: {
-			workspaceID: workspace?.id.toString()!,
-		},
-	})
-	useEffect(() => {
-		logger.info({ safeAddressData }, 'Safe address')
-		setSafeChainId(safeAddressData?.workspaceSafes[0]?.chainId)
-		if(safeAddressData) {
-			// console.log('safe address data', safeAddressData)
-			// const { workspaceSafes } = safeAddressData
-
-
-			// const safeAddress = workspaceSafes[0]?.address
-			// const safeNetwork = workspaceSafes[0]?.chainId
-			// setWorkspaceSafe(safeAddress)
-			// setWorkspaceSafeChainId(parseInt(workspaceSafes[0]?.chainId))
-			// if(isEvmChain) {
-			// 	checkIfUserIsOnCorrectNetwork(safeNetwork)
-			// }
-		}
-	}, [safeAddressData])
-
-
 	useEffect(() => {
 		if(data?.grants?.length) {
 			setGrantData(data.grants[0])
@@ -174,6 +149,7 @@ function ApplyGrant() {
 			setRewardCurrencyCoin(grantData.reward.token.iconHash)
 			setRewardDecimal(chainInfo.decimals)
 		} else {
+
 			supportedCurrencyObj = getAssetInfo(
 				grantData?.reward?.asset?.toLowerCase(),
 				chainId,
@@ -193,6 +169,7 @@ function ApplyGrant() {
 		setGrantSummary(grantData?.summary)
 		setGrantRequiredFields(grantData?.fields)
 		setAcceptingApplications(grantData?.acceptingApplications)
+		setSafeChainId(grantData?.workspace?.safe?.chainId)
 
 	}, [grantData])
 

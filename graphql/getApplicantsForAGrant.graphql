@@ -44,6 +44,7 @@ query getApplicantsForAGrant($first: Int, $skip: Int, $grantID: String!) {
     },
     reviews {
       id,
+      createdAtS,
       reviewer {
         id,
         fullName,

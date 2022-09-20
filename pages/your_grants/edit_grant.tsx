@@ -12,7 +12,7 @@ import { ApiClientsContext } from 'pages/_app'
 import Breadcrumbs from 'src/components/ui/breadcrumbs'
 import Form from 'src/components/your_grants/edit_grant/form'
 import Sidebar from 'src/components/your_grants/edit_grant/sidebar'
-import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
+import { CHAIN_INFO, defaultChainId, USD_ASSET } from 'src/constants/chains'
 import { useGetGrantDetailsQuery } from 'src/generated/graphql'
 import useEditGrant from 'src/hooks/useEditGrant'
 import NavbarLayout from 'src/layout/navbarLayout'
@@ -27,22 +27,17 @@ function EditGrant() {
 
 	const router = useRouter()
 
-	const grantInfoRef = useRef(null)
-	const detailsRef = useRef(null)
-	const applicationDetailsRef = useRef(null)
-	const grantRewardsRef = useRef(null)
 
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
-	const [currentStep, setCurrentStep] = useState(0)
 	const [grantID, setGrantID] = useState<string>()
 
 	const [formData, setFormData] = useState<any>(null)
 
 	const [queryParams, setQueryParams] = useState<any>({
 		client:
-      subgraphClients[
-      	getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-      ].client,
+			subgraphClients[
+				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+			].client,
 	})
 
 	useEffect(() => {
@@ -52,7 +47,7 @@ function EditGrant() {
 
 		setQueryParams({
 			client:
-        subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
+				subgraphClients[getSupportedChainIdFromWorkspace(workspace)!].client,
 			variables: { grantID },
 		})
 
@@ -70,7 +65,7 @@ function EditGrant() {
 		let reward
 		let rewardCurrency
 		let rewardCurrencyAddress
-		// console.log('grant token while editing grant', grant)
+
 		if(grant.reward.token) {
 			reward = ethers.utils.formatUnits(
 				grant.reward.committed,
@@ -78,6 +73,8 @@ function EditGrant() {
 			).toString()
 			rewardCurrency = grant.reward.token.label
 			rewardCurrencyAddress = grant.reward.token.address
+		} else if(grant.reward.asset === USD_ASSET) {
+			reward = grant.reward.committed
 		} else {
 			reward = formatAmount(
 				grant.reward.committed,
@@ -106,27 +103,27 @@ function EditGrant() {
 			summary: grant.summary,
 			details: d,
 			applicantName:
-        grant.fields.find((field: any) => field.id.includes('applicantName')) !== undefined,
+				grant.fields.find((field: any) => field.id.includes('applicantName')) !== undefined,
 			applicantEmail:
-        grant.fields.find((field: any) => field.id.includes('applicantEmail')) !== undefined,
+				grant.fields.find((field: any) => field.id.includes('applicantEmail')) !== undefined,
 			applicantAddress: grant.fields.find((field: any) => field.id.includes('applicantAddress')) !== undefined,
 			teamMembers:
-        grant.fields.find((field: any) => field.id.includes('teamMembers')) !== undefined,
+				grant.fields.find((field: any) => field.id.includes('teamMembers')) !== undefined,
 			projectName:
-        grant.fields.find((field: any) => field.id.includes('projectName')) !== undefined,
+				grant.fields.find((field: any) => field.id.includes('projectName')) !== undefined,
 			projectGoals:
-        grant.fields.find((field: any) => field.id.includes('projectGoals')) !== undefined,
+				grant.fields.find((field: any) => field.id.includes('projectGoals')) !== undefined,
 			projectDetails:
-        grant.fields.find((field: any) => field.id.includes('projectDetails')) !== undefined,
+				grant.fields.find((field: any) => field.id.includes('projectDetails')) !== undefined,
 			projectLink:
-        grant.fields.find((field: any) => field.id.includes('projectLink')) !== undefined,
+				grant.fields.find((field: any) => field.id.includes('projectLink')) !== undefined,
 			isMultipleMilestones:
-        grant.fields.find((field: any) => field.id.includes('isMultipleMilestones')) !== undefined,
+				grant.fields.find((field: any) => field.id.includes('isMultipleMilestones')) !== undefined,
 			fundingBreakdown:
-        grant.fields.find((field: any) => field.id.includes('fundingBreakdown')) !== undefined,
+				grant.fields.find((field: any) => field.id.includes('fundingBreakdown')) !== undefined,
 			extraField:
-        grant.fields.find((field: any) => field.id.includes('extraField'))
-        !== undefined,
+				grant.fields.find((field: any) => field.id.includes('extraField'))
+				!== undefined,
 			reward,
 			rewardCurrency,
 			rewardCurrencyAddress,
@@ -162,17 +159,17 @@ function EditGrant() {
 			}
 
 			let reward
-			let rewardCurrency
-			let rewardCurrencyAddress
-			// console.log('grant token while editing grant', grant)
+			// let rewardCurrency
+			// let rewardCurrencyAddress
 			if(grant.reward.token) {
-				// console.log('grant token while editing grant', grant)
 				reward = ethers.utils.formatUnits(
 					grant.reward.committed,
 					grant.reward.token.decimal,
 				).toString()
-				rewardCurrency = grant.reward.token.label
-				rewardCurrencyAddress = grant.reward.token.address
+				// rewardCurrency = grant.reward.token.label
+				// rewardCurrencyAddress = grant.reward.token.address
+			} else if(grant.reward.asset === USD_ASSET) {
+				reward = grant.reward.committed
 			} else {
 				reward = formatAmount(
 					grant.reward.committed,
@@ -183,16 +180,16 @@ function EditGrant() {
 					]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
 						?.decimals,
 				)
-				rewardCurrency = CHAIN_INFO[
-					getSupportedChainIdFromSupportedNetwork(
-						grant.workspace.supportedNetworks[0],
-					)
-				]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label || 'LOL'
-				rewardCurrencyAddress = CHAIN_INFO[
-					getSupportedChainIdFromSupportedNetwork(
-						grant.workspace.supportedNetworks[0],
-					)
-				]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.address
+				// rewardCurrency = CHAIN_INFO[
+				// 	getSupportedChainIdFromSupportedNetwork(
+				// 		grant.workspace.supportedNetworks[0],
+				// 	)
+				// ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.label || 'LOL'
+				// rewardCurrencyAddress = CHAIN_INFO[
+				// 	getSupportedChainIdFromSupportedNetwork(
+				// 		grant.workspace.supportedNetworks[0],
+				// 	)
+				// ]?.supportedCurrencies[grant.reward.asset.toLowerCase()]?.address
 			}
 
 			const fd = {
@@ -200,30 +197,28 @@ function EditGrant() {
 				summary: grant.summary,
 				details: grant.details,
 				applicantName:
-          grant.fields.find((field: any) => field.id.includes('applicantName')) !== undefined,
+					grant.fields.find((field: any) => field.id.includes('applicantName')) !== undefined,
 				applicantEmail:
-          grant.fields.find((field: any) => field.id.includes('applicantEmail')) !== undefined,
-		  applicantAddress: grant.fields.find((field: any) => field.id.includes('applicantAddress')) !== undefined,
+					grant.fields.find((field: any) => field.id.includes('applicantEmail')) !== undefined,
+				applicantAddress: grant.fields.find((field: any) => field.id.includes('applicantAddress')) !== undefined,
 				teamMembers:
-          grant.fields.find((field: any) => field.id.includes('teamMembers')) !== undefined,
+					grant.fields.find((field: any) => field.id.includes('teamMembers')) !== undefined,
 				projectName:
-          grant.fields.find((field: any) => field.id.includes('projectName')) !== undefined,
+					grant.fields.find((field: any) => field.id.includes('projectName')) !== undefined,
 				projectGoals:
-          grant.fields.find((field: any) => field.id.includes('projectGoals')) !== undefined,
+					grant.fields.find((field: any) => field.id.includes('projectGoals')) !== undefined,
 				projectDetails:
-          grant.fields.find((field: any) => field.id.includes('projectDetails')) !== undefined,
+					grant.fields.find((field: any) => field.id.includes('projectDetails')) !== undefined,
 				projectLink:
-          grant.fields.find((field: any) => field.id.includes('projectLink')) !== undefined,
+					grant.fields.find((field: any) => field.id.includes('projectLink')) !== undefined,
 				isMultipleMilestones:
-          grant.fields.find((field: any) => field.id.includes('isMultipleMilestones')) !== undefined,
+					grant.fields.find((field: any) => field.id.includes('isMultipleMilestones')) !== undefined,
 				fundingBreakdown:
-          grant.fields.find((field: any) => field.id.includes('fundingBreakdown')) !== undefined,
+					grant.fields.find((field: any) => field.id.includes('fundingBreakdown')) !== undefined,
 				extraField:
-          grant.fields.find((field: any) => field.id.includes('extraField'))
-          !== undefined,
+					grant.fields.find((field: any) => field.id.includes('extraField'))
+					!== undefined,
 				reward,
-				rewardCurrency,
-				rewardCurrencyAddress,
 				date: grant.deadline,
 				rubric: grant?.rubric,
 				isPii: grant.fields.some((field: any) => field.isPii),
@@ -278,7 +273,6 @@ function EditGrant() {
 							formData={formData}
 							onSubmit={
 								(editdata: any) => {
-									// console.log('editdata', editdata)
 									setEditData(editdata)
 								}
 							}

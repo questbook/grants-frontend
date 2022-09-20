@@ -2,6 +2,7 @@
 import Safe from '@gnosis.pm/safe-core-sdk'
 import EthersAdapter from '@gnosis.pm/safe-ethers-lib'
 import SafeServiceClient from '@gnosis.pm/safe-service-client'
+import axios from 'axios'
 import { ethers } from 'ethers'
 import { MetaTransaction, Safe as _GnosisSafe, TransactionType } from 'src/v2/types/safe'
 
@@ -85,7 +86,6 @@ export class GnosisSafe implements _GnosisSafe {
 
 
 	async isOwner(safeAddress: string): Promise<boolean> {
-		console.log('safe chain id', this.chainId)
     	//@ts-ignore
     	const provider = new ethers.providers.Web3Provider(window.ethereum)
     	await provider.send('eth_requestAccounts', [])

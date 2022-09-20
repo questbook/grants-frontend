@@ -106,7 +106,6 @@ export default function useCreateWorkspace(
 					WorkspaceRegistryAbi,
 					webwallet
 				)
-				// console.log('ENTERING')
 				// console.log(networkChainId, scwAddress, webwallet, nonce, webHookId)
 				const response = await sendGaslessTransaction(biconomy, targetContractObject, 'createWorkspace', [ipfsHash, new Uint8Array(32), 0],
 					WORKSPACE_REGISTRY_ADDRESS[networkChainId], biconomyWalletClient,

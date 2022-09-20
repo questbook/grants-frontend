@@ -1,3 +1,4 @@
+// Used for switching metamask network to correct one
 const rpcUrls: {[key: number]: string} = {
 	1: 'https://mainnet.infura.io/v3/',
 	4: 'https://rinkeby.infura.io/v3/',

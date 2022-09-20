@@ -308,14 +308,15 @@ function Form({
 	// }
 
 	React.useEffect(() => {
-		// // console.log(currentChain);
+		// console.log(currentChain);
 		// if(currentChain) {
 		// 	const supportedCurrencies = Object.keys(
 		// 		CHAIN_INFO[currentChain].supportedCurrencies,
 		// 	)
 		// 		.map((address) => CHAIN_INFO[currentChain].supportedCurrencies[address])
 		// 		.map((currency) => ({ ...currency, id: currency.address }))
-		if(safeNetwork) {
+		if(safeNetwork && formData.rewardCurrency) {
+			// console.log('form data', formData)
 			transactionServiceURL = SAFES_ENDPOINTS[safeNetwork]
 			// console.log('transaction service url', safeNetwork, transactionServiceURL)
 			const gnosisUrl = `${transactionServiceURL}/v1/safes/${safeAddress}/balances/`
@@ -532,20 +533,38 @@ function Form({
 				})
 			}
 
-			const s = {
-				title,
-				summary,
-				details: detailsString,
-				fields,
-				reward,
-				rewardCurrencyAddress,
-				rewardToken,
-				date,
-				grantManagers: admins,
-				rubric: {
-					isPrivate: shouldEncryptReviews,
-					rubric,
-				},
+			let s
+			if(rewardCurrencyAddress) {
+				s = {
+					title,
+					summary,
+					details: detailsString,
+					fields,
+					reward,
+					rewardCurrencyAddress,
+					rewardToken,
+					date,
+					grantManagers: admins,
+					rubric: {
+						isPrivate: shouldEncryptReviews,
+						rubric,
+					},
+				}
+			} else {
+				console.log('USD asset')
+				s = {
+					title,
+					summary,
+					details: detailsString,
+					fields,
+					reward,
+					date,
+					grantManagers: admins,
+					rubric: {
+						isPrivate: shouldEncryptReviews,
+						rubric,
+					},
+				}
 			}
 
 			if((shouldEncrypt || shouldEncryptReviews) && (!pk || pk === '*')) {

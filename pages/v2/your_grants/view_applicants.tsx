@@ -69,6 +69,7 @@ function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 }
 
 function ViewApplicants() {
+	const [tabIndex, setTabIndex] = useState(0)
 	const [applicantsData, setApplicantsData] = useState<any>([])
 	// const [reviewerData, setReviewerData] = useState<any>([])
 	// const [daoId, setDaoId] = useState('')
@@ -98,7 +99,6 @@ function ViewApplicants() {
 	const [rewardAssetSymbol, setRewardAssetSymbol] = useState<string>()
 
 	const [sendFundsTo, setSendFundsTo] = useState<any[]>()
-
 
 	const { data: accountData } = useQuestbookAccount()
 	const router = useRouter()
@@ -264,10 +264,7 @@ function ViewApplicants() {
 	}, [router])
 
 	const [queryParams, setQueryParams] = useState<any>({
-		client:
-			subgraphClients[
-				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-			].client,
+		client: subgraphClients[workspacechainId].client,
 	})
 
 
@@ -377,6 +374,7 @@ function ViewApplicants() {
 
 				return {
 					grantTitle: applicant?.grant?.title,
+					grant: applicant?.grant,
 					applicationId: applicant.id,
 					applicantName: getFieldString(applicant, 'applicantName'),
 					applicantEmail: getFieldString(applicant, 'applicantEmail'),
@@ -464,7 +462,7 @@ function ViewApplicants() {
 
 	async function getAllStatus(applicationToTxnHashMap: any) {
 		var statuses: any = {}
-
+		console.log('application to txn map', applicationToTxnHashMap)
 		const getEachStatus = async(transaction: any, applicationId: any) => {
 			logger.info('transaction hash', transaction)
 			logger.info('fund', ethers.utils.formatUnits(transaction.amount.toString(), rewardAssetDecimals))
@@ -496,8 +494,8 @@ function ViewApplicants() {
 					const evmObj = {
 						transactionHash: transaction.transactionHash,
 						status: status.status,
-						amount: parseInt(ethers.utils.formatUnits(transaction.amount.toString(), rewardAssetDecimals))
-						// amount: transaction.amount
+						// amount: parseInt(ethers.utils.formatUnits(transaction.amount.toString(), rewardAssetDecimals))
+						amount: transaction.amount
 					}
 					logger.info({ evmObj }, 'Pushed object (EVM)')
 					statuses[applicationId].push(evmObj)
@@ -556,21 +554,20 @@ function ViewApplicants() {
 			checkIfUserIsOnCorrectNetwork(workspaceSafeChainId.toString())
 		}
 
-		if(workspace?.safe) {
-			setSendFundsTo(selectedApplicants)
-		} else {
-			router.push({ pathname: '/safe', query: {
-				'show_toast': true,
-			} })
-		}
+		setSendFundsTo(selectedApplicants)
+		// if(workspace?.safe) {
+		// 	setSendFundsTo(selectedApplicants)
+		// } else {
+		// 	router.push({ pathname: '/safe', query: {
+		// 		'show_toast': true,
+		// 	} })
+		// }
 	}
 
 
 	const [getReviewersForAWorkspaceParams, setGetReviewersForAWorkspaceParams] = useState<any>({
 		client:
-			subgraphClients[
-				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-			].client,
+			subgraphClients[workspacechainId].client,
 	})
 	const { data: reviewersForAWorkspaceData } = useGetReviewersForAWorkspaceQuery(getReviewersForAWorkspaceParams)
 	useEffect(() => {
@@ -762,16 +759,30 @@ function ViewApplicants() {
 
 
 				<Tabs
+					index={tabIndex}
+					onChange={(i) => setTabIndex(i)}
 					h={8}
 					colorScheme='brandv2'>
 					<TabList>
-						<StyledTab label={`Accepted (${applicantsData.filter((item: any) => (2 === item.status)).length})`} />
 						<StyledTab label={`In Review (${applicantsData.filter((item: any) => (0 === item.status)).length})`} />
+						<StyledTab label={`Accepted (${applicantsData.filter((item: any) => (2 === item.status)).length})`} />
 						<StyledTab label={`Rejected (${applicantsData.filter((item: any) => (3 === item.status)).length})`} />
 						<StyledTab label={`Asked to Resubmit (${applicantsData.filter((item: any) => (1 === item.status)).length})`} />
 					</TabList>
 
 					<TabPanels>
+						<TabPanel
+							tabIndex={1}
+							borderRadius='2px'
+							p={0}
+							mt={5}
+							bg='white'
+							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
+							<InReviewPanel
+								applicantsData={applicantsData}
+								grantData={grantData} />
+						</TabPanel>
+
 						<TabPanel
 							borderRadius='2px'
 							p={0}
@@ -792,18 +803,6 @@ function ViewApplicants() {
 						</TabPanel>
 
 						<TabPanel
-							tabIndex={1}
-							borderRadius='2px'
-							p={0}
-							mt={5}
-							bg='white'
-							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
-							<InReviewPanel
-								applicantsData={applicantsData}
-								grantData={grantData} />
-						</TabPanel>
-
-						<TabPanel
 							tabIndex={2}
 							borderRadius='2px'
 							p={0}
@@ -811,6 +810,7 @@ function ViewApplicants() {
 							bg='white'
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
 							<RejectedPanel
+								chainId={workspacechainId}
 								applicantsData={applicantsData} />
 						</TabPanel>
 
@@ -822,6 +822,7 @@ function ViewApplicants() {
 							bg='white'
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
 							<ResubmitPanel
+								chainId={workspacechainId}
 								applicantsData={applicantsData} />
 						</TabPanel>
 
@@ -834,7 +835,7 @@ function ViewApplicants() {
 					onClose={() => setRubricDrawerOpen(false)}
 					onComplete={() => setRubricDrawerOpen(false)}
 					grantAddress={grantID}
-					chainId={getSupportedChainIdFromWorkspace(workspace) || defaultChainId}
+					chainId={workspacechainId}
 					setNetworkTransactionModalStep={setNetworkTransactionModalStep}
 					setTransactionHash={setTransactionHash}
 					data={reviewersForAWorkspaceData}
@@ -889,7 +890,7 @@ function ViewApplicants() {
 							'Rubric created and Reviewers assigned',
 						]
 					}
-					viewLink={getExplorerUrlForTxHash(getSupportedChainIdFromWorkspace(workspace) || defaultChainId, transactionHash)}
+					viewLink={getExplorerUrlForTxHash(workspacechainId, transactionHash)}
 					onClose={
 						() => {
 							setNetworkTransactionModalStep(undefined)

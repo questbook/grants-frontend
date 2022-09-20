@@ -49,6 +49,7 @@ query getApplicantsForAGrantReviewer($first: Int, $skip: Int, $grantID: String!,
       }
       publicReviewDataHash
       id
+      createdAtS
     }
 
   }

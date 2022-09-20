@@ -11,7 +11,7 @@ import GrantShare from 'src/components/ui/grantShare'
 import Modal from 'src/components/ui/modal'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
-import { defaultChainId } from 'src/constants/chains'
+import { defaultChainId, USD_ASSET, USD_ICON } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import {
 	GetGrantDetailsQuery,
@@ -173,7 +173,9 @@ function AboutGrant() {
 				: ''
 		)
 		let supportedCurrencyObj
-		if(grantData.reward.token) {
+		if(grantData.reward.asset === USD_ASSET) {
+			setRewardCurrencyCoin(USD_ICON)
+		} else if(grantData.reward.token) {
 			setRewardCurrency(chainInfo.label)
 			setRewardCurrencyCoin(grantData.reward.token.iconHash)
 		} else {

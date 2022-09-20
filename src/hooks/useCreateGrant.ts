@@ -107,19 +107,10 @@ export default function useCreateGrant(
 				let reward
 
 				if(isEVM) {
-					if(!data.rewardToken.address) {
-						reward = {
-							committed: parseAmount(data.reward, data.rewardCurrencyAddress),
-							asset: data.rewardCurrencyAddress,
-						}
-					} else {
-					// console.log('Reward before parsing', data.reward, data.rewardToken.decimal)
-						reward = {
-							committed: parseAmount(data.reward, undefined, data.rewardToken.decimal),
-							asset: data.rewardCurrencyAddress,
-							token: data.rewardToken,
-						}
-					// console.log('Reward after parsing', reward)
+					console.log('reward', data.reward)
+					reward = {
+						committed: data.reward,
+						asset: USD_ASSET
 					}
 				} else {
 					reward = {
@@ -234,30 +225,21 @@ export default function useCreateGrant(
 		}
 
 		try {
-			// console.log('O')
 			if(!data) {
 				return
 			}
-
-			// console.log('OO')
 
 			if(transactionData) {
 				return
 			}
 
-			// console.log('OOO')
-
 			if(!accountData || !accountData.address) {
 				throw new Error('not connected to wallet')
 			}
 
-			// console.log('OOOO')
-
 			if(!workspace) {
 				throw new Error('not connected to workspace')
 			}
-
-			// console.log('OOOOO')
 
 			if(!currentChainId) {
 				if(switchNetwork && chainId) {

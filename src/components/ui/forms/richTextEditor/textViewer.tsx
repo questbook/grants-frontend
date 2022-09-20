@@ -18,6 +18,7 @@ const linkifyPlugin = createLinkifyPlugin({
 		return (
 			<Link
 				{...props}
+				whiteSpace='break-spaces'
 				onClick={() => window.open(props.href, '_blank')}
 				isExternal />
 		)

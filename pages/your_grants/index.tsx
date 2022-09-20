@@ -196,12 +196,6 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 	const [isLoading, setIsLoading] = useState(true)
 
 	useEffect(() => {
-		setSelectedTab(
-			parseInt(localStorage.getItem('yourGrantsTabSelected') || '0'),
-		)
-	}, [])
-
-	useEffect(() => {
 		if(!workspace) {
 			return
 		}
@@ -466,10 +460,6 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 										onClick={
 											() => {
 												setSelectedTab(tab.index)
-												localStorage.setItem(
-													'yourGrantsTabSelected',
-													tab.index.toString(),
-												)
 											}
 										}
 										_hover={{}}
@@ -494,6 +484,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 							let decimals
 							let icon
 							let label
+
 							if(grant.reward.token) {
 								// console.log('Reward has token')
 								decimals = grant.reward.token.decimal
@@ -534,7 +525,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 									endTimestamp={new Date(grant.deadline!).getTime()}
 									grantAmount={formatAmount(grantAmount, decimals)}
 									grantCurrency={label || 'LOL'}
-									grantCurrencyIcon={icon}
+									grantCurrencyIcon={grant.reward.asset === '0x0000000000000000000000000000000000000001' ? '/dollar_icon.svg' : icon}
 									state='done'
 									chainId={
 										getSupportedChainIdFromSupportedNetwork(
@@ -603,7 +594,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 							}
 
             	return (
-	<YourGrantCard
+								<YourGrantCard
             			grantID={grant.grant.id}
             			key={grant.grant.id}
             			daoIcon={

@@ -2,11 +2,12 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Box, Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
-import { CHAIN_INFO } from 'src/constants/chains'
+import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO } from 'src/constants/chains'
 import { useGetProfileDetailsQuery, useGetWorkspaceMembersQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
+import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { addAuthorizedOwner } from 'src/utils/gaslessUtils'
 import { delay } from 'src/utils/generics'
@@ -16,14 +17,9 @@ import ConnectWalletModal from 'src/v2/components/ConnectWalletModal'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import { useAccount, useNetwork, useSigner, useSwitchNetwork } from 'wagmi'
 
-interface Props {
-    isOpen: boolean
-    onClose: () => void
-}
+const POINTERS = ['Zero gas fee across the app', 'No annoying sign transaction pop-ups']
 
-const POINTERS = ['Zero gas-fee across the app', 'No annoying sign transaction pop-ups']
-
-function MigrateToGasless({ isOpen, onClose }: Props) {
+function MigrateToGasless() {
 	const router = useRouter()
 	const toast = useToast()
 	const { waitForScwAddress, webwallet } = useContext(WebwalletContext)!
@@ -34,6 +30,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 	const { chain: walletChain } = useNetwork()
 	const { switchNetwork } = useSwitchNetwork()
 
+	const [isOpen, setIsOpen] = useState(false)
 	const [isConnectWalletModalOpen, setIsConnectWalletModalOpen] = useState(false)
 
 	const workspaceContract = useQBContract('workspace', walletChain?.id as SupportedChainId, false)
@@ -42,6 +39,8 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 	const [transactionHash, setTransactionHash] = useState<string>()
 	const [shouldMigrate, setShouldMigrate] = useState<{state: number, chainId?: SupportedChainId}>()
 	const [ownedWorkspaces, setOwnedWorkspaces] = useState<any>([])
+
+	const isMigrateYes = router?.query?.migrate === 'yes'
 
 	const { results, fetchMore } = useMultiChainQuery({
 		useQuery: useGetProfileDetailsQuery,
@@ -72,7 +71,6 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 			}, true)
 		}
 	}, [walletAddress, walletChain?.id])
-
 
 	useEffect(() => {
 		if(!ownedWorkspacesResults) {
@@ -106,7 +104,7 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 				return
 			}
 
-			if(!(walletChain?.id in SupportedChainId)) {
+			if(!(walletChain?.id in ALL_SUPPORTED_CHAIN_IDS)) {
 				if(workspaceFromMember) {
 					logger.info({ workspaceFromMember }, 'DAO to migrate')
 					logger.info({ chainIdFromMemberWorkspace }, 'DAO chainId')
@@ -133,6 +131,26 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 			setIsConnectWalletModalOpen(false)
 		}
 	}, [walletAddress])
+
+	useEffect(() => {
+		if(isMigrateYes) {
+			setIsOpen(isMigrateYes)
+		}
+	}, [isMigrateYes])
+
+	const onClose = (done?: boolean) => {
+		// if we're done
+		// reload the page to reflect the latest changes
+		if(done) {
+			window.location.href = window.location.pathname
+		} else {
+			const newQuery = { ...router.query }
+			delete newQuery.migrate
+
+			router.push({ query: newQuery })
+			setIsOpen(false)
+		}
+	}
 
 	const migrate = async() => {
 		try {
@@ -236,13 +254,14 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 
 			// set to ensure ensure migration doesn't occur again
 			localStorage.setItem('didMigrate', 'true')
-			onClose()
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} catch(err: any) {
+			onClose(true)
+		} catch(err) {
 			setNetworkModalStep(undefined)
 			logger.error({ err }, 'Error migrating wallet')
+
+			const msg = getErrorMessage(err as Error)
 			toast({
-				title: `Migration error "${(err as Error)?.message}"`,
+				title: `Migration error "${msg}"`,
 				status: 'warning',
 				duration: 9000,
 				isClosable: true,
@@ -258,7 +277,8 @@ function MigrateToGasless({ isOpen, onClose }: Props) {
 				size='3xl'
 				onClose={onClose}
 			>
-				<ModalOverlay />
+				<ModalOverlay
+					backdropFilter='blur(12px)' />
 				<ModalContent>
 					<ModalCloseButton />
 					<Flex>

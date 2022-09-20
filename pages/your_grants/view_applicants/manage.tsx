@@ -42,10 +42,12 @@ import { isPlausibleSolanaAddress } from 'src/utils/generics'
 import useApplicationMilestones from 'src/utils/queryUtil'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import dollarIcon from 'src/v2/assets/currency_icon/dollar_icon.svg'
 import { GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
 import { RealmsSolana } from 'src/v2/constants/safe/realms_solana'
 import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
 import SendFunds from 'src/v2/payouts/SendFunds'
+import SendFundsModal from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 
 function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 	let val = BigNumber.from(0)
@@ -156,18 +158,33 @@ function ManageGrant() {
 		Promise.all(
 		 fundsDisbursed!.fundsTransfers.map(async(transfer: any) => {
 		 	const status: any = await currentSafe.getTransactionHashStatus(transfer.transactionHash)
-		 	if(status && status[transfer.transactionHash]?.closedAtDate !== '') {
-		 		const usdAmount = transfer.amount
+		 	if(!isEvmChain) {
+		 		if(status && status[transfer.transactionHash]?.closedAtDate !== '') {
+		 			const usdAmount = transfer.amount
 
-		 		milestoneTrxnStatus.push({
-		 			amount: (usdAmount || 0),
-		 			txnHash: transfer?.transactionHash,
-		 			milestoneId: transfer?.milestone?.id,
-		 			safeAddress: workspaceSafe,
-		 			...status[transfer.transactionHash]
-		 		})
+		 			milestoneTrxnStatus.push({
+		 				amount: (usdAmount || 0),
+		 				txnHash: transfer?.transactionHash,
+		 				milestoneId: transfer?.milestone?.id,
+		 				safeAddress: workspaceSafe,
+		 				...status[transfer.transactionHash]
+		 			})
 
+		 		}
+		 	} else if(isEvmChain) {
+		 		if(status) {
+		 			const usdAmount = transfer.amount
+
+		 			milestoneTrxnStatus.push({
+		 				amount: (usdAmount || 0),
+		 				txnHash: transfer?.transactionHash,
+		 				milestoneId: transfer?.milestone?.id,
+		 				safeAddress: workspaceSafe,
+		 				...status[transfer.transactionHash]
+		 			})
+		 		}
 		 	}
+
 		 })
 		).then((res) => {
 
@@ -243,9 +260,7 @@ function ManageGrant() {
 		},
 		{
 			icon: fundingIcon,
-			title: !isEvmChain ? rewardDisbursed : formatAmount(getTotalFundingRecv(
-        milestones as unknown as ApplicationMilestone[],
-			).toString(), decimals),
+			title: rewardDisbursed,
 			subtitle: 'Funding Sent',
 			content: (
 				<Funding
@@ -257,7 +272,7 @@ function ManageGrant() {
 					assetDecimals={decimals!}
 					grantId={applicationData?.grant?.id || ''}
 					type='funding_sent'
-					chainId={getSupportedChainIdFromWorkspace(workspace)}
+					chainId={workspaceSafeChainId}
 					rewardToken={rewardToken}
 				/>
 			),
@@ -327,58 +342,6 @@ function ManageGrant() {
 					direction='row'
 					justify='start'
 					align='baseline'>
-					{
-						applicantAddress && (
-							<Text
-								key='address'
-								variant='applicationText'>
-								By
-								{' '}
-								<Tooltip label={applicantAddress}>
-									<Box
-										as='span'
-										fontWeight='700'
-										display='inline-block'>
-										{`${applicantAddress?.substring(0, 6)}...`}
-									</Box>
-								</Tooltip>
-								<Flex
-									display='inline-block'
-									ml={2}>
-									<CopyIcon text={applicantAddress} />
-								</Flex>
-							</Text>
-						)
-					}
-					{applicantAddress && <Box mr={6} />}
-					<Text
-						key='mail_text'
-						fontWeight='400'>
-						<Image
-							display='inline-block'
-							alt='mail_icon'
-							src='/ui_icons/mail_icon.svg'
-							mr={2}
-						/>
-						{applicantEmail}
-					</Text>
-					<Box mr={6} />
-					<Text
-						key='date_text'
-						fontWeight='400'>
-						<Image
-							alt='date_icon'
-							display='inline-block'
-							src='/ui_icons/date_icon.svg'
-							mr={2}
-						/>
-						{
-							getFormattedDateFromUnixTimestampWithYear(
-								applicationData?.createdAtS,
-							)
-						}
-					</Text>
-					<Box mr={6} />
 					<Link
 						key='link'
 						variant='link'
@@ -422,133 +385,10 @@ function ManageGrant() {
 					)
 				}
 
-				<Flex
-					mt='29px'
-					direction='row'
-					w='full'
-					align='center'>
-					{
-						tabs.map((tab, index) => (
-							<Button
-							// eslint-disable-next-line react/no-array-index-key
-								key={`tab-${tab.title}-${index}`}
-								variant='ghost'
-								h='110px'
-								w='full'
-								_hover={
-									{
-										background: '#F5F5F5',
-									}
-								}
-								background={
-									index !== selected
-										? 'linear-gradient(180deg, #FFFFFF 0%, #F3F4F4 100%)'
-										: 'white'
-								}
-								_focus={{}}
-								borderRadius={index !== selected ? 0 : '8px 8px 0px 0px'}
-								borderRightWidth={
-									(index !== tabs.length - 1 && index + 1 !== selected)
-                || index === selected
-										? '2px'
-										: '0px'
-								}
-								borderLeftWidth={index !== selected ? 0 : '2px'}
-								borderTopWidth={index !== selected ? 0 : '2px'}
-								borderBottomWidth={index !== selected ? '2px' : 0}
-								borderBottomRightRadius='-2px'
-								onClick={
-									() => {
-										if(tabs[index].content) {
-											setSelected(index)
-										}
-									}
-								}
-							>
-								<Flex
-									direction='column'
-									justify='center'
-									align='center'
-									w='100%'>
-									<Flex
-										direction='row'
-										justify='center'
-										align='center'>
-										{
-											tab.icon && (
-												<Image
-													h='26px'
-													w='26px'
-													src={tab.icon}
-													fallbackSrc='/images/dummy/Ethereum Icon.svg'
-													alt={tab.icon} />
-											)
-										}
-										<Box mx={1} />
-										<Text
-											fontWeight='700'
-											fontSize='26px'
-											lineHeight='40px'>
-											{tab.title}
-										</Text>
-									</Flex>
-									<Text
-										variant='applicationText'
-										color='#717A7C'>
-										{tab.subtitle}
-									</Text>
-								</Flex>
-							</Button>
-						))
-					}
-				</Flex>
-
 				{tabs[selected].content}
 
-				<Flex
-					direction='row'
-					justify='center'
-					mt={8}>
-					{
-						applicationData?.state !== 'completed' && selected === 0 && (
-							<Button
-								disabled={!isBiconomyInitialised}
-								variant='primary'
-								onClick={() => setIsGrantCompleteModalOpen(true)}
-							>
-								Mark Application as closed
-							</Button>
-						)
-					}
-				</Flex>
 			</Container>
-			{
-				applicationData?.state !== 'completed' && isAdmin && (
-					<Button
-						mt='22px'
-						variant='outline'
-						color='brand.500'
-						borderColor='brand.500'
-						h='48px'
-						w='340px'
-						onClick={
-							() => {
-								setSendFundsTo([applicationData])
-							}
-						}
-					>
-						Send Funds
-					</Button>
-					// <Sidebar
-					// 	milestones={milestones}
-					// 	assetInfo={assetInfo}
-					// 	grant={applicationData?.grant}
-					// 	applicationId={applicationID}
-					// 	applicantId={applicationData?.applicantId!}
-					// 	decimals={decimals}
-					// />
-				)
-			}
+
 
 			<Modal
 				isOpen={isGrantCompleteModelOpen}

@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from 'react'
-import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { Badge, Box, Button, ButtonProps, Checkbox, Flex, forwardRef, Grid, GridItem, HStack, Menu, MenuButton, MenuItem, MenuList, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalOverlay, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
@@ -7,7 +6,7 @@ import { defaultChainId } from 'src/constants/chains'
 import { GetGrantDetailsQuery } from 'src/generated/graphql'
 import useBatchUpdateApplicationState from 'src/hooks/useBatchUpdateApplicationState'
 import { IApplicantData } from 'src/types'
-import { formatAddress, getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { AcceptApplication } from 'src/v2/assets/custom chakra icons/AcceptApplication'
 import { RejectApplication } from 'src/v2/assets/custom chakra icons/RejectApplication'
@@ -494,12 +493,12 @@ const InReviewPanel = ({
 							{(grantData?.grants?.length || 0) > 0 && grantData?.grants[0]?.title}
 						</Text>
 
-						<Button
+						{/* <Button
 							rightIcon={<ExternalLinkIcon />}
 							variant='linkV2'
 							bg='#D5F1EB'>
 							{(grantData?.grants?.length || 0) > 0 && formatAddress(grantData?.grants[0]?.id!)}
-						</Button>
+						</Button> */}
 					</Flex>
 				}
 				currentStepIndex={networkTransactionModalStep || 0}
