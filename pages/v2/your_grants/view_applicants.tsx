@@ -374,6 +374,7 @@ function ViewApplicants() {
 
 				return {
 					grantTitle: applicant?.grant?.title,
+					grant: applicant?.grant,
 					applicationId: applicant.id,
 					applicantName: getFieldString(applicant, 'applicantName'),
 					applicantEmail: getFieldString(applicant, 'applicantEmail'),

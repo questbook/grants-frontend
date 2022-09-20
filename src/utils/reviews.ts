@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { ReviewSetRequest } from '@questbook/service-validator-client'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import { defaultChainId } from 'src/constants/chains'
@@ -92,51 +92,50 @@ export function useLoadReview(
 		return reviewData
 	}
 
-	const loadReview = async(
-		review: IReview,
-		applicationId: string
-	) => {
-		const isPrivate = isReviewPrivate(review)
-		let data: IReviewFeedback
+	const loadReview = useCallback(
+		async(review: IReview, applicationId: string) => {
+			const isPrivate = isReviewPrivate(review)
+			let data: IReviewFeedback
 
-		if(isPrivate) {
-			if(!scwAddress) {
-				throw new Error('Webwallet not initialized. Cannot decrypt')
-			}
+			if(isPrivate) {
+				if(!scwAddress) {
+					throw new Error('Webwallet not initialized. Cannot decrypt')
+				}
 
-			const isReviewer = review.reviewer?.id?.toLocaleLowerCase().endsWith(scwAddress.toLocaleLowerCase())
-			let reviewData: PrivateReviewData
-			if(isReviewer) {
-				reviewData = await loadPrivateReviewDataForSelf(review)
+				const isReviewer = review.reviewer?.id?.toLocaleLowerCase().endsWith(scwAddress.toLocaleLowerCase())
+				let reviewData: PrivateReviewData
+				if(isReviewer) {
+					reviewData = await loadPrivateReviewDataForSelf(review)
+				} else {
+					reviewData = await loadPrivateReviewDataForReviewer(review)
+				}
+
+				logger.info(
+					{ reviewId: review.id, walletAddress: reviewData.walletAddress },
+					'decrypting review using shared key'
+				)
+
+				const ipfsData = await getFromIPFS(reviewData!.dataIpfsHash)
+				const { decrypt } = await getSecureChannelFromPublicKey(
+					webwallet!,
+					reviewData.publicKey,
+					getKeyForApplication(applicationId)
+				)
+
+				logger.info({ walletAddress: reviewData!.walletAddress }, 'prepared secure channel for decryption')
+				const jsonReview = await decrypt(ipfsData)
+				data = JSON.parse(jsonReview)
 			} else {
-				reviewData = await loadPrivateReviewDataForReviewer(review)
+				const ipfsData = await getFromIPFS(review.publicReviewDataHash!)
+				data = JSON.parse(ipfsData || '{}')
 			}
 
-			logger.info(
-				{ reviewId: review.id, walletAddress: reviewData.walletAddress },
-				'decrypting review using shared key'
-			)
+			data.total = totalScore(data.items)
+			data.createdAtS = review.createdAtS
 
-			const ipfsData = await getFromIPFS(reviewData!.dataIpfsHash)
-			const { decrypt } = await getSecureChannelFromPublicKey(
-				webwallet!,
-				reviewData.publicKey,
-				getKeyForApplication(applicationId)
-			)
-
-			logger.info({ walletAddress: reviewData!.walletAddress }, 'prepared secure channel for decryption')
-			const jsonReview = await decrypt(ipfsData)
-			data = JSON.parse(jsonReview)
-		} else {
-			const ipfsData = await getFromIPFS(review.publicReviewDataHash!)
-			data = JSON.parse(ipfsData || '{}')
-		}
-
-		data.total = totalScore(data.items)
-		data.createdAtS = review.createdAtS
-
-		return data
-	}
+			return data
+		}, [scwAddress, webwallet, fetchPubKeys, fetchMembers]
+	)
 
 	return { loadReview }
 }
@@ -151,6 +150,8 @@ export const useLoadReviews = (
 
 	const [reviews, setReviews] = useState<{ [_id: string]: IReviewFeedback }>({ })
 	const { loadReview } = useLoadReview(applicationData?.grant?.id, chainId || defaultChainId)
+
+	const loadingRef = useRef(false)
 
 	const loadReviews = useCallback(
 		async() => {
@@ -173,10 +174,14 @@ export const useLoadReviews = (
 	)
 
 	useEffect(() => {
-		if(submittedReviews?.length) {
+		if(submittedReviews?.length && !loadingRef.current) {
+			loadingRef.current = true
 			loadReviews()
+				.finally(() => {
+					loadingRef.current = false
+				})
 		}
-	}, [submittedReviews])
+	}, [submittedReviews, loadReviews])
 
 	return { reviews }
 }
