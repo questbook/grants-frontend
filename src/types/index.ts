@@ -8,7 +8,6 @@ import {
 } from 'src/generated/contracts'
 import {
 	GetAllGrantsForADaoQuery, GetApplicantsForAGrantQuery,
-	GetApplicationDetailsQuery,
 	GetApplicationMilestonesQuery,
 	GetDaoDetailsQuery,
 	GetFundSentForApplicationQuery,
@@ -57,9 +56,16 @@ export type IApplicantData = {
   reviewers: GetApplicantsForAGrantQuery['grantApplications'][number]['applicationReviewers']
 }
 
-export type IReview = Exclude<Exclude<GetApplicationDetailsQuery['grantApplication'], null>, undefined>['reviews'][0];
+export type IReview = IApplicantData['reviews'][0]
 
-export type IReviewFeedback = { isApproved?: boolean, items: FeedbackType[] }
+export type IReviewer = { id: string, fullName?: string | null }
+
+export type IReviewFeedback = {
+  isApproved?: boolean
+  createdAtS?: number
+  items: FeedbackType[]
+  total: number
+}
 
 export type PartnersProps = {
   name: string

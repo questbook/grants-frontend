@@ -1,4 +1,5 @@
-import { Box, Flex, Input, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Image, Input, Text } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 import { IApplicantData } from 'src/types'
 import { ArrowDownCircle } from 'src/v2/assets/custom chakra icons/Arrows/ArrowDownCircle'
 import { ExternalLink } from 'src/v2/assets/custom chakra icons/ExternalLink'
@@ -20,6 +21,7 @@ const RecipientDetails = ({
 	initiateTransactionData: TransactionType[] | undefined
 	onChangeRecepientDetails: (applicationId: string, fieldName: string, fieldValue: any) => void
 }) => {
+	const router = useRouter()
 	return (
 		<>
 			<Flex
@@ -30,29 +32,33 @@ const RecipientDetails = ({
 				flexDirection='column'
 			>
 
-				<>
-					<Text
-						fontSize='14px'
-						lineHeight='20px'
-						fontWeight='500'
-					>
-						Tokens sent to recipient
-					</Text>
+				{
+					initiateTransactionData?.[0]?.from ? (
+						<>
+							<Text
+								fontSize='14px'
+								lineHeight='20px'
+								fontWeight='500'
+							>
+								Tokens sent to recipient
+							</Text>
 
-					<Box h={2} />
+							<Box h={2} />
 
-					<TokenSelect
-						placeholder='Select a token from the list'
-						value={initiateTransactionData![0]?.selectedToken}
-						safeTokenList={safeTokenList}
-						onChange={
-							(value) => {
-								onChangeRecepientDetails('', 'selectedToken', { name: value?.id, info: value?.info })
-							}
-						} />
+							<TokenSelect
+								placeholder='Select a token from the list'
+								value={initiateTransactionData![0]?.selectedToken}
+								safeTokenList={safeTokenList}
+								onChange={
+									(value) => {
+										onChangeRecepientDetails('', 'selectedToken', { name: value?.id, info: value?.info })
+									}
+								} />
 
-					<Box h={6} />
-				</>
+							<Box h={6} />
+						</>
+					) : null
+				}
 
 
 				<Text
@@ -63,25 +69,72 @@ const RecipientDetails = ({
 					From
 				</Text>
 
-				<Flex
-					alignItems='baseline'
-					mt={2}
-				>
-					<Text
-						fontSize='14px'
-						lineHeight='20px'
-						fontWeight='500'
-					>
-						{initiateTransactionData ? initiateTransactionData[0]?.from : ''}
-					</Text>
+				{
+					initiateTransactionData?.[0]?.from ? (
+						<Flex
+							alignItems='baseline'
+							mt={2}
+						>
+							<Text
+								fontSize='14px'
+								lineHeight='20px'
+								fontWeight='500'
+							>
+								{initiateTransactionData?.[0]?.from}
+							</Text>
 
-					<ExternalLink
-						ml={1}
-						h='12px'
-						w='12px'
-						cursor='pointer'
-					/>
-				</Flex>
+							<ExternalLink
+								ml={1}
+								h='12px'
+								w='12px'
+								cursor='pointer'
+							/>
+						</Flex>
+					) : (
+						<Flex
+							alignItems='baseline'
+							mt={2}
+							direction='column'
+					 	>
+							<Flex
+								mb='8px'
+								alignItems='flex-start'>
+								<Image
+									src='/ui_icons/info_orange.svg'
+									mr='1em'
+									pt='4px' />
+								<Text
+									fontSize='14px'
+									color='#FF7545'>
+									No multisig wallet found. Please add a multisig wallet to send funds
+								</Text>
+							</Flex>
+							<Button
+								px={3}
+								py='6px'
+								minW={0}
+								minH={0}
+								h='auto'
+								borderRadius='2px'
+								onClick={
+									() => {
+										router.push({ pathname: '/safe', query: {
+											'show_toast': true,
+										} })
+									}
+								}
+								fontSize='14px'
+								fontWeight='500'
+							>
+								<Image
+									src='/ui_icons/add_black.svg'
+									mr='0.5em' />
+
+								Add a multisig wallet
+							</Button>
+						</Flex>
+					)
+				}
 
 			</Flex>
 

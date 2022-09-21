@@ -9,7 +9,7 @@ import {
 import { ApiClientsContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
 import { CHAIN_INFO } from 'src/constants/chains'
-import { formatAmount } from 'src/utils/formattingUtils'
+import { formatAmount, getRewardAmount } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import {
@@ -88,12 +88,7 @@ function Accept({
 					>
 						{
 							applicationData
-              && formatAmount(
-              	applicationData?.fields?.find(
-              		(fld: any) => fld?.id?.split('.')[1] === 'fundingAsk',
-              	)?.values[0].value || '0',
-              	decimals,
-              )
+										&& getRewardAmount(decimals, { fields: applicationData?.fields, milestones: applicationData?.milestones })
 						}
 						{' '}
 						{label}

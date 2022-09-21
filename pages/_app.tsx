@@ -340,17 +340,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		return _nonce
 	}
 
-	const getNetwork = () => {
-		return defaultChainId
-
-		// const _network = localStorage.getItem('network')
-
-		// if(!_network) {
-		// 	return defaultChainId
-		// }
-
-		// return parseInt(_network)
-	}
+	const getNetwork = () => defaultChainId
 
 	const createWebWallet = () => {
 
@@ -371,24 +361,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			return newWebwallet
 		}
 	}
-
-	// const getBiconomyDaoObj = () => {
-	// 	if (typeof window === 'undefined') {
-	// 		return undefined
-	// 	}
-
-	// 	let _biconomyDaoObj = localStorage.getItem('biconomyDaoObj')
-	// 	if (!_biconomyDaoObj) {
-	// 		return undefined
-	// 	}
-
-	// 	try {
-	// 		_biconomyDaoObj = JSON.parse(_biconomyDaoObj)
-	// 		return _biconomyDaoObj
-	// 	} catch {
-	// 		return undefined
-	// 	}
-	// }
 
 	const webwalletContextValue = useMemo(
 		() => ({
@@ -504,24 +476,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		[validatorApi, workspace, setWorkspace, clients, connected, setConnected]
 	)
 
-	const [migrateModalOpen, setMigrateModalOpen] = React.useState(false)
-
-	useEffect(() => {
-		if(typeof window === 'undefined') {
-			return
-		}
-
-		const didHaveWallet = localStorage.getItem('wagmi.wallet')
-		const didMigrate = localStorage.getItem('didMigrate') === 'true'
-		if(!didHaveWallet && !didMigrate) {
-			localStorage.setItem('didMigrate', 'true')
-		}
-
-		if(didHaveWallet && !didMigrate) {
-			setMigrateModalOpen(true)
-		}
-	}, [])
-
 	const seo = getSeo()
 
 	const getLayout = Component.getLayout || ((page) => page)
@@ -559,9 +513,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 								{getLayout(<Component {...pageProps} />)}
 								{
 									typeof window !== 'undefined' && (
-										<MigrateToGasless
-											isOpen={migrateModalOpen}
-											onClose={() => setMigrateModalOpen(false)} />
+										<MigrateToGasless />
 									)
 								}
 							</ChakraProvider>

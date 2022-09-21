@@ -14,7 +14,6 @@ import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } f
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
 import { FishEye } from 'src/v2/assets/custom chakra icons/FishEye'
-import { SetupEvaluation } from 'src/v2/assets/custom chakra icons/SetupEvaluation'
 import AssignReviewers from 'src/v2/payouts/SetupEvaluationDrawer/AssignReviewers'
 import RubricsForm from 'src/v2/payouts/SetupEvaluationDrawer/RubricsForm'
 
@@ -43,7 +42,28 @@ const SetupEvaluationDrawer = ({
 	const { workspace, validatorApi, subgraphClients } = useContext(ApiClientsContext)!
 
 	// Setting up rubrics
+	const [isPrivateReviews, setIsPrivateReviews] = useState(false)
 	const [rubrics, setRubrics] = useState<SidebarRubrics[]>([{ index: 0, criteria: '', description: '' }])
+	const [canContinue, setCanContinue] = useState(false)
+	// Assigning reviewers
+	const defaultSliderValue = 1
+	const [numOfReviewersPerApplication, setNumOfReviewersPerApplication] = useState(defaultSliderValue)
+	const [reviewers, setReviewers] = useState<SidebarReviewer[]>([])
+
+	const { t } = useTranslation()
+
+	const toastRef = useRef<ToastId>()
+	const toast = useToast()
+
+	const applicationReviewContract = useQBContract('reviews', chainId)
+
+	const { webwallet } = useContext(WebwalletContext)!
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		chainId: chainId?.toString()!
+		// targetContractABI: GrantFactoryAbi,
+	})
+
+	const { nonce } = useQuestbookAccount()
 
 	const onRubricChange = (rubric: SidebarRubrics) => {
 		const temp = [...rubrics]
@@ -65,9 +85,11 @@ const SetupEvaluationDrawer = ({
 		}
 	}
 
-	const [canContinue, setCanContinue] = useState(false)
-
-	const { t } = useTranslation()
+	const onReviewerChange = (reviewer: SidebarReviewer) => {
+		const temp = [...reviewers]
+		temp[reviewer.index].isSelected = !temp[reviewer.index].isSelected
+		setReviewers(temp)
+	}
 
 	useEffect(() => {
 		for(const rubric of rubrics) {
@@ -80,11 +102,6 @@ const SetupEvaluationDrawer = ({
 		setCanContinue(true)
 	}, [rubrics])
 
-	// Assigning reviewers
-	const defaultSliderValue = 1
-	const [numOfReviewersPerApplication, setNumOfReviewersPerApplication] = useState(defaultSliderValue)
-	const [reviewers, setReviewers] = useState<SidebarReviewer[]>([])
-
 	useEffect(() => {
 		const temp: SidebarReviewer[] = []
 		let i = 0
@@ -96,30 +113,9 @@ const SetupEvaluationDrawer = ({
 		setReviewers(temp)
 	}, [data])
 
-	const onReviewerChange = (reviewer: SidebarReviewer) => {
-		const temp = [...reviewers]
-		temp[reviewer.index].isSelected = !temp[reviewer.index].isSelected
-		setReviewers(temp)
-	}
-
-	const toastRef = useRef<ToastId>()
-	const toast = useToast()
-
-	const applicationReviewContract = useQBContract('reviews', chainId)
-
-	const { webwallet } = useContext(WebwalletContext)!
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
-		chainId: chainId?.toString()!
-		// targetContractABI: GrantFactoryAbi,
-	})
-
-	const { nonce } = useQuestbookAccount()
-
-
 	const onInitiateTransaction = async() => {
 		setNetworkTransactionModalStep(0)
 
-		// console.log('Workspace: ', workspace)
 		if(!workspace || !workspace?.id || !grantAddress) {
 			return
 		}
@@ -133,21 +129,6 @@ const SetupEvaluationDrawer = ({
 			if(!chainId) {
 				return
 			}
-			// Commenting this to accommodate gasless
-			// // console.log('Chain ID: ', activeChain?.id, chainId)
-			// if(activeChain?.id !== chainId) {
-			// 	// console.log('switching')
-			// 	await switchNetwork!(chainId!)
-			// 	// console.log('create workspace again on contract object update')
-			// 	setCallOnContractChange(true)
-			// 	setTimeout(() => {
-			// 		if(callOnContractChange && activeChain?.id !== chainId) {
-			// 			setCallOnContractChange(false)
-			// 			throw new Error('Error switching network')
-			// 		}
-			// 	}, 60000)
-			// 	return
-			// }
 
 			const rubric: {[_ in string]: {
 				title: SidebarRubrics['criteria']
@@ -172,7 +153,7 @@ const SetupEvaluationDrawer = ({
 				data: { ipfsHash: auxRubricHash },
 			} = await validatorApi.validateRubricSet({
 				rubric: {
-					isPrivate: false,
+					isPrivate: isPrivateReviews,
 					rubric: rubric,
 				},
 			})
@@ -261,6 +242,8 @@ const SetupEvaluationDrawer = ({
 		onComplete()
 	}
 
+	const TABS = [{ text: t('/your_grants/view_applicants.review_questions') }, { text: t('/your_grants/view_applicants.select_reviewers') }]
+
 	return (
 		<Drawer
 			placement='right'
@@ -290,39 +273,7 @@ const SetupEvaluationDrawer = ({
 					<Flex
 						direction='row'
 						align='center'>
-						<Flex
-							bg='#D1D7F4'
-							h='48px'
-							w='48px'
-							borderRadius='2px'
-							alignItems='center'
-							justifyContent='center'
-						>
-							<SetupEvaluation
-								color='#036AFF'
-								h='28px'
-								w='28px' />
-						</Flex>
 
-						<Flex
-							ml={2}
-							mr='auto'
-							flexDirection='column'>
-							<Text
-								fontSize='20px'
-								lineHeight='24px'
-								fontWeight='500'
-							>
-								{t('/your_grants/view_applicants.create_review_process')}
-							</Text>
-							<Text
-								fontSize='14px'
-								lineHeight='20px'
-								fontWeight='400'
-								mt={1}
-								color='#7D7DA0'
-							 />
-						</Flex>
 
 						<CancelCircleFilled
 							mb='auto'
@@ -349,84 +300,61 @@ const SetupEvaluationDrawer = ({
 						maxH='calc(100vh - 32px)'
 						overflowY='auto'
 						direction='column'>
-						<Flex>
-							<Flex
-								flex={1}
-								direction='column'
-							>
-								<Box
-									bg={step === 0 ? '#785EF0' : '#E0E0EC'}
-									borderRadius='20px'
-									height={1}
-								/>
-
-								<Flex
-									mt={2}
-									color={step === 0 ? '#785EF0' : '#E0E0EC'}>
-									{
-										step === 0 ? (
-											<FishEye
-												h='14px'
-												w='14px' />
-										) : (
+						<Flex justify='stretch'>
+							{
+								TABS.map((tab, index) => {
+									return (
+										<Flex
+											ml={index === 0 ? 0 : 1}
+											key={index}
+											direction='column'
+											w='100%'
+											align='start'
+										>
 											<Box
-												border='1px solid #E0E0EC'
+												w='100%'
+												bg={step === index ? '#785EF0' : '#E0E0EC'}
 												borderRadius='20px'
-												height='14px'
-												width='14px'
+												height={1}
 											/>
-										)
-									}
-									<Text
-										fontSize='12px'
-										lineHeight='16px'
-										fontWeight='500'
-										ml={1}
-										color={step === 0 ? '#785EF0' : '#1F1F33'}
-									>
-										{t('/your_grants/view_applicants.review_questions')}
-									</Text>
-								</Flex>
-							</Flex>
-							<Box w={1} />
-							<Flex
-								flex={1}
-								direction='column'
-							>
-								<Box
-									bg={step === 1 || step === 2 ? '#785EF0' : '#E0E0EC'}
-									borderRadius='20px'
-									height={1}
-								/>
 
-								<Flex
-									mt={2}
-									color={step === 1 || step === 2 ? '#785EF0' : '#E0E0EC'}>
-									{
-										step === 1 || step === 2 ? (
-											<FishEye
-												h='14px'
-												w='14px' />
-										) : (
-											<Box
-												border='1px solid #E0E0EC'
-												borderRadius='20px'
-												height='14px'
-												width='14px'
-											/>
-										)
-									}
-									<Text
-										fontSize='12px'
-										lineHeight='16px'
-										fontWeight='500'
-										ml={1}
-										color={step === 1 || step === 2 ? '#785EF0' : '#1F1F33'}
-									>
-										{t('/your_grants/view_applicants.select_reviewers')}
-									</Text>
-								</Flex>
-							</Flex>
+											<Button
+												onClick={
+													() => {
+														setStep(index)
+													}
+												}
+												mt={2}
+												variant='link'
+												leftIcon={
+													step === index ? (
+														<FishEye
+															h='14px'
+															w='14px'
+															color='#785EF0' />
+													) : (
+														<Box
+															border='1px solid #E0E0EC'
+															borderRadius='20px'
+															height='14px'
+															width='14px'
+														/>
+													)
+												}>
+												<Text
+													fontSize='12px'
+													lineHeight='16px'
+													fontWeight='500'
+													ml={1}
+													color={step === index ? '#785EF0' : '#1F1F33'}
+												>
+													{tab.text}
+												</Text>
+											</Button>
+										</Flex>
+									)
+								})
+							}
 						</Flex>
 
 						<Box mt={6} />
@@ -445,11 +373,9 @@ const SetupEvaluationDrawer = ({
 									maxCount={Math.min(reviewers.length, MAX_REVIEWER_COUNT)}
 									defaultSliderValue={defaultSliderValue}
 									sliderValue={numOfReviewersPerApplication}
-									onSlide={
-										(value: number) => {
-											setNumOfReviewersPerApplication(value)
-										}
-									}
+									isPrivateReviews={isPrivateReviews}
+									setIsPrivateReviews={setIsPrivateReviews}
+									onSlide={setNumOfReviewersPerApplication}
 									reviewers={reviewers}
 									onReviewerChange={onReviewerChange}
 								/>

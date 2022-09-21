@@ -52,15 +52,8 @@ function AccountDetails() {
 				<HStack>
 					<Image
 						borderRadius='3xl'
-						src={getAvatar(webwallet!.address)}
+						src={getAvatar(false, webwallet!.address)}
 						boxSize='24px' />
-					<Text color={isConnected ? 'brandv2' : 'grey'}>
-						{
-							isConnected
-								? 'Connected with in-app wallet'
-								: 'Connecting your in-app wallet...'
-						}
-					</Text>
 				</HStack>
 			</MenuButton>
 			<MenuList p={0}>

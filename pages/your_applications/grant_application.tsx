@@ -21,6 +21,8 @@ import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { useEncryptPiiForApplication } from 'src/utils/pii'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
+import getAvatar from 'src/utils/avatarUtils'
+import config from 'src/constants/config.json'
 
 function ViewApplication() {
 	const apiClients = useContext(ApiClientsContext)!
@@ -239,7 +241,8 @@ function ViewApplication() {
 						application?.createdAtS.toString()
             || ''
 					}
-					daoLogo={
+					daoLogo={application?.grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash?
+						getAvatar(true, application?.grant?.workspace?.title):
 						getUrlForIPFSHash(
 							application?.grant?.workspace?.logoIpfsHash || '',
 						)

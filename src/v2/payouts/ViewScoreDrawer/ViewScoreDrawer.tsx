@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Box, Button, Container, Drawer, DrawerContent, DrawerOverlay, Flex, Text } from '@chakra-ui/react'
+import { IReviewer, IReviewFeedback } from 'src/types'
 import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
 import { SetupEvaluation } from 'src/v2/assets/custom chakra icons/SetupEvaluation'
 // import AssignReviewers from './AssignReviewers'
@@ -13,11 +14,8 @@ const ViewScoreDrawer = ({
 }: {
   isOpen: boolean
   onClose: () => void
-  score?: {
-		items?: {rating?: number, comment?: string, rubric: {title: string}}[]
-		createdAtS: number
-	}
-	reviewer?: { id: string, name: string }
+  score?: IReviewFeedback
+  reviewer?: IReviewer
 }) => {
 	// The will be required while implementing edit rubrics
 	const [step, setStep] = useState(0)
