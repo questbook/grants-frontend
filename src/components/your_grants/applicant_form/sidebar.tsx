@@ -88,7 +88,7 @@ function Sidebar({
 				bg='white'
 				border='2px solid #D0D3D3'
 				borderRadius={8}
-				w={340}
+				w='100%'
 				direction='column'
 				alignItems='stretch'
 				px='28px'
@@ -278,7 +278,7 @@ function Sidebar({
 				bg='white'
 				border='2px solid #D0D3D3'
 				borderRadius={8}
-				w={340}
+				w='100%'
 				direction='column'
 				alignItems='stretch'
 				px='28px'
