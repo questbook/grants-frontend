@@ -30,20 +30,20 @@ import BrowseGrantCard from 'src/components/profile/grantCard'
 import SeeMore from 'src/components/profile/see_more'
 import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import { CHAIN_INFO } from 'src/constants/chains'
+import config from 'src/constants/config.json'
 import { useGetDaoDetailsQuery, useGetFundsAndProfileDataQuery } from 'src/generated/graphql'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 // APP LAYOUT & STATE
 import NavbarLayout from 'src/layout/navbarLayout'
 // CONSTANTS AND TYPES
 import type { DAOWorkspace } from 'src/types'
+import getAvatar from 'src/utils/avatarUtils'
 import { formatAmount } from 'src/utils/formattingUtils'
 import verify from 'src/utils/grantUtils'
 // UTILS AND TOOLS
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import logger from 'src/utils/logger'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import getAvatar from 'src/utils/avatarUtils'
-import config from 'src/constants/config.json'
 
 function Profile() {
 	const router = useRouter()
@@ -73,7 +73,7 @@ function Profile() {
 
 
 	useEffect(() => {
-		if (router?.query) {
+		if(router?.query) {
 			const { chainId: cId, daoId: dId } = router.query
 			setChainId((cId as unknown) as SupportedChainId)
 			setDaoId(dId?.toString())
@@ -87,11 +87,11 @@ function Profile() {
 	})
 
 	useEffect(() => {
-		if (!daoID) {
+		if(!daoID) {
 			return
 		}
 
-		if (!chainID) {
+		if(!chainID) {
 			return
 		}
 
@@ -109,7 +109,7 @@ function Profile() {
 	const { data, error, loading } = useGetDaoDetailsQuery(queryParams)
 
 	useEffect(() => {
-		if (data) {
+		if(data) {
 			// console.log('data', data)
 			setWorkspaceData(data?.workspace!)
 		}
@@ -126,7 +126,7 @@ function Profile() {
 		},
 	})
 
-	const getAnalyticsData = async () => {
+	const getAnalyticsData = async() => {
 		// console.log('calling analytics')
 		try {
 			//const res = await fetch('https://www.questbook-analytics.com/workspace-analytics', {
@@ -160,7 +160,7 @@ function Profile() {
 			setGrantWinners(data.winnerApplicants)
 
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} catch (e: any) {
+		} catch(e: any) {
 			// console.log(e)
 		}
 	}
@@ -169,7 +169,7 @@ function Profile() {
 		const everydayFundings = data.everydayFunding
 		let totalFunding = 0
 
-		if (!everydayFundings || everydayFundings.length === 0) {
+		if(!everydayFundings || everydayFundings.length === 0) {
 			return totalFunding
 		}
 
@@ -183,7 +183,7 @@ function Profile() {
 	}
 
 	useEffect(() => {
-		if (allDaoData && fundingTime.length === 0) {
+		if(allDaoData && fundingTime.length === 0) {
 			allDaoData.fundsTransfers.forEach((created) => {
 				setFundingTime((array: any) => [...array, created.createdAtS])
 			})
@@ -191,7 +191,7 @@ function Profile() {
 	}, [allDaoData, fundingTime])
 
 	useEffect(() => {
-		if (allDaoData && allDaoData.grants.length >= 1) {
+		if(allDaoData && allDaoData.grants.length >= 1) {
 			allDaoData.grants.forEach((grant) => {
 				grant.applications.filter((app) => {
 					app.state === 'approved' && setApplicationTime((array: any) => [...array, app.updatedAtS])
@@ -230,9 +230,11 @@ function Profile() {
 								fit='contain'
 								alignSelf='flex-end'
 								justifySelf='flex-end'
-								src={workspaceData?.coverImageIpfsHash === config.defaultDAOImageHash?
-									getAvatar(true, workspaceData?.title!):
-									getUrlForIPFSHash(workspaceData?.coverImageIpfsHash)}
+								src={
+									workspaceData?.coverImageIpfsHash === config.defaultDAOImageHash ?
+										getAvatar(true, workspaceData?.title!) :
+										getUrlForIPFSHash(workspaceData?.coverImageIpfsHash)
+								}
 							/>
 						)
 					}
@@ -251,7 +253,7 @@ function Profile() {
 						gap='1rem'
 					>
 						<Image
-							src={workspaceData?.logoIpfsHash! === config.defaultDAOImageHash? getAvatar(true, workspaceData?.title) :getUrlForIPFSHash(workspaceData?.logoIpfsHash!)}
+							src={workspaceData?.logoIpfsHash! === config.defaultDAOImageHash ? getAvatar(true, workspaceData?.title) : getUrlForIPFSHash(workspaceData?.logoIpfsHash!)}
 							w='120px'
 							h='120px'
 							borderRadius='12px'
@@ -409,7 +411,7 @@ function Profile() {
 								)
 								const chainInfo =
 									CHAIN_INFO[chainId]?.supportedCurrencies[
-									grant.reward.asset.toLowerCase()
+										grant.reward.asset.toLowerCase()
 									]
 								const [isGrantVerified, funding] = verify(
 									grant.funding,
@@ -573,7 +575,7 @@ function Profile() {
 	)
 }
 
-Profile.getLayout = function (page: React.ReactElement) {
+Profile.getLayout = function(page: React.ReactElement) {
 	return (
 		<NavbarLayout>
 			{page}

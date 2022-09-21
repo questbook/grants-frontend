@@ -14,14 +14,14 @@ import Empty from 'src/components/ui/empty'
 import Heading from 'src/components/ui/heading'
 import YourApplicationCard from 'src/components/your_applications/yourApplicationCard'
 import { CHAIN_INFO } from 'src/constants/chains'
+import config from 'src/constants/config.json'
 import { GrantApplication, useGetMyApplicationsLazyQuery } from 'src/generated/graphql'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import NavbarLayout from 'src/layout/navbarLayout'
+import getAvatar from 'src/utils/avatarUtils'
 import { formatAmount, getChainIdFromResponse, getFormattedDateFromUnixTimestamp } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import getAvatar from 'src/utils/avatarUtils'
-import config from 'src/constants/config.json'
 
 const PAGE_SIZE = 20
 
@@ -161,9 +161,11 @@ function YourApplications() {
 								key={application.id}
 								grantTitle={application.grant.title}
 								daoName={application.grant.workspace.title}
-								daoIcon={application.grant.workspace.logoIpfsHash === config.defaultDAOImageHash?
-									getAvatar(true, application.grant.workspace.title):
-									getUrlForIPFSHash(application.grant.workspace.logoIpfsHash)}
+								daoIcon={
+									application.grant.workspace.logoIpfsHash === config.defaultDAOImageHash ?
+										getAvatar(true, application.grant.workspace.title) :
+										getUrlForIPFSHash(application.grant.workspace.logoIpfsHash)
+								}
 								isGrantVerified={(new BN(application.grant.funding)).gt(new BN(0))}
 								funding={
 									formatAmount(

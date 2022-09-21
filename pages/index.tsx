@@ -14,20 +14,20 @@ import GrantCard from 'src/components/browse_grants/grantCard'
 import Sidebar from 'src/components/browse_grants/sidebar'
 import Heading from 'src/components/ui/heading'
 import Loader from 'src/components/ui/loader'
+import config from 'src/constants/config.json'
 import {
 	GetAllGrantsQuery,
 	useGetAllGrantsLazyQuery,
 } from 'src/generated/graphql'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import NavbarLayout from 'src/layout/navbarLayout'
+import getAvatar from 'src/utils/avatarUtils'
 import { formatAmount } from 'src/utils/formattingUtils'
 import { unixTimestampSeconds } from 'src/utils/generics'
 import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import getAvatar from 'src/utils/avatarUtils'
-import config from 'src/constants/config.json'
 
 const PAGE_SIZE = 40
 
@@ -193,9 +193,11 @@ function BrowseGrants() {
 										daoID={grant.workspace.id}
 										key={grant.id}
 										grantID={grant.id}
-										daoIcon={grant.workspace.logoIpfsHash === config.defaultDAOImageHash?
-											 getAvatar(true, grant.workspace.title):
-											 getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
+										daoIcon={
+											grant.workspace.logoIpfsHash === config.defaultDAOImageHash ?
+											 getAvatar(true, grant.workspace.title) :
+											 getUrlForIPFSHash(grant.workspace.logoIpfsHash)
+										}
 										daoName={grant.workspace.title}
 										isDaoVerified={false}
 										grantTitle={grant.title}

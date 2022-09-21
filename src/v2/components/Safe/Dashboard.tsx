@@ -92,7 +92,7 @@ function Dashboard() {
 					mt={1}
 					variant='v2_heading_3'
 					fontWeight='500'>
-					{loadedSafesUSDBalance ? (safesUSDBalance[0]?.amount >=0  ? `\$${safesUSDBalance[0].amount}` : t('/safe.could_not_fetch')) : 'Loading...'}
+					{loadedSafesUSDBalance ? (safesUSDBalance[0]?.amount >= 0 ? `\$${safesUSDBalance[0].amount}` : t('/safe.could_not_fetch')) : 'Loading...'}
 				</Text>
 				<Button
 					mt={8}

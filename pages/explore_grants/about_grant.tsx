@@ -13,6 +13,7 @@ import VerifiedBadge from 'src/components/ui/verified_badge'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
 import { defaultChainId, USD_ASSET, USD_ICON } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
+import config from 'src/constants/config.json'
 import {
 	GetGrantDetailsQuery,
 	useGetGrantDetailsQuery,
@@ -22,14 +23,13 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
+import getAvatar from 'src/utils/avatarUtils'
 import {
 	formatAmount,
 } from 'src/utils/formattingUtils'
 import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo, getChainInfo } from 'src/utils/tokenUtils'
-import getAvatar from 'src/utils/avatarUtils'
-import config from 'src/constants/config.json'
 
 type GrantDetails = GetGrantDetailsQuery['grants'][number]
 
@@ -168,8 +168,8 @@ function AboutGrant() {
 		setTitle(grantData.title)
 		setDaoId(grantData.workspace?.id)
 		setDaoName(grantData.workspace?.title)
-		setDaoLogo(grantData.workspace?.logoIpfsHash === config.defaultDAOImageHash?
-			 getAvatar(true, grantData.workspace?.title!):
+		setDaoLogo(grantData.workspace?.logoIpfsHash === config.defaultDAOImageHash ?
+			 getAvatar(true, grantData.workspace?.title!) :
 			 getUrlForIPFSHash(grantData.workspace?.logoIpfsHash))
 		setRewardAmount(
 			grantData.reward?.committed

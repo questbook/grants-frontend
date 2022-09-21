@@ -4,12 +4,12 @@ import { CheckIcon } from '@chakra-ui/icons'
 import { Button, Divider, Flex, HStack, Image, Text, VStack } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
+import config from 'src/constants/config.json'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { MinimalWorkspace } from 'src/types'
+import getAvatar from 'src/utils/avatarUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import getRole from 'src/utils/memberUtils'
-import getAvatar from 'src/utils/avatarUtils'
-import config from 'src/constants/config.json'
 
 interface Props {
   workspaces: MinimalWorkspace[]
@@ -48,9 +48,11 @@ function Domains({ workspaces, onWorkspaceClick }: Props) {
 				}
 			>
 				<Image
-					src={workspaceLocal.logoIpfsHash === config.defaultDAOImageHash?
-						getAvatar(true, workspaceLocal.title):
-						getUrlForIPFSHash(workspaceLocal.logoIpfsHash)}
+					src={
+						workspaceLocal.logoIpfsHash === config.defaultDAOImageHash ?
+							getAvatar(true, workspaceLocal.title) :
+							getUrlForIPFSHash(workspaceLocal.logoIpfsHash)
+					}
 					boxSize='20px'
 					borderRadius='4px'
 				/>
@@ -95,7 +97,7 @@ function Domains({ workspaces, onWorkspaceClick }: Props) {
 				mr={3}>
 				<Image
 					mt={2}
-					src={workspace!.logoIpfsHash === config.defaultDAOImageHash? getAvatar(true, workspace!.title) : getUrlForIPFSHash(workspace!.logoIpfsHash)}
+					src={workspace!.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, workspace!.title) : getUrlForIPFSHash(workspace!.logoIpfsHash)}
 					boxSize='40px'
 				/>
 				<Button
