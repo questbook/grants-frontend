@@ -548,8 +548,6 @@ function Form({
 				// rewardToken={rewardToken}
 				rewardError={rewardError}
 				setRewardError={setRewardError}
-				rewardCurrency={rewardCurrency}
-				setRewardCurrency={setRewardCurrency}
 				setRewardCurrencyAddress={setRewardCurrencyAddress}
 				date={date}
 				setDate={setDate}

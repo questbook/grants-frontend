@@ -22,9 +22,9 @@ function Accept({
 	applicationData,
 	hasClicked,
 }: {
-  onSubmit: () => void
-  applicationData: any
-  hasClicked: boolean
+	onSubmit: () => void
+	applicationData: any
+	hasClicked: boolean
 }) {
 	const { workspace } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
@@ -88,7 +88,7 @@ function Accept({
 					>
 						{
 							applicationData
-										&& getRewardAmount(decimals, { fields: applicationData?.fields, milestones: applicationData?.milestones })
+							&& getRewardAmount(decimals, { fields: applicationData?.fields, milestones: applicationData?.milestones })
 						}
 						{' '}
 						{label}
@@ -152,11 +152,11 @@ function Accept({
 									>
 										{
 											milestone?.amount
-								&& applicationData
-								&& formatAmount(
-									milestone?.amount,
-									decimals,
-								)
+											&& applicationData
+											&& formatAmount(
+												milestone?.amount,
+												decimals,
+											)
 										}
 										{' '}
 										{label}
