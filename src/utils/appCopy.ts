@@ -174,8 +174,8 @@ i18next.use(initReactI18next).init({
 					'send_funds_milestone_description': 'Select the milestone you are sending this grant for',
 					'send_funds_verification_message': 'You will be asked to verify that you are a signer on the multisig wallet. This will ensure we don’t have impersonation.',
 					'send_funds_next_steps': 'Here are the next steps',
-					'send_funds_open_txn': 'Open the transaction in multi-sig', 
-					'create_review_no_rubrics': 'Setup rubrics to evaluate proposals', 
+					'send_funds_open_txn': 'Open the transaction in multi-sig',
+					'create_review_no_rubrics': 'Setup rubrics to evaluate proposals',
 					'create_rubric': 'Setup Rubrics',
 				},
 				'/manage_dao': {

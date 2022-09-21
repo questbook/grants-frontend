@@ -56,7 +56,7 @@ function BrowseGrantCard({
 	useEffect(() => {
 		if(grantReward === 0 && grantCurrency === 'USD') {
 			setGrantReward(parseInt(grantAmount))
-		}else if(grantCurrency!== 'USD'){
+		} else if(grantCurrency !== 'USD') {
 			calculateUSDValue(grantAmount, grantCurrencyPair).then((promise: any) => {
 				setGrantReward(promise as number)
 			})

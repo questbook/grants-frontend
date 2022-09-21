@@ -20,9 +20,11 @@ function MemberRow({ member }: Props) {
 				<Flex direction='row'>
 					<>
 						<Image
-							src={member.profilePictureIpfsHash?
-								getUrlForIPFSHash(member.profilePictureIpfsHash):
-								getAvatar(false, member.actorId)}
+							src={
+								member.profilePictureIpfsHash ?
+									getUrlForIPFSHash(member.profilePictureIpfsHash) :
+									getAvatar(false, member.actorId)
+							}
 							borderRadius='50%'
 							boxSize='40px'
 						/>

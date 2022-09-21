@@ -8,17 +8,17 @@ import Form from 'src/components/explore_grants/apply_grant/form'
 import Sidebar from 'src/components/explore_grants/apply_grant/sidebar'
 import { defaultChainId, USD_ASSET } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
+import config from 'src/constants/config.json'
 import { useGetGrantDetailsQuery } from 'src/generated/graphql'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import NavbarLayout from 'src/layout/navbarLayout'
+import getAvatar from 'src/utils/avatarUtils'
 import { formatAmount } from 'src/utils/formattingUtils'
 import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import logger from 'src/utils/logger'
 import { getAssetInfo, getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import getAvatar from 'src/utils/avatarUtils'
-import config from 'src/constants/config.json'
 
 function ApplyGrant() {
 	const { subgraphClients, workspace } = useContext(ApiClientsContext)!
@@ -132,8 +132,8 @@ function ApplyGrant() {
 		logger.info({ chainId: grantData?.workspace?.safeChainId, grantData }, 'safe chainid')
 		setSafeChainId(grantData?.workspace?.safe?.ChainId)
 		setDaoId(grantData?.workspace?.id)
-		setDaoLogo(grantData?.workspace?.logoIpfsHash === config.defaultDAOImageHash?
-			getAvatar(true, grantData?.workspace?.title):
+		setDaoLogo(grantData?.workspace?.logoIpfsHash === config.defaultDAOImageHash ?
+			getAvatar(true, grantData?.workspace?.title) :
 			getUrlForIPFSHash(grantData?.workspace?.logoIpfsHash))
 		setRewardAmount(
 			grantData?.reward?.committed

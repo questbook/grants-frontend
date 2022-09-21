@@ -10,19 +10,19 @@ import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import Form from 'src/components/your_applications/grant_application/form'
 import { CHAIN_INFO, defaultChainId, USD_ASSET, USD_ICON } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
+import config from 'src/constants/config.json'
 import {
 	GetApplicationDetailsQuery,
 	useGetApplicationDetailsQuery,
 } from 'src/generated/graphql'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { GrantApplicationProps } from 'src/types/application'
+import getAvatar from 'src/utils/avatarUtils'
 import { formatAmount, getFieldString } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { useEncryptPiiForApplication } from 'src/utils/pii'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-import getAvatar from 'src/utils/avatarUtils'
-import config from 'src/constants/config.json'
 
 function ViewApplication() {
 	const apiClients = useContext(ApiClientsContext)!
@@ -241,11 +241,12 @@ function ViewApplication() {
 						application?.createdAtS.toString()
             || ''
 					}
-					daoLogo={application?.grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash?
-						getAvatar(true, application?.grant?.workspace?.title):
-						getUrlForIPFSHash(
-							application?.grant?.workspace?.logoIpfsHash || '',
-						)
+					daoLogo={
+						application?.grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ?
+							getAvatar(true, application?.grant?.workspace?.title) :
+							getUrlForIPFSHash(
+								application?.grant?.workspace?.logoIpfsHash || '',
+							)
 					}
 					state={application?.state || ''}
 					feedback={application?.feedbackDao || ''}

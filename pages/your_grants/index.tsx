@@ -19,6 +19,7 @@ import FirstGrantEmptyState from 'src/components/your_grants/empty_states/first_
 import LiveGrantEmptyState from 'src/components/your_grants/empty_states/live_grants'
 import YourGrantCard from 'src/components/your_grants/yourGrantCard'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
+import config from 'src/constants/config.json'
 import {
 	GetAllGrantsCountForCreatorQuery, GetAllGrantsCountForCreatorQueryVariables,
 	GetAllGrantsForCreatorQuery, GetAllGrantsForCreatorQueryVariables,
@@ -29,6 +30,7 @@ import {
 } from 'src/generated/graphql'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import NavbarLayout from 'src/layout/navbarLayout'
+import getAvatar from 'src/utils/avatarUtils'
 import { formatAmount } from 'src/utils/formattingUtils'
 import { UNIX_TIMESTAMP_MAX, unixTimestampSeconds } from 'src/utils/generics'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
@@ -38,8 +40,6 @@ import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
 import ReviewerDashboard from 'src/v2/components/Dashboard/ReviewerDashboard'
-import getAvatar from 'src/utils/avatarUtils'
-import config from 'src/constants/config.json'
 
 const PAGE_SIZE = 5
 
@@ -522,9 +522,11 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 								<YourGrantCard
 									grantID={grant.id}
 									key={grant.id}
-									daoIcon={grant.workspace.logoIpfsHash === config.defaultDAOImageHash?
-										getAvatar(true, grant.workspace.title):
-										getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
+									daoIcon={
+										grant.workspace.logoIpfsHash === config.defaultDAOImageHash ?
+											getAvatar(true, grant.workspace.title) :
+											getUrlForIPFSHash(grant.workspace.logoIpfsHash)
+									}
 									grantTitle={grant.title}
 									grantDesc={grant.summary}
 									numOfApplicants={grant.numberOfApplications}
