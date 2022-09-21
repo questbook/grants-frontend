@@ -1,12 +1,8 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import React, { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import {
-	Box, Button, Flex, Text } from '@chakra-ui/react'
-import {
-	Token,
-} from '@questbook/service-validator-client'
-import axios from 'axios'
+import { Box, Button, Flex, Text } from '@chakra-ui/react'
+import { Token } from '@questbook/service-validator-client'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import { ApiClientsContext } from 'pages/_app'
 import Heading from 'src/components/ui/heading'
@@ -16,11 +12,9 @@ import Details from 'src/components/your_grants/create_grant/form/2_details'
 import ApplicantDetails from 'src/components/your_grants/create_grant/form/3_applicantDetails'
 import GrantRewardsInput from 'src/components/your_grants/create_grant/form/4_rewards'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
-import { CHAIN_INFO, SupportedChainId } from 'src/constants/chains'
 import SAFES_ENDPOINTS_MAINNETS from 'src/constants/safesEndpoints.json'
 import SAFES_ENDPOINTS_TESTNETS from 'src/constants/safesEndpointsTest.json'
 import strings from 'src/constants/strings.json'
-import { SafeToken } from 'src/types'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 const SAFES_ENDPOINTS = { ...SAFES_ENDPOINTS_MAINNETS, ...SAFES_ENDPOINTS_TESTNETS }
