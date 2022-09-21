@@ -8,7 +8,6 @@ import {
 } from '@chakra-ui/react'
 import Datepicker from 'src/components/ui/forms/datepicker'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
-import CustomTokenModal from 'src/components/ui/submitCustomTokenModal'
 import { USD_ASSET, USD_DECIMALS } from 'src/constants/chains'
 import 'react-datepicker/dist/react-datepicker.css'
 
@@ -17,8 +16,6 @@ function GrantRewardsInput({
 	setReward,
 	rewardError,
 	setRewardError,
-	rewardCurrency,
-	setRewardCurrency,
 	setRewardCurrencyAddress,
 	date,
 	setDate,
@@ -36,8 +33,6 @@ function GrantRewardsInput({
   setReward: (rewards: string) => void
   rewardError: boolean
   setRewardError: (rewardError: boolean) => void
-  rewardCurrency: string
-  setRewardCurrency: (rewardCurrency: string) => void
   setRewardCurrencyAddress: (rewardCurrencyAddress: string) => void
   date: string
   setDate: (date: string) => void
@@ -51,19 +46,9 @@ function GrantRewardsInput({
 	oldDate: boolean
 	setOldDate: (oldDate: boolean) => void
 }) {
-	const [isModalOpen, setIsModalOpen] = React.useState(false)
 	const [supportedCurrenciesList, setSupportedCurrenciesList] = React.useState<any[]>([])
 
-	const [isJustAddedToken, setIsJustAddedToken] = React.useState<boolean>(false)
-	const addERC = false
 	const showSupportedCurrencies = isEVM && supportedCurrenciesList.length > 0
-
-	const [showDropdown, setShowDropdown] = React.useState(false)
-
-	useEffect(() => {
-		const CurrenciesList = supportedCurrenciesList.filter((currencyItem) => currencyItem.length > 0)
-		setShowDropdown(CurrenciesList.length > 0)
-	}, [supportedCurrenciesList])
 
 	useEffect(() => {
 		if(!showSupportedCurrencies) {

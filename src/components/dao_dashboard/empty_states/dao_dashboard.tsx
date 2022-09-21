@@ -19,7 +19,7 @@ function DoaDashTableEmptyState() {
 					src='/illustrations/empty_states/no_daodash_table.svg'
 					imgHeight='174px'
 					imgWidth='146px'
-					title='You have no pending applications'
+					title='You have no pending actions'
 					subtitle=''
 				/>
 
