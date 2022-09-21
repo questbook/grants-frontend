@@ -2,11 +2,8 @@ import React, {
 	ReactElement, useContext, useEffect, useMemo, useRef, useState,
 } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ExternalLinkIcon } from '@chakra-ui/icons'
 import {
-	Box,
-	Button,
-	Container, Flex, forwardRef, IconButton, IconButtonProps, Menu, MenuButton, MenuItem, MenuList, TabList, TabPanel, TabPanels, Tabs, Text, ToastId, useToast
+	Box, Container, Flex, forwardRef, IconButton, IconButtonProps, Menu, MenuButton, MenuItem, MenuList, TabList, TabPanel, TabPanels, Tabs, Text, ToastId, useToast
 } from '@chakra-ui/react'
 import { BigNumber, ethers, logger } from 'ethers'
 import moment from 'moment'
@@ -28,7 +25,7 @@ import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { ApplicationMilestone } from 'src/types'
-import { formatAddress, formatAmount, getExplorerUrlForTxHash, getFieldString } from 'src/utils/formattingUtils'
+import { formatAmount, getExplorerUrlForTxHash, getFieldString } from 'src/utils/formattingUtils'
 import { isPlausibleSolanaAddress } from 'src/utils/generics'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
@@ -37,7 +34,6 @@ import { ArchiveGrant } from 'src/v2/assets/custom chakra icons/ArchiveGrant'
 import { EditPencil } from 'src/v2/assets/custom chakra icons/EditPencil'
 import { ThreeDotsHorizontal } from 'src/v2/assets/custom chakra icons/ThreeDotsHorizontal'
 import { ViewEye } from 'src/v2/assets/custom chakra icons/ViewEye'
-import Breadcrumbs from 'src/v2/components/Breadcrumbs'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import StyledTab from 'src/v2/components/StyledTab'
 import NoReviewerBanner from 'src/v2/components/ViewApplicants/NoReviewerBanner'
@@ -861,24 +857,12 @@ function ViewApplicants() {
 					isOpen={networkTransactionModalStep !== undefined}
 					subtitle='Creating scoring rubric'
 					description={
-						<Flex
-							direction='column'
-							w='100%'
-							align='start'>
-							<Text
-								fontWeight='500'
-								fontSize='17px'
-							>
-								{grantData?.grants && grantData?.grants.length > 0 && grantData?.grants[0].title}
-							</Text>
-
-							<Button
-								rightIcon={<ExternalLinkIcon />}
-								variant='linkV2'
-								bg='#D5F1EB'>
-								{grantID && formatAddress(grantID)}
-							</Button>
-						</Flex>
+						<Text
+							fontWeight='500'
+							fontSize='17px'
+						>
+							{grantData?.grants && grantData?.grants.length > 0 && grantData?.grants[0].title}
+						</Text>
 					}
 					currentStepIndex={networkTransactionModalStep || 0}
 					steps={

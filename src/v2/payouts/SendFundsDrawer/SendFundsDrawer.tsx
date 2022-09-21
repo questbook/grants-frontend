@@ -62,15 +62,15 @@ function SendFundsDrawer({
 	// 	connectors
 	// } = useConnect()
 
-	const validateReceipentInput = () => {
-		let isNotValid = false
-		initiateTransactionData?.map((data,) => {
-			if(data.to === undefined || data.selectedMilestone === undefined || data.amount === undefined || data.amount === 0) {
-				isNotValid = true
-			}
-		})
-		return isNotValid
-	}
+	// const validateReceipentInput = () => {
+	// 	let isNotValid = false
+	// 	initiateTransactionData?.map((data,) => {
+	// 		if(data.to === undefined || data.selectedMilestone === undefined || data.amount === undefined || data.amount === 0) {
+	// 			isNotValid = true
+	// 		}
+	// 	})
+	// 	return isNotValid
+	// }
 
 	return (
 		<Drawer
@@ -274,7 +274,7 @@ function SendFundsDrawer({
 									disabled={
 										initiateTransactionData?.filter((data) => {
 											logger.info({ data })
-											if(data.to === undefined || data.to === '' || data.selectedMilestone === undefined || data.amount === undefined || data.amount === 0) {
+											if(data.to === undefined || data.to === '' || data.selectedMilestone === undefined || data.amount === undefined || data.amount <= 0) {
 												return true
 											}
 										})?.length > 0
