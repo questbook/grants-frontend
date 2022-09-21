@@ -1,10 +1,12 @@
-import { useContext } from 'react'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { ReviewSetRequest } from '@questbook/service-validator-client'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
+import { defaultChainId } from 'src/constants/chains'
 import { useGetWorkspaceMembersPublicKeysQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
-import { IReview, IReviewFeedback } from 'src/types'
+import { IApplicantData, IReview, IReviewFeedback } from 'src/types'
 import { getFromIPFS, uploadToIPFS } from 'src/utils/ipfsUtils'
+import logger from 'src/utils/logger'
 import { getKeyForApplication, getSecureChannelFromPublicKey, useGetPublicKeysOfGrantManagers } from 'src/utils/pii'
 
 type PrivateReviewData = {
@@ -33,10 +35,6 @@ export function useLoadReview(
 		skip: true,
 		client
 	})
-
-	const isReviewPrivate = (review: IReview) => {
-		return !review.publicReviewDataHash
-	}
 
 	const loadPrivateReviewDataForReviewer = async(review: IReview) => {
 		const meAddress = scwAddress?.toLocaleLowerCase()
@@ -94,50 +92,98 @@ export function useLoadReview(
 		return reviewData
 	}
 
-	const loadReview = async(
-		review: IReview,
-		applicationId: string
-	) => {
-		const isPrivate = isReviewPrivate(review)
-		let data: IReviewFeedback
+	const loadReview = useCallback(
+		async(review: IReview, applicationId: string) => {
+			const isPrivate = isReviewPrivate(review)
+			let data: IReviewFeedback
 
-		if(isPrivate) {
-			if(!scwAddress) {
-				throw new Error('Webwallet not initialized. Cannot decrypt')
-			}
+			if(isPrivate) {
+				if(!scwAddress) {
+					throw new Error('Webwallet not initialized. Cannot decrypt')
+				}
 
-			const isReviewer = review.reviewer?.id?.toLocaleLowerCase().endsWith(scwAddress.toLocaleLowerCase())
-			let reviewData: PrivateReviewData
-			if(isReviewer) {
-				reviewData = await loadPrivateReviewDataForSelf(review)
+				const isReviewer = review.reviewer?.id?.toLocaleLowerCase().endsWith(scwAddress.toLocaleLowerCase())
+				let reviewData: PrivateReviewData
+				if(isReviewer) {
+					reviewData = await loadPrivateReviewDataForSelf(review)
+				} else {
+					reviewData = await loadPrivateReviewDataForReviewer(review)
+				}
+
+				logger.info(
+					{ reviewId: review.id, walletAddress: reviewData.walletAddress },
+					'decrypting review using shared key'
+				)
+
+				const ipfsData = await getFromIPFS(reviewData!.dataIpfsHash)
+				const { decrypt } = await getSecureChannelFromPublicKey(
+					webwallet!,
+					reviewData.publicKey,
+					getKeyForApplication(applicationId)
+				)
+
+				logger.info({ walletAddress: reviewData!.walletAddress }, 'prepared secure channel for decryption')
+				const jsonReview = await decrypt(ipfsData)
+				data = JSON.parse(jsonReview)
 			} else {
-				reviewData = await loadPrivateReviewDataForReviewer(review)
+				const ipfsData = await getFromIPFS(review.publicReviewDataHash!)
+				data = JSON.parse(ipfsData || '{}')
 			}
 
-			// console.log(`decrypting "${review.id}" using "${reviewData.walletAddress}" shared key`)
+			data.total = totalScore(data.items)
+			data.createdAtS = review.createdAtS
 
-			const ipfsData = await getFromIPFS(reviewData!.dataIpfsHash)
-			const { decrypt } = await getSecureChannelFromPublicKey(
-				webwallet!,
-				reviewData.publicKey,
-				getKeyForApplication(applicationId)
+			return data
+		}, [scwAddress, webwallet, fetchPubKeys, fetchMembers]
+	)
+
+	return { loadReview }
+}
+
+type ApplicationData = Pick<IApplicantData, 'applicationId' | 'reviews' | 'grant'>
+
+export const useLoadReviews = (
+	applicationData: ApplicationData | undefined,
+	chainId: SupportedChainId | undefined
+) => {
+	const submittedReviews = applicationData?.reviews
+
+	const [reviews, setReviews] = useState<{ [_id: string]: IReviewFeedback }>({ })
+	const { loadReview } = useLoadReview(applicationData?.grant?.id, chainId || defaultChainId)
+
+	const loadingRef = useRef(false)
+
+	const loadReviews = useCallback(
+		async() => {
+			const reviewsDataMap: typeof reviews = {}
+
+			await Promise.all(
+				submittedReviews!.map(async(review) => {
+					try {
+						const reviewData = await loadReview(review, applicationData!.applicationId)
+						const [, reviewerAddress] = review.reviewer!.id.split('.')
+						reviewsDataMap[reviewerAddress] = reviewData
+					} catch(err) {
+						logger.error({ err, review }, 'error in loading review')
+					}
+				})
 			)
 
-			// console.log(`prepared secure channel for decryption with "${reviewData!.walletAddress}"`)
-			const jsonReview = await decrypt(ipfsData)
-			data = JSON.parse(jsonReview)
-		} else {
-			const ipfsData = await getFromIPFS(review.publicReviewDataHash!)
-			data = JSON.parse(ipfsData || '{}')
+			setReviews(reviewsDataMap)
+		}, [setReviews, loadReview, submittedReviews, applicationData]
+	)
+
+	useEffect(() => {
+		if(submittedReviews?.length && !loadingRef.current) {
+			loadingRef.current = true
+			loadReviews()
+				.finally(() => {
+					loadingRef.current = false
+				})
 		}
+	}, [submittedReviews, loadReviews])
 
-		return data
-	}
-
-	return {
-		loadReview,
-		isReviewPrivate
-	}
+	return { reviews }
 }
 
 export const useGenerateReviewData = ({
@@ -150,7 +196,7 @@ export const useGenerateReviewData = ({
 	const { validatorApi } = useContext(ApiClientsContext)!
 	const { fetch: fetchPubKeys } = useGetPublicKeysOfGrantManagers(grantId, chainId)
 
-	const generateReviewData = async(data: IReviewFeedback) => {
+	const generateReviewData = async(data: Pick<IReviewFeedback, 'items'>) => {
 		if(!webwallet) {
 			throw new Error('Webwallet not initialized')
 		}
@@ -166,8 +212,7 @@ export const useGenerateReviewData = ({
 				throw new Error('No grant managers on the grant. Please contact support')
 			}
 
-			// console.log(`encrypting review for ${managers.length} admins...`)
-
+			logger.info({ data, count: managers.length }, 'encrypting review for admins...')
 			// we go through all wallet addresses
 			// and upload the private review for each
 			await Promise.all(
@@ -175,7 +220,7 @@ export const useGenerateReviewData = ({
 					async walletAddress => {
 						const publicKey = grantManagerMap[walletAddress]
 						if(!publicKey) {
-							// console.log(`manager "${walletAddress}" does not have private key set, ignoring...`)
+							logger.warn(`manager "${walletAddress}" does not have private key set, ignoring...`)
 							return
 						}
 
@@ -194,7 +239,7 @@ export const useGenerateReviewData = ({
 				throw new Error('No valid managers to encrypt for!')
 			}
 
-			// console.log('generated encrypted reviews')
+			logger.info('generated encrypted reviews')
 		} else {
 			dataHash = (await uploadToIPFS(jsonReview)).hash
 		}
@@ -216,4 +261,12 @@ export const useGenerateReviewData = ({
 	return {
 		generateReviewData
 	}
+}
+
+function isReviewPrivate(review: IReview) {
+	return !review.publicReviewDataHash
+}
+
+function totalScore(items: IReviewFeedback['items'] | undefined) {
+	return items?.reduce((acc, item) => acc + (item.rating || 0), 0) || 0
 }

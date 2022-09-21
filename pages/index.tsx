@@ -26,6 +26,8 @@ import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
+import getAvatar from 'src/utils/avatarUtils'
+import config from 'src/constants/config.json'
 
 const PAGE_SIZE = 40
 
@@ -191,7 +193,9 @@ function BrowseGrants() {
 										daoID={grant.workspace.id}
 										key={grant.id}
 										grantID={grant.id}
-										daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
+										daoIcon={grant.workspace.logoIpfsHash === config.defaultDAOImageHash?
+											 getAvatar(true, grant.workspace.title):
+											 getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
 										daoName={grant.workspace.title}
 										isDaoVerified={false}
 										grantTitle={grant.title}

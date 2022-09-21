@@ -203,7 +203,6 @@ export const getExplorerUrlForAddress = (chainId: SupportedChainId | undefined, 
 }
 
 export const getExplorerUrlForTxHash = (chainId: SupportedChainId | undefined, tx: string | undefined) => {
-	console.log('tx hash', tx ? CHAIN_INFO[chainId!]?.explorer.transactionHash.replace('{{tx}}', tx) : '')
 	return tx ? CHAIN_INFO[chainId!]?.explorer.transactionHash.replace('{{tx}}', tx) : ''
 }
 

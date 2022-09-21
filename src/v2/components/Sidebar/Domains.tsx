@@ -8,6 +8,8 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { MinimalWorkspace } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import getRole from 'src/utils/memberUtils'
+import getAvatar from 'src/utils/avatarUtils'
+import config from 'src/constants/config.json'
 
 interface Props {
   workspaces: MinimalWorkspace[]
@@ -46,7 +48,9 @@ function Domains({ workspaces, onWorkspaceClick }: Props) {
 				}
 			>
 				<Image
-					src={getUrlForIPFSHash(workspaceLocal.logoIpfsHash)}
+					src={workspaceLocal.logoIpfsHash === config.defaultDAOImageHash?
+						getAvatar(true, workspaceLocal.title):
+						getUrlForIPFSHash(workspaceLocal.logoIpfsHash)}
 					boxSize='20px'
 					borderRadius='4px'
 				/>
@@ -91,7 +95,7 @@ function Domains({ workspaces, onWorkspaceClick }: Props) {
 				mr={3}>
 				<Image
 					mt={2}
-					src={getUrlForIPFSHash(workspace!.logoIpfsHash)}
+					src={workspace!.logoIpfsHash === config.defaultDAOImageHash? getAvatar(true, workspace!.title) : getUrlForIPFSHash(workspace!.logoIpfsHash)}
 					boxSize='40px'
 				/>
 				<Button
@@ -134,13 +138,13 @@ function Domains({ workspaces, onWorkspaceClick }: Props) {
 				mt={2} />
 			<Flex
 				display={expanded ? 'block' : 'none'}
-				maxH='170px'
+				// maxH='170px'
 				w='100%'
 			>
 				<Flex
 					direction='column'
 					overflowY='auto'
-					maxH='80%'
+					// maxH='80%'
 					w='100%'
 					px={6}
 					pt={3}>

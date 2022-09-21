@@ -32,11 +32,14 @@ import NavbarLayout from 'src/layout/navbarLayout'
 import { formatAmount } from 'src/utils/formattingUtils'
 import { UNIX_TIMESTAMP_MAX, unixTimestampSeconds } from 'src/utils/generics'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import logger from 'src/utils/logger'
 import {
 	getSupportedChainIdFromSupportedNetwork,
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
 import ReviewerDashboard from 'src/v2/components/Dashboard/ReviewerDashboard'
+import getAvatar from 'src/utils/avatarUtils'
+import config from 'src/constants/config.json'
 
 const PAGE_SIZE = 5
 
@@ -480,6 +483,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 						isAdmin &&
 						grants.length > 0 &&
 						grants.map((grant) => {
+							logger.info({ grant }, 'Grant')
 							const grantAmount = grant.reward.committed
 							let decimals
 							let icon
@@ -518,7 +522,9 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 								<YourGrantCard
 									grantID={grant.id}
 									key={grant.id}
-									daoIcon={getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
+									daoIcon={grant.workspace.logoIpfsHash === config.defaultDAOImageHash?
+										getAvatar(true, grant.workspace.title):
+										getUrlForIPFSHash(grant.workspace.logoIpfsHash)}
 									grantTitle={grant.title}
 									grantDesc={grant.summary}
 									numOfApplicants={grant.numberOfApplications}
@@ -557,80 +563,6 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 						})
 					}
 
-					{
-						isReviewer &&
-						grantsReviewer.length > 0 &&
-						grantsReviewer.map((grant) => {
-							const grantAmount = grant.grant.reward.committed
-							let decimals
-							let icon
-							let label
-							if(grant.grant.reward.token) {
-								decimals = grant.grant.reward.token.decimal
-								label = grant.grant.reward.token.label
-								icon = getUrlForIPFSHash(grant.grant.reward.token.iconHash)
-							} else {
-								decimals =
-									CHAIN_INFO[
-										getSupportedChainIdFromSupportedNetwork(
-											grant.grant.workspace.supportedNetworks[0],
-										)
-									]?.supportedCurrencies[grant.grant.reward.asset.toLowerCase()]
-										?.decimals
-								label =
-									CHAIN_INFO[
-										getSupportedChainIdFromSupportedNetwork(
-											grant.grant.workspace.supportedNetworks[0],
-										)
-									]?.supportedCurrencies[grant.grant.reward.asset.toLowerCase()]
-										?.label || 'LOL'
-								icon =
-									CHAIN_INFO[
-										getSupportedChainIdFromSupportedNetwork(
-											grant.grant.workspace.supportedNetworks[0],
-										)
-									]?.supportedCurrencies[grant.grant.reward.asset.toLowerCase()]
-										?.icon || '/images/dummy/Ethereum Icon.svg'
-							}
-
-            	return (
-								<YourGrantCard
-            			grantID={grant.grant.id}
-            			key={grant.grant.id}
-            			daoIcon={
-            				getUrlForIPFSHash(
-            					grant.grant.workspace.logoIpfsHash,
-            				)
-            			}
-            			grantTitle={grant.grant.title}
-            			grantDesc={grant.grant.summary}
-            			numOfApplicants={grant.grant.numberOfApplications}
-            			endTimestamp={new Date(grant.grant.deadline!).getTime()}
-            			grantAmount={formatAmount(grantAmount, decimals)}
-            			grantCurrency={label || 'LOL'}
-            			grantCurrencyIcon={icon}
-            			state='done'
-            			chainId={
-            				getSupportedChainIdFromSupportedNetwork(
-            					grant.grant.workspace.supportedNetworks[0],
-            				)
-            			}
-            			onViewApplicantsClick={
-            				() => router.push({
-            					pathname: '/v2/your_grants/view_applicants/',
-            					query: {
-            						grantId: grant.grant.id,
-            					},
-            				})
-            			}
-            			acceptingApplications={grant.grant.acceptingApplications}
-            			isAdmin={isAdmin}
-            			initialRubrics={grant.grant?.rubric as Rubric}
-            			workspaceId={grant.grant.workspace.id}
-            		/>
-            	)
-						})
-					}
 					{
 						grants.length === 0 &&
 						isAdmin &&

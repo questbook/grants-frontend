@@ -262,7 +262,7 @@ function SendFundsModal({
 										colorScheme='brandv2'
 										disabled={
 											initiateTransactionData?.length === 0 || initiateTransactionData?.filter((item) => {
-												return item?.amount === 0
+												return item?.amount <= 0
 											})?.length > 0
 										}
 										onClick={

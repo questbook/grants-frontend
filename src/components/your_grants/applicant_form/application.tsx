@@ -9,6 +9,7 @@ import {
 	Divider,
 	Flex,
 	Heading,
+	HStack,
 	Image,
 	Link,
 	Text,
@@ -130,34 +131,24 @@ function Application({ applicationData }: Props) {
 				direction='column'
 				w='full'>
 				<Divider />
-				<Flex
-					direction='row'
+				<HStack
 					w='full'
-					justify='space-evenly'
+					align='center'
+					justify='center'
+					borderBottomColor='#E7DAFF'
+					borderBottomWidth='1px'
 					h={14}
-					align='stretch'
 					mb={8}
 				>
-					<Button
-						variant='ghost'
-						h='54px'
-						w='full'
-						_hover={
-							{
-								background: '#F5F5F5',
-							}
-						}
-						_focus={{}}
-						borderRadius={0}
+					<Text
 						background='white'
 						color='#122224'
-						borderBottomColor='#E7DAFF'
-						borderBottomWidth='1px'
 						fontSize='1.5rem'
+						fontWeight='bold'
 					>
 						Grant Details
-					</Button>
-				</Flex>
+					</Text>
+				</HStack>
 			</Flex>
 			<Flex
 				direction='column'
