@@ -12,7 +12,6 @@ import {
 	MenuList,
 	Text,
 } from '@chakra-ui/react'
-import { BigNumber } from '@ethersproject/bignumber'
 import { ethers } from 'ethers'
 import { ApiClientsContext } from 'pages/_app'
 // import AddFunds from 'src/components/funds/add_funds_modal'
