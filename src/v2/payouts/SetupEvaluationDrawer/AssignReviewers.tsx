@@ -11,12 +11,14 @@ interface Props {
 	maxCount: number
 	defaultSliderValue: number
 	sliderValue: number
+	isPrivateReviews: boolean
+	setIsPrivateReviews: (_: boolean) => void
 	onSlide: (value: number) => void
 	reviewers: SidebarReviewer[]
 	onReviewerChange: (reviewer: SidebarReviewer) => void
 }
 
-const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, onSlide, reviewers, onReviewerChange }: Props) => {
+const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, isPrivateReviews, setIsPrivateReviews, onSlide, reviewers, onReviewerChange }: Props) => {
 	const { t } = useTranslation()
 	return (
 		<>
@@ -50,7 +52,7 @@ const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, 
 						onChangeEnd={onSlide}
 					>
 						{
-							Array(6).fill(0).map((_, i) => i > 0 && (
+							Array(maxCount + 1).fill(0).map((_, i) => i > 0 && (
 								<SliderMark
 									key={`assignReviewmark-${i}`}
 									value={i}
@@ -132,7 +134,7 @@ const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, 
 								>
 									<Image
 										borderRadius='3xl'
-										src={reviewer.data?.profilePictureIpfsHash ? getUrlForIPFSHash(reviewer.data.profilePictureIpfsHash) : getAvatar(reviewer.data?.actorId)}
+										src={reviewer.data?.profilePictureIpfsHash ? getUrlForIPFSHash(reviewer.data.profilePictureIpfsHash) : getAvatar(false, reviewer.data?.actorId)}
 									/>
 								</Flex>
 
@@ -204,17 +206,18 @@ const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, 
 						{t('/your_grants/view_applicants.make_reviews_private_description')}
 					</Text>
 					<Switch
-						id='encrypt'
-						// // isChecked={partnersRequired}
-						// // onChange={
-						// // 	(e: any) => {
-						// // 		setPartnersRequired(e.target.checked)
-						// // 		const newPartners = partners?.map((partner: any) => ({
-						// // 			...partner,
-						// // 			nameError: false,
-						// // 		}))
-						// // 		setPartners(newPartners)
-						// // 	}
+						isChecked={isPrivateReviews}
+						onChange={e => setIsPrivateReviews(e.target.checked)}
+						// isChecked={partnersRequired}
+						// onChange={
+						// 	(e: any) => {
+						// 		setPartnersRequired(e.target.checked)
+						// 		const newPartners = partners?.map((partner: any) => ({
+						// 			...partner,
+						// 			nameError: false,
+						// 		}))
+						// 		setPartners(newPartners)
+						// 	}
 						// }
 					/>
 				</Flex>

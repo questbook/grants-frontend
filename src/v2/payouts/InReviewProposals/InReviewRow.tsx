@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useContext, useEffect, useMemo, useState } from 'react'
+import React, { MouseEventHandler, useContext, useMemo, useState } from 'react'
 import {
 	Button,
 	Checkbox,
@@ -18,9 +18,9 @@ import {
 import { useRouter } from 'next/router'
 import { ApiClientsContext } from 'pages/_app'
 import { defaultChainId } from 'src/constants/chains'
-import { IApplicantData, IReviewFeedback } from 'src/types'
+import { IApplicantData } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
-import { useLoadReview } from 'src/utils/reviews'
+import { useLoadReviews } from 'src/utils/reviews'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { AcceptApplication } from 'src/v2/assets/custom chakra icons/AcceptApplication'
 import { RejectApplication } from 'src/v2/assets/custom chakra icons/RejectApplication'
@@ -49,40 +49,12 @@ const InReviewRow = ({
 	const router = useRouter()
 	const [isHovering, setIsHovering] = useState(false)
 
-	const { grant, reviews: submittedReviews } = applicantData || { }
-	const { loadReview } = useLoadReview(grant?.id, chainId)
-
-	const [reviews, setReviews] = useState<{ [_id: string]: IReviewFeedback }>({ })
+	const { reviews: submittedReviews } = applicantData || { }
+	const { reviews } = useLoadReviews(applicantData, chainId)
 
 	const sortedReviews = useMemo(() => (
-		[...Object.keys(reviews).sort((a, b) => totalScore(reviews[b]) - totalScore(reviews[a]))]
+		[...Object.keys(reviews).sort((a, b) => reviews[b].total - reviews[a].total)]
 	), [reviews])
-
-	const getReviews = async() => {
-		const reviewsDataMap: {[_ in string]: IReviewFeedback} = {}
-
-		await Promise.all(
-			submittedReviews!.map(async(review) => {
-				try {
-					// @ts-ignore
-					const reviewData = await loadReview(review, applicantData!.applicationId)
-					const [, reviewerAddress] = review.reviewer!.id.split('.')
-					reviewsDataMap[reviewerAddress] = reviewData
-				} catch(error) {
-					// console.error(`failed to load review from "${review.reviewer!.id}"`, error)
-					// do nothing for now
-				}
-			})
-		)
-
-		setReviews(reviewsDataMap)
-	}
-
-	useEffect(() => {
-		if(submittedReviews?.length) {
-			getReviews()
-		}
-	}, [applicantData])
 
 	return (
 		<>
@@ -121,7 +93,7 @@ const InReviewRow = ({
 					>
 						<Image
 							borderRadius='3xl'
-							src={getAvatar(applicantData?.applicantAddress)}
+							src={getAvatar(false, applicantData?.applicantAddress)}
 						/>
 					</Flex>
 
@@ -267,7 +239,7 @@ const InReviewRow = ({
 												>
 													<Image
 														borderRadius='3xl'
-														src={getAvatar(reviewerId)}
+														src={getAvatar(false, reviewerId)}
 													/>
 												</Flex>
 												<Flex
@@ -294,7 +266,7 @@ const InReviewRow = ({
 													color='#7D7DA0'
 													ml='auto'
 												>
-													{reviews[reviewerId] ? totalScore(reviews[reviewerId]) : 0}
+													{reviews[reviewerId]?.total || 0}
 												</Text>
 											</Flex>
 										</MenuItem>
@@ -337,7 +309,7 @@ const InReviewRow = ({
 															aria-label='reviewers'
 															cursor='pointer'
 														>
-															{totalScore(reviews[reviewKey])}
+															{reviews[reviewKey]?.total}
 														</Text>
 													))
 												}
@@ -394,7 +366,7 @@ const InReviewRow = ({
 																		>
 																			<Image
 																				borderRadius='3xl'
-																				src={getAvatar(reviewerId)}
+																				src={getAvatar(false, reviewerId)}
 																			/>
 																		</Flex>
 
@@ -422,7 +394,7 @@ const InReviewRow = ({
 																			color='#7D7DA0'
 																			ml='auto'
 																		>
-																			{reviewerId && reviews[reviewerId] ? totalScore(reviews[reviewerId]) : 0}
+																			{reviews[reviewerId!]?.total}
 																		</Text>
 																	</Flex>
 																</MenuItem>
@@ -560,15 +532,6 @@ const InReviewRow = ({
 			</GridItem>
 		</>
 	)
-}
-
-const totalScore = (feedback: IReviewFeedback) => {
-	let s = 0
-	feedback?.items?.forEach((item) => {
-		s += item.rating ?? 0
-	})
-
-	return s
 }
 
 export default InReviewRow

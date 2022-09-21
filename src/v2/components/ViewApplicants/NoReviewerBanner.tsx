@@ -30,15 +30,6 @@ function NoReviewerBanner({ onSetup, onClose }: Props) {
 				flex={1}
 			>
 				<Text
-					fontSize='16px'
-					lineHeight='24px'
-					fontWeight='500'
-				>
-					{t('/your_grants/view_applicants.create_review_process')}
-				</Text>
-
-				<Text
-					mt='8px'
 					fontSize='14px'
 					lineHeight='20px'
 					fontWeight='400'

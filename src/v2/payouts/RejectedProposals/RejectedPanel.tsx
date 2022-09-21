@@ -1,12 +1,15 @@
 import { Flex, Grid, GridItem, Text } from '@chakra-ui/react'
+import SupportedChainId from 'src/generated/SupportedChainId'
 import { IApplicantData } from 'src/types'
 import RejectedRow from 'src/v2/payouts/RejectedProposals/RejectedRow'
 import ZeroState from 'src/v2/payouts/RejectedProposals/ZeroState'
 
 const RejectedPanel = ({
 	applicantsData,
+	chainId
 }: {
   applicantsData: IApplicantData[]
+  chainId: SupportedChainId
 }) => {
 	if(applicantsData?.filter((item) => (3 === item.status)).length === 0) {
 		return (
@@ -97,12 +100,16 @@ const RejectedPanel = ({
 				{/* new ro */}
 
 				{
-					applicantsData?.filter((item) => (3 === item.status)).map((applicantData, i) => (
-						<RejectedRow
-							key={`inreview-${i}`}
-							applicantData={applicantData}
-						/>
-					))
+					applicantsData
+						// filter only reject applications
+						?.filter((item) => (3 === item.status))
+						.map((applicantData) => (
+							<RejectedRow
+								key={applicantData.applicationId}
+								applicantData={applicantData}
+								chainId={chainId}
+							/>
+						))
 				}
 			</Grid>
 		</>

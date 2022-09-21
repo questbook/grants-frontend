@@ -1,12 +1,15 @@
 import { Flex, Grid, GridItem, Text } from '@chakra-ui/react'
+import SupportedChainId from 'src/generated/SupportedChainId'
 import { IApplicantData } from 'src/types'
 import ResubmitRow from 'src/v2/payouts/ResubmitProposals/ResubmitRow'
 import ZeroState from 'src/v2/payouts/ResubmitProposals/ZeroState'
 
 const ResubmitPanel = ({
 	applicantsData,
+	chainId,
 }: {
   applicantsData: IApplicantData[]
+  chainId: SupportedChainId
 }) => {
 	if(applicantsData?.filter((item) => (1 === item.status)).length === 0) {
 		return (
@@ -90,12 +93,15 @@ const ResubmitPanel = ({
 				{/* new ro */}
 
 				{
-					applicantsData?.filter((item) => (1 === item.status)).map((applicantData, i) => (
-						<ResubmitRow
-							key={`inreview-${i}`}
-							applicantData={applicantData}
-						/>
-					))
+					applicantsData
+						?.filter((item) => (1 === item.status))
+						.map((applicantData) => (
+							<ResubmitRow
+								chainId={chainId}
+								key={applicantData.applicationId}
+								applicantData={applicantData}
+							/>
+						))
 				}
 			</Grid>
 		</>

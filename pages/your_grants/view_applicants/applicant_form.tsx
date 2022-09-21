@@ -360,7 +360,7 @@ function ApplicantForm() {
 								direction='column'
 								mt={2}
 								ml={4}
-								w={340}
+								w={400}
 								alignItems='stretch'
 								pos='sticky'
 								top='36px'
@@ -396,30 +396,29 @@ function ApplicantForm() {
 	}
 
 	return (
-		<>
+		<Flex
+			direction='column'
+			w='70%'
+			mx='auto'>
 			<Flex
 				direction='column'
-				mx={200}>
+				mx={10}
+				w='100%'>
+				<Text
+					mt={4}
+					mb={4}
+					variant='heading'>
+					{applicationData?.grant?.title}
+				</Text>
+				<Divider mb={5} />
 				<Flex
-					direction='column'
-					mx={10}
-					w='100%'>
-					<Text
-						mt={4}
-						mb={4}
-						variant='heading'>
-						{applicationData?.grant?.title}
-					</Text>
-					<Divider mb={5} />
-					<Flex
-						maxW='100%'
-						direction='row'
-						justify='space-between'>
-						{renderContent(step)}
-					</Flex>
+					maxW='100%'
+					direction='row'
+					justify='space-between'>
+					{renderContent(step)}
 				</Flex>
 			</Flex>
-		</>
+		</Flex>
 	)
 }
 

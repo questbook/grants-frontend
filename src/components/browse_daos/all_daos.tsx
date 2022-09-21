@@ -4,7 +4,9 @@ import GetStartedCard from 'src/components/browse_daos/get_started_card'
 import LoadMoreCard from 'src/components/browse_daos/loadMoreCard'
 import { GetDaOsForExploreQuery } from 'src/generated/graphql'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import getAvatar from 'src/utils/avatarUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import config from 'src/constants/config.json'
 
 type Workspace = GetDaOsForExploreQuery['workspaces'][0]
 
@@ -41,7 +43,9 @@ function AllDaosGrid({
 				workspaces.map((workspace, index: number) => (
 					<GridItem key={index}>
 						<DaoCard
-							logo={getUrlForIPFSHash(workspace.logoIpfsHash)}
+							logo={workspace.logoIpfsHash === config.defaultDAOImageHash?
+								getAvatar(true, workspace.title):
+								getUrlForIPFSHash(workspace.logoIpfsHash!)}
 							name={workspace.title}
 							daoId={workspace.id}
 							chainId={getSupportedChainIdFromWorkspace(workspace)}

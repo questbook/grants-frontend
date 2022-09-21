@@ -23,6 +23,8 @@ import { formatAmount } from 'src/utils/formattingUtils'
 //TOOLS and UTILS
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
+import getAvatar from 'src/utils/avatarUtils'
+import config from 'src/constants/config.json'
 
 export default function Embed() {
 	const router = useRouter()
@@ -205,7 +207,9 @@ export default function Embed() {
 						h='2rem'
 						w='2rem'
 						borderRadius='100%'
-						src={getUrlForIPFSHash(workspaceData?.logoIpfsHash!)}
+						src={workspaceData?.logoIpfsHash! === config.defaultDAOImageHash?
+							getAvatar(true, workspaceData?.title!):
+							getUrlForIPFSHash(workspaceData?.logoIpfsHash!)}
 					/>
 					<Heading
 						fontFamily='DM Sans'

@@ -1,69 +1,24 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Flex, forwardRef, GridItem, Image, Menu, MenuButton, MenuItem, MenuList, Text, TextProps } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { IApplicantData, IReview } from 'src/types'
+import SupportedChainId from 'src/generated/SupportedChainId'
+import { IApplicantData } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
-import { getFromIPFS } from 'src/utils/ipfsUtils'
+import { useLoadReviews } from 'src/utils/reviews'
+
+type RejectedRowProps = {
+	applicantData: IApplicantData
+	chainId: SupportedChainId
+}
 
 const RejectedRow = ({
 	applicantData,
-}: {
-	applicantData: IApplicantData
-}) => {
+	chainId
+}: RejectedRowProps) => {
 	const router = useRouter()
 	const [isHovering, setIsHovering] = useState(false)
-	const [reviews, setReviews] = useState<{[_ in string]: {items?: {rating?: number}[]}}>()
 
-	const getReview = async(hash: string) => {
-		if(hash === '') {
-			return {}
-		}
-
-		const d = await getFromIPFS(hash)
-		try {
-			const data = JSON.parse(d)
-			return data
-		} catch(e) {
-			// console.log('incorrect review', e)
-			return {}
-		}
-	}
-
-	const getReviews = async(reviews: {
-		publicReviewDataHash?: IReview['publicReviewDataHash']
-		reviewer: IReview['reviewer']
-	}[]) => {
-		const reviewsDataMap: {[_ in string]: {items?: {rating?: number}[]}} = {}
-		const reviewsData = await Promise.all(reviews?.map(async(review) => {
-			const data = await getReview(review!.publicReviewDataHash!)
-			return data
-		}))
-		reviewsData.forEach((review, i) => {
-			const reviewerIdSplit = reviews[i]?.reviewer?.id.split('.')
-			const reviewerId = reviewerIdSplit[reviewerIdSplit.length - 1]
-			reviewsDataMap[reviewerId] = review.items
-		})
-
-		// console.log('reviewsData', reviewsData)
-		// console.log('reviewsData', reviewsDataMap)
-		setReviews(reviewsDataMap)
-	}
-
-	useEffect(() => {
-		if(applicantData?.reviews?.length) {
-			getReviews(applicantData.reviews)
-		}
-	}, [applicantData])
-
-	const totalScore = (items?: {rating?: number}[]) => {
-		// console.log(items)
-		let s = 0
-		items?.forEach((item) => {
-			s += item.rating ?? 0
-		})
-
-		return s
-	}
+	const { reviews } = useLoadReviews(applicantData, chainId)
 
 	return (
 		<>
@@ -89,7 +44,7 @@ const RejectedRow = ({
 					>
 						<Image
 							borderRadius='3xl'
-							src={getAvatar(applicantData?.applicantAddress)}
+							src={getAvatar(false, applicantData?.applicantAddress)}
 						/>
 					</Flex>
 
@@ -258,7 +213,7 @@ const RejectedRow = ({
 												>
 													<Image
 														borderRadius='3xl'
-														src={getAvatar(reviewerId)}
+														src={getAvatar(false, reviewerId)}
 													/>
 												</Flex>
 
@@ -286,7 +241,7 @@ const RejectedRow = ({
 													color='#7D7DA0'
 													ml='auto'
 												>
-													{totalScore(reviews ? reviews[reviewerId]['items'] : [])}
+													{reviews[reviewerId]?.total}
 												</Text>
 											</Flex>
 										</MenuItem>

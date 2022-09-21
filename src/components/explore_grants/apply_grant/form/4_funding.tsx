@@ -53,7 +53,7 @@ function Funding({
 						disabled
 						onChange={() => {}}
 						type='number'
-						subtext={totalMilestoneReward === 0 ? totalFundingSubtext[0] : totalMilestoneReward < parseInt(rewardAmount) ? totalFundingSubtext[1] : totalFundingSubtext[2]}
+						subtext={totalMilestoneReward === 0 ? totalFundingSubtext[0] : totalMilestoneReward <= parseInt(rewardAmount) ? totalFundingSubtext[1] : totalFundingSubtext[2]}
 					/>
 				) : (
 					<SingleLineInput
@@ -64,7 +64,7 @@ function Funding({
 						disabled
 						onChange={() => {}}
 						type='number'
-						subtext={totalMilestoneReward === 0 ? totalFundingSubtext[0] : totalMilestoneReward < parseInt(rewardAmount) ? totalFundingSubtext[1] : totalFundingSubtext[2]}
+						subtext={totalMilestoneReward === 0 ? totalFundingSubtext[0] : totalMilestoneReward <= parseInt(rewardAmount) ? totalFundingSubtext[1] : totalFundingSubtext[2]}
 					/>
 				)
 			}

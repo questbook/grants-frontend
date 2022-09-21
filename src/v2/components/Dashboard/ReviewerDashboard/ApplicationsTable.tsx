@@ -32,6 +32,7 @@ import {
 	getRewardAmount,
 } from 'src/utils/formattingUtils'
 import { capitalizeFirstLetter } from 'src/utils/generics'
+import logger from 'src/utils/logger'
 import { useLoadReview } from 'src/utils/reviews'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import {
@@ -286,10 +287,15 @@ function ApplicationsTable({
 	)
 }
 
+type ReviewTableDataProps = {
+	application: Application
+	loadReview: (r: IReview) => Promise<IReviewFeedback>
+}
+
 const ReviewTableData = ({
 	application,
 	loadReview,
-}: { application: Application, loadReview: (r: IReview) => Promise<IReviewFeedback> }) => {
+}: ReviewTableDataProps) => {
 	const [reviewSum, setReviewSum] = useState<number>()
 
 	const { scwAddress } = useContext(WebwalletContext)!
@@ -300,23 +306,19 @@ const ReviewTableData = ({
 		r.reviewer?.id.split('.')[1].toLowerCase() === scwAddress?.toLowerCase()
 	))
 
-	const getReview = async() => {
+	const loadMyReview = async() => {
 		try {
 			const data = await loadReview(userReview! as IReview)
-
-			let reviewSum = 0
-			data?.items.forEach((feedback) => reviewSum += feedback.rating)
-
-			setReviewSum(reviewSum)
-		} catch(error) {
-			// // console.error(`error in loading self review (${userReview?.id}): ${error}`)
+			setReviewSum(data.total)
+		} catch(err) {
+			logger.error({ err, userReview }, 'error in loading self review')
 			setReviewSum(0)
 		}
 	}
 
 	useEffect(() => {
 		if(userReview) {
-			getReview()
+			loadMyReview()
 		}
 	}, [userReview?.id])
 

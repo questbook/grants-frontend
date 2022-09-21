@@ -28,6 +28,8 @@ import {
 import verify from 'src/utils/grantUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo, getChainInfo } from 'src/utils/tokenUtils'
+import getAvatar from 'src/utils/avatarUtils'
+import config from 'src/constants/config.json'
 
 type GrantDetails = GetGrantDetailsQuery['grants'][number]
 
@@ -166,7 +168,9 @@ function AboutGrant() {
 		setTitle(grantData.title)
 		setDaoId(grantData.workspace?.id)
 		setDaoName(grantData.workspace?.title)
-		setDaoLogo(getUrlForIPFSHash(grantData.workspace?.logoIpfsHash))
+		setDaoLogo(grantData.workspace?.logoIpfsHash === config.defaultDAOImageHash?
+			 getAvatar(true, grantData.workspace?.title!):
+			 getUrlForIPFSHash(grantData.workspace?.logoIpfsHash))
 		setRewardAmount(
 			grantData.reward?.committed
 				? formatAmount(grantData.reward?.committed, chainInfo.decimals)

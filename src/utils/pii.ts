@@ -116,10 +116,14 @@ export function useGetPublicKeysOfGrantManagers(grantId: string | undefined, cha
 		skip: true,
 	})
 
-	return {
-		async fetch() {
+	const fetch = useCallback(
+		async() => {
+			if(!grantId) {
+				throw new Error('Cannot fetch grant managers without grantId')
+			}
+
 			const { data } = await fetchMore({
-				variables: { grantID: grantId || '' },
+				variables: { grantID: grantId },
 			})
 			const result: { [address: string]: string | null } = {}
 			for(const { member } of (data?.grantManagers || [])) {
@@ -129,8 +133,10 @@ export function useGetPublicKeysOfGrantManagers(grantId: string | undefined, cha
 			}
 
 			return result
-		},
-	}
+		}, [fetchMore, grantId]
+	)
+
+	return { fetch }
 }
 
 export function useEncryptPiiForApplication(

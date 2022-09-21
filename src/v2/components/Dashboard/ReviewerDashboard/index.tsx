@@ -24,6 +24,7 @@ function ReviewerDashboard() {
 	const { data: accountData } = useQuestbookAccount()
 
 	const variables = {
+		workspaceId: workspace!.id,
 		reviewerAddress: accountData!.address!.toLowerCase(),
 		reviewerAddressStr: accountData!.address!,
 		applicationsCount: APPLICATIONS_TABLE_PAGE_SIZE,

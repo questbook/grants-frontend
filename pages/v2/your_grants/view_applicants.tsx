@@ -2,11 +2,8 @@ import React, {
 	ReactElement, useContext, useEffect, useMemo, useRef, useState,
 } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ExternalLinkIcon } from '@chakra-ui/icons'
 import {
-	Box,
-	Button,
-	Container, Flex, forwardRef, IconButton, IconButtonProps, Menu, MenuButton, MenuItem, MenuList, TabList, TabPanel, TabPanels, Tabs, Text, ToastId, useToast
+	Box, Container, Flex, forwardRef, IconButton, IconButtonProps, Menu, MenuButton, MenuItem, MenuList, TabList, TabPanel, TabPanels, Tabs, Text, ToastId, useToast
 } from '@chakra-ui/react'
 import { BigNumber, ethers, logger } from 'ethers'
 import moment from 'moment'
@@ -28,7 +25,7 @@ import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/layout/navbarLayout'
 import { ApplicationMilestone } from 'src/types'
-import { formatAddress, formatAmount, getExplorerUrlForTxHash, getFieldString } from 'src/utils/formattingUtils'
+import { formatAmount, getExplorerUrlForTxHash, getFieldString } from 'src/utils/formattingUtils'
 import { isPlausibleSolanaAddress } from 'src/utils/generics'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
@@ -37,7 +34,6 @@ import { ArchiveGrant } from 'src/v2/assets/custom chakra icons/ArchiveGrant'
 import { EditPencil } from 'src/v2/assets/custom chakra icons/EditPencil'
 import { ThreeDotsHorizontal } from 'src/v2/assets/custom chakra icons/ThreeDotsHorizontal'
 import { ViewEye } from 'src/v2/assets/custom chakra icons/ViewEye'
-import Breadcrumbs from 'src/v2/components/Breadcrumbs'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import StyledTab from 'src/v2/components/StyledTab'
 import NoReviewerBanner from 'src/v2/components/ViewApplicants/NoReviewerBanner'
@@ -99,7 +95,6 @@ function ViewApplicants() {
 	const [rewardAssetSymbol, setRewardAssetSymbol] = useState<string>()
 
 	const [sendFundsTo, setSendFundsTo] = useState<any[]>()
-
 
 	const { data: accountData } = useQuestbookAccount()
 	const router = useRouter()
@@ -265,10 +260,7 @@ function ViewApplicants() {
 	}, [router])
 
 	const [queryParams, setQueryParams] = useState<any>({
-		client:
-			subgraphClients[
-				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-			].client,
+		client: subgraphClients[workspacechainId].client,
 	})
 
 
@@ -378,6 +370,7 @@ function ViewApplicants() {
 
 				return {
 					grantTitle: applicant?.grant?.title,
+					grant: applicant?.grant,
 					applicationId: applicant.id,
 					applicantName: getFieldString(applicant, 'applicantName'),
 					applicantEmail: getFieldString(applicant, 'applicantEmail'),
@@ -570,9 +563,7 @@ function ViewApplicants() {
 
 	const [getReviewersForAWorkspaceParams, setGetReviewersForAWorkspaceParams] = useState<any>({
 		client:
-			subgraphClients[
-				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-			].client,
+			subgraphClients[workspacechainId].client,
 	})
 	const { data: reviewersForAWorkspaceData } = useGetReviewersForAWorkspaceQuery(getReviewersForAWorkspaceParams)
 	useEffect(() => {
@@ -815,6 +806,7 @@ function ViewApplicants() {
 							bg='white'
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
 							<RejectedPanel
+								chainId={workspacechainId}
 								applicantsData={applicantsData} />
 						</TabPanel>
 
@@ -826,6 +818,7 @@ function ViewApplicants() {
 							bg='white'
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
 							<ResubmitPanel
+								chainId={workspacechainId}
 								applicantsData={applicantsData} />
 						</TabPanel>
 
@@ -838,7 +831,7 @@ function ViewApplicants() {
 					onClose={() => setRubricDrawerOpen(false)}
 					onComplete={() => setRubricDrawerOpen(false)}
 					grantAddress={grantID}
-					chainId={getSupportedChainIdFromWorkspace(workspace) || defaultChainId}
+					chainId={workspacechainId}
 					setNetworkTransactionModalStep={setNetworkTransactionModalStep}
 					setTransactionHash={setTransactionHash}
 					data={reviewersForAWorkspaceData}
@@ -864,24 +857,12 @@ function ViewApplicants() {
 					isOpen={networkTransactionModalStep !== undefined}
 					subtitle='Creating scoring rubric'
 					description={
-						<Flex
-							direction='column'
-							w='100%'
-							align='start'>
-							<Text
-								fontWeight='500'
-								fontSize='17px'
-							>
-								{grantData?.grants && grantData?.grants.length > 0 && grantData?.grants[0].title}
-							</Text>
-
-							<Button
-								rightIcon={<ExternalLinkIcon />}
-								variant='linkV2'
-								bg='#D5F1EB'>
-								{grantID && formatAddress(grantID)}
-							</Button>
-						</Flex>
+						<Text
+							fontWeight='500'
+							fontSize='17px'
+						>
+							{grantData?.grants && grantData?.grants.length > 0 && grantData?.grants[0].title}
+						</Text>
 					}
 					currentStepIndex={networkTransactionModalStep || 0}
 					steps={
@@ -893,7 +874,7 @@ function ViewApplicants() {
 							'Rubric created and Reviewers assigned',
 						]
 					}
-					viewLink={getExplorerUrlForTxHash(getSupportedChainIdFromWorkspace(workspace) || defaultChainId, transactionHash)}
+					viewLink={getExplorerUrlForTxHash(workspacechainId, transactionHash)}
 					onClose={
 						() => {
 							setNetworkTransactionModalStep(undefined)

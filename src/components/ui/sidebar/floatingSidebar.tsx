@@ -15,7 +15,7 @@ function FloatingSidebar({
 			bg='white'
 			border='2px solid #D0D3D3'
 			borderRadius={4}
-			w={340}
+			w={400}
 			direction='column'
 			alignItems='stretch'
 			px='28px'
