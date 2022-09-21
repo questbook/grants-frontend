@@ -16,7 +16,7 @@ import {
 	useGetApplicationDetailsQuery,
 	useGetFundSentForApplicationQuery,
 } from 'src/generated/graphql'
-import NavbarLayout from 'src/layout/navbarLayout'
+import NavbarLayout from 'libraries/ui/navbarLayout'
 import { ApplicationMilestone } from 'src/types'
 import { formatAmount } from 'src/utils/formattingUtils'
 import verify from 'src/utils/grantUtils'

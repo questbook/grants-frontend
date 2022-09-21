@@ -12,7 +12,7 @@ import { SupportedChainId } from 'src/constants/chains'
 import { SupportedNetwork } from 'src/generated/graphql'
 import useCreateGrant from 'src/hooks/useCreateGrant'
 import useCreateWorkspace from 'src/hooks/useCreateWorkspace'
-import NavbarLayout from 'src/layout/navbarLayout'
+import NavbarLayout from 'libraries/ui/navbarLayout'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 

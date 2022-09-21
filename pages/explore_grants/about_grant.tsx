@@ -22,7 +22,7 @@ import {
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
-import NavbarLayout from 'src/layout/navbarLayout'
+import NavbarLayout from 'libraries/ui/navbarLayout'
 import getAvatar from 'src/utils/avatarUtils'
 import {
 	formatAmount,

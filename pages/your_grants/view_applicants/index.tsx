@@ -25,7 +25,7 @@ import {
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
-import NavbarLayout from 'src/layout/navbarLayout'
+import NavbarLayout from 'libraries/ui/navbarLayout'
 import { ApplicationMilestone } from 'src/types'
 import { formatAmount, getFieldString } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
