@@ -108,7 +108,7 @@ function Sidebar() {
 				)
 			}
 			{
-				workspaces.length > 0 && (
+				!!workspaces.length && (
 					<Divider variant='sidebar' />
 				)
 			}
