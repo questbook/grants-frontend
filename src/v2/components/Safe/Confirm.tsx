@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { Button, Flex, FlexProps, Image, Text } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
+import { ApiClientsContext } from 'src/pages/_app'
 import { formatAddress } from 'src/utils/formattingUtils'
 
 interface Props extends FlexProps {

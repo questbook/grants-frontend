@@ -16,8 +16,8 @@ import {
 	Tooltip,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { ApiClientsContext } from 'pages/_app'
 import { defaultChainId } from 'src/constants/chains'
+import { ApiClientsContext } from 'src/pages/_app'
 import { IApplicantData } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
 import { useLoadReviews } from 'src/utils/reviews'

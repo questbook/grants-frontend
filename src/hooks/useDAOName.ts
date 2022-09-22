@@ -1,7 +1,7 @@
 import { useContext, useEffect } from 'react'
-import { ApiClientsContext } from 'pages/_app'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetDaoNameLazyQuery } from 'src/generated/graphql'
+import { ApiClientsContext } from 'src/pages/_app'
 
 const DEFAULT_DAO_NAME = 'A DAO'
 

@@ -7,12 +7,12 @@ import {
 	Progress,
 	Text,
 } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
 import Title from 'src/components/signup/create_grant/form/1_title'
 import Details from 'src/components/signup/create_grant/form/2_details'
 import ApplicantDetails from 'src/components/signup/create_grant/form/3_applicantDetails'
 import GrantRewardsInput from 'src/components/signup/create_grant/form/4_rewards'
 import strings from 'src/constants/strings.json'
+import { ApiClientsContext } from 'src/pages/_app'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 interface Props {

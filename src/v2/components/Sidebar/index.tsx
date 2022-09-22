@@ -1,34 +1,27 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { Divider, Flex } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { ApiClientsContext } from 'pages/_app'
-import { GetWorkspaceMembersQuery, useGetWorkspaceMembersQuery } from 'src/generated/graphql'
+import { useGetWorkspaceMembersQuery } from 'src/generated/graphql'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
+import { ApiClientsContext } from 'src/pages/_app'
 import { MinimalWorkspace } from 'src/types'
 import logger from 'src/utils/logger'
-import getTabFromPath from 'src/utils/tabUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import Domains from 'src/v2/components/Sidebar/Domains'
 import SidebarItem from 'src/v2/components/Sidebar/SidebarItem'
-import { TAB_INDEXES, useGetTabs } from 'src/v2/components/Sidebar/Tabs'
+import { getTabFromPath, TABS, useGetTabs } from 'src/v2/components/Sidebar/Tabs'
 
 function Sidebar() {
-	const [topTabs, bottomTabs] = useGetTabs()
+	const tabList = useGetTabs()
 	const { data: accountData } = useQuestbookAccount()
 	const { network, switchNetwork } = useNetwork()
-	const { workspace, setWorkspace } = React.useContext(ApiClientsContext)!
+	const { workspace, setWorkspace } = useContext(ApiClientsContext)!
 
 	const router = useRouter()
 
-	const [tabSelected, setTabSelected] = React.useState<number>(TAB_INDEXES[getTabFromPath(router.pathname)])
-
-	React.useEffect(() => {
-		setTabSelected(TAB_INDEXES[getTabFromPath(router.pathname)])
-	}, [router.pathname])
-
-	const [workspaces, setWorkspaces] = React.useState<MinimalWorkspace[]>([])
+	const [tabSelected, setTabSelected] = useState(getTabFromPath(router.pathname))
 
 	const { results, fetchMore } = useMultiChainQuery({
 		useQuery: useGetWorkspaceMembersQuery,
@@ -39,6 +32,38 @@ function Sidebar() {
 		}
 	})
 
+	const workspaces = useMemo(() => {
+		const workspaces: MinimalWorkspace[] = []
+		for(const result of results) {
+			if(result?.workspaceMembers?.length) {
+				for(const mem of result.workspaceMembers) {
+					if(mem?.workspace) {
+						workspaces.push(mem.workspace)
+					}
+				}
+			}
+		}
+
+		return workspaces
+	}, [results])
+
+	useEffect(() => {
+		if(workspaces.length && !workspace) {
+			const savedWorkspaceData = localStorage.getItem('currentWorkspace')
+			if(!savedWorkspaceData || savedWorkspaceData === 'undefined') {
+				setWorkspace(workspaces[0])
+			} else {
+				const savedWorkspaceDataChain = savedWorkspaceData.split('-')[0]
+				const savedWorkspaceDataId = savedWorkspaceData.split('-')[1]
+				const i = workspaces.findIndex(
+					(w) => w.id === savedWorkspaceDataId &&
+	           		 w.supportedNetworks[0] === savedWorkspaceDataChain
+				)
+				setWorkspace(workspaces[i])
+			}
+		}
+	}, [workspaces, workspace])
+
 	useEffect(() => {
 		if(accountData?.address) {
 			fetchMore({
@@ -48,31 +73,8 @@ function Sidebar() {
 	}, [accountData?.address])
 
 	useEffect(() => {
-		const workspaces: MinimalWorkspace[] = []
-		results.forEach((result: GetWorkspaceMembersQuery | undefined) => {
-			if(result !== undefined && (result?.workspaceMembers?.length || 0) > 0) {
-				result.workspaceMembers?.forEach((workspaceMember) => {
-					workspaces.push(workspaceMember?.workspace)
-				})
-			}
-		})
-		setWorkspaces(workspaces)
-
-		if(workspaces.length > 0) {
-			const savedWorkspaceData = localStorage.getItem('currentWorkspace')
-			if(!savedWorkspaceData || savedWorkspaceData === 'undefined') {
-				setWorkspace(workspaces[0])
-			} else {
-				const savedWorkspaceDataChain = savedWorkspaceData.split('-')[0]
-				const savedWorkspaceDataId = savedWorkspaceData.split('-')[1]
-				const i = workspaces.findIndex(
-					(w) => w.id === savedWorkspaceDataId &&
-	            w.supportedNetworks[0] === savedWorkspaceDataChain
-				)
-				setWorkspace(workspaces[i])
-			}
-		}
-	}, [results])
+		setTabSelected(getTabFromPath(router.pathname))
+	}, [router.pathname])
 
 	return (
 		<Flex
@@ -105,46 +107,6 @@ function Sidebar() {
 					/>
 				)
 			}
-			<Flex
-				direction='column'
-				align='stretch'
-				my={2}
-				mx={2}>
-				{
-					bottomTabs.map((tab,) => (
-						<SidebarItem
-							key={tab.id}
-							index={tab.index}
-							selected={tabSelected}
-							id={tab.id}
-							name={tab.name}
-							onClick={
-								() => {
-									setTabSelected(tab.index)
-
-									// @Dhairya: uncomment this when you want dashboards to be public
-									// it will add chainid and daoid in url
-									// if(tab.path === '/dashboard') {
-									// 	if(!workspace) {
-									// 		return
-									// 	}
-
-									// 	router.push({ pathname: tab.path, query: {
-									// 		daoId: workspace.id,
-									// 		chainId: getSupportedChainIdFromWorkspace(workspace)
-									// 	} })
-
-									// 	return
-									// }
-
-									router.push({ pathname: tab.path })
-
-								}
-							}
-						/>
-					))
-				}
-			</Flex>
 			{
 				workspaces.length > 0 && (
 					<Divider variant='sidebar' />
@@ -156,26 +118,36 @@ function Sidebar() {
 				my={2}
 				mx={2}>
 				{
-					topTabs.map((tab,) => (
-						<SidebarItem
-							key={tab.id}
-							index={tab.index}
-							selected={tabSelected}
-							id={tab.id}
-							name={tab.name}
-							onClick={
-								() => {
-									setTabSelected(tab.index)
-									router.push({ pathname: tab.path })
-								}
+					tabList.map((tabs, i) => (
+						<>
+							{
+								tabs.map(tabId => {
+									const tab = TABS[tabId]
+									return (
+										<SidebarItem
+											key={tabId}
+											isSelected={tabId === tabSelected}
+											id={tabId}
+											name={tab.name}
+											onClick={
+												() => {
+													setTabSelected(tabId)
+													router.push({ pathname: `/${tab.path}` })
+												}
+											}
+										/>
+									)
+								})
 							}
-						/>
+							{
+								i !== (tabList.length - 1) && (
+									<Divider variant='sidebar' />
+								)
+							}
+						</>
 					))
 				}
 			</Flex>
-			<Divider
-				variant='sidebar'
-				mt={2} />
 		</Flex>
 	)
 }

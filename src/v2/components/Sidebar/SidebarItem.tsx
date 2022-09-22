@@ -1,16 +1,13 @@
 import { Button, Image } from '@chakra-ui/react'
 
 interface Props {
-  index: number
-  selected: number
+  isSelected: boolean
   id: string
   name: string
   onClick: () => void
 }
 
-function SidebarItem({ id, selected, index, name, onClick }: Props) {
-	const isSelected = index === selected
-
+function SidebarItem({ id, isSelected, name, onClick }: Props) {
 	return (
 		<Button
 			variant='ghost'
@@ -19,7 +16,7 @@ function SidebarItem({ id, selected, index, name, onClick }: Props) {
 				<Image
 					src={
 						`/left_sidebar/${id}_${
-							index === selected ? 'selected' : 'unselected'
+							isSelected ? 'selected' : 'unselected'
 						}.svg`
 					}
 					boxSize='20px'
