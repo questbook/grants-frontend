@@ -3,7 +3,7 @@ import { Box, Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalO
 import { useRouter } from 'next/router'
 import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO } from 'src/constants/chains'
-import { useGetProfileDetailsQuery, useGetWorkspaceMembersQuery } from 'src/generated/graphql'
+import { GetWorkspaceMembersQuery, useGetProfileDetailsQuery, useGetWorkspaceMembersQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
@@ -38,7 +38,7 @@ function MigrateToGasless() {
 	const [networkModalStep, setNetworkModalStep] = useState<number>()
 	const [transactionHash, setTransactionHash] = useState<string>()
 	const [shouldMigrate, setShouldMigrate] = useState<{state: number, chainId?: SupportedChainId}>()
-	const [ownedWorkspaces, setOwnedWorkspaces] = useState<any>([])
+	const [ownedWorkspaces, setOwnedWorkspaces] = useState<GetWorkspaceMembersQuery['workspaceMembers'][number]['workspace'][]>([])
 
 	const isMigrateYes = router?.query?.migrate === 'yes'
 
@@ -78,13 +78,13 @@ function MigrateToGasless() {
 			return
 		}
 
-		const filteredOwnedWorkspaces: any = []
+		const filteredOwnedWorkspaces: GetWorkspaceMembersQuery['workspaceMembers'] = []
 
 		if(walletAddress && walletChain?.id) {
 			const _ownedWorkspaces = ownedWorkspacesResults
 				.filter(result => (result?.workspaceMembers?.length || 0) > 0)
 				.reduce((prev, curr) => prev.concat(curr?.workspaceMembers ?? []), filteredOwnedWorkspaces)
-				.map((prev: any) => prev.workspace)
+				.map((prev: GetWorkspaceMembersQuery['workspaceMembers'][number]) => prev.workspace)
 
 			setOwnedWorkspaces(_ownedWorkspaces)
 		}
@@ -245,7 +245,7 @@ function MigrateToGasless() {
 			// adding the details of all workspaces owned by the user to the database
 
 			try {
-				await Promise.all(ownedWorkspaces.map((ownedWorkspace: any) => new Promise<void>(async(resolve, reject) => {
+				await Promise.all(ownedWorkspaces.map((ownedWorkspace: GetWorkspaceMembersQuery['workspaceMembers'][number]['workspace']) => new Promise<void>(async(resolve, reject) => {
 					try {
 						await addAuthorizedOwner(
 							Number(ownedWorkspace.id),

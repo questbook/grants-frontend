@@ -1,5 +1,3 @@
-import logger from 'src/utils/logger'
-
 function getAvatar(initials: boolean, address: string | null | undefined) {
 	let url = ''
 	if(!address) {
