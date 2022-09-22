@@ -69,6 +69,10 @@ const TAB_ID_LIST = Object.keys(TABS) as Tab[]
 
 export function getTabFromPath(path: string): Tab {
 	const firstComponent = path.split('/')[1]
+	if(firstComponent === 'signup') {
+		return 'grants_and_bounties'
+	}
+
 	for(const id of TAB_ID_LIST) {
 		const { path: tabPath } = TABS[id]
 		if(tabPath === firstComponent) {
