@@ -4,31 +4,18 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import { ApiClientsContext } from 'src/pages/_app'
 
-type Tabs = 'DISCOVER' | 'MY_APPLICATIONS' | 'DASHBOARD' | 'GRANTS_AND_BOUNTIES' | 'SAFE' | 'APPS' | 'SETTINGS' | 'PAYOUTS'
+export const TABS = {
+	'discover': { name: 'Discover', path: '' },
+	'my_applications': { name: 'My Proposals', path: 'your_applications' },
+	'dashboard': { name: 'Stats', path: 'dashboard' },
+	'grants_and_bounties': { name: 'Grants', path: 'your_grants' },
+	'safe': { name: 'Multisig Wallet', path: 'safe' },
+	'settings': { name: 'Profile', path: 'manage_dao' },
+} as const
 
-const TAB_INDEXES: {[_ in Tabs]: number} = {
-	DISCOVER: 0,
-	MY_APPLICATIONS: 1,
-	DASHBOARD: 2,
-	GRANTS_AND_BOUNTIES: 3,
-	SAFE: 4,
-	APPS: 5,
-	SETTINGS: 6,
-	PAYOUTS: 7,
-}
+export type Tab = keyof typeof TABS
 
-export type TabType = keyof typeof TAB_INDEXES
-
-const TABS = [
-	{ id: 'discover', index: TAB_INDEXES.DISCOVER, name: 'Discover', path: '/' },
-	{ id: 'my_applications', index: TAB_INDEXES.MY_APPLICATIONS, name: 'My Proposals', path: '/your_applications' },
-	{ id: 'dashboard', index: TAB_INDEXES.DASHBOARD, name: 'Stats', path: '/dashboard' },
-	{ id: 'grants_and_bounties', index: TAB_INDEXES.GRANTS_AND_BOUNTIES, name: 'Grants', path: '/your_grants' },
-	{ id: 'safe', index: TAB_INDEXES.SAFE, name: 'Multisig Wallet', path: '/safe' },
-	{ id: 'settings', index: TAB_INDEXES.SETTINGS, name: 'Profile', path: '/manage_dao' },
-]
-
-function useGetTabs() {
+export function useGetTabs() {
 	const { data: accountData } = useQuestbookAccount()
 	const { workspace } = React.useContext(ApiClientsContext)!
 
@@ -53,33 +40,41 @@ function useGetTabs() {
 		setApplicationCount(results.length)
 	}, [results])
 
-	if(!workspace || !workspace.id) {
-		// Pure applicant
-		return [ [TABS[0], TABS[1]], [] ]
-	} else {
-		const member = workspace.members.find((m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase())
-		if(!member) {
-			return [[], []]
-		}
+	const member = workspace?.members.find((m) => (
+		m.actorId.toLowerCase() === accountData?.address?.toLowerCase()
+	))
 
-		if(member.accessLevel === 'admin' || member.accessLevel === 'owner') {
-			if(applicationCount > 0) {
-				// Owner or admin with applicants
-				return [ TABS.slice(0, 2), TABS.slice(2, 7) ]
-			} else {
-				// Owner or admin without applicants
-				return [ TABS.slice(0, 1), TABS.slice(2, 7) ]
-			}
-		} else {
-			if(applicationCount > 0) {
-				// Reviewer with applicants
-				return [ TABS.slice(0, 2), [TABS[3]] ]
-			} else {
-				// Reviewer without applicants
-				return [ TABS.slice(0, 1), [TABS[3]] ]
-			}
-		}
+	let tabs: Tab[][]
+	if(!workspace?.id) {
+		// Pure applicant
+		tabs = [ ['discover', 'my_applications'], [] ]
+	} else if(!member) {
+		tabs = [[], []]
+	} else if(member.accessLevel === 'admin' || member.accessLevel === 'owner') {
+		tabs = [
+			applicationCount ? ['discover', 'my_applications'] : ['discover'],
+			['dashboard', 'grants_and_bounties', 'safe', 'settings']
+		]
+	} else {
+		tabs = [
+			applicationCount ? ['discover', 'my_applications'] : ['discover'],
+			['grants_and_bounties']
+		]
 	}
+
+	return tabs
 }
 
-export { useGetTabs, TAB_INDEXES, TABS }
+const TAB_ID_LIST = Object.keys(TABS) as Tab[]
+
+export function getTabFromPath(path: string): Tab {
+	const firstComponent = path.split('/')[1]
+	for(const id of TAB_ID_LIST) {
+		const { path: tabPath } = TABS[id]
+		if(tabPath === firstComponent) {
+			return id
+		}
+	}
+
+	return TAB_ID_LIST[0]
+}
