@@ -20,7 +20,7 @@ const TAB_INDEXES: {[_ in Tabs]: number} = {
 export type TabType = keyof typeof TAB_INDEXES
 
 const TABS = [
-	{ id: 'discover', index: TAB_INDEXES.DISCOVER, name: 'Discover', path: '/browse_dao' },
+	{ id: 'discover', index: TAB_INDEXES.DISCOVER, name: 'Discover', path: '/' },
 	{ id: 'my_applications', index: TAB_INDEXES.MY_APPLICATIONS, name: 'My Proposals', path: '/your_applications' },
 	{ id: 'dashboard', index: TAB_INDEXES.DASHBOARD, name: 'Stats', path: '/dashboard' },
 	{ id: 'grants_and_bounties', index: TAB_INDEXES.GRANTS_AND_BOUNTIES, name: 'Grants', path: '/your_grants' },

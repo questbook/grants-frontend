@@ -15,22 +15,141 @@ import Heading from 'src/components/ui/heading'
 import YourApplicationCard from 'src/components/your_applications/yourApplicationCard'
 import { CHAIN_INFO } from 'src/constants/chains'
 import config from 'src/constants/config.json'
-import { GrantApplication, useGetMyApplicationsLazyQuery } from 'src/generated/graphql'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAmount, getChainIdFromResponse, getFormattedDateFromUnixTimestamp } from 'src/utils/formattingUtils'
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
+
+
+import { getUrlForIPFSHash } from 'src/libraries/ipfsUtils'
+import { GrantApplication, useGetMyApplicationsLazyQuery } from 'src/generated/graphql'
+
 
 const PAGE_SIZE = 20
 
-function YourApplications() {
+function YourProposals() {
+
+    const buildComponent = () => (
+		<VStack
+			ref={containerRef}
+			w='100%'
+			align='center'
+		>
+			{requiresMigrate && <MigrateToGaslessHeader />}
+			<Flex
+				flex={1}
+				direction='column'
+				maxW='70%'
+				minW='50%'
+				alignItems='stretch'
+				pb={8}
+				px={10}
+				mx='auto'
+			>
+				<Heading title={t('/your_applications.your_proposals')} />
+
+				{
+					proposals.length > 0
+					&& proposals.map((proposal: any) => (
+						(
+							<YourApplicationCard
+								key={proposal.id}
+								grantTitle={proposal.grant.title}
+								daoName={proposal.grant.workspace.title}
+								daoIcon={
+									proposal.grant.workspace.logoIpfsHash === config.defaultDAOImageHash ?
+										getAvatar(true, proposal.grant.workspace.title) :
+										getUrlForIPFSHash(proposal.grant.workspace.logoIpfsHash)
+								}
+								isGrantVerified={(new BN(proposal.grant.funding)).gt(new BN(0))}
+								funding={
+									formatAmount(
+										proposal.grant.funding,
+										CHAIN_INFO[
+											getSupportedChainIdFromSupportedNetwork(
+												proposal.grant.workspace.supportedNetworks[0],
+											)
+										]?.supportedCurrencies[proposal.grant.reward.asset.toLowerCase()]
+											?.decimals,
+									)
+								}
+								currency={
+									CHAIN_INFO[
+										getSupportedChainIdFromSupportedNetwork(
+											proposal.grant.workspace.supportedNetworks[0],
+										)
+									]?.supportedCurrencies[proposal.grant.reward.asset.toLowerCase()]
+										?.label || 'LOL'
+								}
+								isDaoVerified={false}
+								status={proposal.state}
+								sentDate={getFormattedDateFromUnixTimestamp(proposal?.createdAtS)}
+								updatedDate={getFormattedDateFromUnixTimestamp(proposal?.updatedAtS)}
+								onViewGrantClick={
+									() => router.push({
+										pathname: '/explore_grants/about_grant',
+										query: {
+											grantId: proposal.grant.id,
+											chainId: getChainIdFromResponse(
+												proposal.grant.workspace.supportedNetworks[0],
+											),
+										},
+									})
+								}
+								onViewApplicationClick={
+									() => router.push({
+										pathname: '/your_applications/grant_application',
+										query: {
+											applicationId: proposal.id,
+											chainId: getChainIdFromResponse(
+												proposal.grant.workspace.supportedNetworks[0],
+											),
+										},
+									})
+								}
+								onManageGrantClick={
+									() => router.push({
+										pathname: '/your_applications/manage_grant',
+										query: {
+											applicationId: proposal.id,
+											chainId: getChainIdFromResponse(
+												proposal.grant.workspace.supportedNetworks[0],
+											),
+										},
+									})
+								}
+							/>
+						)
+					))
+				}
+
+				{
+					proposals.length === 0 && (
+						<Flex
+							direction='column'
+							mt={14}
+							align='center'>
+							<Empty
+								src='/illustrations/empty_states/no_applications.svg'
+								imgHeight='134px'
+								imgWidth='147px'
+								title='No applications'
+								subtitle='All your grant applications are shown here. Discover grants on our home page.'
+							/>
+						</Flex>
+					)
+				}
+
+			</Flex>
+		</VStack>
+	)
+
 	const router = useRouter()
 	// const [applicantID, setApplicantId] = useState<any>('');
 	// const subgraphClient = useContext(ApiClientsContext)?.subgraphClient;
 	const { subgraphClients } = useContext(ApiClientsContext)!
-	const [myApplications, setMyApplications] = useState<any>([])
+	const [proposals, setMyApplications] = useState<any>([])
 	const [requiresMigrate, setRequiresMigrate] = useState(false)
 	const { t } = useTranslation()
 
@@ -71,7 +190,7 @@ function YourApplications() {
 				const allApplicationsData = [].concat(...values)
 				allApplicationsData
 					.sort((a: GrantApplication, b: GrantApplication) => b.createdAtS - a.createdAtS)
-				setMyApplications([...myApplications, ...allApplicationsData])
+				setMyApplications([...proposals, ...allApplicationsData])
 				setCurrentPage(currentPage + 1)
 			})
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -134,123 +253,10 @@ function YourApplications() {
 		}
 	}, [])
 
-	return (
-		<VStack
-			ref={containerRef}
-			w='100%'
-			align='center'
-		>
-			{requiresMigrate && <MigrateToGaslessHeader />}
-			<Flex
-				flex={1}
-				direction='column'
-				maxW='70%'
-				minW='50%'
-				alignItems='stretch'
-				pb={8}
-				px={10}
-				mx='auto'
-			>
-				<Heading title={t('/your_applications.your_proposals')} />
-
-				{
-					myApplications.length > 0
-					&& myApplications.map((application: any) => (
-						(
-							<YourApplicationCard
-								key={application.id}
-								grantTitle={application.grant.title}
-								daoName={application.grant.workspace.title}
-								daoIcon={
-									application.grant.workspace.logoIpfsHash === config.defaultDAOImageHash ?
-										getAvatar(true, application.grant.workspace.title) :
-										getUrlForIPFSHash(application.grant.workspace.logoIpfsHash)
-								}
-								isGrantVerified={(new BN(application.grant.funding)).gt(new BN(0))}
-								funding={
-									formatAmount(
-										application.grant.funding,
-										CHAIN_INFO[
-											getSupportedChainIdFromSupportedNetwork(
-												application.grant.workspace.supportedNetworks[0],
-											)
-										]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
-											?.decimals,
-									)
-								}
-								currency={
-									CHAIN_INFO[
-										getSupportedChainIdFromSupportedNetwork(
-											application.grant.workspace.supportedNetworks[0],
-										)
-									]?.supportedCurrencies[application.grant.reward.asset.toLowerCase()]
-										?.label || 'LOL'
-								}
-								isDaoVerified={false}
-								status={application.state}
-								sentDate={getFormattedDateFromUnixTimestamp(application?.createdAtS)}
-								updatedDate={getFormattedDateFromUnixTimestamp(application?.updatedAtS)}
-								onViewGrantClick={
-									() => router.push({
-										pathname: '/explore_grants/about_grant',
-										query: {
-											grantId: application.grant.id,
-											chainId: getChainIdFromResponse(
-												application.grant.workspace.supportedNetworks[0],
-											),
-										},
-									})
-								}
-								onViewApplicationClick={
-									() => router.push({
-										pathname: '/your_applications/grant_application',
-										query: {
-											applicationId: application.id,
-											chainId: getChainIdFromResponse(
-												application.grant.workspace.supportedNetworks[0],
-											),
-										},
-									})
-								}
-								onManageGrantClick={
-									() => router.push({
-										pathname: '/your_applications/manage_grant',
-										query: {
-											applicationId: application.id,
-											chainId: getChainIdFromResponse(
-												application.grant.workspace.supportedNetworks[0],
-											),
-										},
-									})
-								}
-							/>
-						)
-					))
-				}
-
-				{
-					myApplications.length === 0 && (
-						<Flex
-							direction='column'
-							mt={14}
-							align='center'>
-							<Empty
-								src='/illustrations/empty_states/no_applications.svg'
-								imgHeight='134px'
-								imgWidth='147px'
-								title='No applications'
-								subtitle='All your grant applications are shown here. Discover grants on our home page.'
-							/>
-						</Flex>
-					)
-				}
-
-			</Flex>
-		</VStack>
-	)
+	return buildComponent();
 }
 
-YourApplications.getLayout = function(page: ReactElement) {
+YourProposals.getLayout = function(page: ReactElement) {
 	return (
 		<NavbarLayout>
 			{page}
@@ -287,4 +293,4 @@ function MigrateToGaslessHeader() {
 	)
 }
 
-export default YourApplications
+export default YourProposals

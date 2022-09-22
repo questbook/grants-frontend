@@ -22,7 +22,7 @@ export type UseMultiChainPaginatedQueryOptions<Q, K, V> = {
  * Queries from multiple chains simulataneously.
  * @returns
  */
-export function useMultiChainPaginatedQuery<Q, K, V extends PaginationVariables>({
+export function useMultichainDaosPaginatedQuery<Q, K, V extends PaginationVariables>({
 	chains,
 	variables,
 	pageSize,
