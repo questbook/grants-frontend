@@ -2,7 +2,6 @@ import React, { useContext, useEffect } from 'react'
 import {
 	Box, Button, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, Image, Link,
 	Switch, Text, } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
 import Dropdown from 'src/components/ui/forms/dropdown'
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
@@ -12,6 +11,7 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSetRubrics from 'src/hooks/useSetRubrics'
 import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
+import { ApiClientsContext } from 'src/pages/_app'
 
 function RubricDrawer({
 	rubricDrawerOpen,

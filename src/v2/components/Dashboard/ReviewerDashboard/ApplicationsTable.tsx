@@ -15,7 +15,6 @@ import {
 	Tr,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import {
@@ -25,6 +24,7 @@ import {
 	useGetMoreToBeReviewedApplicationsLazyQuery,
 } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
+import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { IReview, IReviewFeedback } from 'src/types'
 import {
 	getFieldString,

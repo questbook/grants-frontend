@@ -16,7 +16,6 @@ import {
 	Tr,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { ApiClientsContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
 import { defaultChainId } from 'src/constants/chains'
 import {
@@ -24,6 +23,7 @@ import {
 	WorkspaceMember,
 	WorkspaceMemberAccessLevel,
 } from 'src/generated/graphql'
+import { ApiClientsContext } from 'src/pages/_app'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import InviteModal from 'src/v2/components/InviteModal'
 import AccessLevelTab from 'src/v2/components/WorkspaceMembers/AccessLevelTab'

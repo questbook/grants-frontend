@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
-import { ApiClientsContext } from 'pages/_app'
 import { useGetNumberOfApplicationsQuery } from 'src/generated/graphql'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
+import { ApiClientsContext } from 'src/pages/_app'
 
 type Tabs = 'DISCOVER' | 'MY_APPLICATIONS' | 'DASHBOARD' | 'GRANTS_AND_BOUNTIES' | 'SAFE' | 'APPS' | 'SETTINGS' | 'PAYOUTS'
 

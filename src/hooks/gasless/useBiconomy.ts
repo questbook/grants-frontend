@@ -1,5 +1,5 @@
 import { useContext, useEffect } from 'react'
-import { BiconomyContext, WebwalletContext } from 'pages/_app'
+import { BiconomyContext, WebwalletContext } from 'src/pages/_app'
 import logger from 'src/utils/logger'
 
 export const useBiconomy = (props: { chainId?: string, shouldRefreshNonce?: boolean }) => {

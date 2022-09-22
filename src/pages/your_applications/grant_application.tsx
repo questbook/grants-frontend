@@ -6,7 +6,6 @@ import React, {
 } from 'react'
 import { Container } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import Form from 'src/components/your_applications/grant_application/form'
 import { CHAIN_INFO, defaultChainId, USD_ASSET, USD_ICON } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
@@ -16,6 +15,7 @@ import {
 	useGetApplicationDetailsQuery,
 } from 'src/generated/graphql'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
+import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { GrantApplicationProps } from 'src/types/application'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAmount, getFieldString } from 'src/utils/formattingUtils'

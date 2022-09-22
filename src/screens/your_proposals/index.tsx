@@ -9,28 +9,26 @@ import {
 } from '@chakra-ui/react'
 import BN from 'bn.js'
 import { useRouter } from 'next/router'
-import { ApiClientsContext } from 'pages/_app'
 import Empty from 'src/components/ui/empty'
 import Heading from 'src/components/ui/heading'
 import YourApplicationCard from 'src/components/your_applications/yourApplicationCard'
 import { CHAIN_INFO } from 'src/constants/chains'
 import config from 'src/constants/config.json'
+import { GrantApplication, useGetMyApplicationsLazyQuery } from 'src/generated/graphql'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import { getUrlForIPFSHash } from 'src/libraries/ipfsUtils'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
+import { ApiClientsContext } from 'src/pages/_app'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAmount, getChainIdFromResponse, getFormattedDateFromUnixTimestamp } from 'src/utils/formattingUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
-
-
-import { getUrlForIPFSHash } from 'src/libraries/ipfsUtils'
-import { GrantApplication, useGetMyApplicationsLazyQuery } from 'src/generated/graphql'
 
 
 const PAGE_SIZE = 20
 
 function YourProposals() {
 
-    const buildComponent = () => (
+	const buildComponent = () => (
 		<VStack
 			ref={containerRef}
 			w='100%'
@@ -253,7 +251,7 @@ function YourProposals() {
 		}
 	}, [])
 
-	return buildComponent();
+	return buildComponent()
 }
 
 YourProposals.getLayout = function(page: ReactElement) {

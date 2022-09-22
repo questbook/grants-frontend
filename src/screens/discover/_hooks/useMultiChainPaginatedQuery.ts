@@ -1,8 +1,8 @@
 import { useCallback, useContext, useMemo, useRef, useState } from 'react'
 import { QueryHookOptions, QueryResult } from '@apollo/client'
-import { ApiClientsContext } from 'pages/_app'
 import { InputMaybe, Scalars } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
+import { ApiClientsContext } from 'src/pages/_app'
 
 type PaginationVariables = {
 	skip?: InputMaybe<Scalars['Int']>

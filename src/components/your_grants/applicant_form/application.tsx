@@ -14,10 +14,10 @@ import {
 	Link,
 	Text,
 } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
 import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer'
 import { CHAIN_INFO } from 'src/constants/chains'
 import { GetApplicationDetailsQuery } from 'src/generated/graphql'
+import { ApiClientsContext } from 'src/pages/_app'
 import { formatAmount, getFieldString, getRewardAmount } from 'src/utils/formattingUtils'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'

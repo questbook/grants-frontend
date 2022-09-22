@@ -3,7 +3,6 @@ import {
 	Container, Flex, Text
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { ApiClientsContext } from 'pages/_app'
 import Form from 'src/components/signup/create_dao/form'
 import Loading from 'src/components/signup/create_dao/loading'
 import CreateGrant from 'src/components/signup/create_grant'
@@ -13,6 +12,7 @@ import { SupportedNetwork } from 'src/generated/graphql'
 import useCreateGrant from 'src/hooks/useCreateGrant'
 import useCreateWorkspace from 'src/hooks/useCreateWorkspace'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
+import { ApiClientsContext } from 'src/pages/_app'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
