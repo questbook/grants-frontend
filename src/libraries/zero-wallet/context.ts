@@ -1,5 +1,5 @@
-import { Wallet } from 'ethers'
 import { createContext } from 'react'
+import { Wallet } from 'ethers'
 import SupportedChainId from 'src/generated/SupportedChainId'
 export const WebwalletContext = createContext<{
 	webwallet?: Wallet

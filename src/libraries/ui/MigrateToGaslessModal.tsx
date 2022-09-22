@@ -20,6 +20,156 @@ import { useAccount, useNetwork, useSigner, useSwitchNetwork } from 'wagmi'
 const POINTERS = ['Zero gas fee across the app', 'No annoying sign transaction pop-ups']
 
 function MigrateToGasless() {
+	const buildComponent = () => (
+		<>
+			<Modal
+				isCentered={true}
+				isOpen={isOpen}
+				size='3xl'
+				onClose={onClose}
+			>
+				<ModalOverlay
+					backdropFilter='blur(12px)' />
+				<ModalContent>
+					<ModalCloseButton />
+					<Flex>
+						<Image
+							w='40%'
+							objectFit='cover'
+							src='/accept-invite-side.png' />
+						<Flex
+							w='60%'
+							direction='column'
+							m={6}>
+							<Text
+								fontWeight='500'
+								variant='v2_heading_3'>
+								Hey, 👋
+								{' '}
+							</Text>
+							<Text
+								fontWeight='500'
+								variant='v2_heading_3'>
+								We have an update for you!
+							</Text>
+							<Text
+								mt={6}
+								variant='v2_title'
+								fontWeight='500'>
+								Questbook is moving to in-app wallet.
+							</Text>
+							<Flex
+								direction='column'
+								mt={2}
+								p={4}
+								boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'
+								borderRadius='4px'>
+								<Text
+									variant='v2_body'
+									color='black.2'>
+									What it means to you:
+								</Text>
+								{
+									POINTERS.map((pointer, index) => (
+										<Flex
+											align='center'
+											key={index}
+											mt={2}>
+											<Image
+												src={`/ui_icons/migrate-to-gasless/${index + 1}.svg`}
+												boxSize='28px' />
+											<Text
+												variant='v2_body'
+												color='black.2'
+												fontWeight='500'
+												ml={3}>
+												{pointer}
+											</Text>
+										</Flex>
+									))
+								}
+							</Flex>
+							<Flex
+								bg='lightBlue.1'
+								borderLeft='4px solid'
+								borderColor='lightBlue.2'
+								p={4}
+								mt={6}>
+								<Image
+									src='/ui_icons/migrate-to-gasless/info.svg'
+									boxSize='24px' />
+								<Text
+									variant='v2_body'
+									ml={4}>
+									To continue using Questbook without losing any data, migrate to the in-app wallet.
+								</Text>
+							</Flex>
+							<Box mt={6} />
+
+							<Button
+								ml='auto'
+								px={4}
+								py={2}
+								// disabled={!shouldMigrate}
+								variant='primaryV2'
+								rightIcon={
+									<Image
+										src='/ui_icons/arrow-right-fill.svg'
+										boxSize='20px' />
+								}
+								mt='auto'
+								onClick={migrate}>
+								Migrate to In-App Wallet
+							</Button>
+						</Flex>
+					</Flex>
+				</ModalContent>
+			</Modal>
+			<ConnectWalletModal
+				isOpen={isConnectWalletModalOpen}
+				onClose={() => setIsConnectWalletModalOpen(false)} />
+			<NetworkTransactionModal
+				currentStepIndex={networkModalStep || 0}
+				isOpen={networkModalStep !== undefined}
+				subtitle='Migrating your profile'
+				description={
+					<Flex
+						direction='column'
+						align='start'
+						maxW='100%'>
+						<Text
+							fontWeight='bold'
+							color='#3F8792'>
+							Migrating wallet for
+						</Text>
+						<Text
+							noOfLines={1}
+							fontSize='sm'
+							color='#3F8792'>
+							{walletAddress ?? ''}
+						</Text>
+					</Flex>
+				}
+				steps={
+					[
+						'Setting up ZeroWallet',
+						'Sign Migration Transaction',
+						'Waiting for confirmation',
+						'Waiting for indexing to complete',
+						'Migration successful'
+					]
+				}
+				viewLink={getExplorerUrlForTxHash(walletChain?.id, transactionHash)}
+				onClose={
+					() => {
+						setNetworkModalStep(undefined)
+						router.reload()
+					}
+				}
+			/>
+		</>
+	)
+
 	const router = useRouter()
 	const toast = useToast()
 	const { waitForScwAddress, webwallet } = useContext(WebwalletContext)!
@@ -282,155 +432,7 @@ function MigrateToGasless() {
 		}
 	}
 
-	return (
-		<>
-			<Modal
-				isCentered={true}
-				isOpen={isOpen}
-				size='3xl'
-				onClose={onClose}
-			>
-				<ModalOverlay
-					backdropFilter='blur(12px)' />
-				<ModalContent>
-					<ModalCloseButton />
-					<Flex>
-						<Image
-							w='40%'
-							objectFit='cover'
-							src='/accept-invite-side.png' />
-						<Flex
-							w='60%'
-							direction='column'
-							m={6}>
-							<Text
-								fontWeight='500'
-								variant='v2_heading_3'>
-								Hey, 👋
-								{' '}
-							</Text>
-							<Text
-								fontWeight='500'
-								variant='v2_heading_3'>
-								We have an update for you!
-							</Text>
-							<Text
-								mt={6}
-								variant='v2_title'
-								fontWeight='500'>
-								Questbook is moving to in-app wallet.
-							</Text>
-							<Flex
-								direction='column'
-								mt={2}
-								p={4}
-								boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'
-								borderRadius='4px'>
-								<Text
-									variant='v2_body'
-									color='black.2'>
-									What it means to you:
-								</Text>
-								{
-									POINTERS.map((pointer, index) => (
-										<Flex
-											align='center'
-											key={index}
-											mt={2}>
-											<Image
-												src={`/ui_icons/migrate-to-gasless/${index + 1}.svg`}
-												boxSize='28px' />
-											<Text
-												variant='v2_body'
-												color='black.2'
-												fontWeight='500'
-												ml={3}>
-												{pointer}
-											</Text>
-										</Flex>
-									))
-								}
-							</Flex>
-							<Flex
-								bg='lightBlue.1'
-								borderLeft='4px solid'
-								borderColor='lightBlue.2'
-								p={4}
-								mt={6}>
-								<Image
-									src='/ui_icons/migrate-to-gasless/info.svg'
-									boxSize='24px' />
-								<Text
-									variant='v2_body'
-									ml={4}>
-									To continue using Questbook without losing any data, migrate to the in-app wallet.
-								</Text>
-							</Flex>
-							<Box mt={6} />
-
-							<Button
-								ml='auto'
-								px={4}
-								py={2}
-								// disabled={!shouldMigrate}
-								variant='primaryV2'
-								rightIcon={
-									<Image
-										src='/ui_icons/arrow-right-fill.svg'
-										boxSize='20px' />
-								}
-								mt='auto'
-								onClick={migrate}>
-								Migrate to In-App Wallet
-							</Button>
-						</Flex>
-					</Flex>
-				</ModalContent>
-			</Modal>
-			<ConnectWalletModal
-				isOpen={isConnectWalletModalOpen}
-				onClose={() => setIsConnectWalletModalOpen(false)} />
-			<NetworkTransactionModal
-				currentStepIndex={networkModalStep || 0}
-				isOpen={networkModalStep !== undefined}
-				subtitle='Migrating your profile'
-				description={
-					<Flex
-						direction='column'
-						align='start'
-						maxW='100%'>
-						<Text
-							fontWeight='bold'
-							color='#3F8792'>
-							Migrating wallet for
-						</Text>
-						<Text
-							noOfLines={1}
-							fontSize='sm'
-							color='#3F8792'>
-							{walletAddress ?? ''}
-						</Text>
-					</Flex>
-				}
-				steps={
-					[
-						'Setting up ZeroWallet',
-						'Sign Migration Transaction',
-						'Waiting for confirmation',
-						'Waiting for indexing to complete',
-						'Migration successful'
-					]
-				}
-				viewLink={getExplorerUrlForTxHash(walletChain?.id, transactionHash)}
-				onClose={
-					() => {
-						setNetworkModalStep(undefined)
-						router.reload()
-					}
-				}
-			/>
-		</>
-	)
+	return buildComponent()
 }
 
 export default MigrateToGasless
