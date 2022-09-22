@@ -15,7 +15,7 @@ import {
 	GetApplicationDetailsQuery,
 	useGetApplicationDetailsQuery,
 } from 'src/generated/graphql'
-import NavbarLayout from 'libraries/ui/navbarLayout'
+import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { GrantApplicationProps } from 'src/types/application'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAmount, getFieldString } from 'src/utils/formattingUtils'

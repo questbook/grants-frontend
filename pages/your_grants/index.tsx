@@ -29,7 +29,7 @@ import {
 	useGetAllGrantsForReviewerQuery,
 } from 'src/generated/graphql'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import NavbarLayout from 'libraries/ui/navbarLayout'
+import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAmount } from 'src/utils/formattingUtils'
 import { UNIX_TIMESTAMP_MAX, unixTimestampSeconds } from 'src/utils/generics'

@@ -7,9 +7,9 @@ import { WebwalletContext } from 'pages/_app' //TODO - move to /libraries/zero-w
 import DaosGrid from 'src/screens/discover/_components/DaosGrid'
 import { GetDaOsForExploreQuery, useGetDaOsForExploreQuery, Workspace_Filter as WorkspaceFilter, Workspace_OrderBy as WorkspaceOrderBy } from 'src/generated/graphql'
 import { useMultichainDaosPaginatedQuery } from 'src/screens/discover/_hooks/useMultiChainPaginatedQuery'
-import NavbarLayout from 'libraries/ui/navbarLayout'
+import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { extractInviteInfo, InviteInfo } from 'src/screens/discover/_utils/invite'
-import logger from 'libraries/logger'
+import logger from 'src/libraries/logger'
 import { mergeSortedArrays } from 'src/screens/discover/_utils/mergeSortedArrays'
 import AcceptInviteModal from 'src/screens/discover/_components/AcceptInviteModal'
 

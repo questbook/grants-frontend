@@ -16,13 +16,13 @@ import YourApplicationCard from 'src/components/your_applications/yourApplicatio
 import { CHAIN_INFO } from 'src/constants/chains'
 import config from 'src/constants/config.json'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import NavbarLayout from 'libraries/ui/navbarLayout'
+import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAmount, getChainIdFromResponse, getFormattedDateFromUnixTimestamp } from 'src/utils/formattingUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 
 
-import { getUrlForIPFSHash } from 'libraries/ipfsUtils'
+import { getUrlForIPFSHash } from 'src/libraries/ipfsUtils'
 import { GrantApplication, useGetMyApplicationsLazyQuery } from 'src/generated/graphql'
 
 

@@ -34,7 +34,7 @@ import config from 'src/constants/config.json'
 import { useGetDaoDetailsQuery, useGetFundsAndProfileDataQuery } from 'src/generated/graphql'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 // APP LAYOUT & STATE
-import NavbarLayout from 'libraries/ui/navbarLayout'
+import NavbarLayout from 'src/libraries/ui/navbarLayout'
 // CONSTANTS AND TYPES
 import type { DAOWorkspace } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'

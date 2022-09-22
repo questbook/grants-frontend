@@ -27,7 +27,7 @@ import {
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useUpdateApplicationState from 'src/hooks/useUpdateApplicationState'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
-import NavbarLayout from 'libraries/ui/navbarLayout'
+import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { useEncryptPiiForApplication } from 'src/utils/pii'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 

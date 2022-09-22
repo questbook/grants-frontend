@@ -1,6 +1,6 @@
 import { ReactElement } from 'react'
 import { Flex } from '@chakra-ui/react'
-import NavbarLayout from 'libraries/ui/navbarLayout'
+import NavbarLayout from 'src/libraries/ui/navbarLayout'
 
 function Integrations() {
 	return (

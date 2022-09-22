@@ -2,7 +2,7 @@ import { ReactElement, useEffect } from 'react'
 import { Flex } from '@chakra-ui/react'
 // import axios from 'axios'
 // import { useRouter } from 'next/router'
-import NavbarLayout from 'libraries/ui/navbarLayout'
+import NavbarLayout from 'src/libraries/ui/navbarLayout'
 // import { getNonce } from '../src/utils/gaslessUtils'
 // import { GitHubTokenContext, NonceContext, WebwalletContext } from './_app'
 
