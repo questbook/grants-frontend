@@ -14,7 +14,7 @@ import {
 	GetAllGrantsForCreatorQuery,
 	useGetAllGrantsForCreatorQuery,
 } from 'src/generated/graphql'
-import NavbarLayout from 'src/layout/navbarLayout'
+import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { UNIX_TIMESTAMP_MAX, UNIX_TIMESTAMP_MIN } from 'src/utils/generics'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 

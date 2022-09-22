@@ -4,7 +4,7 @@ import { Button, Divider, HStack, Image, ModalBody, ModalCloseButton, ModalConte
 import { useRouter } from 'next/router'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { serialiseInviteInfoIntoUrl, useMakeInvite } from 'src/utils/invite'
+import { serialiseInviteInfoIntoUrl, useMakeInvite } from 'src/screens/discover/_utils/invite'
 import { getRoleTitle } from 'src/v2/components/AcceptInviteModal/RoleDataDisplay'
 import RoleSelect from 'src/v2/components/InviteModal/RoleSelect'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'

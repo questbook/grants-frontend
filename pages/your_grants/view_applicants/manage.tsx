@@ -31,7 +31,7 @@ import {
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCompleteApplication from 'src/hooks/useCompleteApplication'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
-import NavbarLayout from 'src/layout/navbarLayout'
+import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { ApplicationMilestone } from 'src/types'
 import {
 	formatAmount,
