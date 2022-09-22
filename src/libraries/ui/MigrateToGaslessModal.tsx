@@ -170,27 +170,26 @@ function MigrateToGasless() {
 		</>
 	)
 
-	const router = useRouter()
-	const toast = useToast()
+	// useContexts defined here
 	const { waitForScwAddress, webwallet } = useContext(WebwalletContext)!
 	const { subgraphClients } = useContext(ApiClientsContext)!
 
-	const { address: walletAddress } = useAccount()
-	const { data: signer } = useSigner()
-	const { chain: walletChain } = useNetwork()
-	const { switchNetwork } = useSwitchNetwork()
-
+	// useStates start here
 	const [isOpen, setIsOpen] = useState(false)
 	const [isConnectWalletModalOpen, setIsConnectWalletModalOpen] = useState(false)
-
-	const workspaceContract = useQBContract('workspace', walletChain?.id as SupportedChainId, false)
-
 	const [networkModalStep, setNetworkModalStep] = useState<number>()
 	const [transactionHash, setTransactionHash] = useState<string>()
 	const [shouldMigrate, setShouldMigrate] = useState<{state: number, chainId?: SupportedChainId}>()
 	const [ownedWorkspaces, setOwnedWorkspaces] = useState<GetWorkspaceMembersQuery['workspaceMembers'][number]['workspace'][]>([])
 
-	const isMigrateYes = router?.query?.migrate === 'yes'
+	// custom hooks
+	const { address: walletAddress } = useAccount()
+	const { data: signer } = useSigner()
+	const { chain: walletChain } = useNetwork()
+	const { switchNetwork } = useSwitchNetwork()
+	const router = useRouter()
+	const toast = useToast()
+	const workspaceContract = useQBContract('workspace', walletChain?.id as SupportedChainId, false)
 
 	const { results, fetchMore } = useMultiChainQuery({
 		useQuery: useGetProfileDetailsQuery,
@@ -210,96 +209,10 @@ function MigrateToGasless() {
 		}
 	})
 
-	useEffect(() => {
-		if(walletAddress && walletChain?.id) {
-			setShouldMigrate({ state: 3 })
-			fetchMore({
-				actorId: walletAddress
-			}, true)
+	// variables required
+	const isMigrateYes = router?.query?.migrate === 'yes'
 
-			fetchMoreOwnedWorkspaces({
-				actorId: walletAddress
-			}, true)
-		}
-	}, [walletAddress, walletChain?.id])
-
-	useEffect(() => {
-		if(!ownedWorkspacesResults) {
-			return
-		}
-
-		const filteredOwnedWorkspaces: GetWorkspaceMembersQuery['workspaceMembers'] = []
-
-		if(walletAddress && walletChain?.id) {
-			const _ownedWorkspaces = ownedWorkspacesResults
-				.filter(result => (result?.workspaceMembers?.length || 0) > 0)
-				.reduce((prev, curr) => prev.concat(curr?.workspaceMembers ?? []), filteredOwnedWorkspaces)
-				.map((prev: GetWorkspaceMembersQuery['workspaceMembers'][number]) => prev.workspace)
-
-			setOwnedWorkspaces(_ownedWorkspaces)
-		}
-	}, [ownedWorkspacesResults])
-
-	useEffect(() => {
-		if(walletAddress && walletChain?.id) {
-			const workspaceFromMember = results.find((result) => (result?.workspaceMembers?.length || 0) > 0)?.workspaceMembers[0]?.workspace
-			const workspaceFromApplication = results.find((result) => (result?.grantApplications.length || 0) > 0)?.grantApplications[0]?.grant?.workspace
-			const chainIdFromMemberWorkspace = getSupportedChainIdFromWorkspace(workspaceFromMember)
-			const chainIdFromApplicationWorkspace = getSupportedChainIdFromWorkspace(workspaceFromApplication)
-
-			let hasProfileOnCurrentChain = false
-			for(const result of results) {
-				if(result?.workspaceMembers?.length && getSupportedChainIdFromWorkspace(result?.workspaceMembers[0]?.workspace) === walletChain.id) {
-					hasProfileOnCurrentChain = true
-					break
-				}
-
-				if(result?.grantApplications?.length && getSupportedChainIdFromWorkspace(result?.grantApplications[0]?.grant?.workspace) === walletChain.id) {
-					hasProfileOnCurrentChain = true
-					break
-				}
-			}
-
-			if((!chainIdFromMemberWorkspace && !chainIdFromApplicationWorkspace) || chainIdFromMemberWorkspace === walletChain?.id || chainIdFromApplicationWorkspace === walletChain?.id) {
-				if(!chainIdFromMemberWorkspace && !chainIdFromApplicationWorkspace) {
-					setShouldMigrate({ state: -1 })
-				}
-
-				if(chainIdFromMemberWorkspace === walletChain?.id) {
-					setShouldMigrate({ state: 3, chainId: chainIdFromMemberWorkspace })
-				} else if(chainIdFromApplicationWorkspace === walletChain?.id) {
-					setShouldMigrate({ state: 3, chainId: chainIdFromApplicationWorkspace })
-				}
-
-				return
-			}
-
-			if(ALL_SUPPORTED_CHAIN_IDS.findIndex((chain) => chain === walletChain?.id) === -1 || !hasProfileOnCurrentChain) {
-				if(workspaceFromMember && chainIdFromMemberWorkspace && ALL_SUPPORTED_CHAIN_IDS.findIndex((chain) => chain === chainIdFromMemberWorkspace) !== -1) {
-					setShouldMigrate({ state: 0, chainId: chainIdFromMemberWorkspace })
-				} else if(!workspaceFromMember && workspaceFromApplication && chainIdFromApplicationWorkspace && ALL_SUPPORTED_CHAIN_IDS.findIndex((chain) => chain === chainIdFromApplicationWorkspace) !== -1) {
-					setShouldMigrate({ state: 1, chainId: chainIdFromApplicationWorkspace })
-				} else {
-					setShouldMigrate({ state: 2 })
-				}
-			} else {
-				setShouldMigrate({ state: 3 })
-			}
-		}
-	}, [results])
-
-	useEffect(() => {
-		if(walletAddress) {
-			setIsConnectWalletModalOpen(false)
-		}
-	}, [walletAddress])
-
-	useEffect(() => {
-		if(isMigrateYes) {
-			setIsOpen(isMigrateYes)
-		}
-	}, [isMigrateYes])
-
+	// functions start here
 	const onClose = (done?: boolean) => {
 		// if we're done
 		// reload the page to reflect the latest changes
@@ -431,6 +344,97 @@ function MigrateToGasless() {
 			})
 		}
 	}
+
+	// useEffects start here
+	useEffect(() => {
+		if(walletAddress && walletChain?.id) {
+			setShouldMigrate({ state: 3 })
+			fetchMore({
+				actorId: walletAddress
+			}, true)
+
+			fetchMoreOwnedWorkspaces({
+				actorId: walletAddress
+			}, true)
+		}
+	}, [walletAddress, walletChain?.id])
+
+	useEffect(() => {
+		if(!ownedWorkspacesResults) {
+			return
+		}
+
+		const filteredOwnedWorkspaces: GetWorkspaceMembersQuery['workspaceMembers'] = []
+
+		if(walletAddress && walletChain?.id) {
+			const _ownedWorkspaces = ownedWorkspacesResults
+				.filter(result => (result?.workspaceMembers?.length || 0) > 0)
+				.reduce((prev, curr) => prev.concat(curr?.workspaceMembers ?? []), filteredOwnedWorkspaces)
+				.map((prev: GetWorkspaceMembersQuery['workspaceMembers'][number]) => prev.workspace)
+
+			setOwnedWorkspaces(_ownedWorkspaces)
+		}
+	}, [ownedWorkspacesResults])
+
+	useEffect(() => {
+		if(walletAddress && walletChain?.id) {
+			const workspaceFromMember = results.find((result) => (result?.workspaceMembers?.length || 0) > 0)?.workspaceMembers[0]?.workspace
+			const workspaceFromApplication = results.find((result) => (result?.grantApplications.length || 0) > 0)?.grantApplications[0]?.grant?.workspace
+			const chainIdFromMemberWorkspace = getSupportedChainIdFromWorkspace(workspaceFromMember)
+			const chainIdFromApplicationWorkspace = getSupportedChainIdFromWorkspace(workspaceFromApplication)
+
+			let hasProfileOnCurrentChain = false
+			for(const result of results) {
+				if(result?.workspaceMembers?.length && getSupportedChainIdFromWorkspace(result?.workspaceMembers[0]?.workspace) === walletChain.id) {
+					hasProfileOnCurrentChain = true
+					break
+				}
+
+				if(result?.grantApplications?.length && getSupportedChainIdFromWorkspace(result?.grantApplications[0]?.grant?.workspace) === walletChain.id) {
+					hasProfileOnCurrentChain = true
+					break
+				}
+			}
+
+			if((!chainIdFromMemberWorkspace && !chainIdFromApplicationWorkspace) || chainIdFromMemberWorkspace === walletChain?.id || chainIdFromApplicationWorkspace === walletChain?.id) {
+				if(!chainIdFromMemberWorkspace && !chainIdFromApplicationWorkspace) {
+					setShouldMigrate({ state: -1 })
+				}
+
+				if(chainIdFromMemberWorkspace === walletChain?.id) {
+					setShouldMigrate({ state: 3, chainId: chainIdFromMemberWorkspace })
+				} else if(chainIdFromApplicationWorkspace === walletChain?.id) {
+					setShouldMigrate({ state: 3, chainId: chainIdFromApplicationWorkspace })
+				}
+
+				return
+			}
+
+			if(ALL_SUPPORTED_CHAIN_IDS.findIndex((chain) => chain === walletChain?.id) === -1 || !hasProfileOnCurrentChain) {
+				if(workspaceFromMember && chainIdFromMemberWorkspace && ALL_SUPPORTED_CHAIN_IDS.findIndex((chain) => chain === chainIdFromMemberWorkspace) !== -1) {
+					setShouldMigrate({ state: 0, chainId: chainIdFromMemberWorkspace })
+				} else if(!workspaceFromMember && workspaceFromApplication && chainIdFromApplicationWorkspace && ALL_SUPPORTED_CHAIN_IDS.findIndex((chain) => chain === chainIdFromApplicationWorkspace) !== -1) {
+					setShouldMigrate({ state: 1, chainId: chainIdFromApplicationWorkspace })
+				} else {
+					setShouldMigrate({ state: 2 })
+				}
+			} else {
+				setShouldMigrate({ state: 3 })
+			}
+		}
+	}, [results])
+
+	useEffect(() => {
+		if(walletAddress) {
+			setIsConnectWalletModalOpen(false)
+		}
+	}, [walletAddress])
+
+	useEffect(() => {
+		if(isMigrateYes) {
+			setIsOpen(isMigrateYes)
+		}
+	}, [isMigrateYes])
 
 	return buildComponent()
 }
