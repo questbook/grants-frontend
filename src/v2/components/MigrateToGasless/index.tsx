@@ -62,6 +62,7 @@ function MigrateToGasless() {
 
 	useEffect(() => {
 		if(walletAddress && walletChain?.id) {
+			setShouldMigrate({ state: 3 })
 			fetchMore({
 				actorId: walletAddress
 			}, true)
@@ -92,31 +93,50 @@ function MigrateToGasless() {
 	}, [ownedWorkspacesResults])
 
 	useEffect(() => {
-		logger.info({ results, walletAddress, walletChain })
+		logger.info({ results, walletAddress, walletChain }, 'Results')
 		if(walletAddress && walletChain?.id) {
+			// let chainIdFromMemberWorkspace: SupportedChainId
+			// let chainIdFromApplicationWorkspace: SupportedChainId
 			const workspaceFromMember = results.find((result) => (result?.workspaceMembers?.length || 0) > 0)?.workspaceMembers[0]?.workspace
 			const workspaceFromApplication = results.find((result) => (result?.grantApplications.length || 0) > 0)?.grantApplications[0]?.grant?.workspace
 			logger.info({ workspaceFromMember, workspaceFromApplication }, 'DAOs owned')
 			const chainIdFromMemberWorkspace = getSupportedChainIdFromWorkspace(workspaceFromMember)
 			const chainIdFromApplicationWorkspace = getSupportedChainIdFromWorkspace(workspaceFromApplication)
 
-			if(chainIdFromMemberWorkspace === walletChain?.id || chainIdFromApplicationWorkspace === walletChain?.id) {
+			// for (result of results) {
+
+			// }
+
+			let hasProfileOnCurrentChain = false
+			for(const result of results) {
+				if(result?.workspaceMembers?.length && getSupportedChainIdFromWorkspace(result?.workspaceMembers[0]?.workspace) === walletChain.id) {
+					hasProfileOnCurrentChain = true
+					break
+				}
+
+				if(result?.grantApplications?.length && getSupportedChainIdFromWorkspace(result?.grantApplications[0]?.grant?.workspace) === walletChain.id) {
+					hasProfileOnCurrentChain = true
+					break
+				}
+			}
+
+			logger.info({ hasProfileOnCurrentChain }, 'hasProfileOnCurrentChain')
+
+			if((!chainIdFromMemberWorkspace && !chainIdFromApplicationWorkspace) || chainIdFromMemberWorkspace === walletChain?.id || chainIdFromApplicationWorkspace === walletChain?.id) {
 				return
 			}
 
-			if(!(walletChain?.id in ALL_SUPPORTED_CHAIN_IDS)) {
-				if(workspaceFromMember) {
+			if((!(walletChain?.id in SupportedChainId)) || !hasProfileOnCurrentChain) {
+				logger.info({ workspaceFromMember, chainIdFromMemberWorkspace, condition1: workspaceFromMember && chainIdFromMemberWorkspace && chainIdFromMemberWorkspace in SupportedChainId }, 'Condition 1')
+				logger.info({ workspaceFromApplication, chainIdFromApplicationWorkspace, condition2: !workspaceFromMember && workspaceFromApplication && chainIdFromApplicationWorkspace && chainIdFromApplicationWorkspace in SupportedChainId }, 'Condition 2')
+				if(workspaceFromMember && chainIdFromMemberWorkspace && chainIdFromMemberWorkspace in SupportedChainId) {
 					logger.info({ workspaceFromMember }, 'DAO to migrate')
 					logger.info({ chainIdFromMemberWorkspace }, 'DAO chainId')
-					if(chainIdFromMemberWorkspace) {
-						setShouldMigrate({ state: 0, chainId: chainIdFromMemberWorkspace })
-					}
-				} else if(!workspaceFromMember && workspaceFromApplication) {
+					setShouldMigrate({ state: 0, chainId: chainIdFromMemberWorkspace })
+				} else if(!workspaceFromMember && workspaceFromApplication && chainIdFromApplicationWorkspace && chainIdFromApplicationWorkspace in SupportedChainId) {
 					logger.info({ workspaceFromApplication }, 'DAO to migrate')
 					logger.info({ chainIdFromApplicationWorkspace }, 'DAO chainId')
-					if(chainIdFromApplicationWorkspace) {
-						setShouldMigrate({ state: 1, chainId: chainIdFromApplicationWorkspace })
-					}
+					setShouldMigrate({ state: 1, chainId: chainIdFromApplicationWorkspace })
 				} else {
 					setShouldMigrate({ state: 2 })
 				}
@@ -125,6 +145,10 @@ function MigrateToGasless() {
 			}
 		}
 	}, [results])
+
+	useEffect(() => {
+		logger.info({ shouldMigrate }, 'shouldMigrate')
+	}, [shouldMigrate])
 
 	useEffect(() => {
 		if(walletAddress) {
@@ -159,17 +183,18 @@ function MigrateToGasless() {
 				return
 			}
 
+			logger.info({ walletChain, shouldMigrate, switchNetwork, webwallet }, 'Step 1')
 			if(!walletChain || !shouldMigrate || !switchNetwork || !webwallet) {
 				return
 			}
 
-			if(!(walletChain?.id in SupportedChainId)) {
+			if(!(walletChain?.id in ALL_SUPPORTED_CHAIN_IDS)) {
 				const { state, chainId } = shouldMigrate
 
 				if(state === 0 && chainId) {
 					toast({
 						title: 'No DAO found to migrate',
-						description: `The current network (${walletChain?.name}) your wallet is connected to has no DAO. Please switch your network to ${CHAIN_INFO[chainId].name} (or some other network) where you have DAOs`,
+						description: `The current network (${walletChain?.name}) your wallet is connected to has no DAO. Please switch your network to ${CHAIN_INFO[chainId]?.name} (or some other network) where you have DAOs`,
 						status: 'warning',
 						duration: 9000,
 						isClosable: true,
@@ -179,7 +204,7 @@ function MigrateToGasless() {
 				} else if(state === 1 && chainId) {
 					toast({
 						title: 'No applications found to migrate',
-						description: `The current network (${walletChain?.name}) your wallet is connected to has no applications. Please switch your network to ${CHAIN_INFO[chainId].name} (or some other network) where you have applications`,
+						description: `The current network (${walletChain?.name}) your wallet is connected to has no applications. Please switch your network to ${CHAIN_INFO[chainId]?.name} (or some other network) where you have applications`,
 						status: 'warning',
 						duration: 9000,
 						isClosable: true,
