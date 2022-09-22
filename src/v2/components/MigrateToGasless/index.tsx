@@ -81,31 +81,21 @@ function MigrateToGasless() {
 		const filteredOwnedWorkspaces: any = []
 
 		if(walletAddress && walletChain?.id) {
-			logger.info('ownedWorkspacesResults', ownedWorkspacesResults)
 			const _ownedWorkspaces = ownedWorkspacesResults
 				.filter(result => (result?.workspaceMembers?.length || 0) > 0)
 				.reduce((prev, curr) => prev.concat(curr?.workspaceMembers ?? []), filteredOwnedWorkspaces)
 				.map((prev: any) => prev.workspace)
 
-			logger.info({ _ownedWorkspaces }, 'ownedWorkspaces')
 			setOwnedWorkspaces(_ownedWorkspaces)
 		}
 	}, [ownedWorkspacesResults])
 
 	useEffect(() => {
-		logger.info({ results, walletAddress, walletChain }, 'Results')
 		if(walletAddress && walletChain?.id) {
-			// let chainIdFromMemberWorkspace: SupportedChainId
-			// let chainIdFromApplicationWorkspace: SupportedChainId
 			const workspaceFromMember = results.find((result) => (result?.workspaceMembers?.length || 0) > 0)?.workspaceMembers[0]?.workspace
 			const workspaceFromApplication = results.find((result) => (result?.grantApplications.length || 0) > 0)?.grantApplications[0]?.grant?.workspace
-			logger.info({ workspaceFromMember, workspaceFromApplication }, 'DAOs owned')
 			const chainIdFromMemberWorkspace = getSupportedChainIdFromWorkspace(workspaceFromMember)
 			const chainIdFromApplicationWorkspace = getSupportedChainIdFromWorkspace(workspaceFromApplication)
-
-			// for (result of results) {
-
-			// }
 
 			let hasProfileOnCurrentChain = false
 			for(const result of results) {
@@ -120,22 +110,24 @@ function MigrateToGasless() {
 				}
 			}
 
-			logger.info({ hasProfileOnCurrentChain }, 'hasProfileOnCurrentChain')
-
 			if((!chainIdFromMemberWorkspace && !chainIdFromApplicationWorkspace) || chainIdFromMemberWorkspace === walletChain?.id || chainIdFromApplicationWorkspace === walletChain?.id) {
+				if(!chainIdFromMemberWorkspace && !chainIdFromApplicationWorkspace) {
+					setShouldMigrate({ state: -1 })
+				}
+
+				if(chainIdFromMemberWorkspace === walletChain?.id) {
+					setShouldMigrate({ state: 3, chainId: chainIdFromMemberWorkspace })
+				} else if(chainIdFromApplicationWorkspace === walletChain?.id) {
+					setShouldMigrate({ state: 3, chainId: chainIdFromApplicationWorkspace })
+				}
+
 				return
 			}
 
-			if((!(walletChain?.id in SupportedChainId)) || !hasProfileOnCurrentChain) {
-				logger.info({ workspaceFromMember, chainIdFromMemberWorkspace, condition1: workspaceFromMember && chainIdFromMemberWorkspace && chainIdFromMemberWorkspace in SupportedChainId }, 'Condition 1')
-				logger.info({ workspaceFromApplication, chainIdFromApplicationWorkspace, condition2: !workspaceFromMember && workspaceFromApplication && chainIdFromApplicationWorkspace && chainIdFromApplicationWorkspace in SupportedChainId }, 'Condition 2')
-				if(workspaceFromMember && chainIdFromMemberWorkspace && chainIdFromMemberWorkspace in SupportedChainId) {
-					logger.info({ workspaceFromMember }, 'DAO to migrate')
-					logger.info({ chainIdFromMemberWorkspace }, 'DAO chainId')
+			if(ALL_SUPPORTED_CHAIN_IDS.findIndex((chain) => chain === walletChain?.id) === -1 || !hasProfileOnCurrentChain) {
+				if(workspaceFromMember && chainIdFromMemberWorkspace && ALL_SUPPORTED_CHAIN_IDS.findIndex((chain) => chain === chainIdFromMemberWorkspace) !== -1) {
 					setShouldMigrate({ state: 0, chainId: chainIdFromMemberWorkspace })
-				} else if(!workspaceFromMember && workspaceFromApplication && chainIdFromApplicationWorkspace && chainIdFromApplicationWorkspace in SupportedChainId) {
-					logger.info({ workspaceFromApplication }, 'DAO to migrate')
-					logger.info({ chainIdFromApplicationWorkspace }, 'DAO chainId')
+				} else if(!workspaceFromMember && workspaceFromApplication && chainIdFromApplicationWorkspace && ALL_SUPPORTED_CHAIN_IDS.findIndex((chain) => chain === chainIdFromApplicationWorkspace) !== -1) {
 					setShouldMigrate({ state: 1, chainId: chainIdFromApplicationWorkspace })
 				} else {
 					setShouldMigrate({ state: 2 })
@@ -145,10 +137,6 @@ function MigrateToGasless() {
 			}
 		}
 	}, [results])
-
-	useEffect(() => {
-		logger.info({ shouldMigrate }, 'shouldMigrate')
-	}, [shouldMigrate])
 
 	useEffect(() => {
 		if(walletAddress) {
@@ -183,7 +171,6 @@ function MigrateToGasless() {
 				return
 			}
 
-			logger.info({ walletChain, shouldMigrate, switchNetwork, webwallet }, 'Step 1')
 			if(!walletChain || !shouldMigrate || !switchNetwork || !webwallet) {
 				return
 			}
@@ -219,14 +206,23 @@ function MigrateToGasless() {
 						duration: 9000,
 						isClosable: true,
 					})
+					return
+				} else if(state === -1) {
+					// Case when no profile on any network
+					toast({
+						title: 'No profile found to migrate',
+						description: `No profile was found on questbook that mapped to the address ${walletAddress} on any of the supported networks`,
+						status: 'warning',
+						duration: 9000,
+						isClosable: true,
+					})
+					return
 				} else if(state !== 3) {
 					return
 				}
 			}
 
-			// if(!(walletChain?.id in SupportedChainId)) {
-			// 	throw new Error('Switch your wallet\'s chain!')
-			// }
+			// Will reach here only if state === 3
 
 			setNetworkModalStep(0)
 
@@ -237,9 +233,6 @@ function MigrateToGasless() {
 			const scwAddress = await waitForScwAddress
 			setNetworkModalStep(1)
 
-			logger.info({ wallet: walletAddress, scwAddress }, 'migrating to gasless')
-			logger.info({ signerFromWagmi: signer, signerFromContract: workspaceContract.signer }, 'Signer')
-			logger.info({ walletChain }, 'Current Chain')
 			const transaction = await workspaceContract.migrateWallet(walletAddress, scwAddress)
 
 			setNetworkModalStep(2)
@@ -254,7 +247,6 @@ function MigrateToGasless() {
 			try {
 				await Promise.all(ownedWorkspaces.map((ownedWorkspace: any) => new Promise<void>(async(resolve, reject) => {
 					try {
-						logger.info({ ownedWorkspace: ownedWorkspace.id }, 'Migrating workspace')
 						await addAuthorizedOwner(
 							Number(ownedWorkspace.id),
 							webwallet?.address,
@@ -262,17 +254,13 @@ function MigrateToGasless() {
 						getSupportedChainIdFromWorkspace(ownedWorkspace)?.toString()!,
 						'TO_BE_MODIFIED_SAFE_ADDRESS_JUST_PLACE_HOLDER'
 						)
-						logger.info({ ownedWorkspace: ownedWorkspace.id }, 'Migrated workspace')
 						resolve()
 					} catch{
-						logger.info(
-							{ ownedWorkspace: ownedWorkspace.id, chainId: getSupportedChainIdFromWorkspace(ownedWorkspace)?.toString()! },
-							'Failed to migrate workspace - unsupported chain')
 						reject()
 					}
 				})))
-			} catch{
-				logger.info({ ownedWorkspaces }, 'Failed to migrate workspaces on unsupported networks')
+			} catch(e) {
+				logger.error({ ownedWorkspaces, e }, 'Failed to migrate workspaces on unsupported networks')
 			}
 
 			setNetworkModalStep(5)
