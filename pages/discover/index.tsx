@@ -1,2 +1,2 @@
-import _ from 'screens/discover'
+import _ from 'src/screens/discover'
 export default _
