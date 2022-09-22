@@ -2,8 +2,8 @@ import React, { useContext } from 'react'
 import {
 	Box, Text,
 } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
+import { ApiClientsContext } from 'src/pages/_app'
 import { isValidEthereumAddress } from 'src/utils/validationUtils'
 
 function ApplicantDetails({

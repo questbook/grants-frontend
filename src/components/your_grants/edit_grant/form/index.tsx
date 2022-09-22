@@ -11,7 +11,6 @@ import axios from 'axios'
 import {
 	ContentState, convertFromRaw, convertToRaw, EditorState,
 } from 'draft-js'
-import { ApiClientsContext } from 'pages/_app'
 import Heading from 'src/components/ui/heading'
 import Loader from 'src/components/ui/loader'
 import Title from 'src/components/your_grants/edit_grant/form/1_title'
@@ -27,6 +26,7 @@ import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'
 import useChainId from 'src/hooks/utils/useChainId'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
+import { ApiClientsContext } from 'src/pages/_app'
 import { SafeToken } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 

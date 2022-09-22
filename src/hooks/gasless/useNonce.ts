@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
-import { WebwalletContext } from 'pages/_app'
+import { WebwalletContext } from 'src/pages/_app'
 import { addAuthorizedUser, getNonce } from 'src/utils/gaslessUtils'
 
 export const useNonce = (shouldRefreshNonce?: boolean) => {

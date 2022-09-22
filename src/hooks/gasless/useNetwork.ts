@@ -1,7 +1,7 @@
 
 import { useContext, useMemo } from 'react'
-import { WebwalletContext } from 'pages/_app'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
+import { WebwalletContext } from 'src/pages/_app'
 
 export const useNetwork = () => {
 	const { network, switchNetwork } = useContext(WebwalletContext)!

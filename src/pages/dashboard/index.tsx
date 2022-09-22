@@ -2,7 +2,6 @@ import React, { ReactElement, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LinkIcon } from '@chakra-ui/icons'
 import { Button, Container, Flex, Heading, Spacer, Text } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
 import DoaDashTableEmptyState from 'src/components/dao_dashboard/empty_states/dao_dashboard'
 import BarGraph from 'src/components/dao_dashboard/graph/bar_graph'
 import LineGraph from 'src/components/dao_dashboard/graph/line_graph'
@@ -15,6 +14,7 @@ import {
 	useGetAllGrantsForCreatorQuery,
 } from 'src/generated/graphql'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
+import { ApiClientsContext } from 'src/pages/_app'
 import { UNIX_TIMESTAMP_MAX, UNIX_TIMESTAMP_MIN } from 'src/utils/generics'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 

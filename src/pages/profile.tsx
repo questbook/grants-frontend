@@ -23,7 +23,6 @@ import {
 	useDisclosure,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { ApiClientsContext } from 'pages/_app'
 import DaoAbout from 'src/components/profile/dao_about'
 import DaoData from 'src/components/profile/dao_data'
 import BrowseGrantCard from 'src/components/profile/grantCard'
@@ -35,6 +34,7 @@ import { useGetDaoDetailsQuery, useGetFundsAndProfileDataQuery } from 'src/gener
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 // APP LAYOUT & STATE
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
+import { ApiClientsContext } from 'src/pages/_app'
 // CONSTANTS AND TYPES
 import type { DAOWorkspace } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'

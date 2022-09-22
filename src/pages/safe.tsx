@@ -1,6 +1,6 @@
 import { useContext } from 'react'
-import { ApiClientsContext } from 'pages/_app'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
+import { ApiClientsContext } from 'src/pages/_app'
 import AddToSafe from 'src/v2/components/Safe/AddToSafe'
 import Dashboard from 'src/v2/components/Safe/Dashboard'
 

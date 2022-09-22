@@ -9,7 +9,6 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { ApiClientsContext } from 'pages/_app'
 // TYPES, STATES, and CONSTANTS
 import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import { CHAIN_INFO } from 'src/constants/chains'
@@ -18,6 +17,7 @@ import {
 	useGetAllGrantsForADaoQuery,
 	useGetDaoDetailsQuery,
 } from 'src/generated/graphql'
+import { ApiClientsContext } from 'src/pages/_app'
 import type { DAOWorkspace } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
 import { calculateUSDValue } from 'src/utils/calculatingUtils'

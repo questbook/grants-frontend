@@ -6,7 +6,6 @@ import {
 import { BigNumber } from 'ethers'
 import moment from 'moment'
 import { useRouter } from 'next/router'
-import { ApiClientsContext } from 'pages/_app'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import Funding from 'src/components/your_applications/manage_grant/fundingRequestedTable'
 import MilestoneTable from 'src/components/your_applications/manage_grant/milestoneTable'
@@ -17,6 +16,7 @@ import {
 	useGetFundSentForApplicationQuery,
 } from 'src/generated/graphql'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
+import { ApiClientsContext } from 'src/pages/_app'
 import { ApplicationMilestone } from 'src/types'
 import { formatAmount } from 'src/utils/formattingUtils'
 import verify from 'src/utils/grantUtils'

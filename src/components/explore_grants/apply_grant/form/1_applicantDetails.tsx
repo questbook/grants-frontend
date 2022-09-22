@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next'
 import {
 	Box, Text,
 } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
+import { ApiClientsContext } from 'src/pages/_app'
 import { isValidEthereumAddress } from 'src/utils/validationUtils'
 import { RealmsSolana } from 'src/v2/constants/safe/realms_solana'
 

@@ -13,7 +13,6 @@ import {
 } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import { useRouter } from 'next/router'
-import { ApiClientsContext } from 'pages/_app'
 import Breadcrumbs from 'src/components/ui/breadcrumbs'
 import CopyIcon from 'src/components/ui/copy_icon'
 import Heading from 'src/components/ui/heading'
@@ -32,6 +31,7 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCompleteApplication from 'src/hooks/useCompleteApplication'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
+import { ApiClientsContext } from 'src/pages/_app'
 import { ApplicationMilestone } from 'src/types'
 import {
 	formatAmount,

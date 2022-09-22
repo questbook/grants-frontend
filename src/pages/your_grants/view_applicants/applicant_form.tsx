@@ -9,7 +9,6 @@ import {
 	useToast,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { ApiClientsContext } from 'pages/_app'
 import Accept from 'src/components/your_grants/applicant_form/accept/accept'
 import AcceptSidebar from 'src/components/your_grants/applicant_form/accept/sidebar'
 import Application from 'src/components/your_grants/applicant_form/application'
@@ -28,6 +27,7 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useUpdateApplicationState from 'src/hooks/useUpdateApplicationState'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
+import { ApiClientsContext } from 'src/pages/_app'
 import { useEncryptPiiForApplication } from 'src/utils/pii'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
