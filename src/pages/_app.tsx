@@ -21,6 +21,7 @@ import {
 	SupportedChainId,
 } from 'src/constants/chains'
 import SubgraphClient from 'src/graphql/subgraph'
+import MigrateToGasless from 'src/libraries/ui/MigrateToGaslessModal'
 import theme from 'src/theme'
 import { MinimalWorkspace } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
@@ -28,7 +29,6 @@ import { addAuthorizedUser, bicoDapps, deploySCW, getNonce, jsonRpcProviders, ne
 import { delay } from 'src/utils/generics'
 import logger from 'src/utils/logger'
 import getSeo from 'src/utils/seo'
-import MigrateToGasless from 'src/v2/components/MigrateToGasless'
 import {
 	allChains,
 	Chain,

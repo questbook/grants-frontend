@@ -4540,13 +4540,23 @@ export type GetWorkspaceMembersPublicKeysQuery = { __typename?: 'Query', workspa
 
 export const GetProfileDetailsDocument = gql`
     query GetProfileDetails($actorId: Bytes!) {
-  workspaceMembers(where: {actorId: $actorId, accessLevel: owner}, first: 1) {
+  workspaceMembers(
+    where: {actorId: $actorId, accessLevel: owner}
+    first: 1
+    orderBy: updatedAt
+    orderDirection: desc
+  ) {
     id
     workspace {
       supportedNetworks
     }
   }
-  grantApplications(where: {applicantId: $actorId}, first: 1) {
+  grantApplications(
+    where: {applicantId: $actorId}
+    first: 1
+    orderBy: createdAtS
+    orderDirection: desc
+  ) {
     id
     grant {
       workspace {

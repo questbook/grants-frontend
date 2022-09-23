@@ -1,5 +1,3 @@
-import logger from 'src/utils/logger'
-
 function getAvatar(initials: boolean, address: string | null | undefined) {
 	let url = ''
 	if(!address) {
@@ -14,7 +12,6 @@ function getAvatar(initials: boolean, address: string | null | undefined) {
 		url = `https://avatars.dicebear.com/api/identicon/${address}.svg`
 	}
 
-	logger.info({ address, initials, url }, 'Avatar (debug)')
 	return url
 }
 
