@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Box, Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO } from 'src/constants/chains'
@@ -17,8 +18,6 @@ import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import ConnectWalletModal from 'src/v2/components/ConnectWalletModal'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import { useAccount, useNetwork, useSigner, useSwitchNetwork } from 'wagmi'
-
-const POINTERS = ['Zero gas fee across the app', 'No annoying sign transaction pop-ups']
 
 type MigrationState = 'no-domain-found' | 'no-application-found' | 'no-profile-found' | 'no-profile-found-all-chains' | 'migrate'
 
@@ -47,19 +46,19 @@ function MigrateToGasless() {
 							<Text
 								fontWeight='500'
 								variant='v2_heading_3'>
-								Hey, 👋
+								{t('/migrate_to_gasless.greeting_line_1')}
 								{' '}
 							</Text>
 							<Text
 								fontWeight='500'
 								variant='v2_heading_3'>
-								We have an update for you!
+								{t('/migrate_to_gasless.greeting_line_2')}
 							</Text>
 							<Text
 								mt={6}
 								variant='v2_title'
 								fontWeight='500'>
-								Questbook is moving to in-app wallet.
+								{t('/migrate_to_gasless.in_app_wallet')}
 							</Text>
 							<Flex
 								direction='column'
@@ -70,7 +69,7 @@ function MigrateToGasless() {
 								<Text
 									variant='v2_body'
 									color='black.2'>
-									What it means to you:
+									{t('/migrate_to_gasless.what_it_means_to_you.title')}
 								</Text>
 								{
 									POINTERS.map((pointer, index) => (
@@ -104,7 +103,7 @@ function MigrateToGasless() {
 								<Text
 									variant='v2_body'
 									ml={4}>
-									To continue using Questbook without losing any data, migrate to the in-app wallet.
+									{t('/migrate_to_gasless.auxillary')}
 								</Text>
 							</Flex>
 							<Box mt={6} />
@@ -122,7 +121,7 @@ function MigrateToGasless() {
 								}
 								mt='auto'
 								onClick={migrate}>
-								Migrate to In-App Wallet
+								{t('/migrate_to_gasless.button')}
 							</Button>
 						</Flex>
 					</Flex>
@@ -172,6 +171,9 @@ function MigrateToGasless() {
 			/>
 		</>
 	)
+
+	const { t } = useTranslation()
+	const POINTERS = [t('/migrate_to_gasless.what_it_means_to_you.1'), t('/migrate_to_gasless.what_it_means_to_you.2')]
 
 	// useContexts defined here
 	const { waitForScwAddress, webwallet } = useContext(WebwalletContext)!

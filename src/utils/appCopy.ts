@@ -212,6 +212,18 @@ i18next.use(initReactI18next).init({
 					'open_application': 'Open My Proposal',
 					'mark_as_done' : 'Submit milestone for review',
 					'mark_as_done_description': 'Add what you achieved as part of this milestone along with links'
+				},
+				'/migrate_to_gasless': {
+					'greeting_line_1': 'Hey, 👋',
+					'greeting_line_2': 'We have an update for you!',
+					'in_app_wallet': 'Questbook is moving to in-app wallet.',
+					'what_it_means_to_you': {
+						'title': 'What it means to you:',
+						'1': 'Zero gas fee across the app',
+						'2': 'No annoying sign transaction pop-ups',
+					},
+					'auxillary': 'To continue using Questbook without losing any data, migrate to the in-app wallet.',
+					'button': 'Migrate to In-App Wallet'
 				}
 			},
 
