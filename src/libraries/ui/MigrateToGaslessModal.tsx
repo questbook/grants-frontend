@@ -7,6 +7,7 @@ import SupportedChainId from 'src/generated/SupportedChainId'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { MinimalWorkspace } from 'src/types'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { addAuthorizedOwner } from 'src/utils/gaslessUtils'
@@ -18,6 +19,8 @@ import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import { useAccount, useNetwork, useSigner, useSwitchNetwork } from 'wagmi'
 
 const POINTERS = ['Zero gas fee across the app', 'No annoying sign transaction pop-ups']
+
+type MigrationState = 'no-domain-found' | 'no-application-found' | 'no-profile-found' | 'no-profile-found-all-chains' | 'migrate'
 
 function MigrateToGasless() {
 	const buildComponent = () => (
@@ -146,7 +149,7 @@ function MigrateToGasless() {
 							noOfLines={1}
 							fontSize='sm'
 							color='#3F8792'>
-							{walletAddress ?? ''}
+							{walletAddress || ''}
 						</Text>
 					</Flex>
 				}
@@ -179,8 +182,8 @@ function MigrateToGasless() {
 	const [isConnectWalletModalOpen, setIsConnectWalletModalOpen] = useState(false)
 	const [networkModalStep, setNetworkModalStep] = useState<number>()
 	const [transactionHash, setTransactionHash] = useState<string>()
-	const [shouldMigrate, setShouldMigrate] = useState<{state: number, chainId?: SupportedChainId}>()
-	const [ownedWorkspaces, setOwnedWorkspaces] = useState<GetWorkspaceMembersQuery['workspaceMembers'][number]['workspace'][]>([])
+	const [shouldMigrate, setShouldMigrate] = useState<{state: MigrationState, chainId?: SupportedChainId}>()
+	const [ownedWorkspaces, setOwnedWorkspaces] = useState<MinimalWorkspace[]>([])
 
 	// custom hooks
 	const { address: walletAddress } = useAccount()
@@ -195,7 +198,7 @@ function MigrateToGasless() {
 		useQuery: useGetProfileDetailsQuery,
 		options: {
 			variables: {
-				actorId: walletAddress ?? ''
+				actorId: walletAddress || ''
 			}
 		}
 	})
@@ -204,7 +207,7 @@ function MigrateToGasless() {
 		useQuery: useGetWorkspaceMembersQuery,
 		options: {
 			variables: {
-				actorId: walletAddress ?? ''
+				actorId: walletAddress || ''
 			}
 		}
 	})
@@ -238,10 +241,10 @@ function MigrateToGasless() {
 				return
 			}
 
-			if(!(walletChain?.id in ALL_SUPPORTED_CHAIN_IDS)) {
+			if(!(walletChain.id in ALL_SUPPORTED_CHAIN_IDS)) {
 				const { state, chainId } = shouldMigrate
 
-				if(state === 0 && chainId) {
+				if(state === 'no-domain-found' && chainId) {
 					toast({
 						title: 'No DAO found to migrate',
 						description: `The current network (${walletChain?.name}) your wallet is connected to has no DAO. Please switch your network to ${CHAIN_INFO[chainId]?.name} (or some other network) where you have DAOs`,
@@ -251,7 +254,7 @@ function MigrateToGasless() {
 					})
 					switchNetwork(chainId)
 					return
-				} else if(state === 1 && chainId) {
+				} else if(state === 'no-application-found' && chainId) {
 					toast({
 						title: 'No applications found to migrate',
 						description: `The current network (${walletChain?.name}) your wallet is connected to has no applications. Please switch your network to ${CHAIN_INFO[chainId]?.name} (or some other network) where you have applications`,
@@ -261,7 +264,7 @@ function MigrateToGasless() {
 					})
 					switchNetwork(chainId)
 					return
-				} else if(state === 2) {
+				} else if(state === 'no-profile-found') {
 					toast({
 						title: 'No profile found to migrate',
 						description: `No profile was found on questbook that mapped to the address ${walletAddress} on ${walletChain?.name}`,
@@ -270,7 +273,7 @@ function MigrateToGasless() {
 						isClosable: true,
 					})
 					return
-				} else if(state === -1) {
+				} else if(state === 'no-profile-found-all-chains') {
 					// Case when no profile on any network
 					toast({
 						title: 'No profile found to migrate',
@@ -280,7 +283,7 @@ function MigrateToGasless() {
 						isClosable: true,
 					})
 					return
-				} else if(state !== 3) {
+				} else if(state !== 'migrate') {
 					return
 				}
 			}
@@ -308,7 +311,7 @@ function MigrateToGasless() {
 			// adding the details of all workspaces owned by the user to the database
 
 			try {
-				await Promise.all(ownedWorkspaces.map((ownedWorkspace: GetWorkspaceMembersQuery['workspaceMembers'][number]['workspace']) => new Promise<void>(async(resolve, reject) => {
+				await Promise.all(ownedWorkspaces.map((ownedWorkspace: MinimalWorkspace) => new Promise<void>(async(resolve, reject) => {
 					try {
 						await addAuthorizedOwner(
 							Number(ownedWorkspace.id),
@@ -348,7 +351,7 @@ function MigrateToGasless() {
 	// useEffects start here
 	useEffect(() => {
 		if(walletAddress && walletChain?.id) {
-			setShouldMigrate({ state: 3 })
+			setShouldMigrate({ state: 'migrate' })
 			fetchMore({
 				actorId: walletAddress
 			}, true)
@@ -368,9 +371,9 @@ function MigrateToGasless() {
 
 		if(walletAddress && walletChain?.id) {
 			const _ownedWorkspaces = ownedWorkspacesResults
-				.filter(result => (result?.workspaceMembers?.length || 0) > 0)
-				.reduce((prev, curr) => prev.concat(curr?.workspaceMembers ?? []), filteredOwnedWorkspaces)
-				.map((prev: GetWorkspaceMembersQuery['workspaceMembers'][number]) => prev.workspace)
+				.filter(result => result?.workspaceMembers?.length)
+				.reduce((prev, curr) => prev.concat(curr?.workspaceMembers || []), filteredOwnedWorkspaces)
+				.map((prev) => prev.workspace)
 
 			setOwnedWorkspaces(_ownedWorkspaces)
 		}
@@ -378,8 +381,8 @@ function MigrateToGasless() {
 
 	useEffect(() => {
 		if(walletAddress && walletChain?.id) {
-			const workspaceFromMember = results.find((result) => (result?.workspaceMembers?.length || 0) > 0)?.workspaceMembers[0]?.workspace
-			const workspaceFromApplication = results.find((result) => (result?.grantApplications.length || 0) > 0)?.grantApplications[0]?.grant?.workspace
+			const workspaceFromMember = results.find((result) => result?.workspaceMembers?.length)?.workspaceMembers[0]?.workspace
+			const workspaceFromApplication = results.find((result) => result?.grantApplications.length)?.grantApplications[0]?.grant?.workspace
 			const chainIdFromMemberWorkspace = getSupportedChainIdFromWorkspace(workspaceFromMember)
 			const chainIdFromApplicationWorkspace = getSupportedChainIdFromWorkspace(workspaceFromApplication)
 
@@ -398,28 +401,28 @@ function MigrateToGasless() {
 
 			if((!chainIdFromMemberWorkspace && !chainIdFromApplicationWorkspace) || chainIdFromMemberWorkspace === walletChain?.id || chainIdFromApplicationWorkspace === walletChain?.id) {
 				if(!chainIdFromMemberWorkspace && !chainIdFromApplicationWorkspace) {
-					setShouldMigrate({ state: -1 })
+					setShouldMigrate({ state: 'no-profile-found-all-chains' })
 				}
 
 				if(chainIdFromMemberWorkspace === walletChain?.id) {
-					setShouldMigrate({ state: 3, chainId: chainIdFromMemberWorkspace })
+					setShouldMigrate({ state: 'migrate', chainId: chainIdFromMemberWorkspace })
 				} else if(chainIdFromApplicationWorkspace === walletChain?.id) {
-					setShouldMigrate({ state: 3, chainId: chainIdFromApplicationWorkspace })
+					setShouldMigrate({ state: 'migrate', chainId: chainIdFromApplicationWorkspace })
 				}
 
 				return
 			}
 
-			if(ALL_SUPPORTED_CHAIN_IDS.findIndex((chain) => chain === walletChain?.id) === -1 || !hasProfileOnCurrentChain) {
-				if(workspaceFromMember && chainIdFromMemberWorkspace && ALL_SUPPORTED_CHAIN_IDS.findIndex((chain) => chain === chainIdFromMemberWorkspace) !== -1) {
-					setShouldMigrate({ state: 0, chainId: chainIdFromMemberWorkspace })
-				} else if(!workspaceFromMember && workspaceFromApplication && chainIdFromApplicationWorkspace && ALL_SUPPORTED_CHAIN_IDS.findIndex((chain) => chain === chainIdFromApplicationWorkspace) !== -1) {
-					setShouldMigrate({ state: 1, chainId: chainIdFromApplicationWorkspace })
+			if(ALL_SUPPORTED_CHAIN_IDS.indexOf(walletChain.id) === -1 || !hasProfileOnCurrentChain) {
+				if(workspaceFromMember && chainIdFromMemberWorkspace && ALL_SUPPORTED_CHAIN_IDS.indexOf(chainIdFromMemberWorkspace) !== -1) {
+					setShouldMigrate({ state: 'no-domain-found', chainId: chainIdFromMemberWorkspace })
+				} else if(!workspaceFromMember && workspaceFromApplication && chainIdFromApplicationWorkspace && ALL_SUPPORTED_CHAIN_IDS.indexOf(chainIdFromApplicationWorkspace) !== -1) {
+					setShouldMigrate({ state: 'no-application-found', chainId: chainIdFromApplicationWorkspace })
 				} else {
-					setShouldMigrate({ state: 2 })
+					setShouldMigrate({ state: 'no-profile-found' })
 				}
 			} else {
-				setShouldMigrate({ state: 3 })
+				setShouldMigrate({ state: 'migrate' })
 			}
 		}
 	}, [results])
