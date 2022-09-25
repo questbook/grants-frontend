@@ -6,9 +6,9 @@ import {
 	arrayify,
 	keccak256,
 } from 'ethers/lib/utils'
-import { ApiClientsContext, WebwalletContext } from 'pages/_app'
 import { GetApplicationDetailsQuery, useGetGrantManagersWithPublicKeyQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
+import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import MAIN_LOGGER from 'src/utils/logger'
 
@@ -188,27 +188,31 @@ export function useEncryptPiiForApplication(
 						return
 					}
 
-					const secureChannel = await getSecureChannelFromPublicKey(
-						webwallet,
-						pubKey,
-						getKeyForGrantPii(grantId)
-					)
-					const data = await secureChannel.encrypt(piiFieldsJson)
-
-					logger.info({ address }, 'encrypted data')
-					// the subgraph can handle about 7000 bytes in a single field
-					// so if the data is too big, we upload it to IPFS, and set the hash
-					// we can unambigously determine if the encrypted data is an IPFS hash or not
-					// using a simple isIpfsHash function
-					if(data.length < 7000) {
-						piiMap[address] = data
-					} else {
-						logger.info(
-							{ data: data.length },
-							'data too large, uploading to IPFS...'
+					try {
+						const secureChannel = await getSecureChannelFromPublicKey(
+							webwallet,
+							pubKey,
+							getKeyForGrantPii(grantId)
 						)
-						const { hash: ipfsHash } = await uploadToIPFS(data)
-						piiMap[address] = ipfsHash
+						const data = await secureChannel.encrypt(piiFieldsJson)
+
+						logger.info({ address }, 'encrypted data')
+						// the subgraph can handle about 7000 bytes in a single field
+						// so if the data is too big, we upload it to IPFS, and set the hash
+						// we can unambigously determine if the encrypted data is an IPFS hash or not
+						// using a simple isIpfsHash function
+						if(data.length < 7000) {
+							piiMap[address] = data
+						} else {
+							logger.info(
+								{ data: data.length },
+								'data too large, uploading to IPFS...'
+							)
+							const { hash: ipfsHash } = await uploadToIPFS(data)
+							piiMap[address] = ipfsHash
+						}
+					} catch(e) {
+						logger.error({ address, error: e }, 'failed to encrypt')
 					}
 				})
 			)

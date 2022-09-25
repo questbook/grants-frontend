@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { Button, Flex, Image, Link, Text } from '@chakra-ui/react'
 import { logger } from 'ethers'
-import { ApiClientsContext } from 'pages/_app'
 import { defaultChainId } from 'src/constants/chains'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useSafeUSDBalances from 'src/hooks/useSafeUSDBalances'
+import { ApiClientsContext } from 'src/pages/_app'
 import { getSafeIcon } from 'src/utils/tokenUtils'
 import { getSafeURL } from 'src/v2/utils/gnosisUtils'
 import { getSafeURL as getRealmsURL } from 'src/v2/utils/phantomUtils'
@@ -92,7 +92,7 @@ function Dashboard() {
 					mt={1}
 					variant='v2_heading_3'
 					fontWeight='500'>
-					{loadedSafesUSDBalance ? (safesUSDBalance[0]?.amount >=0  ? `\$${safesUSDBalance[0].amount}` : t('/safe.could_not_fetch')) : 'Loading...'}
+					{loadedSafesUSDBalance ? (safesUSDBalance[0]?.amount >= 0 ? `\$${safesUSDBalance[0].amount}` : t('/safe.could_not_fetch')) : 'Loading...'}
 				</Text>
 				<Button
 					mt={8}

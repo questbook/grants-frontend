@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { WebwalletContext } from 'pages/_app'
+import { WebwalletContext } from 'src/pages/_app'
 import erc20Interface from 'src/contracts/abi/ERC20.json'
 import type { ERC20 } from 'src/generated/contracts/ERC20'
 import { useContract } from 'wagmi'

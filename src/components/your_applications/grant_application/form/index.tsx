@@ -19,7 +19,6 @@ import {
 	EditorState,
 } from 'draft-js'
 import { useRouter } from 'next/router'
-import { WebwalletContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
 import ApplicantDetails from 'src/components/your_applications/grant_application/form/1_applicantDetails'
 import AboutTeam from 'src/components/your_applications/grant_application/form/2_aboutTeam'
@@ -29,6 +28,7 @@ import CustomFields from 'src/components/your_applications/grant_application/for
 import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import useResubmitApplication from 'src/hooks/useResubmitApplication'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
+import { WebwalletContext } from 'src/pages/_app'
 import {
 	GrantApplicationFieldsSubgraph,
 	GrantApplicationProps,

@@ -16,8 +16,8 @@ import {
 	Tooltip,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { ApiClientsContext } from 'pages/_app'
 import { defaultChainId } from 'src/constants/chains'
+import { ApiClientsContext } from 'src/pages/_app'
 import { IApplicantData } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
 import { useLoadReviews } from 'src/utils/reviews'
@@ -48,6 +48,8 @@ const InReviewRow = ({
 
 	const router = useRouter()
 	const [isHovering, setIsHovering] = useState(false)
+	const [isHoveringOnReview, setIsHoveringOnReview] = useState(false)
+	const [isHoveringOnScore, setIsHoveringOnScore] = useState(false)
 
 	const { reviews: submittedReviews } = applicantData || { }
 	const { reviews } = useLoadReviews(applicantData, chainId)
@@ -65,6 +67,8 @@ const InReviewRow = ({
 				onMouseEnter={() => setIsHovering(true)}
 				onMouseLeave={() => setIsHovering(false)}
 				bg={isHovering ? '#FBFBFD' : 'white'}
+				borderBottom='1px'
+				borderBottomColor='#F0F0F7'
 			>
 				<Checkbox
 					isChecked={isChecked}
@@ -74,8 +78,9 @@ const InReviewRow = ({
 			<GridItem
 				onMouseEnter={() => setIsHovering(true)}
 				onMouseLeave={() => setIsHovering(false)}
-
 				bg={isHovering ? '#FBFBFD' : 'white'}
+				borderBottom='1px'
+				borderBottomColor='#F0F0F7'
 				display='flex'
 				alignItems='center'
 			>
@@ -84,6 +89,16 @@ const InReviewRow = ({
 					px={4}
 					display='flex'
 					alignItems='center'
+					as='button'
+					onClick={
+						() => router.push({
+							pathname: '/your_grants/view_applicants/applicant_form/',
+							query: {
+								commentData: '',
+								applicationId: applicantData?.applicationId,
+							},
+						})
+					}
 				>
 					<Flex
 						bg='#F0F0F7'
@@ -109,15 +124,6 @@ const InReviewRow = ({
 							noOfLines={1}
 							textOverflow='ellipsis'
 							cursor='pointer'
-							onClick={
-								() => router.push({
-									pathname: '/your_grants/view_applicants/applicant_form/',
-									query: {
-										commentData: '',
-										applicationId: applicantData?.applicationId,
-									},
-								})
-							}
 						>
 							{applicantData?.projectName}
 						</Text>
@@ -162,12 +168,13 @@ const InReviewRow = ({
 			<GridItem
 				onMouseEnter={() => setIsHovering(true)}
 				onMouseLeave={() => setIsHovering(false)}
-
 				bg={isHovering ? '#FBFBFD' : 'white'}
+				borderBottom='1px'
+				borderColor='#F0F0F7'
 				display='flex'
 				alignItems='center'
 			>
-				<Menu>
+				<Menu isOpen={isHoveringOnReview}>
 					<MenuButton
 						as={
 							forwardRef<TextProps, 'div'>((props, ref) => (
@@ -182,6 +189,8 @@ const InReviewRow = ({
 									ref={ref}
 									aria-label='reviewers'
 									cursor='pointer'
+									onMouseEnter={() => setIsHoveringOnReview(true)}
+									onMouseLeave={() => setIsHoveringOnReview(false)}
 								>
 									{
 										applicantData?.reviewers?.length > 0 ?
@@ -282,8 +291,9 @@ const InReviewRow = ({
 			<GridItem
 				onMouseEnter={() => setIsHovering(true)}
 				onMouseLeave={() => setIsHovering(false)}
-
 				bg={isHovering ? '#FBFBFD' : 'white'}
+				borderBottom='1px'
+				borderColor='#F0F0F7'
 				display='flex'
 				alignItems='center'
 			>
@@ -293,7 +303,7 @@ const InReviewRow = ({
 							sortedReviews.map((reviewKey, i) => {
 								return (
 									<>
-										<Menu key={`review-${reviewKey}-${i}`}>
+										<Menu key={`review-${reviewKey}-${i}`} isOpen={isHoveringOnScore}>
 											<MenuButton
 												as={
 													forwardRef<TextProps, 'div'>((props, ref) => (
@@ -308,6 +318,8 @@ const InReviewRow = ({
 															ref={ref}
 															aria-label='reviewers'
 															cursor='pointer'
+															onMouseEnter={() => setIsHoveringOnScore(true)}
+															onMouseLeave={() => setIsHoveringOnScore(false)}
 														>
 															{reviews[reviewKey]?.total}
 														</Text>

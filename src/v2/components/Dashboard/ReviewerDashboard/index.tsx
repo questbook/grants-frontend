@@ -1,6 +1,5 @@
 import { useContext, useMemo, useState } from 'react'
 import { Box, Button, Flex } from '@chakra-ui/react'
-import { ApiClientsContext } from 'pages/_app'
 import Loader from 'src/components/ui/loader'
 import { defaultChainId } from 'src/constants/chains'
 import {
@@ -8,6 +7,7 @@ import {
 	useGetInitialToBeReviewedApplicationGrantsQuery,
 } from 'src/generated/graphql'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import { ApiClientsContext } from 'src/pages/_app'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
