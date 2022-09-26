@@ -18,6 +18,7 @@ import {
 	convertToRaw,
 	EditorState,
 } from 'draft-js'
+import { logger } from 'ethers'
 import { useRouter } from 'next/router'
 import Loader from 'src/components/ui/loader'
 import ApplicantDetails from 'src/components/your_applications/grant_application/form/1_applicantDetails'
@@ -25,16 +26,14 @@ import AboutTeam from 'src/components/your_applications/grant_application/form/2
 import AboutProject from 'src/components/your_applications/grant_application/form/3_aboutProject'
 import Funding from 'src/components/your_applications/grant_application/form/4_funding'
 import CustomFields from 'src/components/your_applications/grant_application/form/5_customFields'
-import { defaultChainId, SupportedChainId } from 'src/constants/chains'
+import { defaultChainId, SupportedChainId, USD_ASSET } from 'src/constants/chains'
 import useResubmitApplication from 'src/hooks/useResubmitApplication'
-import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { WebwalletContext } from 'src/pages/_app'
 import {
 	GrantApplicationFieldsSubgraph,
 	GrantApplicationProps,
 } from 'src/types/application'
 import {
-	formatAddress,
 	getFormattedFullDateFromUnixTimestamp,
 	parseAmount,
 } from 'src/utils/formattingUtils'
@@ -50,6 +49,7 @@ function Form({
 	rewardCurrency,
 	rewardCurrencyCoin,
 	rewardCurrencyAddress,
+	rewardDecimal,
 	formData,
 	grantTitle,
 	sentDate,
@@ -69,6 +69,7 @@ function Form({
 		rewardCurrency: string
 		rewardCurrencyCoin: string
 		rewardCurrencyAddress: string | undefined
+		rewardDecimal: number | undefined
 		formData: GrantApplicationProps | null
 		grantTitle: string
 		sentDate: string
@@ -393,7 +394,11 @@ function Form({
 			},
 			milestones: projectMilestones.map((pm) => ({
 				title: pm.milestone,
-				amount: parseAmount(pm.milestoneReward, rewardCurrencyAddress),
+				amount: rewardCurrencyAddress === USD_ASSET ? pm.milestoneReward : parseAmount(
+					pm.milestoneReward,
+					rewardCurrencyAddress,
+					rewardDecimal,
+				),
 			})),
 		}
 
