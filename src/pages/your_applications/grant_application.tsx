@@ -234,6 +234,7 @@ function ViewApplication() {
 					rewardCurrency={label}
 					rewardCurrencyCoin={icon}
 					rewardCurrencyAddress={application?.grant?.reward?.asset}
+					rewardDecimal={decimals}
 					formData={formData}
 					application={application}
 					grantTitle={application?.grant?.title || ''}
