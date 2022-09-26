@@ -14,8 +14,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true
+    "incremental": true,
   },
-  "include": ["next-env.d.ts", "next.config.js", "src/**/*.ts", "src/**/*.tsx"],
+  "include": ["next-env.d.ts", "next.config.js", "sentry.client.config.ts", "sentry.server.config.ts", "src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules"]
 }
