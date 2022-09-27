@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Box, Button, Container, Drawer, DrawerContent, DrawerOverlay, Flex, Text, ToastId, useToast } from '@chakra-ui/react'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { SupportedChainId } from 'src/constants/chains'
+import { defaultRubricMaximumPoints } from 'src/constants/config.json'
 import { GetReviewersForAWorkspaceQuery, RubricItem } from 'src/generated/graphql'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
@@ -141,7 +142,7 @@ const SetupEvaluationDrawer = ({
 					rubric[index.toString()] = {
 						title: r.criteria,
 						details: r.description,
-						maximumPoints: 5,
+						maximumPoints: defaultRubricMaximumPoints,
 					}
 				})
 			}
