@@ -61,10 +61,10 @@ const ResubmitRow = ({
 							cursor='pointer'
 							onClick={
 								() => router.push({
-									pathname: '/your_grants/view_applicants/applicant_form/',
+									pathname: '/your_grants/view_proposals/proposal',
 									query: {
-										commentData: '',
-										applicationId: applicantData?.applicationId,
+										id: applicantData?.applicationId,
+										chain: chainId,
 									},
 								})
 							}

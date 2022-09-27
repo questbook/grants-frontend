@@ -92,10 +92,10 @@ const InReviewRow = ({
 					as='button'
 					onClick={
 						() => router.push({
-							pathname: '/your_grants/view_applicants/applicant_form/',
+							pathname: '/your_grants/view_proposals/proposal',
 							query: {
-								commentData: '',
-								applicationId: applicantData?.applicationId,
+								id: applicantData?.applicationId,
+								chain: chainId,
 							},
 						})
 					}
@@ -303,7 +303,9 @@ const InReviewRow = ({
 							sortedReviews.map((reviewKey, i) => {
 								return (
 									<>
-										<Menu key={`review-${reviewKey}-${i}`} isOpen={isHoveringOnScore}>
+										<Menu
+											key={`review-${reviewKey}-${i}`}
+											isOpen={isHoveringOnScore}>
 											<MenuButton
 												as={
 													forwardRef<TextProps, 'div'>((props, ref) => (
