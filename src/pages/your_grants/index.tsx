@@ -550,7 +550,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 									}
 									onViewApplicantsClick={
 										() => router.push({
-											pathname: '/v2/your_grants/view_applicants/',
+											pathname: '/your_grants/view_proposals/',
 											query: {
 												grantId: grant.id,
 											},

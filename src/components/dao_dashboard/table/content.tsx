@@ -106,7 +106,7 @@ function TableContent({ grants, funding, pending, tat }: {grants: any[], funding
 										color='white'
 										onClick={
 											() => router.push({
-												pathname: '/v2/your_grants/view_applicants',
+												pathname: '/your_grants/view_proposals',
 												query: {
 													grantId: item.id
 												}
