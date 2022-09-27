@@ -54,7 +54,7 @@ function Form({
 	})))
 	const [detailsError, setDetailsError] = useState(false)
 
-	const [shouldEncrypt, setShouldEncrypt] = useState(false)
+	const [shouldEncrypt, setShouldEncrypt] = useState(true)
 	const [admins, setAdmins] = useState<any[]>([])
 
 	const applicantDetails = applicantDetailsList
@@ -103,9 +103,6 @@ function Form({
 	}
 
 	const [shouldEncryptReviews, setShouldEncryptReviews] = useState(false)
-
-	// const [extraFieldDetails, setExtraFieldDetails] = useState('');
-	// const [extraFieldError, setExtraFieldError] = useState(false);
 
 	// Grant Rewards and Deadline
 	const [reward, setReward] = useState('')
@@ -288,6 +285,7 @@ function Form({
 				grantManagers: admins,
 				rubric: {
 					isPrivate: shouldEncryptReviews,
+					rubric: { }
 				},
 			}
 

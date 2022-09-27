@@ -478,7 +478,8 @@ function Form({
 					date,
 					grantManagers: admins,
 					rubric: {
-						isPrivate: shouldEncryptReviews
+						isPrivate: shouldEncryptReviews,
+						rubric: { }
 					},
 				}
 			} else {
@@ -492,6 +493,7 @@ function Form({
 					grantManagers: admins,
 					rubric: {
 						isPrivate: shouldEncryptReviews,
+						rubric: { }
 					},
 				}
 			}
@@ -587,6 +589,7 @@ function Form({
 				grantManagers: admins,
 				rubric: {
 					isPrivate: shouldEncryptReviews,
+					rubric: { }
 				},
 			}
 
