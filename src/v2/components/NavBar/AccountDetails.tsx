@@ -85,10 +85,6 @@ function AccountDetails() {
 						</Link>
 
 						<Box w={3} />
-
-						<Text color='v2Grey'>
-							{network}
-						</Text>
 					</HStack>
 				</VStack>
 			</MenuList>
