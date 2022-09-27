@@ -105,8 +105,7 @@ const SuccessfulDomainCreationModal = ({
 							onClick={
 								() => {
 									router.push({
-										pathname: '/signup',
-										query: { createGrant: true },
+										pathname: '/your_grants/create_grant'
 									})
 								}
 							}>

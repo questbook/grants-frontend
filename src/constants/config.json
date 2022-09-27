@@ -3,5 +3,6 @@
 	"defaultDAOImageHash": "QmeNL8mChbLFJvhx3YnLa6mMKGHiXwgxPVRVWnQxW651dR",
 	"supportLink": "https://discord.gg/a3SkQX6gnW",
 	"defaultTokenUploadImagePath": "/images/default_token_upload.svg",
-	"approvalLink": "https://www.notion.so/Why-Approve-Fund-Disbursal-ed6094e1a1c9410689c9321a0f5dbfae"
+	"approvalLink": "https://www.notion.so/Why-Approve-Fund-Disbursal-ed6094e1a1c9410689c9321a0f5dbfae",
+	"defaultRubricMaximumPoints": 5
 }
