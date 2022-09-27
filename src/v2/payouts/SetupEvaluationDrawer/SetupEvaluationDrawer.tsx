@@ -243,7 +243,10 @@ const SetupEvaluationDrawer = ({
 		onComplete()
 	}
 
-	const TABS = [{ text: t('/your_grants/view_applicants.review_questions') }, { text: t('/your_grants/view_applicants.select_reviewers') }]
+	const TABS = [
+		{ text: t('/your_grants/view_applicants.review_questions') },
+		{ text: t('/your_grants/view_applicants.select_reviewers') }
+	]
 
 	return (
 		<Drawer
