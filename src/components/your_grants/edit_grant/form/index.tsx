@@ -20,7 +20,6 @@ import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import SAFES_ENDPOINTS_MAINNETS from 'src/constants/safesEndpoints.json'
 import SAFES_ENDPOINTS_TESTNETS from 'src/constants/safesEndpointsTest.json'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'
 import useChainId from 'src/hooks/utils/useChainId'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
@@ -45,36 +44,7 @@ function Form({
 	const [title, setTitle] = useState(formData.title || '')
 	const [summary, setSummary] = useState(formData.summary || '')
 
-	const [pk, setPk] = React.useState<string>('*')
-	const {
-		RenderModal,
-		setHiddenModalOpen: setHiddenPkModalOpen,
-		transactionData: newPkTransactionData,
-		publicKey: newPublicKey,
-	} = useSubmitPublicKey()
-
 	const { t } = useTranslation()
-
-	useEffect(() => {
-		if(!accountData?.address) {
-			return
-		}
-
-		if(!workspace) {
-			return
-		}
-
-		const k = workspace?.members?.find(
-			(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
-		)?.publicKey?.toString()
-		// // console.log(k);
-		if(k && k.length > 0) {
-			setPk(k)
-		} else {
-			setPk('')
-		}
-
-	}, [workspace, accountData])
 
 	const [titleError, setTitleError] = useState(false)
 	const [summaryError, setSummaryError] = useState(false)
@@ -498,105 +468,9 @@ function Form({
 				}
 			}
 
-			if((shouldEncrypt || shouldEncryptReviews) && (!pk || pk === '*')) {
-				setHiddenPkModalOpen(true)
-				return
-			}
-
 			onSubmit(s)
 		}
 	}
-
-	useEffect(() => {
-		if(newPkTransactionData && newPublicKey && newPublicKey.publicKey) {
-			// // console.log(newPublicKey);
-			setPk(newPublicKey.publicKey)
-			const detailsString = JSON.stringify(
-				convertToRaw(details.getCurrentContent()),
-			)
-
-			const requiredDetails = {} as any
-			detailsRequired.forEach((detail) => {
-				if(detail && detail.required) {
-					requiredDetails[detail.id] = {
-						title: detail.title,
-						inputType: detail.inputType,
-					}
-				}
-			})
-			const fields = { ...requiredDetails }
-
-			if(multipleMilestones) {
-				fields.isMultipleMilestones = {
-					title: 'Milestones',
-					inputType: 'array',
-				}
-			}
-
-			if(fields.teamMembers) {
-				fields.memberDetails = {
-					title: 'Member Details',
-					inputType: 'array',
-				}
-			}
-
-			if(fields.fundingBreakdown) {
-				fields.fundingAsk = {
-					title: 'Funding Ask',
-					inputType: 'short-form',
-				}
-			}
-
-			if(shouldEncrypt && (keySubmitted || hasOwnerPublicKey)) {
-				if(fields.applicantEmail) {
-					fields.applicantEmail = { ...fields.applicantEmail, pii: true }
-				}
-
-				if(fields.memberDetails) {
-					fields.memberDetails = { ...fields.memberDetails, pii: true }
-				}
-			}
-
-			if(customFieldsOptionIsVisible && customFields.length > 0) {
-				customFields.forEach((customField: any, index: number) => {
-					const santizedCustomFieldValue = customField.value.split(' ').join('\\s')
-					fields[`customField${index}-${santizedCustomFieldValue}`] = {
-						title: customField.value,
-						inputType: 'short-form',
-					}
-				})
-			}
-
-			if(defaultMilestoneFields.length > 0) {
-				defaultMilestoneFields.forEach((defaultMilestoneField: any, index: number) => {
-					const santizedDefaultMilestoneFieldValue = defaultMilestoneField.value.split(' ').join('\\s')
-					fields[`defaultMilestone${index}-${santizedDefaultMilestoneFieldValue}`] = {
-						title: defaultMilestoneField.value,
-						inputType: 'short-form',
-					}
-				})
-			}
-
-			const s = {
-				title,
-				summary,
-				details: detailsString,
-				fields,
-				reward,
-				rewardCurrencyAddress,
-				rewardToken,
-				date,
-				grantManagers: admins,
-				rubric: {
-					isPrivate: shouldEncryptReviews,
-					rubric: { }
-				},
-			}
-
-			onSubmit(s)
-		}
-
-	}, [newPkTransactionData, newPublicKey])
 
 	const buttonRef = React.useRef<HTMLButtonElement>(null)
 	return (
@@ -693,8 +567,6 @@ function Form({
 				variant='primary'>
 				{hasClicked ? <Loader /> : 'Save Changes'}
 			</Button>
-
-			<RenderModal />
 		</>
 	)
 }
