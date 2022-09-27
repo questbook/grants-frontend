@@ -14,9 +14,9 @@ import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
 
 interface Props {
-  onSubmit: (data: any) => void
-  constructCache: (data: any) => void
-  cacheKey: string
+	onSubmit: (data: any) => void
+	constructCache: (data: any) => void
+	cacheKey: string
 }
 
 function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
@@ -43,18 +43,6 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 		})
 		.filter((obj) => obj !== null)
 	const [detailsRequired, setDetailsRequired] = useState(applicantDetails)
-	const [maximumPoints, setMaximumPoints] = useState(5)
-	const [rubricRequired, setRubricRequired] = useState(false)
-	const [rubrics, setRubrics] = useState<any[]>([
-		{
-			name: '',
-			nameError: false,
-			description: '',
-			descriptionError: false,
-		},
-	])
-	// const [extraField] = useState(false);
-
 	const [milestoneSelectOptionIsVisible, setMilestoneSelectOptionIsVisible] = React.useState(false)
 	const [multipleMilestones, setMultipleMilestones] = useState(false)
 	const [defaultMilestoneFields, setDefaultMilestoneFields] = useState<any[]>(
@@ -73,7 +61,7 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 		const newDetailsRequired = [...detailsRequired];
 		// TODO: create interface for detailsRequired
 		(newDetailsRequired[index] as any).required = !(
-      newDetailsRequired[index] as any
+			newDetailsRequired[index] as any
 		).required
 		setDetailsRequired(newDetailsRequired)
 	}
@@ -85,24 +73,6 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 
 	const handleOnSubmit = () => {
 		let error = false
-		if(rubricRequired) {
-			const errorCheckedRubrics = rubrics.map((rubric: any) => {
-				const errorCheckedRubric = { ...rubric }
-				if(rubric.name.length <= 0) {
-					errorCheckedRubric.nameError = true
-					error = true
-				}
-
-				if(rubric.description.length <= 0) {
-					errorCheckedRubric.descriptionError = true
-					error = true
-				}
-
-				return errorCheckedRubric
-			})
-			setRubrics(errorCheckedRubrics)
-		}
-
 		if(customFieldsOptionIsVisible) {
 			const errorCheckedCustomFields = customFields.map((customField: any) => {
 				const errorCheckedCustomField = { ...customField }
@@ -144,17 +114,6 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 				}
 			})
 			const fields = { ...requiredDetails }
-			const rubric = {} as any
-
-			if(rubricRequired) {
-				rubrics.forEach((r, index) => {
-					rubric[index.toString()] = {
-						title: r.name,
-						details: r.description,
-						maximumPoints,
-					}
-				})
-			}
 
 			if(multipleMilestones) {
 				fields.isMultipleMilestones = {
@@ -207,7 +166,6 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 				fields,
 				rubric: {
 					isPrivate: false,
-					rubric,
 				},
 			})
 		}
@@ -230,10 +188,6 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 			setDetailsRequired(formData?.detailsRequired)
 		}
 
-		if(formData?.rubricRequired) {
-			setRubricRequired(formData?.rubricRequired)
-		}
-
 		if(formData?.customFieldsOptionIsVisible) {
 			setCustomFieldsOptionIsVisible(formData?.customFieldsOptionIsVisible)
 		}
@@ -241,34 +195,20 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 		if(formData?.customFields) {
 			setCustomFields(formData?.customFields)
 		}
-
-		if(formData?.rubrics) {
-			setRubrics(formData?.rubrics)
-		}
-
-		if(formData?.maximumPoints) {
-			setMaximumPoints(formData?.maximumPoints)
-		}
 	}, [cacheKey])
 
 	React.useEffect(() => {
 		const formData = {
 			detailsRequired,
-			rubricRequired,
 			customFieldsOptionIsVisible,
-			customFields,
-			rubrics,
-			maximumPoints,
+			customFields
 		}
 		constructCache(formData)
 
 	}, [
 		customFields,
 		customFieldsOptionIsVisible,
-		detailsRequired,
-		maximumPoints,
-		rubricRequired,
-		rubrics,
+		detailsRequired
 	])
 
 	return (
@@ -291,8 +231,8 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 				>
 					{
 						detailsRequired.map((detail, index) => {
-						// if (index === detailsRequired.length - 1) return null;
-						// if (index === detailsRequired.length - 2) return null;
+							// if (index === detailsRequired.length - 1) return null;
+							// if (index === detailsRequired.length - 2) return null;
 							const {
 								title, required, id, tooltip,
 							} = detail as any
@@ -574,8 +514,8 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 							}
 							{
 								(multipleMilestones
-              || (!multipleMilestones && defaultMilestoneFields.length === 0)) && (
-<Flex
+									|| (!multipleMilestones && defaultMilestoneFields.length === 0)) && (
+									<Flex
 										mt='-4px'
 										gap='2'
 										justifyContent='flex-start'>
@@ -596,13 +536,13 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 											alignItems='center'
 											cursor='pointer'
 										>
-		<Image
+											<Image
 												h='16px'
 												w='15px'
 												src='/ui_icons/plus_circle.svg'
 												mr='6px'
 											/>
-		<Text
+											<Text
 												fontWeight='500'
 												fontSize='14px'
 												color='#8850EA'
@@ -610,304 +550,14 @@ function ApplicantDetails({ onSubmit, constructCache, cacheKey }: Props) {
 											>
 												Add a milestone
 											</Text>
- </Box>
-         </Flex>
+										</Box>
+									</Flex>
 								)
 							}
 							<Box mt={6} />
 						</>
 					)
 				}
-				{/*
-				<Flex
-					direction="column"
-					mt={8}>
-					<Text
-						fontSize="18px"
-						fontWeight="700"
-						lineHeight="26px"
-						letterSpacing={0}
-					>
-            Applicant Review
-					</Text>
-					<Flex>
-						<Text
-							color="#717A7C"
-							fontSize="14px"
-							lineHeight="20px">
-              Once you receive applications you can assign reviewers to each
-              applicant, and setup an evaluation scorecard to get feedback from
-              them.
-						</Text>
-					</Flex>
-				</Flex>
-
-				<Flex
-					mt={4}
-					gap="2"
-					justifyContent="space-between">
-					<Flex direction="column">
-						<Text
-							color="#122224"
-							fontWeight="bold"
-							fontSize="16px"
-							lineHeight="20px"
-						>
-              Evaluation rubric
-						</Text>
-						<Flex>
-							<Text
-								color="#717A7C"
-								fontSize="14px"
-								lineHeight="20px">
-                Define a set of criteria for reviewers to evaluate the
-                application. You can add this later too.
-							</Text>
-						</Flex>
-					</Flex>
-					<Flex
-						justifyContent="center"
-						gap={2}
-						alignItems="center">
-						<Switch
-							id="encrypt"
-							onChange={
-								(e) => {
-									setRubricRequired(e.target.checked)
-									const newRubrics = rubrics.map((rubric) => ({
-										...rubric,
-										nameError: false,
-										descriptionError: false,
-									}))
-									setRubrics(newRubrics)
-								}
-							}
-						/>
-						<Text
-							fontSize="12px"
-							fontWeight="bold"
-							lineHeight="16px">
-							{`${rubricRequired ? 'YES' : 'NO'}`}
-						</Text>
-					</Flex>
-				</Flex>
-
-				{
-					rubrics.map((rubric, index) => (
-						<>
-							<Flex
-								mt={4}
-								gap="2"
-								alignItems="flex-start"
-								opacity={rubricRequired ? 1 : 0.4}
-							>
-								<Flex
-									direction="column"
-									flex={0.3327}>
-									<Text
-										mt="18px"
-										color="#122224"
-										fontWeight="bold"
-										fontSize="16px"
-										lineHeight="20px"
-									>
-                  Criteria
-										{' '}
-										{index + 1}
-									</Text>
-								</Flex>
-								<Flex
-									justifyContent="center"
-									gap={2}
-									alignItems="center"
-									flex={0.6673}
-								>
-									<SingleLineInput
-										value={rubrics[index].name}
-										onChange={
-											(e) => {
-												const newRubrics = [...rubrics]
-												newRubrics[index].name = e.target.value
-												newRubrics[index].nameError = false
-												setRubrics(newRubrics)
-											}
-										}
-										placeholder="Name"
-										isError={rubrics[index].nameError}
-										errorText="Required"
-										disabled={!rubricRequired}
-									/>
-								</Flex>
-							</Flex>
-							<Flex
-								mt={6}
-								gap="2"
-								alignItems="flex-start"
-								opacity={rubricRequired ? 1 : 0.4}
-							>
-								<Flex
-									direction="column"
-									flex={0.3327}>
-									<Text
-										mt="18px"
-										color="#122224"
-										fontWeight="bold"
-										fontSize="16px"
-										lineHeight="20px"
-									>
-                  Description
-									</Text>
-								</Flex>
-								<Flex
-									justifyContent="center"
-									gap={2}
-									alignItems="center"
-									flex={0.6673}
-								>
-									<MultiLineInput
-										value={rubrics[index].description}
-										onChange={
-											(e) => {
-												const newRubrics = [...rubrics]
-												newRubrics[index].description = e.target.value
-												newRubrics[index].descriptionError = false
-												setRubrics(newRubrics)
-											}
-										}
-										placeholder="Describe the evaluation criteria"
-										isError={rubrics[index].descriptionError}
-										errorText="Required"
-										disabled={!rubricRequired}
-									/>
-								</Flex>
-							</Flex>
-
-							<Flex
-								mt={2}
-								gap="2"
-								justifyContent="flex-end">
-								<Box
-									onClick={
-										() => {
-											if(!rubricRequired) {
-												return
-											}
-
-											const newRubrics = [...rubrics]
-											newRubrics.splice(index, 1)
-											setRubrics(newRubrics)
-										}
-									}
-									display="flex"
-									alignItems="center"
-									cursor="pointer"
-									opacity={rubricRequired ? 1 : 0.4}
-								>
-									<Image
-										h="16px"
-										w="15px"
-										src="/ui_icons/delete_red.svg"
-										mr="6px"
-									/>
-									<Text
-										fontWeight="500"
-										fontSize="14px"
-										color="#DF5252"
-										lineHeight="20px"
-									>
-                  Delete
-									</Text>
-								</Box>
-							</Flex>
-							<Divider mt={4} />
-						</>
-					))
-				}
-
-				<Flex
-					mt="19px"
-					gap="2"
-					justifyContent="flex-start">
-					<Box
-						onClick={
-							() => {
-								if(!rubricRequired) {
-									return
-								}
-
-								const newRubrics = [
-									...rubrics,
-									{
-										name: '',
-										nameError: false,
-										description: '',
-										descriptionError: false,
-									},
-								]
-								setRubrics(newRubrics)
-							}
-						}
-						display="flex"
-						alignItems="center"
-						cursor="pointer"
-						opacity={rubricRequired ? 1 : 0.4}
-					>
-						<Image
-							h="16px"
-							w="15px"
-							src="/ui_icons/plus_circle.svg"
-							mr="6px" />
-						<Text
-							fontWeight="500"
-							fontSize="14px"
-							color="#8850EA"
-							lineHeight="20px"
-						>
-              Add another criteria
-						</Text>
-					</Box>
-				</Flex> */}
-
-				{/* <Flex
-					opacity={rubricRequired ? 1 : 0.4}
-					direction="column"
-					mt={6}>
-					<Text
-						fontSize="18px"
-						fontWeight="700"
-						lineHeight="26px"
-						letterSpacing={0}
-					>
-            Evaluation Rating
-					</Text>
-					<Box
-						mt={2}
-						minW="499px"
-						flex={0}>
-						<Dropdown
-							listItems={
-								[
-									{
-										label: '5 point rating',
-										id: '5',
-									},
-									{
-										label: '3 point rating',
-										id: '3',
-									},
-								]
-							}
-							onChange={
-								rubricRequired
-									? ({ id }: any) => {
-										setMaximumPoints(parseInt(id, 10))
-									}
-									: undefined
-							}
-							listItemsMinWidth="600px"
-						/>
-					</Box>
-				</Flex> */}
 			</Flex>
 			<Button
 				mt='auto'

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import React, { useEffect, useRef, useState } from 'react'
 import {
 	Box,
 	Button,
@@ -37,7 +36,7 @@ interface YourGrantCardProps {
   workspaceId: string
 }
 
-function YourGrantCard(this: any, {
+function YourGrantCard({
 	grantID,
 	daoIcon,
 	grantTitle,
@@ -53,10 +52,8 @@ function YourGrantCard(this: any, {
 	chainId,
 	acceptingApplications,
 	isAdmin,
-	initialRubrics,
-	workspaceId,
 }: YourGrantCardProps) {
-	const [isAcceptingApplications, setIsAcceptingApplications] = React.useState<
+	const [isAcceptingApplications, setIsAcceptingApplications] = useState<
   [boolean, number]
   >([acceptingApplications, 0])
 
@@ -67,46 +64,12 @@ function YourGrantCard(this: any, {
 	)
 
 	const { setRefresh } = useCustomToast(txnLink)
-	const buttonRef = React.useRef<HTMLButtonElement>(null)
+	const buttonRef = useRef<HTMLButtonElement>(null)
 
-	const [isArchiveModalOpen, setIsArchiveModalOpen] = React.useState(false)
-	const [isPublishGrantModalOpen, setIsPublishGrantModalOpen] = React.useState(false)
+	const [isArchiveModalOpen, setIsArchiveModalOpen] = useState(false)
+	const [isPublishGrantModalOpen, setIsPublishGrantModalOpen] = useState(false)
 
-	const [rubricDrawerOpen, setRubricDrawerOpen] = React.useState(false)
-	const [rubricEditAllowed] = React.useState(true)
-	const [maximumPoints, setMaximumPoints] = React.useState(5)
-	const [rubrics, setRubrics] = useState<any[]>([
-		{
-			name: '',
-			nameError: false,
-			description: '',
-			descriptionError: false,
-		},
-	])
-
-	const { t } = useTranslation()
 	useEffect(() => {
-		const newRubrics = [] as any[]
-		// console.log('initialRubrics', initialRubrics)
-		initialRubrics?.items.forEach((initalRubric) => {
-			newRubrics.push({
-				name: initalRubric.title,
-				nameError: false,
-				description: initalRubric.details,
-				descriptionError: false,
-			})
-		})
-		if(newRubrics.length === 0) {
-			return
-		}
-
-		setRubrics(newRubrics)
-		if(initialRubrics?.items[0].maximumPoints) {
-			setMaximumPoints(initialRubrics.items[0].maximumPoints)
-		}
-	}, [initialRubrics])
-
-	React.useEffect(() => {
 		// // console.log(transactionData);
 		if(transactionData) {
 			setIsArchiveModalOpen(false)
@@ -116,15 +79,9 @@ function YourGrantCard(this: any, {
 
 	}, [transactionData])
 
-	React.useEffect(() => {
+	useEffect(() => {
 		setIsAcceptingApplications([acceptingApplications, 0])
-
 	}, [error])
-
-	React.useEffect(() => {
-		// console.log('isAcceptingApplications: ', isAcceptingApplications)
-
-	}, [isAcceptingApplications])
 
 	return (
 		<>
