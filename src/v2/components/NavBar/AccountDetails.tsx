@@ -14,7 +14,6 @@ import {
 	VStack,
 } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
-import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { WebwalletContext } from 'src/pages/_app'
 import getAvatar from 'src/utils/avatarUtils'
 
@@ -22,7 +21,6 @@ const IN_APP_WALLET_LEARN_MORE_URL = 'https://blog.questbook.xyz/posts/aug-2022-
 
 function AccountDetails() {
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
-	const { network } = useNetwork()
 
 	const toast = useToast()
 
