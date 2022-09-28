@@ -46,3 +46,5 @@ yarn.lock
 pages/test.tsx
 test/
 lib
+# Sentry
+.sentryclirc
