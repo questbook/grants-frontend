@@ -1,8 +1,6 @@
 import { ReactElement, useEffect, useMemo, useState } from 'react'
 import { Box, Flex, Heading, Image, Link, Spacer, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import CopyIcon from 'src/components/ui/copy_icon'
-import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import { useGetApplicationDetailsQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
