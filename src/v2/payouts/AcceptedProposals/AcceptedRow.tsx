@@ -197,6 +197,7 @@ const AcceptedRow = ({
 							h='auto'
 							borderRadius='2px'
 							mr={6}
+							variant='ghost'
 							onClick={() => onSendFundsClicked()}
 						>
 							<FundsCircleFilled />
