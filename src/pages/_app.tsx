@@ -164,7 +164,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	// used to poll for scwAddress in "waitForScwAddress"
 	const scwAddressRef = useRef(scwAddress)
 
-	const getUseNonce = useCallback(async() => {
+	const getUseNonce = useCallback(async(): Promise<string> => {
 		const _nonce = await getNonce(webwallet)
 		return _nonce
 	}, [webwallet])
@@ -276,21 +276,21 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	)
 
 	const importWebwallet = useCallback((privateKey: string) => {
-		const newWebwallet = new ethers.Wallet(privateKey);
+		const newWebwallet = new ethers.Wallet(privateKey)
 
 		// set the webwallet
-		localStorage.setItem('webwalletPrivateKey', privateKey);
-		setWebwallet(newWebwallet);
+		localStorage.setItem('webwalletPrivateKey', privateKey)
+		setWebwallet(newWebwallet)
 
-		// reset everything else 
-		setLoadingNonce(false);
-		setNonce(undefined);
-		setScwAddress(undefined);
-		setBiconomyWalletClients({});
-		setBiconomyDaoObjs({});
-		setBiconomyLoading({});
+		// reset everything else
+		setLoadingNonce(false)
+		setNonce(undefined)
+		setScwAddress(undefined)
+		setBiconomyWalletClients({})
+		setBiconomyDaoObjs({})
+		setBiconomyLoading({})
 
-		biconomyInitPromisesRef.current = {};
+		biconomyInitPromisesRef.current = {}
 
 	}, [setWebwallet])
 
@@ -313,19 +313,19 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			return
 		}
 
-		addAuthorizedUser(webwallet?.address)
-		 .then(() => {
-				getUseNonce()
-			 .then(_nonce => {
-						setNonce(_nonce)
-			 })
-			 .catch((err) => {
-						logger.info({ err }, 'Error getting nonce')
-					})
-		 })
+		async function getNonce(address: string): Promise<string> {
+			await addAuthorizedUser(address)
+			return await getUseNonce()
+		}
+
+		getNonce(webwallet.address)
+		 .then((_nonce) => {
+				setNonce(_nonce)
+			})
 		 .catch((err) => {
 				logger.info({ err }, 'Error adding authorized user')
 			})
+
 	}, [webwallet, nonce])
 
 	useEffect(() => {
