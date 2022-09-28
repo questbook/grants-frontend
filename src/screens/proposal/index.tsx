@@ -9,29 +9,12 @@ import SupportedChainId from 'src/generated/SupportedChainId'
 import logger from 'src/libraries/logger'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import ActionPanel from 'src/screens/proposal/_components/ActionPanel'
+import MilestoneItem from 'src/screens/proposal/_components/MilestoneItem'
 import { useMultiChainQuery } from 'src/screens/proposal/_hooks/useMultiChainQuery'
-import { ChainInfo, CustomField } from 'src/types'
-import { formatAmount, getCustomFields, getFieldString, getFieldStrings, getFormattedDateFromUnixTimestampWithYear, truncateStringFromMiddle } from 'src/utils/formattingUtils'
+import { Proposal as ProposalType } from 'src/screens/proposal/_types'
+import { formatAmount, getCustomFields, getFieldString, getFieldStrings, getFormattedDateFromUnixTimestampWithYear, getRewardAmountMilestones, truncateStringFromMiddle } from 'src/utils/formattingUtils'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { getChainInfo } from 'src/utils/tokenUtils'
-
-type Proposal = {
-    name: string
-	applicantName: string
-	applicantAddress: string
-	applicantEmail: string
-	createdAt: string
-	links: {link: string}[]
-	details: string
-	goals: string
-	milestones: {id: string, title: string, amount: string}[]
-	fundingBreakdown: string
-	teamMembers: string[]
-	memberDetails: string[]
-    customFields: CustomField[]
-	token: ChainInfo['supportedCurrencies'][string]
-    state: Exclude<GetApplicationDetailsQuery['grantApplication'], null | undefined>['state']
-}
 
 function Proposal() {
 	const buildComponent = () => (
@@ -308,7 +291,54 @@ function Proposal() {
 				h='100%'
 				direction='column'
 			>
-				<ActionPanel state={proposal?.state!} />
+				<ActionPanel
+					state={proposal?.state!}
+					rejectionReason={proposal?.feedbackDao ?? ''}
+					rejectionDate={proposal?.updatedAt ?? ''}
+					onSendFundClick={() => {}}
+					onAcceptClick={() => {}}
+					onRejectClick={() => {}} />
+
+				<Flex
+					mt={4}
+					bg='white'
+					px={5}
+					py={4}
+					align='center'>
+					<Text
+						variant='v2_body'
+						fontWeight='500'>
+						Funding asked
+					</Text>
+					<Text
+						variant='v2_subheading'
+						fontWeight='500'
+						ml='auto'>
+						{getRewardAmountMilestones(proposal?.token?.decimals!, proposal)}
+						{' '}
+						{proposal?.token?.label}
+					</Text>
+				</Flex>
+
+				<Flex
+					direction='column'
+					mt={4}
+					bg='white'
+					p={6}>
+					{
+						proposal?.milestones?.map((milestone, index) => {
+							const disbursedMilestones = proposal?.fundTransfers?.filter((fundTransfer) => fundTransfer?.milestone?.id === milestone.id)
+							return (
+								<MilestoneItem
+									key={milestone.id}
+									milestone={milestone}
+									disbursedMilestones={disbursedMilestones}
+									index={index}
+									token={proposal?.token} />
+							)
+						})
+					}
+				</Flex>
 			</Flex>
 		</Flex>
 
@@ -319,7 +349,7 @@ function Proposal() {
 	const [proposalId, setProposalId] = useState<string>()
 	const [chainId, setChainId] = useState<SupportedChainId>(defaultChainId)
 
-	const [proposal, setProposal] = useState<Proposal>()
+	const [proposal, setProposal] = useState<ProposalType>()
 
 	useEffect(() => {
 		logger.info({ chainId }, '(Proposal) Chain ID')
@@ -371,20 +401,19 @@ function Proposal() {
 			applicantAddress: getFieldString(application, 'applicantAddress') ?? application.applicantId,
 			applicantEmail: getFieldString(application, 'applicantEmail'),
 			createdAt: getFormattedDateFromUnixTimestampWithYear(application.createdAtS)!,
+			updatedAt: getFormattedDateFromUnixTimestampWithYear(application.updatedAtS)!,
 			links: getFieldStrings(application, 'projectLinks'),
 			details: projectDetails,
 			goals: getFieldString(application, 'projectGoals'),
-			milestones: application.milestones.map((milestone) => ({
-				id: milestone.id,
-				title: milestone.title,
-				amount: milestone.amount
-			}))!,
+			milestones: application.milestones,
 			fundingBreakdown: getFieldString(application, 'fundingBreakdown'),
 			teamMembers: getFieldStrings(application, 'teamMembers'),
 			memberDetails: getFieldStrings(application, 'memberDetails'),
 			customFields: getCustomFields(application),
 			token: chainInfo,
 			state: application.state,
+			feedbackDao: application.feedbackDao ?? '',
+			fundTransfers: application.grant.fundTransfers,
 		})
 
 		logger.info({ proposal }, '(Proposal) Final data')

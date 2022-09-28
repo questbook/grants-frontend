@@ -17,6 +17,11 @@ query getApplicationDetails($applicationID: ID!) {
       id
       title
       amount
+      feedbackDao
+      feedbackDaoUpdatedAtS
+      feedbackDev
+      feedbackDevUpdatedAtS
+      state
     }
     grant {
       id
@@ -57,6 +62,25 @@ query getApplicationDetails($applicationID: ID!) {
           details,
           maximumPoints,
         },
+      },
+      fundTransfers {
+        milestone {
+          id
+          title
+          amount
+          amountPaid
+        }
+        amount
+        type
+        asset
+        nonEvmAsset
+        transactionHash
+        application{
+          applicantId
+          id
+          state
+        }
+        createdAtS
       },
     }
     pendingReviewerAddresses
