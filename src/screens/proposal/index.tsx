@@ -21,7 +21,6 @@ function Proposal() {
             mx={8}
             pt={6}
             gap={8}
-            bg='#F5F5F5'
             padding={2}>
             <Flex
                 flex={2}
@@ -54,6 +53,7 @@ function Proposal() {
 
                 {/* Proposal details start */}
                 <Flex bg='white' gap={4} alignItems='start' flexDirection='column' padding={4}>
+                    {/* Links */}
                     <Box>
                         <Heading
                             variant='applicationHeading'>
@@ -73,6 +73,8 @@ function Proposal() {
                             ))
                         }
                     </Box>
+
+                    {/* Project Details */}
                     <Box>
                         <Heading variant='applicationHeading'>Project Details</Heading>
                         <Text>{decodedDetails ? (
@@ -81,6 +83,32 @@ function Proposal() {
                             />
                         ) : null}</Text>
                     </Box>
+
+                    {/* Team Member */}
+                    <Box>
+                        <Heading variant='applicationHeading'>Team Members - {teamMembers}</Heading>
+                        {
+							memberDetails.map((memberDetail: any, index: number) => (
+								<Box key={index}>
+									<Heading
+										variant='applicationHeading'
+										color='brand.500'
+										mt={5}
+									>
+										#
+										{' '}
+										{index + 1}
+									</Heading>
+									<Text
+										variant='applicationText'
+										mt={2}>
+										{memberDetail}
+									</Text>
+								</Box>
+							))
+						}
+                    </Box>
+                    {/* Project Goals */}
 
                 </Flex>
                 {/* Proposal details end */}
