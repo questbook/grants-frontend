@@ -54,9 +54,8 @@ function Form({
 	})))
 	const [detailsError, setDetailsError] = useState(false)
 
-	const [shouldEncrypt, setShouldEncrypt] = useState(false)
+	const [shouldEncrypt, setShouldEncrypt] = useState(true)
 	const [admins, setAdmins] = useState<any[]>([])
-	const [maximumPoints, setMaximumPoints] = useState(5)
 
 	const applicantDetails = applicantDetailsList
 		.map(({
@@ -103,29 +102,10 @@ function Form({
 		setDetailsRequired(newDetailsRequired)
 	}
 
-	const [rubricRequired, setRubricRequired] = useState(false)
-	const [rubrics, setRubrics] = useState<any>([
-		{
-			name: '',
-			nameError: false,
-			description: '',
-			descriptionError: false,
-		},
-	])
-
 	const [shouldEncryptReviews, setShouldEncryptReviews] = useState(false)
-
-	// const [extraFieldDetails, setExtraFieldDetails] = useState('');
-	// const [extraFieldError, setExtraFieldError] = useState(false);
 
 	// Grant Rewards and Deadline
 	const [reward, setReward] = useState('')
-	const [rewardToken, setRewardToken] = useState<Token>({
-		label: '',
-		address: '',
-		decimal: '0',
-		iconHash: '',
-	})
 	const [rewardError, setRewardError] = useState(false)
 
 	const [rewardCurrency, setRewardCurrency] = useState('')
@@ -134,11 +114,9 @@ function Form({
 	const [date, setDate] = useState('')
 	const [dateError, setDateError] = useState(false)
 
-	const safeAddress = workspace?.safe?.address
 	const safeNetwork = workspace?.safe?.chainId as ValidChainID
 	const [oldDate, setOldDate] = React.useState(false)
 	const isEVM = parseInt(safeNetwork) !== 900001
-	let transactionServiceURL
 
 	useEffect(() => {
 		setCurrentChain(getSupportedChainIdFromWorkspace(workspace)!)
@@ -224,24 +202,6 @@ function Form({
 			setDefaultMilestoneFields(errorCheckedDefaultMilestoneFields)
 		}
 
-		if(rubricRequired) {
-			const errorCheckedRubrics = rubrics.map((rubric: any) => {
-				const errorCheckedRubric = { ...rubric }
-				if(rubric.name.length <= 0) {
-					errorCheckedRubric.nameError = true
-					error = true
-				}
-
-				if(rubric.description.length <= 0) {
-					errorCheckedRubric.descriptionError = true
-					error = true
-				}
-
-				return errorCheckedRubric
-			})
-			setRubrics(errorCheckedRubrics)
-		}
-
 		if(!error) {
 			const detailsString = JSON.stringify(
 				convertToRaw(details.getCurrentContent()),
@@ -257,18 +217,6 @@ function Form({
 				}
 			})
 			const fields = { ...requiredDetails }
-
-			const rubric = {} as any
-
-			if(rubricRequired) {
-				rubrics.forEach((r: any, index: number) => {
-					rubric[index.toString()] = {
-						title: r.name,
-						details: r.description,
-						maximumPoints,
-					}
-				})
-			}
 
 			if(multipleMilestones) {
 				fields.isMultipleMilestones = {
@@ -337,7 +285,7 @@ function Form({
 				grantManagers: admins,
 				rubric: {
 					isPrivate: shouldEncryptReviews,
-					rubric,
+					rubric: { }
 				},
 			}
 
@@ -370,10 +318,6 @@ function Form({
 			setDetailsRequired(formData?.detailsRequired)
 		}
 
-		if(formData?.rubricRequired) {
-			setRubricRequired(formData?.rubricRequired)
-		}
-
 		if(formData?.customFieldsOptionIsVisible) {
 			setCustomFieldsOptionIsVisible(formData?.customFieldsOptionIsVisible)
 		}
@@ -388,18 +332,6 @@ function Form({
 
 		if(formData?.multipleMilestones) {
 			setMultipleMilestones(formData?.multipleMilestones)
-		}
-
-		if(formData?.rubrics) {
-			setRubrics(formData?.rubrics)
-		}
-
-		if(formData?.maximumPoints) {
-			setMaximumPoints(formData?.maximumPoints)
-		}
-
-		if(formData?.reward) {
-			setReward(formData?.reward)
 		}
 
 		if(formData?.rewardCurrency) {
@@ -430,13 +362,10 @@ function Form({
 			summary,
 			details: convertToRaw(details.getCurrentContent()),
 			detailsRequired,
-			rubricRequired,
 			customFieldsOptionIsVisible,
 			customFields,
 			multipleMilestones,
 			milestoneSelectOptionIsVisible,
-			rubrics,
-			maximumPoints,
 			reward,
 			rewardCurrency,
 			rewardCurrencyAddress,
@@ -453,9 +382,6 @@ function Form({
 		rewardCurrencyAddress,
 		summary,
 		detailsRequired,
-		rubricRequired,
-		rubrics,
-		maximumPoints,
 		customFieldsOptionIsVisible,
 		customFields,
 		title,
@@ -519,12 +445,6 @@ function Form({
 			<ApplicantDetails
 				detailsRequired={detailsRequired}
 				toggleDetailsRequired={toggleDetailsRequired}
-				// extraField={extraField}
-				// setExtraField={setExtraField}
-				// extraFieldDetails={extraFieldDetails}
-				// setExtraFieldDetails={setExtraFieldDetails}
-				// extraFieldError={extraFieldError}
-				// setExtraFieldError={setExtraFieldError}
 				customFields={customFields}
 				setCustomFields={setCustomFields}
 				customFieldsOptionIsVisible={customFieldsOptionIsVisible}
@@ -535,11 +455,6 @@ function Form({
 				setMilestoneSelectOptionIsVisible={setMilestoneSelectOptionIsVisible}
 				defaultMilestoneFields={defaultMilestoneFields}
 				setDefaultMilestoneFields={setDefaultMilestoneFields}
-				// rubricRequired={rubricRequired}
-				// setRubricRequired={setRubricRequired}
-				// rubrics={rubrics}
-				// setRubrics={setRubrics}
-				// setMaximumPoints={setMaximumPoints}
 			/>
 
 			<GrantRewardsInput

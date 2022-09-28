@@ -3,9 +3,7 @@ import React, {
 	useContext, useEffect, useMemo, useState,
 } from 'react'
 import { useTranslation } from 'react-i18next'
-import {
-	Box, Button, Flex,
-	Image, Link, Text, } from '@chakra-ui/react'
+import { Box, Button, Flex, Text, } from '@chakra-ui/react'
 import { Token, WorkspaceUpdateRequest } from '@questbook/service-validator-client'
 import axios from 'axios'
 import {
@@ -22,13 +20,11 @@ import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import SAFES_ENDPOINTS_MAINNETS from 'src/constants/safesEndpoints.json'
 import SAFES_ENDPOINTS_TESTNETS from 'src/constants/safesEndpointsTest.json'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import useSubmitPublicKey from 'src/hooks/useSubmitPublicKey'
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'
 import useChainId from 'src/hooks/utils/useChainId'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
 import { ApiClientsContext } from 'src/pages/_app'
 import { SafeToken } from 'src/types'
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 const SAFES_ENDPOINTS = { ...SAFES_ENDPOINTS_MAINNETS, ...SAFES_ENDPOINTS_TESTNETS }
 type ValidChainID = keyof typeof SAFES_ENDPOINTS;
@@ -48,37 +44,7 @@ function Form({
 	const [title, setTitle] = useState(formData.title || '')
 	const [summary, setSummary] = useState(formData.summary || '')
 
-	const [pk, setPk] = React.useState<string>('*')
-	const {
-		RenderModal,
-		setHiddenModalOpen: setHiddenPkModalOpen,
-		transactionData: newPkTransactionData,
-		publicKey: newPublicKey,
-	} = useSubmitPublicKey()
-
 	const { t } = useTranslation()
-
-	useEffect(() => {
-		/// // console.log(pk);
-		if(!accountData?.address) {
-			return
-		}
-
-		if(!workspace) {
-			return
-		}
-
-		const k = workspace?.members?.find(
-			(m) => m.actorId.toLowerCase() === accountData?.address?.toLowerCase(),
-		)?.publicKey?.toString()
-		// // console.log(k);
-		if(k && k.length > 0) {
-			setPk(k)
-		} else {
-			setPk('')
-		}
-
-	}, [workspace, accountData])
 
 	const [titleError, setTitleError] = useState(false)
 	const [summaryError, setSummaryError] = useState(false)
@@ -108,7 +74,6 @@ function Form({
 
 	const { setRefresh } = useCustomToast(transactionLink)
 	const [admins, setAdmins] = useState<any[]>([])
-	const [maximumPoints, setMaximumPoints] = useState(5)
 
 	useEffect(() => {
 		if(transactionData) {
@@ -191,16 +156,6 @@ function Form({
 		setDetailsRequired(newDetailsRequired)
 	}
 
-	const [rubricRequired, setRubricRequired] = useState(false)
-	const [rubrics, setRubrics] = useState<any>([
-		{
-			name: '',
-			nameError: false,
-			description: '',
-			descriptionError: false,
-		},
-	])
-
 	const [shouldEncryptReviews, setShouldEncryptReviews] = useState(false)
 
 	useEffect(() => {
@@ -212,29 +167,8 @@ function Form({
 			setShouldEncrypt(true)
 		}
 
-		const initialRubrics = formData?.rubric
-		const newRubrics = [] as any[]
-		// console.log('initialRubrics', initialRubrics)
-		initialRubrics?.items?.forEach((initalRubric: any) => {
-			newRubrics.push({
-				name: initalRubric?.title,
-				nameError: false,
-				description: initalRubric?.details,
-				descriptionError: false,
-			})
-		})
-		if(newRubrics.length === 0) {
-			return
-		}
-
-		setRubrics(newRubrics)
-		setRubricRequired(true)
 		if(formData?.rubric?.isPrivate) {
 			setShouldEncryptReviews(true)
-		}
-
-		if(initialRubrics?.items[0]?.maximumPoints) {
-			setMaximumPoints(initialRubrics?.items[0]?.maximumPoints)
 		}
 	}, [formData])
 
@@ -324,7 +258,6 @@ function Form({
 				// console.log(res.data)
 				let tokens
 				if(safeNetwork === '42220') {
-					console.log('reward currency', tokens)
 					let localTokenData: {icon: string, label: string, address: string, decimals: number, pair?: string}
 
 					tokens = res.data.filter((token: SafeToken) => token.tokenAddress).map((token: SafeToken) => {
@@ -333,7 +266,6 @@ function Form({
 								localTokenData = CHAIN_INFO[safeNetwork].supportedCurrencies[token.tokenAddress.toLowerCase()]
 							}
 
-							console.log('currency', localTokenData)
 							const currency = {
 								'id': token.tokenAddress,
 								'address': token.tokenAddress,
@@ -436,24 +368,6 @@ function Form({
 			setDefaultMilestoneFields(errorCheckedDefaultMilestoneFields)
 		}
 
-		if(rubricRequired) {
-			const errorCheckedRubrics = rubrics.map((rubric: any) => {
-				const errorCheckedRubric = { ...rubric }
-				if(rubric.name.length <= 0) {
-					errorCheckedRubric.nameError = true
-					error = true
-				}
-
-				if(rubric.description.length <= 0) {
-					errorCheckedRubric.descriptionError = true
-					error = true
-				}
-
-				return errorCheckedRubric
-			})
-			setRubrics(errorCheckedRubrics)
-		}
-
 		if(!error) {
 			const detailsString = JSON.stringify(
 				convertToRaw(details.getCurrentContent()),
@@ -469,18 +383,6 @@ function Form({
 				}
 			})
 			const fields = { ...requiredDetails }
-
-			const rubric = {} as any
-
-			if(rubricRequired) {
-				rubrics.forEach((r: any, index: number) => {
-					rubric[index.toString()] = {
-						title: r.name,
-						details: r.description,
-						maximumPoints,
-					}
-				})
-			}
 
 			if(multipleMilestones) {
 				fields.isMultipleMilestones = {
@@ -547,11 +449,10 @@ function Form({
 					grantManagers: admins,
 					rubric: {
 						isPrivate: shouldEncryptReviews,
-						rubric,
+						rubric: { }
 					},
 				}
 			} else {
-				console.log('USD asset')
 				s = {
 					title,
 					summary,
@@ -562,122 +463,14 @@ function Form({
 					grantManagers: admins,
 					rubric: {
 						isPrivate: shouldEncryptReviews,
-						rubric,
+						rubric: { }
 					},
 				}
-			}
-
-			if((shouldEncrypt || shouldEncryptReviews) && (!pk || pk === '*')) {
-				setHiddenPkModalOpen(true)
-				return
 			}
 
 			onSubmit(s)
 		}
 	}
-
-	useEffect(() => {
-		if(newPkTransactionData && newPublicKey && newPublicKey.publicKey) {
-			// // console.log(newPublicKey);
-			setPk(newPublicKey.publicKey)
-			const detailsString = JSON.stringify(
-				convertToRaw(details.getCurrentContent()),
-			)
-
-			const requiredDetails = {} as any
-			detailsRequired.forEach((detail) => {
-				if(detail && detail.required) {
-					requiredDetails[detail.id] = {
-						title: detail.title,
-						inputType: detail.inputType,
-					}
-				}
-			})
-			const fields = { ...requiredDetails }
-
-			const rubric = {} as any
-
-			if(rubricRequired) {
-				rubrics.forEach((r: any, index: number) => {
-					rubric[index.toString()] = {
-						title: r.name,
-						details: r.description,
-						maximumPoints,
-					}
-				})
-			}
-
-			if(multipleMilestones) {
-				fields.isMultipleMilestones = {
-					title: 'Milestones',
-					inputType: 'array',
-				}
-			}
-
-			if(fields.teamMembers) {
-				fields.memberDetails = {
-					title: 'Member Details',
-					inputType: 'array',
-				}
-			}
-
-			if(fields.fundingBreakdown) {
-				fields.fundingAsk = {
-					title: 'Funding Ask',
-					inputType: 'short-form',
-				}
-			}
-
-			if(shouldEncrypt && (keySubmitted || hasOwnerPublicKey)) {
-				if(fields.applicantEmail) {
-					fields.applicantEmail = { ...fields.applicantEmail, pii: true }
-				}
-
-				if(fields.memberDetails) {
-					fields.memberDetails = { ...fields.memberDetails, pii: true }
-				}
-			}
-
-			if(customFieldsOptionIsVisible && customFields.length > 0) {
-				customFields.forEach((customField: any, index: number) => {
-					const santizedCustomFieldValue = customField.value.split(' ').join('\\s')
-					fields[`customField${index}-${santizedCustomFieldValue}`] = {
-						title: customField.value,
-						inputType: 'short-form',
-					}
-				})
-			}
-
-			if(defaultMilestoneFields.length > 0) {
-				defaultMilestoneFields.forEach((defaultMilestoneField: any, index: number) => {
-					const santizedDefaultMilestoneFieldValue = defaultMilestoneField.value.split(' ').join('\\s')
-					fields[`defaultMilestone${index}-${santizedDefaultMilestoneFieldValue}`] = {
-						title: defaultMilestoneField.value,
-						inputType: 'short-form',
-					}
-				})
-			}
-
-			const s = {
-				title,
-				summary,
-				details: detailsString,
-				fields,
-				reward,
-				rewardCurrencyAddress,
-				rewardToken,
-				date,
-				grantManagers: admins,
-				rubric: {
-					isPrivate: shouldEncryptReviews,
-					rubric,
-				},
-			}
-
-			onSubmit(s)
-		}
-
-	}, [newPkTransactionData, newPublicKey])
 
 	const buttonRef = React.useRef<HTMLButtonElement>(null)
 	return (
@@ -733,12 +526,6 @@ function Form({
 			<ApplicantDetails
 				detailsRequired={detailsRequired}
 				toggleDetailsRequired={toggleDetailsRequired}
-				// extraField={extraField}
-				// setExtraField={setExtraField}
-				// extraFieldDetails={extraFieldDetails}
-				// setExtraFieldDetails={setExtraFieldDetails}
-				// extraFieldError={extraFieldError}
-				// setExtraFieldError={setExtraFieldError}
 				customFields={customFields}
 				setCustomFields={setCustomFields}
 				customFieldsOptionIsVisible={customFieldsOptionIsVisible}
@@ -748,12 +535,6 @@ function Form({
 				defaultMilestoneFields={defaultMilestoneFields}
 				setDefaultMilestoneFields={setDefaultMilestoneFields}
 				defaultMilestoneFieldsOptionIsVisible={Object.keys(formData).filter((key) => key.startsWith('defaultMilestone')).length > 0}
-				rubricRequired={rubricRequired}
-				setRubricRequired={setRubricRequired}
-				rubrics={rubrics}
-				setRubrics={setRubrics}
-				// setMaximumPoints={setMaximumPoints}
-				defaultRubricsPresent={formData?.rubric.items.length > 0}
 			/>
 
 			<GrantRewardsInput
@@ -779,39 +560,6 @@ function Form({
 				isEVM={isEVM}
 			/>
 
-			{/* <Flex
-				alignItems='flex-start'
-				mt={8}
-				mb={10}
-				maxW='400'>
-				<Image
-					display='inline-block'
-					h='10px'
-					w='10px'
-					src='/ui_icons/info_brand.svg'
-					mt={1}
-					mr={2}
-				/>
-				{' '}
-				<Text variant='footer'>
-					By clicking Publish Grant you&apos;ll have to approve this transaction
-					in your wallet.
-					{' '}
-					<Link
-						href='https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46'
-						isExternal>
-						Learn more
-					</Link>
-					{' '}
-					<Image
-						display='inline-block'
-						h='10px'
-						w='10px'
-						src='/ui_icons/link.svg'
-					/>
-				</Text>
-			</Flex> */}
-
 			<Button
 				mt={8}
 				disabled={!isBiconomyInitialised}
@@ -819,8 +567,6 @@ function Form({
 				variant='primary'>
 				{hasClicked ? <Loader /> : 'Save Changes'}
 			</Button>
-
-			<RenderModal />
 		</>
 	)
 }
