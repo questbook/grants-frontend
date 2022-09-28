@@ -29,8 +29,12 @@ export type ApplicationMilestone = {
   application: GrantApplication;
   /** Feedback from the grant DAO manager/applicant */
   feedbackDao?: Maybe<Scalars['String']>;
+  /** Time in epoch when the feedback was submitted by the admin */
+  feedbackDaoUpdatedAtS?: Maybe<Scalars['Int']>;
   /** Feedback from the developer */
   feedbackDev?: Maybe<Scalars['String']>;
+  /** Time in epoch when the feedback was submitted by the applicant */
+  feedbackDevUpdatedAtS?: Maybe<Scalars['Int']>;
   id: Scalars['ID'];
   /** Current state of the milestone */
   state: MilestoneState;
@@ -80,6 +84,14 @@ export type ApplicationMilestone_Filter = {
   application_starts_with?: InputMaybe<Scalars['String']>;
   application_starts_with_nocase?: InputMaybe<Scalars['String']>;
   feedbackDao?: InputMaybe<Scalars['String']>;
+  feedbackDaoUpdatedAtS?: InputMaybe<Scalars['Int']>;
+  feedbackDaoUpdatedAtS_gt?: InputMaybe<Scalars['Int']>;
+  feedbackDaoUpdatedAtS_gte?: InputMaybe<Scalars['Int']>;
+  feedbackDaoUpdatedAtS_in?: InputMaybe<Array<Scalars['Int']>>;
+  feedbackDaoUpdatedAtS_lt?: InputMaybe<Scalars['Int']>;
+  feedbackDaoUpdatedAtS_lte?: InputMaybe<Scalars['Int']>;
+  feedbackDaoUpdatedAtS_not?: InputMaybe<Scalars['Int']>;
+  feedbackDaoUpdatedAtS_not_in?: InputMaybe<Array<Scalars['Int']>>;
   feedbackDao_contains?: InputMaybe<Scalars['String']>;
   feedbackDao_contains_nocase?: InputMaybe<Scalars['String']>;
   feedbackDao_ends_with?: InputMaybe<Scalars['String']>;
@@ -100,6 +112,14 @@ export type ApplicationMilestone_Filter = {
   feedbackDao_starts_with?: InputMaybe<Scalars['String']>;
   feedbackDao_starts_with_nocase?: InputMaybe<Scalars['String']>;
   feedbackDev?: InputMaybe<Scalars['String']>;
+  feedbackDevUpdatedAtS?: InputMaybe<Scalars['Int']>;
+  feedbackDevUpdatedAtS_gt?: InputMaybe<Scalars['Int']>;
+  feedbackDevUpdatedAtS_gte?: InputMaybe<Scalars['Int']>;
+  feedbackDevUpdatedAtS_in?: InputMaybe<Array<Scalars['Int']>>;
+  feedbackDevUpdatedAtS_lt?: InputMaybe<Scalars['Int']>;
+  feedbackDevUpdatedAtS_lte?: InputMaybe<Scalars['Int']>;
+  feedbackDevUpdatedAtS_not?: InputMaybe<Scalars['Int']>;
+  feedbackDevUpdatedAtS_not_in?: InputMaybe<Array<Scalars['Int']>>;
   feedbackDev_contains?: InputMaybe<Scalars['String']>;
   feedbackDev_contains_nocase?: InputMaybe<Scalars['String']>;
   feedbackDev_ends_with?: InputMaybe<Scalars['String']>;
@@ -166,7 +186,9 @@ export enum ApplicationMilestone_OrderBy {
   AmountPaid = 'amountPaid',
   Application = 'application',
   FeedbackDao = 'feedbackDao',
+  FeedbackDaoUpdatedAtS = 'feedbackDaoUpdatedAtS',
   FeedbackDev = 'feedbackDev',
+  FeedbackDevUpdatedAtS = 'feedbackDevUpdatedAtS',
   Id = 'id',
   State = 'state',
   Title = 'title',
@@ -3350,29 +3372,10 @@ export type SubscriptionWorkspacesArgs = {
 };
 
 export enum SupportedNetwork {
-  Chain_4 = 'chain_4',
   Chain_5 = 'chain_5',
   Chain_10 = 'chain_10',
-  Chain_40 = 'chain_40',
-  Chain_41 = 'chain_41',
-  Chain_42 = 'chain_42',
-  Chain_69 = 'chain_69',
-  Chain_100 = 'chain_100',
   Chain_137 = 'chain_137',
-  Chain_588 = 'chain_588',
-  Chain_1001 = 'chain_1001',
-  Chain_1088 = 'chain_1088',
-  Chain_1287 = 'chain_1287',
-  Chain_2153 = 'chain_2153',
-  Chain_8217 = 'chain_8217',
-  Chain_9000 = 'chain_9000',
-  Chain_42220 = 'chain_42220',
-  Chain_44787 = 'chain_44787',
-  Chain_80001 = 'chain_80001',
-  Chain_245022926 = 'chain_245022926',
-  Chain_1313161555 = 'chain_1313161555',
-  Chain_1666600000 = 'chain_1666600000',
-  Chain_1666700000 = 'chain_1666700000'
+  Chain_42220 = 'chain_42220'
 }
 
 export type Token = {
@@ -4275,7 +4278,7 @@ export type GetApplicationDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetApplicationDetailsQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, pendingReviewerAddresses: Array<string>, doneReviewerAddresses: Array<string>, applicantId: string, applicantPublicKey?: string | null, state: ApplicationState, feedbackDao?: string | null, feedbackDev?: string | null, createdAtS: number, updatedAtS: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }>, pii: Array<{ __typename?: 'PIIAnswer', id: string, data: string }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, title: string, amount: string }>, grant: { __typename?: 'Grant', id: string, title: string, funding: string, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null }> }, reward: { __typename?: 'Reward', id: string, asset: string, committed: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, fields: Array<{ __typename?: 'GrantField', id: string, title: string, isPii: boolean }>, rubric?: { __typename?: 'Rubric', isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null }, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, createdAtS: number, reviewer: { __typename?: 'WorkspaceMember', id: string, email?: string | null, fullName?: string | null }, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, reviewers: Array<{ __typename?: 'WorkspaceMember', email?: string | null, id: string, fullName?: string | null }> } | null };
+export type GetApplicationDetailsQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, pendingReviewerAddresses: Array<string>, doneReviewerAddresses: Array<string>, applicantId: string, applicantPublicKey?: string | null, state: ApplicationState, feedbackDao?: string | null, feedbackDev?: string | null, createdAtS: number, updatedAtS: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }>, pii: Array<{ __typename?: 'PIIAnswer', id: string, data: string }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, title: string, amount: string }>, grant: { __typename?: 'Grant', id: string, title: string, funding: string, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null }> }, reward: { __typename?: 'Reward', id: string, asset: string, committed: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, fields: Array<{ __typename?: 'GrantField', id: string, title: string, isPii: boolean }>, rubric?: { __typename?: 'Rubric', isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null }, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, createdAtS: number, reviewer: { __typename?: 'WorkspaceMember', actorId: string, id: string, email?: string | null, fullName?: string | null }, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, reviewers: Array<{ __typename?: 'WorkspaceMember', actorId: string, email?: string | null, id: string, fullName?: string | null }> } | null };
 
 export type GetDaoGrantsQueryVariables = Exact<{
   workspaceId: Scalars['String'];
@@ -4541,7 +4544,7 @@ export type GetWorkspaceMembersPublicKeysQuery = { __typename?: 'Query', workspa
 export const GetProfileDetailsDocument = gql`
     query GetProfileDetails($actorId: Bytes!) {
   workspaceMembers(
-    where: {actorId: $actorId, accessLevel: owner}
+    where: {actorId: $actorId}
     first: 1
     orderBy: updatedAt
     orderDirection: desc
@@ -5318,6 +5321,7 @@ export const GetApplicationDetailsDocument = gql`
     doneReviewerAddresses
     reviews {
       reviewer {
+        actorId
         id
         email
         fullName
@@ -5334,6 +5338,7 @@ export const GetApplicationDetailsDocument = gql`
       createdAtS
     }
     reviewers {
+      actorId
       email
       id
       fullName

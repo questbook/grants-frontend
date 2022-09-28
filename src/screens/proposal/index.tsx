@@ -8,6 +8,7 @@ import { GetApplicationDetailsQuery, useGetApplicationDetailsQuery } from 'src/g
 import SupportedChainId from 'src/generated/SupportedChainId'
 import logger from 'src/libraries/logger'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
+import ActionPanel from 'src/screens/proposal/_components/ActionPanel'
 import { useMultiChainQuery } from 'src/screens/proposal/_hooks/useMultiChainQuery'
 import { ChainInfo, CustomField } from 'src/types'
 import { formatAmount, getCustomFields, getFieldString, getFieldStrings, getFormattedDateFromUnixTimestampWithYear, truncateStringFromMiddle } from 'src/utils/formattingUtils'
@@ -29,6 +30,7 @@ type Proposal = {
 	memberDetails: string[]
     customFields: CustomField[]
 	token: ChainInfo['supportedCurrencies'][string]
+    state: Exclude<GetApplicationDetailsQuery['grantApplication'], null | undefined>['state']
 }
 
 function Proposal() {
@@ -304,7 +306,10 @@ function Proposal() {
 				flex={1}
 				w='100%'
 				h='100%'
-				bg='blue' />
+				direction='column'
+			>
+				<ActionPanel state={proposal?.state!} />
+			</Flex>
 		</Flex>
 
 	)
@@ -378,7 +383,8 @@ function Proposal() {
 			teamMembers: getFieldStrings(application, 'teamMembers'),
 			memberDetails: getFieldStrings(application, 'memberDetails'),
 			customFields: getCustomFields(application),
-			token: chainInfo
+			token: chainInfo,
+			state: application.state,
 		})
 
 		logger.info({ proposal }, '(Proposal) Final data')

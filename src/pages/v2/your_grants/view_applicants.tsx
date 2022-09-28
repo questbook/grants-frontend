@@ -786,7 +786,6 @@ function ViewApplicants() {
 							bg='white'
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7' >
 							<AcceptedProposalsPanel
-								isEvmChain={isEvmChain}
 								// totalMilestonesAmount={totalMilestonesAmt}
 								applicationStatuses={applicationStatuses}
 								applicantsData={applicantsData}

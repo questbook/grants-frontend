@@ -63,6 +63,7 @@ query getApplicationDetails($applicationID: ID!) {
     doneReviewerAddresses
     reviews {
       reviewer {
+        actorId
         id
         email
         fullName
@@ -79,6 +80,7 @@ query getApplicationDetails($applicationID: ID!) {
       createdAtS
     }
     reviewers {
+      actorId
       email
       id
       fullName
