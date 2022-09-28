@@ -60,7 +60,7 @@ function Proposal() {
                 {/* Proposal details start */}
                 <Flex bg='white' gap={4} alignItems='start' flexDirection='column' padding={4}>
                     {/* Links */}
-                    <Box>
+                    <Box display={projectLink.length > 0 ? '' : 'none'}>
                         <Heading
                             variant='applicationHeading'>
                             Links
