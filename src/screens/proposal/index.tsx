@@ -1,23 +1,38 @@
-import { ReactElement, useEffect, useMemo, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 import { Box, Flex, Heading, Image, Link, Spacer, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import CopyIcon from 'src/components/ui/copy_icon'
 import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer'
-import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
-import { useGetApplicationDetailsQuery } from 'src/generated/graphql'
+import { defaultChainId } from 'src/constants/chains'
+import { GetApplicationDetailsQuery, useGetApplicationDetailsQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import logger from 'src/libraries/logger'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { useMultiChainQuery } from 'src/screens/proposal/_hooks/useMultiChainQuery'
-import { formatAmount, getFieldString, getFormattedDateFromUnixTimestampWithYear, truncateStringFromMiddle } from 'src/utils/formattingUtils'
+import { ChainInfo, CustomField } from 'src/types'
+import { formatAmount, getCustomFields, getFieldString, getFieldStrings, getFormattedDateFromUnixTimestampWithYear, truncateStringFromMiddle } from 'src/utils/formattingUtils'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
-import { getAssetInfo } from 'src/utils/tokenUtils'
-import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
+import { getChainInfo } from 'src/utils/tokenUtils'
+
+type Proposal = {
+    name: string
+	applicantName: string
+	applicantAddress: string
+	applicantEmail: string
+	createdAt: string
+	links: {link: string}[]
+	details: string
+	goals: string
+	milestones: {id: string, title: string, amount: string}[]
+	fundingBreakdown: string
+	teamMembers: string[]
+	memberDetails: string[]
+    customFields: CustomField[]
+	token: ChainInfo['supportedCurrencies'][string]
+}
 
 function Proposal() {
-
 	const buildComponent = () => (
-
 		<Flex
 			w='100vw'
 			pt={6}
@@ -31,7 +46,7 @@ function Proposal() {
 				gap={4}
 			>
 				<Text variant='proposalHeading'>
-					{projectName}
+					{proposal?.name}
 				</Text>
 				{/* Proposal info start */}
 				<Flex
@@ -47,9 +62,7 @@ function Proposal() {
 							boxSize={4}
 							src='/ui_icons/user_icon.svg' />
 						<Text variant='footer'>
-							{' '}
-							{applicantName}
-							{' '}
+							{proposal?.applicantName}
 						</Text>
 					</Flex>
 					<Spacer />
@@ -60,11 +73,9 @@ function Proposal() {
 							boxSize={4}
 							src='/ui_icons/wallet_line.svg' />
 						<Text variant='footer'>
-							{' '}
-							{applicantAddress ? truncateStringFromMiddle(applicantAddress) : truncateStringFromMiddle(proposalData?.applicantId!)}
-							{' '}
+							{truncateStringFromMiddle(proposal?.applicantAddress!) }
 						</Text>
-						<CopyIcon text={applicantAddress ?? proposalData?.applicantId} />
+						<CopyIcon text={proposal?.applicantAddress!} />
 					</Flex>
 					<Spacer />
 					<Flex
@@ -75,10 +86,10 @@ function Proposal() {
 							src='/ui_icons/mail_line.svg' />
 						<Text variant='footer'>
 							{' '}
-							{applicantEmail}
+							{proposal?.applicantEmail}
 							{' '}
 						</Text>
-						<CopyIcon text={applicantEmail} />
+						<CopyIcon text={proposal?.applicantEmail!} />
 					</Flex>
 					<Spacer />
 					<Flex
@@ -89,7 +100,7 @@ function Proposal() {
 							src='/ui_icons/calendar_line.svg' />
 						<Text variant='footer'>
 							{' '}
-							{getFormattedDateFromUnixTimestampWithYear(proposalData?.createdAtS!)}
+							{proposal?.createdAt}
 							{' '}
 						</Text>
 					</Flex>
@@ -104,13 +115,13 @@ function Proposal() {
 					flexDirection='column'
 					padding={4}>
 					{/* Links */}
-					<Box display={projectLink.length > 0 ? '' : 'none'}>
+					<Box display={proposal?.links?.length ? '' : 'none'}>
 						<Heading
 							variant='applicationHeading'>
 							Links
 						</Heading>
 						{
-							projectLink.map(({ link }) => (
+							proposal?.links?.map(({ link }) => (
 								<Text
 									key={link}
 									variant='applicationText'
@@ -132,9 +143,9 @@ function Proposal() {
 						</Heading>
 						<Text mt={2}>
 							{
-								decodedDetails ? (
+								proposal?.details ? (
 									<TextViewer
-										text={decodedDetails}
+										text={proposal?.details}
 									/>
 								) : null
 							}
@@ -143,19 +154,19 @@ function Proposal() {
 					</Box>
 
 					{/* Project Goals */}
-					<Box display={projectGoals && projectGoals !== '' ? '' : 'none'}>
+					<Box display={proposal?.goals && proposal?.goals !== '' ? '' : 'none'}>
 						<Heading variant='applicationHeading'>
 							Project Goals
 						</Heading>
 						<Text
 							variant='applicationText'
 							mt={2}>
-							{projectGoals}
+							{proposal?.goals}
 						</Text>
 					</Box>
 
 					{/* Project Milestones */}
-					<Box display={projectMilestones.length ? '' : 'none'}>
+					<Box display={proposal?.milestones?.length ? '' : 'none'}>
 						<Heading variant='applicationHeading'>
 							Project Milestones
 						</Heading>
@@ -164,7 +175,7 @@ function Proposal() {
 							mt={2}>
 							{' '}
 							{
-								projectMilestones.map((milestone: any, index: number) => (
+								proposal?.milestones?.map((milestone, index: number) => (
 									<Box key={milestone.id}>
 										<Heading
 											variant='applicationSubtitle'
@@ -184,7 +195,7 @@ function Proposal() {
 											mt={3}>
 											<Image
 												boxSize='48px'
-												src={icon}
+												src={proposal?.token?.icon}
 											/>
 											<Box ml={2} />
 											<Flex
@@ -196,14 +207,14 @@ function Proposal() {
 												</Heading>
 												<Text variant='applicationText'>
 													{
-														milestone?.amount && proposalData
+														milestone?.amount && proposal
                                                         && formatAmount(
                                                         	milestone?.amount,
-                                                        	decimal,
+                                                        	proposal?.token?.decimals,
                                                         )
 													}
 													{' '}
-													{label}
+													{proposal?.token?.label}
 												</Text>
 											</Flex>
 										</Flex>
@@ -216,7 +227,7 @@ function Proposal() {
 
 					{/* Funding Breakdown */}
 					<Box
-						display={fundingBreakdown && fundingBreakdown !== '' ? '' : 'none'}
+						display={proposal?.fundingBreakdown && proposal?.fundingBreakdown !== '' ? '' : 'none'}
 					>
 						<Heading variant='applicationHeading'>
 							Funding Breakdown
@@ -224,21 +235,21 @@ function Proposal() {
 						<Text
 							variant='applicationText'
 							mt={2}>
-							{fundingBreakdown}
+							{proposal?.fundingBreakdown}
 						</Text>
 					</Box>
 
 					{/* Team Member */}
 					<Box
-						display={teamMembers ? '' : 'none'}
+						display={proposal?.teamMembers ? '' : 'none'}
 						mt={8}>
 						<Heading variant='applicationHeading'>
 							Team Members -
 							{' '}
-							{teamMembers}
+							{proposal?.teamMembers}
 						</Heading>
 						{
-							memberDetails.map((memberDetail: any, index: number) => (
+							proposal?.memberDetails?.map((memberDetail, index: number) => (
 								<Box key={index}>
 									<Heading
 										variant='applicationHeading'
@@ -259,7 +270,7 @@ function Proposal() {
 
 					{/* Custom Fields */}
 					<Box
-						display={customFields.length > 0 ? '' : 'none'}
+						display={proposal?.customFields?.length ? '' : 'none'}
 						mt={10}>
 						<Heading
 							variant='applicationHeading'>
@@ -267,7 +278,7 @@ function Proposal() {
 						</Heading>
 
 						{
-							customFields.map((customField: any, index: number) => (
+							proposal?.customFields.map((customField, index: number) => (
 								<Box key={customField.title}>
 									<Heading
 										variant='applicationHeading'
@@ -301,25 +312,17 @@ function Proposal() {
 	const router = useRouter()
 
 	const [proposalId, setProposalId] = useState<string>()
-	const [chainId, setChainId] = useState<SupportedChainId>()
+	const [chainId, setChainId] = useState<SupportedChainId>(defaultChainId)
 
-	const [projectName, setProjectName] = useState('')
-	const [projectLink, setProjectLink] = useState<any[]>([])
-	const [projectGoals, setProjectGoals] = useState('')
-	const [projectMilestones, setProjectMilestones] = useState<any[]>([])
-	const [decodedDetails, setDecodedDetails] = useState('')
+	const [proposal, setProposal] = useState<Proposal>()
 
-	const [applicantName, setApplicantName] = useState('')
-	const [applicantAddress, setApplicantAddress] = useState('')
-	const [applicantEmail, setApplicantEmail] = useState('')
+	useEffect(() => {
+		logger.info({ chainId }, '(Proposal) Chain ID')
+	}, [chainId])
 
-	const [fundingBreakdown, setFundingBreakdown] = useState('')
-	const [teamMembers, setTeamMembers] = useState('')
-	const [memberDetails, setMemberDetails] = useState<any[]>([])
-	const [customFields, setCustomFields] = useState<any[]>([])
-	const [decimal, setDecimal] = useState<number>()
-	const [label, setLabel] = useState<string>()
-	const [icon, setIcon] = useState<string>()
+	useEffect(() => {
+		logger.info({ proposalId }, '(Proposal) Proposal ID')
+	}, [chainId])
 
 	useEffect(() => {
 		if(typeof router.query.id === 'string') {
@@ -338,98 +341,58 @@ function Proposal() {
 				applicationID: proposalId ?? '',
 			}
 		},
-		chains: [chainId ?? defaultChainId]
+		chains: [chainId]
 	})
 
 	useEffect(() => {
 		fetchMore({ applicationID: proposalId }, true)
 	}, [proposalId, chainId])
 
-	const proposalData = useMemo(() => {
-		return results[0]?.grantApplication
+	useEffect(() => {
+		logger.info({ results }, '(Proposal) Results')
 	}, [results])
 
-	useEffect(() => {
-		logger.info({ proposalData }, 'Proposal Data')
+	const fetchData = async(application: Exclude<GetApplicationDetailsQuery['grantApplication'], null | undefined>) => {
+		let projectDetails = getFieldString(application, 'projectDetails')
+		if(projectDetails.startsWith('Qm') && projectDetails.length < 64) {
+			projectDetails = await getFromIPFS(projectDetails)
+		}
 
-		if(!proposalData) {
+		const chainInfo = getChainInfo(application.grant, chainId!)
+
+		const proposal = ({
+			name: getFieldString(application, 'projectName'),
+			applicantName: getFieldString(application, 'applicantName'),
+			applicantAddress: getFieldString(application, 'applicantAddress') ?? application.applicantId,
+			applicantEmail: getFieldString(application, 'applicantEmail'),
+			createdAt: getFormattedDateFromUnixTimestampWithYear(application.createdAtS)!,
+			links: getFieldStrings(application, 'projectLinks'),
+			details: projectDetails,
+			goals: getFieldString(application, 'projectGoals'),
+			milestones: application.milestones.map((milestone) => ({
+				id: milestone.id,
+				title: milestone.title,
+				amount: milestone.amount
+			}))!,
+			fundingBreakdown: getFieldString(application, 'fundingBreakdown'),
+			teamMembers: getFieldStrings(application, 'teamMembers'),
+			memberDetails: getFieldStrings(application, 'memberDetails'),
+			customFields: getCustomFields(application),
+			token: chainInfo
+		})
+
+		logger.info({ proposal }, '(Proposal) Final data')
+		setProposal(proposal)
+	}
+
+	useEffect(() => {
+		const application = results[0]?.grantApplication
+		if(!application || !application?.grant || !chainId) {
 			return
 		}
 
-		if(proposalData?.grant.reward.token) {
-			setLabel(proposalData.grant.reward.token.label)
-			setIcon(proposalData.grant.reward.token.iconHash)
-		} else {
-			setLabel(getAssetInfo(
-				proposalData?.grant?.reward?.asset,
-				chainId,
-			)?.label)
-			setIcon(getAssetInfo(
-				proposalData?.grant?.reward?.asset,
-				chainId,
-			)?.icon)
-		}
-
-		setProjectName(getFieldString(proposalData, 'projectName'))
-		setProjectLink(
-			proposalData?.fields
-				?.find((fld: any) => fld?.id?.split('.')[1] === 'projectLink')
-				?.values.map((val) => ({ link: val.value })) || [],
-		)
-
-		const projectDetailsTemp = getFieldString(proposalData, 'projectDetails')
-		if(projectDetailsTemp.startsWith('Qm') && projectDetailsTemp.length < 64) {
-			getDecodedDetails(projectDetailsTemp)
-		} else {
-			setDecodedDetails(projectDetailsTemp)
-		}
-
-		// console.log(decodedDetails)
-
-		setProjectGoals(getFieldString(proposalData, 'projectGoals'))
-		setProjectMilestones(proposalData?.milestones || [])
-		setFundingBreakdown(getFieldString(proposalData, 'fundingBreakdown'))
-		setTeamMembers(getFieldString(proposalData, 'teamMembers'))
-		setMemberDetails(
-			proposalData?.fields
-				?.find((fld: any) => fld?.id?.split('.')[1] === 'memberDetails')
-				?.values.map((val) => val.value) || [],
-		)
-		if(proposalData.grant.reward.token) {
-			setDecimal(proposalData.grant.reward.token.decimal)
-		} else {
-			setDecimal(CHAIN_INFO[
-				getSupportedChainIdFromSupportedNetwork(
-					proposalData.grant.workspace.supportedNetworks[0],
-				)
-			]?.supportedCurrencies[proposalData.grant.reward.asset.toLowerCase()]
-				?.decimals)
-		}
-
-		setApplicantName(getFieldString(proposalData, 'applicantName'))
-		setApplicantAddress(getFieldString(proposalData, 'applicantAddress'))
-		setApplicantEmail(getFieldString(proposalData, 'applicantEmail'))
-
-		if(proposalData.fields.length > 0) {
-			setCustomFields(proposalData.fields
-				.filter((field: any) => (field.id.split('.')[1].startsWith('customField')))
-				.map((field: any) => {
-					const i = field.id.indexOf('-')
-					return ({
-						title: field.id.substring(i + 1).split('\\s').join(' '),
-						value: field.values[0].value,
-						isError: false,
-					})
-				}))
-		}
-	}, [proposalData])
-
-	const getDecodedDetails = async(detailsHash: string) => {
-		// console.log(detailsHash)
-		const d = await getFromIPFS(detailsHash)
-		setDecodedDetails(d)
-	}
-
+		fetchData(application)
+	}, [results])
 
 	return buildComponent()
 }
