@@ -1,5 +1,5 @@
 query GetProfileDetails($actorId: Bytes!) {
-   workspaceMembers(where: {actorId: $actorId, accessLevel: owner}, first: 1, orderBy: updatedAt, orderDirection: desc) {
+   workspaceMembers(where: {actorId: $actorId}, first: 1, orderBy: updatedAt, orderDirection: desc) {
     id
     workspace {
       supportedNetworks

@@ -43,7 +43,7 @@ yarn-error.log*
 yarn.lock
 
 .env
-pages/test.tsx
+src/pages/test.tsx
 test/
 lib
 # Sentry
