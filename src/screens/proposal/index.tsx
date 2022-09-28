@@ -20,17 +20,16 @@ function Proposal() {
 
         <Flex
             w='100vw'
-            mx={8}
             pt={6}
             gap={8}
-            padding={2}>
+            padding={8}>
             <Flex
                 flex={2}
                 w='100%'
                 h='100%'
                 flexDirection='column'
                 gap={4}
-                padding={4}>
+            >
                 <Text variant='proposalHeading'>{projectName}</Text>
                 {/* Proposal info start */}
                 <Flex bg='white' gap={4} height='60px' alignItems='center' padding={5}>
@@ -38,19 +37,19 @@ function Proposal() {
                         <Image boxSize={4} src='/ui_icons/user_icon.svg' />
                         <Text variant='footer'> {applicantName}  </Text>
                     </Flex>
-                    <Spacer/>
+                    <Spacer />
                     <Flex alignItems='center' gap={1}>
                         <Image boxSize={4} src='/ui_icons/wallet_line.svg' />
-                        <Text variant='footer'> { applicantAddress ? truncateStringFromMiddle(applicantAddress) : truncateStringFromMiddle(proposalData?.applicantId!)}  </Text>
+                        <Text variant='footer'> {applicantAddress ? truncateStringFromMiddle(applicantAddress) : truncateStringFromMiddle(proposalData?.applicantId!)}  </Text>
                         <CopyIcon text={applicantAddress ?? proposalData?.applicantId} />
                     </Flex>
-                    <Spacer/>
+                    <Spacer />
                     <Flex alignItems='center' gap={1}>
                         <Image boxSize={4} src='/ui_icons/mail_line.svg' />
                         <Text variant='footer'> {applicantEmail}  </Text>
                         <CopyIcon text={applicantEmail} />
                     </Flex>
-                    <Spacer/>
+                    <Spacer />
                     <Flex alignItems='center' gap={1}>
                         <Image boxSize={4} src='/ui_icons/calendar_line.svg' />
                         <Text variant='footer'> {getFormattedDateFromUnixTimestampWithYear(proposalData?.createdAtS!)}  </Text>
@@ -162,17 +161,17 @@ function Proposal() {
 
                     {/* Funding Breakdown */}
                     <Box
-						display={fundingBreakdown && fundingBreakdown !== '' ? '' : 'none'}
-					>
-						<Heading variant='applicationHeading'>
-							Funding Breakdown
-						</Heading>
-						<Text
-							variant='applicationText'
-							mt={2}>
-							{fundingBreakdown}
-						</Text>
-					</Box>
+                        display={fundingBreakdown && fundingBreakdown !== '' ? '' : 'none'}
+                    >
+                        <Heading variant='applicationHeading'>
+                            Funding Breakdown
+                        </Heading>
+                        <Text
+                            variant='applicationText'
+                            mt={2}>
+                            {fundingBreakdown}
+                        </Text>
+                    </Box>
 
                     {/* Team Member */}
                     <Box display={teamMembers ? '' : 'none'} mt={8}>
@@ -199,31 +198,31 @@ function Proposal() {
 
                     {/* Custom Fields */}
                     <Box
-						display={customFields.length > 0 ? '' : 'none'} mt={10}>
-						<Heading
-							variant='applicationHeading'>
-							Additional Info
-						</Heading>
+                        display={customFields.length > 0 ? '' : 'none'} mt={10}>
+                        <Heading
+                            variant='applicationHeading'>
+                            Additional Info
+                        </Heading>
 
-						{
-							customFields.map((customField: any, index: number) => (
-								<Box key={customField.title}>
-									<Heading
-										variant='applicationHeading'
-										mt={3}>
-										{index + 1}
-										{'. '}
-										{customField.title}
-									</Heading>
-									<Text
-										variant='applicationText'
-										mt={1}>
-										{customField.value}
-									</Text>
-								</Box>
-							))
-						}
-					</Box>
+                        {
+                            customFields.map((customField: any, index: number) => (
+                                <Box key={customField.title}>
+                                    <Heading
+                                        variant='applicationHeading'
+                                        mt={3}>
+                                        {index + 1}
+                                        {'. '}
+                                        {customField.title}
+                                    </Heading>
+                                    <Text
+                                        variant='applicationText'
+                                        mt={1}>
+                                        {customField.value}
+                                    </Text>
+                                </Box>
+                            ))
+                        }
+                    </Box>
                 </Flex>
                 {/* Proposal details end */}
             </Flex>
@@ -295,7 +294,7 @@ function Proposal() {
             return
         }
 
-        if(proposalData?.grant.reward.token) {
+        if (proposalData?.grant.reward.token) {
             setLabel(proposalData.grant.reward.token.label)
             setIcon(proposalData.grant.reward.token.iconHash)
         } else {
