@@ -13,6 +13,7 @@ import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUti
 import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import CopyIcon from 'src/components/ui/copy_icon'
+import SendFundsModal from './_components/milestoneDoneModal'
 
 function Proposal() {
 
@@ -232,11 +233,17 @@ function Proposal() {
                 w='100%'
                 h='100%'
                 bg='blue' />
+        <SendFundsModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        />
         </Flex>
 
     )
 
     const router = useRouter()
+
+    const [isModalOpen, setIsModalOpen] = useState(true)
 
     const [proposalId, setProposalId] = useState<string>()
     const [chainId, setChainId] = useState<SupportedChainId>()
