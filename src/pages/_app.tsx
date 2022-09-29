@@ -323,7 +323,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				setNonce(_nonce)
 			})
 		 .catch((err) => {
-				logger.info({ err }, 'Error adding authorized user')
+				logger.error({ err }, 'Error adding authorized user')
 			})
 
 	}, [webwallet, nonce])
