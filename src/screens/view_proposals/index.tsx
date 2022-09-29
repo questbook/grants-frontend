@@ -844,13 +844,12 @@ function ViewProposals() {
 				/>
 
 				<SendFunds
-					workspace={workspace}
+					workspace={workspace!}
 					workspaceSafe={workspaceSafe}
-					workspaceSafeChainId={workspaceSafeChainId}
-					sendFundsTo={sendFundsTo}
+					workspaceSafeChainId={workspaceSafeChainId.toString()}
+					sendFundsTo={sendFundsTo!}
 					rewardAssetAddress={rewardAssetAddress}
-					rewardAssetDecimals={rewardAssetDecimals}
-					grantData={grantData} />
+					grantTitle={grantData?.grants?.[0]?.title ?? ''} />
 
 				<NetworkTransactionModal
 					isOpen={networkTransactionModalStep !== undefined}

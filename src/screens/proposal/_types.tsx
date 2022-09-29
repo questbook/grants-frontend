@@ -2,6 +2,7 @@ import { ApplicationState, GetApplicationDetailsQuery } from 'src/generated/grap
 import { ChainInfo, CustomField } from 'src/types'
 
 export type Proposal = {
+    id: string
     name: string
 	applicantName: string
 	applicantAddress: string
@@ -19,7 +20,7 @@ export type Proposal = {
 	token: ChainInfo['supportedCurrencies'][string]
     state: Exclude<GetApplicationDetailsQuery['grantApplication'], null | undefined>['state']
 	feedbackDao: string
-	fundTransfers: Exclude<GetApplicationDetailsQuery['grantApplication'], null | undefined>['grant']['fundTransfers']
+    grant: Exclude<GetApplicationDetailsQuery['grantApplication'], null | undefined>['grant']
 }
 
 export type ActionPanelType = {

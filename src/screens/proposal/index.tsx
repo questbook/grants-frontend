@@ -1,20 +1,25 @@
-import { ReactElement, useEffect, useState } from 'react'
+import { ReactElement, useContext, useEffect, useState } from 'react'
 import { Box, Flex, Heading, Image, Link, Spacer, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import CopyIcon from 'src/components/ui/copy_icon'
 import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer'
+import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters'
 import { defaultChainId } from 'src/constants/chains'
 import { GetApplicationDetailsQuery, useGetApplicationDetailsQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import logger from 'src/libraries/logger'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
+import { ApiClientsContext } from 'src/pages/_app'
 import ActionPanel from 'src/screens/proposal/_components/ActionPanel'
+import MilestoneDoneModal from 'src/screens/proposal/_components/milestoneDoneModal'
 import MilestoneItem from 'src/screens/proposal/_components/MilestoneItem'
 import { useMultiChainQuery } from 'src/screens/proposal/_hooks/useMultiChainQuery'
 import { Proposal as ProposalType } from 'src/screens/proposal/_types'
+import { IApplicantData } from 'src/types'
 import { formatAmount, getCustomFields, getFieldString, getFieldStrings, getFormattedDateFromUnixTimestampWithYear, getRewardAmountMilestones, truncateStringFromMiddle } from 'src/utils/formattingUtils'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { getChainInfo } from 'src/utils/tokenUtils'
+import SendFunds from 'src/v2/payouts/SendFunds'
 
 function Proposal() {
 	const buildComponent = () => (
@@ -295,7 +300,32 @@ function Proposal() {
 					state={proposal?.state!}
 					rejectionReason={proposal?.feedbackDao ?? ''}
 					rejectionDate={proposal?.updatedAt ?? ''}
-					onSendFundClick={() => {}}
+					onSendFundClick={
+						() => {
+							setSendFundData([{
+								grantTitle: proposal?.grant?.title,
+								grant: proposal?.grant,
+								applicationId: proposal?.id!,
+								applicantName:proposal?.applicantName,
+								applicantEmail: proposal?.applicantEmail,
+								applicantAddress: proposal?.applicantAddress,
+								sentOn: proposal?.createdAt!,
+								updatedOn: proposal?.updatedAt!,
+								projectName: proposal?.name,
+								fundingAsked: {
+									amount: getRewardAmountMilestones(proposal?.token?.decimals!, proposal?.milestones),
+									symbol: proposal?.token?.label ?? '',
+									icon: proposal?.token?.icon!,
+								},
+								// status: applicationStatuses.indexOf(applicant?.state),
+								status: TableFilters[proposal?.state!],
+								milestones: proposal?.milestones!,
+								amountPaid: '0',
+								reviewers: [],
+								reviews: []
+							}])
+						}
+					}
 					onAcceptClick={() => {}}
 					onRejectClick={() => {}} />
 
@@ -327,7 +357,7 @@ function Proposal() {
 					p={6}>
 					{
 						proposal?.milestones?.map((milestone, index) => {
-							const disbursedMilestones = proposal?.fundTransfers?.filter((fundTransfer) => fundTransfer?.milestone?.id === milestone.id)
+							const disbursedMilestones = proposal?.grant?.fundTransfers?.filter((fundTransfer) => fundTransfer?.milestone?.id === milestone.id)
 							return (
 								<MilestoneItem
 									key={milestone.id}
@@ -339,12 +369,27 @@ function Proposal() {
 						})
 					}
 				</Flex>
+				<MilestoneDoneModal
+					isOpen={isMilestoneDoneModalOpen}
+					onClose={() => setIsMilestoneDoneModalOpen(false)}
+				/>
+				<SendFunds
+					workspace={workspace!}
+					workspaceSafe={workspace?.safe?.address}
+					workspaceSafeChainId={workspace?.safe?.chainId ?? ''}
+					sendFundsTo={sendFundData}
+					rewardAssetAddress={proposal?.token?.address ?? ''}
+					grantTitle={proposal?.grant?.title ?? ''} />
 			</Flex>
 		</Flex>
 
 	)
 
 	const router = useRouter()
+	const { workspace } = useContext(ApiClientsContext)!
+
+	const [isMilestoneDoneModalOpen, setIsMilestoneDoneModalOpen] = useState<boolean>(false)
+	const [sendFundData, setSendFundData] = useState<IApplicantData[]>([])
 
 	const [proposalId, setProposalId] = useState<string>()
 	const [chainId, setChainId] = useState<SupportedChainId>(defaultChainId)
@@ -396,6 +441,7 @@ function Proposal() {
 		const chainInfo = getChainInfo(application.grant, chainId!)
 
 		const proposal = ({
+			id: application.id,
 			name: getFieldString(application, 'projectName'),
 			applicantName: getFieldString(application, 'applicantName'),
 			applicantAddress: getFieldString(application, 'applicantAddress') ?? application.applicantId,
@@ -413,7 +459,7 @@ function Proposal() {
 			token: chainInfo,
 			state: application.state,
 			feedbackDao: application.feedbackDao ?? '',
-			fundTransfers: application.grant.fundTransfers,
+			grant: application.grant,
 		})
 
 		logger.info({ proposal }, '(Proposal) Final data')
