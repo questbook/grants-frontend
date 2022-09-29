@@ -4,7 +4,6 @@ import {
 	Button,
 	Container,
 	Flex,
-	Input,
 	Modal as ModalComponent,
 	ModalContent,
 	ModalOverlay,
@@ -156,7 +155,7 @@ function MilestoneDoneModal({
 								colorScheme='brandv2'
 								onClick={
 									() => {
-										handleMilestoneMarkedAsDone()
+										onSubmit(comment)
 									}
 
 								}>
@@ -168,11 +167,6 @@ function MilestoneDoneModal({
 			</ModalComponent>
 		</>
 	)
-
-	const handleMilestoneMarkedAsDone = () => {
-
-	}
-
 	return buildModalContent()
 }
 

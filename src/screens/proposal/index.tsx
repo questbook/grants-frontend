@@ -331,6 +331,7 @@ function Proposal() {
 					}
 					onAcceptClick={
 						() => {
+							setIsConfirmClicked(true)
 							setUpdateApplicationStateData({
 								state: 2, comment: ''
 							})
@@ -389,7 +390,7 @@ function Proposal() {
 					}
 				</Flex>
 
-				{/* TODO: Need to pass the function that updates the value of the state variable so that the hook is called */}
+				{/* TODO: Solve for the service validator issue */}
 				<MilestoneDoneModal
 					onSubmit={
 						(comment: string) => {
@@ -400,7 +401,6 @@ function Proposal() {
 					onClose={() => setIsMilestoneDoneModalOpen(false)}
 				/>
 
-				{/* This is done */}
 				<SendFunds
 					workspace={workspace!}
 					workspaceSafe={workspace?.safe?.address}
@@ -409,10 +409,9 @@ function Proposal() {
 					rewardAssetAddress={proposal?.token?.address ?? ''}
 					grantTitle={proposal?.grant?.title ?? ''} />
 
-				{/* TODO: Set up Network Transaction Modal */}
 				<NetworkTransactionModal
 					isOpen={networkTransactionModalStep !== undefined}
-					subtitle={`${updateApplicationStateData?.state === 2 ? 'Accepting Application' : 'Rejecting Application'}`}
+					subtitle={`${proposal?.state === 'approved' ? 'Marking milestone as done' : updateApplicationStateData?.state === 2 ? 'Accepting Application' : 'Rejecting Application'}`}
 					description={
 						<Flex
 							direction='column'
@@ -440,7 +439,7 @@ function Proposal() {
 							'Signing transaction with in-app wallet',
 							'Waiting for transaction to complete on chain',
 							'Indexing transaction on graph protocol',
-							'Application submitted on-chain',
+							`${proposal?.state === 'approved' ? 'Milestone approved on-chain' : `Application ${updateApplicationStateData?.state === 2 ? 'accepted' : 'rejected'} on-chain`}`,
 						]
 					}
 					viewLink={txnLink}
@@ -513,6 +512,7 @@ function Proposal() {
 		approveMilestoneData.comment,
 		proposal?.id,
 		approveMilestoneData.index,
+		setNetworkTransactionModalStep
 	)
 
 	useEffect(() => {
