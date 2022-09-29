@@ -37,6 +37,7 @@ export type MilestoneItemType = {
 	disbursedMilestones: Exclude<GetApplicationDetailsQuery['grantApplication'], null | undefined>['grant']['fundTransfers']
 	token: ChainInfo['supportedCurrencies'][string]
 	index: number
+    onModalOpen: () => void
 }
 
 export type ActionItemType = {

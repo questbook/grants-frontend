@@ -7,6 +7,8 @@ import { TableFilters } from 'src/components/your_grants/view_applicants/table/T
 import { defaultChainId } from 'src/constants/chains'
 import { GetApplicationDetailsQuery, useGetApplicationDetailsQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
+import useApproveMilestone from 'src/hooks/useApproveMilestone'
+import useBatchUpdateApplicationState from 'src/hooks/useBatchUpdateApplicationState'
 import logger from 'src/libraries/logger'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { ApiClientsContext } from 'src/pages/_app'
@@ -19,6 +21,7 @@ import { IApplicantData } from 'src/types'
 import { formatAmount, getCustomFields, getFieldString, getFieldStrings, getFormattedDateFromUnixTimestampWithYear, getRewardAmountMilestones, truncateStringFromMiddle } from 'src/utils/formattingUtils'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { getChainInfo } from 'src/utils/tokenUtils'
+import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import SendFunds from 'src/v2/payouts/SendFunds'
 
 function Proposal() {
@@ -326,8 +329,18 @@ function Proposal() {
 							}])
 						}
 					}
-					onAcceptClick={() => {}}
-					onRejectClick={() => {}} />
+					onAcceptClick={
+						() => {
+							setUpdateApplicationStateData({
+								state: 2, comment: ''
+							})
+						}
+					}
+					onRejectClick={
+						() => {
+							// TODO: Add the logic for opening the reject modal here
+						}
+					} />
 
 				<Flex
 					mt={4}
@@ -364,15 +377,30 @@ function Proposal() {
 									milestone={milestone}
 									disbursedMilestones={disbursedMilestones}
 									index={index}
-									token={proposal?.token} />
+									token={proposal?.token}
+									onModalOpen={
+										() => {
+											setIsMilestoneDoneModalOpen(true)
+											setApproveMilestoneData({ index, comment: '' })
+										}
+									} />
 							)
 						})
 					}
 				</Flex>
+
+				{/* TODO: Need to pass the function that updates the value of the state variable so that the hook is called */}
 				<MilestoneDoneModal
+					onSubmit={
+						(comment: string) => {
+							setApproveMilestoneData({ index: approveMilestoneData.index, comment })
+						}
+					}
 					isOpen={isMilestoneDoneModalOpen}
 					onClose={() => setIsMilestoneDoneModalOpen(false)}
 				/>
+
+				{/* This is done */}
 				<SendFunds
 					workspace={workspace!}
 					workspaceSafe={workspace?.safe?.address}
@@ -380,6 +408,48 @@ function Proposal() {
 					sendFundsTo={sendFundData}
 					rewardAssetAddress={proposal?.token?.address ?? ''}
 					grantTitle={proposal?.grant?.title ?? ''} />
+
+				{/* TODO: Set up Network Transaction Modal */}
+				<NetworkTransactionModal
+					isOpen={networkTransactionModalStep !== undefined}
+					subtitle={`${updateApplicationStateData?.state === 2 ? 'Accepting Application' : 'Rejecting Application'}`}
+					description={
+						<Flex
+							direction='column'
+							w='100%'
+							align='start'>
+							<Text
+								fontWeight='500'
+								fontSize='17px'
+							>
+								{proposal?.grant?.title}
+							</Text>
+
+							{/* <Button
+							rightIcon={<ExternalLinkIcon />}
+							variant='linkV2'
+							bg='#D5F1EB'>
+							{(grantData?.grants?.length || 0) > 0 && formatAddress(grantData?.grants[0]?.id!)}
+						</Button> */}
+						</Flex>
+					}
+					currentStepIndex={networkTransactionModalStep || 0}
+					steps={
+						[
+							'Uploading data to IPFS',
+							'Signing transaction with in-app wallet',
+							'Waiting for transaction to complete on chain',
+							'Indexing transaction on graph protocol',
+							'Application submitted on-chain',
+						]
+					}
+					viewLink={txnLink}
+					onClose={
+						() => {
+							setNetworkTransactionModalStep(undefined)
+							router.reload()
+						}
+					} />
 			</Flex>
 		</Flex>
 
@@ -390,10 +460,14 @@ function Proposal() {
 
 	const [isMilestoneDoneModalOpen, setIsMilestoneDoneModalOpen] = useState<boolean>(false)
 	const [sendFundData, setSendFundData] = useState<IApplicantData[]>([])
+	const [updateApplicationStateData, setUpdateApplicationStateData] = useState<{state: number, comment: string}>({ state: -1, comment: '' })
+	const [approveMilestoneData, setApproveMilestoneData] = useState<{index: number, comment: string}>({ index: -1, comment: '' })
 
 	const [proposalId, setProposalId] = useState<string>()
 	const [chainId, setChainId] = useState<SupportedChainId>(defaultChainId)
 
+	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
+	const [isConfirmClicked, setIsConfirmClicked] = useState<boolean>(false)
 	const [proposal, setProposal] = useState<ProposalType>()
 
 	useEffect(() => {
@@ -423,6 +497,23 @@ function Proposal() {
 		},
 		chains: [chainId]
 	})
+
+	// Needs to use these values properly
+	const [txnData,, , isBiconomyInitialised, error] = useBatchUpdateApplicationState(
+		updateApplicationStateData.comment,
+		[parseInt(proposal?.id!)],
+		updateApplicationStateData.state,
+		isConfirmClicked,
+		setIsConfirmClicked,
+		setNetworkTransactionModalStep
+	)
+
+	// Need to use the returned values properly
+	const [txn, txnLink, ] = useApproveMilestone(
+		approveMilestoneData.comment,
+		proposal?.id,
+		approveMilestoneData.index,
+	)
 
 	useEffect(() => {
 		fetchMore({ applicationID: proposalId }, true)

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
 	Button,
@@ -11,19 +11,24 @@ import {
 	Text } from '@chakra-ui/react'
 import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
 import { FundsCircle } from 'src/v2/assets/custom chakra icons/Your Grants/FundsCircle'
+import TextField from 'src/v2/components/InputFields/TextField'
 
 
 interface Props {
     isOpen: boolean
     onClose: () => void
+    onSubmit: (comment: string) => void
 }
 
 
 function MilestoneDoneModal({
 	isOpen,
 	onClose,
+	onSubmit,
 }: Props) {
 	const { t } = useTranslation()
+
+	const [comment, setComment] = useState<string>('')
 
 	const buildModalContent = () => (
 		<>
@@ -100,7 +105,7 @@ function MilestoneDoneModal({
 							my={4}
 						/>
 
-						<Flex
+						{/* <Flex
 							direction='column'
 							padding={4}
 							gap={2}
@@ -129,7 +134,18 @@ function MilestoneDoneModal({
 										fontWeight: '500'
 									}
 								} />
-						</Flex>
+						</Flex> */}
+
+						<TextField
+							label='Comments'
+							helperText='Feedback on completion of this milestone.'
+							placeholder='Type your feedback'
+							value={comment}
+							onChange={
+								(e) => {
+									setComment(e.target.value)
+								}
+							} />
 
 						<Flex
 							mt={4}

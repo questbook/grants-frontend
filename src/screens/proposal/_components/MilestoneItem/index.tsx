@@ -4,7 +4,7 @@ import ActionItem from 'src/screens/proposal/_components/MilestoneItem/ActionIte
 import { ActionItemType, MilestoneItemType } from 'src/screens/proposal/_types'
 import { formatAmount } from 'src/utils/formattingUtils'
 
-function MilestoneItem({ milestone, index, token, disbursedMilestones }: MilestoneItemType) {
+function MilestoneItem({ milestone, index, token, disbursedMilestones, onModalOpen }: MilestoneItemType) {
 	const buildComponent = () => {
 		return (
 			<Flex
@@ -48,7 +48,8 @@ function MilestoneItem({ milestone, index, token, disbursedMilestones }: Milesto
 							mt={4}
 							bg='white'
 							borderRadius='2px'
-							border='1px solid #785EF0'>
+							border='1px solid #785EF0'
+							onClick={onModalOpen}>
 							<Text
 								variant='v2_body'
 								fontWeight='500'
