@@ -32,6 +32,16 @@ const ResubmitRow = ({
 				<Flex
 					py={2}
 					px={4}
+					as='button'
+					onClick={
+						() => router.push({
+							pathname: '/your_grants/view_applicants/applicant_form/',
+							query: {
+								commentData: '',
+								applicationId: applicantData?.applicationId,
+							},
+						})
+					}
 					display='flex'
 					alignItems='center'
 				>

@@ -25,7 +25,6 @@ const RejectedRow = ({
 			<GridItem
 				onMouseEnter={() => setIsHovering(true)}
 				onMouseLeave={() => setIsHovering(false)}
-
 				bg={isHovering ? '#FBFBFD' : 'white'}
 				display='flex'
 				alignItems='center'
@@ -33,6 +32,16 @@ const RejectedRow = ({
 				<Flex
 					py={2}
 					px={4}
+					as='button'
+					onClick={
+						() => router.push({
+							pathname: '/your_grants/view_applicants/applicant_form/',
+							query: {
+								commentData: '',
+								applicationId: applicantData?.applicationId,
+							},
+						})
+					}
 					display='flex'
 					alignItems='center'
 				>

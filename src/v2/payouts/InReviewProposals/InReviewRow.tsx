@@ -505,6 +505,7 @@ const InReviewRow = ({
 								borderRadius='2px'
 								mr={4}
 								ml='auto'
+								variant='ghost'
 								onClick={onAcceptClicked}
 							>
 								<AcceptApplication />
@@ -520,6 +521,7 @@ const InReviewRow = ({
 								h='auto'
 								borderRadius='2px'
 								mr={4}
+								variant='ghost'
 								onClick={onResubmitClicked}
 							>
 								<ResubmitApplication />
@@ -535,6 +537,7 @@ const InReviewRow = ({
 								h='auto'
 								borderRadius='2px'
 								mr='auto'
+								variant='ghost'
 								onClick={onRejectClicked}
 							>
 								<RejectApplication />
