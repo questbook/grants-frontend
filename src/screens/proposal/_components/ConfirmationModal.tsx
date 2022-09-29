@@ -1,4 +1,5 @@
 import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalOverlay, Text } from "@chakra-ui/react";
+import { UpdateApplicationStateData } from "../_types";
 
 interface Props {
     isOpen: boolean;
@@ -10,6 +11,7 @@ interface Props {
     setIsConfirmationModalOpen: (isOpen: boolean) => void;
     setIsRejectProposalClicked: (value: boolean) => void;
     setIsConfirmClicked: (isConfirmClicked: boolean) => void;
+	setUpdateApplicationStateData: (updateApplicationStateData: UpdateApplicationStateData) => void;
 }
 
 function ConfirmationModal({
@@ -21,7 +23,8 @@ function ConfirmationModal({
     setIsConfirmationModalOpen,
     setIsRejectProposalClicked,
     setIsConfirmClicked,
-    isResubmitClicked=false
+    isResubmitClicked=false,
+	setUpdateApplicationStateData 
 }: Props) {
   return (
     <Modal
@@ -92,7 +95,11 @@ function ConfirmationModal({
 							onClick={
 								() => {
 									setIsConfirmClicked(true)
+									setUpdateApplicationStateData({
+										state: 2, comment: ''
+									})
                                     setIsConfirmationModalOpen(false)
+									
 								}
 							}>
 							Confirm

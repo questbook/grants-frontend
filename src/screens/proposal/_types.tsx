@@ -46,3 +46,5 @@ export type ActionItemType = {
     feedback?: string
 	time: number
 }
+
+export type UpdateApplicationStateData = { state: number, comment: string }

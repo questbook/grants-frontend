@@ -356,9 +356,9 @@ function Proposal() {
                             // setIsConfirmClicked(true)
                             setIsAcceptProposalClicked(true)
                             setIsConfirmationModalOpen(true)
-                            setUpdateApplicationStateData({
-                                state: 2, comment: ''
-                            })
+                            // setUpdateApplicationStateData({
+                            //     state: 2, comment: ''
+                            // })
                         }
                     }
                     onRejectClick={
@@ -378,7 +378,8 @@ function Proposal() {
                     setIsConfirmationModalOpen={setIsConfirmationModalOpen}
                     setIsRejectProposalClicked={setIsRejectProposalClicked}
                     setIsConfirmClicked={setIsConfirmClicked}
-                    networkTransactionModalStep={networkTransactionModalStep!} />
+                    networkTransactionModalStep={networkTransactionModalStep!}
+                    setUpdateApplicationStateData={setUpdateApplicationStateData} />
                 <RejectProposalModal
                     isOpen={isRejectProposalModalOpen}
                     isRejectProposalClicked={isRejectProposalClicked}
