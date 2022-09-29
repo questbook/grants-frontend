@@ -425,6 +425,7 @@ function Proposal() {
                                     disbursedMilestones={disbursedMilestones}
                                     index={index}
                                     token={proposal?.token}
+                                    proposalStatus={proposal?.state!}
                                     onModalOpen={
                                         () => {
                                             setIsMilestoneDoneModalOpen(true)

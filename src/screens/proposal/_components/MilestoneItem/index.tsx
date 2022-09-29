@@ -4,7 +4,7 @@ import ActionItem from 'src/screens/proposal/_components/MilestoneItem/ActionIte
 import { ActionItemType, MilestoneItemType } from 'src/screens/proposal/_types'
 import { formatAmount } from 'src/utils/formattingUtils'
 
-function MilestoneItem({ milestone, index, token, disbursedMilestones, onModalOpen }: MilestoneItemType) {
+function MilestoneItem({ milestone, index, token, disbursedMilestones, onModalOpen, proposalStatus }: MilestoneItemType) {
 	const buildComponent = () => {
 		return (
 			<Flex
@@ -49,7 +49,8 @@ function MilestoneItem({ milestone, index, token, disbursedMilestones, onModalOp
 							bg='white'
 							borderRadius='2px'
 							border='1px solid #785EF0'
-							onClick={onModalOpen}>
+							onClick={onModalOpen}
+							disabled={proposalStatus != 'approved'}>
 							<Text
 								variant='v2_body'
 								fontWeight='500'
