@@ -319,12 +319,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		}
 
 		getNonce(webwallet.address)
-		 .then((_nonce) => {
-				setNonce(_nonce)
-			})
-		 .catch((err) => {
-				logger.error({ err }, 'Error adding authorized user')
-			})
+		 .then(_nonce => setNonce(_nonce))
+		 .catch(err => logger.error({ err }, 'Error adding authorized user'))
 
 	}, [webwallet, nonce])
 
