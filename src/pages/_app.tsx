@@ -7,7 +7,7 @@ import {
 	Configuration,
 	ValidationApi,
 } from '@questbook/service-validator-client'
-import { Wallet } from 'ethers'
+import { ethers, Wallet } from 'ethers'
 import { NextPage } from 'next'
 import type { AppContext, AppProps } from 'next/app'
 import App from 'next/app'
@@ -130,6 +130,8 @@ export const WebwalletContext = createContext<{
 	setNonce: (nonce?: string) => void
 	loadingNonce: boolean
 	setLoadingNonce: (loadingNonce: boolean) => void
+	importWebwallet: (privateKey: string) => void
+	exportWebwallet: () => string
 		} | null>(null)
 
 export const BiconomyContext = createContext<{
@@ -166,31 +168,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		const _nonce = await getNonce(webwallet)
 		return _nonce
 	}, [webwallet])
-
-	useEffect(() => {
-		if(!webwallet) {
-			return
-		}
-
-		if(nonce && nonce !== 'Token expired') {
-			return
-		}
-
-		addAuthorizedUser(webwallet?.address)
-		 .then(() => {
-				getUseNonce()
-			 .then(_nonce => {
-						setNonce(_nonce)
-			 })
-			 .catch((err) => {
-						logger.info({ err }, 'Error getting nonce')
-					})
-		 })
-		 .catch((err) => {
-				logger.info({ err }, 'Error adding authorized user')
-			})
-	}, [webwallet, nonce])
-
 
 	const initiateBiconomyUnsafe = useCallback(async(chainId: string) => {
 		if(!webwallet) {
@@ -297,6 +274,56 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			return task
 		}, [setBiconomyLoading, biconomyInitPromisesRef, initiateBiconomyUnsafe]
 	)
+
+	const importWebwallet = useCallback((privateKey: string) => {
+		const newWebwallet = new ethers.Wallet(privateKey)
+
+		// set the webwallet
+		localStorage.setItem('webwalletPrivateKey', privateKey)
+		setWebwallet(newWebwallet)
+
+		// reset everything else
+		setLoadingNonce(false)
+		setNonce(undefined)
+		setScwAddress(undefined)
+		setBiconomyWalletClients({})
+		setBiconomyDaoObjs({})
+		setBiconomyLoading({})
+
+		biconomyInitPromisesRef.current = {}
+
+	}, [setWebwallet])
+
+	const exportWebwallet = useCallback(() => {
+
+		if(!webwallet) {
+			throw new Error('No webwallet to export')
+		}
+
+		return webwallet.privateKey
+
+	}, [webwallet])
+
+	useEffect(() => {
+		if(!webwallet) {
+			return
+		}
+
+		if(nonce && nonce !== 'Token expired') {
+			return
+		}
+
+		(async() => {
+		  try {
+				await addAuthorizedUser(webwallet?.address!)
+				const newNonce = await getUseNonce()
+				setNonce(newNonce)
+		  } catch(err) {
+				logger.error({ err }, 'error in adding authorized user')
+		  }
+		})()
+
+	  }, [webwallet, nonce])
 
 	useEffect(() => {
 		setWebwallet(createWebWallet())
@@ -416,7 +443,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				setNonce(newNonce)
 			},
 			loadingNonce,
-			setLoadingNonce
+			setLoadingNonce,
+			importWebwallet,
+			exportWebwallet
 		}),
 		[webwallet, setWebwallet, network, switchNetwork, scwAddress, setScwAddress, nonce, setNonce, loadingNonce, setLoadingNonce]
 	)
