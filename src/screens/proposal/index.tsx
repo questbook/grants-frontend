@@ -41,9 +41,28 @@ function Proposal() {
                 flexDirection='column'
                 gap={4}
             >
+                <Flex>
                 <Text variant='proposalHeading'>
                     {proposal?.name}
                 </Text>
+                <Spacer />
+                <Flex
+                 display={proposal?.state === 'submitted' ? 'none' : ''} 
+                 justifyContent='center'
+                 bg={proposal?.state === 'rejected' ? '#FFDCC0' : proposal?.state === 'approved' ? '#E3F6C1' : ''} 
+                 borderRadius='3px' 
+                 padding='8px'>
+                    <Text
+                    textTransform='capitalize'
+                    color={proposal?.state === 'rejected' ? '#FF7545' : proposal?.state === 'approved' ? '#0DC98B' : ''}
+                    fontWeight='600'
+                    fontSize='14px'
+                    lineHeight='20px'
+                    
+                    >{proposal?.state}</Text>
+                </Flex>
+                </Flex>
+                
                 {/* Proposal info start */}
                 <Flex
                     bg='white'
