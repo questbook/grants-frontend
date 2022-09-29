@@ -17,6 +17,13 @@ query getApplicationDetails($applicationID: ID!) {
       id
       title
       amount
+      amountPaid
+      updatedAtS
+      feedbackDao
+      feedbackDaoUpdatedAtS
+      feedbackDev
+      feedbackDevUpdatedAtS
+      state
     }
     grant {
       id
@@ -58,11 +65,37 @@ query getApplicationDetails($applicationID: ID!) {
           maximumPoints,
         },
       },
+      fundTransfers {
+        milestone {
+          id
+          title
+          amount
+          amountPaid
+          updatedAtS
+          feedbackDao
+          feedbackDaoUpdatedAtS
+          feedbackDev
+          feedbackDevUpdatedAtS
+          state
+        }
+        amount
+        type
+        asset
+        nonEvmAsset
+        transactionHash
+        application{
+          applicantId
+          id
+          state
+        }
+        createdAtS
+      },
     }
     pendingReviewerAddresses
     doneReviewerAddresses
     reviews {
       reviewer {
+        actorId
         id
         email
         fullName
@@ -79,6 +112,7 @@ query getApplicationDetails($applicationID: ID!) {
       createdAtS
     }
     reviewers {
+      actorId
       email
       id
       fullName

@@ -32,6 +32,16 @@ const ResubmitRow = ({
 				<Flex
 					py={2}
 					px={4}
+					as='button'
+					onClick={
+						() => router.push({
+							pathname: '/your_grants/view_proposals/proposal',
+							query: {
+								id: applicantData?.applicationId,
+								chain: chainId,
+							},
+						})
+					}
 					display='flex'
 					alignItems='center'
 				>
@@ -61,10 +71,10 @@ const ResubmitRow = ({
 							cursor='pointer'
 							onClick={
 								() => router.push({
-									pathname: '/your_grants/view_applicants/applicant_form/',
+									pathname: '/your_grants/view_proposals/proposal',
 									query: {
-										commentData: '',
-										applicationId: applicantData?.applicationId,
+										id: applicantData?.applicationId,
+										chain: chainId,
 									},
 								})
 							}
@@ -157,7 +167,7 @@ const ResubmitRow = ({
 								>
 									{
 										applicantData?.reviewers?.length > 0 ?
-					 						`${applicantData?.reviews?.length} / ${applicantData?.reviewers?.length}`
+											`${applicantData?.reviews?.length} / ${applicantData?.reviewers?.length}`
 											: '-'
 									}
 								</Text>

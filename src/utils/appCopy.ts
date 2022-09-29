@@ -224,6 +224,10 @@ i18next.use(initReactI18next).init({
 					},
 					'auxillary': 'To continue using Questbook without losing any data, migrate to the in-app wallet.',
 					'button': 'Migrate to In-App Wallet'
+				},
+				'view_proposal/proposal': {
+					'mark_milestone_as_done_modal_heading': 'Mark Milestone as Done',
+					'mark_milestone_as_done_modal_subheading': 'Milestone once verified as completed can be marked as done.',
 				}
 			},
 

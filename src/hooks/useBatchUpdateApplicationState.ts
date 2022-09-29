@@ -77,6 +77,7 @@ export default function useBatchUpdateApplicationState(
 			return
 		}
 
+
 		if(error) {
 			return
 		}
@@ -90,6 +91,7 @@ export default function useBatchUpdateApplicationState(
 			return
 		}
 
+
 		// if(submitClicked) {
 		// 	setIncorrectNetwork(false)
 		// 	setSubmitClicked(false)
@@ -99,7 +101,7 @@ export default function useBatchUpdateApplicationState(
 			setNetworkTransactionModalStep(1)
 			setLoading(true)
 			// // console.log('calling validate');
-			// // console.log('DATA: ', data)
+			console.log('DATA: ', data)
 			try {
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
 					throw new Error('Zero wallet is not ready')
@@ -146,20 +148,22 @@ export default function useBatchUpdateApplicationState(
 				}
 
 				setNetworkTransactionModalStep(2)
+				if(response){
+					const { txFee, receipt } = await getTransactionDetails(response, currentChainId.toString())
+					await subgraphClients[currentChainId].waitForBlock(receipt?.blockNumber)
+					setNetworkTransactionModalStep(3)
 
-				const { txFee, receipt } = await getTransactionDetails(response, currentChainId.toString())
-				await subgraphClients[currentChainId].waitForBlock(receipt?.blockNumber)
-				await chargeGas(Number(workspace?.id), Number(txFee))
-
-				setNetworkTransactionModalStep(3)
-
-				setTransactionData(receipt)
+					setTransactionData(receipt)
+					await chargeGas(Number(workspace?.id), Number(txFee))
+					setNetworkTransactionModalStep(4)
+				}
 				setLoading(false)
 				setSubmitClicked(false)
+				setNetworkTransactionModalStep(5)
 
-				setTimeout(() => {
-					setNetworkTransactionModalStep(undefined)
-				}, 2000)
+				// setTimeout(() => {
+				// 	setNetworkTransactionModalStep(undefined)
+				// }, 2000)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
 				const message = getErrorMessage(e)
@@ -183,12 +187,6 @@ export default function useBatchUpdateApplicationState(
 			if(!state) {
 				return
 			}
-
-			// if(state !== 2) {
-			// 	if(!data) {
-			// 		return
-			// 	}
-			// }
 
 			if(!applicationIds) {
 				return

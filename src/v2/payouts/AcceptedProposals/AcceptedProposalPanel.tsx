@@ -7,7 +7,6 @@ import AcceptedRow from 'src/v2/payouts/AcceptedProposals/AcceptedRow'
 import ZeroState from 'src/v2/payouts/AcceptedProposals/ZeroState'
 
 const AcceptedProposalsPanel = ({
-	isEvmChain,
 	rewardAssetDecimals,
 	applicationStatuses,
 	applicantsData,
@@ -16,7 +15,6 @@ const AcceptedProposalsPanel = ({
 	onSetupApplicantEvaluationClicked,
 	grantData,
 }: {
-	isEvmChain: boolean
 	rewardAssetDecimals: any
 	applicationStatuses: any
   applicantsData: IApplicantData[]
@@ -195,7 +193,6 @@ const AcceptedProposalsPanel = ({
 					applicantsData?.filter((item) => (2 === item.status)).map((applicantData, i) => (
 						<AcceptedRow
 							key={`accepted-${i}`}
-							isEvmChain={isEvmChain}
 							applicationStatus={applicationStatuses[applicantData.applicationId]?.reduce((partialStatus: any, a: any) => partialStatus && a.status, 1)}
 							applicationAmount={applicationStatuses[applicantData.applicationId]?.reduce((partialSum: any, a: any) => partialSum + a.amount, 0)}
 							applicantData={applicantData}

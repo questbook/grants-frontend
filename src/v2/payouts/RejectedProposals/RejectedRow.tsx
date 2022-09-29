@@ -25,7 +25,6 @@ const RejectedRow = ({
 			<GridItem
 				onMouseEnter={() => setIsHovering(true)}
 				onMouseLeave={() => setIsHovering(false)}
-
 				bg={isHovering ? '#FBFBFD' : 'white'}
 				display='flex'
 				alignItems='center'
@@ -33,6 +32,16 @@ const RejectedRow = ({
 				<Flex
 					py={2}
 					px={4}
+					as='button'
+					onClick={
+						() => router.push({
+							pathname: '/your_grants/view_proposals/proposal',
+							query: {
+								id: applicantData?.applicationId,
+								chain: chainId,
+							},
+						})
+					}
 					display='flex'
 					alignItems='center'
 				>
@@ -62,10 +71,10 @@ const RejectedRow = ({
 							cursor='pointer'
 							onClick={
 								() => router.push({
-									pathname: '/your_grants/view_applicants/applicant_form/',
+									pathname: '/your_grants/view_proposals/proposal',
 									query: {
-										commentData: '',
-										applicationId: applicantData?.applicationId,
+										id: applicantData?.applicationId,
+										chain: chainId,
 									},
 								})
 							}
@@ -158,7 +167,7 @@ const RejectedRow = ({
 								>
 									{
 										applicantData?.reviewers?.length > 0 ?
-					 						`${applicantData?.reviews?.length} / ${applicantData?.reviewers?.length}`
+											`${applicantData?.reviews?.length} / ${applicantData?.reviewers?.length}`
 											: '-'
 									}
 								</Text>

@@ -36,7 +36,8 @@ function NavbarLayout({ children, renderNavbar, renderSidebar }: Props) {
 			}
 			<Flex
 				direction='row'
-				maxH='calc(100vh - 64px)'>
+				maxH='calc(100vh - 64px)'
+				bg='#F5F5F5'>
 				{
 					renderSidebar && connected && (
 						<Flex

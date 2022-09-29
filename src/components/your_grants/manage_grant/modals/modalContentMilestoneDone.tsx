@@ -25,6 +25,7 @@ interface Props {
 function ModalContent({ milestone, done }: Props) {
 	const [details, setDetails] = useState('')
 	const [detailsError, setDetailsError] = useState(false)
+	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
 
 	const { milestoneIndex, applicationId } = getMilestoneMetadata(milestone)!
 	const [milestoneUpdate, setMilestoneUpdate] = useState<{text: string}>()
@@ -32,6 +33,7 @@ function ModalContent({ milestone, done }: Props) {
 		milestoneUpdate,
 		applicationId,
 		milestoneIndex,
+		setNetworkTransactionModalStep
 	)
 
 	const { setRefresh } = useCustomToast(txnLink)
