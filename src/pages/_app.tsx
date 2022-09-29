@@ -164,7 +164,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	// used to poll for scwAddress in "waitForScwAddress"
 	const scwAddressRef = useRef(scwAddress)
 
-	const getUseNonce = useCallback(async(): Promise<string> => {
+	const getUseNonce = useCallback(async() => {
 		const _nonce = await getNonce(webwallet)
 		return _nonce
 	}, [webwallet])
