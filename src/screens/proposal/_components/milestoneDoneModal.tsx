@@ -112,7 +112,8 @@ function SendFundsModal({
                                 fontWeight='500'>Comments</Text>
                             <Text fontSize='12px'
                                 lineHeight='16px'
-                                fontWeight='500'>Feedback on completion of this milestone.</Text>
+                                fontWeight='500'
+                                color='#7D7DA0'>Feedback on completion of this milestone.</Text>
                             <Input
                                 variant='brandFlushed'
                                 placeholder='Type your feedback'
@@ -121,7 +122,8 @@ function SendFundsModal({
                                         color: 'blue.100',
                                         fontWeight: '500'
                                     }
-                                }></Input>
+                                }
+                                mt={2}></Input>
                         </Flex>
 
                         <Flex
