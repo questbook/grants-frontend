@@ -313,16 +313,17 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			return
 		}
 
-		async function getNonce(address: string): Promise<string> {
-			await addAuthorizedUser(address)
-			return await getUseNonce()
-		}
+		(async() => {
+		  try {
+				await addAuthorizedUser(webwallet?.address!)
+				const newNonce = await getUseNonce()
+				setNonce(newNonce)
+		  } catch(err) {
+				logger.error({ err }, 'error in adding authorized user')
+		  }
+		})()
 
-		getNonce(webwallet.address)
-		 .then(_nonce => setNonce(_nonce))
-		 .catch(err => logger.error({ err }, 'Error adding authorized user'))
-
-	}, [webwallet, nonce])
+	  }, [webwallet, nonce])
 
 	useEffect(() => {
 		setWebwallet(createWebWallet())
