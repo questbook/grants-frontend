@@ -22,6 +22,7 @@ export default function useUpdateApplicationState(
 	state: number | undefined,
 	submitClicked: boolean,
 	setSubmitClicked: React.Dispatch<React.SetStateAction<boolean>>,
+	setNetworkTransactionModalStep: (step: number | undefined) => void
 ) {
 	const [error, setError] = React.useState<string>()
 	const [loading, setLoading] = React.useState(false)
@@ -31,7 +32,7 @@ export default function useUpdateApplicationState(
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
-	const { validatorApi, workspace } = apiClients
+	const { validatorApi, workspace, subgraphClients } = apiClients
 	const currentChainId = useChainId()
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
 	const applicationContract = useQBContract('applications', chainId)
@@ -90,6 +91,7 @@ export default function useUpdateApplicationState(
 		}
 
 		async function validate() {
+			setNetworkTransactionModalStep(1)
 			setLoading(true)
 			// // console.log('calling validate');
 			// console.log('DATA: ', data)
@@ -133,13 +135,25 @@ export default function useUpdateApplicationState(
 					nonce
 				)
 
+				if(!response) {
+					return
+				}
+
+				setNetworkTransactionModalStep(2)
+
 				if(response) {
 					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+					await subgraphClients[currentChainId].waitForBlock(receipt?.blockNumber)
+					setNetworkTransactionModalStep(3)
+
 					setTransactionData(receipt)
 					await chargeGas(Number(workspace?.id), Number(txFee))
+					setNetworkTransactionModalStep(4)
 				}
 
 				setLoading(false)
+				setSubmitClicked(false)
+				setNetworkTransactionModalStep(5)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
 				const message = getErrorMessage(e)

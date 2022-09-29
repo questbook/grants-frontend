@@ -180,14 +180,15 @@ function BrowseGrantCard({
 							{t('/profile.cards.accepting_proposals_until')}
 							{' '}
 							<b>
-								{moment(endTimestamp).format('MMM D')}
+								{moment(endTimestamp).format('MMM D, YY')}
 							</b>
 						</Text>
 						<Spacer />
 						<Button
 							onClick={onClick}
 							variant='primaryCta'
-							h='105px'>
+							h='105px'
+							disabled={endTimestamp < Date.now()}>
 							{t('/profile.cards.submit_proposal')}
 						</Button>
 					</Flex>

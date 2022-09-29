@@ -35,10 +35,10 @@ const ResubmitRow = ({
 					as='button'
 					onClick={
 						() => router.push({
-							pathname: '/your_grants/view_applicants/applicant_form/',
+							pathname: '/your_grants/view_proposals/proposal',
 							query: {
-								commentData: '',
-								applicationId: applicantData?.applicationId,
+								id: applicantData?.applicationId,
+								chain: chainId,
 							},
 						})
 					}
@@ -69,6 +69,15 @@ const ResubmitRow = ({
 							noOfLines={1}
 							textOverflow='ellipsis'
 							cursor='pointer'
+							onClick={
+								() => router.push({
+									pathname: '/your_grants/view_proposals/proposal',
+									query: {
+										id: applicantData?.applicationId,
+										chain: chainId,
+									},
+								})
+							}
 						>
 							{applicantData?.projectName}
 						</Text>
@@ -158,7 +167,7 @@ const ResubmitRow = ({
 								>
 									{
 										applicantData?.reviewers?.length > 0 ?
-					 						`${applicantData?.reviews?.length} / ${applicantData?.reviewers?.length}`
+											`${applicantData?.reviews?.length} / ${applicantData?.reviewers?.length}`
 											: '-'
 									}
 								</Text>

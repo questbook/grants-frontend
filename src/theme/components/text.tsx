@@ -81,6 +81,11 @@ export default {
 				fontSize: '40px',
 				lineHeight: '48px',
 				color: 'black.1'
+			},
+			proposalHeading: {
+				fontSize: '24px',
+				lineHeight: '32px',
+				fontWeight: '500',
 			}
 		},
 	},

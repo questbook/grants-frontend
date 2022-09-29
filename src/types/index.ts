@@ -156,3 +156,9 @@ export type SafeToken = {
     symbol: string
   }
 }
+
+export type CustomField = {
+	title: string
+	value: string
+	isError: boolean
+}

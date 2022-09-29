@@ -6,6 +6,8 @@ import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { WebwalletContext } from 'src/pages/_app'
+import { Proposal } from 'src/screens/proposal/_types'
+import { IApplicantData, MinimalWorkspace } from 'src/types'
 import { getFieldString } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { isPlausibleSolanaAddress } from 'src/utils/generics'
@@ -31,8 +33,7 @@ export default function SendFunds({
 	workspaceSafeChainId,
 	sendFundsTo,
 	rewardAssetAddress,
-	rewardAssetDecimals,
-	grantData, }: any) {
+	grantTitle, }: {workspace: MinimalWorkspace, workspaceSafe: string | undefined, workspaceSafeChainId: string, sendFundsTo: IApplicantData[], rewardAssetAddress: string, grantTitle: string}) {
 
 	const router = useRouter()
 
@@ -90,7 +91,7 @@ export default function SendFunds({
 	const [assetId, setAssetId] = useState<string>('')
 	const [celoTokensUSDRateMapping, setCeloTokensUSDRateMappings] = useState<any>({})
 
-	const isEvmChain = workspaceSafeChainId !== 900001
+	const isEvmChain = workspaceSafeChainId !== '900001'
 
 	const workspaceRegistryContract = useQBContract('workspace', workspacechainId)
 	const { webwallet } = useContext(WebwalletContext)!
@@ -109,25 +110,25 @@ export default function SendFunds({
 	}
 
 	useEffect(() => {
-		if(workspaceSafeChainId === 42220) {
+		if(workspaceSafeChainId === '42220') {
 			loadAssetIdFromCoinGecko()
 		}
 
 	}, [workspaceSafe])
 
 	useEffect(() => {
-		if(workspaceSafeChainId === 42220) {
+		if(workspaceSafeChainId === '42220') {
 			getCeloUSDRate()
 		}
 	}, [safeTokenList])
 
 	const currentSafe = useMemo(() => {
 		if(isEvmChain && workspaceSafe) {
-			const txnServiceURL = safeServicesInfo[workspaceSafeChainId]
+			const txnServiceURL = safeServicesInfo[parseInt(workspaceSafeChainId)]
 			// loadAssetIdFromCoinGecko()
-			return new GnosisSafe(workspaceSafeChainId, txnServiceURL, workspaceSafe)
+			return new GnosisSafe(parseInt(workspaceSafeChainId), txnServiceURL, workspaceSafe)
 		} else {
-			if(isPlausibleSolanaAddress(workspaceSafe)) {
+			if(workspaceSafe && isPlausibleSolanaAddress(workspaceSafe)) {
 
 				return new RealmsSolana(workspaceSafe)
 			}
@@ -136,7 +137,7 @@ export default function SendFunds({
 
 	const getTokensFromSafe = () => {
 		const tokenList: any[] = []
-		getTokenBalance(workspaceSafeChainId, workspaceSafe).then((res) => {
+		getTokenBalance(workspaceSafeChainId, workspaceSafe!).then((res) => {
 			const tokensFetched = res.data
 			tokensFetched.filter((token: any) => token.token).map((token: any) => {
 				const am = (ethers.utils.formatUnits(token.balance, token.token.decimals)).toString()
@@ -159,7 +160,7 @@ export default function SendFunds({
 
 	useEffect(() => {
 		const getToken = async() => {
-			setSafeTokenList(await getTokenAndbalance(workspaceSafe))
+			setSafeTokenList(await getTokenAndbalance(workspaceSafe!))
 		}
 
 		if(isPlausibleSolanaAddress(workspaceSafe) && currentSafe) {
@@ -187,7 +188,7 @@ export default function SendFunds({
 				from: currentSafe?.id?.toString(),
 				to: recepient?.applicantAddress || getFieldString(recepient, 'applicantAddress') || recepient?.applicantId,
 				applicationId: recepient?.applicationId || applicationID,
-				selectedMilestone: recepient?.milestones[0]?.id,
+				selectedMilestone: recepient?.milestones?.[0]?.id,
 				selectedToken: { name: safeTokenList[0]?.tokenName, info: safeTokenList[0]?.info },
 				amount: 0
 			})
@@ -232,7 +233,7 @@ export default function SendFunds({
 
 	const verifyGnosisOwner = async() => {
 		if(isConnected) {
-			const isVerified = await currentSafe?.isOwner(workspaceSafe)
+			const isVerified = await currentSafe?.isOwner(workspaceSafe!)
 			if(isVerified) {
 				setSignerVerififed(true)
 			} else {
@@ -246,7 +247,7 @@ export default function SendFunds({
 
 		const readyTxs = gnosisBatchData.map((data: any) => {
 			let tokenUSDRate: number
-			if(workspaceSafeChainId === 42220) {
+			if(workspaceSafeChainId === '42220') {
 				const tokenSelected = data.selectedToken.name.toLowerCase()
 				if(tokenSelected === 'cusd') {
 					tokenUSDRate = celoTokensUSDRateMapping['celo-dollar'].usd
@@ -283,7 +284,7 @@ export default function SendFunds({
 		let proposaladdress: string | undefined
 		if(isEvmChain) {
 			const readyToExecuteTxs = createEVMMetaTransactions()
-			const safeTxHash = await currentSafe?.createMultiTransaction(readyToExecuteTxs, workspaceSafe)
+			const safeTxHash = await currentSafe?.createMultiTransaction(readyToExecuteTxs, workspaceSafe!)
 			// console.log('safe tx hash', safeTxHash)
 			if(safeTxHash) {
 				proposaladdress = safeTxHash
@@ -292,7 +293,7 @@ export default function SendFunds({
 				throw new Error('Proposal address not found')
 			}
 		} else {
-			proposaladdress = await currentSafe?.proposeTransactions(grantData?.grants ? grantData?.grants[0].title! : grantData.title, initiateTransactionData, phantomWallet)
+			proposaladdress = await currentSafe?.proposeTransactions(grantTitle, initiateTransactionData, phantomWallet)
 			if(!proposaladdress) {
 				throw new Error('No proposal address found!')
 			}
@@ -451,7 +452,7 @@ export default function SendFunds({
 			<SendFundsModal
 				isOpen={sendFundsModalIsOpen}
 				onClose={onModalClose}
-				safeAddress={workspaceSafe}
+				safeAddress={workspaceSafe!}
 				safeNetwork={currentSafe?.chainId.toString()!}
 				proposals={sendFundsTo ?? []}
 
@@ -476,7 +477,7 @@ export default function SendFunds({
 			<SendFundsDrawer
 				isOpen={sendFundsDrawerIsOpen}
 				onClose={onModalClose}
-				safeAddress={workspaceSafe}
+				safeAddress={workspaceSafe!}
 				proposals={sendFundsTo ?? []}
 
 				safeTokenList={safeTokenList}

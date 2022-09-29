@@ -62,12 +62,16 @@ function ApplicantForm() {
 	const { data, } = useGetApplicationDetailsQuery(queryParams)
 
 	const [state, setState] = useState<number>()
+	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
+
+
 	const [txn, txnLink, loading, isBiconomyInitialised, error] = useUpdateApplicationState(
 		state === 1 ? resubmitComment : rejectionComment,
 		applicationData?.id,
 		state,
 		submitClicked,
 		setSubmitClicked,
+		setNetworkTransactionModalStep,
 	)
 
 	const { setRefresh } = useCustomToast(txnLink)
@@ -131,7 +135,7 @@ function ApplicantForm() {
 		if(txn) {
 			setState(undefined)
 			router.replace({
-				pathname: '/v2/your_grants/view_applicants',
+				pathname: '/your_grants/view_proposals',
 				query: {
 					grantId: applicationData?.grant?.id,
 				},

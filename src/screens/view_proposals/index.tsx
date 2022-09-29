@@ -64,7 +64,7 @@ function getTotalFundingRecv(milestones: ApplicationMilestone[]) {
 	return val
 }
 
-function ViewApplicants() {
+function ViewProposals() {
 	const [tabIndex, setTabIndex] = useState(0)
 	const [applicantsData, setApplicantsData] = useState<any>([])
 	// const [reviewerData, setReviewerData] = useState<any>([])
@@ -786,7 +786,6 @@ function ViewApplicants() {
 							bg='white'
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7' >
 							<AcceptedProposalsPanel
-								isEvmChain={isEvmChain}
 								// totalMilestonesAmount={totalMilestonesAmt}
 								applicationStatuses={applicationStatuses}
 								applicantsData={applicantsData}
@@ -845,13 +844,12 @@ function ViewApplicants() {
 				/>
 
 				<SendFunds
-					workspace={workspace}
+					workspace={workspace!}
 					workspaceSafe={workspaceSafe}
-					workspaceSafeChainId={workspaceSafeChainId}
-					sendFundsTo={sendFundsTo}
+					workspaceSafeChainId={workspaceSafeChainId.toString()}
+					sendFundsTo={sendFundsTo!}
 					rewardAssetAddress={rewardAssetAddress}
-					rewardAssetDecimals={rewardAssetDecimals}
-					grantData={grantData} />
+					grantTitle={grantData?.grants?.[0]?.title ?? ''} />
 
 				<NetworkTransactionModal
 					isOpen={networkTransactionModalStep !== undefined}
@@ -911,7 +909,7 @@ function ViewApplicants() {
 	)
 }
 
-ViewApplicants.getLayout = function(page: ReactElement) {
+ViewProposals.getLayout = function(page: ReactElement) {
 	return (
 		<NavbarLayout>
 			{page}
@@ -919,4 +917,4 @@ ViewApplicants.getLayout = function(page: ReactElement) {
 	)
 }
 
-export default ViewApplicants
+export default ViewProposals

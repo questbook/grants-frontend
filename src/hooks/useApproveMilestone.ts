@@ -24,6 +24,7 @@ export default function useApproveMilestone(
 	data: any,
 	applicationId: string | undefined,
 	milestoneIndex: number | undefined,
+	setNetworkTransactionModalStep: (step: number | undefined) => void,
 ) {
 	const [error, setError] = React.useState<string>()
 	const [loading, setLoading] = React.useState(false)
@@ -33,7 +34,7 @@ export default function useApproveMilestone(
 	const { data: networkData, switchNetwork } = useNetwork()
 
 	const apiClients = useContext(ApiClientsContext)!
-	const { validatorApi, workspace } = apiClients
+	const { validatorApi, workspace, subgraphClients } = apiClients
 	const currentChainId = useMemo(() => networkData.id, [networkData])
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
 	const applicationContract = useQBContract('applications', chainId)
@@ -86,11 +87,12 @@ export default function useApproveMilestone(
 
 		async function validate() {
 			setLoading(true)
-			// // console.log('calling validate');
+			// console.log('calling validate');
 			try {
+				setNetworkTransactionModalStep(0)
 				const {
 					data: { ipfsHash },
-				} = await validatorApi.validateApplicationMilestoneUpdate(data)
+				} = await validatorApi.validateApplicationMilestoneUpdate({text: data})
 				if(!ipfsHash) {
 					throw new Error('Error validating grant data')
 				}
@@ -99,6 +101,7 @@ export default function useApproveMilestone(
 					throw new Error('Zero wallet is not ready')
 				}
 
+				setNetworkTransactionModalStep(1)
 				const txHash = await sendGaslessTransaction(
 					biconomy,
 					applicationContract,
@@ -120,14 +123,21 @@ export default function useApproveMilestone(
 					return
 				}
 
+				setNetworkTransactionModalStep(2)
 				const { receipt, txFee } = await getTransactionDetails(txHash, currentChainId.toString())
 
+				setNetworkTransactionModalStep(3)
+				await subgraphClients[currentChainId].waitForBlock(receipt?.blockNumber)
+
+				setNetworkTransactionModalStep(4)
 				await chargeGas(Number(workspace?.id), Number(txFee))
 
+				setNetworkTransactionModalStep(5)
 				setTransactionData(receipt)
 				setLoading(false)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
+				setNetworkTransactionModalStep(undefined)
 				const message = getErrorMessage(e)
 				setError(message)
 				setLoading(false)
@@ -146,10 +156,10 @@ export default function useApproveMilestone(
 		}
 
 		try {
-			// // console.log(data);
-			// // console.log(milestoneIndex);
-			// // console.log(applicationId);
-			// // console.log(Number.isNaN(milestoneIndex));
+			// console.log(data);
+			// console.log(milestoneIndex);
+			// console.log(applicationId);
+			// console.log(Number.isNaN(milestoneIndex));
 			if(Number.isNaN(milestoneIndex)) {
 				return
 			}

@@ -1,14 +1,16 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Badge, Button, Checkbox, Fade, Flex, GridItem, Image, Text, Tooltip } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import CopyIcon from 'src/components/ui/copy_icon'
+import { defaultChainId } from 'src/constants/chains'
+import { ApiClientsContext } from 'src/pages/_app'
 import { IApplicantData } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
 import { getRewardAmountMilestones } from 'src/utils/formattingUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { FundsCircleFilled } from 'src/v2/assets/custom chakra icons/Your Grants/FundsCircleFilled'
 
 const AcceptedRow = ({
-	isEvmChain,
 	onSendFundsClicked,
 	applicationStatus,
 	applicationAmount,
@@ -17,7 +19,6 @@ const AcceptedRow = ({
 	onChange,
 	rewardAssetDecimals,
 }: {
-	isEvmChain: boolean
 	onSendFundsClicked: () => void
 	applicationStatus: number
 	applicationAmount: any
@@ -26,10 +27,13 @@ const AcceptedRow = ({
 	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 	rewardAssetDecimals: any
 }) => {
+	const { workspace } = useContext(ApiClientsContext)!
+	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+
 	const router = useRouter()
 	const [isHovering, setIsHovering] = useState(false)
 	const [shouldTransitionOnClick, setShouldTransitionOnClick] = useState(true)
-	
+
 	return (
 		<>
 			<GridItem
@@ -39,16 +43,16 @@ const AcceptedRow = ({
 				onMouseEnter={() => setIsHovering(true)}
 				onMouseLeave={() => setIsHovering(false)}
 				as='button'
-					onClick={ shouldTransitionOnClick? 
-						() => router.push({
-							pathname: '/your_grants/view_applicants/applicant_form/',
-							query: {
-								commentData: '',
-								applicationId: applicantData?.applicationId,
-							},
-						}) :
-						() => {}
-					}
+				onClick={shouldTransitionOnClick ?
+					() => router.push({
+						pathname: '/your_grants/view_proposals/proposal',
+						query: {
+							id: applicantData?.applicationId,
+							chain: chainId,
+						},
+					}) :
+					() => { }
+				}
 				bg={isHovering ? '#FBFBFD' : 'white'}
 			>
 				<Checkbox
@@ -59,23 +63,23 @@ const AcceptedRow = ({
 					}}
 					onMouseLeave={() => {
 						setShouldTransitionOnClick(true)
-					}} 
-					/>
+					}}
+				/>
 			</GridItem>
 			<GridItem
 				onMouseEnter={() => setIsHovering(true)}
 				onMouseLeave={() => setIsHovering(false)}
 				as='button'
-					onClick={ shouldTransitionOnClick? 
-						() => router.push({
-							pathname: '/your_grants/view_applicants/applicant_form/',
-							query: {
-								commentData: '',
-								applicationId: applicantData?.applicationId,
-							},
-						}) :
-						() => {}
-					}
+				onClick={shouldTransitionOnClick ?
+					() => router.push({
+						pathname: '/your_grants/view_proposals/proposal',
+						query: {
+							id: applicantData?.applicationId,
+							chain: chainId,
+						},
+					}) :
+					() => { }
+				}
 				bg={isHovering ? '#FBFBFD' : 'white'}
 				display='flex'
 				alignItems='center'
@@ -107,7 +111,15 @@ const AcceptedRow = ({
 							noOfLines={1}
 							textOverflow='ellipsis'
 							cursor='pointer'
-							
+							onClick={
+								() => router.push({
+									pathname: '/your_grants/view_proposals/proposal',
+									query: {
+										id: applicantData?.applicationId,
+										chain: chainId,
+									},
+								})
+							}
 						>
 							{applicantData?.projectName}
 						</Text>
@@ -156,16 +168,16 @@ const AcceptedRow = ({
 				onMouseEnter={() => setIsHovering(true)}
 				onMouseLeave={() => setIsHovering(false)}
 				as='button'
-					onClick={ shouldTransitionOnClick? 
-						() => router.push({
-							pathname: '/your_grants/view_applicants/applicant_form/',
-							query: {
-								commentData: '',
-								applicationId: applicantData?.applicationId,
-							},
-						}) :
-						() => {}
-					}
+				onClick={shouldTransitionOnClick ?
+					() => router.push({
+						pathname: '/your_grants/view_proposals/proposal',
+									query: {
+										id: applicantData?.applicationId,
+										chain: chainId,
+									},
+					}) :
+					() => { }
+				}
 				bg={isHovering ? '#FBFBFD' : 'white'}
 				display='flex'
 				alignItems='center'
@@ -199,16 +211,16 @@ const AcceptedRow = ({
 				onMouseEnter={() => setIsHovering(true)}
 				onMouseLeave={() => setIsHovering(false)}
 				as='button'
-					onClick={ shouldTransitionOnClick? 
-						() => router.push({
-							pathname: '/your_grants/view_applicants/applicant_form/',
-							query: {
-								commentData: '',
-								applicationId: applicantData?.applicationId,
-							},
-						}) :
-						() => {}
-					}
+				onClick={shouldTransitionOnClick ?
+					() => router.push({
+						pathname: '/your_grants/view_proposals/proposal',
+									query: {
+										id: applicantData?.applicationId,
+										chain: chainId,
+									},
+					}) :
+					() => { }
+				}
 				bg={isHovering ? '#FBFBFD' : 'white'}
 				display='flex'
 				alignItems='center'
@@ -247,7 +259,7 @@ const AcceptedRow = ({
 							}}
 							onMouseLeave={() => {
 								setShouldTransitionOnClick(true)
-							}} 
+							}}
 						>
 							<FundsCircleFilled />
 							<Text

@@ -2,7 +2,7 @@ import { BigNumber, ethers } from 'ethers'
 import moment from 'moment'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
 import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO, SupportedChainId, USD_ASSET } from 'src/constants/chains'
-import { ChainInfo, FundTransfer } from 'src/types'
+import { ChainInfo, CustomField, FundTransfer } from 'src/types'
 import { InitialApplicationType } from 'src/v2/components/Dashboard/ReviewerDashboard/ApplicationsTable'
 
 export function timeToString(
@@ -95,17 +95,17 @@ function truncateTo(number: string, digits = 3) {
 	for(
 		let i = decimalIndex + 1;
 		i
-    < Math.min(
-    	decimalIndex + digits + 1,
-    	containsSymbol ? number.length - 1 : number.length,
-    );
+		< Math.min(
+			decimalIndex + digits + 1,
+			containsSymbol ? number.length - 1 : number.length,
+		);
 		i += 1
 	) {
 		ret += number.charAt(i)
 	}
 
 	return (isEntirelyZeroAfterDecimal ? ret.substring(0, decimalIndex) : ret)
-    + (containsSymbol ? number.charAt(number.length - 1) : '')
+		+ (containsSymbol ? number.charAt(number.length - 1) : '')
 }
 
 export const extractDate = (date: string) => date.substring(0, 10)
@@ -209,10 +209,22 @@ export const getExplorerUrlForTxHash = (chainId: SupportedChainId | undefined, t
 export const formatAddress = (address: string) => `${address.substring(0, 4)}......${address.substring(address.length - 4)}`
 
 export const getFieldString = (applicationData: any, name: string) => applicationData?.fields?.find((field: any) => field?.id?.includes(`.${name}`))?.values[0]?.value
+export const getFieldStrings = (applicationData: any, name: string) => applicationData?.fields?.find((field: any) => field?.id?.includes(`.${name}`))?.values?.map((v: any) => v.value)
+
+export const getCustomFields = (applicationData: any): CustomField[] => applicationData?.fields
+	?.filter((field: any) => (field.id.split('.')[1].startsWith('customField')))
+	?.map((field: any) => {
+		const i = field.id.indexOf('-')
+		return ({
+			title: field.id.substring(i + 1).split('\\s').join(' '),
+			value: field.values[0].value,
+			isError: false,
+		})
+	})
 
 export const getRewardAmount = (decimals: number | undefined, application: {
-  fields: InitialApplicationType['fields']
-  milestones: InitialApplicationType['milestones']
+	fields: InitialApplicationType['fields']
+	milestones: InitialApplicationType['milestones']
 }) => {
 	if(typeof decimals === 'undefined') {
 		decimals = 18
