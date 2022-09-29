@@ -1,14 +1,16 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Badge, Button, Checkbox, Fade, Flex, GridItem, Image, Text, Tooltip } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import CopyIcon from 'src/components/ui/copy_icon'
+import { defaultChainId } from 'src/constants/chains'
+import { ApiClientsContext } from 'src/pages/_app'
 import { IApplicantData } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
 import { getRewardAmountMilestones } from 'src/utils/formattingUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { FundsCircleFilled } from 'src/v2/assets/custom chakra icons/Your Grants/FundsCircleFilled'
 
 const AcceptedRow = ({
-	isEvmChain,
 	onSendFundsClicked,
 	applicationStatus,
 	applicationAmount,
@@ -17,7 +19,6 @@ const AcceptedRow = ({
 	onChange,
 	rewardAssetDecimals,
 }: {
-	isEvmChain: boolean
 	onSendFundsClicked: () => void
 	applicationStatus: number
 	applicationAmount: any
@@ -26,6 +27,9 @@ const AcceptedRow = ({
 	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 	rewardAssetDecimals: any
 }) => {
+	const { workspace } = useContext(ApiClientsContext)!
+	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+
 	const router = useRouter()
 	const [isHovering, setIsHovering] = useState(false)
 	return (
@@ -79,9 +83,10 @@ const AcceptedRow = ({
 							cursor='pointer'
 							onClick={
 								() => router.push({
-									pathname: '/your_grants/view_applicants/manage/',
+									pathname: '/your_grants/view_proposals/proposal',
 									query: {
-										applicationId: applicantData?.applicationId,
+										id: applicantData?.applicationId,
+										chain: chainId,
 									},
 								})
 							}

@@ -786,7 +786,6 @@ function ViewProposals() {
 							bg='white'
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7' >
 							<AcceptedProposalsPanel
-								isEvmChain={isEvmChain}
 								// totalMilestonesAmount={totalMilestonesAmt}
 								applicationStatuses={applicationStatuses}
 								applicantsData={applicantsData}
@@ -845,13 +844,12 @@ function ViewProposals() {
 				/>
 
 				<SendFunds
-					workspace={workspace}
+					workspace={workspace!}
 					workspaceSafe={workspaceSafe}
-					workspaceSafeChainId={workspaceSafeChainId}
-					sendFundsTo={sendFundsTo}
+					workspaceSafeChainId={workspaceSafeChainId.toString()}
+					sendFundsTo={sendFundsTo!}
 					rewardAssetAddress={rewardAssetAddress}
-					rewardAssetDecimals={rewardAssetDecimals}
-					grantData={grantData} />
+					grantTitle={grantData?.grants?.[0]?.title ?? ''} />
 
 				<NetworkTransactionModal
 					isOpen={networkTransactionModalStep !== undefined}

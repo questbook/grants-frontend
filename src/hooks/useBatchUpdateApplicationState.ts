@@ -77,6 +77,7 @@ export default function useBatchUpdateApplicationState(
 			return
 		}
 
+
 		if(error) {
 			return
 		}
@@ -89,6 +90,7 @@ export default function useBatchUpdateApplicationState(
 		if(!submitClicked) {
 			return
 		}
+
 
 		// if(submitClicked) {
 		// 	setIncorrectNetwork(false)
@@ -183,12 +185,6 @@ export default function useBatchUpdateApplicationState(
 			if(!state) {
 				return
 			}
-
-			// if(state !== 2) {
-			// 	if(!data) {
-			// 		return
-			// 	}
-			// }
 
 			if(!applicationIds) {
 				return
