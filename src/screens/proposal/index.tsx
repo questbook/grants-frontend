@@ -402,7 +402,6 @@ function Proposal() {
                     }
                 </Flex>
 
-                {/* TODO: Solve for the service validator issue */}
                 <MilestoneDoneModal
                     onSubmit={
                         (comment: string) => {
