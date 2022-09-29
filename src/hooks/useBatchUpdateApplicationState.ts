@@ -101,7 +101,7 @@ export default function useBatchUpdateApplicationState(
 			setNetworkTransactionModalStep(1)
 			setLoading(true)
 			// // console.log('calling validate');
-			// // console.log('DATA: ', data)
+			console.log('DATA: ', data)
 			try {
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
 					throw new Error('Zero wallet is not ready')

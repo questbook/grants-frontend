@@ -24,6 +24,8 @@ import { getChainInfo } from 'src/utils/tokenUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import SendFunds from 'src/v2/payouts/SendFunds'
 import ConfirmationModal from './_components/ConfirmationModal'
+import RejectProposalModal from './_components/RejectProposalModal'
+import useUpdateApplicationState from 'src/hooks/useUpdateApplicationState'
 
 function Proposal() {
     const buildComponent = () => (
@@ -342,8 +344,12 @@ function Proposal() {
                     }
                     onRejectClick={
                         () => {
-                            setIsRejectProposalClicked(true)
                             // TODO: Add the logic for opening the reject modal here
+                            setIsRejectProposalClicked(true)
+                            setIsRejectProposalModalOpen(true)
+                            setUpdateApplicationStateData({
+                                state: 3, comment: ''
+                            })
                         }
                     } />
                 <ConfirmationModal
@@ -355,6 +361,15 @@ function Proposal() {
                     setIsRejectProposalClicked={setIsRejectProposalClicked}
                     setIsConfirmClicked={setIsConfirmClicked}
                     networkTransactionModalStep={networkTransactionModalStep!} />
+                <RejectProposalModal
+                    isOpen={isRejectProposalModalOpen}
+                    isRejectProposalClicked={isRejectProposalClicked}
+                    networkTransactionModalStep={networkTransactionModalStep!}
+                    updateApplicationStateData={updateApplicationStateData!}
+                    setIsConfirmClicked={setIsRejectConfirmClicked}
+                    setIsRejectProposalClicked={setIsRejectProposalClicked}
+                    setIsRejectProposalModalOpen={setIsRejectProposalModalOpen}
+                    setUpdateApplicationStateData={setUpdateApplicationStateData} />
                 <Flex
                     mt={4}
                     bg='white'
@@ -453,10 +468,10 @@ function Proposal() {
                             `${proposal?.state === 'approved' ? 'Milestone approved on-chain' : `Application ${updateApplicationStateData?.state === 2 ? 'accepted' : 'rejected'} on-chain`}`,
                         ]
                     }
-                    viewLink={txnLink ? txnLink : acceptTxnLink}
+                    viewLink={txnLink ? txnLink : acceptTxnLink ? acceptTxnLink : rejectTxnLink}
                     onClose={
                         async () => {
-                            // setNetworkTransactionModalStep(undefined)
+                            setNetworkTransactionModalStep(undefined)
                             router.reload()
                         }
                     } />
@@ -477,9 +492,11 @@ function Proposal() {
     const [chainId, setChainId] = useState<SupportedChainId>(defaultChainId)
 
     const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false)
+    const [isRejectProposalModalOpen, setIsRejectProposalModalOpen] = useState<boolean>(false)
 
     const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
     const [isConfirmClicked, setIsConfirmClicked] = useState<boolean>(false)
+    const [isRejectConfirmClicked, setIsRejectConfirmClicked] = useState<boolean>(false)
     const [proposal, setProposal] = useState<ProposalType>()
 
     const [isAcceptProposalClicked, setIsAcceptProposalClicked] = useState<boolean>(false)
@@ -513,8 +530,17 @@ function Proposal() {
         chains: [chainId]
     })
 
+    const [rejectTxnData, rejectTxnLink, ] = useUpdateApplicationState(
+        updateApplicationStateData.comment,
+        proposal?.id,
+        updateApplicationStateData.state,
+        isRejectConfirmClicked,
+        setIsRejectConfirmClicked,
+        setNetworkTransactionModalStep
+    )
+
     // Needs to use these values properly
-    const [txnData, acceptTxnLink , , isBiconomyInitialised, error] = useBatchUpdateApplicationState(
+    const [txnData, acceptTxnLink, , isBiconomyInitialised, error] = useBatchUpdateApplicationState(
         updateApplicationStateData.comment,
         [parseInt(proposal?.id!)],
         updateApplicationStateData.state,
