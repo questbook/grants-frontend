@@ -1,8 +1,7 @@
 import { Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalOverlay, Text, Image, Input, Divider } from "@chakra-ui/react";
 import { useState } from "react";
 import TextField from "src/v2/components/InputFields/TextField";
-
-type UpdateApplicationStateData = { state: number, comment: string }
+import { UpdateApplicationStateData } from "../_types";
 
 interface Props {
     isOpen: boolean;

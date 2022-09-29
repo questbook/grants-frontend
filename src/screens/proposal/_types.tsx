@@ -36,6 +36,7 @@ export type MilestoneItemType = {
     milestone: Exclude<GetApplicationDetailsQuery['grantApplication'], null | undefined>['milestones'][number]
 	disbursedMilestones: Exclude<GetApplicationDetailsQuery['grantApplication'], null | undefined>['grant']['fundTransfers']
 	token: ChainInfo['supportedCurrencies'][string]
+	proposalStatus: ApplicationState
 	index: number
     onModalOpen: () => void
 }
@@ -46,3 +47,5 @@ export type ActionItemType = {
     feedback?: string
 	time: number
 }
+
+export type UpdateApplicationStateData = { state: number, comment: string }
