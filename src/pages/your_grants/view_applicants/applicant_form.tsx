@@ -62,12 +62,16 @@ function ApplicantForm() {
 	const { data, } = useGetApplicationDetailsQuery(queryParams)
 
 	const [state, setState] = useState<number>()
+	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
+
+
 	const [txn, txnLink, loading, isBiconomyInitialised, error] = useUpdateApplicationState(
 		state === 1 ? resubmitComment : rejectionComment,
 		applicationData?.id,
 		state,
 		submitClicked,
 		setSubmitClicked,
+		setNetworkTransactionModalStep,
 	)
 
 	const { setRefresh } = useCustomToast(txnLink)
