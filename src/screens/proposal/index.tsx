@@ -363,7 +363,6 @@ function Proposal() {
                     }
                     onRejectClick={
                         () => {
-                            // TODO: Add the logic for opening the reject modal here
                             setIsRejectProposalClicked(true)
                             setIsRejectProposalModalOpen(true)
                             setUpdateApplicationStateData({
