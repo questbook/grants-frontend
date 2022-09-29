@@ -148,20 +148,22 @@ export default function useBatchUpdateApplicationState(
 				}
 
 				setNetworkTransactionModalStep(2)
+				if(response){
+					const { txFee, receipt } = await getTransactionDetails(response, currentChainId.toString())
+					await subgraphClients[currentChainId].waitForBlock(receipt?.blockNumber)
+					setNetworkTransactionModalStep(3)
 
-				const { txFee, receipt } = await getTransactionDetails(response, currentChainId.toString())
-				await subgraphClients[currentChainId].waitForBlock(receipt?.blockNumber)
-				await chargeGas(Number(workspace?.id), Number(txFee))
-
-				setNetworkTransactionModalStep(3)
-
-				setTransactionData(receipt)
+					setTransactionData(receipt)
+					await chargeGas(Number(workspace?.id), Number(txFee))
+					setNetworkTransactionModalStep(4)
+				}
 				setLoading(false)
 				setSubmitClicked(false)
+				setNetworkTransactionModalStep(5)
 
-				setTimeout(() => {
-					setNetworkTransactionModalStep(undefined)
-				}, 2000)
+				// setTimeout(() => {
+				// 	setNetworkTransactionModalStep(undefined)
+				// }, 2000)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
 				const message = getErrorMessage(e)

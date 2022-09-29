@@ -87,12 +87,12 @@ export default function useApproveMilestone(
 
 		async function validate() {
 			setLoading(true)
-			// // console.log('calling validate');
+			// console.log('calling validate');
 			try {
 				setNetworkTransactionModalStep(0)
 				const {
 					data: { ipfsHash },
-				} = await validatorApi.validateApplicationMilestoneUpdate(data)
+				} = await validatorApi.validateApplicationMilestoneUpdate({text: data})
 				if(!ipfsHash) {
 					throw new Error('Error validating grant data')
 				}
@@ -156,10 +156,10 @@ export default function useApproveMilestone(
 		}
 
 		try {
-			// // console.log(data);
-			// // console.log(milestoneIndex);
-			// // console.log(applicationId);
-			// // console.log(Number.isNaN(milestoneIndex));
+			// console.log(data);
+			// console.log(milestoneIndex);
+			// console.log(applicationId);
+			// console.log(Number.isNaN(milestoneIndex));
 			if(Number.isNaN(milestoneIndex)) {
 				return
 			}
