@@ -28,6 +28,8 @@ const AcceptedRow = ({
 }) => {
 	const router = useRouter()
 	const [isHovering, setIsHovering] = useState(false)
+	const [shouldTransitionOnClick, setShouldTransitionOnClick] = useState(true)
+	
 	return (
 		<>
 			<GridItem
@@ -36,16 +38,44 @@ const AcceptedRow = ({
 				justifyContent='center'
 				onMouseEnter={() => setIsHovering(true)}
 				onMouseLeave={() => setIsHovering(false)}
+				as='button'
+					onClick={ shouldTransitionOnClick? 
+						() => router.push({
+							pathname: '/your_grants/view_applicants/applicant_form/',
+							query: {
+								commentData: '',
+								applicationId: applicantData?.applicationId,
+							},
+						}) :
+						() => {}
+					}
 				bg={isHovering ? '#FBFBFD' : 'white'}
 			>
 				<Checkbox
 					isChecked={isChecked}
-					onChange={onChange} />
+					onChange={onChange}
+					onMouseEnter={() => {
+						setShouldTransitionOnClick(false)
+					}}
+					onMouseLeave={() => {
+						setShouldTransitionOnClick(true)
+					}} 
+					/>
 			</GridItem>
 			<GridItem
 				onMouseEnter={() => setIsHovering(true)}
 				onMouseLeave={() => setIsHovering(false)}
-
+				as='button'
+					onClick={ shouldTransitionOnClick? 
+						() => router.push({
+							pathname: '/your_grants/view_applicants/applicant_form/',
+							query: {
+								commentData: '',
+								applicationId: applicantData?.applicationId,
+							},
+						}) :
+						() => {}
+					}
 				bg={isHovering ? '#FBFBFD' : 'white'}
 				display='flex'
 				alignItems='center'
@@ -77,14 +107,7 @@ const AcceptedRow = ({
 							noOfLines={1}
 							textOverflow='ellipsis'
 							cursor='pointer'
-							onClick={
-								() => router.push({
-									pathname: '/your_grants/view_applicants/manage/',
-									query: {
-										applicationId: applicantData?.applicationId,
-									},
-								})
-							}
+							
 						>
 							{applicantData?.projectName}
 						</Text>
@@ -132,7 +155,17 @@ const AcceptedRow = ({
 			<GridItem
 				onMouseEnter={() => setIsHovering(true)}
 				onMouseLeave={() => setIsHovering(false)}
-
+				as='button'
+					onClick={ shouldTransitionOnClick? 
+						() => router.push({
+							pathname: '/your_grants/view_applicants/applicant_form/',
+							query: {
+								commentData: '',
+								applicationId: applicantData?.applicationId,
+							},
+						}) :
+						() => {}
+					}
 				bg={isHovering ? '#FBFBFD' : 'white'}
 				display='flex'
 				alignItems='center'
@@ -165,7 +198,17 @@ const AcceptedRow = ({
 			<GridItem
 				onMouseEnter={() => setIsHovering(true)}
 				onMouseLeave={() => setIsHovering(false)}
-
+				as='button'
+					onClick={ shouldTransitionOnClick? 
+						() => router.push({
+							pathname: '/your_grants/view_applicants/applicant_form/',
+							query: {
+								commentData: '',
+								applicationId: applicantData?.applicationId,
+							},
+						}) :
+						() => {}
+					}
 				bg={isHovering ? '#FBFBFD' : 'white'}
 				display='flex'
 				alignItems='center'
@@ -199,6 +242,12 @@ const AcceptedRow = ({
 							mr={6}
 							variant='ghost'
 							onClick={() => onSendFundsClicked()}
+							onMouseEnter={() => {
+								setShouldTransitionOnClick(false)
+							}}
+							onMouseLeave={() => {
+								setShouldTransitionOnClick(true)
+							}} 
 						>
 							<FundsCircleFilled />
 							<Text
