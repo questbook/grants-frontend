@@ -119,7 +119,6 @@ const Control = ({ innerProps, isFocused, ...rest }: any) => {
 				}
 			}
 			cursor='pointer'
-			maxH='28px'
 		>
 			{rest.children}
 		</Box>

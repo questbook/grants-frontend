@@ -14,7 +14,6 @@ import { TransactionType } from 'src/v2/types/safe'
 
 const RecipientDetails = ({
 	safeNetwork,
-	isEvmChain,
 	applicantData,
 	safeTokenList,
 	initiateTransactionData,
@@ -22,7 +21,6 @@ const RecipientDetails = ({
 	onChangeRecepientError,
 }: {
 	safeNetwork: string
-	isEvmChain: boolean
 	applicantData: IApplicantData
 	safeTokenList: any
 	initiateTransactionData: TransactionType | undefined
@@ -367,7 +365,7 @@ const RecipientDetails = ({
 						}
 						fontWeight='500'
 						fontSize='14px'
-						defaultValue=''
+						defaultValue={initiateTransactionData?.amount}
 						errorBorderColor='red'
 						height='auto'
 						type='number'

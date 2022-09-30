@@ -11,7 +11,6 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import { IApplicantData } from 'src/types'
-import logger from 'src/utils/logger'
 import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
 import { FishEye } from 'src/v2/assets/custom chakra icons/FishEye'
 import { FundsCircle } from 'src/v2/assets/custom chakra icons/Your Grants/FundsCircle'
@@ -227,7 +226,6 @@ function SendFundsModal({
 									<RecipientDetails
 										safeNetwork={safeNetwork}
 										safeTokenList={safeTokenList}
-										isEvmChain={isEvmChain}
 										applicantData={proposals[0]}
 										initiateTransactionData={initiateTransactionData?.length > 0 ? initiateTransactionData[0] : undefined}
 										onChangeRecepientError={setRecepientError}

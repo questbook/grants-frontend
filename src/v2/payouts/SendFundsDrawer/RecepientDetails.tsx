@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Image, Input, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Image, Input, InputGroup, InputRightAddon, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { IApplicantData } from 'src/types'
 import { ArrowDownCircle } from 'src/v2/assets/custom chakra icons/Arrows/ArrowDownCircle'
@@ -9,13 +9,11 @@ import TokenSelect from 'src/v2/payouts/SendFundsDrawer/TokenSelect'
 import { TransactionType } from 'src/v2/types/safe'
 
 const RecipientDetails = ({
-	isEvmChain,
 	applicantData,
 	safeTokenList,
 	initiateTransactionData,
 	onChangeRecepientDetails,
 }: {
-	isEvmChain: boolean
 	applicantData: IApplicantData[]
 	safeTokenList: any
 	initiateTransactionData: TransactionType[] | undefined
@@ -225,7 +223,7 @@ const RecipientDetails = ({
 
 							<Box h={6} />
 
-							<Flex alignItems='center'>
+							<Flex alignItems='center' >
 								<Flex
 									flex={1}
 									flexDirection='column'>
@@ -243,7 +241,9 @@ const RecipientDetails = ({
 									flex={1}
 									flexDirection='column'>
 
-									<Box h={2} />
+									{/* <Box h={2} /> */}
+									<InputGroup size='sm'>
+									
 									<Input
 										variant='brandFlushed'
 										placeholder='Amount'
@@ -255,13 +255,17 @@ const RecipientDetails = ({
 										}
 										fontWeight='500'
 										fontSize='14px'
-										defaultValue=''
+										defaultValue={initiateTransactionData ? initiateTransactionData[i]?.amount : ''}
 										errorBorderColor='red'
 										height='auto'
 										type='number'
 										onChange={async(e) => onChangeRecepientDetails(data.applicationId, 'amount', parseFloat(e.target.value?.length > 0 ? e.target.value : '0'))}
 									/>
+									<InputRightAddon children='USD' />
+									</InputGroup>
+									
 								</Flex>
+								
 							</Flex>
 
 							<Box h={6} />
