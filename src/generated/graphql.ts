@@ -4544,7 +4544,7 @@ export type GetWorkspaceMembersPublicKeysQuery = { __typename?: 'Query', workspa
 export const GetProfileDetailsDocument = gql`
     query GetProfileDetails($actorId: Bytes!) {
   workspaceMembers(
-    where: {actorId: $actorId, accessLevel: owner}
+    where: {actorId: $actorId}
     first: 1
     orderBy: updatedAt
     orderDirection: desc
