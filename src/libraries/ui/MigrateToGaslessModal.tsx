@@ -243,6 +243,8 @@ function MigrateToGasless() {
 				return
 			}
 
+			logger.info({ results }, 'Results')
+
 			if(!(walletChain.id in ALL_SUPPORTED_CHAIN_IDS)) {
 				const { state, chainId } = shouldMigrate
 
