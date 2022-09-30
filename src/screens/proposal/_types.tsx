@@ -1,6 +1,9 @@
 import { ApplicationState, GetApplicationDetailsQuery } from 'src/generated/graphql'
 import { ChainInfo, CustomField } from 'src/types'
 
+
+export type P = GetApplicationDetailsQuery['grantApplication']
+
 export type Proposal = {
     id: string
     name: string
@@ -21,6 +24,8 @@ export type Proposal = {
     state: Exclude<GetApplicationDetailsQuery['grantApplication'], null | undefined>['state']
 	feedbackDao: string
     grant: Exclude<GetApplicationDetailsQuery['grantApplication'], null | undefined>['grant']
+	pii: Exclude<GetApplicationDetailsQuery['grantApplication'], null | undefined>['pii']
+	applicantPublicKey: Exclude<GetApplicationDetailsQuery['grantApplication'], null | undefined>['applicantPublicKey']
 }
 
 export type ActionPanelType = {

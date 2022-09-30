@@ -16,7 +16,7 @@ import ActionPanel from 'src/screens/proposal/_components/ActionPanel'
 import MilestoneDoneModal from 'src/screens/proposal/_components/milestoneDoneModal'
 import MilestoneItem from 'src/screens/proposal/_components/MilestoneItem'
 import { useMultiChainQuery } from 'src/screens/proposal/_hooks/useMultiChainQuery'
-import { Proposal as ProposalType } from 'src/screens/proposal/_types'
+import { P as ProposalType } from 'src/screens/proposal/_types'
 import { IApplicantData } from 'src/types'
 import { formatAmount, getCustomFields, getFieldString, getFieldStrings, getFormattedDateFromUnixTimestampWithYear, getRewardAmountMilestones, truncateStringFromMiddle } from 'src/utils/formattingUtils'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
@@ -26,6 +26,7 @@ import SendFunds from 'src/v2/payouts/SendFunds'
 import ConfirmationModal from './_components/ConfirmationModal'
 import RejectProposalModal from './_components/RejectProposalModal'
 import useUpdateApplicationState from 'src/hooks/useUpdateApplicationState'
+import { useEncryptPiiForApplication } from 'src/utils/pii'
 
 function Proposal() {
     const buildComponent = () => (
@@ -42,27 +43,27 @@ function Proposal() {
                 gap={4}
             >
                 <Flex>
-                <Text variant='proposalHeading'>
-                    {proposal?.name}
-                </Text>
-                <Spacer />
-                <Flex
-                 display={proposal?.state === 'submitted' ? 'none' : ''} 
-                 justifyContent='center'
-                 bg={proposal?.state === 'rejected' ? '#FFDCC0' : proposal?.state === 'approved' ? '#E3F6C1' : ''} 
-                 borderRadius='3px' 
-                 padding='8px'>
-                    <Text
-                    textTransform='capitalize'
-                    color={proposal?.state === 'rejected' ? '#FF7545' : proposal?.state === 'approved' ? '#0DC98B' : ''}
-                    fontWeight='600'
-                    fontSize='14px'
-                    lineHeight='20px'
-                    
-                    >{proposal?.state}</Text>
+                    <Text variant='proposalHeading'>
+                        {proposal?.name}
+                    </Text>
+                    <Spacer />
+                    <Flex
+                        display={proposal?.state === 'submitted' ? 'none' : ''}
+                        justifyContent='center'
+                        bg={proposal?.state === 'rejected' ? '#FFDCC0' : proposal?.state === 'approved' ? '#E3F6C1' : ''}
+                        borderRadius='3px'
+                        padding='8px'>
+                        <Text
+                            textTransform='capitalize'
+                            color={proposal?.state === 'rejected' ? '#FF7545' : proposal?.state === 'approved' ? '#0DC98B' : ''}
+                            fontWeight='600'
+                            fontSize='14px'
+                            lineHeight='20px'
+
+                        >{proposal?.state}</Text>
+                    </Flex>
                 </Flex>
-                </Flex>
-                
+
                 {/* Proposal info start */}
                 <Flex
                     bg='white'
@@ -404,7 +405,7 @@ function Proposal() {
                         variant='v2_subheading'
                         fontWeight='500'
                         ml='auto'>
-                        {parseInt(getRewardAmountMilestones(proposal?.token?.decimals!, proposal)).toLocaleString()}
+                        {getRewardAmountMilestones(proposal?.token?.decimals!, proposal)}
                         {' '}
                         {proposal?.token?.label}
                     </Text>
@@ -550,7 +551,7 @@ function Proposal() {
         chains: [chainId]
     })
 
-    const [rejectTxnData, rejectTxnLink, ] = useUpdateApplicationState(
+    const [rejectTxnData, rejectTxnLink,] = useUpdateApplicationState(
         updateApplicationStateData.comment,
         proposal?.id,
         updateApplicationStateData.state,
@@ -613,6 +614,8 @@ function Proposal() {
             state: application.state,
             feedbackDao: application.feedbackDao ?? '',
             grant: application.grant,
+            pii: application.pii,
+            applicantPublicKey: application.applicantPublicKey ?? ''
         })
 
         logger.info({ proposal }, '(Proposal) Final data')
@@ -627,6 +630,16 @@ function Proposal() {
 
         fetchData(application)
     }, [results])
+
+    const { decrypt } = useEncryptPiiForApplication(
+		proposal?.grant?.id,
+		proposal?.applicantPublicKey,
+		chainId
+	)
+
+    useEffect(() => {
+		decrypt(proposal!).then(setApplicationData)
+	}, [data?.grantApplication, setApplicationData, decrypt])
 
     return buildComponent()
 }
