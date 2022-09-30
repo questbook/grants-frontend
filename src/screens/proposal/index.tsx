@@ -404,7 +404,7 @@ function Proposal() {
                         variant='v2_subheading'
                         fontWeight='500'
                         ml='auto'>
-                        {getRewardAmountMilestones(proposal?.token?.decimals!, proposal)}
+                        {parseInt(getRewardAmountMilestones(proposal?.token?.decimals!, proposal)).toLocaleString()}
                         {' '}
                         {proposal?.token?.label}
                     </Text>

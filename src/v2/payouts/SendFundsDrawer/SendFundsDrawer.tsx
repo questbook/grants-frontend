@@ -236,7 +236,6 @@ function SendFundsDrawer({
 						{
 							step === 'RECEIPT_DETAILS' ? (
 								<RecipientDetails
-									isEvmChain={isEvmChain}
 									applicantData={proposals}
 									safeTokenList={safeTokenList}
 									onChangeRecepientDetails={onChangeRecepientDetails}

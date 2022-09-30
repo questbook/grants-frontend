@@ -190,7 +190,7 @@ export default function SendFunds({
 				applicationId: recepient?.applicationId || applicationID,
 				selectedMilestone: recepient?.milestones?.[0]?.id,
 				selectedToken: { name: safeTokenList[0]?.tokenName, info: safeTokenList[0]?.info },
-				amount: 0
+				amount: recepient?.milestones?.[0]?.amount,
 			})
 		)
 		setInitiateTransactionData(formattedTrxnData)
