@@ -43,42 +43,48 @@ const AcceptedRow = ({
 				onMouseEnter={() => setIsHovering(true)}
 				onMouseLeave={() => setIsHovering(false)}
 				as='button'
-				onClick={shouldTransitionOnClick ?
-					() => router.push({
-						pathname: '/your_grants/view_proposals/proposal',
-						query: {
-							id: applicantData?.applicationId,
-							chain: chainId,
-						},
-					}) :
-					() => { }
+				onClick={
+					shouldTransitionOnClick ?
+						() => router.push({
+							pathname: '/your_grants/view_proposals/proposal',
+							query: {
+								id: applicantData?.applicationId,
+								chain: chainId,
+							},
+						}) :
+						() => { }
 				}
 				bg={isHovering ? '#FBFBFD' : 'white'}
 			>
 				<Checkbox
 					isChecked={isChecked}
 					onChange={onChange}
-					onMouseEnter={() => {
-						setShouldTransitionOnClick(false)
-					}}
-					onMouseLeave={() => {
-						setShouldTransitionOnClick(true)
-					}}
+					onMouseEnter={
+						() => {
+							setShouldTransitionOnClick(false)
+						}
+					}
+					onMouseLeave={
+						() => {
+							setShouldTransitionOnClick(true)
+						}
+					}
 				/>
 			</GridItem>
 			<GridItem
 				onMouseEnter={() => setIsHovering(true)}
 				onMouseLeave={() => setIsHovering(false)}
 				as='button'
-				onClick={shouldTransitionOnClick ?
-					() => router.push({
-						pathname: '/your_grants/view_proposals/proposal',
-						query: {
-							id: applicantData?.applicationId,
-							chain: chainId,
-						},
-					}) :
-					() => { }
+				onClick={
+					shouldTransitionOnClick ?
+						() => router.push({
+							pathname: '/your_grants/view_proposals/proposal',
+							query: {
+								id: applicantData?.applicationId,
+								chain: chainId,
+							},
+						}) :
+						() => { }
 				}
 				bg={isHovering ? '#FBFBFD' : 'white'}
 				display='flex'
@@ -168,15 +174,16 @@ const AcceptedRow = ({
 				onMouseEnter={() => setIsHovering(true)}
 				onMouseLeave={() => setIsHovering(false)}
 				as='button'
-				onClick={shouldTransitionOnClick ?
-					() => router.push({
-						pathname: '/your_grants/view_proposals/proposal',
-									query: {
-										id: applicantData?.applicationId,
-										chain: chainId,
-									},
-					}) :
-					() => { }
+				onClick={
+					shouldTransitionOnClick ?
+						() => router.push({
+							pathname: '/your_grants/view_proposals/proposal',
+							query: {
+								id: applicantData?.applicationId,
+								chain: chainId,
+							},
+						}) :
+						() => { }
 				}
 				bg={isHovering ? '#FBFBFD' : 'white'}
 				display='flex'
@@ -211,15 +218,16 @@ const AcceptedRow = ({
 				onMouseEnter={() => setIsHovering(true)}
 				onMouseLeave={() => setIsHovering(false)}
 				as='button'
-				onClick={shouldTransitionOnClick ?
-					() => router.push({
-						pathname: '/your_grants/view_proposals/proposal',
-									query: {
-										id: applicantData?.applicationId,
-										chain: chainId,
-									},
-					}) :
-					() => { }
+				onClick={
+					shouldTransitionOnClick ?
+						() => router.push({
+							pathname: '/your_grants/view_proposals/proposal',
+							query: {
+								id: applicantData?.applicationId,
+								chain: chainId,
+							},
+						}) :
+						() => { }
 				}
 				bg={isHovering ? '#FBFBFD' : 'white'}
 				display='flex'
@@ -254,12 +262,16 @@ const AcceptedRow = ({
 							mr={6}
 							variant='ghost'
 							onClick={() => onSendFundsClicked()}
-							onMouseEnter={() => {
-								setShouldTransitionOnClick(false)
-							}}
-							onMouseLeave={() => {
-								setShouldTransitionOnClick(true)
-							}}
+							onMouseEnter={
+								() => {
+									setShouldTransitionOnClick(false)
+								}
+							}
+							onMouseLeave={
+								() => {
+									setShouldTransitionOnClick(true)
+								}
+							}
 						>
 							<FundsCircleFilled />
 							<Text

@@ -148,7 +148,7 @@ export default function useBatchUpdateApplicationState(
 				}
 
 				setNetworkTransactionModalStep(2)
-				if(response){
+				if(response) {
 					const { txFee, receipt } = await getTransactionDetails(response, currentChainId.toString())
 					await subgraphClients[currentChainId].waitForBlock(receipt?.blockNumber)
 					setNetworkTransactionModalStep(3)
@@ -157,6 +157,7 @@ export default function useBatchUpdateApplicationState(
 					await chargeGas(Number(workspace?.id), Number(txFee))
 					setNetworkTransactionModalStep(4)
 				}
+
 				setLoading(false)
 				setSubmitClicked(false)
 				setNetworkTransactionModalStep(5)
