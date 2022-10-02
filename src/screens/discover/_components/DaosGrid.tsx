@@ -57,7 +57,7 @@ function AllDaosGrid({
 				))
 			}
 			{
-				!renderGetStarted && hasMore && (
+				hasMore && (
 					<GridItem key='get-started'>
 						<LoadMoreCard onClick={() => fetchMore?.()} />
 					</GridItem>

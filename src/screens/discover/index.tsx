@@ -1,6 +1,5 @@
 import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { Container, Divider, Flex, HStack, Text, useToast } from '@chakra-ui/react'
+import { Container, useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/router'
 import { GetDaOsForExploreQuery, useGetDaOsForExploreQuery, Workspace_Filter as WorkspaceFilter, Workspace_OrderBy as WorkspaceOrderBy } from 'src/generated/graphql'
 import logger from 'src/libraries/logger'
@@ -20,40 +19,13 @@ function Discover() {
 		<>
 			<Container
 				maxWidth='1280px'
+				my='16px'
 				w='100%'>
-				<Flex
-					my='16px'
-					maxWidth='1280px'>
-					<Text
-						fontSize='24px'
-						fontWeight='700'>
-						{t('/.section_1.title')}
-					</Text>
-				</Flex>
-
 				<DaosGrid
 					renderGetStarted
+					hasMore={hasMoreDaos}
+					fetchMore={fetchMoreDaos}
 					workspaces={totalDaos} />
-
-				<HStack
-					align='center'
-					justify='stretch'
-					my='16px'
-					maxWidth='1280px'>
-					<Text
-						fontSize='24px'
-						fontWeight='700'>
-						{t('/.section_2.title')}
-					</Text>
-
-					<Divider />
-				</HStack>
-
-				<DaosGrid
-					renderGetStarted={false}
-					workspaces={newDaos}
-					hasMore={hasMoreNewDaos}
-					fetchMore={() => fetchMoreNewDaos()} />
 			</Container>
 			<AcceptInviteModal
 				inviteInfo={inviteInfo}
@@ -75,39 +47,23 @@ function Discover() {
 
 	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
 
-	const { t } = useTranslation()
-
 	const {
-		results: newDaos,
-		hasMore: hasMoreNewDaos,
-		fetchMore: fetchMoreNewDaos,
-	} = useMultiChainDaosForExplore(
-		WorkspaceOrderBy.CreatedAtS,
-		// eslint-disable-next-line camelcase
-		{ totalGrantFundingCommittedUSD_gt: 0 }
-	)
-
-	const {
-		results: popularDaos,
-		fetchMore: fetchMorePopularDaos
-	} = useMultiChainDaosForExplore(
-		WorkspaceOrderBy.TotalGrantFundingDisbursedUsd,
-		// eslint-disable-next-line camelcase
-		{ totalGrantFundingDisbursedUSD_gte: 1000 },
-	)
+		results: daos,
+		hasMore: hasMoreDaos,
+		fetchMore: fetchMoreDaos
+	} = useMultiChainDaosForExplore()
 
 	const {
 		results: myDaos,
 		fetchMore: fetchMoreMyDaos
 	} = useMultiChainDaosForExplore(
-		WorkspaceOrderBy.TotalGrantFundingDisbursedUsd,
 		{ members_: { actorId: scwAddress } },
 	)
 
 	const totalDaos = useMemo(() => [
 		...(scwAddress ? myDaos : []),
-		...popularDaos,
-	], [myDaos, popularDaos])
+		...daos,
+	], [myDaos, daos])
 
 	useEffect(() => {
 		try {
@@ -127,8 +83,7 @@ function Discover() {
 
 	useEffect(() => {
 		logger.info('fetching daos')
-		fetchMoreNewDaos(true)
-		fetchMorePopularDaos(true)
+		fetchMoreDaos(true)
 		if(scwAddress) {
 			fetchMoreMyDaos(true)
 		}
@@ -152,13 +107,14 @@ Discover.getLayout = function(page: ReactElement) {
 }
 
 function useMultiChainDaosForExplore(
-	orderBy: WorkspaceOrderBy,
-	filter: WorkspaceFilter
+	filter?: WorkspaceFilter
 ) {
+	const orderBy = WorkspaceOrderBy.TotalGrantFundingDisbursedUsd;
+
 	return useMultichainDaosPaginatedQuery({
 		useQuery: useGetDaOsForExploreQuery,
 		pageSize: PAGE_SIZE,
-		variables: { orderBy, filter },
+		variables: { orderBy, filter: filter ?? {} },
 		mergeResults(results) {
 			let final: GetDaOsForExploreQuery['workspaces'] = []
 			for(const { workspaces } of results) {
@@ -170,15 +126,9 @@ function useMultiChainDaosForExplore(
 					return b[orderBy] < a[orderBy]
 				})
 			}
-
-			return final.filter((workspace) => {
-				return !DAOS_TO_IGNORE.includes(workspace.id)
-					&& workspace.supportedNetworks[0] !== 'chain_5'
-			})
+			return final
 		}
 	})
 }
-
-const DAOS_TO_IGNORE = [ '0xe9' ]
 
 export default Discover
