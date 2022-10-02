@@ -43,7 +43,7 @@ const Option = ({ innerProps, data }: any) => (
 				color={ data.state === 'approved' ? '#32a852' : '#FF0000' }
 				mt='2px'
 			>
-				{data.state === 'approved' ? 'Milestone has been approved' : data.state === 'requested' ? 'Milestone has not been approved' : 'Milestone has not been submitted'} 
+				{data.state === 'approved' ? 'Milestone has been approved' : data.state === 'requested' ? 'Milestone has not been approved' : 'Milestone has not been submitted'}
 			</Text>
 		</Button>
 	</Box>
