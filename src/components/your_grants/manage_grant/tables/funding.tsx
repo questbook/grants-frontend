@@ -49,7 +49,7 @@ const TABLE_HEADERS: { [id: string]: TableContent } = {
 			let icon
 			let label
 			if(rewardToken) {
-				console.log('reward token', rewardToken)
+				// console.log('reward token', rewardToken)
 				icon = dollarIcon
 				label = rewardToken.label
 			} else {
@@ -296,9 +296,9 @@ function Funding({
 						>
 							{
 								fundTransfers.map((item, index) => {
-									console.log('item.id', item)
+									// console.log('item.id', item)
 									const txnStatus = transactionStatus?.filter((obj: any) => obj.txnHash === item.transactionHash)
-									console.log('txn status', txnStatus)
+									// console.log('txn status', txnStatus)
 									if(txnStatus?.[0]?.closedAtDate || txnStatus.length) {
 										return (
 											<Flex
