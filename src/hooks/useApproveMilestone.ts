@@ -92,7 +92,7 @@ export default function useApproveMilestone(
 				setNetworkTransactionModalStep(0)
 				const {
 					data: { ipfsHash },
-				} = await validatorApi.validateApplicationMilestoneUpdate({text: data})
+				} = await validatorApi.validateApplicationMilestoneUpdate({ text: data })
 				if(!ipfsHash) {
 					throw new Error('Error validating grant data')
 				}

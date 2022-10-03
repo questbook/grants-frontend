@@ -9,12 +9,15 @@ import { GetApplicationDetailsQuery, useGetApplicationDetailsQuery } from 'src/g
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useApproveMilestone from 'src/hooks/useApproveMilestone'
 import useBatchUpdateApplicationState from 'src/hooks/useBatchUpdateApplicationState'
+import useUpdateApplicationState from 'src/hooks/useUpdateApplicationState'
 import logger from 'src/libraries/logger'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { ApiClientsContext } from 'src/pages/_app'
 import ActionPanel from 'src/screens/proposal/_components/ActionPanel'
+import ConfirmationModal from 'src/screens/proposal/_components/ConfirmationModal'
 import MilestoneDoneModal from 'src/screens/proposal/_components/milestoneDoneModal'
 import MilestoneItem from 'src/screens/proposal/_components/MilestoneItem'
+import RejectProposalModal from 'src/screens/proposal/_components/RejectProposalModal'
 import { useMultiChainQuery } from 'src/screens/proposal/_hooks/useMultiChainQuery'
 import { Proposal as ProposalType, P } from 'src/screens/proposal/_types'
 import { ChainInfo, CustomField, IApplicantData } from 'src/types'
@@ -167,8 +170,8 @@ function Proposal() {
                                 ) : null
                             }
 
-                        </Text>
-                    </Box>
+						</Text>
+					</Box>
 
                     {/* Project Goals */}
                     <Box display={projectGoals && projectGoals !== '' ? '' : 'none'}>
