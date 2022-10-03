@@ -40,7 +40,7 @@ function ApplicantDetails({
   safeNetwork: string
 }) {
 	const { workspace } = useContext(ApiClientsContext)!
-	console.log('safe network', safeNetwork)
+	// console.log('safe network', safeNetwork)
 	const { t } = useTranslation()
 	const chainNames = new Map<String, String>([
 		['1', 'Ethereum Mainnet'],
@@ -113,7 +113,7 @@ function ApplicantDetails({
 							safeAddressValid = await isValidEthereumAddress(e.target.value)
 						}
 
-						console.log('safe address', e.target.value, safeAddressValid)
+						// console.log('safe address', e.target.value, safeAddressValid)
 						setApplicantAddressError(!safeAddressValid)
 					}
 				}
