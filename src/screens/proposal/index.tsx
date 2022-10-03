@@ -45,7 +45,7 @@ function Proposal() {
 			>
 				<Flex>
 					<Text variant='proposalHeading'>
-						{projectName}
+						{proposalName}
 					</Text>
 					<Spacer />
 					<Flex
@@ -162,9 +162,9 @@ function Proposal() {
 						</Heading>
 						<Text mt={2}>
 							{
-								projectDetails ? (
+								proposalDetails ? (
 									<TextViewer
-										text={projectDetails}
+										text={proposalDetails}
 									/>
 								) : null
 							}
@@ -173,19 +173,19 @@ function Proposal() {
 					</Box>
 
 					{/* Project Goals */}
-					<Box display={projectGoals && projectGoals !== '' ? '' : 'none'}>
+					<Box display={proposalGoals && proposalGoals !== '' ? '' : 'none'}>
 						<Heading variant='applicationHeading'>
 							Project Goals
 						</Heading>
 						<Text
 							variant='applicationText'
 							mt={2}>
-							{projectGoals}
+							{proposalGoals}
 						</Text>
 					</Box>
 
 					{/* Project Milestones */}
-					<Box display={proposal?.milestones?.length ? '' : 'none'}>
+					<Box display={milestones?.length ? '' : 'none'}>
 						<Heading variant='applicationHeading'>
 							Project Milestones
 						</Heading>
@@ -194,7 +194,7 @@ function Proposal() {
 							mt={2}>
 							{' '}
 							{
-								proposal?.milestones?.map((milestone, index: number) => (
+								milestones?.map((milestone, index: number) => (
 									<Box key={milestone.id}>
 										<Heading
 											variant='applicationSubtitle'
@@ -340,7 +340,7 @@ function Proposal() {
 								applicantAddress: applicantAddress,
 								sentOn: createdAt!,
 								updatedOn: updatedAt!,
-								projectName,
+								projectName: proposalName,
 								fundingAsked: {
 									amount: getRewardAmountMilestones(token?.decimals!, proposal?.milestones),
 									symbol: token?.label ?? '',
@@ -348,7 +348,7 @@ function Proposal() {
 								},
 								// status: applicationStatuses.indexOf(applicant?.state),
 								status: TableFilters[proposal?.state!],
-								milestones: proposal?.milestones!,
+								milestones: milestones!,
 								amountPaid: '0',
 								reviewers: [],
 								reviews: []
@@ -420,13 +420,13 @@ function Proposal() {
 					bg='white'
 					p={6}>
 					{
-						proposal?.milestones?.map((milestone, index) => {
+						milestones?.map((milestone, index) => {
 							const disbursedMilestones = proposal?.grant?.fundTransfers?.filter((fundTransfer) => fundTransfer?.milestone?.id === milestone.id)
 							return (
 								<MilestoneItem
 									key={milestone.id}
 									milestone={milestone}
-									disbursedMilestones={disbursedMilestones}
+									disbursedMilestones={disbursedMilestones!}
 									index={index}
 									token={token!}
 									proposalStatus={proposal?.state!}
@@ -507,7 +507,7 @@ function Proposal() {
 	const router = useRouter()
 	const { workspace } = useContext(ApiClientsContext)!
 
-	const [projectName, setProjectName] = useState('')
+	const [proposalName, setProposalName] = useState('')
 	const [applicantName, setApplicantName] = useState('')
 	const [applicantEmail, setApplicantEmail] = useState('')
 	const [applicantAddress, setApplicantAddress] = useState('')
@@ -515,9 +515,9 @@ function Proposal() {
 	const [createdAt, setCreatedAt] = useState('')
 	const [updatedAt, setUpdatedAt] = useState('')
 
-	const [projectDetails, setProjectDetails] = useState('')
+	const [proposalDetails, setProposalDetails] = useState('')
 	const [projectLinks, setProjectLinks] = useState([])
-	const [projectGoals, setProjectGoals] = useState()
+	const [proposalGoals, setProposalGoals] = useState()
 
 	const [milestones, setMilestones] = useState<Exclude<GetApplicationDetailsQuery['grantApplication'], null | undefined>['milestones']>([])
 
@@ -615,13 +615,13 @@ function Proposal() {
 	}, [results])
 
 
-	const decodeProjectDetails = async() => {
-		let projectDetails = getFieldString(proposal, 'projectDetails')
-		if(projectDetails.startsWith('Qm') && projectDetails.length < 64) {
-			projectDetails = await getFromIPFS(projectDetails)
+	const decodeProposalDetails = async() => {
+		let proposalDetails = getFieldString(proposal, 'projectDetails')
+		if(proposalDetails.startsWith('Qm') && proposalDetails.length < 64) {
+			proposalDetails = await getFromIPFS(proposalDetails)
 		}
 
-		setProjectDetails(projectDetails)
+		setProposalDetails(proposalDetails)
 	}
 
 	useEffect(() => {
@@ -637,8 +637,8 @@ function Proposal() {
 
 	useEffect(() => {
 		if(proposal) {
-			decodeProjectDetails()
-			setProjectName(getFieldString(proposal, 'projectName'))
+			decodeProposalDetails()
+			setProposalName(getFieldString(proposal, 'projectName'))
 			setApplicantName(getFieldString(proposal, 'applicantName'))
 			setApplicantAddress(getFieldString(proposal, 'applicantAddress') ?? proposal.applicantId)
 			setApplicantEmail(getFieldString(proposal, 'applicantEmail'))
@@ -646,7 +646,7 @@ function Proposal() {
 			setCreatedAt(getFormattedDateFromUnixTimestampWithYear(proposal.createdAtS)!)
 			setUpdatedAt(getFormattedDateFromUnixTimestampWithYear(proposal.updatedAtS)!)
 			setProjectLinks(getFieldStrings(proposal, 'projectLinks'))
-			setProjectGoals(getFieldString(proposal, 'projectGoals'))
+			setProposalGoals(getFieldString(proposal, 'projectGoals'))
 			setMilestones(proposal.milestones)
 			setFundingBreakdown(getFieldString(proposal, 'fundingBreakdown'))
 			setTeamMembers(getFieldStrings(proposal, 'teamMembers'))

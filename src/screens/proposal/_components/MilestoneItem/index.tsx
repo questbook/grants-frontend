@@ -65,6 +65,7 @@ function MilestoneItem({ milestone, index, token, disbursedMilestones, onModalOp
 	}
 
 	const actionItems = useMemo(() => {
+		console.log('disbursed milestones', disbursedMilestones, token?.decimals)
 		const items: ActionItemType[] = disbursedMilestones?.map((fundTransfer) => {
 			return { type: 'fund_sent', amount: `${formatAmount(fundTransfer.amount, token?.decimals, true)} ${token?.label}`, time: fundTransfer.createdAtS }
 		})
