@@ -243,29 +243,29 @@ const RecipientDetails = ({
 
 									{/* <Box h={2} /> */}
 									<InputGroup size='sm'>
-									
-									<Input
-										variant='brandFlushed'
-										placeholder='Amount'
-										_placeholder={
-											{
-												color: 'blue.100',
-												fontWeight: '500'
+
+										<Input
+											variant='brandFlushed'
+											placeholder='Amount'
+											_placeholder={
+												{
+													color: 'blue.100',
+													fontWeight: '500'
+												}
 											}
-										}
-										fontWeight='500'
-										fontSize='14px'
-										defaultValue={initiateTransactionData ? initiateTransactionData[i]?.amount : ''}
-										errorBorderColor='red'
-										height='auto'
-										type='number'
-										onChange={async(e) => onChangeRecepientDetails(data.applicationId, 'amount', parseFloat(e.target.value?.length > 0 ? e.target.value : '0'))}
-									/>
-									<InputRightAddon children='USD' />
+											fontWeight='500'
+											fontSize='14px'
+											defaultValue={initiateTransactionData ? initiateTransactionData[i]?.amount : ''}
+											errorBorderColor='red'
+											height='auto'
+											type='number'
+											onChange={async(e) => onChangeRecepientDetails(data.applicationId, 'amount', parseFloat(e.target.value?.length > 0 ? e.target.value : '0'))}
+										/>
+										<InputRightAddon children='USD' />
 									</InputGroup>
-									
+
 								</Flex>
-								
+
 							</Flex>
 
 							<Box h={6} />
