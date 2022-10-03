@@ -10,6 +10,7 @@ import SAFES_NAMES from 'src/constants/safesSupported.json'
 import useAxiosMulti from 'src/hooks/utils/useAxiosMulti'
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 import { getSafeDetails } from 'src/v2/constants/safe/realms_solana'
+import { getTezosSafeDetails } from 'src/v2/utils/tezosUtils'
 
 const URL_PREFIX = 'v1/safes/'
 // const URL_PREFIX = 'v1/safes/'
@@ -61,6 +62,8 @@ function useSafeUSDBalances({ safeAddress, chainId }: Props) {
 	})
 
 	const [splGovSafe, setSplGovSafe] = useState<SafeSelectOption | null>(null)
+	const [tezosSafe, setTezosSafe] = useState<SafeSelectOption | null>(null)
+	const [tezosLoaded, setTezosLoaded] = useState<boolean>(false)
 	const [splGovLoaded, setSplGovLoaded] = useState(false)
 	const [splGovError, setSplGovError] = useState('')
 
@@ -68,10 +71,20 @@ function useSafeUSDBalances({ safeAddress, chainId }: Props) {
 
 	const data = useMemo<SafeSelectOption[]>(() => {
 		if(splGovSafe) {
+			console.log('data', splGovSafe)
 			const temp = [...gnosisData, splGovSafe]
 			temp.sort((a, b) => b.amount - a.amount)
+			console.log('temp', temp)
 			return temp
 		}
+		if(tezosSafe) {
+			console.log('data', tezosSafe)
+			const temp = [...gnosisData, tezosSafe]
+			temp.sort((a, b) => b!.amount - a!.amount)
+			console.log('temp', temp)
+			return temp
+		}
+
 
 		return [...gnosisData.sort((a, b) => b.amount - a.amount)]
 	}, [gnosisData, splGovSafe])
@@ -99,6 +112,32 @@ function useSafeUSDBalances({ safeAddress, chainId }: Props) {
 			}
 
 			setSplGovLoaded(true)
+		})()
+	}, [safeAddress, chainId])
+
+	useEffect(() => {
+		(async() => {
+			setTezosLoaded(false)
+			try {
+				const newTezosSafe = await getTezosSafeDetails(safeAddress)
+				setTezosSafe(newTezosSafe)
+				setSplGovError('')
+			} catch(error) {
+				// console.log(error)
+				if(typeof error === 'string') {
+					setSplGovError(error)
+				}
+
+				if(typeof (error as Error)?.message === 'string') {
+					setSplGovError((error as Error).message)
+				} else {
+					setSplGovError(DEFAULT_ERROR_MESSAGE)
+				}
+
+				setTezosSafe(null)
+			}
+
+			setTezosLoaded(true)
 		})()
 	}, [safeAddress, chainId])
 
@@ -134,7 +173,7 @@ function useSafeUSDBalances({ safeAddress, chainId }: Props) {
 		}
 	}, [gnosisRawData, gnosisLoaded, gnosisError, safeAddress, chainId])
 
-	return { gnosisError, splGovError, loaded: gnosisLoaded && splGovLoaded, data }
+	return { gnosisError, splGovError, loaded: gnosisLoaded && splGovLoaded && tezosLoaded, data }
 }
 
 export default useSafeUSDBalances

@@ -19,7 +19,7 @@ import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { addAuthorizedOwner, addAuthorizedUser, bicoDapps, chargeGas, getEventData, getTransactionDetails, networksMapping, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
-import { getSupportedValidatorNetworkFromChainId, isValidEthereumAddress, isValidSolanaAddress } from 'src/utils/validationUtils'
+import { getSupportedValidatorNetworkFromChainId, isValidEthereumAddress, isValidSolanaAddress, isValidTezosAddress } from 'src/utils/validationUtils'
 import { BackArrowThick } from 'src/v2/assets/custom chakra icons/Arrows/BackArrowThick'
 import { Organization } from 'src/v2/assets/custom chakra icons/Organization'
 import AccountDetails from 'src/v2/components/NavBar/AccountDetails'
@@ -261,11 +261,13 @@ const OnboardingCreateDomain = () => {
 	}, [biconomyWalletClient, domainName, accountDataWebwallet, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, safeSelected])
 
 	useEffect(() => {
+		console.log('is loaded', loadedSafesUSDBalance)
+		console.log('safe usd balance', safesUSDBalance)
 		if(step !== 0 || safeAddress === '' || !loadedSafesUSDBalance) {
 			setSafeAddressError('')
-		} else if(!isValidEthereumAddress(safeAddress) && !isValidSolanaAddress(safeAddress)) {
+		} else if(!isValidEthereumAddress(safeAddress) && !isValidSolanaAddress(safeAddress) && !isValidTezosAddress(safeAddress)) {
 			setSafeAddressError('Invalid address')
-		} else if(safesUSDBalance?.length === 0) {
+		} else if(safesUSDBalance?.length === 0 && !isValidTezosAddress(safeAddress)) {
 			setSafeAddressError('No Safe found with this address')
 		}
 		//step === 0 && safeAddress !== '' && loadedSafesUSDBalance && safesUSDBalance?.length === 0

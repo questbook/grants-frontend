@@ -4,6 +4,7 @@ import { ethers } from 'ethers'
 import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import { SupportedNetwork } from 'src/generated/graphql'
 import { MinimalWorkspace } from 'src/types'
+import { TzSignAPI } from '@tezos/qb-tzsign/'
 
 const isValidEthereumAddress = (address: string) => {
 	return ethers.utils.isAddress(address)
@@ -15,6 +16,16 @@ const isValidSolanaAddress = (address: string) => {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch(e: any) {
 		return false
+	}
+}
+
+const isValidTezosAddress = async (contractAddress: string) => {
+	const api = new TzSignAPI()
+	try {
+		const res = await api.getInitStorage(contractAddress!);
+		return res.status === 200;
+	} catch (e) {
+		return false;
 	}
 }
 
@@ -60,6 +71,7 @@ const getSupportedChainIdFromWorkspace = (workspace?: Pick<MinimalWorkspace, 'su
 export {
 	isValidEthereumAddress,
 	isValidSolanaAddress,
+	isValidTezosAddress,
 	isValidEmail,
 	getSupportedChainIdFromWorkspace,
 	getSupportedValidatorNetworkFromChainId,

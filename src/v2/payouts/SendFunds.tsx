@@ -91,7 +91,7 @@ export default function SendFunds({
 	const [assetId, setAssetId] = useState<string>('')
 	const [celoTokensUSDRateMapping, setCeloTokensUSDRateMappings] = useState<any>({})
 
-	const isEvmChain = workspaceSafeChainId !== '900001'
+	const isEvmChain = workspaceSafeChainId !== '900001' && workspaceSafeChainId !== '900002'
 
 	const workspaceRegistryContract = useQBContract('workspace', workspacechainId)
 	const { webwallet } = useContext(WebwalletContext)!
