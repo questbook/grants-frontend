@@ -134,13 +134,13 @@ function Proposal() {
 					flexDirection='column'
 					padding={4}>
 					{/* Links */}
-					<Box display={projectLinks?.length ? '' : 'none'}>
+					<Box display={proposalLinks?.length ? '' : 'none'}>
 						<Heading
 							variant='applicationHeading'>
 							Links
 						</Heading>
 						{
-							projectLinks?.map(({ link }) => (
+							proposalLinks?.map(({ link }) => (
 								<Text
 									key={link}
 									variant='applicationText'
@@ -155,7 +155,7 @@ function Proposal() {
 						}
 					</Box>
 
-					{/* Project Details */}
+					{/* Proposal Details */}
 					<Box>
 						<Heading variant='applicationHeading'>
 							Project Details
@@ -172,7 +172,7 @@ function Proposal() {
 						</Text>
 					</Box>
 
-					{/* Project Goals */}
+					{/* Proposal Goals */}
 					<Box display={proposalGoals && proposalGoals !== '' ? '' : 'none'}>
 						<Heading variant='applicationHeading'>
 							Project Goals
@@ -184,7 +184,7 @@ function Proposal() {
 						</Text>
 					</Box>
 
-					{/* Project Milestones */}
+					{/* Proposal Milestones */}
 					<Box display={milestones?.length ? '' : 'none'}>
 						<Heading variant='applicationHeading'>
 							Project Milestones
@@ -516,7 +516,7 @@ function Proposal() {
 	const [updatedAt, setUpdatedAt] = useState('')
 
 	const [proposalDetails, setProposalDetails] = useState('')
-	const [projectLinks, setProjectLinks] = useState([])
+	const [proposalLinks, setProposalLinks] = useState([])
 	const [proposalGoals, setProposalGoals] = useState()
 
 	const [milestones, setMilestones] = useState<Exclude<GetApplicationDetailsQuery['grantApplication'], null | undefined>['milestones']>([])
@@ -645,7 +645,7 @@ function Proposal() {
 
 			setCreatedAt(getFormattedDateFromUnixTimestampWithYear(proposal.createdAtS)!)
 			setUpdatedAt(getFormattedDateFromUnixTimestampWithYear(proposal.updatedAtS)!)
-			setProjectLinks(getFieldStrings(proposal, 'projectLinks'))
+			setProposalLinks(getFieldStrings(proposal, 'projectLinks'))
 			setProposalGoals(getFieldString(proposal, 'projectGoals'))
 			setMilestones(proposal.milestones)
 			setFundingBreakdown(getFieldString(proposal, 'fundingBreakdown'))

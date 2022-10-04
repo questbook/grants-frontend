@@ -247,5 +247,5 @@ export const getRewardAmountMilestones = (decimals: number, application: any) =>
 	application?.milestones?.forEach(
 		(milestone: any) => sum = sum.add(milestone.amount))
 	console.log('Reward milestone - ', parseInt(ethers.utils.formatUnits(sum.toString(), decimals)).toLocaleString())
-	return ethers.utils.formatUnits(sum.toString(), decimals).toString()?.split('.')[0]
+	return parseInt(ethers.utils.formatUnits(sum.toString(), decimals)).toLocaleString()?.split('.')[0]
 }
