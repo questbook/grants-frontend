@@ -30,654 +30,656 @@ import SendFunds from 'src/v2/payouts/SendFunds'
 
 function Proposal() {
 
-	const buildComponent = () => (
-		<Flex
-			w='100vw'
-			pt={6}
-			gap={8}
-			padding={8}>
-			<Flex
-				flex={2}
-				w='100%'
-				h='100%'
-				flexDirection='column'
-				gap={4}
-			>
-				<Flex>
-					<Text variant='proposalHeading'>
-						{projectName}
-					</Text>
-					<Spacer />
-					<Flex
-						display={proposal?.state === 'submitted' ? 'none' : ''}
-						justifyContent='center'
-						bg={proposal?.state === 'rejected' ? '#FFDCC0' : proposal?.state === 'approved' ? '#E3F6C1' : ''}
-						borderRadius='3px'
-						padding='8px'>
-						<Text
-							textTransform='capitalize'
-							color={proposal?.state === 'rejected' ? '#FF7545' : proposal?.state === 'approved' ? '#0DC98B' : ''}
-							fontWeight='600'
-							fontSize='14px'
-							lineHeight='20px'
+    const buildComponent = () => (
+        <Flex
+            w='100vw'
+            pt={6}
+            gap={8}
+            padding={8}>
+            <Flex
+                flex={2}
+                w='100%'
+                h='100%'
+                flexDirection='column'
+                gap={4}
+            >
+                <Flex>
+                    <Text variant='proposalHeading'>
+                        {proposalName}
+                    </Text>
+                    <Spacer />
+                    <Flex
+                        display={proposal?.state === 'submitted' ? 'none' : ''}
+                        justifyContent='center'
+                        bg={proposal?.state === 'rejected' ? '#FFDCC0' : proposal?.state === 'approved' ? '#E3F6C1' : ''}
+                        borderRadius='3px'
+                        padding='8px'>
+                        <Text
+                            textTransform='capitalize'
+                            color={proposal?.state === 'rejected' ? '#FF7545' : proposal?.state === 'approved' ? '#0DC98B' : ''}
+                            fontWeight='600'
+                            fontSize='14px'
+                            lineHeight='20px'
 
-						>
-							{proposal?.state}
-						</Text>
-					</Flex>
-				</Flex>
+                        >
+                            {proposal?.state}
+                        </Text>
+                    </Flex>
+                </Flex>
 
-				{/* Proposal info start */}
-				<Flex
-					bg='white'
-					gap={4}
-					height='60px'
-					alignItems='center'
-					padding={5}>
-					<Flex
-						alignItems='center'
-						gap={1} >
-						<Image
-							boxSize={4}
-							src='/ui_icons/user_icon.svg' />
-						<Text variant='footer'>
-							{applicantName}
-						</Text>
-					</Flex>
-					<Spacer />
-					<Flex
-						alignItems='center'
-						gap={1}>
-						<Image
-							boxSize={4}
-							src='/ui_icons/wallet_line.svg' />
-						<Text variant='footer'>
-							{truncateStringFromMiddle(applicantAddress!)}
-						</Text>
-						<CopyIcon text={applicantAddress!} />
-					</Flex>
-					<Spacer />
-					<Flex
-						alignItems='center'
-						gap={1}>
-						<Image
-							boxSize={4}
-							src='/ui_icons/mail_line.svg' />
-						<Text variant='footer'>
-							{' '}
-							{applicantEmail}
-							{' '}
-						</Text>
-						<CopyIcon text={applicantEmail!} />
-					</Flex>
-					<Spacer />
-					<Flex
-						alignItems='center'
-						gap={1}>
-						<Image
-							boxSize={4}
-							src='/ui_icons/calendar_line.svg' />
-						<Text variant='footer'>
-							{' '}
-							{createdAt}
-							{' '}
-						</Text>
-					</Flex>
-				</Flex>
-				{/* Proposal info end */}
+                {/* Proposal info start */}
+                <Flex
+                    bg='white'
+                    gap={4}
+                    height='60px'
+                    alignItems='center'
+                    padding={5}>
+                    <Flex
+                        alignItems='center'
+                        gap={1} >
+                        <Image
+                            boxSize={4}
+                            src='/ui_icons/user_icon.svg' />
+                        <Text variant='footer'>
+                            {applicantName}
+                        </Text>
+                    </Flex>
+                    <Spacer />
+                    <Flex
+                        alignItems='center'
+                        gap={1}>
+                        <Image
+                            boxSize={4}
+                            src='/ui_icons/wallet_line.svg' />
+                        <Text variant='footer'>
+                            {truncateStringFromMiddle(applicantAddress!)}
+                        </Text>
+                        <CopyIcon text={applicantAddress!} />
+                    </Flex>
+                    <Spacer />
+                    <Flex
+                        alignItems='center'
+                        gap={1}>
+                        <Image
+                            boxSize={4}
+                            src='/ui_icons/mail_line.svg' />
+                        <Text variant='footer'>
+                            {' '}
+                            {applicantEmail}
+                            {' '}
+                        </Text>
+                        <CopyIcon text={applicantEmail!} />
+                    </Flex>
+                    <Spacer />
+                    <Flex
+                        alignItems='center'
+                        gap={1}>
+                        <Image
+                            boxSize={4}
+                            src='/ui_icons/calendar_line.svg' />
+                        <Text variant='footer'>
+                            {' '}
+                            {createdAt}
+                            {' '}
+                        </Text>
+                    </Flex>
+                </Flex>
+                {/* Proposal info end */}
 
-				{/* Proposal details start */}
-				<Flex
-					bg='white'
-					gap={4}
-					alignItems='start'
-					flexDirection='column'
-					padding={4}>
-					{/* Links */}
-					<Box display={projectLinks?.length ? '' : 'none'}>
-						<Heading
-							variant='applicationHeading'>
-							Links
-						</Heading>
-						{
-							projectLinks?.map(({ link }) => (
-								<Text
-									key={link}
-									variant='applicationText'
-									mt={2}>
-									<Link
-										href={link}
-										isExternal>
-										{link}
-									</Link>
-								</Text>
-							))
-						}
-					</Box>
+                {/* Proposal details start */}
+                <Flex
+                    bg='white'
+                    gap={4}
+                    alignItems='start'
+                    flexDirection='column'
+                    padding={4}>
+                    {/* Links */}
+                    <Box display={proposalLinks?.length ? '' : 'none'}>
+                        <Heading
+                            variant='applicationHeading'>
+                            Links
+                        </Heading>
+                        {
+                            proposalLinks?.map((link) =>
+                            (
+                                <Text
+                                    key={link}
+                                    variant='applicationText'
+                                    mt={2}>
+                                    <Link
+                                        href={link}
+                                        isExternal>
+                                        {link}
+                                    </Link>
+                                </Text>
+                            ))
+                        }
+                    </Box>
 
-					{/* Project Details */}
-					<Box>
-						<Heading variant='applicationHeading'>
-							Project Details
-						</Heading>
-						<Text mt={2}>
-							{
-								projectDetails ? (
-									<TextViewer
-										text={projectDetails}
-									/>
-								) : null
-							}
+                    {/* Proposal Details */}
+                    <Box>
+                        <Heading variant='applicationHeading'>
+                            Project Details
+                        </Heading>
+                        <Text mt={2}>
+                            {
+                                proposalDetails ? (
+                                    <TextViewer
+                                        text={proposalDetails}
+                                    />
+                                ) : null
+                            }
 
-						</Text>
-					</Box>
+                        </Text>
+                    </Box>
 
-					{/* Project Goals */}
-					<Box display={projectGoals && projectGoals !== '' ? '' : 'none'}>
-						<Heading variant='applicationHeading'>
-							Project Goals
-						</Heading>
-						<Text
-							variant='applicationText'
-							mt={2}>
-							{projectGoals}
-						</Text>
-					</Box>
+                    {/* Proposal Goals */}
+                    <Box display={proposalGoals && proposalGoals !== '' ? '' : 'none'}>
+                        <Heading variant='applicationHeading'>
+                            Project Goals
+                        </Heading>
+                        <Text
+                            variant='applicationText'
+                            mt={2}>
+                            {proposalGoals}
+                        </Text>
+                    </Box>
 
-					{/* Project Milestones */}
-					<Box display={proposal?.milestones?.length ? '' : 'none'}>
-						<Heading variant='applicationHeading'>
-							Project Milestones
-						</Heading>
-						<Text
-							variant='applicationText'
-							mt={2}>
-							{' '}
-							{
-								proposal?.milestones?.map((milestone, index: number) => (
-									<Box key={milestone.id}>
-										<Heading
-											variant='applicationSubtitle'
-											mt={3}>
-											Milestone
-											{' '}
-											{index + 1}
-										</Heading>
-										<Text
-											variant='applicationTextHeading'
-											mt={1}>
-											{milestone?.title}
-										</Text>
-										<Flex
-											direction='row'
-											justify='start'
-											mt={3}>
-											<Image
-												boxSize='48px'
-												src={token?.icon}
-											/>
-											<Box ml={2} />
-											<Flex
-												direction='column'
-												justify='center'
-												align='start'>
-												<Heading variant='applicationSubtitle'>
-													Funding asked
-												</Heading>
-												<Text variant='applicationText'>
-													{
-														milestone?.amount && proposal
+                    {/* Proposal Milestones */}
+                    <Box display={milestones?.length ? '' : 'none'}>
+                        <Heading variant='applicationHeading'>
+                            Project Milestones
+                        </Heading>
+                        <Text
+                            variant='applicationText'
+                            mt={2}>
+                            {' '}
+                            {
+                                milestones?.map((milestone, index: number) => (
+                                    <Box key={milestone.id}>
+                                        <Heading
+                                            variant='applicationSubtitle'
+                                            mt={3}>
+                                            Milestone
+                                            {' '}
+                                            {index + 1}
+                                        </Heading>
+                                        <Text
+                                            variant='applicationTextHeading'
+                                            mt={1}>
+                                            {milestone?.title}
+                                        </Text>
+                                        <Flex
+                                            direction='row'
+                                            justify='start'
+                                            mt={3}>
+                                            <Image
+                                                boxSize='48px'
+                                                src={token?.icon}
+                                            />
+                                            <Box ml={2} />
+                                            <Flex
+                                                direction='column'
+                                                justify='center'
+                                                align='start'>
+                                                <Heading variant='applicationSubtitle'>
+                                                    Funding asked
+                                                </Heading>
+                                                <Text variant='applicationText'>
+                                                    {
+                                                        milestone?.amount && proposal
                                                         && formatAmount(
-                                                        	milestone?.amount,
-                                                        	token?.decimals,
+                                                            milestone?.amount,
+                                                            token?.decimals,
                                                         )
-													}
-													{' '}
-													{token?.label}
-												</Text>
-											</Flex>
-										</Flex>
-										<Box mt={4} />
-									</Box>
-								))
-							}
-						</Text>
-					</Box>
+                                                    }
+                                                    {' '}
+                                                    {token?.label}
+                                                </Text>
+                                            </Flex>
+                                        </Flex>
+                                        <Box mt={4} />
+                                    </Box>
+                                ))
+                            }
+                        </Text>
+                    </Box>
 
-					{/* Funding Breakdown */}
-					<Box
-						display={fundingBreakdown && fundingBreakdown !== '' ? '' : 'none'}
-					>
-						<Heading variant='applicationHeading'>
-							Funding Breakdown
-						</Heading>
-						<Text
-							variant='applicationText'
-							mt={2}>
-							{fundingBreakdown}
-						</Text>
-					</Box>
+                    {/* Funding Breakdown */}
+                    <Box
+                        display={fundingBreakdown && fundingBreakdown !== '' ? '' : 'none'}
+                    >
+                        <Heading variant='applicationHeading'>
+                            Funding Breakdown
+                        </Heading>
+                        <Text
+                            variant='applicationText'
+                            mt={2}>
+                            {fundingBreakdown}
+                        </Text>
+                    </Box>
 
-					{/* Team Member */}
-					<Box
-						display={teamMembers ? '' : 'none'}
-						mt={8}>
-						<Heading variant='applicationHeading'>
-							Team Members -
-							{' '}
-							{teamMembers}
-						</Heading>
-						{
-							memberDetails?.map((memberDetail, index: number) => (
-								<Box key={index}>
-									<Heading
-										variant='applicationHeading'
-										mt={2}
-									>
-										#
-										{' '}
-										{index + 1}
-									</Heading>
-									<Text
-										variant='applicationText'>
-										{memberDetail}
-									</Text>
-								</Box>
-							))
-						}
-					</Box>
+                    {/* Team Member */}
+                    <Box
+                        display={teamMembers ? '' : 'none'}
+                        mt={8}>
+                        <Heading variant='applicationHeading'>
+                            Team Members -
+                            {' '}
+                            {teamMembers}
+                        </Heading>
+                        {
+                            memberDetails?.map((memberDetail, index: number) => (
+                                <Box key={index}>
+                                    <Heading
+                                        variant='applicationHeading'
+                                        mt={2}
+                                    >
+                                        #
+                                        {' '}
+                                        {index + 1}
+                                    </Heading>
+                                    <Text
+                                        variant='applicationText'>
+                                        {memberDetail}
+                                    </Text>
+                                </Box>
+                            ))
+                        }
+                    </Box>
 
-					{/* Custom Fields */}
-					<Box
-						display={customFields?.length ? '' : 'none'}
-						mt={10}>
-						<Heading
-							variant='applicationHeading'>
-							Additional Info
-						</Heading>
+                    {/* Custom Fields */}
+                    <Box
+                        display={customFields?.length ? '' : 'none'}
+                        mt={10}>
+                        <Heading
+                            variant='applicationHeading'>
+                            Additional Info
+                        </Heading>
 
-						{
-							customFields.map((customField, index: number) => (
-								<Box key={customField.title}>
-									<Heading
-										variant='applicationHeading'
-										mt={3}>
-										{index + 1}
-										{'. '}
-										{customField.title}
-									</Heading>
-									<Text
-										variant='applicationText'
-										mt={1}>
-										{customField.value}
-									</Text>
-								</Box>
-							))
-						}
-					</Box>
-				</Flex>
-				{/* Proposal details end */}
-			</Flex>
+                        {
+                            customFields.map((customField, index: number) => (
+                                <Box key={customField.title}>
+                                    <Heading
+                                        variant='applicationHeading'
+                                        mt={3}>
+                                        {index + 1}
+                                        {'. '}
+                                        {customField.title}
+                                    </Heading>
+                                    <Text
+                                        variant='applicationText'
+                                        mt={1}>
+                                        {customField.value}
+                                    </Text>
+                                </Box>
+                            ))
+                        }
+                    </Box>
+                </Flex>
+                {/* Proposal details end */}
+            </Flex>
 
-			<Flex
-				flex={1}
-				w='100%'
-				h='100%'
-				direction='column'
-			>
-				<ActionPanel
-					state={proposal?.state!}
-					rejectionReason={proposal?.feedbackDao ?? ''}
-					rejectionDate={updatedAt ?? ''}
-					onSendFundClick={
-						() => {
-							setSendFundData([{
-								grantTitle: proposal?.grant?.title,
-								grant: proposal?.grant,
-								applicationId: proposal?.id!,
-								applicantName: applicantName,
-								applicantEmail: applicantEmail,
-								applicantAddress: applicantAddress,
-								sentOn: createdAt!,
-								updatedOn: updatedAt!,
-								projectName,
-								fundingAsked: {
-									amount: getRewardAmountMilestones(token?.decimals!, proposal?.milestones),
-									symbol: token?.label ?? '',
-									icon: token?.icon!,
-								},
-								// status: applicationStatuses.indexOf(applicant?.state),
-								status: TableFilters[proposal?.state!],
-								milestones: proposal?.milestones!,
-								amountPaid: '0',
-								reviewers: [],
-								reviews: []
-							}])
-						}
-					}
-					onAcceptClick={
-						() => {
-							// setIsConfirmClicked(true)
-							setIsAcceptProposalClicked(true)
-							setIsConfirmationModalOpen(true)
-							// setUpdateApplicationStateData({
-							//     state: 2, comment: ''
-							// })
-						}
-					}
-					onRejectClick={
-						() => {
-							setIsRejectProposalClicked(true)
-							setIsRejectProposalModalOpen(true)
-							setUpdateApplicationStateData({
-								state: 3, comment: ''
-							})
-						}
-					} />
-				<ConfirmationModal
-					isOpen={isConfirmationModalOpen}
-					isAcceptProposalClicked={isAcceptProposalClicked}
-					isRejectProposalClicked={isRejectProposalClicked}
-					setIsAcceptProposalClicked={setIsAcceptProposalClicked}
-					setIsConfirmationModalOpen={setIsConfirmationModalOpen}
-					setIsRejectProposalClicked={setIsRejectProposalClicked}
-					setIsConfirmClicked={setIsConfirmClicked}
-					networkTransactionModalStep={networkTransactionModalStep!}
-					setUpdateApplicationStateData={setUpdateApplicationStateData} />
-				<RejectProposalModal
-					isOpen={isRejectProposalModalOpen}
-					isRejectProposalClicked={isRejectProposalClicked}
-					networkTransactionModalStep={networkTransactionModalStep!}
-					updateApplicationStateData={updateApplicationStateData!}
-					setIsConfirmClicked={setIsRejectConfirmClicked}
-					setIsRejectProposalClicked={setIsRejectProposalClicked}
-					setIsRejectProposalModalOpen={setIsRejectProposalModalOpen}
-					setUpdateApplicationStateData={setUpdateApplicationStateData} />
-				<Flex
-					mt={4}
-					bg='white'
-					px={5}
-					py={4}
-					align='center'>
-					<Text
-						variant='v2_body'
-						fontWeight='500'>
-						Funding asked
-					</Text>
-					<Text
-						variant='v2_subheading'
-						fontWeight='500'
-						ml='auto'>
-						{getRewardAmountMilestones(token?.decimals!, proposal)}
-						{' '}
-						{token?.label}
-					</Text>
-				</Flex>
+            <Flex
+                flex={1}
+                w='100%'
+                h='100%'
+                direction='column'
+            >
+                <ActionPanel
+                    state={proposal?.state!}
+                    rejectionReason={proposal?.feedbackDao ?? ''}
+                    rejectionDate={updatedAt ?? ''}
+                    onSendFundClick={
+                        () => {
+                            setSendFundData([{
+                                grantTitle: proposal?.grant?.title,
+                                grant: proposal?.grant,
+                                applicationId: proposal?.id!,
+                                applicantName: applicantName,
+                                applicantEmail: applicantEmail,
+                                applicantAddress: applicantAddress,
+                                sentOn: createdAt!,
+                                updatedOn: updatedAt!,
+                                projectName: proposalName,
+                                fundingAsked: {
+                                    amount: getRewardAmountMilestones(token?.decimals!, proposal?.milestones),
+                                    symbol: token?.label ?? '',
+                                    icon: token?.icon!,
+                                },
+                                // status: applicationStatuses.indexOf(applicant?.state),
+                                status: TableFilters[proposal?.state!],
+                                milestones: milestones!,
+                                amountPaid: '0',
+                                reviewers: [],
+                                reviews: []
+                            }])
+                        }
+                    }
+                    onAcceptClick={
+                        () => {
+                            // setIsConfirmClicked(true)
+                            setIsAcceptProposalClicked(true)
+                            setIsConfirmationModalOpen(true)
+                            // setUpdateApplicationStateData({
+                            //     state: 2, comment: ''
+                            // })
+                        }
+                    }
+                    onRejectClick={
+                        () => {
+                            setIsRejectProposalClicked(true)
+                            setIsRejectProposalModalOpen(true)
+                            setUpdateApplicationStateData({
+                                state: 3, comment: ''
+                            })
+                        }
+                    } />
+                <ConfirmationModal
+                    isOpen={isConfirmationModalOpen}
+                    isAcceptProposalClicked={isAcceptProposalClicked}
+                    isRejectProposalClicked={isRejectProposalClicked}
+                    setIsAcceptProposalClicked={setIsAcceptProposalClicked}
+                    setIsConfirmationModalOpen={setIsConfirmationModalOpen}
+                    setIsRejectProposalClicked={setIsRejectProposalClicked}
+                    setIsConfirmClicked={setIsConfirmClicked}
+                    networkTransactionModalStep={networkTransactionModalStep!}
+                    setUpdateApplicationStateData={setUpdateApplicationStateData} />
+                <RejectProposalModal
+                    isOpen={isRejectProposalModalOpen}
+                    isRejectProposalClicked={isRejectProposalClicked}
+                    networkTransactionModalStep={networkTransactionModalStep!}
+                    updateApplicationStateData={updateApplicationStateData!}
+                    setIsConfirmClicked={setIsRejectConfirmClicked}
+                    setIsRejectProposalClicked={setIsRejectProposalClicked}
+                    setIsRejectProposalModalOpen={setIsRejectProposalModalOpen}
+                    setUpdateApplicationStateData={setUpdateApplicationStateData} />
+                <Flex
+                    mt={4}
+                    bg='white'
+                    px={5}
+                    py={4}
+                    align='center'>
+                    <Text
+                        variant='v2_body'
+                        fontWeight='500'>
+                        Funding asked
+                    </Text>
+                    <Text
+                        variant='v2_subheading'
+                        fontWeight='500'
+                        ml='auto'>
+                        {getRewardAmountMilestones(token?.decimals!, proposal)}
+                        {' '}
+                        {token?.label}
+                    </Text>
+                </Flex>
 
-				<Flex
-					direction='column'
-					mt={4}
-					bg='white'
-					p={6}>
-					{
-						proposal?.milestones?.map((milestone, index) => {
-							const disbursedMilestones = proposal?.grant?.fundTransfers?.filter((fundTransfer) => fundTransfer?.milestone?.id === milestone.id)
-							return (
-								<MilestoneItem
-									key={milestone.id}
-									milestone={milestone}
-									disbursedMilestones={disbursedMilestones}
-									index={index}
-									token={token!}
-									proposalStatus={proposal?.state!}
-									onModalOpen={
-										() => {
-											setIsMilestoneDoneModalOpen(true)
-											setApproveMilestoneData({ index, comment: '' })
-										}
-									} />
-							)
-						})
-					}
-				</Flex>
+                <Flex
+                    direction='column'
+                    mt={4}
+                    bg='white'
+                    p={6}>
+                    {
+                        milestones?.map((milestone, index) => {
+                            const disbursedMilestones = proposal?.grant?.fundTransfers?.filter((fundTransfer) => fundTransfer?.milestone?.id === milestone.id)
+                            return (
+                                <MilestoneItem
+                                    key={milestone.id}
+                                    milestone={milestone}
+                                    disbursedMilestones={disbursedMilestones!}
+                                    index={index}
+                                    token={token!}
+                                    proposalStatus={proposal?.state!}
+                                    onModalOpen={
+                                        () => {
+                                            setIsMilestoneDoneModalOpen(true)
+                                            setApproveMilestoneData({ index, comment: '' })
+                                        }
+                                    } />
+                            )
+                        })
+                    }
+                </Flex>
 
-				<MilestoneDoneModal
-					onSubmit={
-						(comment: string) => {
-							setApproveMilestoneData({ index: approveMilestoneData.index, comment })
-						}
-					}
-					isOpen={isMilestoneDoneModalOpen}
-					onClose={() => setIsMilestoneDoneModalOpen(false)}
-				/>
+                <MilestoneDoneModal
+                    onSubmit={
+                        (comment: string) => {
+                            setApproveMilestoneData({ index: approveMilestoneData.index, comment })
+                        }
+                    }
+                    isOpen={isMilestoneDoneModalOpen}
+                    onClose={() => setIsMilestoneDoneModalOpen(false)}
+                />
 
-				<SendFunds
-					workspace={workspace!}
-					workspaceSafe={workspace?.safe?.address}
-					workspaceSafeChainId={workspace?.safe?.chainId ?? ''}
-					sendFundsTo={sendFundData}
-					rewardAssetAddress={token?.address ?? ''}
-					grantTitle={proposal?.grant?.title ?? ''} />
+                <SendFunds
+                    workspace={workspace!}
+                    workspaceSafe={workspace?.safe?.address}
+                    workspaceSafeChainId={workspace?.safe?.chainId ?? ''}
+                    sendFundsTo={sendFundData}
+                    rewardAssetAddress={token?.address ?? ''}
+                    grantTitle={proposal?.grant?.title ?? ''} />
 
-				<NetworkTransactionModal
-					isOpen={networkTransactionModalStep !== undefined}
-					subtitle={`${proposal?.state === 'approved' ? 'Marking milestone as done' : updateApplicationStateData?.state === 2 ? 'Accepting Application' : 'Rejecting Application'}`}
-					description={
-						<Flex
-							direction='column'
-							w='100%'
-							align='start'>
-							<Text
-								fontWeight='500'
-								fontSize='17px'
-							>
-								{proposal?.grant?.title}
-							</Text>
+                <NetworkTransactionModal
+                    isOpen={networkTransactionModalStep !== undefined}
+                    subtitle={`${proposal?.state === 'approved' ? 'Marking milestone as done' : updateApplicationStateData?.state === 2 ? 'Accepting Application' : 'Rejecting Application'}`}
+                    description={
+                        <Flex
+                            direction='column'
+                            w='100%'
+                            align='start'>
+                            <Text
+                                fontWeight='500'
+                                fontSize='17px'
+                            >
+                                {proposal?.grant?.title}
+                            </Text>
 
-							{/* <Button
+                            {/* <Button
 							rightIcon={<ExternalLinkIcon />}
 							variant='linkV2'
 							bg='#D5F1EB'>
 							{(grantData?.grants?.length || 0) > 0 && formatAddress(grantData?.grants[0]?.id!)}
 						</Button> */}
-						</Flex>
-					}
-					currentStepIndex={networkTransactionModalStep || 0}
-					steps={
-						[
-							'Uploading data to IPFS',
-							'Signing transaction with in-app wallet',
-							'Waiting for transaction to complete on chain',
-							'Indexing transaction on graph protocol',
-							`${proposal?.state === 'approved' ? 'Milestone approved on-chain' : `Application ${updateApplicationStateData?.state === 2 ? 'accepted' : 'rejected'} on-chain`}`,
-						]
-					}
-					viewLink={txnLink ? txnLink : acceptTxnLink ? acceptTxnLink : rejectTxnLink}
-					onClose={
-						async() => {
-							setNetworkTransactionModalStep(undefined)
-							router.reload()
-						}
-					} />
-			</Flex>
-		</Flex>
+                        </Flex>
+                    }
+                    currentStepIndex={networkTransactionModalStep || 0}
+                    steps={
+                        [
+                            'Uploading data to IPFS',
+                            'Signing transaction with in-app wallet',
+                            'Waiting for transaction to complete on chain',
+                            'Indexing transaction on graph protocol',
+                            `${proposal?.state === 'approved' ? 'Milestone approved on-chain' : `Application ${updateApplicationStateData?.state === 2 ? 'accepted' : 'rejected'} on-chain`}`,
+                        ]
+                    }
+                    viewLink={txnLink ? txnLink : acceptTxnLink ? acceptTxnLink : rejectTxnLink}
+                    onClose={
+                        async () => {
+                            setNetworkTransactionModalStep(undefined)
+                            router.reload()
+                        }
+                    } />
+            </Flex>
+        </Flex>
 
-	)
+    )
 
-	const router = useRouter()
-	const { workspace } = useContext(ApiClientsContext)!
+    const router = useRouter()
+    const { workspace } = useContext(ApiClientsContext)!
 
-	const [projectName, setProjectName] = useState('')
-	const [applicantName, setApplicantName] = useState('')
-	const [applicantEmail, setApplicantEmail] = useState('')
-	const [applicantAddress, setApplicantAddress] = useState('')
+    const [proposalName, setProposalName] = useState('')
+    const [applicantName, setApplicantName] = useState('')
+    const [applicantEmail, setApplicantEmail] = useState('')
+    const [applicantAddress, setApplicantAddress] = useState('')
 
-	const [createdAt, setCreatedAt] = useState('')
-	const [updatedAt, setUpdatedAt] = useState('')
+    const [createdAt, setCreatedAt] = useState('')
+    const [updatedAt, setUpdatedAt] = useState('')
 
-	const [projectDetails, setProjectDetails] = useState('')
-	const [projectLinks, setProjectLinks] = useState([])
-	const [projectGoals, setProjectGoals] = useState()
+    const [proposalDetails, setProposalDetails] = useState('')
+    const [proposalLinks, setProposalLinks] = useState([])
+    const [proposalGoals, setProposalGoals] = useState()
 
-	const [milestones, setMilestones] = useState<Exclude<GetApplicationDetailsQuery['grantApplication'], null | undefined>['milestones']>([])
+    const [milestones, setMilestones] = useState<Exclude<GetApplicationDetailsQuery['grantApplication'], null | undefined>['milestones']>([])
 
-	const [fundingBreakdown, setFundingBreakdown] = useState('')
+    const [fundingBreakdown, setFundingBreakdown] = useState('')
 
-	const [teamMembers, setTeamMembers] = useState<string[]>([])
-	const [memberDetails, setMemberDetails] = useState<string[]>([])
+    const [teamMembers, setTeamMembers] = useState<string[]>([])
+    const [memberDetails, setMemberDetails] = useState<string[]>([])
 
-	const [customFields, setCustomFields] = useState<CustomField[]>([])
+    const [customFields, setCustomFields] = useState<CustomField[]>([])
 
-	const [isProposalLoading, setIsProposalLoading] = useState(true)
+    const [isProposalLoading, setIsProposalLoading] = useState(true)
 
-	const [isMilestoneDoneModalOpen, setIsMilestoneDoneModalOpen] = useState<boolean>(false)
-	const [sendFundData, setSendFundData] = useState<IApplicantData[]>([])
-	const [updateApplicationStateData, setUpdateApplicationStateData] = useState<{ state: number, comment: string }>({ state: -1, comment: '' })
-	const [approveMilestoneData, setApproveMilestoneData] = useState<{ index: number, comment: string }>({ index: -1, comment: '' })
+    const [isMilestoneDoneModalOpen, setIsMilestoneDoneModalOpen] = useState<boolean>(false)
+    const [sendFundData, setSendFundData] = useState<IApplicantData[]>([])
+    const [updateApplicationStateData, setUpdateApplicationStateData] = useState<{ state: number, comment: string }>({ state: -1, comment: '' })
+    const [approveMilestoneData, setApproveMilestoneData] = useState<{ index: number, comment: string }>({ index: -1, comment: '' })
 
-	const [proposalId, setProposalId] = useState<string>()
-	const [chainId, setChainId] = useState<SupportedChainId>(defaultChainId)
+    const [proposalId, setProposalId] = useState<string>()
+    const [chainId, setChainId] = useState<SupportedChainId>(defaultChainId)
 
-	const [token, setToken] = useState<ChainInfo['supportedCurrencies'][string]>()
+    const [token, setToken] = useState<ChainInfo['supportedCurrencies'][string]>()
 
-	const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false)
-	const [isRejectProposalModalOpen, setIsRejectProposalModalOpen] = useState<boolean>(false)
+    const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false)
+    const [isRejectProposalModalOpen, setIsRejectProposalModalOpen] = useState<boolean>(false)
 
-	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
-	const [isConfirmClicked, setIsConfirmClicked] = useState<boolean>(false)
-	const [isRejectConfirmClicked, setIsRejectConfirmClicked] = useState<boolean>(false)
-	const [proposal, setProposal] = useState<P>()
+    const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
+    const [isConfirmClicked, setIsConfirmClicked] = useState<boolean>(false)
+    const [isRejectConfirmClicked, setIsRejectConfirmClicked] = useState<boolean>(false)
+    const [proposal, setProposal] = useState<P>()
 
-	const [isAcceptProposalClicked, setIsAcceptProposalClicked] = useState<boolean>(false)
-	const [isRejectProposalClicked, setIsRejectProposalClicked] = useState<boolean>(false)
+    const [isAcceptProposalClicked, setIsAcceptProposalClicked] = useState<boolean>(false)
+    const [isRejectProposalClicked, setIsRejectProposalClicked] = useState<boolean>(false)
 
-	useEffect(() => {
-		logger.info({ chainId }, '(Proposal) Chain ID')
-	}, [chainId])
+    useEffect(() => {
+        logger.info({ chainId }, '(Proposal) Chain ID')
+    }, [chainId])
 
-	useEffect(() => {
-		logger.info({ proposalId }, '(Proposal) Proposal ID')
-	}, [chainId])
+    useEffect(() => {
+        logger.info({ proposalId }, '(Proposal) Proposal ID')
+    }, [chainId])
 
-	useEffect(() => {
-		if(typeof router.query.id === 'string') {
-			setProposalId(router.query.id)
-		}
+    useEffect(() => {
+        if (typeof router.query.id === 'string') {
+            setProposalId(router.query.id)
+        }
 
-		if(typeof router.query.chain === 'string' && router.query.chain in SupportedChainId) {
-			setChainId(parseInt(router.query.chain) as SupportedChainId)
-		}
-	}, [])
+        if (typeof router.query.chain === 'string' && router.query.chain in SupportedChainId) {
+            setChainId(parseInt(router.query.chain) as SupportedChainId)
+        }
+    }, [])
 
-	const { results, fetchMore } = useMultiChainQuery({
-		useQuery: useGetApplicationDetailsQuery,
-		options: {
-			variables: {
-				applicationID: proposalId ?? '',
-			}
-		},
-		chains: [chainId]
-	})
+    const { results, fetchMore } = useMultiChainQuery({
+        useQuery: useGetApplicationDetailsQuery,
+        options: {
+            variables: {
+                applicationID: proposalId ?? '',
+            }
+        },
+        chains: [chainId]
+    })
 
-	const [rejectTxnData, rejectTxnLink,] = useUpdateApplicationState(
-		updateApplicationStateData.comment,
-		proposal?.id,
-		updateApplicationStateData.state,
-		isRejectConfirmClicked,
-		setIsRejectConfirmClicked,
-		setNetworkTransactionModalStep
-	)
+    const [rejectTxnData, rejectTxnLink,] = useUpdateApplicationState(
+        updateApplicationStateData.comment,
+        proposal?.id,
+        updateApplicationStateData.state,
+        isRejectConfirmClicked,
+        setIsRejectConfirmClicked,
+        setNetworkTransactionModalStep
+    )
 
-	// Needs to use these values properly
-	const [txnData, acceptTxnLink, , isBiconomyInitialised, error] = useBatchUpdateApplicationState(
-		updateApplicationStateData.comment,
-		[parseInt(proposal?.id!)],
-		updateApplicationStateData.state,
-		isConfirmClicked,
-		setIsConfirmClicked,
-		setNetworkTransactionModalStep
-	)
+    // Needs to use these values properly
+    const [txnData, acceptTxnLink, , isBiconomyInitialised, error] = useBatchUpdateApplicationState(
+        updateApplicationStateData.comment,
+        [parseInt(proposal?.id!)],
+        updateApplicationStateData.state,
+        isConfirmClicked,
+        setIsConfirmClicked,
+        setNetworkTransactionModalStep
+    )
 
-	// Need to use the returned values properly
-	const [txn, txnLink,] = useApproveMilestone(
-		approveMilestoneData.comment,
-		proposal?.id,
-		approveMilestoneData.index,
-		setNetworkTransactionModalStep
-	)
+    // Need to use the returned values properly
+    const [txn, txnLink,] = useApproveMilestone(
+        approveMilestoneData.comment,
+        proposal?.id,
+        approveMilestoneData.index,
+        setNetworkTransactionModalStep
+    )
 
-	useEffect(() => {
-		fetchMore({ applicationID: proposalId }, true)
-	}, [proposalId, chainId])
+    useEffect(() => {
+        fetchMore({ applicationID: proposalId }, true)
+    }, [proposalId, chainId])
 
-	useEffect(() => {
-		logger.info({ results }, '(Proposal) Results')
-	}, [results])
+    useEffect(() => {
+        logger.info({ results }, '(Proposal) Results')
+    }, [results])
 
 
-	const decodeProjectDetails = async() => {
-		let projectDetails = getFieldString(proposal, 'projectDetails')
-		if(projectDetails.startsWith('Qm') && projectDetails.length < 64) {
-			projectDetails = await getFromIPFS(projectDetails)
-		}
+    const decodeProposalDetails = async () => {
+        let proposalDetails = getFieldString(proposal, 'projectDetails')
+        if (proposalDetails.startsWith('Qm') && proposalDetails.length < 64) {
+            proposalDetails = await getFromIPFS(proposalDetails)
+        }
 
-		setProjectDetails(projectDetails)
-	}
+        setProposalDetails(proposalDetails)
+    }
 
-	useEffect(() => {
-		const application = results[0]?.grantApplication
-		if(!application || !application?.grant || !chainId) {
-			return
-		}
+    useEffect(() => {
+        const application = results[0]?.grantApplication
+        if (!application || !application?.grant || !chainId) {
+            return
+        }
+        // console.log('proposal links', getFieldStrings(application, 'projectLink'))
+        
+        setProposal(application)
+        // fetchData(application)
 
-		setProposal(application)
-		// fetchData(application)
+    }, [results])
 
-	}, [results])
+    useEffect(() => {
+        if (proposal) {
+            decodeProposalDetails()
+            setProposalName(getFieldString(proposal, 'projectName'))
+            setApplicantName(getFieldString(proposal, 'applicantName'))
+            setApplicantAddress(getFieldString(proposal, 'applicantAddress') ?? proposal.applicantId)
+            setApplicantEmail(getFieldString(proposal, 'applicantEmail'))
 
-	useEffect(() => {
-		if(proposal) {
-			decodeProjectDetails()
-			setProjectName(getFieldString(proposal, 'projectName'))
-			setApplicantName(getFieldString(proposal, 'applicantName'))
-			setApplicantAddress(getFieldString(proposal, 'applicantAddress') ?? proposal.applicantId)
-			setApplicantEmail(getFieldString(proposal, 'applicantEmail'))
+            setCreatedAt(getFormattedDateFromUnixTimestampWithYear(proposal.createdAtS)!)
+            setUpdatedAt(getFormattedDateFromUnixTimestampWithYear(proposal.updatedAtS)!)
+            setProposalLinks(getFieldStrings(proposal, 'projectLink'))
+            setProposalGoals(getFieldString(proposal, 'projectGoals'))
+            setMilestones(proposal.milestones)
+            setFundingBreakdown(getFieldString(proposal, 'fundingBreakdown'))
+            setTeamMembers(getFieldStrings(proposal, 'teamMembers'))
+            setMemberDetails(getFieldStrings(proposal, 'memberDetails'))
+            setCustomFields(getCustomFields(proposal))
 
-			setCreatedAt(getFormattedDateFromUnixTimestampWithYear(proposal.createdAtS)!)
-			setUpdatedAt(getFormattedDateFromUnixTimestampWithYear(proposal.updatedAtS)!)
-			setProjectLinks(getFieldStrings(proposal, 'projectLinks'))
-			setProjectGoals(getFieldString(proposal, 'projectGoals'))
-			setMilestones(proposal.milestones)
-			setFundingBreakdown(getFieldString(proposal, 'fundingBreakdown'))
-			setTeamMembers(getFieldStrings(proposal, 'teamMembers'))
-			setMemberDetails(getFieldStrings(proposal, 'memberDetails'))
-			setCustomFields(getCustomFields(proposal))
+            const chainInfo = getChainInfo(proposal.grant, chainId!)
+            setToken(chainInfo)
+        }
+    }, [proposal])
 
-			const chainInfo = getChainInfo(proposal.grant, chainId!)
-			setToken(chainInfo)
-		}
-	}, [proposal])
+    const { decrypt } = useEncryptPiiForApplication(
+        proposal?.grant?.id,
+        proposal?.applicantPublicKey,
+        chainId
+    )
 
-	const { decrypt } = useEncryptPiiForApplication(
-		proposal?.grant?.id,
-		proposal?.applicantPublicKey,
-		chainId
-	)
+    useEffect(() => {
+        decrypt(proposal!).then(setProposal)
+    }, [proposal, setProposal, decrypt])
 
-	useEffect(() => {
-		decrypt(proposal!).then(setProposal)
-	}, [proposal, setProposal, decrypt])
-
-	return buildComponent()
+    return buildComponent()
 }
 
 
-Proposal.getLayout = function(page: ReactElement) {
-	return (
-		<NavbarLayout>
-			{page}
-		</NavbarLayout>
-	)
+Proposal.getLayout = function (page: ReactElement) {
+    return (
+        <NavbarLayout>
+            {page}
+        </NavbarLayout>
+    )
 }
 
 export default Proposal
