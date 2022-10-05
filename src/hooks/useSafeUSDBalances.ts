@@ -72,7 +72,7 @@ function useSafeUSDBalances({ safeAddress, chainId }: Props) {
 			temp.sort((a, b) => b.amount - a.amount)
 			return temp
 		}
-
+		console.log('gnosis data before sort',gnosisData)
 		return [...gnosisData.sort((a, b) => b.amount - a.amount)]
 	}, [gnosisData, splGovSafe])
 
@@ -129,7 +129,7 @@ function useSafeUSDBalances({ safeAddress, chainId }: Props) {
 					newData.push(newElement)
 				}
 			})
-			// console.log('Final Safe', newData)
+			console.log('Final Safe', newData)
 			setGnosisData(newData)
 		}
 	}, [gnosisRawData, gnosisLoaded, gnosisError, safeAddress, chainId])
