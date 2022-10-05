@@ -9,25 +9,27 @@ import { GetApplicationDetailsQuery, useGetApplicationDetailsQuery } from 'src/g
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useApproveMilestone from 'src/hooks/useApproveMilestone'
 import useBatchUpdateApplicationState from 'src/hooks/useBatchUpdateApplicationState'
+import useUpdateApplicationState from 'src/hooks/useUpdateApplicationState'
 import logger from 'src/libraries/logger'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { ApiClientsContext } from 'src/pages/_app'
 import ActionPanel from 'src/screens/proposal/_components/ActionPanel'
+import ConfirmationModal from 'src/screens/proposal/_components/ConfirmationModal'
 import MilestoneDoneModal from 'src/screens/proposal/_components/milestoneDoneModal'
 import MilestoneItem from 'src/screens/proposal/_components/MilestoneItem'
+import RejectProposalModal from 'src/screens/proposal/_components/RejectProposalModal'
 import { useMultiChainQuery } from 'src/screens/proposal/_hooks/useMultiChainQuery'
-import { Proposal as ProposalType } from 'src/screens/proposal/_types'
-import { IApplicantData } from 'src/types'
+import { P, Proposal as ProposalType } from 'src/screens/proposal/_types'
+import { ChainInfo, CustomField, IApplicantData } from 'src/types'
 import { formatAmount, getCustomFields, getFieldString, getFieldStrings, getFormattedDateFromUnixTimestampWithYear, getRewardAmountMilestones, truncateStringFromMiddle } from 'src/utils/formattingUtils'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
+import { useEncryptPiiForApplication } from 'src/utils/pii'
 import { getChainInfo } from 'src/utils/tokenUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import SendFunds from 'src/v2/payouts/SendFunds'
-import ConfirmationModal from './_components/ConfirmationModal'
-import RejectProposalModal from './_components/RejectProposalModal'
-import useUpdateApplicationState from 'src/hooks/useUpdateApplicationState'
 
 function Proposal() {
+
     const buildComponent = () => (
         <Flex
             w='100vw'
@@ -42,27 +44,29 @@ function Proposal() {
                 gap={4}
             >
                 <Flex>
-                <Text variant='proposalHeading'>
-                    {proposal?.name}
-                </Text>
-                <Spacer />
-                <Flex
-                 display={proposal?.state === 'submitted' ? 'none' : ''} 
-                 justifyContent='center'
-                 bg={proposal?.state === 'rejected' ? '#FFDCC0' : proposal?.state === 'approved' ? '#E3F6C1' : ''} 
-                 borderRadius='3px' 
-                 padding='8px'>
-                    <Text
-                    textTransform='capitalize'
-                    color={proposal?.state === 'rejected' ? '#FF7545' : proposal?.state === 'approved' ? '#0DC98B' : ''}
-                    fontWeight='600'
-                    fontSize='14px'
-                    lineHeight='20px'
-                    
-                    >{proposal?.state}</Text>
+                    <Text variant='proposalHeading'>
+                        {proposalName}
+                    </Text>
+                    <Spacer />
+                    <Flex
+                        display={proposal?.state === 'submitted' ? 'none' : ''}
+                        justifyContent='center'
+                        bg={proposal?.state === 'rejected' ? '#FFDCC0' : proposal?.state === 'approved' ? '#E3F6C1' : ''}
+                        borderRadius='3px'
+                        padding='8px'>
+                        <Text
+                            textTransform='capitalize'
+                            color={proposal?.state === 'rejected' ? '#FF7545' : proposal?.state === 'approved' ? '#0DC98B' : ''}
+                            fontWeight='600'
+                            fontSize='14px'
+                            lineHeight='20px'
+
+                        >
+                            {proposal?.state}
+                        </Text>
+                    </Flex>
                 </Flex>
-                </Flex>
-                
+
                 {/* Proposal info start */}
                 <Flex
                     bg='white'
@@ -77,7 +81,7 @@ function Proposal() {
                             boxSize={4}
                             src='/ui_icons/user_icon.svg' />
                         <Text variant='footer'>
-                            {proposal?.applicantName}
+                            {applicantName}
                         </Text>
                     </Flex>
                     <Spacer />
@@ -88,9 +92,9 @@ function Proposal() {
                             boxSize={4}
                             src='/ui_icons/wallet_line.svg' />
                         <Text variant='footer'>
-                            {truncateStringFromMiddle(proposal?.applicantAddress!)}
+                            {truncateStringFromMiddle(applicantAddress!)}
                         </Text>
-                        <CopyIcon text={proposal?.applicantAddress!} />
+                        <CopyIcon text={applicantAddress!} />
                     </Flex>
                     <Spacer />
                     <Flex
@@ -101,10 +105,10 @@ function Proposal() {
                             src='/ui_icons/mail_line.svg' />
                         <Text variant='footer'>
                             {' '}
-                            {proposal?.applicantEmail}
+                            {applicantEmail}
                             {' '}
                         </Text>
-                        <CopyIcon text={proposal?.applicantEmail!} />
+                        <CopyIcon text={applicantEmail!} />
                     </Flex>
                     <Spacer />
                     <Flex
@@ -115,7 +119,7 @@ function Proposal() {
                             src='/ui_icons/calendar_line.svg' />
                         <Text variant='footer'>
                             {' '}
-                            {proposal?.createdAt}
+                            {createdAt}
                             {' '}
                         </Text>
                     </Flex>
@@ -130,13 +134,14 @@ function Proposal() {
                     flexDirection='column'
                     padding={4}>
                     {/* Links */}
-                    <Box display={proposal?.links?.length ? '' : 'none'}>
+                    <Box display={proposalLinks?.length ? '' : 'none'}>
                         <Heading
                             variant='applicationHeading'>
                             Links
                         </Heading>
                         {
-                            proposal?.links?.map(({ link }) => (
+                            proposalLinks?.map((link) =>
+                            (
                                 <Text
                                     key={link}
                                     variant='applicationText'
@@ -151,16 +156,16 @@ function Proposal() {
                         }
                     </Box>
 
-                    {/* Project Details */}
+                    {/* Proposal Details */}
                     <Box>
                         <Heading variant='applicationHeading'>
                             Project Details
                         </Heading>
                         <Text mt={2}>
                             {
-                                proposal?.details ? (
+                                proposalDetails ? (
                                     <TextViewer
-                                        text={proposal?.details}
+                                        text={proposalDetails}
                                     />
                                 ) : null
                             }
@@ -168,20 +173,20 @@ function Proposal() {
                         </Text>
                     </Box>
 
-                    {/* Project Goals */}
-                    <Box display={proposal?.goals && proposal?.goals !== '' ? '' : 'none'}>
+                    {/* Proposal Goals */}
+                    <Box display={proposalGoals && proposalGoals !== '' ? '' : 'none'}>
                         <Heading variant='applicationHeading'>
                             Project Goals
                         </Heading>
                         <Text
                             variant='applicationText'
                             mt={2}>
-                            {proposal?.goals}
+                            {proposalGoals}
                         </Text>
                     </Box>
 
-                    {/* Project Milestones */}
-                    <Box display={proposal?.milestones?.length ? '' : 'none'}>
+                    {/* Proposal Milestones */}
+                    <Box display={milestones?.length ? '' : 'none'}>
                         <Heading variant='applicationHeading'>
                             Project Milestones
                         </Heading>
@@ -190,7 +195,7 @@ function Proposal() {
                             mt={2}>
                             {' '}
                             {
-                                proposal?.milestones?.map((milestone, index: number) => (
+                                milestones?.map((milestone, index: number) => (
                                     <Box key={milestone.id}>
                                         <Heading
                                             variant='applicationSubtitle'
@@ -210,7 +215,7 @@ function Proposal() {
                                             mt={3}>
                                             <Image
                                                 boxSize='48px'
-                                                src={proposal?.token?.icon}
+                                                src={token?.icon}
                                             />
                                             <Box ml={2} />
                                             <Flex
@@ -225,11 +230,11 @@ function Proposal() {
                                                         milestone?.amount && proposal
                                                         && formatAmount(
                                                             milestone?.amount,
-                                                            proposal?.token?.decimals,
+                                                            token?.decimals,
                                                         )
                                                     }
                                                     {' '}
-                                                    {proposal?.token?.label}
+                                                    {token?.label}
                                                 </Text>
                                             </Flex>
                                         </Flex>
@@ -242,7 +247,7 @@ function Proposal() {
 
                     {/* Funding Breakdown */}
                     <Box
-                        display={proposal?.fundingBreakdown && proposal?.fundingBreakdown !== '' ? '' : 'none'}
+                        display={fundingBreakdown && fundingBreakdown !== '' ? '' : 'none'}
                     >
                         <Heading variant='applicationHeading'>
                             Funding Breakdown
@@ -250,21 +255,21 @@ function Proposal() {
                         <Text
                             variant='applicationText'
                             mt={2}>
-                            {proposal?.fundingBreakdown}
+                            {fundingBreakdown}
                         </Text>
                     </Box>
 
                     {/* Team Member */}
                     <Box
-                        display={proposal?.teamMembers ? '' : 'none'}
+                        display={teamMembers ? '' : 'none'}
                         mt={8}>
                         <Heading variant='applicationHeading'>
                             Team Members -
                             {' '}
-                            {proposal?.teamMembers}
+                            {teamMembers}
                         </Heading>
                         {
-                            proposal?.memberDetails?.map((memberDetail, index: number) => (
+                            memberDetails?.map((memberDetail, index: number) => (
                                 <Box key={index}>
                                     <Heading
                                         variant='applicationHeading'
@@ -285,7 +290,7 @@ function Proposal() {
 
                     {/* Custom Fields */}
                     <Box
-                        display={proposal?.customFields?.length ? '' : 'none'}
+                        display={customFields?.length ? '' : 'none'}
                         mt={10}>
                         <Heading
                             variant='applicationHeading'>
@@ -293,7 +298,7 @@ function Proposal() {
                         </Heading>
 
                         {
-                            proposal?.customFields.map((customField, index: number) => (
+                            customFields.map((customField, index: number) => (
                                 <Box key={customField.title}>
                                     <Heading
                                         variant='applicationHeading'
@@ -324,27 +329,27 @@ function Proposal() {
                 <ActionPanel
                     state={proposal?.state!}
                     rejectionReason={proposal?.feedbackDao ?? ''}
-                    rejectionDate={proposal?.updatedAt ?? ''}
+                    rejectionDate={updatedAt ?? ''}
                     onSendFundClick={
                         () => {
                             setSendFundData([{
                                 grantTitle: proposal?.grant?.title,
                                 grant: proposal?.grant,
                                 applicationId: proposal?.id!,
-                                applicantName: proposal?.applicantName,
-                                applicantEmail: proposal?.applicantEmail,
-                                applicantAddress: proposal?.applicantAddress,
-                                sentOn: proposal?.createdAt!,
-                                updatedOn: proposal?.updatedAt!,
-                                projectName: proposal?.name,
+                                applicantName: applicantName,
+                                applicantEmail: applicantEmail,
+                                applicantAddress: applicantAddress,
+                                sentOn: createdAt!,
+                                updatedOn: updatedAt!,
+                                projectName: proposalName,
                                 fundingAsked: {
-                                    amount: getRewardAmountMilestones(proposal?.token?.decimals!, proposal?.milestones),
-                                    symbol: proposal?.token?.label ?? '',
-                                    icon: proposal?.token?.icon!,
+                                    amount: getRewardAmountMilestones(token?.decimals!, proposal?.milestones),
+                                    symbol: token?.label ?? '',
+                                    icon: token?.icon!,
                                 },
                                 // status: applicationStatuses.indexOf(applicant?.state),
                                 status: TableFilters[proposal?.state!],
-                                milestones: proposal?.milestones!,
+                                milestones: milestones!,
                                 amountPaid: '0',
                                 reviewers: [],
                                 reviews: []
@@ -404,9 +409,9 @@ function Proposal() {
                         variant='v2_subheading'
                         fontWeight='500'
                         ml='auto'>
-                        {parseInt(getRewardAmountMilestones(proposal?.token?.decimals!, proposal)).toLocaleString()}
+                        {getRewardAmountMilestones(token?.decimals!, proposal)}
                         {' '}
-                        {proposal?.token?.label}
+                        {token?.label}
                     </Text>
                 </Flex>
 
@@ -416,15 +421,15 @@ function Proposal() {
                     bg='white'
                     p={6}>
                     {
-                        proposal?.milestones?.map((milestone, index) => {
+                        milestones?.map((milestone, index) => {
                             const disbursedMilestones = proposal?.grant?.fundTransfers?.filter((fundTransfer) => fundTransfer?.milestone?.id === milestone.id)
                             return (
                                 <MilestoneItem
                                     key={milestone.id}
                                     milestone={milestone}
-                                    disbursedMilestones={disbursedMilestones}
+                                    disbursedMilestones={disbursedMilestones!}
                                     index={index}
-                                    token={proposal?.token}
+                                    token={token!}
                                     proposalStatus={proposal?.state!}
                                     onModalOpen={
                                         () => {
@@ -452,7 +457,7 @@ function Proposal() {
                     workspaceSafe={workspace?.safe?.address}
                     workspaceSafeChainId={workspace?.safe?.chainId ?? ''}
                     sendFundsTo={sendFundData}
-                    rewardAssetAddress={proposal?.token?.address ?? ''}
+                    rewardAssetAddress={token?.address ?? ''}
                     grantTitle={proposal?.grant?.title ?? ''} />
 
                 <NetworkTransactionModal
@@ -503,6 +508,29 @@ function Proposal() {
     const router = useRouter()
     const { workspace } = useContext(ApiClientsContext)!
 
+    const [proposalName, setProposalName] = useState('')
+    const [applicantName, setApplicantName] = useState('')
+    const [applicantEmail, setApplicantEmail] = useState('')
+    const [applicantAddress, setApplicantAddress] = useState('')
+
+    const [createdAt, setCreatedAt] = useState('')
+    const [updatedAt, setUpdatedAt] = useState('')
+
+    const [proposalDetails, setProposalDetails] = useState('')
+    const [proposalLinks, setProposalLinks] = useState([])
+    const [proposalGoals, setProposalGoals] = useState()
+
+    const [milestones, setMilestones] = useState<Exclude<GetApplicationDetailsQuery['grantApplication'], null | undefined>['milestones']>([])
+
+    const [fundingBreakdown, setFundingBreakdown] = useState('')
+
+    const [teamMembers, setTeamMembers] = useState<string[]>([])
+    const [memberDetails, setMemberDetails] = useState<string[]>([])
+
+    const [customFields, setCustomFields] = useState<CustomField[]>([])
+
+    const [isProposalLoading, setIsProposalLoading] = useState(true)
+
     const [isMilestoneDoneModalOpen, setIsMilestoneDoneModalOpen] = useState<boolean>(false)
     const [sendFundData, setSendFundData] = useState<IApplicantData[]>([])
     const [updateApplicationStateData, setUpdateApplicationStateData] = useState<{ state: number, comment: string }>({ state: -1, comment: '' })
@@ -511,13 +539,15 @@ function Proposal() {
     const [proposalId, setProposalId] = useState<string>()
     const [chainId, setChainId] = useState<SupportedChainId>(defaultChainId)
 
+    const [token, setToken] = useState<ChainInfo['supportedCurrencies'][string]>()
+
     const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false)
     const [isRejectProposalModalOpen, setIsRejectProposalModalOpen] = useState<boolean>(false)
 
     const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
     const [isConfirmClicked, setIsConfirmClicked] = useState<boolean>(false)
     const [isRejectConfirmClicked, setIsRejectConfirmClicked] = useState<boolean>(false)
-    const [proposal, setProposal] = useState<ProposalType>()
+    const [proposal, setProposal] = useState<P>()
 
     const [isAcceptProposalClicked, setIsAcceptProposalClicked] = useState<boolean>(false)
     const [isRejectProposalClicked, setIsRejectProposalClicked] = useState<boolean>(false)
@@ -550,7 +580,7 @@ function Proposal() {
         chains: [chainId]
     })
 
-    const [rejectTxnData, rejectTxnLink, ] = useUpdateApplicationState(
+    const [rejectTxnData, rejectTxnLink,] = useUpdateApplicationState(
         updateApplicationStateData.comment,
         proposal?.id,
         updateApplicationStateData.state,
@@ -585,38 +615,14 @@ function Proposal() {
         logger.info({ results }, '(Proposal) Results')
     }, [results])
 
-    const fetchData = async (application: Exclude<GetApplicationDetailsQuery['grantApplication'], null | undefined>) => {
-        let projectDetails = getFieldString(application, 'projectDetails')
-        if (projectDetails.startsWith('Qm') && projectDetails.length < 64) {
-            projectDetails = await getFromIPFS(projectDetails)
+
+    const decodeProposalDetails = async () => {
+        let proposalDetails = getFieldString(proposal, 'projectDetails')
+        if (proposalDetails.startsWith('Qm') && proposalDetails.length < 64) {
+            proposalDetails = await getFromIPFS(proposalDetails)
         }
 
-        const chainInfo = getChainInfo(application.grant, chainId!)
-
-        const proposal = ({
-            id: application.id,
-            name: getFieldString(application, 'projectName'),
-            applicantName: getFieldString(application, 'applicantName'),
-            applicantAddress: getFieldString(application, 'applicantAddress') ?? application.applicantId,
-            applicantEmail: getFieldString(application, 'applicantEmail'),
-            createdAt: getFormattedDateFromUnixTimestampWithYear(application.createdAtS)!,
-            updatedAt: getFormattedDateFromUnixTimestampWithYear(application.updatedAtS)!,
-            links: getFieldStrings(application, 'projectLinks'),
-            details: projectDetails,
-            goals: getFieldString(application, 'projectGoals'),
-            milestones: application.milestones,
-            fundingBreakdown: getFieldString(application, 'fundingBreakdown'),
-            teamMembers: getFieldStrings(application, 'teamMembers'),
-            memberDetails: getFieldStrings(application, 'memberDetails'),
-            customFields: getCustomFields(application),
-            token: chainInfo,
-            state: application.state,
-            feedbackDao: application.feedbackDao ?? '',
-            grant: application.grant,
-        })
-
-        logger.info({ proposal }, '(Proposal) Final data')
-        setProposal(proposal)
+        setProposalDetails(proposalDetails)
     }
 
     useEffect(() => {
@@ -624,12 +630,49 @@ function Proposal() {
         if (!application || !application?.grant || !chainId) {
             return
         }
+        // console.log('proposal links', getFieldStrings(application, 'projectLink'))
+        
+        setProposal(application)
+        // fetchData(application)
 
-        fetchData(application)
     }, [results])
+
+    useEffect(() => {
+        if (proposal) {
+            decodeProposalDetails()
+            setProposalName(getFieldString(proposal, 'projectName'))
+            setApplicantName(getFieldString(proposal, 'applicantName'))
+            setApplicantAddress(getFieldString(proposal, 'applicantAddress') ?? proposal.applicantId)
+            setApplicantEmail(getFieldString(proposal, 'applicantEmail'))
+
+            setCreatedAt(getFormattedDateFromUnixTimestampWithYear(proposal.createdAtS)!)
+            setUpdatedAt(getFormattedDateFromUnixTimestampWithYear(proposal.updatedAtS)!)
+            setProposalLinks(getFieldStrings(proposal, 'projectLink'))
+            setProposalGoals(getFieldString(proposal, 'projectGoals'))
+            setMilestones(proposal.milestones)
+            setFundingBreakdown(getFieldString(proposal, 'fundingBreakdown'))
+            setTeamMembers(getFieldStrings(proposal, 'teamMembers'))
+            setMemberDetails(getFieldStrings(proposal, 'memberDetails'))
+            setCustomFields(getCustomFields(proposal))
+
+            const chainInfo = getChainInfo(proposal.grant, chainId!)
+            setToken(chainInfo)
+        }
+    }, [proposal])
+
+    const { decrypt } = useEncryptPiiForApplication(
+        proposal?.grant?.id,
+        proposal?.applicantPublicKey,
+        chainId
+    )
+
+    useEffect(() => {
+        decrypt(proposal!).then(setProposal)
+    }, [proposal, setProposal, decrypt])
 
     return buildComponent()
 }
+
 
 Proposal.getLayout = function (page: ReactElement) {
     return (
