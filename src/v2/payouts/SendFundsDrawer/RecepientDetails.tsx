@@ -230,9 +230,9 @@ const RecipientDetails = ({
 
 									<MilestoneSelect
 										placeholder='Select from the list'
-										value={initiateTransactionData ? initiateTransactionData[i].selectedMilestone : ''}
+										value={initiateTransactionData ? initiateTransactionData[i].selectedMilestone?.id : ''}
 										milestoneList={data.milestones}
-										onChange={(value) => value && onChangeRecepientDetails(data.applicationId, 'selectedMilestone', value?.id)} />
+										onChange={(value) => value && onChangeRecepientDetails(data.applicationId, 'selectedMilestone', value)} />
 								</Flex>
 
 								<Box w={6} />
@@ -253,6 +253,7 @@ const RecipientDetails = ({
 													fontWeight: '500'
 												}
 											}
+											value={initiateTransactionData ? initiateTransactionData[i]?.amount : ''}
 											fontWeight='500'
 											fontSize='14px'
 											defaultValue={initiateTransactionData ? initiateTransactionData[i]?.amount : ''}
