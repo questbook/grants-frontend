@@ -183,12 +183,13 @@ export default function SendFunds({
 
 	useEffect(() => {
 		logger.info('safe token', safeTokenList)
+		logger.info({ sendFundsTo }, 'Send Funds To')
 		const formattedTrxnData = sendFundsTo?.map((recepient: any,) => (
 			{
 				from: currentSafe?.id?.toString(),
 				to: recepient?.applicantAddress || getFieldString(recepient, 'applicantAddress') || recepient?.applicantId,
 				applicationId: recepient?.applicationId || applicationID,
-				selectedMilestone: recepient?.milestones?.[0]?.id,
+				selectedMilestone: recepient?.milestones?.[0],
 				selectedToken: { name: safeTokenList[0]?.tokenName, info: safeTokenList[0]?.info },
 				amount: recepient?.milestones?.[0]?.amount,
 			})
@@ -343,7 +344,7 @@ export default function SendFunds({
 
 			const methodArgs = [
 				initiateTransactionData.map((element: any) => (parseInt(element.applicationId, 16))),
-				initiateTransactionData.map((element: any) => (parseInt(element.selectedMilestone?.split('.')[1]))),
+				initiateTransactionData.map((element: any) => (parseInt(element.selectedMilestone?.id?.split('.')[1]))),
 				rewardAssetAddress,
 				'nonEvmAssetAddress-toBeChanged',
 				initiateTransactionData.map((element: any) => Math.floor(element.amount)),
@@ -392,16 +393,20 @@ export default function SendFunds({
 			const tempData = initiateTransactionData.map((transactionData: any) => {
 				return { ...transactionData, [fieldName]: fieldValue }
 			})
+			logger.info({ tempData }, 'tempData 1')
 			setInitiateTransactionData(tempData)
 			setGnosisBatchData(tempData)
 		} else {
+			logger.info({ initiateTransactionData }, 'Initiate Transaction Data')
 			const tempData = initiateTransactionData.map((transactionData: any) => {
 				if(transactionData.applicationId === applicationId) {
+					logger.info({ transactionData }, 'transactionData')
 					return { ...transactionData, [fieldName]: fieldValue }
 				}
 
 				return transactionData
 			})
+			logger.info({ tempData }, 'tempData 2')
 			setInitiateTransactionData(tempData)
 			setGnosisBatchData(tempData)
 		}
