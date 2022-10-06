@@ -67,6 +67,7 @@ const MilestoneSelect = ({
 				title: milestone.title,
 				label: '',
 				state: milestone.state,
+				amount: milestone.amount,
 			}))
 		}
 		makeOption={Option}
