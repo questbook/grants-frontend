@@ -181,7 +181,7 @@ const VerifySignerModal = ({
 
 			setWalletClicked(false)
 		}
-	}, [walletClicked, address, owners,tzWalletAddress, toast, phantomWallet?.publicKey, isOpen, phantomWallet?.disconnect])
+	}, [walletClicked, address, owners, tzWalletAddress, toast, phantomWallet?.publicKey, isOpen, phantomWallet?.disconnect])
 
 	return (
 		<Modal
@@ -292,11 +292,14 @@ const VerifySignerModal = ({
 													isPopular={wallet.isPopular}
 													onClick={
 														async () => {
-															tzWallet
-																.requestPermissions({ network: { type: TzNetworkType.GHOSTNET } })
-																.then((_) => tzWallet.getPKH())
-																.then((address) => setTzWalletAddress(address));
-															Tezos.setWalletProvider(tzWallet);
+															try {
+																console.log("Requesting permissions...");
+																const permissions = await tzWallet.requestPermissions();
+																console.log("Got permissions:", permissions.address);
+																setTzWalletAddress(permissions.address)
+															} catch (error) {
+																console.log("Got error:", error);
+															}
 															setWalletClicked(true)
 															// showToast()
 														}

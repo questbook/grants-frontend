@@ -286,6 +286,7 @@ const OnboardingCreateDomain = () => {
 				(newValue) => {
 					if(step === 1) {
 						setStep(0)
+						console.log('step 1', safeAddress, isSafeAddressVerified)
 						setIsSafeAddressVerified(false)
 						setSafeSelected(undefined)
 					}
