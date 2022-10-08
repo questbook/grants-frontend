@@ -1,57 +1,62 @@
 import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
-import { Container, useToast } from '@chakra-ui/react';
+import { Box, Button, Center, Container, Flex, useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/router'
 import { GetDaOsForExploreQuery, useGetDaOsForExploreQuery, Workspace_Filter as WorkspaceFilter, Workspace_OrderBy as WorkspaceOrderBy } from 'src/generated/graphql'
 import logger from 'src/libraries/logger'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
-import { WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
+import { ApiClientsContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import AcceptInviteModal from 'src/screens/discover/_components/AcceptInviteModal'
 import DaosGrid from 'src/screens/discover/_components/DaosGrid'
 import { useMultichainDaosPaginatedQuery } from 'src/screens/discover/_hooks/useMultiChainPaginatedQuery'
 import { extractInviteInfo, InviteInfo } from 'src/screens/discover/_utils/invite'
 import { mergeSortedArrays } from 'src/screens/discover/_utils/mergeSortedArrays'
+import { getSupportedChainIdFromWorkspace } from '../../utils/validationUtils';
+import { defaultChainId } from '../../constants/chains';
+import Loader from '../../components/ui/loader';
+import NetworkTransactionModal from '../../v2/components/NetworkTransactionModal';
+import useUpdateDaoVisibility from '../../hooks/useUpdateDaoVisibility';
+import useQBContract from '../../hooks/contracts/useQBContract';
 
 const PAGE_SIZE = 3
 
 function Discover() {
+  const [isAdmin, setIsAdmin] = useState<boolean>()
+	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
+	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number | undefined>()
+	const [unsavedDaosState, setUnsavedDaosState] = useState<{ [_: string]: boolean }>({})
+	const [formData, setFormData] = useState<{ [_: string]: boolean }>({})
 
-	const buildComponent = () => (
-		<>
-			<Container
-				maxWidth='1280px'
-				my='16px'
-				w='100%'>
-				<DaosGrid
-					renderGetStarted
-					hasMore={hasMoreDaos}
-					fetchMore={fetchMoreDaos}
-					workspaces={totalDaos} />
-			</Container>
-			<AcceptInviteModal
-				inviteInfo={inviteInfo}
-				onClose={
-					() => {
-						setInviteInfo(undefined)
-						window.history.pushState(undefined, '', '/')
-						router.reload()
-					}
-				} />
-		</>
-	)
+	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 
+	const { workspace } = useContext(ApiClientsContext)!
+	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 
-	const { scwAddress } = useContext(WebwalletContext)!
+	const workspaceContract = useQBContract('workspace', chainId)
 
 	const toast = useToast()
 	const router = useRouter()
 
-	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
+	const [, txnLink, loading, isBiconomyInitialised] = useUpdateDaoVisibility(
+		formData,
+		setNetworkTransactionModalStep,
+	)
+
+	const onDaoVisibilityUpdate = (daoId: string, visibleState: boolean) => {
+		if(unsavedDaosState[daoId] !== undefined) {
+			delete unsavedDaosState[daoId]
+		} else {
+			unsavedDaosState[daoId] = visibleState
+		}
+		setUnsavedDaosState({...unsavedDaosState})
+	}
 
 	const {
 		results: daos,
 		hasMore: hasMoreDaos,
 		fetchMore: fetchMoreDaos
-	} = useMultiChainDaosForExplore()
+	} = useMultiChainDaosForExplore(
+		isAdmin ? undefined : { isVisible: true }
+	)
 
 	const {
 		results: myDaos,
@@ -60,10 +65,21 @@ function Discover() {
 		{ members_: { actorId: scwAddress } },
 	)
 
-	const totalDaos = useMemo(() => [
+  const totalDaos = useMemo(() => [
 		...(scwAddress ? myDaos : []),
-		...daos,
-	], [myDaos, daos])
+		...daos ?? [],
+	], [daos, myDaos])
+
+	useEffect(() => {
+		(async () => {
+			// FIXME
+			const admins = await workspaceContract.getQBAdmins()
+			if(scwAddress || webwallet) {
+				setIsAdmin((scwAddress ? admins.includes(scwAddress) : false) || (webwallet ? admins.includes(webwallet.address) : false));
+			}
+    })();
+
+	}, [scwAddress, webwallet, workspaceContract])
 
 	useEffect(() => {
 		try {
@@ -95,7 +111,77 @@ function Discover() {
 		}
 	}, [scwAddress])
 
-	return buildComponent()
+	if(isAdmin === undefined) {
+		return <Center w={'100%'}><Loader /></Center>
+	}
+
+	return (
+		<>
+			<Flex direction={'column'} w='100%'>
+				<Container
+					maxWidth='1280px'
+					my='16px'
+					w='100%'>
+					<DaosGrid
+						renderGetStarted
+						isAdmin={isAdmin}
+						unsavedDaosVisibleState={unsavedDaosState}
+						onDaoVisibilityUpdate={onDaoVisibilityUpdate}
+						hasMore={hasMoreDaos}
+						fetchMore={fetchMoreDaos}
+						workspaces={totalDaos} />
+				</Container>
+				{isAdmin && Object.keys(unsavedDaosState).length !== 0 && <Box
+						background={'#f0f0f7'}
+						bottom={0}
+						style={{ position : 'sticky' }}
+						w={'100%'}
+						alignSelf={'stretch'}>
+						<Flex px={'25px'} py={'20px'} alignItems={'center'} justifyContent={'center'}>
+              You have made changes to your Discover page on Questbook.
+							<Button
+								onClick={() => setFormData(unsavedDaosState)}
+								variant={'primary'}
+								disabled={!isBiconomyInitialised || loading}
+								ml={'25px'}>
+								{loading ? <Loader/> : 'Save'}
+							</Button>
+							<Button
+								bg={'transparent'}
+								style={{fontWeight: "bold"}}
+								onClick={() => setUnsavedDaosState({})}>
+								Cancel
+							</Button>
+					</Flex>
+				</Box>}
+			</Flex>
+			<NetworkTransactionModal
+				isOpen={networkTransactionModalStep !== undefined}
+				subtitle='Submitting Dao visibility changes'
+				description={`Updating ${Object.keys(unsavedDaosState).length} daos' visibility state!`}
+				currentStepIndex={networkTransactionModalStep || 0}
+				steps={
+					[
+						'Uploading data to IPFS',
+						'Signing transaction with in-app wallet',
+						'Waiting for transaction to complete on chain',
+						'Indexing transaction on graph protocol',
+						'Changes updated on-chain',
+					]
+				}
+				viewLink={txnLink}
+				onClose={router.reload} />
+			<AcceptInviteModal
+				inviteInfo={inviteInfo}
+				onClose={
+					() => {
+						setInviteInfo(undefined)
+						window.history.pushState(undefined, '', '/')
+						router.reload()
+					}
+				} />
+		</>
+	)
 }
 
 Discover.getLayout = function(page: ReactElement) {
@@ -109,7 +195,7 @@ Discover.getLayout = function(page: ReactElement) {
 function useMultiChainDaosForExplore(
 	filter?: WorkspaceFilter
 ) {
-	const orderBy = WorkspaceOrderBy.TotalGrantFundingDisbursedUsd;
+	const orderBy = WorkspaceOrderBy.TotalGrantFundingDisbursedUsd
 
 	return useMultichainDaosPaginatedQuery({
 		useQuery: useGetDaOsForExploreQuery,

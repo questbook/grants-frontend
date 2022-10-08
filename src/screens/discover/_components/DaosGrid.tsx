@@ -12,6 +12,9 @@ type Workspace = GetDaOsForExploreQuery['workspaces'][0]
 
 type AllDaosGridProps = {
 	workspaces: Workspace[]
+	isAdmin: boolean
+	unsavedDaosVisibleState?: { [_: string]: boolean },
+	onDaoVisibilityUpdate?: (daoId: string, visibleState: boolean) => void
 	renderGetStarted: boolean
 	hasMore?: boolean
 	fetchMore?: (reset?: boolean | undefined) => void
@@ -20,6 +23,9 @@ type AllDaosGridProps = {
 function AllDaosGrid({
 	workspaces,
 	renderGetStarted,
+	onDaoVisibilityUpdate,
+	unsavedDaosVisibleState,
+	isAdmin,
 	hasMore,
 	fetchMore
 }: AllDaosGridProps) {
@@ -43,6 +49,9 @@ function AllDaosGrid({
 				workspaces.map((workspace, index: number) => (
 					<GridItem key={index}>
 						<DaoCard
+							isAdmin={isAdmin}
+							isVisible={unsavedDaosVisibleState?.[workspace.id] ?? workspace.isVisible}
+							onVisibilityUpdate={(visibleState) => onDaoVisibilityUpdate?.(workspace.id, visibleState)}
 							logo={
 								workspace.logoIpfsHash === config.defaultDAOImageHash ?
 									getAvatar(true, workspace.title) :
@@ -58,7 +67,7 @@ function AllDaosGrid({
 			}
 			{
 				hasMore && (
-					<GridItem key='get-started'>
+					<GridItem key='load-more'>
 						<LoadMoreCard onClick={() => fetchMore?.()} />
 					</GridItem>
 				)
