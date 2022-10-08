@@ -400,8 +400,13 @@ export default function SendFunds({
 			logger.info({ initiateTransactionData }, 'Initiate Transaction Data')
 			const tempData = initiateTransactionData.map((transactionData: any) => {
 				if(transactionData.applicationId === applicationId) {
-					logger.info({ transactionData }, 'transactionData')
-					return { ...transactionData, [fieldName]: fieldValue }
+					logger.info({ txData: { ...transactionData, [fieldName]: fieldValue } }, 'transactionData')
+					const ret = { ...transactionData, [fieldName]: fieldValue }
+					if(fieldName === 'selectedMilestone') {
+						ret.amount = fieldValue?.amount
+					}
+
+					return ret
 				}
 
 				return transactionData

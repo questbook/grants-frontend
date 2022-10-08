@@ -369,10 +369,9 @@ const RecipientDetails = ({
 								fontWeight: '500'
 							}
 						}
-						value={initiateTransactionData?.selectedMilestone?.amount}
 						fontWeight='500'
 						fontSize='14px'
-						defaultValue={initiateTransactionData?.amount}
+						value={initiateTransactionData?.amount}
 						errorBorderColor='red'
 						height='auto'
 						type='number'

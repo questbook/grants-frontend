@@ -28,7 +28,7 @@ function DomainName({ domainName, setValue, isVerified, onContinue }: Props) {
 				onChange={(e) => setValue(e.target.value)}
 				// setValue={setValue}
 				isVerified={isVerified}
-				maxLength={30} />
+				maxLength={100} />
 			<Button
 				variant='primaryV2'
 				ml='auto'
