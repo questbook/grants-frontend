@@ -24,7 +24,7 @@ function Discover() {
 	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number | undefined>()
 	const [unsavedDaosState, setUnsavedDaosState] = useState<{ [_: string]: boolean }>({})
-	const [formData, setFormData] = useState<{ [_: string]: boolean }>({})
+	const [formData, setFormData] = useState<{ [_: string]: boolean }>()
 
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 

@@ -17,19 +17,9 @@ import {
 } from 'src/utils/validationUtils'
 
 export default function useUpdateDaoVisibility(
-  data: { [_: string]: boolean },
+  data: { [_: string]: boolean } | undefined,
   setCurrentStep: (step: number | undefined) => void
 ) {
-  const keys = Object.keys(data)
-
-  const workspaceIds: string[] = [];
-  const isVisible: boolean[] = [];
-
-  keys.forEach((key) => {
-    workspaceIds.push(key)
-    isVisible.push(data[key])
-  })
-
   const [error, setError] = useState<string>()
   const [loading, setLoading] = useState(false)
   const [incorrectNetwork, setIncorrectNetwork] = useState(false)
@@ -98,6 +88,16 @@ export default function useUpdateDaoVisibility(
         //   throw new Error('Error validating grant data')
         // }
 
+        const keys = Object.keys(data!)
+
+        const workspaceIds: string[] = [];
+        const isVisible: boolean[] = [];
+
+        keys.forEach((key) => {
+          workspaceIds.push(key)
+          isVisible.push(data![key])
+        })
+
         const response = await sendGaslessTransaction(
           biconomy,
           workspaceContract,
@@ -153,7 +153,7 @@ export default function useUpdateDaoVisibility(
     }
 
     try {
-      if(!data || !Object.keys(data).length) {
+      if(!data) {
         return
       }
 

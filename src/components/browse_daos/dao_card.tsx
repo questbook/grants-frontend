@@ -77,7 +77,6 @@ function DaoCard({ logo, isAdmin, name, daoId, chainId, noOfApplicants, totalAmo
 							size='md'
 							mx='10px'
 							borderRadius={0}
-							isFocusable={true}
 							colorScheme={'green'}
 							isChecked={isVisible}
 							// FIXME: calls card on tap
