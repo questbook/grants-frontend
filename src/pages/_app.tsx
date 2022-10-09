@@ -134,6 +134,11 @@ export const WebwalletContext = createContext<{
 	exportWebwallet: () => string
 		} | null>(null)
 
+export const SearchContext = createContext<{
+	searchString: string | undefined,
+	setSearchString: (q: string) => void,
+} | null>(null)
+
 export const BiconomyContext = createContext<{
 	biconomyDaoObjs?: { [key: string]: any }
 	setBiconomyDaoObjs: (biconomyDaoObjs: any) => void
@@ -145,6 +150,7 @@ export const BiconomyContext = createContext<{
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [network, switchNetwork] = React.useState<SupportedChainId>(defaultChainId)
+	const [searchString, setSearchString] = React.useState<string>()
 	const [webwallet, setWebwallet] = React.useState<Wallet>()
 	const [workspace, setWorkspace] = React.useState<MinimalWorkspace>()
 	const [scwAddress, setScwAddress] = React.useState<string>()
@@ -505,6 +511,14 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		[validatorApi, workspace, setWorkspace, clients, connected, setConnected]
 	)
 
+	const searchContext = useMemo(
+		() => ({
+			searchString,
+			setSearchString,
+		}),
+		[searchString, setSearchString]
+	)
+
 	const seo = getSeo()
 
 	const getLayout = Component.getLayout || ((page) => page)
@@ -538,7 +552,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				<ApiClientsContext.Provider value={apiClients}>
 					<WebwalletContext.Provider value={webwalletContextValue}>
 						<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
-							<ChakraProvider theme={theme}>
+							<SearchContext.Provider value={searchContext}>
+								<ChakraProvider theme={theme}>
 								{getLayout(<Component {...pageProps} />)}
 								{
 									typeof window !== 'undefined' && (
@@ -546,6 +561,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 									)
 								}
 							</ChakraProvider>
+							</SearchContext.Provider>
 						</BiconomyContext.Provider>
 					</WebwalletContext.Provider>
 				</ApiClientsContext.Provider>
