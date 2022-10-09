@@ -1,10 +1,10 @@
-import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
+import { ReactElement, useContext, useEffect, useMemo, useState } from 'react';
 import { Box, Button, Center, Container, Flex, useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/router'
 import { GetDaOsForExploreQuery, useGetDaOsForExploreQuery, Workspace_Filter as WorkspaceFilter, Workspace_OrderBy as WorkspaceOrderBy } from 'src/generated/graphql'
 import logger from 'src/libraries/logger'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
+import { ApiClientsContext, SearchContext, WebwalletContext } from 'src/pages/_app'; //TODO - move to /libraries/zero-wallet/context
 import AcceptInviteModal from 'src/screens/discover/_components/AcceptInviteModal'
 import DaosGrid from 'src/screens/discover/_components/DaosGrid'
 import { useMultichainDaosPaginatedQuery } from 'src/screens/discover/_hooks/useMultiChainPaginatedQuery'
@@ -28,6 +28,8 @@ function Discover() {
 
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 
+  const { searchString } = useContext(SearchContext)!
+
 	const { workspace } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 
@@ -50,19 +52,31 @@ function Discover() {
 		setUnsavedDaosState({...unsavedDaosState})
 	}
 
+	const getExploreDaosRequestFilters = (additionalFilters?: WorkspaceFilter) => {
+		let filters: WorkspaceFilter = {}
+
+		if(searchString) filters.title_contains_nocase = searchString;
+		if(!isAdmin) filters.isVisible = true;
+
+		filters = {
+			...filters,
+			...additionalFilters,
+		}
+
+		return filters;
+	}
+
 	const {
 		results: daos,
 		hasMore: hasMoreDaos,
 		fetchMore: fetchMoreDaos
-	} = useMultiChainDaosForExplore(
-		isAdmin ? undefined : { isVisible: true }
-	)
+	} = useMultiChainDaosForExplore(getExploreDaosRequestFilters())
 
 	const {
 		results: myDaos,
 		fetchMore: fetchMoreMyDaos
 	} = useMultiChainDaosForExplore(
-		{ members_: { actorId: scwAddress } },
+		getExploreDaosRequestFilters({ members_: { actorId: scwAddress } })
 	)
 
   const totalDaos = useMemo(() => [
@@ -96,6 +110,14 @@ function Discover() {
 			})
 		}
 	}, [])
+
+	useEffect(() => {
+		(async () => {
+			await new Promise(resolve => setTimeout(resolve, 0))
+			fetchMoreDaos(true)
+			fetchMoreMyDaos(true)
+		})()
+	}, [searchString])
 
 	useEffect(() => {
 		logger.info('fetching daos')
