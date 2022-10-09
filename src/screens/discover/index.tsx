@@ -186,7 +186,7 @@ function Discover() {
 
 Discover.getLayout = function(page: ReactElement) {
 	return (
-		<NavbarLayout>
+		<NavbarLayout renderSearchBar>
 			{page}
 		</NavbarLayout>
 	)

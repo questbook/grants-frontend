@@ -1,11 +1,20 @@
-import { Container, Image } from '@chakra-ui/react'
+import { Center, Container, Image, Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
 import { useRouter } from 'next/router'
 import AccountDetails from 'src/v2/components/NavBar/AccountDetails'
+import { useContext } from 'react';
+import { Search2Icon } from '@chakra-ui/icons';
+import { SearchContext } from '../../../pages/_app';
 
-function NavBar() {
+type Props = {
+	showSearchBar: boolean
+}
+
+function NavBar({ showSearchBar }: Props) {
 	// const { connected } = useContext(ApiClientsContext)!
 	const router = useRouter()
 	// const chainId = useChainId()
+
+	const { searchString, setSearchString } = useContext(SearchContext)!
 
 	return (
 		<Container
@@ -17,6 +26,8 @@ function NavBar() {
 			variant='header-container'
 			maxH='64px'
 			display='flex'
+			alignItems={'center'}
+			justifyContent={'center'}
 			maxW='100vw'
 			bg='white'
 			ps='42px'
@@ -82,6 +93,24 @@ function NavBar() {
 			} */}
 
 			{/* @TODO-gasless: FIX HERE */}
+			{showSearchBar &&
+				<Center
+					position={'absolute'}
+				><InputGroup mx={'20px'}>
+				<InputLeftElement
+					pointerEvents='none'
+					children={<Search2Icon color='gray.300' />}
+				/>
+				<Input
+					type='search'
+					placeholder='Search'
+					size={'md'}
+					defaultValue={searchString}
+					width={'500px'}
+					onChange={(e) => setSearchString(e.target.value)
+					}/>
+			</InputGroup></Center>
+			}
 			<AccountDetails />
 
 			{/* {!connected && <GetStarted onGetStartedClick={onGetStartedClick} />} */}

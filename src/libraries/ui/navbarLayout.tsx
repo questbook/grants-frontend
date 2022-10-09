@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react';
 import { Flex } from '@chakra-ui/react'
 import { ApiClientsContext } from 'src/pages/_app'
 import logger from 'src/utils/logger'
@@ -8,10 +8,11 @@ import Sidebar from 'src/v2/components/Sidebar'
 interface Props {
   children: React.ReactNode
   renderNavbar?: boolean
-  renderSidebar?: boolean
+	renderSidebar?: boolean,
+	renderSearchBar?: boolean,
 }
 
-function NavbarLayout({ children, renderNavbar, renderSidebar }: Props) {
+function NavbarLayout({ children, renderNavbar, renderSidebar, renderSearchBar }: Props) {
 	const { connected, setConnected } = useContext(ApiClientsContext)!
 
 	const [renderCount, setRenderCount] = useState(0)
@@ -30,8 +31,7 @@ function NavbarLayout({ children, renderNavbar, renderSidebar }: Props) {
 			overscrollBehavior='none'>
 			{
 				renderNavbar && (
-					<NavBar
-					/>
+					<NavBar showSearchBar={renderSearchBar ?? false} />
 				)
 			}
 			<Flex
