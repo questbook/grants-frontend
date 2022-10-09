@@ -79,10 +79,20 @@ function Discover() {
 		getExploreDaosRequestFilters({ members_: { actorId: scwAddress } })
 	)
 
-  const totalDaos = useMemo(() => [
-		...(scwAddress ? myDaos : []),
-		...daos ?? [],
-	], [daos, myDaos])
+  const totalDaos = useMemo(() => {
+		let exploreDaos = [...(daos ?? [])]
+
+		// removing myDaos from explore daos
+		exploreDaos = exploreDaos.filter((exploreDao) => {
+			const filtered = myDaos.filter(e => e.id === exploreDao.id)
+			return !filtered.length
+		})
+
+		return [
+			...(scwAddress ? myDaos : []),
+			...exploreDaos,
+		]
+	}, [daos, myDaos])
 
 	useEffect(() => {
 		(async () => {
