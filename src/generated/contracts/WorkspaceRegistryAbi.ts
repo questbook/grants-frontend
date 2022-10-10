@@ -42,6 +42,7 @@ export declare namespace WorkspaceRegistry {
 
 export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   functions: {
+    "addQBAdmin(address)": FunctionFragment;
     "anonAuthoriserAddress()": FunctionFragment;
     "apiFlagForWorkspaceId(uint96,uint8)": FunctionFragment;
     "applicationReg()": FunctionFragment;
@@ -78,6 +79,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "addQBAdmin"
       | "anonAuthoriserAddress"
       | "apiFlagForWorkspaceId"
       | "applicationReg"
@@ -112,6 +114,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
       | "workspaces"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "addQBAdmin",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "anonAuthoriserAddress",
     values?: undefined
@@ -271,6 +277,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
 
+  decodeFunctionResult(functionFragment: "addQBAdmin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "anonAuthoriserAddress",
     data: BytesLike
@@ -647,6 +654,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    addQBAdmin(
+      _address: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     anonAuthoriserAddress(overrides?: CallOverrides): Promise<[string]>;
 
     apiFlagForWorkspaceId(
@@ -825,6 +837,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       }
     >;
   };
+
+  addQBAdmin(
+    _address: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   anonAuthoriserAddress(overrides?: CallOverrides): Promise<string>;
 
@@ -1005,6 +1022,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
   >;
 
   callStatic: {
+    addQBAdmin(
+      _address: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     anonAuthoriserAddress(overrides?: CallOverrides): Promise<string>;
 
     apiFlagForWorkspaceId(
@@ -1359,6 +1381,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
   };
 
   estimateGas: {
+    addQBAdmin(
+      _address: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     anonAuthoriserAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
     apiFlagForWorkspaceId(
@@ -1532,6 +1559,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
   };
 
   populateTransaction: {
+    addQBAdmin(
+      _address: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     anonAuthoriserAddress(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
