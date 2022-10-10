@@ -123,6 +123,8 @@ function Discover() {
 
 	useEffect(() => {
 		(async () => {
+			if(isAdmin === undefined) return;
+
 			await new Promise(resolve => setTimeout(resolve, 0))
 			fetchMoreDaos(true)
 			fetchMoreMyDaos(true)
@@ -166,16 +168,15 @@ function Discover() {
 				{isAdmin && Object.keys(unsavedDaosState).length !== 0 && <Box
 						background={'#f0f0f7'}
 						bottom={0}
-						style={{ position : 'sticky' }}
-						w={'100%'}
+						style={{ position : 'fixed' }}
 						alignSelf={'stretch'}>
-						<Flex px={'25px'} py={'20px'} alignItems={'center'} justifyContent={'center'}>
+						<Flex px={'25px'} py={'20px'} alignItems={'center'} justifyContent={'center'} w={'80vw'}>
               You have made changes to your Discover page on Questbook.
 							<Button
 								onClick={() => setFormData(unsavedDaosState)}
 								variant={'primary'}
 								disabled={!isBiconomyInitialised || loading}
-								ml={'25px'}>
+								mx={'20px'}>
 								{loading ? <Loader/> : 'Save'}
 							</Button>
 							<Button
