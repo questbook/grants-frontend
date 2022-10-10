@@ -71,22 +71,13 @@ export default function useUpdateDaoVisibility(
     }
 
     async function validate() {
-      setCurrentStep(1)
+      setCurrentStep(0)
       setLoading(true)
       try {
 
         if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
           throw new Error('Zero wallet is not ready')
         }
-
-        // TODO
-        // const {
-        //   data: { ipfsHash },
-        // } = await validatorApi.({
-        // })
-        // if(!ipfsHash) {
-        //   throw new Error('Error validating grant data')
-        // }
 
         const keys = Object.keys(data!)
 
@@ -119,16 +110,19 @@ export default function useUpdateDaoVisibility(
           return
         }
 
-        setCurrentStep(2)
+        setCurrentStep(1)
 
         if(response) {
           const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
+
+          setCurrentStep(2)
+
           await subgraphClients[currentChainId].waitForBlock(receipt?.blockNumber)
           setCurrentStep(3)
 
           setTransactionData(receipt)
+
           await chargeGas(Number(workspace?.id), Number(txFee))
-          setCurrentStep(4)
         }
 
         setLoading(false)

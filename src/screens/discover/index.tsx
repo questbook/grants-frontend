@@ -195,7 +195,6 @@ function Discover() {
 				currentStepIndex={networkTransactionModalStep || 0}
 				steps={
 					[
-						'Uploading data to IPFS',
 						'Signing transaction with in-app wallet',
 						'Waiting for transaction to complete on chain',
 						'Indexing transaction on graph protocol',
