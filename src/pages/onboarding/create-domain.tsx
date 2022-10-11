@@ -40,6 +40,7 @@ const OnboardingCreateDomain = () => {
 
 	// State variables for step 0 and 1
 	const [safeAddress, setSafeAddress] = useState('')
+	debugger
 	const [isSafeAddressVerified, setIsSafeAddressVerified] = useState(false)
 	const { data: safesUSDBalance, loaded: loadedSafesUSDBalance } = useSafeUSDBalances({ safeAddress })
 	const [safeSelected, setSafeSelected] = useState<SafeSelectOption>()
@@ -124,6 +125,10 @@ const OnboardingCreateDomain = () => {
 	}, [webwallet, nonce])
 
 	useEffect(() => {
+		console.log('safe address', safeAddress)
+	}, [safeAddress])
+
+	useEffect(() => {
 		if(!setIsSafeAddressVerified || !safesUSDBalance) {
 			return
 		}
@@ -148,7 +153,7 @@ const OnboardingCreateDomain = () => {
 	}, [domainName])
 
 	useEffect(() => {
-		// console.log('safeSelected', safeSelected)
+		console.log('safeSelected', safeSelected)
 	}, [safeSelected])
 
 	const createWorkspace = useCallback(async() => {

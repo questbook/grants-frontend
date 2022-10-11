@@ -22,12 +22,12 @@ const SAFES_BALANCES_ENPOINTS = Object.values(SAFES_ENDPOINTS)
 const DEFAULT_ERROR_MESSAGE = 'Could not fetch data'
 
 interface Props {
-    safeAddress: string
+	safeAddress: string
 	chainId?: SupportedChainId
 }
 
 interface SingleTokenData {
-    fiatBalance?: string
+	fiatBalance?: string
 }
 
 type ValidChainID = keyof typeof CHAIN_INFO;
@@ -36,14 +36,14 @@ interface AllTokensData extends Array<SingleTokenData> { }
 
 function useSafeUSDBalances({ safeAddress, chainId }: Props) {
 	const gnosisUrls = useMemo(() => {
-		if(safeAddress === '') {
+		if (safeAddress === '') {
 			return []
 		}
 
-		if(chainId) {
+		if (chainId) {
 			const index = SAFES_BALANCES_CHAIN_ID.indexOf(chainId.toString())
 			logger.info({ index }, 'index')
-			if(index === -1) {
+			if (index === -1) {
 				return []
 			} else {
 				logger.info({ url: SAFES_BALANCES_ENPOINTS[index], URL_PREFIX, safeAddress, URL_SUFFIX }, 'url')
@@ -70,14 +70,14 @@ function useSafeUSDBalances({ safeAddress, chainId }: Props) {
 	const [gnosisData, setGnosisData] = useState<SafeSelectOption[]>([])
 
 	const data = useMemo<SafeSelectOption[]>(() => {
-		if(splGovSafe) {
+		if (splGovSafe) {
 			console.log('data', splGovSafe)
 			const temp = [...gnosisData, splGovSafe]
 			temp.sort((a, b) => b.amount - a.amount)
 			console.log('temp', temp)
 			return temp
 		}
-		if(tezosSafe) {
+		if (tezosSafe) {
 			console.log('data', tezosSafe)
 			const temp = [...gnosisData, tezosSafe]
 			temp.sort((a, b) => b!.amount - a!.amount)
@@ -87,22 +87,52 @@ function useSafeUSDBalances({ safeAddress, chainId }: Props) {
 
 
 		return [...gnosisData.sort((a, b) => b.amount - a.amount)]
-	}, [gnosisData, splGovSafe])
+	}, [gnosisData, splGovSafe, tezosSafe])
+
+	const getTz = async () => {
+
+		setTezosLoaded(false)
+		try {
+			console.log('safe address in use effect', safeAddress)
+			const newTezosSafe = await getTezosSafeDetails(safeAddress)
+			if(newTezosSafe?.safeAddress){
+				setTezosSafe(newTezosSafe)
+				setSplGovError('')
+			}
+			
+		} catch (error) {
+			// console.log(error)
+			if (typeof error === 'string') {
+				setSplGovError(error)
+			}
+
+			if (typeof (error as Error)?.message === 'string') {
+				setSplGovError((error as Error).message)
+			} else {
+				setSplGovError(DEFAULT_ERROR_MESSAGE)
+			}
+
+			setTezosSafe(null)
+		}
+
+		setTezosLoaded(true)
+	}
+
 
 	useEffect(() => {
-		(async() => {
+		(async () => {
 			setSplGovLoaded(false)
 			try {
 				const newSplGovSafe = await getSafeDetails(safeAddress)
 				setSplGovSafe(newSplGovSafe)
 				setSplGovError('')
-			} catch(error) {
+			} catch (error) {
 				// console.log(error)
-				if(typeof error === 'string') {
+				if (typeof error === 'string') {
 					setSplGovError(error)
 				}
 
-				if(typeof (error as Error)?.message === 'string') {
+				if (typeof (error as Error)?.message === 'string') {
 					setSplGovError((error as Error).message)
 				} else {
 					setSplGovError(DEFAULT_ERROR_MESSAGE)
@@ -113,47 +143,49 @@ function useSafeUSDBalances({ safeAddress, chainId }: Props) {
 
 			setSplGovLoaded(true)
 		})()
+		getTz()
 	}, [safeAddress, chainId])
 
-	useEffect(() => {
-		(async() => {
-			setTezosLoaded(false)
-			try {
-				const newTezosSafe = await getTezosSafeDetails(safeAddress)
-				setTezosSafe(newTezosSafe)
-				setSplGovError('')
-			} catch(error) {
-				// console.log(error)
-				if(typeof error === 'string') {
-					setSplGovError(error)
-				}
+	// useEffect(() => {
+	// 	(async() => {
+	// 		setTezosLoaded(false)
+	// 		try {
+	// 			console.log('safe address in use effect', safeAddress)
+	// 			const newTezosSafe = await getTezosSafeDetails(safeAddress)
+	// 			setTezosSafe(newTezosSafe)
+	// 			setSplGovError('')
+	// 		} catch(error) {
+	// 			// console.log(error)
+	// 			if(typeof error === 'string') {
+	// 				setSplGovError(error)
+	// 			}
 
-				if(typeof (error as Error)?.message === 'string') {
-					setSplGovError((error as Error).message)
-				} else {
-					setSplGovError(DEFAULT_ERROR_MESSAGE)
-				}
+	// 			if(typeof (error as Error)?.message === 'string') {
+	// 				setSplGovError((error as Error).message)
+	// 			} else {
+	// 				setSplGovError(DEFAULT_ERROR_MESSAGE)
+	// 			}
 
-				setTezosSafe(null)
-			}
+	// 			setTezosSafe(null)
+	// 		}
 
-			setTezosLoaded(true)
-		})()
-	}, [safeAddress, chainId])
+	// 		setTezosLoaded(true)
+	// 	})()
+	// }, [safeAddress, chainId])
 
 	const getTokensSum = (tokensData: AllTokensData) => {
 		return tokensData.reduce((partialSum: number, item) => partialSum + parseFloat(item?.fiatBalance || '0'), 0)
 	}
 
 	useEffect(() => {
-		if(gnosisLoaded && !gnosisError) {
+		if (gnosisLoaded && !gnosisError) {
 			const newData: SafeSelectOption[] = []
 			logger.info({ gnosisRawData }, 'gnosis raw data: ')
 			gnosisRawData.forEach((allTokensData: AllTokensData, index) => {
 				const currentChainID = SAFES_BALANCES_CHAIN_ID[index] as unknown as ValidChainID
 				const tokensSum = getTokensSum(allTokensData)
 				// if(tokensSum >= USD_BALANCE_THRESHOLD) {
-				if(allTokensData.length > 0 && currentChainID in SAFES_NAMES) {
+				if (allTokensData.length > 0 && currentChainID in SAFES_NAMES) {
 					const newElement: SafeSelectOption = {
 						safeAddress: safeAddress,
 						networkType: NetworkType.EVM,
@@ -168,7 +200,7 @@ function useSafeUSDBalances({ safeAddress, chainId }: Props) {
 					newData.push(newElement)
 				}
 			})
-			// console.log('Final Safe', newData)
+			console.log('Final Safe', newData)
 			setGnosisData(newData)
 		}
 	}, [gnosisRawData, gnosisLoaded, gnosisError, safeAddress, chainId])

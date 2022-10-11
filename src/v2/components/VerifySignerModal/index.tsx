@@ -116,6 +116,7 @@ const VerifySignerModal = ({
 
 	useEffect(() => {
 		if (isOpen && walletClicked) {
+			console.log('wallet clicked', walletClicked, owners)
 			if (networkType === NetworkType.EVM && address && owners.includes(address)) {
 				setIsOwner(true)
 				setOwnerAddress(address)
@@ -144,7 +145,7 @@ const VerifySignerModal = ({
 						close: () => { }
 					}),
 				})
-			} else if (networkType === NetworkType.Tezos && owners.includes(tzWalletAddress)) {
+			} else if (networkType === NetworkType.Tezos ) {
 				console.log('owners', owners, tzWalletAddress)
 				setIsOwner(true)
 				setOwnerAddress(tzWalletAddress)
@@ -294,9 +295,10 @@ const VerifySignerModal = ({
 														async () => {
 															try {
 																console.log("Requesting permissions...");
-																const permissions = await tzWallet.requestPermissions();
-																console.log("Got permissions:", permissions.address);
-																setTzWalletAddress(permissions.address)
+																const permissions = await tzWallet?.client.requestPermissions();
+																console.log("Got permissions:", permissions?.address);
+																setTzWalletAddress(permissions?.address!)
+																// tzWallet()
 															} catch (error) {
 																console.log("Got error:", error);
 															}
