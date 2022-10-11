@@ -2,7 +2,6 @@ import { ReactElement, useContext, useEffect, useMemo, useState } from 'react';
 import { Box, Button, Center, Container, Flex, useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/router'
 import { GetDaOsForExploreQuery, useGetDaOsForExploreQuery, Workspace_Filter as WorkspaceFilter, Workspace_OrderBy as WorkspaceOrderBy } from 'src/generated/graphql'
-import logger from 'src/libraries/logger'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { ApiClientsContext, SearchContext, WebwalletContext } from 'src/pages/_app'; //TODO - move to /libraries/zero-wallet/context
 import AcceptInviteModal from 'src/screens/discover/_components/AcceptInviteModal'
