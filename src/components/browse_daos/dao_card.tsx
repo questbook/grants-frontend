@@ -76,6 +76,7 @@ function DaoCard({ logo, isAdmin, name, daoId, chainId, noOfApplicants, totalAmo
 						<Switch
 							size='md'
 							mx='10px'
+							height={'20px'}
 							borderRadius={0}
 							colorScheme={'green'}
 							isChecked={isVisible}

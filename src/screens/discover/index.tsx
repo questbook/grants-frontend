@@ -137,7 +137,7 @@ function Discover() {
 		if(scwAddress) {
 			fetchMoreMyDaos(true)
 		}
-	}, [])
+	}, [isAdmin])
 
 	useEffect(() => {
 		if(scwAddress) {
@@ -168,9 +168,8 @@ function Discover() {
 				{isAdmin && Object.keys(unsavedDaosState).length !== 0 && <Box
 						background={'#f0f0f7'}
 						bottom={0}
-						style={{ position : 'fixed' }}
-						alignSelf={'stretch'}>
-						<Flex px={'25px'} py={'20px'} alignItems={'center'} justifyContent={'center'} w={'80vw'}>
+						style={{ position : 'sticky' }}>
+						<Flex px={'25px'} py={'20px'} alignItems={'center'} justifyContent={'center'}>
               You have made changes to your Discover page on Questbook.
 							<Button
 								onClick={() => setFormData(unsavedDaosState)}
