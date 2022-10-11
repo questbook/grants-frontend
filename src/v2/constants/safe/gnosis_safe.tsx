@@ -1,5 +1,5 @@
 /* eslint-disable */
-import Safe from '@gnosis.pm/safe-core-sdk'
+import Safe, { ContractNetworksConfig } from '@gnosis.pm/safe-core-sdk'
 import EthersAdapter from '@gnosis.pm/safe-ethers-lib'
 import SafeServiceClient from '@gnosis.pm/safe-service-client'
 import axios from 'axios'
@@ -50,10 +50,27 @@ export class GnosisSafe implements _GnosisSafe {
 		})
 		const safeService = new SafeServiceClient({ txServiceUrl: this.txnServiceURL, ethAdapter })
 		// const safeFactory = await SafeFactory.create({ ethAdapter })
-		const safeSdk = await Safe.create({ ethAdapter, safeAddress })
+		let safeSdk
+
+		if (this.chainId === 40) {
+			const id = await ethAdapter.getChainId()
+			const contractNetworks: ContractNetworksConfig = {
+				[id]: {
+					multiSendAddress: '0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761',
+					safeMasterCopyAddress: '0xe591ae490dcc235f420fb7ae3239e0df3ae2048f',
+					safeProxyFactoryAddress: '0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2'
+				}
+			}
+
+			safeSdk = await Safe.create({ ethAdapter, safeAddress, contractNetworks })
+
+		} else {
+			safeSdk = await Safe.create({ ethAdapter, safeAddress })
+
+		}
 
 		try {
-			const safeTransaction = await safeSdk.createTransaction({ safeTransactionData: transactions })
+			const safeTransaction = await safeSdk.createTransaction(transactions)
 
 			const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
 			const senderSignature = await safeSdk.signTransactionHash(safeTxHash)
@@ -95,8 +112,25 @@ export class GnosisSafe implements _GnosisSafe {
 			signer,
 		})
 
-		const safeSdk = await Safe.create({ ethAdapter, safeAddress })
+		let safeSdk
 
+		if (this.chainId === 40) {
+			const id = await ethAdapter.getChainId()
+			const contractNetworks: ContractNetworksConfig = {
+				[id]: {
+					multiSendAddress: '0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761',
+					safeMasterCopyAddress: '0xe591ae490dcc235f420fb7ae3239e0df3ae2048f',
+					safeProxyFactoryAddress: '0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2'
+				}
+			}
+
+			safeSdk = await Safe.create({ ethAdapter, safeAddress, contractNetworks })
+
+		} else {
+			safeSdk = await Safe.create({ ethAdapter, safeAddress })
+
+		}
+		
 		const userAddress = await signer.getAddress()
 		return await safeSdk.isOwner(userAddress)
 	}
