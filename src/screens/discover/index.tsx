@@ -127,23 +127,11 @@ function Discover() {
 
 			await new Promise(resolve => setTimeout(resolve, 0))
 			fetchMoreDaos(true)
-			fetchMoreMyDaos(true)
+			if(scwAddress) {
+				fetchMoreMyDaos(true)
+			}
 		})()
-	}, [searchString])
-
-	useEffect(() => {
-		logger.info('fetching daos')
-		fetchMoreDaos(true)
-		if(scwAddress) {
-			fetchMoreMyDaos(true)
-		}
-	}, [isAdmin])
-
-	useEffect(() => {
-		if(scwAddress) {
-			fetchMoreMyDaos(true)
-		}
-	}, [scwAddress])
+	}, [scwAddress, isAdmin, searchString])
 
 	if(isAdmin === undefined) {
 		return <Center w={'100%'}><Loader /></Center>
