@@ -1,5 +1,6 @@
 {
     "1": "https://safe-transaction.mainnet.gnosis.io/api/",
+    "40": "https://transaction.safe.telos.net/api/",
     "100": "https://safe-transaction.xdai.gnosis.io/api/",
     "42161": "https://safe-transaction.arbitrum.gnosis.io/api/",
     "43114": "https://safe-transaction.avalanche.gnosis.io/api/",

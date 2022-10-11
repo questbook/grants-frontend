@@ -54,6 +54,7 @@ export const bicoDapps: { [key: string]: { apiKey: string, webHookId: string } }
 export const networksMapping: { [key: string]: string } = {
 	'1': '10',
 	'10': '10',
+	'40': '10',
 	'56': '10',
 	'100': '10',
 	'246': '10',

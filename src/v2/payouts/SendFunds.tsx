@@ -137,6 +137,7 @@ export default function SendFunds({
 
 	const getTokensFromSafe = () => {
 		const tokenList: any[] = []
+		// console.log('Fetching tokens')
 		getTokenBalance(workspaceSafeChainId, workspaceSafe!).then((res) => {
 			const tokensFetched = res.data
 			tokensFetched.filter((token: any) => token.token).map((token: any) => {
@@ -155,6 +156,7 @@ export default function SendFunds({
 				})
 			})
 		})
+		// console.log('fetched tokens', tokenList)
 		setSafeTokenList(tokenList)
 	}
 
@@ -194,6 +196,7 @@ export default function SendFunds({
 				amount: recepient?.milestones?.[0]?.amount,
 			})
 		)
+		// console.log('txn data', formattedTrxnData)
 		setInitiateTransactionData(formattedTrxnData)
 		setGnosisBatchData(formattedTrxnData)
 	}, [sendFundsTo])
@@ -265,6 +268,7 @@ export default function SendFunds({
 			const rewardAssetAddress = data.selectedToken.info.tokenAddress
 			const usdToToken = (data.amount / tokenUSDRate!).toFixed(rewardAssetDecimals)
 
+			// console.log('reward asset address', rewardAssetAddress)
 			logger.info('usd amount, usd rate, usd to token amount', data.amount, tokenUSDRate!, usdToToken)
 			const txData = encodeTransactionData(data.to, (usdToToken.toString()), rewardAssetDecimals)
 			const tx = {
@@ -285,6 +289,7 @@ export default function SendFunds({
 		let proposaladdress: string | undefined
 		if(isEvmChain) {
 			const readyToExecuteTxs = createEVMMetaTransactions()
+			// console.log('ready to execute txn', readyToExecuteTxs)
 			const safeTxHash = await currentSafe?.createMultiTransaction(readyToExecuteTxs, workspaceSafe!)
 			// console.log('safe tx hash', safeTxHash)
 			if(safeTxHash) {
