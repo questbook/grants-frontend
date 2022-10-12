@@ -94,6 +94,7 @@ export default function useUpdateDaoVisibility() {
 				setCurrentStep?.(5)
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e) {
+				setCurrentStep?.(undefined)
 				const message = getErrorMessage(e as Error)
 				toastRef.current = toast({
 					position: 'top',
