@@ -19,7 +19,6 @@ import DaosGrid from 'src/screens/discover/_components/DaosGrid'
 import { useMultichainDaosPaginatedQuery } from 'src/screens/discover/_hooks/useMultiChainPaginatedQuery'
 import { extractInviteInfo, InviteInfo } from 'src/screens/discover/_utils/invite'
 import { mergeSortedArrays } from 'src/screens/discover/_utils/mergeSortedArrays'
-import logger from 'src/utils/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
@@ -211,7 +210,6 @@ function Discover() {
 			}
 
 			const adminWalletAddresses = getAdminsData.qbadmins.map(e => e.walletAddress.toLowerCase())
-			logger.info(`admins ${adminWalletAddresses}`)
 
 			if(scwAddress || webwallet) {
 				setIsAdmin(

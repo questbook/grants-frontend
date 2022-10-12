@@ -72,7 +72,7 @@ export default function useUpdateDaoVisibility() {
 					biconomyWalletClient,
 					scwAddress,
 					webwallet,
-					currentChainId.toString(),
+					`${currentChainId}`,
 					bicoDapps[currentChainId].webHookId,
 					nonce
 				)
