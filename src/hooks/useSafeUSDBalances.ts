@@ -45,7 +45,7 @@ function useSafeUSDBalances({ safeAddress, chainId }: Props) {
 			if(index === -1) {
 				return []
 			} else {
-				logger.info({ url: SAFES_BALANCES_ENPOINTS[index], URL_PREFIX, safeAddress, URL_SUFFIX }, 'url')
+				logger.info({ url: SAFES_BALANCES_ENPOINTS[index], URL_PREFIX, safeAddress, URL_SUFFIX, fin_url: SAFES_BALANCES_ENPOINTS[index] + URL_PREFIX + safeAddress + URL_SUFFIX }, 'url')
 				return [SAFES_BALANCES_ENPOINTS[index] + URL_PREFIX + safeAddress + URL_SUFFIX]
 			}
 		}
@@ -129,7 +129,7 @@ function useSafeUSDBalances({ safeAddress, chainId }: Props) {
 					newData.push(newElement)
 				}
 			})
-			console.log('Final Safe', newData)
+			console.log('Final Safe', newData, gnosisLoaded, )
 			setGnosisData(newData)
 		}
 	}, [gnosisRawData, gnosisLoaded, gnosisError, safeAddress, chainId])

@@ -58,7 +58,8 @@ export class GnosisSafe implements _GnosisSafe {
 				[id]: {
 					multiSendAddress: '0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761',
 					safeMasterCopyAddress: '0xe591ae490dcc235f420fb7ae3239e0df3ae2048f',
-					safeProxyFactoryAddress: '0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2'
+					safeProxyFactoryAddress: '0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2',
+					multiSendCallOnlyAddress: '0x40A2aCCbd92BCA938b02010E17A5b8929b49130D'
 				}
 			}
 
@@ -70,7 +71,7 @@ export class GnosisSafe implements _GnosisSafe {
 		}
 
 		try {
-			const safeTransaction = await safeSdk.createTransaction(transactions)
+			const safeTransaction = await safeSdk.createTransaction({safeTransactionData: transactions})
 
 			const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
 			const senderSignature = await safeSdk.signTransactionHash(safeTxHash)
@@ -120,7 +121,8 @@ export class GnosisSafe implements _GnosisSafe {
 				[id]: {
 					multiSendAddress: '0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761',
 					safeMasterCopyAddress: '0xe591ae490dcc235f420fb7ae3239e0df3ae2048f',
-					safeProxyFactoryAddress: '0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2'
+					safeProxyFactoryAddress: '0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2',
+					multiSendCallOnlyAddress: '0x40A2aCCbd92BCA938b02010E17A5b8929b49130D'
 				}
 			}
 
@@ -130,7 +132,7 @@ export class GnosisSafe implements _GnosisSafe {
 			safeSdk = await Safe.create({ ethAdapter, safeAddress })
 
 		}
-		
+
 		const userAddress = await signer.getAddress()
 		return await safeSdk.isOwner(userAddress)
 	}
