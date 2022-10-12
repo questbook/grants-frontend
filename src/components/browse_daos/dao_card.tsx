@@ -41,7 +41,16 @@ function DaoCard({ logo, isAdmin, name, daoId, chainId, noOfApplicants, totalAmo
 				}
 			}
 			onClick={
-				() => {
+				(e) => {
+					// returning as onClick fired from dao visibility toggle switch for admins
+					if(isAdmin && [
+						'[object HTMLSpanElement]',
+						'[object HTMLLabelElement]',
+						'[object HTMLInputElement]',
+					].includes(e.target.toString())) {
+						return
+					}
+
 					router.push({
 						pathname: '/profile/',
 						query: {
@@ -80,7 +89,6 @@ function DaoCard({ logo, isAdmin, name, daoId, chainId, noOfApplicants, totalAmo
 							borderRadius={0}
 							colorScheme='green'
 							isChecked={isVisible}
-							// FIXME: calls card on tap
 							onChange={() => onVisibilityUpdate?.(!isVisible)}
 						/>
 					)
