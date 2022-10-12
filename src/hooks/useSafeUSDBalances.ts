@@ -72,7 +72,8 @@ function useSafeUSDBalances({ safeAddress, chainId }: Props) {
 			temp.sort((a, b) => b.amount - a.amount)
 			return temp
 		}
-		console.log('gnosis data before sort',gnosisData)
+
+		console.log('gnosis data before sort', gnosisData)
 		return [...gnosisData.sort((a, b) => b.amount - a.amount)]
 	}, [gnosisData, splGovSafe])
 
