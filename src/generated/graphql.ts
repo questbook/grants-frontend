@@ -3507,6 +3507,8 @@ export type Workspace = {
   /** in seconds since epoch */
   createdAtS: Scalars['Int'];
   id: Scalars['ID'];
+  /** Whether the workspace is visible to users in the explore page */
+  isVisible: Scalars['Boolean'];
   /** Hash to fetch the logo */
   logoIpfsHash: Scalars['String'];
   /** Members of the workspace */
@@ -3985,6 +3987,10 @@ export type Workspace_Filter = {
   id_lte?: InputMaybe<Scalars['ID']>;
   id_not?: InputMaybe<Scalars['ID']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  isVisible?: InputMaybe<Scalars['Boolean']>;
+  isVisible_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  isVisible_not?: InputMaybe<Scalars['Boolean']>;
+  isVisible_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   logoIpfsHash?: InputMaybe<Scalars['String']>;
   logoIpfsHash_contains?: InputMaybe<Scalars['String']>;
   logoIpfsHash_contains_nocase?: InputMaybe<Scalars['String']>;
@@ -4130,6 +4136,7 @@ export enum Workspace_OrderBy {
   CoverImageIpfsHash = 'coverImageIpfsHash',
   CreatedAtS = 'createdAtS',
   Id = 'id',
+  IsVisible = 'isVisible',
   LogoIpfsHash = 'logoIpfsHash',
   Members = 'members',
   MetadataHash = 'metadataHash',

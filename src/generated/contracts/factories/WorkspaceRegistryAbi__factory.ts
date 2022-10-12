@@ -440,6 +440,38 @@ const _abi = [
     type: "event",
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint96[]",
+        name: "workspaceId",
+        type: "uint96[]",
+      },
+      {
+        indexed: false,
+        internalType: "bool[]",
+        name: "isVisible",
+        type: "bool[]",
+      },
+    ],
+    name: "WorkspacesVisibleUpdated",
+    type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_address",
+        type: "address",
+      },
+    ],
+    name: "addQBAdmin",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "anonAuthoriserAddress",
     outputs: [
@@ -619,6 +651,19 @@ const _abi = [
     name: "disburseRewardP2P",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getQBAdmins",
+    outputs: [
+      {
+        internalType: "address[]",
+        name: "",
+        type: "address[]",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -803,6 +848,25 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "qbAdmins",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "renounceOwnership",
     outputs: [],
@@ -879,7 +943,7 @@ const _abi = [
       },
       {
         internalType: "string[]",
-        name: "_emails",
+        name: "_metadataHashes",
         type: "string[]",
       },
     ],
@@ -930,6 +994,24 @@ const _abi = [
       },
     ],
     name: "updateWorkspaceSafe",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint96[]",
+        name: "_workspaceIds",
+        type: "uint96[]",
+      },
+      {
+        internalType: "bool[]",
+        name: "_isVisible",
+        type: "bool[]",
+      },
+    ],
+    name: "updateWorkspacesVisible",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

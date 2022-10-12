@@ -42,6 +42,7 @@ export declare namespace WorkspaceRegistry {
 
 export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   functions: {
+    "addQBAdmin(address)": FunctionFragment;
     "anonAuthoriserAddress()": FunctionFragment;
     "apiFlagForWorkspaceId(uint96,uint8)": FunctionFragment;
     "applicationReg()": FunctionFragment;
@@ -49,6 +50,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     "createWorkspace(string,bytes32,string,uint256)": FunctionFragment;
     "disburseRewardFromSafe(uint96[],uint96[],address,string,uint256[],uint96,string)": FunctionFragment;
     "disburseRewardP2P(uint96,address,uint96,address,uint256,uint96)": FunctionFragment;
+    "getQBAdmins()": FunctionFragment;
     "initialize()": FunctionFragment;
     "isWorkspaceAdmin(uint96,address)": FunctionFragment;
     "isWorkspaceAdminOrReviewer(uint96,address)": FunctionFragment;
@@ -59,6 +61,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
+    "qbAdmins(uint256)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setApplicationReg(address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -67,6 +70,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     "updateWorkspaceMembers(uint96,address[],uint8[],bool[],string[])": FunctionFragment;
     "updateWorkspaceMetadata(uint96,string)": FunctionFragment;
     "updateWorkspaceSafe(uint96,bytes32,string,uint256)": FunctionFragment;
+    "updateWorkspacesVisible(uint96[],bool[])": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
     "workspaceCount()": FunctionFragment;
@@ -75,6 +79,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "addQBAdmin"
       | "anonAuthoriserAddress"
       | "apiFlagForWorkspaceId"
       | "applicationReg"
@@ -82,6 +87,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
       | "createWorkspace"
       | "disburseRewardFromSafe"
       | "disburseRewardP2P"
+      | "getQBAdmins"
       | "initialize"
       | "isWorkspaceAdmin"
       | "isWorkspaceAdminOrReviewer"
@@ -92,6 +98,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
       | "pause"
       | "paused"
       | "proxiableUUID"
+      | "qbAdmins"
       | "renounceOwnership"
       | "setApplicationReg"
       | "transferOwnership"
@@ -100,12 +107,17 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
       | "updateWorkspaceMembers"
       | "updateWorkspaceMetadata"
       | "updateWorkspaceSafe"
+      | "updateWorkspacesVisible"
       | "upgradeTo"
       | "upgradeToAndCall"
       | "workspaceCount"
       | "workspaces"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "addQBAdmin",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "anonAuthoriserAddress",
     values?: undefined
@@ -159,6 +171,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "getQBAdmins",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "initialize",
     values?: undefined
   ): string;
@@ -195,6 +211,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "proxiableUUID",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "qbAdmins",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -237,6 +257,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "updateWorkspacesVisible",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<boolean>[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "upgradeTo",
     values: [PromiseOrValue<string>]
   ): string;
@@ -253,6 +277,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
 
+  decodeFunctionResult(functionFragment: "addQBAdmin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "anonAuthoriserAddress",
     data: BytesLike
@@ -279,6 +304,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "disburseRewardP2P",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getQBAdmins",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
@@ -309,6 +338,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     functionFragment: "proxiableUUID",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "qbAdmins", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -338,6 +368,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     functionFragment: "updateWorkspaceSafe",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateWorkspacesVisible",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "upgradeToAndCall",
@@ -365,6 +399,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     "WorkspaceMembersUpdated(uint96,address[],uint8[],bool[],string[],uint256)": EventFragment;
     "WorkspaceSafeUpdated(uint96,bytes32,string,uint256,uint256)": EventFragment;
     "WorkspaceUpdated(uint96,address,string,uint256)": EventFragment;
+    "WorkspacesVisibleUpdated(uint96[],bool[])": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
@@ -382,6 +417,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "WorkspaceMembersUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WorkspaceSafeUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WorkspaceUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "WorkspacesVisibleUpdated"): EventFragment;
 }
 
 export interface AdminChangedEventObject {
@@ -579,6 +615,18 @@ export type WorkspaceUpdatedEvent = TypedEvent<
 export type WorkspaceUpdatedEventFilter =
   TypedEventFilter<WorkspaceUpdatedEvent>;
 
+export interface WorkspacesVisibleUpdatedEventObject {
+  workspaceId: BigNumber[];
+  isVisible: boolean[];
+}
+export type WorkspacesVisibleUpdatedEvent = TypedEvent<
+  [BigNumber[], boolean[]],
+  WorkspacesVisibleUpdatedEventObject
+>;
+
+export type WorkspacesVisibleUpdatedEventFilter =
+  TypedEventFilter<WorkspacesVisibleUpdatedEvent>;
+
 export interface WorkspaceRegistryAbi extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -606,6 +654,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    addQBAdmin(
+      _address: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     anonAuthoriserAddress(overrides?: CallOverrides): Promise<[string]>;
 
     apiFlagForWorkspaceId(
@@ -651,6 +704,8 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       _workspaceId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    getQBAdmins(overrides?: CallOverrides): Promise<[string[]]>;
 
     initialize(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -700,6 +755,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
 
     proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
 
+    qbAdmins(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     renounceOwnership(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -728,7 +788,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       _members: PromiseOrValue<string>[],
       _roles: PromiseOrValue<BigNumberish>[],
       _enabled: PromiseOrValue<boolean>[],
-      _emails: PromiseOrValue<string>[],
+      _metadataHashes: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -743,6 +803,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       _safeAddress: PromiseOrValue<BytesLike>,
       _longSafeAddress: PromiseOrValue<string>,
       _safeChainId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    updateWorkspacesVisible(
+      _workspaceIds: PromiseOrValue<BigNumberish>[],
+      _isVisible: PromiseOrValue<boolean>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -771,6 +837,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       }
     >;
   };
+
+  addQBAdmin(
+    _address: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   anonAuthoriserAddress(overrides?: CallOverrides): Promise<string>;
 
@@ -817,6 +888,8 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     _workspaceId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  getQBAdmins(overrides?: CallOverrides): Promise<string[]>;
 
   initialize(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -866,6 +939,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
 
   proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
+  qbAdmins(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   renounceOwnership(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -894,7 +972,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     _members: PromiseOrValue<string>[],
     _roles: PromiseOrValue<BigNumberish>[],
     _enabled: PromiseOrValue<boolean>[],
-    _emails: PromiseOrValue<string>[],
+    _metadataHashes: PromiseOrValue<string>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -909,6 +987,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     _safeAddress: PromiseOrValue<BytesLike>,
     _longSafeAddress: PromiseOrValue<string>,
     _safeChainId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  updateWorkspacesVisible(
+    _workspaceIds: PromiseOrValue<BigNumberish>[],
+    _isVisible: PromiseOrValue<boolean>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -938,6 +1022,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
   >;
 
   callStatic: {
+    addQBAdmin(
+      _address: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     anonAuthoriserAddress(overrides?: CallOverrides): Promise<string>;
 
     apiFlagForWorkspaceId(
@@ -984,6 +1073,8 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    getQBAdmins(overrides?: CallOverrides): Promise<string[]>;
+
     initialize(overrides?: CallOverrides): Promise<void>;
 
     isWorkspaceAdmin(
@@ -1028,6 +1119,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
 
     proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
+    qbAdmins(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     setApplicationReg(
@@ -1052,7 +1148,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       _members: PromiseOrValue<string>[],
       _roles: PromiseOrValue<BigNumberish>[],
       _enabled: PromiseOrValue<boolean>[],
-      _emails: PromiseOrValue<string>[],
+      _metadataHashes: PromiseOrValue<string>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1067,6 +1163,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       _safeAddress: PromiseOrValue<BytesLike>,
       _longSafeAddress: PromiseOrValue<string>,
       _safeChainId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateWorkspacesVisible(
+      _workspaceIds: PromiseOrValue<BigNumberish>[],
+      _isVisible: PromiseOrValue<boolean>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1267,9 +1369,23 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       metadataHash?: null,
       time?: null
     ): WorkspaceUpdatedEventFilter;
+
+    "WorkspacesVisibleUpdated(uint96[],bool[])"(
+      workspaceId?: null,
+      isVisible?: null
+    ): WorkspacesVisibleUpdatedEventFilter;
+    WorkspacesVisibleUpdated(
+      workspaceId?: null,
+      isVisible?: null
+    ): WorkspacesVisibleUpdatedEventFilter;
   };
 
   estimateGas: {
+    addQBAdmin(
+      _address: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     anonAuthoriserAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
     apiFlagForWorkspaceId(
@@ -1315,6 +1431,8 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       _workspaceId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    getQBAdmins(overrides?: CallOverrides): Promise<BigNumber>;
 
     initialize(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1364,6 +1482,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
 
     proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
 
+    qbAdmins(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     renounceOwnership(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1392,7 +1515,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       _members: PromiseOrValue<string>[],
       _roles: PromiseOrValue<BigNumberish>[],
       _enabled: PromiseOrValue<boolean>[],
-      _emails: PromiseOrValue<string>[],
+      _metadataHashes: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1407,6 +1530,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       _safeAddress: PromiseOrValue<BytesLike>,
       _longSafeAddress: PromiseOrValue<string>,
       _safeChainId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    updateWorkspacesVisible(
+      _workspaceIds: PromiseOrValue<BigNumberish>[],
+      _isVisible: PromiseOrValue<boolean>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1430,6 +1559,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
   };
 
   populateTransaction: {
+    addQBAdmin(
+      _address: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     anonAuthoriserAddress(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1477,6 +1611,8 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       _workspaceId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    getQBAdmins(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     initialize(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1526,6 +1662,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
 
     proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    qbAdmins(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     renounceOwnership(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -1554,7 +1695,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       _members: PromiseOrValue<string>[],
       _roles: PromiseOrValue<BigNumberish>[],
       _enabled: PromiseOrValue<boolean>[],
-      _emails: PromiseOrValue<string>[],
+      _metadataHashes: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1569,6 +1710,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       _safeAddress: PromiseOrValue<BytesLike>,
       _longSafeAddress: PromiseOrValue<string>,
       _safeChainId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateWorkspacesVisible(
+      _workspaceIds: PromiseOrValue<BigNumberish>[],
+      _isVisible: PromiseOrValue<boolean>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
