@@ -42,7 +42,7 @@ export declare namespace WorkspaceRegistry {
 
 export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   functions: {
-    "addQBAdmin(address)": FunctionFragment;
+    "addQBAdmins(address[])": FunctionFragment;
     "anonAuthoriserAddress()": FunctionFragment;
     "apiFlagForWorkspaceId(uint96,uint8)": FunctionFragment;
     "applicationReg()": FunctionFragment;
@@ -62,6 +62,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     "paused()": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
     "qbAdmins(uint256)": FunctionFragment;
+    "removeQBAdmins(address[])": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setApplicationReg(address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -79,7 +80,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "addQBAdmin"
+      | "addQBAdmins"
       | "anonAuthoriserAddress"
       | "apiFlagForWorkspaceId"
       | "applicationReg"
@@ -99,6 +100,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
       | "paused"
       | "proxiableUUID"
       | "qbAdmins"
+      | "removeQBAdmins"
       | "renounceOwnership"
       | "setApplicationReg"
       | "transferOwnership"
@@ -115,8 +117,8 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "addQBAdmin",
-    values: [PromiseOrValue<string>]
+    functionFragment: "addQBAdmins",
+    values: [PromiseOrValue<string>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "anonAuthoriserAddress",
@@ -217,6 +219,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "removeQBAdmins",
+    values: [PromiseOrValue<string>[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
@@ -277,7 +283,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
 
-  decodeFunctionResult(functionFragment: "addQBAdmin", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "addQBAdmins",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "anonAuthoriserAddress",
     data: BytesLike
@@ -340,6 +349,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "qbAdmins", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "removeQBAdmins",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
@@ -391,6 +404,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     "Initialized(uint8)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Paused(address)": EventFragment;
+    "QBAdminsUpdated(address[],bool,uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
     "Upgraded(address)": EventFragment;
     "WorkspaceCreated(uint96,address,string,uint256)": EventFragment;
@@ -409,6 +423,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "QBAdminsUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WorkspaceCreated"): EventFragment;
@@ -511,6 +526,18 @@ export interface PausedEventObject {
 export type PausedEvent = TypedEvent<[string], PausedEventObject>;
 
 export type PausedEventFilter = TypedEventFilter<PausedEvent>;
+
+export interface QBAdminsUpdatedEventObject {
+  walletAddresses: string[];
+  isAdded: boolean;
+  time: BigNumber;
+}
+export type QBAdminsUpdatedEvent = TypedEvent<
+  [string[], boolean, BigNumber],
+  QBAdminsUpdatedEventObject
+>;
+
+export type QBAdminsUpdatedEventFilter = TypedEventFilter<QBAdminsUpdatedEvent>;
 
 export interface UnpausedEventObject {
   account: string;
@@ -654,8 +681,8 @@ export interface WorkspaceRegistryAbi extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    addQBAdmin(
-      _address: PromiseOrValue<string>,
+    addQBAdmins(
+      _addresses: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -760,6 +787,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    removeQBAdmins(
+      _addresses: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     renounceOwnership(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -788,7 +820,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       _members: PromiseOrValue<string>[],
       _roles: PromiseOrValue<BigNumberish>[],
       _enabled: PromiseOrValue<boolean>[],
-      _emails: PromiseOrValue<string>[],
+      _metadataHashes: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -838,8 +870,8 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     >;
   };
 
-  addQBAdmin(
-    _address: PromiseOrValue<string>,
+  addQBAdmins(
+    _addresses: PromiseOrValue<string>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -944,6 +976,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  removeQBAdmins(
+    _addresses: PromiseOrValue<string>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   renounceOwnership(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -972,7 +1009,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     _members: PromiseOrValue<string>[],
     _roles: PromiseOrValue<BigNumberish>[],
     _enabled: PromiseOrValue<boolean>[],
-    _emails: PromiseOrValue<string>[],
+    _metadataHashes: PromiseOrValue<string>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1022,8 +1059,8 @@ export interface WorkspaceRegistryAbi extends BaseContract {
   >;
 
   callStatic: {
-    addQBAdmin(
-      _address: PromiseOrValue<string>,
+    addQBAdmins(
+      _addresses: PromiseOrValue<string>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1124,6 +1161,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    removeQBAdmins(
+      _addresses: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     setApplicationReg(
@@ -1148,7 +1190,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       _members: PromiseOrValue<string>[],
       _roles: PromiseOrValue<BigNumberish>[],
       _enabled: PromiseOrValue<boolean>[],
-      _emails: PromiseOrValue<string>[],
+      _metadataHashes: PromiseOrValue<string>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1272,6 +1314,17 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
 
+    "QBAdminsUpdated(address[],bool,uint256)"(
+      walletAddresses?: null,
+      isAdded?: null,
+      time?: null
+    ): QBAdminsUpdatedEventFilter;
+    QBAdminsUpdated(
+      walletAddresses?: null,
+      isAdded?: null,
+      time?: null
+    ): QBAdminsUpdatedEventFilter;
+
     "Unpaused(address)"(account?: null): UnpausedEventFilter;
     Unpaused(account?: null): UnpausedEventFilter;
 
@@ -1381,8 +1434,8 @@ export interface WorkspaceRegistryAbi extends BaseContract {
   };
 
   estimateGas: {
-    addQBAdmin(
-      _address: PromiseOrValue<string>,
+    addQBAdmins(
+      _addresses: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1487,6 +1540,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    removeQBAdmins(
+      _addresses: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     renounceOwnership(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1515,7 +1573,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       _members: PromiseOrValue<string>[],
       _roles: PromiseOrValue<BigNumberish>[],
       _enabled: PromiseOrValue<boolean>[],
-      _emails: PromiseOrValue<string>[],
+      _metadataHashes: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1559,8 +1617,8 @@ export interface WorkspaceRegistryAbi extends BaseContract {
   };
 
   populateTransaction: {
-    addQBAdmin(
-      _address: PromiseOrValue<string>,
+    addQBAdmins(
+      _addresses: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1667,6 +1725,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    removeQBAdmins(
+      _addresses: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     renounceOwnership(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -1695,7 +1758,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       _members: PromiseOrValue<string>[],
       _roles: PromiseOrValue<BigNumberish>[],
       _enabled: PromiseOrValue<boolean>[],
-      _emails: PromiseOrValue<string>[],
+      _metadataHashes: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
