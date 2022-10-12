@@ -137,6 +137,7 @@ export default function SendFunds({
 
 	const getTokensFromSafe = () => {
 		const tokenList: any[] = []
+		// console.log('Fetching tokens')
 		getTokenBalance(workspaceSafeChainId, workspaceSafe!).then((res) => {
 			const tokensFetched = res.data
 			tokensFetched.filter((token: any) => token.token).map((token: any) => {
@@ -155,6 +156,7 @@ export default function SendFunds({
 				})
 			})
 		})
+		// console.log('fetched tokens', tokenList)
 		setSafeTokenList(tokenList)
 	}
 
@@ -183,16 +185,18 @@ export default function SendFunds({
 
 	useEffect(() => {
 		logger.info('safe token', safeTokenList)
+		logger.info({ sendFundsTo }, 'Send Funds To')
 		const formattedTrxnData = sendFundsTo?.map((recepient: any,) => (
 			{
 				from: currentSafe?.id?.toString(),
 				to: recepient?.applicantAddress || getFieldString(recepient, 'applicantAddress') || recepient?.applicantId,
 				applicationId: recepient?.applicationId || applicationID,
-				selectedMilestone: recepient?.milestones?.[0]?.id,
+				selectedMilestone: recepient?.milestones?.[0],
 				selectedToken: { name: safeTokenList[0]?.tokenName, info: safeTokenList[0]?.info },
 				amount: recepient?.milestones?.[0]?.amount,
 			})
 		)
+		// console.log('txn data', formattedTrxnData)
 		setInitiateTransactionData(formattedTrxnData)
 		setGnosisBatchData(formattedTrxnData)
 	}, [sendFundsTo])
@@ -264,6 +268,7 @@ export default function SendFunds({
 			const rewardAssetAddress = data.selectedToken.info.tokenAddress
 			const usdToToken = (data.amount / tokenUSDRate!).toFixed(rewardAssetDecimals)
 
+			// console.log('reward asset address', rewardAssetAddress)
 			logger.info('usd amount, usd rate, usd to token amount', data.amount, tokenUSDRate!, usdToToken)
 			const txData = encodeTransactionData(data.to, (usdToToken.toString()), rewardAssetDecimals)
 			const tx = {
@@ -284,6 +289,7 @@ export default function SendFunds({
 		let proposaladdress: string | undefined
 		if(isEvmChain) {
 			const readyToExecuteTxs = createEVMMetaTransactions()
+			// console.log('ready to execute txn', readyToExecuteTxs)
 			const safeTxHash = await currentSafe?.createMultiTransaction(readyToExecuteTxs, workspaceSafe!)
 			// console.log('safe tx hash', safeTxHash)
 			if(safeTxHash) {
@@ -343,7 +349,7 @@ export default function SendFunds({
 
 			const methodArgs = [
 				initiateTransactionData.map((element: any) => (parseInt(element.applicationId, 16))),
-				initiateTransactionData.map((element: any) => (parseInt(element.selectedMilestone?.split('.')[1]))),
+				initiateTransactionData.map((element: any) => (parseInt(element.selectedMilestone?.id?.split('.')[1]))),
 				rewardAssetAddress,
 				'nonEvmAssetAddress-toBeChanged',
 				initiateTransactionData.map((element: any) => Math.floor(element.amount)),
@@ -392,16 +398,25 @@ export default function SendFunds({
 			const tempData = initiateTransactionData.map((transactionData: any) => {
 				return { ...transactionData, [fieldName]: fieldValue }
 			})
+			logger.info({ tempData }, 'tempData 1')
 			setInitiateTransactionData(tempData)
 			setGnosisBatchData(tempData)
 		} else {
+			logger.info({ initiateTransactionData }, 'Initiate Transaction Data')
 			const tempData = initiateTransactionData.map((transactionData: any) => {
 				if(transactionData.applicationId === applicationId) {
-					return { ...transactionData, [fieldName]: fieldValue }
+					logger.info({ txData: { ...transactionData, [fieldName]: fieldValue } }, 'transactionData')
+					const ret = { ...transactionData, [fieldName]: fieldValue }
+					if(fieldName === 'selectedMilestone') {
+						ret.amount = fieldValue?.amount
+					}
+
+					return ret
 				}
 
 				return transactionData
 			})
+			logger.info({ tempData }, 'tempData 2')
 			setInitiateTransactionData(tempData)
 			setGnosisBatchData(tempData)
 		}

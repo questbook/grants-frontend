@@ -25,8 +25,8 @@ function Dashboard() {
 	const { data: safesUSDBalance, loaded: loadedSafesUSDBalance } = useSafeUSDBalances({ safeAddress: workspace?.safe?.address ?? '', chainId: safeChainId })
 
 	useEffect(() => {
-		logger.info({ safesUSDBalance }, 'safesUSDBalance')
-	}, [safesUSDBalance])
+		logger.info({ safesUSDBalance, loadedSafesUSDBalance }, 'safesUSDBalance')
+	}, [safesUSDBalance, loadedSafesUSDBalance])
 
 	const openLink = () => {
 		const safe = workspace?.safe

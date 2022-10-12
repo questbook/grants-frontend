@@ -282,6 +282,7 @@ export function useEncryptPiiForApplication(
 	const decrypt = useCallback(
 		async(app: GetApplicationDetailsQuery['grantApplication']) => {
 			if(app?.pii?.length) {
+				logger.info('Encrypted Data', app)
 				if(!scwAddress || !applicantPublicKey || !grantId) {
 					logger.debug('skipping decryption, as details not present')
 					return

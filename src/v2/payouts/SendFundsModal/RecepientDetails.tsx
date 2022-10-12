@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Box, Button, Flex, Image, Input, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { IApplicantData } from 'src/types'
+import logger from 'src/utils/logger'
 import { ArrowDownCircle } from 'src/v2/assets/custom chakra icons/Arrows/ArrowDownCircle'
 import { ExternalLink } from 'src/v2/assets/custom chakra icons/ExternalLink'
 import { GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
@@ -294,9 +295,14 @@ const RecipientDetails = ({
 
 				<MilestoneSelect
 					placeholder='Select from the list'
-					value={initiateTransactionData?.selectedMilestone}
+					value={initiateTransactionData?.selectedMilestone?.id}
 					milestoneList={applicantData?.milestones}
-					onChange={(value) => value && onChangeRecepientDetails(applicantData?.applicationId, 'selectedMilestone', value?.id)} />
+					onChange={
+						(value) => {
+							logger.info({ value }, 'Value')
+							return value && onChangeRecepientDetails(applicantData?.applicationId, 'selectedMilestone', value)
+						}
+					} />
 
 				<Box h={6} />
 
@@ -365,7 +371,7 @@ const RecipientDetails = ({
 						}
 						fontWeight='500'
 						fontSize='14px'
-						defaultValue={initiateTransactionData?.amount}
+						value={initiateTransactionData?.amount}
 						errorBorderColor='red'
 						height='auto'
 						type='number'
