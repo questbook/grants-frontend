@@ -129,7 +129,6 @@ function useSafeUSDBalances({ safeAddress, chainId }: Props) {
 					newData.push(newElement)
 				}
 			})
-			console.log('Final Safe', newData, gnosisLoaded, )
 			setGnosisData(newData)
 		}
 	}, [gnosisRawData, gnosisLoaded, gnosisError, safeAddress, chainId])
