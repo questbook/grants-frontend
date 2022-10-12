@@ -30,7 +30,7 @@ export function getGnosisTansactionLink(safeAddress: string, chainId: string) {
 	if (chainId === '42220') {
 		return `https://safe.celo.org/#/safes/${safeAddress}/transactions`
 	} else if (chainId === '40') {
-		return `https://safe.telos.net/${NETWORK_PREFIX[chainId]}:${safeAddress}`
+		return `https://safe.telos.net/${NETWORK_PREFIX[chainId]}:${safeAddress}/transactions/queue`
 	} else {
 		return `https://gnosis-safe.io/app/${NETWORK_PREFIX[chainId]}:${safeAddress}/transactions/queue`
 	}
