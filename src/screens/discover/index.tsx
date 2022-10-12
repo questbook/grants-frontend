@@ -25,6 +25,96 @@ import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 const PAGE_SIZE = 3
 
 function Discover() {
+	const buildComponent = () => {
+		if(isAdmin === undefined) {
+			return (
+				<Center w='100%'>
+					<Loader />
+				</Center>
+			)
+		}
+
+		return (
+			<>
+				<Flex
+					direction='column'
+					w='100%'>
+					<Container
+						maxWidth='1280px'
+						my='16px'
+						w='100%'>
+						<DaosGrid
+							renderGetStarted
+							isAdmin={isAdmin}
+							unsavedDaosVisibleState={unsavedDaosState}
+							onDaoVisibilityUpdate={onDaoVisibilityUpdate}
+							hasMore={hasMoreDaos}
+							fetchMore={fetchMoreDaos}
+							workspaces={totalDaos} />
+					</Container>
+					{
+						isAdmin && Object.keys(unsavedDaosState).length !== 0 && (
+							<Box
+								background='#f0f0f7'
+								bottom={0}
+								style={{ position: 'sticky' }}>
+								<Flex
+									px='25px'
+									py='20px'
+									alignItems='center'
+									justifyContent='center'>
+									You have made changes to your Discover page on Questbook.
+									<Button
+										onClick={
+											() => updateDaoVisibility(
+												unsavedDaosState,
+												setNetworkTransactionModalStep,
+											)
+										}
+										variant='primary'
+										disabled={!isBiconomyInitialised}
+										mx='20px'>
+										Save
+									</Button>
+									<Button
+										bg='transparent'
+										style={{ fontWeight: 'bold' }}
+										onClick={() => setUnsavedDaosState({})}>
+										Cancel
+									</Button>
+								</Flex>
+							</Box>
+						)
+					}
+				</Flex>
+				<NetworkTransactionModal
+					isOpen={networkTransactionModalStep !== undefined}
+					subtitle='Submitting Dao visibility changes'
+					description={`Updating ${Object.keys(unsavedDaosState).length} daos' visibility state!`}
+					currentStepIndex={networkTransactionModalStep || 0}
+					steps={
+						[
+							'Signing transaction with in-app wallet',
+							'Waiting for transaction to complete on chain',
+							'Indexing transaction on graph protocol',
+							'Changes updated on-chain',
+						]
+					}
+					viewLink={txnLink}
+					onClose={router.reload} />
+				<AcceptInviteModal
+					inviteInfo={inviteInfo}
+					onClose={
+						() => {
+							setInviteInfo(undefined)
+							window.history.pushState(undefined, '', '/')
+							router.reload()
+						}
+					} />
+			</>
+		)
+	}
+
 	const [isAdmin, setIsAdmin] = useState<boolean>()
 	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number | undefined>()
@@ -158,93 +248,7 @@ function Discover() {
 		})()
 	}, [scwAddress, isAdmin, searchString])
 
-	if(isAdmin === undefined) {
-		return (
-			<Center w='100%'>
-				<Loader />
-			</Center>
-		)
-	}
-
-	return (
-		<>
-			<Flex
-				direction='column'
-				w='100%'>
-				<Container
-					maxWidth='1280px'
-					my='16px'
-					w='100%'>
-					<DaosGrid
-						renderGetStarted
-						isAdmin={isAdmin}
-						unsavedDaosVisibleState={unsavedDaosState}
-						onDaoVisibilityUpdate={onDaoVisibilityUpdate}
-						hasMore={hasMoreDaos}
-						fetchMore={fetchMoreDaos}
-						workspaces={totalDaos} />
-				</Container>
-				{
-					isAdmin && Object.keys(unsavedDaosState).length !== 0 && (
-						<Box
-							background='#f0f0f7'
-							bottom={0}
-							style={{ position: 'sticky' }}>
-							<Flex
-								px='25px'
-								py='20px'
-								alignItems='center'
-								justifyContent='center'>
-								You have made changes to your Discover page on Questbook.
-								<Button
-									onClick={
-										() => updateDaoVisibility(
-											unsavedDaosState,
-											setNetworkTransactionModalStep,
-										)
-									}
-									variant='primary'
-									disabled={!isBiconomyInitialised}
-									mx='20px'>
-									Save
-								</Button>
-								<Button
-									bg='transparent'
-									style={{ fontWeight: 'bold' }}
-									onClick={() => setUnsavedDaosState({})}>
-									Cancel
-								</Button>
-							</Flex>
-						</Box>
-					)
-				}
-			</Flex>
-			<NetworkTransactionModal
-				isOpen={networkTransactionModalStep !== undefined}
-				subtitle='Submitting Dao visibility changes'
-				description={`Updating ${Object.keys(unsavedDaosState).length} daos' visibility state!`}
-				currentStepIndex={networkTransactionModalStep || 0}
-				steps={
-					[
-						'Signing transaction with in-app wallet',
-						'Waiting for transaction to complete on chain',
-						'Indexing transaction on graph protocol',
-						'Changes updated on-chain',
-					]
-				}
-				viewLink={txnLink}
-				onClose={router.reload} />
-			<AcceptInviteModal
-				inviteInfo={inviteInfo}
-				onClose={
-					() => {
-						setInviteInfo(undefined)
-						window.history.pushState(undefined, '', '/')
-						router.reload()
-					}
-				} />
-		</>
-	)
+	return buildComponent()
 }
 
 Discover.getLayout = function(page: ReactElement) {
