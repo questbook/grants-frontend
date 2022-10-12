@@ -134,7 +134,7 @@ export const WebwalletContext = createContext<{
 	exportWebwallet: () => string
 		} | null>(null)
 
-export const SearchContext = createContext<{
+export const DAOSearchContext = createContext<{
 	searchString: string | undefined
 	setSearchString: (q: string) => void
 		} | null>(null)
@@ -511,7 +511,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		[validatorApi, workspace, setWorkspace, clients, connected, setConnected]
 	)
 
-	const searchContext = useMemo(
+	const daoSearchContext = useMemo(
 		() => ({
 			searchString,
 			setSearchString,
@@ -552,7 +552,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				<ApiClientsContext.Provider value={apiClients}>
 					<WebwalletContext.Provider value={webwalletContextValue}>
 						<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
-							<SearchContext.Provider value={searchContext}>
+							<DAOSearchContext.Provider value={daoSearchContext}>
 								<ChakraProvider theme={theme}>
 									{getLayout(<Component {...pageProps} />)}
 									{
@@ -561,7 +561,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 										)
 									}
 								</ChakraProvider>
-							</SearchContext.Provider>
+							</DAOSearchContext.Provider>
 						</BiconomyContext.Provider>
 					</WebwalletContext.Provider>
 				</ApiClientsContext.Provider>

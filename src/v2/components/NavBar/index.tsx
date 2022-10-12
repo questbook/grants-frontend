@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import { Search2Icon } from '@chakra-ui/icons'
 import { Center, Container, Image, Input, InputGroup, InputLeftElement } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { SearchContext } from 'src/pages/_app'
+import { DAOSearchContext } from 'src/pages/_app'
 import AccountDetails from 'src/v2/components/NavBar/AccountDetails'
 
 type Props = {
@@ -14,7 +14,7 @@ function NavBar({ showSearchBar }: Props) {
 	const router = useRouter()
 	// const chainId = useChainId()
 
-	const { searchString, setSearchString } = useContext(SearchContext)!
+	const { searchString, setSearchString } = useContext(DAOSearchContext)!
 
 	return (
 		<Container

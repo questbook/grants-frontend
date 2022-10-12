@@ -7,7 +7,7 @@ import { GetDaOsForExploreQuery, useGetDaOsForExploreQuery, Workspace_Filter as 
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import useUpdateDaoVisibility from 'src/hooks/useUpdateDaoVisibility'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
-import { ApiClientsContext, SearchContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
+import { ApiClientsContext, DAOSearchContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import AcceptInviteModal from 'src/screens/discover/_components/AcceptInviteModal'
 import DaosGrid from 'src/screens/discover/_components/DaosGrid'
 import { useMultichainDaosPaginatedQuery } from 'src/screens/discover/_hooks/useMultiChainPaginatedQuery'
@@ -26,7 +26,7 @@ function Discover() {
 
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 
-	const { searchString } = useContext(SearchContext)!
+	const { searchString } = useContext(DAOSearchContext)!
 
 	const { workspace } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
