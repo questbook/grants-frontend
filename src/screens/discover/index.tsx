@@ -23,7 +23,6 @@ function Discover() {
 	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number | undefined>()
 	const [unsavedDaosState, setUnsavedDaosState] = useState<{ [_: string]: boolean }>({})
-	const [formData, setFormData] = useState<{ [_: string]: boolean }>()
 
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 
@@ -37,10 +36,7 @@ function Discover() {
 	const toast = useToast()
 	const router = useRouter()
 
-	const [, txnLink, loading, isBiconomyInitialised] = useUpdateDaoVisibility(
-		formData,
-		setNetworkTransactionModalStep,
-	)
+	const { txnLink, isBiconomyInitialised, updateDaoVisibility } = useUpdateDaoVisibility()
 
 	const onDaoVisibilityUpdate = (daoId: string, visibleState: boolean) => {
 		if(unsavedDaosState[daoId] !== undefined) {
@@ -180,11 +176,16 @@ function Discover() {
 								justifyContent='center'>
 								You have made changes to your Discover page on Questbook.
 								<Button
-									onClick={() => setFormData(unsavedDaosState)}
+									onClick={
+										() => updateDaoVisibility(
+											unsavedDaosState,
+											setNetworkTransactionModalStep,
+										)
+									}
 									variant='primary'
-									disabled={!isBiconomyInitialised || loading}
+									disabled={!isBiconomyInitialised}
 									mx='20px'>
-									{loading ? <Loader /> : 'Save'}
+									Save
 								</Button>
 								<Button
 									bg='transparent'
