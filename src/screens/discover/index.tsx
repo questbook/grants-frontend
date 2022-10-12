@@ -84,7 +84,10 @@ function Discover() {
 		results: myDaos,
 		fetchMore: fetchMoreMyDaos,
 	} = useMultiChainDaosForExplore(
-		getExploreDaosRequestFilters({ members_: { actorId: scwAddress } })
+		getExploreDaosRequestFilters({
+			members_: { actorId: scwAddress },
+			isVisible: undefined,
+		}),
 	)
 
 	const totalDaos = useMemo(() => {
