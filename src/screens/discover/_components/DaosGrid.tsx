@@ -13,7 +13,7 @@ type Workspace = GetDaOsForExploreQuery['workspaces'][0]
 type AllDaosGridProps = {
 	workspaces: Workspace[]
 	isAdmin: boolean
-	unsavedDaosVisibleState?: { [_: string]: boolean },
+	unsavedDaosVisibleState?: { [_: string]: boolean }
 	onDaoVisibilityUpdate?: (daoId: string, visibleState: boolean) => void
 	renderGetStarted: boolean
 	hasMore?: boolean

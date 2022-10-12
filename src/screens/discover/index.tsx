@@ -1,25 +1,25 @@
-import { ReactElement, useContext, useEffect, useMemo, useState } from 'react';
-import { Box, Button, Center, Container, Flex, useToast } from '@chakra-ui/react';
+import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
+import { Box, Button, Center, Container, Flex, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import Loader from 'src/components/ui/loader'
+import { defaultChainId } from 'src/constants/chains'
 import { GetDaOsForExploreQuery, useGetDaOsForExploreQuery, Workspace_Filter as WorkspaceFilter, Workspace_OrderBy as WorkspaceOrderBy } from 'src/generated/graphql'
+import useQBContract from 'src/hooks/contracts/useQBContract'
+import useUpdateDaoVisibility from 'src/hooks/useUpdateDaoVisibility'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
-import { ApiClientsContext, SearchContext, WebwalletContext } from 'src/pages/_app'; //TODO - move to /libraries/zero-wallet/context
+import { ApiClientsContext, SearchContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import AcceptInviteModal from 'src/screens/discover/_components/AcceptInviteModal'
 import DaosGrid from 'src/screens/discover/_components/DaosGrid'
 import { useMultichainDaosPaginatedQuery } from 'src/screens/discover/_hooks/useMultiChainPaginatedQuery'
 import { extractInviteInfo, InviteInfo } from 'src/screens/discover/_utils/invite'
 import { mergeSortedArrays } from 'src/screens/discover/_utils/mergeSortedArrays'
-import { getSupportedChainIdFromWorkspace } from '../../utils/validationUtils';
-import { defaultChainId } from '../../constants/chains';
-import Loader from '../../components/ui/loader';
-import NetworkTransactionModal from '../../v2/components/NetworkTransactionModal';
-import useUpdateDaoVisibility from '../../hooks/useUpdateDaoVisibility';
-import useQBContract from '../../hooks/contracts/useQBContract';
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
 const PAGE_SIZE = 3
 
 function Discover() {
-  const [isAdmin, setIsAdmin] = useState<boolean>()
+	const [isAdmin, setIsAdmin] = useState<boolean>()
 	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number | undefined>()
 	const [unsavedDaosState, setUnsavedDaosState] = useState<{ [_: string]: boolean }>({})
@@ -27,7 +27,7 @@ function Discover() {
 
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 
-  const { searchString } = useContext(SearchContext)!
+	const { searchString } = useContext(SearchContext)!
 
 	const { workspace } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
@@ -48,21 +48,28 @@ function Discover() {
 		} else {
 			unsavedDaosState[daoId] = visibleState
 		}
-		setUnsavedDaosState({...unsavedDaosState})
+
+		setUnsavedDaosState({ ...unsavedDaosState })
 	}
 
 	const getExploreDaosRequestFilters = (additionalFilters?: WorkspaceFilter) => {
 		let filters: WorkspaceFilter = {}
 
-		if(searchString) filters.title_contains_nocase = searchString;
-		if(!isAdmin) filters.isVisible = true;
+		if(searchString) {
+			// eslint-disable-next-line camelcase
+			filters.title_contains_nocase = searchString
+		}
+
+		if(!isAdmin) {
+			filters.isVisible = true
+		}
 
 		filters = {
 			...filters,
 			...additionalFilters,
 		}
 
-		return filters;
+		return filters
 	}
 
 	const {
@@ -78,7 +85,7 @@ function Discover() {
 		getExploreDaosRequestFilters({ members_: { actorId: scwAddress } })
 	)
 
-  const totalDaos = useMemo(() => {
+	const totalDaos = useMemo(() => {
 		let exploreDaos = [...(daos ?? [])]
 
 		// removing myDaos from explore daos
@@ -94,13 +101,13 @@ function Discover() {
 	}, [daos, myDaos])
 
 	useEffect(() => {
-		(async () => {
+		(async() => {
 			// FIXME
 			const admins = await workspaceContract.getQBAdmins()
 			if(scwAddress || webwallet) {
-				setIsAdmin((scwAddress ? admins.includes(scwAddress) : false) || (webwallet ? admins.includes(webwallet.address) : false));
+				setIsAdmin((scwAddress ? admins.includes(scwAddress) : false) || (webwallet ? admins.includes(webwallet.address) : false))
 			}
-    })();
+		})()
 
 	}, [scwAddress, webwallet, workspaceContract])
 
@@ -121,8 +128,10 @@ function Discover() {
 	}, [])
 
 	useEffect(() => {
-		(async () => {
-			if(isAdmin === undefined) return;
+		(async() => {
+			if(isAdmin === undefined) {
+				return
+			}
 
 			await new Promise(resolve => setTimeout(resolve, 0))
 			fetchMoreDaos(true)
@@ -133,12 +142,18 @@ function Discover() {
 	}, [scwAddress, isAdmin, searchString])
 
 	if(isAdmin === undefined) {
-		return <Center w={'100%'}><Loader /></Center>
+		return (
+			<Center w='100%'>
+				<Loader />
+			</Center>
+		)
 	}
 
 	return (
 		<>
-			<Flex direction={'column'} w='100%'>
+			<Flex
+				direction='column'
+				w='100%'>
 				<Container
 					maxWidth='1280px'
 					my='16px'
@@ -152,27 +167,35 @@ function Discover() {
 						fetchMore={fetchMoreDaos}
 						workspaces={totalDaos} />
 				</Container>
-				{isAdmin && Object.keys(unsavedDaosState).length !== 0 && <Box
-						background={'#f0f0f7'}
-						bottom={0}
-						style={{ position : 'sticky' }}>
-						<Flex px={'25px'} py={'20px'} alignItems={'center'} justifyContent={'center'}>
-              You have made changes to your Discover page on Questbook.
-							<Button
-								onClick={() => setFormData(unsavedDaosState)}
-								variant={'primary'}
-								disabled={!isBiconomyInitialised || loading}
-								mx={'20px'}>
-								{loading ? <Loader/> : 'Save'}
-							</Button>
-							<Button
-								bg={'transparent'}
-								style={{fontWeight: "bold"}}
-								onClick={() => setUnsavedDaosState({})}>
-								Cancel
-							</Button>
-					</Flex>
-				</Box>}
+				{
+					isAdmin && Object.keys(unsavedDaosState).length !== 0 && (
+						<Box
+							background='#f0f0f7'
+							bottom={0}
+							style={{ position : 'sticky' }}>
+							<Flex
+								px='25px'
+								py='20px'
+								alignItems='center'
+								justifyContent='center'>
+								You have made changes to your Discover page on Questbook.
+								<Button
+									onClick={() => setFormData(unsavedDaosState)}
+									variant='primary'
+									disabled={!isBiconomyInitialised || loading}
+									mx='20px'>
+									{loading ? <Loader /> : 'Save'}
+								</Button>
+								<Button
+									bg='transparent'
+									style={{ fontWeight: 'bold' }}
+									onClick={() => setUnsavedDaosState({})}>
+									Cancel
+								</Button>
+							</Flex>
+						</Box>
+					)
+				}
 			</Flex>
 			<NetworkTransactionModal
 				isOpen={networkTransactionModalStep !== undefined}
@@ -230,6 +253,7 @@ function useMultiChainDaosForExplore(
 					return b[orderBy] < a[orderBy]
 				})
 			}
+
 			return final
 		}
 	})

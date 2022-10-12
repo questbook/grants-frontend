@@ -135,9 +135,9 @@ export const WebwalletContext = createContext<{
 		} | null>(null)
 
 export const SearchContext = createContext<{
-	searchString: string | undefined,
-	setSearchString: (q: string) => void,
-} | null>(null)
+	searchString: string | undefined
+	setSearchString: (q: string) => void
+		} | null>(null)
 
 export const BiconomyContext = createContext<{
 	biconomyDaoObjs?: { [key: string]: any }
@@ -554,13 +554,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 						<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
 							<SearchContext.Provider value={searchContext}>
 								<ChakraProvider theme={theme}>
-								{getLayout(<Component {...pageProps} />)}
-								{
-									typeof window !== 'undefined' && (
-										<MigrateToGasless />
-									)
-								}
-							</ChakraProvider>
+									{getLayout(<Component {...pageProps} />)}
+									{
+										typeof window !== 'undefined' && (
+											<MigrateToGasless />
+										)
+									}
+								</ChakraProvider>
 							</SearchContext.Provider>
 						</BiconomyContext.Provider>
 					</WebwalletContext.Provider>

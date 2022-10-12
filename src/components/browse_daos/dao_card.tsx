@@ -76,9 +76,9 @@ function DaoCard({ logo, isAdmin, name, daoId, chainId, noOfApplicants, totalAmo
 						<Switch
 							size='md'
 							mx='10px'
-							height={'20px'}
+							height='20px'
 							borderRadius={0}
-							colorScheme={'green'}
+							colorScheme='green'
 							isChecked={isVisible}
 							// FIXME: calls card on tap
 							onChange={() => onVisibilityUpdate?.(!isVisible)}

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react'
 import { Flex } from '@chakra-ui/react'
 import { ApiClientsContext } from 'src/pages/_app'
 import logger from 'src/utils/logger'
@@ -8,8 +8,8 @@ import Sidebar from 'src/v2/components/Sidebar'
 interface Props {
   children: React.ReactNode
   renderNavbar?: boolean
-	renderSidebar?: boolean,
-	renderSearchBar?: boolean,
+	renderSidebar?: boolean
+	renderSearchBar?: boolean
 }
 
 function NavbarLayout({ children, renderNavbar, renderSidebar, renderSearchBar }: Props) {
