@@ -3,7 +3,13 @@ import { Box, Button, Center, Container, Flex, useToast } from '@chakra-ui/react
 import { useRouter } from 'next/router'
 import Loader from 'src/components/ui/loader'
 import { defaultChainId } from 'src/constants/chains'
-import { GetDaOsForExploreQuery, useGetDaOsForExploreQuery, Workspace_Filter as WorkspaceFilter, Workspace_OrderBy as WorkspaceOrderBy } from 'src/generated/graphql'
+import {
+	GetDaOsForExploreQuery,
+	useGetDaOsForExploreQuery,
+	useGetQbAdminsQuery,
+	Workspace_Filter as WorkspaceFilter,
+	Workspace_OrderBy as WorkspaceOrderBy,
+} from 'src/generated/graphql'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import useUpdateDaoVisibility from 'src/hooks/useUpdateDaoVisibility'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
@@ -28,7 +34,7 @@ function Discover() {
 
 	const { searchString } = useContext(DAOSearchContext)!
 
-	const { workspace } = useContext(ApiClientsContext)!
+	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 
 	const workspaceContract = useQBContract('workspace', chainId)
@@ -71,12 +77,12 @@ function Discover() {
 	const {
 		results: daos,
 		hasMore: hasMoreDaos,
-		fetchMore: fetchMoreDaos
+		fetchMore: fetchMoreDaos,
 	} = useMultiChainDaosForExplore(getExploreDaosRequestFilters())
 
 	const {
 		results: myDaos,
-		fetchMore: fetchMoreMyDaos
+		fetchMore: fetchMoreMyDaos,
 	} = useMultiChainDaosForExplore(
 		getExploreDaosRequestFilters({ members_: { actorId: scwAddress } })
 	)
@@ -96,16 +102,28 @@ function Discover() {
 		]
 	}, [daos, myDaos])
 
+	const { data: getAdminsData } = useGetQbAdminsQuery(
+		{
+			client: subgraphClients[
+				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+			].client,
+		},
+	)
+
 	useEffect(() => {
 		(async() => {
-			// FIXME
-			const admins = await workspaceContract.getQBAdmins()
+			if(!getAdminsData) {
+				return
+			}
+
+			const adminWalletAddresses = getAdminsData.qbadmins.map(e => e.walletAddress)
+
 			if(scwAddress || webwallet) {
-				setIsAdmin((scwAddress ? admins.includes(scwAddress) : false) || (webwallet ? admins.includes(webwallet.address) : false))
+				setIsAdmin((scwAddress ? adminWalletAddresses.includes(scwAddress) : false) || (webwallet ? adminWalletAddresses.includes(webwallet.address) : false))
 			}
 		})()
 
-	}, [scwAddress, webwallet, workspaceContract])
+	}, [scwAddress, webwallet, workspaceContract, getAdminsData])
 
 	useEffect(() => {
 		try {
@@ -168,7 +186,7 @@ function Discover() {
 						<Box
 							background='#f0f0f7'
 							bottom={0}
-							style={{ position : 'sticky' }}>
+							style={{ position: 'sticky' }}>
 							<Flex
 								px='25px'
 								py='20px'
@@ -235,7 +253,7 @@ Discover.getLayout = function(page: ReactElement) {
 }
 
 function useMultiChainDaosForExplore(
-	filter?: WorkspaceFilter
+	filter?: WorkspaceFilter,
 ) {
 	const orderBy = WorkspaceOrderBy.TotalGrantFundingDisbursedUsd
 
@@ -256,7 +274,7 @@ function useMultiChainDaosForExplore(
 			}
 
 			return final
-		}
+		},
 	})
 }
 
