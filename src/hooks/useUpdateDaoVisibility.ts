@@ -1,9 +1,8 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext } from 'react'
 import { Contract } from 'ethers'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import useQBContract from 'src/hooks/contracts/useQBContract'
-import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { ApiClientsContext, BiconomyContext, WebwalletContext } from 'src/pages/_app'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
@@ -20,20 +19,7 @@ export default function useUpdateDaoVisibility() {
 
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 
-	const { initiateBiconomy } = useContext(BiconomyContext)!
-
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, loading: biconomyLoading } = useBiconomy({
-		chainId: defaultChainId?.toString()!
-	})
-
-	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
-
-	useEffect(() => {
-		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && biconomy.networkId &&
-      biconomy.networkId.toString() === defaultChainId.toString()) {
-			setIsBiconomyInitialised(true)
-		}
-	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised])
+	const { initiateBiconomy, biconomyWalletClients: initialBiconomyWalletClients } = useContext(BiconomyContext)!
 
 	const updateDaoVisibility = useCallback(
 		async(
@@ -41,7 +27,7 @@ export default function useUpdateDaoVisibility() {
 			stepsLength: number,
 			setCurrentStep?: (step: number | undefined) => void
 		) => {
-			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
+			if(!scwAddress) {
 				return undefined!
 			}
 
@@ -71,9 +57,14 @@ export default function useUpdateDaoVisibility() {
 					continue
 				}
 
-
 				setCurrentStep?.(chainIdx * stepsLength)
-				await initiateBiconomy(chains[chainIdx])
+				const initBiconomyRes = await initiateBiconomy(chains[chainIdx])
+
+				if(!initBiconomyRes) {
+					continue
+				}
+
+				const { biconomyWalletClients, biconomyDaoObjs } = initBiconomyRes
 
 				const workspaceIds: string[] = []
 				const isVisible: boolean[] = []
@@ -90,14 +81,12 @@ export default function useUpdateDaoVisibility() {
 				setCurrentStep?.(chainIdx * stepsLength + 1)
 
 				const response = await sendGaslessTransaction(
-					// FIXME
-					biconomy,
+					biconomyDaoObjs![chainId],
 					workspaceContract,
 					'updateWorkspacesVisible',
 					[workspaceIds, isVisible],
 					WORKSPACE_REGISTRY_ADDRESS[chains[chainIdx] as unknown as SupportedChainId],
-					// FIXME
-					biconomyWalletClient,
+					biconomyWalletClients![chainId],
 					scwAddress,
 					webwallet,
 					chains[chainIdx],
@@ -120,11 +109,11 @@ export default function useUpdateDaoVisibility() {
 
 			setCurrentStep?.(chainIdx * stepsLength + 1)
 		},
-		[workspace?.id, workspaceContractGoerli, workspaceContractPolygon, workspaceContractCelo, workspaceContractOptimism, scwAddress, nonce, webwallet]
+		[workspace?.id, workspaceContractGoerli, workspaceContractPolygon, workspaceContractCelo, workspaceContractOptimism, initialBiconomyWalletClients, scwAddress, nonce, webwallet]
 	)
 
 	return {
-		isBiconomyInitialised,
+		isBiconomyInitialised: initialBiconomyWalletClients?.[defaultChainId],
 		updateDaoVisibility,
 	}
 }
