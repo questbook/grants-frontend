@@ -20,10 +20,8 @@ import {
 	defaultChainId,
 	SupportedChainId,
 } from 'src/constants/chains'
-import {
-	useGetQbAdminsQuery,
-} from 'src/generated/graphql'
 import SubgraphClient from 'src/graphql/subgraph'
+import { QBAdminsContextMaker } from 'src/hooks/QBAdminsContext'
 import MigrateToGasless from 'src/libraries/ui/MigrateToGaslessModal'
 import theme from 'src/theme'
 import { MinimalWorkspace } from 'src/types'
@@ -32,7 +30,6 @@ import { addAuthorizedUser, bicoDapps, deploySCW, getNonce, jsonRpcProviders, ne
 import { delay } from 'src/utils/generics'
 import logger from 'src/utils/logger'
 import getSeo from 'src/utils/seo'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import {
 	allChains,
 	Chain,
@@ -143,11 +140,6 @@ export const DAOSearchContext = createContext<{
 	setSearchString: (q: string) => void
 		} | null>(null)
 
-export const QBAdminContext = createContext<{
-	isQBAdmin: boolean | undefined
-	setIsQBAdmin: (q: boolean) => void
-		} | null>(null)
-
 export const BiconomyContext = createContext<{
 	biconomyDaoObjs?: { [key: string]: any }
 	setBiconomyDaoObjs: (biconomyDaoObjs: any) => void
@@ -159,7 +151,6 @@ export const BiconomyContext = createContext<{
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [network, switchNetwork] = React.useState<SupportedChainId>(defaultChainId)
-	const [isQBAdmin, setIsQBAdmin] = React.useState<boolean>()
 	const [searchString, setSearchString] = React.useState<string>()
 	const [webwallet, setWebwallet] = React.useState<Wallet>()
 	const [workspace, setWorkspace] = React.useState<MinimalWorkspace>()
@@ -488,7 +479,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 	const validatorApi = useMemo(() => {
 		const validatorConfiguration = new Configuration({
-			basePath: 'https://api-grant-validator.questbook.app',
 		})
 		return new ValidationApi(validatorConfiguration)
 	}, [])
@@ -521,45 +511,12 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		[validatorApi, workspace, setWorkspace, clients, connected, setConnected]
 	)
 
-
-	const { data: getAdminsData } = useGetQbAdminsQuery({
-		client: clients[
-			getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-		].client,
-	})
-
-	useEffect(() => {
-		(async() => {
-			if(!getAdminsData) {
-				return
-			}
-
-			const adminWalletAddresses = getAdminsData.qbadmins.map(e => e.walletAddress.toLowerCase())
-
-			if(scwAddress || webwallet) {
-				setIsQBAdmin(
-					(scwAddress ? adminWalletAddresses.includes(scwAddress.toLowerCase()) : false)
-					|| (webwallet ? adminWalletAddresses.includes(webwallet.address.toLowerCase()) : false),
-				)
-			}
-		})()
-
-	}, [scwAddress, webwallet, getAdminsData])
-
 	const daoSearchContext = useMemo(
 		() => ({
 			searchString,
 			setSearchString,
 		}),
 		[searchString, setSearchString]
-	)
-
-	const qbAdminContext = useMemo(
-		() => ({
-			isQBAdmin,
-			setIsQBAdmin,
-		}),
-		[isQBAdmin, setIsQBAdmin]
 	)
 
 	const seo = getSeo()
@@ -596,7 +553,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 					<WebwalletContext.Provider value={webwalletContextValue}>
 						<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
 							<DAOSearchContext.Provider value={daoSearchContext}>
-								<QBAdminContext.Provider value={qbAdminContext}>
+								<QBAdminsContextMaker>
 									<ChakraProvider theme={theme}>
 										{getLayout(<Component {...pageProps} />)}
 										{
@@ -605,7 +562,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 											)
 										}
 									</ChakraProvider>
-								</QBAdminContext.Provider>
+								</QBAdminsContextMaker>
 							</DAOSearchContext.Provider>
 						</BiconomyContext.Provider>
 					</WebwalletContext.Provider>

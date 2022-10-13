@@ -8,9 +8,10 @@ import {
 	Workspace_Filter as WorkspaceFilter,
 	Workspace_OrderBy as WorkspaceOrderBy,
 } from 'src/generated/graphql'
+import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
 import useUpdateDaoVisibility from 'src/hooks/useUpdateDaoVisibility'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
-import { DAOSearchContext, QBAdminContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
+import { DAOSearchContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import AcceptInviteModal from 'src/screens/discover/_components/AcceptInviteModal'
 import DaosGrid from 'src/screens/discover/_components/DaosGrid'
 import { useMultichainDaosPaginatedQuery } from 'src/screens/discover/_hooks/useMultiChainPaginatedQuery'
@@ -22,7 +23,7 @@ const PAGE_SIZE = 3
 
 function Discover() {
 	const buildComponent = () => {
-		if(isQBAdmin === undefined) {
+		if(isQbAdmin === undefined) {
 			return (
 				<Center w='100%'>
 					<Loader />
@@ -41,7 +42,7 @@ function Discover() {
 						w='100%'>
 						<DaosGrid
 							renderGetStarted
-							isAdmin={isQBAdmin}
+							isAdmin={isQbAdmin}
 							unsavedDaosVisibleState={unsavedDaosState}
 							onDaoVisibilityUpdate={onDaoVisibilityUpdate}
 							hasMore={hasMoreDaos}
@@ -49,7 +50,7 @@ function Discover() {
 							workspaces={totalDaos} />
 					</Container>
 					{
-						isQBAdmin && Object.keys(unsavedDaosState).length !== 0 && (
+						isQbAdmin && Object.keys(unsavedDaosState).length !== 0 && (
 							<Box
 								background='#f0f0f7'
 								bottom={0}
@@ -67,7 +68,7 @@ function Discover() {
 												setNetworkTransactionModalStep,
 											)
 										}
-										variant='primary'
+										variant='primaryV2'
 										disabled={!isBiconomyInitialised}
 										mx='20px'>
 										Save
@@ -117,7 +118,7 @@ function Discover() {
 
 	const { scwAddress } = useContext(WebwalletContext)!
 
-	const { isQBAdmin } = useContext(QBAdminContext)!
+	const { isQbAdmin } = useContext(QBAdminsContext)!
 
 	const { searchString } = useContext(DAOSearchContext)!
 
@@ -144,7 +145,7 @@ function Discover() {
 			filters.title_contains_nocase = searchString
 		}
 
-		if(!isQBAdmin) {
+		if(!isQbAdmin) {
 			filters.isVisible = true
 		}
 
@@ -205,7 +206,7 @@ function Discover() {
 
 	useEffect(() => {
 		(async() => {
-			if(isQBAdmin === undefined) {
+			if(isQbAdmin === undefined) {
 				return
 			}
 
@@ -215,7 +216,7 @@ function Discover() {
 				fetchMoreMyDaos(true)
 			}
 		})()
-	}, [scwAddress, isQBAdmin, searchString])
+	}, [scwAddress, isQbAdmin, searchString])
 
 	return buildComponent()
 }
