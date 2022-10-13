@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Flex } from '@chakra-ui/react'
+import NavBar from 'src/libraries/ui/NavBar'
 import { ApiClientsContext } from 'src/pages/_app'
 import logger from 'src/utils/logger'
-import NavBar from 'src/v2/components/NavBar'
 import Sidebar from 'src/v2/components/Sidebar'
 
 interface Props {

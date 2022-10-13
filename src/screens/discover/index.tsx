@@ -12,7 +12,7 @@ import { useMultichainDaosPaginatedQuery } from 'src/screens/discover/_hooks/use
 import { extractInviteInfo, InviteInfo } from 'src/screens/discover/_utils/invite'
 import { mergeSortedArrays } from 'src/screens/discover/_utils/mergeSortedArrays'
 
-const PAGE_SIZE = 3
+const PAGE_SIZE = 10
 
 function Discover() {
 

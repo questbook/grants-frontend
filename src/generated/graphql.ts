@@ -2006,6 +2006,48 @@ export enum Partner_OrderBy {
   Website = 'website'
 }
 
+export type QbAdmin = {
+  __typename?: 'QBAdmin';
+  /** When the admin was added */
+  addedAt: Scalars['Int'];
+  id: Scalars['ID'];
+  /** Address of the admin */
+  walletAddress: Scalars['Bytes'];
+};
+
+export type QbAdmin_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  addedAt?: InputMaybe<Scalars['Int']>;
+  addedAt_gt?: InputMaybe<Scalars['Int']>;
+  addedAt_gte?: InputMaybe<Scalars['Int']>;
+  addedAt_in?: InputMaybe<Array<Scalars['Int']>>;
+  addedAt_lt?: InputMaybe<Scalars['Int']>;
+  addedAt_lte?: InputMaybe<Scalars['Int']>;
+  addedAt_not?: InputMaybe<Scalars['Int']>;
+  addedAt_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  walletAddress?: InputMaybe<Scalars['Bytes']>;
+  walletAddress_contains?: InputMaybe<Scalars['Bytes']>;
+  walletAddress_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  walletAddress_not?: InputMaybe<Scalars['Bytes']>;
+  walletAddress_not_contains?: InputMaybe<Scalars['Bytes']>;
+  walletAddress_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+};
+
+export enum QbAdmin_OrderBy {
+  AddedAt = 'addedAt',
+  Id = 'id',
+  WalletAddress = 'walletAddress'
+}
+
 export type Query = {
   __typename?: 'Query';
   /** Access to subgraph metadata */
@@ -2038,6 +2080,8 @@ export type Query = {
   partners: Array<Partner>;
   piianswer?: Maybe<PiiAnswer>;
   piianswers: Array<PiiAnswer>;
+  qbadmin?: Maybe<QbAdmin>;
+  qbadmins: Array<QbAdmin>;
   review?: Maybe<Review>;
   reviews: Array<Review>;
   reward?: Maybe<Reward>;
@@ -2313,6 +2357,24 @@ export type QueryPiianswersArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<PiiAnswer_Filter>;
+};
+
+
+export type QueryQbadminArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryQbadminsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<QbAdmin_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<QbAdmin_Filter>;
 };
 
 
@@ -2932,6 +2994,8 @@ export type Subscription = {
   partners: Array<Partner>;
   piianswer?: Maybe<PiiAnswer>;
   piianswers: Array<PiiAnswer>;
+  qbadmin?: Maybe<QbAdmin>;
+  qbadmins: Array<QbAdmin>;
   review?: Maybe<Review>;
   reviews: Array<Review>;
   reward?: Maybe<Reward>;
@@ -3207,6 +3271,24 @@ export type SubscriptionPiianswersArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<PiiAnswer_Filter>;
+};
+
+
+export type SubscriptionQbadminArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionQbadminsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<QbAdmin_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<QbAdmin_Filter>;
 };
 
 
@@ -3507,6 +3589,8 @@ export type Workspace = {
   /** in seconds since epoch */
   createdAtS: Scalars['Int'];
   id: Scalars['ID'];
+  /** Whether the workspace is visible to users in the explore page */
+  isVisible: Scalars['Boolean'];
   /** Hash to fetch the logo */
   logoIpfsHash: Scalars['String'];
   /** Members of the workspace */
@@ -3985,6 +4069,10 @@ export type Workspace_Filter = {
   id_lte?: InputMaybe<Scalars['ID']>;
   id_not?: InputMaybe<Scalars['ID']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  isVisible?: InputMaybe<Scalars['Boolean']>;
+  isVisible_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  isVisible_not?: InputMaybe<Scalars['Boolean']>;
+  isVisible_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   logoIpfsHash?: InputMaybe<Scalars['String']>;
   logoIpfsHash_contains?: InputMaybe<Scalars['String']>;
   logoIpfsHash_contains_nocase?: InputMaybe<Scalars['String']>;
@@ -4130,6 +4218,7 @@ export enum Workspace_OrderBy {
   CoverImageIpfsHash = 'coverImageIpfsHash',
   CreatedAtS = 'createdAtS',
   Id = 'id',
+  IsVisible = 'isVisible',
   LogoIpfsHash = 'logoIpfsHash',
   Members = 'members',
   MetadataHash = 'metadataHash',
@@ -4300,7 +4389,7 @@ export type GetDaoDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetDaoDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, bio: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, partners: Array<{ __typename?: 'Partner', name: string, industry: string, website?: string | null, partnerImageHash?: string | null }>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }> } | null, grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
+export type GetDaoDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, bio: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, totalGrantFundingCommittedUSD: number, totalGrantFundingDisbursedUSD: number, numberOfApplications: number, numberOfApplicationsSelected: number, partners: Array<{ __typename?: 'Partner', name: string, industry: string, website?: string | null, partnerImageHash?: string | null }>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }> } | null, grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
 
 export type GetDaoNameQueryVariables = Exact<{
   workspaceID: Scalars['ID'];
@@ -5554,6 +5643,10 @@ export const GetDaoDetailsDocument = gql`
       decimal
       iconHash
     }
+    totalGrantFundingCommittedUSD
+    totalGrantFundingDisbursedUSD
+    numberOfApplications
+    numberOfApplicationsSelected
   }
   grants(
     subgraphError: allow

@@ -197,6 +197,7 @@ i18next.use(initReactI18next).init({
 					'amount_sent': 'Amount Sent',
 				},
 				'/safe': {
+					'edit': 'Edit',
 					'balance': 'Balance',
 					'could_not_fetch': 'Could not fetch balance',
 					'open': 'Open multisig wallet',
