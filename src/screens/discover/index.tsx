@@ -1,13 +1,15 @@
-import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
-import { Box, Button, Center, Container, Flex, useToast } from '@chakra-ui/react'
+import { ReactElement, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { Box, Button, Center, Container, Flex, ToastId, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import Loader from 'src/components/ui/loader'
+import ErrorToast from 'src/components/ui/toasts/errorToast'
 import {
 	GetDaOsForExploreQuery,
 	useGetDaOsForExploreQuery,
 	Workspace_Filter as WorkspaceFilter,
 	Workspace_OrderBy as WorkspaceOrderBy,
 } from 'src/generated/graphql'
+import SupportedChainId from 'src/generated/SupportedChainId'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
 import useUpdateDaoVisibility from 'src/hooks/useUpdateDaoVisibility'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
@@ -17,6 +19,8 @@ import DaosGrid from 'src/screens/discover/_components/DaosGrid'
 import { useMultichainDaosPaginatedQuery } from 'src/screens/discover/_hooks/useMultiChainPaginatedQuery'
 import { extractInviteInfo, InviteInfo } from 'src/screens/discover/_utils/invite'
 import { mergeSortedArrays } from 'src/screens/discover/_utils/mergeSortedArrays'
+import { chainNames } from 'src/utils/chainNames'
+import getErrorMessage from 'src/utils/errorUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
 const PAGE_SIZE = 3
@@ -63,10 +67,45 @@ function Discover() {
 									You have made changes to your Discover page on Questbook.
 									<Button
 										onClick={
-											() => updateDaoVisibility(
-												unsavedDaosState,
-												setNetworkTransactionModalStep,
-											)
+											async() => {
+												const chainsList = Object.keys(unsavedDaosState)
+
+												const txSteps: string[] = []
+												for(const chain of chainsList) {
+													const chainName = chainNames.get(chain)!
+
+													txSteps.push(`Initializing biconomy client for ${chainName}`)
+													txSteps.push(`Signing transaction with in-app wallet on ${chainName}`)
+													txSteps.push(`Waiting for transaction to complete on ${chainName}`)
+													txSteps.push(`Indexing transaction on graph protocol for ${chainName}`)
+													txSteps.push(`Changes updated on ${chainName}`)
+												}
+
+												setNetworkModalSteps(txSteps)
+
+												try {
+													await updateDaoVisibility(
+														unsavedDaosState,
+														txSteps.length / chainsList.length,
+														setNetworkTransactionModalStep,
+													)
+												} catch(e) {
+													setUnsavedDaosState({})
+													setNetworkTransactionModalStep(undefined)
+													const message = getErrorMessage(e as Error)
+													toastRef.current = toast({
+														position: 'top',
+														render: () => ErrorToast({
+															content: message,
+															close: () => {
+																if(toastRef.current) {
+																	toast.close(toastRef.current)
+																}
+															},
+														}),
+													})
+												}
+											}
 										}
 										variant='primaryV2'
 										disabled={!isBiconomyInitialised}
@@ -84,21 +123,19 @@ function Discover() {
 						)
 					}
 				</Flex>
-				<NetworkTransactionModal
-					isOpen={networkTransactionModalStep !== undefined}
-					subtitle='Submitting Dao visibility changes'
-					description={`Updating ${Object.keys(unsavedDaosState).length} daos' visibility state!`}
-					currentStepIndex={networkTransactionModalStep || 0}
-					steps={
-						[
-							'Signing transaction with in-app wallet',
-							'Waiting for transaction to complete on chain',
-							'Indexing transaction on graph protocol',
-							'Changes updated on-chain',
-						]
-					}
-					viewLink={txnLink}
-					onClose={router.reload} />
+				{
+					networkModalSteps && (
+						<NetworkTransactionModal
+							isOpen={networkTransactionModalStep !== undefined}
+							subtitle='Submitting Dao visibility changes'
+							viewLink='.'
+							showViewTransactionButton={false}
+							description={`Updating ${Object.keys(unsavedDaosState).length} daos' visibility state!`}
+							currentStepIndex={networkTransactionModalStep || 0}
+							steps={networkModalSteps}
+							onClose={router.reload} />
+					)
+				}
 				<AcceptInviteModal
 					inviteInfo={inviteInfo}
 					onClose={
@@ -113,8 +150,9 @@ function Discover() {
 	}
 
 	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
+	const [networkModalSteps, setNetworkModalSteps] = useState<Array<string>>()
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number | undefined>()
-	const [unsavedDaosState, setUnsavedDaosState] = useState<{ [_: string]: boolean }>({})
+	const [unsavedDaosState, setUnsavedDaosState] = useState<{ [_: number]: { [_: string]: boolean } }>({})
 
 	const { scwAddress } = useContext(WebwalletContext)!
 
@@ -122,16 +160,27 @@ function Discover() {
 
 	const { searchString } = useContext(DAOSearchContext)!
 
+	const toastRef = useRef<ToastId>()
 	const toast = useToast()
+
 	const router = useRouter()
 
-	const { txnLink, isBiconomyInitialised, updateDaoVisibility } = useUpdateDaoVisibility()
+	const { isBiconomyInitialised, updateDaoVisibility } = useUpdateDaoVisibility()
 
-	const onDaoVisibilityUpdate = (daoId: string, visibleState: boolean) => {
-		if(unsavedDaosState[daoId] !== undefined) {
-			delete unsavedDaosState[daoId]
+	const onDaoVisibilityUpdate = (daoId: string, chainId: SupportedChainId, visibleState: boolean) => {
+		if(unsavedDaosState[chainId]) {
+			if(unsavedDaosState[chainId][daoId] !== undefined) {
+				delete unsavedDaosState[chainId][daoId]
+
+				if(!Object.keys(unsavedDaosState[chainId]).length) {
+					delete unsavedDaosState[chainId]
+				}
+			} else {
+				unsavedDaosState[chainId][daoId] = visibleState
+			}
 		} else {
-			unsavedDaosState[daoId] = visibleState
+			unsavedDaosState[chainId] = {}
+			unsavedDaosState[chainId][daoId] = visibleState
 		}
 
 		setUnsavedDaosState({ ...unsavedDaosState })
