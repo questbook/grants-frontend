@@ -2,31 +2,28 @@ import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
 import { Box, Button, Center, Container, Flex, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import Loader from 'src/components/ui/loader'
-import { defaultChainId } from 'src/constants/chains'
 import {
 	GetDaOsForExploreQuery,
 	useGetDaOsForExploreQuery,
-	useGetQbAdminsQuery,
 	Workspace_Filter as WorkspaceFilter,
 	Workspace_OrderBy as WorkspaceOrderBy,
 } from 'src/generated/graphql'
-import useQBContract from 'src/hooks/contracts/useQBContract'
+import useIsQBAdmin from 'src/hooks/useIsQBAdmin'
 import useUpdateDaoVisibility from 'src/hooks/useUpdateDaoVisibility'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
-import { ApiClientsContext, DAOSearchContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
+import { DAOSearchContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import AcceptInviteModal from 'src/screens/discover/_components/AcceptInviteModal'
 import DaosGrid from 'src/screens/discover/_components/DaosGrid'
 import { useMultichainDaosPaginatedQuery } from 'src/screens/discover/_hooks/useMultiChainPaginatedQuery'
 import { extractInviteInfo, InviteInfo } from 'src/screens/discover/_utils/invite'
 import { mergeSortedArrays } from 'src/screens/discover/_utils/mergeSortedArrays'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
 const PAGE_SIZE = 3
 
 function Discover() {
 	const buildComponent = () => {
-		if(isAdmin === undefined) {
+		if(isQBAdmin === undefined) {
 			return (
 				<Center w='100%'>
 					<Loader />
@@ -45,7 +42,7 @@ function Discover() {
 						w='100%'>
 						<DaosGrid
 							renderGetStarted
-							isAdmin={isAdmin}
+							isAdmin={isQBAdmin}
 							unsavedDaosVisibleState={unsavedDaosState}
 							onDaoVisibilityUpdate={onDaoVisibilityUpdate}
 							hasMore={hasMoreDaos}
@@ -53,7 +50,7 @@ function Discover() {
 							workspaces={totalDaos} />
 					</Container>
 					{
-						isAdmin && Object.keys(unsavedDaosState).length !== 0 && (
+						isQBAdmin && Object.keys(unsavedDaosState).length !== 0 && (
 							<Box
 								background='#f0f0f7'
 								bottom={0}
@@ -115,19 +112,15 @@ function Discover() {
 		)
 	}
 
-	const [isAdmin, setIsAdmin] = useState<boolean>()
 	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number | undefined>()
 	const [unsavedDaosState, setUnsavedDaosState] = useState<{ [_: string]: boolean }>({})
 
-	const { scwAddress, webwallet } = useContext(WebwalletContext)!
+	const { scwAddress } = useContext(WebwalletContext)!
+
+	const { isQBAdmin } = useIsQBAdmin()
 
 	const { searchString } = useContext(DAOSearchContext)!
-
-	const { workspace, subgraphClients } = useContext(ApiClientsContext)!
-	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-
-	const workspaceContract = useQBContract('workspace', chainId)
 
 	const toast = useToast()
 	const router = useRouter()
@@ -152,7 +145,7 @@ function Discover() {
 			filters.title_contains_nocase = searchString
 		}
 
-		if(!isAdmin) {
+		if(!isQBAdmin) {
 			filters.isVisible = true
 		}
 
@@ -195,32 +188,6 @@ function Discover() {
 		]
 	}, [daos, myDaos])
 
-	const { data: getAdminsData } = useGetQbAdminsQuery(
-		{
-			client: subgraphClients[
-				getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-			].client,
-		},
-	)
-
-	useEffect(() => {
-		(async() => {
-			if(!getAdminsData) {
-				return
-			}
-
-			const adminWalletAddresses = getAdminsData.qbadmins.map(e => e.walletAddress.toLowerCase())
-
-			if(scwAddress || webwallet) {
-				setIsAdmin(
-					(scwAddress ? adminWalletAddresses.includes(scwAddress.toLowerCase()) : false)
-          || (webwallet ? adminWalletAddresses.includes(webwallet.address.toLowerCase()) : false),
-				)
-			}
-		})()
-
-	}, [scwAddress, webwallet, workspaceContract, getAdminsData])
-
 	useEffect(() => {
 		try {
 			const inviteInfo = extractInviteInfo()
@@ -239,7 +206,7 @@ function Discover() {
 
 	useEffect(() => {
 		(async() => {
-			if(isAdmin === undefined) {
+			if(isQBAdmin === undefined) {
 				return
 			}
 
@@ -249,7 +216,7 @@ function Discover() {
 				fetchMoreMyDaos(true)
 			}
 		})()
-	}, [scwAddress, isAdmin, searchString])
+	}, [scwAddress, isQBAdmin, searchString])
 
 	return buildComponent()
 }
