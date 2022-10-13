@@ -1,4 +1,5 @@
 import { ChangeEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button, Flex, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
 import TextField from 'src/v2/components/InputFields/TextField'
 
@@ -37,13 +38,13 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 								variant='v2_subheading'
 								fontWeight='500'
 								mt={5}>
-								{type === 'import' ? 'Use another wallet' : 'Export wallet'}
+								{type === 'import' ? `${t('recovery.import.heading')}` : `${t('recovery.export.heading')}`}
 							</Text>
 							<Text
 								variant='v2_body'
 								mt={1}
 								color='black.2'>
-								{type === 'import' ? 'Enter the wallet private key to import wallet.' : 'Download the file, or save it in your password manager.'}
+								{type === 'import' ? `${t('recovery.import.subheading')}` : `${t('recovery.export.subheading')}` }
 							</Text>
 							{
 								type === 'export' && (
@@ -51,7 +52,7 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 										mt={6}
 										variant='v2_body'
 										fontWeight='500'>
-										For your eyes only. Anyone who has your private key can access your Questbook wallet
+										{t('recovery.export.warning')}
 									</Text>
 								)
 							}
@@ -70,7 +71,7 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 										variant='primaryV2'
 										disabled={privateKeyError !== '' || privateKey === '' || privateKey === localStorage.getItem('webwalletPrivateKey')}
 										onClick={onImportClick}>
-										Import wallet
+										{t('recovery.import.button')}
 									</Button>
 								)
 							}
@@ -90,7 +91,7 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 												color='#572EF5'
 												variant='v2_body'
 												fontWeight='500'>
-												Download .txt file
+												{t('recovery.export.download')}
 											</Text>
 										</Button>
 										<Button
@@ -106,9 +107,8 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 												color='#572EF5'
 												variant='v2_body'
 												fontWeight='500'>
-												Copy & save manually
+												{t('recovery.export.copy_and_save_manually')}
 											</Text>
-
 										</Button>
 									</Flex>
 								)
@@ -119,6 +119,8 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 			</Modal>
 		)
 	}
+
+	const { t } = useTranslation()
 
 	return buildComponent()
 }

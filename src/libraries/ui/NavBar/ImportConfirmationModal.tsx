@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
 
 interface Props {
@@ -26,7 +27,7 @@ function ImportConfirmationModal({ isOpen, onClose, saveWallet }: Props) {
 								variant='v2_subheading'
 								fontWeight='500'
 								textAlign='center'>
-								Importing a wallet will overwrite your current wallet. Are you sure, you want to continue?
+								{t('recovery.confirmation.warning')}
 							</Text>
 							<Flex mt={4}>
 								<Button
@@ -35,7 +36,7 @@ function ImportConfirmationModal({ isOpen, onClose, saveWallet }: Props) {
 									<Text
 										variant='v2_body'
 										color='white'>
-										Yes
+										{t('recovery.confirmation.yes')}
 									</Text>
 								</Button>
 								<Button
@@ -43,7 +44,7 @@ function ImportConfirmationModal({ isOpen, onClose, saveWallet }: Props) {
 									ml={4}
 									variant='link'>
 									<Text variant='v2_body'>
-										No
+										{t('recovery.confirmation.no')}
 									</Text>
 								</Button>
 							</Flex>
@@ -54,6 +55,7 @@ function ImportConfirmationModal({ isOpen, onClose, saveWallet }: Props) {
 		)
 	}
 
+	const { t } = useTranslation()
 	return buildComponent()
 }
 

@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ChevronDownIcon } from '@chakra-ui/icons'
 import {
 	Box,
@@ -87,7 +88,7 @@ function AccountDetails({ openModal }: Props) {
 								leftIcon={<Image src='/ui_icons/export-wallet.svg' />}
 								onClick={() => openModal('export')}>
 								<Text variant='v2_body'>
-									Save Wallet
+									{t('recovery.menu.save_wallet')}
 								</Text>
 							</Button>
 						)
@@ -103,7 +104,7 @@ function AccountDetails({ openModal }: Props) {
 								mt={3}
 								py={2}
 								px={3}>
-								Others
+								{t('recovery.menu.others')}
 							</Text>
 						)
 					}
@@ -118,7 +119,7 @@ function AccountDetails({ openModal }: Props) {
 								leftIcon={<Image src='/ui_icons/import-wallet.svg' />}
 								onClick={() => openModal('import')}>
 								<Text variant='v2_body'>
-									Use another Wallet
+									{t('recovery.menu.use_another_wallet')}
 								</Text>
 							</Button>
 						)
@@ -128,6 +129,7 @@ function AccountDetails({ openModal }: Props) {
 		</Menu>
 	)
 
+	const { t } = useTranslation()
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 
 	const toast = useToast()
