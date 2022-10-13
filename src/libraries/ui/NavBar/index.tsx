@@ -1,7 +1,12 @@
-import { useState } from 'react'
-import { Container, Image } from '@chakra-ui/react'
+import { ChangeEvent, useEffect, useState } from 'react'
+import { Container, Image, useToast } from '@chakra-ui/react'
+import copy from 'copy-to-clipboard'
+import { ethers } from 'ethers'
+import saveAs from 'file-saver'
 import { useRouter } from 'next/router'
+import logger from 'src/libraries/logger'
 import AccountDetails from 'src/libraries/ui/NavBar/AccountDetails'
+import ImportConfirmationModal from 'src/libraries/ui/NavBar/ImportConfirmationModal'
 import RecoveryModal from 'src/libraries/ui/NavBar/RecoveryModal'
 
 function NavBar() {
@@ -101,14 +106,86 @@ function NavBar() {
 			<RecoveryModal
 				isOpen={isRecoveryModalOpen}
 				onClose={() => setIsRecoveryModalOpen(false)}
-				type={type} />
+				type={type}
+				privateKey={privateKey}
+				privateKeyError={privateKeyError}
+				onChange={onChange}
+				onImportClick={onImportClick}
+				onSaveAsTextClick={onSaveAsTextClick}
+				onCopyAndSaveManuallyClick={onCopyAndSaveManuallyClick} />
+
+			<ImportConfirmationModal
+				isOpen={isImportConfirmationModalOpen}
+				onClose={() => setImportConfirmationModalOpen(false)}
+				saveWallet={saveWallet} />
 
 		</>
 	)
 
 	const router = useRouter()
+	const toast = useToast()
+	const [privateKey, setPrivateKey] = useState<string>('')
+	const [privateKeyError, setPrivateKeyError] = useState<string>('')
+
 	const [isRecoveryModalOpen, setIsRecoveryModalOpen] = useState<boolean>(false)
+	const [isImportConfirmationModalOpen, setImportConfirmationModalOpen] = useState<boolean>(false)
 	const [type, setType] = useState<'import' | 'export'>('export')
+
+	useEffect(() => {
+		logger.info({ type, privateKey }, 'RecoveryModal')
+		if(type === 'export') {
+			const privateKey = localStorage.getItem('webwalletPrivateKey')
+			setPrivateKey(privateKey ?? '')
+		}
+	}, [type])
+
+	const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setPrivateKey(e.target.value)
+		try {
+			new ethers.Wallet(e.target.value)
+			setPrivateKeyError('')
+		} catch(error) {
+			if(e.target.value !== '') {
+				setPrivateKeyError('Invalid private key')
+			} else {
+				setPrivateKeyError('')
+			}
+		}
+	}
+
+	const onImportClick = () => {
+		setImportConfirmationModalOpen(true)
+	}
+
+	const onSaveAsTextClick = () => {
+		var blob = new Blob([privateKey], { type: 'text/plain;charset=utf-8' })
+		saveAs(blob, 'key.txt', { autoBom: true })
+	}
+
+	const onCopyAndSaveManuallyClick = () => {
+		const copied = copy(privateKey)
+		if(copied) {
+			toast({
+				title: 'Copied to clipboard',
+				status: 'success',
+				duration: 3000,
+				isClosable: true,
+			})
+		}
+	}
+
+	const saveWallet = async() => {
+		localStorage.setItem('webwalletPrivateKey', privateKey)
+		toast({
+			title: 'Wallet imported successfully',
+			status: 'success',
+			duration: 3000,
+			isClosable: true,
+			onCloseComplete() {
+				router.reload()
+			},
+		})
+	}
 
 	return buildComponent()
 }

@@ -20,7 +20,7 @@ import getAvatar from 'src/utils/avatarUtils'
 const IN_APP_WALLET_LEARN_MORE_URL = 'https://blog.questbook.xyz/posts/aug-2022-release/#:~:text=App%20Specific%20Wallet%20%2D%20Zero%20Wallet'
 
 interface Props {
-	openModal: (type: 'import' | 'export') => void
+	openModal?: (type: 'import' | 'export') => void
 }
 
 function AccountDetails({ openModal }: Props) {
@@ -77,40 +77,52 @@ function AccountDetails({ openModal }: Props) {
 						<Box w={3} />
 					</Flex>
 
-					<Button
-						alignSelf='start'
-						ml={3}
-						mt={4}
-						variant='link'
-						leftIcon={<Image src='/ui_icons/export-wallet.svg' />}
-						onClick={() => openModal('export')}>
-						<Text variant='v2_body'>
-							Save Wallet
-						</Text>
-					</Button>
+					{
+						openModal && (
+							<Button
+								alignSelf='start'
+								ml={3}
+								mt={4}
+								variant='link'
+								leftIcon={<Image src='/ui_icons/export-wallet.svg' />}
+								onClick={() => openModal('export')}>
+								<Text variant='v2_body'>
+									Save Wallet
+								</Text>
+							</Button>
+						)
+					}
 
-					<Text
-						variant='v2_body'
-						color='black.2'
-						fontWeight='500'
-						bg='gray.2'
-						mt={3}
-						py={2}
-						px={3}>
-						Others
-					</Text>
+					{
+						openModal && (
+							<Text
+								variant='v2_body'
+								color='black.2'
+								fontWeight='500'
+								bg='gray.2'
+								mt={3}
+								py={2}
+								px={3}>
+								Others
+							</Text>
+						)
+					}
 
-					<Button
-						alignSelf='start'
-						ml={3}
-						my={3}
-						variant='link'
-						leftIcon={<Image src='/ui_icons/import-wallet.svg' />}
-						onClick={() => openModal('import')}>
-						<Text variant='v2_body'>
-							Use another Wallet
-						</Text>
-					</Button>
+					{
+						openModal && (
+							<Button
+								alignSelf='start'
+								ml={3}
+								my={3}
+								variant='link'
+								leftIcon={<Image src='/ui_icons/import-wallet.svg' />}
+								onClick={() => openModal('import')}>
+								<Text variant='v2_body'>
+									Use another Wallet
+								</Text>
+							</Button>
+						)
+					}
 				</Flex>
 			</MenuList>
 		</Menu>
