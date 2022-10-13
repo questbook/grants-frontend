@@ -44,7 +44,7 @@ export default function useUpdateDaoVisibility() {
 
 	const updateDaoVisibility = useCallback(
 		async(
-			data: { [_: string]: boolean } | undefined,
+			data: { [_: string]: boolean },
 			setCurrentStep?: (step: number | undefined) => void
 		) => {
 			setCurrentStep?.(0)
@@ -53,14 +53,14 @@ export default function useUpdateDaoVisibility() {
 					return undefined!
 				}
 
-				const keys = Object.keys(data!)
+				const keys = Object.keys(data)
 
 				const workspaceIds: string[] = []
 				const isVisible: boolean[] = []
 
 				keys.forEach((key) => {
 					workspaceIds.push(key)
-					isVisible.push(data![key])
+					isVisible.push(data[key])
 				})
 
 				const response = await sendGaslessTransaction(
