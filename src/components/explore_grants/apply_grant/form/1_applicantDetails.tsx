@@ -5,6 +5,7 @@ import {
 } from '@chakra-ui/react'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import { ApiClientsContext } from 'src/pages/_app'
+import { chainNames } from 'src/utils/chainNames'
 import { isValidEthereumAddress } from 'src/utils/validationUtils'
 import { RealmsSolana } from 'src/v2/constants/safe/realms_solana'
 
@@ -42,17 +43,7 @@ function ApplicantDetails({
 	const { workspace } = useContext(ApiClientsContext)!
 	// console.log('safe network', safeNetwork)
 	const { t } = useTranslation()
-	const chainNames = new Map<String, String>([
-		['1', 'Ethereum Mainnet'],
-		['5', 'Goerli Testnet'],
-		['10', 'Optimism Mainnet'],
-		['40', 'Telos Mainnet'],
-		['137', 'Polygon Mainnet'],
-		['42220', 'Celo Mainnet'],
-		['9001', 'Solana'],
-		['90001', 'Solana'],
-		['900001', 'Solana'],
-	])
+
 	const isSafeOnSolana = (safeNetwork == '9001' || safeNetwork == '90001' || safeNetwork == '900001' || safeNetwork == '9000001')
 	return (
 		<>
