@@ -4571,7 +4571,7 @@ export type GetNumberOfGrantsQuery = { __typename?: 'Query', grants: Array<{ __t
 export type GetQbAdminsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetQbAdminsQuery = { __typename?: 'Query', qbadmins: Array<{ __typename?: 'QBAdmin', id: string, walletAddress: string }> };
+export type GetQbAdminsQuery = { __typename?: 'Query', qbadmins: Array<{ __typename?: 'QBAdmin', walletAddress: string }> };
 
 export type GetRealmsFundTransferDataQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -6897,7 +6897,6 @@ export type GetNumberOfGrantsQueryResult = Apollo.QueryResult<GetNumberOfGrantsQ
 export const GetQbAdminsDocument = gql`
     query getQBAdmins {
   qbadmins {
-    id
     walletAddress
   }
 }

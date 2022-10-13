@@ -1,6 +1,5 @@
 query getQBAdmins {
     qbadmins {
-        id
         walletAddress
     }
 }
