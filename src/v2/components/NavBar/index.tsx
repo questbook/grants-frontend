@@ -2,8 +2,7 @@ import { useContext } from 'react'
 import { Search2Icon } from '@chakra-ui/icons'
 import { Center, Container, Image, Input, InputGroup, InputLeftElement, Spacer } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import useIsQBAdmin from 'src/hooks/useIsQBAdmin'
-import { DAOSearchContext } from 'src/pages/_app'
+import { DAOSearchContext, QBAdminContext } from 'src/pages/_app'
 import AccountDetails from 'src/v2/components/NavBar/AccountDetails'
 
 type Props = {
@@ -15,7 +14,7 @@ function NavBar({ showSearchBar }: Props) {
 	const router = useRouter()
 	// const chainId = useChainId()
 
-	const { isQBAdmin } = useIsQBAdmin()
+	const { isQBAdmin } = useContext(QBAdminContext)!
 
 	const { searchString, setSearchString } = useContext(DAOSearchContext)!
 

@@ -8,10 +8,9 @@ import {
 	Workspace_Filter as WorkspaceFilter,
 	Workspace_OrderBy as WorkspaceOrderBy,
 } from 'src/generated/graphql'
-import useIsQBAdmin from 'src/hooks/useIsQBAdmin'
 import useUpdateDaoVisibility from 'src/hooks/useUpdateDaoVisibility'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
-import { DAOSearchContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
+import { DAOSearchContext, QBAdminContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import AcceptInviteModal from 'src/screens/discover/_components/AcceptInviteModal'
 import DaosGrid from 'src/screens/discover/_components/DaosGrid'
 import { useMultichainDaosPaginatedQuery } from 'src/screens/discover/_hooks/useMultiChainPaginatedQuery'
@@ -118,7 +117,7 @@ function Discover() {
 
 	const { scwAddress } = useContext(WebwalletContext)!
 
-	const { isQBAdmin } = useIsQBAdmin()
+	const { isQBAdmin } = useContext(QBAdminContext)!
 
 	const { searchString } = useContext(DAOSearchContext)!
 
