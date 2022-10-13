@@ -1,7 +1,8 @@
 import { useContext } from 'react'
 import { Search2Icon } from '@chakra-ui/icons'
-import { Center, Container, Image, Input, InputGroup, InputLeftElement } from '@chakra-ui/react'
+import { Center, Container, Image, Input, InputGroup, InputLeftElement, Spacer } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import useIsQBAdmin from 'src/hooks/useIsQBAdmin'
 import { DAOSearchContext } from 'src/pages/_app'
 import AccountDetails from 'src/v2/components/NavBar/AccountDetails'
 
@@ -13,6 +14,8 @@ function NavBar({ showSearchBar }: Props) {
 	// const { connected } = useContext(ApiClientsContext)!
 	const router = useRouter()
 	// const chainId = useChainId()
+
+	const { isQBAdmin } = useIsQBAdmin()
 
 	const { searchString, setSearchString } = useContext(DAOSearchContext)!
 
@@ -41,13 +44,25 @@ function NavBar({ showSearchBar }: Props) {
 						pathname: '/',
 					})
 				}
-				display={{ base: 'none', lg: 'inherit' }}
 				mr='auto'
 				src='/ui_icons/qb.svg'
 				alt='Questbook'
 				cursor='pointer'
 			/>
-			<Image
+			{
+				isQBAdmin && (
+					<>
+						<Image
+							display={{ base: 'none', lg: 'inherit' }}
+							ml='10px'
+							src='/ui_icons/builders.svg'
+							alt='Questbook Builders'
+						/>
+					</>
+				)
+			}
+			<Spacer />
+			{/*			<Image
 				onClick={
 					() => router.push({
 						pathname: '/',
@@ -58,7 +73,7 @@ function NavBar({ showSearchBar }: Props) {
 				src='/ui_icons/qb.svg'
 				alt='Questbook'
 				cursor='pointer'
-			/>
+			/>*/}
 			{/* {
 				// @TODO-gasless: FIX HERE
 				true && (
@@ -95,25 +110,23 @@ function NavBar({ showSearchBar }: Props) {
 			{/* @TODO-gasless: FIX HERE */}
 			{
 				showSearchBar && (
-					<Center
-						position='absolute'
-					>
+					<Center>
 						<InputGroup mx='20px'>
-							<InputLeftElement
-								pointerEvents='none'
-								children={<Search2Icon color='gray.300' />}
-							/>
+							<InputLeftElement pointerEvents='none'>
+								<Search2Icon color='gray.300' />
+							</InputLeftElement>
 							<Input
 								type='search'
 								placeholder='Search'
 								size='md'
 								defaultValue={searchString}
-								width='500px'
+								width='25vw'
 								onChange={(e) => setSearchString(e.target.value)} />
 						</InputGroup>
 					</Center>
 				)
 			}
+			<Spacer />
 			<AccountDetails />
 
 			{/* {!connected && <GetStarted onGetStartedClick={onGetStartedClick} />} */}
