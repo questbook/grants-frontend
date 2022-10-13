@@ -76,6 +76,11 @@ const { chains, provider } = configureChains(allChains, [
 	infuraProvider({ apiKey: infuraId! })
 ])
 
+type InitiateBiconomyReturnType = {
+	biconomyDaoObjs: Array<typeof BiconomyContext>
+	biconomyWalletClients: Array<BiconomyWalletClient>
+}
+
 // Set up client
 const client = createClient({
 	autoConnect: true,
@@ -143,7 +148,7 @@ export const DAOSearchContext = createContext<{
 export const BiconomyContext = createContext<{
 	biconomyDaoObjs?: { [key: string]: any }
 	setBiconomyDaoObjs: (biconomyDaoObjs: any) => void
-	initiateBiconomy: (chainId: string) => Promise<void>
+	initiateBiconomy: (chainId: string) => Promise<InitiateBiconomyReturnType | undefined>
 	loadingBiconomyMap: { [_: string]: boolean }
 	biconomyWalletClients?: {[key: string]: BiconomyWalletClient}
 	setBiconomyWalletClients: (biconomyWalletClients?: {[key: string]: BiconomyWalletClient}) => void
@@ -155,7 +160,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [webwallet, setWebwallet] = React.useState<Wallet>()
 	const [workspace, setWorkspace] = React.useState<MinimalWorkspace>()
 	const [scwAddress, setScwAddress] = React.useState<string>()
-	const [biconomyDaoObjs, setBiconomyDaoObjs] = React.useState<any>()
+	const [biconomyDaoObjs, setBiconomyDaoObjs] = React.useState<{[key: string]: typeof BiconomyContext}>()
 	const [biconomyWalletClients, setBiconomyWalletClients] = React.useState<{[key: string]: BiconomyWalletClient}>()
 	const [nonce, setNonce] = React.useState<string>()
 	const [loadingNonce, setLoadingNonce] = React.useState<boolean>(false)
@@ -166,7 +171,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const mostRecentInitChainId = useRef<string>()
 	// ref to store all the chains that are loading biconomy
 	// this is used to prevent multiple calls to biconomy init
-	const biconomyInitPromisesRef = useRef<{ [chainId: string]: Promise<void> | undefined }>({})
+	const biconomyInitPromisesRef = useRef<{ [chainId: string]: Promise<InitiateBiconomyReturnType> | undefined }>({})
 	// reference to scw address
 	// used to poll for scwAddress in "waitForScwAddress"
 	const scwAddressRef = useRef(scwAddress)
@@ -244,8 +249,17 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 		_logger.info({ scwAddress }, 'got scw address')
 
-		setBiconomyWalletClients(prev => ({ ...prev, [chainId]: _biconomyWalletClient }))
-		setBiconomyDaoObjs((prev: any) => ({ ...prev, [chainId]: _biconomy }))
+		let localBiconomyClients: typeof biconomyWalletClients = {}
+		setBiconomyWalletClients(prev => {
+			localBiconomyClients = { ...prev, [chainId]: _biconomyWalletClient }
+			return localBiconomyClients
+		})
+
+		let localBiconomyDaoObjs: typeof biconomyDaoObjs = {}
+		setBiconomyDaoObjs((prev) => {
+			localBiconomyDaoObjs = { ...prev, [chainId]: _biconomy }
+			return localBiconomyDaoObjs
+		})
 
 		// only switch the chainId if it's the most recently requested one
 		// this prevents race conditions when inititialisation of multiple chains is requested
@@ -256,6 +270,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			const chain = parseInt(chainId)
 			switchNetwork(chain)
 		}
+
+		return { biconomyDaoObjs: localBiconomyDaoObjs, biconomyWalletClients: localBiconomyClients }
 	}, [webwallet, nonce])
 
 	const initiateBiconomy = useCallback(
@@ -266,6 +282,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			if(!task) {
 				setBiconomyLoading(prev => ({ ...prev, [chainId]: true }))
 
+				// @ts-ignore
 				task = initiateBiconomyUnsafe(chainId)
 					.catch(() => {
 						biconomyInitPromisesRef.current[chainId] = undefined
@@ -278,7 +295,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				switchNetwork(parseInt(chainId))
 			}
 
-			return task
+			if(task) {
+				return await task
+			}
 		}, [setBiconomyLoading, biconomyInitPromisesRef, initiateBiconomyUnsafe]
 	)
 
