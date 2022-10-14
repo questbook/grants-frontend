@@ -69,21 +69,6 @@ function Discover() {
 									<Button
 										onClick={
 											async() => {
-												const chainsList = Object.keys(unsavedDaosState)
-
-												const txSteps: string[] = []
-												for(const chain of chainsList) {
-													const chainName = chainNames.get(chain)!
-
-													txSteps.push(`Initializing biconomy client for ${chainName}`)
-													txSteps.push(`Signing transaction with in-app wallet on ${chainName}`)
-													txSteps.push(`Waiting for transaction to complete on ${chainName}`)
-													txSteps.push(`Indexing transaction on graph protocol for ${chainName}`)
-													txSteps.push(`Changes updated on ${chainName}`)
-												}
-
-												setNetworkModalSteps(txSteps)
-
 												try {
 													await updateDaoVisibility(
 														unsavedDaosState,
@@ -91,7 +76,6 @@ function Discover() {
 													)
 												} catch(e) {
 													setUnsavedDaosState({})
-													setNetworkModalSteps(undefined)
 													setNetworkTransactionModalStep(undefined)
 													const message = getErrorMessage(e as Error)
 													toastRef.current = toast({
@@ -124,7 +108,7 @@ function Discover() {
 						)
 					}
 				</Flex>
-				{networkModalSteps && buildNetworkModal()}
+				{buildNetworkModal()}
 				<AcceptInviteModal
 					inviteInfo={inviteInfo}
 					onClose={
@@ -139,12 +123,20 @@ function Discover() {
 	}
 
 	const buildNetworkModal = () => {
-		const chainsLength = Object.keys(unsavedDaosState).length
+		const chainsList = Object.keys(unsavedDaosState)
 
-		if(!networkModalSteps || !chainsLength) {
-			return
+		const txSteps: string[] = []
+		for(const chain of chainsList) {
+			const chainName = chainNames.get(chain)!
+
+			txSteps.push(`Initializing biconomy client for ${chainName}`)
+			txSteps.push(`Signing transaction with in-app wallet on ${chainName}`)
+			txSteps.push(`Waiting for transaction to complete on ${chainName}`)
+			txSteps.push(`Indexing transaction on graph protocol for ${chainName}`)
+			txSteps.push(`Changes updated on ${chainName}`)
 		}
 
+		const chainsLength = chainsList.length
 		const daosLength = Object.values(unsavedDaosState)
 			.map(e => Object.keys(e).length).reduce((a, b) => a + b, 0)
 		const description = `Updating ${daosLength} dao${daosLength === 1 ? '\'' : ''}s${daosLength === 1 ? '' : '\''} visibility state across ${chainsLength} chain${chainsLength === 1 ? '' : 's'}!`
@@ -157,13 +149,12 @@ function Discover() {
 				showViewTransactionButton={false}
 				description={description}
 				currentStepIndex={networkTransactionModalStep || 0}
-				steps={networkModalSteps}
+				steps={txSteps}
 				onClose={router.reload} />
 		)
 	}
 
 	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
-	const [networkModalSteps, setNetworkModalSteps] = useState<Array<string>>()
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number | undefined>()
 	const [unsavedDaosState, setUnsavedDaosState] = useState<{ [_: number]: { [_: string]: boolean } }>({})
 
