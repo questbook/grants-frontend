@@ -258,7 +258,6 @@ function Discover() {
 				return
 			}
 
-			await new Promise(resolve => setTimeout(resolve, 0))
 			fetchMoreDaos(true)
 			if(scwAddress) {
 				fetchMoreMyDaos(true)
