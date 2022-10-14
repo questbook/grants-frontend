@@ -31,9 +31,15 @@ export default function useUpdateDaoVisibility() {
 	const updateDaoVisibility = useCallback(
 		async(
 			data: { [_: number]: { [_: string]: boolean } },
-			stepsLength: number,
 			setCurrentStep?: (step: number | undefined) => void
 		) => {
+
+			let currentStep = -1
+			const incrementStep = () => {
+				currentStep++
+				setCurrentStep?.(currentStep)
+			}
+
 			if(!scwAddress) {
 				return undefined!
 			}
@@ -50,7 +56,7 @@ export default function useUpdateDaoVisibility() {
 					continue
 				}
 
-				setCurrentStep?.(chainIdx * stepsLength)
+				incrementStep()
 				const initBiconomyRes = await initiateBiconomy(chains[chainIdx])
 
 				if(!initBiconomyRes) {
@@ -71,7 +77,7 @@ export default function useUpdateDaoVisibility() {
 					isVisible.push(chainData[key])
 				})
 
-				setCurrentStep?.(chainIdx * stepsLength + 1)
+				incrementStep()
 
 				const response = await sendGaslessTransaction(
 					biconomy,
@@ -87,20 +93,20 @@ export default function useUpdateDaoVisibility() {
 					nonce
 				)
 
-				setCurrentStep?.(chainIdx * stepsLength + 2)
+				incrementStep()
 
 				if(response) {
 					const { receipt, txFee } = await getTransactionDetails(response, chainId.toString())
-					setCurrentStep?.(chainIdx * stepsLength + 3)
+					incrementStep()
 
 					await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
-					setCurrentStep?.(chainIdx * stepsLength + 4)
+					incrementStep()
 
 					await chargeGas(Number(workspace?.id), Number(txFee))
 				}
 			}
 
-			setCurrentStep?.(chainIdx * stepsLength + 1)
+			incrementStep()
 		},
 		[workspace?.id, workspaceContractGoerli, workspaceContractPolygon, workspaceContractCelo, workspaceContractOptimism, initialBiconomyWalletClients, scwAddress, nonce, webwallet]
 	)

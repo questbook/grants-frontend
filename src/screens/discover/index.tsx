@@ -86,7 +86,6 @@ function Discover() {
 												try {
 													await updateDaoVisibility(
 														unsavedDaosState,
-														txSteps.length / chainsList.length,
 														setNetworkTransactionModalStep,
 													)
 												} catch(e) {
