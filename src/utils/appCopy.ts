@@ -237,7 +237,7 @@ i18next.use(initReactI18next).init({
 						'save_wallet': 'Save Wallet'
 					},
 					'import': {
-						'heading': 'Save Wallet',
+						'heading': 'Import Wallet',
 						'subheading': 'Enter the wallet private key to import wallet.',
 						'button': 'Import Wallet',
 					},
