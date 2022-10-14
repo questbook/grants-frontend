@@ -17,6 +17,13 @@ export default function useUpdateDaoVisibility() {
 	const workspaceContractOptimism = useQBContract('workspace', SupportedChainId.OPTIMISM_MAINNET)
 	const workspaceContractCelo = useQBContract('workspace', SupportedChainId.CELO_MAINNET)
 
+	const contractsMap: { [C in SupportedChainId]: Contract } = {
+		[SupportedChainId.GOERLI_TESTNET]: workspaceContractGoerli,
+		[SupportedChainId.CELO_MAINNET]: workspaceContractCelo,
+		[SupportedChainId.OPTIMISM_MAINNET]: workspaceContractOptimism,
+		[SupportedChainId.POLYGON_MAINNET]: workspaceContractPolygon,
+	}
+
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 
 	const { initiateBiconomy, biconomyWalletClients: initialBiconomyWalletClients } = useContext(BiconomyContext)!
@@ -38,22 +45,8 @@ export default function useUpdateDaoVisibility() {
 				const chain = chains[chainIdx]
 				const chainId = +chain
 
-				let workspaceContract: Contract
-
-				switch (chainId) {
-				case 5:
-					workspaceContract = workspaceContractGoerli
-					break
-				case 10:
-					workspaceContract = workspaceContractOptimism
-					break
-				case 137:
-					workspaceContract = workspaceContractPolygon
-					break
-				case 42220:
-					workspaceContract = workspaceContractCelo
-					break
-				default:
+				const workspaceContract = contractsMap[chain as unknown as SupportedChainId]
+				if(!workspaceContract) {
 					continue
 				}
 
