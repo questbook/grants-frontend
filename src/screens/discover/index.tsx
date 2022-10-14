@@ -125,15 +125,24 @@ function Discover() {
 				</Flex>
 				{
 					networkModalSteps && (
-						<NetworkTransactionModal
-							isOpen={networkTransactionModalStep !== undefined}
-							subtitle='Submitting Dao visibility changes'
-							viewLink='.'
-							showViewTransactionButton={false}
-							description={`Updating ${Object.keys(unsavedDaosState).length} daos' visibility state!`}
-							currentStepIndex={networkTransactionModalStep || 0}
-							steps={networkModalSteps}
-							onClose={router.reload} />
+						(() => {
+							const chainsLength = Object.keys(unsavedDaosState).length
+							const daosLength = Object.values(unsavedDaosState)
+								.map(e => Object.keys(e).length).reduce((a, b) => a + b)
+							const description = `Updating ${daosLength} dao${daosLength === 1 ? "'" : ''}s${daosLength === 1 ? '' : "'"} visibility state across ${chainsLength} chain${chainsLength === 1 ? '' : 's'}!`
+
+							return (
+								<NetworkTransactionModal
+									isOpen={networkTransactionModalStep !== undefined}
+									subtitle='Submitting dao visibility changes'
+									viewLink='.'
+									showViewTransactionButton={false}
+									description={description}
+									currentStepIndex={networkTransactionModalStep || 0}
+									steps={networkModalSteps}
+									onClose={router.reload} />
+							)
+						})()
 					)
 				}
 				<AcceptInviteModal
