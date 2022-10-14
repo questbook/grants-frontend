@@ -77,8 +77,8 @@ const { chains, provider } = configureChains(allChains, [
 ])
 
 type InitiateBiconomyReturnType = {
-	biconomyDaoObjs: Array<typeof BiconomyContext>
-	biconomyWalletClients: Array<BiconomyWalletClient>
+	biconomyDaoObj: typeof BiconomyContext
+	biconomyWalletClient: BiconomyWalletClient
 }
 
 // Set up client
@@ -249,17 +249,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 		_logger.info({ scwAddress }, 'got scw address')
 
-		let localBiconomyClients: typeof biconomyWalletClients = {}
-		setBiconomyWalletClients(prev => {
-			localBiconomyClients = { ...prev, [chainId]: _biconomyWalletClient }
-			return localBiconomyClients
-		})
-
-		let localBiconomyDaoObjs: typeof biconomyDaoObjs = {}
-		setBiconomyDaoObjs((prev) => {
-			localBiconomyDaoObjs = { ...prev, [chainId]: _biconomy }
-			return localBiconomyDaoObjs
-		})
+		setBiconomyWalletClients(prev => ({ ...prev, [chainId]: _biconomyWalletClient }))
+		setBiconomyDaoObjs(prev => ({ ...prev, [chainId]: _biconomy }))
 
 		// only switch the chainId if it's the most recently requested one
 		// this prevents race conditions when inititialisation of multiple chains is requested
@@ -271,7 +262,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			switchNetwork(chain)
 		}
 
-		return { biconomyDaoObjs: localBiconomyDaoObjs, biconomyWalletClients: localBiconomyClients }
+		return { biconomyDaoObj: _biconomy, biconomyWalletClient: _biconomyWalletClient! }
 	}, [webwallet, nonce])
 
 	const initiateBiconomy = useCallback(

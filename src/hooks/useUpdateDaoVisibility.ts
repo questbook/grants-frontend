@@ -57,7 +57,7 @@ export default function useUpdateDaoVisibility() {
 					continue
 				}
 
-				const { biconomyWalletClients, biconomyDaoObjs } = initBiconomyRes
+				const { biconomyWalletClient, biconomyDaoObj: biconomy } = initBiconomyRes
 
 				const workspaceIds: string[] = []
 				const isVisible: boolean[] = []
@@ -74,12 +74,12 @@ export default function useUpdateDaoVisibility() {
 				setCurrentStep?.(chainIdx * stepsLength + 1)
 
 				const response = await sendGaslessTransaction(
-					biconomyDaoObjs![chainId],
+					biconomy,
 					workspaceContract,
 					'updateWorkspacesVisible',
 					[workspaceIds, isVisible],
 					WORKSPACE_REGISTRY_ADDRESS[chains[chainIdx] as unknown as SupportedChainId],
-					biconomyWalletClients![chainId],
+					biconomyWalletClient,
 					scwAddress,
 					webwallet,
 					chains[chainIdx],
