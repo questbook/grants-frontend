@@ -19,7 +19,7 @@ import MilestoneDoneModal from 'src/screens/proposal/_components/milestoneDoneMo
 import MilestoneItem from 'src/screens/proposal/_components/MilestoneItem'
 import RejectProposalModal from 'src/screens/proposal/_components/RejectProposalModal'
 import { useMultiChainQuery } from 'src/screens/proposal/_hooks/useMultiChainQuery'
-import { P, Proposal as ProposalType } from 'src/screens/proposal/_types'
+import { P } from 'src/screens/proposal/_types'
 import { ChainInfo, CustomField, IApplicantData } from 'src/types'
 import { formatAmount, getCustomFields, getFieldString, getFieldStrings, getFormattedDateFromUnixTimestampWithYear, getRewardAmountMilestones, truncateStringFromMiddle } from 'src/utils/formattingUtils'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
@@ -528,7 +528,7 @@ function Proposal() {
 
 	const [customFields, setCustomFields] = useState<CustomField[]>([])
 
-	const [isProposalLoading, setIsProposalLoading] = useState(true)
+	// const [isProposalLoading, setIsProposalLoading] = useState(true)
 
 	const [isMilestoneDoneModalOpen, setIsMilestoneDoneModalOpen] = useState<boolean>(false)
 	const [sendFundData, setSendFundData] = useState<IApplicantData[]>([])
@@ -579,7 +579,7 @@ function Proposal() {
 		chains: [chainId]
 	})
 
-	const [rejectTxnData, rejectTxnLink,] = useUpdateApplicationState(
+	const [, rejectTxnLink,] = useUpdateApplicationState(
 		updateApplicationStateData.comment,
 		proposal?.id,
 		updateApplicationStateData.state,
@@ -589,7 +589,7 @@ function Proposal() {
 	)
 
 	// Needs to use these values properly
-	const [txnData, acceptTxnLink, , isBiconomyInitialised, error] = useBatchUpdateApplicationState(
+	const [, acceptTxnLink, , , ] = useBatchUpdateApplicationState(
 		updateApplicationStateData.comment,
 		[parseInt(proposal?.id!)],
 		updateApplicationStateData.state,
@@ -599,7 +599,7 @@ function Proposal() {
 	)
 
 	// Need to use the returned values properly
-	const [txn, txnLink,] = useApproveMilestone(
+	const [, txnLink,] = useApproveMilestone(
 		approveMilestoneData.comment,
 		proposal?.id,
 		approveMilestoneData.index,
@@ -631,6 +631,7 @@ function Proposal() {
 		}
 		// console.log('proposal links', getFieldStrings(application, 'projectLink'))
 
+		logger.info({ application }, 'Application')
 		setProposal(application)
 		// fetchData(application)
 
