@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Box, Button, Flex, Image, Input, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { IApplicantData } from 'src/types'
+import { chainNames } from 'src/utils/chainNames'
 import logger from 'src/utils/logger'
 import { ArrowDownCircle } from 'src/v2/assets/custom chakra icons/Arrows/ArrowDownCircle'
 import { ExternalLink } from 'src/v2/assets/custom chakra icons/ExternalLink'
@@ -63,17 +64,6 @@ const RecipientDetails = ({
 	// 	}
 	// }, [])
 
-	const chainNames = new Map<string, string>([
-		['1', 'Ethereum Mainnet'],
-		['4', 'Rinkeby Testnet'],
-		['5', 'Goerli Testnet'],
-		['137', 'Polygon Mainnet'],
-		['42220', 'Celo Mainnet'],
-		['9001', 'Solana'],
-		['90001', 'Solana'],
-		['900001', 'Solana'],
-		['9000001', 'Solana'],
-	])
 	const isInvalidAddress = async(address: string | undefined) => {
 		if(!address) {
 			return true

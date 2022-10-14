@@ -4406,7 +4406,7 @@ export type GetDaOsForExploreQueryVariables = Exact<{
 }>;
 
 
-export type GetDaOsForExploreQuery = { __typename?: 'Query', workspaces: Array<{ __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, createdAtS: number, mostRecentGrantPostedAtS: number, numberOfApplications: number, numberOfApplicationsSelected: number, totalGrantFundingDisbursedUSD: number }> };
+export type GetDaOsForExploreQuery = { __typename?: 'Query', workspaces: Array<{ __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, createdAtS: number, mostRecentGrantPostedAtS: number, numberOfApplications: number, numberOfApplicationsSelected: number, totalGrantFundingDisbursedUSD: number }> };
 
 export type GetFundSentforReviewerQueryVariables = Exact<{
   type?: InputMaybe<FundsTransferType>;
@@ -4567,6 +4567,11 @@ export type GetNumberOfGrantsQueryVariables = Exact<{
 
 
 export type GetNumberOfGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string }> };
+
+export type GetQbAdminsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetQbAdminsQuery = { __typename?: 'Query', qbadmins: Array<{ __typename?: 'QBAdmin', walletAddress: string }> };
 
 export type GetRealmsFundTransferDataQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -5762,6 +5767,7 @@ export const GetDaOsForExploreDocument = gql`
   ) {
     id
     title
+    isVisible
     logoIpfsHash
     supportedNetworks
     createdAtS
@@ -6892,6 +6898,40 @@ export function useGetNumberOfGrantsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetNumberOfGrantsQueryHookResult = ReturnType<typeof useGetNumberOfGrantsQuery>;
 export type GetNumberOfGrantsLazyQueryHookResult = ReturnType<typeof useGetNumberOfGrantsLazyQuery>;
 export type GetNumberOfGrantsQueryResult = Apollo.QueryResult<GetNumberOfGrantsQuery, GetNumberOfGrantsQueryVariables>;
+export const GetQbAdminsDocument = gql`
+    query getQBAdmins {
+  qbadmins {
+    walletAddress
+  }
+}
+    `;
+
+/**
+ * __useGetQbAdminsQuery__
+ *
+ * To run a query within a React component, call `useGetQbAdminsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetQbAdminsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetQbAdminsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetQbAdminsQuery(baseOptions?: Apollo.QueryHookOptions<GetQbAdminsQuery, GetQbAdminsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetQbAdminsQuery, GetQbAdminsQueryVariables>(GetQbAdminsDocument, options);
+      }
+export function useGetQbAdminsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetQbAdminsQuery, GetQbAdminsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetQbAdminsQuery, GetQbAdminsQueryVariables>(GetQbAdminsDocument, options);
+        }
+export type GetQbAdminsQueryHookResult = ReturnType<typeof useGetQbAdminsQuery>;
+export type GetQbAdminsLazyQueryHookResult = ReturnType<typeof useGetQbAdminsLazyQuery>;
+export type GetQbAdminsQueryResult = Apollo.QueryResult<GetQbAdminsQuery, GetQbAdminsQueryVariables>;
 export const GetRealmsFundTransferDataDocument = gql`
     query getRealmsFundTransferData($first: Int, $skip: Int, $grantID: ID!) {
   grants(where: {id: $grantID}, subgraphError: allow) {

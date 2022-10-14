@@ -1,15 +1,22 @@
-import { ChangeEvent, useEffect, useState } from 'react'
-import { Container, Image, useToast } from '@chakra-ui/react'
+import { ChangeEvent, useContext, useEffect, useState } from 'react'
+import { Search2Icon } from '@chakra-ui/icons'
+import { Center, Container, Image, Input, InputGroup, InputLeftElement, Spacer, useToast } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import { ethers } from 'ethers'
 import saveAs from 'file-saver'
 import { useRouter } from 'next/router'
+import { DAOSearchContext } from 'src/hooks/DAOSearchContext'
+import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
 import logger from 'src/libraries/logger'
 import AccountDetails from 'src/libraries/ui/NavBar/AccountDetails'
 import ImportConfirmationModal from 'src/libraries/ui/NavBar/ImportConfirmationModal'
 import RecoveryModal from 'src/libraries/ui/NavBar/RecoveryModal'
 
-function NavBar() {
+type Props = {
+	showSearchBar: boolean
+}
+
+function NavBar({ showSearchBar }: Props) {
 	const buildComponent = () => (
 		<>
 			<Container
@@ -52,6 +59,19 @@ function NavBar() {
 					alt='Questbook'
 					cursor='pointer'
 				/>
+				{
+					isQbAdmin && (
+						<>
+							<Image
+								display={{ base: 'none', lg: 'inherit' }}
+								ml='10px'
+								src='/ui_icons/builders.svg'
+								alt='Questbook Builders'
+							/>
+						</>
+					)
+				}
+				<Spacer />
 				{/* {
 				// @TODO-gasless: FIX HERE
 				true && (
@@ -86,6 +106,25 @@ function NavBar() {
 			} */}
 
 				{/* @TODO-gasless: FIX HERE */}
+				{
+					showSearchBar && (
+						<Center>
+							<InputGroup mx='20px'>
+								<InputLeftElement pointerEvents='none'>
+									<Search2Icon color='gray.300' />
+								</InputLeftElement>
+								<Input
+									type='search'
+									placeholder='Search'
+									size='md'
+									defaultValue={searchString}
+									width='25vw'
+									onChange={(e) => setSearchString(e.target.value)} />
+							</InputGroup>
+						</Center>
+					)
+				}
+				<Spacer />
 				<AccountDetails
 					openModal={
 						(type) => {
@@ -122,6 +161,8 @@ function NavBar() {
 		</>
 	)
 
+	const { isQbAdmin } = useContext(QBAdminsContext)!
+	const { searchString, setSearchString } = useContext(DAOSearchContext)!
 	const router = useRouter()
 	const toast = useToast()
 	const [privateKey, setPrivateKey] = useState<string>('')
