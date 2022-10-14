@@ -12,7 +12,9 @@ function MilestoneItem({ milestone, index, token, disbursedMilestones, onModalOp
 				direction='column'
 				bg='white'
 			>
-				<Flex align='center'>
+				<Flex
+					align='center'
+					mt={index > 0 ? 6 : 0}>
 					<Text
 						color='black.3'
 						variant='v2_metadata'
@@ -50,7 +52,7 @@ function MilestoneItem({ milestone, index, token, disbursedMilestones, onModalOp
 							borderRadius='2px'
 							border='1px solid #785EF0'
 							onClick={onModalOpen}
-							disabled={proposalStatus != 'approved'}>
+							disabled={proposalStatus !== 'approved'}>
 							<Text
 								variant='v2_body'
 								fontWeight='500'
@@ -65,9 +67,8 @@ function MilestoneItem({ milestone, index, token, disbursedMilestones, onModalOp
 	}
 
 	const actionItems = useMemo(() => {
-		console.log('disbursed milestones', disbursedMilestones, token?.decimals)
 		const items: ActionItemType[] = disbursedMilestones?.map((fundTransfer) => {
-			return { type: 'fund_sent', amount: `${formatAmount(fundTransfer.amount, token?.decimals, true)} ${token?.label}`, time: fundTransfer.createdAtS }
+			return { type: 'fund_sent', amount: `${fundTransfer.amount} ${token?.label}`, time: fundTransfer.createdAtS }
 		})
 
 		if(milestone?.feedbackDao) {
