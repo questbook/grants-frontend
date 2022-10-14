@@ -24,7 +24,7 @@ import { chainNames } from 'src/utils/chainNames'
 import getErrorMessage from 'src/utils/errorUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
-const PAGE_SIZE = 3
+const PAGE_SIZE = 10
 
 function Discover() {
 	const buildComponent = () => {

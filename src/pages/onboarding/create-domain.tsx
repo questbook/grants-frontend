@@ -13,6 +13,7 @@ import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSafeOwners from 'src/hooks/useSafeOwners'
 import useSafeUSDBalances from 'src/hooks/useSafeUSDBalances'
+import AccountDetails from 'src/libraries/ui/NavBar/AccountDetails'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import getErrorMessage from 'src/utils/errorUtils'
@@ -22,7 +23,6 @@ import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedValidatorNetworkFromChainId, isValidEthereumAddress, isValidSolanaAddress } from 'src/utils/validationUtils'
 import { BackArrowThick } from 'src/v2/assets/custom chakra icons/Arrows/BackArrowThick'
 import { Organization } from 'src/v2/assets/custom chakra icons/Organization'
-import AccountDetails from 'src/v2/components/NavBar/AccountDetails'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import { ConfirmData, DomainName, SafeDetails } from 'src/v2/components/Onboarding/CreateDomain'
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
@@ -364,7 +364,6 @@ const OnboardingCreateDomain = () => {
 			router.back()
 		}
 	}
-
 
 	return (
 		<>

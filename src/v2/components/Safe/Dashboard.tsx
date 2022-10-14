@@ -11,7 +11,11 @@ import { getSafeIcon } from 'src/utils/tokenUtils'
 import { getSafeURL } from 'src/v2/utils/gnosisUtils'
 import { getSafeURL as getRealmsURL } from 'src/v2/utils/phantomUtils'
 
-function Dashboard() {
+interface Props {
+	setEdit: (edit: boolean) => void
+}
+
+function Dashboard({ setEdit }: Props) {
 	const [safeChainId, setSafeChainId] = useState<SupportedChainId>(defaultChainId)
 	const { t } = useTranslation()
 	const { workspace } = useContext(ApiClientsContext)!
@@ -94,13 +98,23 @@ function Dashboard() {
 					fontWeight='500'>
 					{loadedSafesUSDBalance ? (safesUSDBalance[0]?.amount >= 0 ? `\$${safesUSDBalance[0].amount}` : t('/safe.could_not_fetch')) : 'Loading...'}
 				</Text>
-				<Button
-					mt={8}
-					variant='primaryV2'
-					rightIcon={<ExternalLinkIcon />}
-					onClick={openLink}>
-					{t('/safe.open')}
-				</Button>
+				<Flex mt={8}>
+					<Button
+						variant='link'
+						onClick={() => setEdit(true)}>
+						<Text variant='v2_body'>
+							{t('/safe.edit')}
+						</Text>
+					</Button>
+					<Button
+						ml={4}
+						variant='primaryV2'
+						rightIcon={<ExternalLinkIcon />}
+						onClick={openLink}>
+						{t('/safe.open')}
+					</Button>
+				</Flex>
+
 				<Text
 					mt={8}
 					variant='v2_metadata'

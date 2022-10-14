@@ -197,6 +197,7 @@ i18next.use(initReactI18next).init({
 					'amount_sent': 'Amount Sent',
 				},
 				'/safe': {
+					'edit': 'Edit',
 					'balance': 'Balance',
 					'could_not_fetch': 'Could not fetch balance',
 					'open': 'Open multisig wallet',
@@ -228,6 +229,30 @@ i18next.use(initReactI18next).init({
 				'view_proposal/proposal': {
 					'mark_milestone_as_done_modal_heading': 'Mark Milestone as Done',
 					'mark_milestone_as_done_modal_subheading': 'Milestone once verified as completed can be marked as done.',
+				},
+				'recovery': {
+					'menu': {
+						'use_another_wallet': 'Use another Wallet',
+						'others': 'Others',
+						'save_wallet': 'Save Wallet'
+					},
+					'import': {
+						'heading': 'Import Wallet',
+						'subheading': 'Enter the wallet private key to import wallet.',
+						'button': 'Import Wallet',
+					},
+					'export': {
+						'heading': 'Export Wallet',
+						'subheading': 'Download the file, or save it in your password manager.',
+						'warning': 'For your eyes only. Anyone who has your private key can access your Questbook wallet',
+						'download': 'Download .txt file',
+						'copy_and_save_manually': 'Copy & save manually'
+					},
+					'confirmation': {
+						'warning': 'Importing a wallet will overwrite your current wallet. Are you sure, you want to continue?',
+						'yes': 'Yes',
+						'no': 'No'
+					}
 				}
 			},
 
