@@ -91,6 +91,7 @@ function Discover() {
 													)
 												} catch(e) {
 													setUnsavedDaosState({})
+													setNetworkModalSteps(undefined)
 													setNetworkTransactionModalStep(undefined)
 													const message = getErrorMessage(e as Error)
 													toastRef.current = toast({
@@ -123,19 +124,7 @@ function Discover() {
 						)
 					}
 				</Flex>
-				{
-					networkModalSteps && (
-						<NetworkTransactionModal
-							isOpen={networkTransactionModalStep !== undefined}
-							subtitle='Submitting Dao visibility changes'
-							viewLink='.'
-							showViewTransactionButton={false}
-							description={`Updating ${Object.keys(unsavedDaosState).length} daos' visibility state!`}
-							currentStepIndex={networkTransactionModalStep || 0}
-							steps={networkModalSteps}
-							onClose={router.reload} />
-					)
-				}
+				{networkModalSteps && buildNetworkModal()}
 				<AcceptInviteModal
 					inviteInfo={inviteInfo}
 					onClose={
@@ -146,6 +135,30 @@ function Discover() {
 						}
 					} />
 			</>
+		)
+	}
+
+	const buildNetworkModal = () => {
+		const chainsLength = Object.keys(unsavedDaosState).length
+
+		if(!networkModalSteps || !chainsLength) {
+			return
+		}
+
+		const daosLength = Object.values(unsavedDaosState)
+			.map(e => Object.keys(e).length).reduce((a, b) => a + b, 0)
+		const description = `Updating ${daosLength} dao${daosLength === 1 ? '\'' : ''}s${daosLength === 1 ? '' : '\''} visibility state across ${chainsLength} chain${chainsLength === 1 ? '' : 's'}!`
+
+		return (
+			<NetworkTransactionModal
+				isOpen={networkTransactionModalStep !== undefined}
+				subtitle='Submitting dao visibility changes'
+				viewLink='.'
+				showViewTransactionButton={false}
+				description={description}
+				currentStepIndex={networkTransactionModalStep || 0}
+				steps={networkModalSteps}
+				onClose={router.reload} />
 		)
 	}
 
