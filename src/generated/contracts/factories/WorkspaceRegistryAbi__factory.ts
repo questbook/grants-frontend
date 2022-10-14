@@ -202,6 +202,31 @@ const _abi = [
     inputs: [
       {
         indexed: false,
+        internalType: "address[]",
+        name: "walletAddresses",
+        type: "address[]",
+      },
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "isAdded",
+        type: "bool",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "time",
+        type: "uint256",
+      },
+    ],
+    name: "QBAdminsUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         internalType: "address",
         name: "account",
         type: "address",
@@ -461,12 +486,12 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_address",
-        type: "address",
+        internalType: "address[]",
+        name: "_addresses",
+        type: "address[]",
       },
     ],
-    name: "addQBAdmin",
+    name: "addQBAdmins",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -864,6 +889,19 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "_addresses",
+        type: "address[]",
+      },
+    ],
+    name: "removeQBAdmins",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {

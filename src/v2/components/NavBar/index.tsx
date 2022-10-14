@@ -1,11 +1,23 @@
-import { Container, Image } from '@chakra-ui/react'
+import { useContext } from 'react'
+import { Search2Icon } from '@chakra-ui/icons'
+import { Center, Container, Image, Input, InputGroup, InputLeftElement, Spacer } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { DAOSearchContext } from 'src/hooks/DAOSearchContext'
+import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
 import AccountDetails from 'src/v2/components/NavBar/AccountDetails'
 
-function NavBar() {
+type Props = {
+	showSearchBar: boolean
+}
+
+function NavBar({ showSearchBar }: Props) {
 	// const { connected } = useContext(ApiClientsContext)!
 	const router = useRouter()
 	// const chainId = useChainId()
+
+	const { isQbAdmin } = useContext(QBAdminsContext)!
+
+	const { searchString, setSearchString } = useContext(DAOSearchContext)!
 
 	return (
 		<Container
@@ -17,6 +29,8 @@ function NavBar() {
 			variant='header-container'
 			maxH='64px'
 			display='flex'
+			alignItems='center'
+			justifyContent='center'
 			maxW='100vw'
 			bg='white'
 			ps='42px'
@@ -30,13 +44,25 @@ function NavBar() {
 						pathname: '/',
 					})
 				}
-				display={{ base: 'none', lg: 'inherit' }}
 				mr='auto'
 				src='/ui_icons/qb.svg'
 				alt='Questbook'
 				cursor='pointer'
 			/>
-			<Image
+			{
+				isQbAdmin && (
+					<>
+						<Image
+							display={{ base: 'none', lg: 'inherit' }}
+							ml='10px'
+							src='/ui_icons/builders.svg'
+							alt='Questbook Builders'
+						/>
+					</>
+				)
+			}
+			<Spacer />
+			{/*			<Image
 				onClick={
 					() => router.push({
 						pathname: '/',
@@ -47,7 +73,7 @@ function NavBar() {
 				src='/ui_icons/qb.svg'
 				alt='Questbook'
 				cursor='pointer'
-			/>
+			/>*/}
 			{/* {
 				// @TODO-gasless: FIX HERE
 				true && (
@@ -82,6 +108,25 @@ function NavBar() {
 			} */}
 
 			{/* @TODO-gasless: FIX HERE */}
+			{
+				showSearchBar && (
+					<Center>
+						<InputGroup mx='20px'>
+							<InputLeftElement pointerEvents='none'>
+								<Search2Icon color='gray.300' />
+							</InputLeftElement>
+							<Input
+								type='search'
+								placeholder='Search'
+								size='md'
+								defaultValue={searchString}
+								width='25vw'
+								onChange={(e) => setSearchString(e.target.value)} />
+						</InputGroup>
+					</Center>
+				)
+			}
+			<Spacer />
 			<AccountDetails />
 
 			{/* {!connected && <GetStarted onGetStartedClick={onGetStartedClick} />} */}

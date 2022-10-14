@@ -7,7 +7,8 @@ export type NetworkTransactionModalProps = {
 	isOpen: boolean
 	/** two words about what we're doing on chain, eg. "creating invite link" */
 	subtitle: string
-
+	/** Required when executing transactions on multiple chains, and want to hide the view transaction button. Defaults to true */
+	showViewTransactionButton?: boolean
 	description: ReactNode
 	/** what step we're at */
 	currentStepIndex: number
@@ -31,6 +32,7 @@ export default ({
 	subtitle,
 	description,
 	currentStepIndex,
+	showViewTransactionButton,
 	steps,
 	viewLink,
 	onClose,
@@ -116,16 +118,20 @@ export default ({
 						{
 							(viewLink?.length || 0) > 0 && (
 								<Flex mt='4'>
-									<Button
-										variant='link'
-										rightIcon={<ExternalLink />}
-										onClick={
-											() => {
-												window.open(viewLink, '_blank')
-											}
-										}>
-										View transaction
-									</Button>
+									{
+										(showViewTransactionButton ?? true) && (
+											<Button
+												variant='link'
+												rightIcon={<ExternalLink />}
+												onClick={
+													() => {
+														window.open(viewLink, '_blank')
+													}
+												}>
+												View transaction
+											</Button>
+										)
+									}
 									<Button
 										isDisabled={currentStepIndex < steps.length}
 										ml='auto'

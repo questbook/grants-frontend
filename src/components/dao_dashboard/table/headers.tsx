@@ -41,7 +41,7 @@ function Header() {
 				{
                          		TableHeader.map((header: any, index: any) => (
 
-						<Text
+	<Text
 							whiteSpace='nowrap'
 							key={header}
 							fontWeight='700'
@@ -53,8 +53,8 @@ function Header() {
 
 
 						>
-		{header}
- </Text>
+							{header}
+						</Text>
 
 					))
 

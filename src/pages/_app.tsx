@@ -21,6 +21,8 @@ import {
 	SupportedChainId,
 } from 'src/constants/chains'
 import SubgraphClient from 'src/graphql/subgraph'
+import { DAOSearchContextMaker } from 'src/hooks/DAOSearchContext'
+import { QBAdminsContextMaker } from 'src/hooks/QBAdminsContext'
 import MigrateToGasless from 'src/libraries/ui/MigrateToGaslessModal'
 import theme from 'src/theme'
 import { MinimalWorkspace } from 'src/types'
@@ -74,6 +76,11 @@ const { chains, provider } = configureChains(allChains, [
 	publicProvider(),
 	infuraProvider({ apiKey: infuraId! })
 ])
+
+type InitiateBiconomyReturnType = {
+	biconomyDaoObj: typeof BiconomyContext
+	biconomyWalletClient: BiconomyWalletClient
+}
 
 // Set up client
 const client = createClient({
@@ -137,7 +144,7 @@ export const WebwalletContext = createContext<{
 export const BiconomyContext = createContext<{
 	biconomyDaoObjs?: { [key: string]: any }
 	setBiconomyDaoObjs: (biconomyDaoObjs: any) => void
-	initiateBiconomy: (chainId: string) => Promise<void>
+	initiateBiconomy: (chainId: string) => Promise<InitiateBiconomyReturnType | undefined>
 	loadingBiconomyMap: { [_: string]: boolean }
 	biconomyWalletClients?: {[key: string]: BiconomyWalletClient}
 	setBiconomyWalletClients: (biconomyWalletClients?: {[key: string]: BiconomyWalletClient}) => void
@@ -148,7 +155,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [webwallet, setWebwallet] = React.useState<Wallet>()
 	const [workspace, setWorkspace] = React.useState<MinimalWorkspace>()
 	const [scwAddress, setScwAddress] = React.useState<string>()
-	const [biconomyDaoObjs, setBiconomyDaoObjs] = React.useState<any>()
+	const [biconomyDaoObjs, setBiconomyDaoObjs] = React.useState<{[key: string]: typeof BiconomyContext}>()
 	const [biconomyWalletClients, setBiconomyWalletClients] = React.useState<{[key: string]: BiconomyWalletClient}>()
 	const [nonce, setNonce] = React.useState<string>()
 	const [loadingNonce, setLoadingNonce] = React.useState<boolean>(false)
@@ -159,7 +166,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const mostRecentInitChainId = useRef<string>()
 	// ref to store all the chains that are loading biconomy
 	// this is used to prevent multiple calls to biconomy init
-	const biconomyInitPromisesRef = useRef<{ [chainId: string]: Promise<void> | undefined }>({})
+	const biconomyInitPromisesRef = useRef<{ [chainId: string]: Promise<InitiateBiconomyReturnType> | undefined }>({})
 	// reference to scw address
 	// used to poll for scwAddress in "waitForScwAddress"
 	const scwAddressRef = useRef(scwAddress)
@@ -238,7 +245,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		_logger.info({ scwAddress }, 'got scw address')
 
 		setBiconomyWalletClients(prev => ({ ...prev, [chainId]: _biconomyWalletClient }))
-		setBiconomyDaoObjs((prev: any) => ({ ...prev, [chainId]: _biconomy }))
+		setBiconomyDaoObjs(prev => ({ ...prev, [chainId]: _biconomy }))
 
 		// only switch the chainId if it's the most recently requested one
 		// this prevents race conditions when inititialisation of multiple chains is requested
@@ -249,6 +256,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			const chain = parseInt(chainId)
 			switchNetwork(chain)
 		}
+
+		return { biconomyDaoObj: _biconomy, biconomyWalletClient: _biconomyWalletClient! }
 	}, [webwallet, nonce])
 
 	const initiateBiconomy = useCallback(
@@ -259,6 +268,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			if(!task) {
 				setBiconomyLoading(prev => ({ ...prev, [chainId]: true }))
 
+				// @ts-ignore
 				task = initiateBiconomyUnsafe(chainId)
 					.catch(() => {
 						biconomyInitPromisesRef.current[chainId] = undefined
@@ -271,7 +281,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				switchNetwork(parseInt(chainId))
 			}
 
-			return task
+			if(task) {
+				return await task
+			}
 		}, [setBiconomyLoading, biconomyInitPromisesRef, initiateBiconomyUnsafe]
 	)
 
@@ -472,7 +484,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 	const validatorApi = useMemo(() => {
 		const validatorConfiguration = new Configuration({
-			basePath: 'https://api-grant-validator.questbook.app',
 		})
 		return new ValidationApi(validatorConfiguration)
 	}, [])
@@ -538,14 +549,18 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				<ApiClientsContext.Provider value={apiClients}>
 					<WebwalletContext.Provider value={webwalletContextValue}>
 						<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
-							<ChakraProvider theme={theme}>
-								{getLayout(<Component {...pageProps} />)}
-								{
-									typeof window !== 'undefined' && (
-										<MigrateToGasless />
-									)
-								}
-							</ChakraProvider>
+							<DAOSearchContextMaker>
+								<QBAdminsContextMaker>
+									<ChakraProvider theme={theme}>
+										{getLayout(<Component {...pageProps} />)}
+										{
+											typeof window !== 'undefined' && (
+												<MigrateToGasless />
+											)
+										}
+									</ChakraProvider>
+								</QBAdminsContextMaker>
+							</DAOSearchContextMaker>
 						</BiconomyContext.Provider>
 					</WebwalletContext.Provider>
 				</ApiClientsContext.Provider>
