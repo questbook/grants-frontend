@@ -129,7 +129,7 @@ function Discover() {
 							const chainsLength = Object.keys(unsavedDaosState).length
 							const daosLength = Object.values(unsavedDaosState)
 								.map(e => Object.keys(e).length).reduce((a, b) => a + b)
-							const description = `Updating ${daosLength} dao${daosLength === 1 ? "'" : ''}s${daosLength === 1 ? '' : "'"} visibility state across ${chainsLength} chain${chainsLength === 1 ? '' : 's'}!`
+							const description = `Updating ${daosLength} dao${daosLength === 1 ? '\'' : ''}s${daosLength === 1 ? '' : '\''} visibility state across ${chainsLength} chain${chainsLength === 1 ? '' : 's'}!`
 
 							return (
 								<NetworkTransactionModal
