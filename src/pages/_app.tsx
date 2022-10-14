@@ -21,6 +21,7 @@ import {
 	SupportedChainId,
 } from 'src/constants/chains'
 import SubgraphClient from 'src/graphql/subgraph'
+import { DAOSearchContextMaker } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContextMaker } from 'src/hooks/QBAdminsContext'
 import MigrateToGasless from 'src/libraries/ui/MigrateToGaslessModal'
 import theme from 'src/theme'
@@ -140,11 +141,6 @@ export const WebwalletContext = createContext<{
 	exportWebwallet: () => string
 		} | null>(null)
 
-export const DAOSearchContext = createContext<{
-	searchString: string | undefined
-	setSearchString: (q: string) => void
-		} | null>(null)
-
 export const BiconomyContext = createContext<{
 	biconomyDaoObjs?: { [key: string]: any }
 	setBiconomyDaoObjs: (biconomyDaoObjs: any) => void
@@ -156,7 +152,6 @@ export const BiconomyContext = createContext<{
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [network, switchNetwork] = React.useState<SupportedChainId>(defaultChainId)
-	const [searchString, setSearchString] = React.useState<string>()
 	const [webwallet, setWebwallet] = React.useState<Wallet>()
 	const [workspace, setWorkspace] = React.useState<MinimalWorkspace>()
 	const [scwAddress, setScwAddress] = React.useState<string>()
@@ -521,14 +516,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		[validatorApi, workspace, setWorkspace, clients, connected, setConnected]
 	)
 
-	const daoSearchContext = useMemo(
-		() => ({
-			searchString,
-			setSearchString,
-		}),
-		[searchString, setSearchString]
-	)
-
 	const seo = getSeo()
 
 	const getLayout = Component.getLayout || ((page) => page)
@@ -562,7 +549,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				<ApiClientsContext.Provider value={apiClients}>
 					<WebwalletContext.Provider value={webwalletContextValue}>
 						<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
-							<DAOSearchContext.Provider value={daoSearchContext}>
+							<DAOSearchContextMaker>
 								<QBAdminsContextMaker>
 									<ChakraProvider theme={theme}>
 										{getLayout(<Component {...pageProps} />)}
@@ -573,7 +560,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 										}
 									</ChakraProvider>
 								</QBAdminsContextMaker>
-							</DAOSearchContext.Provider>
+							</DAOSearchContextMaker>
 						</BiconomyContext.Provider>
 					</WebwalletContext.Provider>
 				</ApiClientsContext.Provider>

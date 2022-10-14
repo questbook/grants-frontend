@@ -2,8 +2,8 @@ import { useContext } from 'react'
 import { Search2Icon } from '@chakra-ui/icons'
 import { Center, Container, Image, Input, InputGroup, InputLeftElement, Spacer } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { DAOSearchContext } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
-import { DAOSearchContext } from 'src/pages/_app'
 import AccountDetails from 'src/v2/components/NavBar/AccountDetails'
 
 type Props = {
