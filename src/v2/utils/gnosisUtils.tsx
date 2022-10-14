@@ -16,20 +16,19 @@ const NETWORK_PREFIX: { [key: string]: string } = {
 }
 
 export function getSafeURL(safeAddress: string, chainId: string) {
-	if (chainId === '42220') {
+	if(chainId === '42220') {
 		return `https://safe.celo.org/#/safes/${safeAddress}`
-	} else if (chainId === '40') {
+	} else if(chainId === '40') {
 		return `https://safe.telos.net/${NETWORK_PREFIX[chainId]}:${safeAddress}`
-	}
-	else {
+	} else {
 		return `https://gnosis-safe.io/app/${NETWORK_PREFIX[chainId]}:${safeAddress}`
 	}
 }
 
 export function getGnosisTansactionLink(safeAddress: string, chainId: string) {
-	if (chainId === '42220') {
+	if(chainId === '42220') {
 		return `https://safe.celo.org/#/safes/${safeAddress}/transactions`
-	} else if (chainId === '40') {
+	} else if(chainId === '40') {
 		return `https://safe.telos.net/${NETWORK_PREFIX[chainId]}:${safeAddress}/transactions/queue`
 	} else {
 		return `https://gnosis-safe.io/app/${NETWORK_PREFIX[chainId]}:${safeAddress}/transactions/queue`
@@ -51,7 +50,7 @@ export async function getTransactionHashStatus(safeNetworkId: string, transactio
 	const response = await axios.get(API_URL)
 	logger.info({ data: response.data }, 'transaction status')
 	const txnDetails = response.data
-	if (txnDetails.isExecuted) {
+	if(txnDetails.isExecuted) {
 		return { ...txnDetails, status: 1 }
 	} else {
 		return null

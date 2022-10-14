@@ -106,9 +106,6 @@ export const useMakeInvite = (role: number) => {
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
 
 	useEffect(() => {
-		// const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
-		// console.log('rree', biconomyLoading, chainId, biconomy)
-		// console.log("invite", scwAddress)
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
 			biconomy.networkId.toString() === chainId.toString()) {
 			setIsBiconomyInitialised(true)
@@ -258,13 +255,10 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 
 			didReachStep?.('ipfs-uploaded')
 
-			// console.log("inviiii", biconomyWalletClient, scwAddress)
-
 			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
 				return undefined!
 			}
 
-			// console.log('invite33', inviteInfo)
 			const response = await sendGaslessTransaction(
 				biconomy,
 				targetContractObject,

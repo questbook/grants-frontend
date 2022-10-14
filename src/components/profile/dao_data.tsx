@@ -4,9 +4,9 @@ import { Flex, Grid, Heading, Text } from '@chakra-ui/react'
 import { getAverageTime } from 'src/utils/calculatingUtils'
 
 interface Props {
-  disbursed: Array<number>
-  applicants: Array<number>
-  winners: Array<number>
+  disbursed: number
+  applicants: number
+  winners: number
   fundTimes: Array<number>
   applicationTime: Array<number>
 }

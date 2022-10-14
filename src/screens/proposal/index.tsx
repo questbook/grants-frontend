@@ -667,7 +667,7 @@ function Proposal() {
 
 	useEffect(() => {
 		decrypt(proposal!).then(setProposal)
-        logger.info('Decrypted proposal', proposal)
+		logger.info('Decrypted proposal', proposal)
 	}, [proposal, setProposal, decrypt])
 
 	return buildComponent()

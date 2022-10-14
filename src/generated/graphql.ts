@@ -2006,6 +2006,48 @@ export enum Partner_OrderBy {
   Website = 'website'
 }
 
+export type QbAdmin = {
+  __typename?: 'QBAdmin';
+  /** When the admin was added */
+  addedAt: Scalars['Int'];
+  id: Scalars['ID'];
+  /** Address of the admin */
+  walletAddress: Scalars['Bytes'];
+};
+
+export type QbAdmin_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  addedAt?: InputMaybe<Scalars['Int']>;
+  addedAt_gt?: InputMaybe<Scalars['Int']>;
+  addedAt_gte?: InputMaybe<Scalars['Int']>;
+  addedAt_in?: InputMaybe<Array<Scalars['Int']>>;
+  addedAt_lt?: InputMaybe<Scalars['Int']>;
+  addedAt_lte?: InputMaybe<Scalars['Int']>;
+  addedAt_not?: InputMaybe<Scalars['Int']>;
+  addedAt_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  walletAddress?: InputMaybe<Scalars['Bytes']>;
+  walletAddress_contains?: InputMaybe<Scalars['Bytes']>;
+  walletAddress_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  walletAddress_not?: InputMaybe<Scalars['Bytes']>;
+  walletAddress_not_contains?: InputMaybe<Scalars['Bytes']>;
+  walletAddress_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+};
+
+export enum QbAdmin_OrderBy {
+  AddedAt = 'addedAt',
+  Id = 'id',
+  WalletAddress = 'walletAddress'
+}
+
 export type Query = {
   __typename?: 'Query';
   /** Access to subgraph metadata */
@@ -2038,6 +2080,8 @@ export type Query = {
   partners: Array<Partner>;
   piianswer?: Maybe<PiiAnswer>;
   piianswers: Array<PiiAnswer>;
+  qbadmin?: Maybe<QbAdmin>;
+  qbadmins: Array<QbAdmin>;
   review?: Maybe<Review>;
   reviews: Array<Review>;
   reward?: Maybe<Reward>;
@@ -2313,6 +2357,24 @@ export type QueryPiianswersArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<PiiAnswer_Filter>;
+};
+
+
+export type QueryQbadminArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryQbadminsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<QbAdmin_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<QbAdmin_Filter>;
 };
 
 
@@ -2932,6 +2994,8 @@ export type Subscription = {
   partners: Array<Partner>;
   piianswer?: Maybe<PiiAnswer>;
   piianswers: Array<PiiAnswer>;
+  qbadmin?: Maybe<QbAdmin>;
+  qbadmins: Array<QbAdmin>;
   review?: Maybe<Review>;
   reviews: Array<Review>;
   reward?: Maybe<Reward>;
@@ -3207,6 +3271,24 @@ export type SubscriptionPiianswersArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<PiiAnswer_Filter>;
+};
+
+
+export type SubscriptionQbadminArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionQbadminsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<QbAdmin_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<QbAdmin_Filter>;
 };
 
 
@@ -3507,6 +3589,8 @@ export type Workspace = {
   /** in seconds since epoch */
   createdAtS: Scalars['Int'];
   id: Scalars['ID'];
+  /** Whether the workspace is visible to users in the explore page */
+  isVisible: Scalars['Boolean'];
   /** Hash to fetch the logo */
   logoIpfsHash: Scalars['String'];
   /** Members of the workspace */
@@ -3985,6 +4069,10 @@ export type Workspace_Filter = {
   id_lte?: InputMaybe<Scalars['ID']>;
   id_not?: InputMaybe<Scalars['ID']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  isVisible?: InputMaybe<Scalars['Boolean']>;
+  isVisible_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  isVisible_not?: InputMaybe<Scalars['Boolean']>;
+  isVisible_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   logoIpfsHash?: InputMaybe<Scalars['String']>;
   logoIpfsHash_contains?: InputMaybe<Scalars['String']>;
   logoIpfsHash_contains_nocase?: InputMaybe<Scalars['String']>;
@@ -4130,6 +4218,7 @@ export enum Workspace_OrderBy {
   CoverImageIpfsHash = 'coverImageIpfsHash',
   CreatedAtS = 'createdAtS',
   Id = 'id',
+  IsVisible = 'isVisible',
   LogoIpfsHash = 'logoIpfsHash',
   Members = 'members',
   MetadataHash = 'metadataHash',
@@ -4300,7 +4389,7 @@ export type GetDaoDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetDaoDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, bio: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, partners: Array<{ __typename?: 'Partner', name: string, industry: string, website?: string | null, partnerImageHash?: string | null }>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }> } | null, grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
+export type GetDaoDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, bio: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, totalGrantFundingCommittedUSD: number, totalGrantFundingDisbursedUSD: number, numberOfApplications: number, numberOfApplicationsSelected: number, partners: Array<{ __typename?: 'Partner', name: string, industry: string, website?: string | null, partnerImageHash?: string | null }>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }> } | null, grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
 
 export type GetDaoNameQueryVariables = Exact<{
   workspaceID: Scalars['ID'];
@@ -4317,7 +4406,7 @@ export type GetDaOsForExploreQueryVariables = Exact<{
 }>;
 
 
-export type GetDaOsForExploreQuery = { __typename?: 'Query', workspaces: Array<{ __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, createdAtS: number, mostRecentGrantPostedAtS: number, numberOfApplications: number, numberOfApplicationsSelected: number, totalGrantFundingDisbursedUSD: number }> };
+export type GetDaOsForExploreQuery = { __typename?: 'Query', workspaces: Array<{ __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, createdAtS: number, mostRecentGrantPostedAtS: number, numberOfApplications: number, numberOfApplicationsSelected: number, totalGrantFundingDisbursedUSD: number }> };
 
 export type GetFundSentforReviewerQueryVariables = Exact<{
   type?: InputMaybe<FundsTransferType>;
@@ -4478,6 +4567,11 @@ export type GetNumberOfGrantsQueryVariables = Exact<{
 
 
 export type GetNumberOfGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string }> };
+
+export type GetQbAdminsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetQbAdminsQuery = { __typename?: 'Query', qbadmins: Array<{ __typename?: 'QBAdmin', walletAddress: string }> };
 
 export type GetRealmsFundTransferDataQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -5554,6 +5648,10 @@ export const GetDaoDetailsDocument = gql`
       decimal
       iconHash
     }
+    totalGrantFundingCommittedUSD
+    totalGrantFundingDisbursedUSD
+    numberOfApplications
+    numberOfApplicationsSelected
   }
   grants(
     subgraphError: allow
@@ -5669,6 +5767,7 @@ export const GetDaOsForExploreDocument = gql`
   ) {
     id
     title
+    isVisible
     logoIpfsHash
     supportedNetworks
     createdAtS
@@ -6799,6 +6898,40 @@ export function useGetNumberOfGrantsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetNumberOfGrantsQueryHookResult = ReturnType<typeof useGetNumberOfGrantsQuery>;
 export type GetNumberOfGrantsLazyQueryHookResult = ReturnType<typeof useGetNumberOfGrantsLazyQuery>;
 export type GetNumberOfGrantsQueryResult = Apollo.QueryResult<GetNumberOfGrantsQuery, GetNumberOfGrantsQueryVariables>;
+export const GetQbAdminsDocument = gql`
+    query getQBAdmins {
+  qbadmins {
+    walletAddress
+  }
+}
+    `;
+
+/**
+ * __useGetQbAdminsQuery__
+ *
+ * To run a query within a React component, call `useGetQbAdminsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetQbAdminsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetQbAdminsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetQbAdminsQuery(baseOptions?: Apollo.QueryHookOptions<GetQbAdminsQuery, GetQbAdminsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetQbAdminsQuery, GetQbAdminsQueryVariables>(GetQbAdminsDocument, options);
+      }
+export function useGetQbAdminsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetQbAdminsQuery, GetQbAdminsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetQbAdminsQuery, GetQbAdminsQueryVariables>(GetQbAdminsDocument, options);
+        }
+export type GetQbAdminsQueryHookResult = ReturnType<typeof useGetQbAdminsQuery>;
+export type GetQbAdminsLazyQueryHookResult = ReturnType<typeof useGetQbAdminsLazyQuery>;
+export type GetQbAdminsQueryResult = Apollo.QueryResult<GetQbAdminsQuery, GetQbAdminsQueryVariables>;
 export const GetRealmsFundTransferDataDocument = gql`
     query getRealmsFundTransferData($first: Int, $skip: Int, $grantID: ID!) {
   grants(where: {id: $grantID}, subgraphError: allow) {

@@ -1,19 +1,22 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Box, Flex, Image, Text } from '@chakra-ui/react'
+import { Box, Flex, Image, Switch, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import SupportedChainId from 'src/generated/SupportedChainId'
 
 type DaoCardProps = {
 	logo: string
 	name: string
+	isVisible: boolean
+	onVisibilityUpdate?: (visibleState: boolean) => void
+	isAdmin: boolean
 	daoId: string
 	chainId: SupportedChainId | undefined
 	noOfApplicants: number
 	totalAmount: number
 }
 
-function DaoCard({ logo, name, daoId, chainId, noOfApplicants, totalAmount }: DaoCardProps) {
+function DaoCard({ logo, isAdmin, name, daoId, chainId, noOfApplicants, totalAmount, onVisibilityUpdate, isVisible }: DaoCardProps) {
 	const router = useRouter()
 	const [isActive, setIsActive] = useState(false)
 	const { t } = useTranslation()
@@ -38,7 +41,16 @@ function DaoCard({ logo, name, daoId, chainId, noOfApplicants, totalAmount }: Da
 				}
 			}
 			onClick={
-				() => {
+				(e) => {
+					// returning as onClick fired from dao visibility toggle switch for admins
+					if(isAdmin && [
+						'[object HTMLSpanElement]',
+						'[object HTMLLabelElement]',
+						'[object HTMLInputElement]',
+					].includes(e.target.toString())) {
+						return
+					}
+
 					router.push({
 						pathname: '/profile/',
 						query: {
@@ -68,6 +80,19 @@ function DaoCard({ logo, name, daoId, chainId, noOfApplicants, totalAmount }: Da
 					fontSize='12px'>
 					{t('/.cards.proposals')}
 				</Text>
+				{
+					isAdmin && (
+						<Switch
+							size='md'
+							mx='10px'
+							height='20px'
+							borderRadius={0}
+							colorScheme='green'
+							isChecked={isVisible}
+							onChange={() => onVisibilityUpdate?.(!isVisible)}
+						/>
+					)
+				}
 			</Flex>
 			<Text
 				fontSize='20px'

@@ -280,15 +280,15 @@ function Funding({
 										{
 											grantId
                   && tableHeaders.map(({ title, flex, content }) => (
-                  	<Flex
+	<Flex
                   		key={title}
                   		direction='row'
                   		justify='start'
                   		align='center'
                   		flex={flex}
                   	>
-                  		{content(item, assetId, assetDecimals, grantId, chainId, rewardToken)}
- </Flex>
+	{content(item, assetId, assetDecimals, grantId, chainId, rewardToken)}
+                  	</Flex>
                   ))
 										}
 									</Flex>
