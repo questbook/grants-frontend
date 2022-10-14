@@ -39,7 +39,7 @@ import {
 	getSupportedChainIdFromSupportedNetwork,
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'
-import PaginatorView from 'src/v2/components/WorkspaceMembers/PaginatorView'
+import PaginatorView from 'src/v2/components/Dashboard/ReviewerDashboard/PaginatorView'
 
 const STATUS_COLORS: { [key in ApplicationState]?: { 'text': string, 'bg': string } } = {
 	[ApplicationState.Approved]: {
