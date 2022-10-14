@@ -65,7 +65,7 @@ query getApplicationDetails($applicationID: ID!) {
           maximumPoints,
         },
       },
-      fundTransfers {
+      fundTransfers (where: {type: funds_disbursed_from_safe}) {
         milestone {
           id
           title
