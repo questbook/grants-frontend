@@ -49,7 +49,6 @@ function Discover() {
 									unsavedDaosVisibleState={unsavedDaosState}
 									onDaoVisibilityUpdate={onDaoVisibilityUpdate}
 									hasMore={hasMoreDaos}
-									isLoading={false}
 									fetchMore={fetchMoreDaos}
 									workspaces={totalDaos} />
 							)
