@@ -28,14 +28,6 @@ const PAGE_SIZE = 10
 
 function Discover() {
 	const buildComponent = () => {
-		if(isQbAdmin === undefined) {
-			return (
-				<Center w='100%'>
-					<Loader />
-				</Center>
-			)
-		}
-
 		return (
 			<>
 				<Flex
@@ -45,14 +37,22 @@ function Discover() {
 						maxWidth='1280px'
 						my='16px'
 						w='100%'>
-						<DaosGrid
-							renderGetStarted
-							isAdmin={isQbAdmin}
-							unsavedDaosVisibleState={unsavedDaosState}
-							onDaoVisibilityUpdate={onDaoVisibilityUpdate}
-							hasMore={hasMoreDaos}
-							fetchMore={fetchMoreDaos}
-							workspaces={totalDaos} />
+						{
+							isQbAdmin === undefined ? (
+								<Center>
+									<Loader />
+								</Center>
+							) : (
+								<DaosGrid
+									renderGetStarted
+									isAdmin={isQbAdmin}
+									unsavedDaosVisibleState={unsavedDaosState}
+									onDaoVisibilityUpdate={onDaoVisibilityUpdate}
+									hasMore={hasMoreDaos}
+									fetchMore={fetchMoreDaos}
+									workspaces={totalDaos} />
+							)
+						}
 					</Container>
 					{
 						isQbAdmin && Object.keys(unsavedDaosState).length !== 0 && (
@@ -288,6 +288,7 @@ function useMultiChainDaosForExplore(
 
 	return useMultichainDaosPaginatedQuery({
 		useQuery: useGetDaOsForExploreQuery,
+		listGetter: (e) => e.workspaces,
 		pageSize: PAGE_SIZE,
 		variables: { orderBy, filter: filter ?? {} },
 		mergeResults(results) {
