@@ -81,7 +81,7 @@ export function useMultichainDaosPaginatedQuery<Q, K, V extends PaginationVariab
 			const newMergedResults = mergeResults(queryResults)
 
 			pageRef.current += 1
-			if(!newMergedResults.length) {
+			if(!newMergedResults.length || newMergedResults.length < pageSize) {
 				hasMoreRef.current = false
 			}
 
