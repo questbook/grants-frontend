@@ -289,6 +289,7 @@ function useMultiChainDaosForExplore(
 
 	return useMultichainDaosPaginatedQuery({
 		useQuery: useGetDaOsForExploreQuery,
+		listGetter: (e) => e.workspaces,
 		pageSize: PAGE_SIZE,
 		variables: { orderBy, filter: filter ?? {} },
 		mergeResults(results) {
