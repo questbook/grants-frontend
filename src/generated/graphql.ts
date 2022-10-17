@@ -223,6 +223,7 @@ export type FundsTransfer = {
   asset: Scalars['Bytes'];
   /** in seconds since epoch */
   createdAtS: Scalars['Int'];
+  executionTimestamp?: Maybe<Scalars['Int']>;
   /** Which grant were the funds transferred to/from */
   grant: Grant;
   id: Scalars['ID'];
@@ -233,111 +234,20 @@ export type FundsTransfer = {
   review?: Maybe<Review>;
   /** Address of who released the funds */
   sender: Scalars['Bytes'];
+  status: FundsTransferStatusType;
   /** The address to which funds were sent */
   to: Scalars['Bytes'];
+  tokenName?: Maybe<Scalars['String']>;
+  tokenUSDValue?: Maybe<Scalars['BigInt']>;
   /** Hash/signature of the transaction */
   transactionHash?: Maybe<Scalars['String']>;
   /** What the type of funds transfer is */
   type: FundsTransferType;
 };
 
-export type FundsTransferStatus = {
-  __typename?: 'FundsTransferStatus';
-  executionTimestamp: Scalars['Int'];
-  id: Scalars['ID'];
-  /** Safe transaction hash for funds transfer txn */
-  safeTxnHash: Scalars['String'];
-  /** Status of the transaction */
-  status: FundsTransferStatusType;
-  tokenName: Scalars['String'];
-  tokenUSDValue: Scalars['BigInt'];
-};
-
 export enum FundsTransferStatusType {
   Executed = 'executed',
   Queued = 'queued'
-}
-
-export type FundsTransferStatus_Filter = {
-  /** Filter for the block changed event. */
-  _change_block?: InputMaybe<BlockChangedFilter>;
-  executionTimestamp?: InputMaybe<Scalars['Int']>;
-  executionTimestamp_gt?: InputMaybe<Scalars['Int']>;
-  executionTimestamp_gte?: InputMaybe<Scalars['Int']>;
-  executionTimestamp_in?: InputMaybe<Array<Scalars['Int']>>;
-  executionTimestamp_lt?: InputMaybe<Scalars['Int']>;
-  executionTimestamp_lte?: InputMaybe<Scalars['Int']>;
-  executionTimestamp_not?: InputMaybe<Scalars['Int']>;
-  executionTimestamp_not_in?: InputMaybe<Array<Scalars['Int']>>;
-  id?: InputMaybe<Scalars['ID']>;
-  id_gt?: InputMaybe<Scalars['ID']>;
-  id_gte?: InputMaybe<Scalars['ID']>;
-  id_in?: InputMaybe<Array<Scalars['ID']>>;
-  id_lt?: InputMaybe<Scalars['ID']>;
-  id_lte?: InputMaybe<Scalars['ID']>;
-  id_not?: InputMaybe<Scalars['ID']>;
-  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
-  safeTxnHash?: InputMaybe<Scalars['String']>;
-  safeTxnHash_contains?: InputMaybe<Scalars['String']>;
-  safeTxnHash_contains_nocase?: InputMaybe<Scalars['String']>;
-  safeTxnHash_ends_with?: InputMaybe<Scalars['String']>;
-  safeTxnHash_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  safeTxnHash_gt?: InputMaybe<Scalars['String']>;
-  safeTxnHash_gte?: InputMaybe<Scalars['String']>;
-  safeTxnHash_in?: InputMaybe<Array<Scalars['String']>>;
-  safeTxnHash_lt?: InputMaybe<Scalars['String']>;
-  safeTxnHash_lte?: InputMaybe<Scalars['String']>;
-  safeTxnHash_not?: InputMaybe<Scalars['String']>;
-  safeTxnHash_not_contains?: InputMaybe<Scalars['String']>;
-  safeTxnHash_not_contains_nocase?: InputMaybe<Scalars['String']>;
-  safeTxnHash_not_ends_with?: InputMaybe<Scalars['String']>;
-  safeTxnHash_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  safeTxnHash_not_in?: InputMaybe<Array<Scalars['String']>>;
-  safeTxnHash_not_starts_with?: InputMaybe<Scalars['String']>;
-  safeTxnHash_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
-  safeTxnHash_starts_with?: InputMaybe<Scalars['String']>;
-  safeTxnHash_starts_with_nocase?: InputMaybe<Scalars['String']>;
-  status?: InputMaybe<FundsTransferStatusType>;
-  status_in?: InputMaybe<Array<FundsTransferStatusType>>;
-  status_not?: InputMaybe<FundsTransferStatusType>;
-  status_not_in?: InputMaybe<Array<FundsTransferStatusType>>;
-  tokenName?: InputMaybe<Scalars['String']>;
-  tokenName_contains?: InputMaybe<Scalars['String']>;
-  tokenName_contains_nocase?: InputMaybe<Scalars['String']>;
-  tokenName_ends_with?: InputMaybe<Scalars['String']>;
-  tokenName_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  tokenName_gt?: InputMaybe<Scalars['String']>;
-  tokenName_gte?: InputMaybe<Scalars['String']>;
-  tokenName_in?: InputMaybe<Array<Scalars['String']>>;
-  tokenName_lt?: InputMaybe<Scalars['String']>;
-  tokenName_lte?: InputMaybe<Scalars['String']>;
-  tokenName_not?: InputMaybe<Scalars['String']>;
-  tokenName_not_contains?: InputMaybe<Scalars['String']>;
-  tokenName_not_contains_nocase?: InputMaybe<Scalars['String']>;
-  tokenName_not_ends_with?: InputMaybe<Scalars['String']>;
-  tokenName_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  tokenName_not_in?: InputMaybe<Array<Scalars['String']>>;
-  tokenName_not_starts_with?: InputMaybe<Scalars['String']>;
-  tokenName_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
-  tokenName_starts_with?: InputMaybe<Scalars['String']>;
-  tokenName_starts_with_nocase?: InputMaybe<Scalars['String']>;
-  tokenUSDValue?: InputMaybe<Scalars['BigInt']>;
-  tokenUSDValue_gt?: InputMaybe<Scalars['BigInt']>;
-  tokenUSDValue_gte?: InputMaybe<Scalars['BigInt']>;
-  tokenUSDValue_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  tokenUSDValue_lt?: InputMaybe<Scalars['BigInt']>;
-  tokenUSDValue_lte?: InputMaybe<Scalars['BigInt']>;
-  tokenUSDValue_not?: InputMaybe<Scalars['BigInt']>;
-  tokenUSDValue_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-};
-
-export enum FundsTransferStatus_OrderBy {
-  ExecutionTimestamp = 'executionTimestamp',
-  Id = 'id',
-  SafeTxnHash = 'safeTxnHash',
-  Status = 'status',
-  TokenName = 'tokenName',
-  TokenUsdValue = 'tokenUSDValue'
 }
 
 export enum FundsTransferType {
@@ -394,6 +304,14 @@ export type FundsTransfer_Filter = {
   createdAtS_lte?: InputMaybe<Scalars['Int']>;
   createdAtS_not?: InputMaybe<Scalars['Int']>;
   createdAtS_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  executionTimestamp?: InputMaybe<Scalars['Int']>;
+  executionTimestamp_gt?: InputMaybe<Scalars['Int']>;
+  executionTimestamp_gte?: InputMaybe<Scalars['Int']>;
+  executionTimestamp_in?: InputMaybe<Array<Scalars['Int']>>;
+  executionTimestamp_lt?: InputMaybe<Scalars['Int']>;
+  executionTimestamp_lte?: InputMaybe<Scalars['Int']>;
+  executionTimestamp_not?: InputMaybe<Scalars['Int']>;
+  executionTimestamp_not_in?: InputMaybe<Array<Scalars['Int']>>;
   grant?: InputMaybe<Scalars['String']>;
   grant_?: InputMaybe<Grant_Filter>;
   grant_contains?: InputMaybe<Scalars['String']>;
@@ -491,12 +409,44 @@ export type FundsTransfer_Filter = {
   sender_not?: InputMaybe<Scalars['Bytes']>;
   sender_not_contains?: InputMaybe<Scalars['Bytes']>;
   sender_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  status?: InputMaybe<FundsTransferStatusType>;
+  status_in?: InputMaybe<Array<FundsTransferStatusType>>;
+  status_not?: InputMaybe<FundsTransferStatusType>;
+  status_not_in?: InputMaybe<Array<FundsTransferStatusType>>;
   to?: InputMaybe<Scalars['Bytes']>;
   to_contains?: InputMaybe<Scalars['Bytes']>;
   to_in?: InputMaybe<Array<Scalars['Bytes']>>;
   to_not?: InputMaybe<Scalars['Bytes']>;
   to_not_contains?: InputMaybe<Scalars['Bytes']>;
   to_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  tokenName?: InputMaybe<Scalars['String']>;
+  tokenName_contains?: InputMaybe<Scalars['String']>;
+  tokenName_contains_nocase?: InputMaybe<Scalars['String']>;
+  tokenName_ends_with?: InputMaybe<Scalars['String']>;
+  tokenName_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  tokenName_gt?: InputMaybe<Scalars['String']>;
+  tokenName_gte?: InputMaybe<Scalars['String']>;
+  tokenName_in?: InputMaybe<Array<Scalars['String']>>;
+  tokenName_lt?: InputMaybe<Scalars['String']>;
+  tokenName_lte?: InputMaybe<Scalars['String']>;
+  tokenName_not?: InputMaybe<Scalars['String']>;
+  tokenName_not_contains?: InputMaybe<Scalars['String']>;
+  tokenName_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  tokenName_not_ends_with?: InputMaybe<Scalars['String']>;
+  tokenName_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  tokenName_not_in?: InputMaybe<Array<Scalars['String']>>;
+  tokenName_not_starts_with?: InputMaybe<Scalars['String']>;
+  tokenName_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  tokenName_starts_with?: InputMaybe<Scalars['String']>;
+  tokenName_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  tokenUSDValue?: InputMaybe<Scalars['BigInt']>;
+  tokenUSDValue_gt?: InputMaybe<Scalars['BigInt']>;
+  tokenUSDValue_gte?: InputMaybe<Scalars['BigInt']>;
+  tokenUSDValue_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  tokenUSDValue_lt?: InputMaybe<Scalars['BigInt']>;
+  tokenUSDValue_lte?: InputMaybe<Scalars['BigInt']>;
+  tokenUSDValue_not?: InputMaybe<Scalars['BigInt']>;
+  tokenUSDValue_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   transactionHash?: InputMaybe<Scalars['String']>;
   transactionHash_contains?: InputMaybe<Scalars['String']>;
   transactionHash_contains_nocase?: InputMaybe<Scalars['String']>;
@@ -528,13 +478,17 @@ export enum FundsTransfer_OrderBy {
   Application = 'application',
   Asset = 'asset',
   CreatedAtS = 'createdAtS',
+  ExecutionTimestamp = 'executionTimestamp',
   Grant = 'grant',
   Id = 'id',
   Milestone = 'milestone',
   NonEvmAsset = 'nonEvmAsset',
   Review = 'review',
   Sender = 'sender',
+  Status = 'status',
   To = 'to',
+  TokenName = 'tokenName',
+  TokenUsdValue = 'tokenUSDValue',
   TransactionHash = 'transactionHash',
   Type = 'type'
 }
@@ -2154,8 +2108,6 @@ export type Query = {
   applicationMilestone?: Maybe<ApplicationMilestone>;
   applicationMilestones: Array<ApplicationMilestone>;
   fundsTransfer?: Maybe<FundsTransfer>;
-  fundsTransferStatus?: Maybe<FundsTransferStatus>;
-  fundsTransferStatuses: Array<FundsTransferStatus>;
   fundsTransfers: Array<FundsTransfer>;
   grant?: Maybe<Grant>;
   grantApplication?: Maybe<GrantApplication>;
@@ -2231,24 +2183,6 @@ export type QueryFundsTransferArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type QueryFundsTransferStatusArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type QueryFundsTransferStatusesArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<FundsTransferStatus_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<FundsTransferStatus_Filter>;
 };
 
 
@@ -3088,8 +3022,6 @@ export type Subscription = {
   applicationMilestone?: Maybe<ApplicationMilestone>;
   applicationMilestones: Array<ApplicationMilestone>;
   fundsTransfer?: Maybe<FundsTransfer>;
-  fundsTransferStatus?: Maybe<FundsTransferStatus>;
-  fundsTransferStatuses: Array<FundsTransferStatus>;
   fundsTransfers: Array<FundsTransfer>;
   grant?: Maybe<Grant>;
   grantApplication?: Maybe<GrantApplication>;
@@ -3165,24 +3097,6 @@ export type SubscriptionFundsTransferArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionFundsTransferStatusArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionFundsTransferStatusesArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<FundsTransferStatus_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<FundsTransferStatus_Filter>;
 };
 
 
@@ -4758,7 +4672,6 @@ export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers:
 
 export type GetWorkspaceMembersByWorkspaceIdQueryVariables = Exact<{
   workspaceId: Scalars['String'];
-  accessLevelsIn: Array<WorkspaceMemberAccessLevel> | WorkspaceMemberAccessLevel;
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
 }>;
@@ -7382,9 +7295,9 @@ export type GetWorkspaceMembersQueryHookResult = ReturnType<typeof useGetWorkspa
 export type GetWorkspaceMembersLazyQueryHookResult = ReturnType<typeof useGetWorkspaceMembersLazyQuery>;
 export type GetWorkspaceMembersQueryResult = Apollo.QueryResult<GetWorkspaceMembersQuery, GetWorkspaceMembersQueryVariables>;
 export const GetWorkspaceMembersByWorkspaceIdDocument = gql`
-    query getWorkspaceMembersByWorkspaceId($workspaceId: String!, $accessLevelsIn: [WorkspaceMemberAccessLevel!]!, $first: Int, $skip: Int) {
+    query getWorkspaceMembersByWorkspaceId($workspaceId: String!, $first: Int, $skip: Int) {
   workspaceMembers(
-    where: {workspace: $workspaceId, accessLevel_in: $accessLevelsIn}
+    where: {workspace: $workspaceId}
     first: $first
     skip: $skip
     subgraphError: allow
@@ -7412,7 +7325,6 @@ export const GetWorkspaceMembersByWorkspaceIdDocument = gql`
  * const { data, loading, error } = useGetWorkspaceMembersByWorkspaceIdQuery({
  *   variables: {
  *      workspaceId: // value for 'workspaceId'
- *      accessLevelsIn: // value for 'accessLevelsIn'
  *      first: // value for 'first'
  *      skip: // value for 'skip'
  *   },
