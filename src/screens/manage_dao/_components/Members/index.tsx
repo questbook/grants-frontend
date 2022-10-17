@@ -87,17 +87,15 @@ function WorkspaceMembers() {
 		options: {
 			variables: {
 				workspaceId: workspace?.id ?? '',
-				accessLevelsIn: USER_TYPES[selectedUserTypeIdx].accessLevels,
 			}
 		}
 	})
 
 	useEffect(() => {
 		fetchMore({
-			workspaceId: workspace?.id,
-			accessLevelsIn: USER_TYPES[selectedUserTypeIdx].accessLevels,
+			workspaceId: workspace?.id
 		}, true)
-	}, [workspace, selectedUserTypeIdx])
+	}, [workspace])
 
 	const members = useMemo(() => {
 		if(!results) {
