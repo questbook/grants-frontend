@@ -6,14 +6,17 @@ import {
 	Flex, Text
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { defaultChainId } from 'src/constants/chains'
 import {
 	useGetWorkspaceMembersByWorkspaceIdQuery,
 	WorkspaceMemberAccessLevel,
 } from 'src/generated/graphql'
+import SupportedChainId from 'src/generated/SupportedChainId'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import FilterTable from 'src/libraries/ui/FilterTable'
 import { ApiClientsContext } from 'src/pages/_app'
 import TablePanel from 'src/screens/manage_dao/_components/Members/TablePanel'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import InviteModal from 'src/v2/components/InviteModal'
 
 const USER_TYPES = [
@@ -56,7 +59,21 @@ function WorkspaceMembers() {
 				<FilterTable
 					tabs={
 						USER_TYPES.map((type,) => {
-							const filteredMembers = members.filter((member) => type.accessLevels.indexOf(member.accessLevel) !== -1)
+							const filteredMembers = members.filter((member) => type.accessLevels.indexOf(member.accessLevel) !== -1).sort((a, b) => {
+								if(a.accessLevel === 'owner') {
+									return -1
+								} else if(b.accessLevel === 'owner') {
+									return 1
+								} else {
+									const cmp = a.accessLevel.localeCompare(b.accessLevel)
+									if(cmp === 0) {
+										return a.addedAt - b.addedAt
+									} else {
+										return cmp
+									}
+								}
+							}
+							)
 							return {
 								title: `${type.name} (${filteredMembers.length})`,
 								element: <TablePanel
@@ -79,6 +96,10 @@ function WorkspaceMembers() {
 	const router = useRouter()
 	const { workspace } = useContext(ApiClientsContext)!
 
+	const chainId = useMemo<SupportedChainId>(() => {
+		return getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
+	}, [workspace])
+
 	const [isInviteModalOpen, setIsInviteModalOpen] = useState(router.query.tab === 'members')
 	const [selectedUserTypeIdx, setSelectedUserTypeIdx] = useState(0)
 
@@ -88,7 +109,8 @@ function WorkspaceMembers() {
 			variables: {
 				workspaceId: workspace?.id ?? '',
 			}
-		}
+		},
+		chains: [chainId]
 	})
 
 	useEffect(() => {

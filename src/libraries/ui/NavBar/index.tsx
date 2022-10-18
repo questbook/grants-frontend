@@ -217,6 +217,8 @@ function NavBar({ showSearchBar }: Props) {
 
 	const saveWallet = async() => {
 		localStorage.setItem('webwalletPrivateKey', privateKey)
+		localStorage.removeItem('scwAddress')
+		localStorage.removeItem('currentWorkspace')
 		toast({
 			title: 'Wallet imported successfully',
 			status: 'success',
