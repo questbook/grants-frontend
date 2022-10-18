@@ -130,6 +130,7 @@ export function useLoadReview(
 				data = JSON.parse(ipfsData || '{}')
 			}
 
+			data.reviewer = review.reviewer.id.substring(review.reviewer.id.indexOf('.') + 1)
 			data.total = totalScore(data.items)
 			data.createdAtS = review.createdAtS
 
