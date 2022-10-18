@@ -192,7 +192,7 @@ export default function useCreateGrant(
 
 				setCurrentStep(3)
 
-				await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee),)
+				await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee), chainId)
 
 				const CACHE_KEY = strings.cache.create_grant
 				const cacheKey = `${chainId || getSupportedChainIdFromWorkspace(workspace)}-${CACHE_KEY}-${workspace?.id}`
