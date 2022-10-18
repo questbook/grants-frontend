@@ -125,7 +125,7 @@ export default function useUpdateWorkspacePublicKeys(
 				if(response) {
 					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
 					setTransactionData(receipt)
-					await chargeGas(Number(workspace?.id), Number(txFee))
+					await chargeGas(Number(workspace?.id), Number(txFee), chainId)
 				}
 
 				setLoading(false)

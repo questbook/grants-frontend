@@ -102,7 +102,7 @@ export default function useUpdateDaoVisibility() {
 					await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
 					incrementStep()
 
-					await chargeGas(Number(workspace?.id), Number(txFee))
+					await chargeGas(Number(workspaceIds[0]), Number(txFee), chainId)
 				}
 			}
 
