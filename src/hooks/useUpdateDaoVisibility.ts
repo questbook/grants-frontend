@@ -5,8 +5,7 @@ import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { ApiClientsContext, BiconomyContext, WebwalletContext } from 'src/pages/_app'
-import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { bicoDapps, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 
 export default function useUpdateDaoVisibility() {
 	const { nonce } = useQuestbookAccount()
@@ -58,7 +57,7 @@ export default function useUpdateDaoVisibility() {
 				}
 
 				incrementStep()
-				const initBiconomyRes = await initiateBiconomy(chains[chainIdx])
+				const initBiconomyRes = await initiateBiconomy(chain)
 
 				if(!initBiconomyRes) {
 					continue
@@ -85,37 +84,28 @@ export default function useUpdateDaoVisibility() {
 					workspaceContract,
 					'updateWorkspacesVisible',
 					[workspaceIds, isVisible],
-					WORKSPACE_REGISTRY_ADDRESS[chains[chainIdx] as unknown as SupportedChainId],
+					WORKSPACE_REGISTRY_ADDRESS[chain as unknown as SupportedChainId],
 					biconomyWalletClient,
 					scwAddress,
 					webwallet,
-					chains[chainIdx],
-					bicoDapps[chains[chainIdx]].webHookId,
+					chain,
+					bicoDapps[chain].webHookId,
 					nonce
 				)
 
 				incrementStep()
 
 				if(response) {
-					const { receipt, txFee } = await getTransactionDetails(response, chainId.toString())
+					const { receipt } = await getTransactionDetails(response, chainId.toString())
 					incrementStep()
 
 					await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
 					incrementStep()
 
-
-					let chargeWorkspaceId: string
-					let chargeWorkspaceChainId: SupportedChainId | undefined
-
-					if(workspace) {
-						chargeWorkspaceId = workspace?.id
-						chargeWorkspaceChainId = getSupportedChainIdFromWorkspace(workspace)
-					} else {
-						chargeWorkspaceId = workspaceIds[0]
-						chargeWorkspaceChainId = chainId
-					}
-
-					await chargeGas(Number(chargeWorkspaceId), Number(txFee), chargeWorkspaceChainId)
+					// not charging qb admins when making dao visibility changes
+					// if(workspace) {
+					// 	await chargeGas(Number(workspace?.id), Number(txFee), getSupportedChainIdFromWorkspace(workspace))
+					// }
 				}
 			}
 
