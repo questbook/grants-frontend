@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { CheckIcon } from '@chakra-ui/icons'
 import { Button, Divider, Flex, HStack, Image, Text, VStack } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import config from 'src/constants/config.json'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { ApiClientsContext } from 'src/pages/_app'
@@ -10,6 +11,7 @@ import { MinimalWorkspace } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import getRole from 'src/utils/memberUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 interface Props {
   workspaces: MinimalWorkspace[]
@@ -75,6 +77,17 @@ function Domains({ workspaces, onWorkspaceClick }: Props) {
 					>
 						{getRole(workspaceLocal, accountData?.address!)}
 					</Text>
+					{
+						process.env.NODE_ENV === 'development' && (
+							<Text
+								variant='v2_body'
+								color='black.3'
+								fontWeight='500'
+							>
+								{CHAIN_INFO[getSupportedChainIdFromWorkspace(workspaceLocal) ?? defaultChainId].name}
+							</Text>
+						)
+					}
 				</Flex>
 				{
 					areWorkspaceEqual(workspace!, workspaceLocal) && (
