@@ -6,6 +6,7 @@ import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { ApiClientsContext, BiconomyContext, WebwalletContext } from 'src/pages/_app'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 export default function useUpdateDaoVisibility() {
 	const { nonce } = useQuestbookAccount()
@@ -102,7 +103,19 @@ export default function useUpdateDaoVisibility() {
 					await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
 					incrementStep()
 
-					await chargeGas(Number(workspaceIds[0]), Number(txFee), chainId)
+
+					let chargeWorkspaceId: string
+					let chargeWorkspaceChainId: SupportedChainId | undefined
+
+					if(workspace) {
+						chargeWorkspaceId = workspace?.id
+						chargeWorkspaceChainId = getSupportedChainIdFromWorkspace(workspace)
+					} else {
+						chargeWorkspaceId = workspaceIds[0]
+						chargeWorkspaceChainId = chainId
+					}
+
+					await chargeGas(Number(chargeWorkspaceId), Number(txFee), chargeWorkspaceChainId)
 				}
 			}
 
