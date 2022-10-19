@@ -13,7 +13,7 @@ function TablePanel({ data }: Props) {
 			<>
 				<Grid
 					justifyContent='start'
-					templateColumns='2fr 1fr 1fr 1fr'
+					templateColumns='3fr 2fr 2fr 2fr 2fr'
 					alignItems='center'
 				>
 					{
@@ -47,7 +47,7 @@ function TablePanel({ data }: Props) {
 		)
 	}
 
-	const TABLE_HEADERS = ['Members', 'Role', 'Joined At', '']
+	const TABLE_HEADERS = ['Members', 'Role', 'Joined on', 'Can access encrypted data', '']
 
 	return buildComponent()
 }

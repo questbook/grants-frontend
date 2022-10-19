@@ -2,6 +2,7 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import { EditIcon } from '@chakra-ui/icons'
 import { Fade, Flex, GridItem, HStack, IconButton, Image, Spacer, Text, ToastId, Tooltip, useToast, VStack } from '@chakra-ui/react'
 import { WorkspaceMemberUpdate } from '@questbook/service-validator-client'
+import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
 import CopyIcon from 'src/components/ui/copy_icon'
 import { defaultChainId } from 'src/constants/chains'
@@ -29,6 +30,7 @@ function TableRow({ member }: Props) {
 	const buildComponent = () => {
 		return (
 			<>
+				{/* Member Details */}
 				<GridItem
 					onMouseEnter={() => setIsHovering(true)}
 					onMouseLeave={() => setIsHovering(false)}>
@@ -80,10 +82,18 @@ function TableRow({ member }: Props) {
 								>
 									<CopyIcon text={member.actorId ?? ''} />
 								</Flex>
+								<Text
+									ml={1}
+									fontStyle='italic'
+									fontWeight='400'>
+									{member?.actorId === scwAddress?.toLowerCase() && '(You)'}
+								</Text>
 							</Text>
 						</Flex>
 					</Flex>
 				</GridItem>
+
+				{/* Access Level */}
 				<GridItem
 					onMouseEnter={() => setIsHovering(true)}
 					onMouseLeave={() => setIsHovering(false)}>
@@ -105,6 +115,8 @@ function TableRow({ member }: Props) {
 						}
 					</Flex>
 				</GridItem>
+
+				{/* Joined on  */}
 				<GridItem
 					onMouseEnter={() => setIsHovering(true)}
 					onMouseLeave={() => setIsHovering(false)}>
@@ -114,17 +126,58 @@ function TableRow({ member }: Props) {
 						{getFormattedFullDateFromUnixTimestamp(member?.addedAt ?? 0)}
 					</Text>
 				</GridItem>
+
+				{/* Can access encrypted data  */}
+				<GridItem
+					onMouseEnter={() => setIsHovering(true)}
+					onMouseLeave={() => setIsHovering(false)}>
+					<Flex
+						align='center'
+						justify='center'>
+						<Tooltip
+							label={getEncryptedTooltipLabel()}>
+							<Image
+								onClick={
+									async() => {
+										if(member?.actorId !== scwAddress?.toLowerCase() || canAccessEncryptedData()) {
+											return
+										}
+
+										setType('pub-key')
+										await onSaveClick()
+									}
+								}
+								cursor={canAccessEncryptedData() || member?.actorId !== scwAddress?.toLowerCase() ? 'default' : 'pointer'}
+								src={canAccessEncryptedData() ? '/ui_icons/success_toast_icon.svg' : '/ui_icons/error_toast_icon.svg'} />
+						</Tooltip>
+
+					</Flex>
+
+				</GridItem>
+
+				{/* Action items */}
 				<GridItem>
 					<Fade
 						onMouseEnter={() => setIsHovering(true)}
 						onMouseLeave={() => setIsHovering(false)}
 						in={isHovering}>
-						<IconButton
-							onClick={() => setIsEditMemberModalOpen(true)}
-							icon={<EditIcon color='black' />}
-							aria-label='' />
+						<Flex
+							align='center'
+							justify='center'>
+							<IconButton
+								onClick={
+									() => {
+										setType('edit')
+										setIsEditMemberModalOpen(true)
+									}
+								}
+								icon={<EditIcon color='black' />}
+								aria-label='' />
+						</Flex>
+
 					</Fade>
 				</GridItem>
+
 				<EditMemberModal
 					isSaveEnabled={isBiconomyInitialised}
 					onSaveClick={onSaveClick}
@@ -134,7 +187,7 @@ function TableRow({ member }: Props) {
 				<NetworkTransactionModal
 					currentStepIndex={networkTransactionModalStep || 0}
 					isOpen={networkTransactionModalStep !== undefined}
-					subtitle='Editing member details'
+					subtitle={type === 'edit' ? 'Editing member details' : 'Providing encrypted data access'}
 					description={
 						<HStack w='100%'>
 							<VStack
@@ -144,7 +197,7 @@ function TableRow({ member }: Props) {
 								<Text
 									fontWeight='bold'
 									color='#3F8792'>
-									Editing details for
+									{type === 'edit' ? 'Editing details for' : 'Providing access to'}
 								</Text>
 								<Text
 									color='black.3'
@@ -164,7 +217,7 @@ function TableRow({ member }: Props) {
 							'Uploading data to IPFS',
 							'Waiting for transaction to complete on chain',
 							'Indexing transaction on graph protocol',
-							'Member details updated',
+							type === 'edit' ? 'Member details updated' : 'Access enabled to encrypted data',
 						]
 					}
 					viewLink={getExplorerUrlForTxHash(chainId, transactionHash)}
@@ -199,6 +252,7 @@ function TableRow({ member }: Props) {
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState<boolean>(false)
 	const [transactionHash, setTransactionHash] = useState<string>('')
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
+	const [type, setType] = useState<'edit' | 'pub-key'>('edit')
 
 	useEffect(() => {
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
@@ -209,7 +263,7 @@ function TableRow({ member }: Props) {
 
 	const workspaceRegistryContract = useQBContract('workspace', chainId)
 
-	const onSaveClick = async(name: string) => {
+	const onSaveClick = async(name?: string) => {
 		logger.info({ name, chainId: getSupportedChainIdFromWorkspace(workspace) }, 'WorkspaceMember name')
 
 		try {
@@ -291,6 +345,32 @@ function TableRow({ member }: Props) {
 					},
 				}),
 			})
+		}
+	}
+
+	const canAccessEncryptedData = () => {
+		try {
+			logger.info({ actorId: member?.actorId, pubKey: member?.publicKey }, 'WorkspaceMember')
+			if(!member?.publicKey) {
+				return false
+			}
+
+			ethers.utils.computeAddress(member.publicKey)
+			return true
+		} catch(e) {
+			return false
+		}
+	}
+
+	const getEncryptedTooltipLabel = () => {
+		if(canAccessEncryptedData()) {
+			return 'Can access encrypted data fields in applications and private reviews'
+		} else {
+			if(member?.actorId === scwAddress?.toLowerCase()) {
+				return 'Cannot access any encrypted data. This might cause reviewers to be unable to submit private reviews. Click on this to fix it.'
+			} else {
+				return 'Cannot access any encrypted data. This might cause reviewers to be unable to submit private reviews.'
+			}
 		}
 	}
 

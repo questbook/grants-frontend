@@ -223,6 +223,7 @@ export type FundsTransfer = {
   asset: Scalars['Bytes'];
   /** in seconds since epoch */
   createdAtS: Scalars['Int'];
+  /** Funds transfer execution timestamp */
   executionTimestamp?: Maybe<Scalars['Int']>;
   /** Which grant were the funds transferred to/from */
   grant: Grant;
@@ -237,7 +238,9 @@ export type FundsTransfer = {
   status: FundsTransferStatusType;
   /** The address to which funds were sent */
   to: Scalars['Bytes'];
+  /** Token name */
   tokenName?: Maybe<Scalars['String']>;
+  /** Token amount transferred value in USD */
   tokenUSDValue?: Maybe<Scalars['BigInt']>;
   /** Hash/signature of the transaction */
   transactionHash?: Maybe<Scalars['String']>;
@@ -3641,6 +3644,8 @@ export type Workspace = {
   coverImageIpfsHash?: Maybe<Scalars['String']>;
   /** in seconds since epoch */
   createdAtS: Scalars['Int'];
+  /** List of grant addresses in the workspace */
+  grants: Array<Scalars['String']>;
   id: Scalars['ID'];
   /** Whether the workspace is visible to users in the explore page */
   isVisible: Scalars['Boolean'];
@@ -4114,6 +4119,12 @@ export type Workspace_Filter = {
   createdAtS_lte?: InputMaybe<Scalars['Int']>;
   createdAtS_not?: InputMaybe<Scalars['Int']>;
   createdAtS_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  grants?: InputMaybe<Array<Scalars['String']>>;
+  grants_contains?: InputMaybe<Array<Scalars['String']>>;
+  grants_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  grants_not?: InputMaybe<Array<Scalars['String']>>;
+  grants_not_contains?: InputMaybe<Array<Scalars['String']>>;
+  grants_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
   id?: InputMaybe<Scalars['ID']>;
   id_gt?: InputMaybe<Scalars['ID']>;
   id_gte?: InputMaybe<Scalars['ID']>;
@@ -4270,6 +4281,7 @@ export enum Workspace_OrderBy {
   Bio = 'bio',
   CoverImageIpfsHash = 'coverImageIpfsHash',
   CreatedAtS = 'createdAtS',
+  Grants = 'grants',
   Id = 'id',
   IsVisible = 'isVisible',
   LogoIpfsHash = 'logoIpfsHash',
@@ -4677,7 +4689,7 @@ export type GetWorkspaceMembersByWorkspaceIdQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceMembersByWorkspaceIdQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, addedAt: number }> };
+export type GetWorkspaceMembersByWorkspaceIdQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, addedAt: number, publicKey?: string | null }> };
 
 export type GetWorkspaceMembersPublicKeysQueryVariables = Exact<{
   workspaceId: Scalars['String'];
@@ -7308,6 +7320,7 @@ export const GetWorkspaceMembersByWorkspaceIdDocument = gql`
     profilePictureIpfsHash
     accessLevel
     addedAt
+    publicKey
   }
 }
     `;

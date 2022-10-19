@@ -299,6 +299,7 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
 
   events: {
     "AdminChanged(address,address)": EventFragment;
+    "ApplicationMigrate(uint96,address,uint256)": EventFragment;
     "ApplicationSubmitted(uint96,address,address,string,uint48,uint256)": EventFragment;
     "ApplicationUpdated(uint96,address,string,uint8,uint48,uint256)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
@@ -309,6 +310,7 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ApplicationMigrate"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApplicationSubmitted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApplicationUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
@@ -328,6 +330,19 @@ export type AdminChangedEvent = TypedEvent<
 >;
 
 export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
+
+export interface ApplicationMigrateEventObject {
+  applicationId: BigNumber;
+  newApplicantAddress: string;
+  time: BigNumber;
+}
+export type ApplicationMigrateEvent = TypedEvent<
+  [BigNumber, string, BigNumber],
+  ApplicationMigrateEventObject
+>;
+
+export type ApplicationMigrateEventFilter =
+  TypedEventFilter<ApplicationMigrateEvent>;
 
 export interface ApplicationSubmittedEventObject {
   applicationId: BigNumber;
@@ -849,6 +864,17 @@ export interface ApplicationRegistryAbi extends BaseContract {
       previousAdmin?: null,
       newAdmin?: null
     ): AdminChangedEventFilter;
+
+    "ApplicationMigrate(uint96,address,uint256)"(
+      applicationId?: PromiseOrValue<BigNumberish> | null,
+      newApplicantAddress?: null,
+      time?: null
+    ): ApplicationMigrateEventFilter;
+    ApplicationMigrate(
+      applicationId?: PromiseOrValue<BigNumberish> | null,
+      newApplicantAddress?: null,
+      time?: null
+    ): ApplicationMigrateEventFilter;
 
     "ApplicationSubmitted(uint96,address,address,string,uint48,uint256)"(
       applicationId?: PromiseOrValue<BigNumberish> | null,
