@@ -10,8 +10,8 @@ import Loader from 'src/components/ui/loader'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { ApiClientsContext } from 'src/pages/_app'
-import WorkspaceMembers from 'src/screens/manage_dao/_components/Members'
-import Settings from 'src/screens/manage_dao/_components/Settings'
+import WorkspaceMembers from 'src/screens/manage_dao/members'
+import Settings from 'src/screens/manage_dao/settings'
 
 function ManageDAO() {
 	const buildComponent = () => (

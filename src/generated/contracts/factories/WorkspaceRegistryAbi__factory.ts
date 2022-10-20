@@ -115,6 +115,12 @@ const _abi = [
       {
         indexed: false,
         internalType: "string",
+        name: "tokenName",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "string",
         name: "nonEvmAssetAddress",
         type: "string",
       },
@@ -150,6 +156,43 @@ const _abi = [
       },
     ],
     name: "DisburseRewardFromSafe",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint96[]",
+        name: "applicationId",
+        type: "uint96[]",
+      },
+      {
+        indexed: false,
+        internalType: "string[]",
+        name: "transactionHash",
+        type: "string[]",
+      },
+      {
+        indexed: false,
+        internalType: "string[]",
+        name: "status",
+        type: "string[]",
+      },
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "tokenUSDValue",
+        type: "uint256[]",
+      },
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "executionTimestamp",
+        type: "uint256[]",
+      },
+    ],
+    name: "FundsTransferStatusUpdated",
     type: "event",
   },
   {
@@ -616,6 +659,11 @@ const _abi = [
       },
       {
         internalType: "string",
+        name: "_tokenName",
+        type: "string",
+      },
+      {
+        internalType: "string",
         name: "nonEvmAssetAddress",
         type: "string",
       },
@@ -953,6 +1001,39 @@ const _abi = [
       },
     ],
     name: "updateAnonAuthoriserAddress",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint96[]",
+        name: "_applicationId",
+        type: "uint96[]",
+      },
+      {
+        internalType: "string[]",
+        name: "_transactionHash",
+        type: "string[]",
+      },
+      {
+        internalType: "string[]",
+        name: "_status",
+        type: "string[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "_tokenUSDValue",
+        type: "uint256[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "_executionTimestamp",
+        type: "uint256[]",
+      },
+    ],
+    name: "updateFundsTransferTransactionStatus",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
