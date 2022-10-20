@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 // UI AND COMPONENTS
 import {
@@ -9,41 +9,26 @@ import {
 	Image,
 	Switch,
 	Text,
-	ToastId,
-	useToast,
 } from '@chakra-ui/react'
-import { WorkspaceUpdateRequest } from '@questbook/service-validator-client'
-import { useRouter } from 'next/router'
 import CoverUpload from 'src/components/ui/forms/coverUpload'
 import ImageUpload from 'src/components/ui/forms/imageUpload'
 import MultiLineInput from 'src/components/ui/forms/multiLineInput'
 import RichTextEditor from 'src/components/ui/forms/richTextEditor'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import Loader from 'src/components/ui/loader'
-import ErrorToast from 'src/components/ui/toasts/errorToast'
 // CONSTANTS AND TYPES
 import config from 'src/constants/config.json'
+import useSettings from 'src/screens/manage_dao/_hooks/useSettings'
 // UTILS AND TOOLS
-import useUpdateWorkspace from 'src/hooks/useUpdateWorkspace'
-import { PartnersProps, SettingsForm, Workspace } from 'src/types'
 import { getUrlForIPFSHash, isIpfsHash } from 'src/utils/ipfsUtils'
-import {
-	generateWorkspaceUpdateRequest,
-	workspaceDataToSettingsForm,
-} from 'src/utils/settingsUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
-type EditFormProps = {
-  workspaceData: Workspace | undefined
-};
-
-type EditErrors = { [K in keyof SettingsForm]?: { error: string } };
-
-const MAX_IMAGE_SIZE_MB = 2
-
-function EditForm({ workspaceData }: EditFormProps) {
+function Settings() {
 	const buildComponent = () => (
-		<>
+		<Flex
+			direction='column'
+			align='start'
+			w='70%'>
 			<Grid
 				w='100%'
 				gridTemplateColumns='4fr 1fr'
@@ -434,40 +419,6 @@ function EditForm({ workspaceData }: EditFormProps) {
 					isError={hasError('telegramChannel')}
 				/>
 			</Flex>
-			{/* <Flex
-				direction='row'
-				mt={4}>
-				<Text
-					textAlign='left'
-					variant='footer'
-					fontSize='12px'>
-					<Image
-						display='inline-block'
-						src='/ui_icons/info.svg'
-						alt='pro tip'
-						mb='-2px'
-					/>
-					{' '}
-					By pressing the button Save Changes below you&apos;ll have to approve
-					this transaction in your wallet.
-					{' '}
-					<Link
-						href='https://www.notion.so/questbook/FAQs-206fbcbf55fc482593ef6914f8e04a46'
-						isExternal
-					>
-						Learn more
-					</Link>
-					{' '}
-					<Image
-						display='inline-block'
-						src='/ui_icons/link.svg'
-						alt='pro tip'
-						mb='-1px'
-						h='10px'
-						w='10px'
-					/>
-				</Text>
-			</Flex> */}
 
 			<Flex
 				direction='row'
@@ -509,140 +460,33 @@ function EditForm({ workspaceData }: EditFormProps) {
 					]
 				}
 				viewLink={txnLink}
-				onClose={
-					async() => {
-						router.reload()
-					}
-				} />
-		</>
+				onClose={onNetworkModalClose} />
+			<Box my={10} />
+		</Flex>
 	)
 
-	const router = useRouter()
-	const toast = useToast()
-
-	const [editedFormData, setEditedFormData] = useState<SettingsForm>()
-	const [editData, setEditData] = useState<WorkspaceUpdateRequest>()
-	const [editError, setEditError] = useState<EditErrors>({})
-
-	const [partnersRequired, setPartnersRequired] = useState(false)
-	const [partners, setPartners] = useState<PartnersProps[]>([{
-		name: '',
-		industry: '',
-		website: ''
-	}])
-
-	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
-
-	const [, txnLink, loading, isBiconomyInitialised] = useUpdateWorkspace(editData as WorkspaceUpdateRequest, setNetworkTransactionModalStep)
-
 	const { t } = useTranslation()
-
 	const buttonRef = useRef<HTMLButtonElement>(null)
-	const toastRef = useRef<ToastId>()
-
-	const updateEditError = (
-		key: keyof SettingsForm,
-		error: string | undefined
-	) => setEditError((err) => ({ ...err, [key]: error ? { error } : undefined }))
-
-	/**
-	 * Update the edited form data with the newly updated key/value pair
-	 * @param update the updated keys
-	 */
-	const updateFormData = (update: Partial<SettingsForm>) => {
-		for(const key in update) {
-			updateEditError(key as keyof SettingsForm, undefined)
-		}
-
-		if(editedFormData) {
-			setEditedFormData((current) => ({ ...current!, ...update }))
-		}
-	}
-
-	const hasError = (key: keyof SettingsForm) => !!editError[key]
-
-	const handleImageChange = (
-		key: 'image' | 'coverImage',
-		event: React.ChangeEvent<HTMLInputElement>
-	) => {
-		if(event?.target?.files?.length) {
-			const img = event.target.files[0]
-			updateFormData({ [key]: URL.createObjectURL(img) })
-		}
-	}
-
-	const handlePartnerImageChange = (
-		event: React.ChangeEvent<HTMLInputElement>,
-		index: number
-	) => {
-		if(event?.target?.files?.length) {
-			const img = event.target.files[0]
-			if(img.size / 1024 / 1024 <= MAX_IMAGE_SIZE_MB) {
-				const newPartners = [...partners!]
-				newPartners[index].partnerImageHash = URL.createObjectURL(img)
-				updateFormData({ partners: newPartners })
-			} else {
-				toastRef.current = toast({
-					position: 'top',
-					render: () => ErrorToast({
-						content: `Image size exceeds ${MAX_IMAGE_SIZE_MB} MB`,
-						close: () => {
-							if(toastRef.current) {
-								toast.close(toastRef.current)
-							}
-						},
-					}),
-				})
-			}
-		}
-	}
-
-	const handleSubmit = async() => {
-		// if(!editedFormData?.bio?.length) {
-		// 	return updateEditError('bio', 'Please enter a bio')
-		// }
-
-		// if(!editedFormData?.name?.length) {
-		// 	return updateEditError('name', 'Please enter a name')
-		// }
-
-		// if(!editedFormData?.about?.getCurrentContent()?.hasText()) {
-		// 	return updateEditError('about', 'Please enter about')
-		// }
-
-		if(!editedFormData) {
-			return
-		}
-
-		const data = await generateWorkspaceUpdateRequest(
-			editedFormData,
-			workspaceDataToSettingsForm(workspaceData)!
-		)
-
-		if(!Object.keys(data).length) {
-			toast({
-				position: 'bottom-right',
-				title: 'No Changes to Save!',
-				status: 'info',
-				isClosable: true,
-				duration: 3000,
-			})
-			return undefined
-		}
-
-		setEditData(data)
-	}
-
-	useEffect(() => {
-		setEditedFormData(workspaceDataToSettingsForm(workspaceData))
-		if(workspaceData && workspaceData!.partners!.length >= 1) {
-			setPartnersRequired(true)
-			setPartners(JSON.parse(JSON.stringify(workspaceData.partners)))
-		}
-
-	}, [workspaceData])
+	const {
+		workspaceData,
+		editedFormData,
+		updateFormData,
+		partnersRequired,
+		setPartnersRequired,
+		partners,
+		setPartners,
+		hasError,
+		loading,
+		networkTransactionModalStep,
+		isBiconomyInitialised,
+		txnLink,
+		handleImageChange,
+		handlePartnerImageChange,
+		handleSubmit,
+		onNetworkModalClose,
+	} = useSettings()
 
 	return buildComponent()
 }
 
-export default EditForm
+export default Settings
