@@ -85,6 +85,10 @@ function Domains({ workspaces, onWorkspaceClick }: Props) {
 								fontWeight='500'
 							>
 								{CHAIN_INFO[getSupportedChainIdFromWorkspace(workspaceLocal) ?? defaultChainId].name}
+								{' '}
+								-
+								{' '}
+								{workspaceLocal.id}
 							</Text>
 						)
 					}
