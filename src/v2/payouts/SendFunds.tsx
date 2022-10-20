@@ -196,7 +196,7 @@ export default function SendFunds({
 				amount: recepient?.milestones?.[0]?.amount,
 			})
 		)
-		// console.log('txn data', formattedTrxnData)
+		console.log('txn data', formattedTrxnData)
 		setInitiateTransactionData(formattedTrxnData)
 		setGnosisBatchData(formattedTrxnData)
 	}, [sendFundsTo])
