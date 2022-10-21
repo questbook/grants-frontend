@@ -145,7 +145,7 @@ export default function SendFunds({
 				tokenList.push({
 					tokenIcon: token.token.logoUri,
 					tokenName: token.token.symbol,
-					tokenValueAmount: am,
+					tokenValueAmount: token.fiatBalance,
 					usdValueAmount: token.fiatBalance,
 					mintAddress: '',
 					info: {
@@ -351,6 +351,7 @@ export default function SendFunds({
 				initiateTransactionData.map((element: any) => (parseInt(element.applicationId, 16))),
 				initiateTransactionData.map((element: any) => (parseInt(element.selectedMilestone?.id?.split('.')[1]))),
 				rewardAssetAddress,
+				initiateTransactionData.map((element: any) => (element.selectedToken.name.toLowerCase()))[0],
 				'nonEvmAssetAddress-toBeChanged',
 				initiateTransactionData.map((element: any) => Math.floor(element.amount)),
 				workspace.id,
