@@ -4689,7 +4689,7 @@ export type GetWorkspaceMembersByWorkspaceIdQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceMembersByWorkspaceIdQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, addedAt: number }> };
+export type GetWorkspaceMembersByWorkspaceIdQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, addedAt: number, publicKey?: string | null }> };
 
 export type GetWorkspaceMembersPublicKeysQueryVariables = Exact<{
   workspaceId: Scalars['String'];
@@ -7320,6 +7320,7 @@ export const GetWorkspaceMembersByWorkspaceIdDocument = gql`
     profilePictureIpfsHash
     accessLevel
     addedAt
+    publicKey
   }
 }
     `;

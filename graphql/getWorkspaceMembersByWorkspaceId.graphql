@@ -17,5 +17,6 @@ query getWorkspaceMembersByWorkspaceId(
         profilePictureIpfsHash
         accessLevel
         addedAt
+        publicKey
     }
 }
