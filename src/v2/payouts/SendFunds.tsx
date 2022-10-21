@@ -145,7 +145,7 @@ export default function SendFunds({
 				tokenList.push({
 					tokenIcon: token.token.logoUri,
 					tokenName: token.token.symbol,
-					tokenValueAmount: am,
+					tokenValueAmount: token.fiatBalance,
 					usdValueAmount: token.fiatBalance,
 					mintAddress: '',
 					info: {
