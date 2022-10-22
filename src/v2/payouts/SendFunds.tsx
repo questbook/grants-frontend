@@ -141,11 +141,11 @@ export default function SendFunds({
 		getTokenBalance(workspaceSafeChainId, workspaceSafe!).then((res) => {
 			const tokensFetched = res.data
 			tokensFetched.filter((token: any) => token.token).map((token: any) => {
-				const am = (ethers.utils.formatUnits(token.balance, token.token.decimals)).toString()
+				const tokenBalance = (ethers.utils.formatUnits(token.balance, token.token.decimals)).toString()
 				tokenList.push({
 					tokenIcon: token.token.logoUri,
 					tokenName: token.token.symbol,
-					tokenValueAmount: token.fiatBalance,
+					tokenValueAmount: `${token.fiatBalance == '0.0' ? tokenBalance : `${token.fiatBalance} usd`}`,
 					usdValueAmount: token.fiatBalance,
 					mintAddress: '',
 					info: {
@@ -156,7 +156,7 @@ export default function SendFunds({
 				})
 			})
 		})
-		// console.log('fetched tokens', tokenList)
+		console.log('fetched tokens', tokenList)
 		setSafeTokenList(tokenList)
 	}
 
@@ -259,6 +259,10 @@ export default function SendFunds({
 					tokenUSDRate = celoTokensUSDRateMapping['celo-euro'].usd
 				} else if(tokenSelected === 'tether') {
 					tokenUSDRate = celoTokensUSDRateMapping['tether'].usd
+				} else if(tokenSelected === 'spcUSD') {
+					tokenUSDRate = 1
+				} else if(tokenSelected === 'spCELO') {
+					tokenUSDRate = 1
 				}
 			} else {
 				tokenUSDRate = data.selectedToken.info.fiatConversion
