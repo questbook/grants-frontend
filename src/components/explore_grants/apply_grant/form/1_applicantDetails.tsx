@@ -23,7 +23,9 @@ function ApplicantDetails({
 	grantRequiredFields,
 	applicantAddressError,
 	setApplicantAddressError,
-	safeNetwork
+	safeNetwork,
+	resolvedDomain,
+	resolvedDomainError
 }: {
   applicantName: string
   setApplicantName: (applicantName: string) => void
@@ -39,9 +41,10 @@ function ApplicantDetails({
   setApplicantAddressError: (applicantAddressError: boolean) => void
   grantRequiredFields: string[]
   safeNetwork: string
+  resolvedDomain: string
+  resolvedDomainError: boolean
 }) {
 	const { workspace } = useContext(ApiClientsContext)!
-	// console.log('safe network', safeNetwork)
 	const { t } = useTranslation()
 
 	const isSafeOnSolana = (safeNetwork == '9001' || safeNetwork == '90001' || safeNetwork == '900001' || safeNetwork == '9000001')
@@ -93,23 +96,25 @@ function ApplicantDetails({
 			<SingleLineInput
 				label={t('/explore_grants/apply.address')}
 				placeholder={isSafeOnSolana ? '5yDU...' : '0xa2dD...' } //TODO : remove hardcoding of chainId
-				subtext={`${t('/explore_grants/apply.your_address_on')} ${chainNames.get(safeNetwork)}`}
+				subtext={resolvedDomain ? `Unstoppable domain found with owner ${resolvedDomain}` : `${t('/explore_grants/apply.your_address_on')} ${chainNames.get(safeNetwork)}`}
 				onChange={
 					async(e) => {
+						debugger
 						setApplicantAddress(e.target.value)
 						let safeAddressValid = false
 						if(isSafeOnSolana) {
 							const realms = new RealmsSolana('')
 							safeAddressValid = await realms.isValidRecipientAddress(e.target.value)
+							setApplicantAddressError(!safeAddressValid)
 						} else {
 							safeAddressValid = await isValidEthereumAddress(e.target.value)
+							setApplicantAddressError(!safeAddressValid)
 						}
 
 						// console.log('safe address', e.target.value, safeAddressValid)
-						setApplicantAddressError(!safeAddressValid)
 					}
 				}
-				isError={applicantAddressError}
+				isError={applicantAddressError && resolvedDomainError}
 				errorText={t('/explore_grants/apply.invalid_address_on_chain').replace('%CHAIN', chainNames.get(safeNetwork)!.toString())}
 				value={applicantAddress}
 				visible={grantRequiredFields.includes('applicantAddress')}
