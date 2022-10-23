@@ -31,6 +31,7 @@ import { useEncryptPiiForApplication } from 'src/utils/pii'
 import { isValidEmail } from 'src/utils/validationUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import axios from 'axios'
+import logger from 'src/libraries/logger'
 
 interface Props {
 	// onSubmit: (data: any) => void;
@@ -100,6 +101,7 @@ function Form({
 	const [applicantAddressError, setApplicantAddressError] = React.useState(false)
 
 	const [resolvedDomain, setResolvedDomain] = React.useState('')
+	const [resolvedDomainError, setResolvedDomainError] = React.useState(true)
 
 	const [teamMembers, setTeamMembers] = React.useState<number | null>(1)
 	const [teamMembersError, setTeamMembersError] = React.useState(false)
@@ -535,37 +537,44 @@ function Form({
 
 	useEffect(() => {
 		if (applicantAddress && applicantAddress.includes('.')) {
-			const token = '3c5c109c-0763-4ee1-affa-30b6f669214c'
-			// fetch("https://resolve.unstoppabledomains.com/domains/brad.crypto", {
-			// 	headers: {
-			// 		Authorization: `Bearer ${token}`
-			// 	}
-			// })
-			// .then((res) => {console.log("UD ->", res.json())})
-			// .then((data) => console.log("Data ->", data))
-			// .catch((error) => console.log(`Error: ${error}`))
-
+			// setResolvedDomainError(true)
+			const token = process.env.UD_KEY
 			axios.get(`https://resolve.unstoppabledomains.com/domains/${applicantAddress}`, {
 				headers: {
 					Authorization: `Bearer ${token}`
 				}
 			})
 				.then((res) => {
-					console.log("UD ->", res.data)
-					if(res.data.meta.networkId !== safeNetwork) {
-						console.log(`domain not on chain ${safeNetwork}`)
+					logger.info("UD ->", res.data)
+					if(res.data.meta.networkId !== parseInt(safeNetwork)) {
+						logger.info(`domain not on safe network ${safeNetwork}`)
+						setResolvedDomainError(true)
+						// setApplicantAddressError(true)
+					} else if (res.data.meta.owner) {
+						console.log("resolved domain", res.data.meta.owner)
+						setResolvedDomain(res.data.meta.owner)
+						setApplicantAddress(res.data.meta.owner)
+						setResolvedDomainError(false)
+						setApplicantAddressError(false)
 					}
-					if (res.data.meta.owner) {
-						setResolvedDomain(res.data)
-					}
+				}).catch((err) => {
+					logger.error("UD error ->", err)
+					setResolvedDomainError(true)
 				})
 
+		} else if (resolvedDomain){
+			setResolvedDomainError(true)
 		}
 	}, [applicantAddress])
 
-	useEffect(() => {
-		console.log("resolved domain", resolvedDomain)
-	}, [resolvedDomain])
+	// useEffect(() => {
+	// 	logger.info("resolved domain changed", resolvedDomain)
+	// 	debugger
+	// 	if(resolvedDomain) {
+	// 	logger.info("resolved domain in useffect", resolvedDomain)
+	// 	setApplicantAddress(resolvedDomain)
+	// 	}
+	// }, [resolvedDomain])
 
 	return (
 		<Flex
@@ -669,6 +678,8 @@ function Form({
 					setApplicantAddressError={setApplicantAddressError}
 					grantRequiredFields={grantRequiredFields}
 					safeNetwork={safeNetwork!}
+					resolvedDomain={resolvedDomain}
+					resolvedDomainError={resolvedDomainError}
 				/>
 
 				<Box mt='43px' />
