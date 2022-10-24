@@ -279,7 +279,8 @@ const InReviewPanel = ({
 
 
 			<Grid
-				templateColumns='56px 1fr 1fr 1fr'
+				templateColumns='56px 3fr 1fr 1fr 1fr'
+				alignItems='center'
 			>
 				<GridItem
 					display='flex'
@@ -333,12 +334,19 @@ const InReviewPanel = ({
 					</Text>
 				</GridItem>
 
-				<GridItem colSpan={4}>
+				<GridItem colSpan={5}>
 					<Flex
 						bg='#F0F0F7'
 						h='1px'
 					/>
 				</GridItem>
+
+				{/* <GridItem colSpan={4}>
+					<Flex
+						bg='#F0F0F7'
+						h='1px'
+					/>
+				</GridItem> */}
 
 				{/* new ro */}
 
