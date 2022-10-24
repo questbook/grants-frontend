@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
 	Box,
@@ -30,27 +30,29 @@ import { addAuthorizedUser } from 'src/utils/gaslessUtils'
 import { useEncryptPiiForApplication } from 'src/utils/pii'
 import { isValidEmail } from 'src/utils/validationUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
+import axios from 'axios'
+import logger from 'src/libraries/logger'
 
 interface Props {
-  // onSubmit: (data: any) => void;
-  chainId: SupportedChainId | undefined
-  title: string
-  grantId: string
-  daoLogo: string
-  workspaceId: string
-  safeNetwork: string
-  isGrantVerified: boolean
-  funding: string
-  rewardAmount: string
-  rewardCurrency: string
-  rewardDecimal: number | undefined
-  rewardCurrencyCoin: string
-  rewardCurrencyAddress: string | undefined
-  grantRequiredFields: string[]
-  piiFields: string[]
-  acceptingApplications: boolean
-  shouldShowButton: boolean
-  defaultMilestoneFields: any[]
+	// onSubmit: (data: any) => void;
+	chainId: SupportedChainId | undefined
+	title: string
+	grantId: string
+	daoLogo: string
+	workspaceId: string
+	safeNetwork: string
+	isGrantVerified: boolean
+	funding: string
+	rewardAmount: string
+	rewardCurrency: string
+	rewardDecimal: number | undefined
+	rewardCurrencyCoin: string
+	rewardCurrencyAddress: string | undefined
+	grantRequiredFields: string[]
+	piiFields: string[]
+	acceptingApplications: boolean
+	shouldShowButton: boolean
+	defaultMilestoneFields: any[]
 }
 
 // const MINIMUM_ALLOWED_LENGTH = 250
@@ -98,6 +100,9 @@ function Form({
 	const [applicantAddress, setApplicantAddress] = React.useState('')
 	const [applicantAddressError, setApplicantAddressError] = React.useState(false)
 
+	const [resolvedDomain, setResolvedDomain] = React.useState('')
+	const [resolvedDomainError, setResolvedDomainError] = React.useState(true)
+
 	const [teamMembers, setTeamMembers] = React.useState<number | null>(1)
 	const [teamMembersError, setTeamMembersError] = React.useState(false)
 
@@ -123,12 +128,12 @@ function Form({
 			convertFromRaw({
 				entityMap: {},
 				blocks: [
-          {
-          	text: '',
-          	key: 'foo',
-          	type: 'unstyled',
-          	entityRanges: [],
-          } as any,
+					{
+						text: '',
+						key: 'foo',
+						type: 'unstyled',
+						entityRanges: [],
+					} as any,
 				],
 			}),
 		),
@@ -154,7 +159,7 @@ function Form({
 	const { t } = useTranslation()
 
 	React.useEffect(() => {
-		if(defaultMilestoneFields && defaultMilestoneFields.length > 0) {
+		if (defaultMilestoneFields && defaultMilestoneFields.length > 0) {
 			setProjectMilestones(
 				defaultMilestoneFields.map((defaultMilestone) => ({
 					milestone: defaultMilestone.detail,
@@ -171,7 +176,7 @@ function Form({
 
 	const [customFields, setCustomFields] = React.useState<any[]>([])
 	React.useEffect(() => {
-		if(customFields.length > 0) {
+		if (customFields.length > 0) {
 			return
 		}
 
@@ -199,32 +204,32 @@ function Form({
 	)
 
 	React.useEffect(() => {
-		if(nonce && nonce !== 'Token expired') {
+		if (nonce && nonce !== 'Token expired') {
 			return
 		}
 
-		if(signer) {
+		if (signer) {
 			addAuthorizedUser(signer?.address)
 				.then(() => {
 					setShouldRefreshNonce(true)
 					// console.log('Added authorized user', signer.address)
 				})
-				// .catch((err) => console.log("Couldn't add authorized user", err))
+			// .catch((err) => console.log("Couldn't add authorized user", err))
 		}
 	}, [signer, nonce])
 
-	const handleOnSubmit = async() => {
+	const handleOnSubmit = async () => {
 		// console.log(grantRequiredFields)
 		let error = false
-		if(applicantName === '' && grantRequiredFields.includes('applicantName')) {
+		if (applicantName === '' && grantRequiredFields.includes('applicantName')) {
 			setApplicantNameError(true)
 			// console.log('Error name')
 			error = true
 		}
 
-		if(
+		if (
 			(applicantEmail === '' || !isValidEmail(applicantEmail))
-      && grantRequiredFields.includes('applicantEmail')
+			&& grantRequiredFields.includes('applicantEmail')
 		) {
 
 			setApplicantEmailError(true)
@@ -232,14 +237,14 @@ function Form({
 			error = true
 		}
 
-		if(applicantAddress === '' && grantRequiredFields.includes('applicantAddress')) {
+		if (applicantAddress === '' && grantRequiredFields.includes('applicantAddress')) {
 			setApplicantAddressError(true)
 			error = true
 		}
 
-		if(
+		if (
 			(!teamMembers || teamMembers <= 0)
-      && grantRequiredFields.includes('teamMembers')
+			&& grantRequiredFields.includes('teamMembers')
 		) {
 			setTeamMembersError(true)
 			// console.log('Error teamMembers')
@@ -249,9 +254,9 @@ function Form({
 		let membersDescriptionError = false
 		const newMembersDescriptionArray = [...membersDescription]
 		membersDescription.forEach((member, index) => {
-			if(
+			if (
 				member.description === ''
-        && grantRequiredFields.includes('memberDetails')
+				&& grantRequiredFields.includes('memberDetails')
 			) {
 				newMembersDescriptionArray[index].isError = true
 				// console.log('Error memberDetails')
@@ -260,12 +265,12 @@ function Form({
 			}
 		})
 
-		if(membersDescriptionError) {
+		if (membersDescriptionError) {
 			setMembersDescription(newMembersDescriptionArray)
 			error = true
 		}
 
-		if(projectName === '' && grantRequiredFields.includes('projectName')) {
+		if (projectName === '' && grantRequiredFields.includes('projectName')) {
 			setProjectNameError(true)
 			// console.log('Error projectName')
 
@@ -275,13 +280,13 @@ function Form({
 		let projectLinksError = false
 		const newProjectLinks = [...projectLinks]
 		projectLinks.forEach((project, index) => {
-			if(project.link === '' && grantRequiredFields.includes('projectLink')) {
+			if (project.link === '' && grantRequiredFields.includes('projectLink')) {
 				newProjectLinks[index].isError = true
 				projectLinksError = true
 			}
 		})
 
-		if(projectLinksError) {
+		if (projectLinksError) {
 			setProjectLinks(newProjectLinks)
 			error = true
 		}
@@ -291,12 +296,12 @@ function Form({
 		// 	error = true
 		// }
 
-		if(!projectDetails.getCurrentContent().hasText()) {
+		if (!projectDetails.getCurrentContent().hasText()) {
 			setProjectDetailsError(true)
 			error = true
 		}
 
-		if(projectGoal === '' && grantRequiredFields.includes('projectGoals')) {
+		if (projectGoal === '' && grantRequiredFields.includes('projectGoals')) {
 			setProjectGoalError(true)
 			error = true
 		}
@@ -305,18 +310,18 @@ function Form({
 		const newProjectMilestones = [...projectMilestones]
 		console.log('project milestones', newProjectMilestones)
 		projectMilestones.forEach((project, index) => {
-			if(project.milestone === '') {
+			if (project.milestone === '') {
 				newProjectMilestones[index].milestoneIsError = true
 				projectMilestonesError = true
 			}
 
-			if(project.milestoneReward === '') {
+			if (project.milestoneReward === '') {
 				newProjectMilestones[index].milestoneRewardIsError = true
 				projectMilestonesError = true
 			}
 		})
 
-		if(projectMilestonesError) {
+		if (projectMilestonesError) {
 			setProjectMilestones(newProjectMilestones)
 			error = true
 		}
@@ -326,18 +331,18 @@ function Form({
 		// 	error = true
 		// }
 
-		if(
+		if (
 			fundingBreakdown === ''
-      && grantRequiredFields.includes('fundingBreakdown')
+			&& grantRequiredFields.includes('fundingBreakdown')
 		) {
 			setFundingBreakdownError(true)
 			error = true
 		}
 
-		if(customFields.length > 0) {
+		if (customFields.length > 0) {
 			const errorCheckedCustomFields = customFields.map((customField: any) => {
 				const errorCheckedCustomField = { ...customField }
-				if(customField.value.length <= 0) {
+				if (customField.value.length <= 0) {
 					errorCheckedCustomField.isError = true
 					error = true
 				}
@@ -349,7 +354,7 @@ function Form({
 
 		setApplicationError(error)
 
-		if(error) {
+		if (error) {
 			return
 		}
 
@@ -358,7 +363,7 @@ function Form({
 		)
 		const links = projectLinks.map((pl) => pl.link)
 		// console.log('Signer', signer)
-		if(!signer || !signer) {
+		if (!signer || !signer) {
 			return
 		}
 
@@ -399,7 +404,7 @@ function Form({
 			})),
 		}
 		Object.keys(data.fields).forEach((field) => {
-			if(!grantRequiredFields.includes(field)) {
+			if (!grantRequiredFields.includes(field)) {
 				delete data.fields[field as keyof GrantApplicationFieldsSubgraph]
 			}
 		})
@@ -407,7 +412,7 @@ function Form({
 			data.fields[customField.title] = [{ value: customField.value }]
 		})
 
-		if(piiFields.length) {
+		if (piiFields.length) {
 			await encrypt(data, piiFields)
 		}
 
@@ -417,47 +422,47 @@ function Form({
 
 	React.useEffect(() => {
 		// console.log('Key: ', getKey)
-		if(getKey.includes('undefined') || typeof window === 'undefined') {
+		if (getKey.includes('undefined') || typeof window === 'undefined') {
 			return
 		}
 
 		const data = localStorage.getItem(getKey)
-		if(data === 'undefined') {
+		if (data === 'undefined') {
 			return
 		}
 
 		const formDataLocal = typeof window !== 'undefined' ? JSON.parse(data || '{}') : {}
 		// console.log('form data local', formDataLocal)
-		if(formDataLocal?.applicantName) {
+		if (formDataLocal?.applicantName) {
 			setApplicantName(formDataLocal?.applicantName)
 		}
 
-		if(formDataLocal?.applicantEmail) {
+		if (formDataLocal?.applicantEmail) {
 			setApplicantEmail(formDataLocal?.applicantEmail)
 		}
 
-		if(formDataLocal?.applicantAddress) {
+		if (formDataLocal?.applicantAddress) {
 			setApplicantAddress(formDataLocal?.applicantAddress)
 		}
 
-		if(formDataLocal?.teamMembers) {
+		if (formDataLocal?.teamMembers) {
 			setTeamMembers(formDataLocal?.teamMembers)
 		}
 
-		if(formDataLocal?.membersDescription) {
+		if (formDataLocal?.membersDescription) {
 			setMembersDescription(formDataLocal?.membersDescription)
 		}
 
-		if(formDataLocal?.projectName) {
+		if (formDataLocal?.projectName) {
 			setProjectName(formDataLocal?.projectName)
 		}
 
-		if(formDataLocal?.projectLinks) {
+		if (formDataLocal?.projectLinks) {
 			setProjectLinks(formDataLocal?.projectLinks)
 		}
 
 		// console.log('projecttt', formDataLocal.projectDetails)
-		if(formDataLocal?.projectDetails) {
+		if (formDataLocal?.projectDetails) {
 			setProjectDetails(
 				EditorState.createWithContent(
 					convertFromRaw(formDataLocal?.projectDetails),
@@ -465,11 +470,11 @@ function Form({
 			)
 		}
 
-		if(formDataLocal?.projectGoal) {
+		if (formDataLocal?.projectGoal) {
 			setProjectGoal(formDataLocal?.projectGoal)
 		}
 
-		if(formDataLocal?.projectMilestones) {
+		if (formDataLocal?.projectMilestones) {
 			console.log('project milestones', formDataLocal.projectMilestones)
 			setProjectMilestones(formDataLocal?.projectMilestones)
 		}
@@ -478,11 +483,11 @@ function Form({
 		// 	setFundingAsk(formDataLocal?.fundingAsk)
 		// }
 
-		if(formDataLocal?.fundingBreakdown) {
+		if (formDataLocal?.fundingBreakdown) {
 			setFundingBreakdown(formDataLocal?.fundingBreakdown)
 		}
 
-		if(formDataLocal?.customFields) {
+		if (formDataLocal?.customFields) {
 			setCustomFields(formDataLocal?.customFields)
 		}
 
@@ -490,7 +495,7 @@ function Form({
 	}, [getKey])
 
 	React.useEffect(() => {
-		if(getKey.includes('undefined')) {
+		if (getKey.includes('undefined')) {
 			return
 		}
 
@@ -510,7 +515,7 @@ function Form({
 			customFields,
 		}
 		// console.log(JSON.stringify(formDataLocal))
-		if(typeof window !== 'undefined') {
+		if (typeof window !== 'undefined') {
 			localStorage.setItem(getKey, JSON.stringify(formDataLocal))
 		}
 
@@ -529,6 +534,47 @@ function Form({
 		fundingBreakdown,
 		customFields,
 	])
+
+	useEffect(() => {
+		if (applicantAddress && applicantAddress.includes('.')) {
+			// setResolvedDomainError(true)
+			const token = process.env.UD_KEY
+			axios.get(`https://resolve.unstoppabledomains.com/domains/${applicantAddress}`, {
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
+			})
+				.then((res) => {
+					logger.info("UD ->", res.data)
+					if(res.data.meta.networkId !== parseInt(safeNetwork)) {
+						logger.info(`domain not on safe network ${safeNetwork}`)
+						setResolvedDomainError(true)
+						// setApplicantAddressError(true)
+					} else if (res.data.meta.owner) {
+						console.log("resolved domain", res.data.meta.owner)
+						setResolvedDomain(res.data.meta.owner)
+						setApplicantAddress(res.data.meta.owner)
+						setResolvedDomainError(false)
+						setApplicantAddressError(false)
+					}
+				}).catch((err) => {
+					logger.error("UD error ->", err)
+					setResolvedDomainError(true)
+				})
+
+		} else if (resolvedDomain){
+			setResolvedDomainError(true)
+		}
+	}, [applicantAddress])
+
+	// useEffect(() => {
+	// 	logger.info("resolved domain changed", resolvedDomain)
+	// 	debugger
+	// 	if(resolvedDomain) {
+	// 	logger.info("resolved domain in useffect", resolvedDomain)
+	// 	setApplicantAddress(resolvedDomain)
+	// 	}
+	// }, [resolvedDomain])
 
 	return (
 		<Flex
@@ -632,6 +678,8 @@ function Form({
 					setApplicantAddressError={setApplicantAddressError}
 					grantRequiredFields={grantRequiredFields}
 					safeNetwork={safeNetwork!}
+					resolvedDomain={resolvedDomain}
+					resolvedDomainError={resolvedDomainError}
 				/>
 
 				<Box mt='43px' />
@@ -714,7 +762,7 @@ function Form({
 						mt={10}
 						mb={4}
 						disabled={!isBiconomyInitialised}
-						onClick={loading ? () => {} : handleOnSubmit}
+						onClick={loading ? () => { } : handleOnSubmit}
 						mx={10}
 						alignSelf='stretch'
 						variant='primary'
@@ -767,7 +815,7 @@ function Form({
 				}
 				viewLink={txnLink}
 				onClose={
-					async() => {
+					async () => {
 						router.push({ pathname: '/your_applications' })
 					}
 				} />
