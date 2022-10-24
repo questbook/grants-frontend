@@ -492,8 +492,10 @@ const InReviewRow = ({
 							})
 						}
 					</Flex>
-
-
+				</Flex>
+			</GridItem>
+			<GridItem >
+				<Flex align='center'>
 					<Fade in={!someChecked && isHovering}>
 						<Tooltip label='Accept application'>
 							<Button
@@ -544,8 +546,8 @@ const InReviewRow = ({
 							</Button>
 						</Tooltip>
 					</Fade>
-
 				</Flex>
+
 			</GridItem>
 		</>
 	)
