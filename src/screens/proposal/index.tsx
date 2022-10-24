@@ -18,6 +18,7 @@ import ConfirmationModal from 'src/screens/proposal/_components/ConfirmationModa
 import MilestoneDoneModal from 'src/screens/proposal/_components/milestoneDoneModal'
 import MilestoneItem from 'src/screens/proposal/_components/MilestoneItem'
 import RejectProposalModal from 'src/screens/proposal/_components/RejectProposalModal'
+import ScoresPanel from 'src/screens/proposal/_components/ScoresPanel'
 import { useMultiChainQuery } from 'src/screens/proposal/_hooks/useMultiChainQuery'
 import { P } from 'src/screens/proposal/_types'
 import { ChainInfo, CustomField, IApplicantData } from 'src/types'
@@ -38,8 +39,7 @@ function Proposal() {
 			padding={8}>
 			<Flex
 				flex={2}
-				w='100%'
-				h='100%'
+				maxW='75%'
 				flexDirection='column'
 				gap={4}
 			>
@@ -134,7 +134,8 @@ function Proposal() {
 					flexDirection='column'
 					padding={4}>
 					{/* Links */}
-					<Box display={proposalLinks?.length ? '' : 'none'}>
+					<Box
+						display={proposalLinks?.length ? '' : 'none'}>
 						<Heading
 							variant='applicationHeading'>
 							Links
@@ -321,8 +322,6 @@ function Proposal() {
 
 			<Flex
 				flex={1}
-				w='100%'
-				h='100%'
 				direction='column'
 			>
 				<ActionPanel
@@ -440,6 +439,14 @@ function Proposal() {
 						})
 					}
 				</Flex>
+
+				{
+					(proposal?.grant?.rubric?.items?.length || 0) > 0 && (
+						<ScoresPanel
+							proposal={proposal}
+							chainId={chainId} />
+					)
+				}
 
 				<MilestoneDoneModal
 					onSubmit={
@@ -667,8 +674,10 @@ function Proposal() {
 	)
 
 	useEffect(() => {
-		decrypt(proposal!).then(setProposal)
-		logger.info('Decrypted proposal', proposal)
+		decrypt(proposal!).then((decryptedProposal) => {
+			logger.info('Decrypted proposal', decryptedProposal)
+			setProposal(decryptedProposal)
+		})
 	}, [proposal, setProposal, decrypt])
 
 	return buildComponent()
