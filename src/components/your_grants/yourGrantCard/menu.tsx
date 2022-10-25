@@ -65,7 +65,7 @@ function YourGrantMenu({
 	const archivedItems: MenuItemProps[] = [
 		{
 			iconPath: '/ui_icons/view_applicants.svg',
-			text: numOfApplicants > 0 ? 'View applicants' : 'Edit grant',
+			text: numOfApplicants > 0 ? 'View proposals' : 'Edit grant',
 			onClick: () => (numOfApplicants > 0
 				? onViewApplicantsClick?.()
 				: onEditClick?.()),

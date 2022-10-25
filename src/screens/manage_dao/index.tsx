@@ -103,7 +103,7 @@ function ManageDAO() {
 
 	const { workspace } = useContext(ApiClientsContext)!
 	const router = useRouter()
-	const tabs = ['Settings', 'Members']
+	const tabs = ['Profile', 'Members']
 	const [selected, setSelected] = useState(
 		router.query.tab === 'members' ? 1 : 0,
 	)

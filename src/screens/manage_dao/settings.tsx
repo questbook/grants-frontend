@@ -438,7 +438,7 @@ function Settings() {
 
 			<NetworkTransactionModal
 				isOpen={networkTransactionModalStep !== undefined}
-				subtitle='Updating Workspace Details'
+				subtitle='Updating Domain Details'
 				description={
 					<Flex direction='column'>
 						<Text
@@ -456,7 +456,7 @@ function Settings() {
 						'Signing transaction with in-app wallet',
 						'Waiting for transaction to complete on chain',
 						'Indexing transaction on graph protocol',
-						'Workspace Details updated',
+						'Domain Details updated',
 					]
 				}
 				viewLink={txnLink}

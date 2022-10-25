@@ -25,7 +25,7 @@ function CustomFields({
 				Other Information
 				<Tooltip
 					icon='/ui_icons/tooltip_questionmark_brand.svg'
-					label='Additional details for the application form'
+					label='Additional details for the proposal form'
 					placement='bottom-start'
 				/>
 			</Text>
