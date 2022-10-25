@@ -260,8 +260,8 @@ function MigrateToGasless() {
 					return
 				} else if(state === 'no-application-found' && chainId) {
 					toast({
-						title: 'No applications found to migrate',
-						description: `The current network (${walletChain?.name}) your wallet is connected to has no applications. Please switch your network to ${CHAIN_INFO[chainId]?.name} (or some other network) where you have applications`,
+						title: 'No proposals found to migrate',
+						description: `The current network (${walletChain?.name}) your wallet is connected to has no proposals. Please switch your network to ${CHAIN_INFO[chainId]?.name} (or some other network) where you have proposals`,
 						status: 'warning',
 						duration: 9000,
 						isClosable: true,

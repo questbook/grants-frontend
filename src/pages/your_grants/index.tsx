@@ -61,7 +61,7 @@ const TABS = [
 		index: 1,
 		query: {
 			// fetch all expired (including archived) grants
-			acceptingApplications: [true, false],
+			acceptingApplications: [true],
 			minDeadline: 0,
 			maxDeadline: unixTimestampSeconds(),
 		},
@@ -97,7 +97,7 @@ function YourGrants() {
 	const { workspace } = useContext(ApiClientsContext)!
 	const { data: accountData } = useQuestbookAccount()
 
-	const { t } = useTranslation()
+	// const { t } = useTranslation()
 
 	useEffect(() => {
 		if(
@@ -280,16 +280,16 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 	}, [workspace, selectedTab])
 
 	useEffect(() => {
-		if(data.data && data.data.grants && data.data.grants.length > 0) {
+		if((data?.data?.grants?.length || 0) > 0) {
 			// console.log('data.grants', data.data.grants)
 			if(
 				grants.length > 0 &&
-				grants[0].workspace.id === data.data.grants[0].workspace.id &&
+				grants[0].workspace.id === data?.data?.grants?.[0]?.workspace?.id &&
 				grants[0].id !== data.data.grants[0].id
 			) {
 				setGrants([...grants, ...data.data.grants])
 			} else {
-				setGrants(data.data.grants)
+				setGrants(data?.data?.grants ?? [])
 			}
 		}
 	}, [data])
@@ -307,9 +307,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 
 	useEffect(() => {
 		if(
-			allGrantsReviewerData.data &&
-			allGrantsReviewerData.data.grantApplications &&
-			allGrantsReviewerData.data.grantApplications.length > 0
+			(allGrantsReviewerData?.data?.grantApplications?.length || 0) > 0
 		) {
 			// console.log(
 			//	'data.grantsReviewer.raw',
@@ -317,7 +315,7 @@ function YourGrantsAdminView({ isAdmin, isReviewer }: { isAdmin: boolean, isRevi
 			// )
 			// eslint-disable-next-line max-len
 			const newReviewerData = removeDuplicates(
-				allGrantsReviewerData.data.grantApplications,
+				allGrantsReviewerData?.data?.grantApplications ?? [],
 			)
 
 			// console.log('data.grantsReviewer', newReviewerData)

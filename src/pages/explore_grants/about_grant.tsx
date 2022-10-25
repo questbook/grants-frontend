@@ -271,7 +271,7 @@ function AboutGrant() {
 								{
 									shouldShowButton && accountData?.address
 										? 'Grant is archived and cannot be discovered on the Home page.'
-										: 'Grant is archived and closed for new applications.'
+										: 'Grant is archived and closed for new proposals.'
 								}
 							</Text>
 							<Text
@@ -420,7 +420,7 @@ function AboutGrant() {
 					}
 					subtitle={
 						acceptingApplications
-							? 'The grant will no longer be visible to anyone. You will not receive any new applications for it.'
+							? 'The grant will no longer be visible to anyone. You will not receive any new proposals for it.'
 							: 'The grant will be live, and applicants can apply for this grant.'
 					}
 					actionButtonText={acceptingApplications ? 'Archive grant' : 'Publish grant'}

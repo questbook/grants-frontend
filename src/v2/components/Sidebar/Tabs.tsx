@@ -10,7 +10,7 @@ export const TABS = {
 	'dashboard': { name: 'Stats', path: 'dashboard' },
 	'grants_and_bounties': { name: 'Grants', path: 'your_grants' },
 	'safe': { name: 'Multisig Wallet', path: 'safe' },
-	'settings': { name: 'Profile', path: 'manage_dao' },
+	'settings': { name: 'Settings', path: 'manage_dao' },
 } as const
 
 export type Tab = keyof typeof TABS
