@@ -201,7 +201,7 @@ i18next.use(initReactI18next).init({
 					'balance': 'Balance',
 					'could_not_fetch': 'Could not fetch balance',
 					'open': 'Open multisig wallet',
-					'note': 'All grants will be paid out from this multisig wallet.',
+					'note': 'All payouts will be made from this multisig wallet.',
 					'learn_more': 'Learn more about multisig wallets',
 				},
 				'/your_applications': {

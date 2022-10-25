@@ -238,8 +238,8 @@ function YourApplications() {
 								src='/illustrations/empty_states/no_applications.svg'
 								imgHeight='134px'
 								imgWidth='147px'
-								title='No applications'
-								subtitle='All your grant applications are shown here. Discover grants on our home page.'
+								title='No proposals'
+								subtitle='All your grant proposals are shown here. Discover grants on our home page.'
 							/>
 						</Flex>
 					)

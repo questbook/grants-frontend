@@ -51,15 +51,15 @@ const InReviewPanel = ({
 
 	useEffect(() => {
 		if(isAcceptClicked) {
-			setSubtitle('Accepting applications')
+			setSubtitle('Accepting proposals')
 		}
 
 		if(isRejectClicked) {
-			setSubtitle('Rejecting applications')
+			setSubtitle('Rejecting proposals')
 		}
 
 		if(isResubmitClicked) {
-			setSubtitle('Resubmitting applications')
+			setSubtitle('Resubmitting proposals')
 		}
 
 	}, [isAcceptClicked, isRejectClicked, isResubmitClicked])
@@ -512,10 +512,10 @@ const InReviewPanel = ({
 				currentStepIndex={networkTransactionModalStep || 0}
 				steps={
 					[
-						`Updating application${checkedApplicationsIds.length === 1 ? '' : 's'} state`,
+						`Updating proposal${checkedApplicationsIds.length === 1 ? '' : 's'} state`,
 						'Waiting for transaction to complete on chain',
 						'Indexing transaction on graph protocol',
-						`Application${checkedApplicationsIds.length === 1 ? '' : 's'} state updated`,
+						`Proposal${checkedApplicationsIds.length === 1 ? '' : 's'} state updated`,
 					]
 				}
 				viewLink={getExplorerUrlForTxHash(getSupportedChainIdFromWorkspace(workspace) || defaultChainId, txn?.transactionHash)}
