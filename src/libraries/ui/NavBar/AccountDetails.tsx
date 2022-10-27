@@ -17,6 +17,7 @@ import {
 import copy from 'copy-to-clipboard'
 import { WebwalletContext } from 'src/pages/_app'
 import getAvatar from 'src/utils/avatarUtils'
+import { formatAddress } from 'src/utils/formattingUtils'
 
 const IN_APP_WALLET_LEARN_MORE_URL = 'https://blog.questbook.xyz/posts/aug-2022-release/#:~:text=App%20Specific%20Wallet%20%2D%20Zero%20Wallet'
 
@@ -50,17 +51,21 @@ function AccountDetails({ openModal }: Props) {
 						fontSize={15}
 						w='100%'
 						color='v2Grey'>
-						<Text fontWeight='bold'>
-							YOUR IN-APP WALLET
+						<Text
+							variant='v2_body'
+							color='black.3'>
+							Your in-app wallet
 						</Text>
 
 						<Link
 							ml='auto'
-							fontWeight='bold'
-							color='v2Grey'
 							target='_blank'
 							href={IN_APP_WALLET_LEARN_MORE_URL}>
-							Learn More
+							<Text
+								variant='v2_metadata'
+								fontWeight='500'>
+								Learn More
+							</Text>
 						</Link>
 					</Flex>
 
@@ -69,10 +74,11 @@ function AccountDetails({ openModal }: Props) {
 						px={3}
 						pt={1}>
 						<Link
-							onClick={copyScwAddress}
-							fontWeight='bold'
-							color='brandv2'>
-							{scwAddress}
+							onClick={copyScwAddress}>
+							<Text variant='v2_body'>
+								{formatAddress(scwAddress ?? '')}
+							</Text>
+
 						</Link>
 
 						<Box w={3} />
@@ -80,50 +86,33 @@ function AccountDetails({ openModal }: Props) {
 
 					{
 						openModal && (
-							<Button
-								alignSelf='start'
-								ml={3}
-								mt={4}
-								variant='link'
-								leftIcon={<Image src='/ui_icons/export-wallet.svg' />}
-								onClick={() => openModal('export')}>
-								<Text variant='v2_body'>
-									{t('recovery.menu.save_wallet')}
-								</Text>
-							</Button>
-						)
-					}
-
-					{
-						openModal && (
 							<Text
-								variant='v2_body'
-								color='black.2'
-								fontWeight='500'
-								bg='gray.2'
+								ml={3}
 								mt={3}
-								py={2}
-								px={3}>
-								{t('recovery.menu.others')}
+								_hover={{ textDecoration: 'underline', cursor: 'pointer' }}
+								onClick={() => openModal('export')}
+								variant='v2_body'
+								lineHeight='20px'>
+								{t('recovery.menu.save_wallet')}
 							</Text>
 						)
 					}
 
 					{
 						openModal && (
-							<Button
-								alignSelf='start'
+							<Text
 								ml={3}
-								my={3}
-								variant='link'
-								leftIcon={<Image src='/ui_icons/import-wallet.svg' />}
-								onClick={() => openModal('import')}>
-								<Text variant='v2_body'>
-									{t('recovery.menu.use_another_wallet')}
-								</Text>
-							</Button>
+								mt={2}
+								_hover={{ textDecoration: 'underline', cursor: 'pointer' }}
+								onClick={() => openModal('import')}
+								variant='v2_body'
+								lineHeight='20px'>
+								{t('recovery.menu.use_another_wallet')}
+							</Text>
 						)
 					}
+
+					<Box mb={2} />
 				</Flex>
 			</MenuList>
 		</Menu>

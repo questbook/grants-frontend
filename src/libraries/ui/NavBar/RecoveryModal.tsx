@@ -32,8 +32,8 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 							direction='column'
 							align='center'>
 							<Image
-								src='/ui_icons/recovery-icon.svg'
-								boxSize='40px' />
+								src={`/ui_icons/recovery/${type}.svg`}
+								boxSize='48px' />
 							<Text
 								variant='v2_subheading'
 								fontWeight='500'
@@ -43,7 +43,7 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 							<Text
 								variant='v2_body'
 								mt={1}
-								color='black.2'>
+								color='black.3'>
 								{type === 'import' ? `${t('recovery.import.subheading')}` : `${t('recovery.export.subheading')}` }
 							</Text>
 							{
@@ -51,8 +51,18 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 									<Text
 										mt={6}
 										variant='v2_body'
-										fontWeight='500'>
-										{t('recovery.export.warning')}
+									>
+										{t('recovery.export.warning-line-1')}
+									</Text>
+								)
+							}
+							{
+								type === 'export' && (
+									<Text
+										mt={1}
+										variant='v2_body'
+									>
+										{t('recovery.export.warning-line-2')}
 									</Text>
 								)
 							}
