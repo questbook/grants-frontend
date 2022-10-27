@@ -6,8 +6,8 @@ import logger from 'src/utils/logger'
 import Sidebar from 'src/v2/components/Sidebar'
 
 interface Props {
-  children: React.ReactNode
-  renderNavbar?: boolean
+	children: React.ReactNode
+	renderNavbar?: boolean
 	renderSidebar?: boolean
 	renderSearchBar?: boolean
 }

@@ -180,6 +180,13 @@ export default {
 					color: 'gray.5',
 				},
 				py: 2,
+			},
+			primaryCTAv2: {
+				bg: '#0A84FF',
+				color: '#ffffff',
+				padding: '14px 20px',
+				w: '170px',
+				h: '40px',
 			}
 		},
 	},

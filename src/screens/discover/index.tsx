@@ -1,5 +1,5 @@
 import { ReactElement, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { Box, Button, Center, Container, Flex, ToastId, useToast } from '@chakra-ui/react'
+import { Box, Button, Center, Container, Flex, Image, Spacer, Text, ToastId, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import Loader from 'src/components/ui/loader'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
@@ -23,6 +23,7 @@ import { mergeSortedArrays } from 'src/screens/discover/_utils/mergeSortedArrays
 import { chainNames } from 'src/utils/chainNames'
 import getErrorMessage from 'src/utils/errorUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
+import RightArrowIcon from './_components/RightArrowIcon'
 
 const PAGE_SIZE = 10
 
@@ -33,6 +34,25 @@ function Discover() {
 				<Flex
 					direction='column'
 					w='100%'>
+						<Flex
+							direction='row'
+							w='100%'
+							alignItems='stretch'
+							alignContent='stretch'
+							h='460px'>
+							<Flex bgColor='black.1' padding={24} flexDirection='column' textColor='white'  width='600px'>
+								<Text fontWeight='500' fontSize='40px' lineHeight='48px' color='white'>Home for </Text>
+								<Text fontWeight='500' fontSize='40px' lineHeight='48px' color='#FFE900' as='span'> high quality </Text> 
+								<Text fontWeight='500' fontSize='40px' lineHeight='48px'>builders </Text>
+								
+								<Text mt={2} fontSize='16px' lineHeight='24px' fontWeight='400'>Invite proposals from builders. Review and fund proposals with milestones - all on chain.</Text>
+								
+								<Button variant='primaryCTAv2' mt={8} padding={4} rightIcon={<RightArrowIcon/>} w='170px' h='48px' fontWeight='500' lineHeight='20px'>Invite Proposals</Button>
+							</Flex>
+							<Flex bgColor='brand.800' flexGrow={1}  justifyContent='center'>
+								<Image mt={10} src='/illustrations/Browsers.svg' />
+							</Flex>
+						</Flex>
 					<Container
 						maxWidth='1280px'
 						my='16px'
@@ -275,7 +295,7 @@ function Discover() {
 
 Discover.getLayout = function(page: ReactElement) {
 	return (
-		<NavbarLayout renderSearchBar>
+		<NavbarLayout renderSearchBar renderSidebar={false}>
 			{page}
 		</NavbarLayout>
 	)
