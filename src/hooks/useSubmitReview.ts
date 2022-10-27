@@ -163,7 +163,7 @@ export default function useSubmitReview(
 					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
 					setTransactionHash(receipt.transactionHash)
 					setTransactionData(receipt)
-					await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee))
+					await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee), chainId)
 				}
 
 				setCurrentStep(3)

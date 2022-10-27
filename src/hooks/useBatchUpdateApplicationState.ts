@@ -154,7 +154,7 @@ export default function useBatchUpdateApplicationState(
 					setNetworkTransactionModalStep(3)
 
 					setTransactionData(receipt)
-					await chargeGas(Number(workspace?.id), Number(txFee))
+					await chargeGas(Number(workspace?.id), Number(txFee), chainId)
 					setNetworkTransactionModalStep(4)
 				}
 
