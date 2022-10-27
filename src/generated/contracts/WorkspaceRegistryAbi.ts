@@ -57,6 +57,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     "joinViaInviteLink(uint96,string,uint8,uint8,bytes32,bytes32)": FunctionFragment;
     "memberRoles(uint96,address)": FunctionFragment;
     "migrateWallet(address,address)": FunctionFragment;
+    "migrateWalletBatch(address[],address[])": FunctionFragment;
     "owner()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
@@ -96,6 +97,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
       | "joinViaInviteLink"
       | "memberRoles"
       | "migrateWallet"
+      | "migrateWalletBatch"
       | "owner"
       | "pause"
       | "paused"
@@ -209,6 +211,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "migrateWallet",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "migrateWalletBatch",
+    values: [PromiseOrValue<string>[], PromiseOrValue<string>[]]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
@@ -353,6 +359,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     functionFragment: "migrateWallet",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "migrateWalletBatch",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
@@ -417,6 +427,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     "AdminChanged(address,address)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
     "DisburseReward(uint96,uint96,address,address,uint256,bool,uint256)": EventFragment;
+    "DisburseRewardFromSafe(uint96[],uint96[],address,string,string,address,uint256[],bool,uint256)": EventFragment;
     "DisburseRewardFromSafe(uint96[],uint96[],address,string,string,string,address,uint256[],bool,uint256)": EventFragment;
     "FundsTransferStatusUpdated(uint96[],string[],string[],uint256[],uint256[])": EventFragment;
     "Initialized(uint8)": EventFragment;
@@ -437,7 +448,12 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "DisburseReward"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "DisburseRewardFromSafe"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "DisburseRewardFromSafe(uint96[],uint96[],address,string,string,address,uint256[],bool,uint256)"
+  ): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "DisburseRewardFromSafe(uint96[],uint96[],address,string,string,string,address,uint256[],bool,uint256)"
+  ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FundsTransferStatusUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
@@ -491,7 +507,37 @@ export type DisburseRewardEvent = TypedEvent<
 
 export type DisburseRewardEventFilter = TypedEventFilter<DisburseRewardEvent>;
 
-export interface DisburseRewardFromSafeEventObject {
+export interface DisburseRewardFromSafe_uint96_array_uint96_array_address_string_string_address_uint256_array_bool_uint256_EventObject {
+  applicationIds: BigNumber[];
+  milestoneIds: BigNumber[];
+  asset: string;
+  nonEvmAssetAddress: string;
+  transactionHash: string;
+  sender: string;
+  amounts: BigNumber[];
+  isP2P: boolean;
+  time: BigNumber;
+}
+export type DisburseRewardFromSafe_uint96_array_uint96_array_address_string_string_address_uint256_array_bool_uint256_Event =
+  TypedEvent<
+    [
+      BigNumber[],
+      BigNumber[],
+      string,
+      string,
+      string,
+      string,
+      BigNumber[],
+      boolean,
+      BigNumber
+    ],
+    DisburseRewardFromSafe_uint96_array_uint96_array_address_string_string_address_uint256_array_bool_uint256_EventObject
+  >;
+
+export type DisburseRewardFromSafe_uint96_array_uint96_array_address_string_string_address_uint256_array_bool_uint256_EventFilter =
+  TypedEventFilter<DisburseRewardFromSafe_uint96_array_uint96_array_address_string_string_address_uint256_array_bool_uint256_Event>;
+
+export interface DisburseRewardFromSafe_uint96_array_uint96_array_address_string_string_string_address_uint256_array_bool_uint256_EventObject {
   applicationIds: BigNumber[];
   milestoneIds: BigNumber[];
   asset: string;
@@ -503,24 +549,25 @@ export interface DisburseRewardFromSafeEventObject {
   isP2P: boolean;
   time: BigNumber;
 }
-export type DisburseRewardFromSafeEvent = TypedEvent<
-  [
-    BigNumber[],
-    BigNumber[],
-    string,
-    string,
-    string,
-    string,
-    string,
-    BigNumber[],
-    boolean,
-    BigNumber
-  ],
-  DisburseRewardFromSafeEventObject
->;
+export type DisburseRewardFromSafe_uint96_array_uint96_array_address_string_string_string_address_uint256_array_bool_uint256_Event =
+  TypedEvent<
+    [
+      BigNumber[],
+      BigNumber[],
+      string,
+      string,
+      string,
+      string,
+      string,
+      BigNumber[],
+      boolean,
+      BigNumber
+    ],
+    DisburseRewardFromSafe_uint96_array_uint96_array_address_string_string_string_address_uint256_array_bool_uint256_EventObject
+  >;
 
-export type DisburseRewardFromSafeEventFilter =
-  TypedEventFilter<DisburseRewardFromSafeEvent>;
+export type DisburseRewardFromSafe_uint96_array_uint96_array_address_string_string_string_address_uint256_array_bool_uint256_EventFilter =
+  TypedEventFilter<DisburseRewardFromSafe_uint96_array_uint96_array_address_string_string_string_address_uint256_array_bool_uint256_Event>;
 
 export interface FundsTransferStatusUpdatedEventObject {
   applicationId: BigNumber[];
@@ -809,6 +856,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    migrateWalletBatch(
+      fromWallets: PromiseOrValue<string>[],
+      toWallets: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     pause(
@@ -1005,6 +1058,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
   migrateWallet(
     fromWallet: PromiseOrValue<string>,
     toWallet: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  migrateWalletBatch(
+    fromWallets: PromiseOrValue<string>[],
+    toWallets: PromiseOrValue<string>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1205,6 +1264,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    migrateWalletBatch(
+      fromWallets: PromiseOrValue<string>[],
+      toWallets: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     owner(overrides?: CallOverrides): Promise<string>;
 
     pause(overrides?: CallOverrides): Promise<void>;
@@ -1342,6 +1407,17 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       time?: null
     ): DisburseRewardEventFilter;
 
+    "DisburseRewardFromSafe(uint96[],uint96[],address,string,string,address,uint256[],bool,uint256)"(
+      applicationIds?: null,
+      milestoneIds?: null,
+      asset?: null,
+      nonEvmAssetAddress?: null,
+      transactionHash?: null,
+      sender?: null,
+      amounts?: null,
+      isP2P?: null,
+      time?: null
+    ): DisburseRewardFromSafe_uint96_array_uint96_array_address_string_string_address_uint256_array_bool_uint256_EventFilter;
     "DisburseRewardFromSafe(uint96[],uint96[],address,string,string,string,address,uint256[],bool,uint256)"(
       applicationIds?: null,
       milestoneIds?: null,
@@ -1353,19 +1429,7 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       amounts?: null,
       isP2P?: null,
       time?: null
-    ): DisburseRewardFromSafeEventFilter;
-    DisburseRewardFromSafe(
-      applicationIds?: null,
-      milestoneIds?: null,
-      asset?: null,
-      tokenName?: null,
-      nonEvmAssetAddress?: null,
-      transactionHash?: null,
-      sender?: null,
-      amounts?: null,
-      isP2P?: null,
-      time?: null
-    ): DisburseRewardFromSafeEventFilter;
+    ): DisburseRewardFromSafe_uint96_array_uint96_array_address_string_string_string_address_uint256_array_bool_uint256_EventFilter;
 
     "FundsTransferStatusUpdated(uint96[],string[],string[],uint256[],uint256[])"(
       applicationId?: null,
@@ -1609,6 +1673,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    migrateWalletBatch(
+      fromWallets: PromiseOrValue<string>[],
+      toWallets: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     pause(
@@ -1801,6 +1871,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     migrateWallet(
       fromWallet: PromiseOrValue<string>,
       toWallet: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    migrateWalletBatch(
+      fromWallets: PromiseOrValue<string>[],
+      toWallets: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

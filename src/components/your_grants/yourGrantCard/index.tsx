@@ -302,7 +302,7 @@ function YourGrantCard({
 												}
 												display={isAdmin || numOfApplicants > 0 ? undefined : 'none'}
 											>
-												{numOfApplicants > 0 ? 'View applicants' : 'Edit grant'}
+												{numOfApplicants > 0 ? 'View proposals' : 'Edit grant'}
 											</Button>
 										)
 									}

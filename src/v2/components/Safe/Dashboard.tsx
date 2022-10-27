@@ -86,7 +86,7 @@ function Dashboard({ setEdit }: Props) {
 						{workspace?.safe?.address}
 					</Text>
 				</Button>
-				<Text
+				{/* <Text
 					mt={8}
 					variant='v2_body'
 					color='black.3'>
@@ -97,7 +97,7 @@ function Dashboard({ setEdit }: Props) {
 					variant='v2_heading_3'
 					fontWeight='500'>
 					{loadedSafesUSDBalance ? (safesUSDBalance[0]?.amount >= 0 ? `\$${safesUSDBalance[0].amount}` : t('/safe.could_not_fetch')) : 'Loading...'}
-				</Text>
+				</Text> */}
 				<Flex mt={8}>
 					<Button
 						variant='link'

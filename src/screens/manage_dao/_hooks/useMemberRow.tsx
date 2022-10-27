@@ -147,15 +147,20 @@ function useMemberRow(member: Partial<WorkspaceMember>) {
 	}
 
 	const getEncryptedTooltipLabel = () => {
-		if(canAccessEncryptedData()) {
-			return 'Can access encrypted data fields in applications and private reviews'
-		} else {
-			if(member?.actorId === scwAddress?.toLowerCase()) {
-				return 'Cannot access any encrypted data. This might cause reviewers to be unable to submit private reviews. Click on this to fix it.'
+		if(member?.accessLevel !== 'reviewer') {
+			if(canAccessEncryptedData()) {
+				return 'Can access encrypted proposal details and reviews'
 			} else {
-				return 'Cannot access any encrypted data. This might cause reviewers to be unable to submit private reviews.'
+				return 'Cannot access encrypted proposal details and reviews'
+			}
+		} else {
+			if(canAccessEncryptedData()) {
+				return 'Can submit reviews and access encrypted proposal details'
+			} else {
+				return 'Cannot submit reviews and cannot access encrypted proposal details'
 			}
 		}
+
 	}
 
 	const onNetworkModalClose = () => {

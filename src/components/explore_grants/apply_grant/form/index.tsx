@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
 	Box,
@@ -10,6 +10,7 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import { GrantApplicationRequest } from '@questbook/service-validator-client'
+import axios from 'axios'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import { useRouter } from 'next/router'
 import ApplicantDetails from 'src/components/explore_grants/apply_grant/form/1_applicantDetails'
@@ -23,6 +24,7 @@ import { defaultChainId, SupportedChainId, USD_ASSET } from 'src/constants/chain
 import strings from 'src/constants/strings.json'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSubmitApplication from 'src/hooks/useSubmitApplication'
+import logger from 'src/libraries/logger'
 import { WebwalletContext } from 'src/pages/_app'
 import { GrantApplicationFieldsSubgraph } from 'src/types/application'
 import { parseAmount } from 'src/utils/formattingUtils'
@@ -32,25 +34,25 @@ import { isValidEmail } from 'src/utils/validationUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
 interface Props {
-  // onSubmit: (data: any) => void;
-  chainId: SupportedChainId | undefined
-  title: string
-  grantId: string
-  daoLogo: string
-  workspaceId: string
-  safeNetwork: string
-  isGrantVerified: boolean
-  funding: string
-  rewardAmount: string
-  rewardCurrency: string
-  rewardDecimal: number | undefined
-  rewardCurrencyCoin: string
-  rewardCurrencyAddress: string | undefined
-  grantRequiredFields: string[]
-  piiFields: string[]
-  acceptingApplications: boolean
-  shouldShowButton: boolean
-  defaultMilestoneFields: any[]
+	// onSubmit: (data: any) => void;
+	chainId: SupportedChainId | undefined
+	title: string
+	grantId: string
+	daoLogo: string
+	workspaceId: string
+	safeNetwork: string
+	isGrantVerified: boolean
+	funding: string
+	rewardAmount: string
+	rewardCurrency: string
+	rewardDecimal: number | undefined
+	rewardCurrencyCoin: string
+	rewardCurrencyAddress: string | undefined
+	grantRequiredFields: string[]
+	piiFields: string[]
+	acceptingApplications: boolean
+	shouldShowButton: boolean
+	defaultMilestoneFields: any[]
 }
 
 // const MINIMUM_ALLOWED_LENGTH = 250
@@ -98,6 +100,9 @@ function Form({
 	const [applicantAddress, setApplicantAddress] = React.useState('')
 	const [applicantAddressError, setApplicantAddressError] = React.useState(false)
 
+	const [resolvedDomain, setResolvedDomain] = React.useState('')
+	const [resolvedDomainError, setResolvedDomainError] = React.useState(true)
+
 	const [teamMembers, setTeamMembers] = React.useState<number | null>(1)
 	const [teamMembersError, setTeamMembersError] = React.useState(false)
 
@@ -123,12 +128,12 @@ function Form({
 			convertFromRaw({
 				entityMap: {},
 				blocks: [
-          {
-          	text: '',
-          	key: 'foo',
-          	type: 'unstyled',
-          	entityRanges: [],
-          } as any,
+					{
+						text: '',
+						key: 'foo',
+						type: 'unstyled',
+						entityRanges: [],
+					} as any,
 				],
 			}),
 		),
@@ -209,7 +214,7 @@ function Form({
 					setShouldRefreshNonce(true)
 					// console.log('Added authorized user', signer.address)
 				})
-				// .catch((err) => console.log("Couldn't add authorized user", err))
+			// .catch((err) => console.log("Couldn't add authorized user", err))
 		}
 	}, [signer, nonce])
 
@@ -224,7 +229,7 @@ function Form({
 
 		if(
 			(applicantEmail === '' || !isValidEmail(applicantEmail))
-      && grantRequiredFields.includes('applicantEmail')
+			&& grantRequiredFields.includes('applicantEmail')
 		) {
 
 			setApplicantEmailError(true)
@@ -239,7 +244,7 @@ function Form({
 
 		if(
 			(!teamMembers || teamMembers <= 0)
-      && grantRequiredFields.includes('teamMembers')
+			&& grantRequiredFields.includes('teamMembers')
 		) {
 			setTeamMembersError(true)
 			// console.log('Error teamMembers')
@@ -251,7 +256,7 @@ function Form({
 		membersDescription.forEach((member, index) => {
 			if(
 				member.description === ''
-        && grantRequiredFields.includes('memberDetails')
+				&& grantRequiredFields.includes('memberDetails')
 			) {
 				newMembersDescriptionArray[index].isError = true
 				// console.log('Error memberDetails')
@@ -328,7 +333,7 @@ function Form({
 
 		if(
 			fundingBreakdown === ''
-      && grantRequiredFields.includes('fundingBreakdown')
+			&& grantRequiredFields.includes('fundingBreakdown')
 		) {
 			setFundingBreakdownError(true)
 			error = true
@@ -530,6 +535,47 @@ function Form({
 		customFields,
 	])
 
+	useEffect(() => {
+		if(applicantAddress && applicantAddress.includes('.')) {
+			// setResolvedDomainError(true)
+			const token = process.env.UD_KEY
+			axios.get(`https://resolve.unstoppabledomains.com/domains/${applicantAddress}`, {
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
+			})
+				.then((res) => {
+					logger.info('UD ->', res.data)
+					if(res.data.meta.networkId !== parseInt(safeNetwork)) {
+						logger.info(`domain not on safe network ${safeNetwork}`)
+						setResolvedDomainError(true)
+						// setApplicantAddressError(true)
+					} else if(res.data.meta.owner) {
+						console.log('resolved domain', res.data.meta.owner)
+						setResolvedDomain(res.data.meta.owner)
+						setApplicantAddress(res.data.meta.owner)
+						setResolvedDomainError(false)
+						setApplicantAddressError(false)
+					}
+				}).catch((err) => {
+					logger.error('UD error ->', err)
+					setResolvedDomainError(true)
+				})
+
+		} else if(resolvedDomain) {
+			setResolvedDomainError(true)
+		}
+	}, [applicantAddress])
+
+	// useEffect(() => {
+	// 	logger.info("resolved domain changed", resolvedDomain)
+	// 	debugger
+	// 	if(resolvedDomain) {
+	// 	logger.info("resolved domain in useffect", resolvedDomain)
+	// 	setApplicantAddress(resolvedDomain)
+	// 	}
+	// }, [resolvedDomain])
+
 	return (
 		<Flex
 			my='30px'
@@ -565,7 +611,7 @@ function Form({
 								{
 									shouldShowButton && accountData?.address
 										? 'Grant is archived and cannot be discovered on the Home page.'
-										: 'Grant is archived and closed for new applications.'
+										: 'Grant is archived and closed for new proposals.'
 								}
 							</Text>
 							<Text
@@ -632,6 +678,8 @@ function Form({
 					setApplicantAddressError={setApplicantAddressError}
 					grantRequiredFields={grantRequiredFields}
 					safeNetwork={safeNetwork!}
+					resolvedDomain={resolvedDomain}
+					resolvedDomainError={resolvedDomainError}
 				/>
 
 				<Box mt='43px' />
@@ -714,13 +762,13 @@ function Form({
 						mt={10}
 						mb={4}
 						disabled={!isBiconomyInitialised}
-						onClick={loading ? () => {} : handleOnSubmit}
+						onClick={loading ? () => { } : handleOnSubmit}
 						mx={10}
 						alignSelf='stretch'
 						variant='primary'
 						py={loading ? 2 : 0}
 					>
-						{loading ? <Loader /> : 'Submit Application'}
+						{loading ? <Loader /> : 'Submit Proposal'}
 					</Button>
 				)
 			}
@@ -762,7 +810,7 @@ function Form({
 						'Signing transaction with in-app wallet',
 						'Waiting for transaction to complete on chain',
 						'Indexing transaction on graph protocol',
-						'Application submitted on-chain',
+						'Proposal submitted on-chain',
 					]
 				}
 				viewLink={txnLink}

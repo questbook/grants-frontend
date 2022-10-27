@@ -63,6 +63,7 @@ export type IReviewer = { id: string, fullName?: string | null }
 export type IReviewFeedback = {
   isApproved?: boolean
   createdAtS?: number
+  reviewer?: string
   items: FeedbackType[]
   total: number
 }
