@@ -386,7 +386,7 @@ export default function SendFunds({
 
 			// console.log('txFee', txFee)
 			// console.log('receipt: ', receipt)
-			await chargeGas(Number(workspace.id), Number(txFee))
+			await chargeGas(Number(workspace.id), Number(txFee), workspacechainId)
 
 		} catch(e) {
 			console.log('disburse error', e)

@@ -222,7 +222,7 @@ const SetupEvaluationDrawer = ({
 			await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
 			setNetworkTransactionModalStep(4)
 
-			await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee))
+			await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee), chainId)
 			setNetworkTransactionModalStep(5)
 		} catch(e) {
 			setNetworkTransactionModalStep(undefined)

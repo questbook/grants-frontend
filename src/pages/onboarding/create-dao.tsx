@@ -177,7 +177,7 @@ const OnboardingCreateDao = () => {
 
 				await addAuthorizedOwner(workspaceId, webwallet?.address!, scwAddress, daoNetwork.id.toString(),
 					'this is the safe addres - to be updated in the new flow')
-				await chargeGas(workspaceId, Number(txFee))
+				await chargeGas(workspaceId, Number(txFee), daoNetwork?.id)
 			}
 
 			setCurrentStep(5)
