@@ -20,7 +20,7 @@ function FilterTable({ tabs, tabIndex, onChange }: Props) {
 			index={tabIndex}
 			onChange={onChange}
 			h={8}
-			colorScheme='brandv2'>
+		>
 			<TabList>
 				{
 					tabs.map((tab, index) => (
@@ -41,7 +41,6 @@ function FilterTable({ tabs, tabIndex, onChange }: Props) {
 							borderRadius='2px'
 							p={0}
 							mt={5}
-							bg='white'
 							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
 							{tab.element}
 						</TabPanel>
