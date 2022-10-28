@@ -224,7 +224,7 @@ export default function useEditGrant(
 					setCurrentStep(3)
 
 					setTransactionData(receipt)
-					await chargeGas(Number(workspace?.id), Number(txFee))
+					await chargeGas(Number(workspace?.id), Number(txFee), chainId)
 
 					setCurrentStep(4)
 				}

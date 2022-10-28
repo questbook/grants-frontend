@@ -112,7 +112,7 @@ function useMemberRow(member: Partial<WorkspaceMember>) {
 
 			setNetworkTransactionModalStep(3)
 
-			await chargeGas(Number(workspace.id), Number(txFee))
+			await chargeGas(Number(workspace.id), Number(txFee), chainId)
 			setNetworkTransactionModalStep(4)
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {

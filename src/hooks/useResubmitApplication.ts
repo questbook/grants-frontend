@@ -142,7 +142,7 @@ export default function useResubmitApplication(
 					await subgraphClients[currentChainId].waitForBlock(receipt?.blockNumber)
 
 					setCurrentStep(4)
-					await chargeGas(Number(workspace?.id), Number(txFee))
+					await chargeGas(Number(workspace?.id), Number(txFee), chainId)
 				}
 
 				setCurrentStep(5)

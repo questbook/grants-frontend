@@ -168,7 +168,7 @@ export default function useSubmitApplication(
 					setCurrentStep(3)
 
 					setTransactionData(receipt)
-					await chargeGas(Number(workspaceId), Number(txFee))
+					await chargeGas(Number(workspaceId), Number(txFee), chainId)
 
 					setCurrentStep(4)
 				}

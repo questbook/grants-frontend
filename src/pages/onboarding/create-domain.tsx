@@ -233,7 +233,7 @@ const OnboardingCreateDomain = () => {
 				await addAuthorizedOwner(workspaceId, webwallet?.address!, scwAddress, network.toString(),
 					'this is the safe addres - to be updated in the new flow')
 				// console.log('fdsao')
-				await chargeGas(workspaceId, Number(txFee))
+				await chargeGas(workspaceId, Number(txFee), network)
 			}
 
 			setCurrentStep(4)

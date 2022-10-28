@@ -148,7 +148,7 @@ export const useMakeInvite = (role: number) => {
 			if(response) {
 				const { txFee, receipt } = await getTransactionDetails(response, chainId.toString())
 				setTransactionHash?.(receipt?.transactionHash)
-				await chargeGas(workspaceId, Number(txFee))
+				await chargeGas(workspaceId, Number(txFee), chainId)
 			}
 
 			const inviteInfo: InviteInfo = {
@@ -284,7 +284,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 			if(response) {
 				const { txFee, receipt } = await getTransactionDetails(response, inviteInfo?.chainId.toString())
 				setTransactionHash?.(receipt?.transactionHash)
-				await chargeGas(inviteInfo.workspaceId, Number(txFee))
+				await chargeGas(inviteInfo.workspaceId, Number(txFee), inviteInfo.chainId)
 			}
 
 			didReachStep?.('tx-confirmed')

@@ -73,7 +73,7 @@ const TABS = [
 		query: {
 			// fetch all non-expired archived grants
 			acceptingApplications: [false],
-			minDeadline: unixTimestampSeconds(),
+			minDeadline: 0,
 			maxDeadline: UNIX_TIMESTAMP_MAX,
 		},
 		label: 'Archived',
