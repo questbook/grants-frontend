@@ -259,7 +259,7 @@ export default function SendFunds({
 					tokenUSDRate = celoTokensUSDRateMapping['celo-euro'].usd
 				} else if(tokenSelected === 'tether') {
 					tokenUSDRate = celoTokensUSDRateMapping['tether'].usd
-				} else if(tokenSelected === 'spcUSD') {
+				} else if(tokenSelected === 'spcusd') {
 					tokenUSDRate = 1
 				} else if(tokenSelected === 'spCELO') {
 					tokenUSDRate = 1
