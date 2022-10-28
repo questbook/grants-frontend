@@ -47,7 +47,7 @@ function useMemberRow(member: Partial<WorkspaceMember>) {
 
 	const workspaceRegistryContract = useQBContract('workspace', chainId)
 
-	const onSaveClick = async(name?: string) => {
+	const onSaveClick = async(name?: string, enabled?: boolean) => {
 		logger.info({ name, chainId: getSupportedChainIdFromWorkspace(workspace) }, 'WorkspaceMember name')
 
 		try {
@@ -82,7 +82,7 @@ function useMemberRow(member: Partial<WorkspaceMember>) {
 				workspace.id,
 				[member.actorId],
 				[member.accessLevel === 'reviewer' ? 1 : 0],
-				[true],
+				[enabled ?? true],
 				[ipfsHash]
 			]
 
