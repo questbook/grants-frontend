@@ -3,6 +3,7 @@ import { FeedbackType } from 'src/components/your_grants/feedbackDrawer'
 import {
 	ApplicationRegistryAbi,
 	ApplicationReviewRegistryAbi,
+	CommunicationAbi,
 	GrantFactoryAbi,
 	WorkspaceRegistryAbi,
 } from 'src/generated/contracts'
@@ -94,13 +95,15 @@ export type QBContract =
   | 'workspace'
   | 'grantFactory'
   | 'applications'
-  | 'reviews';
+  | 'reviews'
+  | 'communication';
 
 export type QBContractABIMap = {
   workspace: WorkspaceRegistryAbi
   grantFactory: GrantFactoryAbi
   applications: ApplicationRegistryAbi
   reviews: ApplicationReviewRegistryAbi
+  communication: CommunicationAbi
 };
 
 export interface ChainInfo {
