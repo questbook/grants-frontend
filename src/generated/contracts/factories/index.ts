@@ -3,6 +3,7 @@
 /* eslint-disable */
 export { ApplicationRegistryAbi__factory } from "./ApplicationRegistryAbi__factory";
 export { ApplicationReviewRegistryAbi__factory } from "./ApplicationReviewRegistryAbi__factory";
+export { CommunicationAbi__factory } from "./CommunicationAbi__factory";
 export { GrantAbi__factory } from "./GrantAbi__factory";
 export { GrantFactoryAbi__factory } from "./GrantFactoryAbi__factory";
 export { WorkspaceRegistryAbi__factory } from "./WorkspaceRegistryAbi__factory";

@@ -6,6 +6,7 @@ import ApplicationRegistryAbi from 'src/contracts/abi/ApplicationRegistryAbi.jso
 import ApplicationReviewRegistryAbi from 'src/contracts/abi/ApplicationReviewRegistryAbi.json'
 import GrantFactoryAbi from 'src/contracts/abi/GrantFactoryAbi.json'
 import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
+import CommunicationAbi from "src/contracts/abi/CommunicationAbi.json"
 import { QBContract, QBContractABIMap } from 'src/types'
 import { useContract, useSigner } from 'wagmi'
 
@@ -31,4 +32,5 @@ const CONTRACT_INTERFACE_MAP = {
 	grantFactory: GrantFactoryAbi,
 	applications: ApplicationRegistryAbi,
 	reviews: ApplicationReviewRegistryAbi,
+	communication: CommunicationAbi
 } as const

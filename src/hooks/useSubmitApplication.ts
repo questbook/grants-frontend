@@ -1,8 +1,10 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { GrantApplicationRequest } from '@questbook/service-validator-client'
+import axios from 'axios'
+import sha256 from 'crypto-js/sha256'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
-import { APPLICATION_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import { APPLICATION_REGISTRY_ADDRESS, COMMUNICATION_ADDRESS } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
 import strings from 'src/constants/strings.json'
 import useQBContract from 'src/hooks/contracts/useQBContract'
@@ -19,6 +21,7 @@ import logger from 'src/utils/logger'
 
 export default function useSubmitApplication(
 	data: GrantApplicationRequest,
+	email: string,
 	setCurrentStep: (step: number | undefined) => void,
 	chainId?: SupportedChainId,
 	grantId?: string,
@@ -38,6 +41,7 @@ export default function useSubmitApplication(
 
 	const currentChainId = useChainId()
 	const applicationRegistryContract = useQBContract('applications', chainId)
+	const communicationContract = useQBContract('communication', chainId)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
@@ -118,6 +122,8 @@ export default function useSubmitApplication(
 
 		async function validate() {
 			setLoading(true)
+			// logger.info({ data }, 'Submit application data')
+			// return
 			// // console.log('calling validate');
 			try {
 				if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
@@ -168,9 +174,44 @@ export default function useSubmitApplication(
 					setCurrentStep(3)
 
 					setTransactionData(receipt)
-					await chargeGas(Number(workspaceId), Number(txFee), chainId)
+
+					const commTx = await sendGaslessTransaction(
+						biconomy,
+						communicationContract,
+						'createLink',
+						[currentChainId, sha256(email), (await webwallet?.signMessage(email))?.toString()],
+						COMMUNICATION_ADDRESS[currentChainId],
+						biconomyWalletClient,
+						scwAddress,
+						webwallet,
+						`${currentChainId}`,
+						bicoDapps[currentChainId].webHookId,
+						nonce
+					)
 
 					setCurrentStep(4)
+
+					if(commTx) {
+						const { receipt: commReceipt } = await getTransactionDetails(commTx, currentChainId.toString())
+						const txHash = commReceipt.transactionHash
+
+						logger.info({ txHash }, 'Communication tx hash')
+
+						setCurrentStep(5)
+						const ret = await axios.post(`${process.env.API_ENDPOINT}/mapping/create`, {
+							id: scwAddress,
+							chainId: currentChainId,
+							sender: scwAddress,
+							to: email,
+							wallet: webwallet?.address,
+							transactionHash: txHash,
+						})
+
+						if(ret.status === 200) {
+							await chargeGas(Number(workspaceId), Number(txFee), chainId)
+							setCurrentStep(6)
+						}
+					}
 				}
 
 				const CACHE_KEY = strings.cache.apply_grant
