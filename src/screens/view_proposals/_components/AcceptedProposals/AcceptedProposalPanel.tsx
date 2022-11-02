@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 import { QueryResult } from '@apollo/client'
 import { Button, Checkbox, Flex, Grid, GridItem, Text } from '@chakra-ui/react'
 import { GetGrantDetailsQuery, GetGrantDetailsQueryVariables } from 'src/generated/graphql'
+import AcceptedRow from 'src/screens/view_proposals/_components/AcceptedProposals/AcceptedRow'
+import ZeroState from 'src/screens/view_proposals/_components/AcceptedProposals/ZeroState'
 import { IApplicantData } from 'src/types'
-import AcceptedRow from 'src/v2/payouts/AcceptedProposals/AcceptedRow'
-import ZeroState from 'src/v2/payouts/AcceptedProposals/ZeroState'
 
 const AcceptedProposalsPanel = ({
 	rewardAssetDecimals,
@@ -126,7 +126,7 @@ const AcceptedProposalsPanel = ({
 			/>
 
 			<Grid
-				templateColumns='56px 1fr 1fr 1fr'
+				templateColumns='56px 2fr 1fr 1fr 1fr'
 			>
 				<GridItem
 					display='flex'
@@ -180,7 +180,7 @@ const AcceptedProposalsPanel = ({
 					</Text>
 				</GridItem>
 
-				<GridItem colSpan={4}>
+				<GridItem colSpan={5}>
 					<Flex
 						bg='#F0F0F7'
 						h='1px'

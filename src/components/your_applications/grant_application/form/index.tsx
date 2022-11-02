@@ -231,6 +231,7 @@ function Form({
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = React.useState<number>()
 	const [, txnLink, loading, isBiconomyInitialised] = useResubmitApplication(
 		updateData,
+		applicantEmail,
 		setNetworkTransactionModalStep,
 		chainId,
 		applicationID,
@@ -831,6 +832,7 @@ function Form({
 						'Signing transaction with in-app wallet',
 						'Waiting for transaction to complete on chain',
 						'Indexing transaction on graph protocol',
+						'Updating communication channel',
 						'Application resubmitted on-chain',
 					]
 				}

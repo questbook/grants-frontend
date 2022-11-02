@@ -372,6 +372,11 @@
         "internalType": "uint96",
         "name": "_workspaceId",
         "type": "uint96"
+      },
+      {
+        "internalType": "string[]",
+        "name": "feedbackHashes",
+        "type": "string[]"
       }
     ],
     "name": "batchUpdateApplicationState",

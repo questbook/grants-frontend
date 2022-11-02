@@ -494,8 +494,17 @@ const InReviewRow = ({
 					</Flex>
 				</Flex>
 			</GridItem>
-			<GridItem >
-				<Flex align='center'>
+			<GridItem
+				onMouseEnter={() => setIsHovering(true)}
+				onMouseLeave={() => setIsHovering(false)}
+				bg={isHovering ? '#FBFBFD' : 'white'}
+				borderBottom='1px'
+				borderColor='#F0F0F7'
+				display='flex'
+				alignItems='center'>
+				<Flex
+					align='center'
+				>
 					<Fade in={!someChecked && isHovering}>
 						<Tooltip label='Accept application'>
 							<Button
