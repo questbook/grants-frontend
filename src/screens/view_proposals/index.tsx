@@ -3,7 +3,7 @@ import React, {
 } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
-	Box, Container, Flex, forwardRef, IconButton, IconButtonProps, Menu, MenuButton, MenuItem, MenuList, TabList, TabPanel, TabPanels, Tabs, Text, ToastId, useToast
+	Box, Container, Flex, forwardRef, IconButton, IconButtonProps, Menu, MenuButton, MenuItem, MenuList, Text, ToastId, useToast
 } from '@chakra-ui/react'
 import { BigNumber, ethers, logger } from 'ethers'
 import moment from 'moment'
@@ -22,9 +22,14 @@ import {
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useArchiveGrant from 'src/hooks/useArchiveGrant'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
+import FilterTable from 'src/libraries/ui/FilterTable'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { ApiClientsContext } from 'src/pages/_app'
-import { ApplicationMilestone } from 'src/types'
+import AcceptedProposalsPanel from 'src/screens/view_proposals/_components/AcceptedProposals/AcceptedProposalPanel'
+import InReviewPanel from 'src/screens/view_proposals/_components/InReviewProposals/InReviewPanel'
+import RejectedPanel from 'src/screens/view_proposals/_components/RejectedProposals/RejectedPanel'
+import ResubmitPanel from 'src/screens/view_proposals/_components/ResubmitProposals/ResubmitPanel'
+import { ApplicationMilestone, IApplicantData } from 'src/types'
 import { formatAmount, getExplorerUrlForTxHash, getFieldString } from 'src/utils/formattingUtils'
 import { isPlausibleSolanaAddress } from 'src/utils/generics'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
@@ -35,17 +40,12 @@ import { EditPencil } from 'src/v2/assets/custom chakra icons/EditPencil'
 import { ThreeDotsHorizontal } from 'src/v2/assets/custom chakra icons/ThreeDotsHorizontal'
 import { ViewEye } from 'src/v2/assets/custom chakra icons/ViewEye'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
-import StyledTab from 'src/v2/components/StyledTab'
 import NoReviewerBanner from 'src/v2/components/ViewApplicants/NoReviewerBanner'
 import RubricNotSetBanner from 'src/v2/components/ViewApplicants/RubricNotSetBanner'
 import rpcUrls from 'src/v2/constants/publicRpcUrlInfo'
 import { GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
 import { RealmsSolana } from 'src/v2/constants/safe/realms_solana'
 import safeServicesInfo from 'src/v2/constants/safeServicesInfo'
-import AcceptedProposalsPanel from 'src/v2/payouts/AcceptedProposals/AcceptedProposalPanel'
-import InReviewPanel from 'src/v2/payouts/InReviewProposals/InReviewPanel'
-import RejectedPanel from 'src/v2/payouts/RejectedProposals/RejectedPanel'
-import ResubmitPanel from 'src/v2/payouts/ResubmitProposals/ResubmitPanel'
 import SendFunds from 'src/v2/payouts/SendFunds'
 import SetupEvaluationDrawer from 'src/v2/payouts/SetupEvaluationDrawer/SetupEvaluationDrawer'
 import StatsBanner from 'src/v2/payouts/StatsBanner'
@@ -753,8 +753,46 @@ function ViewProposals() {
 					)
 				}
 
+				<FilterTable
+					tabs={
+						[
+							{
+								title: `In Review (${applicantsData.filter((item: IApplicantData) => (0 === item.status)).length})`,
+								element: <InReviewPanel
+									applicantsData={applicantsData}
+									grantData={grantData} />
+							},
+							{
+								title: `Accepted (${applicantsData.filter((item: any) => (2 === item.status)).length})`,
+								element: <AcceptedProposalsPanel
+								// totalMilestonesAmount={totalMilestonesAmt}
+									applicationStatuses={applicationStatuses}
+									applicantsData={applicantsData}
+									onSendFundsClicked={onSendFundsButtonClicked}
+									onBulkSendFundsClicked={onSendFundsButtonClicked}
+									onSetupApplicantEvaluationClicked={() => setRubricDrawerOpen(true)}
+									grantData={grantData}
+									rewardAssetDecimals={rewardAssetDecimals}
+								/>
+							},
+							{
+								title: `Rejected (${applicantsData.filter((item: any) => (3 === item.status)).length})`,
+								element: <RejectedPanel
+									chainId={workspacechainId}
+									applicantsData={applicantsData} />
+							},
+							{
+								title: `Asked to Resubmit (${applicantsData.filter((item: any) => (1 === item.status)).length})`,
+								element: <ResubmitPanel
+									chainId={workspacechainId}
+									applicantsData={applicantsData} />
+							}
+						]
+					}
+					tabIndex={tabIndex}
+					onChange={setTabIndex} />
 
-				<Tabs
+				{/* <Tabs
 					index={tabIndex}
 					onChange={(i) => setTabIndex(i)}
 					h={8}
@@ -823,7 +861,7 @@ function ViewProposals() {
 
 
 					</TabPanels>
-				</Tabs>
+				</Tabs> */}
 
 				<SetupEvaluationDrawer
 					isOpen={rubricDrawerOpen}
