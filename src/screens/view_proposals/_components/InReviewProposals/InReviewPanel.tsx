@@ -5,6 +5,9 @@ import { defaultChainId } from 'src/constants/chains'
 import { GetGrantDetailsQuery } from 'src/generated/graphql'
 import useBatchUpdateApplicationState from 'src/hooks/useBatchUpdateApplicationState'
 import { ApiClientsContext } from 'src/pages/_app'
+import ConfirmationModal from 'src/screens/view_proposals/_components/ConfirmationModal'
+import InReviewRow from 'src/screens/view_proposals/_components/InReviewProposals/InReviewRow'
+import ZeroState from 'src/screens/view_proposals/_components/InReviewProposals/ZeroState'
 import { IApplicantData } from 'src/types'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -12,8 +15,6 @@ import { AcceptApplication } from 'src/v2/assets/custom chakra icons/AcceptAppli
 import { RejectApplication } from 'src/v2/assets/custom chakra icons/RejectApplication'
 import { ResubmitApplication } from 'src/v2/assets/custom chakra icons/ResubmitApplication'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
-import InReviewRow from 'src/v2/payouts/InReviewProposals/InReviewRow'
-import ZeroState from 'src/v2/payouts/InReviewProposals/ZeroState'
 
 const InReviewPanel = ({
 	applicantsData,
@@ -28,6 +29,7 @@ const InReviewPanel = ({
 	const [isRejectClicked, setIsRejectClicked] = useState<boolean>(false)
 	const [isResubmitClicked, setIsResubmitClicked] = useState<boolean>(false)
 	const [isConfirmClicked, setIsConfirmClicked] = useState<boolean>(false)
+	const [feedback, setFeedback] = useState<string>('')
 
 	const { workspace } = useContext(ApiClientsContext)!
 
@@ -100,7 +102,7 @@ const InReviewPanel = ({
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
 
 	const [txn,, loading, isBiconomyInitialised, error] = useBatchUpdateApplicationState(
-		'',
+		feedback,
 		checkedApplicationsIds,
 		state,
 		isConfirmClicked,
@@ -122,12 +124,13 @@ const InReviewPanel = ({
 		txn, error, loading
 	])
 
-	const handleSubmit = (st: number) => {
+	const handleSubmit = (st: number, comment?: string) => {
 		setState(st)
 		setIsConfirmClicked(true)
 		setIsAcceptClicked(false)
 		setIsRejectClicked(false)
 		setIsModalOpen(false)
+		setFeedback(comment || '')
 		// setCurrentStep(0)
 	}
 
@@ -403,7 +406,40 @@ const InReviewPanel = ({
 				}
 			</Grid>
 
-			<Modal
+			<ConfirmationModal
+				isOpen={isModalOpen}
+				onClose={
+					() => {
+						setIsAcceptClicked(false)
+						setIsRejectClicked(false)
+						setIsResubmitClicked(false)
+						setCheckedItems(Array(checkedItems.length).fill(false))
+						setIsModalOpen(false)
+					}
+				}
+				onCancelClick={
+					() => {
+						setIsAcceptClicked(false)
+						setIsRejectClicked(false)
+						setIsResubmitClicked(false)
+						setCheckedItems(Array(checkedItems.length).fill(false))
+						setIsModalOpen(false)
+					}
+				}
+				onConfirmClick={
+					(comment?: string) => {
+						if(isAcceptClicked) {
+							handleSubmit(2, comment)
+						} else if(isResubmitClicked) {
+							handleSubmit(1, comment)
+						} else {
+							handleSubmit(3, comment)
+						}
+					}
+				}
+				type={isAcceptClicked ? 'accept' : isResubmitClicked ? 'resubmit' : 'reject'} />
+
+			{/* <Modal
 				isCentered
 				isOpen={isModalOpen && networkTransactionModalStep === undefined}
 				onClose={
@@ -484,7 +520,7 @@ const InReviewPanel = ({
 						</Button>
 					</ModalFooter>
 				</ModalContent>
-			</Modal>
+			</Modal> */}
 
 			<NetworkTransactionModal
 				isOpen={networkTransactionModalStep !== undefined}
