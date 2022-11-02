@@ -384,6 +384,11 @@ const _abi = [
         name: "_workspaceId",
         type: "uint96",
       },
+      {
+        internalType: "string[]",
+        name: "feedbackHashes",
+        type: "string[]",
+      },
     ],
     name: "batchUpdateApplicationState",
     outputs: [],

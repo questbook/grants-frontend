@@ -3932,6 +3932,8 @@ export type WorkspaceMember = {
   /** Address of the workspace member who added this member */
   addedBy?: Maybe<WorkspaceMember>;
   email?: Maybe<Scalars['String']>;
+  /** An indicator if the person is an active part of the workspace or not */
+  enabled: Scalars['Boolean'];
   /** Full name of the user */
   fullName?: Maybe<Scalars['String']>;
   /** Globally unique ID of the member */
@@ -4022,6 +4024,10 @@ export type WorkspaceMember_Filter = {
   email_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
   email_starts_with?: InputMaybe<Scalars['String']>;
   email_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  enabled?: InputMaybe<Scalars['Boolean']>;
+  enabled_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  enabled_not?: InputMaybe<Scalars['Boolean']>;
+  enabled_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   fullName?: InputMaybe<Scalars['String']>;
   fullName_contains?: InputMaybe<Scalars['String']>;
   fullName_contains_nocase?: InputMaybe<Scalars['String']>;
@@ -4155,6 +4161,7 @@ export enum WorkspaceMember_OrderBy {
   AddedAt = 'addedAt',
   AddedBy = 'addedBy',
   Email = 'email',
+  Enabled = 'enabled',
   FullName = 'fullName',
   Id = 'id',
   LastKnownTxHash = 'lastKnownTxHash',

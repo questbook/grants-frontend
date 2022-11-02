@@ -1,8 +1,10 @@
 import React, { useContext, useEffect } from 'react'
 import { ToastId, useToast } from '@chakra-ui/react'
 import { GrantApplicationUpdate } from '@questbook/service-validator-client'
+import axios from 'axios'
+import sha256 from 'crypto-js/sha256'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
-import { APPLICATION_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import { APPLICATION_REGISTRY_ADDRESS, COMMUNICATION_ADDRESS } from 'src/constants/addresses'
 import { SupportedChainId } from 'src/constants/chains'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
@@ -18,6 +20,7 @@ import logger from 'src/utils/logger'
 
 export default function useResubmitApplication(
 	data: GrantApplicationUpdate,
+	email: string,
 	setCurrentStep: (step: number | undefined) => void,
 	chainId?: SupportedChainId,
 	applicationId?: string,
@@ -34,6 +37,7 @@ export default function useResubmitApplication(
 
 	const currentChainId = useChainId()
 	const applicationRegistryContract = useQBContract('applications', chainId)
+	const communicationContract = useQBContract('communication', chainId)
 
 	const toastRef = React.useRef<ToastId>()
 	const toast = useToast()
@@ -141,11 +145,48 @@ export default function useResubmitApplication(
 
 					await subgraphClients[currentChainId].waitForBlock(receipt?.blockNumber)
 
-					setCurrentStep(4)
-					await chargeGas(Number(workspace?.id), Number(txFee), chainId)
+					const commTx = await sendGaslessTransaction(
+						biconomy,
+						communicationContract,
+						'createLink',
+						[currentChainId, sha256(email), (await webwallet?.signMessage(email))?.toString()],
+						COMMUNICATION_ADDRESS[currentChainId],
+						biconomyWalletClient,
+						scwAddress,
+						webwallet,
+						`${currentChainId}`,
+						bicoDapps[currentChainId].webHookId,
+						nonce
+					)
+
+					if(commTx) {
+						const { receipt: commReceipt } = await getTransactionDetails(commTx, currentChainId.toString())
+						const txHash = commReceipt.transactionHash
+
+						logger.info({ txHash }, 'Communication tx hash')
+
+						const ret = await axios.post(`${process.env.API_ENDPOINT}/mapping/create`, {
+							id: scwAddress,
+							chainId: currentChainId,
+							sender: scwAddress,
+							to: email,
+							wallet: webwallet?.address,
+							transactionHash: txHash,
+						})
+
+						if(ret.status === 200) {
+							setCurrentStep(5)
+
+							setTransactionData(receipt)
+							await chargeGas(Number(workspace?.id), Number(txFee), chainId)
+						}
+					}
+
+					// setCurrentStep(4)
+					// await chargeGas(Number(workspace?.id), Number(txFee), chainId)
 				}
 
-				setCurrentStep(5)
+				setCurrentStep(6)
 
 				setLoading(false)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any

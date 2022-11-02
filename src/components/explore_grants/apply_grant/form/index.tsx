@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
 	Box,
@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react'
 import { GrantApplicationRequest } from '@questbook/service-validator-client'
 import axios from 'axios'
+import sha256 from 'crypto-js/sha256'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import { useRouter } from 'next/router'
 import ApplicantDetails from 'src/components/explore_grants/apply_grant/form/1_applicantDetails'
@@ -197,6 +198,7 @@ function Form({
 	const [formData, setFormData] = React.useState<GrantApplicationRequest>()
 	const [, txnLink, loading, isBiconomyInitialised] = useSubmitApplication(
 		formData!,
+		applicantEmail,
 		setNetworkTransactionModalStep,
 		chainId,
 		grantId,
@@ -366,7 +368,6 @@ function Form({
 		if(!signer || !signer) {
 			return
 		}
-
 
 		const data: GrantApplicationRequest = {
 			grantId,
@@ -810,6 +811,7 @@ function Form({
 						'Signing transaction with in-app wallet',
 						'Waiting for transaction to complete on chain',
 						'Indexing transaction on graph protocol',
+						'Setting up communication channel',
 						'Proposal submitted on-chain',
 					]
 				}
