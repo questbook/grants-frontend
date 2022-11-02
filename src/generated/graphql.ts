@@ -3932,6 +3932,8 @@ export type WorkspaceMember = {
   /** Address of the workspace member who added this member */
   addedBy?: Maybe<WorkspaceMember>;
   email?: Maybe<Scalars['String']>;
+  /** An indicator if the person is an active part of the workspace or not */
+  enabled: Scalars['Boolean'];
   /** Full name of the user */
   fullName?: Maybe<Scalars['String']>;
   /** Globally unique ID of the member */
@@ -4022,6 +4024,10 @@ export type WorkspaceMember_Filter = {
   email_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
   email_starts_with?: InputMaybe<Scalars['String']>;
   email_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  enabled?: InputMaybe<Scalars['Boolean']>;
+  enabled_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  enabled_not?: InputMaybe<Scalars['Boolean']>;
+  enabled_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   fullName?: InputMaybe<Scalars['String']>;
   fullName_contains?: InputMaybe<Scalars['String']>;
   fullName_contains_nocase?: InputMaybe<Scalars['String']>;
@@ -4155,6 +4161,7 @@ export enum WorkspaceMember_OrderBy {
   AddedAt = 'addedAt',
   AddedBy = 'addedBy',
   Email = 'email',
+  Enabled = 'enabled',
   FullName = 'fullName',
   Id = 'id',
   LastKnownTxHash = 'lastKnownTxHash',
@@ -4540,6 +4547,11 @@ export type GetProfileDetailsQueryVariables = Exact<{
 
 export type GetProfileDetailsQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork> } }>, grantApplications: Array<{ __typename?: 'GrantApplication', id: string, grant: { __typename?: 'Grant', workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork> } } }> };
 
+export type GetAllApplicationsOnANetworkQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllApplicationsOnANetworkQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string }> };
+
 export type GetAllGrantsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
@@ -4670,7 +4682,7 @@ export type GetDaOsForExploreQueryVariables = Exact<{
 }>;
 
 
-export type GetDaOsForExploreQuery = { __typename?: 'Query', workspaces: Array<{ __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, createdAtS: number, mostRecentGrantPostedAtS: number, numberOfApplications: number, numberOfApplicationsSelected: number, totalGrantFundingDisbursedUSD: number }> };
+export type GetDaOsForExploreQuery = { __typename?: 'Query', workspaces: Array<{ __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, createdAtS: number, mostRecentGrantPostedAtS: number, numberOfApplications: number, numberOfApplicationsSelected: number, totalGrantFundingDisbursedUSD: number, safe?: { __typename?: 'WorkspaceSafe', address: string } | null }> };
 
 export type GetFundSentforReviewerQueryVariables = Exact<{
   type?: InputMaybe<FundsTransferType>;
@@ -4954,6 +4966,40 @@ export function useGetProfileDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetProfileDetailsQueryHookResult = ReturnType<typeof useGetProfileDetailsQuery>;
 export type GetProfileDetailsLazyQueryHookResult = ReturnType<typeof useGetProfileDetailsLazyQuery>;
 export type GetProfileDetailsQueryResult = Apollo.QueryResult<GetProfileDetailsQuery, GetProfileDetailsQueryVariables>;
+export const GetAllApplicationsOnANetworkDocument = gql`
+    query getAllApplicationsOnANetwork {
+  grantApplications {
+    id
+  }
+}
+    `;
+
+/**
+ * __useGetAllApplicationsOnANetworkQuery__
+ *
+ * To run a query within a React component, call `useGetAllApplicationsOnANetworkQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllApplicationsOnANetworkQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllApplicationsOnANetworkQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllApplicationsOnANetworkQuery(baseOptions?: Apollo.QueryHookOptions<GetAllApplicationsOnANetworkQuery, GetAllApplicationsOnANetworkQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllApplicationsOnANetworkQuery, GetAllApplicationsOnANetworkQueryVariables>(GetAllApplicationsOnANetworkDocument, options);
+      }
+export function useGetAllApplicationsOnANetworkLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllApplicationsOnANetworkQuery, GetAllApplicationsOnANetworkQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllApplicationsOnANetworkQuery, GetAllApplicationsOnANetworkQueryVariables>(GetAllApplicationsOnANetworkDocument, options);
+        }
+export type GetAllApplicationsOnANetworkQueryHookResult = ReturnType<typeof useGetAllApplicationsOnANetworkQuery>;
+export type GetAllApplicationsOnANetworkLazyQueryHookResult = ReturnType<typeof useGetAllApplicationsOnANetworkLazyQuery>;
+export type GetAllApplicationsOnANetworkQueryResult = Apollo.QueryResult<GetAllApplicationsOnANetworkQuery, GetAllApplicationsOnANetworkQueryVariables>;
 export const GetAllGrantsDocument = gql`
     query getAllGrants($first: Int, $skip: Int, $applicantId: Bytes!, $minDeadline: Int!) {
   grants(
@@ -6032,6 +6078,9 @@ export const GetDaOsForExploreDocument = gql`
     title
     isVisible
     logoIpfsHash
+    safe {
+      address
+    }
     supportedNetworks
     createdAtS
     mostRecentGrantPostedAtS

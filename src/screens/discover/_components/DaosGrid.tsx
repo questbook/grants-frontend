@@ -40,13 +40,6 @@ function AllDaosGrid({
 
 		>
 			{
-				renderGetStarted && (
-					<GridItem key='get-started'>
-						<GetStartedCard />
-					</GridItem>
-				)
-			}
-			{
 				workspaces.map((workspace, index: number) => {
 					const workspaceChainId = getSupportedChainIdFromWorkspace(workspace)
 
@@ -62,6 +55,7 @@ function AllDaosGrid({
 										getUrlForIPFSHash(workspace.logoIpfsHash!)
 								}
 								name={workspace.title}
+								safeAddress={workspace.safe?.address!}
 								daoId={workspace.id}
 								chainId={workspaceChainId}
 								noOfApplicants={workspace.numberOfApplications}

@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Box, Flex, Image, Switch, Text } from '@chakra-ui/react'
+import { Box, Divider, Flex, Image, Spacer, Switch, Tag, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import SupportedChainId from 'src/generated/SupportedChainId'
+import { formatAddress } from 'src/utils/formattingUtils'
 
 type DaoCardProps = {
 	logo: string
 	name: string
+	safeAddress: string
 	isVisible: boolean
 	onVisibilityUpdate?: (visibleState: boolean) => void
 	isAdmin: boolean
@@ -16,14 +18,13 @@ type DaoCardProps = {
 	totalAmount: number
 }
 
-function DaoCard({ logo, isAdmin, name, daoId, chainId, noOfApplicants, totalAmount, onVisibilityUpdate, isVisible }: DaoCardProps) {
+function DaoCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfApplicants, totalAmount, onVisibilityUpdate, isVisible }: DaoCardProps) {
 	const router = useRouter()
 	const [isActive, setIsActive] = useState(false)
 	const { t } = useTranslation()
 	return (
 		<Box
 			w='100%'
-			h='172px'
 			background='white'
 			p='24px'
 			position='relative'
@@ -43,7 +44,7 @@ function DaoCard({ logo, isAdmin, name, daoId, chainId, noOfApplicants, totalAmo
 			onClick={
 				(e) => {
 					// returning as onClick fired from dao visibility toggle switch for admins
-					if(isAdmin && [
+					if (isAdmin && [
 						'[object HTMLSpanElement]',
 						'[object HTMLLabelElement]',
 						'[object HTMLInputElement]',
@@ -60,84 +61,92 @@ function DaoCard({ logo, isAdmin, name, daoId, chainId, noOfApplicants, totalAmo
 					})
 				}
 			}>
-			<Flex>
-				<Image
-					src={logo}
-					my='8px'
-					w='56px'
-					h='56px'
-					objectFit='cover'
-					borderRadius='4px' />
+			<Flex flexDirection='column' gap={4}>
+				<Flex>
+					<Image
+						src={logo}
+						my='8px'
+						w='56px'
+						h='56px'
+						objectFit='cover'
+						borderRadius='4px' />
+					{
+						isAdmin && (
+							<Switch
+								size='md'
+								mx='10px'
+								height='20px'
+								borderRadius={0}
+								colorScheme='green'
+								isChecked={isVisible}
+								onChange={() => onVisibilityUpdate?.(!isVisible)}
+							/>
+						)
+					}
+				</Flex>
+				
 				<Text
-					ml='auto'
-					fontWeight='700'
-					fontSize='12px'>
-					{noOfApplicants}
+					fontSize='20px'
+					fontWeight='500'
+					noOfLines={1}>
+					{name}
 				</Text>
-				<Text
-					ml='3px'
-					color='#555570'
-					fontSize='12px'>
-					{t('/.cards.proposals')}
-				</Text>
+				<Tag mt='-14px' color='#767471' bgColor='#F1EEE8' fontSize='12px' fontWeight='500' lineHeight='16px' maxWidth='max-content' minHeight='0' paddingStart={1} paddingEnd={1}>
+					{safeAddress ? formatAddress(safeAddress): ''}
+				</Tag>
+				<Divider />
+				<Flex justifyContent='space-between' mt={2}>
+					<Flex alignItems='center'>
+						<Text
+							fontSize='18px'
+							fontWeight='500'>
+							$
+							{totalAmount ? totalAmount.toLocaleString() : 0}
+						</Text>
+						<Text
+							ml='5px'
+							fontSize='14px'
+							color='#555570'>
+							{t('/.cards.in_grants')}
+						</Text>
+					</Flex>
+					<Flex alignItems='center'>
+						<Text
+							fontSize='18px'
+							fontWeight='500'>
+							{noOfApplicants}
+						</Text>
+						<Text ml='5px'
+							fontSize='14px'
+							color='#555570'>
+							Proposals
+						</Text>
+					</Flex>
+				</Flex>
 				{
-					isAdmin && (
-						<Switch
-							size='md'
-							mx='10px'
-							height='20px'
-							borderRadius={0}
-							colorScheme='green'
-							isChecked={isVisible}
-							onChange={() => onVisibilityUpdate?.(!isVisible)}
-						/>
+					isActive && (
+						<Box
+							position='absolute'
+							bottom={0}
+							right={0}
+							p='24px'
+							display='flex'
+							alignItems='center'
+							as='button'
+							onClick={() => { }}>
+
+							<Text
+								fontSize='14px'
+								fontWeight='500'
+								color='#1F1F33'
+								mr='8px'>
+								{t('/.cards.submit_proposal')}
+							</Text>
+							<Image src='/ui_icons/black_right_arrow.svg' />
+						</Box>
 					)
 				}
 			</Flex>
-			<Text
-				fontSize='20px'
-				fontWeight='500'
-				mb='5px'
-				noOfLines={1}>
-				{name}
-			</Text>
-			<Flex>
-				<Text
-					fontSize='14px'
-					fontWeight='600'>
-					$
-					{totalAmount ? totalAmount.toLocaleString() : 0}
-				</Text>
-				<Text
-					ml='5px'
-					fontSize='14px'
-					color='#555570'>
-					{t('/.cards.in_grants')}
-				</Text>
-			</Flex>
-			{
-				isActive && (
-					<Box
-						position='absolute'
-						bottom={0}
-						right={0}
-						p='24px'
-						display='flex'
-						alignItems='center'
-						as='button'
-						onClick={() => {}}>
-
-						<Text
-							fontSize='14px'
-							fontWeight='500'
-							color='#1F1F33'
-							mr='8px'>
-							{t('/.cards.submit_proposal')}
-						</Text>
-						<Image src='/ui_icons/black_right_arrow.svg' />
-					</Box>
-				)
-			}
 		</Box>
 	)
 }

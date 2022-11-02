@@ -5,10 +5,12 @@ import Loader from 'src/components/ui/loader'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import {
 	GetDaOsForExploreQuery,
+	useGetAllApplicationsOnANetworkQuery,
 	useGetDaOsForExploreQuery,
 	Workspace_Filter as WorkspaceFilter,
 	Workspace_OrderBy as WorkspaceOrderBy,
 } from 'src/generated/graphql'
+import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { DAOSearchContext } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
@@ -34,6 +36,7 @@ function Discover() {
 				<Flex
 					direction='column'
 					w='100%'>
+						{/* Start Hero Container */}
 						<Flex
 							direction='row'
 							w='100%'
@@ -41,9 +44,8 @@ function Discover() {
 							alignContent='stretch'
 							h='460px'>
 							<Flex bgColor='black.1' padding={24} flexDirection='column' textColor='white'  width='600px'>
-								<Text fontWeight='500' fontSize='40px' lineHeight='48px' color='white'>Home for </Text>
-								<Text fontWeight='500' fontSize='40px' lineHeight='48px' color='#FFE900' as='span'> high quality </Text> 
-								<Text fontWeight='500' fontSize='40px' lineHeight='48px'>builders </Text>
+								<Text fontWeight='500' fontSize='40px' lineHeight='48px' color='white'>Home for 
+								<Text fontWeight='500' fontSize='40px' lineHeight='48px' color='#FFE900' as='span'> high quality </Text> builders</Text>
 								
 								<Text mt={2} fontSize='16px' lineHeight='24px' fontWeight='400'>Invite proposals from builders. Review and fund proposals with milestones - all on chain.</Text>
 								
@@ -53,16 +55,37 @@ function Discover() {
 								<Image mt={10} src='/illustrations/Browsers.svg' />
 							</Flex>
 						</Flex>
+						{/* End Hero Container */}
+
+						{/* Start Stats Banner */}
+						<Flex bgColor='#F1EEE8' padding={8} gap={4} justifyContent='space-evenly'>
+							<Flex flexDirection='column' alignItems='center'>
+								<Text fontWeight='500' fontSize='40px' lineHeight='48px'>20000+</Text>
+								<Text fontWeight='500' fontSize='15px' lineHeight='22px' textTransform='uppercase'>Builders</Text>
+							</Flex>
+							<Flex flexDirection='column' alignItems='center'>
+								<Text fontWeight='500' fontSize='40px' lineHeight='48px'>$2m+</Text>
+								<Text fontWeight='500' fontSize='15px' lineHeight='22px' textTransform='uppercase'>Paid Out</Text>
+							</Flex>
+							<Flex flexDirection='column' alignItems='center'>
+								<Text fontWeight='500' fontSize='40px' lineHeight='48px'>1000+</Text>
+								<Text fontWeight='500' fontSize='15px' lineHeight='22px' textTransform='uppercase'>Proposals</Text>
+							</Flex>
+						</Flex>
+						{/* End Stats Banner */}
 					<Container
 						maxWidth='1280px'
-						my='16px'
+						
 						w='100%'>
 						{
 							isQbAdmin === undefined ? (
 								<Center>
 									<Loader />
 								</Center>
-							) : (
+							) : (<>
+								<Box my={4}>
+									<Text fontWeight='500' fontSize='24px' lineHeight='32px'>Discover</Text>
+								</Box>
 								<DaosGrid
 									renderGetStarted
 									isAdmin={isQbAdmin}
@@ -71,6 +94,7 @@ function Discover() {
 									hasMore={hasMoreDaos}
 									fetchMore={fetchMoreDaos}
 									workspaces={totalDaos} />
+								</>
 							)
 						}
 					</Container>
@@ -246,6 +270,14 @@ function Discover() {
 		}),
 	)
 
+	// TODO: get all proposals from all the networks from the backend
+	const { results: proposals, fetchMore: fetchMoreApplications } = useMultiChainQuery({
+		useQuery: useGetAllApplicationsOnANetworkQuery,
+		options: {
+			
+		}
+	})
+
 	const totalDaos = useMemo(() => {
 		let exploreDaos = [...(daos ?? [])]
 
@@ -260,6 +292,10 @@ function Discover() {
 			...exploreDaos,
 		]
 	}, [daos, myDaos])
+
+	useEffect(() => {
+		console.log('proposals', proposals)
+	}, [proposals])
 
 	useEffect(() => {
 		try {
