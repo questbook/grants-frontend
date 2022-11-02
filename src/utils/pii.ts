@@ -127,7 +127,7 @@ export function useGetPublicKeysOfGrantManagers(grantId: string | undefined, cha
 			})
 			const result: { [address: string]: string | null } = {}
 			for(const { member } of (data?.grantManagers || [])) {
-				if(member) {
+				if(member?.enabled) {
 					result[member.actorId] = member.publicKey || null
 				}
 			}
