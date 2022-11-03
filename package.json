@@ -69,6 +69,7 @@
     "react-datepicker": "^4.6.0",
     "react-dom": "^17.0.2",
     "react-i18next": "^11.18.6",
+    "react-icons": "^4.6.0",
     "react-linkify": "^1.0.0-alpha",
     "urql": "^2.2.1",
     "wagmi": "^0.6.5"

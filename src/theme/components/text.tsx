@@ -86,6 +86,11 @@ export default {
 				fontSize: '24px',
 				lineHeight: '32px',
 				fontWeight: '500',
+			},
+			requestProposalBody: {
+				fontSize: '20px',
+				fontWeight: '400',
+				lineHeight: '28px',
 			}
 		},
 	},

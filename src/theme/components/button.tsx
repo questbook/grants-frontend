@@ -184,7 +184,10 @@ export default {
 			primaryCTAv2: {
 				bg: '#0A84FF',
 				color: '#ffffff',
-				padding: '14px 20px',
+				paddingTop: '14px',
+				paddingBottom: '14px',
+				paddingLeft: '48px',
+				paddingRight: '48px',
 				w: '170px',
 				h: '40px',
 			}
