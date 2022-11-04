@@ -49,7 +49,7 @@ function Discover() {
 								
 								<Text mt={2} fontSize='16px' lineHeight='24px' fontWeight='400'>Invite proposals from builders. Review and fund proposals with milestones - all on chain.</Text>
 								
-								<Button variant='primaryCTAv2' mt={8} padding={4} rightIcon={<RightArrowIcon/>} w='170px' h='48px' fontWeight='500' lineHeight='20px'>Invite Proposals</Button>
+								<Button variant='primaryLarge' mt={8} padding={4} rightIcon={<RightArrowIcon/>}  lineHeight='20px'>Invite Proposals</Button>
 							</Flex>
 							<Flex bgColor='brand.800' flexGrow={1}  justifyContent='center'>
 								<Image mt={10} src='/illustrations/Browsers.svg' />

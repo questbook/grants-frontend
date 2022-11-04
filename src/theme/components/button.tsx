@@ -181,12 +181,26 @@ export default {
 				},
 				py: 2,
 			},
-			primaryCTAv2: {
+			primaryLarge: {
 				bg: '#0A84FF',
-				color: '#ffffff',
-				padding: '14px 20px',
+				color: 'white',
+				paddingY: '14px',
+				paddingX: '40px',
+				fontWeight: '500',
 				w: '170px',
-				h: '40px',
+				h: '48px',
+				borderRadius: '2px'
+			},
+			primaryMedium: {
+				bg: '#0A84FF',
+				color: 'white',
+				paddingY: '8px',
+				paddingX: '16px',
+				fontWeight: '500',
+				fontSize: '14px',
+				w: '170px', // Note: the values for height and width will be changed
+				h: '48px',
+				borderRadius: '2px'
 			}
 		},
 	},

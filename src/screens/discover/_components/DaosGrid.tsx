@@ -35,7 +35,7 @@ function AllDaosGrid({
 			w='100%'
 			maxWidth='1280px'
 
-			templateColumns={{ md: 'repeat(1, 1fr)', lg: 'repeat(3, 1fr)' }}
+			templateColumns={{ md: 'repeat(1, 1fr)', lg: 'repeat(4, 1fr)' }}
 			gap={6}
 
 		>
