@@ -11,6 +11,7 @@ import logger from 'src/libraries/logger'
 import AccountDetails from 'src/libraries/ui/NavBar/AccountDetails'
 import ImportConfirmationModal from 'src/libraries/ui/NavBar/ImportConfirmationModal'
 import RecoveryModal from 'src/libraries/ui/NavBar/RecoveryModal'
+import { getNonce } from 'src/utils/gaslessUtils'
 
 type Props = {
 	showSearchBar: boolean
@@ -216,18 +217,32 @@ function NavBar({ showSearchBar }: Props) {
 	}
 
 	const saveWallet = async() => {
-		localStorage.setItem('webwalletPrivateKey', privateKey)
-		localStorage.removeItem('scwAddress')
-		localStorage.removeItem('currentWorkspace')
-		toast({
-			title: 'Wallet imported successfully',
-			status: 'success',
-			duration: 3000,
-			isClosable: true,
-			onCloseComplete() {
-				router.reload()
-			},
-		})
+		const Wallet = new ethers.Wallet(privateKey)
+		const nonce = await getNonce(Wallet)
+		if(nonce) {
+			localStorage.setItem('webwalletPrivateKey', privateKey)
+			localStorage.setItem('nonce', nonce)
+			localStorage.removeItem('scwAddress')
+			localStorage.removeItem('currentWorkspace')
+			toast({
+				title: 'Wallet imported successfully',
+				status: 'success',
+				duration: 3000,
+				isClosable: true,
+				onCloseComplete() {
+					router.reload()
+				},
+			})
+		} else {
+			toast({
+				title: 'Wallet could not be imported',
+				description: 'User not authorised. Nonce not present, contact support!',
+				status: 'warning',
+				duration: 3000,
+				isClosable: true,
+			})
+		}
+
 	}
 
 	return buildComponent()
