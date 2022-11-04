@@ -18,7 +18,7 @@ import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { GrantApplicationProps } from 'src/types/application'
 import getAvatar from 'src/utils/avatarUtils'
-import { formatAmount, getFieldString } from 'src/utils/formattingUtils'
+import { formatAmount, getFieldString, getRewardAmount } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { useEncryptPiiForApplication } from 'src/utils/pii'
 import { getAssetInfo } from 'src/utils/tokenUtils'
@@ -151,12 +151,7 @@ function ViewApplication() {
         		})
         }) || [],
 			// fundingAsk: ethers.utils.formatEther(getStringField('fundingAsk') || '0'),
-			fundingAsk:
-        application && getFieldString(application, 'fundingAsk') ? formatAmount(
-        	getFieldString(application, 'fundingAsk'),
-        	decimals,
-        	true,
-        ) : '1',
+			fundingAsk: getRewardAmount(decimals, application),
 			fundingBreakdown: getFieldString(application, 'fundingBreakdown'),
 		}
 
