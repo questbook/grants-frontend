@@ -4,6 +4,7 @@ import { Contract, ethers, Wallet } from 'ethers'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { defaultChainId } from 'src/constants/chains'
 import SupportedChainId from 'src/generated/SupportedChainId'
+import logger from 'src/libraries/logger'
 import { BiconomyContext } from 'src/pages/_app'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import { TransactionReceipt } from 'web3-core'
@@ -217,13 +218,19 @@ export const sendGaslessTransaction = async(biconomy: typeof BiconomyContext, ta
 		},
 	}
 
+	logger.info({ webHookAttributes }, 'Webhook attributes')
+
 	// signature appended
-	return await biconomyWalletClient.sendBiconomyWalletTransaction({
+	const ret = await biconomyWalletClient.sendBiconomyWalletTransaction({
 		execTransactionBody: safeTxBody,
 		walletAddress: scwAddress,
 		signature: newSignature,
 		webHookAttributes,
 	})
+
+	logger.info({ ret }, 'Biconomy wallet transaction')
+
+	return ret
 }
 
 export const getTransactionReceipt = async(transactionHash: string | undefined, chainId: string) => {
