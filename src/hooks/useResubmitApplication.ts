@@ -145,11 +145,15 @@ export default function useResubmitApplication(
 
 					await subgraphClients[currentChainId].waitForBlock(receipt?.blockNumber)
 
+					const encryptedEmail = sha256(email)
+					const signedMessage = (await webwallet?.signMessage(email))?.toString()
+
+					const commMethodArgs = [currentChainId, encryptedEmail, signedMessage]
 					const commTx = await sendGaslessTransaction(
 						biconomy,
 						communicationContract,
 						'createLink',
-						[currentChainId, sha256(email), (await webwallet?.signMessage(email))?.toString()],
+						commMethodArgs,
 						COMMUNICATION_ADDRESS[currentChainId],
 						biconomyWalletClient,
 						scwAddress,
