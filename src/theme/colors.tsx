@@ -1,4 +1,13 @@
 const colors = {
+	azure: {
+		1: '#0A84FF',
+	},
+	jeans: {
+		1: '#56C7EC'
+	},
+	carrot: {
+		1: '#EF6436',
+	},
 	white: {
 		1: '#FFFFFF',
 		400: '#FFFFFF'

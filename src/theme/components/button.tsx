@@ -182,26 +182,33 @@ export default {
 				py: 2,
 			},
 			primaryLarge: {
-				bg: '#0A84FF',
+				bg: 'azure.1',
 				color: '#ffffff',
 				paddingTop: '14px',
 				paddingBottom: '14px',
 				paddingLeft: '48px',
 				paddingRight: '48px',
+				fontWeight:'500',
+				lineHeight:'20px',
 				w: '170px',
 				h: '48px',
 				borderRadius: '2px'
 			},
 			primaryMedium: {
-				bg: '#0A84FF',
+				bg: 'azure.1',
 				color: 'white',
 				paddingY: '8px',
 				paddingX: '16px',
 				fontWeight: '500',
 				fontSize: '14px',
+				lineHeight: '24px',
 				w: '170px', // Note: the values for height and width will be changed
 				h: '48px',
-				borderRadius: '2px'
+				borderRadius: '2px',
+				_disabled: {
+					bg: '#E7E4DD',
+					color: '#8D8B87',
+				}
 			}
 		},
 	},
