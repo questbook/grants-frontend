@@ -217,6 +217,7 @@ export default function SendFunds({
 		}
 	}, [signerVerified])
 
+	//should go inside gnosis class - inside proposeTransaction
 	function encodeTransactionData(recipientAddress: string, fundAmount: string, rewardAssetDecimals: number) {
 		const txData = ERC20Interface.encodeFunctionData('transfer', [
 			recipientAddress,
@@ -247,7 +248,9 @@ export default function SendFunds({
 		}
 	}
 
-	const createEVMMetaTransactions = () => {
+
+	//should go inside gnosis class - inside proposeTransaction
+	const createEVMMetaTransactions = (gnosisBatchData: any) => {
 
 		const readyTxs = gnosisBatchData.map((data: any) => {
 			let tokenUSDRate: number
@@ -292,7 +295,7 @@ export default function SendFunds({
 		// console.log('initiate transaction called')
 		let proposaladdress: string | undefined
 		if(isEvmChain) {
-			const readyToExecuteTxs = createEVMMetaTransactions()
+			const readyToExecuteTxs = createEVMMetaTransactions(gnosisBatchData)
 			// console.log('ready to execute txn', readyToExecuteTxs)
 			const safeTxHash = await currentSafe?.createMultiTransaction(readyToExecuteTxs, workspaceSafe!)
 			// console.log('safe tx hash', safeTxHash)

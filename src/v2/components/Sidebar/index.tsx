@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { Divider, Flex } from '@chakra-ui/react'
+import { SupportedSafes } from '@questbook/supported-safes'
 import { useRouter } from 'next/router'
+import { useSafeContext } from 'src/contexts/safeContext'
 import { useGetWorkspaceMembersQuery } from 'src/generated/graphql'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
@@ -18,6 +20,8 @@ function Sidebar() {
 	const { data: accountData } = useQuestbookAccount()
 	const { network, switchNetwork } = useNetwork()
 	const { workspace, setWorkspace } = useContext(ApiClientsContext)!
+
+	const { safeObj, setSafeObj } = useSafeContext()
 
 	const router = useRouter()
 
@@ -63,6 +67,17 @@ function Sidebar() {
 			}
 		}
 	}, [workspaces, workspace])
+
+	useEffect(() => {
+		if(workspace?.id!) {
+			const currentSafe = new SupportedSafes().getSafe(parseInt(workspace?.safe?.chainId!), workspace.safe?.address!)
+			setSafeObj(currentSafe)
+		}
+	}, [workspace?.id!])
+
+	useEffect(() => {
+		logger.info('safeObj from context', safeObj)
+	}, [safeObj])
 
 	useEffect(() => {
 		if(accountData?.address) {
