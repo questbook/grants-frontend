@@ -240,7 +240,6 @@ export default function useSubmitApplication(
 
 							if(ret.status === 200) {
 								await chargeGas(Number(workspaceId), Number(txFee), chainId)
-								setCurrentStep(7)
 							}
 						}
 					}
@@ -253,8 +252,8 @@ export default function useSubmitApplication(
 					localStorage.removeItem(cacheKey)
 				}
 
+				setCurrentStep(7)
 				setLoading(false)
-				setCurrentStep(5)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
 				logger.info({ e }, 'useSubmitApplication: Error')

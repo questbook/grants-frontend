@@ -157,7 +157,6 @@ export default function useResubmitApplication(
 						logger.info({ check }, 'useResubmitApplication: Mapping Exists')
 						setCurrentStep(7)
 					} else {
-
 						const encryptedEmail = sha256(email).toString()
 						const signedMessage = (await webwallet?.signMessage(email))?.toString()
 
@@ -195,9 +194,7 @@ export default function useResubmitApplication(
 							})
 							setCurrentStep(6)
 							if(ret.status === 200) {
-								setTransactionData(receipt)
 								await chargeGas(Number(workspace?.id), Number(txFee), chainId)
-								setCurrentStep(7)
 							}
 						}
 					}
@@ -206,8 +203,7 @@ export default function useResubmitApplication(
 					// await chargeGas(Number(workspace?.id), Number(txFee), chainId)
 				}
 
-				setCurrentStep(6)
-
+				setCurrentStep(7)
 				setLoading(false)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
