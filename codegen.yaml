@@ -1,5 +1,5 @@
 schema:
-  - https://the-graph.questbook.app/subgraphs/name/qb-subgraph-goerli-testnet?version=pending
+  - https://the-graph.questbook.app/subgraphs/name/qb-subgraph-goerli-testnet
 documents:
   - ./graphql/*.graphql
 overwrite: true
