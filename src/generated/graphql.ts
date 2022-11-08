@@ -4754,7 +4754,7 @@ export type GetGrantManagersWithPublicKeyQueryVariables = Exact<{
 }>;
 
 
-export type GetGrantManagersWithPublicKeyQuery = { __typename?: 'Query', grantManagers: Array<{ __typename?: 'GrantManager', member?: { __typename?: 'WorkspaceMember', actorId: string, publicKey?: string | null } | null }> };
+export type GetGrantManagersWithPublicKeyQuery = { __typename?: 'Query', grantManagers: Array<{ __typename?: 'GrantManager', member?: { __typename?: 'WorkspaceMember', actorId: string, publicKey?: string | null, enabled: boolean } | null }> };
 
 export type GetGrantsAppliedToQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -4872,7 +4872,7 @@ export type GetWorkspaceDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, bio: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, safe?: { __typename?: 'WorkspaceSafe', address: string, chainId: string } | null, partners: Array<{ __typename?: 'Partner', name: string, industry: string, website?: string | null, partnerImageHash?: string | null }>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, updatedAt: number, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number, addedBy?: { __typename?: 'WorkspaceMember', id: string, actorId: string } | null }> } | null };
+export type GetWorkspaceDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, bio: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, safe?: { __typename?: 'WorkspaceSafe', address: string, chainId: string } | null, partners: Array<{ __typename?: 'Partner', name: string, industry: string, website?: string | null, partnerImageHash?: string | null }>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, updatedAt: number, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number, enabled: boolean, addedBy?: { __typename?: 'WorkspaceMember', id: string, actorId: string } | null }> } | null };
 
 export type GetWorkspaceMemberExistsQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -4886,7 +4886,7 @@ export type GetWorkspaceMembersQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, workspace: { __typename?: 'Workspace', id: string, ownerId: string, logoIpfsHash: string, title: string, supportedNetworks: Array<SupportedNetwork>, safe?: { __typename?: 'WorkspaceSafe', id: string, chainId: string, address: string } | null, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, fullName?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number }> } }> };
+export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, enabled: boolean, workspace: { __typename?: 'Workspace', id: string, ownerId: string, logoIpfsHash: string, title: string, supportedNetworks: Array<SupportedNetwork>, safe?: { __typename?: 'WorkspaceSafe', id: string, chainId: string, address: string } | null, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, fullName?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number }> } }> };
 
 export type GetWorkspaceMembersByWorkspaceIdQueryVariables = Exact<{
   workspaceId: Scalars['String'];
@@ -6549,7 +6549,7 @@ export const GetGrantDetailsDocument = gql`
       title
       logoIpfsHash
       supportedNetworks
-      members {
+      members(where: {enabled: true}) {
         id
         actorId
         publicKey
@@ -6609,6 +6609,7 @@ export const GetGrantManagersWithPublicKeyDocument = gql`
     member {
       actorId
       publicKey
+      enabled
     }
   }
 }
@@ -7253,7 +7254,7 @@ export type GetRealmsFundTransferDataQueryResult = Apollo.QueryResult<GetRealmsF
 export const GetReviewersForAWorkspaceDocument = gql`
     query getReviewersForAWorkspace($workspaceId: ID!) {
   workspaces(where: {id: $workspaceId}) {
-    members(where: {accessLevel_not: owner}) {
+    members(where: {accessLevel_not: owner, enabled: true}) {
       profilePictureIpfsHash
       accessLevel
       fullName
@@ -7359,7 +7360,7 @@ export const GetWorkspaceDetailsDocument = gql`
       decimal
       iconHash
     }
-    members {
+    members(where: {enabled: true}) {
       id
       actorId
       publicKey
@@ -7368,6 +7369,7 @@ export const GetWorkspaceDetailsDocument = gql`
       updatedAt
       outstandingReviewIds
       lastReviewSubmittedAt
+      enabled
       addedBy {
         id
         actorId
@@ -7442,13 +7444,14 @@ export type GetWorkspaceMemberExistsQueryResult = Apollo.QueryResult<GetWorkspac
 export const GetWorkspaceMembersDocument = gql`
     query getWorkspaceMembers($actorId: Bytes!) {
   workspaceMembers(
-    where: {actorId: $actorId}
+    where: {actorId: $actorId, enabled: true}
     subgraphError: allow
     orderBy: id
     orderDirection: desc
   ) {
     id
     actorId
+    enabled
     workspace {
       id
       ownerId
@@ -7470,7 +7473,7 @@ export const GetWorkspaceMembersDocument = gql`
         address
         chainId
       }
-      members {
+      members(where: {enabled: true}) {
         id
         actorId
         publicKey
@@ -7515,7 +7518,7 @@ export type GetWorkspaceMembersQueryResult = Apollo.QueryResult<GetWorkspaceMemb
 export const GetWorkspaceMembersByWorkspaceIdDocument = gql`
     query getWorkspaceMembersByWorkspaceId($workspaceId: String!, $first: Int, $skip: Int) {
   workspaceMembers(
-    where: {workspace: $workspaceId}
+    where: {workspace: $workspaceId, enabled: true}
     first: $first
     skip: $skip
     subgraphError: allow
@@ -7562,7 +7565,7 @@ export type GetWorkspaceMembersByWorkspaceIdLazyQueryHookResult = ReturnType<typ
 export type GetWorkspaceMembersByWorkspaceIdQueryResult = Apollo.QueryResult<GetWorkspaceMembersByWorkspaceIdQuery, GetWorkspaceMembersByWorkspaceIdQueryVariables>;
 export const GetWorkspaceMembersPublicKeysDocument = gql`
     query getWorkspaceMembersPublicKeys($workspaceId: String!) {
-  workspaceMembers(where: {workspace: $workspaceId}) {
+  workspaceMembers(where: {workspace: $workspaceId, enabled: true}) {
     actorId
     publicKey
   }

@@ -2,6 +2,7 @@ query getWorkspaceMembers($actorId: Bytes!) {
   workspaceMembers(
     where: {
       actorId: $actorId
+      enabled: true
     }
     subgraphError: allow
     orderBy: id
@@ -9,6 +10,7 @@ query getWorkspaceMembers($actorId: Bytes!) {
   ) {
     id
     actorId
+    enabled
     workspace {
       id
       ownerId
@@ -30,7 +32,7 @@ query getWorkspaceMembers($actorId: Bytes!) {
           address
           chainId
         }
-      members {
+      members (where: {enabled: true}) {
         id
         actorId
         publicKey
