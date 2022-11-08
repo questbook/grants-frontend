@@ -536,37 +536,37 @@ function Form({
 		customFields,
 	])
 
-	useEffect(() => {
-		if(applicantAddress && applicantAddress.includes('.')) {
-			// setResolvedDomainError(true)
-			const token = process.env.UD_KEY
-			axios.get(`https://resolve.unstoppabledomains.com/domains/${applicantAddress}`, {
-				headers: {
-					Authorization: `Bearer ${token}`
-				}
-			})
-				.then((res) => {
-					logger.info('UD ->', res.data)
-					if(res.data.meta.networkId !== parseInt(safeNetwork)) {
-						logger.info(`domain not on safe network ${safeNetwork}`)
-						setResolvedDomainError(true)
-						// setApplicantAddressError(true)
-					} else if(res.data.meta.owner) {
-						console.log('resolved domain', res.data.meta.owner)
-						setResolvedDomain(res.data.meta.owner)
-						setApplicantAddress(res.data.meta.owner)
-						setResolvedDomainError(false)
-						setApplicantAddressError(false)
-					}
-				}).catch((err) => {
-					logger.error('UD error ->', err)
-					setResolvedDomainError(true)
-				})
+	// useEffect(() => {
+	// 	if(applicantAddress && applicantAddress.includes('.')) {
+	// 		// setResolvedDomainError(true)
+	// 		const token = process.env.UD_KEY
+	// 		axios.get(`https://resolve.unstoppabledomains.com/domains/${applicantAddress}`, {
+	// 			headers: {
+	// 				Authorization: `Bearer ${token}`
+	// 			}
+	// 		})
+	// 			.then((res) => {
+	// 				logger.info('UD ->', res.data)
+	// 				if(res.data.meta.networkId !== parseInt(safeNetwork)) {
+	// 					logger.info(`domain not on safe network ${safeNetwork}`)
+	// 					setResolvedDomainError(true)
+	// 					// setApplicantAddressError(true)
+	// 				} else if(res.data.meta.owner) {
+	// 					console.log('resolved domain', res.data.meta.owner)
+	// 					setResolvedDomain(res.data.meta.owner)
+	// 					setApplicantAddress(res.data.meta.owner)
+	// 					setResolvedDomainError(false)
+	// 					setApplicantAddressError(false)
+	// 				}
+	// 			}).catch((err) => {
+	// 				logger.error('UD error ->', err)
+	// 				setResolvedDomainError(true)
+	// 			})
 
-		} else if(resolvedDomain) {
-			setResolvedDomainError(true)
-		}
-	}, [applicantAddress])
+	// 	} else if(resolvedDomain) {
+	// 		setResolvedDomainError(true)
+	// 	}
+	// }, [applicantAddress])
 
 	// useEffect(() => {
 	// 	logger.info("resolved domain changed", resolvedDomain)
@@ -679,8 +679,8 @@ function Form({
 					setApplicantAddressError={setApplicantAddressError}
 					grantRequiredFields={grantRequiredFields}
 					safeNetwork={safeNetwork!}
-					resolvedDomain={resolvedDomain}
-					resolvedDomainError={resolvedDomainError}
+					// resolvedDomain={resolvedDomain}
+					// resolvedDomainError={resolvedDomainError}
 				/>
 
 				<Box mt='43px' />
