@@ -59,6 +59,13 @@ function ScoresItem({ reviewer, review, ...props }: Props) {
 									variant='v2_body'
 									fontWeight='600'>
 									{review?.total}
+									<Text
+										ml={1}
+										color='black.3'
+										display='inline-block'>
+										{' / '}
+										{review?.items?.reduce((acc, item) => acc + item?.rubric?.maximumPoints, 0)}
+									</Text>
 								</Text>
 							</Flex>
 						)
@@ -85,17 +92,34 @@ function ScoresItem({ reviewer, review, ...props }: Props) {
 						return (
 							<Flex
 								key={index}
-								mt={index === 0 ? 0 : 1}>
-								<Text
-									variant='v2_metadata'
-									lineHeight='20px'>
-									{item?.rubric?.title}
-								</Text>
+								mt={index === 0 ? 0 : 3}
+								align='start'>
+								<Flex direction='column'>
+									<Text
+										variant='v2_body'
+										lineHeight='20px'>
+										{item?.rubric?.title}
+									</Text>
+									<Text
+										variant='v2_body'
+										color='black.3'
+										lineHeight='20px'>
+										{item?.rubric?.details}
+									</Text>
+								</Flex>
+
 								<Text
 									ml='auto'
-									variant='v2_metadata'
+									variant='v2_body'
 									lineHeight='20px'>
 									{item?.rating}
+									<Text
+										ml={1}
+										color='black.3'
+										display='inline-block'>
+										{' / '}
+										{item?.rubric?.maximumPoints}
+									</Text>
 								</Text>
 							</Flex>
 						)
