@@ -76,10 +76,6 @@ function Sidebar() {
 	}, [workspace?.id!])
 
 	useEffect(() => {
-		logger.info('safeObj from context', safeObj)
-	}, [safeObj])
-
-	useEffect(() => {
 		if(accountData?.address) {
 			fetchMore({
 				actorId: accountData?.address,

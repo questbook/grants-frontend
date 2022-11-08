@@ -2,6 +2,7 @@ import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ethers, logger } from 'ethers'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
+import { useSafeContext } from 'src/contexts/safeContext'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
@@ -83,94 +84,51 @@ export default function SendFunds({
 	const [safeTokenList, setSafeTokenList] = useState<any>([])
 
 	const [initiateTransactionData, setInitiateTransactionData] = useState<any>([])
-	const [gnosisBatchData, setGnosisBatchData] = useState<any>([])
-	const [, setGnosisReadyToExecuteTxns] = useState<any>([])
 	const [step, setStep] = useState('RECEIPT_DETAILS')
-	const [recepientError, setRecepientError] = useState<string>('')
 
-	const [assetId, setAssetId] = useState<string>('')
-	const [celoTokensUSDRateMapping, setCeloTokensUSDRateMappings] = useState<any>({})
+	// const [assetId, setAssetId] = useState<string>('')
+	// const [celoTokensUSDRateMapping, setCeloTokensUSDRateMappings] = useState<any>({})
 
 	const isEvmChain = workspaceSafeChainId !== '900001'
 
 	const workspaceRegistryContract = useQBContract('workspace', workspacechainId)
 	const { webwallet } = useContext(WebwalletContext)!
+	const { safeObj } = useSafeContext()
 
-	const loadAssetIdFromCoinGecko = () => {
-		loadAssetId(workspaceSafeChainId).then(response => {
-			setAssetId(response[0].id)
-		})
-	}
+	// const loadAssetIdFromCoinGecko = () => {
+	// 	loadAssetId(workspaceSafeChainId).then(response => {
+	// 		setAssetId(response[0].id)
+	// 	})
+	// }
 
-	function getCeloUSDRate() {
-		getCeloTokenUSDRate().then(response => {
-			setCeloTokensUSDRateMappings(response.data)
-		})
+	// function getCeloUSDRate() {
+	// 	getCeloTokenUSDRate().then(response => {
+	// 		setCeloTokensUSDRateMappings(response.data)
+	// 	})
 
-	}
+	// }
 
-	useEffect(() => {
-		if(workspaceSafeChainId === '42220') {
-			loadAssetIdFromCoinGecko()
-		}
+	// useEffect(() => {
+	// 	if(workspaceSafeChainId === '42220') {
+	// 		loadAssetIdFromCoinGecko()
+	// 	}
 
-	}, [workspaceSafe])
+	// }, [workspaceSafe])
 
-	useEffect(() => {
-		if(workspaceSafeChainId === '42220') {
-			getCeloUSDRate()
-		}
-	}, [safeTokenList])
-
-	const currentSafe = useMemo(() => {
-		if(isEvmChain && workspaceSafe) {
-			const txnServiceURL = safeServicesInfo[parseInt(workspaceSafeChainId)]
-			// loadAssetIdFromCoinGecko()
-			return new GnosisSafe(parseInt(workspaceSafeChainId), txnServiceURL, workspaceSafe)
-		} else {
-			if(workspaceSafe && isPlausibleSolanaAddress(workspaceSafe)) {
-
-				return new RealmsSolana(workspaceSafe)
-			}
-		}
-	}, [workspaceSafe])
-
-	const getTokensFromSafe = () => {
-		const tokenList: any[] = []
-		// console.log('Fetching tokens')
-		getTokenBalance(workspaceSafeChainId, workspaceSafe!).then((res) => {
-			const tokensFetched = res.data
-			tokensFetched.filter((token: any) => token.token).map((token: any) => {
-				const tokenBalance = (ethers.utils.formatUnits(token.balance, token.token.decimals)).toString()
-				tokenList.push({
-					tokenIcon: token.token.logoUri,
-					tokenName: token.token.symbol,
-					tokenValueAmount: `${token.fiatBalance == '0.0' ? tokenBalance : `${token.fiatBalance} usd`}`,
-					usdValueAmount: token.fiatBalance,
-					mintAddress: '',
-					info: {
-						decimals: token.token.decimals,
-						tokenAddress: token.tokenAddress,
-						fiatConversion: token.fiatConversion
-					},
-				})
-			})
-		})
-		console.log('fetched tokens', tokenList)
-		setSafeTokenList(tokenList)
-	}
+	// useEffect(() => {
+	// 	if(workspaceSafeChainId === '42220') {
+	// 		getCeloUSDRate()
+	// 	}
+	// }, [safeTokenList])
 
 	useEffect(() => {
 		const getToken = async() => {
-			setSafeTokenList(await getTokenAndbalance(workspaceSafe!))
+			const response = await safeObj?.getTokenAndbalance()
+			setSafeTokenList(response)
 		}
 
-		if(isPlausibleSolanaAddress(workspaceSafe) && currentSafe) {
-			getToken()
-		} else {
-			getTokensFromSafe()
-		}
-	}, [currentSafe])
+		getToken()
+	}, [workspaceSafe])
 
 	useEffect(() => {
 		if(sendFundsTo?.length > 0) {
@@ -188,7 +146,7 @@ export default function SendFunds({
 		logger.info({ sendFundsTo }, 'Send Funds To')
 		const formattedTrxnData = sendFundsTo?.map((recepient: any,) => (
 			{
-				from: currentSafe?.id?.toString(),
+				from: safeObj.safeAddress.toString(),
 				to: recepient?.applicantAddress || getFieldString(recepient, 'applicantAddress') || recepient?.applicantId,
 				applicationId: recepient?.applicationId || applicationID,
 				selectedMilestone: recepient?.milestones?.[0],
@@ -198,7 +156,6 @@ export default function SendFunds({
 		)
 		console.log('txn data', formattedTrxnData)
 		setInitiateTransactionData(formattedTrxnData)
-		setGnosisBatchData(formattedTrxnData)
 	}, [sendFundsTo])
 
 	useEffect(() => {
@@ -217,19 +174,9 @@ export default function SendFunds({
 		}
 	}, [signerVerified])
 
-	//should go inside gnosis class - inside proposeTransaction
-	function encodeTransactionData(recipientAddress: string, fundAmount: string, rewardAssetDecimals: number) {
-		const txData = ERC20Interface.encodeFunctionData('transfer', [
-			recipientAddress,
-			ethers.utils.parseUnits(fundAmount, rewardAssetDecimals)
-		])
-
-		return txData
-	}
-
 	const getRealmsVerification = async() => {
 		if(phantomWallet?.publicKey?.toString()) {
-			const isVerified = await currentSafe?.isOwner(phantomWallet.publicKey?.toString())
+			const isVerified = await safeObj?.isOwner(phantomWallet.publicKey?.toString())
 			if(isVerified) {
 				setSignerVerififed(true)
 			}
@@ -238,7 +185,7 @@ export default function SendFunds({
 
 	const verifyGnosisOwner = async() => {
 		if(isConnected) {
-			const isVerified = await currentSafe?.isOwner(workspaceSafe!)
+			const isVerified = await safeObj?.isOwner(workspaceSafe!)
 			if(isVerified) {
 				setSignerVerififed(true)
 			} else {
@@ -248,65 +195,21 @@ export default function SendFunds({
 		}
 	}
 
-
-	//should go inside gnosis class - inside proposeTransaction
-	const createEVMMetaTransactions = (gnosisBatchData: any) => {
-
-		const readyTxs = gnosisBatchData.map((data: any) => {
-			let tokenUSDRate: number
-			if(workspaceSafeChainId === '42220') {
-				const tokenSelected = data.selectedToken.name.toLowerCase()
-				if(tokenSelected === 'cusd') {
-					tokenUSDRate = celoTokensUSDRateMapping['celo-dollar'].usd
-				} else if(tokenSelected === 'ceuro') {
-					tokenUSDRate = celoTokensUSDRateMapping['celo-euro'].usd
-				} else if(tokenSelected === 'tether') {
-					tokenUSDRate = celoTokensUSDRateMapping['tether'].usd
-				} else if(tokenSelected === 'spcusd') {
-					tokenUSDRate = 1
-				} else if(tokenSelected === 'spCELO') {
-					tokenUSDRate = 1
-				}
-			} else {
-				tokenUSDRate = data.selectedToken.info.fiatConversion
-			}
-
-			const rewardAssetDecimals = data.selectedToken.info.decimals
-			const rewardAssetAddress = data.selectedToken.info.tokenAddress
-			const usdToToken = (data.amount / tokenUSDRate!).toFixed(rewardAssetDecimals)
-
-			// console.log('reward asset address', rewardAssetAddress)
-			logger.info('usd amount, usd rate, usd to token amount', data.amount, tokenUSDRate!, usdToToken)
-			const txData = encodeTransactionData(data.to, (usdToToken.toString()), rewardAssetDecimals)
-			const tx = {
-				to: ethers.utils.getAddress(rewardAssetAddress),
-				data: txData,
-				value: '0'
-			}
-			return tx
-		})
-
-		setGnosisReadyToExecuteTxns(readyTxs)
-		return readyTxs
-
-	}
-
 	const initiateTransaction = async() => {
 		// console.log('initiate transaction called')
 		let proposaladdress: string | undefined
-		if(isEvmChain) {
-			const readyToExecuteTxs = createEVMMetaTransactions(gnosisBatchData)
+		if(safeObj.getIsEvm()) {
 			// console.log('ready to execute txn', readyToExecuteTxs)
-			const safeTxHash = await currentSafe?.createMultiTransaction(readyToExecuteTxs, workspaceSafe!)
-			// console.log('safe tx hash', safeTxHash)
-			if(safeTxHash) {
-				proposaladdress = safeTxHash
-				setProposalAddr(safeTxHash)
-			} else {
-				throw new Error('Proposal address not found')
+			console.log('safeObj from context- sendFunds', safeObj)
+			const proposaladdress = await safeObj?.proposeTransactions('', initiateTransactionData, '')
+			if(!proposaladdress) {
+				throw new Error('No proposal address found!')
 			}
+
+			setProposalAddr(proposaladdress?.toString())
 		} else {
-			proposaladdress = await currentSafe?.proposeTransactions(grantTitle, initiateTransactionData, phantomWallet)
+			console.log('safeObj from context- sendFunds', safeObj)
+			proposaladdress = await safeObj?.proposeTransactions(grantTitle, initiateTransactionData, phantomWallet)
 			if(!proposaladdress) {
 				throw new Error('No proposal address found!')
 			}
@@ -396,9 +299,6 @@ export default function SendFunds({
 		}
 	}, [workspace, biconomyWalletClient, workspacechainId, biconomy, workspaceRegistryContract, scwAddress, webwallet, nonce, initiateTransactionData, proposalAddr])
 
-	const onChangeRecepientError = (error: string) => {
-		setRecepientError(error)
-	}
 
 	const onChangeRecepientDetails = async(applicationId: any, fieldName: string, fieldValue: any) => {
 
@@ -408,7 +308,6 @@ export default function SendFunds({
 			})
 			logger.info({ tempData }, 'tempData 1')
 			setInitiateTransactionData(tempData)
-			setGnosisBatchData(tempData)
 		} else {
 			logger.info({ initiateTransactionData }, 'Initiate Transaction Data')
 			const tempData = initiateTransactionData.map((transactionData: any) => {
@@ -426,7 +325,6 @@ export default function SendFunds({
 			})
 			logger.info({ tempData }, 'tempData 2')
 			setInitiateTransactionData(tempData)
-			setGnosisBatchData(tempData)
 		}
 	}
 
@@ -476,7 +374,7 @@ export default function SendFunds({
 				isOpen={sendFundsModalIsOpen}
 				onClose={onModalClose}
 				safeAddress={workspaceSafe!}
-				safeNetwork={currentSafe?.chainId.toString()!}
+				safeNetwork={safeObj?.chainId.toString()!}
 				proposals={sendFundsTo ?? []}
 
 				safeTokenList={safeTokenList}
@@ -493,8 +391,8 @@ export default function SendFunds({
 				isOpen={!!(txnInitModalIsOpen && proposalAddr)}
 				onClose={onModalClose}
 				numOfTransactionsInitiated={sendFundsTo?.length || 0}
-				proposalUrl={isEvmChain ? getGnosisTansactionLink(currentSafe?.id?.toString()!, currentSafe?.chainId?.toString()!) : getProposalUrl(currentSafe?.id?.toString()!, proposalAddr)}
-				safe={currentSafe as Safe}
+				proposalUrl={isEvmChain ? getGnosisTansactionLink(safeObj?.safeAddress?.toString()!, safeObj?.chainId?.toString()!) : getProposalUrl(safeObj?.safeAddress?.toString()!, proposalAddr)}
+				safe={safeObj as Safe}
 			/>
 
 			<SendFundsDrawer
@@ -508,7 +406,6 @@ export default function SendFunds({
 				phantomWallet={phantomWallet}
 				setPhantomWalletConnected={setPhantomWalletConnected}
 				isEvmChain={isEvmChain}
-				current_safe={currentSafe}
 				signerVerified={signerVerified}
 				initiateTransaction={initiateTransaction}
 				initiateTransactionData={initiateTransactionData}
