@@ -5,7 +5,6 @@ import Loader from 'src/components/ui/loader'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import {
 	GetDaOsForExploreQuery,
-	useGetAllApplicationsOnANetworkQuery,
 	useGetDaOsForExploreQuery,
 	Workspace_Filter as WorkspaceFilter,
 	Workspace_OrderBy as WorkspaceOrderBy,
@@ -270,14 +269,6 @@ function Discover() {
 		}),
 	)
 
-	// TODO: get all proposals from all the networks from the backend
-	const { results: proposals, fetchMore: fetchMoreApplications } = useMultiChainQuery({
-		useQuery: useGetAllApplicationsOnANetworkQuery,
-		options: {
-			
-		}
-	})
-
 	const totalDaos = useMemo(() => {
 		let exploreDaos = [...(daos ?? [])]
 
@@ -292,10 +283,6 @@ function Discover() {
 			...exploreDaos,
 		]
 	}, [daos, myDaos])
-
-	useEffect(() => {
-		console.log('proposals', proposals)
-	}, [proposals])
 
 	useEffect(() => {
 		try {

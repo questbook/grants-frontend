@@ -36,6 +36,7 @@ function DaoCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfApplica
 					setIsActive(true)
 				}
 			}
+			className='dao-card'
 			onMouseLeave={
 				() => {
 					setIsActive(false)
@@ -123,29 +124,6 @@ function DaoCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfApplica
 						</Text>
 					</Flex>
 				</Flex>
-				{
-					isActive && (
-						<Box
-							position='absolute'
-							bottom={0}
-							right={0}
-							p='24px'
-							display='flex'
-							alignItems='center'
-							as='button'
-							onClick={() => { }}>
-
-							<Text
-								fontSize='14px'
-								fontWeight='500'
-								color='#1F1F33'
-								mr='8px'>
-								{t('/.cards.submit_proposal')}
-							</Text>
-							<Image src='/ui_icons/black_right_arrow.svg' />
-						</Box>
-					)
-				}
 			</Flex>
 		</Box>
 	)
