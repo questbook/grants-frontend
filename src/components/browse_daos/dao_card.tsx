@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Box, Divider, Flex, Image, Spacer, Switch, Tag, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
@@ -17,13 +16,13 @@ type DomainCardProps = {
 	chainId: SupportedChainId | undefined
 	noOfApplicants: number
 	totalAmount: number
-	safeChainId: number | undefined
+	safeChainId: string | undefined
 }
 
 function DomainCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfApplicants, totalAmount, onVisibilityUpdate, isVisible, safeChainId }: DomainCardProps) {
 	const router = useRouter()
 	const { t } = useTranslation()
-	const safeUrl = getSafeURL(safeAddress, safeChainId?.toString()!)
+	const safeUrl = getSafeURL(safeAddress, safeChainId!)
 	return (
 		<Box
 			w='100%'

@@ -9,7 +9,6 @@ import {
 	Workspace_Filter as WorkspaceFilter,
 	Workspace_OrderBy as WorkspaceOrderBy,
 } from 'src/generated/graphql'
-import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { DAOSearchContext } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
@@ -86,7 +85,6 @@ function Discover() {
 									<Text fontWeight='500' fontSize='24px' lineHeight='32px'>Discover</Text>
 								</Box>
 								<DomainGrid
-									renderGetStarted
 									isAdmin={isQbAdmin}
 									unsavedDomainVisibleState={unsavedDomainState}
 									onDaoVisibilityUpdate={onDaoVisibilityUpdate}

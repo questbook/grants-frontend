@@ -1,6 +1,5 @@
 import { Grid, GridItem } from '@chakra-ui/react'
 import DomainCard from 'src/components/browse_daos/dao_card'
-import GetStartedCard from 'src/components/browse_daos/get_started_card'
 import LoadMoreCard from 'src/components/browse_daos/loadMoreCard'
 import config from 'src/constants/config.json'
 import { GetDaOsForExploreQuery } from 'src/generated/graphql'
@@ -16,14 +15,12 @@ type AllDomainGridProps = {
   isAdmin: boolean
   unsavedDomainVisibleState?: { [_: number]: { [_: string]: boolean } }
   onDaoVisibilityUpdate?: (daoId: string, chainId: SupportedChainId, visibleState: boolean) => void
-  renderGetStarted: boolean
   hasMore?: boolean
   fetchMore?: (reset?: boolean | undefined) => void
 }
 
 function AllDomainGrid({
 	workspaces,
-	renderGetStarted,
 	onDaoVisibilityUpdate,
 	unsavedDomainVisibleState,
 	isAdmin,
