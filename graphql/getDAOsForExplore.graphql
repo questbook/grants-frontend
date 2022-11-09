@@ -15,6 +15,10 @@ query getDAOsForExplore(
     title
     isVisible
     logoIpfsHash
+    safe{
+      address
+      chainId
+    }
     supportedNetworks
     createdAtS,
     mostRecentGrantPostedAtS,

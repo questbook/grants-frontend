@@ -24,7 +24,7 @@ i18next.use(initReactI18next).init({
 					},
 					'cards': {
 						'proposals': 'proposals',
-						'in_grants': 'sent in grants',
+						'in_grants': 'paid out',
 						'submit_proposal': 'Submit Proposal',
 					},
 					'show_more': 'Show More',

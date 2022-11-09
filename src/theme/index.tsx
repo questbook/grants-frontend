@@ -11,9 +11,9 @@ import text from 'src/theme/components/text'
 
 const theme = extendTheme({
 	fonts: {
-		heading: 'DM Sans, sans-serif',
-		body: 'DM Sans, sans-serif',
-		buttons: 'DM Sans, sans-serif',
+		heading: 'Neue-Haas-Grotesk-Display, sans-serif',
+		body: 'Neue-Haas-Grotesk-Display, sans-serif',
+		buttons: 'Neue-Haas-Grotesk-Display, sans-serif',
 	},
 	// fonts: {
 	// 	body: 'nhg, sans-serif',
@@ -26,6 +26,7 @@ const theme = extendTheme({
 			500: '#8850EA',
 			600: '#AA82F0',
 			700: '#6200EE',
+			800: '#B6F72B'
 		},
 		brandDisabled: {
 			500: '#69CACA',

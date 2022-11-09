@@ -1,5 +1,5 @@
 import { ReactElement, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { Box, Button, Center, Container, Flex, ToastId, useToast } from '@chakra-ui/react'
+import { Box, Button, Center, Container, Flex, Image, Spacer, Text, ToastId, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import Loader from 'src/components/ui/loader'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
@@ -16,13 +16,14 @@ import useUpdateDaoVisibility from 'src/hooks/useUpdateDaoVisibility'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import AcceptInviteModal from 'src/screens/discover/_components/AcceptInviteModal'
-import DaosGrid from 'src/screens/discover/_components/DaosGrid'
+import DomainGrid from 'src/screens/discover/_components/DaosGrid'
 import { useMultichainDaosPaginatedQuery } from 'src/screens/discover/_hooks/useMultiChainPaginatedQuery'
 import { extractInviteInfo, InviteInfo } from 'src/screens/discover/_utils/invite'
 import { mergeSortedArrays } from 'src/screens/discover/_utils/mergeSortedArrays'
 import { chainNames } from 'src/utils/chainNames'
 import getErrorMessage from 'src/utils/errorUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
+import RightArrowIcon from './_components/RightArrowIcon'
 
 const PAGE_SIZE = 10
 
@@ -33,29 +34,69 @@ function Discover() {
 				<Flex
 					direction='column'
 					w='100%'>
+						{/* Start Hero Container */}
+						<Flex
+							direction='row'
+							w='100%'
+							alignItems='stretch'
+							alignContent='stretch'
+							h='460px'>
+							<Flex bgColor='black.1' padding={24} flexDirection='column' textColor='white'  width='600px'>
+								<Text fontWeight='500' fontSize='40px' lineHeight='48px' color='white'>Home for 
+								<Text fontWeight='500' fontSize='40px' lineHeight='48px' color='#FFE900' as='span'> high quality </Text> builders</Text>
+								
+								<Text mt={2} fontSize='16px' lineHeight='24px' fontWeight='400'>Invite proposals from builders. Review and fund proposals with milestones - all on chain.</Text>
+								
+								<Button variant='primaryLarge' mt={8} padding={4} rightIcon={<RightArrowIcon/>}  lineHeight='20px'>Invite Proposals</Button>
+							</Flex>
+							<Flex bgColor='brand.800' flexGrow={1}  justifyContent='center'>
+								<Image mt={10} src='/illustrations/Browsers.svg' />
+							</Flex>
+						</Flex>
+						{/* End Hero Container */}
+
+						{/* Start Stats Banner */}
+						<Flex bgColor='#F1EEE8' padding={8} gap={4} justifyContent='space-evenly'>
+							<Flex flexDirection='column' alignItems='center'>
+								<Text fontWeight='500' fontSize='40px' lineHeight='48px'>20000+</Text>
+								<Text fontWeight='500' fontSize='15px' lineHeight='22px' textTransform='uppercase'>Builders</Text>
+							</Flex>
+							<Flex flexDirection='column' alignItems='center'>
+								<Text fontWeight='500' fontSize='40px' lineHeight='48px'>$2m+</Text>
+								<Text fontWeight='500' fontSize='15px' lineHeight='22px' textTransform='uppercase'>Paid Out</Text>
+							</Flex>
+							<Flex flexDirection='column' alignItems='center'>
+								<Text fontWeight='500' fontSize='40px' lineHeight='48px'>1000+</Text>
+								<Text fontWeight='500' fontSize='15px' lineHeight='22px' textTransform='uppercase'>Proposals</Text>
+							</Flex>
+						</Flex>
+						{/* End Stats Banner */}
 					<Container
-						maxWidth='1280px'
-						my='16px'
+						maxWidth='max-content'
+						
 						w='100%'>
 						{
 							isQbAdmin === undefined ? (
 								<Center>
 									<Loader />
 								</Center>
-							) : (
-								<DaosGrid
-									renderGetStarted
+							) : (<>
+								<Box my={4}>
+									<Text fontWeight='500' fontSize='24px' lineHeight='32px'>Discover</Text>
+								</Box>
+								<DomainGrid
 									isAdmin={isQbAdmin}
-									unsavedDaosVisibleState={unsavedDaosState}
+									unsavedDomainVisibleState={unsavedDomainState}
 									onDaoVisibilityUpdate={onDaoVisibilityUpdate}
 									hasMore={hasMoreDaos}
 									fetchMore={fetchMoreDaos}
 									workspaces={totalDaos} />
+								</>
 							)
 						}
 					</Container>
 					{
-						isQbAdmin && Object.keys(unsavedDaosState).length !== 0 && (
+						isQbAdmin && Object.keys(unsavedDomainState).length !== 0 && (
 							<Box
 								background='#f0f0f7'
 								bottom={0}
@@ -71,7 +112,7 @@ function Discover() {
 											async() => {
 												try {
 													await updateDaoVisibility(
-														unsavedDaosState,
+														unsavedDomainState,
 														setNetworkTransactionModalStep,
 													)
 												} catch(e) {
@@ -123,7 +164,7 @@ function Discover() {
 	}
 
 	const buildNetworkModal = () => {
-		const chainsList = Object.keys(unsavedDaosState)
+		const chainsList = Object.keys(unsavedDomainState)
 
 		const txSteps: string[] = []
 		for(const chain of chainsList) {
@@ -137,7 +178,7 @@ function Discover() {
 		}
 
 		const chainsLength = chainsList.length
-		const daosLength = Object.values(unsavedDaosState)
+		const daosLength = Object.values(unsavedDomainState)
 			.map(e => Object.keys(e).length).reduce((a, b) => a + b, 0)
 		const description = `Updating ${daosLength} dao${daosLength === 1 ? '\'' : ''}s${daosLength === 1 ? '' : '\''} visibility state across ${chainsLength} chain${chainsLength === 1 ? '' : 's'}!`
 
@@ -156,7 +197,7 @@ function Discover() {
 
 	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number | undefined>()
-	const [unsavedDaosState, setUnsavedDaosState] = useState<{ [_: number]: { [_: string]: boolean } }>({})
+	const [unsavedDomainState, setUnsavedDaosState] = useState<{ [_: number]: { [_: string]: boolean } }>({})
 
 	const { scwAddress } = useContext(WebwalletContext)!
 
@@ -172,22 +213,22 @@ function Discover() {
 	const { isBiconomyInitialised, updateDaoVisibility } = useUpdateDaoVisibility()
 
 	const onDaoVisibilityUpdate = (daoId: string, chainId: SupportedChainId, visibleState: boolean) => {
-		if(unsavedDaosState[chainId]) {
-			if(unsavedDaosState[chainId][daoId] !== undefined) {
-				delete unsavedDaosState[chainId][daoId]
+		if(unsavedDomainState[chainId]) {
+			if(unsavedDomainState[chainId][daoId] !== undefined) {
+				delete unsavedDomainState[chainId][daoId]
 
-				if(!Object.keys(unsavedDaosState[chainId]).length) {
-					delete unsavedDaosState[chainId]
+				if(!Object.keys(unsavedDomainState[chainId]).length) {
+					delete unsavedDomainState[chainId]
 				}
 			} else {
-				unsavedDaosState[chainId][daoId] = visibleState
+				unsavedDomainState[chainId][daoId] = visibleState
 			}
 		} else {
-			unsavedDaosState[chainId] = {}
-			unsavedDaosState[chainId][daoId] = visibleState
+			unsavedDomainState[chainId] = {}
+			unsavedDomainState[chainId][daoId] = visibleState
 		}
 
-		setUnsavedDaosState({ ...unsavedDaosState })
+		setUnsavedDaosState({ ...unsavedDomainState })
 	}
 
 	const getExploreDaosRequestFilters = (additionalFilters?: WorkspaceFilter) => {
@@ -275,7 +316,7 @@ function Discover() {
 
 Discover.getLayout = function(page: ReactElement) {
 	return (
-		<NavbarLayout renderSearchBar>
+		<NavbarLayout renderSidebar={false}>
 			{page}
 		</NavbarLayout>
 	)

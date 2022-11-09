@@ -180,6 +180,27 @@ export default {
 					color: 'gray.5',
 				},
 				py: 2,
+			},
+			primaryLarge: {
+				bg: '#0A84FF',
+				color: 'white',
+				paddingY: '14px',
+				paddingX: '40px',
+				fontWeight: '500',
+				w: '170px',
+				h: '48px',
+				borderRadius: '2px'
+			},
+			primaryMedium: {
+				bg: '#0A84FF',
+				color: 'white',
+				paddingY: '8px',
+				paddingX: '16px',
+				fontWeight: '500',
+				fontSize: '14px',
+				w: '170px', // Note: the values for height and width will be changed
+				h: '48px',
+				borderRadius: '2px'
 			}
 		},
 	},

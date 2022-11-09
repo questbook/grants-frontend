@@ -206,7 +206,7 @@ export const getExplorerUrlForTxHash = (chainId: SupportedChainId | undefined, t
 	return tx ? CHAIN_INFO[chainId!]?.explorer.transactionHash.replace('{{tx}}', tx) : ''
 }
 
-export const formatAddress = (address: string) => `${address.substring(0, 4)}......${address.substring(address.length - 4)}`
+export const formatAddress = (address: string) => `${address.substring(0, 4)}....${address.substring(address.length - 4)}`
 
 export const getFieldString = (applicationData: any, name: string) => applicationData?.fields?.find((field: any) => field?.id?.includes(`.${name}`))?.values[0]?.value
 export const getFieldStrings = (applicationData: any, name: string) => applicationData?.fields?.find((field: any) => field?.id?.includes(`.${name}`))?.values?.map((v: any) => v.value)
