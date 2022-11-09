@@ -17,7 +17,7 @@ import useUpdateDaoVisibility from 'src/hooks/useUpdateDaoVisibility'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import AcceptInviteModal from 'src/screens/discover/_components/AcceptInviteModal'
-import DaosGrid from 'src/screens/discover/_components/DaosGrid'
+import DomainGrid from 'src/screens/discover/_components/DaosGrid'
 import { useMultichainDaosPaginatedQuery } from 'src/screens/discover/_hooks/useMultiChainPaginatedQuery'
 import { extractInviteInfo, InviteInfo } from 'src/screens/discover/_utils/invite'
 import { mergeSortedArrays } from 'src/screens/discover/_utils/mergeSortedArrays'
@@ -73,7 +73,7 @@ function Discover() {
 						</Flex>
 						{/* End Stats Banner */}
 					<Container
-						maxWidth='1280px'
+						maxWidth='max-content'
 						
 						w='100%'>
 						{
@@ -85,10 +85,10 @@ function Discover() {
 								<Box my={4}>
 									<Text fontWeight='500' fontSize='24px' lineHeight='32px'>Discover</Text>
 								</Box>
-								<DaosGrid
+								<DomainGrid
 									renderGetStarted
 									isAdmin={isQbAdmin}
-									unsavedDaosVisibleState={unsavedDaosState}
+									unsavedDomainVisibleState={unsavedDomainState}
 									onDaoVisibilityUpdate={onDaoVisibilityUpdate}
 									hasMore={hasMoreDaos}
 									fetchMore={fetchMoreDaos}
@@ -98,7 +98,7 @@ function Discover() {
 						}
 					</Container>
 					{
-						isQbAdmin && Object.keys(unsavedDaosState).length !== 0 && (
+						isQbAdmin && Object.keys(unsavedDomainState).length !== 0 && (
 							<Box
 								background='#f0f0f7'
 								bottom={0}
@@ -114,7 +114,7 @@ function Discover() {
 											async() => {
 												try {
 													await updateDaoVisibility(
-														unsavedDaosState,
+														unsavedDomainState,
 														setNetworkTransactionModalStep,
 													)
 												} catch(e) {
@@ -166,7 +166,7 @@ function Discover() {
 	}
 
 	const buildNetworkModal = () => {
-		const chainsList = Object.keys(unsavedDaosState)
+		const chainsList = Object.keys(unsavedDomainState)
 
 		const txSteps: string[] = []
 		for(const chain of chainsList) {
@@ -180,7 +180,7 @@ function Discover() {
 		}
 
 		const chainsLength = chainsList.length
-		const daosLength = Object.values(unsavedDaosState)
+		const daosLength = Object.values(unsavedDomainState)
 			.map(e => Object.keys(e).length).reduce((a, b) => a + b, 0)
 		const description = `Updating ${daosLength} dao${daosLength === 1 ? '\'' : ''}s${daosLength === 1 ? '' : '\''} visibility state across ${chainsLength} chain${chainsLength === 1 ? '' : 's'}!`
 
@@ -199,7 +199,7 @@ function Discover() {
 
 	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number | undefined>()
-	const [unsavedDaosState, setUnsavedDaosState] = useState<{ [_: number]: { [_: string]: boolean } }>({})
+	const [unsavedDomainState, setUnsavedDaosState] = useState<{ [_: number]: { [_: string]: boolean } }>({})
 
 	const { scwAddress } = useContext(WebwalletContext)!
 
@@ -215,22 +215,22 @@ function Discover() {
 	const { isBiconomyInitialised, updateDaoVisibility } = useUpdateDaoVisibility()
 
 	const onDaoVisibilityUpdate = (daoId: string, chainId: SupportedChainId, visibleState: boolean) => {
-		if(unsavedDaosState[chainId]) {
-			if(unsavedDaosState[chainId][daoId] !== undefined) {
-				delete unsavedDaosState[chainId][daoId]
+		if(unsavedDomainState[chainId]) {
+			if(unsavedDomainState[chainId][daoId] !== undefined) {
+				delete unsavedDomainState[chainId][daoId]
 
-				if(!Object.keys(unsavedDaosState[chainId]).length) {
-					delete unsavedDaosState[chainId]
+				if(!Object.keys(unsavedDomainState[chainId]).length) {
+					delete unsavedDomainState[chainId]
 				}
 			} else {
-				unsavedDaosState[chainId][daoId] = visibleState
+				unsavedDomainState[chainId][daoId] = visibleState
 			}
 		} else {
-			unsavedDaosState[chainId] = {}
-			unsavedDaosState[chainId][daoId] = visibleState
+			unsavedDomainState[chainId] = {}
+			unsavedDomainState[chainId][daoId] = visibleState
 		}
 
-		setUnsavedDaosState({ ...unsavedDaosState })
+		setUnsavedDaosState({ ...unsavedDomainState })
 	}
 
 	const getExploreDaosRequestFilters = (additionalFilters?: WorkspaceFilter) => {

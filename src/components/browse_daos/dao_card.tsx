@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { formatAddress } from 'src/utils/formattingUtils'
 
-type DaoCardProps = {
+type DomainCardProps = {
 	logo: string
 	name: string
 	safeAddress: string
@@ -18,7 +18,7 @@ type DaoCardProps = {
 	totalAmount: number
 }
 
-function DaoCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfApplicants, totalAmount, onVisibilityUpdate, isVisible }: DaoCardProps) {
+function DomainCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfApplicants, totalAmount, onVisibilityUpdate, isVisible }: DomainCardProps) {
 	const router = useRouter()
 	const [isActive, setIsActive] = useState(false)
 	const { t } = useTranslation()
@@ -129,4 +129,4 @@ function DaoCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfApplica
 	)
 }
 
-export default DaoCard
+export default DomainCard
