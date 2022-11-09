@@ -17,6 +17,7 @@ query getDAOsForExplore(
     logoIpfsHash
     safe{
       address
+      chainId
     }
     supportedNetworks
     createdAtS,

@@ -4682,7 +4682,7 @@ export type GetDaOsForExploreQueryVariables = Exact<{
 }>;
 
 
-export type GetDaOsForExploreQuery = { __typename?: 'Query', workspaces: Array<{ __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, createdAtS: number, mostRecentGrantPostedAtS: number, numberOfApplications: number, numberOfApplicationsSelected: number, totalGrantFundingDisbursedUSD: number, safe?: { __typename?: 'WorkspaceSafe', address: string } | null }> };
+export type GetDaOsForExploreQuery = { __typename?: 'Query', workspaces: Array<{ __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, createdAtS: number, mostRecentGrantPostedAtS: number, numberOfApplications: number, numberOfApplicationsSelected: number, totalGrantFundingDisbursedUSD: number, safe?: { __typename?: 'WorkspaceSafe', address: string, chainId: string } | null }> };
 
 export type GetFundSentforReviewerQueryVariables = Exact<{
   type?: InputMaybe<FundsTransferType>;
@@ -6080,6 +6080,7 @@ export const GetDaOsForExploreDocument = gql`
     logoIpfsHash
     safe {
       address
+      chainId
     }
     supportedNetworks
     createdAtS

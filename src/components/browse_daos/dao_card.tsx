@@ -4,6 +4,7 @@ import { Box, Divider, Flex, Image, Spacer, Switch, Tag, Text } from '@chakra-ui
 import { useRouter } from 'next/router'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { formatAddress } from 'src/utils/formattingUtils'
+import { getSafeURL } from 'src/v2/utils/gnosisUtils'
 
 type DomainCardProps = {
 	logo: string
@@ -16,12 +17,13 @@ type DomainCardProps = {
 	chainId: SupportedChainId | undefined
 	noOfApplicants: number
 	totalAmount: number
+	safeChainId: number | undefined
 }
 
-function DomainCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfApplicants, totalAmount, onVisibilityUpdate, isVisible }: DomainCardProps) {
+function DomainCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfApplicants, totalAmount, onVisibilityUpdate, isVisible, safeChainId }: DomainCardProps) {
 	const router = useRouter()
-	const [isActive, setIsActive] = useState(false)
 	const { t } = useTranslation()
+	const safeUrl = getSafeURL(safeAddress, safeChainId?.toString()!)
 	return (
 		<Box
 			w='100%'
@@ -31,17 +33,7 @@ function DomainCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfAppl
 			boxShadow='0px 10px 18px rgba(31, 31, 51, 0.05), 0px 0px 1px rgba(31, 31, 51, 0.31);'
 			borderRadius='4px'
 			cursor='pointer'
-			onMouseOver={
-				() => {
-					setIsActive(true)
-				}
-			}
 			className='dao-card'
-			onMouseLeave={
-				() => {
-					setIsActive(false)
-				}
-			}
 			onClick={
 				(e) => {
 					// returning as onClick fired from dao visibility toggle switch for admins
@@ -85,15 +77,26 @@ function DomainCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfAppl
 						)
 					}
 				</Flex>
-				
+
 				<Text
 					fontSize='20px'
 					fontWeight='500'
 					noOfLines={1}>
 					{name}
 				</Text>
-				<Tag mt='-14px' color='#767471' bgColor='#F1EEE8' fontSize='12px' fontWeight='500' lineHeight='16px' maxWidth='max-content' minHeight='0' paddingStart={1} paddingEnd={1}>
-					{safeAddress ? formatAddress(safeAddress): ''}
+				<Tag
+					mt='-14px'
+					color='#767471'
+					bgColor='#F1EEE8'
+					fontSize='12px'
+					fontWeight='500'
+					lineHeight='16px'
+					maxWidth='max-content'
+					minHeight='0'
+					paddingStart={1}
+					paddingEnd={1}
+					onClick={() => {window.open(safeUrl, '_blank')}}>
+					{safeAddress ? formatAddress(safeAddress) : ''}
 				</Tag>
 				<Divider />
 				<Flex justifyContent='space-between' mt={2}>

@@ -59,7 +59,8 @@ function AllDomainGrid({
 								daoId={workspace.id}
 								chainId={workspaceChainId}
 								noOfApplicants={workspace.numberOfApplications}
-								totalAmount={workspace.totalGrantFundingDisbursedUSD} />
+								totalAmount={workspace.totalGrantFundingDisbursedUSD}
+								safeChainId={workspace.safe?.chainId} />
 						</GridItem>
 					)
 				})
