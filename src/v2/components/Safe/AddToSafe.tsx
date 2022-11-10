@@ -1,5 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { Flex, Image, Text, ToastId, useToast } from '@chakra-ui/react'
+import { SupportedSafes } from '@questbook/supported-safes'
 import { logger } from 'ethers'
 import { useRouter } from 'next/router'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
@@ -8,7 +9,6 @@ import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSafeOwners from 'src/hooks/useSafeOwners'
-import useSafeUSDBalances from 'src/hooks/useSafeUSDBalances'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
@@ -51,7 +51,7 @@ function AddToSafe() {
 
 	useEffect(() => {
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && selectedSafe?.networkId &&
-			biconomy.networkId && biconomy.networkId.toString() === networksMapping[selectedSafe?.networkId?.toString()]) {
+            biconomy.networkId && biconomy.networkId.toString() === networksMapping[selectedSafe?.networkId?.toString()]) {
 			setIsBiconomyInitialised(true)
 		}
 
@@ -76,7 +76,9 @@ function AddToSafe() {
 		}
 	}, [isOwner, ownerAddress])
 
-	const { data: safesUSDBalance, loaded: loadedSafesUSDBalance } = useSafeUSDBalances({ safeAddress })
+	// const { data: safesUSDBalance, loaded: loadedSafesUSDBalance } = useSafeUSDBalances({ safeAddress })
+	const [loadingSafeData, setLoadingSafeData] = useState(false)
+	const [safeData, setSafeData] = useState(null)
 
 	useEffect(() => {
 		const isValidEthAddress = isValidEthereumAddress(safeAddress)
@@ -87,20 +89,32 @@ function AddToSafe() {
 			setSafeAddressError('')
 		} else if(!isValidEthAddress && !isValidSolAddress) {
 			setSafeAddressError('Invalid address')
-		} else if(safesUSDBalance?.length === 0 && loadedSafesUSDBalance && safeAddressError === '') {
+		} else if(safeData?.length === 0 && !loadingSafeData && safeAddressError === '') {
 			setSafeAddressError('No Safe found with this address')
 		} else {
 			setSafeAddressError('')
 		}
-		//step === 0 && safeAddress !== '' && loadedSafesUSDBalance && safesUSDBalance?.length === 0
-	}, [step, safeAddress, loadedSafesUSDBalance, safesUSDBalance])
+		//step === 0 && safeAddress !== '' && loadedSafesUSDBalance && safeData?.length === 0
+	}, [step, safeAddress, loadingSafeData, safeData])
 
 	useEffect(() => {
-		if(loadedSafesUSDBalance && safesUSDBalance?.length > 0) {
+		const fetchSafeData = async() => {
+			const supportedSafes = new SupportedSafes()
+			const res = await supportedSafes.getSafeByAddress(safeAddress)
+			setLoadingSafeData(false)
+			setSafeData(res)
+		}
+
+		setLoadingSafeData(true)
+		fetchSafeData()
+	}, [safeAddress])
+
+	useEffect(() => {
+		if(!loadingSafeData && safeData?.length > 0) {
 			setIsVerified(true)
 			setStep(1)
 		}
-	}, [safesUSDBalance, loadedSafesUSDBalance])
+	}, [safeData, loadingSafeData])
 
 	const { data: safeOwners } = useSafeOwners({ safeAddress, chainID: selectedSafe?.networkId, type: selectedSafe?.networkType ?? NetworkType.EVM })
 	useEffect(() => {
@@ -160,7 +174,7 @@ function AddToSafe() {
 
 			setNetworkTransactionModalStep(4)
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			setNetworkTransactionModalStep(undefined)
 			const message = getErrorMessage(e)
@@ -204,7 +218,7 @@ function AddToSafe() {
 					setSafeAddress(clipboardContent)
 				}
 			}
-			isVerified={isVerified !== undefined && safesUSDBalance?.length > 0 && selectedSafe !== undefined}
+			isVerified={isVerified !== undefined && safeData?.length > 0 && selectedSafe !== undefined}
 			safeAddressError={safeAddressError}
 			onContinue={
 				() => {
@@ -215,8 +229,8 @@ function AddToSafe() {
 					}
 				}
 			}
-			isLoading={!loadedSafesUSDBalance && safeAddress !== ''}
-			safesOptions={safesUSDBalance}
+			isLoading={loadingSafeData && safeAddress !== ''}
+			safesOptions={safeData}
 			selectedSafe={selectedSafe}
 			onSelectedSafeChange={
 				(safe) => {
@@ -255,7 +269,7 @@ function AddToSafe() {
 				boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'
 				bg='white'
 				direction='column'
-			 >
+			>
 				{step <= 1 ? STEPS[0] : STEPS[1]}
 			</Flex>
 			<VerifySignerModal
