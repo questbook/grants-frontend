@@ -12,7 +12,6 @@ import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import useSafeOwners from 'src/hooks/useSafeOwners'
 import AccountDetails from 'src/libraries/ui/NavBar/AccountDetails'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
@@ -55,7 +54,7 @@ const OnboardingCreateDomain = () => {
 	const [daoImageFile, setDaoImageFile] = useState<File | null>(null)
 	const [isOwner, setIsOwner] = useState(false)
 	const [isVerifySignerModalOpen, setIsVerifySignerModalOpen] = useState(false)
-	const { data: safeOwners } = useSafeOwners({ safeAddress, chainID: safeSelected?.networkId, type: safeSelected?.networkType ?? NetworkType.EVM })
+	// const { data: safeOwners } = useSafeOwners({ safeAddress, chainID: safeSelected?.networkId, type: safeSelected?.networkType ?? NetworkType.EVM })
 	const [ txHash, setTxHash ] = useState('')
 	const [ownerAddress, setOwnerAddress] = useState('')
 
@@ -497,7 +496,7 @@ const OnboardingCreateDomain = () => {
 						setIsOwner(newState)
 					}
 				}
-				owners={safeOwners}
+				owners={safeData?.owners}
 				isOpen={isVerifySignerModalOpen}
 				onClose={
 					() => {

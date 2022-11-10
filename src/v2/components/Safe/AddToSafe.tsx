@@ -8,7 +8,6 @@ import { NetworkType } from 'src/constants/Networks'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import useSafeOwners from 'src/hooks/useSafeOwners'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
@@ -116,10 +115,10 @@ function AddToSafe() {
 		}
 	}, [safeData, loadingSafeData])
 
-	const { data: safeOwners } = useSafeOwners({ safeAddress, chainID: selectedSafe?.networkId, type: selectedSafe?.networkType ?? NetworkType.EVM })
-	useEffect(() => {
-		logger.info({ safeOwners }, 'Safe owners')
-	}, [safeOwners])
+	// const { data: safeOwners } = useSafeOwners({ safeAddress, chainID: selectedSafe?.networkId, type: selectedSafe?.networkType ?? NetworkType.EVM })
+	// useEffect(() => {
+	// 	logger.info({ safeOwners }, 'Safe owners')
+	// }, [safeOwners])
 
 	const workspaceContract = useQBContract('workspace', getSupportedChainIdFromWorkspace(workspace))
 
@@ -273,7 +272,7 @@ function AddToSafe() {
 				{step <= 1 ? STEPS[0] : STEPS[1]}
 			</Flex>
 			<VerifySignerModal
-				owners={safeOwners}
+				owners={safeData?.owners}
 				isOpen={isVerifySignerModalOpen}
 				onClose={() => setIsVerifySignerModalOpen(false)}
 				setIsOwner={
