@@ -146,16 +146,22 @@ export default function useSubmitApplication(
 					throw new Error('Error validating grant data')
 				}
 
+				logger.info({ ipfsHash }, 'useApplicationSubmit: IPFS Hash')
+
 				setCurrentStep(1)
+
+				const methodArgs = [grantId!,
+					Number(workspaceId).toString(),
+					ipfsHash,
+					data.milestones.length]
+
+				logger.info({ methodArgs }, 'useApplicationSubmit: Method args')
 
 				const response = await sendGaslessTransaction(
 					biconomy,
 					applicationRegistryContract,
 					'submitApplication',
-					[grantId!,
-						Number(workspaceId).toString(),
-						ipfsHash,
-						data.milestones.length, ],
+					methodArgs,
 					APPLICATION_REGISTRY_ADDRESS[currentChainId],
 					biconomyWalletClient,
 					scwAddress,
@@ -167,49 +173,74 @@ export default function useSubmitApplication(
 
 				setCurrentStep(2)
 
+				logger.info({ response }, 'useApplicationSubmit: Response')
+
 				if(response) {
 					const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
-					await subgraphClients[currentChainId].waitForBlock(receipt?.blockNumber)
-
+					logger.info({ receipt, txFee }, 'useApplicationSubmit: Receipt')
 					setCurrentStep(3)
-
+					await subgraphClients[currentChainId].waitForBlock(receipt?.blockNumber)
 					setTransactionData(receipt)
 
-					const commTx = await sendGaslessTransaction(
-						biconomy,
-						communicationContract,
-						'createLink',
-						[currentChainId, sha256(email), (await webwallet?.signMessage(email))?.toString()],
-						COMMUNICATION_ADDRESS[currentChainId],
-						biconomyWalletClient,
-						scwAddress,
-						webwallet,
-						`${currentChainId}`,
-						bicoDapps[currentChainId].webHookId,
-						nonce
-					)
+					const check = await axios.post(`${process.env.API_ENDPOINT}/mapping/check`, {
+						id: scwAddress,
+						from: scwAddress,
+						to: email
+					})
 
-					setCurrentStep(4)
+					if(check.status === 200) {
+						logger.info({ check }, 'useApplicationSubmit: Mapping Exists')
+						setCurrentStep(7)
+					} else {
 
-					if(commTx) {
-						const { receipt: commReceipt } = await getTransactionDetails(commTx, currentChainId.toString())
-						const txHash = commReceipt.transactionHash
+						setCurrentStep(4)
 
-						logger.info({ txHash }, 'Communication tx hash')
+						const encryptedEmail = sha256(email).toString()
+						const signedMessage = (await webwallet?.signMessage(email))?.toString()
 
-						setCurrentStep(5)
-						const ret = await axios.post(`${process.env.API_ENDPOINT}/mapping/create`, {
-							id: scwAddress,
-							chainId: currentChainId,
-							sender: scwAddress,
-							to: email,
-							wallet: webwallet?.address,
-							transactionHash: txHash,
-						})
+						const commMethodArgs = [currentChainId, encryptedEmail, signedMessage]
+						logger.info({ commMethodArgs }, 'useApplicationSubmit: Communication method args')
 
-						if(ret.status === 200) {
-							await chargeGas(Number(workspaceId), Number(txFee), chainId)
+						const commTx = await sendGaslessTransaction(
+							biconomy,
+							communicationContract,
+							'createLink',
+							commMethodArgs,
+							COMMUNICATION_ADDRESS[currentChainId],
+							biconomyWalletClient,
+							scwAddress,
+							webwallet,
+							`${currentChainId}`,
+							bicoDapps[currentChainId].webHookId,
+							nonce
+						)
+
+						logger.info({ commTx }, 'useApplicationSubmit: commTx')
+
+						if(commTx) {
+							const { receipt: commReceipt } = await getTransactionDetails(commTx, currentChainId.toString())
+							logger.info({ commReceipt }, 'useApplicationSubmit: commReceipt')
+							const txHash = commReceipt.transactionHash
+
+							logger.info({ txHash }, 'useApplicationSubmit: Communication tx hash')
+
+							setCurrentStep(5)
+							const ret = await axios.post(`${process.env.API_ENDPOINT}/mapping/create`, {
+								id: scwAddress,
+								chainId: currentChainId,
+								sender: scwAddress,
+								to: email,
+								wallet: webwallet?.address,
+								transactionHash: txHash,
+							})
+
 							setCurrentStep(6)
+
+							logger.info({ ret }, 'useApplicationSubmit: Mapping response')
+
+							if(ret.status === 200) {
+								await chargeGas(Number(workspaceId), Number(txFee), chainId)
+							}
 						}
 					}
 				}
@@ -221,10 +252,11 @@ export default function useSubmitApplication(
 					localStorage.removeItem(cacheKey)
 				}
 
+				setCurrentStep(7)
 				setLoading(false)
-				setCurrentStep(5)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
+				logger.info({ e }, 'useSubmitApplication: Error')
 				setCurrentStep(undefined)
 				const message = getErrorMessage(e)
 				setError(message)

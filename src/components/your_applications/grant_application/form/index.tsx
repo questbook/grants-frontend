@@ -18,7 +18,6 @@ import {
 	convertToRaw,
 	EditorState,
 } from 'draft-js'
-import { logger } from 'ethers'
 import { useRouter } from 'next/router'
 import Loader from 'src/components/ui/loader'
 import ApplicantDetails from 'src/components/your_applications/grant_application/form/1_applicantDetails'
@@ -28,6 +27,7 @@ import Funding from 'src/components/your_applications/grant_application/form/4_f
 import CustomFields from 'src/components/your_applications/grant_application/form/5_customFields'
 import { defaultChainId, SupportedChainId, USD_ASSET } from 'src/constants/chains'
 import useResubmitApplication from 'src/hooks/useResubmitApplication'
+import logger from 'src/libraries/logger'
 import { WebwalletContext } from 'src/pages/_app'
 import {
 	GrantApplicationFieldsSubgraph,
@@ -377,7 +377,7 @@ function Form({
 				applicantAddress: [{ value: applicantAddress }],
 				projectName: [{ value: projectName }],
 				projectDetails: [{ value: projectDetailsString }],
-				fundingAsk: [{ value: parseAmount(fundingAsk, rewardCurrencyAddress) }],
+				fundingAsk: [],
 				fundingBreakdown: [{ value: fundingBreakdown }],
 				teamMembers: [{ value: Number(teamMembers).toString() }],
 				memberDetails: membersDescription.map((md) => ({
@@ -416,6 +416,8 @@ function Form({
 		if(piiFields.length) {
 			await encrypt(data, piiFields)
 		}
+
+		logger.info({ data }, 'Updated data')
 
 		setUpdateData(data)
 	}

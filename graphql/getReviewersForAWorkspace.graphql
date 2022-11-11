@@ -1,6 +1,6 @@
 query getReviewersForAWorkspace($workspaceId: ID!) {
     workspaces(where: {id: $workspaceId}) {
-        members (where: {accessLevel_not: owner}) {
+        members (where: {accessLevel_not: owner, enabled: true}) {
             profilePictureIpfsHash
             accessLevel
             fullName

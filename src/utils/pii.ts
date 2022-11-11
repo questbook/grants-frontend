@@ -1,7 +1,7 @@
 import { useCallback, useContext, useMemo } from 'react'
 import { GrantApplicationRequest, GrantApplicationUpdate } from '@questbook/service-validator-client'
 import { ec as EC } from 'elliptic'
-import { Wallet } from 'ethers'
+import { ethers, Wallet } from 'ethers'
 import {
 	arrayify,
 	keccak256,
@@ -127,8 +127,19 @@ export function useGetPublicKeysOfGrantManagers(grantId: string | undefined, cha
 			})
 			const result: { [address: string]: string | null } = {}
 			for(const { member } of (data?.grantManagers || [])) {
-				if(member) {
-					result[member.actorId] = member.publicKey || null
+				if(!member?.publicKey) {
+					continue
+				}
+
+				try {
+					// check if the public key is valid or not
+					ethers.utils.computeAddress(member?.publicKey)
+				} catch(e) {
+					continue
+				}
+
+				if(member?.enabled) {
+					result[member.actorId] = member.publicKey
 				}
 			}
 

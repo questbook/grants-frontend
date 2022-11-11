@@ -145,40 +145,57 @@ export default function useResubmitApplication(
 
 					await subgraphClients[currentChainId].waitForBlock(receipt?.blockNumber)
 
-					const commTx = await sendGaslessTransaction(
-						biconomy,
-						communicationContract,
-						'createLink',
-						[currentChainId, sha256(email), (await webwallet?.signMessage(email))?.toString()],
-						COMMUNICATION_ADDRESS[currentChainId],
-						biconomyWalletClient,
-						scwAddress,
-						webwallet,
-						`${currentChainId}`,
-						bicoDapps[currentChainId].webHookId,
-						nonce
-					)
+					setCurrentStep(4)
 
-					if(commTx) {
-						const { receipt: commReceipt } = await getTransactionDetails(commTx, currentChainId.toString())
-						const txHash = commReceipt.transactionHash
+					const check = await axios.post(`${process.env.API_ENDPOINT}/mapping/check`, {
+						id: scwAddress,
+						from: scwAddress,
+						to: email
+					})
 
-						logger.info({ txHash }, 'Communication tx hash')
+					if(check.status === 200) {
+						logger.info({ check }, 'useResubmitApplication: Mapping Exists')
+						setCurrentStep(7)
+					} else {
+						const encryptedEmail = sha256(email).toString()
+						const signedMessage = (await webwallet?.signMessage(email))?.toString()
 
-						const ret = await axios.post(`${process.env.API_ENDPOINT}/mapping/create`, {
-							id: scwAddress,
-							chainId: currentChainId,
-							sender: scwAddress,
-							to: email,
-							wallet: webwallet?.address,
-							transactionHash: txHash,
-						})
+						const commMethodArgs = [currentChainId, encryptedEmail, signedMessage]
+						logger.info({ commMethodArgs }, 'useResubmitApplication: comm method args')
+						const commTx = await sendGaslessTransaction(
+							biconomy,
+							communicationContract,
+							'createLink',
+							commMethodArgs,
+							COMMUNICATION_ADDRESS[currentChainId],
+							biconomyWalletClient,
+							scwAddress,
+							webwallet,
+							`${currentChainId}`,
+							bicoDapps[currentChainId].webHookId,
+							nonce
+						)
 
-						if(ret.status === 200) {
-							setCurrentStep(5)
+						setCurrentStep(5)
 
-							setTransactionData(receipt)
-							await chargeGas(Number(workspace?.id), Number(txFee), chainId)
+						if(commTx) {
+							const { receipt: commReceipt } = await getTransactionDetails(commTx, currentChainId.toString())
+							const txHash = commReceipt.transactionHash
+
+							logger.info({ txHash }, 'Communication tx hash')
+
+							const ret = await axios.post(`${process.env.API_ENDPOINT}/mapping/create`, {
+								id: scwAddress,
+								chainId: currentChainId,
+								sender: scwAddress,
+								to: email,
+								wallet: webwallet?.address,
+								transactionHash: txHash,
+							})
+							setCurrentStep(6)
+							if(ret.status === 200) {
+								await chargeGas(Number(workspace?.id), Number(txFee), chainId)
+							}
 						}
 					}
 
@@ -186,8 +203,7 @@ export default function useResubmitApplication(
 					// await chargeGas(Number(workspace?.id), Number(txFee), chainId)
 				}
 
-				setCurrentStep(6)
-
+				setCurrentStep(7)
 				setLoading(false)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {

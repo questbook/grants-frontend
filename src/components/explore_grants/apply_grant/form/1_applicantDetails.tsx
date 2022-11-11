@@ -23,8 +23,9 @@ function ApplicantDetails({
 	grantRequiredFields,
 	applicantAddressError,
 	setApplicantAddressError,
-	resolvedDomain,
-	resolvedDomainError
+	safeNetwork,
+	// resolvedDomain,
+	// resolvedDomainError
 }: {
   applicantName: string
   setApplicantName: (applicantName: string) => void
@@ -39,8 +40,9 @@ function ApplicantDetails({
   applicantAddressError: boolean
   setApplicantAddressError: (applicantAddressError: boolean) => void
   grantRequiredFields: string[]
-  resolvedDomain: string
-  resolvedDomainError: boolean
+  safeNetwork: string
+//   resolvedDomain: string
+//   resolvedDomainError: boolean
 }) {
 	const { t } = useTranslation()
 	const { safeObj } = useSafeContext()
@@ -98,10 +100,9 @@ function ApplicantDetails({
 			<SingleLineInput
 				label={t('/explore_grants/apply.address')}
 				placeholder={isEvm ? '0xa2dD...' : '5yDU...' } //TODO : remove hardcoding of chainId
-				subtext={resolvedDomain ? `Unstoppable domain found with owner ${resolvedDomain}` : `${t('/explore_grants/apply.your_address_on')} ${chainNames.get(safeObj?.chainId?.toString())}`}
+				subtext={`${t('/explore_grants/apply.your_address_on')} ${chainNames.get(safeObj?.chainId?.toString())}`}
 				onChange={
 					async(e) => {
-						debugger
 						setApplicantAddress(e.target.value)
 						let safeAddressValid = false
 						if(isEvm) {
@@ -115,7 +116,8 @@ function ApplicantDetails({
 						// console.log('safe address', e.target.value, safeAddressValid)
 					}
 				}
-				isError={applicantAddressError && resolvedDomainError}
+				// isError={applicantAddressError && resolvedDomainError}
+				isError={applicantAddressError}
 				errorText={t('/explore_grants/apply.invalid_address_on_chain').replace('%CHAIN', chainNames.get(safeObj?.chainId?.toString())!)}
 				value={applicantAddress}
 				visible={grantRequiredFields.includes('applicantAddress')}

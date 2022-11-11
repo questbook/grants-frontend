@@ -6,6 +6,7 @@ query getWorkspaceMembersByWorkspaceId(
     workspaceMembers(
         where: {
             workspace: $workspaceId
+            enabled: true
         }
         first: $first
         skip: $skip
