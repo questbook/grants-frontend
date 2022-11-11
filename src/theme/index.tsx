@@ -20,52 +20,7 @@ const theme = extendTheme({
 	// 	heading: 'nhg, sans-serif',
 	// 	buttons: 'nhg, sans-serif',
 	// },
-	colors: {
-		brand: {
-			100: '#9580FF1A',
-			500: '#8850EA',
-			600: '#AA82F0',
-			700: '#6200EE',
-			800: '#B6F72B'
-		},
-		brandDisabled: {
-			500: '#69CACA',
-			600: '#656c6c',
-		},
-		backgrounds: {
-			sidebar: '#F6F9FB',
-			card: '#F3F4F4',
-			floatingSidebar: '#F3F4F4',
-		},
-		brandGreen: {
-			500: '#01C37E',
-			600: '#01C37E',
-		},
-		brandRed: {
-			500: '#EE7979',
-			600: '#EE7979',
-		},
-		brandText: '#4E4E6B',
-		brandSubtext: '#7D7DA0',
-		greenTextBackground: '#79F2C0',
-		greenTextDark: '#36B37E',
-		brandGrey: {
-			500: '#F0F0F7',
-			600: '#EBEBF3',
-			700: '#DCDCE6',
-		},
-		red: '#F25A5A',
-		brandv2: {
-			500: '#1F1F33',
-			600: '#3F3F53',
-			700: '#5F5F72',
-		},
-		bannerGrey: '#F0F0F7',
-		v2Grey: '#555570',
-		primary: '#745FE8',
-		v2LightGrey: '#D2D2E3',
-		...colors
-	},
+	colors,
 	sizes: {
 		connectWallet: '41.5rem',
 	},
