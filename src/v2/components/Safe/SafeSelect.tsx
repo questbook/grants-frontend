@@ -36,6 +36,7 @@ export interface SafeSelectOption extends OptionBase {
 	currency?: string // USD
 	isNote?: boolean
 	noteDetails?: NoteDetails
+	owners: string[]
 }
 
 const Option = ({ innerProps, data }: OptionProps<SafeSelectOption, any, any>) => (

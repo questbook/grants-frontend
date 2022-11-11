@@ -420,7 +420,8 @@ const getSafeDetails = async(realmsAddress: string): Promise<SafeSelectOption | 
 		safeType: 'Realms',
 		safeIcon: '/safes_icons/realms.svg',
 		amount: usdAmount, // 1000
-		isDisabled: usdAmount < USD_THRESHOLD
+		isDisabled: usdAmount < USD_THRESHOLD,
+		owners: [],
 	}
 }
 

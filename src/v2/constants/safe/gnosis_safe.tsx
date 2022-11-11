@@ -88,68 +88,72 @@ export class GnosisSafe implements _GnosisSafe {
 		return readyTxs
 	}
 
-	async createMultiTransaction(workspaceSafeChainId: any, initiateTransactionData: any, safeAddress: string) {
-
-		const readyToExecuteTxs = await this.createEVMMetaTransactions(workspaceSafeChainId, initiateTransactionData)
-
-		console.log('creating gnosis transaction for', readyToExecuteTxs)
-		//@ts-ignore
-		const provider = new ethers.providers.Web3Provider(window.ethereum)
-		await provider.send('eth_requestAccounts', [])
-
-		const signer = provider.getSigner()
-		const ethAdapter = new EthersAdapter({
-			ethers,
-			signer,
-		})
-		const safeService = new SafeServiceClient({ txServiceUrl: this.txnServiceURL, ethAdapter })
-		// const safeFactory = await SafeFactory.create({ ethAdapter })
-		let safeSdk
-
-		if (this.chainId === 40) {
-			const id = await ethAdapter.getChainId()
-			const contractNetworks: ContractNetworksConfig = {
-				[id]: {
-					multiSendAddress: '0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761',
-					safeMasterCopyAddress: '0xe591ae490dcc235f420fb7ae3239e0df3ae2048f',
-					safeProxyFactoryAddress: '0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2',
-					multiSendCallOnlyAddress: '0x40A2aCCbd92BCA938b02010E17A5b8929b49130D'
-				}
-			}
-
-			safeSdk = await Safe.create({ ethAdapter, safeAddress, contractNetworks })
-
-		} else {
-			safeSdk = await Safe.create({ ethAdapter, safeAddress })
-
-		}
-
-		try {
-			const safeTransaction = await safeSdk.createTransaction({safeTransactionData: readyToExecuteTxs})
-
-			const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
-			const senderSignature = await safeSdk.signTransactionHash(safeTxHash)
-			// console.log(await signer.getAddress())
-
-			// console.log('safe address', safeAddress, safeTransaction.data, safeTxHash, senderSignature.data)
-
-			await safeService.proposeTransaction({
-				safeAddress,
-				safeTransactionData: safeTransaction.data,
-				safeTxHash,
-				senderAddress: senderSignature.signer,
-				senderSignature: senderSignature.data
-			})
-
-			return safeTxHash
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} catch (e: any) {
-			// return undefined
-			console.log(e)
-		}
-
-
+	createMultiTransaction(transactions: MetaTransaction[], safeAddress: string): void {
+    	throw new Error('Method not implemented.')
 	}
+
+	// async createMultiTransaction(workspaceSafeChainId: any, initiateTransactionData: any, safeAddress: string) {
+
+	// 	const readyToExecuteTxs = await this.createEVMMetaTransactions(workspaceSafeChainId, initiateTransactionData)
+
+	// 	console.log('creating gnosis transaction for', readyToExecuteTxs)
+	// 	//@ts-ignore
+	// 	const provider = new ethers.providers.Web3Provider(window.ethereum)
+	// 	await provider.send('eth_requestAccounts', [])
+
+	// 	const signer = provider.getSigner()
+	// 	const ethAdapter = new EthersAdapter({
+	// 		ethers,
+	// 		signer,
+	// 	})
+	// 	const safeService = new SafeServiceClient({ txServiceUrl: this.txnServiceURL, ethAdapter })
+	// 	// const safeFactory = await SafeFactory.create({ ethAdapter })
+	// 	let safeSdk
+
+	// 	if (this.chainId === 40) {
+	// 		const id = await ethAdapter.getChainId()
+	// 		const contractNetworks: ContractNetworksConfig = {
+	// 			[id]: {
+	// 				multiSendAddress: '0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761',
+	// 				safeMasterCopyAddress: '0xe591ae490dcc235f420fb7ae3239e0df3ae2048f',
+	// 				safeProxyFactoryAddress: '0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2',
+	// 				multiSendCallOnlyAddress: '0x40A2aCCbd92BCA938b02010E17A5b8929b49130D'
+	// 			}
+	// 		}
+
+	// 		safeSdk = await Safe.create({ ethAdapter, safeAddress, contractNetworks })
+
+	// 	} else {
+	// 		safeSdk = await Safe.create({ ethAdapter, safeAddress })
+
+	// 	}
+
+	// 	try {
+	// 		const safeTransaction = await safeSdk.createTransaction({safeTransactionData: readyToExecuteTxs})
+
+	// 		const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
+	// 		const senderSignature = await safeSdk.signTransactionHash(safeTxHash)
+	// 		// console.log(await signer.getAddress())
+
+	// 		// console.log('safe address', safeAddress, safeTransaction.data, safeTxHash, senderSignature.data)
+
+	// 		await safeService.proposeTransaction({
+	// 			safeAddress,
+	// 			safeTransactionData: safeTransaction.data,
+	// 			safeTxHash,
+	// 			senderAddress: senderSignature.signer,
+	// 			senderSignature: senderSignature.data
+	// 		})
+
+	// 		return safeTxHash
+	// 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	// 	} catch (e: any) {
+	// 		// return undefined
+	// 		console.log(e)
+	// 	}
+
+
+	// }
 
 	async isValidSafeAddress(address: String) {
 		return false

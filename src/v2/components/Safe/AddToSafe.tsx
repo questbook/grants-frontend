@@ -77,7 +77,7 @@ function AddToSafe() {
 
 	// const { data: safesUSDBalance, loaded: loadedSafesUSDBalance } = useSafeUSDBalances({ safeAddress })
 	const [loadingSafeData, setLoadingSafeData] = useState(false)
-	const [safeData, setSafeData] = useState(null)
+	const [safeData, setSafeData] = useState<any[]>([])
 
 	useEffect(() => {
 		const isValidEthAddress = isValidEthereumAddress(safeAddress)
@@ -272,7 +272,7 @@ function AddToSafe() {
 				{step <= 1 ? STEPS[0] : STEPS[1]}
 			</Flex>
 			<VerifySignerModal
-				owners={safeData?.owners}
+				owners={selectedSafe?.owners!}
 				isOpen={isVerifySignerModalOpen}
 				onClose={() => setIsVerifySignerModalOpen(false)}
 				setIsOwner={

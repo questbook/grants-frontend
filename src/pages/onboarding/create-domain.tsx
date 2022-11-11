@@ -42,7 +42,7 @@ const OnboardingCreateDomain = () => {
 	const [isSafeAddressVerified, setIsSafeAddressVerified] = useState(false)
 	// const { data: safesUSDBalance, loaded: loadedSafesUSDBalance } = useSafeUSDBalances({ safeAddress })
 	const [loadingSafeData, setLoadingSafeData] = useState(false)
-	const [safeData, setSafeData] = useState(null)
+	const [safeData, setSafeData] = useState<any[]>([])
 	const [safeSelected, setSafeSelected] = useState<SafeSelectOption>()
 	const [safeAddressError, setSafeAddressError] = useState<string>('')
 
@@ -496,7 +496,7 @@ const OnboardingCreateDomain = () => {
 						setIsOwner(newState)
 					}
 				}
-				owners={safeData?.owners}
+				owners={safeSelected?.owners}
 				isOpen={isVerifySignerModalOpen}
 				onClose={
 					() => {
