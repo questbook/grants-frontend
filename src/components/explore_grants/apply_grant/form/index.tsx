@@ -678,7 +678,6 @@ function Form({
 					setApplicantAddress={setApplicantAddress}
 					setApplicantAddressError={setApplicantAddressError}
 					grantRequiredFields={grantRequiredFields}
-					safeNetwork={safeNetwork!}
 					resolvedDomain={resolvedDomain}
 					resolvedDomainError={resolvedDomainError}
 				/>

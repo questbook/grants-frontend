@@ -2,12 +2,14 @@ import React, {
 	ReactElement, useContext, useEffect, useState,
 } from 'react'
 import { Flex } from '@chakra-ui/react'
+import { SupportedSafes } from '@questbook/supported-safes'
 import { useRouter } from 'next/router'
 import Form from 'src/components/explore_grants/apply_grant/form'
 import Sidebar from 'src/components/explore_grants/apply_grant/sidebar'
 import { defaultChainId, USD_ASSET } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import config from 'src/constants/config.json'
+import { useSafeContext } from 'src/contexts/safeContext'
 import { useGetGrantDetailsQuery } from 'src/generated/graphql'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
@@ -39,12 +41,13 @@ function ApplyGrant() {
 	const [grantDetails, setGrantDetails] = useState('')
 	const [grantSummary, setGrantSummary] = useState('')
 	const [workspaceId, setWorkspaceId] = useState('')
-	const [safeChainId, setSafeChainId] = useState<string | undefined>(defaultChainId.toString())
+	// const [safeChainId, setSafeChainId] = useState<string | undefined>(defaultChainId.toString())
 	const [grantRequiredFields, setGrantRequiredFields] = useState<any[]>([])
 	const [chainId, setChainId] = useState<SupportedChainId>()
 	const [acceptingApplications, setAcceptingApplications] = useState(true)
 	const [shouldShowButton, setShouldShowButton] = useState(false)
 	const { network, switchNetwork } = useNetwork()
+	const { safeObj, setSafeObj } = useSafeContext()
 
 	useEffect(() => {
 		if(router?.query) {
@@ -129,8 +132,9 @@ function ApplyGrant() {
 		setChainId(localChainId)
 		setTitle(grantData?.title)
 		setWorkspaceId(grantData?.workspace?.id)
-		logger.info({ chainId: grantData?.workspace?.safeChainId, grantData }, 'safe chainid')
-		setSafeChainId(grantData?.workspace?.safe?.ChainId)
+		logger.info({ chainId: grantData?.workspace?.safe?.address, grantData }, 'safe chainid')
+		const currentSafe = new SupportedSafes().getSafe(parseInt(grantData?.workspace?.safe?.chainId!), grantData?.workspace?.safe?.address!)
+		setSafeObj(currentSafe)
 		setDaoId(grantData?.workspace?.id)
 		setDaoLogo(grantData?.workspace?.logoIpfsHash === config.defaultDAOImageHash ?
 			getAvatar(true, grantData?.workspace?.title) :
@@ -173,7 +177,7 @@ function ApplyGrant() {
 		setGrantSummary(grantData?.summary)
 		setGrantRequiredFields(grantData?.fields)
 		setAcceptingApplications(grantData?.acceptingApplications)
-		setSafeChainId(grantData?.workspace?.safe?.chainId)
+		setSafeObj(currentSafe)
 
 	}, [grantData])
 
@@ -204,7 +208,7 @@ function ApplyGrant() {
 					rewardCurrencyCoin={rewardCurrencyCoin}
 					rewardCurrencyAddress={rewardCurrencyAddress}
 					workspaceId={workspaceId}
-					safeNetwork={safeChainId || defaultChainId.toString()}
+					safeNetwork={safeObj.chainId}
 					grantRequiredFields={grantRequiredFields.map((field: any) => field.id.split('.')[1])}
 					piiFields={grantRequiredFields.filter((field: any) => field.isPii).map((field: any) => field.id.split('.')[1])}
 					acceptingApplications={acceptingApplications}

@@ -21,7 +21,7 @@ function Sidebar() {
 	const { network, switchNetwork } = useNetwork()
 	const { workspace, setWorkspace } = useContext(ApiClientsContext)!
 
-	const { safeObj, setSafeObj } = useSafeContext()
+	const { setSafeObj } = useSafeContext()
 
 	const router = useRouter()
 
