@@ -97,7 +97,7 @@ function ViewProposals() {
 	const workspacechainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 
 	const { safeObj } = useSafeContext()
-	const isEvmChain = safeObj.getIsEvm()
+	const isEvmChain = safeObj?.getIsEvm()
 
 	const { t } = useTranslation()
 
@@ -148,7 +148,7 @@ function ViewProposals() {
 	const toastRef = useRef<ToastId>()
 
 	useEffect(() => {
-		if(!safeObj.chainId && !safeObj.address) {
+		if(workspace && !workspace?.safe?.chainId && !workspace?.safe?.address) {
 			toastRef.current = toast({
 				title: 'No Safe Found',
 				description: 'Please add a Safe Address to your workspace',
@@ -158,7 +158,7 @@ function ViewProposals() {
 			})
 			return
 		}
-	}, [safeObj])
+	}, [workspace])
 
 
 	useEffect(() => {

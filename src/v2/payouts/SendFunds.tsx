@@ -80,26 +80,28 @@ export default function SendFunds({
 	// const [celoTokensUSDRateMapping, setCeloTokensUSDRateMappings] = useState<any>({})
 
 	const { safeObj } = useSafeContext()
-	const isEvmChain = safeObj.getIsEvm()
+	const isEvmChain = safeObj?.getIsEvm()
 
 	const workspaceRegistryContract = useQBContract('workspace', workspacechainId)
 	const { webwallet } = useContext(WebwalletContext)!
 
 	useEffect(() => {
-		if(sendFundsTo?.length > 0) {
-			if(sendFundsTo?.length === 1) {
-				setSendFundsModalIsOpen(true)
-			} else {
-				setSendFundsDrawerIsOpen(true)
-			}
-		}
 
 		const getToken = async() => {
 			const response = await safeObj?.getTokenAndbalance()
 			setSafeTokenList(response)
 		}
 
-		getToken()
+		if(sendFundsTo?.length > 0) {
+			if(sendFundsTo?.length === 1) {
+				setSendFundsModalIsOpen(true)
+				getToken()
+			} else {
+				setSendFundsDrawerIsOpen(true)
+				getToken()
+			}
+		}
+
 	}, [sendFundsTo])
 
 
@@ -332,7 +334,7 @@ export default function SendFunds({
 			<SendFundsModal
 				isOpen={sendFundsModalIsOpen}
 				onClose={onModalClose}
-				safeAddress={safeObj.safeAddress}
+				safeAddress={safeObj?.safeAddress}
 				safeNetwork={safeObj?.chainId.toString()!}
 				proposals={sendFundsTo ?? []}
 
@@ -357,7 +359,7 @@ export default function SendFunds({
 			<SendFundsDrawer
 				isOpen={sendFundsDrawerIsOpen}
 				onClose={onModalClose}
-				safeAddress={safeObj.safeAddress}
+				safeAddress={safeObj?.safeAddress}
 				proposals={sendFundsTo ?? []}
 
 				safeTokenList={safeTokenList}
