@@ -4909,6 +4909,20 @@ export type GetWorkspaceMembersPublicKeysQueryVariables = Exact<{
 
 export type GetWorkspaceMembersPublicKeysQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', actorId: string, publicKey?: string | null }> };
 
+export type GetGrantQueryVariables = Exact<{
+  grantID: Scalars['ID'];
+}>;
+
+
+export type GetGrantQuery = { __typename?: 'Query', grant?: { __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, applications: Array<{ __typename?: 'GrantApplication', id: string }> } | null };
+
+export type GetGrantsQueryVariables = Exact<{
+  domainID: Scalars['String'];
+}>;
+
+
+export type GetGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean }> };
+
 
 export const GetProfileDetailsDocument = gql`
     query GetProfileDetails($actorId: Bytes!) {
@@ -4966,6 +4980,9 @@ export function useGetProfileDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetProfileDetailsQueryHookResult = ReturnType<typeof useGetProfileDetailsQuery>;
 export type GetProfileDetailsLazyQueryHookResult = ReturnType<typeof useGetProfileDetailsLazyQuery>;
 export type GetProfileDetailsQueryResult = Apollo.QueryResult<GetProfileDetailsQuery, GetProfileDetailsQueryVariables>;
+export function refetchGetProfileDetailsQuery(variables: GetProfileDetailsQueryVariables) {
+      return { query: GetProfileDetailsDocument, variables: variables }
+    }
 export const GetAllApplicationsOnANetworkDocument = gql`
     query getAllApplicationsOnANetwork {
   grantApplications {
@@ -5000,6 +5017,9 @@ export function useGetAllApplicationsOnANetworkLazyQuery(baseOptions?: Apollo.La
 export type GetAllApplicationsOnANetworkQueryHookResult = ReturnType<typeof useGetAllApplicationsOnANetworkQuery>;
 export type GetAllApplicationsOnANetworkLazyQueryHookResult = ReturnType<typeof useGetAllApplicationsOnANetworkLazyQuery>;
 export type GetAllApplicationsOnANetworkQueryResult = Apollo.QueryResult<GetAllApplicationsOnANetworkQuery, GetAllApplicationsOnANetworkQueryVariables>;
+export function refetchGetAllApplicationsOnANetworkQuery(variables?: GetAllApplicationsOnANetworkQueryVariables) {
+      return { query: GetAllApplicationsOnANetworkDocument, variables: variables }
+    }
 export const GetAllGrantsDocument = gql`
     query getAllGrants($first: Int, $skip: Int, $applicantId: Bytes!, $minDeadline: Int!) {
   grants(
@@ -5074,6 +5094,9 @@ export function useGetAllGrantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetAllGrantsQueryHookResult = ReturnType<typeof useGetAllGrantsQuery>;
 export type GetAllGrantsLazyQueryHookResult = ReturnType<typeof useGetAllGrantsLazyQuery>;
 export type GetAllGrantsQueryResult = Apollo.QueryResult<GetAllGrantsQuery, GetAllGrantsQueryVariables>;
+export function refetchGetAllGrantsQuery(variables: GetAllGrantsQueryVariables) {
+      return { query: GetAllGrantsDocument, variables: variables }
+    }
 export const GetAllGrantsCountForCreatorDocument = gql`
     query getAllGrantsCountForCreator($first: Int, $skip: Int, $creatorId: Bytes, $workspaceId: String) {
   liveGrants: grants(
@@ -5123,6 +5146,9 @@ export function useGetAllGrantsCountForCreatorLazyQuery(baseOptions?: Apollo.Laz
 export type GetAllGrantsCountForCreatorQueryHookResult = ReturnType<typeof useGetAllGrantsCountForCreatorQuery>;
 export type GetAllGrantsCountForCreatorLazyQueryHookResult = ReturnType<typeof useGetAllGrantsCountForCreatorLazyQuery>;
 export type GetAllGrantsCountForCreatorQueryResult = Apollo.QueryResult<GetAllGrantsCountForCreatorQuery, GetAllGrantsCountForCreatorQueryVariables>;
+export function refetchGetAllGrantsCountForCreatorQuery(variables?: GetAllGrantsCountForCreatorQueryVariables) {
+      return { query: GetAllGrantsCountForCreatorDocument, variables: variables }
+    }
 export const GetAllGrantsForADaoDocument = gql`
     query getAllGrantsForADao($first: Int, $skip: Int, $workspaceId: String!, $acceptingApplications: Boolean!) {
   grants(
@@ -5199,6 +5225,9 @@ export function useGetAllGrantsForADaoLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type GetAllGrantsForADaoQueryHookResult = ReturnType<typeof useGetAllGrantsForADaoQuery>;
 export type GetAllGrantsForADaoLazyQueryHookResult = ReturnType<typeof useGetAllGrantsForADaoLazyQuery>;
 export type GetAllGrantsForADaoQueryResult = Apollo.QueryResult<GetAllGrantsForADaoQuery, GetAllGrantsForADaoQueryVariables>;
+export function refetchGetAllGrantsForADaoQuery(variables: GetAllGrantsForADaoQueryVariables) {
+      return { query: GetAllGrantsForADaoDocument, variables: variables }
+    }
 export const GetAllGrantsForAllDaoDocument = gql`
     query getAllGrantsForAllDao($first: Int, $skip: Int, $applicantId: Bytes!, $minDeadline: Int!) {
   grants(
@@ -5275,6 +5304,9 @@ export function useGetAllGrantsForAllDaoLazyQuery(baseOptions?: Apollo.LazyQuery
 export type GetAllGrantsForAllDaoQueryHookResult = ReturnType<typeof useGetAllGrantsForAllDaoQuery>;
 export type GetAllGrantsForAllDaoLazyQueryHookResult = ReturnType<typeof useGetAllGrantsForAllDaoLazyQuery>;
 export type GetAllGrantsForAllDaoQueryResult = Apollo.QueryResult<GetAllGrantsForAllDaoQuery, GetAllGrantsForAllDaoQueryVariables>;
+export function refetchGetAllGrantsForAllDaoQuery(variables: GetAllGrantsForAllDaoQueryVariables) {
+      return { query: GetAllGrantsForAllDaoDocument, variables: variables }
+    }
 export const GetAllGrantsForCreatorDocument = gql`
     query getAllGrantsForCreator($first: Int, $skip: Int, $creatorId: Bytes, $workspaceId: String, $acceptingApplications: [Boolean!], $minDeadline: Int!, $maxDeadline: Int!) {
   grants(
@@ -5357,6 +5389,9 @@ export function useGetAllGrantsForCreatorLazyQuery(baseOptions?: Apollo.LazyQuer
 export type GetAllGrantsForCreatorQueryHookResult = ReturnType<typeof useGetAllGrantsForCreatorQuery>;
 export type GetAllGrantsForCreatorLazyQueryHookResult = ReturnType<typeof useGetAllGrantsForCreatorLazyQuery>;
 export type GetAllGrantsForCreatorQueryResult = Apollo.QueryResult<GetAllGrantsForCreatorQuery, GetAllGrantsForCreatorQueryVariables>;
+export function refetchGetAllGrantsForCreatorQuery(variables: GetAllGrantsForCreatorQueryVariables) {
+      return { query: GetAllGrantsForCreatorDocument, variables: variables }
+    }
 export const GetAllGrantsForReviewerDocument = gql`
     query getAllGrantsForReviewer($first: Int, $skip: Int, $reviewerIDs: [String!]) {
   grantApplications(
@@ -5436,6 +5471,9 @@ export function useGetAllGrantsForReviewerLazyQuery(baseOptions?: Apollo.LazyQue
 export type GetAllGrantsForReviewerQueryHookResult = ReturnType<typeof useGetAllGrantsForReviewerQuery>;
 export type GetAllGrantsForReviewerLazyQueryHookResult = ReturnType<typeof useGetAllGrantsForReviewerLazyQuery>;
 export type GetAllGrantsForReviewerQueryResult = Apollo.QueryResult<GetAllGrantsForReviewerQuery, GetAllGrantsForReviewerQueryVariables>;
+export function refetchGetAllGrantsForReviewerQuery(variables?: GetAllGrantsForReviewerQueryVariables) {
+      return { query: GetAllGrantsForReviewerDocument, variables: variables }
+    }
 export const GetAllWorkspacesDocument = gql`
     query getAllWorkspaces {
   workspaces(subgraphError: allow) {
@@ -5475,6 +5513,9 @@ export function useGetAllWorkspacesLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type GetAllWorkspacesQueryHookResult = ReturnType<typeof useGetAllWorkspacesQuery>;
 export type GetAllWorkspacesLazyQueryHookResult = ReturnType<typeof useGetAllWorkspacesLazyQuery>;
 export type GetAllWorkspacesQueryResult = Apollo.QueryResult<GetAllWorkspacesQuery, GetAllWorkspacesQueryVariables>;
+export function refetchGetAllWorkspacesQuery(variables?: GetAllWorkspacesQueryVariables) {
+      return { query: GetAllWorkspacesDocument, variables: variables }
+    }
 export const GetApplicantsForAGrantDocument = gql`
     query getApplicantsForAGrant($first: Int, $skip: Int, $grantID: String!) {
   grantApplications(first: $first, where: {grant: $grantID}, subgraphError: allow) {
@@ -5574,6 +5615,9 @@ export function useGetApplicantsForAGrantLazyQuery(baseOptions?: Apollo.LazyQuer
 export type GetApplicantsForAGrantQueryHookResult = ReturnType<typeof useGetApplicantsForAGrantQuery>;
 export type GetApplicantsForAGrantLazyQueryHookResult = ReturnType<typeof useGetApplicantsForAGrantLazyQuery>;
 export type GetApplicantsForAGrantQueryResult = Apollo.QueryResult<GetApplicantsForAGrantQuery, GetApplicantsForAGrantQueryVariables>;
+export function refetchGetApplicantsForAGrantQuery(variables: GetApplicantsForAGrantQueryVariables) {
+      return { query: GetApplicantsForAGrantDocument, variables: variables }
+    }
 export const GetApplicantsForAGrantReviewerDocument = gql`
     query getApplicantsForAGrantReviewer($first: Int, $skip: Int, $grantID: String!, $reviewerIDs: [String!]) {
   grantApplications(
@@ -5660,6 +5704,9 @@ export function useGetApplicantsForAGrantReviewerLazyQuery(baseOptions?: Apollo.
 export type GetApplicantsForAGrantReviewerQueryHookResult = ReturnType<typeof useGetApplicantsForAGrantReviewerQuery>;
 export type GetApplicantsForAGrantReviewerLazyQueryHookResult = ReturnType<typeof useGetApplicantsForAGrantReviewerLazyQuery>;
 export type GetApplicantsForAGrantReviewerQueryResult = Apollo.QueryResult<GetApplicantsForAGrantReviewerQuery, GetApplicantsForAGrantReviewerQueryVariables>;
+export function refetchGetApplicantsForAGrantReviewerQuery(variables: GetApplicantsForAGrantReviewerQueryVariables) {
+      return { query: GetApplicantsForAGrantReviewerDocument, variables: variables }
+    }
 export const GetApplicationDetailsDocument = gql`
     query getApplicationDetails($applicationID: ID!) {
   grantApplication(id: $applicationID, subgraphError: allow) {
@@ -5816,6 +5863,9 @@ export function useGetApplicationDetailsLazyQuery(baseOptions?: Apollo.LazyQuery
 export type GetApplicationDetailsQueryHookResult = ReturnType<typeof useGetApplicationDetailsQuery>;
 export type GetApplicationDetailsLazyQueryHookResult = ReturnType<typeof useGetApplicationDetailsLazyQuery>;
 export type GetApplicationDetailsQueryResult = Apollo.QueryResult<GetApplicationDetailsQuery, GetApplicationDetailsQueryVariables>;
+export function refetchGetApplicationDetailsQuery(variables: GetApplicationDetailsQueryVariables) {
+      return { query: GetApplicationDetailsDocument, variables: variables }
+    }
 export const GetDaoGrantsDocument = gql`
     query getDaoGrants($workspaceId: String!) {
   grants(
@@ -5870,6 +5920,9 @@ export function useGetDaoGrantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetDaoGrantsQueryHookResult = ReturnType<typeof useGetDaoGrantsQuery>;
 export type GetDaoGrantsLazyQueryHookResult = ReturnType<typeof useGetDaoGrantsLazyQuery>;
 export type GetDaoGrantsQueryResult = Apollo.QueryResult<GetDaoGrantsQuery, GetDaoGrantsQueryVariables>;
+export function refetchGetDaoGrantsQuery(variables: GetDaoGrantsQueryVariables) {
+      return { query: GetDaoGrantsDocument, variables: variables }
+    }
 export const GetApplicationMilestonesDocument = gql`
     query getApplicationMilestones($grantId: ID!) {
   grantApplications(where: {id: $grantId}) {
@@ -5931,6 +5984,9 @@ export function useGetApplicationMilestonesLazyQuery(baseOptions?: Apollo.LazyQu
 export type GetApplicationMilestonesQueryHookResult = ReturnType<typeof useGetApplicationMilestonesQuery>;
 export type GetApplicationMilestonesLazyQueryHookResult = ReturnType<typeof useGetApplicationMilestonesLazyQuery>;
 export type GetApplicationMilestonesQueryResult = Apollo.QueryResult<GetApplicationMilestonesQuery, GetApplicationMilestonesQueryVariables>;
+export function refetchGetApplicationMilestonesQuery(variables: GetApplicationMilestonesQueryVariables) {
+      return { query: GetApplicationMilestonesDocument, variables: variables }
+    }
 export const GetDaoDetailsDocument = gql`
     query getDAODetails($workspaceID: ID!, $daoID: String!) {
   workspace(id: $workspaceID, subgraphError: allow) {
@@ -6026,6 +6082,9 @@ export function useGetDaoDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetDaoDetailsQueryHookResult = ReturnType<typeof useGetDaoDetailsQuery>;
 export type GetDaoDetailsLazyQueryHookResult = ReturnType<typeof useGetDaoDetailsLazyQuery>;
 export type GetDaoDetailsQueryResult = Apollo.QueryResult<GetDaoDetailsQuery, GetDaoDetailsQueryVariables>;
+export function refetchGetDaoDetailsQuery(variables: GetDaoDetailsQueryVariables) {
+      return { query: GetDaoDetailsDocument, variables: variables }
+    }
 export const GetDaoNameDocument = gql`
     query getDAOName($workspaceID: ID!) {
   workspace(id: $workspaceID) {
@@ -6065,6 +6124,9 @@ export function useGetDaoNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetDaoNameQueryHookResult = ReturnType<typeof useGetDaoNameQuery>;
 export type GetDaoNameLazyQueryHookResult = ReturnType<typeof useGetDaoNameLazyQuery>;
 export type GetDaoNameQueryResult = Apollo.QueryResult<GetDaoNameQuery, GetDaoNameQueryVariables>;
+export function refetchGetDaoNameQuery(variables: GetDaoNameQueryVariables) {
+      return { query: GetDaoNameDocument, variables: variables }
+    }
 export const GetDaOsForExploreDocument = gql`
     query getDAOsForExplore($first: Int, $skip: Int, $orderBy: Workspace_orderBy!, $filter: Workspace_filter!) {
   workspaces(
@@ -6122,6 +6184,9 @@ export function useGetDaOsForExploreLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetDaOsForExploreQueryHookResult = ReturnType<typeof useGetDaOsForExploreQuery>;
 export type GetDaOsForExploreLazyQueryHookResult = ReturnType<typeof useGetDaOsForExploreLazyQuery>;
 export type GetDaOsForExploreQueryResult = Apollo.QueryResult<GetDaOsForExploreQuery, GetDaOsForExploreQueryVariables>;
+export function refetchGetDaOsForExploreQuery(variables: GetDaOsForExploreQueryVariables) {
+      return { query: GetDaOsForExploreDocument, variables: variables }
+    }
 export const GetFundSentforReviewerDocument = gql`
     query getFundSentforReviewer($type: FundsTransferType, $to: Bytes) {
   fundsTransfers(
@@ -6171,6 +6236,9 @@ export function useGetFundSentforReviewerLazyQuery(baseOptions?: Apollo.LazyQuer
 export type GetFundSentforReviewerQueryHookResult = ReturnType<typeof useGetFundSentforReviewerQuery>;
 export type GetFundSentforReviewerLazyQueryHookResult = ReturnType<typeof useGetFundSentforReviewerLazyQuery>;
 export type GetFundSentforReviewerQueryResult = Apollo.QueryResult<GetFundSentforReviewerQuery, GetFundSentforReviewerQueryVariables>;
+export function refetchGetFundSentforReviewerQuery(variables?: GetFundSentforReviewerQueryVariables) {
+      return { query: GetFundSentforReviewerDocument, variables: variables }
+    }
 export const GetFundSentforReviewsDocument = gql`
     query getFundSentforReviews($type: FundsTransferType) {
   fundsTransfers(
@@ -6219,6 +6287,9 @@ export function useGetFundSentforReviewsLazyQuery(baseOptions?: Apollo.LazyQuery
 export type GetFundSentforReviewsQueryHookResult = ReturnType<typeof useGetFundSentforReviewsQuery>;
 export type GetFundSentforReviewsLazyQueryHookResult = ReturnType<typeof useGetFundSentforReviewsLazyQuery>;
 export type GetFundSentforReviewsQueryResult = Apollo.QueryResult<GetFundSentforReviewsQuery, GetFundSentforReviewsQueryVariables>;
+export function refetchGetFundSentforReviewsQuery(variables?: GetFundSentforReviewsQueryVariables) {
+      return { query: GetFundSentforReviewsDocument, variables: variables }
+    }
 export const GetFundSentDisburseDocument = gql`
     query getFundSentDisburse($type: FundsTransferType) {
   fundsTransfers(
@@ -6270,6 +6341,9 @@ export function useGetFundSentDisburseLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type GetFundSentDisburseQueryHookResult = ReturnType<typeof useGetFundSentDisburseQuery>;
 export type GetFundSentDisburseLazyQueryHookResult = ReturnType<typeof useGetFundSentDisburseLazyQuery>;
 export type GetFundSentDisburseQueryResult = Apollo.QueryResult<GetFundSentDisburseQuery, GetFundSentDisburseQueryVariables>;
+export function refetchGetFundSentDisburseQuery(variables?: GetFundSentDisburseQueryVariables) {
+      return { query: GetFundSentDisburseDocument, variables: variables }
+    }
 export const GetFundSentDisburseforGrantDocument = gql`
     query getFundSentDisburseforGrant($type: FundsTransferType, $grant: String) {
   fundsTransfers(
@@ -6316,6 +6390,9 @@ export function useGetFundSentDisburseforGrantLazyQuery(baseOptions?: Apollo.Laz
 export type GetFundSentDisburseforGrantQueryHookResult = ReturnType<typeof useGetFundSentDisburseforGrantQuery>;
 export type GetFundSentDisburseforGrantLazyQueryHookResult = ReturnType<typeof useGetFundSentDisburseforGrantLazyQuery>;
 export type GetFundSentDisburseforGrantQueryResult = Apollo.QueryResult<GetFundSentDisburseforGrantQuery, GetFundSentDisburseforGrantQueryVariables>;
+export function refetchGetFundSentDisburseforGrantQuery(variables?: GetFundSentDisburseforGrantQueryVariables) {
+      return { query: GetFundSentDisburseforGrantDocument, variables: variables }
+    }
 export const GetFundSentForApplicationDocument = gql`
     query getFundSentForApplication($applicationId: String) {
   fundsTransfers(
@@ -6368,6 +6445,9 @@ export function useGetFundSentForApplicationLazyQuery(baseOptions?: Apollo.LazyQ
 export type GetFundSentForApplicationQueryHookResult = ReturnType<typeof useGetFundSentForApplicationQuery>;
 export type GetFundSentForApplicationLazyQueryHookResult = ReturnType<typeof useGetFundSentForApplicationLazyQuery>;
 export type GetFundSentForApplicationQueryResult = Apollo.QueryResult<GetFundSentForApplicationQuery, GetFundSentForApplicationQueryVariables>;
+export function refetchGetFundSentForApplicationQuery(variables?: GetFundSentForApplicationQueryVariables) {
+      return { query: GetFundSentForApplicationDocument, variables: variables }
+    }
 export const GetFundingDocument = gql`
     query getFunding($grantId: String) {
   fundsTransfers(
@@ -6422,6 +6502,9 @@ export function useGetFundingLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetFundingQueryHookResult = ReturnType<typeof useGetFundingQuery>;
 export type GetFundingLazyQueryHookResult = ReturnType<typeof useGetFundingLazyQuery>;
 export type GetFundingQueryResult = Apollo.QueryResult<GetFundingQuery, GetFundingQueryVariables>;
+export function refetchGetFundingQuery(variables?: GetFundingQueryVariables) {
+      return { query: GetFundingDocument, variables: variables }
+    }
 export const GetFundsAndProfileDataDocument = gql`
     query getFundsAndProfileData($type: FundsTransferType, $first: Int, $skip: Int, $workspaceId: String!, $acceptingApplications: Boolean!) {
   fundsTransfers(
@@ -6518,6 +6601,9 @@ export function useGetFundsAndProfileDataLazyQuery(baseOptions?: Apollo.LazyQuer
 export type GetFundsAndProfileDataQueryHookResult = ReturnType<typeof useGetFundsAndProfileDataQuery>;
 export type GetFundsAndProfileDataLazyQueryHookResult = ReturnType<typeof useGetFundsAndProfileDataLazyQuery>;
 export type GetFundsAndProfileDataQueryResult = Apollo.QueryResult<GetFundsAndProfileDataQuery, GetFundsAndProfileDataQueryVariables>;
+export function refetchGetFundsAndProfileDataQuery(variables: GetFundsAndProfileDataQueryVariables) {
+      return { query: GetFundsAndProfileDataDocument, variables: variables }
+    }
 export const GetGrantApplicationDocument = gql`
     query getGrantApplication($grantID: String!, $applicantID: Bytes!) {
   grantApplications(
@@ -6562,6 +6648,9 @@ export function useGetGrantApplicationLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type GetGrantApplicationQueryHookResult = ReturnType<typeof useGetGrantApplicationQuery>;
 export type GetGrantApplicationLazyQueryHookResult = ReturnType<typeof useGetGrantApplicationLazyQuery>;
 export type GetGrantApplicationQueryResult = Apollo.QueryResult<GetGrantApplicationQuery, GetGrantApplicationQueryVariables>;
+export function refetchGetGrantApplicationQuery(variables: GetGrantApplicationQueryVariables) {
+      return { query: GetGrantApplicationDocument, variables: variables }
+    }
 export const GetGrantDetailsDocument = gql`
     query getGrantDetails($grantID: ID!) {
   grants(where: {id: $grantID}, subgraphError: allow) {
@@ -6646,6 +6735,9 @@ export function useGetGrantDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetGrantDetailsQueryHookResult = ReturnType<typeof useGetGrantDetailsQuery>;
 export type GetGrantDetailsLazyQueryHookResult = ReturnType<typeof useGetGrantDetailsLazyQuery>;
 export type GetGrantDetailsQueryResult = Apollo.QueryResult<GetGrantDetailsQuery, GetGrantDetailsQueryVariables>;
+export function refetchGetGrantDetailsQuery(variables: GetGrantDetailsQueryVariables) {
+      return { query: GetGrantDetailsDocument, variables: variables }
+    }
 export const GetGrantManagersWithPublicKeyDocument = gql`
     query getGrantManagersWithPublicKey($grantID: String!) {
   grantManagers(where: {grant: $grantID}) {
@@ -6685,6 +6777,9 @@ export function useGetGrantManagersWithPublicKeyLazyQuery(baseOptions?: Apollo.L
 export type GetGrantManagersWithPublicKeyQueryHookResult = ReturnType<typeof useGetGrantManagersWithPublicKeyQuery>;
 export type GetGrantManagersWithPublicKeyLazyQueryHookResult = ReturnType<typeof useGetGrantManagersWithPublicKeyLazyQuery>;
 export type GetGrantManagersWithPublicKeyQueryResult = Apollo.QueryResult<GetGrantManagersWithPublicKeyQuery, GetGrantManagersWithPublicKeyQueryVariables>;
+export function refetchGetGrantManagersWithPublicKeyQuery(variables: GetGrantManagersWithPublicKeyQueryVariables) {
+      return { query: GetGrantManagersWithPublicKeyDocument, variables: variables }
+    }
 export const GetGrantsAppliedToDocument = gql`
     query getGrantsAppliedTo($first: Int, $skip: Int, $applicantID: Bytes!) {
   grantApplications(
@@ -6730,6 +6825,9 @@ export function useGetGrantsAppliedToLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type GetGrantsAppliedToQueryHookResult = ReturnType<typeof useGetGrantsAppliedToQuery>;
 export type GetGrantsAppliedToLazyQueryHookResult = ReturnType<typeof useGetGrantsAppliedToLazyQuery>;
 export type GetGrantsAppliedToQueryResult = Apollo.QueryResult<GetGrantsAppliedToQuery, GetGrantsAppliedToQueryVariables>;
+export function refetchGetGrantsAppliedToQuery(variables: GetGrantsAppliedToQueryVariables) {
+      return { query: GetGrantsAppliedToDocument, variables: variables }
+    }
 export const GetInitialReviewedApplicationGrantsDocument = gql`
     query getInitialReviewedApplicationGrants($reviewerAddress: Bytes!, $reviewerAddressStr: String!, $applicationsCount: Int!, $workspaceId: String!) {
   grantReviewerCounters(
@@ -6814,6 +6912,9 @@ export function useGetInitialReviewedApplicationGrantsLazyQuery(baseOptions?: Ap
 export type GetInitialReviewedApplicationGrantsQueryHookResult = ReturnType<typeof useGetInitialReviewedApplicationGrantsQuery>;
 export type GetInitialReviewedApplicationGrantsLazyQueryHookResult = ReturnType<typeof useGetInitialReviewedApplicationGrantsLazyQuery>;
 export type GetInitialReviewedApplicationGrantsQueryResult = Apollo.QueryResult<GetInitialReviewedApplicationGrantsQuery, GetInitialReviewedApplicationGrantsQueryVariables>;
+export function refetchGetInitialReviewedApplicationGrantsQuery(variables: GetInitialReviewedApplicationGrantsQueryVariables) {
+      return { query: GetInitialReviewedApplicationGrantsDocument, variables: variables }
+    }
 export const GetInitialToBeReviewedApplicationGrantsDocument = gql`
     query getInitialToBeReviewedApplicationGrants($reviewerAddress: Bytes!, $reviewerAddressStr: String!, $applicationsCount: Int!, $workspaceId: String!) {
   grantReviewerCounters(
@@ -6898,6 +6999,9 @@ export function useGetInitialToBeReviewedApplicationGrantsLazyQuery(baseOptions?
 export type GetInitialToBeReviewedApplicationGrantsQueryHookResult = ReturnType<typeof useGetInitialToBeReviewedApplicationGrantsQuery>;
 export type GetInitialToBeReviewedApplicationGrantsLazyQueryHookResult = ReturnType<typeof useGetInitialToBeReviewedApplicationGrantsLazyQuery>;
 export type GetInitialToBeReviewedApplicationGrantsQueryResult = Apollo.QueryResult<GetInitialToBeReviewedApplicationGrantsQuery, GetInitialToBeReviewedApplicationGrantsQueryVariables>;
+export function refetchGetInitialToBeReviewedApplicationGrantsQuery(variables: GetInitialToBeReviewedApplicationGrantsQueryVariables) {
+      return { query: GetInitialToBeReviewedApplicationGrantsDocument, variables: variables }
+    }
 export const GetLatestBlockDocument = gql`
     query getLatestBlock {
   _meta {
@@ -6934,6 +7038,9 @@ export function useGetLatestBlockLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetLatestBlockQueryHookResult = ReturnType<typeof useGetLatestBlockQuery>;
 export type GetLatestBlockLazyQueryHookResult = ReturnType<typeof useGetLatestBlockLazyQuery>;
 export type GetLatestBlockQueryResult = Apollo.QueryResult<GetLatestBlockQuery, GetLatestBlockQueryVariables>;
+export function refetchGetLatestBlockQuery(variables?: GetLatestBlockQueryVariables) {
+      return { query: GetLatestBlockDocument, variables: variables }
+    }
 export const GetMoreReviewedApplicationsDocument = gql`
     query getMoreReviewedApplications($grantId: String!, $reviewerAddress: Bytes!, $reviewerAddressStr: String!, $first: Int, $skip: Int) {
   grantApplications(
@@ -7003,6 +7110,9 @@ export function useGetMoreReviewedApplicationsLazyQuery(baseOptions?: Apollo.Laz
 export type GetMoreReviewedApplicationsQueryHookResult = ReturnType<typeof useGetMoreReviewedApplicationsQuery>;
 export type GetMoreReviewedApplicationsLazyQueryHookResult = ReturnType<typeof useGetMoreReviewedApplicationsLazyQuery>;
 export type GetMoreReviewedApplicationsQueryResult = Apollo.QueryResult<GetMoreReviewedApplicationsQuery, GetMoreReviewedApplicationsQueryVariables>;
+export function refetchGetMoreReviewedApplicationsQuery(variables: GetMoreReviewedApplicationsQueryVariables) {
+      return { query: GetMoreReviewedApplicationsDocument, variables: variables }
+    }
 export const GetMoreToBeReviewedApplicationsDocument = gql`
     query getMoreToBeReviewedApplications($grantId: String!, $reviewerAddress: Bytes!, $reviewerAddressStr: String!, $first: Int, $skip: Int) {
   grantApplications(
@@ -7072,6 +7182,9 @@ export function useGetMoreToBeReviewedApplicationsLazyQuery(baseOptions?: Apollo
 export type GetMoreToBeReviewedApplicationsQueryHookResult = ReturnType<typeof useGetMoreToBeReviewedApplicationsQuery>;
 export type GetMoreToBeReviewedApplicationsLazyQueryHookResult = ReturnType<typeof useGetMoreToBeReviewedApplicationsLazyQuery>;
 export type GetMoreToBeReviewedApplicationsQueryResult = Apollo.QueryResult<GetMoreToBeReviewedApplicationsQuery, GetMoreToBeReviewedApplicationsQueryVariables>;
+export function refetchGetMoreToBeReviewedApplicationsQuery(variables: GetMoreToBeReviewedApplicationsQueryVariables) {
+      return { query: GetMoreToBeReviewedApplicationsDocument, variables: variables }
+    }
 export const GetMyApplicationsDocument = gql`
     query getMyApplications($first: Int, $skip: Int, $applicantID: Bytes!) {
   grantApplications(
@@ -7138,6 +7251,9 @@ export function useGetMyApplicationsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetMyApplicationsQueryHookResult = ReturnType<typeof useGetMyApplicationsQuery>;
 export type GetMyApplicationsLazyQueryHookResult = ReturnType<typeof useGetMyApplicationsLazyQuery>;
 export type GetMyApplicationsQueryResult = Apollo.QueryResult<GetMyApplicationsQuery, GetMyApplicationsQueryVariables>;
+export function refetchGetMyApplicationsQuery(variables: GetMyApplicationsQueryVariables) {
+      return { query: GetMyApplicationsDocument, variables: variables }
+    }
 export const GetNumberOfApplicationsDocument = gql`
     query getNumberOfApplications($first: Int, $skip: Int, $applicantId: Bytes!) {
   grantApplications(where: {applicantId: $applicantId}, subgraphError: allow) {
@@ -7175,6 +7291,9 @@ export function useGetNumberOfApplicationsLazyQuery(baseOptions?: Apollo.LazyQue
 export type GetNumberOfApplicationsQueryHookResult = ReturnType<typeof useGetNumberOfApplicationsQuery>;
 export type GetNumberOfApplicationsLazyQueryHookResult = ReturnType<typeof useGetNumberOfApplicationsLazyQuery>;
 export type GetNumberOfApplicationsQueryResult = Apollo.QueryResult<GetNumberOfApplicationsQuery, GetNumberOfApplicationsQueryVariables>;
+export function refetchGetNumberOfApplicationsQuery(variables: GetNumberOfApplicationsQueryVariables) {
+      return { query: GetNumberOfApplicationsDocument, variables: variables }
+    }
 export const GetNumberOfGrantsDocument = gql`
     query getNumberOfGrants($first: Int, $skip: Int, $workspaceId: String!) {
   grants(where: {workspace: $workspaceId}, subgraphError: allow) {
@@ -7212,6 +7331,9 @@ export function useGetNumberOfGrantsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetNumberOfGrantsQueryHookResult = ReturnType<typeof useGetNumberOfGrantsQuery>;
 export type GetNumberOfGrantsLazyQueryHookResult = ReturnType<typeof useGetNumberOfGrantsLazyQuery>;
 export type GetNumberOfGrantsQueryResult = Apollo.QueryResult<GetNumberOfGrantsQuery, GetNumberOfGrantsQueryVariables>;
+export function refetchGetNumberOfGrantsQuery(variables: GetNumberOfGrantsQueryVariables) {
+      return { query: GetNumberOfGrantsDocument, variables: variables }
+    }
 export const GetQbAdminsDocument = gql`
     query getQBAdmins {
   qbadmins {
@@ -7246,6 +7368,9 @@ export function useGetQbAdminsLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetQbAdminsQueryHookResult = ReturnType<typeof useGetQbAdminsQuery>;
 export type GetQbAdminsLazyQueryHookResult = ReturnType<typeof useGetQbAdminsLazyQuery>;
 export type GetQbAdminsQueryResult = Apollo.QueryResult<GetQbAdminsQuery, GetQbAdminsQueryVariables>;
+export function refetchGetQbAdminsQuery(variables?: GetQbAdminsQueryVariables) {
+      return { query: GetQbAdminsDocument, variables: variables }
+    }
 export const GetRealmsFundTransferDataDocument = gql`
     query getRealmsFundTransferData($first: Int, $skip: Int, $grantID: ID!) {
   grants(where: {id: $grantID}, subgraphError: allow) {
@@ -7294,6 +7419,9 @@ export function useGetRealmsFundTransferDataLazyQuery(baseOptions?: Apollo.LazyQ
 export type GetRealmsFundTransferDataQueryHookResult = ReturnType<typeof useGetRealmsFundTransferDataQuery>;
 export type GetRealmsFundTransferDataLazyQueryHookResult = ReturnType<typeof useGetRealmsFundTransferDataLazyQuery>;
 export type GetRealmsFundTransferDataQueryResult = Apollo.QueryResult<GetRealmsFundTransferDataQuery, GetRealmsFundTransferDataQueryVariables>;
+export function refetchGetRealmsFundTransferDataQuery(variables: GetRealmsFundTransferDataQueryVariables) {
+      return { query: GetRealmsFundTransferDataDocument, variables: variables }
+    }
 export const GetReviewersForAWorkspaceDocument = gql`
     query getReviewersForAWorkspace($workspaceId: ID!) {
   workspaces(where: {id: $workspaceId}) {
@@ -7334,6 +7462,9 @@ export function useGetReviewersForAWorkspaceLazyQuery(baseOptions?: Apollo.LazyQ
 export type GetReviewersForAWorkspaceQueryHookResult = ReturnType<typeof useGetReviewersForAWorkspaceQuery>;
 export type GetReviewersForAWorkspaceLazyQueryHookResult = ReturnType<typeof useGetReviewersForAWorkspaceLazyQuery>;
 export type GetReviewersForAWorkspaceQueryResult = Apollo.QueryResult<GetReviewersForAWorkspaceQuery, GetReviewersForAWorkspaceQueryVariables>;
+export function refetchGetReviewersForAWorkspaceQuery(variables: GetReviewersForAWorkspaceQueryVariables) {
+      return { query: GetReviewersForAWorkspaceDocument, variables: variables }
+    }
 export const GetSafeForAWorkspaceDocument = gql`
     query getSafeForAWorkspace($workspaceID: String!) {
   workspaceSafes(where: {workspace: $workspaceID}) {
@@ -7373,6 +7504,9 @@ export function useGetSafeForAWorkspaceLazyQuery(baseOptions?: Apollo.LazyQueryH
 export type GetSafeForAWorkspaceQueryHookResult = ReturnType<typeof useGetSafeForAWorkspaceQuery>;
 export type GetSafeForAWorkspaceLazyQueryHookResult = ReturnType<typeof useGetSafeForAWorkspaceLazyQuery>;
 export type GetSafeForAWorkspaceQueryResult = Apollo.QueryResult<GetSafeForAWorkspaceQuery, GetSafeForAWorkspaceQueryVariables>;
+export function refetchGetSafeForAWorkspaceQuery(variables: GetSafeForAWorkspaceQueryVariables) {
+      return { query: GetSafeForAWorkspaceDocument, variables: variables }
+    }
 export const GetWorkspaceDetailsDocument = gql`
     query getWorkspaceDetails($workspaceID: ID!) {
   workspace(id: $workspaceID, subgraphError: allow) {
@@ -7449,6 +7583,9 @@ export function useGetWorkspaceDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type GetWorkspaceDetailsQueryHookResult = ReturnType<typeof useGetWorkspaceDetailsQuery>;
 export type GetWorkspaceDetailsLazyQueryHookResult = ReturnType<typeof useGetWorkspaceDetailsLazyQuery>;
 export type GetWorkspaceDetailsQueryResult = Apollo.QueryResult<GetWorkspaceDetailsQuery, GetWorkspaceDetailsQueryVariables>;
+export function refetchGetWorkspaceDetailsQuery(variables: GetWorkspaceDetailsQueryVariables) {
+      return { query: GetWorkspaceDetailsDocument, variables: variables }
+    }
 export const GetWorkspaceMemberExistsDocument = gql`
     query getWorkspaceMemberExists($id: ID!) {
   workspaceMember(id: $id) {
@@ -7484,6 +7621,9 @@ export function useGetWorkspaceMemberExistsLazyQuery(baseOptions?: Apollo.LazyQu
 export type GetWorkspaceMemberExistsQueryHookResult = ReturnType<typeof useGetWorkspaceMemberExistsQuery>;
 export type GetWorkspaceMemberExistsLazyQueryHookResult = ReturnType<typeof useGetWorkspaceMemberExistsLazyQuery>;
 export type GetWorkspaceMemberExistsQueryResult = Apollo.QueryResult<GetWorkspaceMemberExistsQuery, GetWorkspaceMemberExistsQueryVariables>;
+export function refetchGetWorkspaceMemberExistsQuery(variables: GetWorkspaceMemberExistsQueryVariables) {
+      return { query: GetWorkspaceMemberExistsDocument, variables: variables }
+    }
 export const GetWorkspaceMembersDocument = gql`
     query getWorkspaceMembers($actorId: Bytes!) {
   workspaceMembers(
@@ -7558,6 +7698,9 @@ export function useGetWorkspaceMembersLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type GetWorkspaceMembersQueryHookResult = ReturnType<typeof useGetWorkspaceMembersQuery>;
 export type GetWorkspaceMembersLazyQueryHookResult = ReturnType<typeof useGetWorkspaceMembersLazyQuery>;
 export type GetWorkspaceMembersQueryResult = Apollo.QueryResult<GetWorkspaceMembersQuery, GetWorkspaceMembersQueryVariables>;
+export function refetchGetWorkspaceMembersQuery(variables: GetWorkspaceMembersQueryVariables) {
+      return { query: GetWorkspaceMembersDocument, variables: variables }
+    }
 export const GetWorkspaceMembersByWorkspaceIdDocument = gql`
     query getWorkspaceMembersByWorkspaceId($workspaceId: String!, $first: Int, $skip: Int) {
   workspaceMembers(
@@ -7606,6 +7749,9 @@ export function useGetWorkspaceMembersByWorkspaceIdLazyQuery(baseOptions?: Apoll
 export type GetWorkspaceMembersByWorkspaceIdQueryHookResult = ReturnType<typeof useGetWorkspaceMembersByWorkspaceIdQuery>;
 export type GetWorkspaceMembersByWorkspaceIdLazyQueryHookResult = ReturnType<typeof useGetWorkspaceMembersByWorkspaceIdLazyQuery>;
 export type GetWorkspaceMembersByWorkspaceIdQueryResult = Apollo.QueryResult<GetWorkspaceMembersByWorkspaceIdQuery, GetWorkspaceMembersByWorkspaceIdQueryVariables>;
+export function refetchGetWorkspaceMembersByWorkspaceIdQuery(variables: GetWorkspaceMembersByWorkspaceIdQueryVariables) {
+      return { query: GetWorkspaceMembersByWorkspaceIdDocument, variables: variables }
+    }
 export const GetWorkspaceMembersPublicKeysDocument = gql`
     query getWorkspaceMembersPublicKeys($workspaceId: String!) {
   workspaceMembers(where: {workspace: $workspaceId, enabled: true}) {
@@ -7642,3 +7788,94 @@ export function useGetWorkspaceMembersPublicKeysLazyQuery(baseOptions?: Apollo.L
 export type GetWorkspaceMembersPublicKeysQueryHookResult = ReturnType<typeof useGetWorkspaceMembersPublicKeysQuery>;
 export type GetWorkspaceMembersPublicKeysLazyQueryHookResult = ReturnType<typeof useGetWorkspaceMembersPublicKeysLazyQuery>;
 export type GetWorkspaceMembersPublicKeysQueryResult = Apollo.QueryResult<GetWorkspaceMembersPublicKeysQuery, GetWorkspaceMembersPublicKeysQueryVariables>;
+export function refetchGetWorkspaceMembersPublicKeysQuery(variables: GetWorkspaceMembersPublicKeysQueryVariables) {
+      return { query: GetWorkspaceMembersPublicKeysDocument, variables: variables }
+    }
+export const GetGrantDocument = gql`
+    query getGrant($grantID: ID!) {
+  grant(id: $grantID) {
+    id
+    title
+    acceptingApplications
+    applications {
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetGrantQuery__
+ *
+ * To run a query within a React component, call `useGetGrantQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGrantQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGrantQuery({
+ *   variables: {
+ *      grantID: // value for 'grantID'
+ *   },
+ * });
+ */
+export function useGetGrantQuery(baseOptions: Apollo.QueryHookOptions<GetGrantQuery, GetGrantQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetGrantQuery, GetGrantQueryVariables>(GetGrantDocument, options);
+      }
+export function useGetGrantLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetGrantQuery, GetGrantQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetGrantQuery, GetGrantQueryVariables>(GetGrantDocument, options);
+        }
+export type GetGrantQueryHookResult = ReturnType<typeof useGetGrantQuery>;
+export type GetGrantLazyQueryHookResult = ReturnType<typeof useGetGrantLazyQuery>;
+export type GetGrantQueryResult = Apollo.QueryResult<GetGrantQuery, GetGrantQueryVariables>;
+export function refetchGetGrantQuery(variables: GetGrantQueryVariables) {
+      return { query: GetGrantDocument, variables: variables }
+    }
+export const GetGrantsDocument = gql`
+    query getGrants($domainID: String!) {
+  grants(
+    where: {workspace: $domainID}
+    orderBy: createdAtS
+    orderDirection: desc
+    first: 1
+  ) {
+    id
+    title
+    acceptingApplications
+  }
+}
+    `;
+
+/**
+ * __useGetGrantsQuery__
+ *
+ * To run a query within a React component, call `useGetGrantsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGrantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGrantsQuery({
+ *   variables: {
+ *      domainID: // value for 'domainID'
+ *   },
+ * });
+ */
+export function useGetGrantsQuery(baseOptions: Apollo.QueryHookOptions<GetGrantsQuery, GetGrantsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetGrantsQuery, GetGrantsQueryVariables>(GetGrantsDocument, options);
+      }
+export function useGetGrantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetGrantsQuery, GetGrantsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetGrantsQuery, GetGrantsQueryVariables>(GetGrantsDocument, options);
+        }
+export type GetGrantsQueryHookResult = ReturnType<typeof useGetGrantsQuery>;
+export type GetGrantsLazyQueryHookResult = ReturnType<typeof useGetGrantsLazyQuery>;
+export type GetGrantsQueryResult = Apollo.QueryResult<GetGrantsQuery, GetGrantsQueryVariables>;
+export function refetchGetGrantsQuery(variables: GetGrantsQueryVariables) {
+      return { query: GetGrantsDocument, variables: variables }
+    }

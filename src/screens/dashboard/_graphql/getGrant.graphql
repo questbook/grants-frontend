@@ -1,0 +1,10 @@
+query getGrant($grantID: ID!) {
+    grant(id: $grantID) {
+        id
+        title
+        acceptingApplications
+        applications {
+            id
+        }
+    }
+}

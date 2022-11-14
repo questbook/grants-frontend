@@ -1,5 +1,5 @@
 import { ReactElement, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { Box, Button, Center, Container, Flex, Image, Spacer, Text, ToastId, useToast } from '@chakra-ui/react'
+import { Box, Button, Center, Container, Flex, Image, Text, ToastId, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import Loader from 'src/components/ui/loader'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
@@ -17,13 +17,13 @@ import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import AcceptInviteModal from 'src/screens/discover/_components/AcceptInviteModal'
 import DomainGrid from 'src/screens/discover/_components/DaosGrid'
+import RightArrowIcon from 'src/screens/discover/_components/RightArrowIcon'
 import { useMultichainDaosPaginatedQuery } from 'src/screens/discover/_hooks/useMultiChainPaginatedQuery'
 import { extractInviteInfo, InviteInfo } from 'src/screens/discover/_utils/invite'
 import { mergeSortedArrays } from 'src/screens/discover/_utils/mergeSortedArrays'
 import { chainNames } from 'src/utils/chainNames'
 import getErrorMessage from 'src/utils/errorUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
-import RightArrowIcon from './_components/RightArrowIcon'
 
 const PAGE_SIZE = 10
 
@@ -34,63 +34,153 @@ function Discover() {
 				<Flex
 					direction='column'
 					w='100%'>
-						{/* Start Hero Container */}
+					{/* Start Hero Container */}
+					<Flex
+						direction='row'
+						w='100%'
+						alignItems='stretch'
+						alignContent='stretch'
+						h='460px'>
 						<Flex
-							direction='row'
-							w='100%'
-							alignItems='stretch'
-							alignContent='stretch'
-							h='460px'>
-							<Flex bgColor='black.1' padding={24} flexDirection='column' textColor='white'  width='600px'>
-								<Text fontWeight='500' fontSize='40px' lineHeight='48px' color='white'>Home for 
-								<Text fontWeight='500' fontSize='40px' lineHeight='48px' color='#FFE900' as='span'> high quality </Text> builders</Text>
-								
-								<Text mt={2} fontSize='16px' lineHeight='24px' fontWeight='400'>Invite proposals from builders. Review and fund proposals with milestones - all on chain.</Text>
-								
-								<Button variant='primaryLarge' mt={8} padding={4} rightIcon={<RightArrowIcon/>}  lineHeight='20px'>Invite Proposals</Button>
-							</Flex>
-							<Flex bgColor='brand.800' flexGrow={1}  justifyContent='center'>
-								<Image mt={10} src='/illustrations/Browsers.svg' />
-							</Flex>
-						</Flex>
-						{/* End Hero Container */}
+							bgColor='black.1'
+							padding={24}
+							flexDirection='column'
+							textColor='white'
+							width='600px'>
+							<Text
+								fontWeight='500'
+								fontSize='40px'
+								lineHeight='48px'
+								color='white'>
+								Home for
+								<Text
+									fontWeight='500'
+									fontSize='40px'
+									lineHeight='48px'
+									color='#FFE900'
+									as='span'>
+									{' '}
+									high quality
+									{' '}
+								</Text>
+								{' '}
+								builders
 
-						{/* Start Stats Banner */}
-						<Flex bgColor='#F1EEE8' padding={8} gap={4} justifyContent='space-evenly'>
-							<Flex flexDirection='column' alignItems='center'>
-								<Text fontWeight='500' fontSize='40px' lineHeight='48px'>20000+</Text>
-								<Text fontWeight='500' fontSize='15px' lineHeight='22px' textTransform='uppercase'>Builders</Text>
-							</Flex>
-							<Flex flexDirection='column' alignItems='center'>
-								<Text fontWeight='500' fontSize='40px' lineHeight='48px'>$2m+</Text>
-								<Text fontWeight='500' fontSize='15px' lineHeight='22px' textTransform='uppercase'>Paid Out</Text>
-							</Flex>
-							<Flex flexDirection='column' alignItems='center'>
-								<Text fontWeight='500' fontSize='40px' lineHeight='48px'>1000+</Text>
-								<Text fontWeight='500' fontSize='15px' lineHeight='22px' textTransform='uppercase'>Proposals</Text>
-							</Flex>
+							</Text>
+
+							<Text
+								mt={2}
+								fontSize='16px'
+								lineHeight='24px'
+								fontWeight='400'>
+								Invite proposals from builders. Review and fund proposals with milestones - all on chain.
+							</Text>
+
+							<Button
+								variant='primaryLarge'
+								mt={8}
+								padding={4}
+								rightIcon={<RightArrowIcon />}
+								lineHeight='20px'>
+								Invite Proposals
+							</Button>
 						</Flex>
-						{/* End Stats Banner */}
+						<Flex
+							bgColor='brand.800'
+							flexGrow={1}
+							justifyContent='center'>
+							<Image
+								mt={10}
+								src='/illustrations/Browsers.svg' />
+						</Flex>
+					</Flex>
+					{/* End Hero Container */}
+
+					{/* Start Stats Banner */}
+					<Flex
+						bgColor='#F1EEE8'
+						padding={8}
+						gap={4}
+						justifyContent='space-evenly'>
+						<Flex
+							flexDirection='column'
+							alignItems='center'>
+							<Text
+								fontWeight='500'
+								fontSize='40px'
+								lineHeight='48px'>
+								20000+
+							</Text>
+							<Text
+								fontWeight='500'
+								fontSize='15px'
+								lineHeight='22px'
+								textTransform='uppercase'>
+								Builders
+							</Text>
+						</Flex>
+						<Flex
+							flexDirection='column'
+							alignItems='center'>
+							<Text
+								fontWeight='500'
+								fontSize='40px'
+								lineHeight='48px'>
+								$2m+
+							</Text>
+							<Text
+								fontWeight='500'
+								fontSize='15px'
+								lineHeight='22px'
+								textTransform='uppercase'>
+								Paid Out
+							</Text>
+						</Flex>
+						<Flex
+							flexDirection='column'
+							alignItems='center'>
+							<Text
+								fontWeight='500'
+								fontSize='40px'
+								lineHeight='48px'>
+								1000+
+							</Text>
+							<Text
+								fontWeight='500'
+								fontSize='15px'
+								lineHeight='22px'
+								textTransform='uppercase'>
+								Proposals
+							</Text>
+						</Flex>
+					</Flex>
+					{/* End Stats Banner */}
 					<Container
 						maxWidth='max-content'
-						
+
 						w='100%'>
 						{
 							isQbAdmin === undefined ? (
 								<Center>
 									<Loader />
 								</Center>
-							) : (<>
-								<Box my={4}>
-									<Text fontWeight='500' fontSize='24px' lineHeight='32px'>Discover</Text>
-								</Box>
-								<DomainGrid
-									isAdmin={isQbAdmin}
-									unsavedDomainVisibleState={unsavedDomainState}
-									onDaoVisibilityUpdate={onDaoVisibilityUpdate}
-									hasMore={hasMoreDaos}
-									fetchMore={fetchMoreDaos}
-									workspaces={totalDaos} />
+							) : (
+								<>
+									<Box my={4}>
+										<Text
+											fontWeight='500'
+											fontSize='24px'
+											lineHeight='32px'>
+											Discover
+										</Text>
+									</Box>
+									<DomainGrid
+										isAdmin={isQbAdmin}
+										unsavedDomainVisibleState={unsavedDomainState}
+										onDaoVisibilityUpdate={onDaoVisibilityUpdate}
+										hasMore={hasMoreDaos}
+										fetchMore={fetchMoreDaos}
+										workspaces={totalDaos} />
 								</>
 							)
 						}
