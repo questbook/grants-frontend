@@ -1,6 +1,6 @@
 import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { defaultChainId } from 'src/constants/chains'
-import { GetGrantQuery, useGetGrantQuery, useGetGrantsQuery, useGetWorkspaceMembersQuery } from 'src/generated/graphql'
+import { GetGrantQuery, GetGrantsQuery, useGetGrantQuery, useGetGrantsQuery, useGetWorkspaceMembersQuery } from 'src/generated/graphql'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import logger from 'src/libraries/logger'
 import { ApiClientsContext } from 'src/pages/_app'
@@ -36,8 +36,9 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		chains: [chainID],
 	})
 
-	const [grantID, setGrantID] = useState<string>()
-	const [grant, setGrant] = useState<GetGrantQuery['grant']>()
+	const [grants, setGrants] = useState<GetGrantsQuery['grants']>([])
+	const [selectedGrantIndex, setSelectedGrantIndex] = useState<number>()
+	const [selectedGrant, setSelectedGrant] = useState<GetGrantQuery['grant']>()
 
 	const setSelectedWorkspace = useCallback(async() => {
 		if(!accountData?.address) {
@@ -76,62 +77,79 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		}
 	}, [accountData?.address])
 
-	const setSelectedGrant = useCallback(async() => {
+	const fetchSelectedGrant = useCallback(async() => {
 		if(!workspace) {
 			return 'domain-loading'
 		}
 
 		const KEY = `${GRANT_CACHE_KEY}-${chainID}-${workspace.id}`
 		const grantID = localStorage.getItem(KEY)
-		if(!grantID) {
-			const results = await fetchMoreGrants({ domainID: workspace.id }, true)
-			if(results?.length === 0 || !results[0] || results?.[0]?.grants?.length === 0) {
-				return 'no-grants'
-			}
 
+		const results = await fetchMoreGrants({ domainID: workspace.id }, true)
+		if(results?.length === 0 || !results[0] || results?.[0]?.grants?.length === 0) {
+			return 'no-grants'
+		}
+
+		logger.info({ results }, 'Fetched grants')
+		setGrants(results[0].grants)
+
+		if(!grantID) {
+			setSelectedGrantIndex(0)
 			localStorage.setItem(KEY, results[0].grants[0].id)
-			setGrantID(results[0].grants[0].id)
 			return 'grants-fetched-using-query'
 		} else {
-			setGrantID(grantID)
+			const index = results[0].grants.findIndex((g) => g.id === grantID)
+			logger.info({ index }, 'Grant index')
+			if(index >= 0) {
+				setSelectedGrantIndex(index)
+			} else {
+				setSelectedGrantIndex(0)
+			}
+
 			return 'grants-fetched-from-cache'
 		}
 	}, [workspace])
 
 	const getGrantDetails = useCallback(async() => {
-		if(!grantID) {
-			return 'no-grant-ID'
+		logger.info({ selectedGrantIndex }, 'Fetching grant details')
+		if(selectedGrantIndex === undefined) {
+			return 'no-selected-grant-index'
+		} else if(!grants[selectedGrantIndex]?.id) {
+			return 'no-grant-id'
 		}
 
-		const results = await fetchMoreGrantDetails({ grantID }, true)
+		const results = await fetchMoreGrantDetails({ grantID: grants[selectedGrantIndex].id }, true)
 		if(results?.length === 0 || !results[0]) {
 			return 'no-grant-with-id'
 		}
 
-		setGrant(results[0].grant)
+		setSelectedGrant(results[0].grant)
 		return 'grant-details-fetched'
-	}, [grantID])
+	}, [selectedGrantIndex])
 
 	useEffect(() => {
+		logger.info({ address: accountData?.address }, 'Account data changed')
 		setSelectedWorkspace().then((ret) => {
 			logger.info({ message: 'setSelectedWorkspace', ret }, 'Set selected workspace')
 		})
 	}, [accountData?.address])
 
 	useEffect(() => {
-		setSelectedGrant().then((ret) => {
+		logger.info({ workspace }, 'Workspace changed')
+		fetchSelectedGrant().then((ret) => {
 			logger.info({ message: 'setSelectedGrant', ret }, 'Set selected grant')
 		})
 	}, [workspace])
 
 	useEffect(() => {
+		logger.info({ selectedGrantIndex }, 'Selected grant index changed')
 		getGrantDetails().then((ret) => {
 			logger.info({ message: 'getGrantDetails', ret }, 'Get grant details')
 		})
-	}, [grantID])
+	}, [selectedGrantIndex])
 
 	return (
-		<DashboardContext.Provider value={{ grant, setGrant }}>
+		<DashboardContext.Provider value={{ selectedGrant, setSelectedGrant, grants, selectedGrantIndex, setSelectedGrantIndex }}>
 			{children}
 		</DashboardContext.Provider>
 	)

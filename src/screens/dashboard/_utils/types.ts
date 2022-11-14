@@ -1,6 +1,9 @@
-import { GetGrantQuery } from 'src/generated/graphql'
+import { GetGrantQuery, GetGrantsQuery } from 'src/generated/graphql'
 
 export type DashboardContextType = {
-    grant: GetGrantQuery['grant']
-    setGrant: (grant: GetGrantQuery['grant']) => void
+    selectedGrant: GetGrantQuery['grant']
+    setSelectedGrant: (grant: GetGrantQuery['grant']) => void
+    grants: GetGrantsQuery['grants']
+    selectedGrantIndex: number | undefined
+    setSelectedGrantIndex: (index: number) => void
 }

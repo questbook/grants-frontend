@@ -3,7 +3,13 @@
 import { Flex } from '@chakra-ui/react'
 
 function ProposalList() {
-	return <Flex />
+	return (
+		<Flex
+			maxW='25%'
+			bg='accent.vodka'>
+			Proposal List
+		</Flex>
+	)
 }
 
 export default ProposalList

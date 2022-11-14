@@ -1,8 +1,6 @@
-import { ReactElement, useContext, useEffect } from 'react'
+import { ReactElement } from 'react'
 import { Flex } from '@chakra-ui/react'
-import logger from 'src/libraries/logger'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
-import { ApiClientsContext } from 'src/pages/_app'
 import ActionList from 'src/screens/dashboard/ActionList'
 import Body from 'src/screens/dashboard/Body'
 import { DashboardProvider } from 'src/screens/dashboard/Context'
@@ -11,20 +9,18 @@ import TopBar from 'src/screens/dashboard/TopBar'
 
 function Dashboard() {
 	const buildComponent = () => (
-		<Flex direction='column'>
+		<Flex
+			direction='column'
+			w='100vw'
+			h='calc(100vh - 64px)'>
 			<TopBar />
-			<Flex w='100%'>
+			<Flex>
 				<ProposalList />
 				<Body />
 				<ActionList />
 			</Flex>
 		</Flex>
 	)
-
-	const { workspace } = useContext(ApiClientsContext)!
-	useEffect(() => {
-		logger.info({ workspace }, 'Main UI Workspace')
-	}, [])
 
 	return buildComponent()
 }

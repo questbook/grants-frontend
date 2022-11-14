@@ -7836,12 +7836,7 @@ export function refetchGetGrantQuery(variables: GetGrantQueryVariables) {
     }
 export const GetGrantsDocument = gql`
     query getGrants($domainID: String!) {
-  grants(
-    where: {workspace: $domainID}
-    orderBy: createdAtS
-    orderDirection: desc
-    first: 1
-  ) {
+  grants(where: {workspace: $domainID}, orderBy: createdAtS, orderDirection: desc) {
     id
     title
     acceptingApplications

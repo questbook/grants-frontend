@@ -24,6 +24,7 @@ import SubgraphClient from 'src/graphql/subgraph'
 import { DAOSearchContextMaker } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContextMaker } from 'src/hooks/QBAdminsContext'
 import MigrateToGasless from 'src/libraries/ui/MigrateToGaslessModal'
+import { DOMAIN_CACHE_KEY } from 'src/screens/dashboard/_utils/constants'
 import theme from 'src/theme'
 import { MinimalWorkspace } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
@@ -498,11 +499,11 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			setWorkspace: (newWorkspace?: MinimalWorkspace) => {
 				if(newWorkspace) {
 					localStorage.setItem(
-						'currentWorkspace',
+						DOMAIN_CACHE_KEY,
 						newWorkspace.supportedNetworks[0] + '-' + newWorkspace.id
 					)
 				} else {
-					localStorage.setItem('currentWorkspace', 'undefined')
+					localStorage.setItem(DOMAIN_CACHE_KEY, 'undefined')
 				}
 
 				setWorkspace(newWorkspace)
