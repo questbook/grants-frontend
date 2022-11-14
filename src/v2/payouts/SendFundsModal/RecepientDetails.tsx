@@ -5,10 +5,9 @@ import { useRouter } from 'next/router'
 import { IApplicantData } from 'src/types'
 import { chainNames } from 'src/utils/chainNames'
 import logger from 'src/utils/logger'
+import { isValidEthereumAddress, isValidSolanaAddress } from 'src/utils/validationUtils'
 import { ArrowDownCircle } from 'src/v2/assets/custom chakra icons/Arrows/ArrowDownCircle'
 import { ExternalLink } from 'src/v2/assets/custom chakra icons/ExternalLink'
-import { GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
-import { getSafeDetails, RealmsSolana } from 'src/v2/constants/safe/realms_solana'
 import AlertBanner from 'src/v2/payouts/SendFundsModal/AlertBanner'
 import MilestoneSelect from 'src/v2/payouts/SendFundsModal/MilestoneSelect'
 import TokenSelect from 'src/v2/payouts/SendFundsModal/TokenSelect'
@@ -71,11 +70,9 @@ const RecipientDetails = ({
 
 		let invalidRecipientAddress = false
 		if(isSafeOnSolana) {
-			const realms = new RealmsSolana('')
-			invalidRecipientAddress = (!await realms.isValidRecipientAddress(address))
+			invalidRecipientAddress = (!await isValidSolanaAddress(address))
 		} else {
-			const gnosis = new GnosisSafe(1, '', '')
-			invalidRecipientAddress = (!await gnosis.isValidRecipientAddress(address))
+			invalidRecipientAddress = (!await isValidEthereumAddress(address))
 		}
 
 		return invalidRecipientAddress
