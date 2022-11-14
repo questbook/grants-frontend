@@ -208,7 +208,7 @@ function ApplyGrant() {
 					rewardCurrencyCoin={rewardCurrencyCoin}
 					rewardCurrencyAddress={rewardCurrencyAddress}
 					workspaceId={workspaceId}
-					safeNetwork={safeObj.chainId}
+					safeNetwork={safeObj?.chainId}
 					grantRequiredFields={grantRequiredFields.map((field: any) => field.id.split('.')[1])}
 					piiFields={grantRequiredFields.filter((field: any) => field.isPii).map((field: any) => field.id.split('.')[1])}
 					acceptingApplications={acceptingApplications}

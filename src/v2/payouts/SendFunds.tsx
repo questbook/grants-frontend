@@ -110,7 +110,7 @@ export default function SendFunds({
 		logger.info({ sendFundsTo }, 'Send Funds To')
 		const formattedTrxnData = sendFundsTo?.map((recepient: any,) => (
 			{
-				from: safeObj.safeAddress.toString(),
+				from: safeObj?.safeAddress?.toString(),
 				to: recepient?.applicantAddress || getFieldString(recepient, 'applicantAddress') || recepient?.applicantId,
 				applicationId: recepient?.applicationId || applicationID,
 				selectedMilestone: recepient?.milestones?.[0],

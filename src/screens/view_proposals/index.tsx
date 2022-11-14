@@ -353,8 +353,8 @@ function ViewProposals() {
 
 
 	const onSendFundsButtonClicked = async(state: boolean, selectedApplicants: any[]) => {
-		if(isEvmChain && safeObj.chainId) {
-			checkIfUserIsOnCorrectNetwork(safeObj.chainId.toString())
+		if(isEvmChain && safeObj?.chainId) {
+			checkIfUserIsOnCorrectNetwork(safeObj?.chainId?.toString())
 		}
 
 		setSendFundsTo(selectedApplicants)
