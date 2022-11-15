@@ -38,13 +38,13 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 								variant='v2_subheading'
 								fontWeight='500'
 								mt={5}>
-								{type === 'import' ? `${t('recovery.import.heading')}` : `${t('recovery.export.heading')}`}
+								{type === 'import' ? `${t('account_details.import.heading')}` : `${t('account_details.export.heading')}`}
 							</Text>
 							<Text
 								variant='v2_body'
 								mt={1}
 								color='black.3'>
-								{type === 'import' ? `${t('recovery.import.subheading')}` : `${t('recovery.export.subheading')}` }
+								{type === 'import' ? `${t('account_details.import.subheading')}` : `${t('account_details.export.subheading')}` }
 							</Text>
 							{
 								type === 'export' && (
@@ -52,7 +52,7 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 										mt={6}
 										variant='v2_body'
 									>
-										{t('recovery.export.warning-line-1')}
+										{t('account_details.export.warning-line-1')}
 									</Text>
 								)
 							}
@@ -62,7 +62,7 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 										mt={1}
 										variant='v2_body'
 									>
-										{t('recovery.export.warning-line-2')}
+										{t('account_details.export.warning-line-2')}
 									</Text>
 								)
 							}
@@ -81,7 +81,7 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 										variant='primaryV2'
 										disabled={privateKeyError !== '' || privateKey === '' || privateKey === localStorage.getItem('webwalletPrivateKey')}
 										onClick={onImportClick}>
-										{t('recovery.import.button')}
+										{t('account_details.import.button')}
 									</Button>
 								)
 							}
@@ -101,7 +101,7 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 												color='#572EF5'
 												variant='v2_body'
 												fontWeight='500'>
-												{t('recovery.export.download')}
+												{t('account_details.export.download')}
 											</Text>
 										</Button>
 										<Button
@@ -117,7 +117,7 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 												color='#572EF5'
 												variant='v2_body'
 												fontWeight='500'>
-												{t('recovery.export.copy_and_save_manually')}
+												{t('account_details.export.copy_and_save_manually')}
 											</Text>
 										</Button>
 									</Flex>
