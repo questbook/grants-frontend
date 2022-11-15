@@ -67,7 +67,7 @@ i18next.use(initReactI18next).init({
 					'team': 'Team',
 					'team_members': 'Team Members',
 					'team_members_desc': 'Add team members to your proposal',
-					'address': 'Wallet Address / Unstoppable Domain',
+					'address': 'Wallet Address',
 					'your_address_on': 'Your wallet address on',
 					'num_team_members': 'Number of team members',
 					'member': 'member #',
@@ -232,19 +232,19 @@ i18next.use(initReactI18next).init({
 				},
 				'recovery': {
 					'menu': {
-						'use_another_wallet': 'Use another Wallet',
-						'others': 'Others',
-						'save_wallet': 'Save Wallet'
+						'use_another_wallet': 'Use another in-app wallet',
+						'save_wallet': 'Export private key'
 					},
 					'import': {
-						'heading': 'Import Wallet',
-						'subheading': 'Enter the wallet private key to import wallet.',
+						'heading': 'Use another in-app wallet',
+						'subheading': 'Enter the private key to import your wallet.',
 						'button': 'Import Wallet',
 					},
 					'export': {
-						'heading': 'Export Wallet',
+						'heading': 'Export private key',
 						'subheading': 'Download the file, or save it in your password manager.',
-						'warning': 'For your eyes only. Anyone who has your private key can access your Questbook wallet',
+						'warning-line-1': 'Don\'t share this key with anyone',
+						'warning-line-2': 'Anyone who has your private key can access your in-app wallet',
 						'download': 'Download .txt file',
 						'copy_and_save_manually': 'Copy & save manually'
 					},

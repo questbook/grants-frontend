@@ -53,7 +53,8 @@
 			"applications": "0x06c3C145F0879F969F2beb5d8DB1D25c83a7b7C2",
 			"workspace": "0x4881fAB72dE0cBd58Bdc635EE9967d1de87EB5A2",
 			"grantFactory": "0x6C95c4b887eAcC52612e3D79575A1b00Ace05A4d",
-			"reviews": "0xc782342D667f8355869E9f5D23f245804aB10F56"
+			"reviews": "0xc782342D667f8355869E9f5D23f245804aB10F56",
+			"communication": "0x89791d27558146e813f45636ed028c10b619aca5"
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-goerli-testnet",
 		"rpcUrls": [
@@ -140,7 +141,8 @@
 			"workspace": "0x2dB223158288B2299480aF577eDF30D5a533F137",
 			"applications": "0xF4Db8BdDF1029764e4E09e7cE34149371a9A7027",
 			"grantFactory": "0xf08bCcf3C9DE7Daf25BCe13C87D0dd69754E0a33",
-			"reviews": "0xab163375C1aD08e24005771cC9908a1C7c61Adaa"
+			"reviews": "0xab163375C1aD08e24005771cC9908a1C7c61Adaa",
+			"communication": "0xAF36eE06Efa0bB77B8eD6ca875ee2456dC7361B6"
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-optimism-mainnet",
 		"rpcUrls": [
@@ -312,7 +314,8 @@
 			"workspace": "0x168A72b08FCFF48192E0B1A27486f4394a4F86e1",
 			"applications": "0xE9d6c045232b7f4C07C151f368E747EBE46209E4",
 			"grantFactory": "0xC6b6356FBdcf6CC6EA4Cb90Cd11B7E3c5848F312",
-			"reviews": "0xdC5EbC9130a2e7Ad776E3503fa6Dcf16D80ca915"
+			"reviews": "0xdC5EbC9130a2e7Ad776E3503fa6Dcf16D80ca915",
+			"communication": "0xE738283296dB5d8465A5FcA98aA7a6f14b431212"
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-polygon-mainnet",
 		"rpcUrls": [
@@ -370,7 +373,8 @@
 			"applications": "0x32798CC9da06363eF2b0eE12e54cD4476D9C891a",
 			"workspace": "0x6D0f81BDA11995f25921aAd5B43359630E65Ca96",
 			"grantFactory": "0xda717ab1206c59493e1E5c66F4e0712B39EC6D81",
-			"reviews": "0x2d49a247AA77cA433218C9567953645bE04A7b3A"
+			"reviews": "0x2d49a247AA77cA433218C9567953645bE04A7b3A",
+			"communication": "0xd7F4D4134f47255c4bc8E4f8CfDFD7854Aa2640e"
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-celo-mainnet",
 		"rpcUrls": [

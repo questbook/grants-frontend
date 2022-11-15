@@ -1,4 +1,4 @@
-import { EditIcon } from '@chakra-ui/icons'
+import { CloseIcon, EditIcon } from '@chakra-ui/icons'
 import { Fade, Flex, GridItem, HStack, IconButton, Image, Spacer, Text, Tooltip, VStack } from '@chakra-ui/react'
 import CopyIcon from 'src/components/ui/copy_icon'
 import { WorkspaceMember } from 'src/generated/graphql'
@@ -152,6 +152,15 @@ function MemberRow({ member }: Props) {
 							align='center'
 							justify='center'>
 							<IconButton
+								onClick={
+									async() => {
+										await onSaveClick(undefined, false)
+									}
+								}
+								icon={<CloseIcon color='black' />}
+								aria-label='' />
+							<IconButton
+								ml={2}
 								onClick={
 									() => {
 										setType('edit')

@@ -1,6 +1,5 @@
 import { Grid, GridItem } from '@chakra-ui/react'
-import DaoCard from 'src/components/browse_daos/dao_card'
-import GetStartedCard from 'src/components/browse_daos/get_started_card'
+import DomainCard from 'src/components/browse_daos/dao_card'
 import LoadMoreCard from 'src/components/browse_daos/loadMoreCard'
 import config from 'src/constants/config.json'
 import { GetDaOsForExploreQuery } from 'src/generated/graphql'
@@ -11,32 +10,30 @@ import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 type Workspace = GetDaOsForExploreQuery['workspaces'][0]
 
-type AllDaosGridProps = {
+type AllDomainGridProps = {
   workspaces: Workspace[]
   isAdmin: boolean
-  unsavedDaosVisibleState?: { [_: number]: { [_: string]: boolean } }
+  unsavedDomainVisibleState?: { [_: number]: { [_: string]: boolean } }
   onDaoVisibilityUpdate?: (daoId: string, chainId: SupportedChainId, visibleState: boolean) => void
-  renderGetStarted: boolean
   hasMore?: boolean
   fetchMore?: (reset?: boolean | undefined) => void
 }
 
-function AllDaosGrid({
+function AllDomainGrid({
 	workspaces,
-	renderGetStarted,
 	onDaoVisibilityUpdate,
-	unsavedDaosVisibleState,
+	unsavedDomainVisibleState,
 	isAdmin,
 	hasMore,
 	fetchMore,
-}: AllDaosGridProps) {
+}: AllDomainGridProps) {
 	return (
 		<Grid
 			w='100%'
-			maxWidth='1280px'
+			// maxWidth='1280px'
 
 			templateColumns={{ md: 'repeat(1, 1fr)', lg: 'repeat(4, 1fr)' }}
-			gap={6}
+			gap={8}
 
 		>
 			{
@@ -45,9 +42,9 @@ function AllDaosGrid({
 
 					return (
 						<GridItem key={index}>
-							<DaoCard
+							<DomainCard
 								isAdmin={isAdmin}
-								isVisible={unsavedDaosVisibleState?.[workspaceChainId!]?.[workspace.id] ?? workspace.isVisible}
+								isVisible={unsavedDomainVisibleState?.[workspaceChainId!]?.[workspace.id] ?? workspace.isVisible}
 								onVisibilityUpdate={(visibleState) => onDaoVisibilityUpdate?.(workspace.id, workspaceChainId!, visibleState)}
 								logo={
 									workspace.logoIpfsHash === config.defaultDAOImageHash ?
@@ -59,7 +56,8 @@ function AllDaosGrid({
 								daoId={workspace.id}
 								chainId={workspaceChainId}
 								noOfApplicants={workspace.numberOfApplications}
-								totalAmount={workspace.totalGrantFundingDisbursedUSD} />
+								totalAmount={workspace.totalGrantFundingDisbursedUSD}
+								safeChainId={workspace.safe?.chainId} />
 						</GridItem>
 					)
 				})
@@ -75,4 +73,4 @@ function AllDaosGrid({
 	)
 }
 
-export default AllDaosGrid
+export default AllDomainGrid

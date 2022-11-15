@@ -1,17 +1,17 @@
 import { Flex, Grid, GridItem, Text } from '@chakra-ui/react'
 import SupportedChainId from 'src/generated/SupportedChainId'
+import ResubmitRow from 'src/screens/view_proposals/_components/ResubmitProposals/ResubmitRow'
+import ZeroState from 'src/screens/view_proposals/_components/ResubmitProposals/ZeroState'
 import { IApplicantData } from 'src/types'
-import RejectedRow from 'src/v2/payouts/RejectedProposals/RejectedRow'
-import ZeroState from 'src/v2/payouts/RejectedProposals/ZeroState'
 
-const RejectedPanel = ({
+const ResubmitPanel = ({
 	applicantsData,
-	chainId
+	chainId,
 }: {
   applicantsData: IApplicantData[]
   chainId: SupportedChainId
 }) => {
-	if(applicantsData?.filter((item) => (3 === item.status)).length === 0) {
+	if(applicantsData?.filter((item) => (1 === item.status)).length === 0) {
 		return (
 			<ZeroState />
 		)
@@ -30,7 +30,7 @@ const RejectedPanel = ({
 					lineHeight='20px'
 					fontWeight='500'
 				>
-					Rejected
+					Resubmit
 				</Text>
 
 
@@ -74,7 +74,7 @@ const RejectedPanel = ({
 						lineHeight='20px'
 						fontWeight='500'
 					>
-						Rejected On
+						Asked for Resubmission On
 					</Text>
 				</GridItem>
 				<GridItem>
@@ -90,24 +90,16 @@ const RejectedPanel = ({
 					</Text>
 				</GridItem>
 
-				{/* <GridItem colSpan={4}>
-					<Flex
-						bg='#F0F0F7'
-						h='1px'
-					/>
-				</GridItem> */}
-
 				{/* new ro */}
 
 				{
 					applicantsData
-						// filter only reject applications
-						?.filter((item) => (3 === item.status))
+						?.filter((item) => (1 === item.status))
 						.map((applicantData) => (
-							<RejectedRow
+							<ResubmitRow
+								chainId={chainId}
 								key={applicantData.applicationId}
 								applicantData={applicantData}
-								chainId={chainId}
 							/>
 						))
 				}
@@ -116,4 +108,4 @@ const RejectedPanel = ({
 	)
 }
 
-export default RejectedPanel
+export default ResubmitPanel

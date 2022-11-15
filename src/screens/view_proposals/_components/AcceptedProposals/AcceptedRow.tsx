@@ -21,11 +21,11 @@ const AcceptedRow = ({
 }: {
 	onSendFundsClicked: () => void
 	applicationStatus: number
-	applicationAmount: any
+	applicationAmount: number
 	applicantData: IApplicantData
 	isChecked: boolean
 	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-	rewardAssetDecimals: any
+	rewardAssetDecimals: number
 }) => {
 	const { workspace } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
@@ -249,8 +249,20 @@ const AcceptedRow = ({
 						{' '}
 						{applicantData?.milestones?.length}
 					</Text>
+				</Flex>
+			</GridItem>
 
-
+			<GridItem
+				onMouseEnter={() => setIsHovering(true)}
+				onMouseLeave={() => setIsHovering(false)}
+				bg={isHovering ? '#FBFBFD' : 'white'}
+				borderBottom='1px'
+				borderColor='#F0F0F7'
+				display='flex'
+				alignItems='center'>
+				<Flex
+					align='center'
+				>
 					<Fade in={isHovering}>
 						<Button
 							px={3}

@@ -4,6 +4,7 @@ import { Contract, ethers, Wallet } from 'ethers'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { defaultChainId } from 'src/constants/chains'
 import SupportedChainId from 'src/generated/SupportedChainId'
+import logger from 'src/libraries/logger'
 import { BiconomyContext } from 'src/pages/_app'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import { TransactionReceipt } from 'web3-core'
@@ -121,18 +122,14 @@ export const addAuthorizedUser = async(webwalletAddress: string) => {
 	return !!response.data?.authorize
 }
 
-// @TODO: Correct the usage of charge gas by adding chain_id
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const chargeGas = async(workspaceId: number, amount: number) => {
-	// const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/charge_gas',
-	// 	{
-	// 		'workspace_id': workspaceId,
-	// 		amount,
-	// 	})
-	// return !!response.data?.status
-	// workspaceId
-	// amount
-	return true
+export const chargeGas = async(workspaceId: number, amount: number, chainId: SupportedChainId | undefined) => {
+	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/charge_gas',
+		{
+			'workspace_id': workspaceId,
+			'chain_id': chainId ?? defaultChainId,
+			amount,
+		})
+	return !!response.data?.status
 }
 
 export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: BiconomyWalletClient, chainId: string, nonce: string) => {
@@ -221,13 +218,19 @@ export const sendGaslessTransaction = async(biconomy: typeof BiconomyContext, ta
 		},
 	}
 
+	logger.info({ webHookAttributes }, 'Webhook attributes')
+
 	// signature appended
-	return await biconomyWalletClient.sendBiconomyWalletTransaction({
+	const ret = await biconomyWalletClient.sendBiconomyWalletTransaction({
 		execTransactionBody: safeTxBody,
 		walletAddress: scwAddress,
 		signature: newSignature,
 		webHookAttributes,
 	})
+
+	logger.info({ ret }, 'Biconomy wallet transaction')
+
+	return ret
 }
 
 export const getTransactionReceipt = async(transactionHash: string | undefined, chainId: string) => {

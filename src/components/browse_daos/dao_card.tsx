@@ -1,11 +1,11 @@
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Box, Divider, Flex, Image, Spacer, Switch, Tag, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { formatAddress } from 'src/utils/formattingUtils'
+import { getSafeURL } from 'src/v2/utils/gnosisUtils'
 
-type DaoCardProps = {
+type DomainCardProps = {
 	logo: string
 	name: string
 	safeAddress: string
@@ -16,12 +16,13 @@ type DaoCardProps = {
 	chainId: SupportedChainId | undefined
 	noOfApplicants: number
 	totalAmount: number
+	safeChainId: string | undefined
 }
 
-function DaoCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfApplicants, totalAmount, onVisibilityUpdate, isVisible }: DaoCardProps) {
+function DomainCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfApplicants, totalAmount, onVisibilityUpdate, isVisible, safeChainId }: DomainCardProps) {
 	const router = useRouter()
-	const [isActive, setIsActive] = useState(false)
 	const { t } = useTranslation()
+	const safeUrl = getSafeURL(safeAddress, safeChainId!)
 	return (
 		<Box
 			w='100%'
@@ -31,16 +32,7 @@ function DaoCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfApplica
 			boxShadow='0px 10px 18px rgba(31, 31, 51, 0.05), 0px 0px 1px rgba(31, 31, 51, 0.31);'
 			borderRadius='4px'
 			cursor='pointer'
-			onMouseOver={
-				() => {
-					setIsActive(true)
-				}
-			}
-			onMouseLeave={
-				() => {
-					setIsActive(false)
-				}
-			}
+			className='dao-card'
 			onClick={
 				(e) => {
 					// returning as onClick fired from dao visibility toggle switch for admins
@@ -84,15 +76,26 @@ function DaoCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfApplica
 						)
 					}
 				</Flex>
-				
+
 				<Text
 					fontSize='20px'
 					fontWeight='500'
 					noOfLines={1}>
 					{name}
 				</Text>
-				<Tag mt='-14px' color='#767471' bgColor='#F1EEE8' fontSize='12px' fontWeight='500' lineHeight='16px' maxWidth='max-content' minHeight='0' paddingStart={1} paddingEnd={1}>
-					{safeAddress ? formatAddress(safeAddress): ''}
+				<Tag
+					mt='-14px'
+					color='#767471'
+					bgColor='#F1EEE8'
+					fontSize='12px'
+					fontWeight='500'
+					lineHeight='16px'
+					maxWidth='max-content'
+					minHeight='0'
+					paddingStart={1}
+					paddingEnd={1}
+					onClick={() => {window.open(safeUrl, '_blank')}}>
+					{safeAddress ? formatAddress(safeAddress) : ''}
 				</Tag>
 				<Divider />
 				<Flex justifyContent='space-between' mt={2}>
@@ -123,32 +126,9 @@ function DaoCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfApplica
 						</Text>
 					</Flex>
 				</Flex>
-				{
-					isActive && (
-						<Box
-							position='absolute'
-							bottom={0}
-							right={0}
-							p='24px'
-							display='flex'
-							alignItems='center'
-							as='button'
-							onClick={() => { }}>
-
-							<Text
-								fontSize='14px'
-								fontWeight='500'
-								color='#1F1F33'
-								mr='8px'>
-								{t('/.cards.submit_proposal')}
-							</Text>
-							<Image src='/ui_icons/black_right_arrow.svg' />
-						</Box>
-					)
-				}
 			</Flex>
 		</Box>
 	)
 }
 
-export default DaoCard
+export default DomainCard

@@ -150,6 +150,10 @@ a {
   border-color: #8850EA;
 }
 
+.dao-card:hover{
+  box-shadow: rgba(55, 56, 55, 0.484) 1px 2px 15px 5px;
+}
+
 .barhover {
   background: white;
   padding: 4px 8px;

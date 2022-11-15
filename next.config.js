@@ -19,7 +19,8 @@ const nextConfig = {
 		NEXT_PUBLIC_IS_TEST: process.env.NEXT_PUBLIC_IS_TEST,
 		BICO_AUTH_TOKEN: process.env.BICO_AUTH_TOKEN,
 		SOLANA_RPC: process.env.SOLANA_RPC,
-		UD_KEY: process.env.UD_KEY
+		UD_KEY: process.env.UD_KEY,
+		API_ENDPOINT: process.env.API_ENDPOINT
 	},
 	sentry: {
 		disableServerWebpackPlugin: true,

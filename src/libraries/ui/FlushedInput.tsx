@@ -17,13 +17,15 @@ function FlushedInput({ placeholder, width, type, isDisabled, value, onChange }:
             variant='flushed'
             placeholder={placeholder}
             borderBottom='5px solid'
+            borderColor={ value ? 'black' : 'gray.300'}
             fontWeight='400'
             fontSize='20px'
-            width={width}
+            width={value ? `${value.length + 1}ch` : `${placeholder.length + 5}ch`}
             type={type}
             isDisabled={isDisabled}
             value={value}
-            onChange={onChange} />
+            onChange={onChange}
+            textAlign='center' />
 
     )
 }

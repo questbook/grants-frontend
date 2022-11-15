@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { Box, Button, Flex, Text } from '@chakra-ui/react'
 import { Token } from '@questbook/service-validator-client'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
+import { ethers } from 'ethers'
 import Heading from 'src/components/ui/heading'
 import Loader from 'src/components/ui/loader'
 import Title from 'src/components/your_grants/create_grant/form/1_title'
@@ -123,10 +124,19 @@ function Form({
 		setGetKey(`${currentChain}-${CACHE_KEY}-${workspace?.id}`)
 	}, [workspace, currentChain])
 
+	const isValidPublicKey = (publicKey: string) => {
+		try {
+			ethers.utils.computeAddress(publicKey)
+			return true
+		} catch(e) {
+			return false
+		}
+	}
+
 	useEffect(() => {
 		if(workspace?.members) {
 			const adminAddresses = workspace.members
-				.filter((member) => member.publicKey && member.publicKey !== '')
+				.filter((member) => member.publicKey && member.publicKey !== '' && isValidPublicKey(member.publicKey))
 				.map((member) => member.actorId)
 			setAdmins(adminAddresses)
 		}
