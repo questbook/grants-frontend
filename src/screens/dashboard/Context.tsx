@@ -39,6 +39,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const [grants, setGrants] = useState<GetGrantsQuery['grants']>([])
 	const [selectedGrantIndex, setSelectedGrantIndex] = useState<number>()
 	const [selectedGrant, setSelectedGrant] = useState<GetGrantQuery['grant']>()
+	const [selectedProposals, setSelectedProposals] = useState<boolean[]>([])
 
 	const setSelectedWorkspace = useCallback(async() => {
 		if(!accountData?.address) {
@@ -70,7 +71,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			const savedWorkspaceDataId = savedWorkspaceData.split('-')[1]
 			const i = workspaces.findIndex(
 				(w) => w.id === savedWorkspaceDataId &&
-	           		 w.supportedNetworks[0] === savedWorkspaceDataChain
+					w.supportedNetworks[0] === savedWorkspaceDataChain
 			)
 			setWorkspace(workspaces[i])
 			return 'workspaces-fetched-from-cache'
@@ -127,6 +128,18 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		return 'grant-details-fetched'
 	}, [selectedGrantIndex])
 
+	const proposals = useMemo(() => {
+		if(!selectedGrant) {
+			return []
+		}
+
+		return selectedGrant.applications
+	}, [selectedGrant])
+
+	useEffect(() => {
+		setSelectedProposals(Array(proposals.length).fill(false))
+	}, [proposals])
+
 	useEffect(() => {
 		logger.info({ address: accountData?.address }, 'Account data changed')
 		setSelectedWorkspace().then((ret) => {
@@ -149,7 +162,19 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	}, [selectedGrantIndex])
 
 	return (
-		<DashboardContext.Provider value={{ selectedGrant, setSelectedGrant, grants, selectedGrantIndex, setSelectedGrantIndex }}>
+		<DashboardContext.Provider
+			value={
+				{
+					grants,
+					proposals,
+					selectedGrant,
+					setSelectedGrant,
+					selectedGrantIndex,
+					setSelectedGrantIndex,
+					selectedProposals,
+					setSelectedProposals
+				}
+			}>
 			{children}
 		</DashboardContext.Provider>
 	)

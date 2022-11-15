@@ -4914,7 +4914,7 @@ export type GetGrantQueryVariables = Exact<{
 }>;
 
 
-export type GetGrantQuery = { __typename?: 'Query', grant?: { __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, applications: Array<{ __typename?: 'GrantApplication', id: string }> } | null };
+export type GetGrantQuery = { __typename?: 'Query', grant?: { __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, applications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, applicantPublicKey?: string | null, state: ApplicationState, createdAtS: number, updatedAtS: number, feedbackDao?: string | null, feedbackDev?: string | null, pendingReviewerAddresses: Array<string>, doneReviewerAddresses: Array<string>, version: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, field: { __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, possibleValues?: Array<string> | null, isPii: boolean }, values: Array<{ __typename?: 'GrantFieldAnswerItem', id: string, value: string, walletId?: string | null }> }>, pii: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string, member?: { __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, publicKey?: string | null, addedAt: number, updatedAt: number, enabled: boolean } | null } | null }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, state: MilestoneState, amount: string, amountPaid: string, updatedAtS?: number | null, feedbackDao?: string | null, feedbackDaoUpdatedAtS?: number | null, feedbackDev?: string | null, feedbackDevUpdatedAtS?: number | null }>, reviews: Array<{ __typename?: 'Review', id: string, createdAtS: number, publicReviewDataHash?: string | null, reviewer: { __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, publicKey?: string | null, addedAt: number, updatedAt: number, enabled: boolean }, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string, member?: { __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, publicKey?: string | null, addedAt: number, updatedAt: number, enabled: boolean } | null } | null }> }>, applicationReviewers: Array<{ __typename?: 'GrantApplicationReviewer', id: string, assignedAtS: number, member: { __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, publicKey?: string | null, addedAt: number, updatedAt: number, enabled: boolean } }> }> } | null };
 
 export type GetGrantsQueryVariables = Exact<{
   domainID: Scalars['String'];
@@ -7797,8 +7797,111 @@ export const GetGrantDocument = gql`
     id
     title
     acceptingApplications
-    applications {
+    applications(orderBy: updatedAtS, orderDirection: desc) {
       id
+      applicantId
+      applicantPublicKey
+      state
+      fields {
+        id
+        field {
+          id
+          title
+          inputType
+          possibleValues
+          isPii
+        }
+        values {
+          id
+          value
+          walletId
+        }
+      }
+      pii {
+        id
+        manager {
+          id
+          member {
+            id
+            actorId
+            fullName
+            profilePictureIpfsHash
+            accessLevel
+            publicKey
+            addedAt
+            updatedAt
+            enabled
+          }
+        }
+        data
+      }
+      createdAtS
+      updatedAtS
+      milestones {
+        id
+        state
+        amount
+        amountPaid
+        updatedAtS
+        feedbackDao
+        feedbackDaoUpdatedAtS
+        feedbackDev
+        feedbackDevUpdatedAtS
+      }
+      feedbackDao
+      feedbackDev
+      reviews {
+        id
+        reviewer {
+          id
+          actorId
+          fullName
+          profilePictureIpfsHash
+          accessLevel
+          publicKey
+          addedAt
+          updatedAt
+          enabled
+        }
+        createdAtS
+        publicReviewDataHash
+        data {
+          id
+          manager {
+            id
+            member {
+              id
+              actorId
+              fullName
+              profilePictureIpfsHash
+              accessLevel
+              publicKey
+              addedAt
+              updatedAt
+              enabled
+            }
+          }
+          data
+        }
+      }
+      pendingReviewerAddresses
+      doneReviewerAddresses
+      applicationReviewers {
+        id
+        member {
+          id
+          actorId
+          fullName
+          profilePictureIpfsHash
+          accessLevel
+          publicKey
+          addedAt
+          updatedAt
+          enabled
+        }
+        assignedAtS
+      }
+      version
     }
   }
 }

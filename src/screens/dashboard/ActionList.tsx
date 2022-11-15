@@ -3,13 +3,13 @@
 import { Flex } from '@chakra-ui/react'
 
 function ActionList() {
-	return (
+	const buildComponent = () => (
 		<Flex
-			maxW='25%'
-			bg='accent.crayola'>
-			Action List
-		</Flex>
+			w='25%'
+			bg='white' />
 	)
+
+	return buildComponent()
 }
 
 export default ActionList

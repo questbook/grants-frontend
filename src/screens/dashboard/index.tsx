@@ -14,7 +14,7 @@ function Dashboard() {
 			w='100vw'
 			h='calc(100vh - 64px)'>
 			<TopBar />
-			<Flex>
+			<Flex h='calc(100vh - 128px)'>
 				<ProposalList />
 				<Body />
 				<ActionList />
