@@ -420,7 +420,8 @@ const getSafeDetails = async(realmsAddress: string): Promise<SafeSelectOption | 
 		safeType: 'Realms',
 		safeIcon: '/safes_icons/realms.svg',
 		amount: usdAmount, // 1000
-		isDisabled: usdAmount < USD_THRESHOLD
+		isDisabled: usdAmount < USD_THRESHOLD,
+		owners: [],
 	}
 }
 
@@ -450,7 +451,7 @@ const getTokenAndbalance = async(realmAddress: string): Promise<any> =>{
 	])
 	const governance = governances.filter((gov)=>gov.pubkey.toString()===realmData.account.authority?.toString())[0]
 	const nativeTreasuryAddress = await getNativeTreasuryAddress(programId, governance.pubkey)
-	assert(realmData.account.name)
+	// assert(realmData.account.name)
 	const solAmount = (await connection.getAccountInfo(nativeTreasuryAddress))!.lamports / 1000000000
 	const usdAmount = await solanaToUsd(solAmount)
 
