@@ -20,6 +20,7 @@ import {
 	defaultChainId,
 	SupportedChainId,
 } from 'src/constants/chains'
+import { SafeProvider } from 'src/contexts/safeContext'
 import SubgraphClient from 'src/graphql/subgraph'
 import { DAOSearchContextMaker } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContextMaker } from 'src/hooks/QBAdminsContext'
@@ -563,18 +564,20 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				<ApiClientsContext.Provider value={apiClients}>
 					<WebwalletContext.Provider value={webwalletContextValue}>
 						<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
-							<DAOSearchContextMaker>
-								<QBAdminsContextMaker>
-									<ChakraProvider theme={theme}>
-										{getLayout(<Component {...pageProps} />)}
-										{
-											typeof window !== 'undefined' && (
-												<MigrateToGasless />
-											)
-										}
-									</ChakraProvider>
-								</QBAdminsContextMaker>
-							</DAOSearchContextMaker>
+							<SafeProvider>
+								<DAOSearchContextMaker>
+									<QBAdminsContextMaker>
+										<ChakraProvider theme={theme}>
+											{getLayout(<Component {...pageProps} />)}
+											{
+												typeof window !== 'undefined' && (
+													<MigrateToGasless />
+												)
+											}
+										</ChakraProvider>
+									</QBAdminsContextMaker>
+								</DAOSearchContextMaker>
+							</SafeProvider>
 						</BiconomyContext.Provider>
 					</WebwalletContext.Provider>
 				</ApiClientsContext.Provider>
