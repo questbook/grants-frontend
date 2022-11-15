@@ -14,13 +14,11 @@ import logger from 'src/utils/logger'
 import { CancelCircleFilled } from 'src/v2/assets/custom chakra icons/CancelCircleFilled'
 import { FishEye } from 'src/v2/assets/custom chakra icons/FishEye'
 import { FundsCircle } from 'src/v2/assets/custom chakra icons/Your Grants/FundsCircle'
-import { GnosisSafe } from 'src/v2/constants/safe/gnosis_safe'
-import { RealmsSolana } from 'src/v2/constants/safe/realms_solana'
 import RecipientDetails from 'src/v2/payouts/SendFundsDrawer/RecepientDetails'
 import SafeOwner from 'src/v2/payouts/SendFundsModal/SafeOwner'
 // import { MODAL_STATE_INDEXES, ModalStateType } from 'src/v2/payouts/SendFundsModal/SendFundsModal'
 import { PhantomProvider } from 'src/v2/types/phantom'
-import { Safe, TransactionType } from 'src/v2/types/safe'
+import { TransactionType } from 'src/v2/types/safe'
 
 interface Props {
 	isOpen: boolean
@@ -32,7 +30,6 @@ interface Props {
 	phantomWallet: PhantomProvider | undefined
 	setPhantomWalletConnected: (value: boolean) => void
 	isEvmChain: boolean
-	current_safe?: Safe | RealmsSolana | GnosisSafe
 	signerVerified: boolean
 	initiateTransaction: () => Promise<void>
 	initiateTransactionData: TransactionType[]

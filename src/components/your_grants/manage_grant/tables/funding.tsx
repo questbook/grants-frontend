@@ -15,7 +15,6 @@ import {
 } from 'src/utils/formattingUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import dollarIcon from 'src/v2/assets/currency_icon/dollar_icon.svg'
-import { getDateInDDMMYYYY, solanaToUsdOnDate } from 'src/v2/constants/safe/realms_solana'
 import { getGnosisTansactionLink, getSafeURL } from 'src/v2/utils/gnosisUtils'
 import { getProposalUrl } from 'src/v2/utils/phantomUtils'
 
