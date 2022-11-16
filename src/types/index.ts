@@ -146,7 +146,7 @@ export interface SidebarRubrics {
 }
 
 export interface SidebarReviewer {
-  data: GetReviewersForAWorkspaceQuery['workspaces'][number]['members'][number]
+  data: Exclude<GetReviewersForAWorkspaceQuery['workspace'], null | undefined>['members'][number]
   isSelected: boolean
   index: number
 }
