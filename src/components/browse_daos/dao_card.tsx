@@ -19,7 +19,7 @@ type DaoCardProps = {
 	chainId: SupportedChainId | undefined
 	noOfApplicants: number
 	totalAmount: number
-	workspaceData: Workspace | undefined
+	workspaceData: any
 }
 
 function DaoCard({ logo, isAdmin, name, daoId, chainId, noOfApplicants, totalAmount, onVisibilityUpdate, isVisible, workspaceData }: DaoCardProps) {
