@@ -1,8 +1,13 @@
-import { useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Box, Flex, Image, Switch, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { defaultChainId } from 'src/constants/chains'
+import { useGetAllFundsTransfersForADaoQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
+import { ApiClientsContext } from 'src/pages/_app'
+import { Workspace } from 'src/types'
+import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 
 type DaoCardProps = {
 	logo: string
@@ -14,12 +19,41 @@ type DaoCardProps = {
 	chainId: SupportedChainId | undefined
 	noOfApplicants: number
 	totalAmount: number
+	workspaceData: Workspace | undefined
 }
 
-function DaoCard({ logo, isAdmin, name, daoId, chainId, noOfApplicants, totalAmount, onVisibilityUpdate, isVisible }: DaoCardProps) {
+function DaoCard({ logo, isAdmin, name, daoId, chainId, noOfApplicants, totalAmount, onVisibilityUpdate, isVisible, workspaceData }: DaoCardProps) {
 	const router = useRouter()
 	const [isActive, setIsActive] = useState(false)
 	const { t } = useTranslation()
+	const [totalFundsDisbursed, setTotalFundsDisbursed] = useState<number>(0)
+	const { subgraphClients } = useContext(ApiClientsContext)!
+
+
+	const { data: fundTransfersData } = useGetAllFundsTransfersForADaoQuery({
+		client:
+			subgraphClients[
+				getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) || defaultChainId
+			].client,
+		variables: {
+			workspaceId: daoId || '',
+		},
+	})
+
+	useEffect(() => {
+		if(fundTransfersData) {
+			let totalAmount = 0
+			for(let i = 0; i < fundTransfersData?.fundsTransfers?.length!; i++) {
+				if(fundTransfersData?.fundsTransfers[i]?.status === 'executed'
+						&& fundTransfersData?.fundsTransfers[i]?.type === 'funds_disbursed_from_safe') {
+					totalAmount += parseInt(fundTransfersData?.fundsTransfers[i]?.amount!)
+				}
+			}
+
+			setTotalFundsDisbursed(totalAmount)
+		}
+	}, [fundTransfersData])
+
 	return (
 		<Box
 			w='100%'
@@ -106,7 +140,7 @@ function DaoCard({ logo, isAdmin, name, daoId, chainId, noOfApplicants, totalAmo
 					fontSize='14px'
 					fontWeight='600'>
 					$
-					{totalAmount ? totalAmount.toLocaleString() : 0}
+					{totalAmount ? totalAmount + totalFundsDisbursed : 0}
 				</Text>
 				<Text
 					ml='5px'

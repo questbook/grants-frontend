@@ -14,6 +14,7 @@ import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGran
 import { CHAIN_INFO, defaultChainId, SupportedChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
 import {
+	useGetAllFundsTransfersForADaoQuery,
 	useGetApplicantsForAGrantQuery,
 	useGetGrantDetailsQuery,
 	useGetReviewersForAWorkspaceQuery,
@@ -405,6 +406,30 @@ function ViewProposals() {
 
 	const [transactionHash, setTransactionHash] = useState<string>()
 
+	const { data: fundTransfersData } = useGetAllFundsTransfersForADaoQuery({
+		client:
+			subgraphClients[
+				getSupportedChainIdFromSupportedNetwork(workspace?.supportedNetworks[0]!) || defaultChainId
+			].client,
+		variables: {
+			workspaceId: workspace?.id || '',
+		},
+	})
+
+	useEffect(() => {
+		if(fundTransfersData) {
+			let totalAmount = 0
+			for(let i = 0; i < fundTransfersData?.fundsTransfers?.length!; i++) {
+				if(fundTransfersData?.fundsTransfers[i]?.status === 'executed'
+						&& fundTransfersData?.fundsTransfers[i]?.type === 'funds_disbursed_from_safe') {
+					totalAmount += parseInt(fundTransfersData?.fundsTransfers[i]?.amount!)
+				}
+			}
+
+			setTotalFundDisbursed(totalAmount)
+		}
+	}, [fundTransfersData])
+
 	return (
 		<Container
 			maxW='100%'
@@ -573,6 +598,7 @@ function ViewProposals() {
 									onSetupApplicantEvaluationClicked={() => setRubricDrawerOpen(true)}
 									grantData={grantData}
 									rewardAssetDecimals={rewardAssetDecimals}
+									fundTransfersData={fundTransfersData?.fundsTransfers}
 								/>
 							},
 							{
