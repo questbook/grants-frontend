@@ -387,8 +387,8 @@ function ViewProposals() {
 	useEffect(() => {
 		if(!reviewersForAWorkspaceData) {
 			setAreReviewersAdded(true)
-		} else if(reviewersForAWorkspaceData?.workspaces[0]?.members.length) {
-			setAreReviewersAdded(reviewersForAWorkspaceData?.workspaces[0]?.members.length > 0)
+		} else if(reviewersForAWorkspaceData?.workspace?.members.length) {
+			setAreReviewersAdded(reviewersForAWorkspaceData?.workspace?.members.length > 0)
 		} else {
 			setAreReviewersAdded(false)
 		}
@@ -429,6 +429,15 @@ function ViewProposals() {
 			setTotalFundDisbursed(totalAmount)
 		}
 	}, [fundTransfersData])
+	const areReviewsPrivate = useMemo(() => {
+		if(!grantData?.grants[0]?.rubric?.isPrivate) {
+			logger.info({}, 'Rubric privacy not loaded')
+			return false
+		}
+
+		logger.info({ isPrivate: grantData.grants[0].rubric.isPrivate }, 'Rubric privacy')
+		return grantData.grants[0].rubric.isPrivate
+	}, [grantData?.grants[0]?.rubric?.isPrivate])
 
 	return (
 		<Container
@@ -618,77 +627,6 @@ function ViewProposals() {
 					tabIndex={tabIndex}
 					onChange={setTabIndex} />
 
-				{/* <Tabs
-					index={tabIndex}
-					onChange={(i) => setTabIndex(i)}
-					h={8}
-					colorScheme='brandv2'>
-					<TabList>
-						<StyledTab label={`In Review (${applicantsData.filter((item: any) => (0 === item.status)).length})`} />
-						<StyledTab label={`Accepted (${applicantsData.filter((item: any) => (2 === item.status)).length})`} />
-						<StyledTab label={`Rejected (${applicantsData.filter((item: any) => (3 === item.status)).length})`} />
-						<StyledTab label={`Asked to Resubmit (${applicantsData.filter((item: any) => (1 === item.status)).length})`} />
-					</TabList>
-
-					<TabPanels>
-						<TabPanel
-							tabIndex={1}
-							borderRadius='2px'
-							p={0}
-							mt={5}
-							bg='white'
-							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
-							<InReviewPanel
-								applicantsData={applicantsData}
-								grantData={grantData} />
-						</TabPanel>
-
-						<TabPanel
-							borderRadius='2px'
-							p={0}
-							mt={5}
-							bg='white'
-							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7' >
-							<AcceptedProposalsPanel
-								// totalMilestonesAmount={totalMilestonesAmt}
-								applicationStatuses={applicationStatuses}
-								applicantsData={applicantsData}
-								onSendFundsClicked={onSendFundsButtonClicked}
-								onBulkSendFundsClicked={onSendFundsButtonClicked}
-								onSetupApplicantEvaluationClicked={() => setRubricDrawerOpen(true)}
-								grantData={grantData}
-								rewardAssetDecimals={rewardAssetDecimals}
-							/>
-						</TabPanel>
-
-						<TabPanel
-							tabIndex={2}
-							borderRadius='2px'
-							p={0}
-							mt={5}
-							bg='white'
-							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
-							<RejectedPanel
-								chainId={workspacechainId}
-								applicantsData={applicantsData} />
-						</TabPanel>
-
-						<TabPanel
-							tabIndex={3}
-							borderRadius='2px'
-							p={0}
-							mt={5}
-							bg='white'
-							boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'>
-							<ResubmitPanel
-								chainId={workspacechainId}
-								applicantsData={applicantsData} />
-						</TabPanel>
-
-
-					</TabPanels>
-				</Tabs> */}
-
 				<SetupEvaluationDrawer
 					isOpen={rubricDrawerOpen}
 					onClose={() => setRubricDrawerOpen(false)}
@@ -698,6 +636,7 @@ function ViewProposals() {
 					setNetworkTransactionModalStep={setNetworkTransactionModalStep}
 					setTransactionHash={setTransactionHash}
 					data={reviewersForAWorkspaceData}
+					isRubricPrivate={areReviewsPrivate}
 				/>
 
 				<ViewEvaluationDrawer
