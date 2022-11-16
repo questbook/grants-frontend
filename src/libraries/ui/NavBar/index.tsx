@@ -247,7 +247,7 @@ NavBar.defaultProps = {
 	showSearchBar: false,
 	showInviteProposals: true,
 	showAddMembers: true,
-	showWorkspaces: true,
+	showDomains: true,
 	showStats: true
 }
 
