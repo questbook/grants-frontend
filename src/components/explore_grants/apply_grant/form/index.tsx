@@ -102,6 +102,7 @@ function Form({
 
 	const [resolvedDomain, setResolvedDomain] = React.useState('')
 	const [resolvedDomainError, setResolvedDomainError] = React.useState(true)
+	const [resolvedDomainErrorMessage, setResolvedDomainErrorMessage] = React.useState('')
 
 	const [teamMembers, setTeamMembers] = React.useState<number | null>(1)
 	const [teamMembersError, setTeamMembersError] = React.useState(false)
@@ -536,7 +537,7 @@ function Form({
 	])
 
 	useEffect(() => {
-		if (applicantAddress && applicantAddress.includes('.')) {
+		if (applicantAddress && applicantAddress.includes('.') && (safeNetwork === '137' || safeNetwork === '900001' || safeNetwork === '1')) {
 			// setResolvedDomainError(true)
 			const token = process.env.UD_KEY
 			axios.get(`https://resolve.unstoppabledomains.com/domains/${applicantAddress}`, {
@@ -546,35 +547,56 @@ function Form({
 			})
 				.then((res) => {
 					logger.info("UD ->", res.data)
-					if(res.data.meta.networkId !== parseInt(safeNetwork)) {
-						logger.info(`domain not on safe network ${safeNetwork}`)
+					if (res.data.meta.owner) {
+						if (safeNetwork === '137') {
+							if (res.data.records['crypto.MATIC.version.ERC20.address']) {
+								console.log("resolved domain", res.data.records['crypto.MATIC.version.ERC20.address'])
+								setResolvedDomain(res.data.records['crypto.MATIC.version.ERC20.address'])
+								setApplicantAddress(res.data.records['crypto.MATIC.version.ERC20.address'])
+								setResolvedDomainError(false)
+								setApplicantAddressError(false)
+								setResolvedDomainErrorMessage('')
+							} else {
+								setResolvedDomainErrorMessage("No MATIC address found for this domain")
+							}
+						}
+						if (safeNetwork === '900001') {
+							if (res.data.records['crypto.SOL.address']) {
+								console.log("resolved domain", res.data.records['crypto.SOL.address'])
+								setResolvedDomain(res.data.records['crypto.SOL.address'])
+								setApplicantAddress(res.data.records['crypto.SOL.address'])
+								setResolvedDomainError(false)
+								setApplicantAddressError(false)
+								setResolvedDomainErrorMessage('')
+							} else {
+								setResolvedDomainErrorMessage("No SOL address found for this domain")
+							}
+						}
+						if (safeNetwork === '1') {
+							if (res.data.records['crypto.ETH.address']) {
+								console.log("resolved domain", res.data.records['crypto.ETH.address'])
+								setResolvedDomain(res.data.records['crypto.ETH.address'])
+								setApplicantAddress(res.data.records['crypto.ETH.address'])
+								setResolvedDomainError(false)
+								setApplicantAddressError(false)
+								setResolvedDomainErrorMessage('')
+							} else {
+								setResolvedDomainErrorMessage("No ETH address found for this domain")
+							}
+						}
+					} else {
+						setResolvedDomainErrorMessage('Invalid Unstoppable domain')
 						setResolvedDomainError(true)
-						// setApplicantAddressError(true)
-					} else if (res.data.meta.owner) {
-						console.log("resolved domain", res.data.meta.owner)
-						setResolvedDomain(res.data.meta.owner)
-						setApplicantAddress(res.data.meta.owner)
-						setResolvedDomainError(false)
-						setApplicantAddressError(false)
 					}
 				}).catch((err) => {
 					logger.error("UD error ->", err)
 					setResolvedDomainError(true)
 				})
 
-		} else if (resolvedDomain){
+		} else if (resolvedDomain) {
 			setResolvedDomainError(true)
 		}
 	}, [applicantAddress])
-
-	// useEffect(() => {
-	// 	logger.info("resolved domain changed", resolvedDomain)
-	// 	debugger
-	// 	if(resolvedDomain) {
-	// 	logger.info("resolved domain in useffect", resolvedDomain)
-	// 	setApplicantAddress(resolvedDomain)
-	// 	}
-	// }, [resolvedDomain])
 
 	return (
 		<Flex
@@ -680,6 +702,7 @@ function Form({
 					safeNetwork={safeNetwork!}
 					resolvedDomain={resolvedDomain}
 					resolvedDomainError={resolvedDomainError}
+					resolvedDomainErrorMessage={resolvedDomainErrorMessage}
 				/>
 
 				<Box mt='43px' />

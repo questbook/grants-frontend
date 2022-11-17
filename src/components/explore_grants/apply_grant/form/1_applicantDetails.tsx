@@ -25,7 +25,8 @@ function ApplicantDetails({
 	setApplicantAddressError,
 	safeNetwork,
 	resolvedDomain,
-	resolvedDomainError
+	resolvedDomainError,
+	resolvedDomainErrorMessage
 }: {
   applicantName: string
   setApplicantName: (applicantName: string) => void
@@ -43,6 +44,7 @@ function ApplicantDetails({
   safeNetwork: string
   resolvedDomain: string
   resolvedDomainError: boolean
+  resolvedDomainErrorMessage: string
 }) {
 	const { workspace } = useContext(ApiClientsContext)!
 	const { t } = useTranslation()
@@ -115,7 +117,7 @@ function ApplicantDetails({
 					}
 				}
 				isError={applicantAddressError && resolvedDomainError}
-				errorText={t('/explore_grants/apply.invalid_address_on_chain').replace('%CHAIN', chainNames.get(safeNetwork)!.toString())}
+				errorText={resolvedDomainErrorMessage ? resolvedDomainErrorMessage : t('/explore_grants/apply.invalid_address_on_chain').replace('%CHAIN', chainNames.get(safeNetwork)!.toString())}
 				value={applicantAddress}
 				visible={grantRequiredFields.includes('applicantAddress')}
 			/>
