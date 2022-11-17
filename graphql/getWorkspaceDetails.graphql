@@ -27,7 +27,7 @@ query getWorkspaceDetails($workspaceID: ID!) {
     decimal,
     iconHash
     }
-        members {
+        members (where: {enabled: true}) {
           id
           actorId
           publicKey
@@ -36,6 +36,7 @@ query getWorkspaceDetails($workspaceID: ID!) {
           updatedAt
           outstandingReviewIds
           lastReviewSubmittedAt
+          enabled
           addedBy {
             id
             actorId

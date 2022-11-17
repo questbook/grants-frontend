@@ -3,6 +3,7 @@ import { FeedbackType } from 'src/components/your_grants/feedbackDrawer'
 import {
 	ApplicationRegistryAbi,
 	ApplicationReviewRegistryAbi,
+	CommunicationAbi,
 	GrantFactoryAbi,
 	WorkspaceRegistryAbi,
 } from 'src/generated/contracts'
@@ -63,6 +64,7 @@ export type IReviewer = { id: string, fullName?: string | null }
 export type IReviewFeedback = {
   isApproved?: boolean
   createdAtS?: number
+  reviewer?: string
   items: FeedbackType[]
   total: number
 }
@@ -93,13 +95,15 @@ export type QBContract =
   | 'workspace'
   | 'grantFactory'
   | 'applications'
-  | 'reviews';
+  | 'reviews'
+  | 'communication';
 
 export type QBContractABIMap = {
   workspace: WorkspaceRegistryAbi
   grantFactory: GrantFactoryAbi
   applications: ApplicationRegistryAbi
   reviews: ApplicationReviewRegistryAbi
+  communication: CommunicationAbi
 };
 
 export interface ChainInfo {
@@ -142,7 +146,7 @@ export interface SidebarRubrics {
 }
 
 export interface SidebarReviewer {
-  data: GetReviewersForAWorkspaceQuery['workspaces'][number]['members'][number]
+  data: Exclude<GetReviewersForAWorkspaceQuery['workspace'], null | undefined>['members'][number]
   isSelected: boolean
   index: number
 }

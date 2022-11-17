@@ -1,10 +1,10 @@
 import { Biconomy } from '@biconomy/mexa'
 import axios from 'axios'
 import { Contract, ethers, Wallet } from 'ethers'
-import { Fragment } from 'ethers/lib/utils'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { defaultChainId } from 'src/constants/chains'
 import SupportedChainId from 'src/generated/SupportedChainId'
+import logger from 'src/libraries/logger'
 import { BiconomyContext } from 'src/pages/_app'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import { TransactionReceipt } from 'web3-core'
@@ -69,7 +69,7 @@ export const networksMapping: { [key: string]: string } = {
 	// testnets
 	'5': '5',
 	'4': '5',
-	'900001': SupportedChainId.OPTIMISM_MAINNET.toString(), // This is for solana.
+	'900001': defaultChainId.toString(),
 }
 
 export const signNonce = async(webwallet: Wallet, nonce: string) => {
@@ -87,6 +87,7 @@ export const getNonce = async(webwallet: Wallet | undefined) => {
 
 	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/refresh_nonce',
 		{
+			// eslint-disable-next-line camelcase
 			webwallet_address: webwallet.address,
 		})
 	if(response.data && response.data.nonce !== 'Token expired') {
@@ -121,10 +122,11 @@ export const addAuthorizedUser = async(webwalletAddress: string) => {
 	return !!response.data?.authorize
 }
 
-export const chargeGas = async(workspaceId: number, amount: number) => {
+export const chargeGas = async(workspaceId: number, amount: number, chainId: SupportedChainId | undefined) => {
 	const response = await axios.post('https://2j6v8c5ee6.execute-api.ap-south-1.amazonaws.com/v0/charge_gas',
 		{
 			'workspace_id': workspaceId,
+			'chain_id': chainId ?? defaultChainId,
 			amount,
 		})
 	return !!response.data?.status
@@ -164,6 +166,7 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 }
 
 export const sendGaslessTransaction = async(biconomy: typeof BiconomyContext, targetContractObject: Contract, targetContractMethod: string,
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	targetContractArgs: any, targetContractAddress: string, biconomyWalletClient: BiconomyWalletClient,
 	scwAddress: string, webwallet: Wallet | undefined, chainId: string, webHookId: string, nonce: string | undefined) => {
 
@@ -215,13 +218,19 @@ export const sendGaslessTransaction = async(biconomy: typeof BiconomyContext, ta
 		},
 	}
 
+	logger.info({ webHookAttributes }, 'Webhook attributes')
+
 	// signature appended
-	return await biconomyWalletClient.sendBiconomyWalletTransaction({
+	const ret = await biconomyWalletClient.sendBiconomyWalletTransaction({
 		execTransactionBody: safeTxBody,
 		walletAddress: scwAddress,
 		signature: newSignature,
 		webHookAttributes,
 	})
+
+	logger.info({ ret }, 'Biconomy wallet transaction')
+
+	return ret
 }
 
 export const getTransactionReceipt = async(transactionHash: string | undefined, chainId: string) => {
@@ -253,6 +262,7 @@ export const getTransactionDetails = async(transactionHash: string, chainId: str
 	return { receipt, txFee }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getEventData = async(receipt: ethers.providers.TransactionReceipt, eventName: string, contractABI: any) => {
 
 	const isValidEvent = (item: ethers.utils.Fragment) => {
@@ -321,7 +331,7 @@ export const registerWebHook = async(authToken: string | undefined, apiKey: stri
 	const responseJSON = await response.json()
 
 	let webHookId = "Couldn't register webhook on workspace!"
-	console.log(responseJSON)
+
 	try {
 		webHookId = responseJSON.data.webHookId
 	} catch{
@@ -332,7 +342,7 @@ export const registerWebHook = async(authToken: string | undefined, apiKey: stri
 }
 
 export const addDapp = async(dappName: string, networkId: string, authToken: string | undefined) => {
-	console.log('AUTH TOKEN', authToken)
+
 	if(!authToken) {
 		throw new Error('No bico auth token found')
 	}
@@ -353,8 +363,6 @@ export const addDapp = async(dappName: string, networkId: string, authToken: str
 
 	const res = await fetch(url, requestOptions)
 	const resJson = await res.json()
-
-	console.log(resJson.data)
 
 	return { apiKey: resJson.data.apiKey, fundingKey: resJson.data.fundingKey.toString() }
 }

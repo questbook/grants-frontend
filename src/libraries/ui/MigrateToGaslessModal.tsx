@@ -245,7 +245,7 @@ function MigrateToGasless() {
 
 			logger.info({ results }, 'Results')
 
-			if(!(walletChain.id in ALL_SUPPORTED_CHAIN_IDS)) {
+			if(ALL_SUPPORTED_CHAIN_IDS.indexOf(walletChain.id) === -1) {
 				const { state, chainId } = shouldMigrate
 
 				if(state === 'no-domain-found' && chainId) {
@@ -260,8 +260,8 @@ function MigrateToGasless() {
 					return
 				} else if(state === 'no-application-found' && chainId) {
 					toast({
-						title: 'No applications found to migrate',
-						description: `The current network (${walletChain?.name}) your wallet is connected to has no applications. Please switch your network to ${CHAIN_INFO[chainId]?.name} (or some other network) where you have applications`,
+						title: 'No proposals found to migrate',
+						description: `The current network (${walletChain?.name}) your wallet is connected to has no proposals. Please switch your network to ${CHAIN_INFO[chainId]?.name} (or some other network) where you have proposals`,
 						status: 'warning',
 						duration: 9000,
 						isClosable: true,

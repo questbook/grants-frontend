@@ -106,7 +106,7 @@ function DaoCard({ logo, isAdmin, name, daoId, chainId, noOfApplicants, totalAmo
 					fontSize='14px'
 					fontWeight='600'>
 					$
-					{totalAmount ? totalAmount : 0}
+					{totalAmount ? totalAmount.toLocaleString() : 0}
 				</Text>
 				<Text
 					ml='5px'

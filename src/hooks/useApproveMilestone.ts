@@ -130,7 +130,7 @@ export default function useApproveMilestone(
 				await subgraphClients[currentChainId].waitForBlock(receipt?.blockNumber)
 
 				setNetworkTransactionModalStep(4)
-				await chargeGas(Number(workspace?.id), Number(txFee))
+				await chargeGas(Number(workspace?.id), Number(txFee), chainId)
 
 				setNetworkTransactionModalStep(5)
 				setTransactionData(receipt)

@@ -55,9 +55,6 @@ function Profile() {
 	const [workspaceData, setWorkspaceData] = React.useState<DAOWorkspace>()
 	const [chainID, setChainId] = React.useState<SupportedChainId>()
 	const [daoID, setDaoId] = React.useState<string>()
-	const [grantsApplicants, setGrantsApplicants] = React.useState<any>([])
-	const [grantsDisbursed, setGrantsDisbursed] = React.useState<any>([])
-	const [grantWinners, setGrantWinners] = React.useState<any>([])
 	const [fundingTime, setFundingTime] = React.useState<any>([])
 	const [applicationTime, setApplicationTime] = React.useState<any>([])
 	const { network, switchNetwork } = useNetwork()
@@ -102,8 +99,6 @@ function Profile() {
 				daoID,
 			},
 		})
-
-		getAnalyticsData()
 	}, [chainID, daoID])
 
 	const { data, error, loading } = useGetDaoDetailsQuery(queryParams)
@@ -125,62 +120,6 @@ function Profile() {
 			acceptingApplications: true,
 		},
 	})
-
-	const getAnalyticsData = async() => {
-		// console.log('calling analytics')
-		try {
-			//const res = await fetch('https://www.questbook-analytics.com/workspace-analytics', {
-			const res = await fetch(
-				'https://www.questbook-analytics.com/workspace-analytics',
-				{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					referrerPolicy: 'unsafe-url',
-					body: JSON.stringify({
-						chainId: chainID,
-						workspaceId: daoID,
-					}),
-
-					// For testing
-					// body: JSON.stringify({
-					// 	chainId: 137,
-					// 	workspaceId: '0x2'
-					// })
-				}
-			)
-
-			const data = await res.json()
-			// console.log('res', data)
-
-			const totalFunding = extractLast30Fundings(data)
-			setGrantsDisbursed(totalFunding)
-			setGrantsApplicants(data.totalApplicants)
-			setGrantWinners(data.winnerApplicants)
-
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} catch(e: any) {
-			// console.log(e)
-		}
-	}
-
-	const extractLast30Fundings = (data: any) => {
-		const everydayFundings = data.everydayFunding
-		let totalFunding = 0
-
-		if(!everydayFundings || everydayFundings.length === 0) {
-			return totalFunding
-		}
-
-		// // console.log(everydayApplications)
-
-		everydayFundings.forEach((application: any) => {
-			totalFunding += parseInt(application.funding)
-		})
-
-		return totalFunding
-	}
 
 	useEffect(() => {
 		if(allDaoData && fundingTime.length === 0) {
@@ -334,9 +273,9 @@ function Profile() {
 						justifyContent='space-between'
 					>
 						<DaoData
-							disbursed={grantsDisbursed}
-							winners={grantWinners}
-							applicants={grantsApplicants}
+							disbursed={data?.workspace?.totalGrantFundingDisbursedUSD ?? 0}
+							winners={data?.workspace?.numberOfApplicationsSelected ?? 0}
+							applicants={data?.workspace?.numberOfApplications ?? 0}
 							fundTimes={fundingTime}
 							applicationTime={applicationTime}
 						/>

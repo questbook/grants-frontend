@@ -1,13 +1,12 @@
 query getWorkspaceMembersByWorkspaceId(
     $workspaceId: String!
-    $accessLevelsIn: [WorkspaceMemberAccessLevel!]!
     $first: Int
     $skip: Int
 ) {
     workspaceMembers(
         where: {
             workspace: $workspaceId
-            accessLevel_in: $accessLevelsIn
+            enabled: true
         }
         first: $first
         skip: $skip
@@ -19,5 +18,6 @@ query getWorkspaceMembersByWorkspaceId(
         profilePictureIpfsHash
         accessLevel
         addedAt
+        publicKey
     }
 }

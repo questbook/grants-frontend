@@ -20,6 +20,7 @@ import {
 	defaultChainId,
 	SupportedChainId,
 } from 'src/constants/chains'
+import { SafeProvider } from 'src/contexts/safeContext'
 import SubgraphClient from 'src/graphql/subgraph'
 import { DAOSearchContextMaker } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContextMaker } from 'src/hooks/QBAdminsContext'
@@ -544,23 +545,39 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 						}
 					}
 				/>
+				<script
+					dangerouslySetInnerHTML={
+						{
+							__html: `(function(h,o,t,j,a,r){
+								h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+								h._hjSettings={hjid:3220839,hjsv:6};
+								a=o.getElementsByTagName('head')[0];
+								r=o.createElement('script');r.async=1;
+								r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+								a.appendChild(r);
+							})(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');`
+						}
+					}
+				/>
 			</Head>
 			<WagmiConfig client={client}>
 				<ApiClientsContext.Provider value={apiClients}>
 					<WebwalletContext.Provider value={webwalletContextValue}>
 						<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
-							<DAOSearchContextMaker>
-								<QBAdminsContextMaker>
-									<ChakraProvider theme={theme}>
-										{getLayout(<Component {...pageProps} />)}
-										{
-											typeof window !== 'undefined' && (
-												<MigrateToGasless />
-											)
-										}
-									</ChakraProvider>
-								</QBAdminsContextMaker>
-							</DAOSearchContextMaker>
+							<SafeProvider>
+								<DAOSearchContextMaker>
+									<QBAdminsContextMaker>
+										<ChakraProvider theme={theme}>
+											{getLayout(<Component {...pageProps} />)}
+											{
+												typeof window !== 'undefined' && (
+													<MigrateToGasless />
+												)
+											}
+										</ChakraProvider>
+									</QBAdminsContextMaker>
+								</DAOSearchContextMaker>
+							</SafeProvider>
 						</BiconomyContext.Provider>
 					</WebwalletContext.Provider>
 				</ApiClientsContext.Provider>

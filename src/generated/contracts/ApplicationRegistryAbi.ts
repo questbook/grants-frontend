@@ -35,7 +35,7 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     "applicationReviewReg()": FunctionFragment;
     "applications(uint96)": FunctionFragment;
     "approveMilestone(uint96,uint48,uint96,string)": FunctionFragment;
-    "batchUpdateApplicationState(uint96[],uint8[],uint96)": FunctionFragment;
+    "batchUpdateApplicationState(uint96[],uint8[],uint96,string[])": FunctionFragment;
     "completeApplication(uint96,uint96,string)": FunctionFragment;
     "getApplicationOwner(uint96)": FunctionFragment;
     "getApplicationWorkspace(uint96)": FunctionFragment;
@@ -114,7 +114,8 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     values: [
       PromiseOrValue<BigNumberish>[],
       PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>[]
     ]
   ): string;
   encodeFunctionData(
@@ -299,6 +300,7 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
 
   events: {
     "AdminChanged(address,address)": EventFragment;
+    "ApplicationMigrate(uint96,address,uint256)": EventFragment;
     "ApplicationSubmitted(uint96,address,address,string,uint48,uint256)": EventFragment;
     "ApplicationUpdated(uint96,address,string,uint8,uint48,uint256)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
@@ -309,6 +311,7 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ApplicationMigrate"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApplicationSubmitted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApplicationUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
@@ -328,6 +331,19 @@ export type AdminChangedEvent = TypedEvent<
 >;
 
 export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
+
+export interface ApplicationMigrateEventObject {
+  applicationId: BigNumber;
+  newApplicantAddress: string;
+  time: BigNumber;
+}
+export type ApplicationMigrateEvent = TypedEvent<
+  [BigNumber, string, BigNumber],
+  ApplicationMigrateEventObject
+>;
+
+export type ApplicationMigrateEventFilter =
+  TypedEventFilter<ApplicationMigrateEvent>;
 
 export interface ApplicationSubmittedEventObject {
   applicationId: BigNumber;
@@ -477,6 +493,7 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _applicationIds: PromiseOrValue<BigNumberish>[],
       _applicationStates: PromiseOrValue<BigNumberish>[],
       _workspaceId: PromiseOrValue<BigNumberish>,
+      feedbackHashes: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -612,6 +629,7 @@ export interface ApplicationRegistryAbi extends BaseContract {
     _applicationIds: PromiseOrValue<BigNumberish>[],
     _applicationStates: PromiseOrValue<BigNumberish>[],
     _workspaceId: PromiseOrValue<BigNumberish>,
+    feedbackHashes: PromiseOrValue<string>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -747,6 +765,7 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _applicationIds: PromiseOrValue<BigNumberish>[],
       _applicationStates: PromiseOrValue<BigNumberish>[],
       _workspaceId: PromiseOrValue<BigNumberish>,
+      feedbackHashes: PromiseOrValue<string>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -849,6 +868,17 @@ export interface ApplicationRegistryAbi extends BaseContract {
       previousAdmin?: null,
       newAdmin?: null
     ): AdminChangedEventFilter;
+
+    "ApplicationMigrate(uint96,address,uint256)"(
+      applicationId?: PromiseOrValue<BigNumberish> | null,
+      newApplicantAddress?: null,
+      time?: null
+    ): ApplicationMigrateEventFilter;
+    ApplicationMigrate(
+      applicationId?: PromiseOrValue<BigNumberish> | null,
+      newApplicantAddress?: null,
+      time?: null
+    ): ApplicationMigrateEventFilter;
 
     "ApplicationSubmitted(uint96,address,address,string,uint48,uint256)"(
       applicationId?: PromiseOrValue<BigNumberish> | null,
@@ -954,6 +984,7 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _applicationIds: PromiseOrValue<BigNumberish>[],
       _applicationStates: PromiseOrValue<BigNumberish>[],
       _workspaceId: PromiseOrValue<BigNumberish>,
+      feedbackHashes: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1081,6 +1112,7 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _applicationIds: PromiseOrValue<BigNumberish>[],
       _applicationStates: PromiseOrValue<BigNumberish>[],
       _workspaceId: PromiseOrValue<BigNumberish>,
+      feedbackHashes: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -97,22 +97,26 @@ function TextField({ label, optionalText, helperText, helperLinkText, helperLink
 					//   }
 					// }
 				/>
-				<InputRightElement>
-					{
-						!isVerified && onPasteClick && (
-							<Text
-								variant='v2_title'
-								color='violet.2'
-								fontWeight='500'
-								cursor='pointer'
-								transition='font-weight .4s ease-in-out'
-								onClick={onPasteClick}>
-								Paste
-							</Text>
-						)
-					}
-					{isVerified && <CheckIcon color='green.2' />}
-				</InputRightElement>
+				{
+					isVerified !== undefined && (
+						<InputRightElement>
+							{
+								!isVerified && onPasteClick && (
+									<Text
+										variant='v2_title'
+										color='violet.2'
+										fontWeight='500'
+										cursor='pointer'
+										transition='font-weight .4s ease-in-out'
+										onClick={onPasteClick}>
+										Paste
+									</Text>
+								)
+							}
+							{isVerified && <CheckIcon color='green.2' />}
+						</InputRightElement>
+					)
+				}
 			</InputGroup>
 			<Flex mt={1}>
 				{

@@ -93,13 +93,11 @@ const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, 
 
 			<Flex
 				my={4}
-				p={4}
 				borderRadius='2px'
 				boxShadow='inset 1px 1px 0px #F0F0F7, inset -1px -1px 0px #F0F0F7'
 				flexDirection='column'
 				maxH='378px'
 				minH='240px'
-				overflow='auto'
 			>
 
 				<Text
@@ -107,75 +105,82 @@ const AssignReviewers = ({ minCount, maxCount, defaultSliderValue, sliderValue, 
 					lineHeight='20px'
 					fontWeight='500'
 					mb={6}
+					mt={4}
+					px={4}
 				>
 					{t('/your_grants/view_applicants.pick_reviewers')}
 				</Text>
 
-				{
-					reviewers.map((reviewer: SidebarReviewer) => {
-						return (
-							<Flex
-								key={`reviewer-${reviewer.index}`}
-								py={2}
-								px={0}
-								display='flex'
-								alignItems='center'
-							>
-								<Checkbox
-									isChecked={reviewer.isSelected}
-									onChange={() => onReviewerChange(reviewer)}
-								/>
+				<Flex
+					direction='column'
+					overflow='auto'
+					pl={4}>
+					{
+						reviewers.map((reviewer: SidebarReviewer) => {
+							return (
 								<Flex
-									bg='#F0F0F7'
-									borderRadius='20px'
-									h='40px'
-									w='40px'
-									ml='12px'
-								>
-									<Image
-										borderRadius='3xl'
-										src={reviewer.data?.profilePictureIpfsHash ? getUrlForIPFSHash(reviewer.data.profilePictureIpfsHash) : getAvatar(false, reviewer.data?.actorId)}
-									/>
-								</Flex>
-
-								<Flex
-									direction='column'
-									ml='12px'
+									key={`reviewer-${reviewer.index}`}
+									py={2}
+									px={0}
+									display='flex'
 									alignItems='center'
 								>
-									<Text
-										fontSize='14px'
-										lineHeight='20px'
-										fontWeight='500'
-										noOfLines={1}
-										textOverflow='ellipsis'
+									<Checkbox
+										isChecked={reviewer.isSelected}
+										onChange={() => onReviewerChange(reviewer)}
+									/>
+									<Flex
+										bg='#F0F0F7'
+										borderRadius='20px'
+										h='40px'
+										w='40px'
+										ml='12px'
 									>
-										{reviewer.data.fullName}
-									</Text>
-									<Text
-										fontSize='12px'
-										lineHeight='16px'
-										fontWeight='400'
-										mt='2px'
-										color='#7D7DA0'
-										display='flex'
-										alignItems='center'
+										<Image
+											borderRadius='3xl'
+											src={reviewer.data?.profilePictureIpfsHash ? getUrlForIPFSHash(reviewer.data.profilePictureIpfsHash) : getAvatar(false, reviewer.data?.actorId)}
+										/>
+									</Flex>
+
+									<Flex
+										direction='column'
+										ml='12px'
+										alignItems='start'
 									>
-										<Tooltip label={reviewer.data.actorId}>
-											{formatAddress(reviewer.data.actorId)}
-										</Tooltip>
-										<Flex
-											display='inline-block'
-											ml={2}
+										<Text
+											fontSize='14px'
+											lineHeight='20px'
+											fontWeight='500'
+											noOfLines={1}
+											textOverflow='ellipsis'
 										>
-											<CopyIcon text={reviewer.data.actorId} />
-										</Flex>
-									</Text>
+											{reviewer.data.fullName}
+										</Text>
+										<Text
+											fontSize='12px'
+											lineHeight='16px'
+											fontWeight='400'
+											mt='2px'
+											color='#7D7DA0'
+											display='flex'
+											alignItems='center'
+										>
+											<Tooltip label={reviewer.data.actorId}>
+												{formatAddress(reviewer.data.actorId)}
+											</Tooltip>
+											<Flex
+												display='inline-block'
+												ml={2}
+											>
+												<CopyIcon text={reviewer.data.actorId} />
+											</Flex>
+										</Text>
+									</Flex>
 								</Flex>
-							</Flex>
-						)
-					})
-				}
+							)
+						})
+					}
+				</Flex>
 			</Flex>
 
 			<Flex

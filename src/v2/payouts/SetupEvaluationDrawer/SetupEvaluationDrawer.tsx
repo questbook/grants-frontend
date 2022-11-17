@@ -29,6 +29,7 @@ const SetupEvaluationDrawer = ({
 	setNetworkTransactionModalStep,
 	setTransactionHash,
 	data,
+	isRubricPrivate
 }: {
 	isOpen: boolean
 	onClose: () => void
@@ -38,12 +39,15 @@ const SetupEvaluationDrawer = ({
 	setNetworkTransactionModalStep: (step: number | undefined) => void
 	setTransactionHash: (hash: string) => void
 	data: GetReviewersForAWorkspaceQuery | undefined
+	isRubricPrivate: boolean
 }) => {
 	const [step, setStep] = useState(0)
 	const { workspace, validatorApi, subgraphClients } = useContext(ApiClientsContext)!
-
 	// Setting up rubrics
-	const [isPrivateReviews, setIsPrivateReviews] = useState(false)
+	const [isPrivateReviews, setIsPrivateReviews] = useState(isRubricPrivate)
+	useEffect(() => {
+		setIsPrivateReviews(isRubricPrivate)
+	}, [isRubricPrivate])
 	const [rubrics, setRubrics] = useState<SidebarRubrics[]>([{ index: 0, criteria: '', description: '' }])
 	const [canContinue, setCanContinue] = useState(false)
 	// Assigning reviewers
@@ -106,7 +110,7 @@ const SetupEvaluationDrawer = ({
 	useEffect(() => {
 		const temp: SidebarReviewer[] = []
 		let i = 0
-		data?.workspaces[0].members.forEach((member) => {
+		data?.workspace?.members.forEach((member) => {
 			temp.push({ isSelected: false, data: member, index: i })
 			++i
 		}
@@ -117,7 +121,7 @@ const SetupEvaluationDrawer = ({
 	const onInitiateTransaction = async() => {
 		setNetworkTransactionModalStep(0)
 
-		if(!workspace || !workspace?.id || !grantAddress) {
+		if(!workspace?.id || !grantAddress) {
 			return
 		}
 
@@ -222,7 +226,7 @@ const SetupEvaluationDrawer = ({
 			await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
 			setNetworkTransactionModalStep(4)
 
-			await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee))
+			await chargeGas(Number(workspaceId || Number(workspace?.id).toString()), Number(txFee), chainId)
 			setNetworkTransactionModalStep(5)
 		} catch(e) {
 			setNetworkTransactionModalStep(undefined)

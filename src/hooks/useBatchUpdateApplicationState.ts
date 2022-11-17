@@ -121,10 +121,19 @@ export default function useBatchUpdateApplicationState(
 				// )
 				// const updateTxnData = await updateTxn.wait()
 
+				const {
+					data: { ipfsHash },
+				} = await validatorApi.validateGrantApplicationUpdate({
+					feedback: data.length === 0 ? '  ' : data,
+				})
+
+				logger.info({ ipfsHash }, 'Batch update IPFS Hash')
+
 				const methodArgs = [
 					applicationIds,
 					Array(applicationIds.length).fill(state),
 					Number(workspace!.id),
+					Array(applicationIds.length).fill(ipfsHash)
 				]
 
 				// console.log('THESE ARE METHODS', methodArgs)
@@ -154,7 +163,7 @@ export default function useBatchUpdateApplicationState(
 					setNetworkTransactionModalStep(3)
 
 					setTransactionData(receipt)
-					await chargeGas(Number(workspace?.id), Number(txFee))
+					await chargeGas(Number(workspace?.id), Number(txFee), chainId)
 					setNetworkTransactionModalStep(4)
 				}
 

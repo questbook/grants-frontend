@@ -157,6 +157,110 @@ const _abi = [
     inputs: [
       {
         indexed: false,
+        internalType: "uint96[]",
+        name: "applicationIds",
+        type: "uint96[]",
+      },
+      {
+        indexed: false,
+        internalType: "uint96[]",
+        name: "milestoneIds",
+        type: "uint96[]",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "asset",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "tokenName",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "nonEvmAssetAddress",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "transactionHash",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "amounts",
+        type: "uint256[]",
+      },
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "isP2P",
+        type: "bool",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "time",
+        type: "uint256",
+      },
+    ],
+    name: "DisburseRewardFromSafe",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint96[]",
+        name: "applicationId",
+        type: "uint96[]",
+      },
+      {
+        indexed: false,
+        internalType: "string[]",
+        name: "transactionHash",
+        type: "string[]",
+      },
+      {
+        indexed: false,
+        internalType: "string[]",
+        name: "status",
+        type: "string[]",
+      },
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "tokenUSDValue",
+        type: "uint256[]",
+      },
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "executionTimestamp",
+        type: "uint256[]",
+      },
+    ],
+    name: "FundsTransferStatusUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         internalType: "uint8",
         name: "version",
         type: "uint8",
@@ -616,6 +720,11 @@ const _abi = [
       },
       {
         internalType: "string",
+        name: "_tokenName",
+        type: "string",
+      },
+      {
+        internalType: "string",
         name: "nonEvmAssetAddress",
         type: "string",
       },
@@ -827,6 +936,24 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "fromWallets",
+        type: "address[]",
+      },
+      {
+        internalType: "address[]",
+        name: "toWallets",
+        type: "address[]",
+      },
+    ],
+    name: "migrateWalletBatch",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "owner",
     outputs: [
@@ -953,6 +1080,39 @@ const _abi = [
       },
     ],
     name: "updateAnonAuthoriserAddress",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint96[]",
+        name: "_applicationId",
+        type: "uint96[]",
+      },
+      {
+        internalType: "string[]",
+        name: "_transactionHash",
+        type: "string[]",
+      },
+      {
+        internalType: "string[]",
+        name: "_status",
+        type: "string[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "_tokenUSDValue",
+        type: "uint256[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "_executionTimestamp",
+        type: "uint256[]",
+      },
+    ],
+    name: "updateFundsTransferTransactionStatus",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

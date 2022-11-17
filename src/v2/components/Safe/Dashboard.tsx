@@ -1,32 +1,19 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { Button, Flex, Image, Link, Text } from '@chakra-ui/react'
-import { logger } from 'ethers'
-import { defaultChainId } from 'src/constants/chains'
-import SupportedChainId from 'src/generated/SupportedChainId'
-import useSafeUSDBalances from 'src/hooks/useSafeUSDBalances'
 import { ApiClientsContext } from 'src/pages/_app'
 import { getSafeIcon } from 'src/utils/tokenUtils'
 import { getSafeURL } from 'src/v2/utils/gnosisUtils'
 import { getSafeURL as getRealmsURL } from 'src/v2/utils/phantomUtils'
 
-function Dashboard() {
-	const [safeChainId, setSafeChainId] = useState<SupportedChainId>(defaultChainId)
+interface Props {
+	setEdit: (edit: boolean) => void
+}
+
+function Dashboard({ setEdit }: Props) {
 	const { t } = useTranslation()
 	const { workspace } = useContext(ApiClientsContext)!
-
-	useEffect(() => {
-		const chainId = workspace?.safe?.chainId ? parseInt(workspace?.safe?.chainId) as SupportedChainId : defaultChainId
-		// logger.info(chainId, 'chain id - safe')
-		setSafeChainId(chainId)
-	}, [workspace])
-
-	const { data: safesUSDBalance, loaded: loadedSafesUSDBalance } = useSafeUSDBalances({ safeAddress: workspace?.safe?.address ?? '', chainId: safeChainId })
-
-	useEffect(() => {
-		logger.info({ safesUSDBalance, loadedSafesUSDBalance }, 'safesUSDBalance')
-	}, [safesUSDBalance, loadedSafesUSDBalance])
 
 	const openLink = () => {
 		const safe = workspace?.safe
@@ -82,25 +69,23 @@ function Dashboard() {
 						{workspace?.safe?.address}
 					</Text>
 				</Button>
-				<Text
-					mt={8}
-					variant='v2_body'
-					color='black.3'>
-					{t('/safe.balance')}
-				</Text>
-				<Text
-					mt={1}
-					variant='v2_heading_3'
-					fontWeight='500'>
-					{loadedSafesUSDBalance ? (safesUSDBalance[0]?.amount >= 0 ? `\$${safesUSDBalance[0].amount}` : t('/safe.could_not_fetch')) : 'Loading...'}
-				</Text>
-				<Button
-					mt={8}
-					variant='primaryV2'
-					rightIcon={<ExternalLinkIcon />}
-					onClick={openLink}>
-					{t('/safe.open')}
-				</Button>
+				<Flex mt={8}>
+					<Button
+						variant='link'
+						onClick={() => setEdit(true)}>
+						<Text variant='v2_body'>
+							{t('/safe.edit')}
+						</Text>
+					</Button>
+					<Button
+						ml={4}
+						variant='primaryV2'
+						rightIcon={<ExternalLinkIcon />}
+						onClick={openLink}>
+						{t('/safe.open')}
+					</Button>
+				</Flex>
+
 				<Text
 					mt={8}
 					variant='v2_metadata'

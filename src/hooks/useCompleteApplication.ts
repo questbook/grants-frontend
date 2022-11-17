@@ -127,7 +127,7 @@ export default function useCompleteApplication(
 
 				const { receipt, txFee } = await getTransactionDetails(response, currentChainId.toString())
 
-				await chargeGas(Number(workspace?.id), Number(txFee))
+				await chargeGas(Number(workspace?.id), Number(txFee), chainId)
 
 				setTransactionData(receipt)
 				setLoading(false)

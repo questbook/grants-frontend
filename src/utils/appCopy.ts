@@ -67,7 +67,7 @@ i18next.use(initReactI18next).init({
 					'team': 'Team',
 					'team_members': 'Team Members',
 					'team_members_desc': 'Add team members to your proposal',
-					'address': 'Wallet Address / Unstoppable Domain',
+					'address': 'Wallet Address',
 					'your_address_on': 'Your wallet address on',
 					'num_team_members': 'Number of team members',
 					'member': 'member #',
@@ -197,10 +197,11 @@ i18next.use(initReactI18next).init({
 					'amount_sent': 'Amount Sent',
 				},
 				'/safe': {
+					'edit': 'Edit',
 					'balance': 'Balance',
 					'could_not_fetch': 'Could not fetch balance',
 					'open': 'Open multisig wallet',
-					'note': 'All grants will be paid out from this multisig wallet.',
+					'note': 'All payouts will be made from this multisig wallet.',
 					'learn_more': 'Learn more about multisig wallets',
 				},
 				'/your_applications': {
@@ -228,6 +229,30 @@ i18next.use(initReactI18next).init({
 				'view_proposal/proposal': {
 					'mark_milestone_as_done_modal_heading': 'Mark Milestone as Done',
 					'mark_milestone_as_done_modal_subheading': 'Milestone once verified as completed can be marked as done.',
+				},
+				'recovery': {
+					'menu': {
+						'use_another_wallet': 'Use another in-app wallet',
+						'save_wallet': 'Export private key'
+					},
+					'import': {
+						'heading': 'Use another in-app wallet',
+						'subheading': 'Enter the private key to import your wallet.',
+						'button': 'Import Wallet',
+					},
+					'export': {
+						'heading': 'Export private key',
+						'subheading': 'Download the file, or save it in your password manager.',
+						'warning-line-1': 'Don\'t share this key with anyone',
+						'warning-line-2': 'Anyone who has your private key can access your in-app wallet',
+						'download': 'Download .txt file',
+						'copy_and_save_manually': 'Copy & save manually'
+					},
+					'confirmation': {
+						'warning': 'Importing a wallet will overwrite your current wallet. Are you sure, you want to continue?',
+						'yes': 'Yes',
+						'no': 'No'
+					}
 				}
 			},
 

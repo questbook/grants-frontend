@@ -98,6 +98,8 @@ export default function useUpdateWorkspace(
 					throw new Error('Error validating grant data')
 				}
 
+				logger.info({ ipfsHash }, 'UpdateWorkspace IPFS')
+
 				setCurrentStep(1)
 
 				// const updateTransaction1 = await workspaceRegistryContract.updateWorkspaceMetadata(
@@ -132,7 +134,7 @@ export default function useUpdateWorkspace(
 					await subgraphClients[currentChainId].waitForBlock(receipt?.blockNumber)
 
 					setCurrentStep(4)
-					await chargeGas(Number(workspace?.id), Number(txFee))
+					await chargeGas(Number(workspace?.id), Number(txFee), chainId)
 				}
 
 				setCurrentStep(5)

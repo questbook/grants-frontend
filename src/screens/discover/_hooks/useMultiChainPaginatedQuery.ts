@@ -9,11 +9,12 @@ type PaginationVariables = {
 	first?: InputMaybe<Scalars['Int']>
 }
 
-export type UseMultiChainPaginatedQueryOptions<Q, K, V> = {
+export type UseMultiChainPaginatedQueryOptions<Q, K, V, D> = {
 	/** specify chains to query from, set undefined to query all */
 	chains?: SupportedChainId[]
 	pageSize: number
 	variables: V
+	listGetter: (data: Q) => D[]
 	mergeResults: (results: Q[]) => K[]
 	useQuery: (opts: QueryHookOptions<Q, V>) => QueryResult<Q, V>
 }
@@ -22,20 +23,21 @@ export type UseMultiChainPaginatedQueryOptions<Q, K, V> = {
  * Queries from multiple chains simulataneously.
  * @returns
  */
-export function useMultichainDaosPaginatedQuery<Q, K, V extends PaginationVariables>({
+export function useMultichainDaosPaginatedQuery<Q, K, V extends PaginationVariables, D>({
 	chains,
 	variables,
 	pageSize,
+	listGetter,
 	useQuery,
 	mergeResults,
-}: UseMultiChainPaginatedQueryOptions<Q, K, V>) {
+}: UseMultiChainPaginatedQueryOptions<Q, K, V, D>) {
 	const { subgraphClients } = useContext(ApiClientsContext)!
 
 	const [results, setResults] = useState<K[]>([])
 	const [loading, setLoading] = useState(false)
 
 	const pageRef = useRef(0)
-	const hasMoreRef = useRef(true)
+	const hasMoreRef = useRef(false)
 
 	const subgraphClientList = useMemo(
 		() => chains ? chains.map(chainId => subgraphClients[chainId]) : Object.values(subgraphClients),
@@ -58,7 +60,7 @@ export function useMultichainDaosPaginatedQuery<Q, K, V extends PaginationVariab
 
 			if(reset) {
 				pageRef.current = 0
-				hasMoreRef.current = true
+				hasMoreRef.current = false
 			}
 
 			const vars = {
@@ -69,9 +71,14 @@ export function useMultichainDaosPaginatedQuery<Q, K, V extends PaginationVariab
 			setLoading(true)
 
 			const queryResults: Q[] = []
+			const hasMoreArr: boolean[] = []
+
 			await Promise.allSettled(
 				allQueryFuncs.map(async query => {
 					const result = await query.fetchMore({ variables: vars })
+					// if any chain returns data equal to the page size, then there is possibility of more data...
+					hasMoreArr.push(listGetter(result.data).length === pageSize)
+
 					if(result.data) {
 						queryResults.push(result.data)
 					}
@@ -81,9 +88,9 @@ export function useMultichainDaosPaginatedQuery<Q, K, V extends PaginationVariab
 			const newMergedResults = mergeResults(queryResults)
 
 			pageRef.current += 1
-			if(!newMergedResults.length) {
-				hasMoreRef.current = false
-			}
+
+			// checking if results from at least one chain has more data
+			hasMoreRef.current = !!hasMoreArr.find(() => true)
 
 			setLoading(false)
 			setResults(results => [

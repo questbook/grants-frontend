@@ -34,7 +34,7 @@ function ActionItem({ item }: {item: ActionItemType}) {
 			<Flex
 				direction='column'
 				w='100%'
-				mb={6}>
+			>
 				<Flex
 					w='100%'
 					mr='auto'
@@ -71,7 +71,6 @@ function ActionItem({ item }: {item: ActionItemType}) {
 	case 'feedback_dev':
 		return (
 			<Flex
-				mb={6}
 				direction='column'
 				w='100%'>
 				<Flex

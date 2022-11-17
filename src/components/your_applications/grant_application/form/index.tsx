@@ -18,7 +18,6 @@ import {
 	convertToRaw,
 	EditorState,
 } from 'draft-js'
-import { logger } from 'ethers'
 import { useRouter } from 'next/router'
 import Loader from 'src/components/ui/loader'
 import ApplicantDetails from 'src/components/your_applications/grant_application/form/1_applicantDetails'
@@ -28,6 +27,7 @@ import Funding from 'src/components/your_applications/grant_application/form/4_f
 import CustomFields from 'src/components/your_applications/grant_application/form/5_customFields'
 import { defaultChainId, SupportedChainId, USD_ASSET } from 'src/constants/chains'
 import useResubmitApplication from 'src/hooks/useResubmitApplication'
+import logger from 'src/libraries/logger'
 import { WebwalletContext } from 'src/pages/_app'
 import {
 	GrantApplicationFieldsSubgraph,
@@ -231,6 +231,7 @@ function Form({
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = React.useState<number>()
 	const [, txnLink, loading, isBiconomyInitialised] = useResubmitApplication(
 		updateData,
+		applicantEmail,
 		setNetworkTransactionModalStep,
 		chainId,
 		applicationID,
@@ -376,7 +377,7 @@ function Form({
 				applicantAddress: [{ value: applicantAddress }],
 				projectName: [{ value: projectName }],
 				projectDetails: [{ value: projectDetailsString }],
-				fundingAsk: [{ value: parseAmount(fundingAsk, rewardCurrencyAddress) }],
+				fundingAsk: [],
 				fundingBreakdown: [{ value: fundingBreakdown }],
 				teamMembers: [{ value: Number(teamMembers).toString() }],
 				memberDetails: membersDescription.map((md) => ({
@@ -415,6 +416,8 @@ function Form({
 		if(piiFields.length) {
 			await encrypt(data, piiFields)
 		}
+
+		logger.info({ data }, 'Updated data')
 
 		setUpdateData(data)
 	}
@@ -831,6 +834,7 @@ function Form({
 						'Signing transaction with in-app wallet',
 						'Waiting for transaction to complete on chain',
 						'Indexing transaction on graph protocol',
+						'Updating communication channel',
 						'Application resubmitted on-chain',
 					]
 				}

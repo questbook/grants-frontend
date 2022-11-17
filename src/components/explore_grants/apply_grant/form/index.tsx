@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
 	Box,
@@ -10,6 +10,8 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import { GrantApplicationRequest } from '@questbook/service-validator-client'
+import axios from 'axios'
+import sha256 from 'crypto-js/sha256'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import { useRouter } from 'next/router'
 import ApplicantDetails from 'src/components/explore_grants/apply_grant/form/1_applicantDetails'
@@ -23,6 +25,7 @@ import { defaultChainId, SupportedChainId, USD_ASSET } from 'src/constants/chain
 import strings from 'src/constants/strings.json'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSubmitApplication from 'src/hooks/useSubmitApplication'
+import logger from 'src/libraries/logger'
 import { WebwalletContext } from 'src/pages/_app'
 import { GrantApplicationFieldsSubgraph } from 'src/types/application'
 import { parseAmount } from 'src/utils/formattingUtils'
@@ -30,8 +33,6 @@ import { addAuthorizedUser } from 'src/utils/gaslessUtils'
 import { useEncryptPiiForApplication } from 'src/utils/pii'
 import { isValidEmail } from 'src/utils/validationUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
-import axios from 'axios'
-import logger from 'src/libraries/logger'
 
 interface Props {
 	// onSubmit: (data: any) => void;
@@ -160,7 +161,7 @@ function Form({
 	const { t } = useTranslation()
 
 	React.useEffect(() => {
-		if (defaultMilestoneFields && defaultMilestoneFields.length > 0) {
+		if(defaultMilestoneFields && defaultMilestoneFields.length > 0) {
 			setProjectMilestones(
 				defaultMilestoneFields.map((defaultMilestone) => ({
 					milestone: defaultMilestone.detail,
@@ -177,7 +178,7 @@ function Form({
 
 	const [customFields, setCustomFields] = React.useState<any[]>([])
 	React.useEffect(() => {
-		if (customFields.length > 0) {
+		if(customFields.length > 0) {
 			return
 		}
 
@@ -198,6 +199,7 @@ function Form({
 	const [formData, setFormData] = React.useState<GrantApplicationRequest>()
 	const [, txnLink, loading, isBiconomyInitialised] = useSubmitApplication(
 		formData!,
+		applicantEmail,
 		setNetworkTransactionModalStep,
 		chainId,
 		grantId,
@@ -205,11 +207,11 @@ function Form({
 	)
 
 	React.useEffect(() => {
-		if (nonce && nonce !== 'Token expired') {
+		if(nonce && nonce !== 'Token expired') {
 			return
 		}
 
-		if (signer) {
+		if(signer) {
 			addAuthorizedUser(signer?.address)
 				.then(() => {
 					setShouldRefreshNonce(true)
@@ -219,16 +221,16 @@ function Form({
 		}
 	}, [signer, nonce])
 
-	const handleOnSubmit = async () => {
+	const handleOnSubmit = async() => {
 		// console.log(grantRequiredFields)
 		let error = false
-		if (applicantName === '' && grantRequiredFields.includes('applicantName')) {
+		if(applicantName === '' && grantRequiredFields.includes('applicantName')) {
 			setApplicantNameError(true)
 			// console.log('Error name')
 			error = true
 		}
 
-		if (
+		if(
 			(applicantEmail === '' || !isValidEmail(applicantEmail))
 			&& grantRequiredFields.includes('applicantEmail')
 		) {
@@ -238,12 +240,12 @@ function Form({
 			error = true
 		}
 
-		if (applicantAddress === '' && grantRequiredFields.includes('applicantAddress')) {
+		if(applicantAddress === '' && grantRequiredFields.includes('applicantAddress')) {
 			setApplicantAddressError(true)
 			error = true
 		}
 
-		if (
+		if(
 			(!teamMembers || teamMembers <= 0)
 			&& grantRequiredFields.includes('teamMembers')
 		) {
@@ -255,7 +257,7 @@ function Form({
 		let membersDescriptionError = false
 		const newMembersDescriptionArray = [...membersDescription]
 		membersDescription.forEach((member, index) => {
-			if (
+			if(
 				member.description === ''
 				&& grantRequiredFields.includes('memberDetails')
 			) {
@@ -266,12 +268,12 @@ function Form({
 			}
 		})
 
-		if (membersDescriptionError) {
+		if(membersDescriptionError) {
 			setMembersDescription(newMembersDescriptionArray)
 			error = true
 		}
 
-		if (projectName === '' && grantRequiredFields.includes('projectName')) {
+		if(projectName === '' && grantRequiredFields.includes('projectName')) {
 			setProjectNameError(true)
 			// console.log('Error projectName')
 
@@ -281,13 +283,13 @@ function Form({
 		let projectLinksError = false
 		const newProjectLinks = [...projectLinks]
 		projectLinks.forEach((project, index) => {
-			if (project.link === '' && grantRequiredFields.includes('projectLink')) {
+			if(project.link === '' && grantRequiredFields.includes('projectLink')) {
 				newProjectLinks[index].isError = true
 				projectLinksError = true
 			}
 		})
 
-		if (projectLinksError) {
+		if(projectLinksError) {
 			setProjectLinks(newProjectLinks)
 			error = true
 		}
@@ -297,12 +299,12 @@ function Form({
 		// 	error = true
 		// }
 
-		if (!projectDetails.getCurrentContent().hasText()) {
+		if(!projectDetails.getCurrentContent().hasText()) {
 			setProjectDetailsError(true)
 			error = true
 		}
 
-		if (projectGoal === '' && grantRequiredFields.includes('projectGoals')) {
+		if(projectGoal === '' && grantRequiredFields.includes('projectGoals')) {
 			setProjectGoalError(true)
 			error = true
 		}
@@ -311,18 +313,18 @@ function Form({
 		const newProjectMilestones = [...projectMilestones]
 		console.log('project milestones', newProjectMilestones)
 		projectMilestones.forEach((project, index) => {
-			if (project.milestone === '') {
+			if(project.milestone === '') {
 				newProjectMilestones[index].milestoneIsError = true
 				projectMilestonesError = true
 			}
 
-			if (project.milestoneReward === '') {
+			if(project.milestoneReward === '') {
 				newProjectMilestones[index].milestoneRewardIsError = true
 				projectMilestonesError = true
 			}
 		})
 
-		if (projectMilestonesError) {
+		if(projectMilestonesError) {
 			setProjectMilestones(newProjectMilestones)
 			error = true
 		}
@@ -332,7 +334,7 @@ function Form({
 		// 	error = true
 		// }
 
-		if (
+		if(
 			fundingBreakdown === ''
 			&& grantRequiredFields.includes('fundingBreakdown')
 		) {
@@ -340,10 +342,10 @@ function Form({
 			error = true
 		}
 
-		if (customFields.length > 0) {
+		if(customFields.length > 0) {
 			const errorCheckedCustomFields = customFields.map((customField: any) => {
 				const errorCheckedCustomField = { ...customField }
-				if (customField.value.length <= 0) {
+				if(customField.value.length <= 0) {
 					errorCheckedCustomField.isError = true
 					error = true
 				}
@@ -355,7 +357,7 @@ function Form({
 
 		setApplicationError(error)
 
-		if (error) {
+		if(error) {
 			return
 		}
 
@@ -364,10 +366,9 @@ function Form({
 		)
 		const links = projectLinks.map((pl) => pl.link)
 		// console.log('Signer', signer)
-		if (!signer || !signer) {
+		if(!signer || !signer) {
 			return
 		}
-
 
 		const data: GrantApplicationRequest = {
 			grantId,
@@ -405,7 +406,7 @@ function Form({
 			})),
 		}
 		Object.keys(data.fields).forEach((field) => {
-			if (!grantRequiredFields.includes(field)) {
+			if(!grantRequiredFields.includes(field)) {
 				delete data.fields[field as keyof GrantApplicationFieldsSubgraph]
 			}
 		})
@@ -413,7 +414,7 @@ function Form({
 			data.fields[customField.title] = [{ value: customField.value }]
 		})
 
-		if (piiFields.length) {
+		if(piiFields.length) {
 			await encrypt(data, piiFields)
 		}
 
@@ -423,47 +424,47 @@ function Form({
 
 	React.useEffect(() => {
 		// console.log('Key: ', getKey)
-		if (getKey.includes('undefined') || typeof window === 'undefined') {
+		if(getKey.includes('undefined') || typeof window === 'undefined') {
 			return
 		}
 
 		const data = localStorage.getItem(getKey)
-		if (data === 'undefined') {
+		if(data === 'undefined') {
 			return
 		}
 
 		const formDataLocal = typeof window !== 'undefined' ? JSON.parse(data || '{}') : {}
 		// console.log('form data local', formDataLocal)
-		if (formDataLocal?.applicantName) {
+		if(formDataLocal?.applicantName) {
 			setApplicantName(formDataLocal?.applicantName)
 		}
 
-		if (formDataLocal?.applicantEmail) {
+		if(formDataLocal?.applicantEmail) {
 			setApplicantEmail(formDataLocal?.applicantEmail)
 		}
 
-		if (formDataLocal?.applicantAddress) {
+		if(formDataLocal?.applicantAddress) {
 			setApplicantAddress(formDataLocal?.applicantAddress)
 		}
 
-		if (formDataLocal?.teamMembers) {
+		if(formDataLocal?.teamMembers) {
 			setTeamMembers(formDataLocal?.teamMembers)
 		}
 
-		if (formDataLocal?.membersDescription) {
+		if(formDataLocal?.membersDescription) {
 			setMembersDescription(formDataLocal?.membersDescription)
 		}
 
-		if (formDataLocal?.projectName) {
+		if(formDataLocal?.projectName) {
 			setProjectName(formDataLocal?.projectName)
 		}
 
-		if (formDataLocal?.projectLinks) {
+		if(formDataLocal?.projectLinks) {
 			setProjectLinks(formDataLocal?.projectLinks)
 		}
 
 		// console.log('projecttt', formDataLocal.projectDetails)
-		if (formDataLocal?.projectDetails) {
+		if(formDataLocal?.projectDetails) {
 			setProjectDetails(
 				EditorState.createWithContent(
 					convertFromRaw(formDataLocal?.projectDetails),
@@ -471,11 +472,11 @@ function Form({
 			)
 		}
 
-		if (formDataLocal?.projectGoal) {
+		if(formDataLocal?.projectGoal) {
 			setProjectGoal(formDataLocal?.projectGoal)
 		}
 
-		if (formDataLocal?.projectMilestones) {
+		if(formDataLocal?.projectMilestones) {
 			console.log('project milestones', formDataLocal.projectMilestones)
 			setProjectMilestones(formDataLocal?.projectMilestones)
 		}
@@ -484,11 +485,11 @@ function Form({
 		// 	setFundingAsk(formDataLocal?.fundingAsk)
 		// }
 
-		if (formDataLocal?.fundingBreakdown) {
+		if(formDataLocal?.fundingBreakdown) {
 			setFundingBreakdown(formDataLocal?.fundingBreakdown)
 		}
 
-		if (formDataLocal?.customFields) {
+		if(formDataLocal?.customFields) {
 			setCustomFields(formDataLocal?.customFields)
 		}
 
@@ -496,7 +497,7 @@ function Form({
 	}, [getKey])
 
 	React.useEffect(() => {
-		if (getKey.includes('undefined')) {
+		if(getKey.includes('undefined')) {
 			return
 		}
 
@@ -516,7 +517,7 @@ function Form({
 			customFields,
 		}
 		// console.log(JSON.stringify(formDataLocal))
-		if (typeof window !== 'undefined') {
+		if(typeof window !== 'undefined') {
 			localStorage.setItem(getKey, JSON.stringify(formDataLocal))
 		}
 
@@ -633,7 +634,7 @@ function Form({
 								{
 									shouldShowButton && accountData?.address
 										? 'Grant is archived and cannot be discovered on the Home page.'
-										: 'Grant is archived and closed for new applications.'
+										: 'Grant is archived and closed for new proposals.'
 								}
 							</Text>
 							<Text
@@ -791,7 +792,7 @@ function Form({
 						variant='primary'
 						py={loading ? 2 : 0}
 					>
-						{loading ? <Loader /> : 'Submit Application'}
+						{loading ? <Loader /> : 'Submit Proposal'}
 					</Button>
 				)
 			}
@@ -833,12 +834,13 @@ function Form({
 						'Signing transaction with in-app wallet',
 						'Waiting for transaction to complete on chain',
 						'Indexing transaction on graph protocol',
-						'Application submitted on-chain',
+						'Setting up communication channel',
+						'Proposal submitted on-chain',
 					]
 				}
 				viewLink={txnLink}
 				onClose={
-					async () => {
+					async() => {
 						router.push({ pathname: '/your_applications' })
 					}
 				} />

@@ -17,7 +17,7 @@ query getGrantDetails($grantID: ID!) {
             title, 
             logoIpfsHash, 
             supportedNetworks, 
-            members {
+            members (where: {enabled: true}) {
                 id
                 actorId
                 publicKey

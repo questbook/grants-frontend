@@ -1,5 +1,6 @@
 import { ReactElement, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Box, Flex, HStack, IconButton, Image, Spacer, Text, ToastId, useToast } from '@chakra-ui/react'
+import { SupportedSafes } from '@questbook/supported-safes'
 import { logger } from 'ethers'
 import { useRouter } from 'next/router'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
@@ -11,8 +12,7 @@ import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import useSafeOwners from 'src/hooks/useSafeOwners'
-import useSafeUSDBalances from 'src/hooks/useSafeUSDBalances'
+import AccountDetails from 'src/libraries/ui/NavBar/AccountDetails'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import getErrorMessage from 'src/utils/errorUtils'
@@ -22,7 +22,6 @@ import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedValidatorNetworkFromChainId, isValidEthereumAddress, isValidSolanaAddress } from 'src/utils/validationUtils'
 import { BackArrowThick } from 'src/v2/assets/custom chakra icons/Arrows/BackArrowThick'
 import { Organization } from 'src/v2/assets/custom chakra icons/Organization'
-import AccountDetails from 'src/v2/components/NavBar/AccountDetails'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import { ConfirmData, DomainName, SafeDetails } from 'src/v2/components/Onboarding/CreateDomain'
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
@@ -41,7 +40,9 @@ const OnboardingCreateDomain = () => {
 	// State variables for step 0 and 1
 	const [safeAddress, setSafeAddress] = useState('')
 	const [isSafeAddressVerified, setIsSafeAddressVerified] = useState(false)
-	const { data: safesUSDBalance, loaded: loadedSafesUSDBalance } = useSafeUSDBalances({ safeAddress })
+	// const { data: safesUSDBalance, loaded: loadedSafesUSDBalance } = useSafeUSDBalances({ safeAddress })
+	const [loadingSafeData, setLoadingSafeData] = useState(false)
+	const [safeData, setSafeData] = useState<any[]>([])
 	const [safeSelected, setSafeSelected] = useState<SafeSelectOption>()
 	const [safeAddressError, setSafeAddressError] = useState<string>('')
 
@@ -53,7 +54,7 @@ const OnboardingCreateDomain = () => {
 	const [daoImageFile, setDaoImageFile] = useState<File | null>(null)
 	const [isOwner, setIsOwner] = useState(false)
 	const [isVerifySignerModalOpen, setIsVerifySignerModalOpen] = useState(false)
-	const { data: safeOwners } = useSafeOwners({ safeAddress, chainID: safeSelected?.networkId, type: safeSelected?.networkType ?? NetworkType.EVM })
+	// const { data: safeOwners } = useSafeOwners({ safeAddress, chainID: safeSelected?.networkId, type: safeSelected?.networkType ?? NetworkType.EVM })
 	const [ txHash, setTxHash ] = useState('')
 	const [ownerAddress, setOwnerAddress] = useState('')
 
@@ -124,11 +125,11 @@ const OnboardingCreateDomain = () => {
 	}, [webwallet, nonce])
 
 	useEffect(() => {
-		if(!setIsSafeAddressVerified || !safesUSDBalance) {
+		if(!setIsSafeAddressVerified || !safeData) {
 			return
 		}
 
-		if(Object.keys(safesUSDBalance).length > 0) {
+		if(Object.keys(safeData).length > 0) {
 			// console.log('safe address verified!')
 			setIsSafeAddressVerified(true)
 			setStep(1)
@@ -137,7 +138,7 @@ const OnboardingCreateDomain = () => {
 			// console.log('safe address not verified!')
 			setIsSafeAddressVerified(false)
 		}
-	}, [safesUSDBalance])
+	}, [safeData])
 
 	useEffect(() => {
 		if(!setIsDomainNameVerified) {
@@ -233,7 +234,7 @@ const OnboardingCreateDomain = () => {
 				await addAuthorizedOwner(workspaceId, webwallet?.address!, scwAddress, network.toString(),
 					'this is the safe addres - to be updated in the new flow')
 				// console.log('fdsao')
-				await chargeGas(workspaceId, Number(txFee))
+				await chargeGas(workspaceId, Number(txFee), network)
 			}
 
 			setCurrentStep(4)
@@ -261,24 +262,36 @@ const OnboardingCreateDomain = () => {
 	}, [biconomyWalletClient, domainName, accountDataWebwallet, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, safeSelected])
 
 	useEffect(() => {
-		if(step !== 0 || safeAddress === '' || !loadedSafesUSDBalance) {
+		if(step !== 0 || safeAddress === '' || loadingSafeData) {
 			setSafeAddressError('')
 		} else if(!isValidEthereumAddress(safeAddress) && !isValidSolanaAddress(safeAddress)) {
 			setSafeAddressError('Invalid address')
-		} else if(safesUSDBalance?.length === 0) {
+		} else if(safeData?.length === 0) {
 			setSafeAddressError('No Safe found with this address')
 		}
-		//step === 0 && safeAddress !== '' && loadedSafesUSDBalance && safesUSDBalance?.length === 0
-	}, [step, safeAddress, loadedSafesUSDBalance, safesUSDBalance])
+		//step === 0 && safeAddress !== '' && loadedSafesUSDBalance && safeData?.length === 0
+	}, [step, safeAddress, loadingSafeData, safeData])
+
+	useEffect(() => {
+		const fetchSafeData = async() => {
+			const supportedSafes = new SupportedSafes()
+			const res = await supportedSafes.getSafeByAddress(safeAddress)
+			setLoadingSafeData(false)
+			setSafeData(res)
+		}
+
+		setLoadingSafeData(true)
+		fetchSafeData()
+	}, [safeAddress])
 
 	const steps = [
 		<SafeDetails
-			safesOptions={safesUSDBalance}
+			safesOptions={safeData}
 			key={0}
 			step={step}
 			safeAddress={safeAddress}
 			isVerified={isSafeAddressVerified}
-			isLoading={!loadedSafesUSDBalance && safeAddress !== ''}
+			isLoading={loadingSafeData && safeAddress !== ''}
 			safeAddressErrorText={safeAddressError}
 			setValue={
 				(newValue) => {
@@ -364,7 +377,6 @@ const OnboardingCreateDomain = () => {
 			router.back()
 		}
 	}
-
 
 	return (
 		<>
@@ -484,7 +496,7 @@ const OnboardingCreateDomain = () => {
 						setIsOwner(newState)
 					}
 				}
-				owners={safeOwners}
+				owners={safeSelected?.owners}
 				isOpen={isVerifySignerModalOpen}
 				onClose={
 					() => {

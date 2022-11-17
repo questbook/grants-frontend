@@ -27,6 +27,10 @@ query getDAODetails($workspaceID: ID!, $daoID: String!) {
             decimal
             iconHash
         }
+        totalGrantFundingCommittedUSD
+        totalGrantFundingDisbursedUSD
+        numberOfApplications
+        numberOfApplicationsSelected
     }
     
     grants(

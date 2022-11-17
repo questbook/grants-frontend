@@ -41,6 +41,31 @@ const _abi = [
       {
         indexed: false,
         internalType: "address",
+        name: "newApplicantAddress",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "time",
+        type: "uint256",
+      },
+    ],
+    name: "ApplicationMigrate",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint96",
+        name: "applicationId",
+        type: "uint96",
+      },
+      {
+        indexed: false,
+        internalType: "address",
         name: "grant",
         type: "address",
       },
@@ -358,6 +383,11 @@ const _abi = [
         internalType: "uint96",
         name: "_workspaceId",
         type: "uint96",
+      },
+      {
+        internalType: "string[]",
+        name: "feedbackHashes",
+        type: "string[]",
       },
     ],
     name: "batchUpdateApplicationState",

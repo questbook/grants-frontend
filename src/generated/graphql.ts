@@ -223,23 +223,35 @@ export type FundsTransfer = {
   asset: Scalars['Bytes'];
   /** in seconds since epoch */
   createdAtS: Scalars['Int'];
+  /** Funds transfer execution timestamp */
+  executionTimestamp?: Maybe<Scalars['Int']>;
   /** Which grant were the funds transferred to/from */
   grant: Grant;
   id: Scalars['ID'];
   /** Milestone for which the funds were released */
   milestone?: Maybe<ApplicationMilestone>;
-  /** Hash/signature of the transaction */
   nonEvmAsset?: Maybe<Scalars['String']>;
   /** Reviw for which the payment was done */
   review?: Maybe<Review>;
   /** Address of who released the funds */
   sender: Scalars['Bytes'];
+  status: FundsTransferStatusType;
   /** The address to which funds were sent */
   to: Scalars['Bytes'];
+  /** Token name */
+  tokenName?: Maybe<Scalars['String']>;
+  /** Token amount transferred value in USD */
+  tokenUSDValue?: Maybe<Scalars['BigInt']>;
+  /** Hash/signature of the transaction */
   transactionHash?: Maybe<Scalars['String']>;
   /** What the type of funds transfer is */
   type: FundsTransferType;
 };
+
+export enum FundsTransferStatusType {
+  Executed = 'executed',
+  Queued = 'queued'
+}
 
 export enum FundsTransferType {
   FundsDeposited = 'funds_deposited',
@@ -295,6 +307,14 @@ export type FundsTransfer_Filter = {
   createdAtS_lte?: InputMaybe<Scalars['Int']>;
   createdAtS_not?: InputMaybe<Scalars['Int']>;
   createdAtS_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  executionTimestamp?: InputMaybe<Scalars['Int']>;
+  executionTimestamp_gt?: InputMaybe<Scalars['Int']>;
+  executionTimestamp_gte?: InputMaybe<Scalars['Int']>;
+  executionTimestamp_in?: InputMaybe<Array<Scalars['Int']>>;
+  executionTimestamp_lt?: InputMaybe<Scalars['Int']>;
+  executionTimestamp_lte?: InputMaybe<Scalars['Int']>;
+  executionTimestamp_not?: InputMaybe<Scalars['Int']>;
+  executionTimestamp_not_in?: InputMaybe<Array<Scalars['Int']>>;
   grant?: InputMaybe<Scalars['String']>;
   grant_?: InputMaybe<Grant_Filter>;
   grant_contains?: InputMaybe<Scalars['String']>;
@@ -392,12 +412,44 @@ export type FundsTransfer_Filter = {
   sender_not?: InputMaybe<Scalars['Bytes']>;
   sender_not_contains?: InputMaybe<Scalars['Bytes']>;
   sender_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  status?: InputMaybe<FundsTransferStatusType>;
+  status_in?: InputMaybe<Array<FundsTransferStatusType>>;
+  status_not?: InputMaybe<FundsTransferStatusType>;
+  status_not_in?: InputMaybe<Array<FundsTransferStatusType>>;
   to?: InputMaybe<Scalars['Bytes']>;
   to_contains?: InputMaybe<Scalars['Bytes']>;
   to_in?: InputMaybe<Array<Scalars['Bytes']>>;
   to_not?: InputMaybe<Scalars['Bytes']>;
   to_not_contains?: InputMaybe<Scalars['Bytes']>;
   to_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  tokenName?: InputMaybe<Scalars['String']>;
+  tokenName_contains?: InputMaybe<Scalars['String']>;
+  tokenName_contains_nocase?: InputMaybe<Scalars['String']>;
+  tokenName_ends_with?: InputMaybe<Scalars['String']>;
+  tokenName_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  tokenName_gt?: InputMaybe<Scalars['String']>;
+  tokenName_gte?: InputMaybe<Scalars['String']>;
+  tokenName_in?: InputMaybe<Array<Scalars['String']>>;
+  tokenName_lt?: InputMaybe<Scalars['String']>;
+  tokenName_lte?: InputMaybe<Scalars['String']>;
+  tokenName_not?: InputMaybe<Scalars['String']>;
+  tokenName_not_contains?: InputMaybe<Scalars['String']>;
+  tokenName_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  tokenName_not_ends_with?: InputMaybe<Scalars['String']>;
+  tokenName_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  tokenName_not_in?: InputMaybe<Array<Scalars['String']>>;
+  tokenName_not_starts_with?: InputMaybe<Scalars['String']>;
+  tokenName_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  tokenName_starts_with?: InputMaybe<Scalars['String']>;
+  tokenName_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  tokenUSDValue?: InputMaybe<Scalars['BigInt']>;
+  tokenUSDValue_gt?: InputMaybe<Scalars['BigInt']>;
+  tokenUSDValue_gte?: InputMaybe<Scalars['BigInt']>;
+  tokenUSDValue_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  tokenUSDValue_lt?: InputMaybe<Scalars['BigInt']>;
+  tokenUSDValue_lte?: InputMaybe<Scalars['BigInt']>;
+  tokenUSDValue_not?: InputMaybe<Scalars['BigInt']>;
+  tokenUSDValue_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   transactionHash?: InputMaybe<Scalars['String']>;
   transactionHash_contains?: InputMaybe<Scalars['String']>;
   transactionHash_contains_nocase?: InputMaybe<Scalars['String']>;
@@ -429,13 +481,17 @@ export enum FundsTransfer_OrderBy {
   Application = 'application',
   Asset = 'asset',
   CreatedAtS = 'createdAtS',
+  ExecutionTimestamp = 'executionTimestamp',
   Grant = 'grant',
   Id = 'id',
   Milestone = 'milestone',
   NonEvmAsset = 'nonEvmAsset',
   Review = 'review',
   Sender = 'sender',
+  Status = 'status',
   To = 'to',
+  TokenName = 'tokenName',
+  TokenUsdValue = 'tokenUSDValue',
   TransactionHash = 'transactionHash',
   Type = 'type'
 }
@@ -1662,6 +1718,165 @@ export enum Grant_OrderBy {
   Workspace = 'workspace'
 }
 
+export type Migration = {
+  __typename?: 'Migration';
+  /** This is null if type !== ApplicationMigrate */
+  application?: Maybe<GrantApplication>;
+  /** The wallet that initiated the migration */
+  fromWallet: Scalars['Bytes'];
+  id: Scalars['ID'];
+  /** This is null if type !== ReviewrMigrate */
+  review?: Maybe<Review>;
+  /** in seconds since epoch */
+  timestamp: Scalars['Int'];
+  /** The wallet to which the migration was done */
+  toWallet: Scalars['Bytes'];
+  /** The hash of the transaction that caused the migration */
+  transactionHash: Scalars['String'];
+  /** The type of migration that took place */
+  type: MigrationType;
+  /** This is null if type !== WorkspaceMemberMigrate */
+  workspace?: Maybe<Workspace>;
+};
+
+export enum MigrationType {
+  Application = 'Application',
+  Review = 'Review',
+  WorkspaceMember = 'WorkspaceMember'
+}
+
+export type Migration_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  application?: InputMaybe<Scalars['String']>;
+  application_?: InputMaybe<GrantApplication_Filter>;
+  application_contains?: InputMaybe<Scalars['String']>;
+  application_contains_nocase?: InputMaybe<Scalars['String']>;
+  application_ends_with?: InputMaybe<Scalars['String']>;
+  application_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  application_gt?: InputMaybe<Scalars['String']>;
+  application_gte?: InputMaybe<Scalars['String']>;
+  application_in?: InputMaybe<Array<Scalars['String']>>;
+  application_lt?: InputMaybe<Scalars['String']>;
+  application_lte?: InputMaybe<Scalars['String']>;
+  application_not?: InputMaybe<Scalars['String']>;
+  application_not_contains?: InputMaybe<Scalars['String']>;
+  application_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  application_not_ends_with?: InputMaybe<Scalars['String']>;
+  application_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  application_not_in?: InputMaybe<Array<Scalars['String']>>;
+  application_not_starts_with?: InputMaybe<Scalars['String']>;
+  application_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  application_starts_with?: InputMaybe<Scalars['String']>;
+  application_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  fromWallet?: InputMaybe<Scalars['Bytes']>;
+  fromWallet_contains?: InputMaybe<Scalars['Bytes']>;
+  fromWallet_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  fromWallet_not?: InputMaybe<Scalars['Bytes']>;
+  fromWallet_not_contains?: InputMaybe<Scalars['Bytes']>;
+  fromWallet_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  review?: InputMaybe<Scalars['String']>;
+  review_?: InputMaybe<Review_Filter>;
+  review_contains?: InputMaybe<Scalars['String']>;
+  review_contains_nocase?: InputMaybe<Scalars['String']>;
+  review_ends_with?: InputMaybe<Scalars['String']>;
+  review_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  review_gt?: InputMaybe<Scalars['String']>;
+  review_gte?: InputMaybe<Scalars['String']>;
+  review_in?: InputMaybe<Array<Scalars['String']>>;
+  review_lt?: InputMaybe<Scalars['String']>;
+  review_lte?: InputMaybe<Scalars['String']>;
+  review_not?: InputMaybe<Scalars['String']>;
+  review_not_contains?: InputMaybe<Scalars['String']>;
+  review_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  review_not_ends_with?: InputMaybe<Scalars['String']>;
+  review_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  review_not_in?: InputMaybe<Array<Scalars['String']>>;
+  review_not_starts_with?: InputMaybe<Scalars['String']>;
+  review_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  review_starts_with?: InputMaybe<Scalars['String']>;
+  review_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  timestamp?: InputMaybe<Scalars['Int']>;
+  timestamp_gt?: InputMaybe<Scalars['Int']>;
+  timestamp_gte?: InputMaybe<Scalars['Int']>;
+  timestamp_in?: InputMaybe<Array<Scalars['Int']>>;
+  timestamp_lt?: InputMaybe<Scalars['Int']>;
+  timestamp_lte?: InputMaybe<Scalars['Int']>;
+  timestamp_not?: InputMaybe<Scalars['Int']>;
+  timestamp_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  toWallet?: InputMaybe<Scalars['Bytes']>;
+  toWallet_contains?: InputMaybe<Scalars['Bytes']>;
+  toWallet_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  toWallet_not?: InputMaybe<Scalars['Bytes']>;
+  toWallet_not_contains?: InputMaybe<Scalars['Bytes']>;
+  toWallet_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  transactionHash?: InputMaybe<Scalars['String']>;
+  transactionHash_contains?: InputMaybe<Scalars['String']>;
+  transactionHash_contains_nocase?: InputMaybe<Scalars['String']>;
+  transactionHash_ends_with?: InputMaybe<Scalars['String']>;
+  transactionHash_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  transactionHash_gt?: InputMaybe<Scalars['String']>;
+  transactionHash_gte?: InputMaybe<Scalars['String']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['String']>>;
+  transactionHash_lt?: InputMaybe<Scalars['String']>;
+  transactionHash_lte?: InputMaybe<Scalars['String']>;
+  transactionHash_not?: InputMaybe<Scalars['String']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['String']>;
+  transactionHash_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  transactionHash_not_ends_with?: InputMaybe<Scalars['String']>;
+  transactionHash_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['String']>>;
+  transactionHash_not_starts_with?: InputMaybe<Scalars['String']>;
+  transactionHash_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  transactionHash_starts_with?: InputMaybe<Scalars['String']>;
+  transactionHash_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<MigrationType>;
+  type_in?: InputMaybe<Array<MigrationType>>;
+  type_not?: InputMaybe<MigrationType>;
+  type_not_in?: InputMaybe<Array<MigrationType>>;
+  workspace?: InputMaybe<Scalars['String']>;
+  workspace_?: InputMaybe<Workspace_Filter>;
+  workspace_contains?: InputMaybe<Scalars['String']>;
+  workspace_contains_nocase?: InputMaybe<Scalars['String']>;
+  workspace_ends_with?: InputMaybe<Scalars['String']>;
+  workspace_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  workspace_gt?: InputMaybe<Scalars['String']>;
+  workspace_gte?: InputMaybe<Scalars['String']>;
+  workspace_in?: InputMaybe<Array<Scalars['String']>>;
+  workspace_lt?: InputMaybe<Scalars['String']>;
+  workspace_lte?: InputMaybe<Scalars['String']>;
+  workspace_not?: InputMaybe<Scalars['String']>;
+  workspace_not_contains?: InputMaybe<Scalars['String']>;
+  workspace_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  workspace_not_ends_with?: InputMaybe<Scalars['String']>;
+  workspace_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  workspace_not_in?: InputMaybe<Array<Scalars['String']>>;
+  workspace_not_starts_with?: InputMaybe<Scalars['String']>;
+  workspace_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  workspace_starts_with?: InputMaybe<Scalars['String']>;
+  workspace_starts_with_nocase?: InputMaybe<Scalars['String']>;
+};
+
+export enum Migration_OrderBy {
+  Application = 'application',
+  FromWallet = 'fromWallet',
+  Id = 'id',
+  Review = 'review',
+  Timestamp = 'timestamp',
+  ToWallet = 'toWallet',
+  TransactionHash = 'transactionHash',
+  Type = 'type',
+  Workspace = 'workspace'
+}
+
 export enum MilestoneState {
   Approved = 'approved',
   Requested = 'requested',
@@ -2074,6 +2289,8 @@ export type Query = {
   grantReviewerCounter?: Maybe<GrantReviewerCounter>;
   grantReviewerCounters: Array<GrantReviewerCounter>;
   grants: Array<Grant>;
+  migration?: Maybe<Migration>;
+  migrations: Array<Migration>;
   notification?: Maybe<Notification>;
   notifications: Array<Notification>;
   partner?: Maybe<Partner>;
@@ -2303,6 +2520,24 @@ export type QueryGrantsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<Grant_Filter>;
+};
+
+
+export type QueryMigrationArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryMigrationsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Migration_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Migration_Filter>;
 };
 
 
@@ -2988,6 +3223,8 @@ export type Subscription = {
   grantReviewerCounter?: Maybe<GrantReviewerCounter>;
   grantReviewerCounters: Array<GrantReviewerCounter>;
   grants: Array<Grant>;
+  migration?: Maybe<Migration>;
+  migrations: Array<Migration>;
   notification?: Maybe<Notification>;
   notifications: Array<Notification>;
   partner?: Maybe<Partner>;
@@ -3217,6 +3454,24 @@ export type SubscriptionGrantsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<Grant_Filter>;
+};
+
+
+export type SubscriptionMigrationArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionMigrationsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Migration_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Migration_Filter>;
 };
 
 
@@ -3588,6 +3843,8 @@ export type Workspace = {
   coverImageIpfsHash?: Maybe<Scalars['String']>;
   /** in seconds since epoch */
   createdAtS: Scalars['Int'];
+  /** List of grant addresses in the workspace */
+  grants: Array<Scalars['String']>;
   id: Scalars['ID'];
   /** Whether the workspace is visible to users in the explore page */
   isVisible: Scalars['Boolean'];
@@ -3675,6 +3932,8 @@ export type WorkspaceMember = {
   /** Address of the workspace member who added this member */
   addedBy?: Maybe<WorkspaceMember>;
   email?: Maybe<Scalars['String']>;
+  /** An indicator if the person is an active part of the workspace or not */
+  enabled: Scalars['Boolean'];
   /** Full name of the user */
   fullName?: Maybe<Scalars['String']>;
   /** Globally unique ID of the member */
@@ -3765,6 +4024,10 @@ export type WorkspaceMember_Filter = {
   email_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
   email_starts_with?: InputMaybe<Scalars['String']>;
   email_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  enabled?: InputMaybe<Scalars['Boolean']>;
+  enabled_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  enabled_not?: InputMaybe<Scalars['Boolean']>;
+  enabled_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   fullName?: InputMaybe<Scalars['String']>;
   fullName_contains?: InputMaybe<Scalars['String']>;
   fullName_contains_nocase?: InputMaybe<Scalars['String']>;
@@ -3898,6 +4161,7 @@ export enum WorkspaceMember_OrderBy {
   AddedAt = 'addedAt',
   AddedBy = 'addedBy',
   Email = 'email',
+  Enabled = 'enabled',
   FullName = 'fullName',
   Id = 'id',
   LastKnownTxHash = 'lastKnownTxHash',
@@ -4061,6 +4325,12 @@ export type Workspace_Filter = {
   createdAtS_lte?: InputMaybe<Scalars['Int']>;
   createdAtS_not?: InputMaybe<Scalars['Int']>;
   createdAtS_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  grants?: InputMaybe<Array<Scalars['String']>>;
+  grants_contains?: InputMaybe<Array<Scalars['String']>>;
+  grants_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  grants_not?: InputMaybe<Array<Scalars['String']>>;
+  grants_not_contains?: InputMaybe<Array<Scalars['String']>>;
+  grants_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
   id?: InputMaybe<Scalars['ID']>;
   id_gt?: InputMaybe<Scalars['ID']>;
   id_gte?: InputMaybe<Scalars['ID']>;
@@ -4217,6 +4487,7 @@ export enum Workspace_OrderBy {
   Bio = 'bio',
   CoverImageIpfsHash = 'coverImageIpfsHash',
   CreatedAtS = 'createdAtS',
+  Grants = 'grants',
   Id = 'id',
   IsVisible = 'isVisible',
   LogoIpfsHash = 'logoIpfsHash',
@@ -4389,7 +4660,7 @@ export type GetDaoDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetDaoDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, bio: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, partners: Array<{ __typename?: 'Partner', name: string, industry: string, website?: string | null, partnerImageHash?: string | null }>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }> } | null, grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
+export type GetDaoDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, bio: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, totalGrantFundingCommittedUSD: number, totalGrantFundingDisbursedUSD: number, numberOfApplications: number, numberOfApplicationsSelected: number, partners: Array<{ __typename?: 'Partner', name: string, industry: string, website?: string | null, partnerImageHash?: string | null }>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }> } | null, grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
 
 export type GetDaoNameQueryVariables = Exact<{
   workspaceID: Scalars['ID'];
@@ -4483,7 +4754,7 @@ export type GetGrantManagersWithPublicKeyQueryVariables = Exact<{
 }>;
 
 
-export type GetGrantManagersWithPublicKeyQuery = { __typename?: 'Query', grantManagers: Array<{ __typename?: 'GrantManager', member?: { __typename?: 'WorkspaceMember', actorId: string, publicKey?: string | null } | null }> };
+export type GetGrantManagersWithPublicKeyQuery = { __typename?: 'Query', grantManagers: Array<{ __typename?: 'GrantManager', member?: { __typename?: 'WorkspaceMember', actorId: string, publicKey?: string | null, enabled: boolean } | null }> };
 
 export type GetGrantsAppliedToQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -4587,7 +4858,7 @@ export type GetReviewersForAWorkspaceQueryVariables = Exact<{
 }>;
 
 
-export type GetReviewersForAWorkspaceQuery = { __typename?: 'Query', workspaces: Array<{ __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, fullName?: string | null, actorId: string }> }> };
+export type GetReviewersForAWorkspaceQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, fullName?: string | null, actorId: string }> } | null };
 
 export type GetSafeForAWorkspaceQueryVariables = Exact<{
   workspaceID: Scalars['String'];
@@ -4601,7 +4872,7 @@ export type GetWorkspaceDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, bio: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, safe?: { __typename?: 'WorkspaceSafe', address: string, chainId: string } | null, partners: Array<{ __typename?: 'Partner', name: string, industry: string, website?: string | null, partnerImageHash?: string | null }>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, updatedAt: number, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number, addedBy?: { __typename?: 'WorkspaceMember', id: string, actorId: string } | null }> } | null };
+export type GetWorkspaceDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, bio: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, safe?: { __typename?: 'WorkspaceSafe', address: string, chainId: string } | null, partners: Array<{ __typename?: 'Partner', name: string, industry: string, website?: string | null, partnerImageHash?: string | null }>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, updatedAt: number, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number, enabled: boolean, addedBy?: { __typename?: 'WorkspaceMember', id: string, actorId: string } | null }> } | null };
 
 export type GetWorkspaceMemberExistsQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -4615,17 +4886,16 @@ export type GetWorkspaceMembersQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, workspace: { __typename?: 'Workspace', id: string, ownerId: string, logoIpfsHash: string, title: string, supportedNetworks: Array<SupportedNetwork>, safe?: { __typename?: 'WorkspaceSafe', id: string, chainId: string, address: string } | null, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, fullName?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number }> } }> };
+export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, enabled: boolean, workspace: { __typename?: 'Workspace', id: string, ownerId: string, logoIpfsHash: string, title: string, supportedNetworks: Array<SupportedNetwork>, safe?: { __typename?: 'WorkspaceSafe', id: string, chainId: string, address: string } | null, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, fullName?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number }> } }> };
 
 export type GetWorkspaceMembersByWorkspaceIdQueryVariables = Exact<{
   workspaceId: Scalars['String'];
-  accessLevelsIn: Array<WorkspaceMemberAccessLevel> | WorkspaceMemberAccessLevel;
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type GetWorkspaceMembersByWorkspaceIdQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, addedAt: number }> };
+export type GetWorkspaceMembersByWorkspaceIdQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, addedAt: number, publicKey?: string | null }> };
 
 export type GetWorkspaceMembersPublicKeysQueryVariables = Exact<{
   workspaceId: Scalars['String'];
@@ -5417,7 +5687,7 @@ export const GetApplicationDetailsDocument = gql`
           maximumPoints
         }
       }
-      fundTransfers {
+      fundTransfers(where: {type: funds_disbursed_from_safe}) {
         milestone {
           id
           title
@@ -5648,6 +5918,10 @@ export const GetDaoDetailsDocument = gql`
       decimal
       iconHash
     }
+    totalGrantFundingCommittedUSD
+    totalGrantFundingDisbursedUSD
+    numberOfApplications
+    numberOfApplicationsSelected
   }
   grants(
     subgraphError: allow
@@ -6275,7 +6549,7 @@ export const GetGrantDetailsDocument = gql`
       title
       logoIpfsHash
       supportedNetworks
-      members {
+      members(where: {enabled: true}) {
         id
         actorId
         publicKey
@@ -6335,6 +6609,7 @@ export const GetGrantManagersWithPublicKeyDocument = gql`
     member {
       actorId
       publicKey
+      enabled
     }
   }
 }
@@ -6978,8 +7253,12 @@ export type GetRealmsFundTransferDataLazyQueryHookResult = ReturnType<typeof use
 export type GetRealmsFundTransferDataQueryResult = Apollo.QueryResult<GetRealmsFundTransferDataQuery, GetRealmsFundTransferDataQueryVariables>;
 export const GetReviewersForAWorkspaceDocument = gql`
     query getReviewersForAWorkspace($workspaceId: ID!) {
-  workspaces(where: {id: $workspaceId}) {
-    members(where: {accessLevel_not: owner}) {
+  workspace(id: $workspaceId) {
+    members(
+      where: {accessLevel: reviewer, enabled: true}
+      orderBy: addedAt
+      orderDirection: desc
+    ) {
       profilePictureIpfsHash
       accessLevel
       fullName
@@ -7085,7 +7364,7 @@ export const GetWorkspaceDetailsDocument = gql`
       decimal
       iconHash
     }
-    members {
+    members(where: {enabled: true}) {
       id
       actorId
       publicKey
@@ -7094,6 +7373,7 @@ export const GetWorkspaceDetailsDocument = gql`
       updatedAt
       outstandingReviewIds
       lastReviewSubmittedAt
+      enabled
       addedBy {
         id
         actorId
@@ -7168,13 +7448,14 @@ export type GetWorkspaceMemberExistsQueryResult = Apollo.QueryResult<GetWorkspac
 export const GetWorkspaceMembersDocument = gql`
     query getWorkspaceMembers($actorId: Bytes!) {
   workspaceMembers(
-    where: {actorId: $actorId}
+    where: {actorId: $actorId, enabled: true}
     subgraphError: allow
     orderBy: id
     orderDirection: desc
   ) {
     id
     actorId
+    enabled
     workspace {
       id
       ownerId
@@ -7196,7 +7477,7 @@ export const GetWorkspaceMembersDocument = gql`
         address
         chainId
       }
-      members {
+      members(where: {enabled: true}) {
         id
         actorId
         publicKey
@@ -7239,9 +7520,9 @@ export type GetWorkspaceMembersQueryHookResult = ReturnType<typeof useGetWorkspa
 export type GetWorkspaceMembersLazyQueryHookResult = ReturnType<typeof useGetWorkspaceMembersLazyQuery>;
 export type GetWorkspaceMembersQueryResult = Apollo.QueryResult<GetWorkspaceMembersQuery, GetWorkspaceMembersQueryVariables>;
 export const GetWorkspaceMembersByWorkspaceIdDocument = gql`
-    query getWorkspaceMembersByWorkspaceId($workspaceId: String!, $accessLevelsIn: [WorkspaceMemberAccessLevel!]!, $first: Int, $skip: Int) {
+    query getWorkspaceMembersByWorkspaceId($workspaceId: String!, $first: Int, $skip: Int) {
   workspaceMembers(
-    where: {workspace: $workspaceId, accessLevel_in: $accessLevelsIn}
+    where: {workspace: $workspaceId, enabled: true}
     first: $first
     skip: $skip
     subgraphError: allow
@@ -7252,6 +7533,7 @@ export const GetWorkspaceMembersByWorkspaceIdDocument = gql`
     profilePictureIpfsHash
     accessLevel
     addedAt
+    publicKey
   }
 }
     `;
@@ -7269,7 +7551,6 @@ export const GetWorkspaceMembersByWorkspaceIdDocument = gql`
  * const { data, loading, error } = useGetWorkspaceMembersByWorkspaceIdQuery({
  *   variables: {
  *      workspaceId: // value for 'workspaceId'
- *      accessLevelsIn: // value for 'accessLevelsIn'
  *      first: // value for 'first'
  *      skip: // value for 'skip'
  *   },
@@ -7288,7 +7569,7 @@ export type GetWorkspaceMembersByWorkspaceIdLazyQueryHookResult = ReturnType<typ
 export type GetWorkspaceMembersByWorkspaceIdQueryResult = Apollo.QueryResult<GetWorkspaceMembersByWorkspaceIdQuery, GetWorkspaceMembersByWorkspaceIdQueryVariables>;
 export const GetWorkspaceMembersPublicKeysDocument = gql`
     query getWorkspaceMembersPublicKeys($workspaceId: String!) {
-  workspaceMembers(where: {workspace: $workspaceId}) {
+  workspaceMembers(where: {workspace: $workspaceId, enabled: true}) {
     actorId
     publicKey
   }
