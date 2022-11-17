@@ -24,8 +24,9 @@ function ApplicantDetails({
 	applicantAddressError,
 	setApplicantAddressError,
 	safeNetwork,
-	// resolvedDomain,
-	// resolvedDomainError
+	resolvedDomain,
+	resolvedDomainError,
+	resolvedDomainErrorMessage
 }: {
   applicantName: string
   setApplicantName: (applicantName: string) => void
@@ -41,8 +42,9 @@ function ApplicantDetails({
   setApplicantAddressError: (applicantAddressError: boolean) => void
   grantRequiredFields: string[]
   safeNetwork: string
-//   resolvedDomain: string
-//   resolvedDomainError: boolean
+  resolvedDomain: string
+  resolvedDomainError: boolean
+  resolvedDomainErrorMessage: string
 }) {
 	const { t } = useTranslation()
 	const { safeObj } = useSafeContext()
@@ -116,9 +118,8 @@ function ApplicantDetails({
 						// console.log('safe address', e.target.value, safeAddressValid)
 					}
 				}
-				// isError={applicantAddressError && resolvedDomainError}
-				isError={applicantAddressError}
-				errorText={t('/explore_grants/apply.invalid_address_on_chain').replace('%CHAIN', chainNames.get(safeObj?.chainId?.toString())!)}
+				isError={applicantAddressError && resolvedDomainError}
+				errorText={resolvedDomainErrorMessage ? resolvedDomainErrorMessage : t('/explore_grants/apply.invalid_address_on_chain').replace('%CHAIN', chainNames.get(safeNetwork)!.toString())}
 				value={applicantAddress}
 				visible={grantRequiredFields.includes('applicantAddress')}
 			/>
