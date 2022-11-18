@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import {
 	Box, Text,
 } from '@chakra-ui/react'
+import { logger } from 'ethers'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import { useSafeContext } from 'src/contexts/safeContext'
 import { chainNames } from 'src/utils/chainNames'
@@ -51,7 +52,7 @@ function ApplicantDetails({
 	const isEvm = safeObj?.getIsEvm()
 
 	useEffect(() => {
-		console.log('safeObj', safeObj, isEvm, chainNames.get(safeObj?.chainId?.toString()))
+		logger.info('safeObj', safeObj, isEvm, chainNames.get(safeObj?.chainId?.toString()))
 	}, [safeObj])
 
 	return (
