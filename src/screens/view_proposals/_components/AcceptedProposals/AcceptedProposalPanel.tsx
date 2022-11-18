@@ -14,14 +14,16 @@ const AcceptedProposalsPanel = ({
 	onBulkSendFundsClicked,
 	onSetupApplicantEvaluationClicked,
 	grantData,
+	fundTransfersData,
 }: {
 	rewardAssetDecimals: any
 	applicationStatuses: any
-  applicantsData: IApplicantData[]
-  onSendFundsClicked: (state: boolean, checkedItems: IApplicantData[]) => void
-  onBulkSendFundsClicked: (state: boolean, checkedItems: IApplicantData[]) => void
-  onSetupApplicantEvaluationClicked: () => void
+	applicantsData: IApplicantData[]
+	onSendFundsClicked: (state: boolean, checkedItems: IApplicantData[]) => void
+	onBulkSendFundsClicked: (state: boolean, checkedItems: IApplicantData[]) => void
+	onSetupApplicantEvaluationClicked: () => void
 	grantData: QueryResult<GetGrantDetailsQuery, GetGrantDetailsQueryVariables>['data']
+	fundTransfersData: any
 }) => {
 	const [checkedItems, setCheckedItems] = useState<boolean[]>(applicantsData.filter((item) => (2 === item.status)).map(() => false))
 	const [acceptedApplications, setAcceptedApplications] = useState<IApplicantData[]>([])
@@ -190,28 +192,32 @@ const AcceptedProposalsPanel = ({
 				{/* new ro */}
 
 				{
-					applicantsData?.filter((item) => (2 === item.status)).map((applicantData, i) => (
-						<AcceptedRow
-							key={`accepted-${i}`}
-							applicationStatus={applicationStatuses[applicantData.applicationId]?.reduce((partialStatus: any, a: any) => partialStatus && a.status, 1)}
-							applicationAmount={applicationStatuses[applicantData.applicationId]?.reduce((partialSum: any, a: any) => partialSum + a.amount, 0)}
-							applicantData={applicantData}
-							rewardAssetDecimals={rewardAssetDecimals}
-							isChecked={checkedItems[i]}
-							onChange={
-								(e) => {
-									const tempArr: boolean[] = []
-									tempArr.push(...checkedItems)
-									tempArr[i] = e.target.checked
-									setCheckedItems(tempArr)
+					applicantsData?.filter((item) => (2 === item.status)).map((applicantData, i) => {
+						const fundTrasferofApplicant = fundTransfersData?.filter((fundTransfer: any) => (fundTransfer.application.id === applicantData.applicationId && fundTransfer.status === 'executed'))
+						const totalFundsSent = fundTrasferofApplicant?.reduce((acc: number, fundTransfer: any) => (acc + Number(fundTransfer.amount)), 0)
+						return (
+							<AcceptedRow
+								key={`accepted-${i}`}
+								applicationStatus={applicationStatuses[applicantData.applicationId]?.reduce((partialStatus: any, a: any) => partialStatus && a.status, 1)}
+								applicationAmount={totalFundsSent}
+								applicantData={applicantData}
+								rewardAssetDecimals={rewardAssetDecimals}
+								isChecked={checkedItems[i]}
+								onChange={
+									(e) => {
+										const tempArr: boolean[] = []
+										tempArr.push(...checkedItems)
+										tempArr[i] = e.target.checked
+										setCheckedItems(tempArr)
+									}
 								}
-							}
-							onSendFundsClicked={
-								() => {
-									onSendFundsClicked(true, [acceptedApplications[i]])
-								}
-							} />
-					))
+								onSendFundsClicked={
+									() => {
+										onSendFundsClicked(true, [acceptedApplications[i]])
+									}
+								} />
+						)
+					})
 				}
 			</Grid>
 		</>

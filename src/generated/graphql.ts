@@ -4547,6 +4547,13 @@ export type GetProfileDetailsQueryVariables = Exact<{
 
 export type GetProfileDetailsQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork> } }>, grantApplications: Array<{ __typename?: 'GrantApplication', id: string, grant: { __typename?: 'Grant', workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork> } } }> };
 
+export type GetAllFundsTransfersForADaoQueryVariables = Exact<{
+  workspaceId: Scalars['String'];
+}>;
+
+
+export type GetAllFundsTransfersForADaoQuery = { __typename?: 'Query', fundsTransfers: Array<{ __typename?: 'FundsTransfer', id: string, type: FundsTransferType, amount: string, status: FundsTransferStatusType, transactionHash?: string | null, to: string, application?: { __typename?: 'GrantApplication', id: string } | null }> };
+
 export type GetAllGrantsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
@@ -4638,7 +4645,7 @@ export type GetApplicationDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetApplicationDetailsQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, pendingReviewerAddresses: Array<string>, doneReviewerAddresses: Array<string>, applicantId: string, applicantPublicKey?: string | null, state: ApplicationState, feedbackDao?: string | null, feedbackDev?: string | null, createdAtS: number, updatedAtS: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }>, pii: Array<{ __typename?: 'PIIAnswer', id: string, data: string }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, title: string, amount: string, amountPaid: string, updatedAtS?: number | null, feedbackDao?: string | null, feedbackDaoUpdatedAtS?: number | null, feedbackDev?: string | null, feedbackDevUpdatedAtS?: number | null, state: MilestoneState }>, grant: { __typename?: 'Grant', id: string, title: string, funding: string, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null }> }, reward: { __typename?: 'Reward', id: string, asset: string, committed: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, fields: Array<{ __typename?: 'GrantField', id: string, title: string, isPii: boolean }>, rubric?: { __typename?: 'Rubric', isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, asset: string, nonEvmAsset?: string | null, transactionHash?: string | null, createdAtS: number, milestone?: { __typename?: 'ApplicationMilestone', id: string, title: string, amount: string, amountPaid: string, updatedAtS?: number | null, feedbackDao?: string | null, feedbackDaoUpdatedAtS?: number | null, feedbackDev?: string | null, feedbackDevUpdatedAtS?: number | null, state: MilestoneState } | null, application?: { __typename?: 'GrantApplication', applicantId: string, id: string, state: ApplicationState } | null }> }, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, createdAtS: number, reviewer: { __typename?: 'WorkspaceMember', actorId: string, id: string, email?: string | null, fullName?: string | null }, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, reviewers: Array<{ __typename?: 'WorkspaceMember', actorId: string, email?: string | null, id: string, fullName?: string | null }> } | null };
+export type GetApplicationDetailsQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, pendingReviewerAddresses: Array<string>, doneReviewerAddresses: Array<string>, applicantId: string, applicantPublicKey?: string | null, state: ApplicationState, feedbackDao?: string | null, feedbackDev?: string | null, createdAtS: number, updatedAtS: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }>, pii: Array<{ __typename?: 'PIIAnswer', id: string, data: string }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, title: string, amount: string, amountPaid: string, updatedAtS?: number | null, feedbackDao?: string | null, feedbackDaoUpdatedAtS?: number | null, feedbackDev?: string | null, feedbackDevUpdatedAtS?: number | null, state: MilestoneState }>, grant: { __typename?: 'Grant', id: string, title: string, funding: string, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null }> }, reward: { __typename?: 'Reward', id: string, asset: string, committed: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, fields: Array<{ __typename?: 'GrantField', id: string, title: string, isPii: boolean }>, rubric?: { __typename?: 'Rubric', isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, asset: string, nonEvmAsset?: string | null, transactionHash?: string | null, status: FundsTransferStatusType, createdAtS: number, milestone?: { __typename?: 'ApplicationMilestone', id: string, title: string, amount: string, amountPaid: string, updatedAtS?: number | null, feedbackDao?: string | null, feedbackDaoUpdatedAtS?: number | null, feedbackDev?: string | null, feedbackDevUpdatedAtS?: number | null, state: MilestoneState } | null, application?: { __typename?: 'GrantApplication', applicantId: string, id: string, state: ApplicationState } | null }> }, reviews: Array<{ __typename?: 'Review', publicReviewDataHash?: string | null, id: string, createdAtS: number, reviewer: { __typename?: 'WorkspaceMember', actorId: string, id: string, email?: string | null, fullName?: string | null }, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string } | null }> }>, reviewers: Array<{ __typename?: 'WorkspaceMember', actorId: string, email?: string | null, id: string, fullName?: string | null }> } | null };
 
 export type GetDaoGrantsQueryVariables = Exact<{
   workspaceId: Scalars['String'];
@@ -4961,6 +4968,49 @@ export function useGetProfileDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetProfileDetailsQueryHookResult = ReturnType<typeof useGetProfileDetailsQuery>;
 export type GetProfileDetailsLazyQueryHookResult = ReturnType<typeof useGetProfileDetailsLazyQuery>;
 export type GetProfileDetailsQueryResult = Apollo.QueryResult<GetProfileDetailsQuery, GetProfileDetailsQueryVariables>;
+export const GetAllFundsTransfersForADaoDocument = gql`
+    query getAllFundsTransfersForADao($workspaceId: String!) {
+  fundsTransfers(where: {grant_: {workspace: $workspaceId}}) {
+    id
+    type
+    amount
+    status
+    transactionHash
+    to
+    application {
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAllFundsTransfersForADaoQuery__
+ *
+ * To run a query within a React component, call `useGetAllFundsTransfersForADaoQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllFundsTransfersForADaoQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllFundsTransfersForADaoQuery({
+ *   variables: {
+ *      workspaceId: // value for 'workspaceId'
+ *   },
+ * });
+ */
+export function useGetAllFundsTransfersForADaoQuery(baseOptions: Apollo.QueryHookOptions<GetAllFundsTransfersForADaoQuery, GetAllFundsTransfersForADaoQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllFundsTransfersForADaoQuery, GetAllFundsTransfersForADaoQueryVariables>(GetAllFundsTransfersForADaoDocument, options);
+      }
+export function useGetAllFundsTransfersForADaoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllFundsTransfersForADaoQuery, GetAllFundsTransfersForADaoQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllFundsTransfersForADaoQuery, GetAllFundsTransfersForADaoQueryVariables>(GetAllFundsTransfersForADaoDocument, options);
+        }
+export type GetAllFundsTransfersForADaoQueryHookResult = ReturnType<typeof useGetAllFundsTransfersForADaoQuery>;
+export type GetAllFundsTransfersForADaoLazyQueryHookResult = ReturnType<typeof useGetAllFundsTransfersForADaoLazyQuery>;
+export type GetAllFundsTransfersForADaoQueryResult = Apollo.QueryResult<GetAllFundsTransfersForADaoQuery, GetAllFundsTransfersForADaoQueryVariables>;
 export const GetAllGrantsDocument = gql`
     query getAllGrants($first: Int, $skip: Int, $applicantId: Bytes!, $minDeadline: Int!) {
   grants(
@@ -5705,6 +5755,7 @@ export const GetApplicationDetailsDocument = gql`
         asset
         nonEvmAsset
         transactionHash
+        status
         application {
           applicantId
           id
