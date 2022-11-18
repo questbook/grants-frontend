@@ -41,7 +41,7 @@ interface Props {
 	grantId: string
 	daoLogo: string
 	workspaceId: string
-	safeNetwork: string
+	safeNetwork: number
 	isGrantVerified: boolean
 	funding: string
 	rewardAmount: string
@@ -538,7 +538,7 @@ function Form({
 	])
 
 	useEffect(() => {
-		if (applicantAddress && applicantAddress.includes('.') && (safeNetwork === '137' || safeNetwork === '900001' || safeNetwork === '1')) {
+		if (applicantAddress && applicantAddress.includes('.') && (safeNetwork === 137 || safeNetwork === 900001 || safeNetwork === 1)) {
 			// setResolvedDomainError(true)
 			const token = process.env.UD_KEY
 			axios.get(`https://resolve.unstoppabledomains.com/domains/${applicantAddress}`, {
@@ -549,7 +549,7 @@ function Form({
 				.then((res) => {
 					logger.info("UD ->", res.data)
 					if (res.data.meta.owner) {
-						if (safeNetwork === '137') {
+						if (safeNetwork === 137) {
 							if (res.data.records['crypto.MATIC.version.ERC20.address']) {
 								console.log("resolved domain", res.data.records['crypto.MATIC.version.ERC20.address'])
 								setResolvedDomain(res.data.records['crypto.MATIC.version.ERC20.address'])
@@ -561,7 +561,7 @@ function Form({
 								setResolvedDomainErrorMessage("No MATIC address found for this domain")
 							}
 						}
-						if (safeNetwork === '900001') {
+						if (safeNetwork === 900001) {
 							if (res.data.records['crypto.SOL.address']) {
 								console.log("resolved domain", res.data.records['crypto.SOL.address'])
 								setResolvedDomain(res.data.records['crypto.SOL.address'])
@@ -573,7 +573,7 @@ function Form({
 								setResolvedDomainErrorMessage("No SOL address found for this domain")
 							}
 						}
-						if (safeNetwork === '1') {
+						if (safeNetwork === 1) {
 							if (res.data.records['crypto.ETH.address']) {
 								console.log("resolved domain", res.data.records['crypto.ETH.address'])
 								setResolvedDomain(res.data.records['crypto.ETH.address'])
@@ -700,7 +700,7 @@ function Form({
 					setApplicantAddress={setApplicantAddress}
 					setApplicantAddressError={setApplicantAddressError}
 					grantRequiredFields={grantRequiredFields}
-					safeNetwork={safeNetwork!}
+					safeNetwork={safeNetwork?.toString() ?? defaultChainId.toString()}
 					resolvedDomain={resolvedDomain}
 					resolvedDomainError={resolvedDomainError}
 					resolvedDomainErrorMessage={resolvedDomainErrorMessage}

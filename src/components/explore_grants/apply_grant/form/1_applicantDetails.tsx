@@ -103,7 +103,7 @@ function ApplicantDetails({
 			<SingleLineInput
 				label={t('/explore_grants/apply.address')}
 				placeholder={isEvm ? '0xa2dD...' : '5yDU...' } //TODO : remove hardcoding of chainId
-				subtext={`${t('/explore_grants/apply.your_address_on')} ${chainNames.get(safeObj?.chainId?.toString())}`}
+				subtext={resolvedDomain ? `Unstoppable domain found with owner ${resolvedDomain}` : `${t('/explore_grants/apply.your_address_on')} ${chainNames.get(safeObj?.chainId?.toString())}`}
 				onChange={
 					async(e) => {
 						setApplicantAddress(e.target.value)
