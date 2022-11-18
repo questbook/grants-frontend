@@ -65,7 +65,8 @@ function AllDaosGrid({
 								daoId={workspace.id}
 								chainId={workspaceChainId}
 								noOfApplicants={workspace.numberOfApplications}
-								totalAmount={workspace.totalGrantFundingDisbursedUSD} />
+								totalAmount={workspace.totalGrantFundingDisbursedUSD}
+								workspaceData={workspace} />
 						</GridItem>
 					)
 				})

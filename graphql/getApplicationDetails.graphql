@@ -83,6 +83,7 @@ query getApplicationDetails($applicationID: ID!) {
         asset
         nonEvmAsset
         transactionHash
+        status
         application{
           applicantId
           id
