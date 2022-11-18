@@ -8,6 +8,7 @@ import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import { useSafeContext } from 'src/contexts/safeContext'
 import { chainNames } from 'src/utils/chainNames'
 import { isValidEthereumAddress, isValidSolanaAddress } from 'src/utils/validationUtils'
+import { defaultChainId } from 'src/constants/chains'
 
 function ApplicantDetails({
 	applicantName,
@@ -119,7 +120,7 @@ function ApplicantDetails({
 					}
 				}
 				isError={applicantAddressError && resolvedDomainError}
-				errorText={resolvedDomainErrorMessage ? resolvedDomainErrorMessage : t('/explore_grants/apply.invalid_address_on_chain').replace('%CHAIN', chainNames.get(safeNetwork)!.toString())}
+				errorText={resolvedDomainErrorMessage ? resolvedDomainErrorMessage : t('/explore_grants/apply.invalid_address_on_chain').replace('%CHAIN', chainNames.get(safeNetwork)?.toString() ?? defaultChainId.toString())}
 				value={applicantAddress}
 				visible={grantRequiredFields.includes('applicantAddress')}
 			/>
