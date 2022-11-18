@@ -23,6 +23,7 @@ import Loader from 'src/components/ui/loader'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import { defaultChainId, SupportedChainId, USD_ASSET } from 'src/constants/chains'
 import strings from 'src/constants/strings.json'
+import { useSafeContext } from 'src/contexts/safeContext'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSubmitApplication from 'src/hooks/useSubmitApplication'
 import logger from 'src/libraries/logger'
@@ -42,7 +43,7 @@ interface Props {
 	grantId: string
 	daoLogo: string
 	workspaceId: string
-	safeNetwork: string
+	safeNetwork: number
 	isGrantVerified: boolean
 	funding: string
 	rewardAmount: string
@@ -161,6 +162,7 @@ function Form({
 	}, 0)
 
 	const { t } = useTranslation()
+	const { safeObj } = useSafeContext()
 
 	React.useEffect(() => {
 		if(defaultMilestoneFields && defaultMilestoneFields.length > 0) {
@@ -540,66 +542,64 @@ function Form({
 	])
 
 	useEffect(() => {
-		// const { resolvedDomain, resolvedDomainError } = resolveUnstoppableDomains(applicantAddress)
-
-		// if(applicantAddress && applicantAddress.includes('.') && (safeNetwork === '137' || safeNetwork === '900001' || safeNetwork === '1')) {
-		// 	 setApplicantAddressError(true)
-		// 	const token = process.env.UD_KEY
-		// 	axios.get(`https://resolve.unstoppabledomains.com/domains/${applicantAddress}`, {
-		// 		headers: {
-		// 			Authorization: `Bearer ${token}`
-		// 		}
-		// 	})
-		// 		.then((res) => {
-		// 			logger.info('UD ->', res.data)
-		// 			if(res.data.meta.owner) {
-		// 				if(safeNetwork === '137') {
-		// 					if(res.data.records['crypto.MATIC.version.ERC20.address']) {
-		// 						console.log('resolved domain', res.data.records['crypto.MATIC.version.ERC20.address'])
-		// 						setResolvedDomain(res.data.records['crypto.MATIC.version.ERC20.address'])
-		// 						setApplicantAddress(res.data.records['crypto.MATIC.version.ERC20.address'])
-		// 						setApplicantAddressError(false)
-		// 					} else {
-		// 						setApplicantAddressErrorMessage('No MATIC address found for this domain')
-		// 					}
+		// if (applicantAddress && applicantAddress.includes('.') && (safeNetwork === 137 || safeNetwork === 900001 || safeNetwork === 1)) {
+		// setResolvedDomainError(true)
+		// const token = process.env.UD_KEY
+		// axios.get(`https://resolve.unstoppabledomains.com/domains/${applicantAddress}`, {
+		// 	headers: {
+		// 		Authorization: `Bearer ${token}`
+		// 	}
+		// })
+		// 	.then((res) => {
+		// 		logger.info("UD ->", res.data)
+		// 		if (res.data.meta.owner) {
+		// 			if (safeNetwork === 137) {
+		// 				if (res.data.records['crypto.MATIC.version.ERC20.address']) {
+		// 					console.log("resolved domain", res.data.records['crypto.MATIC.version.ERC20.address'])
+		// 					setResolvedDomain(res.data.records['crypto.MATIC.version.ERC20.address'])
+		// 					setApplicantAddress(res.data.records['crypto.MATIC.version.ERC20.address'])
+		// 					setResolvedDomainError(false)
+		// 					setApplicantAddressError(false)
+		// 					setResolvedDomainErrorMessage('')
+		// 				} else {
+		// 					setResolvedDomainErrorMessage("No MATIC address found for this domain")
 		// 				}
-
-		// 				if(safeNetwork === '900001') {
-		// 					if(res.data.records['crypto.SOL.address']) {
-		// 						console.log('resolved domain', res.data.records['crypto.SOL.address'])
-		// 						setResolvedDomain(res.data.records['crypto.SOL.address'])
-		// 						setApplicantAddress(res.data.records['crypto.SOL.address'])
-		// 						setApplicantAddressError(false)
-		// 					} else {
-		// 						setApplicantAddressErrorMessage('No SOL address found for this domain')
-		// 					}
-		// 				}
-
-		// 				if(safeNetwork === '1') {
-		// 					if(res.data.records['crypto.ETH.address']) {
-		// 						console.log('resolved domain', res.data.records['crypto.ETH.address'])
-		// 						setResolvedDomain(res.data.records['crypto.ETH.address'])
-		// 						setApplicantAddress(res.data.records['crypto.ETH.address'])
-		// 						setApplicantAddressError(false)
-		// 					} else {
-		// 						setApplicantAddressErrorMessage('No ETH address found for this domain')
-		// 					}
-		// 				}
-		// 			} else {
-		// 				setApplicantAddressErrorMessage('Invalid Unstoppable domain')
-		// 				setApplicantAddressError(true)
 		// 			}
-		// 		}).catch((err) => {
-		// 			logger.error('UD error ->', err)
-		// 			setApplicantAddressError(true)
-		// 		})
-
-		// } else if(resolvedDomain) {
-		// 	setApplicantAddressError(true)
-		// }
+		// 			if (safeNetwork === 900001) {
+		// 				if (res.data.records['crypto.SOL.address']) {
+		// 					console.log("resolved domain", res.data.records['crypto.SOL.address'])
+		// 					setResolvedDomain(res.data.records['crypto.SOL.address'])
+		// 					setApplicantAddress(res.data.records['crypto.SOL.address'])
+		// 					setResolvedDomainError(false)
+		// 					setApplicantAddressError(false)
+		// 					setResolvedDomainErrorMessage('')
+		// 				} else {
+		// 					setResolvedDomainErrorMessage("No SOL address found for this domain")
+		// 				}
+		// 			}
+		// 			if (safeNetwork === 1) {
+		// 				if (res.data.records['crypto.ETH.address']) {
+		// 					console.log("resolved domain", res.data.records['crypto.ETH.address'])
+		// 					setResolvedDomain(res.data.records['crypto.ETH.address'])
+		// 					setApplicantAddress(res.data.records['crypto.ETH.address'])
+		// 					setResolvedDomainError(false)
+		// 					setApplicantAddressError(false)
+		// 					setResolvedDomainErrorMessage('')
+		// 				} else {
+		// 					setResolvedDomainErrorMessage("No ETH address found for this domain")
+		// 				}
+		// 			}
+		// 		} else {
+		// 			setResolvedDomainErrorMessage('Invalid Unstoppable domain')
+		// 			setResolvedDomainError(true)
+		// 		}
+		// 	}).catch((err) => {
+		// 		logger.error("UD error ->", err)
+		// 		setResolvedDomainError(true)
+		// 	})
 
 		const resolve = async(applicantAddress: string) => {
-			const response: any = await resolveApplicantAddress(applicantAddress)
+			const response: any = await resolveApplicantAddress(safeObj, applicantAddress)
 			if(response?.error) {
 				setApplicantAddressError(true)
 				setApplicantAddressErrorMessage(response?.error)
@@ -714,7 +714,7 @@ function Form({
 					setApplicantAddress={setApplicantAddress}
 					setApplicantAddressError={setApplicantAddressError}
 					grantRequiredFields={grantRequiredFields}
-					safeNetwork={safeNetwork!}
+					safeNetwork={safeNetwork?.toString() ?? defaultChainId.toString()}
 					resolvedDomain={resolvedDomain}
 					resolvedDomainError={applicantAddressError}
 					resolvedDomainErrorMessage={applicantAddressErrorMessage}

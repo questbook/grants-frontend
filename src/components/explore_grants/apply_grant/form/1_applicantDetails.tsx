@@ -9,6 +9,7 @@ import SingleLineInput from 'src/components/ui/forms/singleLineInput'
 import { useSafeContext } from 'src/contexts/safeContext'
 import { chainNames } from 'src/utils/chainNames'
 import { isValidEthereumAddress, isValidSolanaAddress } from 'src/utils/validationUtils'
+import { defaultChainId } from 'src/constants/chains'
 
 function ApplicantDetails({
 	applicantName,
@@ -103,7 +104,7 @@ function ApplicantDetails({
 			<SingleLineInput
 				label={t('/explore_grants/apply.address')}
 				placeholder={isEvm ? '0xa2dD...' : '5yDU...' } //TODO : remove hardcoding of chainId
-				subtext={`${t('/explore_grants/apply.your_address_on')} ${chainNames.get(safeObj?.chainId?.toString())}`}
+				subtext={resolvedDomain ? `Unstoppable domain found with owner ${resolvedDomain}` : `${t('/explore_grants/apply.your_address_on')} ${chainNames.get(safeObj?.chainId?.toString())}`}
 				onChange={
 					async(e) => {
 						setApplicantAddress(e.target.value)
@@ -120,7 +121,7 @@ function ApplicantDetails({
 					}
 				}
 				isError={applicantAddressError && resolvedDomainError}
-				errorText={resolvedDomainErrorMessage ? resolvedDomainErrorMessage : t('/explore_grants/apply.invalid_address_on_chain').replace('%CHAIN', chainNames.get(safeNetwork)?.toString()!)}
+				errorText={resolvedDomainErrorMessage ? resolvedDomainErrorMessage : t('/explore_grants/apply.invalid_address_on_chain').replace('%CHAIN', chainNames.get(safeNetwork)?.toString() ?? defaultChainId.toString())}
 				value={applicantAddress}
 				visible={grantRequiredFields.includes('applicantAddress')}
 			/>
