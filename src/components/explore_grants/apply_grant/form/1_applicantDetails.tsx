@@ -119,7 +119,7 @@ function ApplicantDetails({
 					}
 				}
 				isError={applicantAddressError && resolvedDomainError}
-				errorText={resolvedDomainErrorMessage ? resolvedDomainErrorMessage : t('/explore_grants/apply.invalid_address_on_chain').replace('%CHAIN', chainNames.get(safeNetwork)!.toString())}
+				errorText={resolvedDomainErrorMessage ? resolvedDomainErrorMessage : t('/explore_grants/apply.invalid_address_on_chain').replace('%CHAIN', chainNames.get(safeNetwork)?.toString()!)}
 				value={applicantAddress}
 				visible={grantRequiredFields.includes('applicantAddress')}
 			/>
