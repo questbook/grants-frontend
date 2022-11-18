@@ -107,7 +107,6 @@ function Profile() {
 
 	useEffect(() => {
 		if(data) {
-			console.log('data', data)
 			setWorkspaceData(data?.workspace!)
 		}
 	}, [data, error, loading])
