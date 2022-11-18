@@ -12,7 +12,7 @@ function FloatingSidebar({
 	return (
 		<Flex
 			// h="calc(100vh - 64px)"
-			bg={theme.colors.backgrounds.floatingSidebar}
+			bg='#F3F4F4'
 			border='1px solid #E8E9E9'
 			borderRadius={12}
 			maxW={340}

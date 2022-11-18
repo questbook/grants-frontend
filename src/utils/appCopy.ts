@@ -67,7 +67,7 @@ i18next.use(initReactI18next).init({
 					'team': 'Team',
 					'team_members': 'Team Members',
 					'team_members_desc': 'Add team members to your proposal',
-					'address': 'Wallet Address',
+					'address': 'Wallet Address / Unstoppable Domain',
 					'your_address_on': 'Your wallet address on',
 					'num_team_members': 'Number of team members',
 					'member': 'member #',
