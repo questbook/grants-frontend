@@ -2,7 +2,7 @@ import axios from 'axios'
 import { IdrissCrypto } from 'idriss-crypto'
 import idRiss from 'src/constants/idRiss'
 import unstoppableDomains from 'src/constants/unstoppableDomains'
-import { useSafeContext } from 'src/contexts/safeContext'
+import logger from 'src/libraries/logger'
 
 export const resolveUnstoppableDomains = async(chainId: string, applicantAddress: string) => {
 
@@ -17,7 +17,7 @@ export const resolveUnstoppableDomains = async(chainId: string, applicantAddress
 		const resolvedDomain = data.records[`crypto.${unstoppableDomains[chainId]}.address`]
 		return resolvedDomain
 	} catch(e) {
-		throw e
+		logger.error(e)
 	}
 }
 
@@ -25,9 +25,17 @@ export const resolveIDriss = async(isEvm: boolean, applicantAddress: string) => 
 	try {
 		const idriss = new IdrissCrypto()
 		const result = await idriss.resolve(applicantAddress)
-		return result[`${idRiss[isEvm ? 'evm' : 'non-evm']}`]
+		const chainType = isEvm ? 'evm' : 'non-evm'
+		const domainTags = idRiss[chainType]
+
+		for(const tag of domainTags) {
+			const resolvedDomain = result[tag]
+			if(resolvedDomain) {
+				return resolvedDomain
+			}
+		}
 	} catch(e) {
-		throw e
+		logger.error(e)
 	}
 }
 
@@ -36,21 +44,17 @@ export async function resolveApplicantAddress(safeObj: any, applicantAddress: st
 	const isEvm = safeObj?.getIsEvm()
 
 	if(applicantAddress) {
+		let unstoppabledomains: string | undefined = ''
+		let idriss: string | undefined = ''
 		try {
-			const unstoppabledomains = await resolveUnstoppableDomains(chainId, applicantAddress)
-			const idriss = await resolveIDriss(isEvm, applicantAddress)
+			unstoppabledomains = await resolveUnstoppableDomains(chainId, applicantAddress)
+		} catch(e) {}
 
-			if(unstoppabledomains) {
-				return ({ 'address':unstoppabledomains })
-			} else if(idriss) {
-				return ({ 'address':idriss })
-			} else {
-				return ({ 'address':applicantAddress })
-			}
+		try {
+			idriss = await resolveIDriss(isEvm, applicantAddress)
+		} catch(e) {}
 
-		} catch(e: any) {
-			return ({ 'error': e.message })
-		}
+		return ({ unstoppabledomains, idriss })
 	}
 
 }

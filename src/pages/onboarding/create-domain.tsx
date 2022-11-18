@@ -264,7 +264,7 @@ const OnboardingCreateDomain = () => {
 	useEffect(() => {
 		if(step !== 0 || safeAddress === '' || loadingSafeData) {
 			setSafeAddressError('')
-		} else if(!isValidEthereumAddress(safeAddress) && !isValidSolanaAddress(safeAddress)) {
+		} else if(!isValidEthereumAddress(safeAddress)) { //removed && !isValidSolanaAddress(safeAddress) as it's right method to check SAFE exists
 			setSafeAddressError('Invalid address')
 		} else if(safeData?.length === 0) {
 			setSafeAddressError('No Safe found with this address')
