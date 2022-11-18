@@ -119,6 +119,7 @@ function ApplicantDetails({
 							for(const key of keys) {
 								if(response[key]) {
 									resolvedAddress = true
+									setApplicantAddressError(false)
 									setApplicantAddress(response[key])
 								}
 							}
