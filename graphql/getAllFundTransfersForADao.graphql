@@ -1,0 +1,13 @@
+query getAllFundsTransfersForADao($workspaceId: String!) {
+    fundsTransfers(where: {grant_: {workspace: $workspaceId}}) {
+    id
+    type
+    amount
+    status
+    transactionHash
+    to
+    application {
+      id
+    }
+  }
+}

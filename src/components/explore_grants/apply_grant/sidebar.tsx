@@ -12,7 +12,7 @@ function Sidebar({
 	const theme = useTheme()
 	return (
 		<Flex
-			bg={theme.colors.backgrounds.floatingSidebar}
+			bg='#F3F4F4'
 			direction='column'
 			alignItems='center'
 			px={10}
