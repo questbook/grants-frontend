@@ -18,7 +18,7 @@ import { WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/ze
 import AcceptInviteModal from 'src/screens/discover/_components/AcceptInviteModal'
 import DomainGrid from 'src/screens/discover/_components/DaosGrid'
 import { useMultichainDaosPaginatedQuery } from 'src/screens/discover/_hooks/useMultiChainPaginatedQuery'
-import { extractInviteInfo, InviteInfo } from 'src/screens/discover/_utils/invite'
+import { extractInviteInfo, InviteInfo } from 'src/libraries/_utils/invite'
 import { mergeSortedArrays } from 'src/screens/discover/_utils/mergeSortedArrays'
 import { chainNames } from 'src/utils/chainNames'
 import getErrorMessage from 'src/utils/errorUtils'
