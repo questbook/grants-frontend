@@ -31,6 +31,7 @@ function AccountDetails({ openModal }: Props) {
 	const buildComponent = () => (
 		<Menu size='xl'>
 			<MenuButton
+				ml={3}
 				variant='ghost'
 				disabled={isConnecting}
 				as={Button}
