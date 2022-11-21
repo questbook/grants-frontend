@@ -1,16 +1,18 @@
 import { Flex } from "@chakra-ui/react"
 import { ReactElement, useState } from "react"
 import NavbarLayout from "src/libraries/ui/navbarLayout"
-import LinkMultiSig from "./_components/LinkMultiSig"
-import Payouts from "./_components/Payouts"
-import ProposalReview from "./_components/ProposalReview"
-import ProposalSubmission from "./_components/ProposalSubmission"
+import { SafeSelectOption } from "src/v2/components/Onboarding/CreateDomain/SafeSelect"
+import BuilderDiscovery from "./_subscreens/BuilderDiscovery"
+import LinkMultiSig from "./_subscreens/LinkMultiSig"
+import Payouts from "./_subscreens/Payouts"
+import ProposalReview from "./_subscreens/ProposalReview"
+import ProposalSubmission from "./_subscreens/ProposalSubmission"
 import { today } from "./_utils/utils"
 
 function RequestProposal() {
     const buildComponent = () => {
         return (
-            <Flex minWidth='90%' gap={8} bgColor='white' padding={4} alignItems='center' marginTop={8} marginRight={16} marginLeft={16} marginBottom={4}>
+            <Flex minWidth='90%' gap={8} bgColor='white' padding={4} justifyContent='center' alignItems='center' marginTop={8} marginRight={16} marginLeft={16} marginBottom={4}>
 
                 {renderBody()}
             </Flex>
@@ -61,8 +63,13 @@ function RequestProposal() {
                 setMultiSigAddress={setMultiSigAddress}
                 step={step}
                 setStep={setStep}
-                selectedSafeNetwork={selectedSafeNetwork}
+                selectedSafeNetwork={selectedSafeNetwork!}
                 setSelectedSafeNetwork={setSelectedSafeNetwork}></LinkMultiSig>)
+            case 5: return (<BuilderDiscovery 
+                domainName={domainName} 
+                setDomainName = {setDomainName}
+                domainImage={domainImage}
+                setDomainImage={setDomainImage}/>)
         }
     }
 
@@ -90,7 +97,12 @@ function RequestProposal() {
 
     // State for Linking MultiSig
     const [multiSigAddress, setMultiSigAddress] = useState('')
-    const [selectedSafeNetwork, setSelectedSafeNetwork] = useState('')
+    const [selectedSafeNetwork, setSelectedSafeNetwork] = useState<SafeSelectOption>()
+
+    // State for Builder Discovery
+    const [domainName, setDomainName] = useState('')
+    const [domainImage, setDomainImage] = useState('')
+
 
     return buildComponent()
 }

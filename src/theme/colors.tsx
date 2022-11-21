@@ -62,6 +62,7 @@ const colors = {
 		1: '#FFDCC0',
 		2: '#FF7545',
 		3: '#E0533B',
+		4: '#FF9400',
 	},
 	crimson: {
 		1: '#FFC6C5',
