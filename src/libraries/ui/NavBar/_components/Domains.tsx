@@ -1,5 +1,5 @@
-import { useContext, useEffect, useMemo } from 'react'
-import { Flex, Image, Text } from '@chakra-ui/react'
+import { useContext, useEffect, useMemo, useRef } from 'react'
+import { Flex, FlexProps, Image, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Text } from '@chakra-ui/react'
 import { SupportedSafes } from '@questbook/supported-safes'
 import config from 'src/constants/config.json'
 import { SafeContext } from 'src/contexts/safeContext'
@@ -10,15 +10,57 @@ import logger from 'src/libraries/logger'
 import { ApiClientsContext } from 'src/pages/_app'
 import { MinimalWorkspace } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
+import { formatAddress } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 function Domains() {
 	const buildComponent = () => {
 		return (
+			<Popover
+				isLazy
+				initialFocusRef={popoverRef}>
+				{
+					({ onClose }) => (
+						<>
+							<PopoverTrigger>
+								{popoverButton()}
+							</PopoverTrigger>
+							<PopoverContent>
+								<PopoverHeader>
+									<Text
+										variant='v2_body'
+										fontWeight='500'>
+										Choose a different domain
+									</Text>
+								</PopoverHeader>
+								<PopoverArrow />
+								<PopoverCloseButton />
+								<PopoverBody
+									maxH='40vh'
+									overflowY='auto'>
+									{
+										workspaces.map((_) => {
+											return domainItem(_, { my: 2 }, () => {
+												setWorkspace(_)
+												onClose()
+											})
+										})
+									}
+								</PopoverBody>
+							</PopoverContent>
+						</>
+					)
+				}
+			</Popover>
+		)
+	}
+
+	const domainItem = (workspace: MinimalWorkspace, props?: FlexProps, onClick?: () => void) => {
+		return (
 			<Flex
-				px={3}
-				py={1}
-				align='center'>
+				onClick={onClick}
+				cursor={onClick ? 'pointer' : 'default'}
+				{...props}>
 				<Image
 					boxSize='32px'
 					src={workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, workspace?.title) : getUrlForIPFSHash(workspace?.logoIpfsHash!)} />
@@ -30,6 +72,11 @@ function Domains() {
 						fontWeight='500'>
 						{workspace?.title}
 					</Text>
+					<Text
+						variant='v2_metadata'
+						color='gray.5'>
+						{safeObj?.safeAddress && formatAddress(safeObj.safeAddress)}
+					</Text>
 					{/* <Flex align='center'>
 						<Image src={safeObj} />
 					</Flex> */}
@@ -38,10 +85,23 @@ function Domains() {
 		)
 	}
 
+	const popoverButton = () => {
+		return (
+			<Flex
+				bg='white'
+				px={3}
+				py={1}
+				align='center'>
+				{workspace && domainItem(workspace)}
+			</Flex>
+		)
+	}
+
+	const popoverRef = useRef<HTMLButtonElement>(null)
 	const { workspace, setWorkspace } = useContext(ApiClientsContext)!
 	const { safeObj, setSafeObj } = useContext(SafeContext)!
 	useEffect(() => {
-		logger.info({ safeObj }, '(Domains) Safe object')
+		logger.info({ safeObj, class: safeObj?.class }, '(Domains) Safe object')
 	}, [safeObj])
 	const { data: accountData } = useQuestbookAccount()
 
@@ -101,7 +161,7 @@ function Domains() {
 		}
 	}, [accountData?.address])
 
-	return buildComponent()
+	return workspace?.id ? buildComponent() : <Flex />
 }
 
 export default Domains

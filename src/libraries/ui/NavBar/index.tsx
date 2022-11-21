@@ -242,7 +242,7 @@ function NavBar({ bg, showLogo, showAddMembers, showInviteProposals, showStats, 
 // }
 
 NavBar.defaultProps = {
-	bg: 'white',
+	bg: 'gray.1',
 	showLogo: false,
 	showSearchBar: false,
 	showInviteProposals: true,
