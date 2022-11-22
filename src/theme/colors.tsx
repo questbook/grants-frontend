@@ -18,6 +18,7 @@ const colors = {
 		3: '#E0E0EC',
 		4: '#D2D2E3',
 		5: '#AFAFCC',
+		6: '#E7E4DD'
 	},
 	black: {
 		1: '#1D1919',
