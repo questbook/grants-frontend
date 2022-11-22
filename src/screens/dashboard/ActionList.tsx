@@ -12,7 +12,8 @@ function ActionList() {
 		<Flex
 			w='25%'
 			bg='white'
-			direction='column'>
+			direction='column'
+			overflowY='auto'>
 			{selectedProposalCount > 1 ? <MultiSelect /> : selectedProposalCount === 1 ? <SingleSelect /> : <Empty />}
 		</Flex>
 	)

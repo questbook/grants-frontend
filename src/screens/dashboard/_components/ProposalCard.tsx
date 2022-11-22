@@ -17,21 +17,31 @@ function ProposalCard({ index, proposal }: Props) {
 			<Flex
 				direction='column'
 				mt={2}
+				pr={2}
 				py={2}>
 				<Flex align='center'>
 					<Checkbox
 						isChecked={selectedProposals[index]}
 						spacing={1}
-						onChange={onClick}>
-						<Text
-							variant='body'
-							fontWeight='500'
-							cursor='pointer'
-							_hover={{ textDecoration: 'underline' }}
-						>
-							{getFieldString(proposal, 'projectName')}
-						</Text>
-					</Checkbox>
+						onChange={
+							() => {
+								onClick()
+							}
+						} />
+					<Text
+						ml={2}
+						variant='body'
+						fontWeight='500'
+						cursor='pointer'
+						onClick={
+							() => {
+								onClick(true)
+							}
+						}
+						_hover={{ textDecoration: 'underline' }}
+					>
+						{getFieldString(proposal, 'projectName')}
+					</Text>
 					<Text
 						ml='auto'
 						color='gray.5'
@@ -41,7 +51,7 @@ function ProposalCard({ index, proposal }: Props) {
 				</Flex>
 				<Flex
 					align='center'
-					mt={1}>
+					mt={2}>
 					<Image
 						borderWidth='1px'
 						borderColor='black.1'
@@ -49,7 +59,7 @@ function ProposalCard({ index, proposal }: Props) {
 						src={getAvatar(false, proposal.applicantId)}
 						boxSize='16px' />
 					<Text
-						ml={1}
+						ml={2}
 						variant='metadata'>
 						{getFieldString(proposal, 'applicantName')}
 					</Text>
@@ -60,8 +70,13 @@ function ProposalCard({ index, proposal }: Props) {
 
 	const { selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
 
-	const onClick = () => {
-		const copy = [...selectedProposals]
+	const onClick = (isText: boolean = false) => {
+		const count = selectedProposals.filter((_) => _).length
+		if(count === 1 && selectedProposals[index]) {
+			return
+		}
+
+		const copy = isText ? Array(selectedProposals.length).fill(false) : [...selectedProposals]
 		copy[index] = !copy[index]
 		setSelectedProposals(copy)
 	}

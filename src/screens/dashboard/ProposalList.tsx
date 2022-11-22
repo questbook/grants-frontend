@@ -10,9 +10,10 @@ function ProposalList() {
 	const buildComponent = () => (
 		<Flex
 			w='25%'
+			h='100%'
 			bg='white'
 			direction='column'
-			px={5}
+			pl={5}
 			py={4}>
 			<Text
 				fontWeight='700'
@@ -24,38 +25,52 @@ function ProposalList() {
 					color='black.3'>
 					{`(${proposals?.length})`}
 				</Text>
-
-				{/* TODO - Search Box */}
-
-				<Flex mt={4}>
-					<Checkbox
-						isChecked={selectedProposals.length > 0 && selectedProposals.every((_) => _)}
-						onChange={
-							(e) => {
-								logger.info({ value: e.target.checked }, '(Proposal List) Select All Checkbox')
-								setSelectedProposals(Array(proposals.length).fill(e.target.checked))
-							}
-						}>
-						<Text
-							variant='body'
-							fontWeight='400'>
-							Select All
-						</Text>
-					</Checkbox>
-
-					{/* TODO - Filter (Latest,..., etc) */}
-				</Flex>
 			</Text>
-			{
-				proposals.map((proposal, index) => {
-					return (
-						<ProposalCard
-							key={proposal.id}
-							proposal={proposal}
-							index={index} />
+
+			{/* TODO - Search Box */}
+
+			<Flex mt={4}>
+				<Checkbox
+					isChecked={selectedProposals.length > 0 && selectedProposals.every((_) => _)}
+					onChange={
+						(e) => {
+							logger.info({ value: e.target.checked }, '(Proposal List) Select All Checkbox')
+							setSelectedProposals(Array(proposals.length).fill(e.target.checked))
+						}
+					}>
+					<Text
+						variant='body'
+						fontWeight='400'>
+						Select All
+					</Text>
+				</Checkbox>
+			</Flex>
+
+			<Flex
+				w='100%'
+				h='100%'
+				direction='column'
+				overflowY='auto'>
+				{
+					proposals?.length > 0 && proposals?.map((proposal, index) => {
+						return (
+							<ProposalCard
+								key={proposal.id}
+								proposal={proposal}
+								index={index} />
+						)
+					})
+				}
+				{
+					!proposals?.length && (
+						<Text
+							my='auto'
+							textAlign='center'>
+							Proposals from builders show up here.
+						</Text>
 					)
-				})
-			}
+				}
+			</Flex>
 		</Flex>
 	)
 

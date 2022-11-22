@@ -182,8 +182,8 @@ function Reviews() {
 											{item?.rubric?.title}
 										</Text>
 										<Text
-											variant='body'
-											color='black.3'>
+											variant='metadata'
+											color='gray.6'>
 											{item?.rubric?.details}
 										</Text>
 									</Flex>
