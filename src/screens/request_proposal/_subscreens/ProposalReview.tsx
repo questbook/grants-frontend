@@ -90,10 +90,12 @@ function ProposalReview(
                     {/* CTA */}
                     <Flex gap={8} width='100%' justifyContent='flex-end'>
                         <Button variant='link' onClick={() => setStep(3)}>Skip for now</Button>
-                        <Button variant='primaryMedium' onClick={() => {
+                        <Button variant='primaryMedium'
+                         onClick={() => {
                             setStep(3)
                             setRubrics(rubricInputValues)
-                            }} >Continue</Button>
+                            }}
+                          isDisabled={!rubricMechanism}   >Continue</Button>
                     </Flex>
 
 

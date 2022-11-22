@@ -13,8 +13,8 @@ interface Props {
     setAmount: (value: number) => void,
     step: number,
     setStep: (value: number) => void,
-    milestones: string[],
-    setMilestones: (value: string[]) => void
+    milestones: object,
+    setMilestones: (value: object) => void
 }
 
 function Payouts(
@@ -46,7 +46,7 @@ function Payouts(
 
                     <Flex gap={4} alignItems='baseline'>
                         <Text variant="requestProposalBody">Accepted Proposals are paid out</Text>
-                        <FlushedInput placeholder='select one' width='15%' isDisabled={true} value={payoutMode} onChange={(e) => setPayoutMode(e.target.value)} />
+                        <FlushedInput placeholder='select one' isDisabled={true} value={payoutMode} onChange={(e) => setPayoutMode(e.target.value)} />
                     </Flex>
 
                     <Flex gap={4} alignItems='baseline'>
@@ -81,14 +81,18 @@ function Payouts(
 
                     <Flex gap={4} alignItems='baseline'>
                         <Text variant="requestProposalBody">Maximum amount paid out per proposal will be</Text>
-                        <FlushedInput placeholder='enter number' type='number' width='15%' value={amount.toString()} onChange={(e) => setAmount(parseInt(e.target.value))} />
+                        <FlushedInput placeholder='enter number' type='number' value={amount.toString()} onChange={(e) => setAmount(parseInt(e.target.value))} />
                         <Text variant="requestProposalBody">USD</Text>
                     </Flex>
 
                     {/* CTA */}
                     <Flex gap={8} width='100%' justifyContent='flex-end' >
-                        <Button variant='link' onClick={() => setStep(3)}>Skip for now</Button>
-                        <Button variant='primaryMedium' onClick={() => setStep(4)}>Continue</Button>
+                        <Button 
+                        variant='primaryMedium' 
+                        onClick={() => {setStep(4)
+                            setMilestones(milestoneInputValues)}} 
+                        isDisabled={!payoutMode || !amount}
+                        >Continue</Button>
                     </Flex>
                 </Flex>
             </>
