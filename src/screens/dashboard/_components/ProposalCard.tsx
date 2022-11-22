@@ -22,16 +22,13 @@ function ProposalCard({ index, proposal }: Props) {
 					<Checkbox
 						isChecked={selectedProposals[index]}
 						spacing={1}
-						onChange={
-							(e) => {
-								const copy = [...selectedProposals]
-								copy[index] = e.target.checked
-								setSelectedProposals(copy)
-							}
-						}>
+						onChange={onClick}>
 						<Text
 							variant='body'
-							fontWeight='500'>
+							fontWeight='500'
+							cursor='pointer'
+							_hover={{ textDecoration: 'underline' }}
+						>
 							{getFieldString(proposal, 'projectName')}
 						</Text>
 					</Checkbox>
@@ -62,6 +59,12 @@ function ProposalCard({ index, proposal }: Props) {
 	}
 
 	const { selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
+
+	const onClick = () => {
+		const copy = [...selectedProposals]
+		copy[index] = !copy[index]
+		setSelectedProposals(copy)
+	}
 
 	return buildComponent()
 }

@@ -137,7 +137,9 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	}, [selectedGrant])
 
 	useEffect(() => {
-		setSelectedProposals(Array(proposals.length).fill(false))
+		const arr = Array(proposals.length).fill(false)
+		arr[0] = true
+		setSelectedProposals(arr)
 	}, [proposals])
 
 	useEffect(() => {
