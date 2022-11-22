@@ -45,6 +45,7 @@ query getGrant($grantID: ID!) {
             updatedAtS
             milestones {
                 id
+                title
                 state
                 amount
                 amountPaid
