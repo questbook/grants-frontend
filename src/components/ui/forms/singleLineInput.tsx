@@ -97,7 +97,7 @@ function SingleLineInput({
 					fontWeight='bold'>
 					{label}
 					{
-						tooltip && tooltip.length ? (
+						tooltip ? (
 							<Tooltip
 								label={tooltip as string}
 								placement={tooltipPlacement}
@@ -160,7 +160,7 @@ function SingleLineInput({
 			{
 				(subtext && subtext.length)
       || (isError && errorText && errorText?.length) ? (
-						<Box mt={1} />
+	<Box mt={1} />
 					) : null
 			}
 			{
