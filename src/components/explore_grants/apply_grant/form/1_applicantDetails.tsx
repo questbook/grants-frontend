@@ -27,9 +27,6 @@ function ApplicantDetails({
 	applicantAddressError,
 	setApplicantAddressError,
 	safeNetwork,
-	resolvedDomain,
-	resolvedDomainError,
-	resolvedDomainErrorMessage
 }: {
   applicantName: string
   setApplicantName: (applicantName: string) => void
@@ -45,9 +42,6 @@ function ApplicantDetails({
   setApplicantAddressError: (applicantAddressError: boolean) => void
   grantRequiredFields: string[]
   safeNetwork: string
-  resolvedDomain: string
-  resolvedDomainError: boolean
-  resolvedDomainErrorMessage: string
 }) {
 	const { t } = useTranslation()
 	const { safeObj } = useSafeContext()
@@ -104,8 +98,21 @@ function ApplicantDetails({
 			<Box mt={6} />
 			<SingleLineInput
 				label={t('/explore_grants/apply.address')}
+				tooltip={
+					<div>
+						<div>
+							1. Wallet address on the specified network
+						</div>
+						<div>
+							2. Unstoppable Domain on the specified network
+						</div>
+						<div>
+							3. IDriss email, phone number or Twitter handle
+						</div>
+					</div>
+				}
 				placeholder={isEvm ? '0xa2dD...' : '5yDU...' } //TODO : remove hardcoding of chainId
-				subtext={resolvedDomain ? `Unstoppable domain found with owner ${resolvedDomain}` : `${t('/explore_grants/apply.your_address_on')} ${chainNames.get(safeObj?.chainId?.toString())}`}
+				subtext={`${t('/explore_grants/apply.your_address_on')} ${chainNames.get(safeObj?.chainId?.toString())}`}
 				onChange={
 					async(e) => {
 						setApplicantAddressError(false)
@@ -136,7 +143,7 @@ function ApplicantDetails({
 						}
 					}
 				}
-				isError={applicantAddressError && resolvedDomainError}
+				isError={applicantAddressError}
 				errorText={t('/explore_grants/apply.invalid_address_on_chain').replace('%CHAIN', chainNames.get(safeNetwork)?.toString() ?? defaultChainId.toString())}
 				value={applicantAddress}
 				visible={grantRequiredFields.includes('applicantAddress')}

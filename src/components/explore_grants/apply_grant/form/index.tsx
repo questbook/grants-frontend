@@ -10,8 +10,6 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import { GrantApplicationRequest } from '@questbook/service-validator-client'
-import axios from 'axios'
-import sha256 from 'crypto-js/sha256'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import { useRouter } from 'next/router'
 import ApplicantDetails from 'src/components/explore_grants/apply_grant/form/1_applicantDetails'
@@ -100,11 +98,6 @@ function Form({
 
 	const [applicantAddress, setApplicantAddress] = React.useState('')
 	const [applicantAddressError, setApplicantAddressError] = React.useState(false)
-	const [applicantAddressErrorMessage, setApplicantAddressErrorMessage] = React.useState('')
-
-	const [resolvedDomain, setResolvedDomain] = React.useState('')
-	// const [resolvedDomainError, setResolvedDomainError] = React.useState(true)
-	// const [resolvedDomainErrorMessage, setResolvedDomainErrorMessage] = React.useState('')
 
 	const [teamMembers, setTeamMembers] = React.useState<number | null>(1)
 	const [teamMembersError, setTeamMembersError] = React.useState(false)
@@ -313,7 +306,6 @@ function Form({
 
 		let projectMilestonesError = false
 		const newProjectMilestones = [...projectMilestones]
-		console.log('project milestones', newProjectMilestones)
 		projectMilestones.forEach((project, index) => {
 			if(project.milestone === '') {
 				newProjectMilestones[index].milestoneIsError = true
@@ -641,9 +633,6 @@ function Form({
 					setApplicantAddressError={setApplicantAddressError}
 					grantRequiredFields={grantRequiredFields}
 					safeNetwork={safeNetwork?.toString() ?? defaultChainId.toString()}
-					resolvedDomain={resolvedDomain}
-					resolvedDomainError={applicantAddressError}
-					resolvedDomainErrorMessage={applicantAddressErrorMessage}
 				/>
 
 				<Box mt='43px' />

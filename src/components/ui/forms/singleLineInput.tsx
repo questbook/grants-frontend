@@ -23,7 +23,7 @@ interface SingleLineInputProps {
   subtext?: string | null | undefined
   subtextAlign?: 'left' | 'right' | 'center'
   disabled?: boolean
-  tooltip?: string
+  tooltip?: string | JSX.Element
   tooltipPlacement?: PlacementWithLogical
 
   labelRightElement?: React.ReactNode
@@ -99,7 +99,7 @@ function SingleLineInput({
 					{
 						tooltip && tooltip.length ? (
 							<Tooltip
-								label={tooltip}
+								label={tooltip as string}
 								placement={tooltipPlacement}
 							/>
 						) : null
@@ -160,7 +160,7 @@ function SingleLineInput({
 			{
 				(subtext && subtext.length)
       || (isError && errorText && errorText?.length) ? (
-	<Box mt={1} />
+						<Box mt={1} />
 					) : null
 			}
 			{
