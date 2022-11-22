@@ -100,15 +100,17 @@ function ApplicantDetails({
 				label={t('/explore_grants/apply.address')}
 				tooltip={
 					<div>
-						<div>
-							1. Wallet address on the specified network
-						</div>
-						<div>
-							2. Unstoppable Domain on the specified network
-						</div>
-						<div>
-							3. IDriss email, phone number or Twitter handle
-						</div>
+						<ol>
+							<li>
+								Wallet address on the specified network
+							</li>
+							<li>
+								Unstoppable Domain on the specified network
+							</li>
+							<li>
+								IDriss email, phone number or Twitter handle
+							</li>
+						</ol>
 					</div>
 				}
 				placeholder={isEvm ? '0xa2dD...' : '5yDU...' } //TODO : remove hardcoding of chainId
