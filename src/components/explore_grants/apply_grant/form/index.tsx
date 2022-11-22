@@ -10,8 +10,6 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import { GrantApplicationRequest } from '@questbook/service-validator-client'
-import axios from 'axios'
-import sha256 from 'crypto-js/sha256'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import { useRouter } from 'next/router'
 import ApplicantDetails from 'src/components/explore_grants/apply_grant/form/1_applicantDetails'
@@ -23,9 +21,9 @@ import Loader from 'src/components/ui/loader'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import { defaultChainId, SupportedChainId, USD_ASSET } from 'src/constants/chains'
 import strings from 'src/constants/strings.json'
+import { useSafeContext } from 'src/contexts/safeContext'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSubmitApplication from 'src/hooks/useSubmitApplication'
-import logger from 'src/libraries/logger'
 import { WebwalletContext } from 'src/pages/_app'
 import { GrantApplicationFieldsSubgraph } from 'src/types/application'
 import { parseAmount } from 'src/utils/formattingUtils'
@@ -101,10 +99,6 @@ function Form({
 	const [applicantAddress, setApplicantAddress] = React.useState('')
 	const [applicantAddressError, setApplicantAddressError] = React.useState(false)
 
-	const [resolvedDomain, setResolvedDomain] = React.useState('')
-	const [resolvedDomainError, setResolvedDomainError] = React.useState(true)
-	const [resolvedDomainErrorMessage, setResolvedDomainErrorMessage] = React.useState('')
-
 	const [teamMembers, setTeamMembers] = React.useState<number | null>(1)
 	const [teamMembersError, setTeamMembersError] = React.useState(false)
 
@@ -159,6 +153,7 @@ function Form({
 	}, 0)
 
 	const { t } = useTranslation()
+	const { safeObj } = useSafeContext()
 
 	React.useEffect(() => {
 		if(defaultMilestoneFields && defaultMilestoneFields.length > 0) {
@@ -311,7 +306,6 @@ function Form({
 
 		let projectMilestonesError = false
 		const newProjectMilestones = [...projectMilestones]
-		console.log('project milestones', newProjectMilestones)
 		projectMilestones.forEach((project, index) => {
 			if(project.milestone === '') {
 				newProjectMilestones[index].milestoneIsError = true
@@ -537,68 +531,6 @@ function Form({
 		customFields,
 	])
 
-	useEffect(() => {
-		if (applicantAddress && applicantAddress.includes('.') && (safeNetwork === 137 || safeNetwork === 900001 || safeNetwork === 1)) {
-			// setResolvedDomainError(true)
-			const token = process.env.UD_KEY
-			axios.get(`https://resolve.unstoppabledomains.com/domains/${applicantAddress}`, {
-				headers: {
-					Authorization: `Bearer ${token}`
-				}
-			})
-				.then((res) => {
-					logger.info("UD ->", res.data)
-					if (res.data.meta.owner) {
-						if (safeNetwork === 137) {
-							if (res.data.records['crypto.MATIC.version.ERC20.address']) {
-								console.log("resolved domain", res.data.records['crypto.MATIC.version.ERC20.address'])
-								setResolvedDomain(res.data.records['crypto.MATIC.version.ERC20.address'])
-								setApplicantAddress(res.data.records['crypto.MATIC.version.ERC20.address'])
-								setResolvedDomainError(false)
-								setApplicantAddressError(false)
-								setResolvedDomainErrorMessage('')
-							} else {
-								setResolvedDomainErrorMessage("No MATIC address found for this domain")
-							}
-						}
-						if (safeNetwork === 900001) {
-							if (res.data.records['crypto.SOL.address']) {
-								console.log("resolved domain", res.data.records['crypto.SOL.address'])
-								setResolvedDomain(res.data.records['crypto.SOL.address'])
-								setApplicantAddress(res.data.records['crypto.SOL.address'])
-								setResolvedDomainError(false)
-								setApplicantAddressError(false)
-								setResolvedDomainErrorMessage('')
-							} else {
-								setResolvedDomainErrorMessage("No SOL address found for this domain")
-							}
-						}
-						if (safeNetwork === 1) {
-							if (res.data.records['crypto.ETH.address']) {
-								console.log("resolved domain", res.data.records['crypto.ETH.address'])
-								setResolvedDomain(res.data.records['crypto.ETH.address'])
-								setApplicantAddress(res.data.records['crypto.ETH.address'])
-								setResolvedDomainError(false)
-								setApplicantAddressError(false)
-								setResolvedDomainErrorMessage('')
-							} else {
-								setResolvedDomainErrorMessage("No ETH address found for this domain")
-							}
-						}
-					} else {
-						setResolvedDomainErrorMessage('Invalid Unstoppable domain')
-						setResolvedDomainError(true)
-					}
-				}).catch((err) => {
-					logger.error("UD error ->", err)
-					setResolvedDomainError(true)
-				})
-
-		} else if (resolvedDomain) {
-			setResolvedDomainError(true)
-		}
-	}, [applicantAddress])
-
 	return (
 		<Flex
 			my='30px'
@@ -701,9 +633,6 @@ function Form({
 					setApplicantAddressError={setApplicantAddressError}
 					grantRequiredFields={grantRequiredFields}
 					safeNetwork={safeNetwork?.toString() ?? defaultChainId.toString()}
-					resolvedDomain={resolvedDomain}
-					resolvedDomainError={resolvedDomainError}
-					resolvedDomainErrorMessage={resolvedDomainErrorMessage}
 				/>
 
 				<Box mt='43px' />
