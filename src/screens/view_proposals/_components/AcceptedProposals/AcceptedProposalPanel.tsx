@@ -193,8 +193,8 @@ const AcceptedProposalsPanel = ({
 
 				{
 					applicantsData?.filter((item) => (2 === item.status)).map((applicantData, i) => {
-						const fundTrasferofApplicant = fundTransfersData?.filter((fundTransfer: any) => (fundTransfer.application.id === applicantData.applicationId && fundTransfer.status === 'executed'))
-						const totalFundsSent = fundTrasferofApplicant?.reduce((acc: number, fundTransfer: any) => (acc + Number(fundTransfer.amount)), 0)
+						const fundTrasferofApplicant = fundTransfersData?.filter((fundTransfer: any) => (fundTransfer?.application?.id === applicantData?.applicationId && fundTransfer?.status === 'executed'))
+						const totalFundsSent = fundTrasferofApplicant?.reduce((acc: number, fundTransfer: any) => (acc + Number(fundTransfer?.amount)), 0)
 						return (
 							<AcceptedRow
 								key={`accepted-${i}`}

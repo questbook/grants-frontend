@@ -81,12 +81,13 @@ function AddToSafe() {
 
 	useEffect(() => {
 		const isValidEthAddress = isValidEthereumAddress(safeAddress)
-		const isValidSolAddress = isValidSolanaAddress(safeAddress)
-		logger.info({ isValidEthAddress, isValidSolAddress }, 'Is valid address')
+		// const isValidSolAddress = isValidSolanaAddress(safeAddress)
+		//isValidSolanaAddress(safeAddress) as it's right method to check SAFE exists
+		logger.info({ isValidEthAddress }, 'Is valid address')
 
 		if(step > 0 || safeAddress === '') {
 			setSafeAddressError('')
-		} else if(!isValidEthAddress && !isValidSolAddress) {
+		} else if(!isValidEthAddress) {
 			setSafeAddressError('Invalid address')
 		} else if(safeData?.length === 0 && !loadingSafeData && safeAddressError === '') {
 			setSafeAddressError('No Safe found with this address')
