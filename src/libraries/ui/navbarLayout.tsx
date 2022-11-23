@@ -5,14 +5,28 @@ import { ApiClientsContext } from 'src/pages/_app'
 import logger from 'src/utils/logger'
 import Sidebar from 'src/v2/components/Sidebar'
 
-interface Props {
-	children: React.ReactNode
-	renderNavbar?: boolean
-	renderSidebar?: boolean
-	renderSearchBar?: boolean
+type NavbarConfig = {
+	bg?: string
+	showLogo?: boolean
+	showSearchBar?: boolean
+	showInviteProposals?: boolean
+	showAddMembers?: boolean
+	showDomains?: boolean
+	showStats?: boolean
 }
 
-function NavbarLayout({ children, renderNavbar, renderSidebar, renderSearchBar }: Props) {
+type Props = {
+	children: React.ReactNode
+
+	//Navbar configs
+	renderNavbar?: boolean
+	navbarConfig: NavbarConfig
+
+	//Sidebar configs
+	renderSidebar?: boolean
+}
+
+function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar }: Props) {
 	const { connected, setConnected } = useContext(ApiClientsContext)!
 
 	const [renderCount, setRenderCount] = useState(0)
@@ -31,7 +45,7 @@ function NavbarLayout({ children, renderNavbar, renderSidebar, renderSearchBar }
 			overscrollBehavior='none'>
 			{
 				renderNavbar && (
-					<NavBar showSearchBar={renderSearchBar ?? false} />
+					<NavBar {...navbarConfig} />
 				)
 			}
 			<Flex
