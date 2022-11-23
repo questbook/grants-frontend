@@ -1,6 +1,7 @@
 import { useContext, useEffect, useMemo, useRef } from 'react'
 import { Flex, FlexProps, Image, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Text } from '@chakra-ui/react'
 import { SupportedSafes } from '@questbook/supported-safes'
+import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import config from 'src/constants/config.json'
 import { SafeContext } from 'src/contexts/safeContext'
 import { useGetWorkspaceMembersQuery } from 'src/generated/graphql'
@@ -12,46 +13,49 @@ import { MinimalWorkspace } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAddress } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function Domains() {
 	const buildComponent = () => {
 		return (
-			<Popover
-				isLazy
-				initialFocusRef={popoverRef}>
-				{
-					({ onClose }) => (
-						<>
-							<PopoverTrigger>
-								{popoverButton()}
-							</PopoverTrigger>
-							<PopoverContent>
-								<PopoverHeader>
-									<Text
-										variant='v2_body'
-										fontWeight='500'>
-										Choose a different domain
-									</Text>
-								</PopoverHeader>
-								<PopoverArrow />
-								<PopoverCloseButton />
-								<PopoverBody
-									maxH='40vh'
-									overflowY='auto'>
-									{
-										workspaces.map((_) => {
-											return domainItem(_, { my: 2 }, () => {
-												setWorkspace(_)
-												onClose()
+			workspaces?.length > 1 ? (
+				<Popover
+					isLazy
+					initialFocusRef={popoverRef}>
+					{
+						({ onClose }) => (
+							<>
+								<PopoverTrigger>
+									{popoverButton()}
+								</PopoverTrigger>
+								<PopoverContent>
+									<PopoverHeader>
+										<Text
+											variant='v2_body'
+											fontWeight='500'>
+											Choose a different domain
+										</Text>
+									</PopoverHeader>
+									<PopoverArrow />
+									<PopoverCloseButton />
+									<PopoverBody
+										maxH='40vh'
+										overflowY='auto'>
+										{
+											workspaces.map((_) => {
+												return domainItem(_, { my: 2 }, () => {
+													setWorkspace(_)
+													onClose()
+												})
 											})
-										})
-									}
-								</PopoverBody>
-							</PopoverContent>
-						</>
-					)
-				}
-			</Popover>
+										}
+									</PopoverBody>
+								</PopoverContent>
+							</>
+						)
+					}
+				</Popover>
+			) : popoverButton()
 		)
 	}
 
@@ -80,6 +84,21 @@ function Domains() {
 					{/* <Flex align='center'>
 						<Image src={safeObj} />
 					</Flex> */}
+					{
+						onClick && process.env.NODE_ENV === 'development' && (
+							<Text
+								variant='v2_body'
+								color='black.3'
+								fontWeight='500'
+							>
+								{CHAIN_INFO[getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId].name}
+								{' '}
+								-
+								{' '}
+								{workspace.id}
+							</Text>
+						)
+					}
 				</Flex>
 			</Flex>
 		)

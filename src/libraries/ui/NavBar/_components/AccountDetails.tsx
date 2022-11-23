@@ -13,9 +13,9 @@ import {
 	MenuButton,
 	MenuList,
 	Text,
-	useToast,
 } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { WebwalletContext } from 'src/pages/_app'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAddress } from 'src/utils/formattingUtils'
@@ -147,7 +147,7 @@ function AccountDetails({ openModal }: Props) {
 	const { t } = useTranslation()
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 
-	const toast = useToast()
+	const toast = useCustomToast()
 
 	const isConnected = !!scwAddress
 	const isConnecting = !scwAddress && !!webwallet?.address

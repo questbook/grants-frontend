@@ -1,37 +1,34 @@
 import { useRef } from 'react'
-import { Button, Flex, Image, Text, ToastId, useToast } from '@chakra-ui/react'
+import { Button, Flex, Image, Text, ToastId, useToast, UseToastOptions } from '@chakra-ui/react'
 
-interface Props {
-    type: 'info' | 'success' | 'warning' | 'error'
-    prompt: string
-    action?: () => void
-    actionText?: string
-}
+type Props = {
+	action?: () => void
+	actionText?: string
+} & UseToastOptions
 
-function useCustomToast({ type, prompt, action, actionText }: Props) {
+function useCustomToast() {
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()
 
-	const showToast = (bg: string) => {
+	const showToast = ({ action, actionText, ...props }: Props) => {
 		toastRef.current = toast({
-			position: 'top',
 			render: () => {
 				return (
 					<Flex
 						boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
-						bg={bg}
+						bg={BG[props.status ?? 'info']}
 						direction='column'
 						p={4}>
 						<Flex>
 							<Image
-								src={`/v2/icons/${type === 'success' ? 'check double' : 'error warning'}.svg`}
+								src={`/v2/icons/${props.status === 'success' ? 'check double' : 'error warning'}.svg`}
 								boxSize='20px' />
 							<Flex
 								align='start'
 								direction='column'
 								ml={4}>
 								<Text fontWeight='400'>
-									{prompt}
+									{props.title}
 								</Text>
 								{
 									action && actionText && (
@@ -49,27 +46,20 @@ function useCustomToast({ type, prompt, action, actionText }: Props) {
 						</Flex>
 					</Flex>
 				)
-			}
+			},
+			position: 'top-right',
+			...props
 		})
+
+		const BG = {
+			'info': 'accent.columbia',
+			'success': 'accent.june',
+			'warning': 'accent.crayola',
+			'error': 'accent.melon'
+		}
 	}
 
-	const showInfoToast = () => {
-		showToast('accent.columbia')
-	}
-
-	const showSuccessToast = () => {
-		showToast('accent.june')
-	}
-
-	const showWarningToast = () => {
-		showToast('accent.crayola')
-	}
-
-	const showErrorToast = () => {
-		showToast('accent.melon')
-	}
-
-	return { toastRef, showInfoToast, showSuccessToast, showWarningToast, showErrorToast }
+	return showToast
 }
 
 export default useCustomToast

@@ -1,12 +1,13 @@
 import { ChangeEvent, useContext, useEffect, useState } from 'react'
 import { Search2Icon } from '@chakra-ui/icons'
-import { Center, Container, Image, Input, InputGroup, InputLeftElement, Spacer, useToast } from '@chakra-ui/react'
+import { Center, Container, Image, Input, InputGroup, InputLeftElement, Spacer } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import { ethers } from 'ethers'
 import saveAs from 'file-saver'
 import { useRouter } from 'next/router'
 import { DAOSearchContext } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import AccountDetails from 'src/libraries/ui/NavBar/_components/AccountDetails'
 import AddMemberButton from 'src/libraries/ui/NavBar/_components/AddMemberButton'
@@ -148,7 +149,7 @@ function NavBar({ bg, showLogo, showAddMembers, showInviteProposals, showStats, 
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString, setSearchString } = useContext(DAOSearchContext)!
 	const router = useRouter()
-	const toast = useToast()
+	const toast = useCustomToast()
 	const [privateKey, setPrivateKey] = useState<string>('')
 	const [privateKeyError, setPrivateKeyError] = useState<string>('')
 
@@ -191,8 +192,8 @@ function NavBar({ bg, showLogo, showAddMembers, showInviteProposals, showStats, 
 		const copied = copy(privateKey)
 		if(copied) {
 			toast({
-				title: 'Copied to clipboard',
 				status: 'success',
+				title: 'Copied to clipboard',
 				duration: 3000,
 				isClosable: true,
 			})
@@ -208,9 +209,9 @@ function NavBar({ bg, showLogo, showAddMembers, showInviteProposals, showStats, 
 			localStorage.removeItem('scwAddress')
 			localStorage.removeItem('currentWorkspace')
 			toast({
+				status: 'info',
 				title: 'Wallet imported successfully',
-				status: 'success',
-				duration: 3000,
+				duration: 2000,
 				isClosable: true,
 				onCloseComplete() {
 					router.reload()
@@ -218,9 +219,9 @@ function NavBar({ bg, showLogo, showAddMembers, showInviteProposals, showStats, 
 			})
 		} else {
 			toast({
+				status: 'error',
 				title: 'Wallet could not be imported',
 				description: 'User not authorised. Nonce not present, contact support!',
-				status: 'warning',
 				duration: 3000,
 				isClosable: true,
 			})
@@ -231,14 +232,24 @@ function NavBar({ bg, showLogo, showAddMembers, showInviteProposals, showStats, 
 	return buildComponent()
 }
 
+// NavBar.defaultProps = {
+// 	bg: 'white',
+// 	showLogo: true,
+// 	showSearchBar: true,
+// 	showInviteProposals: false,
+// 	showAddMembers: false,
+// 	showDomains: false,
+// 	showStats: false
+// }
+
 NavBar.defaultProps = {
-	bg: 'white',
-	showLogo: true,
-	showSearchBar: true,
-	showInviteProposals: false,
-	showAddMembers: false,
-	showWorkspaces: false,
-	showStats: false
+	bg: 'gray.1',
+	showLogo: false,
+	showSearchBar: false,
+	showInviteProposals: true,
+	showAddMembers: true,
+	showDomains: true,
+	showStats: true
 }
 
 export default NavBar
