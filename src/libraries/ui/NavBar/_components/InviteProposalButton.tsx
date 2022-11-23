@@ -16,7 +16,7 @@ function InviteProposalButton() {
 				}
 				onClick={onClick}>
 				<Text
-					variant='v2_body'
+					variant='body'
 					color='white'>
 					Invite Proposal
 				</Text>

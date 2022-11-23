@@ -61,7 +61,7 @@ function AccountDetails({ openModal }: Props) {
 							boxSize='24px' />
 						<Text
 							ml={3}
-							variant='v2_body'
+							variant='body'
 							fontWeight='500'>
 							Setup your profile
 						</Text>
@@ -72,7 +72,7 @@ function AccountDetails({ openModal }: Props) {
 							size='24px'
 							icon={
 								<Image
-									src='/v2/icons/arrow right.svg'
+									src='/v2/icons/arrow right/enabled.svg'
 									boxSize='18px' />
 							}
 							onClick={() => {}} />
@@ -84,7 +84,7 @@ function AccountDetails({ openModal }: Props) {
 						mt={3}
 					>
 						<Text
-							variant='v2_body'
+							variant='body'
 							color='gray.5'>
 							Your zero wallet
 						</Text>
@@ -94,7 +94,7 @@ function AccountDetails({ openModal }: Props) {
 							target='_blank'
 							href={IN_APP_WALLET_LEARN_MORE_URL}>
 							<Text
-								variant='v2_body'>
+								variant='body'>
 								Learn More
 							</Text>
 						</Link>
@@ -105,7 +105,7 @@ function AccountDetails({ openModal }: Props) {
 						px={3}
 						pt={1}>
 						<Link onClick={copyScwAddress}>
-							<Text variant='v2_body'>
+							<Text variant='body'>
 								{formatAddress(scwAddress ?? '')}
 							</Text>
 						</Link>
@@ -128,7 +128,7 @@ function AccountDetails({ openModal }: Props) {
 										ml={2}
 										_hover={{ textDecoration: 'underline', cursor: 'pointer' }}
 										onClick={item.onClick}
-										variant='v2_body'
+										variant='body'
 									>
 										{item.title}
 									</Text>

@@ -14,7 +14,7 @@ function StatsButton() {
 				}
 				onClick={onClick}>
 				<Text
-					variant='v2_body'
+					variant='body'
 					fontWeight='500'>
 					View Stats
 				</Text>
