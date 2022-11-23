@@ -119,12 +119,27 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			return 'no-grant-id'
 		}
 
-		const results = await fetchMoreGrantDetails({ grantID: grants[selectedGrantIndex].id }, true)
-		if(results?.length === 0 || !results[0]) {
+		const first = 100
+		let skip = 0
+		const results = await fetchMoreGrantDetails({ first, skip, grantID: grants[selectedGrantIndex].id }, true)
+		const tempGrant = results[0]?.grant
+		if(results?.length === 0 || !results[0] || !tempGrant) {
 			return 'no-grant-with-id'
 		}
 
-		setSelectedGrant(results[0].grant)
+		let shouldContinue = true
+		do {
+			skip += first
+			const moreResults = await fetchMoreGrantDetails({ first, skip, grantID: grants[selectedGrantIndex].id }, true)
+			if(moreResults?.length === 0 || !moreResults[0] || !moreResults[0]?.grant?.applications) {
+				shouldContinue = false
+				break
+			}
+
+			tempGrant.applications = [...tempGrant?.applications, ...moreResults[0].grant.applications]
+		} while(shouldContinue)
+
+		setSelectedGrant(tempGrant)
 		return 'grant-details-fetched'
 	}, [selectedGrantIndex])
 
