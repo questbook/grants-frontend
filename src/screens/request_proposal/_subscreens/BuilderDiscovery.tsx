@@ -8,11 +8,14 @@ import ErrorToast from "src/components/ui/toasts/errorToast";
 interface Props {
     domainName: string,
     setDomainName: (domainName: string) => void,
-    domainImage: string,
-    setDomainImage: (domainImage: string) => void,
+    domainImage: File,
+    setDomainImage: (domainImage: File) => void,
+    step: number,
+    setIsOpen: (value: boolean) => void,
+    createWorkspace: () => void
 }
 
-function BuilderDiscovery({ domainName, setDomainName, domainImage, setDomainImage }: Props) {
+function BuilderDiscovery({ domainName, setDomainName, domainImage, setDomainImage, step, setIsOpen, createWorkspace }: Props) {
 
     const ref = useRef(null)
 
@@ -97,7 +100,16 @@ function BuilderDiscovery({ domainName, setDomainName, domainImage, setDomainIma
                 </Flex>
 
                 {/* CTA button */}
-                <Button variant='primaryMedium' isDisabled={!domainName}>Create</Button>
+                <Button
+                    variant='primaryMedium'
+                    isDisabled={!domainName}
+                    onClick={() => {
+                        console.log('domainName', domainName)
+                        setDomainImage(domainLogoFile!)
+                        createWorkspace()
+                        setIsOpen(true)
+                    }}
+                >Create</Button>
             </Flex>
         )
     }

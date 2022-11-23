@@ -51,7 +51,8 @@ const colors = {
 	green: {
 		1: '#E3F6C1',
 		2: '#0DC98B',
-		3: '#0E753A'
+		3: '#0E753A',
+		4: '#2FE60B'
 	},
 	yellow: {
 		1: '#FFF2BD',

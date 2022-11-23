@@ -1,6 +1,22 @@
-import { Flex } from "@chakra-ui/react"
-import { ReactElement, useState } from "react"
+import { Flex, ToastId, useToast } from "@chakra-ui/react"
+import { ReactElement, useCallback, useContext, useEffect, useRef, useState } from "react"
+import NetworkTransactionFlowStepperModal from "src/components/ui/NetworkTransactionFlowStepperModal"
+import ErrorToast from "src/components/ui/toasts/errorToast"
+import { WORKSPACE_REGISTRY_ADDRESS } from "src/constants/addresses"
+import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
+import SupportedChainId from "src/generated/SupportedChainId"
+import useQBContract from "src/hooks/contracts/useQBContract"
+import { useBiconomy } from "src/hooks/gasless/useBiconomy"
+import { useNetwork } from "src/hooks/gasless/useNetwork"
+import { useQuestbookAccount } from "src/hooks/gasless/useQuestbookAccount"
+import logger from "src/libraries/logger"
 import NavbarLayout from "src/libraries/ui/navbarLayout"
+import { ApiClientsContext, WebwalletContext } from "src/pages/_app"
+import getErrorMessage from "src/utils/errorUtils"
+import { getExplorerUrlForTxHash } from "src/utils/formattingUtils"
+import { addAuthorizedOwner, addAuthorizedUser, bicoDapps, chargeGas, getEventData, getTransactionDetails, networksMapping, sendGaslessTransaction } from "src/utils/gaslessUtils"
+import { uploadToIPFS } from "src/utils/ipfsUtils"
+import { getSupportedValidatorNetworkFromChainId } from "src/utils/validationUtils"
 import { SafeSelectOption } from "src/v2/components/Onboarding/CreateDomain/SafeSelect"
 import BuilderDiscovery from "./_subscreens/BuilderDiscovery"
 import LinkMultiSig from "./_subscreens/LinkMultiSig"
@@ -65,11 +81,21 @@ function RequestProposal() {
                 setStep={setStep}
                 selectedSafeNetwork={selectedSafeNetwork!}
                 setSelectedSafeNetwork={setSelectedSafeNetwork}></LinkMultiSig>)
-            case 5: return (<BuilderDiscovery 
-                domainName={domainName} 
-                setDomainName = {setDomainName}
-                domainImage={domainImage}
-                setDomainImage={setDomainImage}/>)
+            case 5: return (
+                <><BuilderDiscovery
+                    domainName={domainName}
+                    setDomainName={setDomainName}
+                    domainImage={domainImage!}
+                    setDomainImage={setDomainImage}
+                    step={step}
+                    setIsOpen={setIsNetworkTransactionModalOpen}
+                    createWorkspace={createWorkspace} />
+                    <NetworkTransactionFlowStepperModal
+                        isOpen={isNetworkTransactionModalOpen}
+                        currentStepIndex={currentStepIndex || 0}
+                        viewTxnLink={getExplorerUrlForTxHash(network, txHash)} 
+                        onClose={() => setCurrentStepIndex(undefined)}/>
+                </>)
         }
     }
 
@@ -101,7 +127,162 @@ function RequestProposal() {
 
     // State for Builder Discovery
     const [domainName, setDomainName] = useState('')
-    const [domainImage, setDomainImage] = useState('')
+    const [domainImage, setDomainImage] = useState<File | null>(null);
+
+    // State for Network Transaction Flow
+    const [isNetworkTransactionModalOpen, setIsNetworkTransactionModalOpen] = useState(false)
+    const [currentStepIndex, setCurrentStepIndex] = useState<number>()
+
+    // state for gasless transactions
+    const [txHash, setTxHash] = useState('')
+
+    // Webwallet
+	const [shouldRefreshNonce, setShouldRefreshNonce] = useState<boolean>()
+	const { data: accountDataWebwallet, nonce } = useQuestbookAccount(shouldRefreshNonce)
+	const { webwallet } = useContext(WebwalletContext)!
+
+    const { validatorApi, subgraphClients } = useContext(ApiClientsContext)!
+    const { network } = useNetwork()
+    const targetContractObject = useQBContract('workspace', network as unknown as SupportedChainId)
+
+    const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
+		chainId: selectedSafeNetwork?.networkId ? networksMapping[selectedSafeNetwork?.networkId?.toString()] : '',
+		shouldRefreshNonce: shouldRefreshNonce
+	})
+	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
+
+    const toastRef = useRef<ToastId>()
+	const toast = useToast()
+
+    useEffect(() => {
+		// console.log("add_user", nonce, webwallet)
+		if(nonce && nonce !== 'Token expired') {
+			return
+		}
+
+		if(webwallet) {
+			addAuthorizedUser(webwallet?.address)
+				.then(() => {
+					setShouldRefreshNonce(true)
+					// console.log('Added authorized user', webwallet.address)
+				})
+				// .catch((err) => console.log("Couldn't add authorized user", err))
+		}
+	}, [webwallet, nonce])
+
+
+    useEffect(() => {
+
+		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && selectedSafeNetwork?.networkId &&
+			biconomy.networkId && biconomy.networkId.toString() === networksMapping[selectedSafeNetwork?.networkId?.toString()]) {
+			setIsBiconomyInitialised(true)
+		}
+
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, selectedSafeNetwork?.networkId])
+
+
+
+    const createWorkspace = useCallback(async() => {
+		
+		try {
+			setCurrentStepIndex(0)
+			const uploadedImageHash = (await uploadToIPFS(domainImage)).hash
+
+			const {
+				data: { ipfsHash },
+			} = await validatorApi.validateWorkspaceCreate({
+				title: domainName!,
+				about: '',
+				logoIpfsHash: uploadedImageHash,
+				creatorId: accountDataWebwallet!.address!,
+				creatorPublicKey: webwallet?.publicKey,
+				socials: [],
+				supportedNetworks: [
+					getSupportedValidatorNetworkFromChainId(network!),
+				],
+			})
+
+			if(!ipfsHash) {
+				throw new Error('Error validating grant data')
+			}
+
+			console.log('sefe', selectedSafeNetwork)
+			console.log('network', network)
+			if(!selectedSafeNetwork || !network) {
+				throw new Error('No network specified')
+			}
+
+			// console.log(12344343)
+
+			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
+				// console.log('54321')
+				return
+			}
+
+			setCurrentStepIndex(1)
+
+			const transactionHash = await sendGaslessTransaction(
+				biconomy,
+				targetContractObject,
+				'createWorkspace',
+				[ipfsHash, new Uint8Array(32), multiSigAddress, parseInt(selectedSafeNetwork.networkId)],
+				WORKSPACE_REGISTRY_ADDRESS[network],
+				biconomyWalletClient,
+				scwAddress,
+				webwallet,
+				`${network}`,
+				bicoDapps[network].webHookId,
+				nonce
+			)
+
+			if(!transactionHash) {
+				return
+			}
+
+			const { txFee, receipt } = await getTransactionDetails(transactionHash, network.toString())
+			setTxHash(receipt?.transactionHash)
+			logger.info({ network, subgraphClients }, 'Network and Client')
+			await subgraphClients[network]?.waitForBlock(receipt?.blockNumber)
+			// console.log('txFee', txFee)
+
+			setCurrentStepIndex(2)
+			const event = await getEventData(receipt, 'WorkspaceCreated', WorkspaceRegistryAbi)
+			if(event) {
+				const workspaceId = Number(event.args[0].toBigInt())
+				// console.log('workspace_id', workspace_id)
+
+				const newWorkspace = `chain_${network}-0x${workspaceId.toString(16)}`
+				logger.info({ newWorkspace }, 'New workspace created')
+				localStorage.setItem('currentWorkspace', newWorkspace)
+				await addAuthorizedOwner(workspaceId, webwallet?.address!, scwAddress, network.toString(),
+					'this is the safe addres - to be updated in the new flow')
+				// console.log('fdsao')
+				await chargeGas(workspaceId, Number(txFee), network)
+			}
+
+			setCurrentStepIndex(3)
+			// setTimeout(() => {
+			// 	router.push({ pathname: '/your_grants' })
+			// }, 2000)
+			// setIsDomainCreationSuccessful(true)
+			setCurrentStepIndex(undefined)
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		} catch(e: any) {
+			setCurrentStepIndex(undefined)
+			const message = getErrorMessage(e)
+			toastRef.current = toast({
+				position: 'top',
+				render: () => ErrorToast({
+					content: message,
+					close: () => {
+						if(toastRef.current) {
+							toast.close(toastRef.current)
+						}
+					},
+				}),
+			})
+		}
+	}, [biconomyWalletClient, domainName, accountDataWebwallet, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, selectedSafeNetwork])
 
 
     return buildComponent()
