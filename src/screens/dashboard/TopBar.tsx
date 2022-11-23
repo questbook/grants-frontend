@@ -3,24 +3,33 @@ import { Button, Flex, IconButton, Image, Text } from '@chakra-ui/react'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 
 function TopBar() {
-	const { selectedGrant, selectedGrantIndex, setSelectedGrantIndex, grants } = useContext(DashboardContext)!
+	const { selectedGrantIndex, setSelectedGrantIndex, grants } = useContext(DashboardContext)!
+
+	const selectedGrant = useMemo(() => {
+		if(!grants?.length || selectedGrantIndex === undefined || selectedGrantIndex >= grants?.length) {
+			return
+		}
+
+		return grants[selectedGrantIndex]
+	}, [selectedGrantIndex, grants])
+
 	const isLeftArrowEnabled = useMemo(() => {
-		if(!grants?.length) {
+		if(!grants?.length || selectedGrantIndex === undefined) {
 			return false
 		}
 
 		const index = grants.findIndex(grant => grant.id === selectedGrant?.id)
 		return index > 0
-	}, [selectedGrant, grants])
+	}, [selectedGrant])
 
 	const isRightArrowEnabled = useMemo(() => {
-		if(!grants?.length) {
+		if(!grants?.length || selectedGrantIndex === undefined) {
 			return false
 		}
 
 		const index = grants.findIndex(grant => grant.id === selectedGrant?.id)
 		return index < grants.length - 1
-	}, [selectedGrant, grants])
+	}, [selectedGrant])
 
 	return (
 		<Flex

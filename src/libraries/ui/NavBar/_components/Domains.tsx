@@ -8,6 +8,7 @@ import { useGetWorkspaceMembersQuery } from 'src/generated/graphql'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
+import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import { ApiClientsContext } from 'src/pages/_app'
 import { MinimalWorkspace } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
@@ -150,7 +151,7 @@ function Domains() {
 
 	useEffect(() => {
 		if(workspaces.length && !workspace) {
-			const savedWorkspaceData = localStorage.getItem('currentWorkspace')
+			const savedWorkspaceData = localStorage.getItem(DOMAIN_CACHE_KEY)
 			if(!savedWorkspaceData || savedWorkspaceData === 'undefined') {
 				setWorkspace(workspaces[0])
 			} else {

@@ -211,11 +211,11 @@ function Reviews() {
 	}
 
 	const { workspace } = useContext(ApiClientsContext)!
-	const { proposals, selectedGrant, selectedProposals } = useContext(DashboardContext)!
+	const { proposals, grants, selectedGrantIndex, selectedProposals } = useContext(DashboardContext)!
 	const chainId = useMemo(() => {
 		return getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
 	}, [workspace])
-	const { loadReview } = useLoadReview(selectedGrant?.id, chainId)
+	const { loadReview } = useLoadReview(grants[selectedGrantIndex!]?.id, chainId)
 
 	const [expanded, setExpanded] = useState<boolean>(false)
 	const [reviews, setReviews] = useState<IReviewFeedback[]>([])

@@ -1,28 +1,20 @@
 import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { defaultChainId } from 'src/constants/chains'
-import { GetGrantQuery, GetGrantsQuery, useGetGrantQuery, useGetGrantsQuery, useGetWorkspaceMembersQuery } from 'src/generated/graphql'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import { GetGrantsQuery, useGetGrantsQuery, useGetProposalsQuery } from 'src/generated/graphql'
 import logger from 'src/libraries/logger'
 import { ApiClientsContext } from 'src/pages/_app'
-import { DOMAIN_CACHE_KEY, GRANT_CACHE_KEY } from 'src/screens/dashboard/_utils/constants'
-import { DashboardContextType } from 'src/screens/dashboard/_utils/types'
+import { GRANT_CACHE_KEY } from 'src/screens/dashboard/_utils/constants'
+import { DashboardContextType, Proposals } from 'src/screens/dashboard/_utils/types'
 import { useMultiChainQuery } from 'src/screens/proposal/_hooks/useMultiChainQuery'
-import { MinimalWorkspace } from 'src/types'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined)
 
 const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
-	const { data: accountData } = useQuestbookAccount()
-	const { workspace, setWorkspace } = useContext(ApiClientsContext)!
+	const { workspace } = useContext(ApiClientsContext)!
 	const chainID = useMemo(() => {
 		return getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
 	}, [workspace])
-
-	const { fetchMore: fetchWorkspaces } = useMultiChainQuery({
-		useQuery: useGetWorkspaceMembersQuery,
-		options: {}
-	})
 
 	const { fetchMore: fetchMoreGrants } = useMultiChainQuery({
 		useQuery: useGetGrantsQuery,
@@ -30,53 +22,16 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		chains: [chainID],
 	})
 
-	const { fetchMore: fetchMoreGrantDetails } = useMultiChainQuery({
-		useQuery: useGetGrantQuery,
+	const { fetchMore: fetchMoreProposals } = useMultiChainQuery({
+		useQuery: useGetProposalsQuery,
 		options: {},
 		chains: [chainID],
 	})
 
 	const [grants, setGrants] = useState<GetGrantsQuery['grants']>([])
 	const [selectedGrantIndex, setSelectedGrantIndex] = useState<number>()
-	const [selectedGrant, setSelectedGrant] = useState<GetGrantQuery['grant']>()
+	const [proposals, setProposals] = useState<Proposals>([])
 	const [selectedProposals, setSelectedProposals] = useState<boolean[]>([])
-
-	const setSelectedWorkspace = useCallback(async() => {
-		if(!accountData?.address) {
-			return 'no-account'
-		}
-
-		const results = await fetchWorkspaces({ actorId: accountData.address })
-		if(!results?.length || !results?.[0]?.workspaceMembers?.length) {
-			return 'no-workspace'
-		}
-
-		const workspaces: MinimalWorkspace[] = []
-		for(const result of results) {
-			if(result?.workspaceMembers?.length) {
-				for(const mem of result.workspaceMembers) {
-					if(mem?.workspace) {
-						workspaces.push(mem.workspace)
-					}
-				}
-			}
-		}
-
-		const savedWorkspaceData = localStorage.getItem(DOMAIN_CACHE_KEY)
-		if(!savedWorkspaceData || savedWorkspaceData === 'undefined') {
-			setWorkspace(workspaces[0])
-			return 'workspaces-fetched-using-query'
-		} else {
-			const savedWorkspaceDataChain = savedWorkspaceData.split('-')[0]
-			const savedWorkspaceDataId = savedWorkspaceData.split('-')[1]
-			const i = workspaces.findIndex(
-				(w) => w.id === savedWorkspaceDataId &&
-					w.supportedNetworks[0] === savedWorkspaceDataChain
-			)
-			setWorkspace(workspaces[i])
-			return 'workspaces-fetched-from-cache'
-		}
-	}, [accountData?.address])
 
 	const fetchSelectedGrant = useCallback(async() => {
 		if(!workspace) {
@@ -87,8 +42,8 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		const grantID = localStorage.getItem(KEY)
 
 		const results = await fetchMoreGrants({ domainID: workspace.id }, true)
-		if(results?.length === 0 || !results[0] || results?.[0]?.grants?.length === 0) {
-			return 'no-grants'
+		if(results?.length === 0 || !results[0]) {
+			return 'some-error'
 		}
 
 		logger.info({ results }, 'Fetched grants')
@@ -96,7 +51,12 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 		if(!grantID) {
 			setSelectedGrantIndex(0)
-			localStorage.setItem(KEY, results[0].grants[0].id)
+			if(results[0].grants.length === 0) {
+				localStorage.removeItem(KEY)
+			} else {
+				localStorage.setItem(KEY, results[0].grants[0].id)
+			}
+
 			return 'grants-fetched-using-query'
 		} else {
 			const index = results[0].grants.findIndex((g) => g.id === grantID)
@@ -111,58 +71,36 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		}
 	}, [workspace])
 
-	const getGrantDetails = useCallback(async() => {
-		logger.info({ selectedGrantIndex }, 'Fetching grant details')
+	const getProposals = useCallback(async() => {
+		logger.info({ selectedGrantIndex }, 'Fetching proposals')
 		if(selectedGrantIndex === undefined) {
 			return 'no-selected-grant-index'
+		} else if(grants.length === 0) {
+			setProposals([])
+			return 'no-grants-no-proposal'
 		} else if(!grants[selectedGrantIndex]?.id) {
 			return 'no-grant-id'
 		}
 
 		const first = 100
 		let skip = 0
-		const results = await fetchMoreGrantDetails({ first, skip, grantID: grants[selectedGrantIndex].id }, true)
-		const tempGrant = results[0]?.grant
-		if(results?.length === 0 || !results[0] || !tempGrant) {
-			return 'no-grant-with-id'
-		}
 
+		const proposals: Proposals = []
 		let shouldContinue = true
 		do {
-			skip += first
-			const moreResults = await fetchMoreGrantDetails({ first, skip, grantID: grants[selectedGrantIndex].id }, true)
-			if(moreResults?.length === 0 || !moreResults[0] || !moreResults[0]?.grant?.applications) {
+			const results = await fetchMoreProposals({ first, skip, grantID: grants[selectedGrantIndex].id }, true)
+			if(results?.length === 0 || !results[0] || !results[0]?.grantApplications?.length) {
 				shouldContinue = false
 				break
 			}
 
-			tempGrant.applications = [...tempGrant?.applications, ...moreResults[0].grant.applications]
+			proposals.push(...results[0]?.grantApplications)
+			skip += first
 		} while(shouldContinue)
 
-		setSelectedGrant(tempGrant)
+		setProposals(proposals)
 		return 'grant-details-fetched'
-	}, [selectedGrantIndex])
-
-	const proposals = useMemo(() => {
-		if(!selectedGrant) {
-			return []
-		}
-
-		return selectedGrant.applications
-	}, [selectedGrant])
-
-	useEffect(() => {
-		const arr = Array(proposals.length).fill(false)
-		arr[0] = true
-		setSelectedProposals(arr)
-	}, [proposals])
-
-	useEffect(() => {
-		logger.info({ address: accountData?.address }, 'Account data changed')
-		setSelectedWorkspace().then((ret) => {
-			logger.info({ message: 'setSelectedWorkspace', ret }, 'Set selected workspace')
-		})
-	}, [accountData?.address])
+	}, [grants, selectedGrantIndex])
 
 	useEffect(() => {
 		logger.info({ workspace }, 'Workspace changed')
@@ -173,10 +111,16 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 	useEffect(() => {
 		logger.info({ selectedGrantIndex }, 'Selected grant index changed')
-		getGrantDetails().then((ret) => {
-			logger.info({ message: 'getGrantDetails', ret }, 'Get grant details')
+		getProposals().then((ret) => {
+			logger.info({ message: 'getProposals', ret }, 'Get proposals')
 		})
-	}, [selectedGrantIndex])
+	}, [grants, selectedGrantIndex])
+
+	useEffect(() => {
+		const arr = Array(proposals.length).fill(false)
+		arr[0] = true
+		setSelectedProposals(arr)
+	}, [proposals])
 
 	return (
 		<DashboardContext.Provider
@@ -184,8 +128,6 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 				{
 					grants,
 					proposals,
-					selectedGrant,
-					setSelectedGrant,
 					selectedGrantIndex,
 					setSelectedGrantIndex,
 					selectedProposals,

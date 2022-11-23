@@ -27,7 +27,20 @@ function Dashboard() {
 
 Dashboard.getLayout = function(page: ReactElement) {
 	return (
-		<NavbarLayout renderSidebar={false}>
+		<NavbarLayout
+			renderSidebar={false}
+			renderNavbar
+			navbarConfig={
+				{
+					bg: 'gray.1',
+					showLogo: false,
+					showSearchBar: false,
+					showInviteProposals: true,
+					showAddMembers: true,
+					showDomains: true,
+					showStats: true
+				}
+			}>
 			<DashboardProvider>
 				{page}
 			</DashboardProvider>
