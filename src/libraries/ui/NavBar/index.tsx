@@ -1,23 +1,34 @@
 import { ChangeEvent, useContext, useEffect, useState } from 'react'
 import { Search2Icon } from '@chakra-ui/icons'
-import { Center, Container, Image, Input, InputGroup, InputLeftElement, Spacer, useToast } from '@chakra-ui/react'
+import { Center, Container, Image, Input, InputGroup, InputLeftElement, Spacer } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import { ethers } from 'ethers'
 import saveAs from 'file-saver'
 import { useRouter } from 'next/router'
 import { DAOSearchContext } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
-import AccountDetails from 'src/libraries/ui/NavBar/AccountDetails'
-import ImportConfirmationModal from 'src/libraries/ui/NavBar/ImportConfirmationModal'
-import RecoveryModal from 'src/libraries/ui/NavBar/RecoveryModal'
+import AccountDetails from 'src/libraries/ui/NavBar/_components/AccountDetails'
+import AddMemberButton from 'src/libraries/ui/NavBar/_components/AddMemberButton'
+import Domains from 'src/libraries/ui/NavBar/_components/Domains'
+import ImportConfirmationModal from 'src/libraries/ui/NavBar/_components/ImportConfirmationModal'
+import InviteProposalButton from 'src/libraries/ui/NavBar/_components/InviteProposalButton'
+import RecoveryModal from 'src/libraries/ui/NavBar/_components/RecoveryModal'
+import StatsButton from 'src/libraries/ui/NavBar/_components/StatsButton'
 import { getNonce } from 'src/utils/gaslessUtils'
 
 type Props = {
-	showSearchBar: boolean
+	bg?: string
+	showLogo?: boolean
+	showSearchBar?: boolean
+	showInviteProposals?: boolean
+	showAddMembers?: boolean
+	showDomains?: boolean
+	showStats?: boolean
 }
 
-function NavBar({ showSearchBar }: Props) {
+function NavBar({ bg, showLogo, showAddMembers, showInviteProposals, showStats, showDomains, showSearchBar }: Props) {
 	const buildComponent = () => (
 		<>
 			<Container
@@ -30,36 +41,44 @@ function NavBar({ showSearchBar }: Props) {
 				maxH='64px'
 				display='flex'
 				maxW='100vw'
-				bg='white'
+				bg={bg}
 				ps='42px'
 				pe='15px'
 				py='16px'
 				minWidth={{ base: '-webkit-fill-available' }}
 			>
-				<Image
-					onClick={
-						() => router.push({
-							pathname: '/',
-						})
-					}
-					display={{ base: 'none', lg: 'inherit' }}
-					mr='auto'
-					src='/ui_icons/qb.svg'
-					alt='Questbook'
-					cursor='pointer'
-				/>
-				<Image
-					onClick={
-						() => router.push({
-							pathname: '/',
-						})
-					}
-					display={{ base: 'inherit', lg: 'none' }}
-					mr='auto'
-					src='/ui_icons/qb.svg'
-					alt='Questbook'
-					cursor='pointer'
-				/>
+				{
+					showLogo && (
+						<Image
+							onClick={
+								() => router.push({
+									pathname: '/',
+								})
+							}
+							display={{ base: 'none', lg: 'inherit' }}
+							mr='auto'
+							src='/ui_icons/qb.svg'
+							alt='Questbook'
+							cursor='pointer'
+						/>
+					)
+				}
+				{
+					showLogo && (
+						<Image
+							onClick={
+								() => router.push({
+									pathname: '/',
+								})
+							}
+							display={{ base: 'inherit', lg: 'none' }}
+							mr='auto'
+							src='/ui_icons/qb.svg'
+							alt='Questbook'
+							cursor='pointer'
+						/>
+					)
+				}
 				{
 					isQbAdmin && (
 						<>
@@ -72,41 +91,11 @@ function NavBar({ showSearchBar }: Props) {
 						</>
 					)
 				}
+
+				{showDomains && <Domains />}
+				{showStats && <StatsButton />}
 				<Spacer />
-				{/* {
-				// @TODO-gasless: FIX HERE
-				true && (
-					<Flex
-						align="center"
-						justify="center"
-						borderRadius="2px"
-						bg="#F0F0F7"
-						px={2.5}
-						py={2.5}>
-						<Image
-							src='/ui_icons/ellipse.svg'
-							boxSize="8px"
-							mr={2}
-							display="inline-block" />
-						<Text
-							fontSize="14px"
-							lineHeight="20px"
-							fontWeight="500"
-							color="#122224">
-							{
-								chainId
-									? CHAIN_INFO[chainId].isTestNetwork && !SHOW_TEST_NETS
-										? 'Unsupported Network'
-										: CHAIN_INFO[chainId].name
-									: 'Unsupported Network'
-							}
-						</Text>
-					</Flex>
 
-				)
-			} */}
-
-				{/* @TODO-gasless: FIX HERE */}
 				{
 					showSearchBar && (
 						<Center>
@@ -126,6 +115,10 @@ function NavBar({ showSearchBar }: Props) {
 					)
 				}
 				<Spacer />
+
+				{showAddMembers && <AddMemberButton />}
+				{showInviteProposals && <InviteProposalButton />}
+
 				<AccountDetails
 					openModal={
 						(type) => {
@@ -133,15 +126,6 @@ function NavBar({ showSearchBar }: Props) {
 							setIsRecoveryModalOpen(true)
 						}
 					} />
-
-				{/* {!connected && <GetStarted onGetStartedClick={onGetStartedClick} />} */}
-				{/* {
-				isDisconnected && false && (
-					<ConnectWallet
-						onGetStartedBtnClicked={onGetStartedBtnClicked}
-						setGetStartedClicked={setGetStartedClicked} />
-				)
-			} */}
 			</Container>
 			<RecoveryModal
 				isOpen={isRecoveryModalOpen}
@@ -165,7 +149,7 @@ function NavBar({ showSearchBar }: Props) {
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString, setSearchString } = useContext(DAOSearchContext)!
 	const router = useRouter()
-	const toast = useToast()
+	const toast = useCustomToast()
 	const [privateKey, setPrivateKey] = useState<string>('')
 	const [privateKeyError, setPrivateKeyError] = useState<string>('')
 
@@ -208,8 +192,8 @@ function NavBar({ showSearchBar }: Props) {
 		const copied = copy(privateKey)
 		if(copied) {
 			toast({
-				title: 'Copied to clipboard',
 				status: 'success',
+				title: 'Copied to clipboard',
 				duration: 3000,
 				isClosable: true,
 			})
@@ -225,9 +209,9 @@ function NavBar({ showSearchBar }: Props) {
 			localStorage.removeItem('scwAddress')
 			localStorage.removeItem('currentWorkspace')
 			toast({
+				status: 'info',
 				title: 'Wallet imported successfully',
-				status: 'success',
-				duration: 3000,
+				duration: 2000,
 				isClosable: true,
 				onCloseComplete() {
 					router.reload()
@@ -235,9 +219,9 @@ function NavBar({ showSearchBar }: Props) {
 			})
 		} else {
 			toast({
+				status: 'error',
 				title: 'Wallet could not be imported',
 				description: 'User not authorised. Nonce not present, contact support!',
-				status: 'warning',
 				duration: 3000,
 				isClosable: true,
 			})
@@ -246,6 +230,26 @@ function NavBar({ showSearchBar }: Props) {
 	}
 
 	return buildComponent()
+}
+
+// NavBar.defaultProps = {
+// 	bg: 'white',
+// 	showLogo: true,
+// 	showSearchBar: true,
+// 	showInviteProposals: false,
+// 	showAddMembers: false,
+// 	showDomains: false,
+// 	showStats: false
+// }
+
+NavBar.defaultProps = {
+	bg: 'gray.1',
+	showLogo: false,
+	showSearchBar: false,
+	showInviteProposals: true,
+	showAddMembers: true,
+	showDomains: true,
+	showStats: true
 }
 
 export default NavBar

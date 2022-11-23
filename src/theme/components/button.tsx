@@ -137,9 +137,6 @@ export default {
 					},
 				},
 			},
-			ghost: {
-				color: '#555570',
-			},
 			secondaryV2: {
 				bg: 'gray.3',
 				color: 'black.1',
@@ -196,10 +193,8 @@ export default {
 				color: 'white',
 				paddingY: '8px',
 				paddingX: '16px',
-				fontWeight: '500',
-				fontSize: '14px',
 				w: '170px', // Note: the values for height and width will be changed
-				h: '48px',
+				h: '32px',
 				borderRadius: '2px'
 			}
 		},

@@ -230,10 +230,11 @@ i18next.use(initReactI18next).init({
 					'mark_milestone_as_done_modal_heading': 'Mark Milestone as Done',
 					'mark_milestone_as_done_modal_subheading': 'Milestone once verified as completed can be marked as done.',
 				},
-				'recovery': {
+				'account_details': {
 					'menu': {
-						'use_another_wallet': 'Use another in-app wallet',
-						'save_wallet': 'Export private key'
+						'use_another_wallet': 'Import existing wallet',
+						'save_wallet': 'Save wallet key',
+						'swap': 'Switch to building'
 					},
 					'import': {
 						'heading': 'Use another in-app wallet',
@@ -253,7 +254,7 @@ i18next.use(initReactI18next).init({
 						'yes': 'Yes',
 						'no': 'No'
 					}
-				}
+				},
 			},
 
 		},
