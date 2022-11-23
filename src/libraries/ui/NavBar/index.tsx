@@ -232,24 +232,24 @@ function NavBar({ bg, showLogo, showAddMembers, showInviteProposals, showStats, 
 	return buildComponent()
 }
 
-// NavBar.defaultProps = {
-// 	bg: 'white',
-// 	showLogo: true,
-// 	showSearchBar: true,
-// 	showInviteProposals: false,
-// 	showAddMembers: false,
-// 	showDomains: false,
-// 	showStats: false
-// }
-
 NavBar.defaultProps = {
-	bg: 'gray.1',
-	showLogo: false,
-	showSearchBar: false,
-	showInviteProposals: true,
-	showAddMembers: true,
-	showDomains: true,
-	showStats: true
+	bg: 'white',
+	showLogo: true,
+	showSearchBar: true,
+	showInviteProposals: false,
+	showAddMembers: false,
+	showDomains: false,
+	showStats: false
 }
+
+// NavBar.defaultProps = {
+// 	bg: 'gray.1',
+// 	showLogo: false,
+// 	showSearchBar: false,
+// 	showInviteProposals: true,
+// 	showAddMembers: true,
+// 	showDomains: true,
+// 	showStats: true
+// }
 
 export default NavBar
