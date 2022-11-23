@@ -1,3 +1,4 @@
+import { captureException } from '@sentry/nextjs'
 import { errorCodes, getMessageFromCode } from 'eth-rpc-errors'
 import { RpcError } from 'wagmi'
 
@@ -26,6 +27,7 @@ function getErrorMessage(
 	e: RpcError<{ message?: string }> | Error | { error: RpcError<{ message?: string }> },
 	gasEstimationFailMessage = 'An Internal Smart Contract Error Occurred'
 ) {
+	captureException(e)
 	if('error' in e) {
 		e = e.error
 	}

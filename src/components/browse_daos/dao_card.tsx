@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { Box, Divider, Flex, Image, Spacer, Switch, Tag, Text } from '@chakra-ui/react'
+import { Box, Divider, Flex, Image, Switch, Tag, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { formatAddress } from 'src/utils/formattingUtils'
@@ -36,7 +36,7 @@ function DomainCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfAppl
 			onClick={
 				(e) => {
 					// returning as onClick fired from dao visibility toggle switch for admins
-					if (isAdmin && [
+					if(isAdmin && [
 						'[object HTMLSpanElement]',
 						'[object HTMLLabelElement]',
 						'[object HTMLInputElement]',
@@ -53,7 +53,9 @@ function DomainCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfAppl
 					})
 				}
 			}>
-			<Flex flexDirection='column' gap={4}>
+			<Flex
+				flexDirection='column'
+				gap={4}>
 				<Flex>
 					<Image
 						src={logo}
@@ -94,11 +96,17 @@ function DomainCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfAppl
 					minHeight='0'
 					paddingStart={1}
 					paddingEnd={1}
-					onClick={() => {window.open(safeUrl, '_blank')}}>
+					onClick={
+						() => {
+							window.open(safeUrl, '_blank')
+						}
+					}>
 					{safeAddress ? formatAddress(safeAddress) : ''}
 				</Tag>
 				<Divider />
-				<Flex justifyContent='space-between' mt={2}>
+				<Flex
+					justifyContent='space-between'
+					mt={2}>
 					<Flex alignItems='center'>
 						<Text
 							fontSize='18px'
@@ -119,7 +127,8 @@ function DomainCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfAppl
 							fontWeight='500'>
 							{noOfApplicants}
 						</Text>
-						<Text ml='5px'
+						<Text
+							ml='5px'
 							fontSize='14px'
 							color='#555570'>
 							Proposals
