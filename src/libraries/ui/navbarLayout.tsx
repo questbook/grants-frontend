@@ -20,7 +20,7 @@ type Props = {
 
 	//Navbar configs
 	renderNavbar?: boolean
-	navbarConfig: NavbarConfig
+	navbarConfig?: NavbarConfig
 
 	//Sidebar configs
 	renderSidebar?: boolean
