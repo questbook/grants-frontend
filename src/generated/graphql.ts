@@ -4916,6 +4916,15 @@ export type GetGrantsQueryVariables = Exact<{
 
 export type GetGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean }> };
 
+export type GetPayoutsQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+  proposalID: Scalars['String'];
+}>;
+
+
+export type GetPayoutsQuery = { __typename?: 'Query', fundsTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, asset: string, type: FundsTransferType, createdAtS: number, to: string, transactionHash?: string | null, status: FundsTransferStatusType, executionTimestamp?: number | null, milestone?: { __typename?: 'ApplicationMilestone', id: string } | null, grant: { __typename?: 'Grant', reward: { __typename?: 'Reward', id: string, asset: string, committed: string, token?: { __typename?: 'Token', id: string, label: string, address: string, decimal: number, chainId?: string | null, iconHash: string } | null } } }> };
+
 export type GetProposalsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
@@ -7836,6 +7845,75 @@ export type GetGrantsLazyQueryHookResult = ReturnType<typeof useGetGrantsLazyQue
 export type GetGrantsQueryResult = Apollo.QueryResult<GetGrantsQuery, GetGrantsQueryVariables>;
 export function refetchGetGrantsQuery(variables: GetGrantsQueryVariables) {
       return { query: GetGrantsDocument, variables: variables }
+    }
+export const GetPayoutsDocument = gql`
+    query getPayouts($first: Int, $skip: Int, $proposalID: String!) {
+  fundsTransfers(
+    first: $first
+    skip: $skip
+    where: {application: $proposalID, type_in: [funds_disbursed, funds_disbursed_from_safe]}
+  ) {
+    amount
+    asset
+    type
+    createdAtS
+    to
+    transactionHash
+    status
+    executionTimestamp
+    milestone {
+      id
+    }
+    grant {
+      reward {
+        id
+        asset
+        committed
+        token {
+          id
+          label
+          address
+          decimal
+          chainId
+          iconHash
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetPayoutsQuery__
+ *
+ * To run a query within a React component, call `useGetPayoutsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPayoutsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPayoutsQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *      proposalID: // value for 'proposalID'
+ *   },
+ * });
+ */
+export function useGetPayoutsQuery(baseOptions: Apollo.QueryHookOptions<GetPayoutsQuery, GetPayoutsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPayoutsQuery, GetPayoutsQueryVariables>(GetPayoutsDocument, options);
+      }
+export function useGetPayoutsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPayoutsQuery, GetPayoutsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPayoutsQuery, GetPayoutsQueryVariables>(GetPayoutsDocument, options);
+        }
+export type GetPayoutsQueryHookResult = ReturnType<typeof useGetPayoutsQuery>;
+export type GetPayoutsLazyQueryHookResult = ReturnType<typeof useGetPayoutsLazyQuery>;
+export type GetPayoutsQueryResult = Apollo.QueryResult<GetPayoutsQuery, GetPayoutsQueryVariables>;
+export function refetchGetPayoutsQuery(variables: GetPayoutsQueryVariables) {
+      return { query: GetPayoutsDocument, variables: variables }
     }
 export const GetProposalsDocument = gql`
     query getProposals($first: Int, $skip: Int, $grantID: String!) {

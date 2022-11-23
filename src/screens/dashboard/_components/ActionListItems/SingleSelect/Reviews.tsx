@@ -63,13 +63,17 @@ function Reviews() {
 							)
 						})
 					}
-					<Text
-						mt={4}
-						variant='metadata'
-						color='gray.5'
-						fontWeight='500'>
-						REVIEWER EVALUATION
-					</Text>
+					{
+						(proposal?.applicationReviewers?.length || 0) > 0 && (
+							<Text
+								mt={4}
+								variant='metadata'
+								color='gray.5'
+								fontWeight='500'>
+								REVIEWER EVALUATION
+							</Text>
+						)
+					}
 
 					{
 						proposal?.applicationReviewers?.map((reviewer, index) => {

@@ -51,12 +51,6 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 		if(!grantID) {
 			setSelectedGrantIndex(0)
-			if(results[0].grants.length === 0) {
-				localStorage.removeItem(KEY)
-			} else {
-				localStorage.setItem(KEY, results[0].grants[0].id)
-			}
-
 			return 'grants-fetched-using-query'
 		} else {
 			const index = results[0].grants.findIndex((g) => g.id === grantID)
@@ -111,6 +105,11 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 	useEffect(() => {
 		logger.info({ selectedGrantIndex }, 'Selected grant index changed')
+		if(selectedGrantIndex !== undefined && selectedGrantIndex < grants?.length) {
+			const KEY = `${GRANT_CACHE_KEY}-${chainID}-${workspace?.id}`
+			localStorage.setItem(KEY, grants[selectedGrantIndex].id)
+		}
+
 		getProposals().then((ret) => {
 			logger.info({ message: 'getProposals', ret }, 'Get proposals')
 		})

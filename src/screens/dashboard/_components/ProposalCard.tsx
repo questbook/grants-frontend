@@ -42,6 +42,16 @@ function ProposalCard({ index, proposal }: Props) {
 					>
 						{getFieldString(proposal, 'projectName')}
 					</Text>
+					{
+						process.env.NODE_ENV === 'development' && (
+							<Text
+								ml={2}
+								variant='metadata'
+								color='black.3'>
+								{`(${proposal.id})`}
+							</Text>
+						)
+					}
 					<Text
 						ml='auto'
 						color='gray.5'
