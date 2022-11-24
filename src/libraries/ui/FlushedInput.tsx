@@ -1,5 +1,5 @@
 import { Flex, Text, Input, ResponsiveValue } from "@chakra-ui/react"
-import { ChangeEventHandler } from "react"
+import { ChangeEventHandler, MutableRefObject } from "react"
 
 interface Props {
     placeholder: string,
@@ -9,10 +9,13 @@ interface Props {
     value?: string,
     onChange?: ChangeEventHandler<HTMLInputElement>,
     textAlign?: any,
-    helperText?: string
+    helperText?: string,
+    ref?: MutableRefObject<HTMLInputElement | null>,
+    onClick?: () => void,
+    height?: ResponsiveValue<string | number>,
 }
 
-function FlushedInput({ placeholder, width, type, isDisabled, value, onChange, textAlign, helperText }: Props) {
+function FlushedInput({ placeholder, width, height, type, isDisabled, value, onChange, textAlign, helperText, ref }: Props) {
     return (
         <>
             <Flex direction='column' gap={2}>
@@ -24,11 +27,13 @@ function FlushedInput({ placeholder, width, type, isDisabled, value, onChange, t
                     fontWeight='400'
                     fontSize='20px'
                     width={width ? width : value ? `${value.length + 1}ch` : `${placeholder.length + 5}ch`}
+                    height={height}
                     type={type}
                     isDisabled={isDisabled}
                     value={value}
                     onChange={onChange}
-                    textAlign={textAlign ? textAlign : 'center'} />
+                    textAlign={textAlign ? textAlign : 'center'}
+                    ref={ref} />
                 <Text variant="v2_helper_text">{helperText}</Text>
             </Flex>
         </>

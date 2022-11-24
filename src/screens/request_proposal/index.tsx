@@ -1,4 +1,5 @@
 import { Flex, ToastId, useToast } from "@chakra-ui/react"
+import {useRouter} from "next/router"
 import { ReactElement, useCallback, useContext, useEffect, useRef, useState } from "react"
 import NetworkTransactionFlowStepperModal from "src/components/ui/NetworkTransactionFlowStepperModal"
 import ErrorToast from "src/components/ui/toasts/errorToast"
@@ -92,14 +93,17 @@ function RequestProposal() {
                     createWorkspace={createWorkspace} />
                     <NetworkTransactionFlowStepperModal
                         isOpen={isNetworkTransactionModalOpen}
-                        currentStepIndex={currentStepIndex || 0}
+                        currentStepIndex={currentStepIndex! }
                         viewTxnLink={getExplorerUrlForTxHash(network, txHash)} 
-                        onClose={() => setCurrentStepIndex(undefined)}/>
+                        onClose={() => {
+                            setCurrentStepIndex(undefined)
+                            router.push({ pathname: '/your_grants' })
+                            }}/>
                 </>)
         }
     }
 
-    // State for Proposal Submission
+    // State for proposal creation
     const todayDate = today()
     const [proposalName, setProposalName] = useState('')
     const [startDate, setStartDate] = useState(todayDate)
@@ -154,6 +158,8 @@ function RequestProposal() {
     const toastRef = useRef<ToastId>()
 	const toast = useToast()
 
+    const router = useRouter()
+
     useEffect(() => {
 		// console.log("add_user", nonce, webwallet)
 		if(nonce && nonce !== 'Token expired') {
@@ -181,13 +187,13 @@ function RequestProposal() {
 	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, selectedSafeNetwork?.networkId])
 
 
-
+    // create workspace
     const createWorkspace = useCallback(async() => {
 		
 		try {
 			setCurrentStepIndex(0)
 			const uploadedImageHash = (await uploadToIPFS(domainImage)).hash
-
+            console.log('domain logo', uploadedImageHash)
 			const {
 				data: { ipfsHash },
 			} = await validatorApi.validateWorkspaceCreate({
@@ -212,14 +218,11 @@ function RequestProposal() {
 				throw new Error('No network specified')
 			}
 
-			// console.log(12344343)
-
 			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
-				// console.log('54321')
 				return
 			}
 
-			setCurrentStepIndex(1)
+			// setCurrentStepIndex(1)
 
 			const transactionHash = await sendGaslessTransaction(
 				biconomy,
@@ -243,9 +246,9 @@ function RequestProposal() {
 			setTxHash(receipt?.transactionHash)
 			logger.info({ network, subgraphClients }, 'Network and Client')
 			await subgraphClients[network]?.waitForBlock(receipt?.blockNumber)
-			// console.log('txFee', txFee)
+			console.log('txFee', txFee)
 
-			setCurrentStepIndex(2)
+			setCurrentStepIndex(1)
 			const event = await getEventData(receipt, 'WorkspaceCreated', WorkspaceRegistryAbi)
 			if(event) {
 				const workspaceId = Number(event.args[0].toBigInt())
@@ -256,19 +259,15 @@ function RequestProposal() {
 				localStorage.setItem('currentWorkspace', newWorkspace)
 				await addAuthorizedOwner(workspaceId, webwallet?.address!, scwAddress, network.toString(),
 					'this is the safe addres - to be updated in the new flow')
-				// console.log('fdsao')
+				
 				await chargeGas(workspaceId, Number(txFee), network)
 			}
 
-			setCurrentStepIndex(3)
-			// setTimeout(() => {
-			// 	router.push({ pathname: '/your_grants' })
-			// }, 2000)
-			// setIsDomainCreationSuccessful(true)
-			setCurrentStepIndex(undefined)
+			setCurrentStepIndex(2)
+			setCurrentStepIndex(3) // 3 is the final step
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
-			setCurrentStepIndex(undefined)
+			setCurrentStepIndex(3) // 3 is the final step
 			const message = getErrorMessage(e)
 			toastRef.current = toast({
 				position: 'top',
@@ -283,6 +282,8 @@ function RequestProposal() {
 			})
 		}
 	}, [biconomyWalletClient, domainName, accountDataWebwallet, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, selectedSafeNetwork])
+
+    // create grant
 
 
     return buildComponent()
