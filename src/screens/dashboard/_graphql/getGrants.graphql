@@ -4,5 +4,16 @@ query getGrants($domainID: String!) {
         id
         title
         acceptingApplications
+        reward {
+            committed,
+            id,
+            asset,
+            token {
+                address,
+                label,
+                decimal,
+                iconHash
+            }
+        },
     }
 }

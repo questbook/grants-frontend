@@ -1,14 +1,25 @@
 // This renders the single proposal along with the Discussion section or the aggregated proposals, and shows up as the 2nd column
 
+import { useContext, useMemo } from 'react'
 import { Flex } from '@chakra-ui/react'
+import Empty from 'src/screens/dashboard/_components/Body/Empty'
+import MultiSelect from 'src/screens/dashboard/_components/Body/MultiSelect'
+import SingleSelect from 'src/screens/dashboard/_components/Body/SingleSelect'
+import { DashboardContext } from 'src/screens/dashboard/Context'
 
 function Body() {
 	const buildComponent = () => (
 		<Flex
 			mx='auto'
-			bg='white'
-			w='48%' />
+			w='48%'>
+			{selectedProposalCount > 1 ? <MultiSelect /> : selectedProposalCount === 1 ? <SingleSelect /> : <Empty />}
+		</Flex>
 	)
+
+	const { selectedProposals } = useContext(DashboardContext)!
+	const selectedProposalCount = useMemo(() => {
+		return selectedProposals.filter((_) => _).length
+	}, [selectedProposals])
 
 	return buildComponent()
 }

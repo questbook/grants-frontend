@@ -2,9 +2,9 @@
 
 import { useContext, useMemo } from 'react'
 import { Flex } from '@chakra-ui/react'
-import Empty from 'src/screens/dashboard/_components/ActionListItems/Empty'
-import MultiSelect from 'src/screens/dashboard/_components/ActionListItems/MultiSelect'
-import SingleSelect from 'src/screens/dashboard/_components/ActionListItems/SingleSelect'
+import Empty from 'src/screens/dashboard/_components/ActionList/Empty'
+import MultiSelect from 'src/screens/dashboard/_components/ActionList/MultiSelect'
+import SingleSelect from 'src/screens/dashboard/_components/ActionList/SingleSelect'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 
 function ActionList() {

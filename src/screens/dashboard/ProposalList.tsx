@@ -3,7 +3,7 @@
 import { useContext } from 'react'
 import { Checkbox, Flex, Text } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
-import ProposalCard from 'src/screens/dashboard/_components/ProposalCard'
+import ProposalCard from 'src/screens/dashboard/_components/ProposalList'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 
 function ProposalList() {

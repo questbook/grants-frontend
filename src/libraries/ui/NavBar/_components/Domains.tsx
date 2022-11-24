@@ -80,7 +80,7 @@ function Domains() {
 					<Text
 						variant='metadata'
 						color='gray.5'>
-						{safeObj?.safeAddress && formatAddress(safeObj.safeAddress)}
+						{workspace?.safe?.address && formatAddress(workspace.safe.address)}
 					</Text>
 					{/* <Flex align='center'>
 						<Image src={safeObj} />

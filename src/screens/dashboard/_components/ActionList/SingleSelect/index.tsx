@@ -1,7 +1,7 @@
 import { Box, Button, Divider, Flex } from '@chakra-ui/react'
-import Milestones from 'src/screens/dashboard/_components/ActionListItems/SingleSelect/Milestones'
-import Payouts from 'src/screens/dashboard/_components/ActionListItems/SingleSelect/Payouts'
-import Reviews from 'src/screens/dashboard/_components/ActionListItems/SingleSelect/Reviews'
+import Milestones from 'src/screens/dashboard/_components/ActionList/SingleSelect/Milestones'
+import Payouts from 'src/screens/dashboard/_components/ActionList/SingleSelect/Payouts'
+import Reviews from 'src/screens/dashboard/_components/ActionList/SingleSelect/Reviews'
 
 function SingleSelect() {
 	const buildComponent = () => {
