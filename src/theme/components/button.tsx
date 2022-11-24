@@ -184,7 +184,6 @@ export default {
 				paddingY: '14px',
 				paddingX: '40px',
 				fontWeight: '500',
-				w: '170px',
 				h: '48px',
 				borderRadius: '2px'
 			},
@@ -193,7 +192,6 @@ export default {
 				color: 'white',
 				paddingY: '8px',
 				paddingX: '16px',
-				w: '170px', // Note: the values for height and width will be changed
 				h: '32px',
 				borderRadius: '2px'
 			}
