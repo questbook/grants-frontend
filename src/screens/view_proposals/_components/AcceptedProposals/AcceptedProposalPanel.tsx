@@ -5,6 +5,7 @@ import { GetGrantDetailsQuery, GetGrantDetailsQueryVariables } from 'src/generat
 import AcceptedRow from 'src/screens/view_proposals/_components/AcceptedProposals/AcceptedRow'
 import ZeroState from 'src/screens/view_proposals/_components/AcceptedProposals/ZeroState'
 import { IApplicantData } from 'src/types'
+import { formatAmount, parseAmount } from 'src/utils/formattingUtils'
 
 const AcceptedProposalsPanel = ({
 	rewardAssetDecimals,
@@ -193,10 +194,14 @@ const AcceptedProposalsPanel = ({
 
 				{
 					applicantsData?.filter((item) => (2 === item.status)).map((applicantData, i) => {
-						const fundTrasferofApplicant = fundTransfersData?.filter((fundTransfer: any) => (fundTransfer?.application?.id === applicantData?.applicationId && fundTransfer?.status === 'executed'))
-						const totalFundsSent = fundTrasferofApplicant.filter((fundTransfer: any) => (fundTransfer.type === 'funds_disbursed'))?.reduce((acc: number, fundTransfer: any) => (acc + Number(fundTransfer?.amount)), 0)
-						const totalFundsSentFromSafe = fundTrasferofApplicant.filter((fundTransfer: any) => (fundTransfer.type === 'funds_disbursed_from_safe'))?.reduce((acc: number, fundTransfer: any) => (acc + Number(fundTransfer?.amount)), 0)
-						console.log('totalFundsSent', totalFundsSent, 'totalFundsSentFromSafe', totalFundsSentFromSafe)
+						const fundTrasferofApplicant = fundTransfersData?.
+							filter((fundTransfer: any) => (fundTransfer?.application?.id === applicantData?.applicationId && fundTransfer?.status === 'executed'))
+						const totalFundsSent = fundTrasferofApplicant?.
+							filter((fundTransfer: any) => (fundTransfer.type === 'funds_disbursed'))?.
+							reduce((acc: number, fundTransfer: any) => (acc + Number(formatAmount(fundTransfer?.amount, undefined, true, true, true))), 0)
+						const totalFundsSentFromSafe = fundTrasferofApplicant?.
+							filter((fundTransfer: any) => (fundTransfer.type === 'funds_disbursed_from_safe'))?.
+							reduce((acc: number, fundTransfer: any) => (acc + Number(fundTransfer?.amount)), 0)
 						return (
 							<AcceptedRow
 								key={`accepted-${i}`}

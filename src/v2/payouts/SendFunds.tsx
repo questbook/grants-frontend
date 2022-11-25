@@ -89,6 +89,7 @@ export default function SendFunds({
 
 		const getToken = async() => {
 			const response = await safeObj?.getTokenAndbalance()
+			console.log('getTokenAndbalance response', response)
 			setSafeTokenList(response)
 		}
 
@@ -114,7 +115,7 @@ export default function SendFunds({
 				to: recepient?.applicantAddress || getFieldString(recepient, 'applicantAddress') || recepient?.applicantId,
 				applicationId: recepient?.applicationId || applicationID,
 				selectedMilestone: recepient?.milestones?.[0],
-				selectedToken: { name: safeTokenList[0]?.tokenName, info: safeTokenList[0]?.info },
+				selectedToken: safeTokenList[0],
 				amount: recepient?.milestones?.[0]?.amount,
 			})
 		)
@@ -191,7 +192,7 @@ export default function SendFunds({
 				initiateTransactionData.map((element: any) => (parseInt(element.applicationId, 16))),
 				initiateTransactionData.map((element: any) => (parseInt(element.selectedMilestone?.id?.split('.')[1]))),
 				rewardAssetAddress,
-				initiateTransactionData.map((element: any) => (element.selectedToken.name.toLowerCase()))[0],
+				initiateTransactionData.map((element: any) => (element.selectedToken.tokenName.toLowerCase()))[0],
 				'nonEvmAssetAddress-toBeChanged',
 				initiateTransactionData.map((element: any) => Math.floor(element.amount)),
 				workspace.id,
@@ -225,8 +226,6 @@ export default function SendFunds({
 
 			const { txFee } = await getTransactionDetails(transactionHash, workspacechainId.toString())
 
-			// console.log('txFee', txFee)
-			// console.log('receipt: ', receipt)
 			await chargeGas(Number(workspace.id), Number(txFee), workspacechainId)
 
 		} catch(e) {
@@ -249,86 +248,12 @@ export default function SendFunds({
 		}
 	}, [proposalAddr])
 
-	// const disburseRewardFromSafe = useCallback(async(proposaladdress: string) => {
-	// 	// console.log(workspacechainId)
-	// 	if(!workspacechainId) {
-	// 		return
-	// 	}
-
-	// 	try {
-	// 		if(!workspacechainId) {
-	// 			throw new Error('No network specified')
-	// 		}
-
-	// 		if(!proposaladdress) {
-	// 			throw new Error('No proposal Address specified')
-	// 		}
-
-	// 		if(!initiateTransactionData) {
-	// 			throw new Error('No data provided!')
-	// 		}
-
-	// 		if(!workspace) {
-	// 			throw new Error('No workspace found!')
-	// 		}
-
-	// 		if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
-	// 			return
-	// 		}
-
-	// 		logger.info({ initiateTransactionData }, 'initiateTransactionData', Math.floor(initiateTransactionData[0].amount))
-
-
-	// 		const methodArgs = [
-	// 			initiateTransactionData.map((element: any) => (parseInt(element.applicationId, 16))),
-	// 			initiateTransactionData.map((element: any) => (parseInt(element.selectedMilestone?.id?.split('.')[1]))),
-	// 			rewardAssetAddress,
-	// 			initiateTransactionData.map((element: any) => (element.selectedToken.name.toLowerCase()))[0],
-	// 			'nonEvmAssetAddress-toBeChanged',
-	// 			initiateTransactionData.map((element: any) => Math.floor(element.amount)),
-	// 			workspace.id,
-	// 			proposaladdress
-	// 		]
-
-	// 		logger.info({ methodArgs }, 'methodArgs')
-
-	// 		const transactionHash = await sendGaslessTransaction(
-	// 			biconomy,
-	// 			workspaceRegistryContract,
-	// 			'disburseRewardFromSafe',
-	// 			methodArgs,
-	// 			workspaceRegistryContract.address,
-	// 			biconomyWalletClient,
-	// 			scwAddress,
-	// 			webwallet,
-	// 			`${workspacechainId}`,
-	// 			bicoDapps[workspacechainId.toString()].webHookId,
-	// 			nonce
-	// 		)
-
-	// 		if(!transactionHash) {
-	// 			throw new Error('No transaction hash found!')
-	// 		}
-
-	// 		const { txFee } = await getTransactionDetails(transactionHash, workspacechainId.toString())
-
-	// 		// console.log('txFee', txFee)
-	// 		// console.log('receipt: ', receipt)
-	// 		await chargeGas(Number(workspace.id), Number(txFee), workspacechainId)
-
-	// 	} catch(e) {
-	// 		console.log('disburse error', e)
-	// 	}
-	// }, [workspace, biconomyWalletClient, workspacechainId, biconomy, workspaceRegistryContract, scwAddress, webwallet, nonce, initiateTransactionData, proposalAddr, proposaladdress])
-
-
 	const onChangeRecepientDetails = async(applicationId: any, fieldName: string, fieldValue: any) => {
 
 		if(fieldName === 'selectedToken') {
 			const tempData = initiateTransactionData.map((transactionData: any) => {
 				return { ...transactionData, [fieldName]: fieldValue }
 			})
-			logger.info({ tempData }, 'tempData 1')
 			setInitiateTransactionData(tempData)
 		} else {
 			logger.info({ initiateTransactionData }, 'Initiate Transaction Data')

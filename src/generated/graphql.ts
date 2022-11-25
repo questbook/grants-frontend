@@ -4552,7 +4552,7 @@ export type GetAllFundsTransfersForADaoQueryVariables = Exact<{
 }>;
 
 
-export type GetAllFundsTransfersForADaoQuery = { __typename?: 'Query', fundsTransfers: Array<{ __typename?: 'FundsTransfer', id: string, type: FundsTransferType, amount: string, status: FundsTransferStatusType, transactionHash?: string | null, to: string, application?: { __typename?: 'GrantApplication', id: string } | null }> };
+export type GetAllFundsTransfersForADaoQuery = { __typename?: 'Query', fundsTransfers: Array<{ __typename?: 'FundsTransfer', id: string, type: FundsTransferType, amount: string, status: FundsTransferStatusType, transactionHash?: string | null, to: string, application?: { __typename?: 'GrantApplication', id: string } | null, grant: { __typename?: 'Grant', reward: { __typename?: 'Reward', asset: string, token?: { __typename?: 'Token', id: string, decimal: number, address: string, chainId?: string | null } | null } } }> };
 
 export type GetAllGrantsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -4979,6 +4979,17 @@ export const GetAllFundsTransfersForADaoDocument = gql`
     to
     application {
       id
+    }
+    grant {
+      reward {
+        token {
+          id
+          decimal
+          address
+          chainId
+        }
+        asset
+      }
     }
   }
 }

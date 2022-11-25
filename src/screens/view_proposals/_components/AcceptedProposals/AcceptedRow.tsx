@@ -34,8 +34,6 @@ const AcceptedRow = ({
 	const [isHovering, setIsHovering] = useState(false)
 	const [shouldTransitionOnClick, setShouldTransitionOnClick] = useState(true)
 
-	console.log('fund sent', applicantData?.projectName, applicationAmount)
-
 	return (
 		<>
 			<GridItem

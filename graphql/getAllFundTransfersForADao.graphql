@@ -9,5 +9,16 @@ query getAllFundsTransfersForADao($workspaceId: String!) {
     application {
       id
     }
+    grant {
+      reward {
+        token {
+          id
+          decimal
+          address
+          chainId
+        }
+        asset
+      }
+    }
   }
 }
