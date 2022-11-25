@@ -89,7 +89,6 @@ export default function SendFunds({
 
 		const getToken = async() => {
 			const response = await safeObj?.getTokenAndbalance()
-			console.log('getTokenAndbalance response', response)
 			setSafeTokenList(response)
 		}
 
@@ -119,7 +118,6 @@ export default function SendFunds({
 				amount: recepient?.milestones?.[0]?.amount,
 			})
 		)
-		console.log('txn data', formattedTrxnData)
 		setInitiateTransactionData(formattedTrxnData)
 	}, [sendFundsTo])
 
@@ -154,7 +152,6 @@ export default function SendFunds({
 			if(isVerified) {
 				setSignerVerififed(true)
 			} else {
-				// console.log('not a owner')
 				setSignerVerififed(false)
 			}
 		}
@@ -238,9 +235,7 @@ export default function SendFunds({
 			logger.info({ proposalAddr }, 'Proposal address received inside use Effect')
 			disburseRewardFromSafe(proposalAddr)
 				.then(() => {
-				// console.log('Sent transaction to contract - EVM', proposaladdress)
 					logger.info({}, 'HERE 99')
-
 				})
 				.catch((err) => {
 					logger.info({ err }, 'sending transction error:')

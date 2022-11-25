@@ -53,7 +53,6 @@ function SendFundsModal({
 	const { t } = useTranslation()
 	const [recepientError, setRecepientError] = React.useState('')
 
-	console.log('fiatConversion', initiateTransactionData)
 	return (
 		<>
 			<ModalComponent
