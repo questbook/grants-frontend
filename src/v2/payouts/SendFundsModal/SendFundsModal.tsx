@@ -250,10 +250,12 @@ function SendFundsModal({
 										colorScheme='brandv2'
 										disabled={
 											initiateTransactionData?.length === 0 ||
-											initiateTransactionData?.filter((item) => {
+											initiateTransactionData?.filter((item: any) => {
 												return item?.amount <= 0
 											})?.length > 0 ||
-											parseFloat(initiateTransactionData[0]?.selectedToken?.fiatConversion) === 0
+											initiateTransactionData?.filter((item: any) => {
+												return item?.selectedToken?.fiatConversion <= 0
+											})?.length > 0
 										}
 										onClick={
 											async() => {
