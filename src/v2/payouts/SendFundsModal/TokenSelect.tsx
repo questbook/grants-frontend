@@ -74,7 +74,7 @@ const TokenSelect = ({
 }) => {
 	let selected = undefined
 	if(safeTokenList?.length > 0) {
-		const foundToken = safeTokenList?.find((token) => token.tokenName === value.name)
+		const foundToken = safeTokenList?.find((token) => token?.tokenName === value?.tokenName)
 		selected = {
 			icon: foundToken?.tokenIcon,
 			title: foundToken?.tokenName,

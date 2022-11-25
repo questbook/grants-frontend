@@ -1,4 +1,5 @@
-import { Box, Button, Flex, Image, Input, InputGroup, InputRightAddon, Text } from '@chakra-ui/react'
+import { useTranslation } from 'react-i18next'
+import { Box, Button, Flex, Image, Input, InputGroup, InputRightAddon, InputRightElement, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { IApplicantData } from 'src/types'
 import { ArrowDownCircle } from 'src/v2/assets/custom chakra icons/Arrows/ArrowDownCircle'
@@ -20,6 +21,7 @@ const RecipientDetails = ({
 	onChangeRecepientDetails: (applicationId: string, fieldName: string, fieldValue: any) => void
 }) => {
 	const router = useRouter()
+	const { t } = useTranslation()
 	return (
 		<>
 			<Flex
@@ -49,9 +51,42 @@ const RecipientDetails = ({
 								safeTokenList={safeTokenList}
 								onChange={
 									(value) => {
-										onChangeRecepientDetails('', 'selectedToken', { name: value?.id, info: value?.info })
+										onChangeRecepientDetails('', 'selectedToken', safeTokenList.filter((token: any) => token.tokenName === value.id)[0])
 									}
 								} />
+							{
+								initiateTransactionData?.[0]?.selectedToken ? (
+									<Text
+										fontSize='12px'
+										lineHeight='16px'
+										fontWeight='400'
+										color='#7D7DA0'
+										mt='2px'
+									>
+										Balance:
+										{' '}
+										{parseFloat(initiateTransactionData?.[0]?.selectedToken?.tokenValueAmount).toFixed(2)}
+										{' '}
+										{initiateTransactionData?.[0]?.selectedToken?.tokenName}
+										{' '}
+										≈
+										{' '}
+										{parseFloat(initiateTransactionData?.[0]?.selectedToken?.usdValueAmount).toFixed(2)}
+										{' '}
+										USD
+									</Text>
+								) : (
+									<Text
+										fontSize='12px'
+										lineHeight='16px'
+										fontWeight='400'
+										color='#7D7DA0'
+										mt='2px'
+									>
+										Please select a token above
+									</Text>
+								)
+							}
 
 							<Box h={6} />
 						</>
@@ -223,51 +258,84 @@ const RecipientDetails = ({
 
 							<Box h={6} />
 
-							<Flex alignItems='center' >
-								<Flex
-									flex={1}
-									flexDirection='column'>
+							<Text
+								fontSize='14px'
+								lineHeight='20px'
+								fontWeight='500'
+							>
+								{t('/your_grants/view_applicants.send_funds_milestone')}
+							</Text>
 
-									<MilestoneSelect
-										placeholder='Select from the list'
-										value={initiateTransactionData ? initiateTransactionData[i].selectedMilestone?.id : ''}
-										milestoneList={data.milestones}
-										onChange={(value) => value && onChangeRecepientDetails(data.applicationId, 'selectedMilestone', value)} />
-								</Flex>
+							<Text
+								fontSize='12px'
+								lineHeight='16px'
+								fontWeight='400'
+								color='#7D7DA0'
+								mt='2px'
+							>
+								{t('/your_grants/view_applicants.send_funds_milestone_description')}
+							</Text>
 
-								<Box w={6} />
+							<Box h={2} />
 
-								<Flex
-									flex={1}
-									flexDirection='column'>
+							<MilestoneSelect
+								placeholder='Select from the list'
+								value={initiateTransactionData ? initiateTransactionData[i].selectedMilestone?.id : ''}
+								milestoneList={data.milestones}
+								onChange={(value) => value && onChangeRecepientDetails(data.applicationId, 'selectedMilestone', value)} />
 
-									{/* <Box h={2} /> */}
-									<InputGroup size='sm'>
+							<Box h={6} />
 
-										<Input
-											variant='brandFlushed'
-											placeholder='Amount'
-											_placeholder={
-												{
-													color: 'blue.100',
-													fontWeight: '500'
-												}
+							<Text
+								fontSize='14px'
+								lineHeight='20px'
+								fontWeight='500'
+							>
+								Amount (in USD)
+							</Text>
+
+							<Flex
+								alignItems='baseline'
+								mt={2}
+							>
+								<InputGroup size='sm'>
+
+									<Input
+										variant='brandFlushed'
+										placeholder='Amount'
+										_placeholder={
+											{
+												color: 'blue.100',
+												fontWeight: '500'
 											}
-											fontWeight='500'
-											fontSize='14px'
-											value={initiateTransactionData?.[i]?.amount}
-											errorBorderColor='red'
-											height='auto'
-											type='number'
-											onChange={async(e) => onChangeRecepientDetails(data.applicationId, 'amount', parseFloat(e.target.value?.length > 0 ? e.target.value : '0'))}
-										/>
-										<InputRightAddon children='USD' />
-									</InputGroup>
-
-								</Flex>
-
+										}
+										fontWeight='500'
+										fontSize='14px'
+										value={initiateTransactionData?.[i]?.amount}
+										errorBorderColor='red'
+										height='auto'
+										type='number'
+										onChange={async(e) => onChangeRecepientDetails(data.applicationId, 'amount', parseFloat(e.target.value?.length > 0 ? e.target.value : '0'))}
+									/>
+									{
+										parseFloat(initiateTransactionData?.[0]?.selectedToken?.fiatConversion) > 0 ? (
+											<InputRightElement
+												width='6rem'
+												pb='2rem'>
+												<Text
+													ml='auto'
+													fontSize='12px'
+													lineHeight='16px'
+													fontWeight='400'
+													color='#7D7DA0'
+													mt='2px'>
+													{`${parseFloat((initiateTransactionData?.[i]?.amount / initiateTransactionData?.[0]?.selectedToken?.fiatConversion).toString()).toFixed(2)} ${initiateTransactionData?.[0]?.selectedToken?.tokenName}`}
+												</Text>
+											</InputRightElement>
+										) : null
+									}
+								</InputGroup>
 							</Flex>
-
 							<Box h={6} />
 						</>
 					))
