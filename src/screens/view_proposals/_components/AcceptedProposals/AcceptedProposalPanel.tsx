@@ -194,12 +194,14 @@ const AcceptedProposalsPanel = ({
 				{
 					applicantsData?.filter((item) => (2 === item.status)).map((applicantData, i) => {
 						const fundTrasferofApplicant = fundTransfersData?.filter((fundTransfer: any) => (fundTransfer?.application?.id === applicantData?.applicationId && fundTransfer?.status === 'executed'))
-						const totalFundsSent = fundTrasferofApplicant?.reduce((acc: number, fundTransfer: any) => (acc + Number(fundTransfer?.amount)), 0)
+						const totalFundsSent = fundTrasferofApplicant.filter((fundTransfer: any) => (fundTransfer.type === 'funds_disbursed'))?.reduce((acc: number, fundTransfer: any) => (acc + Number(fundTransfer?.amount)), 0)
+						const totalFundsSentFromSafe = fundTrasferofApplicant.filter((fundTransfer: any) => (fundTransfer.type === 'funds_disbursed_from_safe'))?.reduce((acc: number, fundTransfer: any) => (acc + Number(fundTransfer?.amount)), 0)
+						console.log('totalFundsSent', totalFundsSent, 'totalFundsSentFromSafe', totalFundsSentFromSafe)
 						return (
 							<AcceptedRow
 								key={`accepted-${i}`}
 								applicationStatus={applicationStatuses[applicantData.applicationId]?.reduce((partialStatus: any, a: any) => partialStatus && a.status, 1)}
-								applicationAmount={totalFundsSent}
+								applicationAmount={totalFundsSent + totalFundsSentFromSafe}
 								applicantData={applicantData}
 								rewardAssetDecimals={rewardAssetDecimals}
 								isChecked={checkedItems[i]}
