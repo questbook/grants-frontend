@@ -90,7 +90,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 
                         <Button variant='primaryMedium' isDisabled={!selectedSafeNetwork} onClick={() => setIsVerifySignerModalOpen(true)}>Link multisig</Button>
                         <Text>Why do I need a multisig?</Text>
-                        <Button variant='link'>Skip for now</Button>
+                        <Button variant='link' onClick={() => setStep(5)}>Skip for now</Button>
                     </Flex>
                     <Flex gap={1}>
                         <Text variant="footerContent" color='black.3'>By continuing, you accept Questbook’s</Text>
