@@ -14,16 +14,16 @@ import { DAOSearchContext } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
 import useUpdateDaoVisibility from 'src/hooks/useUpdateDaoVisibility'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
+import { extractInviteInfo, InviteInfo } from 'src/libraries/utils/invite'
 import { WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import AcceptInviteModal from 'src/screens/discover/_components/AcceptInviteModal'
 import DomainGrid from 'src/screens/discover/_components/DaosGrid'
+import RightArrowIcon from 'src/screens/discover/_components/RightArrowIcon'
 import { useMultichainDaosPaginatedQuery } from 'src/screens/discover/_hooks/useMultiChainPaginatedQuery'
-import { extractInviteInfo, InviteInfo } from 'src/screens/discover/_utils/invite'
 import { mergeSortedArrays } from 'src/screens/discover/_utils/mergeSortedArrays'
 import { chainNames } from 'src/utils/chainNames'
 import getErrorMessage from 'src/utils/errorUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
-import RightArrowIcon from './_components/RightArrowIcon'
 
 const PAGE_SIZE = 10
 

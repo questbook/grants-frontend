@@ -14,7 +14,7 @@ function useMembers() {
 		return getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
 	}, [workspace])
 
-	const [isInviteModalOpen, setIsInviteModalOpen] = useState(router.query.tab === 'members')
+	const [isInviteModalOpen, setIsInviteModalOpen] = useState(router.query.tab === 'members' && !router.query.state)
 	const [selectedUserTypeIdx, setSelectedUserTypeIdx] = useState(0)
 
 	const { results, fetchMore } = useMultiChainQuery({

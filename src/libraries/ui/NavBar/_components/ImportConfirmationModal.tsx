@@ -27,7 +27,7 @@ function ImportConfirmationModal({ isOpen, onClose, saveWallet }: Props) {
 								variant='v2_subheading'
 								fontWeight='500'
 								textAlign='center'>
-								{t('recovery.confirmation.warning')}
+								{t('account_details.confirmation.warning')}
 							</Text>
 							<Flex mt={4}>
 								<Button
@@ -36,7 +36,7 @@ function ImportConfirmationModal({ isOpen, onClose, saveWallet }: Props) {
 									<Text
 										variant='v2_body'
 										color='white'>
-										{t('recovery.confirmation.yes')}
+										{t('account_details.confirmation.yes')}
 									</Text>
 								</Button>
 								<Button
@@ -44,7 +44,7 @@ function ImportConfirmationModal({ isOpen, onClose, saveWallet }: Props) {
 									ml={4}
 									variant='link'>
 									<Text variant='v2_body'>
-										{t('recovery.confirmation.no')}
+										{t('account_details.confirmation.no')}
 									</Text>
 								</Button>
 							</Flex>

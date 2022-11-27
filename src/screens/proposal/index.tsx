@@ -460,8 +460,6 @@ function Proposal() {
 
 				<SendFunds
 					workspace={workspace!}
-					workspaceSafe={workspace?.safe?.address}
-					workspaceSafeChainId={workspace?.safe?.chainId ?? ''}
 					sendFundsTo={sendFundData}
 					rewardAssetAddress={token?.address ?? ''}
 					grantTitle={proposal?.grant?.title ?? ''} />

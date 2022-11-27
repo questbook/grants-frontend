@@ -7,7 +7,6 @@ import { ApplicationMilestone } from 'src/types'
 import { formatAmount } from 'src/utils/formattingUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'
 import dollarIcon from 'src/v2/assets/currency_icon/dollar_icon.svg'
-import { solanaToUsdOnDate } from 'src/v2/constants/safe/realms_solana'
 
 const TABLE_HEADERS = [
 	{

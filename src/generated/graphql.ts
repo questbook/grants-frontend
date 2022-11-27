@@ -4863,7 +4863,7 @@ export type GetReviewersForAWorkspaceQueryVariables = Exact<{
 }>;
 
 
-export type GetReviewersForAWorkspaceQuery = { __typename?: 'Query', workspaces: Array<{ __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, fullName?: string | null, actorId: string }> }> };
+export type GetReviewersForAWorkspaceQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, fullName?: string | null, actorId: string }> } | null };
 
 export type GetSafeForAWorkspaceQueryVariables = Exact<{
   workspaceID: Scalars['String'];
@@ -7296,8 +7296,12 @@ export type GetRealmsFundTransferDataLazyQueryHookResult = ReturnType<typeof use
 export type GetRealmsFundTransferDataQueryResult = Apollo.QueryResult<GetRealmsFundTransferDataQuery, GetRealmsFundTransferDataQueryVariables>;
 export const GetReviewersForAWorkspaceDocument = gql`
     query getReviewersForAWorkspace($workspaceId: ID!) {
-  workspaces(where: {id: $workspaceId}) {
-    members(where: {accessLevel_not: owner, enabled: true}) {
+  workspace(id: $workspaceId) {
+    members(
+      where: {accessLevel: reviewer, enabled: true}
+      orderBy: addedAt
+      orderDirection: desc
+    ) {
       profilePictureIpfsHash
       accessLevel
       fullName

@@ -137,9 +137,6 @@ export default {
 					},
 				},
 			},
-			ghost: {
-				color: '#555570',
-			},
 			secondaryV2: {
 				bg: 'gray.3',
 				color: 'black.1',
@@ -182,14 +179,11 @@ export default {
 				py: 2,
 			},
 			primaryLarge: {
-				bg: 'azure.1',
-				color: '#ffffff',
-				paddingTop: '14px',
-				paddingBottom: '14px',
-				paddingLeft: '48px',
-				paddingRight: '48px',
-				fontWeight:'500',
-				lineHeight:'20px',
+				bg: '#0A84FF',
+				color: 'white',
+				paddingY: '14px',
+				paddingX: '40px',
+				fontWeight: '500',
 				w: '170px',
 				h: '48px',
 				borderRadius: '2px'
