@@ -39,11 +39,12 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
                             <Text>Use your multisig to payout builders on Questbook</Text>
                         </Flex>
 
-                        <Flex direction='column' gap={1}>
+                        <Flex direction='column' gap={1} alignItems='center'>
                             <Text>We currently support</Text>
                             <Flex gap={4}>
                                 <Image src='/safes_icons/safe_logo.svg' />
                                 <Image src='/safes_icons/realms_logo.svg' />
+                                <Image src="/safes_icons/celo_safe.svg" />
                             </Flex>
                         </Flex>
                         <Flex direction='column'>
