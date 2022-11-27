@@ -71,7 +71,7 @@ function BuilderDiscovery({ domainName, setDomainName, domainImage, setDomainIma
 
                 {/* Input Card */}
                 <Flex width='100%' alignItems='center' direction='column'>
-                    <Box display='flex' flexDirection='column' border='1px solid' gap={6} pt={8} p={6}>
+                    <Box display='flex' flexDirection='column' border='1px solid #E7E4DD' gap={6} pt={8} p={6}>
                         <Flex gap={4} alignItems='center'>
                             <input
                                 style={{ visibility: 'hidden', height: 0, width: 0 }}
