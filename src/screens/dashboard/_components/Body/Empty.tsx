@@ -18,7 +18,7 @@ function Empty() {
 				align='center'
 				justify='center'>
 				<Text
-					variant='heading3'
+					variant='v2_heading_3'
 					fontWeight='500'>
 					Your invitation for proposals is live!
 				</Text>
@@ -40,7 +40,7 @@ function Empty() {
 				</Text>
 				<Text
 					mt={1}
-					variant='body'>
+					variant='v2_body'>
 					Attract builders to
 					{' '}
 					{workspace?.title}
@@ -64,7 +64,7 @@ function Empty() {
 							}
 						}>
 						<Text
-							variant='body'
+							variant='v2_body'
 							color='white'>
 							Copy Link
 						</Text>
@@ -75,7 +75,7 @@ function Empty() {
 						variant='primaryMedium'
 						bg='gray.3'>
 						<Text
-							variant='body'>
+							variant='v2_body'>
 							Use embed
 						</Text>
 					</Button>

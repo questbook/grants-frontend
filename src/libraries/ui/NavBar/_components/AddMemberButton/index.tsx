@@ -33,7 +33,7 @@ function AddMemberButton() {
 												src='/v2/icons/link.svg'
 												boxSize='18px' />
 											<Text
-												variant='body'
+												variant='v2_body'
 												ml={3}>
 												Invite
 											</Text>
@@ -49,7 +49,7 @@ function AddMemberButton() {
 														size='18px' />
 													<Text
 														ml={3}
-														variant='body'>
+														variant='v2_body'>
 														Generating link on-chain...
 													</Text>
 												</Flex>
@@ -59,7 +59,7 @@ function AddMemberButton() {
 											link && (
 												<Flex mt={2}>
 													<Text
-														variant='body'
+														variant='v2_body'
 														mr={2}>
 														{formatLink(link)}
 													</Text>
@@ -88,7 +88,7 @@ function AddMemberButton() {
 													}
 												}>
 												<Text
-													variant='body'
+													variant='v2_body'
 													fontWeight='400'>
 													See all Members
 												</Text>
@@ -125,7 +125,7 @@ function AddMemberButton() {
 					}
 				}>
 				<Text
-					variant='body'
+					variant='v2_body'
 					fontWeight='400'>
 					{id === 0 ? 'Admin' : 'Reviewer'}
 				</Text>
@@ -144,7 +144,7 @@ function AddMemberButton() {
 						boxSize='16px' />
 				}>
 				<Text
-					variant='body'
+					variant='v2_body'
 					fontWeight='500'>
 					Add Members
 				</Text>

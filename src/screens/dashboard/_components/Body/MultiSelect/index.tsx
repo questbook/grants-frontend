@@ -17,7 +17,7 @@ function MultiSelect() {
 				h='100%'
 				direction='column'>
 				<Text
-					variant='heading3'
+					variant='v2_heading_3'
 					fontWeight='500'>
 					Proposals Selected
 					<Text
@@ -44,7 +44,7 @@ function MultiSelect() {
 				borderRadius='2px'
 				direction='column'>
 				<Text
-					variant='body'
+					variant='v2_body'
 					fontWeight='500'
 					cursor='pointer'
 					_hover={{ textDecoration: 'underline' }}
@@ -62,7 +62,7 @@ function MultiSelect() {
 						boxSize='16px' />
 					<Text
 						ml={2}
-						variant='metadata'>
+						variant='v2_metadata'>
 						{getFieldString(proposal, 'applicantName')}
 					</Text>
 				</Flex>

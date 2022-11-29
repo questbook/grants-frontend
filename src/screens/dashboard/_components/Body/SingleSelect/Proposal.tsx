@@ -45,12 +45,12 @@ function Proposal() {
 					align='center'
 					justify='space-between'>
 					<Text
-						variant='heading3'
+						variant='v2_heading_3'
 						fontWeight='500'>
 						{getFieldString(decryptedProposal, 'projectName')}
 					</Text>
 					<Text
-						variant='body'
+						variant='v2_body'
 						color='gray.5'>
 						{formatTime(decryptedProposal.updatedAtS)}
 					</Text>
@@ -93,7 +93,7 @@ function Proposal() {
 									}>
 									<Text
 										fontWeight='400'
-										variant='body'
+										variant='v2_body'
 										color='gray.5'>
 										{getFieldString(decryptedProposal, 'applicantEmail')}
 									</Text>
@@ -127,7 +127,7 @@ function Proposal() {
 											}>
 											<Text
 												fontWeight='400'
-												variant='body'
+												variant='v2_body'
 												color='gray.5'>
 												{formatAddress(getFieldString(decryptedProposal, 'applicantAddress'))}
 											</Text>
@@ -220,13 +220,13 @@ function Proposal() {
 							>
 								<Text
 									color='gray.4'
-									variant='heading3'
+									variant='v2_heading_3'
 									fontWeight='500'>
 									{index < 9 ? `0${index + 1}` : (index + 1)}
 								</Text>
 								<Text
 									ml={3}
-									variant='body'>
+									variant='v2_body'>
 									{milestone?.title}
 								</Text>
 								{

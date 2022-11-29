@@ -40,7 +40,7 @@ function ProposalList() {
 						}
 					}>
 					<Text
-						variant='body'
+						variant='v2_body'
 						fontWeight='400'>
 						Select All
 					</Text>

@@ -32,7 +32,7 @@ function Domains() {
 								<PopoverContent>
 									<PopoverHeader>
 										<Text
-											variant='body'
+											variant='v2_body'
 											fontWeight='500'>
 											Choose a different domain
 										</Text>
@@ -73,12 +73,12 @@ function Domains() {
 					direction='column'
 					ml={2}>
 					<Text
-						variant='body'
+						variant='v2_body'
 						fontWeight='500'>
 						{workspace?.title}
 					</Text>
 					<Text
-						variant='metadata'
+						variant='v2_metadata'
 						color='gray.5'>
 						{workspace?.safe?.address && formatAddress(workspace.safe.address)}
 					</Text>
@@ -88,7 +88,7 @@ function Domains() {
 					{
 						onClick && process.env.NODE_ENV === 'development' && (
 							<Text
-								variant='body'
+								variant='v2_body'
 								color='black.3'
 								fontWeight='500'
 							>

@@ -64,14 +64,14 @@ function Payouts() {
 				<Flex mt={2}>
 					<Text
 						w='50%'
-						variant='body'
+						variant='v2_body'
 						color='gray.6'>
 						Milestone
 					</Text>
 					<Text
 						w='50%'
 						fontWeight='500'
-						variant='body'>
+						variant='v2_body'>
 						{formatMilestoneId(payout?.milestone?.id)}
 					</Text>
 				</Flex>
@@ -79,13 +79,13 @@ function Payouts() {
 				<Flex mt={2}>
 					<Text
 						w='50%'
-						variant='body'
+						variant='v2_body'
 						color='gray.6'>
 						Amount
 					</Text>
 					<Text
 						w='50%'
-						variant='body'>
+						variant='v2_body'>
 						10000 USD
 					</Text>
 				</Flex>
@@ -93,13 +93,13 @@ function Payouts() {
 				<Flex mt={2}>
 					<Text
 						w='50%'
-						variant='body'
+						variant='v2_body'
 						color='gray.6'>
 						Paid On
 					</Text>
 					<Text
 						w='50%'
-						variant='body'>
+						variant='v2_body'>
 						{formatTime(payout.executionTimestamp ?? payout.createdAtS, true)}
 					</Text>
 				</Flex>
@@ -107,7 +107,7 @@ function Payouts() {
 				<Flex mt={2}>
 					<Text
 						w='50%'
-						variant='body'
+						variant='v2_body'
 						color='gray.6'>
 						Status
 					</Text>
@@ -135,7 +135,7 @@ function Payouts() {
 						}>
 						<Text
 							fontWeight='400'
-							variant='body'>
+							variant='v2_body'>
 							{payout.status === 'queued' ? 'Queued' : 'Success'}
 						</Text>
 					</Button>

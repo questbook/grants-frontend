@@ -42,12 +42,12 @@ function TopBar() {
 					} />
 				<Text
 					ml={2}
-					variant='subheading'
+					variant='v2_subheading'
 					fontWeight='500'>
 					{selectedGrant?.title}
 				</Text>
 				<Text
-					variant='body'
+					variant='v2_body'
 					fontWeight='500'
 					ml={2}
 					px={2}
@@ -65,7 +65,7 @@ function TopBar() {
 							boxSize='16px' />
 					}>
 					<Text
-						variant='body'
+						variant='v2_body'
 						fontWeight='500'>
 						Edit
 					</Text>
@@ -101,12 +101,12 @@ function TopBar() {
 													direction='column'
 													align='start'>
 													<Text
-														variant='body'
+														variant='v2_body'
 														fontWeight='500'>
 														{item.title}
 													</Text>
 													<Text
-														variant='body'
+														variant='v2_body'
 														mt={1}>
 														{item.description}
 													</Text>
@@ -126,7 +126,7 @@ function TopBar() {
 															}
 														}>
 														<Text
-															variant='body'
+															variant='v2_body'
 															color='accent.azure'>
 															{item.buttonText}
 														</Text>
@@ -182,7 +182,7 @@ function TopBar() {
 						boxSize='16px' />
 				}>
 				<Text
-					variant='body'
+					variant='v2_body'
 					fontWeight='500'>
 					Share
 				</Text>

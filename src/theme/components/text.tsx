@@ -47,46 +47,41 @@ export default {
 				color: '#122224',
 				fontWeight: '500',
 			},
-			metadata: {
+			v2_metadata: {
 				fontSize: '12px',
 				lineHeight: '16px',
 				color: 'black.1'
 			},
-			body: {
+			v2_body: {
 				fontSize: '14px',
 				lineHeight: '20px',
 				color: 'black.1'
 			},
-			title: {
+			v2_title: {
 				fontSize: '16px',
 				lineHeight: '24px',
 				color: 'black.1'
 			},
-			subheading: {
+			v2_subheading: {
 				fontSize: '20px',
 				lineHeight: '24px',
 				color: 'black.1'
 			},
-			heading3: {
+			v2_heading_3: {
 				fontSize: '24px',
 				lineHeight: '32px',
 				color: 'black.1'
 			},
-			heading2: {
+			v2_heading_2: {
 				fontSize: '32px',
 				lineHeight: '40px',
 				color: 'black.1'
 			},
-			heading1: {
+			v2_heading_1: {
 				fontSize: '40px',
 				lineHeight: '48px',
 				color: 'black.1'
 			},
-			proposalHeading: {
-				fontSize: '24px',
-				lineHeight: '32px',
-				fontWeight: '500',
-			}
 		},
 	},
 }

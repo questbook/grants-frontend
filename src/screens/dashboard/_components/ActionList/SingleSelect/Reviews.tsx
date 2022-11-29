@@ -56,13 +56,13 @@ function Reviews() {
 									w='100%'>
 									<Text
 										w='50%'
-										variant='body'
+										variant='v2_body'
 										color='gray.6'>
 										{detail.title}
 									</Text>
 									<Text
 										w='50%'
-										variant='body'>
+										variant='v2_body'>
 										{detail.value}
 									</Text>
 								</Flex>
@@ -73,7 +73,7 @@ function Reviews() {
 						(proposal?.applicationReviewers?.length || 0) > 0 && (
 							<Text
 								mt={4}
-								variant='metadata'
+								variant='v2_metadata'
 								color='gray.5'
 								fontWeight='500'>
 								REVIEWER EVALUATION
@@ -117,7 +117,7 @@ function Reviews() {
 							src={getAvatar(false, reviewer?.actorId)}
 						/>
 						<Text
-							variant='body'
+							variant='v2_body'
 							fontWeight='500'
 							ml={3}
 							noOfLines={3}>
@@ -141,7 +141,7 @@ function Reviews() {
 									cursor='pointer'
 								/>
 								<Text
-									variant='body'
+									variant='v2_body'
 									textAlign='right'
 									fontWeight='500'>
 									{review?.total}
@@ -165,7 +165,7 @@ function Reviews() {
 								px={2}
 								borderRadius='8px'
 								color='black.3'
-								variant='metadata'
+								variant='v2_metadata'
 								fontWeight='500'>
 								Pending
 							</Text>
@@ -188,11 +188,11 @@ function Reviews() {
 									align='start'>
 									<Flex direction='column'>
 										<Text
-											variant='body'>
+											variant='v2_body'>
 											{item?.rubric?.title}
 										</Text>
 										<Text
-											variant='metadata'
+											variant='v2_metadata'
 											color='gray.6'>
 											{item?.rubric?.details}
 										</Text>
@@ -201,7 +201,7 @@ function Reviews() {
 									<Text
 										ml='auto'
 										textAlign='right'
-										variant='body'>
+										variant='v2_body'>
 										{item?.rating}
 										<Text
 											ml={1}

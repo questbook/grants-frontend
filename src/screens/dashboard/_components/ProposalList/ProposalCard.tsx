@@ -30,7 +30,7 @@ function ProposalCard({ index, proposal }: Props) {
 						} />
 					<Text
 						ml={2}
-						variant='body'
+						variant='v2_body'
 						fontWeight='500'
 						cursor='pointer'
 						onClick={
@@ -46,7 +46,7 @@ function ProposalCard({ index, proposal }: Props) {
 						process.env.NODE_ENV === 'development' && (
 							<Text
 								ml={2}
-								variant='metadata'
+								variant='v2_metadata'
 								color='black.3'>
 								{`(${proposal.id})`}
 							</Text>
@@ -55,7 +55,7 @@ function ProposalCard({ index, proposal }: Props) {
 					<Text
 						ml='auto'
 						color='gray.5'
-						variant='metadata'>
+						variant='v2_metadata'>
 						{formatTime(proposal.updatedAtS)}
 					</Text>
 				</Flex>
@@ -70,7 +70,7 @@ function ProposalCard({ index, proposal }: Props) {
 						boxSize='16px' />
 					<Text
 						ml={2}
-						variant='metadata'>
+						variant='v2_metadata'>
 						{getFieldString(proposal, 'applicantName')}
 					</Text>
 				</Flex>
