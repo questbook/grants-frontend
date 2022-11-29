@@ -3,8 +3,8 @@
 import { useContext, useMemo } from 'react'
 import { Checkbox, Flex, Text } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
-import ProposalCard from 'src/screens/dashboard/_components/ProposalList'
 import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
+import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 
 function ProposalList() {

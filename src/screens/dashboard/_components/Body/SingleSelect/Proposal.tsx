@@ -6,7 +6,6 @@ import logger from 'src/libraries/logger'
 import CopyIcon from 'src/libraries/ui/CopyIcon'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
 import { ApiClientsContext } from 'src/pages/_app'
-import MilestoneItem from 'src/screens/dashboard/_components/MilestoneItem'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -18,15 +17,7 @@ import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function Proposal() {
 	const buildComponent = () => {
-		if(!proposal) {
-			return (
-				<Flex>
-					<Text>
-						Could not proposal data!
-					</Text>
-				</Flex>
-			)
-		} else if(!decryptedProposal) {
+		if(!decryptedProposal) {
 			return (
 				<Flex
 					w='100%'
