@@ -24,7 +24,7 @@ const ConnectWalletButton = ({
 			py={4}
 			h='auto'
 			maxW={maxW ?? '27rem'}
-			colorScheme='brandGrey'
+			backgroundColor='gray.2'
 			onClick={onClick}
 			borderRadius='sm'
 			onMouseEnter={() => setIsHovering(true)}

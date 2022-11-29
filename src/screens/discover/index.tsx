@@ -60,7 +60,7 @@ function Discover() {
 									})
 								}>Invite Proposals</Button>
 						</Flex>
-						<Flex bgColor='brand.800' flexGrow={1} justifyContent='center'>
+						<Flex bgColor='brand.green' flexGrow={1} justifyContent='center'>
 							<Image mt={10} src='/illustrations/Browsers.svg' />
 						</Flex>
 					</Flex>

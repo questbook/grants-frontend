@@ -5,12 +5,13 @@ import { MdArrowDropDown } from 'react-icons/md'
 import FlushedInput from "src/libraries/ui/FlushedInput";
 import StepIndicator from "src/libraries/ui/StepIndicator";
 import { ChangeEvent, useEffect, useState } from "react";
-import useSafeUSDBalances from "src/hooks/useSafeUSDBalances";
+import { SupportedSafes } from '@questbook/supported-safes'
+// import useSafeUSDBalances from "src/hooks/useSafeUSDBalances";
 import VerifySignerModal from "../_components/VerifySignerModal";
 import SafeSelect, { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 import { t } from "i18next";
 import { NetworkType } from "src/constants/Networks";
-import useSafeOwners from "src/hooks/useSafeOwners";
+// import useSafeOwners from "src/hooks/useSafeOwners";
 
 
 interface Props {
@@ -58,13 +59,13 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
                             }} />
 
                             {
-                                (multiSigAddress && !loadedSafesUSDBalance && safesUSDBalance.length < 1)
+                                (multiSigAddress && !loadingSafeData && safeNetworks.length < 1)
                                     ? <Text variant="footerContent" color='black.3'>Searching for this address on different networks..</Text>
                                     : (multiSigAddress)
                                         ? (<>
                                             <Flex gap={2}>
                                                 <Image src="/ui_icons/Done_all_alt_round.svg" color='#273B4A' />
-                                                <Text variant="footerContent">Looks like this address is on {safesUSDBalance.length} network(s).</Text>
+                                                <Text variant="footerContent">Looks like this address is on {safeNetworks.length} network(s).</Text>
 
                                             </Flex>
 
@@ -99,7 +100,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
                 </Flex>
 
                 <VerifySignerModal
-                    owners={safeOwners}
+                    owners={ selectedSafeNetwork ? selectedSafeNetwork.owners : []}
                     setOwnerAddress={(newOwnerAddress) => setOwnerAddress(newOwnerAddress)}
                     setIsOwner={
                         (newState) => {
@@ -117,25 +118,41 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
     const [safeNetworks, setSafeNetworks] = useState<SafeSelectOption[]>([]);
     const [IsVerifySignerModalOpen, setIsVerifySignerModalOpen] = useState(false);
     const [isOwner, setIsOwner] = useState(false);
+    const [loadingSafeData, setLoadingSafeData] = useState(false)
+
     const [ownerAddress, setOwnerAddress] = useState('')
 
-    const { data: safeOwners } = useSafeOwners({ safeAddress: multiSigAddress, chainID: selectedSafeNetwork?.networkId, type: selectedSafeNetwork?.networkType ?? NetworkType.EVM })
+    // const { data: safeOwners } = useSafeOwners({ safeAddress: multiSigAddress, chainID: selectedSafeNetwork?.networkId, type: selectedSafeNetwork?.networkType ?? NetworkType.EVM })
 
-    const { data: safesUSDBalance, loaded: loadedSafesUSDBalance } = useSafeUSDBalances({ safeAddress: multiSigAddress })
+    // const { data: safesUSDBalance, loaded: loadedSafesUSDBalance } = useSafeUSDBalances({ safeAddress: multiSigAddress })
+
+    // useEffect(() => {
+    //     setSafeNetworks([])
+    //     console.log('Multi-sig address entered', multiSigAddress)
+    //     console.log('Safe USD balance', safesUSDBalance)
+    //     console.log('Loaded Safe USD balance', loadedSafesUSDBalance)
+    //     // const networks = []
+    //     // for (let i = 0; i < safesUSDBalance.length; i++) {
+    //     //     console.log('network', safesUSDBalance[i].networkName)
+    //     //     networks.push(safesUSDBalance[i].networkName)
+
+    //     // }
+    //     setSafeNetworks(safesUSDBalance)
+    // }, [multiSigAddress])
 
     useEffect(() => {
-        setSafeNetworks([])
         console.log('Multi-sig address entered', multiSigAddress)
-        console.log('Safe USD balance', safesUSDBalance)
-        console.log('Loaded Safe USD balance', loadedSafesUSDBalance)
-        // const networks = []
-        // for (let i = 0; i < safesUSDBalance.length; i++) {
-        //     console.log('network', safesUSDBalance[i].networkName)
-        //     networks.push(safesUSDBalance[i].networkName)
+		const fetchSafeData = async() => {
+			const supportedSafes = new SupportedSafes()
+			const res = await supportedSafes.getSafeByAddress(multiSigAddress)
+            console.log('res safe', res)
+			setLoadingSafeData(false)
+			setSafeNetworks(res)
+		}
 
-        // }
-        setSafeNetworks(safesUSDBalance)
-    }, [multiSigAddress, safesUSDBalance])
+		setLoadingSafeData(true)
+		fetchSafeData()
+	}, [multiSigAddress])
 
     useEffect(() => {
         if (isOwner) {
