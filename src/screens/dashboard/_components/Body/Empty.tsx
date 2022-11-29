@@ -1,6 +1,11 @@
-import { useContext } from 'react'
-import { Flex, Image, Text } from '@chakra-ui/react'
+import { useContext, useMemo } from 'react'
+import { Button, Flex, Image, Text } from '@chakra-ui/react'
+import { defaultChainId } from 'src/constants/chains'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
+import { copyGrantLink } from 'src/libraries/utils/copy'
 import { ApiClientsContext } from 'src/pages/_app'
+import { DashboardContext } from 'src/screens/dashboard/Context'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function Empty() {
 	const buildComponent = () => {
@@ -42,11 +47,50 @@ function Empty() {
 					{' '}
 					with a link, or use embed.
 				</Text>
+
+				<Flex mt={6}>
+					<Button
+						variant='primaryMedium'
+						onClick={
+							async() => {
+								if(selectedGrant?.id) {
+									const ret = await copyGrantLink(selectedGrant.id, chainId)
+									toast({
+										title: ret ? 'Copied!' : 'Failed to copy',
+										status: ret ? 'success' : 'error',
+										duration: 3000,
+									})
+								}
+							}
+						}>
+						<Text
+							variant='body'
+							color='white'>
+							Copy Link
+						</Text>
+					</Button>
+
+					<Button
+						ml={6}
+						variant='primaryMedium'
+						bg='gray.3'>
+						<Text
+							variant='body'>
+							Use embed
+						</Text>
+					</Button>
+				</Flex>
 			</Flex>
 		)
 	}
 
 	const { workspace } = useContext(ApiClientsContext)!
+	const { selectedGrant } = useContext(DashboardContext)!
+	const chainId = useMemo(() => {
+		return getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
+	}, [workspace])
+
+	const toast = useCustomToast()
 
 	return buildComponent()
 }

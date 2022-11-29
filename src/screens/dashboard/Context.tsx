@@ -105,7 +105,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 	useEffect(() => {
 		logger.info({ selectedGrantIndex }, 'Selected grant index changed')
-		if(selectedGrantIndex !== undefined && selectedGrantIndex < grants?.length) {
+		if(selectedGrantIndex !== undefined && selectedGrantIndex < grants?.length && grants[selectedGrantIndex]) {
 			const KEY = `${GRANT_CACHE_KEY}-${chainID}-${workspace?.id}`
 			localStorage.setItem(KEY, grants[selectedGrantIndex].id)
 		}

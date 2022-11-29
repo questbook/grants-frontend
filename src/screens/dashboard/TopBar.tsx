@@ -1,6 +1,11 @@
 import { useContext, useMemo, useRef } from 'react'
 import { Button, Flex, IconButton, Image, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text } from '@chakra-ui/react'
+import { defaultChainId } from 'src/constants/chains'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
+import { copyGrantLink } from 'src/libraries/utils/copy'
+import { ApiClientsContext } from 'src/pages/_app'
 import { DashboardContext } from 'src/screens/dashboard/Context'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function TopBar() {
 	const buildComponent = () => {
@@ -12,21 +17,27 @@ function TopBar() {
 				py={4}
 				align='center'>
 				<IconButton
+					disabled={!isLeftArrowEnabled}
 					variant='ghost'
 					aria-label='left-arrow'
 					icon={<Image src={`/v2/icons/arrow left/${isLeftArrowEnabled ? 'enabled' : 'disabled'}.svg`} />}
 					onClick={
 						() => {
-							setSelectedGrantIndex((selectedGrantIndex! - 1) % grants.length)
+							if(isLeftArrowEnabled) {
+								setSelectedGrantIndex((selectedGrantIndex! - 1) % grants.length)
+							}
 						}
 					} />
 				<IconButton
+					disabled={!isRightArrowEnabled}
 					variant='ghost'
 					aria-label='right-arrow'
 					icon={<Image src={`/v2/icons/arrow right/${isRightArrowEnabled ? 'enabled' : 'disabled'}.svg`} />}
 					onClick={
 						() => {
-							setSelectedGrantIndex((selectedGrantIndex! + 1) % grants.length)
+							if(isRightArrowEnabled) {
+								setSelectedGrantIndex((selectedGrantIndex! + 1) % grants.length)
+							}
 						}
 					} />
 				<Text
@@ -139,7 +150,16 @@ function TopBar() {
 			description: 'Attract builders with a link, or embed your stats on any website.',
 			buttonIcon: '/v2/icons/copy/azure.svg',
 			buttonText: 'Copy Link',
-			onButtonClick: () => {}
+			onButtonClick: async() => {
+				if(selectedGrant?.id) {
+					const ret = await copyGrantLink(selectedGrant.id, chainId)
+					toast({
+						title: ret ? 'Copied!' : 'Failed to copy',
+						status: ret ? 'success' : 'error',
+						duration: 3000,
+					})
+				}
+			}
 		},
 		{
 			title: 'Embed',
@@ -171,7 +191,12 @@ function TopBar() {
 	}
 
 	const popoverRef = useRef<HTMLButtonElement>(null)
+	const { workspace } = useContext(ApiClientsContext)!
 	const { selectedGrantIndex, setSelectedGrantIndex, grants } = useContext(DashboardContext)!
+
+	const chainId = useMemo(() => {
+		return getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
+	}, [workspace])
 
 	const selectedGrant = useMemo(() => {
 		if(!grants?.length || selectedGrantIndex === undefined || selectedGrantIndex >= grants?.length) {
@@ -198,6 +223,8 @@ function TopBar() {
 		const index = grants.findIndex(grant => grant.id === selectedGrant?.id)
 		return index < grants.length - 1
 	}, [selectedGrant])
+
+	const toast = useCustomToast()
 
 	return buildComponent()
 }

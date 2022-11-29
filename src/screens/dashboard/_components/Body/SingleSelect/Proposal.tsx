@@ -1,7 +1,8 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { Box, Button, CircularProgress, Flex, Image, Text } from '@chakra-ui/react'
+import { ethers } from 'ethers'
 import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer'
-import { defaultChainId } from 'src/constants/chains'
+import { defaultChainId, USD_ASSET } from 'src/constants/chains'
 import logger from 'src/libraries/logger'
 import CopyIcon from 'src/libraries/ui/CopyIcon'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
@@ -32,6 +33,8 @@ function Proposal() {
 		return (
 			<Flex
 				w='100%'
+				h='100%'
+				overflowY='auto'
 				px={5}
 				py={6}
 				direction='column'
@@ -96,33 +99,41 @@ function Proposal() {
 									</Text>
 								</Button>
 
-								<Image
-									src='/v2/icons/dot.svg'
-									boxSize='4px'
-									mx={2} />
+								{
+									getFieldString(decryptedProposal, 'applicantAddress') && (
+										<Image
+											src='/v2/icons/dot.svg'
+											boxSize='4px'
+											mx={2} />
+									)
+								}
 
-								<Button
-									variant='link'
-									rightIcon={
-										<Flex
-											w='20px'
-											h='20px'
-											bg='gray.3'
-											borderRadius='3xl'
-											justify='center'>
-											<CopyIcon
-												alignSelf='center'
-												boxSize='12px'
-												text={getFieldString(decryptedProposal, 'applicantAddress')} />
-										</Flex>
-									}>
-									<Text
-										fontWeight='400'
-										variant='body'
-										color='gray.5'>
-										{formatAddress(getFieldString(decryptedProposal, 'applicantAddress'))}
-									</Text>
-								</Button>
+								{
+									getFieldString(decryptedProposal, 'applicantAddress') && (
+										<Button
+											variant='link'
+											rightIcon={
+												<Flex
+													w='20px'
+													h='20px'
+													bg='gray.3'
+													borderRadius='3xl'
+													justify='center'>
+													<CopyIcon
+														alignSelf='center'
+														boxSize='12px'
+														text={getFieldString(decryptedProposal, 'applicantAddress')} />
+												</Flex>
+											}>
+											<Text
+												fontWeight='400'
+												variant='body'
+												color='gray.5'>
+												{formatAddress(getFieldString(decryptedProposal, 'applicantAddress'))}
+											</Text>
+										</Button>
+									)
+								}
 							</Flex>
 						</Flex>
 					</Flex>
@@ -218,11 +229,15 @@ function Proposal() {
 									variant='body'>
 									{milestone?.title}
 								</Text>
-								<Text ml='auto'>
-									{milestone.amount}
-									{' '}
-									{chainInfo?.label}
-								</Text>
+								{
+									chainInfo && (
+										<Text ml='auto'>
+											{chainInfo?.address === USD_ASSET ? milestone.amount : ethers.utils.formatUnits(milestone.amount, chainInfo.decimals)}
+											{' '}
+											{chainInfo?.label}
+										</Text>
+									)
+								}
 							</Flex>
 						))
 					}
