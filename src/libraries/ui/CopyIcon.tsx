@@ -7,7 +7,7 @@ type Props = {
 } & ImageProps
 
 function CopyIcon({ text, ...props }: Props) {
-	const imageSource = '/v2/icons/copy.svg'
+	const imageSource = '/v2/icons/copy/black.svg'
 
 	const defaultTooltip = 'Copy'
 	const copiedTooltip = 'Copied'
