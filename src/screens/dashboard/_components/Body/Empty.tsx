@@ -85,10 +85,19 @@ function Empty() {
 	}
 
 	const { workspace } = useContext(ApiClientsContext)!
-	const { selectedGrant } = useContext(DashboardContext)!
+	const { selectedGrantIndex, grants } = useContext(DashboardContext)!
+
 	const chainId = useMemo(() => {
 		return getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
 	}, [workspace])
+
+	const selectedGrant = useMemo(() => {
+		if(!grants?.length || selectedGrantIndex === undefined || selectedGrantIndex >= grants?.length) {
+			return
+		}
+
+		return grants[selectedGrantIndex]
+	}, [selectedGrantIndex, grants])
 
 	const toast = useCustomToast()
 
