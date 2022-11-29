@@ -1,14 +1,14 @@
 import { useContext } from 'react'
 import { Checkbox, Flex, Image, Text } from '@chakra-ui/react'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
-import { Proposal } from 'src/screens/dashboard/_utils/types'
+import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import getAvatar from 'src/utils/avatarUtils'
 import { getFieldString } from 'src/utils/formattingUtils'
 
 interface Props {
     index: number
-    proposal: Proposal
+    proposal: ProposalType
 }
 
 function ProposalCard({ index, proposal }: Props) {

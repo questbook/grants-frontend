@@ -3,7 +3,7 @@ import { Box, Flex, Image, Text } from '@chakra-ui/react'
 import { defaultChainId } from 'src/constants/chains'
 import logger from 'src/libraries/logger'
 import { ApiClientsContext } from 'src/pages/_app'
-import { Proposal } from 'src/screens/dashboard/_utils/types'
+import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { IReviewFeedback } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
@@ -91,7 +91,7 @@ function Reviews() {
 		)
 	}
 
-	const reviewerItem = (reviewer: Proposal['applicationReviewers'][number]['member'], review: IReviewFeedback | undefined, index: number) => {
+	const reviewerItem = (reviewer: ProposalType['applicationReviewers'][number]['member'], review: IReviewFeedback | undefined, index: number) => {
 		return (
 			<Flex
 				mt={index === 0 ? 5 : 3}

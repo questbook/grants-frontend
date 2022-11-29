@@ -10,6 +10,6 @@ export type DashboardContextType = {
 }
 
 export type Proposals = Exclude<GetProposalsQuery['grantApplications'], null | undefined>
-export type Proposal = Proposals[number]
+export type ProposalType = Proposals[number]
 export type PayoutsType = Exclude<GetPayoutsQuery['fundsTransfers'], null | undefined>
 export type Payout = PayoutsType[number]

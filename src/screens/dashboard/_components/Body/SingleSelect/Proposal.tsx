@@ -1,13 +1,18 @@
-import { useContext, useEffect, useMemo } from 'react'
-import { Button, Flex, Image, Text } from '@chakra-ui/react'
+import { useContext, useEffect, useMemo, useState } from 'react'
+import { Box, Button, CircularProgress, Flex, Image, Text } from '@chakra-ui/react'
+import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer'
 import { defaultChainId } from 'src/constants/chains'
+import logger from 'src/libraries/logger'
 import CopyIcon from 'src/libraries/ui/CopyIcon'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
 import { ApiClientsContext } from 'src/pages/_app'
+import MilestoneItem from 'src/screens/dashboard/_components/MilestoneItem'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
+import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAddress, getFieldString, getRewardAmountMilestones } from 'src/utils/formattingUtils'
+import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { getChainInfo } from 'src/utils/tokenUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
@@ -19,6 +24,16 @@ function Proposal() {
 					<Text>
 						Could not proposal data!
 					</Text>
+				</Flex>
+			)
+		} else if(!decryptedProposal) {
+			return (
+				<Flex
+					w='100%'
+					h='100%'
+					align='center'
+					justify='center'>
+					<CircularProgress />
 				</Flex>
 			)
 		}
@@ -38,12 +53,12 @@ function Proposal() {
 					<Text
 						variant='heading3'
 						fontWeight='500'>
-						{getFieldString(proposal, 'projectName')}
+						{getFieldString(decryptedProposal, 'projectName')}
 					</Text>
 					<Text
 						variant='body'
 						color='gray.5'>
-						{formatTime(proposal.updatedAtS)}
+						{formatTime(decryptedProposal.updatedAtS)}
 					</Text>
 				</Flex>
 
@@ -57,13 +72,13 @@ function Proposal() {
 						<Image
 							borderRadius='3xl'
 							boxSize='36px'
-							src={getAvatar(false, proposal.applicantId)}
+							src={getAvatar(false, decryptedProposal.applicantId)}
 						/>
 						<Flex
 							ml={2}
 							direction='column'>
 							<Text fontWeight='500'>
-								{getFieldString(proposal, 'applicantName')}
+								{getFieldString(decryptedProposal, 'applicantName')}
 							</Text>
 							<Flex
 								align='center'>
@@ -86,7 +101,7 @@ function Proposal() {
 										fontWeight='400'
 										variant='body'
 										color='gray.5'>
-										{getFieldString(proposal, 'applicantEmail')}
+										{getFieldString(decryptedProposal, 'applicantEmail')}
 									</Text>
 								</Button>
 
@@ -107,14 +122,14 @@ function Proposal() {
 											<CopyIcon
 												alignSelf='center'
 												boxSize='12px'
-												text={getFieldString(proposal, 'applicantAddress')} />
+												text={getFieldString(decryptedProposal, 'applicantAddress')} />
 										</Flex>
 									}>
 									<Text
 										fontWeight='400'
 										variant='body'
 										color='gray.5'>
-										{formatAddress(getFieldString(proposal, 'applicantAddress'))}
+										{formatAddress(getFieldString(decryptedProposal, 'applicantAddress'))}
 									</Text>
 								</Button>
 							</Flex>
@@ -124,8 +139,7 @@ function Proposal() {
 
 				<Flex
 					mt={4}
-					w='100%'
-					h='40px'>
+					w='100%'>
 					{
 						chainInfo && (
 							<Flex
@@ -138,7 +152,7 @@ function Proposal() {
 								<Text
 									mt={1}
 									fontWeight='500'>
-									{getRewardAmountMilestones(chainInfo.decimals, proposal)}
+									{getRewardAmountMilestones(chainInfo.decimals, decryptedProposal)}
 									{' '}
 									{chainInfo.label}
 								</Text>
@@ -155,10 +169,74 @@ function Proposal() {
 						<Text
 							mt={1}
 							fontWeight='500'>
-							{proposal.milestones.length}
+							{decryptedProposal.milestones.length}
 						</Text>
 					</Flex>
 				</Flex>
+
+				{
+					getFieldString(decryptedProposal, 'tldr') && (
+						<Flex
+							w='100%'
+							mt={4}
+							direction='column'>
+							<Text color='gray.5'>
+								tl;dr
+							</Text>
+							<Text mt={1}>
+								{getFieldString(decryptedProposal, 'tldr')}
+							</Text>
+						</Flex>
+					)
+				}
+
+				<Flex
+					w='100%'
+					mt={4}
+					direction='column'>
+					<Text color='gray.5'>
+						Details
+					</Text>
+					<Box mt={1} />
+					{projectDetails && <TextViewer text={projectDetails} />}
+				</Flex>
+
+				<Flex
+					w='100%'
+					mt={4}
+					direction='column'>
+					<Text color='gray.5'>
+						Milestones
+					</Text>
+					{
+						decryptedProposal.milestones.map((milestone, index) => (
+							<Flex
+								align='center'
+								w='100%'
+								key={index}
+								mt={index === 0 ? 4 : 2}
+							>
+								<Text
+									color='gray.4'
+									variant='heading3'
+									fontWeight='500'>
+									{index < 9 ? `0${index + 1}` : (index + 1)}
+								</Text>
+								<Text
+									ml={3}
+									variant='body'>
+									{milestone?.title}
+								</Text>
+								<Text ml='auto'>
+									{milestone.amount}
+									{' '}
+									{chainInfo?.label}
+								</Text>
+							</Flex>
+						))
+					}
+				</Flex>
+
 
 			</Flex>
 		)
@@ -195,6 +273,9 @@ function Proposal() {
 		return getChainInfo(selectedGrant, chainId)
 	}, [chainId, selectedGrant])
 
+	const [decryptedProposal, setDecryptedProposal] = useState<ProposalType | undefined>(proposal)
+	const [projectDetails, setProjectDetails] = useState<string>()
+
 	const { decrypt } = useEncryptPiiForApplication(
 		selectedGrant?.id,
 		proposal?.applicantPublicKey,
@@ -206,7 +287,11 @@ function Proposal() {
 			return
 		}
 
-		decrypt(proposal)
+ 		Promise.all([decrypt(proposal), getFromIPFS(getFieldString(proposal, 'projectDetails'))]).then(([decryptedProposal, details]) => {
+			logger.info({ decryptedProposal, details }, '(Proposal) decrypted proposal')
+			setDecryptedProposal(decryptedProposal)
+			setProjectDetails(details)
+		})
 	}, [proposal])
 
 	return buildComponent()

@@ -1,6 +1,6 @@
 import { useContext, useMemo, useState } from 'react'
 import { Flex, Image, Text } from '@chakra-ui/react'
-import { Proposal } from 'src/screens/dashboard/_utils/types'
+import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 
 function Milestones() {
@@ -46,7 +46,7 @@ function Milestones() {
 		)
 	}
 
-	const milestoneItem = (milestone: Proposal['milestones'][number], index: number) => {
+	const milestoneItem = (milestone: ProposalType['milestones'][number], index: number) => {
 		return (
 			<Flex
 				direction='column'
