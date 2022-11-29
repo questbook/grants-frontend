@@ -1,9 +1,10 @@
 // This renders the list of proposals that show up as the first column
 
-import { useContext } from 'react'
+import { useContext, useMemo } from 'react'
 import { Checkbox, Flex, Text } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList'
+import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 
 function ProposalList() {
@@ -23,7 +24,7 @@ function ProposalList() {
 					ml={1}
 					display='inline-block'
 					color='black.3'>
-					{`(${proposals?.length})`}
+					{`(${proposalCount})`}
 				</Text>
 			</Text>
 
@@ -31,7 +32,7 @@ function ProposalList() {
 
 			<Flex mt={4}>
 				<Checkbox
-					isChecked={selectedProposals.length > 0 && selectedProposals.every((_) => _)}
+					isChecked={selectedProposals?.length !== undefined && selectedProposals.every((_) => _)}
 					onChange={
 						(e) => {
 							logger.info({ value: e.target.checked }, '(Proposal List) Select All Checkbox')
@@ -52,7 +53,7 @@ function ProposalList() {
 				direction='column'
 				overflowY='auto'>
 				{
-					proposals?.length > 0 && proposals?.map((proposal, index) => {
+					proposalCount > 0 && proposals?.map((proposal, index) => {
 						return (
 							<ProposalCard
 								key={proposal.id}
@@ -61,20 +62,15 @@ function ProposalList() {
 						)
 					})
 				}
-				{
-					!proposals?.length && (
-						<Text
-							my='auto'
-							textAlign='center'>
-							Proposals from builders show up here.
-						</Text>
-					)
-				}
+				{proposalCount === 0 && <Empty />}
 			</Flex>
 		</Flex>
 	)
 
 	const { proposals, selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
+	const proposalCount = useMemo(() => {
+		return proposals.filter((_) => _).length
+	}, [proposals])
 
 	return buildComponent()
 }

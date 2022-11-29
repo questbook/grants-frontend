@@ -1,7 +1,8 @@
 // This renders the single proposal along with the Discussion section or the aggregated proposals, and shows up as the 2nd column
 
-import { useContext, useMemo } from 'react'
+import { useContext, useEffect, useMemo } from 'react'
 import { Flex } from '@chakra-ui/react'
+import logger from 'src/libraries/logger'
 import Empty from 'src/screens/dashboard/_components/Body/Empty'
 import MultiSelect from 'src/screens/dashboard/_components/Body/MultiSelect'
 import SingleSelect from 'src/screens/dashboard/_components/Body/SingleSelect'
@@ -20,6 +21,12 @@ function Body() {
 	const selectedProposalCount = useMemo(() => {
 		return selectedProposals.filter((_) => _).length
 	}, [selectedProposals])
+
+	useEffect(() => {
+		logger.info({ selectedProposalCount }, '(Body) Selected Proposal Count')
+	}, [
+		selectedProposalCount
+	])
 
 	return buildComponent()
 }

@@ -28,16 +28,22 @@ function Payouts() {
 							setExpanded(!expanded)
 						}
 					}>
-					<Text fontWeight='500'>
+					<Text
+						fontWeight='500'
+						color={proposals?.length ? 'black.1' : 'gray.6'}>
 						Payouts
 					</Text>
-					<Image
-						mr={2}
-						src='/v2/icons/dropdown.svg'
-						transform={expanded ? 'rotate(180deg)' : 'rotate(0deg)'}
-						alt='options'
-						cursor='pointer'
-					/>
+					{
+						proposals?.length > 0 && (
+							<Image
+								mr={2}
+								src='/v2/icons/dropdown.svg'
+								transform={expanded ? 'rotate(180deg)' : 'rotate(0deg)'}
+								alt='options'
+								cursor='pointer'
+							/>
+						)
+					}
 				</Flex>
 
 				<Flex

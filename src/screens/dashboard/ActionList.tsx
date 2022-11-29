@@ -2,7 +2,6 @@
 
 import { useContext, useMemo } from 'react'
 import { Flex } from '@chakra-ui/react'
-import Empty from 'src/screens/dashboard/_components/ActionList/Empty'
 import MultiSelect from 'src/screens/dashboard/_components/ActionList/MultiSelect'
 import SingleSelect from 'src/screens/dashboard/_components/ActionList/SingleSelect'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -14,7 +13,7 @@ function ActionList() {
 			bg='white'
 			direction='column'
 			overflowY='auto'>
-			{selectedProposalCount > 1 ? <MultiSelect /> : selectedProposalCount === 1 ? <SingleSelect /> : <Empty />}
+			{selectedProposalCount > 1 ? <MultiSelect /> : <SingleSelect /> }
 		</Flex>
 	)
 

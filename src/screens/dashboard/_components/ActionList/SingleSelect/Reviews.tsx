@@ -23,19 +23,25 @@ function Reviews() {
 					justify='space-between'
 					onClick={
 						() => {
-							setExpanded(!expanded)
+							if(proposals?.length > 0) {
+								setExpanded(!expanded)
+							}
 						}
 					}>
 					<Text fontWeight='500'>
 						Reviews
 					</Text>
-					<Image
-						mr={2}
-						src='/v2/icons/dropdown.svg'
-						transform={expanded ? 'rotate(180deg)' : 'rotate(0deg)'}
-						alt='options'
-						cursor='pointer'
-					/>
+					{
+						proposals?.length > 0 && (
+							<Image
+								mr={2}
+								src='/v2/icons/dropdown.svg'
+								transform={expanded ? 'rotate(180deg)' : 'rotate(0deg)'}
+								alt='options'
+								cursor='pointer'
+							/>
+						)
+					}
 				</Flex>
 
 				<Flex
@@ -224,6 +230,12 @@ function Reviews() {
 	const [expanded, setExpanded] = useState<boolean>(false)
 	const [reviews, setReviews] = useState<IReviewFeedback[]>([])
 	const [reviewersExpanded, setReviewersExpanded] = useState<boolean[]>([])
+
+	useEffect(() => {
+		if(proposals?.length === 0) {
+			setExpanded(true)
+		}
+	}, [proposals])
 
 	const proposal = useMemo(() => {
 		const index = selectedProposals.indexOf(true)
