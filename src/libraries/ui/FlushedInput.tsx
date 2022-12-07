@@ -13,9 +13,10 @@ interface Props {
     ref?: MutableRefObject<HTMLInputElement | null>,
     onClick?: () => void,
     height?: ResponsiveValue<string | number>,
+    min?: string,
 }
 
-function FlushedInput({ placeholder, width, height, type, isDisabled, value, onChange, textAlign, helperText, ref }: Props) {
+function FlushedInput({ placeholder, width, height, type, isDisabled, value, onChange, textAlign, helperText, ref, min, onClick }: Props) {
     return (
         <>
             <Flex direction='column' gap={2}>
@@ -32,8 +33,10 @@ function FlushedInput({ placeholder, width, height, type, isDisabled, value, onC
                     isDisabled={isDisabled}
                     value={value}
                     onChange={onChange}
+                    onClick={onClick}
                     textAlign={textAlign ? textAlign : 'center'}
-                    ref={ref} />
+                    ref={ref}
+                    min={min} />
                 <Text variant="v2_helper_text">{helperText}</Text>
             </Flex>
         </>

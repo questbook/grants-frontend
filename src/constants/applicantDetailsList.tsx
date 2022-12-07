@@ -18,29 +18,17 @@ export default [
 		isRequired: true
 	},
 	{
-		title: 'Team',
+		title: 'Team Members',
 		id: 'teamMembers',
 		inputType: 'long-form',
 		isRequired: false,
 	},
+
 	{
-		title: 'Usage of Grant',
-		tooltip: 'Details on how the grant will be used to achieve the proposal goals',
-		id: 'fundingBreakdown',
-		inputType: 'long-form',
-		isRequired: false,
-	},
-	{
-		title: 'Project Name',
-		id: 'projectName',
+		title: 'Title',
+		id: 'title',
 		inputType: 'short-form',
 		isRequired: true,
-	},
-	{
-		title: 'Project Links',
-		id: 'projectLink',
-		inputType: 'array',
-		isRequired: false,
 	},
 	{
 		title: 'Project Details',
@@ -49,10 +37,16 @@ export default [
 		isRequired: true,
 	},
 	{
-		title: 'Project Goals',
-		id: 'projectGoals',
+		title: 'Tl,dr',
+		id: 'tldr',
 		inputType: 'long-form',
-		isRequired: false,
+		isRequired: true,
+	},
+	{
+		title: 'Details',
+		id: 'details',
+		inputType: 'long-form',
+		isRequired: true,
 	},
 	{
 		title: 'Milestones',
@@ -66,22 +60,11 @@ export default [
 		inputType: 'array',
 		isRequired: false,
 	},
-	// {
-	//   title: 'Add Custom Field',
-	//   id: 'extraField',
-	//   inputType: 'short-form',
-	//   isRequired: false,
-	// },
 	{
 		title: 'Funding Ask',
 		id: 'fundingAsk',
 		inputType: 'long-form',
 		isRequired: true,
 	},
-	{
-		title: 'Member Details',
-		id: 'memberDetails',
-		inputType: 'long-form',
-		isRequired: true,
-	},
+	
 ]

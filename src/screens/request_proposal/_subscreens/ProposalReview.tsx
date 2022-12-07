@@ -5,6 +5,7 @@ import { AiOutlinePlus } from 'react-icons/ai'
 import FlushedInput from "src/libraries/ui/FlushedInput";
 import StepIndicator from "src/libraries/ui/StepIndicator";
 import { ChangeEvent, useState } from "react";
+import { DynamicInputValues } from "src/types";
 
 interface Props {
     numberOfReviewers: number,
@@ -36,9 +37,9 @@ function ProposalReview(
         return (
             <>
                 <Flex alignSelf='flex-start'>
-                    <Button variant='linkV2' leftIcon={<BsArrowLeft />} onClick={() => setStep(1)}>Back</Button>
+                    <Button className="backBtn" variant='linkV2' leftIcon={<BsArrowLeft />} onClick={() => setStep(1)}>Back</Button>
                 </Flex>
-                <Flex flexDirection='column' width='100%' gap={6}>
+                <Flex className="rightScreenCard" flexDirection='column' width='100%' gap={6} alignSelf='flex-start'>
                     {/* TODO: Add Steps complete indicator */}
                     <StepIndicator step={step} />
                     <Text alignSelf='center' fontWeight='500' fontSize='24px' lineHeight='32px' >Proposal Review</Text>
@@ -104,7 +105,7 @@ function ProposalReview(
         )
     }
 
-    const [rubricInputValues, setRubricInputValues] = useState({ 0: 'Team competence', 1: 'Idea Quality', 2: 'Relevance to our ecosystem' })
+    const [rubricInputValues, setRubricInputValues] = useState<DynamicInputValues>({ 0: 'Team competence', 1: 'Idea Quality', 2: 'Relevance to our ecosystem' })
     const [rubricsCounter, setRubricsCounter] = useState(3)
 
     const handleClick = () => {
@@ -113,10 +114,10 @@ function ProposalReview(
     };
 
     const handleOnChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-        const abc = {};
-        abc[index] = e.target.value;
-        setRubricInputValues({ ...rubricInputValues, ...abc });
-        console.log({ ...rubricInputValues, ...abc });
+        const inputValues:DynamicInputValues = {};
+        inputValues[index] = e.target.value;
+        setRubricInputValues({ ...rubricInputValues, ...inputValues });
+        console.log({ ...rubricInputValues, ...inputValues });
     };
 
 

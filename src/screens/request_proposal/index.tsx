@@ -4,6 +4,7 @@ import { ReactElement, useCallback, useContext, useEffect, useRef, useState } fr
 import NetworkTransactionFlowStepperModal from "src/components/ui/NetworkTransactionFlowStepperModal"
 import ErrorToast from "src/components/ui/toasts/errorToast"
 import { WORKSPACE_REGISTRY_ADDRESS } from "src/constants/addresses"
+import applicantDetailsList from "src/constants/applicantDetailsList"
 import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
 import SupportedChainId from "src/generated/SupportedChainId"
 import useQBContract from "src/hooks/contracts/useQBContract"
@@ -12,7 +13,9 @@ import { useNetwork } from "src/hooks/gasless/useNetwork"
 import { useQuestbookAccount } from "src/hooks/gasless/useQuestbookAccount"
 import logger from "src/libraries/logger"
 import NavbarLayout from "src/libraries/ui/navbarLayout"
+import { validateAndUploadToIpfs, validateRequest } from "src/libraries/validator"
 import { ApiClientsContext, WebwalletContext } from "src/pages/_app"
+import { ApplicantDetailsFieldType } from "src/types"
 import getErrorMessage from "src/utils/errorUtils"
 import { getExplorerUrlForTxHash } from "src/utils/formattingUtils"
 import { addAuthorizedOwner, addAuthorizedUser, bicoDapps, chargeGas, getEventData, getTransactionDetails, networksMapping, sendGaslessTransaction } from "src/utils/gaslessUtils"
@@ -26,10 +29,12 @@ import ProposalReview from "./_subscreens/ProposalReview"
 import ProposalSubmission from "./_subscreens/ProposalSubmission"
 import { today } from "./_utils/utils"
 
+let typeA: keyof typeof applicantDetailsList 
+
 function RequestProposal() {
     const buildComponent = () => {
         return (
-            <Flex minWidth='90%' gap={8} bgColor='white' padding={4} justifyContent='center' alignItems='center' marginTop={8} marginRight={16} marginLeft={16} marginBottom={4}>
+            <Flex className='card' minWidth='90%' gap={8} bgColor='white' padding={4} justifyContent='center' alignItems='center' marginTop={8} marginRight={16} marginLeft={16} marginBottom={4}>
 
                 {renderBody()}
             </Flex>
@@ -51,17 +56,19 @@ function RequestProposal() {
                     setMoreDetails={setMoreDetails}
                     link={link}
                     setLink={setLink}
-                    doc={doc}
+                    doc={doc!}
                     setDoc={setDoc}
                     step={step}
                     setStep={setStep}
+                    allApplicantDetails={allApplicantDetails}
+                    setAllApplicantDetails={setAllApplicantDetails}
                 />)
             case 2:
                 return (<ProposalReview
                     numberOfReviewers={numberOfReviewers}
                     setNumberOfReviewers={setNumberOfReviewers}
-                    rubricMechanism={rubricMechanism}
-                    setRubricMechanism={setRubricMechanism}
+                    rubricMechanism={reviewMechanism}
+                    setRubricMechanism={setReviewMechanism}
                     step={step} setStep={setStep}
                     rubrics={rubrics}
                     setRubrics={setRubrics} />)
@@ -108,16 +115,39 @@ function RequestProposal() {
     const [proposalName, setProposalName] = useState('')
     const [startDate, setStartDate] = useState(todayDate)
     const [endDate, setEndDate] = useState('')
-    const [requiredDetails, setRequiredDetails] = useState(['title', 'tl,dr', 'details', 'funding ask'])
-    const [moreDetails, setMoreDetails] = useState('')
+
+    const applicantDetails = applicantDetailsList
+		.map(({
+			title, id, inputType, isRequired,
+		}, index) => {
+			if(index === applicantDetailsList.length - 1) {
+				return null
+			}
+
+			if(index === applicantDetailsList.length - 2) {
+				return null
+			}
+
+			return {
+				title,
+				required: isRequired || false,
+				id,
+				inputType,
+			}
+		})
+		.filter((obj) => obj !== null)
+        
+    const [requiredDetails, setRequiredDetails] = useState(applicantDetails)
+    const [moreDetails, setMoreDetails] = useState([''])
+    const [allApplicantDetails, setAllApplicantDetails] = useState<ApplicantDetailsFieldType[]>([])
     const [link, setLink] = useState('')
-    const [doc, setDoc] = useState('')
+    const [doc, setDoc] = useState<FileList>()
 
     const [step, setStep] = useState(1)
 
     // State for Proposal Review
     const [numberOfReviewers, setNumberOfReviewers] = useState(2)
-    const [rubricMechanism, setRubricMechanism] = useState('')
+    const [reviewMechanism, setReviewMechanism] = useState('')
     const [rubrics, setRubrics] = useState({})
 
     // State for Payouts
@@ -139,6 +169,9 @@ function RequestProposal() {
 
     // state for gasless transactions
     const [txHash, setTxHash] = useState('')
+
+    // state for workspace creation
+    const [workspaceId, setWorkspaceId] = useState('')
 
     // Webwallet
 	const [shouldRefreshNonce, setShouldRefreshNonce] = useState<boolean>()
@@ -175,6 +208,11 @@ function RequestProposal() {
 				// .catch((err) => console.log("Couldn't add authorized user", err))
 		}
 	}, [webwallet, nonce])
+
+    
+    useEffect(() => {
+        console.log('start date', startDate)
+    }, [])
 
 
     useEffect(() => {
@@ -252,8 +290,8 @@ function RequestProposal() {
 			const event = await getEventData(receipt, 'WorkspaceCreated', WorkspaceRegistryAbi)
 			if(event) {
 				const workspaceId = Number(event.args[0].toBigInt())
-				// console.log('workspace_id', workspace_id)
-
+				console.log('workspace_id', workspaceId)
+                setWorkspaceId(workspaceId.toString())
 				const newWorkspace = `chain_${network}-0x${workspaceId.toString(16)}`
 				logger.info({ newWorkspace }, 'New workspace created')
 				localStorage.setItem('currentWorkspace', newWorkspace)
@@ -284,6 +322,31 @@ function RequestProposal() {
 	}, [biconomyWalletClient, domainName, accountDataWebwallet, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, selectedSafeNetwork])
 
     // create grant
+    // 1. upload document to ipfs
+    const createGrant = useCallback(async() => {
+        if(doc) {
+            const fileCID = await uploadToIPFS(doc[0]!)
+            console.log('fileCID', fileCID)
+        }
+
+        // 2. validate grant data
+       const ipfsHash =  validateAndUploadToIpfs("GrantCreateRequest", {
+            title: proposalName!,
+            startDate: startDate!,
+            endDate: endDate!,
+            details: moreDetails!,
+            reward: amount!,
+            payoutType: payoutMode!,
+            reviewType: reviewMechanism!,
+            creatorId: accountDataWebwallet!.address!,
+            workspaceId: workspaceId!,
+        })
+
+        console.log('ipfsHash', ipfsHash)
+        
+    }, [accountDataWebwallet])
+    
+    // 3. create grant
 
 
     return buildComponent()

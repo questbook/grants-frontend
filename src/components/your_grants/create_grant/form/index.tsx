@@ -60,7 +60,7 @@ function Form({
 
 	const applicantDetails = applicantDetailsList
 		.map(({
-			title, tooltip, id, inputType, isRequired,
+			title, id, inputType, isRequired,
 		}, index) => {
 			if(index === applicantDetailsList.length - 1) {
 				return null
@@ -74,7 +74,6 @@ function Form({
 				title,
 				required: isRequired || false,
 				id,
-				tooltip,
 				index,
 				inputType,
 			}

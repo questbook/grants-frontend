@@ -5,6 +5,7 @@ import { AiOutlinePlus } from 'react-icons/ai'
 import FlushedInput from "src/libraries/ui/FlushedInput";
 import StepIndicator from "src/libraries/ui/StepIndicator";
 import { ChangeEvent, useState } from "react";
+import { DynamicInputValues } from "src/types";
 
 interface Props {
     payoutMode: string,
@@ -38,9 +39,9 @@ function Payouts(
             <>
                 {/* Start Proposal Submission Component */}
                 <Flex alignSelf='flex-start'>
-                    <Button variant='linkV2' leftIcon={<BsArrowLeft />} onClick={() => setStep(2)}>Back</Button>
+                    <Button className="backBtn" variant='linkV2' leftIcon={<BsArrowLeft />} onClick={() => setStep(2)}>Back</Button>
                 </Flex>
-                <Flex flexDirection='column' width='100%' gap={6}>
+                <Flex className="rightScreenCard" flexDirection='column' width='100%' gap={6} alignSelf='flex-start'>
                     <StepIndicator step={step} />
                     <Text alignSelf='center' fontWeight='500' fontSize='24px' lineHeight='32px' marginBottom={8}>Payouts</Text>
 
@@ -99,7 +100,7 @@ function Payouts(
         )
     }
 
-    const [milestoneInputValues, setMilestoneInputValues] = useState({})
+    const [milestoneInputValues, setMilestoneInputValues] = useState<{[key: number]: string}>({})
     const [milestoneCounter, setMilestoneCounter] = useState(0)
 
     const handleClick = () => {
@@ -108,10 +109,10 @@ function Payouts(
     };
 
     const handleOnChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-        const abc = {};
-        abc[index] = e.target.value;
-        setMilestoneInputValues({ ...milestoneInputValues, ...abc });
-        console.log({ ...milestoneInputValues, ...abc });
+        const milestones:DynamicInputValues = {};
+        milestones[index] = e.target.value;
+        setMilestoneInputValues({ ...milestoneInputValues, ...milestones });
+        console.log({ ...milestoneInputValues, ...milestones });
     };
 
 

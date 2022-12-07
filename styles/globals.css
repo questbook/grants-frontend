@@ -154,6 +154,25 @@ a {
   box-shadow: rgba(55, 56, 55, 0.484) 1px 2px 15px 5px;
 }
 
+.card{
+  height: 80vh;
+}
+
+.backBtn{
+  position: relative;
+  margin-top: 20px;
+}
+
+.rightScreenCard{
+  position: relative;
+  margin-top: 20px;
+}
+
+.continueBtn{
+  position: relative;
+  margin-right: 20px;
+}
+
 .barhover {
   background: white;
   padding: 4px 8px;
