@@ -1,36 +1,32 @@
+import $RefParser from '@apidevtools/json-schema-ref-parser'
+import Ajv from 'ajv'
+import addFormats from 'ajv-formats'
 import schema from 'src/libraries/validator/schemaClient.yaml'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
-import Ajv from "ajv"
-import addFormats from 'ajv-formats'
-import $RefParser from "@apidevtools/json-schema-ref-parser";
 
 const schemaJson = JSON.parse(JSON.stringify(schema)).Validations.definitions
-console.log("Schema loaded", schemaJson)
+console.log('Schema loaded', schemaJson)
 
-let ajv = new Ajv({logger: false })
+let ajv = new Ajv({ logger: false })
 ajv = addFormats(ajv)
 ajv.addFormat('hex', /^0x[0-9a-fA-F]+$/)
 ajv.addFormat('integer', () => true)
 
 
 $RefParser.dereference(schemaJson, (err, schema) => {
-	if (err) {
-	  console.error(err);
-	}
-	else {
+	if(err) {
+	  console.error(err)
+	} else {
 	  // `schema` is just a normal JavaScript object that contains your entire JSON Schema,
 	  // including referenced files, combined into a single object
-	  console.log('Schema dereferenced', schemaJson);
+	  console.log('Schema dereferenced', schemaJson)
 	  for(const key in schemaJson) {
-		console.log("Adding schema", key, schemaJson[key])
-	
-		ajv.addSchema(schemaJson[key], key)
+			console.log('Adding schema', key, schemaJson[key])
+
+			ajv.addSchema(schemaJson[key], key)
+		}
 	}
-	}
-  })
-
-
-
+})
 
 
 export async function validateRequest(

@@ -1,5 +1,5 @@
-import { load, dump } from 'js-yaml'
 import { readFile, writeFile } from 'fs/promises'
+import { dump, load } from 'js-yaml'
 
 export async function readYaml<T>(file: string) {
 	const yaml = await readFile(file, { encoding: 'utf-8' })

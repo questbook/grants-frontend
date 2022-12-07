@@ -41,11 +41,39 @@ function Discover() {
 						alignItems='stretch'
 						alignContent='stretch'
 						h='460px'>
-						<Flex bgColor='black.1' padding={24} flexDirection='column' textColor='white' width='600px'>
-							<Text fontWeight='500' fontSize='40px' lineHeight='48px' color='white'>Home for
-								<Text fontWeight='500' fontSize='40px' lineHeight='48px' color='#FFE900' as='span'> high quality </Text> builders</Text>
+						<Flex
+							bgColor='black.1'
+							padding={24}
+							flexDirection='column'
+							textColor='white'
+							width='600px'>
+							<Text
+								fontWeight='500'
+								fontSize='40px'
+								lineHeight='48px'
+								color='white'>
+								Home for
+								<Text
+									fontWeight='500'
+									fontSize='40px'
+									lineHeight='48px'
+									color='#FFE900'
+									as='span'>
+									{' '}
+									high quality
+									{' '}
+								</Text>
+								{' '}
+								builders
+							</Text>
 
-							<Text mt={2} fontSize='16px' lineHeight='24px' fontWeight='400'>Invite proposals from builders. Review and fund proposals with milestones - all on chain.</Text>
+							<Text
+								mt={2}
+								fontSize='16px'
+								lineHeight='24px'
+								fontWeight='400'>
+								Invite proposals from builders. Review and fund proposals with milestones - all on chain.
+							</Text>
 
 							<Button
 								variant='primaryLarge'
@@ -58,27 +86,77 @@ function Discover() {
 										// 	grantId: item.id
 										// }
 									})
-								}>Invite Proposals</Button>
+								}>
+								Invite Proposals
+							</Button>
 						</Flex>
-						<Flex bgColor='brand.green' flexGrow={1} justifyContent='center'>
-							<Image mt={10} src='/illustrations/Browsers.svg' />
+						<Flex
+							bgColor='brand.green'
+							flexGrow={1}
+							justifyContent='center'>
+							<Image
+								mt={10}
+								src='/illustrations/Browsers.svg' />
 						</Flex>
 					</Flex>
 					{/* End Hero Container */}
 
 					{/* Start Stats Banner */}
-					<Flex bgColor='#F1EEE8' padding={8} gap={4} justifyContent='space-evenly'>
-						<Flex flexDirection='column' alignItems='center'>
-							<Text fontWeight='500' fontSize='40px' lineHeight='48px'>20000+</Text>
-							<Text fontWeight='500' fontSize='15px' lineHeight='22px' textTransform='uppercase'>Builders</Text>
+					<Flex
+						bgColor='#F1EEE8'
+						padding={8}
+						gap={4}
+						justifyContent='space-evenly'>
+						<Flex
+							flexDirection='column'
+							alignItems='center'>
+							<Text
+								fontWeight='500'
+								fontSize='40px'
+								lineHeight='48px'>
+								20000+
+							</Text>
+							<Text
+								fontWeight='500'
+								fontSize='15px'
+								lineHeight='22px'
+								textTransform='uppercase'>
+								Builders
+							</Text>
 						</Flex>
-						<Flex flexDirection='column' alignItems='center'>
-							<Text fontWeight='500' fontSize='40px' lineHeight='48px'>$2m+</Text>
-							<Text fontWeight='500' fontSize='15px' lineHeight='22px' textTransform='uppercase'>Paid Out</Text>
+						<Flex
+							flexDirection='column'
+							alignItems='center'>
+							<Text
+								fontWeight='500'
+								fontSize='40px'
+								lineHeight='48px'>
+								$2m+
+							</Text>
+							<Text
+								fontWeight='500'
+								fontSize='15px'
+								lineHeight='22px'
+								textTransform='uppercase'>
+								Paid Out
+							</Text>
 						</Flex>
-						<Flex flexDirection='column' alignItems='center'>
-							<Text fontWeight='500' fontSize='40px' lineHeight='48px'>1000+</Text>
-							<Text fontWeight='500' fontSize='15px' lineHeight='22px' textTransform='uppercase'>Proposals</Text>
+						<Flex
+							flexDirection='column'
+							alignItems='center'>
+							<Text
+								fontWeight='500'
+								fontSize='40px'
+								lineHeight='48px'>
+								1000+
+							</Text>
+							<Text
+								fontWeight='500'
+								fontSize='15px'
+								lineHeight='22px'
+								textTransform='uppercase'>
+								Proposals
+							</Text>
 						</Flex>
 					</Flex>
 					{/* End Stats Banner */}
@@ -90,18 +168,24 @@ function Discover() {
 								<Center>
 									<Loader />
 								</Center>
-							) : (<>
-								<Box my={4}>
-									<Text fontWeight='500' fontSize='24px' lineHeight='32px'>Discover</Text>
-								</Box>
-								<DomainGrid
-									isAdmin={isQbAdmin}
-									unsavedDomainVisibleState={unsavedDomainState}
-									onDaoVisibilityUpdate={onDaoVisibilityUpdate}
-									hasMore={hasMoreDaos}
-									fetchMore={fetchMoreDaos}
-									workspaces={totalDaos} />
-							</>
+							) : (
+								<>
+									<Box my={4}>
+										<Text
+											fontWeight='500'
+											fontSize='24px'
+											lineHeight='32px'>
+											Discover
+										</Text>
+									</Box>
+									<DomainGrid
+										isAdmin={isQbAdmin}
+										unsavedDomainVisibleState={unsavedDomainState}
+										onDaoVisibilityUpdate={onDaoVisibilityUpdate}
+										hasMore={hasMoreDaos}
+										fetchMore={fetchMoreDaos}
+										workspaces={totalDaos} />
+								</>
 							)
 						}
 					</Container>
@@ -119,13 +203,13 @@ function Discover() {
 									You have made changes to your Discover page on Questbook.
 									<Button
 										onClick={
-											async () => {
+											async() => {
 												try {
 													await updateDaoVisibility(
 														unsavedDomainState,
 														setNetworkTransactionModalStep,
 													)
-												} catch (e) {
+												} catch(e) {
 													setUnsavedDaosState({})
 													setNetworkTransactionModalStep(undefined)
 													const message = getErrorMessage(e as Error)
@@ -134,7 +218,7 @@ function Discover() {
 														render: () => ErrorToast({
 															content: message,
 															close: () => {
-																if (toastRef.current) {
+																if(toastRef.current) {
 																	toast.close(toastRef.current)
 																}
 															},
@@ -177,7 +261,7 @@ function Discover() {
 		const chainsList = Object.keys(unsavedDomainState)
 
 		const txSteps: string[] = []
-		for (const chain of chainsList) {
+		for(const chain of chainsList) {
 			const chainName = chainNames.get(chain)!
 
 			txSteps.push(`Initializing biconomy client for ${chainName}`)
@@ -244,12 +328,12 @@ function Discover() {
 	const getExploreDaosRequestFilters = (additionalFilters?: WorkspaceFilter) => {
 		let filters: WorkspaceFilter = {}
 
-		if (searchString) {
+		if(searchString) {
 			// eslint-disable-next-line camelcase
 			filters.title_contains_nocase = searchString
 		}
 
-		if (!isQbAdmin) {
+		if(!isQbAdmin) {
 			filters.isVisible = true
 		}
 
@@ -295,10 +379,10 @@ function Discover() {
 	useEffect(() => {
 		try {
 			const inviteInfo = extractInviteInfo()
-			if (inviteInfo) {
+			if(inviteInfo) {
 				setInviteInfo(inviteInfo)
 			}
-		} catch (error) {
+		} catch(error) {
 			toast({
 				title: `Invalid invite "${(error as Error).message}"`,
 				status: 'error',
@@ -309,13 +393,13 @@ function Discover() {
 	}, [])
 
 	useEffect(() => {
-		(async () => {
-			if (isQbAdmin === undefined) {
+		(async() => {
+			if(isQbAdmin === undefined) {
 				return
 			}
 
 			fetchMoreDaos(true)
-			if (scwAddress) {
+			if(scwAddress) {
 				fetchMoreMyDaos(true)
 			}
 		})()
@@ -324,7 +408,7 @@ function Discover() {
 	return buildComponent()
 }
 
-Discover.getLayout = function (page: ReactElement) {
+Discover.getLayout = function(page: ReactElement) {
 	return (
 		<NavbarLayout renderSidebar={false}>
 			{page}
@@ -344,7 +428,7 @@ function useMultiChainDaosForExplore(
 		variables: { orderBy, filter: filter ?? {} },
 		mergeResults(results) {
 			let final: GetDaOsForExploreQuery['workspaces'] = []
-			for (const { workspaces } of results) {
+			for(const { workspaces } of results) {
 				// logger.info({ workspaces }, 'Browse DAO Workspaces')
 				final = mergeSortedArrays(final, workspaces, (a, b) => {
 					// @ts-ignore

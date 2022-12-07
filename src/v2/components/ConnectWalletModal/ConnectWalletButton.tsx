@@ -1,7 +1,7 @@
 import { ReactNode, useState } from 'react'
+import { BsArrowRight } from 'react-icons/bs'
 import { Box, Button, Spacer, Text } from '@chakra-ui/react'
 import { ArrowRightFilled } from 'src/v2/assets/custom chakra icons/Arrows/ArrowRightFilled'
-import { BsArrowRight } from 'react-icons/bs'
 
 const ConnectWalletButton = ({
 	onClick,
@@ -29,7 +29,11 @@ const ConnectWalletButton = ({
 			borderRadius='sm'
 			onMouseEnter={() => setIsHovering(true)}
 			onMouseLeave={() => setIsHovering(false)}
-			rightIcon={<BsArrowRight color='#0A84FF' strokeWidth='2px' />}
+			rightIcon={
+				<BsArrowRight
+					color='#0A84FF'
+					strokeWidth='2px' />
+			}
 		>
 
 			{icon}
