@@ -1,10 +1,10 @@
-import schema from 'src/libraries/validator/schemaClient.yaml'
+import schema from 'src/libraries/validator/schema.yaml'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import Ajv from "ajv"
 import addFormats from 'ajv-formats'
 import $RefParser from "@apidevtools/json-schema-ref-parser";
 
-const schemaJson = JSON.parse(JSON.stringify(schema)).Validations
+const schemaJson = JSON.parse(JSON.stringify(schema))
 console.log("Schema loaded", schemaJson)
 
 let ajv = new Ajv({logger: false })
