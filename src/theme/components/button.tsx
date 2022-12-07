@@ -189,13 +189,20 @@ export default {
 				borderRadius: '2px'
 			},
 			primaryMedium: {
-				bg: '#0A84FF',
+				bg: 'accent.azure',
 				color: 'white',
 				paddingY: '8px',
 				paddingX: '16px',
+				fontWeight: '500',
+				fontSize: '14px',
+				lineHeight: '24px',
 				w: '170px', // Note: the values for height and width will be changed
-				h: '32px',
-				borderRadius: '2px'
+				h: '48px',
+				borderRadius: '2px',
+				_disabled: {
+					bg: '#E7E4DD',
+					color: '#8D8B87',
+				}
 			}
 		},
 	},

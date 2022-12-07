@@ -1,0 +1,557 @@
+Validations:
+  title: All
+  oneOf:
+    - $ref: '#/definitions/GrantApplicationRequest'
+    - $ref: '#/definitions/GrantUpdateRequest'
+    - $ref: '#/definitions/GrantCreateRequest'
+    - $ref: '#/definitions/RubricSetRequest'
+    - $ref: '#/definitions/ReviewSetRequest'
+    - $ref: '#/definitions/ApplicationMilestoneUpdate'
+    - $ref: '#/definitions/Address'
+    - $ref: '#/definitions/Amount'
+   # - $ref: '#/definitions/ApplicationUpdateRequest'
+   # - $ref: '#/definitions/ApplicationCreateRequest'
+  definitions:
+    Address:
+      type: string
+      #example: '0x95b58a6bff3d14b7db2f5cb5f0ad413dc2940658'
+      minLength: 16
+      maxLength: 256
+      format: hex
+    Amount:
+      type: string
+      pattern: ^[0-9]{1,64}$
+      description: Positive integer amount of currency. Is a string to allow bigint inputs
+      format: integer
+      maxLength: 64
+    Partner:
+      type: object
+      required:
+        - name
+        - industry
+      properties:
+        name:
+          description: Partner name
+          type: string
+          maxLength: 64
+        industry:
+          type: string
+          description: Partner industry
+          maxLength: 64
+        website:
+          type: string
+          description: Partner website
+          maxLength: 256
+        partnerImageHash:
+          type: string
+          description: IPFS hash of partner picture
+          maxLength: 128
+    Token:
+      type: object
+      required:
+        - label
+        - address
+        - decimal
+        - iconHash
+      properties:
+        label:
+          description: Token Symbol to be displayed
+          type: string
+          maxLength: 64
+        address:
+          $ref: '#/definitions/Address'
+        chainId:
+          type: integer
+          minimum: 0
+          description: The chain the token is on, leave undefined to denote same chain
+        decimal:
+          type: string
+          pattern: ^[0-9][0-9]{0,2}
+          description: Decimal for token
+          format: integer
+          maxLength: 4
+        iconHash:
+          type: string
+          description: IPFS hash of token icon
+          maxLength: 128
+    SupportedNetwork:
+      type: string
+      description: Chain ID of the network
+      enum:
+        - '42220'
+        - '5'
+        - '10'
+        - '137'
+    GrantField:
+      type: object
+      additionalProperties: false
+      required:
+        - title
+        - inputType
+      properties:
+        title:
+          description: Human readable title of the field
+          type: string
+          maxLength: 512
+        inputType:
+          type: string
+          enum:
+            - short-form
+            - long-form
+            - numeric
+            - array
+        enum:
+          description: Constraint possible inputs for this field
+          type: array
+          items:
+            type: string
+            maxLength: 1024
+          maxItems: 20
+        pii:
+          description: >-
+            Whether this field is PII (personally identifiable information) or
+            not
+          type: boolean
+          default: false
+    GrantProposedMilestone:
+      type: object
+      required:
+        - title
+        - amount
+      properties:
+        title:
+          type: string
+          maxLength: 1024
+        amount:
+          $ref: '#/definitions/Amount'
+    GrantApplicationFieldAnswer:
+      type: array
+      items:
+        $ref: '#/definitions/GrantApplicationFieldAnswerItem'
+      maxItems: 100
+    RequiredGrantApplicationFieldAnswer:
+      type: array
+      items:
+        $ref: '#/definitions/GrantApplicationFieldAnswerItem'
+      maxItems: 100
+      minItems: 1
+    GrantApplicationFieldAnswerItem:
+      type: object
+      additionalProperties: false
+      required:
+        - value
+      properties:
+        value:
+          type: string
+          maxLength: 7000
+    PIIAnswer:
+      type: string
+      description: JSON serialized object, encrypted with a specific user's public key
+      format: base64
+    PIIAnswers:
+      type: object
+      description: >-
+        Map of encrypted information mapped by the wallet ID, whose public key
+        was used to map the specific information
+      additionalProperties:
+        $ref: '#/definitions/PIIAnswer'
+    GrantApplicationFieldAnswers:
+      type: object
+      description: Maps ID of the field to the answer by the applicant
+      additionalProperties:
+        $ref: '#/definitions/GrantApplicationFieldAnswer'
+    GrantApplicationRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - grantId
+        - applicantId
+        - fields
+        - milestones
+      properties:
+        grantId:
+          type: string
+        applicantId:
+          $ref: '#/definitions/OwnerID'
+        applicantPublicKey:
+          $ref: '#/definitions/PublicKey'
+        fields:
+          $ref: '#/definitions/GrantApplicationFieldAnswers'
+        pii:
+          $ref: '#/definitions/PIIAnswers'
+        milestones:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/definitions/GrantProposedMilestone'
+    WorkspaceMemberUpdate:
+      type: object
+      properties:
+        fullName:
+          type: string
+          maxLength: 255
+        profilePictureIpfsHash:
+          type: string
+          maxLength: 128
+          description: IPFS hash of the profile picture
+        publicKey:
+          $ref: '#/definitions/PublicKey'
+    GrantApplicationUpdate:
+      type: object
+      additionalProperties: false
+      properties:
+        fields:
+          $ref: '#/definitions/GrantApplicationFieldAnswers'
+        pii:
+          $ref: '#/definitions/PIIAnswers'
+        milestones:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/definitions/GrantProposedMilestone'
+        feedback:
+          type: string
+          minLength: 1
+          maxLength: 4096
+    SocialItem:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - value
+      properties:
+        name:
+          type: string
+          maxLength: 64
+        value:
+          type: string
+          maxLength: 255
+    WorkspaceCreateRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - title
+        - about
+        - logoIpfsHash
+        - creatorId
+        - supportedNetworks
+        - socials
+      properties:
+        title:
+          type: string
+          maxLength: 128
+        bio:
+          type: string
+          maxLength: 200
+        about:
+          type: string
+          maxLength: 5000
+        partners:
+          type: array
+          items:
+            $ref: '#/definitions/Partner'
+        logoIpfsHash:
+          type: string
+          description: IPFS hash of the logo of the workspace
+          maxLength: 128
+        coverImageIpfsHash:
+          type: string
+          description: IPFS hash of the cover of the workspace
+          maxLength: 128
+        creatorId:
+          $ref: '#/definitions/OwnerID'
+        creatorPublicKey:
+          $ref: '#/definitions/PublicKey'
+        supportedNetworks:
+          type: array
+          maxItems: 25
+          items:
+            $ref: '#/definitions/SupportedNetwork'
+        socials:
+          type: array
+          items:
+            $ref: '#/definitions/SocialItem'
+          maxItems: 10
+    PublicKey:
+      description: The public encryption key associated with the account address
+      type: string
+      maxLength: 255
+    WorkspaceUpdateRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        title:
+          type: string
+          maxLength: 128
+        bio:
+          type: string
+          maxLength: 200
+        about:
+          type: string
+          maxLength: 5000
+        logoIpfsHash:
+          type: string
+          description: IPFS hash of the logo of the workspace
+          maxLength: 128
+        partners:
+          type: array
+          items:
+            $ref: '#/definitions/Partner'
+        coverImageIpfsHash:
+          type: string
+          description: IPFS hash of the cover of the workspace
+          maxLength: 128
+        socials:
+          type: array
+          items:
+            $ref: '#/definitions/SocialItem'
+          maxItems: 10
+        publicKey:
+          $ref: '#/definitions/PublicKey'
+        tokens:
+          type: array
+          items:
+            $ref: '#/definitions/Token'
+    ApplicationMilestoneUpdate:
+      type: object
+      additionalProperties: false
+      required:
+        - text
+      properties:
+        text:
+          type: string
+          maxLength: 4096
+    GrantFieldMap:
+      type: object
+      additionalProperties:
+        $ref: '#/definitions/GrantField'
+      required:
+        - applicantName
+        - applicantEmail
+        - projectName
+        - projectDetails
+      properties:
+        applicantName:
+          $ref: '#/definitions/GrantField'
+        applicantEmail:
+          $ref: '#/definitions/GrantField'
+        projectName:
+          $ref: '#/definitions/GrantField'
+        projectDetails:
+          $ref: '#/definitions/GrantField'
+        fundingBreakdown:
+          $ref: '#/definitions/GrantField'
+    GrantReward:
+      type: object
+      additionalProperties: false
+      required:
+        - asset
+        - committed
+      properties:
+        committed:
+          $ref: '#/definitions/Amount'
+        asset:
+          $ref: '#/definitions/Address'
+        token:
+          $ref: '#/definitions/Token'
+    ReviewItem:
+      type: object
+      required:
+        - rating
+      properties:
+        rating:
+          type: integer
+          minimum: 0
+        note:
+          type: string
+          description: Content or IPFS hash of the review note
+          maxLength: 7000
+    Review:
+      type: object
+      required:
+        - isApproved
+        - evaluation
+      properties:
+        isApproved:
+          type: boolean
+          description: Does the reviewer approve of the application
+        comment:
+          type: string
+          description: General comment about the application
+          minLength: 1
+        evaluation:
+          type: object
+          additionalProperties:
+            $ref: '#/definitions/ReviewItem'
+    ReviewSetRequest:
+      type: object
+      required:
+        - reviewer
+        - encryptedReview
+      properties:
+        reviewer:
+          $ref: '#/definitions/Address'
+        reviewerPublicKey:
+          $ref: '#/definitions/PublicKey'
+        publicReviewDataHash:
+          type: string
+          maxLength: 255
+        encryptedReview:
+          type: object
+          description: >-
+            Encrypted review data. Map of the grant manager address => IPFS hash
+            of the review encrypted with their public key
+          additionalProperties:
+            type: string
+            maxLength: 255
+    RubricItem:
+      type: object
+      additionalProperties: false
+      required:
+        - title
+        - maximumPoints
+      properties:
+        title:
+          type: string
+          maxLength: 1024
+        details:
+          type: string
+          description: Details about the evaluatation rubric
+          maxLength: 6000
+        maximumPoints:
+          type: integer
+          minimum: 1
+          maximum: 10
+    Rubric:
+      type: object
+      description: Map of evaluation rubric ID to rubric data
+      required:
+        - isPrivate
+        - rubric
+      properties:
+        isPrivate:
+          type: boolean
+        rubric:
+          type: object
+          additionalProperties:
+            $ref: '#/definitions/RubricItem'
+    RubricSetRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - rubric
+      properties:
+        rubric:
+          $ref: '#/definitions/Rubric'
+    GrantCreateRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - title
+        - startDate
+        - endDate
+        - details
+        - reward
+        - payoutType
+        - reviewType
+        - creatorId
+        - workspaceId
+        - fields
+      properties:
+        title:
+          type: string
+          maxLength: 255
+        startDate:
+          type: string
+          format: date-time
+          description: Start date for proposal acceptations
+        endDate:
+          type: string
+          format: date-time
+          description: Deadline for proposal submission
+        details:
+          type: string
+          maxLength: 4096
+        link:
+          type: string
+        docIpfsHash:
+          type: string
+          maxLength: 128
+          description: IPFS hash of the document uploaded by the grant admin
+        reward:
+          $ref: '#/definitions/Amount'
+        payoutType:
+          type: string
+          maxLength: 128
+          enum: 
+            - "in one go"
+            - "milestone"
+        reviewType: 
+          type: string
+          maxLength: 128
+          enum: 
+            - "voting"
+            - "rubric"
+        creatorId:
+          $ref: '#/definitions/OwnerID'
+        workspaceId:
+          type: string
+          description: the workspace the grant is from
+          maxLength: 128
+        fields:
+          $ref: '#/definitions/GrantFieldMap'
+        grantManagers:
+          type: array
+          items:
+            $ref: '#/definitions/Address'
+          minItems: 1
+    GrantUpdateRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        title:
+          type: string
+          maxLength: 255
+        startDate:
+          type: string
+          format: date-time
+          description: Start date for proposal acceptations
+        endDate:
+          type: string
+          format: date-time
+          description: Deadline for proposal submission
+        details:
+          type: string
+          maxLength: 4096
+        reward:
+          $ref: '#/definitions/Amount'
+        payoutType:
+          type: string
+          enum: 
+            - "in-one-go"
+            - "milestones"
+        reviewType: 
+          type: string
+          maxLength: 128
+          enum: 
+            - "voting"
+            - "rubrics"
+        creatorId:
+          $ref: '#/definitions/OwnerID'
+        workspaceId:
+          type: string
+          description: the workspace the grant is from
+          maxLength: 128
+        fields:
+          $ref: '#/definitions/GrantFieldMap'
+        grantManagers:
+          type: array
+          items:
+            $ref: '#/definitions/Address'
+          minItems: 1
+    OwnerID:
+      type: string
+      minLength: 16
+      maxLength: 255
+      #example: '0x71C7656EC7ab88b098defB751B7411C5f6d8976F'
+  

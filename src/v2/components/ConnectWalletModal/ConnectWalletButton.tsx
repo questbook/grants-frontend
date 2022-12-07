@@ -1,6 +1,7 @@
 import { ReactNode, useState } from 'react'
 import { Box, Button, Spacer, Text } from '@chakra-ui/react'
 import { ArrowRightFilled } from 'src/v2/assets/custom chakra icons/Arrows/ArrowRightFilled'
+import { BsArrowRight } from 'react-icons/bs'
 
 const ConnectWalletButton = ({
 	onClick,
@@ -9,10 +10,10 @@ const ConnectWalletButton = ({
 	isPopular,
 	maxW
 }: {
-  onClick: () => void
-  icon: ReactNode
-  name: string
-  isPopular?: boolean
+	onClick: () => void
+	icon: ReactNode
+	name: string
+	isPopular?: boolean
 	maxW?: string
 }) => {
 	const [isHovering, setIsHovering] = useState(false)
@@ -23,10 +24,12 @@ const ConnectWalletButton = ({
 			py={4}
 			h='auto'
 			maxW={maxW ?? '27rem'}
-			colorScheme='brandGrey'
+			backgroundColor='gray.2'
 			onClick={onClick}
+			borderRadius='sm'
 			onMouseEnter={() => setIsHovering(true)}
 			onMouseLeave={() => setIsHovering(false)}
+			rightIcon={<BsArrowRight color='#0A84FF' strokeWidth='2px' />}
 		>
 
 			{icon}
@@ -38,41 +41,8 @@ const ConnectWalletButton = ({
 				{name}
 			</Text>
 
-			{
-				isPopular && (
-					<Box
-						ml={3.5}
-						bg='greenTextBackground'
-						px={1}
-						borderRadius='sm'
-					>
-						<Text
-							fontWeight='bold'
-							fontSize='xs'
-							color='greenTextDark'
-						>
-							POPULAR
-						</Text>
-					</Box>
-				)
-			}
-
 			<Spacer />
-			<Text
-				fontWeight='500'
-				color='blue.500'
-				opacity={isHovering ? 1 : 0}
-				transition='all 0.3s'
-			>
-				Connect
-			</Text>
-			<ArrowRightFilled
-				ml={2}
-				boxSize='13.33px'
-				color='blue.500'
-				opacity={isHovering ? 1 : 0}
-				transition='all 0.3s'
-			/>
+
 		</Button>
 	)
 }
