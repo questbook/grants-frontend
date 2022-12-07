@@ -4,7 +4,7 @@ import Ajv from "ajv"
 import addFormats from 'ajv-formats'
 import $RefParser from "@apidevtools/json-schema-ref-parser";
 
-const schemaJson = JSON.parse(JSON.stringify(schema)).Validations.definitions
+const schemaJson = JSON.parse(JSON.stringify(schema)).Validations
 console.log("Schema loaded", schemaJson)
 
 let ajv = new Ajv({logger: false })

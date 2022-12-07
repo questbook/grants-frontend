@@ -1,4 +1,4 @@
-import { Flex, ToastId, useToast } from "@chakra-ui/react"
+import { Button, Flex, ToastId, useToast } from "@chakra-ui/react"
 import {useRouter} from "next/router"
 import { ReactElement, useCallback, useContext, useEffect, useRef, useState } from "react"
 import NetworkTransactionFlowStepperModal from "src/components/ui/NetworkTransactionFlowStepperModal"
@@ -15,7 +15,7 @@ import logger from "src/libraries/logger"
 import NavbarLayout from "src/libraries/ui/navbarLayout"
 import { validateAndUploadToIpfs, validateRequest } from "src/libraries/validator"
 import { ApiClientsContext, WebwalletContext } from "src/pages/_app"
-import { ApplicantDetailsFieldType } from "src/types"
+import { ApplicantDetailsFieldType, ReviewType } from "src/types"
 import getErrorMessage from "src/utils/errorUtils"
 import { getExplorerUrlForTxHash } from "src/utils/formattingUtils"
 import { addAuthorizedOwner, addAuthorizedUser, bicoDapps, chargeGas, getEventData, getTransactionDetails, networksMapping, sendGaslessTransaction } from "src/utils/gaslessUtils"
@@ -35,7 +35,7 @@ function RequestProposal() {
     const buildComponent = () => {
         return (
             <Flex className='card' minWidth='90%' gap={8} bgColor='white' padding={4} justifyContent='center' alignItems='center' marginTop={8} marginRight={16} marginLeft={16} marginBottom={4}>
-
+                <Button onClick={() => createGrant()}>create grant</Button>
                 {renderBody()}
             </Flex>
         )
@@ -67,8 +67,8 @@ function RequestProposal() {
                 return (<ProposalReview
                     numberOfReviewers={numberOfReviewers}
                     setNumberOfReviewers={setNumberOfReviewers}
-                    rubricMechanism={reviewMechanism}
-                    setRubricMechanism={setReviewMechanism}
+                    reviewMechanism={reviewMechanism}
+                    setReviewMechanism={setReviewMechanism}
                     step={step} setStep={setStep}
                     rubrics={rubrics}
                     setRubrics={setRubrics} />)
@@ -324,9 +324,11 @@ function RequestProposal() {
     // create grant
     // 1. upload document to ipfs
     const createGrant = useCallback(async() => {
+        let fileIPFSHash = ''
         if(doc) {
-            const fileCID = await uploadToIPFS(doc[0]!)
+             const fileCID = await uploadToIPFS(doc[0]!)
             console.log('fileCID', fileCID)
+            fileIPFSHash = fileCID.hash
         }
 
         // 2. validate grant data
@@ -335,6 +337,8 @@ function RequestProposal() {
             startDate: startDate!,
             endDate: endDate!,
             details: moreDetails!,
+            link: link!,
+            docIpfsHash: fileIPFSHash,
             reward: amount!,
             payoutType: payoutMode!,
             reviewType: reviewMechanism!,
@@ -343,6 +347,14 @@ function RequestProposal() {
         })
 
         console.log('ipfsHash', ipfsHash)
+
+        if (reviewMechanism === 'Rubrics') {
+            const {
+                data: { ipfsHash: auxRubricHash },
+            } = await validatorApi.validateRubricSet({
+                rubric: rubrics,
+            })
+        }
         
     }, [accountDataWebwallet])
     

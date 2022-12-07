@@ -257,12 +257,18 @@ export interface GrantCreateRequest {
    */
   endDate: string;
   details: string;
+  /**
+   * Link to sny external document
+   */
   link?: string;
   /**
-   * IPFS hash of the document uploaded by the grant admin
+   * IPFS hash of the document uploaded by grant admin
    */
   docIpfsHash?: string;
-  reward: Amount;
+  /**
+   * Positive integer amount of currency. Is a string to allow bigint inputs
+   */
+  reward: string;
   payoutType: "in one go" | "milestone";
   reviewType: "voting" | "rubric";
   creatorId: OwnerID;

@@ -10,8 +10,8 @@ import { DynamicInputValues } from "src/types";
 interface Props {
     numberOfReviewers: number,
     setNumberOfReviewers: (value: number) => void,
-    rubricMechanism: string,
-    setRubricMechanism: (value: string) => void,
+    reviewMechanism: string,
+    setReviewMechanism: (value: string) => void,
     rubrics: {},
     setRubrics: (value: {}) => void,
     step: number,
@@ -22,8 +22,8 @@ function ProposalReview(
     {
         numberOfReviewers,
         setNumberOfReviewers,
-        rubricMechanism,
-        setRubricMechanism,
+        reviewMechanism,
+        setReviewMechanism,
         rubrics,
         setRubrics,
         step,
@@ -52,16 +52,16 @@ function ProposalReview(
 
                     <Flex gap={4} alignItems='baseline'>
                         <Text variant="requestProposalBody">Review will be based on</Text>
-                        <FlushedInput placeholder='Select one' value={rubricMechanism} isDisabled={true} onChange={(e) => setRubricMechanism(e.target.value)} />
+                        <FlushedInput placeholder='Select one' value={reviewMechanism} isDisabled={true} onChange={(e) => setReviewMechanism(e.target.value)} />
                     </Flex>
 
                     <Flex gap={4} alignItems='baseline'>
-                        <Button variant='outline' leftIcon={<AiOutlinePlus />} borderColor='black' onClick={() => setRubricMechanism('Voting')}>Voting</Button>
-                        <Button variant='outline' leftIcon={<AiOutlinePlus />} borderColor='black' onClick={() => setRubricMechanism('Rubric')}>Rubric</Button>
+                        <Button variant='outline' leftIcon={<AiOutlinePlus />} borderColor='black' onClick={() => setReviewMechanism('Voting')}>Voting</Button>
+                        <Button variant='outline' leftIcon={<AiOutlinePlus />} borderColor='black' onClick={() => setReviewMechanism('Rubric')}>Rubric</Button>
                     </Flex>
 
                     {/* Rubric Selected */}
-                    {rubricMechanism === 'Rubric'
+                    {reviewMechanism === 'Rubric'
                         &&
                         (<>
                             <Flex gap={4} alignItems='baseline' wrap='wrap'>
@@ -96,7 +96,7 @@ function ProposalReview(
                             setStep(3)
                             setRubrics(rubricInputValues)
                             }}
-                          isDisabled={!rubricMechanism}   >Continue</Button>
+                          isDisabled={!reviewMechanism}   >Continue</Button>
                     </Flex>
 
 

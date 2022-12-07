@@ -172,9 +172,13 @@ export type DynamicInputValues = {
   [key: number]: string
 }
 
-
 export type CustomField = {
 	title: string
 	value: string
 	isError: boolean
+}
+
+export enum ReviewType {
+  'Voting',
+  'Rubrics'
 }
