@@ -6,7 +6,7 @@ import { writeFile } from 'fs/promises'
 const GEN_TYPES_FILE = './src/types/gen.d.ts';
 
 (async() => {
-	const schema = await readYaml<any>('src/libraries/validator/schema.yaml')
+	const schema = await readYaml<any>('src/libraries/validator/schemaBackup.yaml')
 	// console.log('Generating types for schema...', schema)
 	const result = await compile(schema.Validations, 'Schema', { 
 		$refOptions: {
