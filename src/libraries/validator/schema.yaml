@@ -1,16 +1,16 @@
 Validations:
   title: All
   oneOf:
-    - $ref: '#/GrantApplicationRequest'
-    - $ref: '#/GrantUpdateRequest'
-    - $ref: '#/GrantCreateRequest'
-    - $ref: '#/RubricSetRequest'
-    - $ref: '#/ReviewSetRequest'
-    - $ref: '#/ApplicationMilestoneUpdate'
-    - $ref: '#/Address'
-    - $ref: '#/Amount'
-   # - $ref: '#/ApplicationUpdateRequest'
-   # - $ref: '#/ApplicationCreateRequest'
+    - $ref: 'GrantApplicationRequest'
+    - $ref: 'GrantUpdateRequest'
+    - $ref: 'GrantCreateRequest'
+    - $ref: 'RubricSetRequest'
+    - $ref: 'ReviewSetRequest'
+    - $ref: 'ApplicationMilestoneUpdate'
+    - $ref: 'Address'
+    - $ref: 'Amount'
+   # - $ref: 'ApplicationUpdateRequest'
+   # - $ref: 'ApplicationCreateRequest'
 Address:
   type: string
   example: '0x95b58a6bff3d14b7db2f5cb5f0ad413dc2940658'
@@ -58,7 +58,7 @@ Token:
       type: string
       maxLength: 64
     address:
-      $ref: '#/Address'
+      $ref: 'Address'
     chainId:
       type: integer
       minimum: 0
@@ -122,16 +122,16 @@ GrantProposedMilestone:
       type: string
       maxLength: 1024
     amount:
-      $ref: '#/Amount'
+      $ref: 'Amount'
 GrantApplicationFieldAnswer:
   type: array
   items:
-    $ref: '#/GrantApplicationFieldAnswerItem'
+    $ref: 'GrantApplicationFieldAnswerItem'
   maxItems: 100
 RequiredGrantApplicationFieldAnswer:
   type: array
   items:
-    $ref: '#/GrantApplicationFieldAnswerItem'
+    $ref: 'GrantApplicationFieldAnswerItem'
   maxItems: 100
   minItems: 1
 GrantApplicationFieldAnswerItem:
@@ -153,12 +153,12 @@ PIIAnswers:
     Map of encrypted information mapped by the wallet ID, whose public key
     was used to map the specific information
   additionalProperties:
-    $ref: '#/PIIAnswer'
+    $ref: 'PIIAnswer'
 GrantApplicationFieldAnswers:
   type: object
   description: Maps ID of the field to the answer by the applicant
   additionalProperties:
-    $ref: '#/GrantApplicationFieldAnswer'
+    $ref: 'GrantApplicationFieldAnswer'
 GrantApplicationRequest:
   type: object
   additionalProperties: false
@@ -171,18 +171,18 @@ GrantApplicationRequest:
     grantId:
       type: string
     applicantId:
-      $ref: '#/OwnerID'
+      $ref: 'OwnerID'
     applicantPublicKey:
-      $ref: '#/PublicKey'
+      $ref: 'PublicKey'
     fields:
-      $ref: '#/GrantApplicationFieldAnswers'
+      $ref: 'GrantApplicationFieldAnswers'
     pii:
-      $ref: '#/PIIAnswers'
+      $ref: 'PIIAnswers'
     milestones:
       type: array
       maxItems: 100
       items:
-        $ref: '#/GrantProposedMilestone'
+        $ref: 'GrantProposedMilestone'
 WorkspaceMemberUpdate:
   type: object
   properties:
@@ -194,20 +194,20 @@ WorkspaceMemberUpdate:
       maxLength: 128
       description: IPFS hash of the profile picture
     publicKey:
-      $ref: '#/PublicKey'
+      $ref: 'PublicKey'
 GrantApplicationUpdate:
   type: object
   additionalProperties: false
   properties:
     fields:
-      $ref: '#/GrantApplicationFieldAnswers'
+      $ref: 'GrantApplicationFieldAnswers'
     pii:
-      $ref: '#/PIIAnswers'
+      $ref: 'PIIAnswers'
     milestones:
       type: array
       maxItems: 100
       items:
-        $ref: '#/GrantProposedMilestone'
+        $ref: 'GrantProposedMilestone'
     feedback:
       type: string
       minLength: 1
@@ -248,7 +248,7 @@ WorkspaceCreateRequest:
     partners:
       type: array
       items:
-        $ref: '#/Partner'
+        $ref: 'Partner'
     logoIpfsHash:
       type: string
       description: IPFS hash of the logo of the workspace
@@ -258,18 +258,18 @@ WorkspaceCreateRequest:
       description: IPFS hash of the cover of the workspace
       maxLength: 128
     creatorId:
-      $ref: '#/OwnerID'
+      $ref: 'OwnerID'
     creatorPublicKey:
-      $ref: '#/PublicKey'
+      $ref: 'PublicKey'
     supportedNetworks:
       type: array
       maxItems: 25
       items:
-        $ref: '#/SupportedNetwork'
+        $ref: 'SupportedNetwork'
     socials:
       type: array
       items:
-        $ref: '#/SocialItem'
+        $ref: 'SocialItem'
       maxItems: 10
 PublicKey:
   description: The public encryption key associated with the account address
@@ -295,7 +295,7 @@ WorkspaceUpdateRequest:
     partners:
       type: array
       items:
-        $ref: '#/Partner'
+        $ref: 'Partner'
     coverImageIpfsHash:
       type: string
       description: IPFS hash of the cover of the workspace
@@ -303,14 +303,14 @@ WorkspaceUpdateRequest:
     socials:
       type: array
       items:
-        $ref: '#/SocialItem'
+        $ref: 'SocialItem'
       maxItems: 10
     publicKey:
-      $ref: '#/PublicKey'
+      $ref: 'PublicKey'
     tokens:
       type: array
       items:
-        $ref: '#/Token'
+        $ref: 'Token'
 ApplicationMilestoneUpdate:
   type: object
   additionalProperties: false
@@ -323,7 +323,7 @@ ApplicationMilestoneUpdate:
 GrantFieldMap:
   type: object
   additionalProperties:
-    $ref: '#/GrantField'
+    $ref: 'GrantField'
   required:
     - applicantName
     - applicantEmail
@@ -331,15 +331,15 @@ GrantFieldMap:
     - projectDetails
   properties:
     applicantName:
-      $ref: '#/GrantField'
+      $ref: 'GrantField'
     applicantEmail:
-      $ref: '#/GrantField'
+      $ref: 'GrantField'
     projectName:
-      $ref: '#/GrantField'
+      $ref: 'GrantField'
     projectDetails:
-      $ref: '#/GrantField'
+      $ref: 'GrantField'
     fundingBreakdown:
-      $ref: '#/GrantField'
+      $ref: 'GrantField'
 GrantReward:
   type: object
   additionalProperties: false
@@ -348,11 +348,11 @@ GrantReward:
     - committed
   properties:
     committed:
-      $ref: '#/Amount'
+      $ref: 'Amount'
     asset:
-      $ref: '#/Address'
+      $ref: 'Address'
     token:
-      $ref: '#/Token'
+      $ref: 'Token'
 ReviewItem:
   type: object
   required:
@@ -381,7 +381,7 @@ Review:
     evaluation:
       type: object
       additionalProperties:
-        $ref: '#/ReviewItem'
+        $ref: 'ReviewItem'
 ReviewSetRequest:
   type: object
   required:
@@ -389,9 +389,9 @@ ReviewSetRequest:
     - encryptedReview
   properties:
     reviewer:
-      $ref: '#/Address'
+      $ref: 'Address'
     reviewerPublicKey:
-      $ref: '#/PublicKey'
+      $ref: 'PublicKey'
     publicReviewDataHash:
       type: string
       maxLength: 255
@@ -433,7 +433,7 @@ Rubric:
     rubric:
       type: object
       additionalProperties:
-        $ref: '#/RubricItem'
+        $ref: 'RubricItem'
 RubricSetRequest:
   type: object
   additionalProperties: false
@@ -441,7 +441,7 @@ RubricSetRequest:
     - rubric
   properties:
     rubric:
-      $ref: '#/Rubric'
+      $ref: 'Rubric'
 GrantCreateRequest:
   type: object
   additionalProperties: false
@@ -479,7 +479,7 @@ GrantCreateRequest:
       maxLength: 128
       description: IPFS hash of the document uploaded by grant admin
     reward:
-      $ref: '#/Amount'
+      $ref: 'Amount'
       description: Grant reward amount in USD
     payoutType:
       type: string
@@ -494,17 +494,17 @@ GrantCreateRequest:
         - "voting"
         - "rubric"
     creatorId:
-      $ref: '#/OwnerID'
+      $ref: 'OwnerID'
     workspaceId:
       type: string
       description: the workspace the grant is from
       maxLength: 128
     fields:
-      $ref: '#/GrantFieldMap'
+      $ref: 'GrantFieldMap'
     grantManagers:
       type: array
       items:
-        $ref: '#/Address'
+        $ref: 'Address'
       minItems: 1
 GrantUpdateRequest:
   type: object
@@ -525,7 +525,7 @@ GrantUpdateRequest:
       type: string
       maxLength: 4096
     reward:
-      $ref: '#/Amount'
+      $ref: 'Amount'
     payoutType:
       type: string
       enum: 
@@ -538,20 +538,20 @@ GrantUpdateRequest:
         - "voting"
         - "rubrics"
     creatorId:
-      $ref: '#/OwnerID'
+      $ref: 'OwnerID'
     workspaceId:
       type: string
       description: the workspace the grant is from
       maxLength: 128
     fields:
-      $ref: '#/GrantFieldMap'
+      $ref: 'GrantFieldMap'
     grantManagers:
       type: array
       items:
-        $ref: '#/Address'
+        $ref: 'Address'
       minItems: 1
 OwnerID:
   type: string
   minLength: 16
   maxLength: 255
-  #example: '0x71C7656EC7ab88b098defB751B7411C5f6d8976F'
+  example: '0x71C7656EC7ab88b098defB751B7411C5f6d8976F'

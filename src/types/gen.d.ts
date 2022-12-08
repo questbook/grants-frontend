@@ -12,309 +12,177 @@ export type All =
   | RubricSetRequest
   | ReviewSetRequest
   | ApplicationMilestoneUpdate
-  | Address
-  | Amount;
-export type OwnerID = string;
-/**
- * The public encryption key associated with the account address
- */
-export type PublicKey = string;
+  | string;
 /**
  * @maxItems 100
  */
 export type GrantApplicationFieldAnswer = GrantApplicationFieldAnswerItem[];
-/**
- * JSON serialized object, encrypted with a specific user's public key
- */
-export type PIIAnswer = string;
-/**
- * Positive integer amount of currency. Is a string to allow bigint inputs
- */
-export type Amount = string;
-export type Address = string;
 
 export interface GrantApplicationRequest {
-  grantId: string
-  applicantId: OwnerID
-  applicantPublicKey?: PublicKey
-  fields: GrantApplicationFieldAnswers
-  pii?: PIIAnswers
+  grantId: string;
+  applicantId: string;
+  /**
+   * The public encryption key associated with the account address
+   */
+  applicantPublicKey?: string;
+  fields: GrantApplicationFieldAnswers;
+  pii?: PIIAnswers;
   /**
    * @maxItems 100
    */
-  milestones: GrantProposedMilestone[]
+  milestones: GrantProposedMilestone[];
 }
 /**
  * Maps ID of the field to the answer by the applicant
  */
 export interface GrantApplicationFieldAnswers {
-  [k: string]: GrantApplicationFieldAnswer
+  [k: string]: GrantApplicationFieldAnswer;
 }
 export interface GrantApplicationFieldAnswerItem {
-  value: string
+  value: string;
 }
 /**
  * Map of encrypted information mapped by the wallet ID, whose public key was used to map the specific information
  */
 export interface PIIAnswers {
-  [k: string]: PIIAnswer
+  /**
+   * JSON serialized object, encrypted with a specific user's public key
+   */
+  [k: string]: string;
 }
 export interface GrantProposedMilestone {
-  title: string
-  amount: Amount
-  [k: string]: unknown
+  title: string;
+  /**
+   * Positive integer amount of currency. Is a string to allow bigint inputs
+   */
+  amount: string;
+  [k: string]: unknown;
 }
 export interface GrantUpdateRequest {
-  title?: string
+  title?: string;
   /**
    * Start date for proposal acceptations
    */
-  startDate?: string
+  startDate?: string;
   /**
    * Deadline for proposal submission
    */
-  endDate?: string
-  details?: string
-  reward?: Amount
-  payoutType?: 'in-one-go' | 'milestones'
-  reviewType?: 'voting' | 'rubrics'
-  creatorId?: OwnerID
+  endDate?: string;
+  details?: string;
+  /**
+   * Positive integer amount of currency. Is a string to allow bigint inputs
+   */
+  reward?: string;
+  payoutType?: "in-one-go" | "milestones";
+  reviewType?: "voting" | "rubrics";
+  creatorId?: string;
   /**
    * the workspace the grant is from
    */
-  workspaceId?: string
-  fields?: GrantFieldMap
+  workspaceId?: string;
+  fields?: GrantFieldMap;
   /**
    * @minItems 1
    */
-  grantManagers?: [Address, ...Address[]]
+  grantManagers?: [string, ...string[]];
 }
 export interface GrantFieldMap {
-  applicantName: GrantField
-  applicantEmail: GrantField
-  projectName: GrantField
-  projectDetails: GrantField
-  fundingBreakdown?: GrantField
-  [k: string]: GrantField
+  applicantName: GrantField;
+  applicantEmail: GrantField;
+  projectName: GrantField;
+  projectDetails: GrantField;
+  fundingBreakdown?: GrantField;
+  [k: string]: GrantField;
 }
 export interface GrantField {
   /**
    * Human readable title of the field
    */
-  title: string
-  inputType: 'short-form' | 'long-form' | 'numeric' | 'array'
+  title: string;
+  inputType: "short-form" | "long-form" | "numeric" | "array";
   /**
    * Constraint possible inputs for this field
    *
    * @maxItems 20
    */
-  enum?:
-    | []
-    | [string]
-    | [string, string]
-    | [string, string, string]
-    | [string, string, string, string]
-    | [string, string, string, string, string]
-    | [string, string, string, string, string, string]
-    | [string, string, string, string, string, string, string]
-    | [string, string, string, string, string, string, string, string]
-    | [string, string, string, string, string, string, string, string, string]
-    | [string, string, string, string, string, string, string, string, string, string]
-    | [string, string, string, string, string, string, string, string, string, string, string]
-    | [string, string, string, string, string, string, string, string, string, string, string, string]
-    | [string, string, string, string, string, string, string, string, string, string, string, string, string]
-    | [string, string, string, string, string, string, string, string, string, string, string, string, string, string]
-    | [
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string
-      ]
-    | [
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string
-      ]
-    | [
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string
-      ]
-    | [
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string
-      ]
-    | [
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string
-      ]
-    | [
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string
-      ]
+  enum?: string[];
   /**
    * Whether this field is PII (personally identifiable information) or not
    */
-  pii?: boolean
+  pii?: boolean;
 }
 export interface GrantCreateRequest {
-  title: string
+  title: string;
   /**
    * Start date for proposal acceptations
    */
-  startDate: string
+  startDate: string;
   /**
    * Deadline for proposal submission
    */
-  endDate: string
-  details: string
+  endDate: string;
+  details: string;
   /**
    * Link to sny external document
    */
-  link?: string
+  link?: string;
   /**
    * IPFS hash of the document uploaded by grant admin
    */
-  docIpfsHash?: string
+  docIpfsHash?: string;
   /**
    * Positive integer amount of currency. Is a string to allow bigint inputs
    */
-  reward: string
-  payoutType: 'in one go' | 'milestone'
-  reviewType: 'voting' | 'rubric'
-  creatorId: OwnerID
+  reward: string;
+  payoutType: "in one go" | "milestone";
+  reviewType: "voting" | "rubric";
+  creatorId: string;
   /**
    * the workspace the grant is from
    */
-  workspaceId: string
-  fields: GrantFieldMap
+  workspaceId: string;
+  fields: GrantFieldMap;
   /**
    * @minItems 1
    */
-  grantManagers?: [Address, ...Address[]]
+  grantManagers?: [string, ...string[]];
 }
 export interface RubricSetRequest {
-  rubric: Rubric
+  rubric: Rubric;
 }
 /**
  * Map of evaluation rubric ID to rubric data
  */
 export interface Rubric {
-  isPrivate: boolean
+  isPrivate: boolean;
   rubric: {
-    [k: string]: RubricItem
-  }
-  [k: string]: unknown
+    [k: string]: RubricItem;
+  };
+  [k: string]: unknown;
 }
 export interface RubricItem {
-  title: string
+  title: string;
   /**
    * Details about the evaluatation rubric
    */
-  details?: string
-  maximumPoints: number
+  details?: string;
+  maximumPoints: number;
 }
 export interface ReviewSetRequest {
-  reviewer: Address
-  reviewerPublicKey?: PublicKey
-  publicReviewDataHash?: string
+  reviewer: string;
+  /**
+   * The public encryption key associated with the account address
+   */
+  reviewerPublicKey?: string;
+  publicReviewDataHash?: string;
   /**
    * Encrypted review data. Map of the grant manager address => IPFS hash of the review encrypted with their public key
    */
   encryptedReview: {
-    [k: string]: string
-  }
-  [k: string]: unknown
+    [k: string]: string;
+  };
+  [k: string]: unknown;
 }
 export interface ApplicationMilestoneUpdate {
-  text: string
+  text: string;
 }
