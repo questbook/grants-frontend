@@ -35,7 +35,7 @@ function RequestProposal() {
     const buildComponent = () => {
         return (
             <Flex className='card' minWidth='90%' gap={8} bgColor='white' padding={4} justifyContent='center' alignItems='center' marginTop={8} marginRight={16} marginLeft={16} marginBottom={4}>
-                <Button onClick={() => createGrant()}>create grant</Button>
+                {/* <Button onClick={() => createGrant()}>create grant</Button> */}
                 {renderBody()}
             </Flex>
         )
@@ -118,21 +118,22 @@ function RequestProposal() {
 
     const applicantDetails = applicantDetailsList
 		.map(({
-			title, id, inputType, isRequired,
+			title, id, inputType, isRequired, pii
 		}, index) => {
 			if(index === applicantDetailsList.length - 1) {
 				return null
 			}
 
-			if(index === applicantDetailsList.length - 2) {
-				return null
-			}
+			// if(index === applicantDetailsList.length - 2) {
+			// 	return null
+			// }
 
 			return {
 				title,
 				required: isRequired || false,
 				id,
 				inputType,
+                pii
 			}
 		})
 		.filter((obj) => obj !== null)
@@ -351,7 +352,7 @@ function RequestProposal() {
         if (reviewMechanism === 'Rubrics') {
             const {
                 data: { ipfsHash: auxRubricHash },
-            } = await validatorApi.validateRubricSet({
+            } = await validateRequest({
                 rubric: rubrics,
             })
         }

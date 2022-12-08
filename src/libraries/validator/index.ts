@@ -34,7 +34,7 @@ $RefParser.dereference(schemaJson, (err, schema) => {
 
 
 export async function validateRequest(
-	type: 'GrantUpdateRequest' | 'GrantCreateRequest',
+	type: 'GrantUpdateRequest' | 'GrantCreateRequest' | 'RubricSetRequest',
 	data: any
 ) {
 	const _validate = await ajv.getSchema(type)!
