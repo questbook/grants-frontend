@@ -5,6 +5,184 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface Schema {
+export type All =
+  | GrantApplicationRequest
+  | GrantUpdateRequest
+  | GrantCreateRequest
+  | RubricSetRequest
+  | ReviewSetRequest
+  | ApplicationMilestoneUpdate
+  | string;
+/**
+ * @maxItems 100
+ */
+export type GrantApplicationFieldAnswer = GrantApplicationFieldAnswerItem[];
+
+export interface GrantApplicationRequest {
+  grantId: string;
+  applicantId: string;
+  /**
+   * The public encryption key associated with the account address
+   */
+  applicantPublicKey?: string;
+  fields: GrantApplicationFieldAnswers;
+  pii?: PIIAnswers;
+  /**
+   * @maxItems 100
+   */
+  milestones: GrantProposedMilestone[];
+}
+/**
+ * Maps ID of the field to the answer by the applicant
+ */
+export interface GrantApplicationFieldAnswers {
+  [k: string]: GrantApplicationFieldAnswer;
+}
+export interface GrantApplicationFieldAnswerItem {
+  value: string;
+}
+/**
+ * Map of encrypted information mapped by the wallet ID, whose public key was used to map the specific information
+ */
+export interface PIIAnswers {
+  /**
+   * JSON serialized object, encrypted with a specific user's public key
+   */
+  [k: string]: string;
+}
+export interface GrantProposedMilestone {
+  title: string;
+  /**
+   * Positive integer amount of currency. Is a string to allow bigint inputs
+   */
+  amount: string;
   [k: string]: unknown;
+}
+export interface GrantUpdateRequest {
+  title?: string;
+  /**
+   * Start date for proposal acceptations
+   */
+  startDate?: string;
+  /**
+   * Deadline for proposal submission
+   */
+  endDate?: string;
+  details?: string;
+  /**
+   * Positive integer amount of currency. Is a string to allow bigint inputs
+   */
+  reward?: string;
+  payoutType?: "in-one-go" | "milestones";
+  reviewType?: "voting" | "rubrics";
+  creatorId?: string;
+  /**
+   * the workspace the grant is from
+   */
+  workspaceId?: string;
+  fields?: GrantFieldMap;
+  /**
+   * @minItems 1
+   */
+  grantManagers?: [string, ...string[]];
+}
+export interface GrantFieldMap {
+  applicantName: GrantField;
+  applicantEmail: GrantField;
+  projectName: GrantField;
+  projectDetails: GrantField;
+  fundingBreakdown?: GrantField;
+  [k: string]: GrantField;
+}
+export interface GrantField {
+  /**
+   * Human readable title of the field
+   */
+  title: string;
+  inputType: "short-form" | "long-form" | "numeric" | "array";
+  /**
+   * Constraint possible inputs for this field
+   *
+   * @maxItems 20
+   */
+  enum?: string[];
+  /**
+   * Whether this field is PII (personally identifiable information) or not
+   */
+  pii?: boolean;
+}
+export interface GrantCreateRequest {
+  title: string;
+  /**
+   * Start date for proposal acceptations
+   */
+  startDate: string;
+  /**
+   * Deadline for proposal submission
+   */
+  endDate: string;
+  details: string;
+  /**
+   * Link to sny external document
+   */
+  link?: string;
+  /**
+   * IPFS hash of the document uploaded by grant admin
+   */
+  docIpfsHash?: string;
+  /**
+   * Positive integer amount of currency. Is a string to allow bigint inputs
+   */
+  reward: string;
+  payoutType: "in one go" | "milestone";
+  reviewType: "voting" | "rubric";
+  creatorId: string;
+  /**
+   * the workspace the grant is from
+   */
+  workspaceId: string;
+  fields: GrantFieldMap;
+  /**
+   * @minItems 1
+   */
+  grantManagers?: [string, ...string[]];
+}
+export interface RubricSetRequest {
+  rubric: Rubric;
+}
+/**
+ * Map of evaluation rubric ID to rubric data
+ */
+export interface Rubric {
+  isPrivate: boolean;
+  rubric: {
+    [k: string]: RubricItem;
+  };
+  [k: string]: unknown;
+}
+export interface RubricItem {
+  title: string;
+  /**
+   * Details about the evaluatation rubric
+   */
+  details?: string;
+  maximumPoints: number;
+}
+export interface ReviewSetRequest {
+  reviewer: string;
+  /**
+   * The public encryption key associated with the account address
+   */
+  reviewerPublicKey?: string;
+  publicReviewDataHash?: string;
+  /**
+   * Encrypted review data. Map of the grant manager address => IPFS hash of the review encrypted with their public key
+   */
+  encryptedReview: {
+    [k: string]: string;
+  };
+  [k: string]: unknown;
+}
+export interface ApplicationMilestoneUpdate {
+  text: string;
 }
