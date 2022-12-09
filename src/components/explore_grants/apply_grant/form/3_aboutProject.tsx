@@ -267,6 +267,7 @@ function AboutProject({
 								label={`${t('/explore_grants/apply.milestone')} #${index + 1}`}
 								placeholder=''
 								value={milestone}
+								maxLength={1024}
 								onChange={
 									(e) => {
 										const newProjectMilestone = [...projectMilestones]
