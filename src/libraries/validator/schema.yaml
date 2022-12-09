@@ -460,6 +460,9 @@ GrantCreateRequest:
     title:
       type: string
       maxLength: 255
+    summary:
+          type: string
+          maxLength: 1024
     startDate:
       type: string
       format: date-time
@@ -479,7 +482,7 @@ GrantCreateRequest:
       maxLength: 128
       description: IPFS hash of the document uploaded by grant admin
     reward:
-      $ref: 'Amount'
+      $ref: 'GrantReward'
       description: Grant reward amount in USD
     payoutType:
       type: string
