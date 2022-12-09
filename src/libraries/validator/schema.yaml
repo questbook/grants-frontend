@@ -516,6 +516,9 @@ GrantUpdateRequest:
     title:
       type: string
       maxLength: 255
+    summary:
+          type: string
+          maxLength: 1024
     startDate:
       type: string
       format: date-time
@@ -527,19 +530,28 @@ GrantUpdateRequest:
     details:
       type: string
       maxLength: 4096
+    link:
+      type: string
+      description: Link to sny external document
+    docIpfsHash:
+      type: string
+      maxLength: 128
+      description: IPFS hash of the document uploaded by grant admin
     reward:
-      $ref: 'Amount'
+      $ref: 'GrantReward'
+      description: Grant reward amount in USD
     payoutType:
       type: string
+      maxLength: 128 
       enum: 
-        - "in-one-go"
-        - "milestones"
+        - "in one go"
+        - "milestone"
     reviewType: 
       type: string
       maxLength: 128
       enum: 
         - "voting"
-        - "rubrics"
+        - "rubric"
     creatorId:
       $ref: 'OwnerID'
     workspaceId:
