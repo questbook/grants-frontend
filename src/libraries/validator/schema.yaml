@@ -447,7 +447,6 @@ GrantCreateRequest:
   additionalProperties: false
   required:
     - title
-    - startDate
     - endDate
     - details
     - reward
