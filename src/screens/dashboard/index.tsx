@@ -1,9 +1,11 @@
-import { ReactElement } from 'react'
+import { ReactElement, useState } from 'react'
 import { Flex } from '@chakra-ui/react'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import ActionList from 'src/screens/dashboard/ActionList'
 import Body from 'src/screens/dashboard/Body'
 import { DashboardProvider } from 'src/screens/dashboard/Context'
+import FundBuilderDrawer from 'src/screens/dashboard/FundBuilderDrawer'
+import FundBuilderModal from 'src/screens/dashboard/FundBuilderModal'
 import ProposalList from 'src/screens/dashboard/ProposalList'
 import TopBar from 'src/screens/dashboard/TopBar'
 
@@ -19,8 +21,22 @@ function Dashboard() {
 				<Body />
 				<ActionList />
 			</Flex>
+
+			{/* Modals */}
+			<FundBuilderModal
+				isOpen={isFundBuilderModalOpen}
+				onClose={
+					() => {
+						setIsFundBuilderModalOpen(false)
+					}
+				} />
+
+			{/* Drawers */}
+			<FundBuilderDrawer />
 		</Flex>
 	)
+
+	const [isFundBuilderModalOpen, setIsFundBuilderModalOpen] = useState(true)
 
 	return buildComponent()
 }
