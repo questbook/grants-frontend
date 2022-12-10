@@ -484,7 +484,7 @@ GrantCreateRequest:
       type: string
       maxLength: 128 
       enum: 
-        - "in_one_go"
+        - "in-one-go"
         - "milestone"
     reviewType: 
       type: string
