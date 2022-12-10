@@ -491,7 +491,6 @@ GrantCreateRequest:
       $ref: 'GrantReward'
       description: Grant reward amount in USD
     payoutType:
-      type: string
       $ref: 'PayoutType'
     reviewType: 
       $ref: 'ReviewType'
