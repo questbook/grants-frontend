@@ -447,11 +447,8 @@ GrantCreateRequest:
   additionalProperties: false
   required:
     - title
-    - endDate
     - details
     - reward
-    - payoutType
-    - reviewType
     - creatorId
     - workspaceId
     - fields
@@ -475,7 +472,7 @@ GrantCreateRequest:
       maxLength: 4096
     link:
       type: string
-      description: Link to sny external document
+      description: Link to any external document
     docIpfsHash:
       type: string
       maxLength: 128
@@ -487,7 +484,7 @@ GrantCreateRequest:
       type: string
       maxLength: 128 
       enum: 
-        - "in one go"
+        - "in_one_go"
         - "milestone"
     reviewType: 
       type: string
