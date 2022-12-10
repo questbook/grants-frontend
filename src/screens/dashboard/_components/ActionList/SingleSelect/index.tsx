@@ -30,7 +30,7 @@ function SingleSelect() {
 								setIsModalOpen(true)
 							}
 						}>
-						Fund builders
+						Fund builder
 					</Button>
 				</Flex>
 			</Flex>
