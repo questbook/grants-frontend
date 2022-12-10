@@ -1,4 +1,6 @@
+import { useContext } from 'react'
 import { Button, Divider, Flex, Text } from '@chakra-ui/react'
+import { FundBuilderContext } from 'src/screens/dashboard/Context'
 
 function MultiSelect() {
 	const buildComponent = () => {
@@ -11,6 +13,7 @@ function MultiSelect() {
 					Batch actions
 				</Text>
 				<Button
+					w='100%'
 					variant='primaryMedium'
 					bg='gray.3'
 					mt={4}>
@@ -35,7 +38,12 @@ function MultiSelect() {
 				</Flex>
 				<Button
 					w='100%'
-					variant='primaryMedium'>
+					variant='primaryMedium'
+					onClick={
+						() => {
+							setIsDrawerOpen(true)
+						}
+					}>
 					<Text
 						variant='v2_body'
 						fontWeight='500'
@@ -46,6 +54,9 @@ function MultiSelect() {
 			</Flex>
 		)
 	}
+
+	const { setIsDrawerOpen } = useContext(FundBuilderContext)!
+
 
 	return buildComponent()
 }

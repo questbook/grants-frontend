@@ -4,7 +4,7 @@ import { GetGrantsQuery, useGetGrantsQuery, useGetProposalsQuery } from 'src/gen
 import logger from 'src/libraries/logger'
 import { ApiClientsContext } from 'src/pages/_app'
 import { GRANT_CACHE_KEY } from 'src/screens/dashboard/_utils/constants'
-import { DashboardContextType, FundBuilderContextType, Proposals, TokenInfo } from 'src/screens/dashboard/_utils/types'
+import { DashboardContextType, FundBuilderContextType, Proposals, SignerVerifiedState, TokenInfo } from 'src/screens/dashboard/_utils/types'
 import { useMultiChainQuery } from 'src/screens/proposal/_hooks/useMultiChainQuery'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
@@ -152,9 +152,10 @@ const FundBuilderProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 	const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
+	const [signerVerifiedState, setSignerVerifiedState] = useState<SignerVerifiedState>('unverified')
 
 	return (
-		<FundBuilderContext.Provider value={{ tokenInfo, setTokenInfo, amounts, setAmounts, tos, setTos, milestoneIndices, setMilestoneIndices, isModalOpen, setIsModalOpen, isDrawerOpen, setIsDrawerOpen }}>
+		<FundBuilderContext.Provider value={{ tokenInfo, setTokenInfo, amounts, setAmounts, tos, setTos, milestoneIndices, setMilestoneIndices, isModalOpen, setIsModalOpen, isDrawerOpen, setIsDrawerOpen, signerVerifiedState, setSignerVerifiedState }}>
 			{children}
 		</FundBuilderContext.Provider>
 	)

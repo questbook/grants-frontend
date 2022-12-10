@@ -1,24 +1,25 @@
 import { useContext, useMemo } from 'react'
-import { Flex, Text } from '@chakra-ui/react'
+import { Flex, FlexProps, Text } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
 import Dropdown from 'src/screens/dashboard/_components/FundBuilder/Dropdown'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { FundBuilderContext } from 'src/screens/dashboard/Context'
 
-interface Props {
+interface Props extends FlexProps {
 	proposal: ProposalType
 	index: number
 }
 
 type DropdownItem = ProposalType['milestones'][number] & { index: number }
 
-function MilestoneChoose({ proposal, index }: Props) {
+function MilestoneChoose({ proposal, index, ...props }: Props) {
 	const buildComponent = () => {
 		return (
 			<Flex
 				p={4}
 				w='100%'
-				borderBottom='1px solid #E7E4DD'>
+				borderBottom='1px solid #E7E4DD'
+				{...props}>
 				<Text
 					w='20%'
 					color='gray.6'>

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { useContext, useEffect, useMemo } from 'react'
 import { Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
@@ -7,7 +7,6 @@ import PayFromChoose from 'src/screens/dashboard/_components/FundBuilder/PayFrom
 import PayWithChoose from 'src/screens/dashboard/_components/FundBuilder/PayWithChoose'
 import ToChoose from 'src/screens/dashboard/_components/FundBuilder/ToChoose'
 import Verify from 'src/screens/dashboard/_components/FundBuilder/Verify'
-import { SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
 import { getFieldString } from 'src/utils/formattingUtils'
 
@@ -36,7 +35,7 @@ function FundBuilderModal() {
 									align='center'
 									w='100%'>
 									<Text fontWeight='500'>
-										Fund Builders
+										Fund Builder
 									</Text>
 									<Flex
 										mt={7}
@@ -53,7 +52,7 @@ function FundBuilderModal() {
 											value={amounts?.[0]}
 											onChange={
 												(e) => {
-													const val = parseInt(e.target.value)
+													const val = parseFloat(e.target.value)
 													setAmounts([val])
 												}
 											}
@@ -69,6 +68,7 @@ function FundBuilderModal() {
 												<PayFromChoose />
 												<PayWithChoose />
 												<ToChoose
+													type='single'
 													proposal={proposal}
 													index={0} />
 												<MilestoneChoose
@@ -109,9 +109,7 @@ function FundBuilderModal() {
 	}
 
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
-	const { isModalOpen, setIsModalOpen, amounts, setAmounts, milestoneIndices, setMilestoneIndices, tos, setTos, tokenInfo } = useContext(FundBuilderContext)!
-
-	const [signerVerifiedState, setSignerVerifiedState] = useState<SignerVerifiedState>('unverified')
+	const { isModalOpen, setIsModalOpen, amounts, setAmounts, milestoneIndices, setMilestoneIndices, tos, setTos, tokenInfo, signerVerifiedState, setSignerVerifiedState } = useContext(FundBuilderContext)!
 
 	const proposal = useMemo(() => {
 		const index = selectedProposals.indexOf(true)

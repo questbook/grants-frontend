@@ -37,6 +37,9 @@ export type FundBuilderContextType = {
     setIsModalOpen: (isOpen: boolean) => void
     isDrawerOpen: boolean
     setIsDrawerOpen: (isOpen: boolean) => void
+
+    signerVerifiedState: SignerVerifiedState
+    setSignerVerifiedState: (state: SignerVerifiedState) => void
 }
 
 export type Proposals = Exclude<GetProposalsQuery['grantApplications'], null | undefined>

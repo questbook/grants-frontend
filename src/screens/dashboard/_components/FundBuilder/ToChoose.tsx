@@ -3,12 +3,17 @@ import { Flex, Text } from '@chakra-ui/react'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { FundBuilderContext } from 'src/screens/dashboard/Context'
-interface Props {
+
+type Props =
+| {
 	proposal: ProposalType
 	index: number
+	type: 'single'
+} | {
+	type: 'multi'
 }
 
-function ToChoose({ proposal, index }: Props) {
+function ToChoose(prop: Props) {
 	const buildComponent = () => {
 		return (
 			<Flex
@@ -21,23 +26,27 @@ function ToChoose({ proposal, index }: Props) {
 					color='gray.6'>
 					To
 				</Text>
-				<FlushedInput
-					isDisabled={!proposal}
-					placeholder='Enter builder address here'
-					value={tos?.[index]}
-					onChange={(e) => setTos([e.target.value])}
-					fontSize='16px'
-					fontWeight='400'
-					lineHeight='20px'
-					borderBottom={undefined}
-					variant='unstyled'
-					w='100%'
-					textAlign='left'
-					flexProps={
-						{
-							w: '100%',
-						}
-					} />
+				{
+					prop.type === 'single' && (
+						<FlushedInput
+							isDisabled={!prop.proposal}
+							placeholder='Enter builder address here'
+							value={tos?.[prop.index]}
+							onChange={(e) => setTos([e.target.value])}
+							fontSize='16px'
+							fontWeight='400'
+							lineHeight='20px'
+							borderBottom={undefined}
+							variant='unstyled'
+							w='100%'
+							textAlign='left'
+							flexProps={
+								{
+									w: '100%',
+								}
+							} />
+					)
+				}
 
 			</Flex>
 		)
