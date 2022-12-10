@@ -81,6 +81,16 @@ SupportedNetwork:
     - '5'
     - '10'
     - '137'
+PayoutType:
+  type: string
+  enum: 
+    - 'in-one-go'
+    - 'milestones'
+ReviewType:
+  type: string
+  enum:
+    - 'voting'
+    - 'rubrics'
 GrantField:
   type: object
   additionalProperties: false
@@ -482,16 +492,9 @@ GrantCreateRequest:
       description: Grant reward amount in USD
     payoutType:
       type: string
-      maxLength: 128 
-      enum: 
-        - "in-one-go"
-        - "milestone"
+      $ref: 'PayoutType'
     reviewType: 
-      type: string
-      maxLength: 128
-      enum: 
-        - "voting"
-        - "rubric"
+      $ref: 'ReviewType'
     creatorId:
       $ref: 'OwnerID'
     workspaceId:
@@ -537,17 +540,9 @@ GrantUpdateRequest:
       $ref: 'GrantReward'
       description: Grant reward amount in USD
     payoutType:
-      type: string
-      maxLength: 128 
-      enum: 
-        - "in one go"
-        - "milestone"
+      $ref: 'PayoutType'
     reviewType: 
-      type: string
-      maxLength: 128
-      enum: 
-        - "voting"
-        - "rubric"
+      $ref: 'ReviewType'
     creatorId:
       $ref: 'OwnerID'
     workspaceId:
