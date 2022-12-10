@@ -8,10 +8,9 @@ import { useRouter } from 'next/router'
 import { NetworkType } from 'src/constants/Networks'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
-import SafeSelect, { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
-
 // import useSafeUSDBalances from "src/hooks/useSafeUSDBalances";
 import VerifySignerModal from 'src/screens/request_proposal/_components/VerifySignerModal'
+import SafeSelect, { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 // import useSafeOwners from "src/hooks/useSafeOwners";
 
 

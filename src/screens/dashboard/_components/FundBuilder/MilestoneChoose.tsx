@@ -1,6 +1,18 @@
+import { useContext, useMemo } from 'react'
 import { Flex, Text } from '@chakra-ui/react'
+import logger from 'src/libraries/logger'
+import Dropdown from 'src/screens/dashboard/_components/FundBuilder/Dropdown'
+import { ProposalType } from 'src/screens/dashboard/_utils/types'
+import { FundBuilderContext } from 'src/screens/dashboard/Context'
 
-function MilestoneChoose() {
+interface Props {
+	proposal: ProposalType
+	index: number
+}
+
+type DropdownItem = ProposalType['milestones'][number] & { index: number }
+
+function MilestoneChoose({ proposal, index }: Props) {
 	const buildComponent = () => {
 		return (
 			<Flex
@@ -12,9 +24,76 @@ function MilestoneChoose() {
 					color='gray.6'>
 					Milestones
 				</Text>
+				<Flex
+					direction='column'>
+					<Dropdown
+						options={
+							milestones.map((milestone, index) => {
+								return { ...milestone, index }
+							})
+						}
+						makeOption={milestoneItem}
+						selected={{ ...milestones?.[milestoneIndices?.[index]], index: milestoneIndices?.[index] }}
+						singleValue={singleValue}
+						setSelected={
+							(value: DropdownItem | undefined) => {
+								if(!value) {
+									return
+								}
+
+								logger.info({ value }, 'Selected milestone')
+
+								const newMilestoneIndices = [...milestoneIndices]
+								newMilestoneIndices[index] = value.index
+								setMilestoneIndices(newMilestoneIndices)
+							}
+						} />
+					{/*  */}
+					<Text
+						mt={1}
+						variant='v2_body'>
+						{milestones?.[milestoneIndices?.[index]]?.title}
+					</Text>
+				</Flex>
 			</Flex>
 		)
 	}
+
+	const milestoneItem = ({ innerProps, data }: any) => (
+		<Flex
+			{...innerProps}
+			direction='column'
+			cursor='pointer'
+		>
+			<Text
+				color='gray.4'
+				variant='v2_heading_3'
+				fontWeight='500'>
+				{data.index < 9 ? `0${data.index + 1}` : (data.index + 1)}
+			</Text>
+			<Text
+				mt={1}
+				variant='v2_body'>
+				{data?.title}
+			</Text>
+		</Flex>
+	)
+
+	const singleValue = ({ innerProps, data }: any) => (
+		<Text
+			{...innerProps}
+			color='gray.4'
+			variant='v2_heading_3'
+			fontWeight='500'>
+			{data.index < 9 ? `0${data.index + 1}` : (data.index + 1)}
+		</Text>
+	)
+
+	const { milestoneIndices, setMilestoneIndices } = useContext(FundBuilderContext)!
+
+	const milestones = useMemo(() => {
+		return proposal?.milestones || []
+	}, [proposal])
 
 	return buildComponent()
 }

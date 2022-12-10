@@ -3,7 +3,7 @@ import { Flex } from '@chakra-ui/react'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import ActionList from 'src/screens/dashboard/ActionList'
 import Body from 'src/screens/dashboard/Body'
-import { DashboardProvider } from 'src/screens/dashboard/Context'
+import { DashboardProvider, FundBuilderProvider } from 'src/screens/dashboard/Context'
 import FundBuilderDrawer from 'src/screens/dashboard/FundBuilderDrawer'
 import FundBuilderModal from 'src/screens/dashboard/FundBuilderModal'
 import ProposalList from 'src/screens/dashboard/ProposalList'
@@ -23,20 +23,12 @@ function Dashboard() {
 			</Flex>
 
 			{/* Modals */}
-			<FundBuilderModal
-				isOpen={isFundBuilderModalOpen}
-				onClose={
-					() => {
-						setIsFundBuilderModalOpen(false)
-					}
-				} />
+			<FundBuilderModal />
 
 			{/* Drawers */}
 			<FundBuilderDrawer />
 		</Flex>
 	)
-
-	const [isFundBuilderModalOpen, setIsFundBuilderModalOpen] = useState(true)
 
 	return buildComponent()
 }
@@ -58,7 +50,9 @@ Dashboard.getLayout = function(page: ReactElement) {
 				}
 			}>
 			<DashboardProvider>
-				{page}
+				<FundBuilderProvider>
+					{page}
+				</FundBuilderProvider>
 			</DashboardProvider>
 		</NavbarLayout>
 	)

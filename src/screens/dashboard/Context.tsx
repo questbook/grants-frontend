@@ -4,11 +4,12 @@ import { GetGrantsQuery, useGetGrantsQuery, useGetProposalsQuery } from 'src/gen
 import logger from 'src/libraries/logger'
 import { ApiClientsContext } from 'src/pages/_app'
 import { GRANT_CACHE_KEY } from 'src/screens/dashboard/_utils/constants'
-import { DashboardContextType, Proposals } from 'src/screens/dashboard/_utils/types'
+import { DashboardContextType, FundBuilderContextType, Proposals, TokenInfo } from 'src/screens/dashboard/_utils/types'
 import { useMultiChainQuery } from 'src/screens/proposal/_hooks/useMultiChainQuery'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined)
+const FundBuilderContext = createContext<FundBuilderContextType | undefined>(undefined)
 
 const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const { workspace } = useContext(ApiClientsContext)!
@@ -143,4 +144,20 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	)
 }
 
-export { DashboardContext, DashboardProvider }
+const FundBuilderProvider = ({ children }: PropsWithChildren<ReactNode>) => {
+	const [tokenInfo, setTokenInfo] = useState<TokenInfo>()
+	const [amounts, setAmounts] = useState<number[]>([])
+	const [tos, setTos] = useState<string[]>([])
+	const [milestoneIndices, setMilestoneIndices] = useState<number[]>([])
+
+	const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+	const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
+
+	return (
+		<FundBuilderContext.Provider value={{ tokenInfo, setTokenInfo, amounts, setAmounts, tos, setTos, milestoneIndices, setMilestoneIndices, isModalOpen, setIsModalOpen, isDrawerOpen, setIsDrawerOpen }}>
+			{children}
+		</FundBuilderContext.Provider>
+	)
+}
+
+export { DashboardContext, DashboardProvider, FundBuilderContext, FundBuilderProvider }

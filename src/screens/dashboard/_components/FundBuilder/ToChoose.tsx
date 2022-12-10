@@ -1,10 +1,14 @@
-import { useContext, useMemo } from 'react'
+import { useContext } from 'react'
 import { Flex, Text } from '@chakra-ui/react'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
-import { DashboardContext } from 'src/screens/dashboard/Context'
-import { getFieldString } from 'src/utils/formattingUtils'
+import { ProposalType } from 'src/screens/dashboard/_utils/types'
+import { FundBuilderContext } from 'src/screens/dashboard/Context'
+interface Props {
+	proposal: ProposalType
+	index: number
+}
 
-function ToChoose() {
+function ToChoose({ proposal, index }: Props) {
 	const buildComponent = () => {
 		return (
 			<Flex
@@ -18,7 +22,10 @@ function ToChoose() {
 					To
 				</Text>
 				<FlushedInput
-					value={getFieldString(proposal, 'applicantAddress') ?? ''}
+					isDisabled={!proposal}
+					placeholder='Enter builder address here'
+					value={tos?.[index]}
+					onChange={(e) => setTos([e.target.value])}
 					fontSize='16px'
 					fontWeight='400'
 					lineHeight='20px'
@@ -36,15 +43,7 @@ function ToChoose() {
 		)
 	}
 
-	const { proposals, selectedProposals } = useContext(DashboardContext)!
-
-	const proposal = useMemo(() => {
-		const index = selectedProposals.indexOf(true)
-
-		if(index !== -1) {
-			return proposals[index]
-		}
-	}, [proposals, selectedProposals])
+	const { tos, setTos } = useContext(FundBuilderContext)!
 
 	return buildComponent()
 }

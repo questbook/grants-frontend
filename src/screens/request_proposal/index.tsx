@@ -15,6 +15,12 @@ import logger from 'src/libraries/logger'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { validateAndUploadToIpfs, validateRequest } from 'src/libraries/validator'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import BuilderDiscovery from 'src/screens/request_proposal/_subscreens/BuilderDiscovery'
+import LinkMultiSig from 'src/screens/request_proposal/_subscreens/LinkMultiSig'
+import Payouts from 'src/screens/request_proposal/_subscreens/Payouts'
+import ProposalReview from 'src/screens/request_proposal/_subscreens/ProposalReview'
+import ProposalSubmission from 'src/screens/request_proposal/_subscreens/ProposalSubmission'
+import { today } from 'src/screens/request_proposal/_utils/utils'
 import { ApplicantDetailsFieldType } from 'src/types'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
@@ -22,13 +28,6 @@ import { addAuthorizedOwner, addAuthorizedUser, bicoDapps, chargeGas, getEventDa
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
-
-import BuilderDiscovery from 'src/screens/request_proposal/_subscreens/BuilderDiscovery'
-import LinkMultiSig from 'src/screens/request_proposal/_subscreens/LinkMultiSig'
-import Payouts from 'src/screens/request_proposal/_subscreens/Payouts'
-import ProposalReview from 'src/screens/request_proposal/_subscreens/ProposalReview'
-import ProposalSubmission from 'src/screens/request_proposal/_subscreens/ProposalSubmission'
-import { today } from 'src/screens/request_proposal/_utils/utils'
 
 let typeA: keyof typeof applicantDetailsList
 

@@ -1,7 +1,6 @@
 import { writeFile } from 'fs/promises'
 import { compile } from 'json-schema-to-typescript'
 import path from 'path'
-
 import { readYaml } from 'src/libraries/validator/utils/yaml'
 
 const GEN_TYPES_FILE = './src/types/gen.d.ts';

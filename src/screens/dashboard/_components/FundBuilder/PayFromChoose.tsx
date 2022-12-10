@@ -1,6 +1,6 @@
 import { Flex, Text } from '@chakra-ui/react'
 import { useSafeContext } from 'src/contexts/safeContext'
-import { formatAddress } from 'src/utils/formattingUtils'
+// import { formatAddress } from 'src/utils/formattingUtils'
 
 function PayFromChoose() {
 	const buildComponent = () => {
