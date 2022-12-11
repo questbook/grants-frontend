@@ -30,22 +30,26 @@ function ProposalList() {
 
 			{/* TODO - Search Box */}
 
-			<Flex mt={4}>
-				<Checkbox
-					isChecked={selectedProposals?.length !== undefined && selectedProposals.every((_) => _)}
-					onChange={
-						(e) => {
-							logger.info({ value: e.target.checked }, '(Proposal List) Select All Checkbox')
-							setSelectedProposals(Array(proposals.length).fill(e.target.checked))
-						}
-					}>
-					<Text
-						variant='v2_body'
-						fontWeight='400'>
-						Select All
-					</Text>
-				</Checkbox>
-			</Flex>
+			{
+				role === 'admin' && (
+					<Flex mt={4}>
+						<Checkbox
+							isChecked={selectedProposals?.length !== undefined && selectedProposals.every((_) => _)}
+							onChange={
+								(e) => {
+									logger.info({ value: e.target.checked }, '(Proposal List) Select All Checkbox')
+									setSelectedProposals(Array(proposals.length).fill(e.target.checked))
+								}
+							}>
+							<Text
+								variant='v2_body'
+								fontWeight='400'>
+								Select All
+							</Text>
+						</Checkbox>
+					</Flex>
+				)
+			}
 
 			<Flex
 				w='100%'
@@ -67,7 +71,7 @@ function ProposalList() {
 		</Flex>
 	)
 
-	const { proposals, selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
+	const { role, proposals, selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
 	const proposalCount = useMemo(() => {
 		return proposals.filter((_) => _).length
 	}, [proposals])

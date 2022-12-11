@@ -110,7 +110,12 @@ function ProposalDetails({ proposal, index }: Props) {
 			return
 		}
 
-		return grants[selectedGrantIndex]
+		const temp = grants[selectedGrantIndex]
+		if(temp.__typename === 'Grant') {
+			return temp
+		} else if(temp.__typename === 'GrantReviewerCounter') {
+			return temp.grant
+		}
 	}, [selectedGrantIndex, grants])
 
 	const { decrypt } = useEncryptPiiForApplication(

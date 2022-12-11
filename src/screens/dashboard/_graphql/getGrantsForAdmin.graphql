@@ -1,5 +1,5 @@
 # This query fetches all the grants for a given domain
-query getGrants($domainID: String!) {
+query getGrantsForAdmin($domainID: String!) {
     grants(where: {workspace: $domainID}, orderBy: createdAtS, orderDirection: desc) {
         id
         title

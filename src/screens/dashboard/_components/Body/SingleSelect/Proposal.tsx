@@ -2,7 +2,7 @@ import { useContext, useEffect, useMemo, useState } from 'react'
 import { Box, Button, CircularProgress, Flex, Image, Text } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer'
-import { defaultChainId, USD_ASSET } from 'src/constants/chains'
+import { USD_ASSET } from 'src/constants/chains'
 import logger from 'src/libraries/logger'
 import CopyIcon from 'src/libraries/ui/CopyIcon'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
@@ -14,7 +14,6 @@ import getAvatar from 'src/utils/avatarUtils'
 import { formatAddress, getFieldString, getRewardAmountMilestones } from 'src/utils/formattingUtils'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { getChainInfo } from 'src/utils/tokenUtils'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function Proposal() {
 	const buildComponent = () => {
@@ -248,12 +247,9 @@ function Proposal() {
 		)
 	}
 
-	const { workspace } = useContext(ApiClientsContext)!
-	const { proposals, grants, selectedGrantIndex, selectedProposals } = useContext(DashboardContext)!
-
-	const chainId = useMemo(() => {
-		return getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
-	}, [workspace])
+	const { chainId } = useContext(ApiClientsContext)!
+	const context = useContext(DashboardContext)!
+	const { grants, proposals, selectedGrantIndex, selectedProposals } = context
 
 	const proposal = useMemo(() => {
 		const index = selectedProposals.indexOf(true)
@@ -268,7 +264,12 @@ function Proposal() {
 			return
 		}
 
-		return grants[selectedGrantIndex]
+		const temp = grants[selectedGrantIndex]
+		if(temp.__typename === 'Grant') {
+			return temp
+		} else if(temp.__typename === 'GrantReviewerCounter') {
+			return temp.grant
+		}
 	}, [selectedGrantIndex, grants])
 
 	const chainInfo = useMemo(() => {

@@ -1,0 +1,41 @@
+query getGrantsForReviewer($reviewerAddress: Bytes!, $workspaceId: String!) {
+  grantReviewerCounters(
+    where: {
+      reviewerAddress: $reviewerAddress
+      grant_: { workspace: $workspaceId }
+    }
+  ) {
+    id
+    counter
+    pendingCounter
+    doneCounter
+    grant {
+      id
+      title
+      acceptingApplications
+      reward {
+        committed
+        id
+        asset
+        token {
+          address
+          label
+          decimal
+          iconHash
+        }
+      }
+      pendingApplications: applications(
+        where: { pendingReviewerAddresses_contains_nocase: [$reviewerAddress] }
+      ) {
+        id
+      }
+      doneApplications: applications(
+        where: {
+          doneReviewerAddresses_contains_nocase: [$reviewerAddress]
+        }
+      ) {
+        id
+      }
+    }
+  }
+}

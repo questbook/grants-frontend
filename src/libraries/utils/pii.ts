@@ -6,7 +6,7 @@ import {
 	arrayify,
 	keccak256,
 } from 'ethers/lib/utils'
-import { GetProposalsQuery, useGetGrantManagersWithPublicKeyQuery } from 'src/generated/graphql'
+import { GetProposalsForAdminQuery, useGetGrantManagersWithPublicKeyQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
@@ -291,7 +291,7 @@ export function useEncryptPiiForApplication(
 	 * otherwise return as is
 	 */
 	const decrypt = useCallback(
-		async(app: Exclude<GetProposalsQuery['grantApplications'], null | undefined>[number]) => {
+		async(app: Exclude<GetProposalsForAdminQuery['grantApplications'], null | undefined>[number]) => {
 			if(app?.pii?.length) {
 				logger.info('Encrypted Data', app)
 				if(!scwAddress || !applicantPublicKey || !grantId) {

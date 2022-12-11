@@ -21,9 +21,11 @@ import {
 	SupportedChainId,
 } from 'src/constants/chains'
 import { SafeProvider } from 'src/contexts/safeContext'
+import { DoesHaveProposalsDocument, useDoesHaveProposalsQuery } from 'src/generated/graphql'
 import SubgraphClient from 'src/graphql/subgraph'
 import { DAOSearchContextMaker } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContextMaker } from 'src/hooks/QBAdminsContext'
+import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import MigrateToGasless from 'src/libraries/ui/MigrateToGaslessModal'
 import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import theme from 'src/theme'
@@ -33,6 +35,7 @@ import { addAuthorizedUser, bicoDapps, deploySCW, getNonce, jsonRpcProviders, ne
 import { delay } from 'src/utils/generics'
 import logger from 'src/utils/logger'
 import getSeo from 'src/utils/seo'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import {
 	allChains,
 	Chain,
@@ -107,7 +110,7 @@ const client = createClient({
 				qrcode: true,
 				rpc: {
 					'137': `https://polygon-mainnet.infura.io/v3/${infuraId}`,
-					'4': `https://rinkeby.infura.io/v3/${infuraId}`
+					'5': `https://goerli.infura.io/v3/${infuraId}`
 				},
 			},
 		}),
@@ -115,13 +118,15 @@ const client = createClient({
 	provider,
 })
 
+export type Roles = 'admin' | 'reviewer' | 'builder' | 'community'
+
 export const ApiClientsContext = createContext<{
 	validatorApi: ValidationApi
 	workspace?: MinimalWorkspace
 	setWorkspace: (workspace?: MinimalWorkspace) => void
 	subgraphClients: { [chainId: string]: SubgraphClient }
-	connected: boolean
-	setConnected: (connected: boolean) => void
+	chainId: SupportedChainId
+	role: Roles
 		} | null>(null)
 
 export const WebwalletContext = createContext<{
@@ -490,8 +495,57 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		return new ValidationApi(validatorConfiguration)
 	}, [])
 
-	const [connected, setConnected] = React.useState(false)
-	const [grantsCount, setGrantsCount] = React.useState(0)
+	const [connected, setConnected] = useState(false)
+	const [isBuilder, setIsBuilder] = useState<'fetching' | 'yes' | 'no'>('fetching')
+
+	const chainId = useMemo(() => {
+		return getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
+	}, [workspace])
+
+	useEffect(() => {
+		if(!scwAddress) {
+			return
+		}
+
+		const fetch = async() => {
+			let hasProposals = false
+			for(const chainId of ALL_SUPPORTED_CHAIN_IDS) {
+				const ret = await clients[chainId].client.query({
+					query: DoesHaveProposalsDocument,
+					variables: {
+						builderId: scwAddress
+					}
+				})
+
+				if(ret.data?.grantApplications?.length) {
+					hasProposals = true
+					break
+				}
+			}
+
+			if(hasProposals) {
+				setIsBuilder('yes')
+			} else {
+				setIsBuilder('no')
+			}
+		}
+
+		fetch()
+	}, [scwAddress])
+
+	const role = useMemo<'admin' | 'reviewer' | 'builder' | 'community'>(() => {
+		if(!workspace) {
+			return isBuilder === 'yes' ? 'builder' : 'community'
+		}
+
+		for(const member of workspace.members) {
+			if(member.actorId === scwAddress?.toLowerCase()) {
+				return member.accessLevel === 'reviewer' ? 'reviewer' : 'admin'
+			}
+		}
+
+		return 'community'
+	}, [workspace, isBuilder, scwAddress])
 
 	const apiClients = useMemo(
 		() => ({
@@ -509,11 +563,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 				setWorkspace(newWorkspace)
 			},
+			chainId,
+			role,
 			subgraphClients: clients,
-			connected,
-			setConnected,
-			grantsCount,
-			setGrantsCount,
 		}),
 		[validatorApi, workspace, setWorkspace, clients, connected, setConnected]
 	)

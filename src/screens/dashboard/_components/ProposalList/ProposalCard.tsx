@@ -20,14 +20,18 @@ function ProposalCard({ index, proposal }: Props) {
 				pr={2}
 				py={2}>
 				<Flex align='center'>
-					<Checkbox
-						isChecked={selectedProposals[index]}
-						spacing={1}
-						onChange={
-							() => {
-								onClick()
-							}
-						} />
+					{
+						role === 'admin' && (
+							<Checkbox
+								isChecked={selectedProposals[index]}
+								spacing={1}
+								onChange={
+									() => {
+										onClick()
+									}
+								} />
+						)
+					}
 					<Text
 						ml={2}
 						variant='v2_body'
@@ -78,7 +82,7 @@ function ProposalCard({ index, proposal }: Props) {
 		)
 	}
 
-	const { selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
+	const { role, selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
 
 	const onClick = (isText: boolean = false) => {
 		const count = selectedProposals.filter((_) => _).length

@@ -1,7 +1,6 @@
-import { GetGrantsQuery, GetPayoutsQuery, GetProposalsQuery } from 'src/generated/graphql'
+import { GetGrantsForAdminQuery, GetGrantsForReviewerQuery, GetPayoutsQuery, GetProposalsForAdminQuery } from 'src/generated/graphql'
 
-export type DashboardContextType = {
-    grants: GetGrantsQuery['grants']
+type BaseDashboardContextType = {
     proposals: Proposals
     selectedGrantIndex: number | undefined
     setSelectedGrantIndex: (index: number) => void
@@ -9,6 +8,17 @@ export type DashboardContextType = {
     setSelectedProposals: (proposal: boolean[]) => void
 }
 
+type OptionalDashboardContextType =
+| {
+    role: 'admin'
+    grants: GetGrantsForAdminQuery['grants']
+}
+| {
+    role: 'reviewer'
+    grants: GetGrantsForReviewerQuery['grantReviewerCounters']
+}
+
+export type DashboardContextType = BaseDashboardContextType & OptionalDashboardContextType
 export interface TokenInfo {
     tokenIcon: string
     tokenName: string
@@ -42,7 +52,10 @@ export type FundBuilderContextType = {
     setSignerVerifiedState: (state: SignerVerifiedState) => void
 }
 
-export type Proposals = Exclude<GetProposalsQuery['grantApplications'], null | undefined>
+export type AdminGrant = GetGrantsForAdminQuery['grants'][number]
+export type ReviewerGrant = GetGrantsForReviewerQuery['grantReviewerCounters'][number]['grant']
+
+export type Proposals = Exclude<GetProposalsForAdminQuery['grantApplications'], null | undefined>
 export type ProposalType = Proposals[number]
 export type PayoutsType = Exclude<GetPayoutsQuery['fundsTransfers'], null | undefined>
 export type Payout = PayoutsType[number]

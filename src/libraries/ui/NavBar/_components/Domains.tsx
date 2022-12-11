@@ -9,7 +9,7 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
 import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
-import { ApiClientsContext } from 'src/pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { MinimalWorkspace } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAddress } from 'src/utils/formattingUtils'
@@ -90,13 +90,15 @@ function Domains() {
 							<Text
 								variant='v2_body'
 								color='black.3'
-								fontWeight='500'
 							>
 								{CHAIN_INFO[getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId].name}
 								{' '}
 								-
 								{' '}
 								{workspace.id}
+								{' ('}
+								{workspace?.members?.[workspace?.members?.map((_) => _.actorId).findIndex((_) => _ === scwAddress?.toLowerCase())]?.accessLevel}
+								)
 							</Text>
 						)
 					}
@@ -118,7 +120,8 @@ function Domains() {
 	}
 
 	const popoverRef = useRef<HTMLButtonElement>(null)
-	const { workspace, setWorkspace } = useContext(ApiClientsContext)!
+	const { scwAddress } = useContext(WebwalletContext)!
+	const { workspace, setWorkspace, role } = useContext(ApiClientsContext)!
 	const { safeObj, setSafeObj } = useContext(SafeContext)!
 	useEffect(() => {
 		logger.info({ safeObj, class: safeObj?.class }, '(Domains) Safe object')
