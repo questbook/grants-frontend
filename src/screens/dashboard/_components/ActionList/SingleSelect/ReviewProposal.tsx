@@ -94,6 +94,7 @@ function ReviewProposal() {
 										isReviewPending && (
 											<FlushedInput
 												w='100%'
+												value={item?.comment}
 												textAlign='left'
 												placeholder='Add comments'
 												fontSize='14px'
@@ -154,12 +155,8 @@ function ReviewProposal() {
 	}, [proposals, selectedProposals])
 
 	const isReviewPending = useMemo(() => {
-		return proposal?.pendingReviewerAddresses?.indexOf(scwAddress?.toLowerCase() ?? '') !== -1
+		return proposal?.pendingReviewerAddresses?.indexOf(scwAddress?.toLowerCase() ?? '') !== -1 && proposal?.state === 'submitted'
 	}, [proposal, scwAddress])
-
-	useEffect(() => {
-		logger.info({ isReviewPending }, 'Is Review Pending')
-	}, [isReviewPending])
 
 	const { loadReview } = useLoadReview(selectedGrant?.id, chainId)
 
@@ -174,7 +171,7 @@ function ReviewProposal() {
 			}),
 			total: 0
 		})
-	}, [selectedGrant])
+	}, [selectedGrant, proposal])
 
 	useEffect(() => {
 		const reviewToBeDecrypted = proposal?.reviews?.find((review) => review.reviewer.actorId === scwAddress?.toLowerCase())

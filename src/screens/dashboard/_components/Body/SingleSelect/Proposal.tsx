@@ -1,10 +1,10 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { Box, Button, CircularProgress, Flex, Image, Text } from '@chakra-ui/react'
 import { ethers } from 'ethers'
-import TextViewer from 'src/components/ui/forms/richTextEditor/textViewer'
 import { USD_ASSET } from 'src/constants/chains'
 import logger from 'src/libraries/logger'
 import CopyIcon from 'src/libraries/ui/CopyIcon'
+import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
 import { ApiClientsContext } from 'src/pages/_app'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
@@ -199,7 +199,8 @@ function Proposal() {
 						Details
 					</Text>
 					<Box mt={1} />
-					{projectDetails && <TextViewer text={projectDetails} />}
+					{/* {projectDetails} */}
+					{projectDetails ? <TextViewer text={projectDetails} /> : null}
 				</Flex>
 
 				<Flex
