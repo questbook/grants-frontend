@@ -1,12 +1,11 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { Box, Button, CircularProgress, Flex, Image, Text } from '@chakra-ui/react'
 import { ethers } from 'ethers'
-import { USD_ASSET } from 'src/constants/chains'
+import { defaultChainId, USD_ASSET } from 'src/constants/chains'
 import logger from 'src/libraries/logger'
 import CopyIcon from 'src/libraries/ui/CopyIcon'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
-import { ApiClientsContext } from 'src/pages/_app'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -14,10 +13,11 @@ import getAvatar from 'src/utils/avatarUtils'
 import { formatAddress, getFieldString, getRewardAmountMilestones } from 'src/utils/formattingUtils'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { getChainInfo } from 'src/utils/tokenUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function Proposal() {
 	const buildComponent = () => {
-		if(!decryptedProposal) {
+		if(!proposal) {
 			return (
 				<Flex
 					w='100%'
@@ -37,6 +37,7 @@ function Proposal() {
 				px={5}
 				py={6}
 				direction='column'
+				boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
 				bg='white'>
 
 				<Flex
@@ -46,12 +47,12 @@ function Proposal() {
 					<Text
 						variant='v2_heading_3'
 						fontWeight='500'>
-						{getFieldString(decryptedProposal, 'projectName')}
+						{getFieldString(proposal, 'projectName')}
 					</Text>
 					<Text
 						variant='v2_body'
 						color='gray.5'>
-						{formatTime(decryptedProposal.updatedAtS)}
+						{formatTime(proposal.updatedAtS)}
 					</Text>
 				</Flex>
 
@@ -65,7 +66,7 @@ function Proposal() {
 						<Image
 							borderRadius='3xl'
 							boxSize='36px'
-							src={getAvatar(false, decryptedProposal.applicantId)}
+							src={getAvatar(false, proposal.applicantId)}
 						/>
 						<Flex
 							ml={2}
@@ -99,7 +100,7 @@ function Proposal() {
 								</Button>
 
 								{
-									getFieldString(decryptedProposal, 'applicantAddress') && (
+									getFieldString(proposal, 'applicantAddress') && (
 										<Image
 											src='/v2/icons/dot.svg'
 											boxSize='4px'
@@ -108,7 +109,7 @@ function Proposal() {
 								}
 
 								{
-									getFieldString(decryptedProposal, 'applicantAddress') && (
+									getFieldString(proposal, 'applicantAddress') && (
 										<Button
 											variant='link'
 											rightIcon={
@@ -121,14 +122,14 @@ function Proposal() {
 													<CopyIcon
 														alignSelf='center'
 														boxSize='12px'
-														text={getFieldString(decryptedProposal, 'applicantAddress')} />
+														text={getFieldString(proposal, 'applicantAddress')} />
 												</Flex>
 											}>
 											<Text
 												fontWeight='400'
 												variant='v2_body'
 												color='gray.5'>
-												{formatAddress(getFieldString(decryptedProposal, 'applicantAddress'))}
+												{formatAddress(getFieldString(proposal, 'applicantAddress'))}
 											</Text>
 										</Button>
 									)
@@ -153,7 +154,7 @@ function Proposal() {
 								<Text
 									mt={1}
 									fontWeight='500'>
-									{getRewardAmountMilestones(chainInfo.decimals, decryptedProposal)}
+									{getRewardAmountMilestones(chainInfo.decimals, proposal)}
 									{' '}
 									{chainInfo.label}
 								</Text>
@@ -170,13 +171,13 @@ function Proposal() {
 						<Text
 							mt={1}
 							fontWeight='500'>
-							{decryptedProposal.milestones.length}
+							{proposal.milestones.length}
 						</Text>
 					</Flex>
 				</Flex>
 
 				{
-					getFieldString(decryptedProposal, 'tldr') && (
+					getFieldString(proposal, 'tldr') && (
 						<Flex
 							w='100%'
 							mt={4}
@@ -185,7 +186,7 @@ function Proposal() {
 								tl;dr
 							</Text>
 							<Text mt={1}>
-								{getFieldString(decryptedProposal, 'tldr')}
+								{getFieldString(proposal, 'tldr')}
 							</Text>
 						</Flex>
 					)
@@ -211,44 +212,45 @@ function Proposal() {
 						Milestones
 					</Text>
 					{
-						decryptedProposal.milestones.map((milestone, index) => (
-							<Flex
-								align='center'
-								w='100%'
-								key={index}
-								mt={index === 0 ? 4 : 2}
-							>
-								<Text
-									color='gray.4'
-									variant='v2_heading_3'
-									fontWeight='500'>
-									{index < 9 ? `0${index + 1}` : (index + 1)}
-								</Text>
-								<Text
-									ml={3}
-									variant='v2_body'>
-									{milestone?.title}
-								</Text>
-								{
-									chainInfo && (
-										<Text ml='auto'>
-											{chainInfo?.address === USD_ASSET ? milestone.amount : ethers.utils.formatUnits(milestone.amount, chainInfo.decimals)}
-											{' '}
-											{chainInfo?.label}
-										</Text>
-									)
-								}
-							</Flex>
-						))
+						proposal.milestones.map((milestone, index) => {
+
+							return (
+								<Flex
+									align='center'
+									w='100%'
+									key={index}
+									mt={index === 0 ? 4 : 2}
+								>
+									<Text
+										color='gray.4'
+										variant='v2_heading_3'
+										fontWeight='500'>
+										{index < 9 ? `0${index + 1}` : (index + 1)}
+									</Text>
+									<Text
+										ml={3}
+										variant='v2_body'>
+										{milestone?.title}
+									</Text>
+									{
+										chainInfo && (
+											<Text ml='auto'>
+												{chainInfo?.address === USD_ASSET ? milestone.amount : ethers.utils.formatUnits(milestone.amount, chainInfo.decimals)}
+												{' '}
+												{chainInfo?.label}
+											</Text>
+										)
+									}
+								</Flex>
+							)
+						})
 					}
 				</Flex>
 			</Flex>
 		)
 	}
 
-	const { chainId } = useContext(ApiClientsContext)!
-	const context = useContext(DashboardContext)!
-	const { proposals, selectedGrant, selectedProposals } = context
+	const { proposals, selectedProposals } = useContext(DashboardContext)!
 
 	const proposal = useMemo(() => {
 		const index = selectedProposals.indexOf(true)
@@ -258,21 +260,25 @@ function Proposal() {
 		}
 	}, [proposals, selectedProposals])
 
+	const chainId = useMemo(() => {
+		return getSupportedChainIdFromWorkspace(proposal?.grant?.workspace) ?? defaultChainId
+	}, [proposal])
+
 	const chainInfo = useMemo(() => {
-		if(!selectedGrant || !chainId) {
+		if(!proposal?.grant?.id || !chainId) {
 			return
 		}
 
-		return getChainInfo(selectedGrant, chainId)
-	}, [chainId, selectedGrant])
+		return getChainInfo(proposal?.grant, chainId)
+	}, [proposal?.grant, chainId])
 
 	const [decryptedProposal, setDecryptedProposal] = useState<ProposalType | undefined>(proposal)
 	const [projectDetails, setProjectDetails] = useState<string>()
 
 	const { decrypt } = useEncryptPiiForApplication(
-		selectedGrant?.id,
+		proposal?.grant?.id,
 		proposal?.applicantPublicKey,
-		chainId
+		chainId,
 	)
 
 	useEffect(() => {

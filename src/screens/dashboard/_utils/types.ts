@@ -12,13 +12,20 @@ type BaseDashboardContextType = {
 }
 
 type OptionalDashboardContextType =
-| {
+|
+{
     role: 'admin'
     grants: GetGrantsForAdminQuery['grants']
 }
-| {
+|
+{
     role: 'reviewer'
     grants: GetGrantsForReviewerQuery['grantReviewerCounters']
+}
+|
+{
+    role: 'builder'
+    grants: []
 }
 
 export type DashboardContextType = BaseDashboardContextType & OptionalDashboardContextType

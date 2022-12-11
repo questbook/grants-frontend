@@ -1,6 +1,7 @@
-import { ReactElement } from 'react'
+import { ReactElement, useContext } from 'react'
 import { Flex } from '@chakra-ui/react'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
+import { ApiClientsContext } from 'src/pages/_app'
 import ActionList from 'src/screens/dashboard/ActionList'
 import Body from 'src/screens/dashboard/Body'
 import { DashboardProvider, FundBuilderProvider } from 'src/screens/dashboard/Context'
@@ -15,9 +16,9 @@ function Dashboard() {
 			direction='column'
 			w='100vw'
 			h='calc(100vh - 64px)'>
-			<TopBar />
+			{(role === 'admin' || role === 'reviewer') && <TopBar />}
 			<Flex
-				h='calc(100vh - 128px)'
+				h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 128px)' : '100vh'}
 				overflowY='clip'>
 				<ProposalList />
 				<Body />
@@ -32,6 +33,8 @@ function Dashboard() {
 		</Flex>
 	)
 
+	const { role } = useContext(ApiClientsContext)!
+
 	return buildComponent()
 }
 
@@ -45,6 +48,7 @@ Dashboard.getLayout = function(page: ReactElement) {
 					bg: 'gray.1',
 					showLogo: false,
 					showSearchBar: false,
+					showSubmitANewProposal: true,
 					showInviteProposals: true,
 					showAddMembers: true,
 					showDomains: true,

@@ -8,6 +8,7 @@ type NavbarConfig = {
 	bg?: string
 	showLogo?: boolean
 	showSearchBar?: boolean
+	showSubmitANewProposal?: boolean
 	showInviteProposals?: boolean
 	showAddMembers?: boolean
 	showDomains?: boolean

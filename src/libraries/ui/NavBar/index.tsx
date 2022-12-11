@@ -16,6 +16,7 @@ import ImportConfirmationModal from 'src/libraries/ui/NavBar/_components/ImportC
 import InviteProposalButton from 'src/libraries/ui/NavBar/_components/InviteProposalButton'
 import RecoveryModal from 'src/libraries/ui/NavBar/_components/RecoveryModal'
 import StatsButton from 'src/libraries/ui/NavBar/_components/StatsButton'
+import SubmitANewProposal from 'src/libraries/ui/NavBar/_components/SubmitANewProposal'
 import { ApiClientsContext } from 'src/pages/_app'
 import { getNonce } from 'src/utils/gaslessUtils'
 
@@ -23,13 +24,14 @@ type Props = {
 	bg?: string
 	showLogo?: boolean
 	showSearchBar?: boolean
+	showSubmitANewProposal?: boolean
 	showInviteProposals?: boolean
 	showAddMembers?: boolean
 	showDomains?: boolean
 	showStats?: boolean
 }
 
-function NavBar({ bg, showLogo, showAddMembers, showInviteProposals, showStats, showDomains, showSearchBar }: Props) {
+function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInviteProposals, showStats, showDomains, showSearchBar }: Props) {
 	const buildComponent = () => (
 		<>
 			<Container
@@ -38,9 +40,10 @@ function NavBar({ bg, showLogo, showAddMembers, showInviteProposals, showStats, 
 				left={0}
 				right={0}
 				zIndex={1}
-				variant='header-container'
+				// variant='header-container'
 				maxH='64px'
 				display='flex'
+				alignItems='center'
 				maxW='100vw'
 				bg={bg}
 				ps='42px'
@@ -49,7 +52,7 @@ function NavBar({ bg, showLogo, showAddMembers, showInviteProposals, showStats, 
 				minWidth={{ base: '-webkit-fill-available' }}
 			>
 				{
-					showLogo && (
+					(showLogo || role === 'builder' || role === 'community') && (
 						<Image
 							onClick={
 								() => router.push({
@@ -65,7 +68,7 @@ function NavBar({ bg, showLogo, showAddMembers, showInviteProposals, showStats, 
 					)
 				}
 				{
-					showLogo && (
+					(showLogo || role === 'builder' || role === 'community') && (
 						<Image
 							onClick={
 								() => router.push({
@@ -93,8 +96,9 @@ function NavBar({ bg, showLogo, showAddMembers, showInviteProposals, showStats, 
 					)
 				}
 
-				{showDomains && <Domains />}
+				{showDomains && (role === 'admin' || role === 'reviewer') && <Domains />}
 				{showStats && role === 'admin' && <StatsButton />}
+				{showSubmitANewProposal && (role === 'builder' || role === 'community') && <SubmitANewProposal />}
 				<Spacer />
 
 				{
@@ -158,6 +162,10 @@ function NavBar({ bg, showLogo, showAddMembers, showInviteProposals, showStats, 
 	const [isRecoveryModalOpen, setIsRecoveryModalOpen] = useState<boolean>(false)
 	const [isImportConfirmationModalOpen, setImportConfirmationModalOpen] = useState<boolean>(false)
 	const [type, setType] = useState<'import' | 'export'>('export')
+
+	useEffect(() => {
+		logger.info({ role, condition: showLogo || role === 'builder' || role === 'community' }, 'condition')
+	}, [role])
 
 	useEffect(() => {
 		logger.info({ type, privateKey }, 'RecoveryModal')
@@ -238,6 +246,7 @@ NavBar.defaultProps = {
 	bg: 'white',
 	showLogo: true,
 	showSearchBar: true,
+	showSubmitANewProposal: false,
 	showInviteProposals: false,
 	showAddMembers: false,
 	showDomains: false,

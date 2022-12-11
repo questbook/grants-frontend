@@ -1,4 +1,4 @@
-import React, { createContext, ReactElement, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { createContext, ReactElement, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Biconomy } from '@biconomy/mexa'
 import { ChakraProvider } from '@chakra-ui/react'
 import { ChatWidget } from '@papercups-io/chat-widget'
@@ -21,13 +21,12 @@ import {
 	SupportedChainId,
 } from 'src/constants/chains'
 import { SafeProvider } from 'src/contexts/safeContext'
-import { DoesHaveProposalsDocument, useDoesHaveProposalsQuery } from 'src/generated/graphql'
+import { DoesHaveProposalsDocument } from 'src/generated/graphql'
 import SubgraphClient from 'src/graphql/subgraph'
 import { DAOSearchContextMaker } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContextMaker } from 'src/hooks/QBAdminsContext'
-import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import MigrateToGasless from 'src/libraries/ui/MigrateToGaslessModal'
-import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
+import { DOMAIN_CACHE_KEY, ROLE_CACHE } from 'src/libraries/ui/NavBar/_utils/constants'
 import theme from 'src/theme'
 import { MinimalWorkspace } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
@@ -127,6 +126,8 @@ export const ApiClientsContext = createContext<{
 	subgraphClients: { [chainId: string]: SubgraphClient }
 	chainId: SupportedChainId
 	role: Roles
+	setRole: (role: Roles) => void
+	possibleRoles: Roles[]
 		} | null>(null)
 
 export const WebwalletContext = createContext<{
@@ -158,14 +159,19 @@ export const BiconomyContext = createContext<{
 		} | null>(null)
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-	const [network, switchNetwork] = React.useState<SupportedChainId>(defaultChainId)
-	const [webwallet, setWebwallet] = React.useState<Wallet>()
-	const [workspace, setWorkspace] = React.useState<MinimalWorkspace>()
-	const [scwAddress, setScwAddress] = React.useState<string>()
-	const [biconomyDaoObjs, setBiconomyDaoObjs] = React.useState<{[key: string]: typeof BiconomyContext}>()
-	const [biconomyWalletClients, setBiconomyWalletClients] = React.useState<{[key: string]: BiconomyWalletClient}>()
-	const [nonce, setNonce] = React.useState<string>()
-	const [loadingNonce, setLoadingNonce] = React.useState<boolean>(false)
+	const [network, switchNetwork] = useState<SupportedChainId>(defaultChainId)
+	const [webwallet, setWebwallet] = useState<Wallet>()
+	const [workspace, setWorkspace] = useState<MinimalWorkspace>()
+	const [role, setRole] = useState<Roles>('community')
+	const [possibleRoles, setPossibleRoles] = useState<Roles[]>([])
+	useEffect(() => {
+		logger.info({ role }, 'Role set')
+	}, [role])
+	const [scwAddress, setScwAddress] = useState<string>()
+	const [biconomyDaoObjs, setBiconomyDaoObjs] = useState<{[key: string]: typeof BiconomyContext}>()
+	const [biconomyWalletClients, setBiconomyWalletClients] = useState<{[key: string]: BiconomyWalletClient}>()
+	const [nonce, setNonce] = useState<string>()
+	const [loadingNonce, setLoadingNonce] = useState<boolean>(false)
 
 	const [biconomyLoading, setBiconomyLoading] = useState<{ [chainId: string]: boolean }>({})
 
@@ -508,7 +514,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		}
 
 		const fetch = async() => {
-			let hasProposals = false
+			const roles: Roles[] = ['community']
 			for(const chainId of ALL_SUPPORTED_CHAIN_IDS) {
 				const ret = await clients[chainId].client.query({
 					query: DoesHaveProposalsDocument,
@@ -517,34 +523,63 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 					}
 				})
 
-				if(ret.data?.grantApplications?.length) {
-					hasProposals = true
-					break
+				if(ret.data?.grantApplications?.length && roles.indexOf('builder') === -1) {
+					roles.push('builder')
+				}
+
+				for(const member of ret.data?.workspaceMembers) {
+					if((member.accessLevel === 'admin' || member.accessLevel === 'owner') && roles.indexOf('admin') === -1) {
+						roles.push('admin')
+					} else if(member.accessLevel === 'reviewer' && roles.indexOf('reviewer') === -1) {
+						roles.push('reviewer')
+					}
 				}
 			}
 
-			if(hasProposals) {
+			if(roles.indexOf('builder') !== -1) {
 				setIsBuilder('yes')
 			} else {
 				setIsBuilder('no')
 			}
+
+			setPossibleRoles(roles)
 		}
 
 		fetch()
 	}, [scwAddress])
 
-	const role = useMemo<'admin' | 'reviewer' | 'builder' | 'community'>(() => {
+	useEffect(() => {
+		const allRoles = ['builder', 'community', 'reviewer', 'admin']
+		const storedRole = localStorage.getItem(ROLE_CACHE)
+		logger.info({ storedRole }, 'Stored Role')
+
+		if(storedRole && allRoles.indexOf(storedRole as Roles) !== -1) {
+			logger.info({ storedRole }, 'Setting role 1')
+			setRole(storedRole as Roles)
+			return
+		}
+
 		if(!workspace) {
-			return isBuilder === 'yes' ? 'builder' : 'community'
+			const newRole = isBuilder === 'yes' ? 'builder' : 'community'
+			logger.info({ newRole }, 'Setting role 2')
+			setRole(newRole)
+			localStorage.setItem(ROLE_CACHE, newRole)
+			return
 		}
 
 		for(const member of workspace.members) {
 			if(member.actorId === scwAddress?.toLowerCase()) {
-				return member.accessLevel === 'reviewer' ? 'reviewer' : 'admin'
+				const newRole = member.accessLevel === 'reviewer' ? 'reviewer' : 'admin'
+				logger.info({ newRole }, 'Setting role 3')
+				setRole(newRole)
+				localStorage.setItem(ROLE_CACHE, newRole)
+				return
 			}
 		}
 
-		return 'community'
+		logger.info({ newRole: 'community' }, 'Setting role 4')
+		setRole('community')
+		localStorage.setItem(ROLE_CACHE, 'community')
 	}, [workspace, isBuilder, scwAddress])
 
 	const apiClients = useMemo(
@@ -565,9 +600,15 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			},
 			chainId,
 			role,
+			setRole: (newRole: Roles) => {
+				logger.info({ newRole }, 'Setting role 5')
+				localStorage.setItem(ROLE_CACHE, newRole)
+				setRole(newRole)
+			},
+			possibleRoles,
 			subgraphClients: clients,
 		}),
-		[validatorApi, workspace, setWorkspace, clients, connected, setConnected]
+		[validatorApi, workspace, setWorkspace, clients, connected, setConnected, chainId, role, setRole, possibleRoles]
 	)
 
 	const seo = getSeo()

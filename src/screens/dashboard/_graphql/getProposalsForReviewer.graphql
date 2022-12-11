@@ -109,5 +109,25 @@ query getProposalsForReviewer($proposalIds: [ID!]) {
       assignedAtS
     }
     version
+    grant {
+      id
+      reward {
+        committed
+        id
+        asset
+        token {
+          address
+          label
+          decimal
+          iconHash
+        }
+      }
+      workspace {
+        id
+        title
+        logoIpfsHash
+        supportedNetworks
+      }
+    }
   }
 }

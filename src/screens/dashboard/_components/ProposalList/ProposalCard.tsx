@@ -1,10 +1,12 @@
 import { useContext } from 'react'
 import { Checkbox, Flex, Image, Text } from '@chakra-ui/react'
+import config from 'src/constants/config.json'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import getAvatar from 'src/utils/avatarUtils'
 import { getFieldString } from 'src/utils/formattingUtils'
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 interface Props {
     index: number
@@ -15,8 +17,10 @@ function ProposalCard({ index, proposal }: Props) {
 	const buildComponent = () => {
 		return (
 			<Flex
+				bg={selectedProposals[index] ? 'gray.1' : 'white'}
 				direction='column'
 				mt={2}
+				pl={5}
 				pr={2}
 				py={2}>
 				<Flex align='center'>
@@ -33,7 +37,7 @@ function ProposalCard({ index, proposal }: Props) {
 						)
 					}
 					<Text
-						ml={2}
+						ml={role === 'admin' ? 2 : 0}
 						variant='v2_body'
 						fontWeight='500'
 						cursor='pointer'
@@ -70,12 +74,12 @@ function ProposalCard({ index, proposal }: Props) {
 						borderWidth='1px'
 						borderColor='black.1'
 						borderRadius='3xl'
-						src={getAvatar(false, proposal.applicantId)}
+						src={role === 'builder' ? (proposal?.grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, proposal?.grant?.workspace?.title) : getUrlForIPFSHash(proposal?.grant?.workspace?.logoIpfsHash!)) : getAvatar(false, proposal.applicantId)}
 						boxSize='16px' />
 					<Text
 						ml={2}
 						variant='v2_metadata'>
-						{getFieldString(proposal, 'applicantName')}
+						{role === 'builder' ? proposal?.grant?.workspace?.title : getFieldString(proposal, 'applicantName')}
 					</Text>
 				</Flex>
 			</Flex>

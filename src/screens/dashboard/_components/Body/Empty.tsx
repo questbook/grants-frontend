@@ -13,6 +13,7 @@ function Empty() {
 				h='100%'
 				bg='white'
 				direction='column'
+				boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
 				align='center'
 				justify='center'>
 				<Text

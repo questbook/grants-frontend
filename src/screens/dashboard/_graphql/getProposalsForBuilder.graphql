@@ -1,6 +1,6 @@
-query getProposalsForAdmin($first: Int, $skip: Int, $grantID: String!) {
+query getProposalsForBuilder($first: Int, $skip: Int, $builderId: Bytes!) {
   grantApplications(
-    where: { grant: $grantID }
+    where: { applicantId: $builderId }
     first: $first
     skip: $skip
     orderBy: updatedAtS

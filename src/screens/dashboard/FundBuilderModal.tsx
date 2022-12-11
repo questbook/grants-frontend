@@ -1,6 +1,5 @@
 import { useContext, useEffect, useMemo } from 'react'
 import { Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
-import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import MilestoneChoose from 'src/screens/dashboard/_components/FundBuilder/MilestoneChoose'
 import PayFromChoose from 'src/screens/dashboard/_components/FundBuilder/PayFromChoose'
@@ -114,7 +113,6 @@ function FundBuilderModal() {
 	const proposal = useMemo(() => {
 		const index = selectedProposals.indexOf(true)
 
-		logger.info({ index, proposals, selectedProposals }, '(Milestone Choose) Selected index')
 		if(index !== -1) {
 			return proposals[index]
 		}
@@ -134,7 +132,6 @@ function FundBuilderModal() {
 	}, [amounts, tos, milestoneIndices, tokenInfo])
 
 	const onContinue = () => {
-		logger.info({ tokenInfo, amounts, tos, milestoneIndices }, 'onContinue')
 		if(signerVerifiedState === 'unverified') {
 			setSignerVerifiedState('initiate_verification')
 		}

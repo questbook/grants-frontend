@@ -3,6 +3,7 @@
 import { useContext, useMemo } from 'react'
 import { Checkbox, Flex, Text } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
+import { ApiClientsContext } from 'src/pages/_app'
 import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -14,9 +15,10 @@ function ProposalList() {
 			h='100%'
 			bg='white'
 			direction='column'
-			pl={5}
+			boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
 			py={4}>
 			<Text
+				pl={5}
 				fontWeight='700'
 				color='black.1'>
 				Proposals
@@ -32,7 +34,9 @@ function ProposalList() {
 
 			{
 				role === 'admin' && (
-					<Flex mt={4}>
+					<Flex
+						mt={4}
+						pl={5}>
 						<Checkbox
 							isChecked={selectedProposals?.length !== undefined && selectedProposals.every((_) => _)}
 							onChange={
@@ -71,7 +75,8 @@ function ProposalList() {
 		</Flex>
 	)
 
-	const { role, proposals, selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
+	const { role } = useContext(ApiClientsContext)!
+	const { proposals, selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
 	const proposalCount = useMemo(() => {
 		return proposals.filter((_) => _).length
 	}, [proposals])

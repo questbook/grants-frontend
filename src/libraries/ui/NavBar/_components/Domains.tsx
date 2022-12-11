@@ -82,9 +82,6 @@ function Domains() {
 						color='gray.5'>
 						{workspace?.safe?.address && formatAddress(workspace.safe.address)}
 					</Text>
-					{/* <Flex align='center'>
-						<Image src={safeObj} />
-					</Flex> */}
 					{
 						onClick && process.env.NODE_ENV === 'development' && (
 							<Text
@@ -121,7 +118,7 @@ function Domains() {
 
 	const popoverRef = useRef<HTMLButtonElement>(null)
 	const { scwAddress } = useContext(WebwalletContext)!
-	const { workspace, setWorkspace, role } = useContext(ApiClientsContext)!
+	const { workspace, setWorkspace } = useContext(ApiClientsContext)!
 	const { safeObj, setSafeObj } = useContext(SafeContext)!
 	useEffect(() => {
 		logger.info({ safeObj, class: safeObj?.class }, '(Domains) Safe object')

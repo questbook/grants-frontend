@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 import { Box, Button, Divider, Flex } from '@chakra-ui/react'
+import { ApiClientsContext } from 'src/pages/_app'
 import Milestones from 'src/screens/dashboard/_components/ActionList/SingleSelect/Milestones'
 import Payouts from 'src/screens/dashboard/_components/ActionList/SingleSelect/Payouts'
 import ReviewProposal from 'src/screens/dashboard/_components/ActionList/SingleSelect/ReviewProposal'
@@ -8,7 +9,7 @@ import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Cont
 
 function SingleSelect() {
 	const buildComponent = () => {
-		return role === 'admin' ? adminComponent() : role === 'reviewer' ? reviewerComponent() : <Flex />
+		return role === 'admin' ? adminComponent() : role === 'reviewer' ? reviewerComponent() : role === 'builder' ? builderComponent() : <Flex />
 	}
 
 	const adminComponent = () => {
@@ -52,8 +53,38 @@ function SingleSelect() {
 		)
 	}
 
+	const builderComponent = () => {
+		return (
+			<Flex
+				h='100%'
+				direction='column'>
+				<Milestones />
+				<Divider />
+				<Payouts />
+				<Box mt='auto' />
+				<Divider />
+				<Flex
+					px={5}
+					py={4}>
+					<Button
+						disabled={proposals?.length === 0}
+						w='100%'
+						variant='primaryMedium'
+						onClick={
+							() => {
+
+							}
+						}>
+						Resubmit proposal
+					</Button>
+				</Flex>
+			</Flex>
+		)
+	}
+
+	const { role } = useContext(ApiClientsContext)!
 	const { setIsModalOpen } = useContext(FundBuilderContext)!
-	const { role, proposals } = useContext(DashboardContext)!
+	const { proposals } = useContext(DashboardContext)!
 
 	return buildComponent()
 }
