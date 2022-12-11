@@ -1,9 +1,9 @@
-import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
+import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { GetGrantsForAdminQuery, GetGrantsForReviewerQuery, useGetGrantsForAdminQuery, useGetGrantsForReviewerQuery, useGetProposalsForAdminQuery, useGetProposalsForReviewerQuery } from 'src/generated/graphql'
 import logger from 'src/libraries/logger'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { GRANT_CACHE_KEY } from 'src/screens/dashboard/_utils/constants'
-import { DashboardContextType, FundBuilderContextType, Proposals, SignerVerifiedState, TokenInfo } from 'src/screens/dashboard/_utils/types'
+import { DashboardContextType, FundBuilderContextType, Proposals, ReviewInfo, SignerVerifiedState, TokenInfo } from 'src/screens/dashboard/_utils/types'
 import { useMultiChainQuery } from 'src/screens/proposal/_hooks/useMultiChainQuery'
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined)
@@ -42,6 +42,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const [selectedGrantIndex, setSelectedGrantIndex] = useState<number>()
 	const [proposals, setProposals] = useState<Proposals>([])
 	const [selectedProposals, setSelectedProposals] = useState<boolean[]>([])
+	const [review, setReview] = useState<ReviewInfo>()
 
 	const fetchSelectedGrant = useCallback(async() => {
 		if(!workspace) {
@@ -141,7 +142,20 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 		setProposals(proposals)
 		return 'grant-details-fetched'
-	}, [adminGrants, reviewerGrants, selectedGrantIndex])
+	}, [role, adminGrants, reviewerGrants, selectedGrantIndex])
+
+	const selectedGrant = useMemo(() => {
+		if(selectedGrantIndex === undefined || (role === 'admin' && (!adminGrants || selectedGrantIndex >= adminGrants?.length)) || (role === 'reviewer' && (!reviewerGrants || selectedGrantIndex >= reviewerGrants?.length))) {
+			return
+		}
+
+		const temp = role === 'admin' ? adminGrants[selectedGrantIndex] : reviewerGrants[selectedGrantIndex]
+		if(temp.__typename === 'Grant') {
+			return temp
+		} else if(temp.__typename === 'GrantReviewerCounter') {
+			return temp.grant
+		}
+	}, [selectedGrantIndex, adminGrants, reviewerGrants])
 
 	useEffect(() => {
 		logger.info({ workspace }, 'Workspace changed')
@@ -160,7 +174,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		getProposals().then((ret) => {
 			logger.info({ message: 'getProposals', ret }, 'Get proposals')
 		})
-	}, [adminGrants, selectedGrantIndex])
+	}, [role, adminGrants, reviewerGrants, selectedGrantIndex])
 
 	useEffect(() => {
 		if(proposals.length === 0) {
@@ -183,7 +197,10 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 					selectedGrantIndex,
 					setSelectedGrantIndex,
 					selectedProposals,
-					setSelectedProposals
+					setSelectedProposals,
+					selectedGrant,
+					review,
+					setReview
 				} : {
 					role: 'reviewer',
 					grants: reviewerGrants,
@@ -191,7 +208,10 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 					selectedGrantIndex,
 					setSelectedGrantIndex,
 					selectedProposals,
-					setSelectedProposals
+					setSelectedProposals,
+					selectedGrant,
+					review,
+					setReview
 				}
 			}>
 			{children}

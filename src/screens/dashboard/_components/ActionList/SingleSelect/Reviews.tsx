@@ -1,6 +1,5 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { Box, Flex, Image, Text } from '@chakra-ui/react'
-import { defaultChainId } from 'src/constants/chains'
 import logger from 'src/libraries/logger'
 import { ApiClientsContext } from 'src/pages/_app'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
@@ -8,7 +7,6 @@ import { DashboardContext } from 'src/screens/dashboard/Context'
 import { IReviewFeedback } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
 import { useLoadReview } from 'src/utils/reviews'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function Reviews() {
 	const buildComponent = () => {
@@ -220,11 +218,8 @@ function Reviews() {
 		)
 	}
 
-	const { workspace } = useContext(ApiClientsContext)!
+	const { chainId } = useContext(ApiClientsContext)!
 	const { proposals, grants, selectedGrantIndex, selectedProposals } = useContext(DashboardContext)!
-	const chainId = useMemo(() => {
-		return getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
-	}, [workspace])
 	const { loadReview } = useLoadReview(grants[selectedGrantIndex!]?.id, chainId)
 
 	const [expanded, setExpanded] = useState<boolean>(false)

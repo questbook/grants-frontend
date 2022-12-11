@@ -1,4 +1,4 @@
-import { GetGrantsForAdminQuery, GetGrantsForReviewerQuery, GetPayoutsQuery, GetProposalsForAdminQuery } from 'src/generated/graphql'
+import { GetGrantsForAdminQuery, GetGrantsForReviewerQuery, GetPayoutsQuery, GetProposalsForAdminQuery, RubricItem } from 'src/generated/graphql'
 
 type BaseDashboardContextType = {
     proposals: Proposals
@@ -6,6 +6,9 @@ type BaseDashboardContextType = {
     setSelectedGrantIndex: (index: number) => void
     selectedProposals: boolean[]
     setSelectedProposals: (proposal: boolean[]) => void
+    selectedGrant: AdminGrant | ReviewerGrant | undefined
+    review: ReviewInfo | undefined
+    setReview: (reviews: ReviewInfo) => void
 }
 
 type OptionalDashboardContextType =
@@ -52,6 +55,14 @@ export type FundBuilderContextType = {
     setSignerVerifiedState: (state: SignerVerifiedState) => void
 }
 
+export type ReviewData = {rubric: RubricItem, rating: number, comment: string}
+export type ReviewInfo = {
+    isApproved?: boolean
+    createdAtS?: number
+    reviewer?: string
+    items: ReviewData[]
+    total: number
+  }
 export type AdminGrant = GetGrantsForAdminQuery['grants'][number]
 export type ReviewerGrant = GetGrantsForReviewerQuery['grantReviewerCounters'][number]['grant']
 

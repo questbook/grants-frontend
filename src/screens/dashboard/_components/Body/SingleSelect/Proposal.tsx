@@ -241,15 +241,13 @@ function Proposal() {
 						))
 					}
 				</Flex>
-
-
 			</Flex>
 		)
 	}
 
 	const { chainId } = useContext(ApiClientsContext)!
 	const context = useContext(DashboardContext)!
-	const { grants, proposals, selectedGrantIndex, selectedProposals } = context
+	const { proposals, selectedGrant, selectedProposals } = context
 
 	const proposal = useMemo(() => {
 		const index = selectedProposals.indexOf(true)
@@ -258,19 +256,6 @@ function Proposal() {
 			return proposals[index]
 		}
 	}, [proposals, selectedProposals])
-
-	const selectedGrant = useMemo(() => {
-		if(!grants?.length || selectedGrantIndex === undefined || selectedGrantIndex >= grants?.length) {
-			return
-		}
-
-		const temp = grants[selectedGrantIndex]
-		if(temp.__typename === 'Grant') {
-			return temp
-		} else if(temp.__typename === 'GrantReviewerCounter') {
-			return temp.grant
-		}
-	}, [selectedGrantIndex, grants])
 
 	const chainInfo = useMemo(() => {
 		if(!selectedGrant || !chainId) {

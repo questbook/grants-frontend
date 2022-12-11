@@ -1,19 +1,33 @@
 # This query fetches all the grants for a given domain
 query getGrantsForAdmin($domainID: String!) {
-    grants(where: {workspace: $domainID}, orderBy: createdAtS, orderDirection: desc) {
+  grants(
+    where: { workspace: $domainID }
+    orderBy: createdAtS
+    orderDirection: desc
+  ) {
+    id
+    title
+    acceptingApplications
+    reward {
+      committed
+      id
+      asset
+      token {
+        address
+        label
+        decimal
+        iconHash
+      }
+    }
+    rubric {
+      id
+      isPrivate
+      items {
         id
         title
-        acceptingApplications
-        reward {
-            committed,
-            id,
-            asset,
-            token {
-                address,
-                label,
-                decimal,
-                iconHash
-            }
-        },
+        details
+        maximumPoints
+      }
     }
+  }
 }

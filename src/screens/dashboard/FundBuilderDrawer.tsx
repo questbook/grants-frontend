@@ -1,6 +1,5 @@
 import { useContext, useMemo } from 'react'
 import { Box, Button, Drawer, DrawerCloseButton, DrawerContent, DrawerOverlay, Flex, Text } from '@chakra-ui/react'
-import logger from 'src/libraries/logger'
 import PayFromChoose from 'src/screens/dashboard/_components/FundBuilder/PayFromChoose'
 import PayWithChoose from 'src/screens/dashboard/_components/FundBuilder/PayWithChoose'
 import ProposalDetails from 'src/screens/dashboard/_components/FundBuilder/ProposalDetails'
@@ -101,7 +100,6 @@ function FundBuilderDrawer() {
 	}, [proposals, selectedProposals])
 
 	const isDisabled = useMemo(() => {
-		logger.info({ 1: !selectedProposalsData, 2: !amounts?.every((amt) => amt !== undefined && amt > 0), 3: !tos?.every((to) => to !== undefined), 4: !milestoneIndices?.every((mi) => mi !== undefined), 5: !tokenInfo, amounts, tos, milestoneIndices, tokenInfo }, 'Is Disabled Drawer')
 		return !selectedProposalsData || !amounts?.every((amt) => amt !== undefined && amt > 0) || !tos?.every((to) => to !== undefined) || !milestoneIndices?.every((mi) => mi !== undefined) || !tokenInfo
 	}, [selectedProposalsData, amounts, tos, milestoneIndices, tokenInfo])
 

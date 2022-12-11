@@ -24,6 +24,16 @@ query getGrantsForReviewer($reviewerAddress: Bytes!, $workspaceId: String!) {
           iconHash
         }
       }
+      rubric {
+        id
+        isPrivate
+        items {
+          id
+          title
+          details
+          maximumPoints
+        }
+      }
       pendingApplications: applications(
         where: { pendingReviewerAddresses_contains_nocase: [$reviewerAddress] }
       ) {

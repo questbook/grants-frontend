@@ -1,11 +1,9 @@
-import { useContext, useMemo } from 'react'
+import { useContext } from 'react'
 import { Button, Flex, Image, Text } from '@chakra-ui/react'
-import { defaultChainId } from 'src/constants/chains'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { copyGrantLink } from 'src/libraries/utils/copy'
 import { ApiClientsContext } from 'src/pages/_app'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function Empty() {
 	const buildComponent = () => {
@@ -84,25 +82,8 @@ function Empty() {
 		)
 	}
 
-	const { workspace } = useContext(ApiClientsContext)!
-	const { selectedGrantIndex, grants } = useContext(DashboardContext)!
-
-	const chainId = useMemo(() => {
-		return getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
-	}, [workspace])
-
-	const selectedGrant = useMemo(() => {
-		if(!grants?.length || selectedGrantIndex === undefined || selectedGrantIndex >= grants?.length) {
-			return
-		}
-
-		const temp = grants[selectedGrantIndex]
-		if(temp.__typename === 'Grant') {
-			return temp
-		} else if(temp.__typename === 'GrantReviewerCounter') {
-			return temp.grant
-		}
-	}, [selectedGrantIndex, grants])
+	const { workspace, chainId } = useContext(ApiClientsContext)!
+	const { selectedGrant } = useContext(DashboardContext)!
 
 	const toast = useCustomToast()
 

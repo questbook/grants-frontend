@@ -1,6 +1,5 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Flex, Image, Text } from '@chakra-ui/react'
-import { defaultChainId } from 'src/constants/chains'
 import { useGetPayoutsQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
@@ -10,7 +9,6 @@ import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { Payout, PayoutsType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function Payouts() {
 	const buildComponent = () => {
@@ -145,10 +143,7 @@ function Payouts() {
 		)
 	}
 
-	const { workspace } = useContext(ApiClientsContext)!
-	const chainId = useMemo(() => {
-		return getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
-	}, [workspace])
+	const { chainId } = useContext(ApiClientsContext)!
 
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 	const [expanded, setExpanded] = useState(false)

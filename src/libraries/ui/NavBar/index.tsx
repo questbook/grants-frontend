@@ -16,6 +16,7 @@ import ImportConfirmationModal from 'src/libraries/ui/NavBar/_components/ImportC
 import InviteProposalButton from 'src/libraries/ui/NavBar/_components/InviteProposalButton'
 import RecoveryModal from 'src/libraries/ui/NavBar/_components/RecoveryModal'
 import StatsButton from 'src/libraries/ui/NavBar/_components/StatsButton'
+import { ApiClientsContext } from 'src/pages/_app'
 import { getNonce } from 'src/utils/gaslessUtils'
 
 type Props = {
@@ -93,7 +94,7 @@ function NavBar({ bg, showLogo, showAddMembers, showInviteProposals, showStats, 
 				}
 
 				{showDomains && <Domains />}
-				{showStats && <StatsButton />}
+				{showStats && role === 'admin' && <StatsButton />}
 				<Spacer />
 
 				{
@@ -116,7 +117,7 @@ function NavBar({ bg, showLogo, showAddMembers, showInviteProposals, showStats, 
 				}
 				<Spacer />
 
-				{showAddMembers && <AddMemberButton />}
+				{showAddMembers && role === 'admin' && <AddMemberButton />}
 				{showInviteProposals && <InviteProposalButton />}
 
 				<AccountDetails
@@ -146,6 +147,7 @@ function NavBar({ bg, showLogo, showAddMembers, showInviteProposals, showStats, 
 		</>
 	)
 
+	const { role } = useContext(ApiClientsContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString, setSearchString } = useContext(DAOSearchContext)!
 	const router = useRouter()

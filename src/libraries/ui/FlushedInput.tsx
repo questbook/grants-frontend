@@ -34,14 +34,34 @@ function FlushedInput({ helperText, textPadding = 2, flexProps, ...props }: Prop
 					{...props}
 					 />
 				{
-					helperText && (
-						<Text
-							mt={2}
-							variant='v2_helper_text'>
-							{helperText}
-						</Text>
+					helperText || props?.maxLength && (
+						<Flex
+							w='100%'
+							mt={2}>
+							{
+								helperText && (
+									<Text
+										variant='v2_helper_text'>
+										{helperText}
+									</Text>
+								)
+							}
+							{
+								props?.maxLength && (
+									<Text
+										ml='auto'
+										variant='v2_metadata'
+										color='gray.5'>
+										{value?.length}
+										/
+										{props?.maxLength}
+									</Text>
+								)
+							}
+						</Flex>
 					)
 				}
+
 			</Flex>
 		</>
 	)
