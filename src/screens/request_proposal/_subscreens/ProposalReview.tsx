@@ -87,7 +87,7 @@ function ProposalReview(
 							placeholder='Select one'
 							value={reviewMechanism}
 							isDisabled={true}
-							onChange={(e) => setReviewMechanism(e.target.value)} />
+							onChange={(e) => {setReviewMechanism(e.target.value); console.log('changed review type', e.target.value)}} />
 					</Flex>
 
 					<Flex

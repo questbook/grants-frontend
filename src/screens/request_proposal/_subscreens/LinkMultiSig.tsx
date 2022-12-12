@@ -32,7 +32,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
                     <Button variant='linkV2' leftIcon={<BsArrowLeft />} onClick={() => setStep(3)}>Back</Button>
                 </Flex>
 
-                <Flex className="rightScreenCard" flexDirection='column' width='100%' gap={6} alignSelf='flex-start'>
+                <Flex className="rightScreenCard" flexDirection='column' width='100%' gap={6} alignSelf='flex-start' alignItems='center'>
                     <StepIndicator step={step} />
                     <Flex direction='column' alignItems='center' gap={10}>
                         <Flex direction='column' gap={2}>
@@ -59,7 +59,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
                             }} />
 
                             {
-                                (multiSigAddress && !loadingSafeData && safeNetworks.length < 1)
+                                (multiSigAddress && loadingSafeData && safeNetworks.length < 1)
                                     ? <Text variant="footerContent" color='black.3'>Searching for this address on different networks..</Text>
                                     : (multiSigAddress)
                                         ? (<>
@@ -93,7 +93,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
                         <Text>Why do I need a multisig?</Text>
                         <Button variant='link' onClick={() => setStep(5)}>Skip for now</Button>
                     </Flex>
-                    <Flex gap={1}>
+                    <Flex gap={1} >
                         <Text variant="footerContent" color='black.3'>By continuing, you accept Questbook’s</Text>
                         <Text variant="footerContentBold">Terms of Service</Text>
                     </Flex>

@@ -45,7 +45,7 @@ function NetworkTransactionFlowStepperModal({ isOpen, currentStepIndex, viewTxnL
 
                             <Text
                                 fontSize='sm'
-                                color='v2Grey'
+                                color='gray.5'
                                 fontWeight='bold'>
                                 ACTIVITY
                             </Text>
@@ -119,7 +119,7 @@ function NetworkTransactionFlowStepperModal({ isOpen, currentStepIndex, viewTxnL
                     {
                         state === 'done' ? (
                             <CheckCircle
-                                color='green.4'
+                                color='brand.green'
                                 boxSize={5} />
                         ) : (
                             <>
@@ -129,7 +129,7 @@ function NetworkTransactionFlowStepperModal({ isOpen, currentStepIndex, viewTxnL
                                             minW={4}
                                             minH={4}
                                             p='2px'
-                                            bg='azure.1'
+                                            bg='accent.azure'
                                             style={
                                                 {
                                                     aspectRatio: '1',

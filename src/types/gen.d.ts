@@ -6,6 +6,7 @@
  */
 
 export type All =
+  | WorkspaceCreateRequest
   | GrantApplicationRequest
   | GrantUpdateRequest
   | GrantCreateRequest
@@ -18,6 +19,56 @@ export type All =
  */
 export type GrantApplicationFieldAnswer = GrantApplicationFieldAnswerItem[];
 
+export interface WorkspaceCreateRequest {
+  title: string;
+  bio?: string;
+  about: string;
+  partners?: Partner[];
+  /**
+   * IPFS hash of the logo of the workspace
+   */
+  logoIpfsHash: string;
+  /**
+   * IPFS hash of the cover of the workspace
+   */
+  coverImageIpfsHash?: string;
+  creatorId: string;
+  /**
+   * The public encryption key associated with the account address
+   */
+  creatorPublicKey?: string;
+  /**
+   * @maxItems 25
+   */
+  supportedNetworks: ("42220" | "5" | "10" | "137")[];
+  /**
+   * @maxItems 10
+   */
+  socials: SocialItem[];
+}
+export interface Partner {
+  /**
+   * Partner name
+   */
+  name: string;
+  /**
+   * Partner industry
+   */
+  industry: string;
+  /**
+   * Partner website
+   */
+  website?: string;
+  /**
+   * IPFS hash of partner picture
+   */
+  partnerImageHash?: string;
+  [k: string]: unknown;
+}
+export interface SocialItem {
+  name: string;
+  value: string;
+}
 export interface GrantApplicationRequest {
   grantId: string;
   applicantId: string;
@@ -60,6 +111,7 @@ export interface GrantProposedMilestone {
 }
 export interface GrantUpdateRequest {
   title?: string;
+  summary?: string;
   /**
    * Start date for proposal acceptations
    */
@@ -70,9 +122,14 @@ export interface GrantUpdateRequest {
   endDate?: string;
   details?: string;
   /**
-   * Positive integer amount of currency. Is a string to allow bigint inputs
+   * Link to sny external document
    */
-  reward?: string;
+  link?: string;
+  /**
+   * IPFS hash of the document uploaded by grant admin
+   */
+  docIpfsHash?: string;
+  reward?: GrantReward;
   payoutType?: "in-one-go" | "milestones";
   reviewType?: "voting" | "rubrics";
   creatorId?: string;
@@ -86,6 +143,37 @@ export interface GrantUpdateRequest {
    */
   grantManagers?: [string, ...string[]];
 }
+/**
+ * Grant reward amount in USD
+ */
+export interface GrantReward {
+  /**
+   * Positive integer amount of currency. Is a string to allow bigint inputs
+   */
+  committed: string;
+  asset: string;
+  token?: Token;
+}
+export interface Token {
+  /**
+   * Token Symbol to be displayed
+   */
+  label: string;
+  address: string;
+  /**
+   * The chain the token is on, leave undefined to denote same chain
+   */
+  chainId?: number;
+  /**
+   * Decimal for token
+   */
+  decimal: string;
+  /**
+   * IPFS hash of token icon
+   */
+  iconHash: string;
+  [k: string]: unknown;
+}
 export interface GrantFieldMap {
   applicantName: GrantField;
   applicantEmail: GrantField;
@@ -96,9 +184,17 @@ export interface GrantFieldMap {
 }
 export interface GrantField {
   /**
+   * field id if any
+   */
+  id?: string;
+  /**
    * Human readable title of the field
    */
   title: string;
+  /**
+   * Denotes if the field is required
+   */
+  required?: boolean;
   inputType: "short-form" | "long-form" | "numeric" | "array";
   /**
    * Constraint possible inputs for this field
@@ -113,29 +209,27 @@ export interface GrantField {
 }
 export interface GrantCreateRequest {
   title: string;
+  summary?: string;
   /**
    * Start date for proposal acceptations
    */
-  startDate: string;
+  startDate?: string;
   /**
    * Deadline for proposal submission
    */
-  endDate: string;
-  details: string;
+  endDate?: string;
+  details?: string;
   /**
-   * Link to sny external document
+   * Link to any external document
    */
   link?: string;
   /**
    * IPFS hash of the document uploaded by grant admin
    */
   docIpfsHash?: string;
-  /**
-   * Positive integer amount of currency. Is a string to allow bigint inputs
-   */
-  reward: string;
-  payoutType: "in one go" | "milestone";
-  reviewType: "voting" | "rubric";
+  reward: GrantReward1;
+  payoutType?: "in-one-go" | "milestones";
+  reviewType?: "voting" | "rubrics";
   creatorId: string;
   /**
    * the workspace the grant is from
@@ -146,6 +240,17 @@ export interface GrantCreateRequest {
    * @minItems 1
    */
   grantManagers?: [string, ...string[]];
+}
+/**
+ * Grant reward amount in USD
+ */
+export interface GrantReward1 {
+  /**
+   * Positive integer amount of currency. Is a string to allow bigint inputs
+   */
+  committed: string;
+  asset: string;
+  token?: Token;
 }
 export interface RubricSetRequest {
   rubric: Rubric;

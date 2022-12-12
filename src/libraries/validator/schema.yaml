@@ -1,6 +1,7 @@
 Validations:
   title: All
   oneOf:
+    - $ref: 'WorkspaceCreateRequest'
     - $ref: 'GrantApplicationRequest'
     - $ref: 'GrantUpdateRequest'
     - $ref: 'GrantCreateRequest'
@@ -13,7 +14,7 @@ Validations:
    # - $ref: 'ApplicationCreateRequest'
 Address:
   type: string
-  example: '0x95b58a6bff3d14b7db2f5cb5f0ad413dc2940658'
+  # example: '0x95b58a6bff3d14b7db2f5cb5f0ad413dc2940658'
   minLength: 16
   maxLength: 256
   format: hex
@@ -98,10 +99,16 @@ GrantField:
     - title
     - inputType
   properties:
+    id: 
+      description: field id if any
+      type: string
     title:
       description: Human readable title of the field
       type: string
       maxLength: 512
+    required: 
+      description: Denotes if the field is required
+      type: boolean
     inputType:
       type: string
       enum:
@@ -457,7 +464,6 @@ GrantCreateRequest:
   additionalProperties: false
   required:
     - title
-    - details
     - reward
     - creatorId
     - workspaceId
@@ -471,11 +477,11 @@ GrantCreateRequest:
           maxLength: 1024
     startDate:
       type: string
-      format: date-time
+      format: date
       description: Start date for proposal acceptations
     endDate:
       type: string
-      format: date-time
+      format: date
       description: Deadline for proposal submission
     details:
       type: string
@@ -519,11 +525,11 @@ GrantUpdateRequest:
           maxLength: 1024
     startDate:
       type: string
-      format: date-time
+      format: date
       description: Start date for proposal acceptations
     endDate:
       type: string
-      format: date-time
+      format: date
       description: Deadline for proposal submission
     details:
       type: string
@@ -559,4 +565,4 @@ OwnerID:
   type: string
   minLength: 16
   maxLength: 255
-  example: '0x71C7656EC7ab88b098defB751B7411C5f6d8976F'
+  # example: '0x71C7656EC7ab88b098defB751B7411C5f6d8976F'

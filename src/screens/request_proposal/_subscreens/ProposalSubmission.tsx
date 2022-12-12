@@ -28,8 +28,8 @@ interface Props {
     setDoc: (value: FileList) => void
     step: number
     setStep: (value: number) => void
-    allApplicantDetails: ApplicantDetailsFieldType[]
-    setAllApplicantDetails: (value: ApplicantDetailsFieldType[]) => void
+    allApplicantDetails: {[key:string]: ApplicantDetailsFieldType}
+    setAllApplicantDetails: (value: {[key:string]: ApplicantDetailsFieldType}) => void
 }
 
 function ProposalSubmission(
@@ -307,16 +307,20 @@ function ProposalSubmission(
 				inputType: 'text'
 			})
 		}
-
+		let allFieldsArray = [...requiredDetails, ...details]
+		let allFieldsObject: {[key: string]: ApplicantDetailsFieldType} = {}
+		for (let i = 0; i < allFieldsArray.length; i++) {
+			allFieldsObject[allFieldsArray[i].id] = allFieldsArray[i]
+		}
 		console.log('all applicant details', [...requiredDetails, ...details])
-		setAllApplicantDetails([...requiredDetails, ...details])
+		setAllApplicantDetails(allFieldsObject)
 	}
 
 	const handleOnChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-		const abc: DynamicInputValues = {}
-		abc[index] = e.target.value
-		setDetailInputValues({ ...detailInputValues, ...abc })
-		console.log({ ...detailInputValues, ...abc })
+		const inputValue: DynamicInputValues = {}
+		inputValue[index] = e.target.value
+		setDetailInputValues({ ...detailInputValues, ...inputValue })
+		console.log({ ...detailInputValues, ...inputValue })
 	}
 
 

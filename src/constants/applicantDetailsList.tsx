@@ -27,7 +27,7 @@ export default [
 
 	{
 		title: 'Title',
-		id: 'title',
+		id: 'projectName',
 		inputType: 'short-form',
 		isRequired: true,
 	},
