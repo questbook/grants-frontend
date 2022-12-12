@@ -7,7 +7,9 @@ function SingleSelect() {
 		return (
 			<Flex
 				direction='column'
-				w='100%'>
+				overflowY='auto'
+				w='100%'
+				h='100%'>
 				<Proposal />
 				<Box mt={5} />
 				<Discussions />

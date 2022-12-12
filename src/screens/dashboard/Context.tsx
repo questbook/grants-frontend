@@ -3,11 +3,12 @@ import { GetGrantsForAdminQuery, GetGrantsForReviewerQuery, useGetGrantsForAdmin
 import logger from 'src/libraries/logger'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { GRANT_CACHE_KEY } from 'src/screens/dashboard/_utils/constants'
-import { DashboardContextType, FundBuilderContextType, Proposals, ReviewInfo, SignerVerifiedState, TokenInfo } from 'src/screens/dashboard/_utils/types'
+import { DashboardContextType, FundBuilderContextType, Proposals, ReviewInfo, SendAnUpdateContextType, SignerVerifiedState, TokenInfo } from 'src/screens/dashboard/_utils/types'
 import { useMultiChainQuery } from 'src/screens/proposal/_hooks/useMultiChainQuery'
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined)
 const FundBuilderContext = createContext<FundBuilderContextType | undefined>(undefined)
+const SendAnUpdateContext = createContext<SendAnUpdateContextType | undefined>(undefined)
 
 const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const { workspace, chainId, role } = useContext(ApiClientsContext)!
@@ -285,4 +286,14 @@ const FundBuilderProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	)
 }
 
-export { DashboardContext, DashboardProvider, FundBuilderContext, FundBuilderProvider }
+const SendAnUpdateProvider = ({ children }: PropsWithChildren<ReactNode>) => {
+	const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+
+	return (
+		<SendAnUpdateContext.Provider value={{ isModalOpen, setIsModalOpen }}>
+			{children}
+		</SendAnUpdateContext.Provider>
+	)
+}
+
+export { DashboardContext, DashboardProvider, FundBuilderContext, FundBuilderProvider, SendAnUpdateContext, SendAnUpdateProvider }

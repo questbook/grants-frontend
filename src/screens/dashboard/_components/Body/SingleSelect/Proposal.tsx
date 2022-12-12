@@ -32,14 +32,13 @@ function Proposal() {
 		return (
 			<Flex
 				w='100%'
-				h='100%'
+				h='60%'
 				overflowY='auto'
 				px={5}
 				py={6}
 				direction='column'
 				boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
 				bg='white'>
-
 				<Flex
 					w='100%'
 					align='center'

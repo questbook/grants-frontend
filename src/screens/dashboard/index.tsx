@@ -4,10 +4,11 @@ import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { ApiClientsContext } from 'src/pages/_app'
 import ActionList from 'src/screens/dashboard/ActionList'
 import Body from 'src/screens/dashboard/Body'
-import { DashboardProvider, FundBuilderProvider } from 'src/screens/dashboard/Context'
+import { DashboardProvider, FundBuilderProvider, SendAnUpdateProvider } from 'src/screens/dashboard/Context'
 import FundBuilderDrawer from 'src/screens/dashboard/FundBuilderDrawer'
 import FundBuilderModal from 'src/screens/dashboard/FundBuilderModal'
 import ProposalList from 'src/screens/dashboard/ProposalList'
+import SendAnUpdateModal from 'src/screens/dashboard/SendAnUpdateModal'
 import TopBar from 'src/screens/dashboard/TopBar'
 
 function Dashboard() {
@@ -27,6 +28,7 @@ function Dashboard() {
 
 			{/* Modals */}
 			<FundBuilderModal />
+			<SendAnUpdateModal />
 
 			{/* Drawers */}
 			<FundBuilderDrawer />
@@ -57,7 +59,9 @@ Dashboard.getLayout = function(page: ReactElement) {
 			}>
 			<DashboardProvider>
 				<FundBuilderProvider>
-					{page}
+					<SendAnUpdateProvider>
+						{page}
+					</SendAnUpdateProvider>
 				</FundBuilderProvider>
 			</DashboardProvider>
 		</NavbarLayout>

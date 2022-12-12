@@ -62,6 +62,11 @@ export type FundBuilderContextType = {
     setSignerVerifiedState: (state: SignerVerifiedState) => void
 }
 
+export type SendAnUpdateContextType = {
+    isModalOpen: boolean
+    setIsModalOpen: (isOpen: boolean) => void
+}
+
 export type ReviewData = {rubric: RubricItem, rating: number, comment: string}
 export type ReviewInfo = {
     isApproved?: boolean

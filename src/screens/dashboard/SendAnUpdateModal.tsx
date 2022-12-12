@@ -1,35 +1,35 @@
-import { useContext, useMemo } from 'react'
-import { Button, Flex, Image, Text, Textarea } from '@chakra-ui/react'
-import { ApiClientsContext } from 'src/pages/_app'
+import { useContext } from 'react'
+import { Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text, Textarea } from '@chakra-ui/react'
 import useQuickReplies from 'src/screens/dashboard/_hooks/useQuickReplies'
-import { DashboardContext } from 'src/screens/dashboard/Context'
-import getAvatar from 'src/utils/avatarUtils'
+import { DashboardContext, SendAnUpdateContext } from 'src/screens/dashboard/Context'
 
-function Discussions() {
-	const buildComponents = () => {
+function SendAnUpdateModal() {
+	const buildComponent = () => {
 		return (
-			<Flex
-				px={5}
-				py={4}
-				w='100%'
-				h='35%'
-				overflowY='auto'
-				boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
-				bg='white'
-				direction='column'>
-				<Text fontWeight='500'>
-					Discussion
-				</Text>
-				<Flex
-					mt={4}
-					w='100%'>
-					<Image
-						src='/v2/images/qb-discussion.svg'
-						boxSize='36px' />
+			<Modal
+				isOpen={isModalOpen}
+				onClose={
+					() => {
+						setIsModalOpen(false)
+					}
+				}
+				size='2xl'
+				isCentered
+				scrollBehavior='outside'>
+				<ModalOverlay />
+				<ModalContent>
+					<ModalCloseButton />
 					<Flex
-						ml={4}
+						p={6}
 						direction='column'>
 						<Text
+							w='100%'
+							fontWeight='500'
+							textAlign='center'>
+							Send an update
+						</Text>
+						<Text
+							mt={6}
 							variant='v2_metadata'
 							fontWeight='500'
 							color='gray.6'>
@@ -96,58 +96,35 @@ function Discussions() {
 								})
 							}
 						</Flex>
-					</Flex>
-				</Flex>
-				<Flex
-					mt={4}
-					w='100%'>
-					<Image
-						borderRadius='3xl'
-						boxSize='36px'
-						src={getAvatar(false, proposal?.applicantId)}
-					/>
-					<Flex
-						ml={4}
-						direction='column'
-						border='1px solid #C1BDB7'
-						px={3}
-						pb={2}
-						w='100%'>
 						<Textarea
 							w='100%'
+							mt={6}
 							textAlign='left'
 							placeholder='Ask a question or post an update'
 							fontSize='16px'
 							fontWeight='400'
 							lineHeight='24px'
 							size='sm'
-							variant='unstyled'
 							resize='none'
 						/>
+
 						<Button
-							ml='auto'
-							variant='primaryMedium'>
+							mt={8}
+							w='100%'
+							variant='primaryLarge'>
 							Post
 						</Button>
 					</Flex>
-				</Flex>
-			</Flex>
+				</ModalContent>
+			</Modal>
 		)
 	}
 
-	const { role } = useContext(ApiClientsContext)!
-	const { proposals, selectedProposals } = useContext(DashboardContext)!
+	const { isModalOpen, setIsModalOpen } = useContext(SendAnUpdateContext)!
+	const { role } = useContext(DashboardContext)!
 	const { quickReplies } = useQuickReplies()
 
-	const proposal = useMemo(() => {
-		const index = selectedProposals.indexOf(true)
-
-		if(index !== -1) {
-			return proposals[index]
-		}
-	}, [proposals, selectedProposals])
-
-	return buildComponents()
+	return buildComponent()
 }
 
-export default Discussions
+export default SendAnUpdateModal

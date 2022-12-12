@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { Button, Divider, Flex, Text } from '@chakra-ui/react'
-import { FundBuilderContext } from 'src/screens/dashboard/Context'
+import { FundBuilderContext, SendAnUpdateContext } from 'src/screens/dashboard/Context'
 
 function MultiSelect() {
 	const buildComponent = () => {
@@ -16,7 +16,12 @@ function MultiSelect() {
 					w='100%'
 					variant='primaryMedium'
 					bg='gray.3'
-					mt={4}>
+					mt={4}
+					onClick={
+						() => {
+							setIsModalOpen(true)
+						}
+					}>
 					<Text
 						variant='v2_body'
 						fontWeight='500'>
@@ -56,7 +61,7 @@ function MultiSelect() {
 	}
 
 	const { setIsDrawerOpen } = useContext(FundBuilderContext)!
-
+	const { setIsModalOpen } = useContext(SendAnUpdateContext)!
 
 	return buildComponent()
 }

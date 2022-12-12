@@ -195,7 +195,7 @@ export default {
 				fontWeight: '500',
 				fontSize: '14px',
 				lineHeight: '24px',
-				w: '170px', // Note: the values for height and width will be changed
+				// w: '170px', // Note: the values for height and width will be changed
 				h: '32px',
 				borderRadius: '2px',
 				_disabled: {
