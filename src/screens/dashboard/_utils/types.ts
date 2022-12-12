@@ -1,6 +1,7 @@
 import { GetGrantsForAdminQuery, GetGrantsForReviewerQuery, GetPayoutsQuery, GetProposalsForAdminQuery, RubricItem } from 'src/generated/graphql'
 
 type BaseDashboardContextType = {
+    isLoading: boolean
     proposals: Proposals
     selectedGrantIndex: number | undefined
     setSelectedGrantIndex: (index: number) => void

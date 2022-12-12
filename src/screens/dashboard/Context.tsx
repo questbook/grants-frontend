@@ -52,6 +52,11 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const [proposals, setProposals] = useState<Proposals>([])
 	const [selectedProposals, setSelectedProposals] = useState<boolean[]>([])
 	const [review, setReview] = useState<ReviewInfo>()
+	const [isLoading, setIsLoading] = useState<boolean>(true)
+
+	useEffect(() => {
+		logger.info({ isLoading }, 'Loading')
+	}, [isLoading])
 
 	const fetchSelectedGrant = useCallback(async() => {
 		if(!workspace) {
@@ -212,6 +217,9 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 		getProposals().then((ret) => {
 			logger.info({ message: 'getProposals', ret }, 'Get proposals')
+			if(scwAddress && ret === 'grant-details-fetched') {
+				setIsLoading(false)
+			}
 		})
 	}, [role, adminGrants, reviewerGrants, selectedGrantIndex, scwAddress])
 
@@ -226,42 +234,49 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		setSelectedProposals(arr)
 	}, [proposals])
 
+	useEffect(() => {
+		if(scwAddress) {
+			setIsLoading(true)
+		}
+	}, [scwAddress])
+
+	const baseValue = useMemo(() => {
+		return {
+			proposals,
+			selectedGrantIndex,
+			setSelectedGrantIndex,
+			selectedProposals,
+			setSelectedProposals,
+			selectedGrant,
+			review,
+			setReview,
+			isLoading
+		}
+	}, [proposals,
+		selectedGrantIndex,
+		setSelectedGrantIndex,
+		selectedProposals,
+		setSelectedProposals,
+		selectedGrant,
+		review,
+		setReview,
+		isLoading])
+
 	return (
 		<DashboardContext.Provider
 			value={
 				role === 'admin' ? {
 					role: 'admin',
 					grants: adminGrants,
-					proposals,
-					selectedGrantIndex,
-					setSelectedGrantIndex,
-					selectedProposals,
-					setSelectedProposals,
-					selectedGrant,
-					review,
-					setReview
+					...baseValue
 				} : role === 'reviewer' ? {
 					role: 'reviewer',
 					grants: reviewerGrants,
-					proposals,
-					selectedGrantIndex,
-					setSelectedGrantIndex,
-					selectedProposals,
-					setSelectedProposals,
-					selectedGrant,
-					review,
-					setReview
+					...baseValue
 				} : {
 					role: 'builder',
 					grants: [],
-					proposals,
-					selectedGrantIndex,
-					setSelectedGrantIndex,
-					selectedProposals,
-					setSelectedProposals,
-					selectedGrant,
-					review,
-					setReview
+					...baseValue
 				}
 			}>
 			{children}
