@@ -71,24 +71,25 @@ function Discover() {
 								mt={2}
 								fontSize='16px'
 								lineHeight='24px'
-								fontWeight='400'>
+								fontWeight='400'
+								color='white'>
 								Invite proposals from builders. Review and fund proposals with milestones - all on chain.
 							</Text>
 
-							<Button
-								variant='primaryLarge'
-								mt={8}
-								rightIcon={<RightArrowIcon />}
-								onClick={
-									() => router.push({
-										pathname: '/request_proposal',
-										// query: {
-										// 	grantId: item.id
-										// }
-									})
-								}>
-								Invite Proposals
-							</Button>
+							<Flex>
+								<Button
+									variant='primaryLarge'
+									mt={8}
+									rightIcon={<RightArrowIcon />}
+									onClick={
+										() => router.push({
+											pathname: '/request_proposal',
+										})
+									}>
+									Invite Proposals
+								</Button>
+							</Flex>
+
 						</Flex>
 						<Flex
 							bgColor='brand.green'
