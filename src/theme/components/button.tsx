@@ -184,7 +184,6 @@ export default {
 				paddingY: '14px',
 				paddingX: '40px',
 				fontWeight: '500',
-				w: '170px',
 				h: '48px',
 				borderRadius: '2px'
 			},
@@ -196,8 +195,8 @@ export default {
 				fontWeight: '500',
 				fontSize: '14px',
 				lineHeight: '24px',
-				w: '170px', // Note: the values for height and width will be changed
-				h: '48px',
+				// w: '170px', // Note: the values for height and width will be changed
+				h: '32px',
 				borderRadius: '2px',
 				_disabled: {
 					bg: '#E7E4DD',

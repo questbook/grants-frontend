@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Flex } from '@chakra-ui/react'
 import NavBar from 'src/libraries/ui/NavBar'
-import { ApiClientsContext } from 'src/pages/_app'
 import logger from 'src/utils/logger'
 import Sidebar from 'src/v2/components/Sidebar'
 
@@ -9,6 +8,7 @@ type NavbarConfig = {
 	bg?: string
 	showLogo?: boolean
 	showSearchBar?: boolean
+	showSubmitANewProposal?: boolean
 	showInviteProposals?: boolean
 	showAddMembers?: boolean
 	showDomains?: boolean
@@ -27,13 +27,10 @@ type Props = {
 }
 
 function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar }: Props) {
-	const { connected, setConnected } = useContext(ApiClientsContext)!
-
 	const [renderCount, setRenderCount] = useState(0)
 
 	useEffect(() => {
 		logger.info({ renderNavbar, renderSidebar }, 'Render Navbar Layout')
-		setConnected(true)
 		setRenderCount(renderCount + 1)
 	}, [])
 
@@ -53,7 +50,7 @@ function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar }: P
 				maxH='calc(100vh - 64px)'
 				bg='#F5F5F5'>
 				{
-					renderSidebar && connected && (
+					renderSidebar && (
 						<Flex
 							display={{ base: 'none', lg: 'flex' }}
 							w='20%'
@@ -68,7 +65,7 @@ function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar }: P
 				}
 				<Flex
 					zIndex={0}
-					w={renderSidebar && connected ? '80%' : '100%'}
+					w={renderSidebar ? '80%' : '100%'}
 					overflowY='auto'
 					overscrollBehavior='none'>
 					{children}

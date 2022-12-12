@@ -44,7 +44,7 @@ function Proposal() {
 				gap={4}
 			>
 				<Flex>
-					<Text variant='v2_heading'>
+					<Text variant='v2_heading_3'>
 						{proposalName}
 					</Text>
 					<Spacer />

@@ -234,7 +234,9 @@ i18next.use(initReactI18next).init({
 					'menu': {
 						'use_another_wallet': 'Import existing wallet',
 						'save_wallet': 'Save wallet key',
-						'swap': 'Switch to building'
+						'swap_builder': 'Switch to building',
+						'swap_reviewer': 'Switch to reviewing',
+						'swap_admin': 'Switch to admin',
 					},
 					'import': {
 						'heading': 'Use another in-app wallet',

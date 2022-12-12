@@ -2,6 +2,7 @@ schema:
   - https://the-graph.questbook.app/subgraphs/name/qb-subgraph-goerli-testnet
 documents:
   - ./graphql/*.graphql
+  - src/screens/dashboard/_graphql/*.graphql
 overwrite: true
 generates:
   ./src/generated/graphql.ts:
@@ -18,4 +19,4 @@ generates:
       withComponent: false
       withHooks: true
       withHOC: false
-      withRefetchFn: false
+      withRefetchFn: true

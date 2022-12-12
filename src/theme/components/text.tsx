@@ -1,5 +1,11 @@
 export default {
 	Text: {
+		baseStyle: {
+			color: 'black.1',
+			fontSize: '16px',
+			lineHeight: '20px',
+			fontWeight: '400'
+		},
 		variants: {
 			heading: {
 				color: '#122224',

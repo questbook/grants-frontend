@@ -8,7 +8,8 @@ import { useGetWorkspaceMembersQuery } from 'src/generated/graphql'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
-import { ApiClientsContext } from 'src/pages/_app'
+import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
+import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { MinimalWorkspace } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAddress } from 'src/utils/formattingUtils'
@@ -79,23 +80,22 @@ function Domains() {
 					<Text
 						variant='v2_metadata'
 						color='gray.5'>
-						{safeObj?.safeAddress && formatAddress(safeObj.safeAddress)}
+						{workspace?.safe?.address && formatAddress(workspace.safe.address)}
 					</Text>
-					{/* <Flex align='center'>
-						<Image src={safeObj} />
-					</Flex> */}
 					{
 						onClick && process.env.NODE_ENV === 'development' && (
 							<Text
 								variant='v2_body'
 								color='black.3'
-								fontWeight='500'
 							>
 								{CHAIN_INFO[getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId].name}
 								{' '}
 								-
 								{' '}
 								{workspace.id}
+								{' ('}
+								{workspace?.members?.[workspace?.members?.map((_) => _.actorId).findIndex((_) => _ === scwAddress?.toLowerCase())]?.accessLevel}
+								)
 							</Text>
 						)
 					}
@@ -117,6 +117,7 @@ function Domains() {
 	}
 
 	const popoverRef = useRef<HTMLButtonElement>(null)
+	const { scwAddress } = useContext(WebwalletContext)!
 	const { workspace, setWorkspace } = useContext(ApiClientsContext)!
 	const { safeObj, setSafeObj } = useContext(SafeContext)!
 	useEffect(() => {
@@ -150,7 +151,7 @@ function Domains() {
 
 	useEffect(() => {
 		if(workspaces.length && !workspace) {
-			const savedWorkspaceData = localStorage.getItem('currentWorkspace')
+			const savedWorkspaceData = localStorage.getItem(DOMAIN_CACHE_KEY)
 			if(!savedWorkspaceData || savedWorkspaceData === 'undefined') {
 				setWorkspace(workspaces[0])
 			} else {

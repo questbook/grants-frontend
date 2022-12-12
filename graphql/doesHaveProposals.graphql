@@ -1,0 +1,9 @@
+query DoesHaveProposals($builderId: Bytes!) {
+  grantApplications(where: { applicantId: $builderId }, first: 1) {
+    id
+  }
+  workspaceMembers(where: { actorId: $builderId, enabled: true }) {
+    id
+    accessLevel
+  }
+}
