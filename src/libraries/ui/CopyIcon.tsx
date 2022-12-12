@@ -1,13 +1,13 @@
 import React from 'react'
-import { Image, Tooltip } from '@chakra-ui/react'
+import { Image, ImageProps, Tooltip } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 
-interface Props {
-  text: string
-}
+type Props = {
+	text: string
+} & ImageProps
 
-function CopyIcon({ text }: Props) {
-	const imageSource = '/v2/icons/copy.svg'
+function CopyIcon({ text, ...props }: Props) {
+	const imageSource = '/v2/icons/copy/black.svg'
 
 	const defaultTooltip = 'Copy'
 	const copiedTooltip = 'Copied'
@@ -27,6 +27,7 @@ function CopyIcon({ text }: Props) {
 						setTooltipLabel(copiedTooltip)
 					}
 				}
+				{...props}
 			/>
 		</Tooltip>
 

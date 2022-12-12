@@ -1,4 +1,5 @@
 import { Button, Image, Text } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 import logger from 'src/libraries/logger'
 
 function InviteProposalButton() {
@@ -24,8 +25,12 @@ function InviteProposalButton() {
 		)
 	}
 
+	const router = useRouter()
 	const onClick = async() => {
 		logger.info({}, 'InviteProposalButton clicked')
+		router.push({
+			pathname: '/request_proposal',
+		})
 	}
 
 	return buildComponent()

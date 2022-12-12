@@ -1,13 +1,10 @@
-import schema from 'src/libraries/validator/schema.yaml'
+import schema from 'src/libraries/validator/schemaClient.yaml'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
-import Ajv from "ajv"
-import addFormats from 'ajv-formats'
-import $RefParser from "@apidevtools/json-schema-ref-parser";
 
 const schemaJson = JSON.parse(JSON.stringify(schema))
 console.log("Schema loaded", schemaJson)
 
-let ajv = new Ajv({logger: false })
+let ajv = new Ajv({ logger: false })
 ajv = addFormats(ajv)
 ajv.addFormat('hex', /^0x[0-9a-fA-F]+$/)
 ajv.addFormat('integer', () => true)
@@ -33,9 +30,6 @@ for(const key in schemaJson) {
 // 	}
 // 	}
 //   })
-
-
-
 
 
 export async function validateRequest(

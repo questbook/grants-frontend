@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ChevronDownIcon } from '@chakra-ui/icons'
 import {
@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
-import { WebwalletContext } from 'src/pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAddress } from 'src/utils/formattingUtils'
 
@@ -72,7 +72,7 @@ function AccountDetails({ openModal }: Props) {
 							size='24px'
 							icon={
 								<Image
-									src='/v2/icons/arrow right.svg'
+									src='/v2/icons/arrow right/enabled.svg'
 									boxSize='18px' />
 							}
 							onClick={() => {}} />
@@ -145,12 +145,18 @@ function AccountDetails({ openModal }: Props) {
 	)
 
 	const { t } = useTranslation()
+	const { role, setRole, possibleRoles } = useContext(ApiClientsContext)!
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 
 	const toast = useCustomToast()
 
-	const isConnected = !!scwAddress
-	const isConnecting = !scwAddress && !!webwallet?.address
+	const isConnected = useMemo(() => {
+		return !!scwAddress
+	}, [scwAddress])
+
+	const isConnecting = useMemo(() => {
+		return !scwAddress && !!webwallet?.address
+	}, [scwAddress, webwallet?.address])
 
 	const menuItems = [
 		{
@@ -160,8 +166,18 @@ function AccountDetails({ openModal }: Props) {
 		},
 		{
 			icon: '/v2/icons/swap.svg',
-			title: t('account_details.menu.swap'),
-			onClick: () => { }
+			title: t(role === 'builder' ? (possibleRoles.includes('admin') ? 'account_details.menu.swap_admin' : 'account_details.menu.swap_reviewer') : 'account_details.menu.swap_builder'),
+			onClick: () => {
+				if(role === 'builder') {
+					if(possibleRoles.includes('admin')) {
+						setRole('admin')
+					} else {
+						setRole('reviewer')
+					}
+				} else {
+					setRole('builder')
+				}
+			}
 		},
 		{
 			icon: '/v2/icons/add user.svg',

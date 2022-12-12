@@ -81,16 +81,16 @@ export interface GrantApplicationRequest {
   /**
    * @maxItems 100
    */
-  milestones: GrantProposedMilestone[];
+  milestones: GrantProposedMilestone[]
 }
 /**
  * Maps ID of the field to the answer by the applicant
  */
 export interface GrantApplicationFieldAnswers {
-  [k: string]: GrantApplicationFieldAnswer;
+  [k: string]: GrantApplicationFieldAnswer
 }
 export interface GrantApplicationFieldAnswerItem {
-  value: string;
+  value: string
 }
 /**
  * Map of encrypted information mapped by the wallet ID, whose public key was used to map the specific information
@@ -115,7 +115,7 @@ export interface GrantUpdateRequest {
   /**
    * Start date for proposal acceptations
    */
-  startDate?: string;
+  startDate?: string
   /**
    * Deadline for proposal submission
    */
@@ -136,8 +136,8 @@ export interface GrantUpdateRequest {
   /**
    * the workspace the grant is from
    */
-  workspaceId?: string;
-  fields?: GrantFieldMap;
+  workspaceId?: string
+  fields?: GrantFieldMap
   /**
    * @minItems 1
    */
@@ -175,12 +175,12 @@ export interface Token {
   [k: string]: unknown;
 }
 export interface GrantFieldMap {
-  applicantName: GrantField;
-  applicantEmail: GrantField;
-  projectName: GrantField;
-  projectDetails: GrantField;
-  fundingBreakdown?: GrantField;
-  [k: string]: GrantField;
+  applicantName: GrantField
+  applicantEmail: GrantField
+  projectName: GrantField
+  projectDetails: GrantField
+  fundingBreakdown?: GrantField
+  [k: string]: GrantField
 }
 export interface GrantField {
   /**
@@ -205,13 +205,13 @@ export interface GrantField {
   /**
    * Whether this field is PII (personally identifiable information) or not
    */
-  pii?: boolean;
+  pii?: boolean
 }
 export interface GrantCreateRequest {
   title: string;
   summary?: string;
   /**
-   * Start date for proposal acceptations
+   * IPFS hash of the document uploaded by grant admin
    */
   startDate?: string;
   /**
@@ -234,8 +234,8 @@ export interface GrantCreateRequest {
   /**
    * the workspace the grant is from
    */
-  workspaceId: string;
-  fields: GrantFieldMap;
+  workspaceId: string
+  fields: GrantFieldMap
   /**
    * @minItems 1
    */
@@ -253,25 +253,25 @@ export interface GrantReward1 {
   token?: Token;
 }
 export interface RubricSetRequest {
-  rubric: Rubric;
+  rubric: Rubric
 }
 /**
  * Map of evaluation rubric ID to rubric data
  */
 export interface Rubric {
-  isPrivate: boolean;
+  isPrivate: boolean
   rubric: {
-    [k: string]: RubricItem;
-  };
-  [k: string]: unknown;
+    [k: string]: RubricItem
+  }
+  [k: string]: unknown
 }
 export interface RubricItem {
-  title: string;
+  title: string
   /**
    * Details about the evaluatation rubric
    */
-  details?: string;
-  maximumPoints: number;
+  details?: string
+  maximumPoints: number
 }
 export interface ReviewSetRequest {
   reviewer: string;
@@ -284,10 +284,10 @@ export interface ReviewSetRequest {
    * Encrypted review data. Map of the grant manager address => IPFS hash of the review encrypted with their public key
    */
   encryptedReview: {
-    [k: string]: string;
-  };
-  [k: string]: unknown;
+    [k: string]: string
+  }
+  [k: string]: unknown
 }
 export interface ApplicationMilestoneUpdate {
-  text: string;
+  text: string
 }

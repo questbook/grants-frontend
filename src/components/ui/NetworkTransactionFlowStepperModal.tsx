@@ -4,11 +4,11 @@ import { CheckCircle } from 'src/v2/assets/custom chakra icons/CheckCircle'
 import { ExternalLink } from 'src/v2/assets/custom chakra icons/ExternalLink'
 
 interface Props {
-    isOpen: boolean,
-    currentStepIndex: number,
-    viewTxnLink: string,
+    isOpen: boolean
+    currentStepIndex: number
+    viewTxnLink: string
     showViewTransactionButton?: boolean
-    onClose: () => void,
+    onClose: () => void
 }
 
 type ModalStepProps = {
@@ -21,27 +21,27 @@ const stepsHeader = ['On-chain transaction..', 'This shouldn’t take long..', '
 const steps = ['Initiate transaction', 'Complete indexing', 'Complete transaction']
 
 function NetworkTransactionFlowStepperModal({ isOpen, currentStepIndex, viewTxnLink, showViewTransactionButton, onClose }: Props) {
-    const buildComponent = () => {
-        return (
-            <Modal
-                isOpen={isOpen}
-                onClose={() => { }}
-                isCentered
-                scrollBehavior='outside'
-                size='md'
-            >
-                <AlertDialogOverlay
-                    background='rgba(31, 31, 51, 0.75)'
-                />
+	const buildComponent = () => {
+		return (
+			<Modal
+				isOpen={isOpen}
+				onClose={() => { }}
+				isCentered
+				scrollBehavior='outside'
+				size='md'
+			>
+				<AlertDialogOverlay
+					background='rgba(31, 31, 51, 0.75)'
+				/>
 
-                <ModalContent>
-                    <ModalHeader>
-                        {stepsHeader[0]}
-                    </ModalHeader>
+				<ModalContent>
+					<ModalHeader>
+						{stepsHeader[0]}
+					</ModalHeader>
 
 
-                    <ModalBody p='5'>
-                        <VStack align='stretch'>
+					<ModalBody p='5'>
+						<VStack align='stretch'>
 
                             <Text
                                 fontSize='sm'
@@ -50,63 +50,63 @@ function NetworkTransactionFlowStepperModal({ isOpen, currentStepIndex, viewTxnL
                                 ACTIVITY
                             </Text>
 
-                            {
-                                steps.map((step, index) => (
-                                    <ModalStep
-                                        key={step}
-                                        state={
-                                            index === currentStepIndex
-                                                ? 'loading'
-                                                : (
-                                                    currentStepIndex > index
-                                                        ? 'done'
-                                                        : 'to-do'
-                                                )
-                                        }
-                                        isLastStep={index === steps.length - 1}
-                                        text={step}
-                                    />
-                                ))
-                            }
+							{
+								steps.map((step, index) => (
+									<ModalStep
+										key={step}
+										state={
+											index === currentStepIndex
+												? 'loading'
+												: (
+													currentStepIndex > index
+														? 'done'
+														: 'to-do'
+												)
+										}
+										isLastStep={index === steps.length - 1}
+										text={step}
+									/>
+								))
+							}
 
 
-                            {
-                                (viewTxnLink?.length || 0) > 0 && (
-                                    <Flex mt='4'>
-                                        {
-                                            (showViewTransactionButton ?? true) && (
-                                                <Button
-                                                    variant='link'
-                                                    rightIcon={<ExternalLink />}
-                                                    onClick={
-                                                        () => {
-                                                            window.open(viewTxnLink, '_blank')
-                                                        }
-                                                    }>
-                                                    View transaction
-                                                </Button>
-                                            )
-                                        }
-                                        <Button
-                                            isDisabled={currentStepIndex < stepsHeader.length}
-                                            ml='auto'
-                                            variant='primaryV2'
-                                            onClick={
-                                                () => {
-                                                    onClose()
-                                                }
-                                            }>
-                                            Okay
-                                        </Button>
-                                    </Flex>
-                                )
-                            }
-                        </VStack>
-                    </ModalBody>
-                </ModalContent>
-            </Modal>
-        )
-    }
+							{
+								(viewTxnLink?.length || 0) > 0 && (
+									<Flex mt='4'>
+										{
+											(showViewTransactionButton ?? true) && (
+												<Button
+													variant='link'
+													rightIcon={<ExternalLink />}
+													onClick={
+														() => {
+															window.open(viewTxnLink, '_blank')
+														}
+													}>
+													View transaction
+												</Button>
+											)
+										}
+										<Button
+											isDisabled={currentStepIndex < stepsHeader.length}
+											ml='auto'
+											variant='primaryV2'
+											onClick={
+												() => {
+													onClose()
+												}
+											}>
+											Okay
+										</Button>
+									</Flex>
+								)
+							}
+						</VStack>
+					</ModalBody>
+				</ModalContent>
+			</Modal>
+		)
+	}
 
     const ModalStep = ({
         state,
@@ -148,41 +148,40 @@ function NetworkTransactionFlowStepperModal({ isOpen, currentStepIndex, viewTxnL
                                             borderColor='#E0E0EC'
                                             borderWidth='2px'
 
-                                            borderRadius='50%'
-                                            boxSizing='border-box'
-                                        />
-                                    )
-                                }
+											borderRadius='50%'
+											boxSizing='border-box'
+										/>
+									)
+								}
 
-                            </>
-                        )
-                    }
+							</>
+						)
+					}
 
-                    <Text
-                        fontWeight={state === 'loading' ? 'bold' : 'light'}
-                        ml={3}
-                        color={state === 'loading' ? 'black' : '#555570'}
-                    >
-                        {text}
-                    </Text>
-                </HStack>
+					<Text
+						fontWeight={state === 'loading' ? 'bold' : 'light'}
+						ml={3}
+						color={state === 'loading' ? 'black' : '#555570'}
+					>
+						{text}
+					</Text>
+				</HStack>
 
-                {
-                    !isLastStep && (
-                        <Box
-                            h='2'
-                            w='2px'
-                            style={{ marginLeft: '8px' }}
-                            bg='#E0E0EC' />
-                    )
-                }
-            </VStack>
-        )
-    }
+				{
+					!isLastStep && (
+						<Box
+							h='2'
+							w='2px'
+							style={{ marginLeft: '8px' }}
+							bg='#E0E0EC' />
+					)
+				}
+			</VStack>
+		)
+	}
 
-   
 
-    return buildComponent()
+	return buildComponent()
 }
 
 export default NetworkTransactionFlowStepperModal

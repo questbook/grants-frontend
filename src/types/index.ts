@@ -162,10 +162,10 @@ export type SafeToken = {
 }
 
 export type ApplicantDetailsFieldType = {
-  title: string,
-  id: string,
-  inputType: string,
-  required: boolean,
+  title: string
+  id: string
+  inputType: string
+  required: boolean
 }
 
 export type DynamicInputValues = {

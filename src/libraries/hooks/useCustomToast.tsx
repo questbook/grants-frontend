@@ -50,13 +50,13 @@ function useCustomToast() {
 			position: 'top-right',
 			...props
 		})
+	}
 
-		const BG = {
-			'info': 'accent.columbia',
-			'success': 'accent.june',
-			'warning': 'accent.crayola',
-			'error': 'accent.melon'
-		}
+	const BG = {
+		'info': 'accent.columbia',
+		'success': 'accent.june',
+		'warning': 'accent.crayola',
+		'error': 'accent.melon'
 	}
 
 	return showToast

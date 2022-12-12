@@ -6,10 +6,9 @@ import { useRouter } from 'next/router'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
+import { today, validateDate } from 'src/screens/request_proposal/_utils/utils'
 import { ApplicantDetailsFieldType, DynamicInputValues } from 'src/types'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
-
-import { today, validateDate } from '/src/screens/request_proposal/_utils/utils'
 
 
 interface Props {
@@ -28,8 +27,8 @@ interface Props {
     setDoc: (value: FileList) => void
     step: number
     setStep: (value: number) => void
-    allApplicantDetails: {[key:string]: ApplicantDetailsFieldType}
-    setAllApplicantDetails: (value: {[key:string]: ApplicantDetailsFieldType}) => void
+    allApplicantDetails: ApplicantDetailsFieldType[]
+    setAllApplicantDetails: (value: ApplicantDetailsFieldType[]) => void
 }
 
 function ProposalSubmission(

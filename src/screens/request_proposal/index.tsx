@@ -125,7 +125,8 @@ function RequestProposal() {
 					onClose={
 						() => {
 							setCurrentStepIndex(undefined)
-							router.push({ pathname: '/your_grants' })
+							setRole('admin')
+							router.push({ pathname: '/dashboard' })
 						}
 					} />
 			</>
@@ -202,7 +203,7 @@ function RequestProposal() {
 	const { data: accountDataWebwallet, nonce } = useQuestbookAccount(shouldRefreshNonce)
 	const { webwallet } = useContext(WebwalletContext)!
 
-	const { validatorApi, subgraphClients } = useContext(ApiClientsContext)!
+	const { validatorApi, subgraphClients, setRole } = useContext(ApiClientsContext)!
 	const { network } = useNetwork()
 	const targetContractObject = useQBContract('workspace', network as unknown as SupportedChainId)
 
@@ -240,6 +241,9 @@ function RequestProposal() {
 		console.log('start date', startDate)
 	}, [])
 
+	useEffect(() => {
+		console.log('start date', startDate)
+	}, [])
 
 	useEffect(() => {
 
