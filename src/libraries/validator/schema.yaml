@@ -2,15 +2,16 @@ Validations:
   title: All
   oneOf:
     - $ref: 'WorkspaceCreateRequest'
+    - $ref: 'WorkspaceMemberUpdate-time'
     - $ref: 'GrantApplicationRequest'
-    - $ref: 'GrantUpdateRequest'
+    - $ref: 'GrantUpdate-timeRequest'
     - $ref: 'GrantCreateRequest'
     - $ref: 'RubricSetRequest'
     - $ref: 'ReviewSetRequest'
-    - $ref: 'ApplicationMilestoneUpdate'
+    - $ref: 'ApplicationMilestoneUpdate-time'
     - $ref: 'Address'
     - $ref: 'Amount'
-   # - $ref: 'ApplicationUpdateRequest'
+   # - $ref: 'ApplicationUpdate-timeRequest'
    # - $ref: 'ApplicationCreateRequest'
 Address:
   type: string
@@ -200,7 +201,7 @@ GrantApplicationRequest:
       maxItems: 100
       items:
         $ref: 'GrantProposedMilestone'
-WorkspaceMemberUpdate:
+WorkspaceMemberUpdate-time:
   type: object
   properties:
     fullName:
@@ -212,7 +213,7 @@ WorkspaceMemberUpdate:
       description: IPFS hash of the profile picture
     publicKey:
       $ref: 'PublicKey'
-GrantApplicationUpdate:
+GrantApplicationUpdate-time:
   type: object
   additionalProperties: false
   properties:
@@ -292,7 +293,7 @@ PublicKey:
   description: The public encryption key associated with the account address
   type: string
   maxLength: 255
-WorkspaceUpdateRequest:
+WorkspaceUpdate-timeRequest:
   type: object
   additionalProperties: false
   properties:
@@ -328,7 +329,7 @@ WorkspaceUpdateRequest:
       type: array
       items:
         $ref: 'Token'
-ApplicationMilestoneUpdate:
+ApplicationMilestoneUpdate-time:
   type: object
   additionalProperties: false
   required:
@@ -475,13 +476,13 @@ GrantCreateRequest:
     summary:
           type: string
           maxLength: 1024
-    startDate:
+    startdate-time:
       type: string
-      format: date
-      description: Start date for proposal acceptations
-    endDate:
+      format: date-time
+      description: Start date-time for proposal acceptations
+    enddate-time:
       type: string
-      format: date
+      format: date-time
       description: Deadline for proposal submission
     details:
       type: string
@@ -513,7 +514,7 @@ GrantCreateRequest:
       items:
         $ref: 'Address'
       minItems: 1
-GrantUpdateRequest:
+GrantUpdate-timeRequest:
   type: object
   additionalProperties: false
   properties:
@@ -523,13 +524,13 @@ GrantUpdateRequest:
     summary:
           type: string
           maxLength: 1024
-    startDate:
+    startdate-time:
       type: string
-      format: date
-      description: Start date for proposal acceptations
-    endDate:
+      format: date-time
+      description: Start date-time for proposal acceptations
+    enddate-time:
       type: string
-      format: date
+      format: date-time
       description: Deadline for proposal submission
     details:
       type: string
