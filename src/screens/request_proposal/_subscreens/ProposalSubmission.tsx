@@ -27,8 +27,8 @@ interface Props {
     setDoc: (value: FileList) => void
     step: number
     setStep: (value: number) => void
-    allApplicantDetails: ApplicantDetailsFieldType[]
-    setAllApplicantDetails: (value: ApplicantDetailsFieldType[]) => void
+    allApplicantDetails: {[key: string]: ApplicantDetailsFieldType}
+    setAllApplicantDetails: (value: {[key: string]: ApplicantDetailsFieldType}) => void
 }
 
 function ProposalSubmission(
