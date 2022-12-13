@@ -86,7 +86,7 @@ SupportedNetwork:
 PayoutType:
   type: string
   enum: 
-    - 'in-one-go'
+    - 'in_one_go'
     - 'milestones'
 ReviewType:
   type: string
@@ -478,11 +478,11 @@ GrantCreateRequest:
           maxLength: 1024
     startDate:
       type: string
-      format: date
+      format: date-time
       description: Start date for proposal acceptations
     endDate:
       type: string
-      format: date
+      format: date-time
       description: Deadline for proposal submission
     details:
       type: string
@@ -526,11 +526,11 @@ GrantUpdateRequest:
           maxLength: 1024
     startDate:
       type: string
-      format: date 
+      format: date-time
       description: Start date for proposal acceptations
     endDate:
       type: string
-      format: date
+      format: date-time
       description: Deadline for proposal submission
     details:
       type: string

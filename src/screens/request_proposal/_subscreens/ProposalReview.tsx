@@ -166,7 +166,10 @@ function ProposalReview(
 							Skip for now
 						</Button>
 						<Button
+							className='continueBtn'
 							variant='primaryMedium'
+							w='166px'
+						h='48px'
 							onClick={
 								() => {
 									handleOnClickContinue()
@@ -194,12 +197,12 @@ function ProposalReview(
 
 	const handleOnClickContinue = () => {
 		setStep(3)
-		let rubrics: {[key: number]: {title: string, details: string, maiximumPoints: number }} = {}
+		let rubrics: {[key: number]: {title: string, details: string, maximumPoints: number }} = {}
 		Object.keys(rubricInputValues).forEach((key, index) => {
 			rubrics[index] = {
 				title: rubricInputValues[index],
 				details: '',
-				maiximumPoints: 5
+				maximumPoints: 5
 			}
 
 		})

@@ -178,6 +178,13 @@ export default {
 				},
 				py: 2,
 			},
+			link: {
+				bg: 'white',
+				color: 'gray.5',
+				fontWeight: '500',
+				fontSize: '16px',
+				lineHeight: '24px',
+			},
 			primaryLarge: {
 				bg: '#0A84FF',
 				color: 'white',
@@ -202,7 +209,7 @@ export default {
 					bg: '#E7E4DD',
 					color: '#8D8B87',
 				}
-			}
+			},
 		},
 	},
 }
