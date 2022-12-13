@@ -29,6 +29,7 @@ import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace, getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 import { USD_ASSET, USD_DECIMALS, USD_ICON } from 'src/constants/chains'
+import { DEFAULT_NETWORK } from 'src/constants'
 
 function RequestProposal() {
 	const buildComponent = () => {
@@ -203,12 +204,12 @@ function RequestProposal() {
 	const { data: accountDataWebwallet, nonce } = useQuestbookAccount(shouldRefreshNonce)
 	const { webwallet } = useContext(WebwalletContext)!
 
-	const { validatorApi, subgraphClients, setRole } = useContext(ApiClientsContext)!
+	const { subgraphClients, setRole } = useContext(ApiClientsContext)!
 	const { network } = useNetwork()
 	const targetContractObject = useQBContract('workspace', network as unknown as SupportedChainId)
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
-		chainId: selectedSafeNetwork?.networkId ? networksMapping[selectedSafeNetwork?.networkId?.toString()] : '',
+		chainId: selectedSafeNetwork?.networkId ? networksMapping[selectedSafeNetwork?.networkId?.toString()] : DEFAULT_NETWORK,
 		shouldRefreshNonce: shouldRefreshNonce
 	})
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
@@ -242,16 +243,23 @@ function RequestProposal() {
 	}, [])
 
 	useEffect(() => {
-		console.log('start date', startDate)
+		console.log('end date', endDate)
 	}, [])
 
 	useEffect(() => {
 
-		if (biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && selectedSafeNetwork?.networkId &&
-			biconomy.networkId && biconomy.networkId.toString() === networksMapping[selectedSafeNetwork?.networkId?.toString()]) {
-			setIsBiconomyInitialised(true)
-		}
+		if (biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && biconomy.networkId) {
+			if (process.env.NEXT_PUBLIC_IS_TEST == 'true' && !selectedSafeNetwork?.networkId) {
+				setIsBiconomyInitialised(true)
+			}
+			if (selectedSafeNetwork?.networkId && biconomy.networkId.toString() === networksMapping[selectedSafeNetwork?.networkId?.toString()]) {
+				setIsBiconomyInitialised(true)
+			}
 
+
+
+			console.log('biconomy', biconomy)
+		}
 	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, selectedSafeNetwork?.networkId])
 
 
@@ -280,7 +288,11 @@ function RequestProposal() {
 
 			console.log('sefe', selectedSafeNetwork)
 			console.log('network', network)
-			if (!selectedSafeNetwork || !network) {
+			// if (!selectedSafeNetwork || !network) {
+			// 	throw new Error('No network specified')
+			// }
+
+			if (!network) {
 				throw new Error('No network specified')
 			}
 
@@ -294,7 +306,7 @@ function RequestProposal() {
 				biconomy,
 				targetContractObject,
 				'createWorkspace',
-				[workspaceCreateIpfsHash, new Uint8Array(32), multiSigAddress, parseInt(selectedSafeNetwork.networkId)],
+				[workspaceCreateIpfsHash, new Uint8Array(32), multiSigAddress, selectedSafeNetwork ? parseInt(selectedSafeNetwork.networkId) : '0'],
 				WORKSPACE_REGISTRY_ADDRESS[network],
 				biconomyWalletClient,
 				scwAddress,
@@ -328,123 +340,126 @@ function RequestProposal() {
 					'this is the safe addres - to be updated in the new flow')
 
 				await chargeGas(workspace_Id, Number(workspaceCreateTxFee), network)
-			
 
-			// createGrant()
-			let fileIPFSHash = ''
-			if (doc) {
-				const fileCID = await uploadToIPFS(doc[0]!)
-				logger.info('fileCID', fileCID)
-				fileIPFSHash = fileCID.hash
-			}
 
-			// 2. validate grant data
-			let payout: string
-			console.log('payout type', payoutMode)
-			if (payoutMode === 'in one go') {
-				payout = 'in-one-go'
-			} else if (payoutMode! === 'based on milestone') {
-				payout = 'milestones'
-			}
+				// createGrant()
+				let fileIPFSHash = ''
+				if (doc) {
+					const fileCID = await uploadToIPFS(doc[0]!)
+					logger.info('fileCID', fileCID)
+					fileIPFSHash = fileCID.hash
+				}
 
-			let review: string
-			if (reviewMechanism === 'Voting') {
-				review = 'voting'
-			} else if (reviewMechanism === 'Rubric') {
-				review = 'rubrics'
-			}
+				// 2. validate grant data
+				let payout: string
+				console.log('payout type', payoutMode)
+				if (payoutMode === 'in one go') {
+					payout = 'in_one_go'
+				} else if (payoutMode! === 'based on milestone') {
+					payout = 'milestones'
+				}
 
-			if (allApplicantDetails) {
+				let review: string
+				if (reviewMechanism === 'Voting') {
+					review = 'voting'
+				} else if (reviewMechanism === 'Rubric') {
+					review = 'rubrics'
+				}
 
-				console.log('fields', allApplicantDetails)
-			}
+				if (allApplicantDetails) {
 
-			console.log('review type', reviewMechanism)
-			console.log('end date', endDate)
-			const { hash: grantCreateIpfsHash } = await validateAndUploadToIpfs('GrantCreateRequest', {
-				title: proposalName!,
-				startDate: startDate!,
-				endDate: endDate!,
-				// details: allApplicantDetails!,
-				link: link!,
-				docIpfsHash: fileIPFSHash,
-				reward: {
-					asset: USD_ASSET!,
-					committed: amount.toString()!,
-					token: {
-						label: 'USD',
-						address: USD_ASSET!,
-						decimal: USD_DECIMALS.toString(),
-						iconHash: USD_ICON
-					}
-				},
-				payoutType: payout!,
-				reviewType: review!,
-				creatorId: accountDataWebwallet!.address!,
-				workspaceId: workspaceId!,
-				fields: allApplicantDetails,
-			})
+					console.log('fields', allApplicantDetails)
+				}
 
-			console.log('ipfsHash', grantCreateIpfsHash)
-			console.log('rubrics', rubrics)
-
-			let rubricHash = ''
-			if (reviewMechanism === 'Rubrics') {
-				const { hash: auxRubricHash } = await validateAndUploadToIpfs('RubricSetRequest', {
-					rubric: rubrics,
+				console.log('review type', reviewMechanism)
+				console.log('end date', endDate)
+				const { hash: grantCreateIpfsHash } = await validateAndUploadToIpfs('GrantCreateRequest', {
+					title: proposalName!,
+					startDate: startDate!,
+					endDate: endDate!,
+					// details: allApplicantDetails!,
+					link: link!,
+					docIpfsHash: fileIPFSHash,
+					reward: {
+						asset: USD_ASSET!,
+						committed: amount.toString()!,
+						token: {
+							label: 'USD',
+							address: USD_ASSET!,
+							decimal: USD_DECIMALS.toString(),
+							iconHash: USD_ICON
+						}
+					},
+					payoutType: payout!,
+					reviewType: review!,
+					creatorId: accountDataWebwallet!.address!,
+					workspaceId: workspaceId!,
+					fields: allApplicantDetails,
 				})
 
-				if (auxRubricHash) {
-					rubricHash = auxRubricHash || ''
-					console.log('Aux rubric hash', auxRubricHash)
+				console.log('ipfsHash', grantCreateIpfsHash)
+				console.log('rubrics', rubrics)
+
+				let rubricHash = ''
+				if (reviewMechanism === 'Rubric') {
+					const { hash: auxRubricHash } = await validateAndUploadToIpfs('RubricSetRequest', {
+						rubric: {
+							rubric: rubrics,
+							isPrivate: false
+						},
+					})
+
+					if (auxRubricHash) {
+						rubricHash = auxRubricHash || ''
+						console.log('Aux rubric hash', auxRubricHash)
+					}
+				}
+				console.log('rubric hash', rubricHash)
+				if (workspace_Id) {
+					const methodArgs = [
+						workspace_Id.toString(),
+						grantCreateIpfsHash,
+						rubricHash,
+						numberOfReviewers,
+						WORKSPACE_REGISTRY_ADDRESS[network!],
+						APPLICATION_REGISTRY_ADDRESS[network!],
+					]
+					console.log('methodArgs for grant creation', methodArgs)
+					const response = await sendGaslessTransaction(
+						biconomy,
+						grantContract,
+						'createGrant',
+						methodArgs,
+						grantContract.address,
+						biconomyWalletClient!,
+						scwAddress!,
+						webwallet,
+						`${network}`,
+						bicoDapps[network!.toString()].webHookId,
+						nonce
+					)
+					console.log('response', response)
+					if (!response) {
+						return
+					}
+
+					// setCurrentStep(2)
+					const { txFee: createGrantTxFee, receipt: createGrantTxReceipt } = await getTransactionDetails(response, network!.toString())
+					await subgraphClients[network!].waitForBlock(createGrantTxReceipt?.blockNumber)
+
+					setCurrentStepIndex(1)
+
+					await chargeGas(workspace_Id, Number(createGrantTxFee), network!)
+
+
+					setCurrentStepIndex(2)
+					setCurrentStepIndex(3) // 3 is the final step
+
+				} else {
+					console.log('workspaceId not found')
 				}
 			}
-			console.log('rubric hash', rubricHash)
-			if (workspace_Id) {
-				const methodArgs = [
-					workspace_Id.toString(),
-					grantCreateIpfsHash,
-					rubricHash,
-					numberOfReviewers,
-					WORKSPACE_REGISTRY_ADDRESS[network!],
-					APPLICATION_REGISTRY_ADDRESS[network!],
-				]
-				console.log('methodArgs for grant creation', methodArgs)
-				const response = await sendGaslessTransaction(
-					biconomy,
-					grantContract,
-					'createGrant',
-					methodArgs,
-					grantContract.address,
-					biconomyWalletClient!,
-					scwAddress!,
-					webwallet,
-					`${network}`,
-					bicoDapps[network!.toString()].webHookId,
-					nonce
-				)
-				console.log('response', response)
-				if (!response) {
-					return
-				}
-	
-				// setCurrentStep(2)
-				const { txFee, receipt } = await getTransactionDetails(response, network!.toString())
-				await subgraphClients[network!].waitForBlock(receipt?.blockNumber)
-	
-				// setCurrentStep(3)
-	
-				await chargeGas(workspace_Id, Number(txFee), network!)
-				setCurrentStepIndex(1)
-	
-				setCurrentStepIndex(2)
-				setCurrentStepIndex(3) // 3 is the final step
-				
-			} else {
-				console.log('workspaceId not found')
-			}
-		}
-			
+
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (e: any) {
 			setCurrentStepIndex(3) // 3 is the final step
@@ -538,7 +553,7 @@ function RequestProposal() {
 	// 			}
 	// 		}
 
-			
+
 	// 		const methodArgs = [
 	// 			workspaceId || Number(workspaceId).toString(),
 	// 			ipfsHash,

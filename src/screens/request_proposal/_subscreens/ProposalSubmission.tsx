@@ -63,6 +63,7 @@ function ProposalSubmission(
 
 	const buildComponent = () => {
 		console.log('start date in component', startdate)
+		console.log('end date in component', endDate)
 		return (
 			<>
 				{/* Start Proposal Submission Component */}
@@ -123,9 +124,10 @@ function ProposalSubmission(
 							Receive proposal submissions from
 						</Text>
 						<FlushedInput
-							type='date'
+							type='datetime-local'
 							placeholder='start date'
 							value={startdate}
+							step='1'
 							min={todayDate}
 							onChange={
 								(e) => {
@@ -143,10 +145,11 @@ function ProposalSubmission(
 							till
 						</Text>
 						<FlushedInput
-							type='date'
+							type='datetime-local'
 							placeholder='end date'
 							min={todayDate}
 							value={endDate}
+							step='1'
 							onChange={
 								(e) => {
 									setEndDate(e.target.value)
@@ -254,6 +257,8 @@ function ProposalSubmission(
 						variant='primaryMedium'
 						alignSelf='flex-end'
 						isDisabled={!proposalName || !startdate || !endDate}
+						w='166px'
+						h='48px'
 						onClick={
 							() => {
 								handleOnClickContinue()
@@ -303,7 +308,7 @@ function ProposalSubmission(
 				title: detailInputValues[i],
 				required: true,
 				id: `customField${i}`,
-				inputType: 'text'
+				inputType: 'long-form'
 			})
 		}
 		let allFieldsArray = [...requiredDetails, ...details]
