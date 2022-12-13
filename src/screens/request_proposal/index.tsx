@@ -53,84 +53,84 @@ function RequestProposal() {
 
 	const renderBody = () => {
 		switch (step) {
-		case 1:
-			return (
-				<ProposalSubmission
-					proposalName={proposalName}
-					setProposalName={setProposalName}
-					startdate={startDate}
-					setStartdate={setStartDate}
-					endDate={endDate}
-					setEndDate={setEndDate}
-					requiredDetails={requiredDetails}
-					moreDetails={moreDetails}
-					setMoreDetails={setMoreDetails}
-					link={link}
-					setLink={setLink}
-					doc={doc!}
-					setDoc={setDoc}
+			case 1:
+				return (
+					<ProposalSubmission
+						proposalName={proposalName}
+						setProposalName={setProposalName}
+						startdate={startDate}
+						setStartdate={setStartDate}
+						endDate={endDate}
+						setEndDate={setEndDate}
+						requiredDetails={requiredDetails}
+						moreDetails={moreDetails}
+						setMoreDetails={setMoreDetails}
+						link={link}
+						setLink={setLink}
+						doc={doc!}
+						setDoc={setDoc}
+						step={step}
+						setStep={setStep}
+						allApplicantDetails={allApplicantDetails}
+						setAllApplicantDetails={setAllApplicantDetails}
+					/>
+				)
+			case 2:
+				return (
+					<ProposalReview
+						numberOfReviewers={numberOfReviewers}
+						setNumberOfReviewers={setNumberOfReviewers}
+						reviewMechanism={reviewMechanism}
+						setReviewMechanism={setReviewMechanism}
+						step={step}
+						setStep={setStep}
+						rubrics={rubrics}
+						setRubrics={setRubrics} />
+				)
+			case 3:
+				return (
+					<Payouts
+						payoutMode={payoutMode}
+						setPayoutMode={setPayoutMode}
+						amount={amount}
+						setAmount={setAmount}
+						step={step}
+						setStep={setStep}
+						milestones={milestones}
+						setMilestones={setMilestones} />
+				)
+			case 4: return (
+				<LinkMultiSig
+					multiSigAddress={multiSigAddress}
+					setMultiSigAddress={setMultiSigAddress}
 					step={step}
 					setStep={setStep}
-					allApplicantDetails={allApplicantDetails}
-					setAllApplicantDetails={setAllApplicantDetails}
-				/>
+					selectedSafeNetwork={selectedSafeNetwork!}
+					setSelectedSafeNetwork={setSelectedSafeNetwork} />
 			)
-		case 2:
-			return (
-				<ProposalReview
-					numberOfReviewers={numberOfReviewers}
-					setNumberOfReviewers={setNumberOfReviewers}
-					reviewMechanism={reviewMechanism}
-					setReviewMechanism={setReviewMechanism}
-					step={step}
-					setStep={setStep}
-					rubrics={rubrics}
-					setRubrics={setRubrics} />
+			case 5: return (
+				<>
+					<BuilderDiscovery
+						domainName={domainName}
+						setDomainName={setDomainName}
+						domainImage={domainImage!}
+						setDomainImage={setDomainImage}
+						step={step}
+						setIsOpen={setIsNetworkTransactionModalOpen}
+						createWorkspace={createWorkspace} />
+					<NetworkTransactionFlowStepperModal
+						isOpen={isNetworkTransactionModalOpen}
+						currentStepIndex={currentStepIndex!}
+						viewTxnLink={getExplorerUrlForTxHash(network, txHash)}
+						onClose={
+							() => {
+								setCurrentStepIndex(undefined)
+								setRole('admin')
+								router.push({ pathname: '/dashboard' })
+							}
+						} />
+				</>
 			)
-		case 3:
-			return (
-				<Payouts
-					payoutMode={payoutMode}
-					setPayoutMode={setPayoutMode}
-					amount={amount}
-					setAmount={setAmount}
-					step={step}
-					setStep={setStep}
-					milestones={milestones}
-					setMilestones={setMilestones} />
-			)
-		case 4: return (
-			<LinkMultiSig
-				multiSigAddress={multiSigAddress}
-				setMultiSigAddress={setMultiSigAddress}
-				step={step}
-				setStep={setStep}
-				selectedSafeNetwork={selectedSafeNetwork!}
-				setSelectedSafeNetwork={setSelectedSafeNetwork} />
-		)
-		case 5: return (
-			<>
-				<BuilderDiscovery
-					domainName={domainName}
-					setDomainName={setDomainName}
-					domainImage={domainImage!}
-					setDomainImage={setDomainImage}
-					step={step}
-					setIsOpen={setIsNetworkTransactionModalOpen}
-					createWorkspace={createWorkspace} />
-				<NetworkTransactionFlowStepperModal
-					isOpen={isNetworkTransactionModalOpen}
-					currentStepIndex={currentStepIndex! }
-					viewTxnLink={getExplorerUrlForTxHash(network, txHash)}
-					onClose={
-						() => {
-							setCurrentStepIndex(undefined)
-							setRole('admin')
-							router.push({ pathname: '/dashboard' })
-						}
-					} />
-			</>
-		)
 		}
 	}
 
@@ -144,7 +144,7 @@ function RequestProposal() {
 		.map(({
 			title, id, inputType, isRequired, pii
 		}, index) => {
-			if(index === applicantDetailsList.length - 1) {
+			if (index === applicantDetailsList.length - 1) {
 				return null
 			}
 
@@ -164,7 +164,7 @@ function RequestProposal() {
 
 	const [requiredDetails, setRequiredDetails] = useState(applicantDetails)
 	const [moreDetails, setMoreDetails] = useState([''])
-	const [allApplicantDetails, setAllApplicantDetails] = useState<{[key: string]: ApplicantDetailsFieldType}>({})
+	const [allApplicantDetails, setAllApplicantDetails] = useState<{ [key: string]: ApplicantDetailsFieldType }>({})
 	const [link, setLink] = useState('')
 	const [doc, setDoc] = useState<FileList>()
 
@@ -222,17 +222,17 @@ function RequestProposal() {
 
 	useEffect(() => {
 		// console.log("add_user", nonce, webwallet)
-		if(nonce && nonce !== 'Token expired') {
+		if (nonce && nonce !== 'Token expired') {
 			return
 		}
 
-		if(webwallet) {
+		if (webwallet) {
 			addAuthorizedUser(webwallet?.address)
 				.then(() => {
 					setShouldRefreshNonce(true)
 					// console.log('Added authorized user', webwallet.address)
 				})
-				// .catch((err) => console.log("Couldn't add authorized user", err))
+			// .catch((err) => console.log("Couldn't add authorized user", err))
 		}
 	}, [webwallet, nonce])
 
@@ -247,7 +247,7 @@ function RequestProposal() {
 
 	useEffect(() => {
 
-		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && selectedSafeNetwork?.networkId &&
+		if (biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && selectedSafeNetwork?.networkId &&
 			biconomy.networkId && biconomy.networkId.toString() === networksMapping[selectedSafeNetwork?.networkId?.toString()]) {
 			setIsBiconomyInitialised(true)
 		}
@@ -256,13 +256,13 @@ function RequestProposal() {
 
 
 	// create workspace
-	const createWorkspace = useCallback(async() => {
-
+	const createWorkspace = useCallback(async () => {
+		// let workspaceId: number
 		try {
 			setCurrentStepIndex(0)
 			const uploadedImageHash = (await uploadToIPFS(domainImage)).hash
 			console.log('domain logo', uploadedImageHash)
-			const  {hash: workspaceCreateIpfsHash } = await validateAndUploadToIpfs( 'WorkspaceCreateRequest',{
+			const { hash: workspaceCreateIpfsHash } = await validateAndUploadToIpfs('WorkspaceCreateRequest', {
 				title: domainName!,
 				about: '',
 				logoIpfsHash: uploadedImageHash,
@@ -274,17 +274,17 @@ function RequestProposal() {
 				],
 			})
 
-			if(!workspaceCreateIpfsHash) {
+			if (!workspaceCreateIpfsHash) {
 				throw new Error('Error validating grant data')
 			}
 
 			console.log('sefe', selectedSafeNetwork)
 			console.log('network', network)
-			if(!selectedSafeNetwork || !network) {
+			if (!selectedSafeNetwork || !network) {
 				throw new Error('No network specified')
 			}
 
-			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
+			if (typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
 				return
 			}
 
@@ -304,7 +304,7 @@ function RequestProposal() {
 				nonce
 			)
 
-			if(!transactionHash) {
+			if (!transactionHash) {
 				return
 			}
 
@@ -316,264 +316,292 @@ function RequestProposal() {
 
 			// setCurrentStepIndex(1)
 			const event = await getEventData(workspaceCreateReceipt, 'WorkspaceCreated', WorkspaceRegistryAbi)
-			if(event) {
-				const workspaceId = Number(event.args[0].toBigInt())
-				console.log('workspace_id', workspaceId)
-				setWorkspaceId(workspaceId.toString())
-				const newWorkspace = `chain_${network}-0x${workspaceId.toString(16)}`
+			if (event) {
+				const workspace_Id = Number(event.args[0].toBigInt())
+				debugger
+				console.log('workspace_id', workspace_Id)
+				setWorkspaceId(workspace_Id.toString())
+				const newWorkspace = `chain_${network}-0x${workspace_Id.toString(16)}`
 				logger.info({ newWorkspace }, 'New workspace created')
 				localStorage.setItem('currentWorkspace', newWorkspace)
-				await addAuthorizedOwner(workspaceId, webwallet?.address!, scwAddress, network.toString(),
+				await addAuthorizedOwner(workspace_Id, webwallet?.address!, scwAddress, network.toString(),
 					'this is the safe addres - to be updated in the new flow')
 
-				await chargeGas(workspaceId, Number(workspaceCreateTxFee), network)
-			}
+				await chargeGas(workspace_Id, Number(workspaceCreateTxFee), network)
+			
 
 			// createGrant()
 			let fileIPFSHash = ''
-		if(doc) {
-			const fileCID = await uploadToIPFS(doc[0]!)
-			logger.info('fileCID', fileCID)
-			fileIPFSHash = fileCID.hash
-		}
+			if (doc) {
+				const fileCID = await uploadToIPFS(doc[0]!)
+				logger.info('fileCID', fileCID)
+				fileIPFSHash = fileCID.hash
+			}
 
-		// 2. validate grant data
-		let payout: string
-		console.log('payout type', payoutMode)
-		if (payoutMode! === 'in one go'){
-			payout = 'in-one-go'
-		} else if (payoutMode! === 'based on milestone'){
-			payout = 'milestones'
-		}
+			// 2. validate grant data
+			let payout: string
+			console.log('payout type', payoutMode)
+			if (payoutMode === 'in one go') {
+				payout = 'in-one-go'
+			} else if (payoutMode! === 'based on milestone') {
+				payout = 'milestones'
+			}
 
-		let review: string
-		if (reviewMechanism === 'Voting') {
-			review = 'voting'
-		} else if (reviewMechanism === 'Rubric') {
-			review = 'rubrics'
-		}
+			let review: string
+			if (reviewMechanism === 'Voting') {
+				review = 'voting'
+			} else if (reviewMechanism === 'Rubric') {
+				review = 'rubrics'
+			}
 
-		let fields: {field: {}}
-		if (allApplicantDetails) {
-			fields = {field: allApplicantDetails[0]}
-			console.log('fields', fields.field)
-		}
+			if (allApplicantDetails) {
 
-		console.log('review type', reviewMechanism)
-		console.log('end date', endDate)
-		const {hash: grantCreateIpfsHash} = await validateAndUploadToIpfs('GrantCreateRequest', {
-			title: proposalName!,
-			startDate: startDate!,
-			endDate: endDate!,
-			// details: allApplicantDetails!,
-			link: link!,
-			docIpfsHash: fileIPFSHash,
-			reward: {
-				asset: USD_ASSET!,
-				committed: amount.toString()!,
-				token: {
-					label: 'USD',
-					address: USD_ASSET!,
-					decimal: USD_DECIMALS.toString(),
-					iconHash: USD_ICON
-				}},
-			payoutType: payout!,
-			reviewType: review!,
-			creatorId: accountDataWebwallet!.address!,
-			workspaceId: workspaceId!,
-			fields: allApplicantDetails,
-		})
+				console.log('fields', allApplicantDetails)
+			}
 
-		console.log('ipfsHash', grantCreateIpfsHash)
-		console.log('rubrics', rubrics)
-
-		let rubricHash = ''
-		if(reviewMechanism === 'Rubrics') {
-			const { hash: auxRubricHash } = await validateAndUploadToIpfs('RubricSetRequest', {
-				rubric: rubrics,
+			console.log('review type', reviewMechanism)
+			console.log('end date', endDate)
+			const { hash: grantCreateIpfsHash } = await validateAndUploadToIpfs('GrantCreateRequest', {
+				title: proposalName!,
+				startDate: startDate!,
+				endDate: endDate!,
+				// details: allApplicantDetails!,
+				link: link!,
+				docIpfsHash: fileIPFSHash,
+				reward: {
+					asset: USD_ASSET!,
+					committed: amount.toString()!,
+					token: {
+						label: 'USD',
+						address: USD_ASSET!,
+						decimal: USD_DECIMALS.toString(),
+						iconHash: USD_ICON
+					}
+				},
+				payoutType: payout!,
+				reviewType: review!,
+				creatorId: accountDataWebwallet!.address!,
+				workspaceId: workspaceId!,
+				fields: allApplicantDetails,
 			})
 
-			if(auxRubricHash) {
-				rubricHash = auxRubricHash || ''
+			console.log('ipfsHash', grantCreateIpfsHash)
+			console.log('rubrics', rubrics)
+
+			let rubricHash = ''
+			if (reviewMechanism === 'Rubrics') {
+				const { hash: auxRubricHash } = await validateAndUploadToIpfs('RubricSetRequest', {
+					rubric: rubrics,
+				})
+
+				if (auxRubricHash) {
+					rubricHash = auxRubricHash || ''
+					console.log('Aux rubric hash', auxRubricHash)
+				}
+			}
+			console.log('rubric hash', rubricHash)
+			if (workspace_Id) {
+				const methodArgs = [
+					workspace_Id.toString(),
+					grantCreateIpfsHash,
+					rubricHash,
+					numberOfReviewers,
+					WORKSPACE_REGISTRY_ADDRESS[network!],
+					APPLICATION_REGISTRY_ADDRESS[network!],
+				]
+				console.log('methodArgs for grant creation', methodArgs)
+				const response = await sendGaslessTransaction(
+					biconomy,
+					grantContract,
+					'createGrant',
+					methodArgs,
+					grantContract.address,
+					biconomyWalletClient!,
+					scwAddress!,
+					webwallet,
+					`${network}`,
+					bicoDapps[network!.toString()].webHookId,
+					nonce
+				)
+				console.log('response', response)
+				if (!response) {
+					return
+				}
+	
+				// setCurrentStep(2)
+				const { txFee, receipt } = await getTransactionDetails(response, network!.toString())
+				await subgraphClients[network!].waitForBlock(receipt?.blockNumber)
+	
+				// setCurrentStep(3)
+	
+				await chargeGas(workspace_Id, Number(txFee), network!)
+				setCurrentStepIndex(1)
+	
+				setCurrentStepIndex(2)
+				setCurrentStepIndex(3) // 3 is the final step
+				
+			} else {
+				console.log('workspaceId not found')
 			}
 		}
-		console.log('rubric hash', rubricHash)
-		const methodArgs = [
-			workspaceId || Number(workspaceId).toString(),
-			grantCreateIpfsHash,
-			rubricHash,
-			numberOfReviewers,
-			WORKSPACE_REGISTRY_ADDRESS[network!],
-			APPLICATION_REGISTRY_ADDRESS[network!],
-		]
-
-		console.log('methodArgs for grant creation', methodArgs)
-
-		const response = await sendGaslessTransaction(
-			biconomy,
-			grantContract,
-			'createGrant',
-			methodArgs,
-			grantContract.address,
-			biconomyWalletClient!,
-			scwAddress!,
-			webwallet,
-			`${network}`,
-			bicoDapps[network!.toString()].webHookId,
-			nonce
-		)
-			console.log( 'response', response)
-		if(!response) {
-			return
-		}
-
-		// setCurrentStep(2)
-		const { txFee, receipt } = await getTransactionDetails(response, network!.toString())
-		await subgraphClients[network!].waitForBlock(receipt?.blockNumber)
-
-		// setCurrentStep(3)
-
-		await chargeGas(Number(workspaceId || Number(workspaceId).toString()), Number(txFee), network!)
-		setCurrentStepIndex(1)
-
-			setCurrentStepIndex(2)
-			setCurrentStepIndex(3) // 3 is the final step
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} catch(e: any) {
+			
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		} catch (e: any) {
 			setCurrentStepIndex(3) // 3 is the final step
 			const message = getErrorMessage(e)
+			console.log('error', message)
 			toastRef.current = toast({
 				position: 'top',
 				render: () => ErrorToast({
 					content: message,
 					close: () => {
-						if(toastRef.current) {
+						if (toastRef.current) {
 							toast.close(toastRef.current)
 						}
 					},
 				}),
 			})
 		}
-	}, [biconomyWalletClient, domainName, accountDataWebwallet, allApplicantDetails, link, doc, rubrics, amount, payoutMode, reviewMechanism, startDate, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, selectedSafeNetwork])
+	}, [biconomyWalletClient, workspaceId, domainName, accountDataWebwallet, allApplicantDetails, link, doc, rubrics, amount, payoutMode, reviewMechanism, startDate, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, selectedSafeNetwork])
 
 	// create grant
 	// 1. upload document to ipfs
-	const createGrant = useCallback(async() => {
-		let fileIPFSHash = ''
-		if(doc) {
-			const fileCID = await uploadToIPFS(doc[0]!)
-			logger.info('fileCID', fileCID)
-			fileIPFSHash = fileCID.hash
-		}
+	// const createGrant = async () => {
 
-		// 2. validate grant data
-		let payout: string
-		console.log('payout type', payoutMode)
-		if (payoutMode! === 'in one go'){
-			payout = 'in-one-go'
-		} else if (payoutMode! === 'based on milestone'){
-			payout = 'milestones'
-		}
+	// 	try {
+	// 		let fileIPFSHash = ''
+	// 		if (doc) {
+	// 			const fileCID = await uploadToIPFS(doc[0]!)
+	// 			logger.info('fileCID', fileCID)
+	// 			fileIPFSHash = fileCID.hash
+	// 		}
 
-		let review: string
-		if (reviewMechanism === 'Voting') {
-			review = 'voting'
-		} else if (reviewMechanism === 'Rubric') {
-			review = 'rubrics'
-		}
+	// 		// 2. validate grant data
+	// 		let payout: string
+	// 		console.log('payout type', payoutMode)
+	// 		if (payoutMode! === 'in one go') {
+	// 			payout = 'in-one-go'
+	// 		} else if (payoutMode! === 'based on milestone') {
+	// 			payout = 'milestones'
+	// 		}
 
-		let fields: {field: {}}
-		if (allApplicantDetails) {
-			fields = {field: allApplicantDetails[0]}
-			console.log('fields', fields.field)
-		}
+	// 		let review: string
+	// 		if (reviewMechanism === 'Voting') {
+	// 			review = 'voting'
+	// 		} else if (reviewMechanism === 'Rubric') {
+	// 			review = 'rubrics'
+	// 		}
 
-		console.log('review type', reviewMechanism)
-		console.log('end date', endDate)
-		const ipfsHash = await validateAndUploadToIpfs('GrantCreateRequest', {
-			title: proposalName!,
-			startDate: startDate!,
-			endDate: endDate!,
-			// details: allApplicantDetails!,
-			link: link!,
-			docIpfsHash: fileIPFSHash,
-			reward: {
-				asset: USD_ASSET!,
-				committed: amount.toString()!,
-				token: {
-					label: 'USD',
-					address: USD_ASSET!,
-					decimal: USD_DECIMALS.toString(),
-					iconHash: USD_ICON
-				}},
-			payoutType: payout!,
-			reviewType: review!,
-			creatorId: accountDataWebwallet!.address!,
-			workspaceId: workspaceId!,
-			fields: allApplicantDetails,
-		})
+	// 		let fields: { field: {} }
+	// 		if (allApplicantDetails) {
+	// 			fields = { field: allApplicantDetails[0] }
+	// 			console.log('fields', fields.field)
+	// 		}
 
-		console.log('ipfsHash', ipfsHash)
-		console.log('rubrics', rubrics)
+	// 		console.log('review type', reviewMechanism)
+	// 		console.log('end date', endDate)
+	// 		const ipfsHash = await validateAndUploadToIpfs('GrantCreateRequest', {
+	// 			title: proposalName!,
+	// 			startDate: startDate!,
+	// 			endDate: endDate!,
+	// 			// details: allApplicantDetails!,
+	// 			link: link!,
+	// 			docIpfsHash: fileIPFSHash,
+	// 			reward: {
+	// 				asset: USD_ASSET!,
+	// 				committed: amount.toString()!,
+	// 				token: {
+	// 					label: 'USD',
+	// 					address: USD_ASSET!,
+	// 					decimal: USD_DECIMALS.toString(),
+	// 					iconHash: USD_ICON
+	// 				}
+	// 			},
+	// 			payoutType: payout!,
+	// 			reviewType: review!,
+	// 			creatorId: accountDataWebwallet!.address!,
+	// 			workspaceId: workspaceId!,
+	// 			fields: allApplicantDetails,
+	// 		})
 
-		let rubricHash = ''
-		if(reviewMechanism === 'Rubrics') {
-			const { hash: auxRubricHash } = await validateAndUploadToIpfs('RubricSetRequest', {
-				rubric: rubrics,
-			})
+	// 		console.log('ipfsHash', ipfsHash)
+	// 		console.log('rubrics', rubrics)
 
-			if(auxRubricHash) {
-				rubricHash = auxRubricHash || ''
-			}
-		}
+	// 		let rubricHash = ''
+	// 		if (reviewMechanism === 'Rubrics') {
+	// 			const { hash: auxRubricHash } = await validateAndUploadToIpfs('RubricSetRequest', {
+	// 				rubric: rubrics,
+	// 			})
 
-		const methodArgs = [
-			workspaceId || Number(workspaceId).toString(),
-			ipfsHash,
-			rubricHash,
-			numberOfReviewers,
-			WORKSPACE_REGISTRY_ADDRESS[network!],
-			APPLICATION_REGISTRY_ADDRESS[network!],
-		]
+	// 			if (auxRubricHash) {
+	// 				rubricHash = auxRubricHash || ''
+	// 			}
+	// 		}
 
-		const response = await sendGaslessTransaction(
-			biconomy,
-			grantContract,
-			'createGrant',
-			methodArgs,
-			grantContract.address,
-			biconomyWalletClient!,
-			scwAddress!,
-			webwallet,
-			`${network}`,
-			bicoDapps[network!.toString()].webHookId,
-			nonce
-		)
-			console.log( 'response', response)
-		if(!response) {
-			return
-		}
+			
+	// 		const methodArgs = [
+	// 			workspaceId || Number(workspaceId).toString(),
+	// 			ipfsHash,
+	// 			rubricHash,
+	// 			numberOfReviewers,
+	// 			WORKSPACE_REGISTRY_ADDRESS[network!],
+	// 			APPLICATION_REGISTRY_ADDRESS[network!],
+	// 		]
 
-		// setCurrentStep(2)
-		const { txFee, receipt } = await getTransactionDetails(response, network!.toString())
-		await subgraphClients[network!].waitForBlock(receipt?.blockNumber)
+	// 		console.log('methodArgs', methodArgs)
+	// 		const response = await sendGaslessTransaction(
+	// 			biconomy,
+	// 			grantContract,
+	// 			'createGrant',
+	// 			methodArgs,
+	// 			grantContract.address,
+	// 			biconomyWalletClient!,
+	// 			scwAddress!,
+	// 			webwallet,
+	// 			`${network}`,
+	// 			bicoDapps[network!.toString()].webHookId,
+	// 			nonce
+	// 		)
+	// 		console.log('response', response)
+	// 		if (!response) {
+	// 			return
+	// 		}
 
-		// setCurrentStep(3)
+	// 		// setCurrentStep(2)
+	// 		const { txFee, receipt } = await getTransactionDetails(response, network!.toString())
+	// 		await subgraphClients[network!].waitForBlock(receipt?.blockNumber)
 
-		await chargeGas(Number(workspaceId || Number(workspaceId).toString()), Number(txFee), network!)
-		setCurrentStepIndex(1)
-		// const CACHE_KEY = strings.cache.create_grant
-		// const cacheKey = `${network || getSupportedChainIdFromWorkspace(workspace)}-${CACHE_KEY}-${workspace?.id}`
-		// console.log('Deleting key: ', cacheKey)
-		// if(typeof window !== 'undefined') {
-		// 	localStorage.removeItem(cacheKey)
-		// }
+	// 		// setCurrentStep(3)
 
-		// setTransactionData(receipt)
-		// setLoading(false)
-		// setCurrentStep(5)
+	// 		await chargeGas(Number(workspaceId || Number(workspaceId).toString()), Number(txFee), network!)
+	// 		setCurrentStepIndex(1)
+	// 		// const CACHE_KEY = strings.cache.create_grant
+	// 		// const cacheKey = `${network || getSupportedChainIdFromWorkspace(workspace)}-${CACHE_KEY}-${workspace?.id}`
+	// 		// console.log('Deleting key: ', cacheKey)
+	// 		// if(typeof window !== 'undefined') {
+	// 		// 	localStorage.removeItem(cacheKey)
+	// 		// }
 
-	}, [accountDataWebwallet, network, startDate, endDate, allApplicantDetails, link, doc, proposalName, amount, payoutMode, reviewMechanism, workspaceId, rubrics])
+	// 		// setTransactionData(receipt)
+	// 		// setLoading(false)
+	// 		// setCurrentStep(5)
+
+	// 	} catch (e: any) {
+	// 		setCurrentStepIndex(3) // 3 is the final step
+	// 		const message = getErrorMessage(e)
+	// 		toastRef.current = toast({
+	// 			position: 'top',
+	// 			render: () => ErrorToast({
+	// 				content: message,
+	// 				close: () => {
+	// 					if (toastRef.current) {
+	// 						toast.close(toastRef.current)
+	// 					}
+	// 				},
+	// 			}),
+	// 		})
+	// 	}
+	// }
 
 	// 3. create grant
 
@@ -581,7 +609,7 @@ function RequestProposal() {
 	return buildComponent()
 }
 
-RequestProposal.getLayout = function(page: ReactElement) {
+RequestProposal.getLayout = function (page: ReactElement) {
 	return (
 		<NavbarLayout renderSidebar={false}>
 			{page}

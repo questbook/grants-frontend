@@ -1,5 +1,7 @@
-import schema from 'src/libraries/validator/schemaClient.yaml'
+import schema from 'src/libraries/validator/schema.yaml'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import Ajv from "ajv"
+import addFormats from 'ajv-formats'
 
 const schemaJson = JSON.parse(JSON.stringify(schema))
 console.log("Schema loaded", schemaJson)
@@ -33,7 +35,7 @@ for(const key in schemaJson) {
 
 
 export async function validateRequest(
-	type: 'GrantUpdateRequest' | 'GrantCreateRequest' | 'RubricSetRequest' | 'WorkspaceCreateRequest',
+	type: 'GrantUpdateRequest' | 'GrantCreateRequest' | 'RubricSetRequest' | 'WorkspaceCreateRequest' | 'WorkspaceMemberUpdate',
 	data: any
 ) {
 	const _validate = await ajv.getSchema(type)!
@@ -44,10 +46,10 @@ export async function validateRequest(
 }
 
 export async function validateAndUploadToIpfs(
-	type: 'GrantUpdateRequest' | 'GrantCreateRequest' | 'RubricSetRequest' | 'WorkspaceCreateRequest',
+	type: 'GrantUpdateRequest' | 'GrantCreateRequest' | 'RubricSetRequest' | 'WorkspaceCreateRequest' | 'WorkspaceMemberUpdate',
 	data: any
 ) {
 	await validateRequest(type, data)
-	const result = await uploadToIPFS(JSON.stringify(data))
+	const result = await uploadToIPFS(JSON.stringify(data)) 
 	return result
 }
