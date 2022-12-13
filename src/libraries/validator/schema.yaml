@@ -86,7 +86,7 @@ SupportedNetwork:
 PayoutType:
   type: string
   enum: 
-    - 'in-one-go'
+    - 'in_one_go'
     - 'milestones'
 ReviewType:
   type: string
