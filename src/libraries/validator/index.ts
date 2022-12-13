@@ -1,36 +1,41 @@
-import $RefParser from '@apidevtools/json-schema-ref-parser'
-import Ajv from 'ajv'
-import addFormats from 'ajv-formats'
-import schema from 'src/libraries/validator/schemaClient.yaml'
+import schema from 'src/libraries/validator/schema.yaml'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import Ajv from "ajv"
+import addFormats from 'ajv-formats'
 
-const schemaJson = JSON.parse(JSON.stringify(schema)).Validations.definitions
-console.log('Schema loaded', schemaJson)
+const schemaJson = JSON.parse(JSON.stringify(schema))
+console.log("Schema loaded", schemaJson)
 
 let ajv = new Ajv({ logger: false })
 ajv = addFormats(ajv)
 ajv.addFormat('hex', /^0x[0-9a-fA-F]+$/)
 ajv.addFormat('integer', () => true)
 
+for(const key in schemaJson) {
+	console.log("Adding schema", key, schemaJson[key])
 
-$RefParser.dereference(schemaJson, (err, schema) => {
-	if(err) {
-	  console.error(err)
-	} else {
-	  // `schema` is just a normal JavaScript object that contains your entire JSON Schema,
-	  // including referenced files, combined into a single object
-	  console.log('Schema dereferenced', schemaJson)
-	  for(const key in schemaJson) {
-			console.log('Adding schema', key, schemaJson[key])
+	ajv.addSchema(schemaJson[key], key)
+}
 
-			ajv.addSchema(schemaJson[key], key)
-		}
-	}
-})
+// $RefParser.dereference(schemaJson, (err, schema) => {
+// 	if (err) {
+// 	  console.error(err);
+// 	}
+// 	else {
+// 	  // `schema` is just a normal JavaScript object that contains your entire JSON Schema,
+// 	  // including referenced files, combined into a single object
+// 	  console.log('Schema dereferenced', schemaJson);
+// 	  for(const key in schemaJson) {
+// 		console.log("Adding schema", key, schemaJson[key])
+	
+// 		ajv.addSchema(schemaJson[key], key)
+// 	}
+// 	}
+//   })
 
 
 export async function validateRequest(
-	type: 'GrantUpdateRequest' | 'GrantCreateRequest',
+	type: 'GrantUpdateRequest' | 'GrantCreateRequest' | 'RubricSetRequest' | 'WorkspaceCreateRequest' | 'WorkspaceMemberUpdate',
 	data: any
 ) {
 	const _validate = await ajv.getSchema(type)!
@@ -41,10 +46,10 @@ export async function validateRequest(
 }
 
 export async function validateAndUploadToIpfs(
-	type: 'GrantUpdateRequest' | 'GrantCreateRequest',
+	type: 'GrantUpdateRequest' | 'GrantCreateRequest' | 'RubricSetRequest' | 'WorkspaceCreateRequest' | 'WorkspaceMemberUpdate',
 	data: any
 ) {
 	await validateRequest(type, data)
-	const result = await uploadToIPFS(JSON.stringify(data))
+	const result = await uploadToIPFS(JSON.stringify(data)) 
 	return result
 }

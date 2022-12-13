@@ -151,6 +151,8 @@ const SetupEvaluationDrawer = ({
 				})
 			}
 
+			// eslint-disable-next-line no-console
+			console.log('Rubric: ', rubric)
 			let rubricHash = ''
 
 			setNetworkTransactionModalStep(1)
@@ -170,6 +172,8 @@ const SetupEvaluationDrawer = ({
 			}
 
 			rubricHash = auxRubricHash
+			// eslint-disable-next-line no-console
+			console.log('Rubric hash: ', auxRubricHash)
 			const workspaceId = Number(workspace?.id).toString()
 			// console.log('Workspace ID: ', workspaceId)
 
