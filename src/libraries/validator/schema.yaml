@@ -9,6 +9,7 @@ Validations:
     - $ref: '#/definitions/ApplicationMilestoneUpdate'
     - $ref: '#/definitions/Address'
     - $ref: '#/definitions/Amount'
+    - $ref: '#/definitions/WorkspaceMemberUpdate'
    # - $ref: '#/definitions/ApplicationUpdateRequest'
    # - $ref: '#/definitions/ApplicationCreateRequest'
   definitions:

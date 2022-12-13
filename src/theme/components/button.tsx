@@ -185,7 +185,7 @@ export default {
 				paddingX: '40px',
 				fontWeight: '500',
 				h: '48px',
-				borderRadius: '2px'
+				borderRadius: '2px',
 			},
 			primaryMedium: {
 				bg: 'accent.azure',

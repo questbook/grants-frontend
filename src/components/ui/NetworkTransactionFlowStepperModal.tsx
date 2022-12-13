@@ -1,5 +1,4 @@
-import { ReactNode, useCallback } from 'react'
-import { AlertDialogOverlay, Box, Button, Divider, Flex, HStack, Image, Modal, ModalBody, ModalContent, ModalHeader, Text, VStack } from '@chakra-ui/react'
+import { AlertDialogOverlay, Box, Button, Flex, HStack, Modal, ModalBody, ModalContent, ModalHeader, Text, VStack } from '@chakra-ui/react'
 import { CheckCircle } from 'src/v2/assets/custom chakra icons/CheckCircle'
 import { ExternalLink } from 'src/v2/assets/custom chakra icons/ExternalLink'
 

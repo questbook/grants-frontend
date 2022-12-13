@@ -102,7 +102,7 @@ function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInvi
 				<Spacer />
 
 				{
-					showSearchBar && (
+					showSearchBar && !inviteInfo && (
 						<Center>
 							<InputGroup mx='20px'>
 								<InputLeftElement pointerEvents='none'>
@@ -151,7 +151,7 @@ function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInvi
 		</>
 	)
 
-	const { role } = useContext(ApiClientsContext)!
+	const { role, inviteInfo } = useContext(ApiClientsContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString, setSearchString } = useContext(DAOSearchContext)!
 	const router = useRouter()

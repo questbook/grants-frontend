@@ -3,6 +3,7 @@ schema:
 documents:
   - ./graphql/*.graphql
   - src/screens/dashboard/_graphql/*.graphql
+  - src/screens/discover/_graphql/*.graphql
 overwrite: true
 generates:
   ./src/generated/graphql.ts:

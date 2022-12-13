@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 import { Box, Button, Divider, Flex } from '@chakra-ui/react'
+import logger from 'src/libraries/logger'
 import { ApiClientsContext } from 'src/pages/_app'
 import Milestones from 'src/screens/dashboard/_components/ActionList/SingleSelect/Milestones'
 import Payouts from 'src/screens/dashboard/_components/ActionList/SingleSelect/Payouts'
@@ -9,6 +10,7 @@ import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Cont
 
 function SingleSelect() {
 	const buildComponent = () => {
+		logger.info({ role }, 'Action List Role')
 		return role === 'admin' ? adminComponent() : role === 'reviewer' ? reviewerComponent() : role === 'builder' ? builderComponent() : <Flex />
 	}
 

@@ -1,22 +1,24 @@
-import { ReactElement, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Box, Button, Center, Container, Flex, Image, Text, ToastId, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import Loader from 'src/components/ui/loader'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
+import { defaultChainId } from 'src/constants/chains'
 import {
 	GetDaOsForExploreQuery,
 	useGetDaOsForExploreQuery,
+	useGetGrantsProgramDetailsQuery,
 	Workspace_Filter as WorkspaceFilter,
 	Workspace_OrderBy as WorkspaceOrderBy,
 } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { DAOSearchContext } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
+import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import useUpdateDaoVisibility from 'src/hooks/useUpdateDaoVisibility'
+import logger from 'src/libraries/logger'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
-import { extractInviteInfo, InviteInfo } from 'src/libraries/utils/invite'
-import { WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
-import AcceptInviteModal from 'src/screens/discover/_components/AcceptInviteModal'
+import { ApiClientsContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import DomainGrid from 'src/screens/discover/_components/DaosGrid'
 import RightArrowIcon from 'src/screens/discover/_components/RightArrowIcon'
 import { useMultichainDaosPaginatedQuery } from 'src/screens/discover/_hooks/useMultiChainPaginatedQuery'
@@ -29,6 +31,10 @@ const PAGE_SIZE = 10
 
 function Discover() {
 	const buildComponent = () => {
+		return inviteInfo ? inviteView() : normalView()
+	}
+
+	const normalView = () => {
 		return (
 			<>
 				<Flex
@@ -245,16 +251,60 @@ function Discover() {
 					}
 				</Flex>
 				{buildNetworkModal()}
-				<AcceptInviteModal
-					inviteInfo={inviteInfo}
-					onClose={
-						() => {
-							setInviteInfo(undefined)
-							window.history.pushState(undefined, '', '/')
-							router.reload()
-						}
-					} />
 			</>
+		)
+	}
+
+	const inviteView = () => {
+		return (
+			<Flex
+				w='100%'
+				h='100vh'
+				direction='column'
+				justify='center'
+				align='center'
+				bg='black.1'>
+				<Text
+					mt='auto'
+					color='white'
+					variant='v2_heading_1'>
+					👋 gm, Welcome to Questbook!
+				</Text>
+				<Text
+					mt={3}
+					color='white'
+					variant='v2_title'>
+					You’re invited to
+					{' '}
+					{grantsProgramTitle}
+					{' '}
+					as
+					{' '}
+					{inviteInfo?.role === 0 ? 'an admin' : 'a reviewer'}
+					.
+				</Text>
+				{
+					inviteInfo?.role === 1 && (
+						<Text
+							mt={8}
+							color='white'
+							variant='v2_title'>
+							As a reviewer you can review grant proposals assigned to you, and communicate with builders to schedule interviews, and clarify your questions.
+						</Text>
+					)
+				}
+				<Button
+					mt={12}
+					variant='primaryLarge'
+					onClick={onGetStartedClick}>
+					<Text color='white'>
+						Get Started
+					</Text>
+				</Button>
+				<Image
+					mt='auto'
+					src='/illustrations/Browsers.svg' />
+			</Flex>
 		)
 	}
 
@@ -290,7 +340,6 @@ function Discover() {
 		)
 	}
 
-	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number | undefined>()
 	const [unsavedDomainState, setUnsavedDaosState] = useState<{ [_: number]: { [_: string]: boolean } }>({})
 
@@ -299,6 +348,18 @@ function Discover() {
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 
 	const { searchString } = useContext(DAOSearchContext)!
+	const { inviteInfo } = useContext(ApiClientsContext)!
+	const { fetchMore } = useMultiChainQuery({
+		useQuery: useGetGrantsProgramDetailsQuery,
+		options: {
+			variables: {
+				workspaceID: inviteInfo ? `0x${inviteInfo.workspaceId.toString(16)}` : ''
+			}
+		},
+		chains: inviteInfo?.chainId ? [inviteInfo.chainId] : [defaultChainId]
+	})
+
+	const [grantsProgramTitle, setGrantsProgramTitle] = useState<string>()
 
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()
@@ -378,22 +439,6 @@ function Discover() {
 	}, [daos, myDaos])
 
 	useEffect(() => {
-		try {
-			const inviteInfo = extractInviteInfo()
-			if(inviteInfo) {
-				setInviteInfo(inviteInfo)
-			}
-		} catch(error) {
-			toast({
-				title: `Invalid invite "${(error as Error).message}"`,
-				status: 'error',
-				duration: 9000,
-				isClosable: true,
-			})
-		}
-	}, [])
-
-	useEffect(() => {
 		(async() => {
 			if(isQbAdmin === undefined) {
 				return
@@ -405,6 +450,34 @@ function Discover() {
 			}
 		})()
 	}, [scwAddress, isQbAdmin, searchString])
+
+	const fetchDetails = useCallback(async() => {
+		if(!inviteInfo?.workspaceId || !inviteInfo?.chainId) {
+			return
+		}
+
+		logger.info({ inviteInfo }, 'Invite Info')
+
+		const workspaceID = `0x${inviteInfo.workspaceId.toString(16)}`
+		logger.info({ workspaceID }, 'Workspace ID')
+		const results = await fetchMore({ workspaceID }, true)
+		logger.info({ results }, 'Results')
+
+		if(!results?.length) {
+			return
+		}
+
+		logger.info({ grantsProgram: results[0] }, 'Results')
+		setGrantsProgramTitle(results[0]?.grantsProgram?.title)
+	}, [inviteInfo])
+
+	useEffect(() => {
+		fetchDetails()
+	}, [inviteInfo])
+
+	const onGetStartedClick = () => {
+		router.push({ pathname: '/setup_profile' })
+	}
 
 	return buildComponent()
 }
