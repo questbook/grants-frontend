@@ -112,19 +112,21 @@ function SetupProfile() {
 	const [email, setEmail] = useState<string>('')
 
 	const isDisabled = useMemo(() => {
-		return name === '' || email === ''
+		return name === '' || email === '' || !isBiconomyInitialised
 	}, [name, email])
 
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
-	const [transactionHash, setTransactionHash] = useState<string>()
+	const [transactionHash, setTransactionHash] = useState<string>('')
 
-	const { setupProfile, isBiconomyInitialised } = useSetupProfile({
-		setNetworkTransactionModalStep, setTransactionHash
-	})
+	const { setupProfile, isBiconomyInitialised } = useSetupProfile({ setNetworkTransactionModalStep, setTransactionHash })
 
 	const onCreateClick = async() => {
+		if(!inviteInfo?.role) {
+			return
+		}
+
 		setupProfile({
-			name, email, role: inviteInfo?.role,
+			name, email, role: inviteInfo.role
 		})
 	}
 

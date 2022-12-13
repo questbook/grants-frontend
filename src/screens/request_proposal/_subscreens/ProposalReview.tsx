@@ -8,22 +8,22 @@ import StepIndicator from 'src/libraries/ui/StepIndicator'
 import { DynamicInputValues } from 'src/types'
 
 interface Props {
-    numberOfReviewers: number
-    setNumberOfReviewers: (value: number) => void
-    rubricMechanism: string
-    setRubricMechanism: (value: string) => void
-    rubrics: {}
-    setRubrics: (value: {}) => void
-    step: number
-    setStep: (value: number) => void
+	numberOfReviewers: number
+	setNumberOfReviewers: (value: number) => void
+	reviewMechanism: string
+	setReviewMechanism: (value: string) => void
+	rubrics: {}
+	setRubrics: (value: {}) => void
+	step: number
+	setStep: (value: number) => void
 }
 
 function ProposalReview(
 	{
 		numberOfReviewers,
 		setNumberOfReviewers,
-		rubricMechanism,
-		setRubricMechanism,
+		reviewMechanism,
+		setReviewMechanism,
 		rubrics,
 		setRubrics,
 		step,
@@ -85,9 +85,9 @@ function ProposalReview(
 						</Text>
 						<FlushedInput
 							placeholder='Select one'
-							value={rubricMechanism}
+							value={reviewMechanism}
 							isDisabled={true}
-							onChange={(e) => setRubricMechanism(e.target.value)} />
+							onChange={(e) => {setReviewMechanism(e.target.value); console.log('changed review type', e.target.value)}} />
 					</Flex>
 
 					<Flex
@@ -97,62 +97,62 @@ function ProposalReview(
 							variant='outline'
 							leftIcon={<AiOutlinePlus />}
 							borderColor='black'
-							onClick={() => setRubricMechanism('Voting')}>
+							onClick={() => setReviewMechanism('Voting')}>
 							Voting
 						</Button>
 						<Button
 							variant='outline'
 							leftIcon={<AiOutlinePlus />}
 							borderColor='black'
-							onClick={() => setRubricMechanism('Rubric')}>
+							onClick={() => setReviewMechanism('Rubric')}>
 							Rubric
 						</Button>
 					</Flex>
 
 					{/* Rubric Selected */}
 					{
-						rubricMechanism === 'Rubric'
-                        &&
-                        (
-                        	<>
-                        		<Flex
-                        			gap={4}
-                        			alignItems='baseline'
-                        			wrap='wrap'>
-                        			<Text variant='requestProposalBody'>
-		Rubric includes
-</Text>
+						reviewMechanism === 'Rubric'
+						&&
+						(
+							<>
+								<Flex
+									gap={4}
+									alignItems='baseline'
+									wrap='wrap'>
+									<Text variant='requestProposalBody'>
+										Rubric includes
+									</Text>
 
-                        			{
-                        				Array.from(Array(rubricsCounter)).map((c, index) => {
-                        				return (
-                        						<>
-                        							<FlushedInput
-                        								placeholder='Add your own'
-                        								value={rubricInputValues[index]}
-                        								onChange={(e) => handleOnChange(e, index)} />
-                        							<Text variant='requestProposalBody'>
-		,
-</Text>
- </>
-                        				)
-                        			})
-                        			}
+									{
+										Array.from(Array(rubricsCounter)).map((c, index) => {
+											return (
+												<>
+													<FlushedInput
+														placeholder='Add your own'
+														value={rubricInputValues[index]}
+														onChange={(e) => handleOnChange(e, index)} />
+													<Text variant='requestProposalBody'>
+														,
+													</Text>
+												</>
+											)
+										})
+									}
 
- </Flex>
-                        		<Flex
-                        			gap={4}
-                        			alignItems='baseline'>
-                        			<Button
-                        				variant='outline'
-                        				leftIcon={<AiOutlinePlus />}
-                        				borderColor='black'
-                        				onClick={() => handleClick()}>
-		Add another
-</Button>
- </Flex>
-                        	</>
-                        )
+								</Flex>
+								<Flex
+									gap={4}
+									alignItems='baseline'>
+									<Button
+										variant='outline'
+										leftIcon={<AiOutlinePlus />}
+										borderColor='black'
+										onClick={() => handleClick()}>
+										Add another
+									</Button>
+								</Flex>
+							</>
+						)
 					}
 
 					{/* CTA */}
@@ -169,12 +169,12 @@ function ProposalReview(
 							variant='primaryMedium'
 							onClick={
 								() => {
-									setStep(3)
-									setRubrics(rubricInputValues)
+									handleOnClickContinue()
 								}
 							}
-							isDisabled={!rubricMechanism} >
+							isDisabled={!reviewMechanism} >
 							Continue
+
 						</Button>
 					</Flex>
 
@@ -190,6 +190,20 @@ function ProposalReview(
 	const handleClick = () => {
 		setRubricsCounter(rubricsCounter + 1)
 		console.log(rubricsCounter)
+	}
+
+	const handleOnClickContinue = () => {
+		setStep(3)
+		let rubrics: {[key: number]: {title: string, details: string, maiximumPoints: number }} = {}
+		Object.keys(rubricInputValues).forEach((key, index) => {
+			rubrics[index] = {
+				title: rubricInputValues[index],
+				details: '',
+				maiximumPoints: 5
+			}
+
+		})
+		setRubrics(rubrics)
 	}
 
 	const handleOnChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {

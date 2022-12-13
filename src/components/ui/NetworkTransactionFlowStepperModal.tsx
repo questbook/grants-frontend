@@ -42,12 +42,12 @@ function NetworkTransactionFlowStepperModal({ isOpen, currentStepIndex, viewTxnL
 					<ModalBody p='5'>
 						<VStack align='stretch'>
 
-							<Text
-								fontSize='sm'
-								color='v2Grey'
-								fontWeight='bold'>
-								ACTIVITY
-							</Text>
+                            <Text
+                                fontSize='sm'
+                                color='gray.5'
+                                fontWeight='bold'>
+                                ACTIVITY
+                            </Text>
 
 							{
 								steps.map((step, index) => (
@@ -107,45 +107,45 @@ function NetworkTransactionFlowStepperModal({ isOpen, currentStepIndex, viewTxnL
 		)
 	}
 
-	const ModalStep = ({
-		state,
-		isLastStep,
-		text,
-	}: ModalStepProps) => {
-		return (
-			<VStack align='start'>
-				<HStack>
-					{
-						state === 'done' ? (
-							<CheckCircle
-								color='green.4'
-								boxSize={5} />
-						) : (
-							<>
-								{
-									state === 'loading' ? (
-										<Box
-											minW={4}
-											minH={4}
-											p='2px'
-											bg='azure.1'
-											style={
-												{
-													aspectRatio: '1',
-													WebkitMask: 'conic-gradient(#0000,#000), linear-gradient(#000 0 0) content-box',
-													WebkitMaskComposite: 'source-out'
-												}
-											}
-											borderRadius='50%'
-											boxSizing='border-box'
-											animation='spinner 0.45s linear infinite'
-										/>
-									) : (
-										<Box
-											minW={4}
-											minH={4}
-											borderColor='#E0E0EC'
-											borderWidth='2px'
+    const ModalStep = ({
+        state,
+        isLastStep,
+        text,
+    }: ModalStepProps) => {
+        return (
+            <VStack align='start'>
+                <HStack>
+                    {
+                        state === 'done' ? (
+                            <CheckCircle
+                                color='brand.green'
+                                boxSize={5} />
+                        ) : (
+                            <>
+                                {
+                                    state === 'loading' ? (
+                                        <Box
+                                            minW={4}
+                                            minH={4}
+                                            p='2px'
+                                            bg='accent.azure'
+                                            style={
+                                                {
+                                                    aspectRatio: '1',
+                                                    WebkitMask: 'conic-gradient(#0000,#000), linear-gradient(#000 0 0) content-box',
+                                                    WebkitMaskComposite: 'source-out'
+                                                }
+                                            }
+                                            borderRadius='50%'
+                                            boxSizing='border-box'
+                                            animation='spinner 0.45s linear infinite'
+                                        />
+                                    ) : (
+                                        <Box
+                                            minW={4}
+                                            minH={4}
+                                            borderColor='#E0E0EC'
+                                            borderWidth='2px'
 
 											borderRadius='50%'
 											boxSizing='border-box'

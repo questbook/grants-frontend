@@ -10,6 +10,7 @@ export default [
 		id: 'applicantEmail',
 		inputType: 'short-form',
 		isRequired: true,
+		pii: true
 	},
 	{
 		title: 'Wallet Address',
@@ -26,7 +27,7 @@ export default [
 
 	{
 		title: 'Title',
-		id: 'title',
+		id: 'projectName',
 		inputType: 'short-form',
 		isRequired: true,
 	},
@@ -55,16 +56,15 @@ export default [
 		isRequired: false,
 	},
 	{
-		title: 'Add more questions',
-		id: 'customFields',
-		inputType: 'array',
-		isRequired: false,
-	},
-	{
 		title: 'Funding Ask',
 		id: 'fundingAsk',
 		inputType: 'long-form',
 		isRequired: true,
 	},
-
+	{
+		title: 'Add more questions',
+		id: 'customFields',
+		inputType: 'array',
+		isRequired: false,
+	},
 ]
