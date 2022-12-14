@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { BsArrowLeft } from 'react-icons/bs'
-import { Button, Flex, Image, Select, Text } from '@chakra-ui/react'
+import { Button, Flex, Image, Text } from '@chakra-ui/react'
 import { SupportedSafes } from '@questbook/supported-safes'
+import { logger } from 'ethers'
 import { NetworkType } from 'src/constants/Networks'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
@@ -21,7 +22,7 @@ interface Props {
 }
 
 function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, selectedSafeNetwork, setSelectedSafeNetwork }: Props) {
-	console.log('selectedSafeNetwork', selectedSafeNetwork)
+	// console.log('selectedSafeNetwork', selectedSafeNetwork)
 	const buildComponent = () => {
 		return (
 			<>
@@ -34,13 +35,32 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 					</Button>
 				</Flex>
 
-                <Flex className="rightScreenCard" flexDirection='column' width='100%' gap={6} alignSelf='flex-start' alignItems='center'>
-                    <StepIndicator step={step} />
-                    <Flex direction='column' alignItems='center' gap={10}>
-                        <Flex direction='column' gap={2}>
-                            <Text alignSelf='center' fontWeight='500' fontSize='24px' lineHeight='32px' >Link your multisig</Text>
-                            <Text>Use your multisig to payout builders on Questbook</Text>
-                        </Flex>
+				<Flex
+					className='rightScreenCard'
+					flexDirection='column'
+					width='100%'
+					gap={6}
+					alignSelf='flex-start'
+					alignItems='center'>
+					<StepIndicator step={step} />
+					<Flex
+						direction='column'
+						alignItems='center'
+						gap={10}>
+						<Flex
+							direction='column'
+							gap={2}>
+							<Text
+								alignSelf='center'
+								fontWeight='500'
+								fontSize='24px'
+								lineHeight='32px' >
+								Link your multisig
+							</Text>
+							<Text>
+								Use your multisig to payout builders on Questbook
+							</Text>
+						</Flex>
 
 						<Flex
 							direction='column'
@@ -70,14 +90,28 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 									}
 								} />
 
-                            {
-                                (multiSigAddress && loadingSafeData && safeNetworks.length < 1)
-                                    ? <Text variant="footerContent" color='black.3'>Searching for this address on different networks..</Text>
-                                    : (multiSigAddress)
-                                        ? (<>
-                                            <Flex gap={2}>
-                                                <Image src="/ui_icons/Done_all_alt_round.svg" color='#273B4A' />
-                                                <Text variant="footerContent">Looks like this address is on {safeNetworks.length} network(s).</Text>
+							{
+								(multiSigAddress && loadingSafeData && safeNetworks.length < 1)
+									? (
+										<Text
+											variant='footerContent'
+											color='black.3'>
+											Searching for this address on different networks..
+										</Text>
+									)
+									: (multiSigAddress)
+										? (
+											<>
+												<Flex gap={2}>
+													<Image
+														src='/ui_icons/Done_all_alt_round.svg'
+														color='#273B4A' />
+													<Text variant='footerContent'>
+														Looks like this address is on
+														{safeNetworks.length}
+														{' '}
+														network(s).
+													</Text>
 
 												</Flex>
 
@@ -129,8 +163,8 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 				</Flex>
 
 				<VerifySignerModal
-					owners={ selectedSafeNetwork ? selectedSafeNetwork.owners : []}
-					setOwnerAddress={(newOwnerAddress) => setOwnerAddress(newOwnerAddress)}
+					owners={selectedSafeNetwork ? selectedSafeNetwork.owners : []}
+					// setOwnerAddress={(newOwnerAddress) => setOwnerAddress(newOwnerAddress)}
 					setIsOwner={
 						(newState) => {
 							setIsOwner(newState)
@@ -149,7 +183,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 	const [isOwner, setIsOwner] = useState(false)
 	const [loadingSafeData, setLoadingSafeData] = useState(false)
 
-	const [ownerAddress, setOwnerAddress] = useState('')
+	// const [ownerAddress, setOwnerAddress] = useState('')
 
 	// const { data: safeOwners } = useSafeOwners({ safeAddress: multiSigAddress, chainID: selectedSafeNetwork?.networkId, type: selectedSafeNetwork?.networkType ?? NetworkType.EVM })
 
@@ -170,11 +204,10 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 	// }, [multiSigAddress])
 
 	useEffect(() => {
-		console.log('Multi-sig address entered', multiSigAddress)
+		logger.info('Multi-sig address entered', multiSigAddress)
 		const fetchSafeData = async() => {
 			const supportedSafes = new SupportedSafes()
 			const res = await supportedSafes.getSafeByAddress(multiSigAddress)
-			console.log('res safe', res)
 			setLoadingSafeData(false)
 			setSafeNetworks(res)
 		}
