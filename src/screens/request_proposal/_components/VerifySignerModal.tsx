@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AlertDialogOverlay, Box, Flex, Image, Modal, ModalBody, ModalContent, Text, useToast, VStack } from '@chakra-ui/react'
-import { Papercups } from '@papercups-io/chat-widget'
+import { AlertDialogOverlay, Box, Flex, Modal, ModalBody, ModalContent, Text, useToast, VStack } from '@chakra-ui/react'
 import { NetworkType } from 'src/constants/Networks'
 import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
 import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/PhantomLogo'
@@ -20,7 +19,7 @@ const VerifySignerModal = ({
 	redirect,
 	setIsOwner,
 	networkType,
-	setOwnerAddress
+	// setOwnerAddress
 }: {
     owners: string[]
     isOpen: boolean
@@ -28,7 +27,7 @@ const VerifySignerModal = ({
     redirect?: () => void
     setIsOwner: (newState: boolean) => void
     networkType: NetworkType
-    setOwnerAddress: (ownerAddress: string) => void
+    // setOwnerAddress: (ownerAddress: string) => void
 }) => {
 	const [connectClicked, setConnectClicked] = useState(false)
 	const [walletClicked, setWalletClicked] = useState(false)
@@ -96,13 +95,13 @@ const VerifySignerModal = ({
 		}
 	}, [address])
 
-	console.log(owners, phantomWallet?.publicKey)
+	// console.log(owners, phantomWallet?.publicKey)
 
 	useEffect(() => {
 		if(isOpen && walletClicked) {
 			if(networkType === NetworkType.EVM && address && owners.includes(address)) {
 				setIsOwner(true)
-				setOwnerAddress(address)
+				// setOwnerAddress(address)
 				// alert('Your safe ownership is proved.')
 				toast.closeAll()
 				toast({
@@ -114,9 +113,10 @@ const VerifySignerModal = ({
 						close: () => { }
 					}),
 				})
+			// eslint-disable-next-line sonarjs/no-duplicated-branches
 			} else if(networkType === NetworkType.Solana && phantomWallet?.publicKey && owners.includes(phantomWallet?.publicKey.toString())) {
 				setIsOwner(true)
-				setOwnerAddress(phantomWallet?.publicKey.toString())
+				// setOwnerAddress(phantomWallet?.publicKey.toString())
 				// alert('Your safe ownership is proved.')
 				toast.closeAll()
 				toast({

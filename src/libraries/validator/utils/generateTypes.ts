@@ -6,6 +6,7 @@ import path from 'path'
 const GEN_TYPES_FILE = './src/types/gen.d.ts'
 
 async function main() {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const schema = await readYaml<any>('src/libraries/validator/schema.yaml')
 	// console.log('Generating types for schema...', schema)
 	const result = await compile(schema.Validations, 'Schema', {

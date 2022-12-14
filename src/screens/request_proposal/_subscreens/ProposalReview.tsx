@@ -2,7 +2,6 @@ import { ChangeEvent, useState } from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { BsArrowLeft } from 'react-icons/bs'
 import { Button, Flex, Text } from '@chakra-ui/react'
-import { useRouter } from 'next/router'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
 import { DynamicInputValues } from 'src/types'
@@ -24,14 +23,10 @@ function ProposalReview(
 		setNumberOfReviewers,
 		reviewMechanism,
 		setReviewMechanism,
-		rubrics,
 		setRubrics,
 		step,
 		setStep
 	}: Props) {
-
-	console.log('step', step)
-
 
 	const buildComponent = () => {
 		return (
@@ -87,7 +82,11 @@ function ProposalReview(
 							placeholder='Select one'
 							value={reviewMechanism}
 							isDisabled={true}
-							onChange={(e) => {setReviewMechanism(e.target.value); console.log('changed review type', e.target.value)}} />
+							onChange={
+								(e) => {
+									setReviewMechanism(e.target.value)
+								}
+							} />
 					</Flex>
 
 					<Flex
@@ -169,7 +168,7 @@ function ProposalReview(
 							className='continueBtn'
 							variant='primaryMedium'
 							w='166px'
-						h='48px'
+							h='48px'
 							onClick={
 								() => {
 									handleOnClickContinue()
@@ -192,12 +191,11 @@ function ProposalReview(
 
 	const handleClick = () => {
 		setRubricsCounter(rubricsCounter + 1)
-		console.log(rubricsCounter)
 	}
 
 	const handleOnClickContinue = () => {
 		setStep(3)
-		let rubrics: {[key: number]: {title: string, details: string, maximumPoints: number }} = {}
+		const rubrics: { [key: number]: { title: string, details: string, maximumPoints: number } } = {}
 		Object.keys(rubricInputValues).forEach((key, index) => {
 			rubrics[index] = {
 				title: rubricInputValues[index],
@@ -213,7 +211,6 @@ function ProposalReview(
 		const inputValues: DynamicInputValues = {}
 		inputValues[index] = e.target.value
 		setRubricInputValues({ ...rubricInputValues, ...inputValues })
-		console.log({ ...rubricInputValues, ...inputValues })
 	}
 
 

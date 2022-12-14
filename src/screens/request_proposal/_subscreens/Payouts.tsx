@@ -2,7 +2,6 @@ import { ChangeEvent, useState } from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { BsArrowLeft } from 'react-icons/bs'
 import { Button, Flex, Text } from '@chakra-ui/react'
-import { useRouter } from 'next/router'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
 import { DynamicInputValues } from 'src/types'
@@ -18,6 +17,7 @@ interface Props {
 	setMilestones: (value: object) => void
 }
 
+
 function Payouts(
 	{
 		payoutMode,
@@ -26,11 +26,10 @@ function Payouts(
 		setAmount,
 		step,
 		setStep,
-		milestones,
 		setMilestones
 	}: Props) {
-	const router = useRouter()
 	const buildComponent = () => {
+		// eslint-disable-next-line no-restricted-syntax
 		enum PayoutMode {
 			IN_ONE_GO = 'in one go',
 			BASED_ON_MILESTONE = 'based on milestone'
@@ -184,14 +183,12 @@ function Payouts(
 
 	const handleClick = () => {
 		setMilestoneCounter(milestoneCounter + 1)
-		console.log(milestoneCounter)
 	}
 
 	const handleOnChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
 		const milestones: DynamicInputValues = {}
 		milestones[index] = e.target.value
 		setMilestoneInputValues({ ...milestoneInputValues, ...milestones })
-		console.log({ ...milestoneInputValues, ...milestones })
 	}
 
 
