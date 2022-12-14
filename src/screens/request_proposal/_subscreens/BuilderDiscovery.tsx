@@ -126,8 +126,8 @@ function BuilderDiscovery({ domainName, setDomainName, setDomainImage, setIsOpen
 				<Button
 					variant='primaryMedium'
 					isDisabled={!domainName}
-					h='166px'
-					w='48px'
+					h='48px'
+					w='166px'
 					onClick={
 						() => {
 							setDomainImage(domainLogoFile!)
