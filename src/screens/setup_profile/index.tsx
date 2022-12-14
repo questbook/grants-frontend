@@ -35,7 +35,6 @@ function SetupProfile() {
 				<Flex
 					bg='white'
 					w='80%'
-					h='90%'
 					border='1px solid #E7E4DD'
 					boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
 					py={8}
