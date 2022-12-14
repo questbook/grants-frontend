@@ -19,14 +19,14 @@ import { bicoDapps, getTransactionDetails, sendGaslessTransaction } from 'src/ut
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 
 interface Props {
-    setNetworkTransactionModalStep: (step: number | undefined) => void
-    setTransactionHash: (hash: string) => void
+	setNetworkTransactionModalStep: (step: number | undefined) => void
+	setTransactionHash: (hash: string) => void
 }
 
 function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash }: Props) {
 	const { subgraphClients } = useContext(ApiClientsContext)!
 	const { webwallet } = useContext(WebwalletContext)!
-	const { grant, chainId } = useContext(ProposalFormContext)!
+	const { type, grant, proposal, chainId } = useContext(ProposalFormContext)!
 	const { encrypt } = useEncryptPiiForApplication(grant?.id, webwallet?.publicKey, chainId)
 	const applicationRegistryContract = useQBContract('applications', chainId)
 	const { nonce } = useQuestbookAccount()
@@ -81,6 +81,10 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 					...fields,
 					fundingAsk: [],
 					projectDetails: [{ value: detailsHash }],
+					teamMembers: [{ value: form.members.length.toString() }],
+					memberDetails: form.members.map((value) => ({
+						value,
+					}))
 				},
 				milestones: form.milestones.map((milestone) => ({
 					title: milestone.title,
@@ -102,12 +106,14 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 			logger.info({ proposalDataHash }, 'useSubmitProposal: (proposalDataHash)')
 
 			// Step - 5: Call the contract function to submit the proposal
-			const methodArgs = [grant.id, grant.workspace.id, proposalDataHash, data.milestones.length]
+			const methodArgs = type === 'submit' ?
+				[grant.id, grant.workspace.id, proposalDataHash, data.milestones.length] :
+				[proposal?.id, proposalDataHash, data.milestones.length]
 			logger.info({ methodArgs }, 'useSubmitProposal: (Method args)')
 			const response = await sendGaslessTransaction(
 				biconomy,
 				applicationRegistryContract,
-				'submitApplication',
+				type === 'submit' ? 'submitApplication' : 'updateApplicationMetadata',
 				methodArgs,
 				APPLICATION_REGISTRY_ADDRESS[chainId],
 				biconomyWalletClient,
@@ -138,12 +144,12 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 			logger.error(e, 'useSubmitProposal: (Error)')
 			setNetworkTransactionModalStep(undefined)
 		}
-	}, [grant, chainId, webwallet, biconomy, biconomyWalletClient, scwAddress, biconomyLoading])
+	}, [type, grant, proposal, chainId, webwallet, biconomy, biconomyWalletClient, scwAddress, biconomyLoading])
 
 	return {
 		submitProposal: useMemo(() => {
 			return submitProposal
-		}, [grant, chainId, webwallet, biconomy, biconomyWalletClient, scwAddress, biconomyLoading]), isBiconomyInitialised
+		}, [type, grant, proposal, chainId, webwallet, biconomy, biconomyWalletClient, scwAddress, biconomyLoading]), isBiconomyInitialised
 	}
 }
 

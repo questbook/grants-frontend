@@ -291,11 +291,11 @@ export function useEncryptPiiForApplication(
 	 * otherwise return as is
 	 */
 	const decrypt = useCallback(
-		async(app: Exclude<GetProposalsForAdminQuery['grantApplications'], null | undefined>[number]) => {
+		async(app: Pick<Exclude<GetProposalsForAdminQuery['grantApplications'], null | undefined>[number], 'pii' | 'fields' | 'id'>) => {
 			if(app?.pii?.length) {
 				logger.info('Encrypted Data', app)
 				if(!scwAddress || !applicantPublicKey || !grantId) {
-					logger.debug('skipping decryption, as details not present')
+					logger.info({ scwAddress, applicantPublicKey, grantId }, 'skipping decryption, as details not present')
 					return
 				}
 
@@ -304,6 +304,7 @@ export function useEncryptPiiForApplication(
 					return idLowerCase.endsWith(webwallet!.address.toLowerCase())
 						|| idLowerCase.endsWith(scwAddress.toLowerCase())
 				})
+				logger.info({ piiData }, 'pii data')
 				if(piiData) {
 					try {
 						const fields = await decryptPii(piiData.data)

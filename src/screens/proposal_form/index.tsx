@@ -1,7 +1,7 @@
-import { ChangeEvent, ReactElement, useContext, useMemo, useState } from 'react'
+import { ChangeEvent, ReactElement, useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Flex, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { PayoutType } from 'src/generated/graphql'
+import logger from 'src/libraries/logger'
 import BackButton from 'src/libraries/ui/BackButton'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
@@ -16,7 +16,7 @@ import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposa
 import { containsField, findField } from 'src/screens/proposal_form/_utils'
 import { MILESTONE_INPUT_STYLE } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
-import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { getExplorerUrlForTxHash, getRewardAmountMilestones } from 'src/utils/formattingUtils'
 
 function ProposalForm() {
 	const buildComponent = () => {
@@ -194,7 +194,7 @@ function ProposalForm() {
 
 						<SelectArray
 							label='Milestones'
-							allowMultiple={grant?.payoutType === PayoutType.Milestones}
+							allowMultiple={grant?.payoutType === 'milestones'}
 							config={
 								form?.milestones?.map((milestone, index) => {
 									return [
@@ -221,16 +221,11 @@ function ProposalForm() {
 							} />
 
 						<SectionInput
-							label={`Funding Asked (in ${chainInfo?.label})`}
-							isDisabled={!containsField(grant, 'fundingAsk')}
-							placeholder='12000'
-							type='number'
-							value={findField(form, 'fundingAsk').value}
-							onChange={
-								(e) => {
-									onChange(e, 'fundingAsk')
-								}
-							} />
+							label='Funding Asked'
+							isDisabled
+							placeholder='12000 USD'
+							value={`${fundingAsk} ${chainInfo?.label}`}
+						/>
 
 						{/* Render custom Fields */}
 						{
@@ -272,7 +267,9 @@ function ProposalForm() {
 							<Text
 								color='white'
 								fontWeight='500'>
-								Submit Proposal
+								{type === 'submit' ? 'Submit' : 'Resubmit'}
+								{' '}
+								Proposal
 							</Text>
 						</Button>
 					</Flex>
@@ -293,7 +290,7 @@ function ProposalForm() {
 	}
 
 	const { setRole } = useContext(ApiClientsContext)!
-	const { grant, chainId, form, setForm } = useContext(ProposalFormContext)!
+	const { type, grant, chainId, form, setForm } = useContext(ProposalFormContext)!
 
 	const router = useRouter()
 
@@ -308,6 +305,15 @@ function ProposalForm() {
 
 		return getChainInfo(grant, chainId)
 	}, [grant, chainId])
+
+	const fundingAsk = useMemo(() => {
+		const val = getRewardAmountMilestones(chainInfo?.decimals ?? 0, { milestones: form.milestones.map((m) => ({ ...m, amount: m.amount.toString() })) })
+		return val
+	}, [form])
+
+	useEffect(() => {
+		logger.info({ form }, 'Form changed')
+	}, [form])
 
 	const onChange = (e: ChangeEvent<HTMLInputElement>, id: string) => {
 		const copy = { ...form }

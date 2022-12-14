@@ -69,6 +69,7 @@ function SelectArray({ label, allowMultiple, flexProps, config }: Props) {
 																fontSize='20px'
 																lineHeight='28px'
 																color='black.1'
+																onWheel={(e) => (e.target as HTMLElement).blur()}
 																_placeholder={
 																	{
 																		color: 'gray.5'

@@ -4,7 +4,7 @@ documents:
   - ./graphql/*.graphql
   - src/screens/dashboard/_graphql/*.graphql
   - src/screens/discover/_graphql/*.graphql
-  - src/screens/submit_proposal/_graphql/*.graphql
+  - src/screens/proposal_form/_graphql/*.graphql
 overwrite: true
 generates:
   ./src/generated/graphql.ts:

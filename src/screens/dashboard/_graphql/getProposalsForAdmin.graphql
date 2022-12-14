@@ -12,17 +12,9 @@ query getProposalsForAdmin($first: Int, $skip: Int, $grantID: String!) {
     state
     fields {
       id
-      field {
-        id
-        title
-        inputType
-        possibleValues
-        isPii
-      }
       values {
         id
         value
-        walletId
       }
     }
     pii {

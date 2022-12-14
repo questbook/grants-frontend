@@ -12,17 +12,9 @@ query getProposalsForBuilder($first: Int, $skip: Int, $builderId: Bytes!) {
     state
     fields {
       id
-      field {
-        id
-        title
-        inputType
-        possibleValues
-        isPii
-      }
       values {
         id
         value
-        walletId
       }
     }
     pii {

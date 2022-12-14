@@ -287,7 +287,7 @@ function Proposal() {
 
  		Promise.all([decrypt(proposal), getFromIPFS(getFieldString(proposal, 'projectDetails'))]).then(([decryptedProposal, details]) => {
 			logger.info({ decryptedProposal, details }, '(Proposal) decrypted proposal')
-			setDecryptedProposal(decryptedProposal)
+			setDecryptedProposal({ ...proposal, ...decryptedProposal })
 			setProjectDetails(details)
 		})
 	}, [proposal])
