@@ -60,11 +60,5 @@ export default [
 		id: 'fundingAsk',
 		inputType: 'long-form',
 		isRequired: true,
-	},
-	{
-		title: 'Add more questions',
-		id: 'customFields',
-		inputType: 'array',
-		isRequired: false,
-	},
+	}
 ]

@@ -166,6 +166,7 @@ export type ApplicantDetailsFieldType = {
   id: string
   inputType: string
   required: boolean
+  pii?: boolean
 }
 
 export type DynamicInputValues = {
@@ -178,6 +179,7 @@ export type CustomField = {
 	isError: boolean
 }
 
+// eslint-disable-next-line no-restricted-syntax
 export enum ReviewType {
   'Voting',
   'Rubrics'

@@ -143,7 +143,7 @@ export interface GrantUpdateRequest {
    */
   docIpfsHash?: string;
   reward?: GrantReward;
-  payoutType?: "in-one-go" | "milestones";
+  payoutType?: "in_one_go" | "milestones";
   reviewType?: "voting" | "rubrics";
   creatorId?: string;
   /**
@@ -241,7 +241,7 @@ export interface GrantCreateRequest {
    */
   docIpfsHash?: string;
   reward: GrantReward1;
-  payoutType?: "in-one-go" | "milestones";
+  payoutType?: "in_one_go" | "milestones";
   reviewType?: "voting" | "rubrics";
   creatorId: string;
   /**
