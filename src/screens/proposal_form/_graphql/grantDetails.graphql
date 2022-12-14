@@ -1,0 +1,46 @@
+query grantDetails($grantId: ID!) {
+  grant(id: $grantId) {
+    id
+    creatorId
+    title
+    summary
+    details
+    reward {
+      id
+      asset
+      committed
+      token {
+        id
+        label
+        address
+        decimal
+        iconHash
+        chainId
+      }
+    }
+    startDate
+    deadline
+    startDateS
+    deadlineS
+    payoutType
+    reviewType
+    numberOfReviewersPerApplication
+    link
+    docIpfsHash
+    acceptingApplications
+    metadataHash
+    funding
+    workspace {
+      id
+      title
+      supportedNetworks
+    }
+    fields {
+      id
+      title
+      inputType
+      possibleValues
+      isPii
+    }
+  }
+}

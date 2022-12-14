@@ -330,6 +330,43 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: "uint96",
+        name: "_workspaceId",
+        type: "uint96",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "_grantAddress",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint96",
+        name: "_numberOfReviewersPerApplication",
+        type: "uint96",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "_metadataHash",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "time",
+        type: "uint256",
+      },
+    ],
+    name: "RubricsSetV2",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: true,
         internalType: "address",
         name: "implementation",
@@ -874,6 +911,11 @@ const _abi = [
         internalType: "address",
         name: "_grantAddress",
         type: "address",
+      },
+      {
+        internalType: "uint96",
+        name: "_numberOfReviewersPerApplication",
+        type: "uint96",
       },
       {
         internalType: "string",

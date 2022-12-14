@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Flex, FlexProps, Text } from '@chakra-ui/react'
 import { EditorState } from 'draft-js'
 import TextEditor from 'src/libraries/ui/RichTextEditor/textEditor'
@@ -6,9 +5,11 @@ import TextEditor from 'src/libraries/ui/RichTextEditor/textEditor'
 interface Props {
     label: string
     flexProps?: FlexProps
+	editorState: EditorState
+	setEditorState: (editorState: EditorState) => void
 }
 
-function SectionRichTextEditor({ label, flexProps }: Props) {
+function SectionRichTextEditor({ label, editorState, setEditorState, flexProps }: Props) {
 	const buildComponent = () => {
 		return (
 			<Flex
@@ -34,8 +35,6 @@ function SectionRichTextEditor({ label, flexProps }: Props) {
 			</Flex>
 		)
 	}
-
-	const [ editorState, setEditorState ] = useState<EditorState>(EditorState.createEmpty())
 
 	return buildComponent()
 }

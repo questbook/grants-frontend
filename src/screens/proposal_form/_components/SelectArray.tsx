@@ -3,18 +3,19 @@ import { Button, Flex, FlexProps, IconButton, Image, Input, InputProps, Text } f
 
 interface Props {
     label: string
+	allowMultiple: boolean
 	config: InputProps[][] // 2D array of InputProps
     flexProps?: FlexProps
 }
 
-function SelectArray({ label, flexProps, config }: Props) {
+function SelectArray({ label, allowMultiple, flexProps, config }: Props) {
 	const buildComponent = () => {
 		return (
 			<Flex
-				{...flexProps}
 				direction='column'
 				mt={8}
-				w='100%'>
+				w='100%'
+				{...flexProps}>
 				<Flex
 					w='100%'
 					align='start'>
@@ -31,7 +32,7 @@ function SelectArray({ label, flexProps, config }: Props) {
 						w='70%'
 						direction='column'>
 						{
-							Array.from(Array(length).keys()).map((index) => {
+							config.map((_, index) => {
 								return (
 									<Flex
 										mt={index === 0 ? 0 : 6}
@@ -51,7 +52,7 @@ function SelectArray({ label, flexProps, config }: Props) {
 											w='100%'>
 											{
 												config[index].map((inputProps, i) => {
-													const [value, setValue] = useState<string>('')
+													const [value, setValue] = useState<string>(inputProps?.value?.toString() ?? '')
 
 													return (
 														<Flex
@@ -59,6 +60,7 @@ function SelectArray({ label, flexProps, config }: Props) {
 															mt={i === 0 ? 0 : 4}
 															direction='column'>
 															<Input
+																{...inputProps}
 																value={value}
 																variant='flushed'
 																textAlign='left'
@@ -72,8 +74,13 @@ function SelectArray({ label, flexProps, config }: Props) {
 																		color: 'gray.5'
 																	}
 																}
-																onChange={(e) => setValue(e.target.value)}
-																{...inputProps} />
+																onChange={
+																	(e) => {
+																		setValue(e.target.value)
+																		inputProps?.onChange?.(e)
+																	}
+																}
+															/>
 															{
 																inputProps.maxLength && (
 																	<Text
@@ -112,21 +119,25 @@ function SelectArray({ label, flexProps, config }: Props) {
 							})
 						}
 
-						<Flex mt={6}>
-							<Button
-								variant='link'
-								leftIcon={
-									<Image
-										src='/v2/icons/add/black.svg'
-										boxSize='28px' />
-								}>
-								<Text
-									variant='v2_subheading'
-									fontWeight='500'>
-									Add another
-								</Text>
-							</Button>
-						</Flex>
+						{
+							allowMultiple && (
+								<Flex mt={6}>
+									<Button
+										variant='link'
+										leftIcon={
+											<Image
+												src='/v2/icons/add/black.svg'
+												boxSize='28px' />
+										}>
+										<Text
+											variant='v2_subheading'
+											fontWeight='500'>
+											Add another
+										</Text>
+									</Button>
+								</Flex>
+							)
+						}
 
 					</Flex>
 				</Flex>
@@ -134,8 +145,6 @@ function SelectArray({ label, flexProps, config }: Props) {
 			</Flex>
 		)
 	}
-
-	const [length, setLength] = useState<number>(config.length)
 
 	return buildComponent()
 }

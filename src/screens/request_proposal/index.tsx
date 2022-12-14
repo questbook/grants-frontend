@@ -1,7 +1,6 @@
 import { ReactElement, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Flex, ToastId, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import NetworkTransactionFlowStepperModal from 'src/components/ui/NetworkTransactionFlowStepperModal'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { DEFAULT_NETWORK } from 'src/constants'
 import { APPLICATION_REGISTRY_ADDRESS, WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
@@ -15,6 +14,7 @@ import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import logger from 'src/libraries/logger'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
+import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import { validateAndUploadToIpfs } from 'src/libraries/validator'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import BuilderDiscovery from 'src/screens/request_proposal/_subscreens/BuilderDiscovery'
@@ -305,7 +305,7 @@ function RequestProposal() {
 			const event = await getEventData(workspaceCreateReceipt, 'WorkspaceCreated', WorkspaceRegistryAbi)
 			if(event) {
 				const workspaceId = Number(event.args[0].toBigInt())
-				debugger
+				// debugger
 				logger.info('workspace_id', workspaceId)
 				setWorkspaceId(workspaceId.toString())
 				const newWorkspace = `chain_${network}-0x${workspaceId.toString(16)}`

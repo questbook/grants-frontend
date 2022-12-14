@@ -5087,6 +5087,13 @@ export type GetGrantsProgramDetailsQueryVariables = Exact<{
 
 export type GetGrantsProgramDetailsQuery = { __typename?: 'Query', grantsProgram?: { __typename?: 'Workspace', id: string, title: string } | null };
 
+export type GrantDetailsQueryVariables = Exact<{
+  grantId: Scalars['ID'];
+}>;
+
+
+export type GrantDetailsQuery = { __typename?: 'Query', grant?: { __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, startDate?: string | null, deadline?: string | null, startDateS?: number | null, deadlineS: number, payoutType?: PayoutType | null, reviewType?: ReviewType | null, numberOfReviewersPerApplication?: number | null, link?: string | null, docIpfsHash?: string | null, acceptingApplications: boolean, metadataHash: string, funding: string, reward: { __typename?: 'Reward', id: string, asset: string, committed: string, token?: { __typename?: 'Token', id: string, label: string, address: string, decimal: number, iconHash: string, chainId?: string | null } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, supportedNetworks: Array<SupportedNetwork> }, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, possibleValues?: Array<string> | null, isPii: boolean }> } | null };
+
 
 export const GetProfileDetailsDocument = gql`
     query GetProfileDetails($actorId: Bytes!) {
@@ -8755,4 +8762,83 @@ export type GetGrantsProgramDetailsLazyQueryHookResult = ReturnType<typeof useGe
 export type GetGrantsProgramDetailsQueryResult = Apollo.QueryResult<GetGrantsProgramDetailsQuery, GetGrantsProgramDetailsQueryVariables>;
 export function refetchGetGrantsProgramDetailsQuery(variables: GetGrantsProgramDetailsQueryVariables) {
       return { query: GetGrantsProgramDetailsDocument, variables: variables }
+    }
+export const GrantDetailsDocument = gql`
+    query grantDetails($grantId: ID!) {
+  grant(id: $grantId) {
+    id
+    creatorId
+    title
+    summary
+    details
+    reward {
+      id
+      asset
+      committed
+      token {
+        id
+        label
+        address
+        decimal
+        iconHash
+        chainId
+      }
+    }
+    startDate
+    deadline
+    startDateS
+    deadlineS
+    payoutType
+    reviewType
+    numberOfReviewersPerApplication
+    link
+    docIpfsHash
+    acceptingApplications
+    metadataHash
+    funding
+    workspace {
+      id
+      title
+      supportedNetworks
+    }
+    fields {
+      id
+      title
+      inputType
+      possibleValues
+      isPii
+    }
+  }
+}
+    `;
+
+/**
+ * __useGrantDetailsQuery__
+ *
+ * To run a query within a React component, call `useGrantDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGrantDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGrantDetailsQuery({
+ *   variables: {
+ *      grantId: // value for 'grantId'
+ *   },
+ * });
+ */
+export function useGrantDetailsQuery(baseOptions: Apollo.QueryHookOptions<GrantDetailsQuery, GrantDetailsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GrantDetailsQuery, GrantDetailsQueryVariables>(GrantDetailsDocument, options);
+      }
+export function useGrantDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GrantDetailsQuery, GrantDetailsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GrantDetailsQuery, GrantDetailsQueryVariables>(GrantDetailsDocument, options);
+        }
+export type GrantDetailsQueryHookResult = ReturnType<typeof useGrantDetailsQuery>;
+export type GrantDetailsLazyQueryHookResult = ReturnType<typeof useGrantDetailsLazyQuery>;
+export type GrantDetailsQueryResult = Apollo.QueryResult<GrantDetailsQuery, GrantDetailsQueryVariables>;
+export function refetchGrantDetailsQuery(variables: GrantDetailsQueryVariables) {
+      return { query: GrantDetailsDocument, variables: variables }
     }

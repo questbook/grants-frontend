@@ -3,10 +3,11 @@ import { Flex, FlexProps, Input, InputProps, Text } from '@chakra-ui/react'
 
 interface Props extends InputProps {
     label: string
+    helperText?: string
     flexProps?: FlexProps
 }
 
-function SectionInput({ label, flexProps, ...props }: Props) {
+function SectionInput({ label, helperText, flexProps, ...props }: Props) {
 	const buildComponent = () => {
 		return (
 			<Flex
@@ -60,6 +61,16 @@ function SectionInput({ label, flexProps, ...props }: Props) {
 							{value?.length}
 							/
 							{props?.maxLength}
+						</Text>
+					)
+				}
+				{
+					helperText && (
+						<Text
+							mt={1}
+							variant='v2_metadata'
+							color='gray.5'>
+							{helperText}
 						</Text>
 					)
 				}

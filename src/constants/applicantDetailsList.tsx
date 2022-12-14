@@ -40,7 +40,7 @@ export default [
 	{
 		title: 'Tl,dr',
 		id: 'tldr',
-		inputType: 'long-form',
+		inputType: 'short-form',
 		isRequired: true,
 	},
 	{

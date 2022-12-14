@@ -15,11 +15,10 @@ type FunctionProps = {
 }
 
 type HookProps = {
-    setNetworkTransactionModalStep: (step: number | undefined) => void
     chainId: SupportedChainId
 }
 
-function useCreateMapping({ setNetworkTransactionModalStep, chainId }: HookProps) {
+function useCreateMapping({ chainId }: HookProps) {
 	const { webwallet } = useContext(WebwalletContext)!
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({ chainId: chainId?.toString()! })
@@ -39,10 +38,7 @@ function useCreateMapping({ setNetworkTransactionModalStep, chainId }: HookProps
 
 		if(check.status === 200) {
 			logger.info({ check }, 'useCreateMapping: Mapping Exists')
-			setNetworkTransactionModalStep(7)
 		} else {
-
-			setNetworkTransactionModalStep(4)
 
 			const encryptedEmail = sha256(email).toString()
 			const signedMessage = (await webwallet?.signMessage(email))?.toString()
@@ -73,7 +69,6 @@ function useCreateMapping({ setNetworkTransactionModalStep, chainId }: HookProps
 
 				logger.info({ txHash }, 'useCreateMapping: Communication tx hash')
 
-				setNetworkTransactionModalStep(5)
 				const ret = await axios.post(`${process.env.API_ENDPOINT}/mapping/create`, {
 					id: scwAddress,
 					chainId,
@@ -82,8 +77,6 @@ function useCreateMapping({ setNetworkTransactionModalStep, chainId }: HookProps
 					wallet: webwallet?.address,
 					transactionHash: txHash,
 				})
-
-				setNetworkTransactionModalStep(6)
 
 				logger.info({ ret }, 'useCreateMapping: Mapping response')
 			}
