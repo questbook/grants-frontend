@@ -128,9 +128,10 @@ function ProposalSubmission(
 							placeholder='start date'
 							value={startdate}
 							step='1'
-							min={todayDate}
+							min={new Date().toISOString().split('.')[0]}
 							onChange={
 								(e) => {
+									console.log('start date', new Date().toLocaleString())
 									checkDate(e.target.value)
 									setStartdate(e.target.value)
 								}
@@ -147,7 +148,7 @@ function ProposalSubmission(
 						<FlushedInput
 							type='datetime-local'
 							placeholder='end date'
-							min={todayDate}
+							min={startdate}
 							value={endDate}
 							step='1'
 							onChange={
@@ -199,17 +200,7 @@ function ProposalSubmission(
 								)
 							})
 						}
-						{/* <FlushedInput placeholder='title' value={requiredDetails[0]} isDisabled={true} />
-                        <Text variant="requestProposalBody">,</Text>
-                        <FlushedInput placeholder='tl,dr' value={requiredDetails[1]} isDisabled={true} />
-                        <Text variant="requestProposalBody">,</Text>
-                        <FlushedInput placeholder='details' value={requiredDetails[2]} isDisabled={true} />
-                        <Text variant="requestProposalBody">,</Text>
-                        <FlushedInput placeholder='funding ask' value={requiredDetails[3]} isDisabled={true} />
-                        <Text variant="requestProposalBody">,</Text> */}
-						{/* <FlushedInput placeholder='ask for more details from the builder' value={moreDetails} onChange={(e) => {
-                            setMoreDetails(e.target.value)
-                        }} /> */}
+						
 						<Button
 							variant='outline'
 							leftIcon={<AiOutlinePlus />}
