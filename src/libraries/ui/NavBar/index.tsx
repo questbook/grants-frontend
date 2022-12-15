@@ -17,6 +17,7 @@ import InviteProposalButton from 'src/libraries/ui/NavBar/_components/InviteProp
 import RecoveryModal from 'src/libraries/ui/NavBar/_components/RecoveryModal'
 import StatsButton from 'src/libraries/ui/NavBar/_components/StatsButton'
 import SubmitANewProposal from 'src/libraries/ui/NavBar/_components/SubmitANewProposal'
+import UpdateProfileModal from 'src/libraries/ui/NavBar/_components/UpdateProfileModal'
 import { ApiClientsContext } from 'src/pages/_app'
 import { getNonce } from 'src/utils/gaslessUtils'
 
@@ -130,7 +131,8 @@ function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInvi
 							setType(type)
 							setIsRecoveryModalOpen(true)
 						}
-					} />
+					}
+					setIsUpdateProfileModalOpen={setIsUpdateProfileModalOpen} />
 			</Container>
 			<RecoveryModal
 				isOpen={isRecoveryModalOpen}
@@ -148,6 +150,10 @@ function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInvi
 				onClose={() => setImportConfirmationModalOpen(false)}
 				saveWallet={saveWallet} />
 
+			<UpdateProfileModal
+				isOpen={isUpdateProfileModalOpen}
+				onClose={() => setIsUpdateProfileModalOpen(false)} />
+
 		</>
 	)
 
@@ -162,6 +168,8 @@ function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInvi
 	const [isRecoveryModalOpen, setIsRecoveryModalOpen] = useState<boolean>(false)
 	const [isImportConfirmationModalOpen, setImportConfirmationModalOpen] = useState<boolean>(false)
 	const [type, setType] = useState<'import' | 'export'>('export')
+
+	const [isUpdateProfileModalOpen, setIsUpdateProfileModalOpen] = useState<boolean>(false)
 
 	useEffect(() => {
 		logger.info({ role, condition: showLogo || role === 'builder' || role === 'community' }, 'condition')

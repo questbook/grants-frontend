@@ -158,10 +158,10 @@ function SetupProfile() {
 		{
 			workspaceId,
 			memberId: `${workspaceId}.${scwAddress}`,
+			chainId: inviteInfo?.chainId ?? defaultChainId,
+			type: 'join',
 			setNetworkTransactionModalStep,
 			setTransactionHash,
-			chainId: inviteInfo?.chainId ?? defaultChainId,
-			type: 'join'
 		})
 
 	const isDisabled = useMemo(() => {

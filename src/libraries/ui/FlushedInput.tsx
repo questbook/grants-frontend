@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Flex, FlexProps, Input, InputProps, Text } from '@chakra-ui/react'
 
 interface Props extends InputProps {
@@ -17,7 +17,6 @@ function FlushedInput({ helperText, textPadding = 2, flexProps, ...props }: Prop
 				{...flexProps}
 			>
 				<Input
-					{...props}
 					variant='flushed'
 					borderBottom='5px solid'
 					borderColor={value ? 'black' : 'gray.300'}
@@ -33,7 +32,7 @@ function FlushedInput({ helperText, textPadding = 2, flexProps, ...props }: Prop
 							props?.onChange?.(e)
 						}
 					}
-
+					{...props}
 					 />
 				{
 					helperText || props?.maxLength && (

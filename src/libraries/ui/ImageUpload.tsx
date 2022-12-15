@@ -1,16 +1,17 @@
 import { useRef } from 'react'
-import { Button, Flex, Image } from '@chakra-ui/react'
+import { Button, Flex, FlexProps, Image } from '@chakra-ui/react'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 
-interface Props {
+interface Props extends FlexProps {
     imageFile: File | null
 	setImageFile: (imageFile: File | null) => void
 }
 
-function ImageUpload({ imageFile, setImageFile }: Props) {
+function ImageUpload({ imageFile, setImageFile, ...props }: Props) {
 	const buildComponent = () => {
 		return (
 			<Flex
+				{...props}
 				w='72px'
 				h='72px'>
 				<input

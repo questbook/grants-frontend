@@ -43,7 +43,7 @@ function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep
 		email: string
 		imageFile: File | null
 		role: number
-		signature: {
+		signature?: {
 			v: number
 			r: number[]
 			s: number[]
@@ -66,6 +66,10 @@ function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep
 
 			if(!workspaceId) {
 				throw new Error('Unable to find workspace id')
+			}
+
+			if(type === 'join' && !signature) {
+				throw new Error('Signature not found')
 			}
 
 			// TODO: Step - 0: Validate Workspace Member Update
@@ -105,9 +109,9 @@ function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep
 				workspaceId,
 				hash,
 				role,
-				signature.v,
-				signature.r,
-				signature.s
+				signature?.v,
+				signature?.r,
+				signature?.s
 			]
 			logger.info({ chainId, methodArgs, workspaceRegistryContract }, 'Method args')
 
