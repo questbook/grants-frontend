@@ -113,8 +113,8 @@ function ApplicantDetails({
 						</ol>
 					</div>
 				}
-				placeholder={isEvm ? '0xa2dD...' : '5yDU...' } //TODO : remove hardcoding of chainId
-				subtext={`${t('/explore_grants/apply.your_address_on')} ${chainNames.get(safeObj?.chainId?.toString())}`}
+				placeholder={isEvm === undefined || isEvm ? '0xa2dD...' : '5yDU...' } //TODO : remove hardcoding of chainId
+				subtext={`${t('/explore_grants/apply.your_address_on')} ${safeObj?.chainId ? chainNames.get(safeObj?.chainId?.toString()) : 'EVM based chain'}`}
 				onChange={
 					async(e) => {
 						setApplicantAddressError(false)
@@ -134,11 +134,14 @@ function ApplicantDetails({
 							}
 						}
 
-						if(isEvm && !resolvedAddress) {
-							safeAddressValid = await isValidEthereumAddress(e.target.value)
+						// Will be removed when safe would be made optional
+						if(isEvm === undefined) {
+							setApplicantAddressError(false)
+						} else if(isEvm && !resolvedAddress) {
+							safeAddressValid = isValidEthereumAddress(e.target.value)
 							setApplicantAddressError(!safeAddressValid)
 						} else if(!isEvm && !resolvedAddress) {
-							safeAddressValid = await isValidSolanaAddress(e.target.value)
+							safeAddressValid = isValidSolanaAddress(e.target.value)
 							setApplicantAddressError(!safeAddressValid)
 						} else if(!resolvedAddress) {
 							setApplicantAddressError(true)
@@ -146,7 +149,7 @@ function ApplicantDetails({
 					}
 				}
 				isError={applicantAddressError}
-				errorText={t('/explore_grants/apply.invalid_address_on_chain').replace('%CHAIN', chainNames.get(safeNetwork)?.toString() ?? defaultChainId.toString())}
+				errorText={t('/explore_grants/apply.invalid_address_on_chain').replace('%CHAIN', chainNames?.get(safeNetwork) !== undefined ? chainNames.get(safeNetwork)!.toString() : 'EVM based chain')}
 				value={applicantAddress}
 				visible={grantRequiredFields.includes('applicantAddress')}
 			/>
