@@ -1,5 +1,6 @@
 import { ChangeEvent, ReactElement, useContext, useMemo, useState } from 'react'
 import { Button, Flex, Image, Text } from '@chakra-ui/react'
+import { EditorState } from 'draft-js'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
 import logger from 'src/libraries/logger'
@@ -375,7 +376,7 @@ function ProposalForm() {
 							w='30%'
 							ml='auto'
 							variant='primaryLarge'
-							isDisabled={!isBiconomyInitialised}
+							isDisabled={isDisabled}
 							onClick={
 								() => {
 									submitProposal(form)
@@ -422,9 +423,45 @@ function ProposalForm() {
 	}, [grant, chainId])
 
 	const fundingAsk = useMemo(() => {
-		const val = getRewardAmountMilestones(chainInfo?.decimals ?? 0, { milestones: form.milestones.map((m) => ({ ...m, amount: m.amount.toString() })) })
+		const val = getRewardAmountMilestones(chainInfo?.decimals ?? 0, { milestones: form.milestones.map((m) => ({ ...m, amount: m.amount ? m.amount.toString() : '0' })) })
 		return val
 	}, [form])
+
+	const isDisabled = useMemo(() => {
+		if(!isBiconomyInitialised || !form) {
+			logger.info('Form is not initialised')
+			return true
+		}
+
+		const { fields, members, details, milestones } = form
+		for(const field of fields) {
+			if(field.value === '' && field.id !== 'projectDetails') {
+				logger.info({ field }, 'Field is empty')
+				return true
+			}
+		}
+
+		for(const member of members) {
+			if(member === '') {
+				logger.info({ member }, 'Member is empty')
+				return true
+			}
+		}
+
+		if(details === EditorState.createEmpty()) {
+			logger.info('Details is empty')
+			return true
+		}
+
+		for(const milestone of milestones) {
+			if(milestone.title === '' || !milestone.amount) {
+				logger.info({ index: milestone.index }, 'Milestone is empty')
+				return true
+			}
+		}
+
+		return false
+	}, [form, isBiconomyInitialised])
 
 	const onChange = (e: ChangeEvent<HTMLInputElement>, id: string) => {
 		const copy = { ...form }

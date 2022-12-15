@@ -1,10 +1,11 @@
 import { useRef } from 'react'
 import { Button, Flex, FlexProps, Image } from '@chakra-ui/react'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 interface Props extends FlexProps {
-    imageFile: File | null
-	setImageFile: (imageFile: File | null) => void
+    imageFile: {file: File | null, hash?: string}
+	setImageFile: (imageFile: {file: File | null, hash?: string}) => void
 }
 
 function ImageUpload({ imageFile, setImageFile, ...props }: Props) {
@@ -24,7 +25,7 @@ function ImageUpload({ imageFile, setImageFile, ...props }: Props) {
 				{
 					imageFile && (
 						<Image
-							src={imageFile ? URL.createObjectURL(imageFile) : ''}
+							src={imageFile?.file ? URL.createObjectURL(imageFile?.file) : imageFile?.hash ? getUrlForIPFSHash(imageFile?.hash) : ''}
 							onClick={() => openInput()}
 							cursor='pointer'
 							fit='fill'
@@ -33,7 +34,7 @@ function ImageUpload({ imageFile, setImageFile, ...props }: Props) {
 					)
 				}
 				{
-					(!imageFile || imageFile === null) && (
+					(!imageFile || (imageFile?.file === null && !imageFile?.hash)) && (
 						<Button
 							w='100%'
 							h='100%'
@@ -66,7 +67,9 @@ function ImageUpload({ imageFile, setImageFile, ...props }: Props) {
 		if(event.target.files?.[0]) {
 			const img = event.target.files[0]
 			if(img.size / 1024 / 1024 <= maxImageSize) {
-				setImageFile(img)
+				const copy = { ...imageFile }
+				copy.file = img
+				setImageFile(copy)
 			} else {
 				toast({
 					position: 'top',

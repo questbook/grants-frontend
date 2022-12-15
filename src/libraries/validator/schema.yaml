@@ -11,6 +11,7 @@ Validations:
     - $ref: 'ApplicationMilestoneUpdate'
     - $ref: 'Address'
     - $ref: 'Amount'
+    - $ref: 'GrantApplicationUpdate'
    # - $ref: 'ApplicationUpdateRequest'
    # - $ref: 'ApplicationCreateRequest'
 Address:
@@ -164,7 +165,7 @@ GrantApplicationFieldAnswerItem:
 PIIAnswer:
   type: string
   description: JSON serialized object, encrypted with a specific user's public key
-  format: base64
+  format: byte
 PIIAnswers:
   type: object
   description: >-

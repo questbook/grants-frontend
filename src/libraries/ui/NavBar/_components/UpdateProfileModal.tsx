@@ -2,6 +2,7 @@ import { useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useSetupProfile from 'src/libraries/hooks/useSetupProfile'
+import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
 import { usePiiForWorkspaceMember } from 'src/libraries/utils/pii'
@@ -144,9 +145,17 @@ function UpdateProfileModal({ isOpen, onClose }: Props) {
 
 	const { decrypt } = usePiiForWorkspaceMember(workspace?.id, member?.id, member?.publicKey, chainId)
 
-	const [name, setName] = useState<string>(member?.fullName ?? '')
+	const [name, setName] = useState<string>('')
 	const [email, setEmail] = useState<string>('')
-	const [imageFile, setImageFile] = useState<File | null>(null)
+	const [imageFile, setImageFile] = useState<{file: File | null, hash?: string}>({ file: null })
+
+	useEffect(() => {
+		logger.info({ member }, 'UpdateProfileModal: member')
+		if(member) {
+			setName(member.fullName ?? '')
+			setImageFile({ file: null, hash: member.profilePictureIpfsHash ?? undefined })
+		}
+	}, [member])
 
 	const TXN_STEPS = ['Initiate transaction', 'Complete indexing', 'Complete transaction']
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
@@ -156,6 +165,7 @@ function UpdateProfileModal({ isOpen, onClose }: Props) {
 	useEffect(() => {
 		if(member?.pii) {
 			decrypt({ pii: member?.pii }).then((res) => {
+				logger.info({ res }, 'Decrypted PII')
 				setEmail(res?.email ?? '')
 			})
 		}
@@ -197,7 +207,8 @@ function UpdateProfileModal({ isOpen, onClose }: Props) {
 		await setupProfile({
 			name,
 			email,
-			imageFile, role: member?.accessLevel === 'reviewer' ? 1 : 0
+			imageFile: imageFile.file,
+			role: member?.accessLevel === 'reviewer' ? 1 : 0
 		})
 	}
 

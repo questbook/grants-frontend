@@ -64,8 +64,12 @@ function SetupProfile() {
 						direction='column'
 						border='1px solid #E7E4DD'>
 						<ImageUpload
-							imageFile={imageFile}
-							setImageFile={setImageFile} />
+							imageFile={{ file: imageFile }}
+							setImageFile={
+								(img) => {
+									setImageFile(img.file)
+								}
+							} />
 						<FlushedInput
 							w='100%'
 							flexProps={{ w: '100%', mt: 5 }}

@@ -38,6 +38,7 @@ query getWorkspaceMembers($actorId: Bytes!) {
         accessLevel
         outstandingReviewIds
         lastReviewSubmittedAt
+        profilePictureIpfsHash
         pii {
           id
           data

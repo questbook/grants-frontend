@@ -57,8 +57,6 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 			setNetworkTransactionModalStep(0)
 			logger.info({ form }, 'useSubmitProposal: (form)')
 
-			// TODO: Step - 0: Validate the form data
-
 			// Step - 1: Upload the project details data to ipfs
 			const detailsHash = (
 				await uploadToIPFS(JSON.stringify(
@@ -101,11 +99,16 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 			await encrypt(data, piiFields)
 			logger.info({ data, piiFields }, 'useSubmitProposal: encryptedPii')
 
-			// Step - 4: Upload the application data to ipfs
+			// TODO: Step - 4: Validate the form data
+			// const validate = await validateRequest('GrantApplicationUpdate', { ...data, grantId: undefined })
+			// logger.info({ validate }, 'useSubmitProposal: (validate)')
+			// return
+
+			// Step - 5: Upload the application data to ipfs
 			const proposalDataHash = (await uploadToIPFS(JSON.stringify(data))).hash
 			logger.info({ proposalDataHash }, 'useSubmitProposal: (proposalDataHash)')
 
-			// Step - 5: Call the contract function to submit the proposal
+			// Step - 6: Call the contract function to submit the proposal
 			const methodArgs = type === 'submit' ?
 				[grant.id, grant.workspace.id, proposalDataHash, data.milestones.length] :
 				[proposal?.id, proposalDataHash, data.milestones.length]
@@ -125,7 +128,7 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 			)
 			logger.info({ response }, 'useSubmitProposal: (Response)')
 
-			// Step - 6: If the proposal is submitted successfully, then create the mapping between the email and the scwAddress
+			// Step - 7: If the proposal is submitted successfully, then create the mapping between the email and the scwAddress
 			if(response) {
 				setNetworkTransactionModalStep(1)
 				const { receipt, txFee } = await getTransactionDetails(response, chainId.toString())

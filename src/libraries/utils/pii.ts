@@ -536,10 +536,10 @@ export function usePiiForWorkspaceMember(
 						// hacky way to copy the object
 						mem = JSON.parse(JSON.stringify({
 							...mem,
+							...email,
 							// also remove PII from the application
 							// since we don't require that anymore
 							pii: undefined,
-							email,
 						}))
 					} catch(err) {
 						logger.error({ err }, 'error in decrypting PII')

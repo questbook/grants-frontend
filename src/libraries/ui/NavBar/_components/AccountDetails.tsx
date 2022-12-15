@@ -54,7 +54,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 					align='stretch'
 					bg='white'>
 					{
-						router.pathname === '/dashboard' && !workspace && (
+						router.pathname === '/dashboard' && (
 							<Flex
 								px={4}
 								pt={3}
@@ -160,7 +160,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 
 	const router = useRouter()
 	useEffect(() => {
-		logger.info({ pathname: router.pathname }, 'Current path')
+		logger.info({ pathname: router.pathname }, 'Could set up profile')
 	}, [router.pathname])
 	const toast = useCustomToast()
 
