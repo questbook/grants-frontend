@@ -34,6 +34,7 @@ query grantDetails($grantId: ID!) {
       id
       title
       supportedNetworks
+      logoIpfsHash
     }
     fields {
       id

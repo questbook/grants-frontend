@@ -1,6 +1,7 @@
 import { ChangeEvent, ReactElement, useContext, useMemo, useState } from 'react'
-import { Button, Flex, Text } from '@chakra-ui/react'
+import { Button, Flex, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import config from 'src/constants/config.json'
 import logger from 'src/libraries/logger'
 import BackButton from 'src/libraries/ui/BackButton'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
@@ -16,10 +17,111 @@ import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposa
 import { containsField, findField } from 'src/screens/proposal_form/_utils'
 import { DEFAULT_MILESTONE, MILESTONE_INPUT_STYLE } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
+import getAvatar from 'src/utils/avatarUtils'
 import { getExplorerUrlForTxHash, getRewardAmountMilestones } from 'src/utils/formattingUtils'
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 function ProposalForm() {
 	const buildComponent = () => {
+		return transactionHash !== '' ? successComponent() : (error ? errorComponent() : formComponent())
+	}
+
+	const successComponent = () => {
+		return (
+			<Flex
+				w='100%'
+				h='calc(100vh - 64px)'
+				align='start'
+				justify='center'>
+				<Flex
+					w='90%'
+					h='calc(100vh - 100px)'
+					bg='white'
+					boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
+					overflowY='auto'
+					my={5}>
+					<Flex
+						direction='column'
+						bg='accent.columbia'
+						w='50%'
+						h='100%'
+						justify='center'
+						align='start'
+						pl='10%'>
+						<Image
+							src={grant?.workspace.logoIpfsHash === config.defaultDAOImageHash ? getUrlForIPFSHash(grant?.workspace?.logoIpfsHash) : getAvatar(true, grant?.workspace.title) }
+							boxSize='30%' />
+						<Text
+							variant='v2_heading_2'
+							fontWeight='500'>
+							Fantastic — we have received
+							your proposal.
+						</Text>
+					</Flex>
+					<Flex
+						bg='white'
+						w='50%'
+						h='100%'
+						direction='column'
+						align='start'
+						justify='center'
+						px='10%'>
+						<Text
+							mt={2}
+							fontWeight='500'
+							variant='v2_subheading'>
+							We will reach out
+						</Text>
+						<Text mt={2}>
+							We will reach out to you in 14-20 working days with our decision
+							on your proposal.
+						</Text>
+						<Button
+							mt={12}
+							variant='primaryLarge'
+							onClick={
+								() => {
+									setRole('builder')
+									router.push({ pathname: '/dashboard' })
+								}
+							}>
+							<Text
+								color='white'
+								fontWeight='500'>
+								Done
+							</Text>
+						</Button>
+					</Flex>
+				</Flex>
+			</Flex>
+		)
+	}
+
+	const errorComponent = () => {
+		return (
+			<Flex
+				w='100%'
+				h='calc(100vh - 64px)'
+				align='start'
+				justify='center'>
+				<Flex
+					w='90%'
+					h='calc(100vh - 100px)'
+					bg='white'
+					boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
+					overflowY='auto'
+					my={5}>
+					<Text
+						fontWeight='500'
+						variant='v2_subheading'>
+						{error}
+					</Text>
+				</Flex>
+			</Flex>
+		)
+	}
+
+	const formComponent = () => {
 		return (
 			<Flex
 				w='100%'
@@ -296,8 +398,6 @@ function ProposalForm() {
 					onClose={
 						() => {
 							setNetworkTransactionModalStep(undefined)
-							setRole('builder')
-							router.push({ pathname: '/dashboard' })
 						}
 					} />
 			</Flex>
@@ -305,7 +405,7 @@ function ProposalForm() {
 	}
 
 	const { setRole } = useContext(ApiClientsContext)!
-	const { type, grant, chainId, form, setForm } = useContext(ProposalFormContext)!
+	const { type, grant, chainId, form, setForm, error } = useContext(ProposalFormContext)!
 
 	const router = useRouter()
 

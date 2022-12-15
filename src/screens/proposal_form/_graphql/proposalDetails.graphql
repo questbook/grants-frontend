@@ -53,6 +53,7 @@ query proposalDetails($proposalId: ID!) {
         id
         title
         supportedNetworks
+        logoIpfsHash
       }
       fields {
         id
