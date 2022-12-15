@@ -18,7 +18,7 @@ function GrantShare({ grantID, chainId }: Props) {
 		// // console.log(domain);
 
 		const req = {
-			long_url: `${protocol}//${domain}/explore_grants/about_grant/?grantId=${grantID}&chainId=${chainId}&utm_source=questbook&utm_medium=grant_details&utm_campaign=share`,
+			long_url: `${protocol}//${domain}/proposal_form/?grantId=${grantID}&chainId=${chainId}&utm_source=questbook&utm_medium=grant_details&utm_campaign=share`,
 			domain: 'bit.ly',
 			group_guid: process.env.NEXT_PUBLIC_BITLY_GROUP,
 		}

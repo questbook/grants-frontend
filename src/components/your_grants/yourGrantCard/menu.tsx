@@ -53,7 +53,7 @@ function YourGrantMenu({
 				const protocol = href[0]
 				const domain = href[2]
 				copy(
-					`${protocol}//${domain}/explore_grants/about_grant/?grantId=${grantID}&chainId=${chainId}`,
+					`${protocol}//${domain}/proposal_form/?grantId=${grantID}&chainId=${chainId}`,
 				)
 				setCopied(true)
 			},
