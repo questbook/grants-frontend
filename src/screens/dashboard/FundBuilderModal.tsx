@@ -1,5 +1,7 @@
 import { useContext, useEffect, useMemo } from 'react'
 import { Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
+import { useSafeContext } from 'src/contexts/safeContext'
+import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import MilestoneChoose from 'src/screens/dashboard/_components/FundBuilder/MilestoneChoose'
 import PayFromChoose from 'src/screens/dashboard/_components/FundBuilder/PayFromChoose'
@@ -107,6 +109,7 @@ function FundBuilderModal() {
 		)
 	}
 
+	const { safeObj } = useSafeContext()
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 	const { isModalOpen, setIsModalOpen, amounts, setAmounts, milestoneIndices, setMilestoneIndices, tos, setTos, tokenInfo, signerVerifiedState, setSignerVerifiedState } = useContext(FundBuilderContext)!
 
@@ -131,13 +134,23 @@ function FundBuilderModal() {
 		return !proposal || amounts?.[0] === undefined || !tos?.[0] || milestoneIndices?.[0] === undefined || !tokenInfo || amounts?.[0] <= 0
 	}, [amounts, tos, milestoneIndices, tokenInfo])
 
-	const onContinue = () => {
+	const onContinue = async() => {
 		if(signerVerifiedState === 'unverified') {
 			setSignerVerifiedState('initiate_verification')
 		}
 
 		if(signerVerifiedState === 'verified') {
-			setSignerVerifiedState('initiate_transaction')
+			const temp = [{
+				from: safeObj?.safeAddress?.toString(),
+				to: tos?.[0],
+				applicationId: proposal?.id,
+				selectedMilestone: milestoneIndices?.[0],
+				selectedToken: { name: tokenInfo?.tokenName, info: tokenInfo?.info },
+				amount: amounts?.[0],
+			}]
+
+			const proposaladdress = await safeObj?.proposeTransactions('', temp, '')
+			logger.info({ proposaladdress }, 'Transaction initiated')
 		}
 	}
 
