@@ -14,7 +14,8 @@ export type All =
   | RubricSetRequest
   | ReviewSetRequest
   | ApplicationMilestoneUpdate
-  | string;
+  | string
+  | GrantApplicationUpdate;
 /**
  * @maxItems 100
  */
@@ -304,4 +305,13 @@ export interface ReviewSetRequest {
 }
 export interface ApplicationMilestoneUpdate {
   text: string;
+}
+export interface GrantApplicationUpdate {
+  fields?: GrantApplicationFieldAnswers;
+  pii?: PIIAnswers;
+  /**
+   * @maxItems 100
+   */
+  milestones?: GrantProposedMilestone[];
+  feedback?: string;
 }

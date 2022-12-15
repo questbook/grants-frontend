@@ -5,7 +5,7 @@ const copyGrantLink = async(grantID: string, chainId: number) => {
 	const protocol = href[0]
 	const domain = href[2]
 
-	const URL = `${protocol}//${domain}/explore_grants/about_grant/?grantId=${grantID}&chainId=${chainId}&utm_source=questbook&utm_medium=grant_details&utm_campaign=share`
+	const URL = `${protocol}//${domain}/proposal_form/?grantId=${grantID}&chainId=${chainId}&utm_source=questbook&utm_medium=grant_details&utm_campaign=share`
 	if(process.env.NODE_ENV === 'development') {
 		copy(URL)
 		return true

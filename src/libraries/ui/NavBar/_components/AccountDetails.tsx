@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useContext, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ChevronDownIcon } from '@chakra-ui/icons'
 import {
@@ -15,7 +15,9 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
+import { useRouter } from 'next/router'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
+import logger from 'src/libraries/logger'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAddress } from 'src/utils/formattingUtils'
@@ -25,9 +27,10 @@ const IN_APP_WALLET_LEARN_MORE_URL =
 
 interface Props {
 	openModal?: (type: 'import' | 'export') => void
+	setIsUpdateProfileModalOpen: (isOpen: boolean) => void
 }
 
-function AccountDetails({ openModal }: Props) {
+function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 	const buildComponent = () => (
 		<Menu size='xl'>
 			<MenuButton
@@ -50,33 +53,39 @@ function AccountDetails({ openModal }: Props) {
 					direction='column'
 					align='stretch'
 					bg='white'>
-					<Flex
-						px={4}
-						pt={3}
-						align='center'>
-						<Image
-							boxShadow='0px 4px 16px rgba(31, 31, 51, 0.15)'
-							borderRadius='3xl'
-							src={getAvatar(false, scwAddress!)}
-							boxSize='24px' />
-						<Text
-							ml={3}
-							variant='v2_body'
-							fontWeight='500'>
-							Setup your profile
-						</Text>
-						<IconButton
-							variant='ghost'
-							ml='auto'
-							aria-label='setup-profile'
-							size='24px'
-							icon={
+					{
+						router.pathname === '/dashboard' && (
+							<Flex
+								px={4}
+								pt={3}
+								align='center'>
 								<Image
-									src='/v2/icons/arrow right/enabled.svg'
-									boxSize='18px' />
-							}
-							onClick={() => {}} />
-					</Flex>
+									boxShadow='0px 4px 16px rgba(31, 31, 51, 0.15)'
+									borderRadius='3xl'
+									src={getAvatar(false, scwAddress!)}
+									boxSize='24px' />
+								<Text
+									ml={3}
+									variant='v2_body'
+									fontWeight='500'>
+									{!member?.fullName ? 'Setup' : 'Update'}
+									{' '}
+									your profile
+								</Text>
+								<IconButton
+									variant='ghost'
+									ml='auto'
+									aria-label='setup-profile'
+									size='24px'
+									icon={
+										<Image
+											src={!member?.fullName ? '/v2/icons/arrow right/enabled.svg' : '/v2/icons/pencil.svg'}
+											boxSize='18px' />
+									}
+									onClick={() => setIsUpdateProfileModalOpen(true)} />
+							</Flex>
+						)
+					}
 
 					<Flex
 						align='center'
@@ -144,10 +153,15 @@ function AccountDetails({ openModal }: Props) {
 		</Menu>
 	)
 
+	const { workspace } = useContext(ApiClientsContext)!
 	const { t } = useTranslation()
 	const { role, setRole, possibleRoles } = useContext(ApiClientsContext)!
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 
+	const router = useRouter()
+	useEffect(() => {
+		logger.info({ pathname: router.pathname }, 'Could set up profile')
+	}, [router.pathname])
 	const toast = useCustomToast()
 
 	const isConnected = useMemo(() => {
@@ -157,6 +171,10 @@ function AccountDetails({ openModal }: Props) {
 	const isConnecting = useMemo(() => {
 		return !scwAddress && !!webwallet?.address
 	}, [scwAddress, webwallet?.address])
+
+	const member = useMemo(() => {
+		return workspace?.members?.find((member) => member.actorId === scwAddress?.toLowerCase())
+	}, [workspace, scwAddress])
 
 	const menuItems = [
 		{

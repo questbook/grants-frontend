@@ -1,9 +1,6 @@
 query getWorkspaceMembers($actorId: Bytes!) {
   workspaceMembers(
-    where: {
-      actorId: $actorId
-      enabled: true
-    }
+    where: { actorId: $actorId, enabled: true }
     subgraphError: allow
     orderBy: id
     orderDirection: desc
@@ -27,12 +24,12 @@ query getWorkspaceMembers($actorId: Bytes!) {
         label
         decimal
         iconHash
-    }
-    safe {
-          address
-          chainId
-        }
-      members (where: {enabled: true}) {
+      }
+      safe {
+        address
+        chainId
+      }
+      members(where: { enabled: true }) {
         id
         actorId
         publicKey
@@ -41,6 +38,11 @@ query getWorkspaceMembers($actorId: Bytes!) {
         accessLevel
         outstandingReviewIds
         lastReviewSubmittedAt
+        profilePictureIpfsHash
+        pii {
+          id
+          data
+        }
       }
     }
   }

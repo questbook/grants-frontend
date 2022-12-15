@@ -399,7 +399,7 @@ function Profile() {
 												// }
 
 												router.push({
-													pathname: '/explore_grants/about_grant',
+													pathname: '/proposal_form',
 													query: {
 														grantId: grant.id,
 														chainId,
@@ -410,7 +410,7 @@ function Profile() {
 										onTitleClick={
 											() => {
 												router.push({
-													pathname: '/explore_grants/about_grant',
+													pathname: '/proposal_form',
 													query: {
 														grantId: grant.id,
 														chainId,

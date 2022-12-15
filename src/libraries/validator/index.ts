@@ -1,5 +1,6 @@
 import Ajv from 'ajv'
 import addFormats from 'ajv-formats'
+import logger from 'src/libraries/logger'
 import schema from 'src/libraries/validator/schema.yaml'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 
@@ -32,10 +33,11 @@ for(const key in schemaJson) {
 
 
 export async function validateRequest(
-	type: 'GrantUpdateRequest' | 'GrantCreateRequest' | 'RubricSetRequest' | 'WorkspaceCreateRequest' | 'WorkspaceMemberUpdate',
+	type: 'GrantUpdateRequest' | 'GrantCreateRequest' | 'RubricSetRequest' | 'WorkspaceCreateRequest' | 'WorkspaceMemberUpdate' | 'GrantApplicationUpdate',
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	data: any
 ) {
+	logger.info({ type, data }, 'Validating request')
 	const _validate = await ajv.getSchema(type)!
 	if(!_validate(data)) {
 		throw new Error(JSON.stringify(_validate.errors, undefined, 2))
@@ -43,7 +45,7 @@ export async function validateRequest(
 }
 
 export async function validateAndUploadToIpfs(
-	type: 'GrantUpdateRequest' | 'GrantCreateRequest' | 'RubricSetRequest' | 'WorkspaceCreateRequest' | 'WorkspaceMemberUpdate',
+	type: 'GrantUpdateRequest' | 'GrantCreateRequest' | 'RubricSetRequest' | 'WorkspaceCreateRequest' | 'WorkspaceMemberUpdate' | 'GrantApplicationUpdate',
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	data: any
 ) {
