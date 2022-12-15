@@ -213,6 +213,8 @@ WorkspaceMemberUpdate:
       description: IPFS hash of the profile picture
     publicKey:
       $ref: 'PublicKey'
+    pii:
+      $ref: 'PIIAnswers'
 GrantApplicationUpdate:
   type: object
   additionalProperties: false
