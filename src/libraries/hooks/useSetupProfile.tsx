@@ -13,14 +13,15 @@ import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } f
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 
 interface Props {
-    setNetworkTransactionModalStep: (step: number | undefined) => void
-    setTransactionHash: (hash: string) => void
+	setNetworkTransactionModalStep: (step: number | undefined) => void
+	setTransactionHash: (hash: string) => void
 	workspaceId: string | undefined
 	memberId: string | undefined
 	chainId: SupportedChainId
+	type: 'join' | 'update'
 }
 
-function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep, setTransactionHash, chainId }: Props) {
+function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep, setTransactionHash, chainId, type }: Props) {
 	const { subgraphClients } = useContext(ApiClientsContext)!
 	const { webwallet } = useContext(WebwalletContext)!
 
@@ -37,12 +38,26 @@ function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep
 	const { encrypt } = usePiiForWorkspaceMember(workspaceId, memberId, webwallet?.publicKey, chainId)
 	const createMapping = useCreateMapping({ chainId })
 
-	const setupProfile = async({ name, email, imageFile, role }: { name: string, email: string, imageFile: File | null, role: number }) => {
+	const setupProfile = async({ name, email, imageFile, role, signature }: {
+		name: string
+		email: string
+		imageFile: File | null
+		role: number
+		signature: {
+			v: number
+			r: number[]
+			s: number[]
+		}
+	}) => {
 		logger.info({ name, email, scwAddress, webwallet }, 'useSetupProfile')
 
 		try {
 			if(!webwallet) {
 				throw new Error('webwallet not connected')
+			}
+
+			if(!chainId) {
+				throw new Error('Chain ID not found')
 			}
 
 			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
@@ -80,18 +95,26 @@ function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep
 			logger.info({ profilePictureIpfsHash, hash }, 'Uploaded data to IPFS')
 
 			// Step - 4: Call the contract method
-			const methodArgs = [
+			const methodArgs = type === 'update' ? [
 				workspaceId,
 				[scwAddress],
 				[role],
 				[true],
 				[hash]
+			] : [
+				workspaceId,
+				hash,
+				role,
+				signature.v,
+				signature.r,
+				signature.s
 			]
+			logger.info({ chainId, methodArgs, workspaceRegistryContract }, 'Method args')
 
 			const response = await sendGaslessTransaction(
 				biconomy,
 				workspaceRegistryContract,
-				'updateWorkspaceMembers',
+				type === 'join' ? 'joinViaInviteLink' : 'updateWorkspaceMembers',
 				methodArgs,
 				workspaceRegistryContract.address,
 				biconomyWalletClient,

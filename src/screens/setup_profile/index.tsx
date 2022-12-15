@@ -1,7 +1,9 @@
 import { ReactElement, useContext, useMemo, useState } from 'react'
 import { Button, Flex, Text } from '@chakra-ui/react'
+import { generateInputForAuthorisation } from '@questbook/anon-authoriser'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
+import useQBContract from 'src/hooks/contracts/useQBContract'
 import useSetupProfile from 'src/libraries/hooks/useSetupProfile'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
@@ -137,10 +139,30 @@ function SetupProfile() {
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
 	const [transactionHash, setTransactionHash] = useState<string>('')
 
+	const workspaceRegistry = useQBContract('workspace', inviteInfo?.chainId)
+	const signature = useMemo(() => (
+		(scwAddress && inviteInfo?.privateKey)
+			? generateInputForAuthorisation(
+				scwAddress!,
+				workspaceRegistry.address,
+				inviteInfo.privateKey,
+			)
+			: undefined
+	), [scwAddress, workspaceRegistry.address, inviteInfo?.privateKey])
+
 	const workspaceId = useMemo(() => {
 		return `0x${inviteInfo?.workspaceId.toString(16)}`
 	}, [inviteInfo])
-	const { setupProfile, isBiconomyInitialised } = useSetupProfile({ workspaceId, memberId: `${workspaceId}.${scwAddress}`, setNetworkTransactionModalStep, setTransactionHash, chainId: inviteInfo?.chainId ?? defaultChainId })
+
+	const { setupProfile, isBiconomyInitialised } = useSetupProfile(
+		{
+			workspaceId,
+			memberId: `${workspaceId}.${scwAddress}`,
+			setNetworkTransactionModalStep,
+			setTransactionHash,
+			chainId: inviteInfo?.chainId ?? defaultChainId,
+			type: 'join'
+		})
 
 	const isDisabled = useMemo(() => {
 		logger.info({ 1: name === '', 2: email === '', 3: isBiconomyInitialised }, 'Is Disabled Create')
@@ -148,12 +170,12 @@ function SetupProfile() {
 	}, [name, email])
 
 	const onCreateClick = async() => {
-		if(inviteInfo?.role === undefined) {
+		if(inviteInfo?.role === undefined || !signature) {
 			return
 		}
 
 		setupProfile({
-			name, email, imageFile, role: inviteInfo.role
+			name, email, imageFile, role: inviteInfo.role, signature
 		})
 	}
 

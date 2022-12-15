@@ -506,6 +506,7 @@ export function usePiiForWorkspaceMember(
 		) => {
 			if(data.email) {
 				data.pii = await encryptPii({ email: data.email })
+				data = { ...data, email: undefined }
 			}
 		}, [encryptPii]
 	)
