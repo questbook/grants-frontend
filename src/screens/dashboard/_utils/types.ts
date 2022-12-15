@@ -84,4 +84,4 @@ export type ProposalType = Proposals[number]
 export type PayoutsType = Exclude<GetPayoutsQuery['fundsTransfers'], null | undefined>
 export type Payout = PayoutsType[number]
 
-export type SignerVerifiedState = 'unverified' | 'initiate_verification' | 'verifying' | 'verified_safe' | 'verified_phantom' | 'failed'
+export type SignerVerifiedState = 'unverified' | 'initiate_verification' | 'verifying' | 'verified' | 'failed'

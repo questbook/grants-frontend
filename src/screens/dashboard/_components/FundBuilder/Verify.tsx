@@ -107,39 +107,21 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 	const { safeObj } = useSafeContext()
 	const { phantomWallet, phantomWalletConnected } = usePhantomWallet()
 
-	const { isConnected } = useAccount()
-	// const { disconnect } = useDisconnect()
+	const { isConnected, address } = useAccount()
 
 	const isEvmChain = useMemo(() => {
 		return safeObj.getIsEvm()
 	}, [safeObj])
 
-	// useEffect(() => {
-	// 	if(isConnected) {
-	// 		disconnect()
-	// 	}
-	// }, [isConnected])
-
-	const verifyRealmsOwner = async() => {
-		if(phantomWallet?.publicKey?.toString()) {
-			const isVerified = await safeObj?.isOwner(phantomWallet.publicKey?.toString())
-			if(isVerified) {
-				setSignerVerifiedState('verified_safe')
-			} else {
-				setSignerVerifiedState('failed')
-			}
-		}
-	}
-
-	const verifyGnosisOwner = async() => {
-		if(isConnected) {
-			logger.info({ address: safeObj.safeAddress }, '1')
-			const isVerified = await safeObj?.isOwner(safeObj.safeAddress)
-			if(isVerified) {
-				setSignerVerifiedState('verified_phantom')
-			} else {
-				setSignerVerifiedState('failed')
-			}
+	const verifyOwner = async(address: string) => {
+		logger.info({ address: safeObj.safeAddress }, '1')
+		const isVerified = await safeObj?.isOwner(address)
+		console.log('address', address)
+		console.log('isVerified', isVerified)
+		if(isVerified) {
+			setSignerVerifiedState('verified')
+		} else {
+			setSignerVerifiedState('failed')
 		}
 	}
 
@@ -148,10 +130,10 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 			setSignerVerifiedState('verifying')
 		}
 
-		if(isConnected) {
-			verifyGnosisOwner()
+		if(safeObj.getIsEvm() && isConnected) {
+			verifyOwner(address!)
 		} else if(phantomWalletConnected) {
-			verifyRealmsOwner()
+			verifyOwner(phantomWallet?.publicKey?.toString()!)
 		}
 	}, [isConnected, phantomWalletConnected])
 

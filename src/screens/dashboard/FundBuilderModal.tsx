@@ -27,7 +27,7 @@ function FundBuilderModal() {
 					<ModalCloseButton />
 					<ModalBody>
 						{
-							['unverified', 'verified_safe', 'verified_phantom'].includes(signerVerifiedState) && (
+							['unverified', 'verified'].includes(signerVerifiedState) && (
 								<Flex
 									p={6}
 									direction='column'
@@ -94,7 +94,7 @@ function FundBuilderModal() {
 						}
 
 						{
-							!['unverified', 'verified_safe', 'verified_phantom'].includes(signerVerifiedState) && (
+							!['unverified', 'verified'].includes(signerVerifiedState) && (
 								<Verify
 									signerVerifiedState={signerVerifiedState}
 									setSignerVerifiedState={setSignerVerifiedState} />
@@ -135,7 +135,15 @@ function FundBuilderModal() {
 		if(signerVerifiedState === 'unverified') {
 			setSignerVerifiedState('initiate_verification')
 		}
+
+		if(signerVerifiedState === 'verified') {
+			setSignerVerifiedState('initiate_transaction')
+		}
 	}
+
+	useEffect(() => {
+		console.log('signerVerifiedState', signerVerifiedState)
+	}, [signerVerifiedState])
 
 	return buildComponent()
 }
