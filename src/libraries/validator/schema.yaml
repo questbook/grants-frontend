@@ -165,7 +165,7 @@ GrantApplicationFieldAnswerItem:
 PIIAnswer:
   type: string
   description: JSON serialized object, encrypted with a specific user's public key
-  format: byte
+  format: base64
 PIIAnswers:
   type: object
   description: >-
