@@ -10,7 +10,7 @@ import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { WebwalletContext } from 'src/pages/_app'
 import { containsField, getProjectDetails } from 'src/screens/proposal_form/_utils'
-import { DEFAULT_FORM } from 'src/screens/proposal_form/_utils/constants'
+import { DEFAULT_FORM, DEFAULT_MILESTONE } from 'src/screens/proposal_form/_utils/constants'
 import { Form, FormType, Grant, Proposal, ProposalFormContextType } from 'src/screens/proposal_form/_utils/types'
 import { getFieldString, getFieldStrings } from 'src/utils/formattingUtils'
 
@@ -112,7 +112,7 @@ const ProposalFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 					value: id === 'isMultipleMilestones' ? 'true' : ''
 				}
 			}),
-			milestones: [{ index: 0, title: '', amount: 0 }],
+			milestones: [DEFAULT_MILESTONE],
 			members: containsField(result[0].grant, 'teamMembers') ? [''] : [],
 			details: EditorState.createEmpty()
 		}

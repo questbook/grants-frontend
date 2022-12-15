@@ -1,4 +1,4 @@
-import { ChangeEvent, ReactElement, useContext, useEffect, useMemo, useState } from 'react'
+import { ChangeEvent, ReactElement, useContext, useMemo, useState } from 'react'
 import { Button, Flex, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import logger from 'src/libraries/logger'
@@ -14,7 +14,7 @@ import SectionSelect from 'src/screens/proposal_form/_components/SectionSelect'
 import SelectArray from 'src/screens/proposal_form/_components/SelectArray'
 import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposal'
 import { containsField, findField } from 'src/screens/proposal_form/_utils'
-import { MILESTONE_INPUT_STYLE } from 'src/screens/proposal_form/_utils/constants'
+import { DEFAULT_MILESTONE, MILESTONE_INPUT_STYLE } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
 import { getExplorerUrlForTxHash, getRewardAmountMilestones } from 'src/utils/formattingUtils'
 
@@ -203,7 +203,7 @@ function ProposalForm() {
 											value: milestone?.title,
 											onChange: (e) => {
 												const copy = { ...form }
-												copy.milestones[index].title = e.target.value
+												copy.milestones[index] = { ...copy.milestones[index], title: e.target.value }
 												setForm(copy)
 											}
 										},
@@ -212,12 +212,27 @@ function ProposalForm() {
 											value: milestone?.amount > 0 ? milestone?.amount : '',
 											onChange: (e) => {
 												const copy = { ...form }
-												copy.milestones[index].amount = parseFloat(e.target.value)
+												copy.milestones[index] = { ...copy.milestones[index], amount: parseFloat(e.target.value) }
 												setForm(copy)
 											}
 										},
 									]
 								})
+							}
+							onAdd={
+								() => {
+									const copy = { ...form }
+									copy.milestones.push(DEFAULT_MILESTONE)
+									setForm(copy)
+								}
+							}
+							onRemove={
+								(index) => {
+									const copy = { ...form }
+									logger.info({ index, copy }, 'Splicing')
+									copy.milestones.splice(index, 1)
+									setForm(copy)
+								}
 							} />
 
 						<SectionInput
@@ -309,10 +324,6 @@ function ProposalForm() {
 	const fundingAsk = useMemo(() => {
 		const val = getRewardAmountMilestones(chainInfo?.decimals ?? 0, { milestones: form.milestones.map((m) => ({ ...m, amount: m.amount.toString() })) })
 		return val
-	}, [form])
-
-	useEffect(() => {
-		logger.info({ form }, 'Form changed')
 	}, [form])
 
 	const onChange = (e: ChangeEvent<HTMLInputElement>, id: string) => {

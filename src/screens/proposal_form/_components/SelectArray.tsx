@@ -1,14 +1,15 @@
-import { useState } from 'react'
 import { Button, Flex, FlexProps, IconButton, Image, Input, InputProps, Text } from '@chakra-ui/react'
 
 interface Props {
     label: string
 	allowMultiple: boolean
 	config: InputProps[][] // 2D array of InputProps
+	onAdd: () => void
+	onRemove: (index: number) => void
     flexProps?: FlexProps
 }
 
-function SelectArray({ label, allowMultiple, flexProps, config }: Props) {
+function SelectArray({ label, allowMultiple, flexProps, config, onAdd, onRemove }: Props) {
 	const buildComponent = () => {
 		return (
 			<Flex
@@ -51,17 +52,14 @@ function SelectArray({ label, allowMultiple, flexProps, config }: Props) {
 											direction='column'
 											w='100%'>
 											{
-												config[index].map((inputProps, i) => {
-													const [value, setValue] = useState<string>(inputProps?.value?.toString() ?? '')
-
+												_.map((inputProps, i) => {
 													return (
 														<Flex
-															key={i}
+															key={`${index}-${i}`}
 															mt={i === 0 ? 0 : 4}
 															direction='column'>
 															<Input
 																{...inputProps}
-																value={value}
 																variant='flushed'
 																textAlign='left'
 																borderColor='gray.3'
@@ -75,12 +73,6 @@ function SelectArray({ label, allowMultiple, flexProps, config }: Props) {
 																		color: 'gray.5'
 																	}
 																}
-																onChange={
-																	(e) => {
-																		setValue(e.target.value)
-																		inputProps?.onChange?.(e)
-																	}
-																}
 															/>
 															{
 																inputProps.maxLength && (
@@ -89,7 +81,7 @@ function SelectArray({ label, allowMultiple, flexProps, config }: Props) {
 																		ml='auto'
 																		variant='v2_metadata'
 																		color='gray.5'>
-																		{value.length.toString()}
+																		{config[index][i]?.value?.toString()?.length}
 																		{' '}
 																		/
 																		{' '}
@@ -108,8 +100,13 @@ function SelectArray({ label, allowMultiple, flexProps, config }: Props) {
 											ml={2}
 											mt={4}
 											aria-label={`remove-${index}`}
-											isDisabled={length === 1}
+											isDisabled={config.length === 1}
 											variant='ghost'
+											onClick={
+												() => {
+													onRemove(index)
+												}
+											}
 											icon={
 												<Image
 													src='/v2/icons/close.svg'
@@ -129,7 +126,8 @@ function SelectArray({ label, allowMultiple, flexProps, config }: Props) {
 											<Image
 												src='/v2/icons/add/black.svg'
 												boxSize='28px' />
-										}>
+										}
+										onClick={onAdd}>
 										<Text
 											variant='v2_subheading'
 											fontWeight='500'>

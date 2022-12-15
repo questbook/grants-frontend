@@ -1,5 +1,7 @@
-import { useContext } from 'react'
+import { useContext, useMemo } from 'react'
 import { Box, Button, Divider, Flex } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
+import { defaultChainId } from 'src/constants/chains'
 import logger from 'src/libraries/logger'
 import { ApiClientsContext } from 'src/pages/_app'
 import Milestones from 'src/screens/dashboard/_components/ActionList/SingleSelect/Milestones'
@@ -7,6 +9,7 @@ import Payouts from 'src/screens/dashboard/_components/ActionList/SingleSelect/P
 import ReviewProposal from 'src/screens/dashboard/_components/ActionList/SingleSelect/ReviewProposal'
 import Reviews from 'src/screens/dashboard/_components/ActionList/SingleSelect/Reviews'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function SingleSelect() {
 	const buildComponent = () => {
@@ -74,7 +77,10 @@ function SingleSelect() {
 						variant='primaryMedium'
 						onClick={
 							() => {
-
+								router.push({ pathname: '/proposal_form', query: {
+									proposalId: proposal?.id,
+									chainId,
+								} })
 							}
 						}>
 						Resubmit proposal
@@ -84,9 +90,22 @@ function SingleSelect() {
 		)
 	}
 
+	const router = useRouter()
 	const { role } = useContext(ApiClientsContext)!
 	const { setIsModalOpen } = useContext(FundBuilderContext)!
-	const { proposals } = useContext(DashboardContext)!
+	const { proposals, selectedProposals } = useContext(DashboardContext)!
+
+	const proposal = useMemo(() => {
+		const index = selectedProposals.indexOf(true)
+
+		if(index !== -1) {
+			return proposals[index]
+		}
+	}, [proposals, selectedProposals])
+
+	const chainId = useMemo(() => {
+		return getSupportedChainIdFromWorkspace(proposal?.grant?.workspace) ?? defaultChainId
+	}, [proposal])
 
 	return buildComponent()
 }
