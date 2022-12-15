@@ -1,10 +1,15 @@
 import { ReactElement, useContext, useMemo, useState } from 'react'
 import { Button, Flex, Text } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
+import { defaultChainId } from 'src/constants/chains'
 import useSetupProfile from 'src/libraries/hooks/useSetupProfile'
+import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
-import { ApiClientsContext } from 'src/pages/_app'
+import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
+import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 
 function SetupProfile() {
 	const buildComponent = () => {
@@ -56,7 +61,9 @@ function SetupProfile() {
 						py={8}
 						direction='column'
 						border='1px solid #E7E4DD'>
-						<ImageUpload onClick={() => {}} />
+						<ImageUpload
+							imageFile={imageFile}
+							setImageFile={setImageFile} />
 						<FlushedInput
 							w='100%'
 							flexProps={{ w: '100%', mt: 5 }}
@@ -101,31 +108,52 @@ function SetupProfile() {
 						</Text>
 					</Button>
 				</Flex>
+				<NetworkTransactionFlowStepperModal
+					isOpen={networkTransactionModalStep !== undefined}
+					currentStepIndex={networkTransactionModalStep || 0}
+					viewTxnLink={getExplorerUrlForTxHash(inviteInfo?.chainId, transactionHash)}
+					onClose={
+						() => {
+							setNetworkTransactionModalStep(undefined)
+							setTransactionHash('')
+							setRole('reviewer')
+							router.push({
+								pathname: '/dashboard'
+							})
+						}
+					} />
 			</Flex>
 		)
 	}
 
-	const { inviteInfo } = useContext(ApiClientsContext)!
+	const { inviteInfo, setRole } = useContext(ApiClientsContext)!
+	const { scwAddress } = useContext(WebwalletContext)!
+	const router = useRouter()
 
 	const [name, setName] = useState<string>('')
 	const [email, setEmail] = useState<string>('')
 
-	const isDisabled = useMemo(() => {
-		return name === '' || email === '' || !isBiconomyInitialised
-	}, [name, email])
-
+	const [imageFile, setImageFile] = useState<File | null>(null)
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
 	const [transactionHash, setTransactionHash] = useState<string>('')
 
-	const { setupProfile, isBiconomyInitialised } = useSetupProfile({ setNetworkTransactionModalStep, setTransactionHash })
+	const workspaceId = useMemo(() => {
+		return `0x${inviteInfo?.workspaceId.toString(16)}`
+	}, [inviteInfo])
+	const { setupProfile, isBiconomyInitialised } = useSetupProfile({ workspaceId, memberId: `${workspaceId}.${scwAddress}`, setNetworkTransactionModalStep, setTransactionHash, chainId: inviteInfo?.chainId ?? defaultChainId })
+
+	const isDisabled = useMemo(() => {
+		logger.info({ 1: name === '', 2: email === '', 3: isBiconomyInitialised }, 'Is Disabled Create')
+		return name === '' || email === '' || !isBiconomyInitialised
+	}, [name, email])
 
 	const onCreateClick = async() => {
-		if(!inviteInfo?.role) {
+		if(inviteInfo?.role === undefined) {
 			return
 		}
 
 		setupProfile({
-			name, email, role: inviteInfo.role
+			name, email, imageFile, role: inviteInfo.role
 		})
 	}
 
