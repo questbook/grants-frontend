@@ -4,6 +4,7 @@ import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useSetupProfile from 'src/libraries/hooks/useSetupProfile'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
+import { usePiiForWorkspaceMember } from 'src/libraries/utils/pii'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 
@@ -141,7 +142,7 @@ function UpdateProfileModal({ isOpen, onClose }: Props) {
 
 	const toast = useCustomToast()
 
-	// const { decrypt } = usePiiForWorkspaceMember(workspace?.id, member?.id, member?.publicKey, chainId)
+	const { decrypt } = usePiiForWorkspaceMember(workspace?.id, member?.id, member?.publicKey, chainId)
 
 	const [name, setName] = useState<string>(member?.fullName ?? '')
 	const [email, setEmail] = useState<string>('')
@@ -152,11 +153,13 @@ function UpdateProfileModal({ isOpen, onClose }: Props) {
 	const [transactionHash, setTransactionHash] = useState<string>('')
 
 	// TODO: Uncomment this once we have the PII decryption working upon subrgaph sync complete
-	// useEffect(() => {
-	// 	decrypt({ pii: member?.pii }).then((res) => {
-	// 		setEmail(res?.email ?? '')
-	// 	})
-	// }, [])
+	useEffect(() => {
+		if(member?.pii) {
+			decrypt({ pii: member?.pii }).then((res) => {
+				setEmail(res?.email ?? '')
+			})
+		}
+	}, [])
 
 	useEffect(() => {
 		if(transactionHash !== '') {

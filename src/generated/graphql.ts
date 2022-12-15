@@ -1823,6 +1823,51 @@ export enum Grant_OrderBy {
   Workspace = 'workspace'
 }
 
+export type MemberPiiAnswer = {
+  __typename?: 'MemberPiiAnswer';
+  /** The encrypted data */
+  data: Scalars['String'];
+  id: Scalars['ID'];
+};
+
+export type MemberPiiAnswer_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  data?: InputMaybe<Scalars['String']>;
+  data_contains?: InputMaybe<Scalars['String']>;
+  data_contains_nocase?: InputMaybe<Scalars['String']>;
+  data_ends_with?: InputMaybe<Scalars['String']>;
+  data_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  data_gt?: InputMaybe<Scalars['String']>;
+  data_gte?: InputMaybe<Scalars['String']>;
+  data_in?: InputMaybe<Array<Scalars['String']>>;
+  data_lt?: InputMaybe<Scalars['String']>;
+  data_lte?: InputMaybe<Scalars['String']>;
+  data_not?: InputMaybe<Scalars['String']>;
+  data_not_contains?: InputMaybe<Scalars['String']>;
+  data_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  data_not_ends_with?: InputMaybe<Scalars['String']>;
+  data_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  data_not_in?: InputMaybe<Array<Scalars['String']>>;
+  data_not_starts_with?: InputMaybe<Scalars['String']>;
+  data_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  data_starts_with?: InputMaybe<Scalars['String']>;
+  data_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+};
+
+export enum MemberPiiAnswer_OrderBy {
+  Data = 'data',
+  Id = 'id'
+}
+
 export type Migration = {
   __typename?: 'Migration';
   /** This is null if type !== ApplicationMigrate */
@@ -2399,6 +2444,8 @@ export type Query = {
   grantReviewerCounter?: Maybe<GrantReviewerCounter>;
   grantReviewerCounters: Array<GrantReviewerCounter>;
   grants: Array<Grant>;
+  memberPiiAnswer?: Maybe<MemberPiiAnswer>;
+  memberPiiAnswers: Array<MemberPiiAnswer>;
   migration?: Maybe<Migration>;
   migrations: Array<Migration>;
   notification?: Maybe<Notification>;
@@ -2630,6 +2677,24 @@ export type QueryGrantsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<Grant_Filter>;
+};
+
+
+export type QueryMemberPiiAnswerArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryMemberPiiAnswersArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<MemberPiiAnswer_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<MemberPiiAnswer_Filter>;
 };
 
 
@@ -3338,6 +3403,8 @@ export type Subscription = {
   grantReviewerCounter?: Maybe<GrantReviewerCounter>;
   grantReviewerCounters: Array<GrantReviewerCounter>;
   grants: Array<Grant>;
+  memberPiiAnswer?: Maybe<MemberPiiAnswer>;
+  memberPiiAnswers: Array<MemberPiiAnswer>;
   migration?: Maybe<Migration>;
   migrations: Array<Migration>;
   notification?: Maybe<Notification>;
@@ -3569,6 +3636,24 @@ export type SubscriptionGrantsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<Grant_Filter>;
+};
+
+
+export type SubscriptionMemberPiiAnswerArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionMemberPiiAnswersArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<MemberPiiAnswer_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<MemberPiiAnswer_Filter>;
 };
 
 
@@ -4059,6 +4144,8 @@ export type WorkspaceMember = {
   lastReviewSubmittedAt: Scalars['Int'];
   /** The review IDs for which this member is owed a payment */
   outstandingReviewIds: Array<Scalars['String']>;
+  /** PII data of the member */
+  pii: Array<MemberPiiAnswer>;
   /** Hash of profile picture on IPFS */
   profilePictureIpfsHash?: Maybe<Scalars['String']>;
   /** Public key of the workspace member */
@@ -4068,6 +4155,15 @@ export type WorkspaceMember = {
   /** Last update on member */
   updatedAt: Scalars['Int'];
   workspace: Workspace;
+};
+
+
+export type WorkspaceMemberPiiArgs = {
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<MemberPiiAnswer_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<MemberPiiAnswer_Filter>;
 };
 
 export enum WorkspaceMemberAccessLevel {
@@ -4191,6 +4287,13 @@ export type WorkspaceMember_Filter = {
   outstandingReviewIds_not?: InputMaybe<Array<Scalars['String']>>;
   outstandingReviewIds_not_contains?: InputMaybe<Array<Scalars['String']>>;
   outstandingReviewIds_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  pii?: InputMaybe<Array<Scalars['String']>>;
+  pii_?: InputMaybe<MemberPiiAnswer_Filter>;
+  pii_contains?: InputMaybe<Array<Scalars['String']>>;
+  pii_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  pii_not?: InputMaybe<Array<Scalars['String']>>;
+  pii_not_contains?: InputMaybe<Array<Scalars['String']>>;
+  pii_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
   profilePictureIpfsHash?: InputMaybe<Scalars['String']>;
   profilePictureIpfsHash_contains?: InputMaybe<Scalars['String']>;
   profilePictureIpfsHash_contains_nocase?: InputMaybe<Scalars['String']>;
@@ -4282,6 +4385,7 @@ export enum WorkspaceMember_OrderBy {
   LastKnownTxHash = 'lastKnownTxHash',
   LastReviewSubmittedAt = 'lastReviewSubmittedAt',
   OutstandingReviewIds = 'outstandingReviewIds',
+  Pii = 'pii',
   ProfilePictureIpfsHash = 'profilePictureIpfsHash',
   PublicKey = 'publicKey',
   RemovedAt = 'removedAt',
@@ -5013,7 +5117,7 @@ export type GetWorkspaceMembersQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, enabled: boolean, workspace: { __typename?: 'Workspace', id: string, ownerId: string, logoIpfsHash: string, title: string, supportedNetworks: Array<SupportedNetwork>, safe?: { __typename?: 'WorkspaceSafe', id: string, chainId: string, address: string } | null, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, fullName?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number }> } }> };
+export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, enabled: boolean, workspace: { __typename?: 'Workspace', id: string, ownerId: string, logoIpfsHash: string, title: string, supportedNetworks: Array<SupportedNetwork>, safe?: { __typename?: 'WorkspaceSafe', id: string, chainId: string, address: string } | null, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, fullName?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number, pii: Array<{ __typename?: 'MemberPiiAnswer', id: string, data: string }> }> } }> };
 
 export type GetWorkspaceMembersByWorkspaceIdQueryVariables = Exact<{
   workspaceId: Scalars['String'];
@@ -7896,6 +8000,10 @@ export const GetWorkspaceMembersDocument = gql`
         accessLevel
         outstandingReviewIds
         lastReviewSubmittedAt
+        pii {
+          id
+          data
+        }
       }
     }
   }
