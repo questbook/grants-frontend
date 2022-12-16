@@ -209,7 +209,7 @@ function TextEditor({
 	const handleImageUpload = async(
 		event: React.ChangeEvent<HTMLInputElement>,
 	) => {
-		if(event.target.files && event.target.files[0]) {
+		if(event?.target?.files?.[0]) {
 			setUploadingImage(true)
 			const img = event.target.files[0]
 			const imageHash = (await uploadToIPFS(img)).hash

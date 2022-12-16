@@ -24,7 +24,7 @@ i18next.use(initReactI18next).init({
 					},
 					'cards': {
 						'proposals': 'proposals',
-						'in_grants': 'sent in grants',
+						'in_grants': 'paid out',
 						'submit_proposal': 'Submit Proposal',
 					},
 					'show_more': 'Show More',
@@ -95,7 +95,7 @@ i18next.use(initReactI18next).init({
 					'multisig_safe_address': 'Multisig Address',
 					'multisig_safe_address_helper': 'Supported Multisig Wallets: Gnosis Safe and Realms',
 					'looking_for_safe': 'Looking up safes with this address on different networks...',
-					'safe_found' : 'Safe with this address was found on one network',
+					'safe_found' : 'Looks like this address is on 1 network.',
 					'safes_found' : 'Multiple safes with this address were found on multiple networks',
 					'pick_network_helptext': 'Pick the network from which you want to do payouts on Questbook.',
 					'pick_network_placeholder' : 'Pick a network',
@@ -105,8 +105,8 @@ i18next.use(initReactI18next).init({
 					'program_name_placeholder': 'e.g. Risk Parameter Research Grants',
 					'create': 'Create',
 					'verify_signer': 'Please verify you’re a signer on this SAFE. This will ensure we don’t have impersonation.',
-					'verify_signer_title': 'Verify you’re a signer',
-					'verify_signer_desc': 'Connect your wallet which is a signer on the Multisig.',
+					'verify_signer_title': 'Verify you own the multisig',
+					'verify_signer_desc': 'Connect your wallet which is a multisig owner.',
 					'success': 'Success',
 					'next_create_grant': 'Next create a grant to invite proposals from builders',
 					'successful_verification' : 'You\'ve successfully verified you\'re a signer on this multisig wallet.',
@@ -231,10 +231,13 @@ i18next.use(initReactI18next).init({
 					'mark_milestone_as_done_modal_heading': 'Mark Milestone as Done',
 					'mark_milestone_as_done_modal_subheading': 'Milestone once verified as completed can be marked as done.',
 				},
-				'recovery': {
+				'account_details': {
 					'menu': {
-						'use_another_wallet': 'Use another in-app wallet',
-						'save_wallet': 'Export private key'
+						'use_another_wallet': 'Import existing wallet',
+						'save_wallet': 'Save wallet key',
+						'swap_builder': 'Switch to building',
+						'swap_reviewer': 'Switch to reviewing',
+						'swap_admin': 'Switch to admin',
 					},
 					'import': {
 						'heading': 'Use another in-app wallet',
@@ -254,7 +257,7 @@ i18next.use(initReactI18next).init({
 						'yes': 'Yes',
 						'no': 'No'
 					}
-				}
+				},
 			},
 
 		},

@@ -168,7 +168,7 @@ export class GnosisSafe implements _GnosisSafe {
 		const signer = provider.getSigner()
 		const ethAdapter = new EthersAdapter({
 			ethers,
-			signer,
+			signerOrProvider: signer,
 		})
 
 		let safeSdk
@@ -180,7 +180,10 @@ export class GnosisSafe implements _GnosisSafe {
 					multiSendAddress: '0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761',
 					safeMasterCopyAddress: '0xe591ae490dcc235f420fb7ae3239e0df3ae2048f',
 					safeProxyFactoryAddress: '0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2',
-					multiSendCallOnlyAddress: '0x40A2aCCbd92BCA938b02010E17A5b8929b49130D'
+					multiSendCallOnlyAddress: '0x40A2aCCbd92BCA938b02010E17A5b8929b49130D',
+					createCallAddress: '',
+					fallbackHandlerAddress: '',
+					signMessageLibAddress: '',
 				}
 			}
 
@@ -206,7 +209,7 @@ export class GnosisSafe implements _GnosisSafe {
 		const signer = provider.getSigner()
 		const ethAdapter = new EthersAdapter({
 			ethers,
-			signer,
+			signerOrProvider: signer,
 		})
 		const safeService = new SafeServiceClient({ txServiceUrl: this.txnServiceURL, ethAdapter })
 		const txnDetails = await safeService.getTransaction(safeTxHash)
@@ -226,7 +229,7 @@ export class GnosisSafe implements _GnosisSafe {
 		const signer = provider.getSigner()
 		const ethAdapter = new EthersAdapter({
 			ethers,
-			signer,
+			signerOrProvider: signer,
 		})
 		const safeService = new SafeServiceClient({ txServiceUrl: this.txnServiceURL, ethAdapter })
 		const balanceInUsd = await safeService.getUsdBalances(this.id)

@@ -1,0 +1,6 @@
+query getGrantsProgramDetails($workspaceID: ID!) {
+    grantsProgram: workspace(id: $workspaceID, subgraphError: allow) {
+        id
+        title
+    }
+}

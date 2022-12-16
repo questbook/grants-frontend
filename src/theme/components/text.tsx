@@ -1,5 +1,11 @@
 export default {
 	Text: {
+		baseStyle: {
+			color: 'black.1',
+			fontSize: '16px',
+			lineHeight: '20px',
+			fontWeight: '400'
+		},
 		variants: {
 			heading: {
 				color: '#122224',
@@ -82,10 +88,47 @@ export default {
 				lineHeight: '48px',
 				color: 'black.1'
 			},
-			proposalHeading: {
+			// New v2 starts here
+			v2_heading: {
 				fontSize: '24px',
 				lineHeight: '32px',
 				fontWeight: '500',
+			},
+			v2_subheading_2: {
+				fontWeight: 450,
+				fontSize: '16px',
+				lineHeight: '24px',
+			},
+			v2_helper_text: {
+				fontWeight: 450,
+				fontSize: '14px',
+				lineHeight: '20px',
+			},
+			requestProposalBody: {
+				fontSize: '20px',
+				fontWeight: '400',
+				lineHeight: '28px',
+			},
+			footerContent: {
+				fontSize: '14px',
+				fontWeight: '400',
+				lineHeight: '20px',
+			},
+			footerContentBold: {
+				fontSize: '14px',
+				fontWeight: '500',
+				lineHeight: '20px',
+				color: 'black.3'
+			},
+			footerContentRegular: {
+				fontSize: '14px',
+				fontWeight: '500',
+				lineHeight: '20px',
+			},
+			modalTitle: {
+				fontSize: '16px',
+				fontWeight: '500',
+				lineHeight: '24px',
 			}
 		},
 	},

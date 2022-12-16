@@ -8,6 +8,8 @@ export const ROLES = {
 
 export const USD_THRESHOLD = 0
 
+export const DEFAULT_NETWORK = process.env.NEXT_PUBLIC_IS_TEST === 'true' ? '5' : '10'
+
 export const DEFAULT_NOTE = <SafeSelectOption>{
 	safeAddress: '',
 	networkType: NetworkType.EVM,

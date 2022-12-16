@@ -192,7 +192,7 @@ function YourApplications() {
 								updatedDate={getFormattedDateFromUnixTimestamp(application?.updatedAtS)}
 								onViewGrantClick={
 									() => router.push({
-										pathname: '/explore_grants/about_grant',
+										pathname: '/proposal_form',
 										query: {
 											grantId: application.grant.id,
 											chainId: getChainIdFromResponse(
