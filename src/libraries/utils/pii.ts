@@ -7,8 +7,8 @@ import { ec as EC } from 'elliptic'
 import { ethers, Wallet } from 'ethers'
 import { arrayify, keccak256 } from 'ethers/lib/utils'
 import {
-	Comment,
 	GetAdminPublicKeysQuery,
+	GetCommentsQuery,
 	GetProposalsForAdminQuery,
 	PiiData,
 	useGetAdminPublicKeysQuery,
@@ -17,6 +17,7 @@ import {
 } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
+import logger from 'src/libraries/logger'
 import { PIIForCommentType } from 'src/libraries/utils/types'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
@@ -105,14 +106,17 @@ export async function getSecureChannelFromPublicKey(
 		},
 		/** decrypts base64 encoded text/binary data */
 		async decrypt(ciphertext: string) {
+			logger.info('1')
 			const ciphertextLatin1 = window.atob(ciphertext)
-			const ciphertextBytes = Uint8Array.from(ciphertextLatin1, (c) => c.charCodeAt(0),
-			)
+			logger.info('2')
+			const ciphertextBytes = Uint8Array.from(ciphertextLatin1, (c) => c.charCodeAt(0))
+			logger.info('3')
 			const result = await crypto.subtle.decrypt(
 				{ name: 'aes-cbc', iv: iv },
 				subtleKey,
 				ciphertextBytes,
 			)
+			logger.info('4')
 
 			return decoder.decode(result)
 		},
@@ -795,15 +799,17 @@ export function usePiiForComment(
 
 			const secureChannel = await getSecureChannelFromPublicKey(
 				webwallet,
-				applicantPublicKey!,
-				getKeyForMemberPii(applicantId),
+				applicantPublicKey,
+				getKeyForApplication(applicationId),
 			)
 
-			logger.info({ memberPublicKey: applicantPublicKey }, 'got secure channel with member')
+			logger.info({ memberPublicKey: applicantPublicKey, piiData }, 'got secure channel with member')
 
 			const decrypted = await secureChannel.decrypt(piiData)
 
-			logger.info('decrypted PII data')
+			logger.info({ decrypted }, 'decrypted PII data')
+
+			// logger.info('decrypted PII data')
 
 			const json = JSON.parse(decrypted) as PIIForCommentType
 
@@ -827,7 +833,7 @@ export function usePiiForComment(
    * otherwise return as is
    */
 	const decrypt = useCallback(
-		async(comment: Comment) => {
+		async(comment: Exclude<GetCommentsQuery['comments'], null | undefined>[number]) => {
 			if(comment?.commentsEncryptedData?.length) {
 				logger.info('Encrypted Data', comment)
 				if(!scwAddress || !applicantPublicKey || !workspaceId || !applicationId) {
@@ -846,6 +852,7 @@ export function usePiiForComment(
 				if(piiData) {
 					try {
 						const data = await decryptPii(piiData.data)
+						logger.info({ data, comment }, 'PII (Comment)')
 						// hacky way to copy the object
 						comment = JSON.parse(
 							JSON.stringify({

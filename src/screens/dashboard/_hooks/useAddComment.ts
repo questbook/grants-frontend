@@ -1,6 +1,7 @@
 import { useCallback, useContext, useMemo } from 'react'
 import { convertToRaw, EditorState } from 'draft-js'
 import { COMMUNICATION_ADDRESS } from 'src/constants/addresses'
+import { defaultChainId } from 'src/constants/chains'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
@@ -12,6 +13,7 @@ import { DashboardContext } from 'src/screens/dashboard/Context'
 import getErrorMessage from 'src/utils/errorUtils'
 import { bicoDapps, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 interface Props {
     setStep: (step: number | undefined) => void
@@ -21,9 +23,21 @@ interface Props {
 function useAddComment({
 	setStep, setTransactionHash
 }: Props) {
-	const { workspace, chainId, role, subgraphClients } = useContext(ApiClientsContext)!
+	const { role, subgraphClients } = useContext(ApiClientsContext)!
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 	const { proposals, selectedGrant, selectedProposals } = useContext(DashboardContext)!
+
+	const proposal = useMemo(() => {
+		const index = selectedProposals.indexOf(true)
+
+		if(index !== -1) {
+			return proposals[index]
+		}
+	}, [proposals, selectedProposals])
+
+	const chainId = useMemo(() => {
+		return getSupportedChainIdFromWorkspace(proposal?.grant?.workspace) ?? defaultChainId
+	}, [proposal])
 
 	const {
 		biconomyDaoObj: biconomy,
@@ -47,16 +61,8 @@ function useAddComment({
 		)
 	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, chainId])
 
-	const proposal = useMemo(() => {
-		const index = selectedProposals.indexOf(true)
-
-		if(index !== -1) {
-			return proposals[index]
-		}
-	}, [proposals, selectedProposals])
-
 	const { encrypt } = usePiiForComment(
-		workspace?.id,
+		proposal?.grant?.workspace?.id,
 		proposal?.id,
 		proposal?.applicantId,
 		proposal?.applicantPublicKey,
@@ -69,7 +75,7 @@ function useAddComment({
 	const addComment = useCallback(
 		async(message: EditorState) => {
 			try {
-				if(!webwallet || !biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress || !workspace?.id || !selectedGrant?.id || !proposal?.id) {
+				if(!webwallet || !biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress || !selectedGrant?.id || !proposal?.id) {
 					return
 				}
 
@@ -93,7 +99,7 @@ function useAddComment({
 				const commentHash = (await uploadToIPFS(JSON.stringify(json))).hash
 				logger.info({ commentHash }, 'Comment Hash (Comment)')
 
-				const methodArgs = [workspace.id, selectedGrant.id, proposal.id, role !== 'community', commentHash]
+				const methodArgs = [proposal.grant.workspace.id, selectedGrant.id, proposal.id, false, commentHash]
 				logger.info({ methodArgs }, 'Method Args (Comment)')
 
 				const response = await sendGaslessTransaction(
@@ -133,11 +139,11 @@ function useAddComment({
 				})
 			}
 		},
-		[webwallet, biconomy, biconomyWalletClient, scwAddress, workspace, chainId, role, selectedGrant, proposal],
+		[webwallet, biconomy, biconomyWalletClient, scwAddress, chainId, role, selectedGrant, proposal],
 	)
 
 	return {
-		addComment: useMemo(() => addComment, [webwallet, biconomy, biconomyWalletClient, scwAddress, workspace, chainId, role]),
+		addComment: useMemo(() => addComment, [webwallet, biconomy, biconomyWalletClient, scwAddress, chainId, role]),
 		isBiconomyInitialised
 	}
 }

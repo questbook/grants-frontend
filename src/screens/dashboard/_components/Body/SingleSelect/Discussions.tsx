@@ -1,16 +1,21 @@
-import { useContext, useMemo, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
-import { Button, Flex, IconButton, Image, Text } from '@chakra-ui/react'
+import { Button, Divider, Flex, IconButton, Image, Text } from '@chakra-ui/react'
 import { convertToRaw, EditorState } from 'draft-js'
 import logger from 'src/libraries/logger'
 import TextEditor from 'src/libraries/ui/RichTextEditor/textEditor'
+import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
 import { TXN_STEPS } from 'src/libraries/utils/constants'
 import { ApiClientsContext } from 'src/pages/_app'
 import useAddComment from 'src/screens/dashboard/_hooks/useAddComment'
+import useGetComments from 'src/screens/dashboard/_hooks/useGetComments'
 import useQuickReplies from 'src/screens/dashboard/_hooks/useQuickReplies'
+import { formatTime } from 'src/screens/dashboard/_utils/formatters'
+import { CommentType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import getAvatar from 'src/utils/avatarUtils'
-import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { formatAddress, getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 function Discussions() {
 	const buildComponents = () => {
@@ -160,6 +165,57 @@ function Discussions() {
 
 					</Flex>
 				</Flex>
+
+				<Divider
+					my={4}
+					color='gray.3'
+					height={1} />
+
+				{comments.filter((comment) => comment.sender && (comment.workspace.members.some((member) => member.actorId.toLowerCase() === comment.sender?.toLowerCase()) || comment.sender?.toLowerCase() === proposal?.applicantId.toLowerCase())).map(renderComment)}
+			</Flex>
+		)
+	}
+
+	const renderComment = (comment: CommentType, index: number) => {
+		const member = comment.workspace.members.find((member) => member.actorId.toLowerCase() === comment.sender?.toLowerCase())
+
+		return (
+			<Flex
+				align='start'
+				mt={index === 0 ? 0 : 4}>
+				<Image
+					borderRadius='3xl'
+					boxSize='36px'
+					src={(member?.profilePictureIpfsHash ? getUrlForIPFSHash(member?.profilePictureIpfsHash) : getAvatar(false, member ? member?.actorId : proposal?.applicantId))} />
+				<Flex
+					ml={3}
+					direction='column'>
+					<Flex align='center'>
+						<Text fontWeight='500'>
+							{member?.fullName ? member?.fullName : member?.actorId ? formatAddress(member?.actorId) : 'No Name found'}
+						</Text>
+						{
+							comment?.role === 'admin' || comment?.role === 'reviewer' && (
+								<Text
+									bg='gray.3'
+									p={1}>
+									Member
+								</Text>
+							)
+						}
+						{
+							comment?.timestamp && (
+								<Text
+									ml={2}
+									variant='v2_body'
+									color='gray.5'>
+									{formatTime(comment?.timestamp)}
+								</Text>
+							)
+						}
+					</Flex>
+					<TextViewer text={comment?.message ?? ''} />
+				</Flex>
 			</Flex>
 		)
 	}
@@ -173,6 +229,7 @@ function Discussions() {
 
 	const [ text, setText ] = useState<EditorState>(EditorState.createEmpty())
 	const { addComment, isBiconomyInitialised } = useAddComment({ setStep, setTransactionHash })
+	const comments = useGetComments()
 
 	const proposal = useMemo(() => {
 		const index = selectedProposals.indexOf(true)
@@ -190,6 +247,10 @@ function Discussions() {
 		logger.info({ text, raw: convertToRaw(text.getCurrentContent()) }, 'Current content (Comment)')
 		return convertToRaw(text.getCurrentContent()).blocks[0].text.length === 0
 	}, [text])
+
+	useEffect(() => {
+		logger.info({ comments }, 'Comments (Comment)')
+	}, [comments])
 
 	return buildComponents()
 }
