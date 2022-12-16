@@ -235,6 +235,7 @@ GrantApplicationUpdate:
       minLength: 1
       maxLength: 4096
 PrivateCommentAddRequest:
+  type: object
   required:
     - pii
   properties:
