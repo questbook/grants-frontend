@@ -5379,6 +5379,23 @@ export type GetAdminPublicKeysQueryVariables = Exact<{
 
 export type GetAdminPublicKeysQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, publicKey?: string | null }> } | null };
 
+export type GetMemberPublicKeysQueryVariables = Exact<{
+  workspaceId: Scalars['ID'];
+  applicationId: Scalars['ID'];
+}>;
+
+
+export type GetMemberPublicKeysQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null }> } | null, grantApplication?: { __typename?: 'GrantApplication', applicationReviewers: Array<{ __typename?: 'GrantApplicationReviewer', member: { __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null } }> } | null };
+
+export type GetCommentsQueryVariables = Exact<{
+  proposalId: Scalars['String'];
+  first?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type GetCommentsQuery = { __typename?: 'Query', comments: Array<{ __typename?: 'Comment', id: string, isPrivate: boolean, commentsPublicHash?: string | null, commentsEncryptedData?: Array<{ __typename?: 'PIIData', id: string, data: string }> | null, workspace: { __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null }> } }> };
+
 export type GetGrantsForAdminQueryVariables = Exact<{
   domainID: Scalars['String'];
 }>;
@@ -8468,6 +8485,117 @@ export type GetAdminPublicKeysLazyQueryHookResult = ReturnType<typeof useGetAdmi
 export type GetAdminPublicKeysQueryResult = Apollo.QueryResult<GetAdminPublicKeysQuery, GetAdminPublicKeysQueryVariables>;
 export function refetchGetAdminPublicKeysQuery(variables: GetAdminPublicKeysQueryVariables) {
       return { query: GetAdminPublicKeysDocument, variables: variables }
+    }
+export const GetMemberPublicKeysDocument = gql`
+    query getMemberPublicKeys($workspaceId: ID!, $applicationId: ID!) {
+  workspace(id: $workspaceId) {
+    members(where: {accessLevel_not: reviewer, enabled: true}) {
+      id
+      actorId
+      publicKey
+    }
+  }
+  grantApplication(id: $applicationId) {
+    applicationReviewers(where: {member_: {enabled: true}}) {
+      member {
+        id
+        actorId
+        publicKey
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetMemberPublicKeysQuery__
+ *
+ * To run a query within a React component, call `useGetMemberPublicKeysQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMemberPublicKeysQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMemberPublicKeysQuery({
+ *   variables: {
+ *      workspaceId: // value for 'workspaceId'
+ *      applicationId: // value for 'applicationId'
+ *   },
+ * });
+ */
+export function useGetMemberPublicKeysQuery(baseOptions: Apollo.QueryHookOptions<GetMemberPublicKeysQuery, GetMemberPublicKeysQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMemberPublicKeysQuery, GetMemberPublicKeysQueryVariables>(GetMemberPublicKeysDocument, options);
+      }
+export function useGetMemberPublicKeysLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMemberPublicKeysQuery, GetMemberPublicKeysQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMemberPublicKeysQuery, GetMemberPublicKeysQueryVariables>(GetMemberPublicKeysDocument, options);
+        }
+export type GetMemberPublicKeysQueryHookResult = ReturnType<typeof useGetMemberPublicKeysQuery>;
+export type GetMemberPublicKeysLazyQueryHookResult = ReturnType<typeof useGetMemberPublicKeysLazyQuery>;
+export type GetMemberPublicKeysQueryResult = Apollo.QueryResult<GetMemberPublicKeysQuery, GetMemberPublicKeysQueryVariables>;
+export function refetchGetMemberPublicKeysQuery(variables: GetMemberPublicKeysQueryVariables) {
+      return { query: GetMemberPublicKeysDocument, variables: variables }
+    }
+export const GetCommentsDocument = gql`
+    query getComments($proposalId: String!, $first: Int, $skip: Int) {
+  comments(
+    first: $first
+    skip: $skip
+    where: {application: $proposalId}
+    orderBy: createdAt
+    orderDirection: desc
+  ) {
+    id
+    isPrivate
+    commentsPublicHash
+    commentsEncryptedData {
+      id
+      data
+    }
+    workspace {
+      members {
+        actorId
+        fullName
+        profilePictureIpfsHash
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetCommentsQuery__
+ *
+ * To run a query within a React component, call `useGetCommentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCommentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCommentsQuery({
+ *   variables: {
+ *      proposalId: // value for 'proposalId'
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *   },
+ * });
+ */
+export function useGetCommentsQuery(baseOptions: Apollo.QueryHookOptions<GetCommentsQuery, GetCommentsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCommentsQuery, GetCommentsQueryVariables>(GetCommentsDocument, options);
+      }
+export function useGetCommentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCommentsQuery, GetCommentsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCommentsQuery, GetCommentsQueryVariables>(GetCommentsDocument, options);
+        }
+export type GetCommentsQueryHookResult = ReturnType<typeof useGetCommentsQuery>;
+export type GetCommentsLazyQueryHookResult = ReturnType<typeof useGetCommentsLazyQuery>;
+export type GetCommentsQueryResult = Apollo.QueryResult<GetCommentsQuery, GetCommentsQueryVariables>;
+export function refetchGetCommentsQuery(variables: GetCommentsQueryVariables) {
+      return { query: GetCommentsDocument, variables: variables }
     }
 export const GetGrantsForAdminDocument = gql`
     query getGrantsForAdmin($domainID: String!) {

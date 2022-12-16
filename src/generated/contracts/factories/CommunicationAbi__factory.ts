@@ -15,6 +15,87 @@ const _abi = [
     inputs: [
       {
         indexed: false,
+        internalType: "address",
+        name: "previousAdmin",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "newAdmin",
+        type: "address",
+      },
+    ],
+    name: "AdminChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "beacon",
+        type: "address",
+      },
+    ],
+    name: "BeaconUpgraded",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint96",
+        name: "workspaceId",
+        type: "uint96",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "grantAddress",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint96",
+        name: "applicationId",
+        type: "uint96",
+      },
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "isPrivate",
+        type: "bool",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "commentMetadataHash",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "timestamp",
+        type: "uint256",
+      },
+    ],
+    name: "CommentAdded",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         internalType: "uint256",
         name: "chainId",
         type: "uint256",
@@ -48,26 +129,240 @@ const _abi = [
     type: "event",
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint8",
+        name: "version",
+        type: "uint8",
+      },
+    ],
+    name: "Initialized",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "previousOwner",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
+    ],
+    name: "OwnershipTransferred",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "implementation",
+        type: "address",
+      },
+    ],
+    name: "Upgraded",
+    type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint96",
+        name: "_workspaceId",
+        type: "uint96",
+      },
+      {
+        internalType: "address",
+        name: "_grantAddress",
+        type: "address",
+      },
+      {
+        internalType: "uint96",
+        name: "_applicationId",
+        type: "uint96",
+      },
+      {
+        internalType: "bool",
+        name: "_isPrivate",
+        type: "bool",
+      },
+      {
+        internalType: "string",
+        name: "_commentMetadataHash",
+        type: "string",
+      },
+    ],
+    name: "addComment",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "applicationReg",
+    outputs: [
+      {
+        internalType: "contract IApplicationRegistry",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
-        name: "chainId",
+        name: "_chainId",
         type: "uint256",
       },
       {
         internalType: "string",
-        name: "emailHash",
+        name: "_emailHash",
         type: "string",
       },
       {
         internalType: "string",
-        name: "message",
+        name: "_message",
         type: "string",
       },
     ],
     name: "createLink",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "initialize",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "owner",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "proxiableUUID",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "renounceOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IApplicationRegistry",
+        name: "_applicationReg",
+        type: "address",
+      },
+    ],
+    name: "setApplicationReg",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IWorkspaceRegistry",
+        name: "_workspaceReg",
+        type: "address",
+      },
+    ],
+    name: "setWorkspaceReg",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
+    ],
+    name: "transferOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "newImplementation",
+        type: "address",
+      },
+    ],
+    name: "upgradeTo",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "newImplementation",
+        type: "address",
+      },
+      {
+        internalType: "bytes",
+        name: "data",
+        type: "bytes",
+      },
+    ],
+    name: "upgradeToAndCall",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "workspaceReg",
+    outputs: [
+      {
+        internalType: "contract IWorkspaceRegistry",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
 ] as const;
