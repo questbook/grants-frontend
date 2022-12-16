@@ -109,8 +109,10 @@ function Payouts(
 												<Flex
 													gap={4}
 													alignItems='baseline'>
-													<Text variant='requestProposalBody'>
-														{`${index + 1}`}
+													<Text
+														variant='v2_heading_3'
+														color='gray.4'>
+														{index < 9 ? `0${index + 1}` : (index + 1)}
 													</Text>
 													<FlushedInput
 														placeholder='Add milestone'
