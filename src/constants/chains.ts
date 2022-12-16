@@ -19,6 +19,7 @@ export const SOL_ETH_DECIMALS = 9
 // otherwise only use mainnets
 export const ALL_SUPPORTED_CHAIN_IDS: SupportedChainId[] = Object.values(CHAIN_INFO)
 	.map(({ id }) => id)
-	.filter(id => SHOW_TEST_NETS || !CHAIN_INFO[id].isTestNetwork)
+	// Changed this temporarily to show only the testnet for testing
+	.filter(id => SHOW_TEST_NETS && CHAIN_INFO[id].isTestNetwork)
 
 export { SupportedChainId }
