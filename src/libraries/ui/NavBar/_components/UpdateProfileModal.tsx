@@ -157,7 +157,6 @@ function UpdateProfileModal({ isOpen, onClose }: Props) {
 		}
 	}, [member])
 
-	const TXN_STEPS = ['Initiate transaction', 'Complete indexing', 'Complete transaction']
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
 	const [transactionHash, setTransactionHash] = useState<string>('')
 

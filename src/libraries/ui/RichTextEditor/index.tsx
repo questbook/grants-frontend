@@ -79,7 +79,7 @@ function RichTextEditor({
 				)
 			}
 			{
-				subtext?.length && (
+				(subtext?.length || 0) > 0 && (
 					<Text
 						fontSize='12px'
 						color='#717A7C'

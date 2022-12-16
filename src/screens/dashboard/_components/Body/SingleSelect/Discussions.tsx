@@ -1,9 +1,16 @@
-import { useContext, useMemo } from 'react'
-import { Button, Flex, Image, Text, Textarea } from '@chakra-ui/react'
+import { useContext, useMemo, useState } from 'react'
+import { ExternalLinkIcon } from '@chakra-ui/icons'
+import { Button, Flex, IconButton, Image, Text } from '@chakra-ui/react'
+import { convertToRaw, EditorState } from 'draft-js'
+import logger from 'src/libraries/logger'
+import TextEditor from 'src/libraries/ui/RichTextEditor/textEditor'
+import { TXN_STEPS } from 'src/libraries/utils/constants'
 import { ApiClientsContext } from 'src/pages/_app'
+import useAddComment from 'src/screens/dashboard/_hooks/useAddComment'
 import useQuickReplies from 'src/screens/dashboard/_hooks/useQuickReplies'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import getAvatar from 'src/utils/avatarUtils'
+import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 
 function Discussions() {
 	const buildComponents = () => {
@@ -109,35 +116,63 @@ function Discussions() {
 					<Flex
 						ml={4}
 						direction='column'
-						border='1px solid #C1BDB7'
-						px={3}
-						pb={2}
 						w='100%'>
-						<Textarea
-							w='100%'
-							textAlign='left'
-							placeholder='Ask a question or post an update'
-							fontSize='16px'
-							fontWeight='400'
-							lineHeight='24px'
-							size='sm'
-							variant='unstyled'
-							resize='none'
-						/>
-						<Button
-							ml='auto'
-							variant='primaryMedium'>
-							Post
-						</Button>
+						<TextEditor
+							value={text}
+							onChange={setText}
+							placeholder='Add a comment here' />
+						<Flex
+							mt={4}
+							align='center'>
+							{
+								step !== undefined && (
+									<Text variant='v2_body'>
+										{TXN_STEPS[step]}
+										...
+										{
+											transactionHash && (
+												<IconButton
+													ml={1}
+													icon={<ExternalLinkIcon />}
+													aria-label='txn-link'
+													onClick={
+														() => {
+															window.open(getExplorerUrlForTxHash(chainId, transactionHash), '_blank')
+														}
+													} />
+											)
+										}
+									</Text>
+								)
+							}
+							<Button
+								ml='auto'
+								variant='primaryMedium'
+								isDisabled={isDisabled}
+								onClick={
+									async() => {
+										await addComment(text)
+									}
+								}>
+								Post
+							</Button>
+						</Flex>
+
 					</Flex>
 				</Flex>
 			</Flex>
 		)
 	}
 
-	const { role } = useContext(ApiClientsContext)!
+	const { chainId, role } = useContext(ApiClientsContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 	const { quickReplies } = useQuickReplies()
+
+	const [step, setStep] = useState<number>()
+	const [transactionHash, setTransactionHash] = useState('')
+
+	const [ text, setText ] = useState<EditorState>(EditorState.createEmpty())
+	const { addComment, isBiconomyInitialised } = useAddComment({ setStep, setTransactionHash })
 
 	const proposal = useMemo(() => {
 		const index = selectedProposals.indexOf(true)
@@ -146,6 +181,15 @@ function Discussions() {
 			return proposals[index]
 		}
 	}, [proposals, selectedProposals])
+
+	const isDisabled = useMemo(() => {
+		if(!isBiconomyInitialised) {
+			return true
+		}
+
+		logger.info({ text, raw: convertToRaw(text.getCurrentContent()) }, 'Current content (Comment)')
+		return convertToRaw(text.getCurrentContent()).blocks[0].text.length === 0
+	}, [text])
 
 	return buildComponents()
 }
