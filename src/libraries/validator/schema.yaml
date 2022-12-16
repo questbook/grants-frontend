@@ -12,6 +12,7 @@ Validations:
     - $ref: 'Address'
     - $ref: 'Amount'
     - $ref: 'GrantApplicationUpdate'
+    - $ref: 'PrivateCommentAddRequest'
    # - $ref: 'ApplicationUpdateRequest'
    # - $ref: 'ApplicationCreateRequest'
 Address:
@@ -233,6 +234,12 @@ GrantApplicationUpdate:
       type: string
       minLength: 1
       maxLength: 4096
+PrivateCommentAddRequest:
+  required:
+    - pii
+  properties:
+    pii:
+      $ref: 'PIIAnswers'
 SocialItem:
   type: object
   additionalProperties: false
