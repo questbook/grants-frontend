@@ -54,7 +54,7 @@
 			"workspace": "0x4881fAB72dE0cBd58Bdc635EE9967d1de87EB5A2",
 			"grantFactory": "0x6C95c4b887eAcC52612e3D79575A1b00Ace05A4d",
 			"reviews": "0xc782342D667f8355869E9f5D23f245804aB10F56",
-			"communication": "0x89791d27558146e813f45636ed028c10b619aca5"
+			"communication": "0xb5b9b0078200871a443a6f6daA76838FCac5F641"
 		},
 		"subgraphClientUrl": "https://the-graph.questbook.app/subgraphs/name/qb-subgraph-goerli-testnet",
 		"rpcUrls": [

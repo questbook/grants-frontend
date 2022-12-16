@@ -6,7 +6,7 @@ import {
 	arrayify,
 	keccak256,
 } from 'ethers/lib/utils'
-import { GetAdminPublicKeysQuery, GetProposalsForAdminQuery, MemberPiiAnswer, useGetAdminPublicKeysQuery, useGetGrantManagersWithPublicKeyQuery } from 'src/generated/graphql'
+import { GetAdminPublicKeysQuery, GetProposalsForAdminQuery, PiiData, useGetAdminPublicKeysQuery, useGetGrantManagersWithPublicKeyQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
@@ -516,7 +516,7 @@ export function usePiiForWorkspaceMember(
 	 * otherwise return as is
 	 */
 	const decrypt = useCallback(
-		async(mem: {email?: string, pii: MemberPiiAnswer[]}) => {
+		async(mem: {email?: string, pii: PiiData[]}) => {
 			if(mem?.pii?.length) {
 				logger.info('Encrypted Data', mem)
 				if(!scwAddress || !memberPublicKey || !workspaceId) {

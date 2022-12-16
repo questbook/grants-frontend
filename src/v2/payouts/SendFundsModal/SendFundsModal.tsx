@@ -30,21 +30,10 @@ interface Props {
 	phantomWallet: PhantomProvider | undefined
 	isEvmChain: boolean
 	signerVerified: boolean
-	initiateTransactionData: TransactionType[]
+	initiateTransactionData: any
 	onModalStepChange: (value: string) => Promise<void>
 	step: string
 }
-
-// export type ModalState = 'RECEIPT_DETAILS' | 'CONNECT_WALLET' | 'VERIFIED_OWNER' | 'TRANSATION_INITIATED'
-
-// export const MODAL_STATE_INDEXES: {[_ in ModalState]: number} = {
-// 	RECEIPT_DETAILS: 0,
-// 	CONNECT_WALLET: 1,
-// 	VERIFIED_OWNER: 2,
-// 	TRANSATION_INITIATED: 3,
-// }
-
-// export type ModalStateType = keyof typeof MODAL_STATE_INDEXES
 
 function SendFundsModal({
 	isOpen,
@@ -63,6 +52,7 @@ function SendFundsModal({
 }: Props) {
 	const { t } = useTranslation()
 	const [recepientError, setRecepientError] = React.useState('')
+
 	return (
 		<>
 			<ModalComponent
@@ -259,8 +249,12 @@ function SendFundsModal({
 										ml='auto'
 										colorScheme='brandv2'
 										disabled={
-											initiateTransactionData?.length === 0 || initiateTransactionData?.filter((item) => {
+											initiateTransactionData?.length === 0 ||
+											initiateTransactionData?.filter((item: any) => {
 												return item?.amount <= 0
+											})?.length > 0 ||
+											initiateTransactionData?.filter((item: any) => {
+												return item?.selectedToken?.fiatConversion <= 0
 											})?.length > 0
 										}
 										onClick={

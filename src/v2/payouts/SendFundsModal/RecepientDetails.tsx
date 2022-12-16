@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Box, Button, Flex, Image, Input, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Image, Input, InputGroup, InputRightElement, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { IApplicantData } from 'src/types'
 import { chainNames } from 'src/utils/chainNames'
@@ -50,18 +50,6 @@ const RecipientDetails = ({
 	}, [])
 
 	const isSafeOnSolana = (safeNetwork == '9001' || safeNetwork == '90001' || safeNetwork == '900001' || safeNetwork == '9000001')
-
-	// const [balance, setBalance] = useState(0)
-	// useEffect(() => {
-	// 	async function getBalance() {
-	// 		// const balance = await getSafeDetails(initiateTransactionData?.from!)
-	// 		// setBalance(balance?.amount!)
-	// 	}
-
-	// 	if(!isEvmChain) {
-	// 		getBalance()
-	// 	}
-	// }, [])
 
 	const isInvalidAddress = async(address: string | undefined) => {
 		if(!address) {
@@ -311,10 +299,43 @@ const RecipientDetails = ({
 						safeTokenList={safeTokenList}
 						onChange={
 							(value) => {
-								console.log('change', value)
-								onChangeRecepientDetails(applicantData?.applicationId, 'selectedToken', { name: value?.id, info: value?.info })
+								onChangeRecepientDetails(applicantData?.applicationId, 'selectedToken', safeTokenList.filter((token: any) => token.tokenName === value.id)[0])
 							}
 						} />
+
+					{
+						initiateTransactionData?.selectedToken ? (
+							<Text
+								fontSize='12px'
+								lineHeight='16px'
+								fontWeight='400'
+								color='#7D7DA0'
+								mt='2px'
+							>
+								Balance:
+								{' '}
+								{parseFloat(initiateTransactionData?.selectedToken?.tokenValueAmount).toFixed(2)}
+								{' '}
+								{initiateTransactionData?.selectedToken?.tokenName}
+								{' '}
+								≈
+								{' '}
+								{parseFloat(initiateTransactionData?.selectedToken?.usdValueAmount).toFixed(2)}
+								{' '}
+								USD
+							</Text>
+						) : (
+							<Text
+								fontSize='12px'
+								lineHeight='16px'
+								fontWeight='400'
+								color='#7D7DA0'
+								mt='2px'
+							>
+								Please select a token above
+							</Text>
+						)
+					}
 
 					<Box h={6} />
 				</>
@@ -328,46 +349,51 @@ const RecipientDetails = ({
 					Amount (in USD)
 				</Text>
 
-				{/* <Text
-					fontSize='12px'
-					lineHeight='16px'
-					fontWeight='400'
-					color='#7D7DA0'
-					mt='2px'
-				>
-					Balance:
-					{' '}
-					{balance}
-					{' '}
-					USD
-				</Text> */}
-
 
 				<Flex
 					alignItems='baseline'
 					mt={2}
 				>
-					<Input
-						variant='brandFlushed'
-						placeholder='Amount'
-						_placeholder={
-							{
-								color: 'blue.100',
-								fontWeight: '500'
+					<InputGroup>
+						<Input
+							variant='brandFlushed'
+							placeholder='Amount'
+							_placeholder={
+								{
+									color: 'blue.100',
+									fontWeight: '500'
+								}
 							}
-						}
-						fontWeight='500'
-						fontSize='14px'
-						value={initiateTransactionData?.amount}
-						errorBorderColor='red'
-						height='auto'
-						type='number'
-						onChange={
-							async(e) => {
-								onChangeRecepientDetails(applicantData.applicationId || applicationID, 'amount', parseFloat(e.target.value?.length > 0 ? e.target.value : '0'))
+							fontWeight='500'
+							fontSize='14px'
+							value={initiateTransactionData?.amount}
+							errorBorderColor='red'
+							height='auto'
+							type='number'
+							onChange={
+								async(e) => {
+									onChangeRecepientDetails(applicantData.applicationId || applicationID, 'amount', parseFloat(e.target.value?.length > 0 ? e.target.value : '0'))
+								}
 							}
+						/>
+						{
+							parseFloat(initiateTransactionData?.selectedToken?.fiatConversion) > 0 ? (
+								<InputRightElement
+									width='6rem'
+									pb='2rem'>
+									<Text
+										ml='auto'
+										fontSize='12px'
+										lineHeight='16px'
+										fontWeight='400'
+										color='#7D7DA0'
+										mt='2px'>
+										{`${parseFloat((initiateTransactionData?.amount / initiateTransactionData?.selectedToken?.fiatConversion).toString()).toFixed(2)} ${initiateTransactionData?.selectedToken?.tokenName}`}
+									</Text>
+								</InputRightElement>
+							) : null
 						}
-					/>
+					</InputGroup>
 				</Flex>
 
 			</Flex>

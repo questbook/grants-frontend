@@ -12,8 +12,7 @@ const isValidEthereumAddress = (address: string) => {
 const isValidSolanaAddress = (address: string) => {
 	try {
 		//@todo: isOnCurve is not the right check here, it returns false even with right address
-		// return PublicKey.isOnCurve(address)
-		return true
+		return PublicKey.isOnCurve(address)
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch(e: any) {
 		return false

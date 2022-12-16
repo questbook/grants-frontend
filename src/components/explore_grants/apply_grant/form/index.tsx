@@ -10,8 +10,6 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import { GrantApplicationRequest } from '@questbook/service-validator-client'
-import axios from 'axios'
-import sha256 from 'crypto-js/sha256'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import { useRouter } from 'next/router'
 import ApplicantDetails from 'src/components/explore_grants/apply_grant/form/1_applicantDetails'
@@ -23,9 +21,9 @@ import Loader from 'src/components/ui/loader'
 import VerifiedBadge from 'src/components/ui/verified_badge'
 import { defaultChainId, SupportedChainId, USD_ASSET } from 'src/constants/chains'
 import strings from 'src/constants/strings.json'
+import { useSafeContext } from 'src/contexts/safeContext'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useSubmitApplication from 'src/hooks/useSubmitApplication'
-import logger from 'src/libraries/logger'
 import { WebwalletContext } from 'src/pages/_app'
 import { GrantApplicationFieldsSubgraph } from 'src/types/application'
 import { parseAmount } from 'src/utils/formattingUtils'
@@ -41,7 +39,7 @@ interface Props {
 	grantId: string
 	daoLogo: string
 	workspaceId: string
-	safeNetwork: string
+	safeNetwork: number
 	isGrantVerified: boolean
 	funding: string
 	rewardAmount: string
@@ -101,9 +99,6 @@ function Form({
 	const [applicantAddress, setApplicantAddress] = React.useState('')
 	const [applicantAddressError, setApplicantAddressError] = React.useState(false)
 
-	const [resolvedDomain, setResolvedDomain] = React.useState('')
-	const [resolvedDomainError, setResolvedDomainError] = React.useState(true)
-
 	const [teamMembers, setTeamMembers] = React.useState<number | null>(1)
 	const [teamMembersError, setTeamMembersError] = React.useState(false)
 
@@ -158,6 +153,7 @@ function Form({
 	}, 0)
 
 	const { t } = useTranslation()
+	const { safeObj } = useSafeContext()
 
 	React.useEffect(() => {
 		if(defaultMilestoneFields && defaultMilestoneFields.length > 0) {
@@ -310,7 +306,6 @@ function Form({
 
 		let projectMilestonesError = false
 		const newProjectMilestones = [...projectMilestones]
-		console.log('project milestones', newProjectMilestones)
 		projectMilestones.forEach((project, index) => {
 			if(project.milestone === '') {
 				newProjectMilestones[index].milestoneIsError = true
@@ -536,47 +531,6 @@ function Form({
 		customFields,
 	])
 
-	// useEffect(() => {
-	// 	if(applicantAddress && applicantAddress.includes('.')) {
-	// 		// setResolvedDomainError(true)
-	// 		const token = process.env.UD_KEY
-	// 		axios.get(`https://resolve.unstoppabledomains.com/domains/${applicantAddress}`, {
-	// 			headers: {
-	// 				Authorization: `Bearer ${token}`
-	// 			}
-	// 		})
-	// 			.then((res) => {
-	// 				logger.info('UD ->', res.data)
-	// 				if(res.data.meta.networkId !== parseInt(safeNetwork)) {
-	// 					logger.info(`domain not on safe network ${safeNetwork}`)
-	// 					setResolvedDomainError(true)
-	// 					// setApplicantAddressError(true)
-	// 				} else if(res.data.meta.owner) {
-	// 					console.log('resolved domain', res.data.meta.owner)
-	// 					setResolvedDomain(res.data.meta.owner)
-	// 					setApplicantAddress(res.data.meta.owner)
-	// 					setResolvedDomainError(false)
-	// 					setApplicantAddressError(false)
-	// 				}
-	// 			}).catch((err) => {
-	// 				logger.error('UD error ->', err)
-	// 				setResolvedDomainError(true)
-	// 			})
-
-	// 	} else if(resolvedDomain) {
-	// 		setResolvedDomainError(true)
-	// 	}
-	// }, [applicantAddress])
-
-	// useEffect(() => {
-	// 	logger.info("resolved domain changed", resolvedDomain)
-	// 	debugger
-	// 	if(resolvedDomain) {
-	// 	logger.info("resolved domain in useffect", resolvedDomain)
-	// 	setApplicantAddress(resolvedDomain)
-	// 	}
-	// }, [resolvedDomain])
-
 	return (
 		<Flex
 			my='30px'
@@ -678,9 +632,7 @@ function Form({
 					setApplicantAddress={setApplicantAddress}
 					setApplicantAddressError={setApplicantAddressError}
 					grantRequiredFields={grantRequiredFields}
-					safeNetwork={safeNetwork!}
-					// resolvedDomain={resolvedDomain}
-					// resolvedDomainError={resolvedDomainError}
+					safeNetwork={safeNetwork?.toString() ?? defaultChainId.toString()}
 				/>
 
 				<Box mt='43px' />

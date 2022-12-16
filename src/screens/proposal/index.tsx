@@ -420,7 +420,7 @@ function Proposal() {
 					p={6}>
 					{
 						milestones?.map((milestone, index) => {
-							const disbursedMilestones = proposal?.grant?.fundTransfers?.filter((fundTransfer) => fundTransfer?.milestone?.id === milestone.id)
+							const disbursedMilestones = proposal?.grant?.fundTransfers?.filter((fundTransfer) => fundTransfer?.milestone?.id === milestone.id && fundTransfer?.status === 'executed')
 							return (
 								<MilestoneItem
 									key={milestone.id}
