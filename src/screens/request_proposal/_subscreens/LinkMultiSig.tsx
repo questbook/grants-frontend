@@ -13,12 +13,12 @@ import SafeSelect, { SafeSelectOption } from 'src/v2/components/Onboarding/Creat
 
 
 interface Props {
-    multiSigAddress: string
-    setMultiSigAddress: (value: string) => void
-    step: number
-    setStep: (value: number) => void
-    selectedSafeNetwork: SafeSelectOption
-    setSelectedSafeNetwork: (value: SafeSelectOption) => void
+	multiSigAddress: string
+	setMultiSigAddress: (value: string) => void
+	step: number
+	setStep: (value: number) => void
+	selectedSafeNetwork: SafeSelectOption
+	setSelectedSafeNetwork: (value: SafeSelectOption) => void
 }
 
 function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, selectedSafeNetwork, setSelectedSafeNetwork }: Props) {
@@ -93,24 +93,31 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 							{
 								(multiSigAddress && loadingSafeData && safeNetworks.length < 1)
 									? (
-										<Text
-											variant='footerContent'
-											color='black.3'>
-											Searching for this address on different networks..
-										</Text>
+										<Flex gap={2}>
+											<Image
+												className='loader'
+												src='/ui_icons/loader.svg'
+												color='black.1'
+											/>
+											<Text
+												variant='footerContent'
+												color='black.3'>
+												Searching for this address on different networks..
+											</Text>
+										</Flex>
 									)
 									: (multiSigAddress)
 										? (
 											<>
-												<Flex gap={2}>
+												<Flex
+													gap={2}
+													mb={4}>
 													<Image
 														src='/ui_icons/Done_all_alt_round.svg'
 														color='#273B4A' />
-													<Text variant='footerContent'>
-														Looks like this address is on
-														{safeNetworks.length}
-														{' '}
-														network(s).
+													<Text
+														variant='footerContent'>
+														{`Looks like this address is on ${safeNetworks.length} ${safeNetworks.length > 1 ? 'networks' : 'network'}.`}
 													</Text>
 
 												</Flex>
@@ -137,6 +144,8 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 
 						<Button
 							variant='primaryMedium'
+							w='144px'
+							h='48px'
 							isDisabled={!selectedSafeNetwork}
 							onClick={() => setIsVerifySignerModalOpen(true)}>
 							Link multisig

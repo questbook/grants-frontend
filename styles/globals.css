@@ -173,6 +173,19 @@ a {
   margin-right: 20px;
 }
 
+.loader{
+  animation: rotation 1s infinite linear;
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+
 .barhover {
   background: white;
   padding: 4px 8px;
