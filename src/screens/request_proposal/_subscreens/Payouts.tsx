@@ -13,8 +13,8 @@ interface Props {
 	setAmount: (value: number) => void
 	step: number
 	setStep: (value: number) => void
-	milestones: object
-	setMilestones: (value: object) => void
+	milestones: Array<string>
+	setMilestones: (value: Array<string>) => void
 }
 
 
@@ -166,8 +166,7 @@ function Payouts(
 							h='48px'
 							onClick={
 								() => {
-									setStep(4)
-									setMilestones(milestoneInputValues)
+									handleOnClickContinue()
 								}
 							}
 							isDisabled={!payoutMode || !amount}
@@ -191,6 +190,17 @@ function Payouts(
 		const milestones: DynamicInputValues = {}
 		milestones[index] = e.target.value
 		setMilestoneInputValues({ ...milestoneInputValues, ...milestones })
+	}
+
+	const handleOnClickContinue = () => {
+		setStep(4)
+		const keys = Object.keys(milestoneInputValues)
+		const milestones = []
+		for(let i = 0; i < keys.length; i++) {
+			milestones.push(milestoneInputValues[i])
+		}
+
+		setMilestones(milestones)
 	}
 
 

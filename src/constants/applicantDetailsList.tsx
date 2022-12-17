@@ -38,18 +38,6 @@ export default [
 		isRequired: true,
 	},
 	{
-		title: 'Tl,dr',
-		id: 'tldr',
-		inputType: 'short-form',
-		isRequired: true,
-	},
-	{
-		title: 'Details',
-		id: 'details',
-		inputType: 'long-form',
-		isRequired: true,
-	},
-	{
 		title: 'Milestones',
 		id: 'isMultipleMilestones',
 		inputType: 'array',

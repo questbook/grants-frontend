@@ -15,7 +15,8 @@ export type All =
   | ReviewSetRequest
   | ApplicationMilestoneUpdate
   | string
-  | GrantApplicationUpdate;
+  | GrantApplicationUpdate
+  | PrivateCommentAddRequest;
 /**
  * @maxItems 100
  */
@@ -252,6 +253,10 @@ export interface GrantCreateRequest {
   workspaceId: string;
   fields: GrantFieldMap;
   /**
+   * @maxItems 20
+   */
+  milestones?: string[];
+  /**
    * @minItems 1
    */
   grantManagers?: [string, ...string[]];
@@ -314,4 +319,8 @@ export interface GrantApplicationUpdate {
    */
   milestones?: GrantProposedMilestone[];
   feedback?: string;
+}
+export interface PrivateCommentAddRequest {
+  pii: PIIAnswers;
+  [k: string]: unknown;
 }
