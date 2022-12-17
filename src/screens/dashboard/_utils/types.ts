@@ -37,6 +37,7 @@ export interface TokenInfo {
     tokenValueAmount: number
     usdValueAmount: number
     mintAddress: string
+    fiatConversion: string
     info: {
         decimals: number
         tokenAddress: string
@@ -84,4 +85,4 @@ export type ProposalType = Proposals[number]
 export type PayoutsType = Exclude<GetPayoutsQuery['fundsTransfers'], null | undefined>
 export type Payout = PayoutsType[number]
 
-export type SignerVerifiedState = 'unverified' | 'initiate_verification' | 'verifying' | 'verified' | 'failed'
+export type SignerVerifiedState = 'unverified' | 'initiate_verification' | 'verifying'| 'failed' | 'verified' | 'transaction_initiated'

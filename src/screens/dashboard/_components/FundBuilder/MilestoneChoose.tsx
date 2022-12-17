@@ -34,7 +34,7 @@ function MilestoneChoose({ proposal, index, ...props }: Props) {
 							})
 						}
 						makeOption={milestoneItem}
-						selected={{ ...milestones?.[milestoneIndices?.[index]], index: milestoneIndices?.[index] }}
+						selected={{ ...milestones?.[milestoneIndices?.[index]], index: milestoneIndices?.[0] }}
 						singleValue={singleValue}
 						setSelected={
 							(value: DropdownItem | undefined) => {
@@ -53,7 +53,7 @@ function MilestoneChoose({ proposal, index, ...props }: Props) {
 					<Text
 						mt={1}
 						variant='v2_body'>
-						{milestones?.[milestoneIndices?.[index]]?.title}
+						{milestones?.[milestoneIndices?.[0]]?.title}
 					</Text>
 				</Flex>
 			</Flex>

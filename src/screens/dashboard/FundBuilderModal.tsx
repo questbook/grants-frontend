@@ -1,15 +1,18 @@
-import { useContext, useEffect, useMemo } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
 import { useSafeContext } from 'src/contexts/safeContext'
-import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import MilestoneChoose from 'src/screens/dashboard/_components/FundBuilder/MilestoneChoose'
 import PayFromChoose from 'src/screens/dashboard/_components/FundBuilder/PayFromChoose'
 import PayWithChoose from 'src/screens/dashboard/_components/FundBuilder/PayWithChoose'
 import ToChoose from 'src/screens/dashboard/_components/FundBuilder/ToChoose'
+import TransactionInitiated from 'src/screens/dashboard/_components/FundBuilder/TransactionInitiated'
 import Verify from 'src/screens/dashboard/_components/FundBuilder/Verify'
+import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
 import { getFieldString } from 'src/utils/formattingUtils'
+import { getGnosisTansactionLink } from 'src/v2/utils/gnosisUtils'
+import { getProposalUrl } from 'src/v2/utils/phantomUtils'
 
 function FundBuilderModal() {
 	const buildComponent = () => {
@@ -20,6 +23,7 @@ function FundBuilderModal() {
 				onClose={
 					() => {
 						setIsModalOpen(false)
+						setSignerVerifiedState('unverified')
 					}
 				}
 				isCentered
@@ -59,12 +63,20 @@ function FundBuilderModal() {
 											}
 											placeholder='0' />
 									</Flex>
-									<Text
-										color='#53514F'
-										fontSize='14px'
-										mt='8px'>
-										≈ 0.11 MATIC
-									</Text>
+									{
+										amounts?.[0] > 0 && tokenInfo?.fiatConversion ? (
+											<Text
+												color='#53514F'
+												fontSize='14px'
+												mt='8px'>
+												≈
+												{' '}
+												{(amounts?.[0] / parseFloat(tokenInfo?.fiatConversion!)).toFixed(2)}
+												{' '}
+												{tokenInfo?.tokenName}
+											</Text>
+										) : null
+									}
 									{
 										proposal && (
 											<Flex
@@ -85,27 +97,51 @@ function FundBuilderModal() {
 										)
 									}
 
-									<Button
-										isDisabled={isDisabled}
-										mt={8}
-										w='100%'
-										variant='primaryLarge'
-										onClick={onContinue}>
-										<Text
-											fontWeight='500'
-											color='white'>
-											{signerVerifiedState === 'unverified' ? 'Continue' : 'Initiate Transaction'}
-										</Text>
-									</Button>
+									{
+										signerVerifiedState === 'verified' ? (
+											<Button
+												isDisabled={isDisabled}
+												mt={8}
+												w='100%'
+												variant='primaryLarge'
+												onClick={onInitiateTransaction}>
+												<Text
+													fontWeight='500'
+													color='white'>
+													Initiate Transaction
+												</Text>
+											</Button>
+										) : (
+											<Button
+												isDisabled={isDisabled}
+												mt={8}
+												w='100%'
+												variant='primaryLarge'
+												onClick={onContinue}>
+												<Text
+													fontWeight='500'
+													color='white'>
+													Continue
+												</Text>
+											</Button>
+										)
+									}
 								</Flex>
 							)
 						}
 
 						{
-							!['unverified', 'verified'].includes(signerVerifiedState) && (
+							['initiate_verification', 'verifying', 'failed' ].includes(signerVerifiedState) && (
 								<Verify
 									signerVerifiedState={signerVerifiedState}
 									setSignerVerifiedState={setSignerVerifiedState} />
+							)
+						}
+
+						{
+							['transaction_initiated'].includes(signerVerifiedState) && (
+								<TransactionInitiated
+									safeProposalLink={safeProposalLink!} />
 							)
 						}
 
@@ -116,7 +152,7 @@ function FundBuilderModal() {
 	}
 
 	const { safeObj } = useSafeContext()
-	const { proposals, selectedProposals } = useContext(DashboardContext)!
+	const { proposals, selectedProposals, selectedGrant } = useContext(DashboardContext)!
 	const {
 		isModalOpen,
 		setIsModalOpen,
@@ -130,8 +166,9 @@ function FundBuilderModal() {
 		signerVerifiedState,
 		setSignerVerifiedState
 	} = useContext(FundBuilderContext)!
-
-	console.log('tokenInfo', tokenInfo)
+	const { phantomWallet } = usePhantomWallet()
+	const [safeProposalAddress, setSafeProposalAddress] = useState<string | undefined>(undefined)
+	const [safeProposalLink, setSafeProposalLink] = useState<string | undefined>(undefined)
 
 	const proposal = useMemo(() => {
 		const index = selectedProposals.indexOf(true)
@@ -158,25 +195,41 @@ function FundBuilderModal() {
 		if(signerVerifiedState === 'unverified') {
 			setSignerVerifiedState('initiate_verification')
 		}
+	}
 
+	const onInitiateTransaction = async() => {
 		if(signerVerifiedState === 'verified') {
 			const temp = [{
 				from: safeObj?.safeAddress?.toString(),
 				to: tos?.[0],
 				applicationId: proposal?.id,
 				selectedMilestone: milestoneIndices?.[0],
-				selectedToken: { name: tokenInfo?.tokenName, info: tokenInfo?.info },
+				selectedToken: { tokenName: tokenInfo?.tokenName, info: tokenInfo?.info },
 				amount: amounts?.[0],
 			}]
 
-			const proposaladdress = await safeObj?.proposeTransactions('', temp, '')
-			logger.info({ proposaladdress }, 'Transaction initiated')
+			let proposaladdress = ''
+			if(safeObj.getIsEvm()) {
+				proposaladdress = await safeObj?.proposeTransactions('', temp, '')
+				setSignerVerifiedState('transaction_initiated')
+				setSafeProposalAddress(proposaladdress)
+				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress, safeObj?.chainId))
+			} else {
+				proposaladdress = await safeObj?.proposeTransactions(selectedGrant?.title, temp, phantomWallet)
+				setSignerVerifiedState('transaction_initiated')
+				setSafeProposalAddress(proposaladdress)
+				setSafeProposalLink(getProposalUrl(safeObj.safeAddress, proposaladdress))
+			}
+
+			// disburseRewardFromSafe(proposaladdress?.toString()!)
+			// 	.then(() => {
+			// 	// console.log('Sent transaction to contract - EVM', proposaladdress)
+			// 	})
+			// 	.catch((err) => {
+			// 		console.log('sending transction error:', err)
+			// 	})
 		}
 	}
-
-	useEffect(() => {
-		console.log('signerVerifiedState', signerVerifiedState)
-	}, [signerVerifiedState])
 
 	return buildComponent()
 }

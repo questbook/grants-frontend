@@ -42,16 +42,24 @@ interface Props {
 }
 
 
-const Verify = ({ setSignerVerifiedState }: Props) => {
+const VerifyDrawer = ({ setSignerVerifiedState }: Props) => {
 	const buildComponent = () => (
-		<Flex direction='column'>
+		<Flex
+			direction='column'
+			p={4}
+			alignItems='center'>
 			<Text
 				mt='24px'
-				fontSize='14px'
+				fontSize='16px'
 				lineHeight='20px'
 				fontWeight='500'
 			>
-				Connect your wallet which is a safe owner.
+				Connect your wallet
+			</Text>
+			<Text
+				fontSize='14px'
+				fontWeight='400'>
+				Connect your wallet which is a multisig owner.
 			</Text>
 
 			<VStack
@@ -138,4 +146,4 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 	return buildComponent()
 }
 
-export default Verify
+export default VerifyDrawer
