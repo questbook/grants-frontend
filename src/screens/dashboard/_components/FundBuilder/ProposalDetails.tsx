@@ -127,7 +127,9 @@ function ProposalDetails({ proposal, index, tokenInfo }: Props) {
 			return
 		}
 
-		decrypt(proposal).then(setDecryptedProposal)
+		decrypt(proposal).then((decrypted) => {
+			setDecryptedProposal({ ...proposal, ...decrypted })
+		})
 	}, [proposal])
 
 	useEffect(() => {

@@ -1,7 +1,5 @@
 import { useRef, useState } from 'react'
 import { Box, Button, Flex, Image, Text, ToastId, useToast } from '@chakra-ui/react'
-import { t } from 'i18next'
-import { useRouter } from 'next/router'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 
@@ -15,7 +13,7 @@ interface Props {
     createWorkspace: () => void
 }
 
-function BuilderDiscovery({ domainName, setDomainName, domainImage, setDomainImage, step, setIsOpen, createWorkspace }: Props) {
+function BuilderDiscovery({ domainName, setDomainName, setDomainImage, setIsOpen, createWorkspace }: Props) {
 
 	const ref = useRef(null)
 
@@ -128,9 +126,10 @@ function BuilderDiscovery({ domainName, setDomainName, domainImage, setDomainIma
 				<Button
 					variant='primaryMedium'
 					isDisabled={!domainName}
+					h='48px'
+					w='166px'
 					onClick={
 						() => {
-							console.log('domainName', domainName)
 							setDomainImage(domainLogoFile!)
 							createWorkspace()
 							setIsOpen(true)

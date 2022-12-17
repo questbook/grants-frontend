@@ -30,7 +30,7 @@ import SeeMore from 'src/components/profile/see_more'
 import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import { CHAIN_INFO } from 'src/constants/chains'
 import config from 'src/constants/config.json'
-import { useGetDaoDetailsQuery, useGetFundsAndProfileDataQuery } from 'src/generated/graphql'
+import { useGetAllFundsTransfersForADaoQuery, useGetDaoDetailsQuery, useGetFundsAndProfileDataQuery } from 'src/generated/graphql'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 // APP LAYOUT & STATE
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
@@ -52,11 +52,13 @@ function Profile() {
 	const { subgraphClients } = React.useContext(ApiClientsContext)!
 	// const { data: accountData, nonce } = useQuestbookAccount()
 
-	const [workspaceData, setWorkspaceData] = React.useState<DAOWorkspace>()
-	const [chainID, setChainId] = React.useState<SupportedChainId>()
-	const [daoID, setDaoId] = React.useState<string>()
-	const [fundingTime, setFundingTime] = React.useState<any>([])
-	const [applicationTime, setApplicationTime] = React.useState<any>([])
+	const [workspaceData, setWorkspaceData] = useState<DAOWorkspace>()
+	const [chainID, setChainId] = useState<SupportedChainId>()
+	const [daoID, setDaoId] = useState<string>()
+	const [fundingTime, setFundingTime] = useState<any>([])
+	const [applicationTime, setApplicationTime] = useState<any>([])
+	const [totalFundsDisbursed, setTotalFundsDisbursed] = useState<number>(0)
+
 	const { network, switchNetwork } = useNetwork()
 
 	const { t } = useTranslation()
@@ -105,7 +107,6 @@ function Profile() {
 
 	useEffect(() => {
 		if(data) {
-			// console.log('data', data)
 			setWorkspaceData(data?.workspace!)
 		}
 	}, [data, error, loading])
@@ -120,6 +121,29 @@ function Profile() {
 			acceptingApplications: true,
 		},
 	})
+
+	const { data: fundTransfersData } = useGetAllFundsTransfersForADaoQuery({
+		client:
+			subgraphClients[
+				getSupportedChainIdFromSupportedNetwork(workspaceData?.supportedNetworks[0]!) || defaultChainId
+			].client,
+		variables: {
+			workspaceId: workspaceData?.id || '',
+		},
+	})
+
+	useEffect(() => {
+		if(fundTransfersData) {
+			let totalAmount = 0
+			for(let i = 0; i < fundTransfersData?.fundsTransfers?.length!; i++) {
+				if(fundTransfersData?.fundsTransfers[i]?.status === 'executed' && fundTransfersData?.fundsTransfers[i]?.type === 'funds_disbursed_from_safe') {
+					totalAmount += parseInt(fundTransfersData?.fundsTransfers[i]?.amount!)
+				}
+			}
+
+			setTotalFundsDisbursed(totalAmount)
+		}
+	}, [fundTransfersData])
 
 	useEffect(() => {
 		if(allDaoData && fundingTime.length === 0) {
@@ -273,7 +297,7 @@ function Profile() {
 						justifyContent='space-between'
 					>
 						<DaoData
-							disbursed={data?.workspace?.totalGrantFundingDisbursedUSD ?? 0}
+							disbursed={ (data?.workspace?.totalGrantFundingDisbursedUSD! + totalFundsDisbursed)! ?? 0}
 							winners={data?.workspace?.numberOfApplicationsSelected ?? 0}
 							applicants={data?.workspace?.numberOfApplications ?? 0}
 							fundTimes={fundingTime}
@@ -399,7 +423,7 @@ function Profile() {
 												// }
 
 												router.push({
-													pathname: '/explore_grants/about_grant',
+													pathname: '/proposal_form',
 													query: {
 														grantId: grant.id,
 														chainId,
@@ -410,7 +434,7 @@ function Profile() {
 										onTitleClick={
 											() => {
 												router.push({
-													pathname: '/explore_grants/about_grant',
+													pathname: '/proposal_form',
 													query: {
 														grantId: grant.id,
 														chainId,

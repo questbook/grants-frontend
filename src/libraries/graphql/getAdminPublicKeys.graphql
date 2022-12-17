@@ -1,0 +1,10 @@
+query getAdminPublicKeys($workspaceId: ID!) {
+    workspace(id: $workspaceId) {
+        members (where: {accessLevel_not: reviewer, enabled: true}) {
+            id
+            actorId
+            fullName
+            publicKey
+        }
+    }
+}

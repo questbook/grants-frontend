@@ -11,6 +11,8 @@ Validations:
     - $ref: 'ApplicationMilestoneUpdate'
     - $ref: 'Address'
     - $ref: 'Amount'
+    - $ref: 'GrantApplicationUpdate'
+    - $ref: 'PrivateCommentAddRequest'
    # - $ref: 'ApplicationUpdateRequest'
    # - $ref: 'ApplicationCreateRequest'
 Address:
@@ -213,6 +215,8 @@ WorkspaceMemberUpdate:
       description: IPFS hash of the profile picture
     publicKey:
       $ref: 'PublicKey'
+    pii:
+      $ref: 'PIIAnswers'
 GrantApplicationUpdate:
   type: object
   additionalProperties: false
@@ -230,6 +234,13 @@ GrantApplicationUpdate:
       type: string
       minLength: 1
       maxLength: 4096
+PrivateCommentAddRequest:
+  type: object
+  required:
+    - pii
+  properties:
+    pii:
+      $ref: 'PIIAnswers'
 SocialItem:
   type: object
   additionalProperties: false

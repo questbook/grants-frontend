@@ -89,6 +89,43 @@ const _abi = [
       },
       {
         indexed: false,
+        internalType: "uint96",
+        name: "workspaceId",
+        type: "uint96",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "metadataHash",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "uint96",
+        name: "numberOfReviewersPerApplication",
+        type: "uint96",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "time",
+        type: "uint256",
+      },
+    ],
+    name: "GrantCreated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "grantAddress",
+        type: "address",
+      },
+      {
+        indexed: false,
         internalType: "bool",
         name: "success",
         type: "bool",
@@ -240,6 +277,11 @@ const _abi = [
         internalType: "string",
         name: "_rubricsMetadataHash",
         type: "string",
+      },
+      {
+        internalType: "uint96",
+        name: "_numberOfReviewersPerApplication",
+        type: "uint96",
       },
       {
         internalType: "contract IWorkspaceRegistry",
@@ -456,7 +498,7 @@ const _abi = [
     stateMutability: "payable",
     type: "function",
   },
-];
+] as const;
 
 export class GrantFactoryAbi__factory {
   static readonly abi = _abi;

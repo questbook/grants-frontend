@@ -25,8 +25,10 @@ import { DoesHaveProposalsDocument } from 'src/generated/graphql'
 import SubgraphClient from 'src/graphql/subgraph'
 import { DAOSearchContextMaker } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContextMaker } from 'src/hooks/QBAdminsContext'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import MigrateToGasless from 'src/libraries/ui/MigrateToGaslessModal'
 import { DOMAIN_CACHE_KEY, ROLE_CACHE } from 'src/libraries/ui/NavBar/_utils/constants'
+import { extractInviteInfo, InviteInfo } from 'src/libraries/utils/invite'
 import theme from 'src/theme'
 import { MinimalWorkspace } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
@@ -128,6 +130,8 @@ export const ApiClientsContext = createContext<{
 	role: Roles
 	setRole: (role: Roles) => void
 	possibleRoles: Roles[]
+	inviteInfo: InviteInfo | undefined
+	setInviteInfo: (inviteInfo: InviteInfo) => void
 		} | null>(null)
 
 export const WebwalletContext = createContext<{
@@ -164,9 +168,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [workspace, setWorkspace] = useState<MinimalWorkspace>()
 	const [role, setRole] = useState<Roles>('community')
 	const [possibleRoles, setPossibleRoles] = useState<Roles[]>([])
-	useEffect(() => {
-		logger.info({ role }, 'Role set')
-	}, [role])
+	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
+
 	const [scwAddress, setScwAddress] = useState<string>()
 	const [biconomyDaoObjs, setBiconomyDaoObjs] = useState<{[key: string]: typeof BiconomyContext}>()
 	const [biconomyWalletClients, setBiconomyWalletClients] = useState<{[key: string]: BiconomyWalletClient}>()
@@ -559,9 +562,15 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			return
 		}
 
-		if(!workspace) {
+		if(!workspace && possibleRoles.indexOf('admin') === -1 && possibleRoles.indexOf('reviewer') === -1) {
 			const newRole = isBuilder === 'yes' ? 'builder' : 'community'
 			logger.info({ newRole }, 'Setting role 2')
+			setRole(newRole)
+			localStorage.setItem(ROLE_CACHE, newRole)
+			return
+		} else if(!workspace) {
+			const newRole = possibleRoles.indexOf('admin') === -1 ? 'reviewer' : 'admin'
+			logger.info({ newRole }, 'Setting role 3')
 			setRole(newRole)
 			localStorage.setItem(ROLE_CACHE, newRole)
 			return
@@ -570,17 +579,35 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		for(const member of workspace.members) {
 			if(member.actorId === scwAddress?.toLowerCase()) {
 				const newRole = member.accessLevel === 'reviewer' ? 'reviewer' : 'admin'
-				logger.info({ newRole }, 'Setting role 3')
+				logger.info({ newRole }, 'Setting role 4')
 				setRole(newRole)
 				localStorage.setItem(ROLE_CACHE, newRole)
 				return
 			}
 		}
 
-		logger.info({ newRole: 'community' }, 'Setting role 4')
+		logger.info({ newRole: 'community' }, 'Setting role 5')
 		setRole('community')
 		localStorage.setItem(ROLE_CACHE, 'community')
 	}, [workspace, isBuilder, scwAddress])
+
+	const toast = useCustomToast()
+
+	useEffect(() => {
+		try {
+			const inviteInfo = extractInviteInfo()
+			if(inviteInfo) {
+				setInviteInfo(inviteInfo)
+			}
+		} catch(error) {
+			toast({
+				title: `Invalid invite "${(error as Error).message}"`,
+				status: 'error',
+				duration: 9000,
+				isClosable: true,
+			})
+		}
+	}, [])
 
 	const apiClients = useMemo(
 		() => ({
@@ -596,6 +623,14 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 					localStorage.setItem(DOMAIN_CACHE_KEY, 'undefined')
 				}
 
+				const member = newWorkspace?.members?.find((member) => member.actorId === scwAddress?.toLowerCase())
+				if(member) {
+					const newRole = member.accessLevel === 'reviewer' ? 'reviewer' : 'admin'
+					logger.info({ newRole }, 'Setting role 6')
+					setRole(newRole)
+					localStorage.setItem(ROLE_CACHE, newRole)
+				}
+
 				setWorkspace(newWorkspace)
 			},
 			chainId,
@@ -606,6 +641,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				setRole(newRole)
 			},
 			possibleRoles,
+			inviteInfo,
+			setInviteInfo,
 			subgraphClients: clients,
 		}),
 		[validatorApi, workspace, setWorkspace, clients, connected, setConnected, chainId, role, setRole, possibleRoles]

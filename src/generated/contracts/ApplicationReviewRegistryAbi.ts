@@ -54,7 +54,7 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
     "reviews(address,uint96)": FunctionFragment;
     "setApplicationReg(address)": FunctionFragment;
     "setGrantFactory(address)": FunctionFragment;
-    "setRubrics(uint96,address,string)": FunctionFragment;
+    "setRubrics(uint96,address,uint96,string)": FunctionFragment;
     "setRubricsAndEnableAutoAssign(uint96,address,address[],bool[],uint96,string)": FunctionFragment;
     "setWorkspaceReg(address)": FunctionFragment;
     "submitReview(address,uint96,uint96,address,string)": FunctionFragment;
@@ -227,6 +227,7 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>
     ]
   ): string;
@@ -394,6 +395,7 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
     "ReviewSubmitted(uint96,address,uint96,uint96,address,string,uint256)": EventFragment;
     "ReviewersAssigned(uint96[],uint96,uint96,address,address[],bool[],uint256)": EventFragment;
     "RubricsSet(uint96,address,string,uint256)": EventFragment;
+    "RubricsSetV2(uint96,address,uint96,string,uint256)": EventFragment;
     "Upgraded(address)": EventFragment;
   };
 
@@ -407,6 +409,7 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "ReviewSubmitted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ReviewersAssigned"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RubricsSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RubricsSetV2"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
 
@@ -541,6 +544,20 @@ export type RubricsSetEvent = TypedEvent<
 >;
 
 export type RubricsSetEventFilter = TypedEventFilter<RubricsSetEvent>;
+
+export interface RubricsSetV2EventObject {
+  _workspaceId: BigNumber;
+  _grantAddress: string;
+  _numberOfReviewersPerApplication: BigNumber;
+  _metadataHash: string;
+  time: BigNumber;
+}
+export type RubricsSetV2Event = TypedEvent<
+  [BigNumber, string, BigNumber, string, BigNumber],
+  RubricsSetV2EventObject
+>;
+
+export type RubricsSetV2EventFilter = TypedEventFilter<RubricsSetV2Event>;
 
 export interface UpgradedEventObject {
   implementation: string;
@@ -724,6 +741,7 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     setRubrics(
       _workspaceId: PromiseOrValue<BigNumberish>,
       _grantAddress: PromiseOrValue<string>,
+      _numberOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
       _metadataHash: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -919,6 +937,7 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
   setRubrics(
     _workspaceId: PromiseOrValue<BigNumberish>,
     _grantAddress: PromiseOrValue<string>,
+    _numberOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
     _metadataHash: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1110,6 +1129,7 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     setRubrics(
       _workspaceId: PromiseOrValue<BigNumberish>,
       _grantAddress: PromiseOrValue<string>,
+      _numberOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
       _metadataHash: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1286,6 +1306,21 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       time?: null
     ): RubricsSetEventFilter;
 
+    "RubricsSetV2(uint96,address,uint96,string,uint256)"(
+      _workspaceId?: null,
+      _grantAddress?: PromiseOrValue<string> | null,
+      _numberOfReviewersPerApplication?: null,
+      _metadataHash?: null,
+      time?: null
+    ): RubricsSetV2EventFilter;
+    RubricsSetV2(
+      _workspaceId?: null,
+      _grantAddress?: PromiseOrValue<string> | null,
+      _numberOfReviewersPerApplication?: null,
+      _metadataHash?: null,
+      time?: null
+    ): RubricsSetV2EventFilter;
+
     "Upgraded(address)"(
       implementation?: PromiseOrValue<string> | null
     ): UpgradedEventFilter;
@@ -1425,6 +1460,7 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     setRubrics(
       _workspaceId: PromiseOrValue<BigNumberish>,
       _grantAddress: PromiseOrValue<string>,
+      _numberOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
       _metadataHash: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1603,6 +1639,7 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     setRubrics(
       _workspaceId: PromiseOrValue<BigNumberish>,
       _grantAddress: PromiseOrValue<string>,
+      _numberOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
       _metadataHash: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

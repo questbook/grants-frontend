@@ -14,7 +14,8 @@ export type All =
   | RubricSetRequest
   | ReviewSetRequest
   | ApplicationMilestoneUpdate
-  | string;
+  | string
+  | GrantApplicationUpdate;
 /**
  * @maxItems 100
  */
@@ -80,7 +81,17 @@ export interface WorkspaceMemberUpdate {
    * The public encryption key associated with the account address
    */
   publicKey?: string;
+  pii?: PIIAnswers;
   [k: string]: unknown;
+}
+/**
+ * Map of encrypted information mapped by the wallet ID, whose public key was used to map the specific information
+ */
+export interface PIIAnswers {
+  /**
+   * JSON serialized object, encrypted with a specific user's public key
+   */
+  [k: string]: string;
 }
 export interface GrantApplicationRequest {
   grantId: string;
@@ -104,15 +115,6 @@ export interface GrantApplicationFieldAnswers {
 }
 export interface GrantApplicationFieldAnswerItem {
   value: string;
-}
-/**
- * Map of encrypted information mapped by the wallet ID, whose public key was used to map the specific information
- */
-export interface PIIAnswers {
-  /**
-   * JSON serialized object, encrypted with a specific user's public key
-   */
-  [k: string]: string;
 }
 export interface GrantProposedMilestone {
   title: string;
@@ -303,4 +305,13 @@ export interface ReviewSetRequest {
 }
 export interface ApplicationMilestoneUpdate {
   text: string;
+}
+export interface GrantApplicationUpdate {
+  fields?: GrantApplicationFieldAnswers;
+  pii?: PIIAnswers;
+  /**
+   * @maxItems 100
+   */
+  milestones?: GrantProposedMilestone[];
+  feedback?: string;
 }

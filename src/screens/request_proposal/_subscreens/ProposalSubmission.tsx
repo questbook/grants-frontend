@@ -1,12 +1,11 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react'
+import { ChangeEvent, useRef, useState } from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { BsArrowLeft } from 'react-icons/bs'
 import { Button, Flex, Input, Text } from '@chakra-ui/react'
+import { logger } from 'ethers'
 import { useRouter } from 'next/router'
-import applicantDetailsList from 'src/constants/applicantDetailsList'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
-import { today, validateDate } from 'src/screens/request_proposal/_utils/utils'
 import { ApplicantDetailsFieldType, DynamicInputValues } from 'src/types'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 
@@ -18,7 +17,7 @@ interface Props {
     setStartdate: (value: string) => void
     endDate: string
     setEndDate: (value: string) => void
-    requiredDetails: any[]
+    requiredDetails: ApplicantDetailsFieldType[]
     moreDetails: string[]
     setMoreDetails: (value: string[]) => void
     link: string
@@ -40,30 +39,24 @@ function ProposalSubmission(
 		endDate,
 		setEndDate,
 		requiredDetails,
-		moreDetails,
-		setMoreDetails,
 		link,
 		setLink,
 		doc,
 		setDoc,
 		step,
 		setStep,
-		allApplicantDetails,
 		setAllApplicantDetails
 	}: Props) {
 
 	const uploaDocInputref = useRef(null)
 
 	const openInput = () => {
-		console.log('open input')
 		if(uploaDocInputref.current) {
 			(uploaDocInputref.current as HTMLInputElement).click()
 		}
 	}
 
 	const buildComponent = () => {
-		console.log('start date in component', startdate)
-		console.log('end date in component', endDate)
 		return (
 			<>
 				{/* Start Proposal Submission Component */}
@@ -128,26 +121,20 @@ function ProposalSubmission(
 							placeholder='start date'
 							value={startdate}
 							step='1'
-							min={todayDate}
+							min={new Date().toISOString().split('.')[0]}
 							onChange={
 								(e) => {
-									checkDate(e.target.value)
+									// console.log('start date', new Date().toLocaleString())
 									setStartdate(e.target.value)
 								}
 							} />
-						{/* <Input type='date' value={startdate} min={todayDate} onChange={
-                            (e) => {
-                                checkDate(e.target.value)
-                                setStartdate(e.target.value)
-                            }
-                        }></Input> */}
 						<Text variant='requestProposalBody'>
 							till
 						</Text>
 						<FlushedInput
 							type='datetime-local'
 							placeholder='end date'
-							min={todayDate}
+							min={startdate}
 							value={endDate}
 							step='1'
 							onChange={
@@ -167,14 +154,14 @@ function ProposalSubmission(
 						</Text>
 
 						{
-							requiredDetails.map((detail, i) => {
+							requiredDetails.map((detail) => {
 								const {
-									title, required, id, index, inputType
-								} = detail as any
+									title
+								} = detail as ApplicantDetailsFieldType
 								return (
 									<>
 										<FlushedInput
-											placeholder={detail}
+											placeholder={title}
 											value={title}
 											isDisabled={true} />
 										<Text variant='requestProposalBody'>
@@ -199,17 +186,7 @@ function ProposalSubmission(
 								)
 							})
 						}
-						{/* <FlushedInput placeholder='title' value={requiredDetails[0]} isDisabled={true} />
-                        <Text variant="requestProposalBody">,</Text>
-                        <FlushedInput placeholder='tl,dr' value={requiredDetails[1]} isDisabled={true} />
-                        <Text variant="requestProposalBody">,</Text>
-                        <FlushedInput placeholder='details' value={requiredDetails[2]} isDisabled={true} />
-                        <Text variant="requestProposalBody">,</Text>
-                        <FlushedInput placeholder='funding ask' value={requiredDetails[3]} isDisabled={true} />
-                        <Text variant="requestProposalBody">,</Text> */}
-						{/* <FlushedInput placeholder='ask for more details from the builder' value={moreDetails} onChange={(e) => {
-                            setMoreDetails(e.target.value)
-                        }} /> */}
+
 						<Button
 							variant='outline'
 							leftIcon={<AiOutlinePlus />}
@@ -248,8 +225,6 @@ function ProposalSubmission(
 							placeholder='Upload a file'
 							onChange={(e) => handleFile(e)}
 							style={{ height: '0.1px', width: '0.1px', opacity: 0 }} />
-						{/* <Text variant="requestProposalBody" >Upload a doc</Text> */}
-						{/* <FlushedInput onClick={() => openInput()}  placeholder='Upload a doc' ref={ref}/> */}
 					</Flex>
 					{/* CTA */}
 					<Button
@@ -275,31 +250,23 @@ function ProposalSubmission(
 	}
 
 	const router = useRouter()
-	const [todayDate, setTodayDate] = useState('')
 
 	const [detailsCounter, setDetailsCounter] = useState(0)
 	const [detailInputValues, setDetailInputValues] = useState<DynamicInputValues>({})
 
-	const checkDate = (date: string) => {
-		const res = validateDate(date)
-		console.log('date validation...', res)
-	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const handleFile = async(e: any) => {
-		console.log('file', e.target.files)
-		// console.log('file', e.target.files[0])
-		const filehash = await uploadToIPFS(e.target.files[0])
-		console.log('filehash', filehash)
+		await uploadToIPFS(e.target.files[0])
 		setDoc(e.target.files)
 	}
 
 	const handleClickAddAnother = () => {
 		setDetailsCounter(detailsCounter + 1)
-		console.log(detailsCounter)
 	}
 
 	const handleOnClickContinue = () => {
-		console.log('step 2')
+		logger.info('step 2')
 		setStep(2)
 		const details: ApplicantDetailsFieldType[] = []
 		const detailInputValuesLength = Object.keys(detailInputValues).length
@@ -311,12 +278,14 @@ function ProposalSubmission(
 				inputType: 'long-form'
 			})
 		}
-		let allFieldsArray = [...requiredDetails, ...details]
-		let allFieldsObject: {[key: string]: ApplicantDetailsFieldType} = {}
-		for (let i = 0; i < allFieldsArray.length; i++) {
+
+		const allFieldsArray = [...requiredDetails, ...details]
+		const allFieldsObject: {[key: string]: ApplicantDetailsFieldType} = {}
+		for(let i = 0; i < allFieldsArray.length; i++) {
 			allFieldsObject[allFieldsArray[i].id] = allFieldsArray[i]
 		}
-		console.log('all applicant details', [...requiredDetails, ...details])
+
+		// console.log('all applicant details', [...requiredDetails, ...details])
 		setAllApplicantDetails(allFieldsObject)
 	}
 
@@ -324,14 +293,7 @@ function ProposalSubmission(
 		const inputValue: DynamicInputValues = {}
 		inputValue[index] = e.target.value
 		setDetailInputValues({ ...detailInputValues, ...inputValue })
-		console.log({ ...detailInputValues, ...inputValue })
 	}
-
-
-	useEffect(() => {
-		const todayDate = today()
-		setTodayDate(todayDate)
-	})
 
 
 	return buildComponent()
