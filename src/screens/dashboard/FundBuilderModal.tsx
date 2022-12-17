@@ -59,6 +59,12 @@ function FundBuilderModal() {
 											}
 											placeholder='0' />
 									</Flex>
+									<Text
+										color='#53514F'
+										fontSize='14px'
+										mt='8px'>
+										≈ 0.11 MATIC
+									</Text>
 									{
 										proposal && (
 											<Flex
@@ -111,7 +117,21 @@ function FundBuilderModal() {
 
 	const { safeObj } = useSafeContext()
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
-	const { isModalOpen, setIsModalOpen, amounts, setAmounts, milestoneIndices, setMilestoneIndices, tos, setTos, tokenInfo, signerVerifiedState, setSignerVerifiedState } = useContext(FundBuilderContext)!
+	const {
+		isModalOpen,
+		setIsModalOpen,
+		amounts,
+		setAmounts,
+		milestoneIndices,
+		setMilestoneIndices,
+		tos,
+		setTos,
+		tokenInfo,
+		signerVerifiedState,
+		setSignerVerifiedState
+	} = useContext(FundBuilderContext)!
+
+	console.log('tokenInfo', tokenInfo)
 
 	const proposal = useMemo(() => {
 		const index = selectedProposals.indexOf(true)
