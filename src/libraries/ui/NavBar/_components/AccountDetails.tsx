@@ -195,6 +195,10 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 				} else {
 					setRole('builder')
 				}
+
+				if(router.pathname !== '/dashboard') {
+					router.push({ pathname: '/dashboard' })
+				}
 			}
 		},
 		{

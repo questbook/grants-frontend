@@ -1,6 +1,6 @@
 import { ChangeEvent, ReactElement, useContext, useMemo, useState } from 'react'
 import { Button, Flex, Image, Text } from '@chakra-ui/react'
-import { EditorState } from 'draft-js'
+import { convertToRaw } from 'draft-js'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
 import logger from 'src/libraries/logger'
@@ -220,6 +220,7 @@ function ProposalForm() {
 												copy.members = copy.members.slice(0, newLength)
 											}
 
+											findField(copy, 'teamMembers').value = newLength.toString()
 											setForm(copy)
 										}
 									} />
@@ -424,6 +425,7 @@ function ProposalForm() {
 
 	const fundingAsk = useMemo(() => {
 		const val = getRewardAmountMilestones(chainInfo?.decimals ?? 0, { milestones: form.milestones.map((m) => ({ ...m, amount: m.amount ? m.amount.toString() : '0' })) })
+		logger.info({ form }, 'Form')
 		return val
 	}, [form])
 
@@ -435,7 +437,7 @@ function ProposalForm() {
 
 		const { fields, members, details, milestones } = form
 		for(const field of fields) {
-			if(field.value === '' && field.id !== 'projectDetails') {
+			if(field.value === '' && field.id !== 'projectDetails' && field.id !== 'fundingAsk') {
 				logger.info({ field }, 'Field is empty')
 				return true
 			}
@@ -448,7 +450,7 @@ function ProposalForm() {
 			}
 		}
 
-		if(details === EditorState.createEmpty()) {
+		if(convertToRaw(details.getCurrentContent()).blocks[0].text.length === 0) {
 			logger.info('Details is empty')
 			return true
 		}
