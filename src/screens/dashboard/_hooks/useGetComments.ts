@@ -4,12 +4,14 @@ import { GetCommentsQuery, useGetCommentsQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
 import { usePiiForComment } from 'src/libraries/utils/pii'
+import { WebwalletContext } from 'src/pages/_app'
 import { CommentType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function useGetComments() {
+	const { webwallet } = useContext(WebwalletContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 	const proposal = useMemo(() => {
 		const index = selectedProposals.indexOf(true)
@@ -32,8 +34,7 @@ function useGetComments() {
 	const { decrypt } = usePiiForComment(
 		proposal?.grant?.workspace?.id,
 		proposal?.id,
-		proposal?.applicantId,
-		proposal?.applicantPublicKey,
+		webwallet?.publicKey,
 		chainId,
 	)
 
@@ -60,9 +61,13 @@ function useGetComments() {
 		for(const comment of localComments) {
 			if(comment.isPrivate) {
 				if(comment?.commentsEncryptedData) {
-					decrypt(comment)
-					logger.info({ comment }, 'comment decrypted (Comment)')
-					finalComments.push(comment)
+					const decryptedData = await decrypt(comment)
+					logger.info({ decryptedData }, 'comment decrypted (Comment)')
+
+					if(decryptedData?.message) {
+						const message = await getFromIPFS(decryptedData.message)
+						finalComments.push({ ...comment, ...decryptedData, message, })
+					}
 				}
 			} else {
 				if(!comment?.commentsPublicHash) {
@@ -72,7 +77,7 @@ function useGetComments() {
 				const data = JSON.parse(await getFromIPFS(comment?.commentsPublicHash))
 				const messageHash = data?.message
 				data.message = await getFromIPFS(messageHash)
-				finalComments.push({ ...data, ...comment })
+				finalComments.push({ ...comment, ...data })
 			}
 		}
 

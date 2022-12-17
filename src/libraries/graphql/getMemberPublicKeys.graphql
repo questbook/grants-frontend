@@ -1,15 +1,15 @@
 query getMemberPublicKeys($workspaceId: ID!, $applicationId: ID!) {
   workspace(id: $workspaceId) {
     members(where: { accessLevel_not: reviewer, enabled: true }) {
-      id
       actorId
       publicKey
     }
   }
   grantApplication(id: $applicationId) {
+    applicantId
+    applicantPublicKey
     applicationReviewers(where: { member_: { enabled: true } }) {
       member {
-        id
         actorId
         publicKey
       }

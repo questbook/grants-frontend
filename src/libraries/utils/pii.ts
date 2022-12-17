@@ -251,6 +251,7 @@ export function useGetPublicKeyOfMembers(
 		for(const member of [
 			...result[0].workspace.members,
 			...result[0].grantApplication.applicationReviewers.map((r) => r.member),
+			{ actorId: result[0].grantApplication.applicantId, publicKey: result[0].grantApplication.applicantPublicKey },
 		]) {
 			if(!member?.publicKey) {
 				continue
@@ -267,7 +268,7 @@ export function useGetPublicKeyOfMembers(
 		}
 
 		return ret
-	}, [workspaceId, fetchMore])
+	}, [workspaceId, applicationId, fetchMore])
 
 	return { fetch }
 }
@@ -678,8 +679,9 @@ export function usePiiForWorkspaceMember(
 export function usePiiForComment(
 	workspaceId: string | undefined,
 	applicationId: string | undefined,
-	applicantId: string | undefined,
-	applicantPublicKey: string | undefined | null,
+	memberPublicKey: string | undefined,
+	// applicantId: string | undefined,
+	// applicantPublicKey: string | undefined | null,
 	chainId: SupportedChainId,
 ) {
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
@@ -689,7 +691,7 @@ export function usePiiForComment(
 		chainId,
 	)
 	const logger = useMemo(
-		() => MAIN_LOGGER.child({ workspaceId, pii: true }),
+		() => MAIN_LOGGER.child({ workspaceId, applicationId, pii: true }),
 		[workspaceId],
 	)
 
@@ -711,9 +713,9 @@ export function usePiiForComment(
 				throw new Error('Application ID not provided')
 			}
 
-			if(!applicantId || !applicantPublicKey) {
-				throw new Error('Applicant ID or public key not provided')
-			}
+			// if(!applicantId || !applicantPublicKey) {
+			// 	throw new Error('Applicant ID or public key not provided')
+			// }
 
 			// JSON serialize the data for it to be encrypted
 			const piiFieldsJson = JSON.stringify(piiData)
@@ -722,7 +724,6 @@ export function usePiiForComment(
 
 			publicKeys = {
 				...publicKeys,
-				[applicantId]: applicantPublicKey!,
 			}
 
 			logger.info({ members: publicKeys }, 'Comment')
@@ -777,7 +778,7 @@ export function usePiiForComment(
 
 			return piiMap
 		},
-		[webwallet, workspaceId, fetch, scwAddress, logger],
+		[scwAddress, webwallet, workspaceId, applicationId, fetch, scwAddress],
 	)
 
 	/**
@@ -791,19 +792,19 @@ export function usePiiForComment(
 				throw new Error('Zero Wallet not connected')
 			}
 
-			if(!applicantPublicKey || !applicantId || !workspaceId || !applicationId) {
+			if(!workspaceId || !applicationId) {
 				throw new Error(
-					'Workspace ID or member id or member public key not provided',
+					'Workspace ID or application ID not provided',
 				)
 			}
 
 			const secureChannel = await getSecureChannelFromPublicKey(
 				webwallet,
-				applicantPublicKey,
+				memberPublicKey!,
 				getKeyForApplication(applicationId),
 			)
 
-			logger.info({ memberPublicKey: applicantPublicKey, piiData }, 'got secure channel with member')
+			logger.info({ memberPublicKey, piiData }, 'got secure channel with member')
 
 			const decrypted = await secureChannel.decrypt(piiData)
 
@@ -812,10 +813,11 @@ export function usePiiForComment(
 			// logger.info('decrypted PII data')
 
 			const json = JSON.parse(decrypted) as PIIForCommentType
+			logger.info({ json }, 'Decrypted JSON')
 
 			return json
 		},
-		[webwallet, workspaceId, applicantId, applicantPublicKey, logger],
+		[scwAddress, webwallet, workspaceId, applicationId, memberPublicKey, logger],
 	)
 
 	const encrypt = useCallback(
@@ -833,12 +835,12 @@ export function usePiiForComment(
    * otherwise return as is
    */
 	const decrypt = useCallback(
-		async(comment: Exclude<GetCommentsQuery['comments'], null | undefined>[number]) => {
+		async(comment: Pick<Exclude<GetCommentsQuery['comments'], null | undefined>[number], 'commentsEncryptedData'> & PIIForCommentType) => {
 			if(comment?.commentsEncryptedData?.length) {
 				logger.info('Encrypted Data', comment)
-				if(!scwAddress || !applicantPublicKey || !workspaceId || !applicationId) {
+				if(!scwAddress || !memberPublicKey || !workspaceId || !applicationId) {
 					logger.info(
-						{ scwAddress, memberPublicKey: applicantPublicKey, workspaceId, applicationId },
+						{ scwAddress, memberPublicKey, workspaceId, applicationId },
 						'skipping decryption, as details not present',
 					)
 					return
@@ -860,7 +862,7 @@ export function usePiiForComment(
 								...data,
 								// also remove PII from the application
 								// since we don't require that anymore
-								pii: undefined,
+								commentsEncryptedData: undefined,
 							}),
 						)
 					} catch(err) {
@@ -873,7 +875,7 @@ export function usePiiForComment(
 
 			return comment
 		},
-		[scwAddress, webwallet, applicantId, applicantPublicKey, workspaceId, decryptPii],
+		[scwAddress, webwallet, applicationId, memberPublicKey, workspaceId, decryptPii],
 	)
 
 	return {

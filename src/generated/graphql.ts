@@ -5385,7 +5385,7 @@ export type GetMemberPublicKeysQueryVariables = Exact<{
 }>;
 
 
-export type GetMemberPublicKeysQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null }> } | null, grantApplication?: { __typename?: 'GrantApplication', applicationReviewers: Array<{ __typename?: 'GrantApplicationReviewer', member: { __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null } }> } | null };
+export type GetMemberPublicKeysQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', actorId: string, publicKey?: string | null }> } | null, grantApplication?: { __typename?: 'GrantApplication', applicantId: string, applicantPublicKey?: string | null, applicationReviewers: Array<{ __typename?: 'GrantApplicationReviewer', member: { __typename?: 'WorkspaceMember', actorId: string, publicKey?: string | null } }> } | null };
 
 export type GetCommentsQueryVariables = Exact<{
   proposalId: Scalars['String'];
@@ -8490,15 +8490,15 @@ export const GetMemberPublicKeysDocument = gql`
     query getMemberPublicKeys($workspaceId: ID!, $applicationId: ID!) {
   workspace(id: $workspaceId) {
     members(where: {accessLevel_not: reviewer, enabled: true}) {
-      id
       actorId
       publicKey
     }
   }
   grantApplication(id: $applicationId) {
+    applicantId
+    applicantPublicKey
     applicationReviewers(where: {member_: {enabled: true}}) {
       member {
-        id
         actorId
         publicKey
       }

@@ -11,21 +11,24 @@ import { usePiiForComment } from 'src/libraries/utils/pii'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import getErrorMessage from 'src/utils/errorUtils'
-import { bicoDapps, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import {
+	bicoDapps,
+	getTransactionDetails,
+	sendGaslessTransaction,
+} from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 interface Props {
-    setStep: (step: number | undefined) => void
-    setTransactionHash: (hash: string) => void
+  setStep: (step: number | undefined) => void
+  setTransactionHash: (hash: string) => void
 }
 
-function useAddComment({
-	setStep, setTransactionHash
-}: Props) {
+function useAddComment({ setStep, setTransactionHash }: Props) {
 	const { role, subgraphClients } = useContext(ApiClientsContext)!
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
-	const { proposals, selectedGrant, selectedProposals } = useContext(DashboardContext)!
+	const { proposals, selectedGrant, selectedProposals } =
+    useContext(DashboardContext)!
 
 	const proposal = useMemo(() => {
 		const index = selectedProposals.indexOf(true)
@@ -36,7 +39,10 @@ function useAddComment({
 	}, [proposals, selectedProposals])
 
 	const chainId = useMemo(() => {
-		return getSupportedChainIdFromWorkspace(proposal?.grant?.workspace) ?? defaultChainId
+		return (
+			getSupportedChainIdFromWorkspace(proposal?.grant?.workspace) ??
+      defaultChainId
+		)
 	}, [proposal])
 
 	const {
@@ -64,8 +70,7 @@ function useAddComment({
 	const { encrypt } = usePiiForComment(
 		proposal?.grant?.workspace?.id,
 		proposal?.id,
-		proposal?.applicantId,
-		proposal?.applicantPublicKey,
+		webwallet?.publicKey,
 		chainId,
 	)
 
@@ -75,7 +80,14 @@ function useAddComment({
 	const addComment = useCallback(
 		async(message: EditorState) => {
 			try {
-				if(!webwallet || !biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress || !selectedGrant?.id || !proposal?.id) {
+				if(
+					!webwallet ||
+          !biconomyWalletClient ||
+          typeof biconomyWalletClient === 'string' ||
+          !scwAddress ||
+          !selectedGrant?.id ||
+          !proposal?.id
+				) {
 					return
 				}
 
@@ -96,10 +108,18 @@ function useAddComment({
 					await encrypt(json)
 				}
 
+				logger.info({ json }, 'Encrypted JSON (Comment)')
+
 				const commentHash = (await uploadToIPFS(JSON.stringify(json))).hash
 				logger.info({ commentHash }, 'Comment Hash (Comment)')
 
-				const methodArgs = [proposal.grant.workspace.id, selectedGrant.id, proposal.id, false, commentHash]
+				const methodArgs = [
+					proposal.grant.workspace.id,
+					selectedGrant.id,
+					proposal.id,
+					role !== 'community',
+					commentHash,
+				]
 				logger.info({ methodArgs }, 'Method Args (Comment)')
 
 				const response = await sendGaslessTransaction(
@@ -113,22 +133,34 @@ function useAddComment({
 					webwallet,
 					`${chainId}`,
 					bicoDapps[chainId].webHookId,
-					nonce
+					nonce,
 				)
 				logger.info({ response }, 'Response (Comment)')
+				setStep(1)
 
 				if(response) {
-					setStep(1)
-					const { receipt, txFee } = await getTransactionDetails(response, chainId.toString())
+					const { receipt, txFee } = await getTransactionDetails(
+						response,
+						chainId.toString(),
+					)
+
+					setStep(2)
 					setTransactionHash(receipt?.transactionHash)
 					logger.info({ receipt, txFee }, 'Receipt: (Comment)')
 					await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
 
-					setStep(2)
+					setStep(3)
+
+					toast({
+						duration: 5000,
+						title: 'Added comment successfully!',
+					})
+					return true
 				} else {
 					setStep(undefined)
+					return false
 				}
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(error: any) {
 				const message = getErrorMessage(error)
 				setStep(undefined)
@@ -137,14 +169,27 @@ function useAddComment({
 					status: 'error',
 					title: message,
 				})
+				return false
 			}
 		},
-		[webwallet, biconomy, biconomyWalletClient, scwAddress, chainId, role, selectedGrant, proposal],
+		[
+			webwallet,
+			biconomy,
+			biconomyWalletClient,
+			scwAddress,
+			chainId,
+			role,
+			selectedGrant,
+			proposal,
+		],
 	)
 
 	return {
-		addComment: useMemo(() => addComment, [webwallet, biconomy, biconomyWalletClient, scwAddress, chainId, role]),
-		isBiconomyInitialised
+		addComment: useMemo(
+			() => addComment,
+			[webwallet, biconomy, biconomyWalletClient, scwAddress, chainId, role],
+		),
+		isBiconomyInitialised,
 	}
 }
 
