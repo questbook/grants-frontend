@@ -172,7 +172,7 @@ function RequestProposal() {
 	// State for Payouts
 	const [payoutMode, setPayoutMode] = useState('')
 	const [amount, setAmount] = useState(0)
-	const [milestones, setMilestones] = useState({})
+	const [milestones, setMilestones] = useState<string[]>([])
 
 	// State for Linking MultiSig
 	const [multiSigAddress, setMultiSigAddress] = useState('')
@@ -202,7 +202,7 @@ function RequestProposal() {
 	const targetContractObject = useQBContract('workspace', network as unknown as SupportedChainId)
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
-		chainId: selectedSafeNetwork?.networkId ? networksMapping[selectedSafeNetwork?.networkId?.toString()] : DEFAULT_NETWORK,
+		chainId: process.env.NEXT_PUBLIC_IS_TEST === 'true' ? '5' : selectedSafeNetwork?.networkId ? networksMapping[selectedSafeNetwork?.networkId?.toString()] : DEFAULT_NETWORK,
 		shouldRefreshNonce: shouldRefreshNonce
 	})
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
@@ -305,7 +305,6 @@ function RequestProposal() {
 			const event = await getEventData(workspaceCreateReceipt, 'WorkspaceCreated', WorkspaceRegistryAbi)
 			if(event) {
 				const workspaceId = Number(event.args[0].toBigInt())
-				// debugger
 				logger.info('workspace_id', workspaceId)
 				setWorkspaceId(workspaceId.toString())
 				const newWorkspace = `chain_${network}-0x${workspaceId.toString(16)}`
@@ -359,6 +358,7 @@ function RequestProposal() {
 					},
 					payoutType: payout!,
 					reviewType: review!,
+					milestones: milestones!,
 					creatorId: accountDataWebwallet!.address!,
 					workspaceId: workspaceId.toString()!,
 					fields: allApplicantDetails,
