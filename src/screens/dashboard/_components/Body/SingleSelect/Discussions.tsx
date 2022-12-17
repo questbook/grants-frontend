@@ -1,6 +1,6 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
-import { Button, Divider, Flex, IconButton, Image, Text } from '@chakra-ui/react'
+import { Button, CircularProgress, Divider, Flex, IconButton, Image, Text } from '@chakra-ui/react'
 import { convertToRaw, EditorState } from 'draft-js'
 import logger from 'src/libraries/logger'
 import TextEditor from 'src/libraries/ui/RichTextEditor/textEditor'
@@ -131,13 +131,25 @@ function Discussions() {
 							align='center'>
 							{
 								step !== undefined && (
-									<Text variant='v2_body'>
-										{TXN_STEPS[step]}
-										...
+									<Flex align='center'>
+										{
+											step < 3 && (
+												<CircularProgress
+													isIndeterminate
+													color='black'
+													size='18px' />
+											)
+										}
+										<Text
+											ml={2}
+											variant='v2_body'>
+											{[...TXN_STEPS, 'Refresh the page to view the update!'][step]}
+										</Text>
 										{
 											transactionHash && (
 												<IconButton
 													ml={1}
+													variant='ghost'
 													icon={<ExternalLinkIcon />}
 													aria-label='txn-link'
 													onClick={
@@ -147,7 +159,7 @@ function Discussions() {
 													} />
 											)
 										}
-									</Text>
+									</Flex>
 								)
 							}
 							<Button
@@ -156,7 +168,10 @@ function Discussions() {
 								isDisabled={isDisabled}
 								onClick={
 									async() => {
-										await addComment(text)
+										const ret = await addComment(text)
+										if(ret) {
+											setText(EditorState.createEmpty())
+										}
 									}
 								}>
 								Post
@@ -240,13 +255,13 @@ function Discussions() {
 	}, [proposals, selectedProposals])
 
 	const isDisabled = useMemo(() => {
-		if(!isBiconomyInitialised) {
+		if(!isBiconomyInitialised || step !== undefined) {
 			return true
 		}
 
 		logger.info({ text, raw: convertToRaw(text.getCurrentContent()) }, 'Current content (Comment)')
 		return convertToRaw(text.getCurrentContent()).blocks[0].text.length === 0
-	}, [text])
+	}, [text, step])
 
 	useEffect(() => {
 		logger.info({ comments }, 'Comments (Comment)')
