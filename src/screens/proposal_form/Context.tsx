@@ -109,7 +109,7 @@ const ProposalFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 				return {
 					...field,
 					id,
-					value: id === 'isMultipleMilestones' ? 'true' : ''
+					value: id === 'isMultipleMilestones' ? 'true' : id === 'teamMembers' ? '1' : ''
 				}
 			}),
 			milestones: [DEFAULT_MILESTONE],

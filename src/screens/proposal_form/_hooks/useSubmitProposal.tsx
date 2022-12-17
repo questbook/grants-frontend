@@ -113,6 +113,7 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 				[grant.id, grant.workspace.id, proposalDataHash, data.milestones.length] :
 				[proposal?.id, proposalDataHash, data.milestones.length]
 			logger.info({ methodArgs }, 'useSubmitProposal: (Method args)')
+
 			const response = await sendGaslessTransaction(
 				biconomy,
 				applicationRegistryContract,
