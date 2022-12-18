@@ -1,5 +1,5 @@
 
-import { useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { Flex, Text, VStack } from '@chakra-ui/react'
 import { useSafeContext } from 'src/contexts/safeContext'
 import logger from 'src/libraries/logger'
@@ -9,7 +9,7 @@ import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/
 import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/PhantomLogo'
 import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
 import ConnectWalletButton from 'src/v2/components/ConnectWalletModal/ConnectWalletButton'
-import { useAccount, useConnect, useNetwork, useSwitchNetwork } from 'wagmi'
+import { useAccount, useConnect, useDisconnect, useNetwork, useSigner, useSwitchNetwork } from 'wagmi'
 
 const availableWallets = [{
 	name: 'Metamask',
@@ -74,6 +74,7 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 									() => {
 										if(!isConnected) {
 											const connector = connectors.find((x) => x.id === wallet.id)
+											logger.info({ connector }, 'connector')
 											// setConnectClicked(true)
 											if(connector) {
 												connect({ connector })
@@ -103,19 +104,26 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 	)
 
 	const { connect, connectors } = useConnect()
-	const { error, switchNetwork } = useSwitchNetwork()
+	const { disconnect } = useDisconnect()
+	const { error, switchNetworkAsync } = useSwitchNetwork()
+	const { data: signer } = useSigner()
 	const { chain } = useNetwork()
 	const { safeObj } = useSafeContext()
 	const { phantomWallet, phantomWalletConnected } = usePhantomWallet()
 
-	const { isConnected, address } = useAccount()
+	const { isConnected, address, connector } = useAccount()
+
+	useEffect(() => {
+		if(isConnected) {
+			disconnect()
+		}
+	}, [])
 
 	const isEvmChain = useMemo(() => {
 		return safeObj.getIsEvm()
 	}, [safeObj])
 
 	const verifyOwner = async(address: string) => {
-
 		logger.info({ address: safeObj.safeAddress }, '1')
 		const isVerified = await safeObj?.isOwner(address)
 		if(isVerified) {
@@ -125,14 +133,23 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 		}
 	}
 
-	useEffect(() => {
-		console.log('isConnected', isConnected)
-		console.log('isConnected chain?.id', chain?.id)
-		console.log('isConnected safeObj?.chainId', safeObj?.chainId)
+	const switchNetworkIfNeed = useCallback(async() => {
+		logger.info('isConnected address', address, connector)
+		logger.info('isConnected signer', signer)
+		logger.info('isConnected', isConnected)
+		logger.info('isConnected chain?.id', chain?.id)
+		logger.info('isConnected safeObj?.chainId', safeObj?.chainId)
+		logger.info('isConnected signer network', await signer?.getChainId())
 		if(isConnected && chain?.id !== safeObj?.chainId) {
-			switchNetwork?.(safeObj?.chainId!)
+			logger.info('Pre switch network')
+			switchNetworkAsync?.(safeObj?.chainId!)
+			logger.info('Post switch network')
 		}
-	}, [isConnected])
+	}, [isConnected, chain, safeObj, signer, address, connector])
+
+	useEffect(() => {
+		switchNetworkIfNeed()
+	}, [isConnected, chain, safeObj, signer, address, connector])
 
 	useEffect(() => {
 		if(isConnected || phantomWalletConnected) {
