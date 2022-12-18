@@ -60,7 +60,10 @@ function BuilderDiscovery({ domainName, setDomainName, setDomainImage, setIsOpen
 				alignItems='center'
 				direction='column'
 				width='100%'
-				gap={12}>
+				gap={12}
+				alignSelf='flex-start'
+				marginTop={8}
+			>
 
 				{/* Screen Heading */}
 				<Flex
@@ -112,13 +115,19 @@ function BuilderDiscovery({ domainName, setDomainName, setDomainImage, setIsOpen
 								Upload
 							</Button>
 						</Flex>
-						<FlushedInput
-							placeholder='Name'
-							width='100%'
-							textAlign='start'
-							value={domainName}
-							onChange={(e) => setDomainName(e.target.value)}
-							helperText='Examples: Uniswap Foundation. Polygon Village DAO. Celo Climate Collective' />
+						<Flex direction='column'>
+							<FlushedInput
+								placeholder='Name'
+								width='100%'
+								textAlign='start'
+								value={domainName}
+								onChange={(e) => setDomainName(e.target.value)}
+								// helperText='Examples: Uniswap Foundation. Polygon Village DAO. Celo Climate Collective'
+							/>
+							<Text variant='v2_helper_text'>
+								Examples: Uniswap Foundation. Polygon Village DAO. Celo Climate Collective
+							</Text>
+						</Flex>
 					</Box>
 				</Flex>
 

@@ -44,8 +44,9 @@ function ProposalReview(
 					className='rightScreenCard'
 					flexDirection='column'
 					width='100%'
-					gap={6}
-					alignSelf='flex-start'>
+					gap={10}
+					alignSelf='flex-start'
+					marginRight={24}>
 					{/* TODO: Add Steps complete indicator */}
 					<StepIndicator step={step} />
 					<Text

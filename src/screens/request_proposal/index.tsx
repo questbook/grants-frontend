@@ -37,15 +37,18 @@ function RequestProposal() {
 			<Flex
 				className='card'
 				minWidth='90%'
-				gap={8}
+				// gap={8}
 				bgColor='white'
 				padding={4}
+				width='1276px'
 				justifyContent='center'
 				alignItems='center'
 				marginTop={8}
-				marginRight={16}
-				marginLeft={16}
-				marginBottom={4}>
+				// marginRight={16}
+				// marginLeft={16}
+				marginBottom={4}
+				alignSelf='center'
+				overflow='scroll'>
 				{/* <Button onClick={() => createGrant()}>create grant</Button> */}
 				{renderBody()}
 			</Flex>

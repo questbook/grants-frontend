@@ -28,6 +28,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 			<>
 				<Flex alignSelf='flex-start'>
 					<Button
+						className='backBtn'
 						variant='linkV2'
 						leftIcon={<BsArrowLeft />}
 						onClick={() => setStep(3)}>
@@ -39,9 +40,10 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 					className='rightScreenCard'
 					flexDirection='column'
 					width='100%'
-					gap={6}
+					gap={10}
 					alignSelf='flex-start'
-					alignItems='center'>
+					alignItems='center'
+					marginRight={24}>
 					<StepIndicator step={step} />
 					<Flex
 						direction='column'

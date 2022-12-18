@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Flex, FlexProps, Input, InputProps, Text } from '@chakra-ui/react'
 
 interface Props extends InputProps {
@@ -8,7 +7,8 @@ interface Props extends InputProps {
 }
 
 function FlushedInput({ helperText, textPadding = 2, flexProps, ...props }: Props) {
-	const [value, setValue] = useState<string>(props?.value?.toString() ?? '')
+	const { value, onChange } = props
+	// const [value, setValue] = useState<string>(props?.value?.toString() || '')
 
 	return (
 		<>
@@ -18,20 +18,17 @@ function FlushedInput({ helperText, textPadding = 2, flexProps, ...props }: Prop
 			>
 				<Input
 					variant='flushed'
-					borderBottom='5px solid'
+					borderBottom='2px solid #0A84FF'
 					borderColor={value ? 'black' : 'gray.300'}
 					fontWeight='400'
 					fontSize='20px'
+					value={props.value}
+					placeholder={props.placeholder}
 					onWheel={(e) => (e.target as HTMLElement).blur()}
-					minWidth={props?.minWidth ? props.minWidth : `${(props?.placeholder?.length || 0) + textPadding * 2}ch`}
-					width={props?.width ? props.width : value !== '' ? `${(value?.toString()?.length || 0) + textPadding}ch` : `${(props?.placeholder?.length || 0) + textPadding}ch`}
+					// minWidth={props?.minWidth ? props.minWidth : `${(props?.placeholder?.length || 0) + textPadding * 2}ch`}
+					width={props?.width ? props.width : value !== '' ? `${(value?.toString()?.length!) + textPadding}ch` : `${(props?.placeholder?.length!) + textPadding}ch`}
 					textAlign={props?.textAlign ? props?.textAlign : 'center'}
-					onChange={
-						(e) => {
-							setValue(e.target.value)
-							props?.onChange?.(e)
-						}
-					}
+					onChange={onChange}
 					{...props}
 					 />
 				{
@@ -42,7 +39,9 @@ function FlushedInput({ helperText, textPadding = 2, flexProps, ...props }: Prop
 							{
 								helperText && (
 									<Text
-										variant='v2_helper_text'>
+										className='helperText'
+										variant='v2_helper_text'
+										color='gray.200'>
 										{helperText}
 									</Text>
 								)
@@ -53,7 +52,7 @@ function FlushedInput({ helperText, textPadding = 2, flexProps, ...props }: Prop
 										ml='auto'
 										variant='v2_metadata'
 										color='gray.5'>
-										{value?.length}
+										{value?.toString().length}
 										/
 										{props?.maxLength}
 									</Text>

@@ -79,8 +79,10 @@ function ProposalSubmission(
 					className='rightScreenCard'
 					flexDirection='column'
 					width='100%'
-					gap={6}
-					alignSelf='flex-start'>
+					gap={10}
+					alignSelf='flex-start'
+					marginRight={24}
+				>
 					{/* TODO: Add Steps complete indicator */}
 					<StepIndicator step={step} />
 					<Text
@@ -89,7 +91,7 @@ function ProposalSubmission(
 						fontSize='24px'
 						lineHeight='32px'
 						marginBottom={8}>
-						Proposal Submission
+						What makes a good proposal?
 					</Text>
 
 					{/* Proposal title */}
@@ -121,6 +123,7 @@ function ProposalSubmission(
 							placeholder='start date'
 							value={startdate}
 							step='1'
+							textPadding={8}
 							min={new Date().toISOString().split('.')[0]}
 							onChange={
 								(e) => {
@@ -137,6 +140,7 @@ function ProposalSubmission(
 							min={startdate}
 							value={endDate}
 							step='1'
+							textPadding={8}
 							onChange={
 								(e) => {
 									setEndDate(e.target.value)
@@ -202,22 +206,34 @@ function ProposalSubmission(
 					</Text>
 					<Flex
 						gap={4}
-						alignItems='baseline'
-						wrap='wrap'>
+						alignItems='center'
+						wrap='wrap'
+					>
+
 						<FlushedInput
 							placeholder='Add a link'
 							value={link}
-							onChange={(e) => setLink(e.target.value)} />
+							onChange={(e) => setLink(e.target.value)}
+							width='100%'
+							// flexProps={{ grow: 1, shrink: 1 }}
+						/>
 						<Text variant='requestProposalBody'>
 							Or
 						</Text>
-						<label htmlFor='upload-doc-id'>
-							<FlushedInput
-								placeholder='Upload a doc'
-								onClick={openInput}
-								value={doc ? doc[0].name : ''}
-								onChange={(e) => handleFile(e)} />
-						</label>
+
+
+						<label htmlFor='upload-doc-id' />
+						<FlushedInput
+							id='upload-doc-id'
+							placeholder='Upload a doc'
+							onClick={openInput}
+							value={doc ? doc[0].name : ''}
+							onChange={(e) => handleFile(e)}
+							width='90%'
+							// flexProps={{ grow: 1, shrink: 1 }}
+						/>
+
+
 						<Input
 							id='upload-doc-id'
 							ref={uploaDocInputref}

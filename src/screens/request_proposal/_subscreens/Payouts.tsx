@@ -50,15 +50,17 @@ function Payouts(
 					className='rightScreenCard'
 					flexDirection='column'
 					width='100%'
-					gap={6}
-					alignSelf='flex-start'>
+					gap={10}
+					alignSelf='flex-start'
+					marginRight={24}
+				>
 					<StepIndicator step={step} />
 					<Text
 						alignSelf='center'
 						fontWeight='500'
 						fontSize='24px'
 						lineHeight='32px'
-						marginBottom={8}>
+					>
 						Payouts
 					</Text>
 

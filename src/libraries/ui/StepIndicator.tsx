@@ -14,6 +14,7 @@ function StepIndicator({ step }: Props) {
 				flexDirection='row'>
 
 				<Container
+					className='firstStep'
 					borderRadius='1px'
 					bgColor={step > 0 ? 'accent.azure' : 'gray.2'}
 					height={1} />

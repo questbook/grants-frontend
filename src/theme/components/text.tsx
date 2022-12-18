@@ -96,14 +96,15 @@ export default {
 				fontWeight: '500',
 			},
 			v2_subheading_2: {
-				fontWeight: 450,
+				fontWeight: 400,
 				fontSize: '16px',
 				lineHeight: '24px',
 			},
 			v2_helper_text: {
-				fontWeight: 450,
+				fontWeight: 400,
 				fontSize: '14px',
 				lineHeight: '20px',
+				color: 'gray.5'
 			},
 			requestProposalBody: {
 				fontSize: '20px',
