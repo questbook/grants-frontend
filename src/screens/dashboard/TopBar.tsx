@@ -1,5 +1,6 @@
 import { useContext, useMemo, useRef } from 'react'
 import { Button, Flex, IconButton, Image, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text } from '@chakra-ui/react'
+import { logger } from 'ethers'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { copyGrantLink } from 'src/libraries/utils/copy'
 import { ApiClientsContext } from 'src/pages/_app'
@@ -150,6 +151,7 @@ function TopBar() {
 			onButtonClick: async() => {
 				if(selectedGrant?.id) {
 					const ret = await copyGrantLink(selectedGrant.id, chainId)
+					logger.info('copyGrantLink', ret)
 					toast({
 						title: ret ? 'Copied!' : 'Failed to copy',
 						status: ret ? 'success' : 'error',
