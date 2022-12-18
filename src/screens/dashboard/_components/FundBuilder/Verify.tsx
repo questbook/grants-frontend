@@ -9,7 +9,7 @@ import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/
 import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/PhantomLogo'
 import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
 import ConnectWalletButton from 'src/v2/components/ConnectWalletModal/ConnectWalletButton'
-import { useAccount, useConnect } from 'wagmi'
+import { useAccount, useConnect, useNetwork, useSwitchNetwork } from 'wagmi'
 
 const availableWallets = [{
 	name: 'Metamask',
@@ -79,7 +79,6 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 												connect({ connector })
 											}
 										}
-
 										// setVerified(true)
 										// onVerified()
 									}
@@ -104,6 +103,8 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 	)
 
 	const { connect, connectors } = useConnect()
+	const { error, switchNetwork } = useSwitchNetwork()
+	const { chain } = useNetwork()
 	const { safeObj } = useSafeContext()
 	const { phantomWallet, phantomWalletConnected } = usePhantomWallet()
 
@@ -114,6 +115,7 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 	}, [safeObj])
 
 	const verifyOwner = async(address: string) => {
+
 		logger.info({ address: safeObj.safeAddress }, '1')
 		const isVerified = await safeObj?.isOwner(address)
 		if(isVerified) {
@@ -124,16 +126,26 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 	}
 
 	useEffect(() => {
+		console.log('isConnected', isConnected)
+		console.log('isConnected chain?.id', chain?.id)
+		console.log('isConnected safeObj?.chainId', safeObj?.chainId)
+		if(isConnected && chain?.id !== safeObj?.chainId) {
+			switchNetwork?.(safeObj?.chainId!)
+		}
+	}, [isConnected])
+
+	useEffect(() => {
 		if(isConnected || phantomWalletConnected) {
 			setSignerVerifiedState('verifying')
 		}
 
-		if(safeObj.getIsEvm() && isConnected) {
+		if(safeObj.getIsEvm() && isConnected && chain?.id === safeObj?.chainId) {
 			verifyOwner(address!)
 		} else if(phantomWalletConnected) {
 			verifyOwner(phantomWallet?.publicKey?.toString()!)
 		}
 	}, [isConnected, phantomWalletConnected])
+
 
 	return buildComponent()
 }
