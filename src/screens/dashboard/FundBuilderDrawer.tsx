@@ -1,4 +1,4 @@
-import { useContext, useMemo, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { Box, Button, Drawer, DrawerCloseButton, DrawerContent, DrawerOverlay, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
 import { useSafeContext } from 'src/contexts/safeContext'
 import PayFromChoose from 'src/screens/dashboard/_components/FundBuilder/PayFromChoose'
@@ -11,6 +11,7 @@ import VerifyDrawer from 'src/screens/dashboard/_components/FundBuilder/VerifyDr
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
+import { getFieldString } from 'src/utils/formattingUtils'
 import { getGnosisTansactionLink } from 'src/v2/utils/gnosisUtils'
 import { getProposalUrl } from 'src/v2/utils/phantomUtils'
 
@@ -147,7 +148,9 @@ function FundBuilderDrawer() {
 		setIsDrawerOpen,
 		amounts,
 		tos,
+		setTos,
 		milestoneIndices,
+		setMilestoneIndices,
 		tokenInfo,
 		signerVerifiedState,
 		setSignerVerifiedState
@@ -165,13 +168,21 @@ function FundBuilderDrawer() {
 		const p: ProposalType[] = []
 		for(let i = 0; i < proposals.length; i++) {
 			if(selectedProposals[i]) {
-				console.log('proposals[i]', proposals[i])
 				p.push(proposals[i])
 			}
 		}
 
 		return p
 	}, [proposals, selectedProposals])
+
+	useEffect(() => {
+		if(!selectedProposalsData) {
+			return
+		}
+
+		setTos(selectedProposalsData.map((p) => getFieldString(p, 'applicantAddress')))
+		setMilestoneIndices(selectedProposalsData.map((p) => 0))
+	}, [selectedProposalsData])
 
 	const isDisabled = useMemo(() => {
 		return !selectedProposalsData || !amounts?.every((amt) => amt !== undefined && amt > 0) || !tos?.every((to) => to !== undefined) || !milestoneIndices?.every((mi) => mi !== undefined) || !tokenInfo
@@ -186,25 +197,27 @@ function FundBuilderDrawer() {
 
 	const onInitiateTransaction = async() => {
 		if(signerVerifiedState === 'verified') {
-			const temp = [{
-				from: safeObj?.safeAddress?.toString(),
-				to: tos?.[0],
-				applicationId: proposals[0]?.id,
-				selectedMilestone: milestoneIndices?.[0],
-				selectedToken: { tokenName: tokenInfo?.tokenName, info: tokenInfo?.info },
-				amount: amounts?.[0],
-			}]
 
+			const transactionData = tos.map((to, i) => {
+				return {
+					from: safeObj?.safeAddress?.toString(),
+					to: to,
+					applicationId: proposals[i]?.id,
+					selectedMilestone: milestoneIndices?.[i],
+					selectedToken: { tokenName: tokenInfo?.tokenName, info: tokenInfo?.info },
+					amount: amounts?.[i],
+				}
+			})
 			let proposaladdress = ''
 			if(safeObj.getIsEvm()) {
-				proposaladdress = await safeObj?.proposeTransactions('', temp, '')
+				proposaladdress = await safeObj?.proposeTransactions('', transactionData, '')
 				setSignerVerifiedState('transaction_initiated')
 				setIsDrawerOpen(false)
 				setIsModalOpen(true)
 				setSafeProposalAddress(proposaladdress)
 				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress, safeObj?.chainId))
 			} else {
-				proposaladdress = await safeObj?.proposeTransactions(selectedGrant?.title, temp, phantomWallet)
+				proposaladdress = await safeObj?.proposeTransactions(selectedGrant?.title, transactionData, phantomWallet)
 				setSignerVerifiedState('transaction_initiated')
 				setIsDrawerOpen(false)
 				setIsModalOpen(true)

@@ -136,9 +136,6 @@ function ProposalDetails({ proposal, index, tokenInfo }: Props) {
 		logger.info({ decryptedProposal }, 'Decrypted proposal')
 	}, [decryptedProposal])
 
-
-	console.log('tos', tos)
-
 	return buildComponent()
 }
 
