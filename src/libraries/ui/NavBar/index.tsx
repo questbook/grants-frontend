@@ -18,6 +18,7 @@ import RecoveryModal from 'src/libraries/ui/NavBar/_components/RecoveryModal'
 import StatsButton from 'src/libraries/ui/NavBar/_components/StatsButton'
 import SubmitANewProposal from 'src/libraries/ui/NavBar/_components/SubmitANewProposal'
 import UpdateProfileModal from 'src/libraries/ui/NavBar/_components/UpdateProfileModal'
+import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import { ApiClientsContext } from 'src/pages/_app'
 import { getNonce } from 'src/utils/gaslessUtils'
 
@@ -217,7 +218,7 @@ function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInvi
 			localStorage.setItem('webwalletPrivateKey', privateKey)
 			localStorage.setItem('nonce', nonce)
 			localStorage.removeItem('scwAddress')
-			localStorage.removeItem('currentWorkspace')
+			localStorage.removeItem(DOMAIN_CACHE_KEY)
 			toast({
 				status: 'info',
 				title: 'Wallet imported successfully',
