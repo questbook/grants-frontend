@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react'
-import { Box, Button, Flex, Image, Text, ToastId, useToast } from '@chakra-ui/react'
+import { Box, Button, Flex, Text, ToastId, useToast } from '@chakra-ui/react'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
+import ImageUpload from 'src/libraries/ui/ImageUpload'
 
 interface Props {
     domainName: string
@@ -94,29 +95,13 @@ function BuilderDiscovery({ domainName, setDomainName, setDomainImage, setIsOpen
 						gap={6}
 						pt={8}
 						p={6}>
-						<Flex
-							gap={4}
-							alignItems='center'>
-							<input
-								style={{ visibility: 'hidden', height: 0, width: 0 }}
-								ref={ref}
-								type='file'
-								name='myImage'
-								onChange={handleImageChange}
-								accept='image/jpg, image/jpeg, image/png' />
-							<Image
-								src={domainLogoFile ? URL.createObjectURL(domainLogoFile) : ''}
-								background={domainLogoFile ? '' : 'gray.4'}
-								boxSize={32} />
-							<Button
-								color='azure.1'
-								background='linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), #0A84FF;'
-								borderRadius='3px'
-								onClick={() => openInput()}
-							>
-								Upload
-							</Button>
-						</Flex>
+						<ImageUpload
+							imageFile={{ file: domainLogoFile }}
+							setImageFile={
+								(f) => {
+									setDomainLogoFile(f.file)
+								}
+							} />
 						<Flex direction='column'>
 							<FlushedInput
 								placeholder='Name'
