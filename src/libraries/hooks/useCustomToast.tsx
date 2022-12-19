@@ -34,6 +34,7 @@ function useCustomToast() {
 									action && actionText && (
 										<Button
 											mt={2}
+											bg={BG[props.status ?? 'info']}
 											color='black.1'
 											fontWeight='500'
 											variant='link'
