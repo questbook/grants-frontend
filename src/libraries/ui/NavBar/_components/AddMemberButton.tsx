@@ -57,11 +57,15 @@ function AddMemberButton() {
 										}
 										{
 											link && (
-												<Flex mt={2}>
+												<Flex
+													mt={2}
+												>
 													<Text
 														variant='v2_body'
+														noOfLines={4}
+														wordBreak='break-all'
 														mr={2}>
-														{formatLink(link)}
+														{link}
 													</Text>
 													<CopyIcon text={link} />
 												</Flex>
