@@ -67,7 +67,7 @@ function Milestones() {
 	}
 
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
-	const [expanded, setExpanded] = useState(true)
+	const [expanded, setExpanded] = useState(false)
 
 	const proposal = useMemo(() => {
 		const index = selectedProposals.indexOf(true)

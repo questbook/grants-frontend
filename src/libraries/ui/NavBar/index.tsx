@@ -18,6 +18,7 @@ import RecoveryModal from 'src/libraries/ui/NavBar/_components/RecoveryModal'
 import StatsButton from 'src/libraries/ui/NavBar/_components/StatsButton'
 import SubmitANewProposal from 'src/libraries/ui/NavBar/_components/SubmitANewProposal'
 import UpdateProfileModal from 'src/libraries/ui/NavBar/_components/UpdateProfileModal'
+import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import { ApiClientsContext } from 'src/pages/_app'
 import { getNonce } from 'src/utils/gaslessUtils'
 
@@ -52,38 +53,30 @@ function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInvi
 				py='16px'
 				minWidth={{ base: '-webkit-fill-available' }}
 			>
-				{
-					(showLogo || role === 'builder' || role === 'community') && (
-						<Image
-							onClick={
-								() => router.push({
-									pathname: '/',
-								})
-							}
-							display={{ base: 'none', lg: 'inherit' }}
-							mr='auto'
-							src='/ui_icons/qb.svg'
-							alt='Questbook'
-							cursor='pointer'
-						/>
-					)
-				}
-				{
-					(showLogo || role === 'builder' || role === 'community') && (
-						<Image
-							onClick={
-								() => router.push({
-									pathname: '/',
-								})
-							}
-							display={{ base: 'inherit', lg: 'none' }}
-							mr='auto'
-							src='/ui_icons/qb.svg'
-							alt='Questbook'
-							cursor='pointer'
-						/>
-					)
-				}
+				<Image
+					onClick={
+						() => router.push({
+							pathname: '/',
+						})
+					}
+					display={{ base: 'none', lg: 'inherit' }}
+					mr='auto'
+					src='/ui_icons/qb.svg'
+					alt='Questbook'
+					cursor='pointer'
+				/>
+				<Image
+					onClick={
+						() => router.push({
+							pathname: '/',
+						})
+					}
+					display={{ base: 'inherit', lg: 'none' }}
+					mr='auto'
+					src='/ui_icons/qb.svg'
+					alt='Questbook'
+					cursor='pointer'
+				/>
 				{
 					isQbAdmin && (
 						<>
@@ -98,7 +91,7 @@ function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInvi
 				}
 
 				{showDomains && (role === 'admin' || role === 'reviewer') && <Domains />}
-				{showStats && role === 'admin' && <StatsButton />}
+				{showStats && workspace && <StatsButton />}
 				{showSubmitANewProposal && (role === 'builder' || role === 'community') && <SubmitANewProposal />}
 				<Spacer />
 
@@ -122,7 +115,7 @@ function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInvi
 				}
 				<Spacer />
 
-				{showAddMembers && role === 'admin' && <AddMemberButton />}
+				{showAddMembers && workspace && <AddMemberButton />}
 				{showInviteProposals && <InviteProposalButton />}
 
 				<AccountDetails
@@ -157,7 +150,7 @@ function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInvi
 		</>
 	)
 
-	const { role, inviteInfo } = useContext(ApiClientsContext)!
+	const { workspace, role, inviteInfo } = useContext(ApiClientsContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString, setSearchString } = useContext(DAOSearchContext)!
 	const router = useRouter()
@@ -225,7 +218,7 @@ function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInvi
 			localStorage.setItem('webwalletPrivateKey', privateKey)
 			localStorage.setItem('nonce', nonce)
 			localStorage.removeItem('scwAddress')
-			localStorage.removeItem('currentWorkspace')
+			localStorage.removeItem(DOMAIN_CACHE_KEY)
 			toast({
 				status: 'info',
 				title: 'Wallet imported successfully',

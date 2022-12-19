@@ -680,6 +680,8 @@ export type Grant = {
   /** People who will manage the grant. They can see the PII submitted in an application */
   managers: Array<GrantManager>;
   metadataHash: Scalars['String'];
+  /** milestones required */
+  milestones?: Maybe<Array<Scalars['String']>>;
   /** Number of applications in the grant */
   numberOfApplications: Scalars['Int'];
   /** Number of Reviewers per application for the grant */
@@ -1795,6 +1797,12 @@ export type Grant_Filter = {
   metadataHash_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
   metadataHash_starts_with?: InputMaybe<Scalars['String']>;
   metadataHash_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  milestones?: InputMaybe<Array<Scalars['String']>>;
+  milestones_contains?: InputMaybe<Array<Scalars['String']>>;
+  milestones_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  milestones_not?: InputMaybe<Array<Scalars['String']>>;
+  milestones_not_contains?: InputMaybe<Array<Scalars['String']>>;
+  milestones_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
   numberOfApplications?: InputMaybe<Scalars['Int']>;
   numberOfApplications_gt?: InputMaybe<Scalars['Int']>;
   numberOfApplications_gte?: InputMaybe<Scalars['Int']>;
@@ -1976,6 +1984,7 @@ export enum Grant_OrderBy {
   Link = 'link',
   Managers = 'managers',
   MetadataHash = 'metadataHash',
+  Milestones = 'milestones',
   NumberOfApplications = 'numberOfApplications',
   NumberOfReviewersPerApplication = 'numberOfReviewersPerApplication',
   PayoutType = 'payoutType',
@@ -5401,7 +5410,7 @@ export type GetGrantsForAdminQueryVariables = Exact<{
 }>;
 
 
-export type GetGrantsForAdminQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, rubric?: { __typename?: 'Rubric', id: string, isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null }> };
+export type GetGrantsForAdminQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, reviewType?: ReviewType | null, payoutType?: PayoutType | null, numberOfReviewersPerApplication?: number | null, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, rubric?: { __typename?: 'Rubric', id: string, isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null }> };
 
 export type GetGrantsForReviewerQueryVariables = Exact<{
   reviewerAddress: Scalars['Bytes'];
@@ -5409,7 +5418,7 @@ export type GetGrantsForReviewerQueryVariables = Exact<{
 }>;
 
 
-export type GetGrantsForReviewerQuery = { __typename?: 'Query', grantReviewerCounters: Array<{ __typename?: 'GrantReviewerCounter', id: string, counter: number, pendingCounter: number, doneCounter: number, grant: { __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, rubric?: { __typename?: 'Rubric', id: string, isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null, pendingApplications: Array<{ __typename?: 'GrantApplication', id: string }>, doneApplications: Array<{ __typename?: 'GrantApplication', id: string }> } }> };
+export type GetGrantsForReviewerQuery = { __typename?: 'Query', grantReviewerCounters: Array<{ __typename?: 'GrantReviewerCounter', id: string, counter: number, pendingCounter: number, doneCounter: number, grant: { __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, reviewType?: ReviewType | null, payoutType?: PayoutType | null, numberOfReviewersPerApplication?: number | null, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, rubric?: { __typename?: 'Rubric', id: string, isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null, pendingApplications: Array<{ __typename?: 'GrantApplication', id: string }>, doneApplications: Array<{ __typename?: 'GrantApplication', id: string }> } }> };
 
 export type GetPayoutsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -8624,6 +8633,9 @@ export const GetGrantsForAdminDocument = gql`
         maximumPoints
       }
     }
+    reviewType
+    payoutType
+    numberOfReviewersPerApplication
   }
 }
     `;
@@ -8692,6 +8704,9 @@ export const GetGrantsForReviewerDocument = gql`
           maximumPoints
         }
       }
+      reviewType
+      payoutType
+      numberOfReviewersPerApplication
       pendingApplications: applications(
         where: {pendingReviewerAddresses_contains_nocase: [$reviewerAddress]}
       ) {

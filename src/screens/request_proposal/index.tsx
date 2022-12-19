@@ -13,6 +13,7 @@ import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import logger from 'src/libraries/logger'
+import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import { validateAndUploadToIpfs } from 'src/libraries/validator'
@@ -127,10 +128,13 @@ function RequestProposal() {
 					currentStepIndex={currentStepIndex!}
 					viewTxnLink={getExplorerUrlForTxHash(network, txHash)}
 					onClose={
-						() => {
+						async() => {
 							setCurrentStepIndex(undefined)
 							setRole('admin')
-							router.push({ pathname: '/dashboard' })
+							const ret = await router.push({ pathname: '/dashboard' })
+							if(ret) {
+								router.reload()
+							}
 						}
 					} />
 			</>
@@ -312,7 +316,7 @@ function RequestProposal() {
 				setWorkspaceId(workspaceId.toString())
 				const newWorkspace = `chain_${network}-0x${workspaceId.toString(16)}`
 				logger.info({ newWorkspace }, 'New workspace created')
-				localStorage.setItem('currentWorkspace', newWorkspace)
+				localStorage.setItem(DOMAIN_CACHE_KEY, newWorkspace)
 				await addAuthorizedOwner(workspaceId, webwallet?.address!, scwAddress, network.toString(),
 					'this is the safe addres - to be updated in the new flow')
 
@@ -420,7 +424,6 @@ function RequestProposal() {
 
 					setCurrentStepIndex(2)
 					setCurrentStepIndex(3) // 3 is the final step
-
 				} else {
 					logger.info('workspaceId not found')
 				}

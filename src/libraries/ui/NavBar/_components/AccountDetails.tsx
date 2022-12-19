@@ -32,7 +32,9 @@ interface Props {
 
 function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 	const buildComponent = () => (
-		<Menu size='xl'>
+		<Menu
+			size='xl'
+			closeOnSelect>
 			<MenuButton
 				ml={3}
 				variant='ghost'
@@ -184,16 +186,18 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 		},
 		{
 			icon: '/v2/icons/swap.svg',
-			title: t(role === 'builder' ? (possibleRoles.includes('admin') ? 'account_details.menu.swap_admin' : 'account_details.menu.swap_reviewer') : 'account_details.menu.swap_builder'),
+			title: router.pathname === '/dashboard' ? t(role === 'builder' ? (possibleRoles.includes('admin') ? 'account_details.menu.swap_admin' : 'account_details.menu.swap_reviewer') : 'account_details.menu.swap_builder') : 'Goto Dashboard',
 			onClick: () => {
-				if(role === 'builder') {
-					if(possibleRoles.includes('admin')) {
-						setRole('admin')
+				if(router.pathname === '/dashboard') {
+					if(role === 'builder') {
+						if(possibleRoles.includes('admin')) {
+							setRole('admin')
+						} else {
+							setRole('reviewer')
+						}
 					} else {
-						setRole('reviewer')
+						setRole('builder')
 					}
-				} else {
-					setRole('builder')
 				}
 
 				if(router.pathname !== '/dashboard') {

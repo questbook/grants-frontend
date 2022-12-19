@@ -29,5 +29,8 @@ query getGrantsForAdmin($domainID: String!) {
         maximumPoints
       }
     }
+    reviewType
+    payoutType
+    numberOfReviewersPerApplication
   }
 }
