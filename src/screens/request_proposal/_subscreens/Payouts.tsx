@@ -61,7 +61,7 @@ function Payouts(
 						fontSize='24px'
 						lineHeight='32px'
 					>
-						Payouts
+						How will builders be paid?
 					</Text>
 
 					<Flex
@@ -144,15 +144,15 @@ function Payouts(
 						gap={4}
 						alignItems='baseline'>
 						<Text variant='v2_subheading'>
-							Maximum amount paid out per proposal will be
+							Proposals should ideally ask for an amount around
 						</Text>
 						<FlushedInput
-							placeholder='enter number'
+							placeholder='enter your grant’s sweetspot'
 							type='number'
 							value={amount.toString()}
 							onChange={(e) => setAmount(parseInt(e.target.value))} />
 						<Text variant='v2_subheading'>
-							USD
+							USD. You can payout in any token.
 						</Text>
 					</Flex>
 

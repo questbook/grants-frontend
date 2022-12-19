@@ -96,7 +96,7 @@ const Option = ({ innerProps, data }: OptionProps<SafeSelectOption, boolean, Gro
 						<Flex
 							ml={2}
 							direction='column'>
-							<Text variant='v2_body'>
+							<Text variant='requestProposalBody'>
 								{data.networkName}
 							</Text>
 							<Flex align='center'>
@@ -114,7 +114,7 @@ const Option = ({ innerProps, data }: OptionProps<SafeSelectOption, boolean, Gro
 					</Flex>
 					<Box mx='auto' />
 					<Text
-						variant='v2_body'
+						variant='requestProposalBody'
 						color='black.2'>
 						{data.amount}
 						{' '}
@@ -139,12 +139,12 @@ const SingleValue = ({ innerProps, data }: SingleValueProps<SafeSelectOption, bo
 				boxSize='20px' />
 			<Text
 				ml={1}
-				variant='v2_body'>
+				variant='requestProposalBody'>
 				{data.networkName}
 			</Text>
 			<Text
 				ml={1}
-				variant='v2_body'
+				variant='requestProposalBody'
 				color='black.2'>
 				{data.amount}
 				{' '}
@@ -206,7 +206,7 @@ function SafeSelect({ label, optionalText, helperText, helperLinkText, helperLin
 		<Flex direction='column'>
 			<Flex>
 				<Text
-					variant='v2_body'
+					variant='requestProposalBody'
 					fontWeight='500'>
 					{label}
 				</Text>

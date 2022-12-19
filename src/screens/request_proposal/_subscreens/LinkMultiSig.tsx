@@ -42,25 +42,28 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 					width='100%'
 					gap={10}
 					alignSelf='flex-start'
-					alignItems='center'
-					marginRight={24}>
+					// alignItems='center'
+					marginRight={24}
+				>
 					<StepIndicator step={step} />
 					<Flex
 						direction='column'
-						alignItems='center'
+						// alignItems='center'
 						gap={10}>
 						<Flex
 							direction='column'
-							gap={2}>
+							gap={2}
+							alignItems='center'>
 							<Text
 								alignSelf='center'
 								fontWeight='500'
 								fontSize='24px'
-								lineHeight='32px' >
-								Link your multisig
+								lineHeight='32px'
+							>
+								Where’s the money for the grants?
 							</Text>
 							<Text>
-								Use your multisig to payout builders on Questbook
+								The money will always stay in your multi sig.
 							</Text>
 						</Flex>
 
@@ -77,25 +80,39 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 								<Image src='/safes_icons/celo_safe.svg' />
 							</Flex>
 						</Flex>
-						<Flex direction='column'>
-							<FlushedInput
-								placeholder='Solana or Ethereum address'
-								value={multiSigAddress}
-								onChange={
-									(e) => {
-										if(e.target.value.includes(':')) {
-											setMultiSigAddress(e.target.value.split(':')[1])
-										} else {
-											setMultiSigAddress(e.target.value)
-										}
+						<Flex
+							direction='column'
+							// justifyContent='center'
+						>
+							<Flex
+								gap={4}
+								alignItems='baseline'>
+								<Text variant='v2_subheading'>
+									Review will be based on
+								</Text>
+								<FlushedInput
+									placeholder='Solana or EVM address'
+									value={multiSigAddress}
+									onChange={
+										(e) => {
+											if(e.target.value.includes(':')) {
+												setMultiSigAddress(e.target.value.split(':')[1])
+											} else {
+												setMultiSigAddress(e.target.value)
+											}
 
-									}
-								} />
+										}
+									} />
+							</Flex>
 
 							{
 								(multiSigAddress && loadingSafeData && safeNetworks.length < 1)
 									? (
-										<Flex gap={2}>
+										<Flex
+											className='loaderHelperText'
+											gap={2}
+											position='relative'
+											left='10px' >
 											<Image
 												className='loader'
 												src='/ui_icons/loader.svg'
@@ -161,7 +178,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 							Skip for now
 						</Button>
 					</Flex>
-					<Flex gap={1}>
+					{/* <Flex gap={1}>
 						<Text
 							variant='v2_body'
 							color='black.3'>
@@ -172,7 +189,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 							fontWeight='500'>
 							Terms of Service
 						</Text>
-					</Flex>
+					</Flex> */}
 				</Flex>
 
 				<VerifySignerModal

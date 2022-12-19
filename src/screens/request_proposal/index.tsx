@@ -168,13 +168,13 @@ function RequestProposal() {
 	const [step, setStep] = useState(1)
 
 	// State for Proposal Review
-	const [numberOfReviewers, setNumberOfReviewers] = useState(2)
+	const [numberOfReviewers, setNumberOfReviewers] = useState(1)
 	const [reviewMechanism, setReviewMechanism] = useState('')
 	const [rubrics, setRubrics] = useState({})
 
 	// State for Payouts
 	const [payoutMode, setPayoutMode] = useState('')
-	const [amount, setAmount] = useState(0)
+	const [amount, setAmount] = useState(1)
 	const [milestones, setMilestones] = useState<string[]>([])
 
 	// State for Linking MultiSig

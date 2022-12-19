@@ -54,7 +54,7 @@ function ProposalReview(
 						fontWeight='500'
 						fontSize='24px'
 						lineHeight='32px' >
-						Proposal Review
+						How will proposals be reviewed?
 					</Text>
 
 					<Flex
@@ -64,12 +64,13 @@ function ProposalReview(
 							Assign
 						</Text>
 						<FlushedInput
-							placeholder='2'
+							placeholder='1'
 							value={numberOfReviewers.toString()}
 							type='number'
 							onChange={(e) => setNumberOfReviewers(parseInt(e.target.value))} />
 						<Text variant='v2_subheading'>
-							reviewers for each proposal
+							reviewers for an incoming proposal automatically.
+
 						</Text>
 					</Flex>
 
@@ -98,7 +99,7 @@ function ProposalReview(
 							leftIcon={<AiOutlinePlus />}
 							borderColor='black'
 							onClick={() => setReviewMechanism('Voting')}>
-							Voting
+							Community Voting
 						</Button>
 						<Button
 							variant='outline'
@@ -120,7 +121,7 @@ function ProposalReview(
 									alignItems='baseline'
 									wrap='wrap'>
 									<Text variant='v2_subheading'>
-										Rubric includes
+										Evaluation rubrics will include
 									</Text>
 
 									{
