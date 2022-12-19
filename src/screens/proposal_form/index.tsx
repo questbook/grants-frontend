@@ -50,7 +50,7 @@ function ProposalForm() {
 						align='start'
 						pl='10%'>
 						<Image
-							src={grant?.workspace.logoIpfsHash === config.defaultDAOImageHash ? getUrlForIPFSHash(grant?.workspace?.logoIpfsHash) : getAvatar(true, grant?.workspace.title) }
+							src={grant?.workspace.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash) }
 							boxSize='30%' />
 						<Text
 							variant='v2_heading_2'
