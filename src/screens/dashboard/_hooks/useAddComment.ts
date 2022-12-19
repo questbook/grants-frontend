@@ -1,4 +1,4 @@
-import { useCallback, useContext, useMemo } from 'react'
+import { useCallback, useContext, useEffect, useMemo } from 'react'
 import { convertToRaw, EditorState } from 'draft-js'
 import { COMMUNICATION_ADDRESS } from 'src/constants/addresses'
 import { defaultChainId } from 'src/constants/chains'
@@ -27,8 +27,7 @@ interface Props {
 function useAddComment({ setStep, setTransactionHash }: Props) {
 	const { role, subgraphClients } = useContext(ApiClientsContext)!
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
-	const { proposals, selectedGrant, selectedProposals } =
-    useContext(DashboardContext)!
+	const { proposals, selectedProposals } = useContext(DashboardContext)!
 
 	const proposal = useMemo(() => {
 		const index = selectedProposals.indexOf(true)
@@ -38,12 +37,13 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 		}
 	}, [proposals, selectedProposals])
 
-	const chainId = useMemo(() => {
-		return (
-			getSupportedChainIdFromWorkspace(proposal?.grant?.workspace) ??
-      defaultChainId
-		)
+	useEffect(() => {
+		logger.info('Proposal Changed (Comment)', proposal)
 	}, [proposal])
+
+	const chainId = useMemo(() => {
+		return (getSupportedChainIdFromWorkspace(proposal?.grant?.workspace) ?? defaultChainId)
+	}, [proposal?.grant?.workspace])
 
 	const {
 		biconomyDaoObj: biconomy,
@@ -81,13 +81,9 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 		async(message: EditorState) => {
 			try {
 				if(
-					!webwallet ||
-          !biconomyWalletClient ||
-          typeof biconomyWalletClient === 'string' ||
-          !scwAddress ||
-          !selectedGrant?.id ||
-          !proposal?.id
+					!webwallet || !biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress || !proposal?.id || !proposal?.grant?.id || !proposal?.grant?.workspace?.id
 				) {
+					logger.info({ webwallet, biconomyWalletClient, scwAddress, proposal, grant: proposal?.grant?.id, workspace: !proposal?.grant?.workspace?.id }, 'Missing Data (Comment)')
 					return
 				}
 
@@ -115,7 +111,7 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 
 				const methodArgs = [
 					proposal.grant.workspace.id,
-					selectedGrant.id,
+					proposal.grant.id,
 					proposal.id,
 					role !== 'community',
 					commentHash,
@@ -179,7 +175,6 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 			scwAddress,
 			chainId,
 			role,
-			selectedGrant,
 			proposal,
 		],
 	)
@@ -187,7 +182,7 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 	return {
 		addComment: useMemo(
 			() => addComment,
-			[webwallet, biconomy, biconomyWalletClient, scwAddress, chainId, role],
+			[webwallet, biconomy, biconomyWalletClient, scwAddress, chainId, role, proposal],
 		),
 		isBiconomyInitialised,
 	}

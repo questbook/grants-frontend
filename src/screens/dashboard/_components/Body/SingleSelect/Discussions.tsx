@@ -259,7 +259,6 @@ function Discussions() {
 			return true
 		}
 
-		logger.info({ text, raw: convertToRaw(text.getCurrentContent()) }, 'Current content (Comment)')
 		return convertToRaw(text.getCurrentContent()).blocks[0].text.length === 0
 	}, [text, step])
 
