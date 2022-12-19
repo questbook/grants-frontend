@@ -48,7 +48,8 @@ function FundBuilderModal() {
 											borderBottom='2px solid'
 											textPadding={1}
 											type='number'
-											value={amounts?.[0]}
+											minW='5ch'
+											value={amounts?.[0] || ''}
 											onChange={
 												(e) => {
 													const val = parseFloat(e.target.value)

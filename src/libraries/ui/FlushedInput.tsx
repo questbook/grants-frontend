@@ -8,7 +8,6 @@ interface Props extends InputProps {
 
 function FlushedInput({ helperText, textPadding = 2, flexProps, ...props }: Props) {
 	const { value, onChange } = props
-	// const [value, setValue] = useState<string>(props?.value?.toString() || '')
 
 	return (
 		<>
@@ -22,7 +21,7 @@ function FlushedInput({ helperText, textPadding = 2, flexProps, ...props }: Prop
 					borderColor={value ? 'black' : 'gray.300'}
 					fontWeight='400'
 					fontSize='20px'
-					value={props.value}
+					value={value}
 					placeholder={props.placeholder}
 					onWheel={(e) => (e.target as HTMLElement).blur()}
 					// minWidth={props?.minWidth ? props.minWidth : `${(props?.placeholder?.length || 0) + textPadding * 2}ch`}
