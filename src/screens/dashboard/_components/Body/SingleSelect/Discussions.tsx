@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { useContext, useMemo, useState } from 'react'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { Button, CircularProgress, Divider, Flex, IconButton, Image, Text } from '@chakra-ui/react'
 import { convertToRaw, EditorState } from 'draft-js'
@@ -6,7 +6,7 @@ import logger from 'src/libraries/logger'
 import TextEditor from 'src/libraries/ui/RichTextEditor/textEditor'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
 import { TXN_STEPS } from 'src/libraries/utils/constants'
-import { ApiClientsContext } from 'src/pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import useAddComment from 'src/screens/dashboard/_hooks/useAddComment'
 import useGetComments from 'src/screens/dashboard/_hooks/useGetComments'
 import useQuickReplies from 'src/screens/dashboard/_hooks/useQuickReplies'
@@ -14,7 +14,7 @@ import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { CommentType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import getAvatar from 'src/utils/avatarUtils'
-import { formatAddress, getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { formatAddress, getExplorerUrlForTxHash, getFieldString } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 function Discussions() {
@@ -116,7 +116,7 @@ function Discussions() {
 					<Image
 						borderRadius='3xl'
 						boxSize='36px'
-						src={getAvatar(false, proposal?.applicantId)}
+						src={(role === 'builder' || role === 'community') ? getAvatar(false, scwAddress?.toLowerCase()) : workspace?.members?.find(member => member.actorId.toLowerCase() === scwAddress?.toLowerCase())?.profilePictureIpfsHash ? getUrlForIPFSHash(workspace?.members?.find(member => member.actorId.toLowerCase() === scwAddress?.toLowerCase())?.profilePictureIpfsHash ?? '') : getAvatar(false, scwAddress?.toLowerCase())}
 					/>
 					<Flex
 						ml={4}
@@ -192,6 +192,7 @@ function Discussions() {
 	}
 
 	const renderComment = (comment: CommentType, index: number) => {
+		logger.info('Rendering comment: ', comment)
 		const member = comment.workspace.members.find((member) => member.actorId.toLowerCase() === comment.sender?.toLowerCase())
 
 		return (
@@ -201,23 +202,22 @@ function Discussions() {
 				<Image
 					borderRadius='3xl'
 					boxSize='36px'
-					src={(member?.profilePictureIpfsHash ? getUrlForIPFSHash(member?.profilePictureIpfsHash) : getAvatar(false, member ? member?.actorId : proposal?.applicantId))} />
+					src={(comment.role === 'builder' || comment.role === 'community') ? getAvatar(false, comment.sender?.toLowerCase() ?? '') : member?.profilePictureIpfsHash ? getUrlForIPFSHash(member.profilePictureIpfsHash) : getAvatar(false, member?.actorId)} />
 				<Flex
 					ml={3}
 					direction='column'>
 					<Flex align='center'>
 						<Text fontWeight='500'>
-							{member?.fullName ? member?.fullName : member?.actorId ? formatAddress(member?.actorId) : 'No Name found'}
+							{getCommentDisplayName(comment)}
 						</Text>
-						{
-							comment?.role === 'admin' || comment?.role === 'reviewer' && (
-								<Text
-									bg='gray.3'
-									p={1}>
-									Member
-								</Text>
-							)
-						}
+						<Text
+							ml={3}
+							variant='v2_metadata'
+							borderRadius='3px'
+							bg={comment?.role === 'admin' || comment?.role === 'reviewer' ? 'gray.3' : 'accent.vodka'}
+							px={1}>
+							{comment?.role === 'admin' || comment?.role === 'reviewer' ? 'Member' : 'Builder'}
+						</Text>
 						{
 							comment?.timestamp && (
 								<Text
@@ -235,7 +235,8 @@ function Discussions() {
 		)
 	}
 
-	const { chainId, role } = useContext(ApiClientsContext)!
+	const { scwAddress } = useContext(WebwalletContext)!
+	const { workspace, chainId, role } = useContext(ApiClientsContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 	const { quickReplies } = useQuickReplies()
 
@@ -259,13 +260,27 @@ function Discussions() {
 			return true
 		}
 
-		logger.info({ text, raw: convertToRaw(text.getCurrentContent()) }, 'Current content (Comment)')
 		return convertToRaw(text.getCurrentContent()).blocks[0].text.length === 0
 	}, [text, step])
 
-	useEffect(() => {
-		logger.info({ comments }, 'Comments (Comment)')
-	}, [comments])
+	const getCommentDisplayName = (comment: CommentType) => {
+		if(comment.role === 'admin' || comment.role === 'reviewer') {
+			const member = comment.workspace.members.find((member) => member.actorId.toLowerCase() === comment.sender?.toLowerCase())
+			if(member?.fullName) {
+				return member?.fullName
+			} else if(member?.actorId) {
+				return formatAddress(member?.actorId)
+			} else {
+				return 'No name found'
+			}
+		} else {
+			if(comment.role === 'builder') {
+				return getFieldString(proposal, 'applicantName')
+			} else if(comment.role === 'community') {
+				return formatAddress(comment.sender ?? '')
+			}
+		}
+	}
 
 	return buildComponents()
 }

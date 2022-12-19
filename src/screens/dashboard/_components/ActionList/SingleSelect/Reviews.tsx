@@ -219,8 +219,8 @@ function Reviews() {
 	}
 
 	const { chainId } = useContext(ApiClientsContext)!
-	const { proposals, grants, selectedGrantIndex, selectedProposals } = useContext(DashboardContext)!
-	const { loadReview } = useLoadReview(grants[selectedGrantIndex!]?.id, chainId)
+	const { proposals, selectedGrant, selectedProposals } = useContext(DashboardContext)!
+	const { loadReview } = useLoadReview(selectedGrant?.id, chainId)
 
 	const [expanded, setExpanded] = useState<boolean>(false)
 	const [reviews, setReviews] = useState<IReviewFeedback[]>([])
@@ -241,7 +241,14 @@ function Reviews() {
 	}, [proposals, selectedProposals])
 
 	const details = useMemo(() => {
-		return [{ title: 'Reviewer', value: proposal?.applicationReviewers?.length }, { title: 'Review with', value: 'Rubric' }]
+		const detailsList = []
+		if(selectedGrant?.numberOfReviewersPerApplication) {
+			detailsList.push({ title: 'Reviewer', value: selectedGrant.numberOfReviewersPerApplication })
+		}
+
+		detailsList.push({ title: 'Review with', value: !selectedGrant?.reviewType || selectedGrant.reviewType === 'rubrics' ? 'Rubrics' : 'Voting' })
+
+		return detailsList
 	}, [proposal])
 
 	useEffect(() => {

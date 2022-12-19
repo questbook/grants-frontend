@@ -145,7 +145,7 @@ function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep
 			await createMapping({ email })
 			await chargeGas(Number(workspaceId), Number(txFee), chainId)
 
-			setNetworkTransactionModalStep(3)
+			setNetworkTransactionModalStep(undefined)
 
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
@@ -159,7 +159,7 @@ function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep
 	}
 
 	return {
-		setupProfile: useMemo(() => setupProfile, [biconomy, biconomyWalletClient, scwAddress, webwallet, chainId, nonce]), isBiconomyInitialised
+		setupProfile: useMemo(() => setupProfile, [biconomy, biconomyWalletClient, scwAddress, webwallet, chainId, nonce, workspaceId]), isBiconomyInitialised
 	}
 }
 
