@@ -186,6 +186,7 @@ function BrowseGrantCard({
 						<Spacer />
 						<Button
 							onClick={onClick}
+							bg='#8850EA'
 							variant='primaryCta'
 							h='105px'
 							disabled={endTimestamp < Date.now()}>
