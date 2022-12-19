@@ -60,7 +60,7 @@ function ProposalReview(
 					<Flex
 						gap={4}
 						alignItems='baseline'>
-						<Text variant='requestProposalBody'>
+						<Text variant='v2_subheading'>
 							Assign
 						</Text>
 						<FlushedInput
@@ -68,7 +68,7 @@ function ProposalReview(
 							value={numberOfReviewers.toString()}
 							type='number'
 							onChange={(e) => setNumberOfReviewers(parseInt(e.target.value))} />
-						<Text variant='requestProposalBody'>
+						<Text variant='v2_subheading'>
 							reviewers for each proposal
 						</Text>
 					</Flex>
@@ -76,7 +76,7 @@ function ProposalReview(
 					<Flex
 						gap={4}
 						alignItems='baseline'>
-						<Text variant='requestProposalBody'>
+						<Text variant='v2_subheading'>
 							Review will be based on
 						</Text>
 						<FlushedInput
@@ -119,7 +119,7 @@ function ProposalReview(
 									gap={4}
 									alignItems='baseline'
 									wrap='wrap'>
-									<Text variant='requestProposalBody'>
+									<Text variant='v2_subheading'>
 										Rubric includes
 									</Text>
 
@@ -131,7 +131,7 @@ function ProposalReview(
 														placeholder='Add your own'
 														value={rubricInputValues[index]}
 														onChange={(e) => handleOnChange(e, index)} />
-													<Text variant='requestProposalBody'>
+													<Text variant='v2_subheading'>
 														,
 													</Text>
 												</>

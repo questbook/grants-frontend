@@ -23,7 +23,7 @@ function ImageUpload({ imageFile, setImageFile, ...props }: Props) {
 					onChange={handleImageChange}
 					accept='image/jpg, image/jpeg, image/png' />
 				{
-					imageFile && (
+					!(!imageFile || (imageFile?.file === null && !imageFile?.hash)) && (
 						<Image
 							src={imageFile?.file ? URL.createObjectURL(imageFile?.file) : imageFile?.hash ? getUrlForIPFSHash(imageFile?.hash) : ''}
 							onClick={() => openInput()}

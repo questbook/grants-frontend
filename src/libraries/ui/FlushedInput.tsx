@@ -40,7 +40,7 @@ function FlushedInput({ helperText, textPadding = 2, flexProps, ...props }: Prop
 								helperText && (
 									<Text
 										className='helperText'
-										variant='v2_helper_text'
+										variant='v2_body'
 										color='gray.200'>
 										{helperText}
 									</Text>
