@@ -2,7 +2,6 @@ import { ChangeEvent, ReactElement, useContext, useMemo, useState } from 'react'
 import { Button, Flex, Image, Text } from '@chakra-ui/react'
 import { convertToRaw } from 'draft-js'
 import { useRouter } from 'next/router'
-import config from 'src/constants/config.json'
 import logger from 'src/libraries/logger'
 import BackButton from 'src/libraries/ui/BackButton'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
@@ -50,7 +49,7 @@ function ProposalForm() {
 						align='start'
 						pl='10%'>
 						<Image
-							src={grant?.workspace.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!) }
+							src={grant?.workspace.logoIpfsHash ? getUrlForIPFSHash(grant?.workspace?.logoIpfsHash) : getAvatar(true, grant?.workspace.title) }
 							boxSize='30%' />
 						<Text
 							variant='v2_heading_2'
