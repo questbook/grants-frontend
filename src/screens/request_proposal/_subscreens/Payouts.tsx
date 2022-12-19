@@ -67,7 +67,7 @@ function Payouts(
 					<Flex
 						gap={4}
 						alignItems='baseline'>
-						<Text variant='requestProposalBody'>
+						<Text variant='v2_subheading'>
 							Accepted Proposals are paid out
 						</Text>
 						<FlushedInput
@@ -143,7 +143,7 @@ function Payouts(
 					<Flex
 						gap={4}
 						alignItems='baseline'>
-						<Text variant='requestProposalBody'>
+						<Text variant='v2_subheading'>
 							Maximum amount paid out per proposal will be
 						</Text>
 						<FlushedInput
@@ -151,7 +151,7 @@ function Payouts(
 							type='number'
 							value={amount.toString()}
 							onChange={(e) => setAmount(parseInt(e.target.value))} />
-						<Text variant='requestProposalBody'>
+						<Text variant='v2_subheading'>
 							USD
 						</Text>
 					</Flex>

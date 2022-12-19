@@ -71,10 +71,12 @@ function BuilderDiscovery({ domainName, setDomainName, setDomainImage, setIsOpen
 					alignItems='center'
 					width='100%'
 					gap={2}>
-					<Text variant='v2_heading'>
+					<Text
+						variant='v2_heading_3'
+						fontWeight='500'>
 						Builder Discovery
 					</Text>
-					<Text variant='v2_subheading_2'>
+					<Text>
 						Customize how builders can discover you on the Discover feed
 					</Text>
 				</Flex>
@@ -124,7 +126,9 @@ function BuilderDiscovery({ domainName, setDomainName, setDomainImage, setIsOpen
 								onChange={(e) => setDomainName(e.target.value)}
 								// helperText='Examples: Uniswap Foundation. Polygon Village DAO. Celo Climate Collective'
 							/>
-							<Text variant='v2_helper_text'>
+							<Text
+								variant='v2_body'
+								color='gray.5'>
 								Examples: Uniswap Foundation. Polygon Village DAO. Celo Climate Collective
 							</Text>
 						</Flex>

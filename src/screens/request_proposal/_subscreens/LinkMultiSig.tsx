@@ -102,7 +102,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 												color='black.1'
 											/>
 											<Text
-												variant='footerContent'
+												variant='v2_body'
 												color='black.3'>
 												Searching for this address on different networks..
 											</Text>
@@ -118,7 +118,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 														src='/ui_icons/Done_all_alt_round.svg'
 														color='#273B4A' />
 													<Text
-														variant='footerContent'>
+														variant='v2_body'>
 														{`Looks like this address is on ${safeNetworks.length} ${safeNetworks.length > 1 ? 'networks' : 'network'}.`}
 													</Text>
 
@@ -163,11 +163,13 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 					</Flex>
 					<Flex gap={1}>
 						<Text
-							variant='footerContent'
+							variant='v2_body'
 							color='black.3'>
 							By continuing, you accept Questbook’s
 						</Text>
-						<Text variant='footerContentBold'>
+						<Text
+							variant='v2_body'
+							fontWeight='500'>
 							Terms of Service
 						</Text>
 					</Flex>

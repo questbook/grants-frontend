@@ -98,7 +98,7 @@ function ProposalSubmission(
 					<Flex
 						gap={4}
 						alignItems='baseline'>
-						<Text variant='requestProposalBody'>
+						<Text variant='v2_subheading'>
 							Receive proposals for
 						</Text>
 						<FlushedInput
@@ -115,7 +115,7 @@ function ProposalSubmission(
 					<Flex
 						gap={4}
 						alignItems='baseline'>
-						<Text variant='requestProposalBody'>
+						<Text variant='v2_subheading'>
 							Receive proposal submissions from
 						</Text>
 						<FlushedInput
@@ -131,7 +131,7 @@ function ProposalSubmission(
 									setStartdate(e.target.value)
 								}
 							} />
-						<Text variant='requestProposalBody'>
+						<Text variant='v2_subheading'>
 							till
 						</Text>
 						<FlushedInput
@@ -153,7 +153,7 @@ function ProposalSubmission(
 						gap={4}
 						alignItems='baseline'
 						wrap='wrap'>
-						<Text variant='requestProposalBody'>
+						<Text variant='v2_subheading'>
 							Proposals must include
 						</Text>
 
@@ -168,7 +168,7 @@ function ProposalSubmission(
 											placeholder={title}
 											value={title}
 											isDisabled={true} />
-										<Text variant='requestProposalBody'>
+										<Text variant='v2_subheading'>
 											,
 										</Text>
 									</>
@@ -183,7 +183,7 @@ function ProposalSubmission(
 											placeholder='Write more details'
 											value={detailInputValues[index]}
 											onChange={(e) => handleOnChange(e, index)} />
-										<Text variant='requestProposalBody'>
+										<Text variant='v2_subheading'>
 											,
 										</Text>
 									</>
@@ -201,7 +201,7 @@ function ProposalSubmission(
 					</Flex>
 
 					{/* More details */}
-					<Text variant='requestProposalBody'>
+					<Text variant='v2_subheading'>
 						Anything else you want the builder to know?
 					</Text>
 					<Flex
@@ -217,7 +217,7 @@ function ProposalSubmission(
 							width='100%'
 							// flexProps={{ grow: 1, shrink: 1 }}
 						/>
-						<Text variant='requestProposalBody'>
+						<Text variant='v2_subheading'>
 							Or
 						</Text>
 
