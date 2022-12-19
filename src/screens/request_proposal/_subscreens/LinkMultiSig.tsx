@@ -40,6 +40,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 					className='rightScreenCard'
 					flexDirection='column'
 					width='100%'
+					height='100%'
 					gap={10}
 					alignSelf='flex-start'
 					// alignItems='center'
@@ -67,7 +68,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 							</Text>
 						</Flex>
 
-						<Flex
+						{/* <Flex
 							direction='column'
 							gap={1}
 							alignItems='center'>
@@ -79,16 +80,18 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 								<Image src='/safes_icons/realms_logo.svg' />
 								<Image src='/safes_icons/celo_safe.svg' />
 							</Flex>
-						</Flex>
+						</Flex> */}
 						<Flex
 							direction='column'
+							gap={10}
 							// justifyContent='center'
 						>
 							<Flex
 								gap={4}
-								alignItems='baseline'>
+								alignItems='baseline'
+								marginTop={12}>
 								<Text variant='v2_subheading'>
-									Review will be based on
+									All the builders will be paid out from
 								</Text>
 								<FlushedInput
 									placeholder='Solana or EVM address'
@@ -105,78 +108,65 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 									} />
 							</Flex>
 
-							{
-								(multiSigAddress && loadingSafeData && safeNetworks.length < 1)
-									? (
-										<Flex
-											className='loaderHelperText'
-											gap={2}
-											position='relative'
-											left='10px' >
-											<Image
-												className='loader'
-												src='/ui_icons/loader.svg'
-												color='black.1'
-											/>
-											<Text
-												variant='v2_body'
-												color='black.3'>
-												Searching for this address on different networks..
-											</Text>
-										</Flex>
-									)
-									: (multiSigAddress)
-										? (
-											<>
-												<Flex
-													gap={2}
-													mb={4}>
-													<Image
-														src='/ui_icons/Done_all_alt_round.svg'
-														color='#273B4A' />
-													<Text
-														variant='v2_body'>
-														{`Looks like this address is on ${safeNetworks.length} ${safeNetworks.length > 1 ? 'networks' : 'network'}.`}
-													</Text>
+							{safeState === 0 && (renderSearchingSafe())}
+							{safeState === 1 && (renderSingleSafe())}
+							{safeState === 2 && (renderSafeDropdown())}
 
-												</Flex>
 
-												<SafeSelect
-													safesOptions={safeNetworks}
-													label=''
-													helperText=''
-													value={selectedSafeNetwork}
-													onChange={
-														(safeSelected: SafeSelectOption | undefined) => {
-															if(safeSelected) {
-																setSelectedSafeNetwork(safeSelected)
-															}
-														}
-													} />
-											</>
-
-										)
-
-										: <></>
-							}
 						</Flex>
 
-						<Button
-							variant='primaryMedium'
-							w='144px'
-							h='48px'
-							isDisabled={!selectedSafeNetwork}
-							onClick={() => setIsVerifySignerModalOpen(true)}>
-							Link multisig
-						</Button>
-						<Text>
-							Why do I need a multisig?
-						</Text>
-						<Button
-							variant='link'
-							onClick={() => setStep(5)}>
-							Skip for now
-						</Button>
+						<Flex
+							direction='column'
+							gap={1}
+							alignItems='center'
+							position='absolute'
+							bottom='80px'
+						>
+							<Text>
+								We currently support
+							</Text>
+							<Flex gap={2}>
+								<Image
+									boxSize={16}
+									src='/safes_icons/safe_logo.svg' />
+								<Image
+									boxSize={16}
+									src='/safes_icons/realms_logo.svg' />
+								<Image
+									boxSize={16}
+									src='/safes_icons/celo_safe.svg' />
+							</Flex>
+							<Text p={8}>
+								Why do I need a multisig?
+							</Text>
+						</Flex>
+
+						<Flex
+							gap={8}
+							width='100%'
+							justifyContent='flex-end'
+							// direction='row-reverse'
+							alignItems='center'
+							position='absolute'
+							bottom='50px'
+						>
+
+
+							<Button
+								variant='link'
+								onClick={() => setStep(5)}>
+								Skip for now
+							</Button>
+							<Button
+								variant='primaryMedium'
+								w='144px'
+								h='48px'
+								isDisabled={safeState !== 1 && !selectedSafeNetwork}
+								onClick={() => setIsVerifySignerModalOpen(true)}>
+								Link multisig
+							</Button>
+						</Flex>
+
 					</Flex>
 					{/* <Flex gap={1}>
 						<Text
@@ -190,6 +180,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 							Terms of Service
 						</Text>
 					</Flex> */}
+
 				</Flex>
 
 				<VerifySignerModal
@@ -208,9 +199,110 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 		)
 	}
 
+	const renderSearchingSafe = () => {
+		return (
+			<Flex
+				className='loaderHelperText'
+				gap={2}
+				position='relative'
+				left='386px'
+				top='-40px' >
+				<Image
+					className='loader'
+					src='/ui_icons/loader.svg'
+					color='black.1'
+				/>
+				<Text
+					variant='v2_body'
+					color='black.3'>
+					Searching for this address on different networks..
+				</Text>
+			</Flex>
+		)
+	}
+
+	const renderSingleSafe = () => {
+		return (
+			<Flex
+				gap={4}
+				alignItems='baseline'>
+				<Text variant='v2_subheading'>
+					This multisig  is on
+					{' '}
+					<span style={{ textDecorationLine: 'underline' }}>
+						{safeNetworks[0].networkName}
+					</span>
+					{' '}
+					and currently has a balance of
+					{' '}
+					<span style={{ textDecorationLine: 'underline' }}>
+						{safeNetworks[0].amount}
+					</span>
+				</Text>
+			</Flex>
+		)
+	}
+
+	const renderSafeDropdown = () => {
+		return (
+			<>
+				<Flex
+					className='loaderHelperText'
+					position='relative'
+					left='386px'
+					top='-40px'
+					gap={2}
+					mb={4}>
+					{
+						safeNetworks.length > 1 ? (
+							<>
+								<Image
+									src='/ui_icons/Done_all_alt_round.svg'
+									color='#273B4A' />
+								<Text
+									variant='v2_body'>
+									{`Looks like this address is on ${safeNetworks.length} networks`}
+								</Text>
+
+							</>
+						) : (
+							<Button
+								variant='link'
+								color='red'
+								fontSize='14px'
+								style={{ cursor: 'pointer' }}
+							>
+								But this address doesn’t exist on any of the 20 supported chains.
+							</Button>
+						)
+					}
+
+
+				</Flex>
+				{
+					safeNetworks.length ? (
+						<SafeSelect
+							safesOptions={safeNetworks}
+							label=''
+							helperText=''
+							value={selectedSafeNetwork}
+							onChange={
+								(safeSelected: SafeSelectOption | undefined) => {
+									if(safeSelected) {
+										setSelectedSafeNetwork(safeSelected)
+									}
+								}
+							} />
+					) : <></>
+				}
+			</>
+		)
+	}
+
 	const [safeNetworks, setSafeNetworks] = useState<SafeSelectOption[]>([])
 	const [IsVerifySignerModalOpen, setIsVerifySignerModalOpen] = useState(false)
 	const [isOwner, setIsOwner] = useState(false)
+	const [safeState, setSafeState] = useState(-1)
 	const [loadingSafeData, setLoadingSafeData] = useState(false)
 
 	// const [ownerAddress, setOwnerAddress] = useState('')
@@ -243,8 +335,28 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 		}
 
 		setLoadingSafeData(true)
+		if(multiSigAddress) {
+			setSafeState(0)
+		} else {
+			setSafeState(-1)
+		}
+
 		fetchSafeData()
 	}, [multiSigAddress])
+
+	useEffect(() => {
+		if(multiSigAddress && loadingSafeData && safeNetworks.length < 1) {
+			//search for safe in supported safes
+			setSafeState(0)
+		} else if(multiSigAddress && (safeNetworks.length > 1 || safeNetworks.length === 0)) {
+			// show dropdown
+			setSafeState(2)
+		} else if(multiSigAddress && safeNetworks.length === 1) {
+			// show single safe
+			setSafeState(1)
+		}
+
+	}, [safeNetworks])
 
 	useEffect(() => {
 		if(isOwner) {
@@ -252,6 +364,13 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 			setStep(5)
 		}
 	}, [isOwner])
+
+	// switch (safeState) {
+	// case 0: return renderSearchingSafe()
+	// case 1: return renderSingleSafe()
+	// case 2: return renderSafeDropdown()
+
+	// }
 
 	return buildComponent()
 }

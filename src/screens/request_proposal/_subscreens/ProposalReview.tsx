@@ -44,6 +44,7 @@ function ProposalReview(
 					className='rightScreenCard'
 					flexDirection='column'
 					width='100%'
+					height='100%'
 					gap={10}
 					alignSelf='flex-start'
 					marginRight={24}>
@@ -160,7 +161,9 @@ function ProposalReview(
 					<Flex
 						gap={8}
 						width='100%'
-						justifyContent='flex-end'>
+						justifyContent='flex-end'
+						position='absolute'
+						bottom='50px'>
 						<Button
 							variant='link'
 							onClick={() => setStep(3)}>

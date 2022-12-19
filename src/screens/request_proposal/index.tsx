@@ -49,7 +49,9 @@ function RequestProposal() {
 				// marginLeft={16}
 				marginBottom={4}
 				alignSelf='center'
-				overflow='scroll'>
+				overflow='scroll'
+				position='relative'
+			>
 				{/* <Button onClick={() => createGrant()}>create grant</Button> */}
 				{renderBody()}
 			</Flex>

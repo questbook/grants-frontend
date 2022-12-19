@@ -79,6 +79,7 @@ function ProposalSubmission(
 					className='rightScreenCard'
 					flexDirection='column'
 					width='100%'
+					height='100%'
 					gap={10}
 					alignSelf='flex-start'
 					marginRight={24}
@@ -250,6 +251,8 @@ function ProposalSubmission(
 						isDisabled={!proposalName || !startdate || !endDate}
 						w='166px'
 						h='48px'
+						position='absolute'
+						bottom='50px'
 						onClick={
 							() => {
 								handleOnClickContinue()
