@@ -59,7 +59,7 @@ export default {
 				color: 'black.1'
 			},
 			v2_body: {
-				fontSize: '20px',
+				fontSize: '14px',
 				fontWeight: '400',
 				lineHeight: '20px',
 				color: 'black.1'
