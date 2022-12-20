@@ -1,12 +1,14 @@
-import { ChangeEvent, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { BsArrowLeft } from 'react-icons/bs'
-import { Button, Flex, Input, Text } from '@chakra-ui/react'
+import { IoMdClose } from 'react-icons/io'
+import { Button, Flex, Icon, Input, Text } from '@chakra-ui/react'
 import { logger } from 'ethers'
 import { useRouter } from 'next/router'
+import { CustomSelect } from 'src/libraries/ui/customSelect'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
-import { ApplicantDetailsFieldType, DynamicInputValues } from 'src/types'
+import { ApplicantDetailsFieldType } from 'src/types'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 
 
@@ -18,8 +20,8 @@ interface Props {
     endDate: string
     setEndDate: (value: string) => void
     requiredDetails: ApplicantDetailsFieldType[]
-    moreDetails: string[]
-    setMoreDetails: (value: string[]) => void
+	extraDetailsFields: ApplicantDetailsFieldType[]
+	setExtraDetailsFields: (value: ApplicantDetailsFieldType[]) => void
     link: string
     setLink: (value: string) => void
     doc: FileList | null
@@ -39,6 +41,8 @@ function ProposalSubmission(
 		endDate,
 		setEndDate,
 		requiredDetails,
+		extraDetailsFields,
+		setExtraDetailsFields,
 		link,
 		setLink,
 		doc,
@@ -149,6 +153,7 @@ function ProposalSubmission(
 							} />
 					</Flex>
 
+
 					{/* Required details */}
 					<Flex
 						gap={4}
@@ -177,6 +182,43 @@ function ProposalSubmission(
 							})
 						}
 						{
+							extraDetailsFields.filter(detail => detail.required).map((detail) => {
+								const {
+									title
+								} = detail as ApplicantDetailsFieldType
+								return (
+									<>
+										<FlushedInput
+											placeholder={title}
+											value={title}
+											isDisabled={true}
+											onMouseOver={() => setShowCrossIcon(true)}
+											// onMouseOut={() => setShowCrossIcon(false)}
+										/>
+										{
+											showCrossIcon && (
+												<Icon
+													as={IoMdClose}
+													cursor='pointer'
+													// onMouseOver={() => setShowCrossIcon(true)}
+													onClick={
+														() => {
+															handleToggleExtraFields(title)
+															setShowCrossIcon(false)
+														}
+													} />
+											)
+										}
+										<Text
+											variant='v2_subheading'
+										>
+											,
+										</Text>
+									</>
+								)
+							})
+						}
+						{/* {
 							Array.from(Array(detailsCounter)).map((_, index) => {
 								return (
 									<>
@@ -190,8 +232,19 @@ function ProposalSubmission(
 									</>
 								)
 							})
-						}
+						} */}
 
+						{
+							showExtraFieldDropdown && (
+								<CustomSelect
+									options={extraDetailsFields}
+									setExtraDetailsFields={setExtraDetailsFields}
+									setShowExtraFieldDropdown={setShowExtraFieldDropdown}
+									width='20%'
+									placeholder='Choose one or Type something and press enter...'
+								/>
+							)
+						}
 						<Button
 							variant='outline'
 							leftIcon={<AiOutlinePlus />}
@@ -268,10 +321,28 @@ function ProposalSubmission(
 		)
 	}
 
+	// const extraDetailsFieldsList = applicantDetailsList.filter(detail => detail.isRequired === false).map(({
+	// 	title, id, inputType, isRequired, pii
+	// }) => {
+	// 	return {
+	// 		title,
+	// 		required: isRequired || false,
+	// 		id,
+	// 		inputType,
+	// 		pii
+	// 	}
+	// })
+	// 	.filter((obj) => obj !== null)
+
 	const router = useRouter()
 
 	const [detailsCounter, setDetailsCounter] = useState(0)
-	const [detailInputValues, setDetailInputValues] = useState<DynamicInputValues>({})
+
+	const [showCrossIcon, setShowCrossIcon] = useState(false)
+
+	// const [extraDetailsFields, setExtraDetailsFields] = useState<ApplicantDetailsFieldType[]>(extraDetailsFieldsList)
+
+	const [showExtraFieldDropdown, setShowExtraFieldDropdown] = useState(false)
 
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -282,38 +353,41 @@ function ProposalSubmission(
 
 	const handleClickAddAnother = () => {
 		setDetailsCounter(detailsCounter + 1)
+		setShowExtraFieldDropdown(true)
+	}
+
+	const handleToggleExtraFields = (title: string) => {
+		const newExtraFieldList = extraDetailsFields.map((field) => {
+			if(field.title === title) {
+				return {
+					...field,
+					required: false
+				}
+			} else {
+				return field
+			}
+		})
+		setExtraDetailsFields(newExtraFieldList)
 	}
 
 	const handleOnClickContinue = () => {
 		logger.info('step 2')
 		setStep(2)
-		const details: ApplicantDetailsFieldType[] = []
-		const detailInputValuesLength = Object.keys(detailInputValues).length
-		for(let i = 0; i < detailInputValuesLength; i++) {
-			details.push({
-				title: detailInputValues[i],
-				required: true,
-				id: `customField${i}`,
-				inputType: 'long-form'
-			})
-		}
 
-		const allFieldsArray = [...requiredDetails, ...details]
+		//filter true values
+		const filteredExtraDetails = extraDetailsFields.filter((field) => field.required === true)
+
+		// merge required and extra details
+		const allFieldsArray = [...requiredDetails, ...filteredExtraDetails]
 		const allFieldsObject: {[key: string]: ApplicantDetailsFieldType} = {}
 		for(let i = 0; i < allFieldsArray.length; i++) {
 			allFieldsObject[allFieldsArray[i].id] = allFieldsArray[i]
 		}
 
-		// console.log('all applicant details', [...requiredDetails, ...details])
+		// const allFieldsObject = [...requiredDetails, ...extraDetailsFields]
+		logger.info('all applicant details', [...requiredDetails, ...filteredExtraDetails])
 		setAllApplicantDetails(allFieldsObject)
 	}
-
-	const handleOnChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-		const inputValue: DynamicInputValues = {}
-		inputValue[index] = e.target.value
-		setDetailInputValues({ ...detailInputValues, ...inputValue })
-	}
-
 
 	return buildComponent()
 }

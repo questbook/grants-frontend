@@ -228,6 +228,8 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 					<span style={{ textDecorationLine: 'underline' }}>
 						{safeNetworks[0].amount}
 					</span>
+					{' '}
+					USD
 				</Text>
 			</Flex>
 		)
