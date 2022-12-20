@@ -1,6 +1,5 @@
-import { useRef, useState } from 'react'
-import { Box, Button, Flex, Text, ToastId, useToast } from '@chakra-ui/react'
-import ErrorToast from 'src/components/ui/toasts/errorToast'
+import { useState } from 'react'
+import { Box, Button, Flex, Text } from '@chakra-ui/react'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
 
@@ -15,44 +14,6 @@ interface Props {
 }
 
 function BuilderDiscovery({ domainName, setDomainName, setDomainImage, setIsOpen, createWorkspace }: Props) {
-
-	const ref = useRef(null)
-
-	const toast = useToast()
-	const toastRef = useRef<ToastId>()
-
-
-	const openInput = () => {
-		if(ref.current) {
-			(ref.current as HTMLInputElement).click()
-		}
-	}
-
-	const maxImageSize = 2
-
-	const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		if(event.target.files?.[0]) {
-			const img = event.target.files[0]
-			if(img.size / 1024 / 1024 <= maxImageSize) {
-				setDomainLogoFile(img)
-			} else {
-				toastRef.current = toast({
-					position: 'top',
-					render: () => ErrorToast({
-						content: `Image size exceeds ${maxImageSize} MB`,
-						close: () => {
-							if(toastRef.current) {
-								toast.close(toastRef.current)
-							}
-						},
-					}),
-				})
-			}
-
-			// @ts-ignore
-			event.target.value = null
-		}
-	}
 
 	const buildScreen = () => {
 
@@ -75,7 +36,7 @@ function BuilderDiscovery({ domainName, setDomainName, setDomainImage, setIsOpen
 					<Text
 						variant='v2_heading_3'
 						fontWeight='500'>
-						Builder Discovery
+						How can builders find your grants?
 					</Text>
 					<Text>
 						Customize how builders can discover you on the Discover feed

@@ -79,6 +79,7 @@ function ProposalSubmission(
 					className='rightScreenCard'
 					flexDirection='column'
 					width='100%'
+					height='100%'
 					gap={10}
 					alignSelf='flex-start'
 					marginRight={24}
@@ -99,10 +100,10 @@ function ProposalSubmission(
 						gap={4}
 						alignItems='baseline'>
 						<Text variant='v2_subheading'>
-							Receive proposals for
+							Receive proposals from builders who are building
 						</Text>
 						<FlushedInput
-							placeholder='Give a title for inviting proposals.'
+							placeholder='describe in 4-5 words'
 							value={proposalName}
 							onChange={
 								(e) => {
@@ -116,7 +117,7 @@ function ProposalSubmission(
 						gap={4}
 						alignItems='baseline'>
 						<Text variant='v2_subheading'>
-							Receive proposal submissions from
+							Builders can submit proposals between
 						</Text>
 						<FlushedInput
 							type='datetime-local'
@@ -202,7 +203,7 @@ function ProposalSubmission(
 
 					{/* More details */}
 					<Text variant='v2_subheading'>
-						Anything else you want the builder to know?
+						Builders can also refer to addtional information here
 					</Text>
 					<Flex
 						gap={4}
@@ -250,6 +251,8 @@ function ProposalSubmission(
 						isDisabled={!proposalName || !startdate || !endDate}
 						w='166px'
 						h='48px'
+						position='absolute'
+						bottom='50px'
 						onClick={
 							() => {
 								handleOnClickContinue()

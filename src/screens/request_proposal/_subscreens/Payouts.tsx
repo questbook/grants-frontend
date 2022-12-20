@@ -50,6 +50,7 @@ function Payouts(
 					className='rightScreenCard'
 					flexDirection='column'
 					width='100%'
+					height='100%'
 					gap={10}
 					alignSelf='flex-start'
 					marginRight={24}
@@ -61,7 +62,7 @@ function Payouts(
 						fontSize='24px'
 						lineHeight='32px'
 					>
-						Payouts
+						How will builders be paid?
 					</Text>
 
 					<Flex
@@ -144,15 +145,15 @@ function Payouts(
 						gap={4}
 						alignItems='baseline'>
 						<Text variant='v2_subheading'>
-							Maximum amount paid out per proposal will be
+							Proposals should ideally ask for an amount around
 						</Text>
 						<FlushedInput
-							placeholder='enter number'
+							placeholder='enter your grant’s sweetspot'
 							type='number'
 							value={amount.toString()}
 							onChange={(e) => setAmount(parseInt(e.target.value))} />
 						<Text variant='v2_subheading'>
-							USD
+							USD. You can payout in any token.
 						</Text>
 					</Flex>
 
@@ -160,7 +161,9 @@ function Payouts(
 					<Flex
 						gap={8}
 						width='100%'
-						justifyContent='flex-end' >
+						justifyContent='flex-end'
+						position='absolute'
+						bottom='50px' >
 						<Button
 							className='continueBtn'
 							variant='primaryMedium'
