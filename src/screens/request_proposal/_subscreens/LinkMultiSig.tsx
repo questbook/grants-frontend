@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { BsArrowLeft } from 'react-icons/bs'
 import { Button, Flex, Image, Text } from '@chakra-ui/react'
 import { SupportedSafes } from '@questbook/supported-safes'
@@ -49,7 +49,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 					<StepIndicator step={step} />
 					<Flex
 						direction='column'
-						// alignItems='center'
+						alignItems='center'
 						gap={10}>
 						<Flex
 							direction='column'
@@ -68,23 +68,11 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 							</Text>
 						</Flex>
 
-						{/* <Flex
-							direction='column'
-							gap={1}
-							alignItems='center'>
-							<Text>
-								We currently support
-							</Text>
-							<Flex gap={4}>
-								<Image src='/safes_icons/safe_logo.svg' />
-								<Image src='/safes_icons/realms_logo.svg' />
-								<Image src='/safes_icons/celo_safe.svg' />
-							</Flex>
-						</Flex> */}
 						<Flex
 							direction='column'
 							gap={10}
 							// justifyContent='center'
+							alignSelf='flex-start'
 						>
 							<Flex
 								gap={4}
@@ -120,7 +108,8 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 							gap={1}
 							alignItems='center'
 							position='absolute'
-							bottom='80px'
+							// bottom='80px'
+							bottom={8}
 						>
 							<Text>
 								We currently support
@@ -222,6 +211,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 	}
 
 	const renderSingleSafe = () => {
+		setSelectedSafeNetwork(safeNetworks[0])
 		return (
 			<Flex
 				gap={4}
@@ -325,7 +315,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 	//     setSafeNetworks(safesUSDBalance)
 	// }, [multiSigAddress])
 
-	useEffect(() => {
+	useMemo(() => {
 		logger.info('Multi-sig address entered', multiSigAddress)
 		const fetchSafeData = async() => {
 			const supportedSafes = new SupportedSafes()
@@ -364,13 +354,6 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 			setStep(5)
 		}
 	}, [isOwner])
-
-	// switch (safeState) {
-	// case 0: return renderSearchingSafe()
-	// case 1: return renderSingleSafe()
-	// case 2: return renderSafeDropdown()
-
-	// }
 
 	return buildComponent()
 }
