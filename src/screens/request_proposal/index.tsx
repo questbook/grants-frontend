@@ -70,8 +70,6 @@ function RequestProposal() {
 					endDate={endDate}
 					setEndDate={setEndDate}
 					requiredDetails={requiredDetails}
-					moreDetails={moreDetails}
-					setMoreDetails={setMoreDetails}
 					link={link}
 					setLink={setLink}
 					doc={doc!}
@@ -80,6 +78,10 @@ function RequestProposal() {
 					setStep={setStep}
 					allApplicantDetails={allApplicantDetails}
 					setAllApplicantDetails={setAllApplicantDetails}
+					extraDetailsFields={extraDetailsFields}
+					setExtraDetailsFields={setExtraDetailsFields}
+
+
 				/>
 			)
 		case 2:
@@ -150,7 +152,7 @@ function RequestProposal() {
 	const [startDate, setStartDate] = useState(todayDate)
 	const [endDate, setEndDate] = useState('')
 
-	const applicantDetails: ApplicantDetailsFieldType[] = applicantDetailsList
+	const applicantDetails: ApplicantDetailsFieldType[] = applicantDetailsList.filter(detail => detail.isRequired)
 		.map(({
 			title, id, inputType, isRequired, pii
 		}) => {
@@ -164,9 +166,22 @@ function RequestProposal() {
 		})
 		.filter((obj) => obj !== null)
 
+	const extraDetailsFieldsList = applicantDetailsList.filter(detail => detail.isRequired === false).map(({
+		title, id, inputType, isRequired, pii
+	}) => {
+		return {
+			title,
+			required: isRequired || false,
+			id,
+			inputType,
+			pii
+		}
+	})
+		.filter((obj) => obj !== null)
+
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [requiredDetails, setRequiredDetails] = useState<ApplicantDetailsFieldType[]>(applicantDetails)
-	const [moreDetails, setMoreDetails] = useState([''])
+	const [extraDetailsFields, setExtraDetailsFields] = useState<ApplicantDetailsFieldType[]>(extraDetailsFieldsList)
 	const [allApplicantDetails, setAllApplicantDetails] = useState<{ [key: string]: ApplicantDetailsFieldType }>({})
 	const [link, setLink] = useState('')
 	const [doc, setDoc] = useState<FileList>()
@@ -180,7 +195,7 @@ function RequestProposal() {
 
 	// State for Payouts
 	const [payoutMode, setPayoutMode] = useState('')
-	const [amount, setAmount] = useState(1)
+	const [amount, setAmount] = useState(0)
 	const [milestones, setMilestones] = useState<string[]>([])
 
 	// State for Linking MultiSig
