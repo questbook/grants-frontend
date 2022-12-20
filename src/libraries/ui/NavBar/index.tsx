@@ -14,9 +14,11 @@ import AddMemberButton from 'src/libraries/ui/NavBar/_components/AddMemberButton
 import Domains from 'src/libraries/ui/NavBar/_components/Domains'
 import ImportConfirmationModal from 'src/libraries/ui/NavBar/_components/ImportConfirmationModal'
 import InviteProposalButton from 'src/libraries/ui/NavBar/_components/InviteProposalButton'
+import OpenDashboard from 'src/libraries/ui/NavBar/_components/OpenDashboard'
 import RecoveryModal from 'src/libraries/ui/NavBar/_components/RecoveryModal'
 import StatsButton from 'src/libraries/ui/NavBar/_components/StatsButton'
 import SubmitANewProposal from 'src/libraries/ui/NavBar/_components/SubmitANewProposal'
+import SwapButton from 'src/libraries/ui/NavBar/_components/SwapButton'
 import UpdateProfileModal from 'src/libraries/ui/NavBar/_components/UpdateProfileModal'
 import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import { ApiClientsContext } from 'src/pages/_app'
@@ -24,6 +26,7 @@ import { getNonce } from 'src/utils/gaslessUtils'
 
 type Props = {
 	bg?: string
+	showOpenDashboard?: boolean
 	showLogo?: boolean
 	showSearchBar?: boolean
 	showSubmitANewProposal?: boolean
@@ -33,7 +36,7 @@ type Props = {
 	showStats?: boolean
 }
 
-function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInviteProposals, showStats, showDomains, showSearchBar }: Props) {
+function NavBar({ bg, showOpenDashboard, showLogo, showAddMembers, showSubmitANewProposal, showInviteProposals, showStats, showDomains, showSearchBar }: Props) {
 	const buildComponent = () => (
 		<>
 			<Container
@@ -61,7 +64,7 @@ function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInvi
 					}
 					display={{ base: 'none', lg: 'inherit' }}
 					mr='auto'
-					src='/ui_icons/qb.svg'
+					src={router.pathname === '/dashboard' ? '/v2/images/qb-only-logo.svg' : '/ui_icons/qb.svg'}
 					alt='Questbook'
 					cursor='pointer'
 				/>
@@ -73,7 +76,7 @@ function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInvi
 					}
 					display={{ base: 'inherit', lg: 'none' }}
 					mr='auto'
-					src='/ui_icons/qb.svg'
+					src={router.pathname === '/dashboard' ? '/v2/images/qb-only-logo.svg' : '/ui_icons/qb.svg'}
 					alt='Questbook'
 					cursor='pointer'
 				/>
@@ -117,6 +120,10 @@ function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInvi
 
 				{showAddMembers && workspace && <AddMemberButton />}
 				{showInviteProposals && <InviteProposalButton />}
+
+				{router.pathname === '/dashboard' && <SwapButton />}
+
+				{showOpenDashboard && router.pathname === '/' && <OpenDashboard />}
 
 				<AccountDetails
 					openModal={
@@ -246,6 +253,7 @@ function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInvi
 NavBar.defaultProps = {
 	bg: 'white',
 	showLogo: true,
+	showOpenDashboard: true,
 	showSearchBar: true,
 	showSubmitANewProposal: false,
 	showInviteProposals: false,

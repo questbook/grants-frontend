@@ -157,7 +157,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 
 	const { workspace } = useContext(ApiClientsContext)!
 	const { t } = useTranslation()
-	const { role, setRole, possibleRoles } = useContext(ApiClientsContext)!
+	const { role } = useContext(ApiClientsContext)!
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 
 	const router = useRouter()
@@ -183,27 +183,6 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 			icon: '/v2/icons/key.svg',
 			title: t('account_details.menu.save_wallet'),
 			onClick: () => openModal?.('export')
-		},
-		{
-			icon: '/v2/icons/swap.svg',
-			title: router.pathname === '/dashboard' ? t(role === 'builder' ? (possibleRoles.includes('admin') ? 'account_details.menu.swap_admin' : 'account_details.menu.swap_reviewer') : 'account_details.menu.swap_builder') : 'Goto Dashboard',
-			onClick: () => {
-				if(router.pathname === '/dashboard') {
-					if(role === 'builder') {
-						if(possibleRoles.includes('admin')) {
-							setRole('admin')
-						} else {
-							setRole('reviewer')
-						}
-					} else {
-						setRole('builder')
-					}
-				}
-
-				if(router.pathname !== '/dashboard') {
-					router.push({ pathname: '/dashboard' })
-				}
-			}
 		},
 		{
 			icon: '/v2/icons/add user.svg',
