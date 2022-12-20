@@ -28,7 +28,7 @@ function SelectDropdown<T>({ options, placeholder, onChange }: Props<T>) {
 					}),
 					valueContainer: (provided) => ({
 						...provided,
-						fontSize: '28px',
+						fontSize: '20px',
 					}),
 					menu: (provided) => ({
 						...provided,

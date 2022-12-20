@@ -375,7 +375,15 @@ function ProposalSubmission(
 		setStep(2)
 
 		//filter true values
-		const filteredExtraDetails = extraDetailsFields.filter((field) => field.required === true)
+		const filteredExtraDetails = extraDetailsFields.filter((field) => field.required === true).map(item => {
+			return {
+				id: item.id,
+				inputType: item.inputType,
+				required: item.required,
+				title: item.title,
+				pii: item.pii
+			}
+		})
 
 		// merge required and extra details
 		const allFieldsArray = [...requiredDetails, ...filteredExtraDetails]

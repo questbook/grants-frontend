@@ -6,6 +6,8 @@ import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
 import { DynamicInputValues } from 'src/types'
 
+import SelectDropdown from '/src/screens/request_proposal/_components/SelectDropdown'
+
 interface Props {
 	payoutMode: string
 	setPayoutMode: (value: string) => void
@@ -71,14 +73,20 @@ function Payouts(
 						<Text variant='v2_subheading'>
 							Accepted Proposals are paid out
 						</Text>
-						<FlushedInput
+						{/* <FlushedInput
 							placeholder='select one'
 							isDisabled={true}
 							value={payoutMode}
-							onChange={(e) => setPayoutMode(e.target.value)} />
+							onChange={(e) => setPayoutMode(e.target.value)} /> */}
+
+						<SelectDropdown
+							options={payoutTypeOptions}
+							onChange={(item) => handleOnChangePayoutTypeOption(item)}
+
+						/>
 					</Flex>
 
-					<Flex
+					{/* <Flex
 						gap={4}
 						alignItems='baseline'>
 						<Button
@@ -99,7 +107,7 @@ function Payouts(
 							}>
 							based on milestone
 						</Button>
-					</Flex>
+					</Flex> */}
 
 					{
 						payoutMode === PayoutMode.BASED_ON_MILESTONE && (
@@ -186,6 +194,13 @@ function Payouts(
 
 	const [milestoneInputValues, setMilestoneInputValues] = useState<{ [key: number]: string }>({})
 	const [milestoneCounter, setMilestoneCounter] = useState(0)
+
+	const payoutTypeOptions = [{ value: 'in_one_go', label: 'in one go' }, { value: 'milestones', label: 'based on milestone' }]
+
+	const handleOnChangePayoutTypeOption = (item: any) => {
+		// console.log('payout changes to', item)
+		setPayoutMode(item.label)
+	}
 
 	const handleClick = () => {
 		setMilestoneCounter(milestoneCounter + 1)

@@ -94,7 +94,7 @@ function ProposalReview(
 						<SelectDropdown
 							options={reviewMechanismOptions}
 							placeholder='Select One'
-							onChange={(e) => handleOnChangeReviewMechanismOption(e)} />
+							onChange={(item) => handleOnChangeReviewMechanismOption(item)} />
 					</Flex>
 
 					{/* <Flex

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Divider, Flex, Text } from '@chakra-ui/react'
 import { CreatableSelect } from 'chakra-react-select'
+import { logger } from 'ethers'
 import { ApplicantDetailsFieldType } from 'src/types'
 
 
@@ -40,7 +41,6 @@ type Props = {
 export function CustomSelect({ options, setExtraDetailsFields, setShowExtraFieldDropdown, width, placeholder }: Props) {
 
 	const [value, setValue] = useState<ApplicantDetailsFieldType | null>()
-
 	const createOption = (label: string): any => {
 		return {
 			id: label.split(' ').join(''),
@@ -78,17 +78,11 @@ export function CustomSelect({ options, setExtraDetailsFields, setShowExtraField
 					setValue(item || undefined); handleOnChange(item)
 				}
 			}
-			options={
-				options.map((option, index) => {
-					return { ...option, index }
-				})
-			}
+			options={options}
 			onCreateOption={handleCreate}
 			components={
 				{
 					Option: detailsItem
-
-
 				}
 			}
 			chakraStyles={

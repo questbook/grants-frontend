@@ -195,7 +195,7 @@ function RequestProposal() {
 
 	// State for Payouts
 	const [payoutMode, setPayoutMode] = useState('')
-	const [amount, setAmount] = useState(1)
+	const [amount, setAmount] = useState(0)
 	const [milestones, setMilestones] = useState<string[]>([])
 
 	// State for Linking MultiSig
