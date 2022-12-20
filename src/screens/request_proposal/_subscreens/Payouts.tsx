@@ -4,9 +4,8 @@ import { BsArrowLeft } from 'react-icons/bs'
 import { Button, Flex, Text } from '@chakra-ui/react'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
+import SelectDropdown from 'src/screens/request_proposal/_components/SelectDropdown'
 import { DynamicInputValues } from 'src/types'
-
-import SelectDropdown from '/src/screens/request_proposal/_components/SelectDropdown'
 
 interface Props {
 	payoutMode: string

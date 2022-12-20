@@ -59,7 +59,7 @@ export function CustomSelect({ options, setExtraDetailsFields, setShowExtraField
 
 	}
 
-	const handleOnChange = (item) => {
+	const handleOnChange = (item: ApplicantDetailsFieldType) => {
 		const changedItem = { ...item, required: true }
 		const newOptionsList = options.filter((option) => option.id !== item.id)
 		setExtraDetailsFields([...newOptionsList, changedItem])
@@ -75,7 +75,7 @@ export function CustomSelect({ options, setExtraDetailsFields, setShowExtraField
 			value={value}
 			onChange={
 				(item) => {
-					setValue(item || undefined); handleOnChange(item)
+					setValue(item); handleOnChange(item!)
 				}
 			}
 			options={options}
