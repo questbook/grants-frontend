@@ -60,7 +60,7 @@ function FundBuilderDrawer() {
 													key={selectedProposalData.id}
 													proposal={selectedProposalData}
 													index={index}
-													tokenInfo={tokenInfo} />
+													tokenInfo={tokenInfo!} />
 											))
 										}
 									</Flex>

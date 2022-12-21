@@ -81,7 +81,7 @@ function FundBuilderModal() {
 												mt='8px'>
 												≈
 												{' '}
-												{(amounts?.[0] / parseFloat(tokenInfo?.fiatConversion!)).toFixed(2)}
+												{(amounts?.[0] / parseFloat(tokenInfo?.fiatConversion!.toString())).toFixed(2)}
 												{' '}
 												{tokenInfo?.tokenName}
 											</Text>
@@ -220,7 +220,7 @@ function FundBuilderModal() {
 				amount: amounts?.[0],
 			}]
 
-			let proposaladdress = '' as string | { error: string }
+			let proposaladdress: any = ''
 			if(safeObj.getIsEvm()) {
 				proposaladdress = await safeObj?.proposeTransactions('', temp, '')
 				if(proposaladdress?.error) {

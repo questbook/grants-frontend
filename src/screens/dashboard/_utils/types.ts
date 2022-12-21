@@ -48,6 +48,7 @@ export interface TokenInfo {
     tokenAddress: string
     fiatConversion: number
   }
+  fiatConversion: number
 }
 
 export type FundBuilderContextType = {
