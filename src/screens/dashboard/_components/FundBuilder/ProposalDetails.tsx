@@ -5,16 +5,19 @@ import FlushedInput from 'src/libraries/ui/FlushedInput'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
 import { ApiClientsContext } from 'src/pages/_app'
 import MilestoneChoose from 'src/screens/dashboard/_components/FundBuilder/MilestoneChoose'
-import { ProposalType } from 'src/screens/dashboard/_utils/types'
+import { ProposalType, TokenInfo } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
 import { getFieldString } from 'src/utils/formattingUtils'
 
 interface Props {
 	proposal: ProposalType
 	index: number
+	tokenInfo: TokenInfo
 }
 
-function ProposalDetails({ proposal, index }: Props) {
+function ProposalDetails({ proposal, index, tokenInfo }: Props) {
+
+
 	const buildComponent = () => {
 		return (
 			<Flex
@@ -90,6 +93,20 @@ function ProposalDetails({ proposal, index }: Props) {
 							w: '100%',
 						}
 					} />
+				{
+					amounts?.[index] > 0 && tokenInfo?.fiatConversion ? (
+						<Text
+							color='#53514F'
+							fontSize='14px'
+							mt='8px'>
+							≈
+							{' '}
+							{(amounts?.[0] / parseFloat(tokenInfo?.fiatConversion!)).toFixed(2)}
+							{' '}
+							{tokenInfo?.tokenName}
+						</Text>
+					) : null
+				}
 			</Flex>
 		)
 	}

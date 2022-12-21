@@ -32,7 +32,7 @@
     "@papercups-io/chat-widget": "^1.3.1",
     "@questbook/anon-authoriser": "git+https://github.com/questbook/anon-authoriser",
     "@questbook/service-validator-client": "git+https://github.com/questbook/service-validator-typescript-client",
-    "@questbook/supported-safes": "git+https://github.com/questbook/supported-safes.git",
+    "@questbook/supported-safes": "git+https://github.com/questbook/supported-safes",
     "@sentry/nextjs": "^7.13.0",
     "@solana/web3.js": "^1.52.0",
     "@unstoppabledomains/resolution": "^8.3.3",

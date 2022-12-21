@@ -21,7 +21,7 @@ export function getSafeURL(safeAddress: string, chainId: string) {
 	} else if(chainId === '40') {
 		return `https://safe.telos.net/${NETWORK_PREFIX[chainId]}:${safeAddress}`
 	} else {
-		return `https://gnosis-safe.io/app/${NETWORK_PREFIX[chainId]}:${safeAddress}`
+		return `https://app.safe.global/${NETWORK_PREFIX[chainId]}:${safeAddress}`
 	}
 }
 
@@ -31,7 +31,7 @@ export function getGnosisTansactionLink(safeAddress: string, chainId: string) {
 	} else if(chainId === '40') {
 		return `https://safe.telos.net/${NETWORK_PREFIX[chainId]}:${safeAddress}/transactions/queue`
 	} else {
-		return `https://gnosis-safe.io/app/${NETWORK_PREFIX[chainId]}:${safeAddress}/transactions/queue`
+		return `https://app.safe.global/${NETWORK_PREFIX[chainId]}:${safeAddress}/transactions/queue`
 	}
 }
 
