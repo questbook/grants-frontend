@@ -168,7 +168,9 @@ function Discover() {
 					</Flex>
 					{/* End Stats Banner */}
 					<Container
-						maxWidth='max-content'
+						className='domainGrid'
+						minWidth='100%'
+						p={10}
 						w='100%'>
 						{
 							isQbAdmin === undefined ? (
