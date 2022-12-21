@@ -1,11 +1,9 @@
 import { ChangeEvent, useContext, useEffect, useState } from 'react'
-import { Search2Icon } from '@chakra-ui/icons'
-import { Center, Container, Image, Input, InputGroup, InputLeftElement, Spacer } from '@chakra-ui/react'
+import { Container, Image, Spacer } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import { ethers } from 'ethers'
 import saveAs from 'file-saver'
 import { useRouter } from 'next/router'
-import { DAOSearchContext } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
@@ -28,7 +26,6 @@ type Props = {
 	bg?: string
 	showOpenDashboard?: boolean
 	showLogo?: boolean
-	showSearchBar?: boolean
 	showSubmitANewProposal?: boolean
 	showInviteProposals?: boolean
 	showAddMembers?: boolean
@@ -36,7 +33,7 @@ type Props = {
 	showStats?: boolean
 }
 
-function NavBar({ bg, showOpenDashboard, showLogo, showAddMembers, showSubmitANewProposal, showInviteProposals, showStats, showDomains, showSearchBar }: Props) {
+function NavBar({ bg, showOpenDashboard, showLogo, showAddMembers, showSubmitANewProposal, showInviteProposals, showStats, showDomains }: Props) {
 	const buildComponent = () => (
 		<>
 			<Container
@@ -98,7 +95,7 @@ function NavBar({ bg, showOpenDashboard, showLogo, showAddMembers, showSubmitANe
 				{showSubmitANewProposal && (role === 'builder' || role === 'community') && <SubmitANewProposal />}
 				<Spacer />
 
-				{
+				{/* {
 					showSearchBar && !inviteInfo && (
 						<Center>
 							<InputGroup mx='20px'>
@@ -115,7 +112,7 @@ function NavBar({ bg, showOpenDashboard, showLogo, showAddMembers, showSubmitANe
 							</InputGroup>
 						</Center>
 					)
-				}
+				} */}
 				<Spacer />
 
 				{showAddMembers && workspace && <AddMemberButton />}
@@ -157,9 +154,9 @@ function NavBar({ bg, showOpenDashboard, showLogo, showAddMembers, showSubmitANe
 		</>
 	)
 
-	const { workspace, role, inviteInfo } = useContext(ApiClientsContext)!
+	const { workspace, role } = useContext(ApiClientsContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
-	const { searchString, setSearchString } = useContext(DAOSearchContext)!
+	// const { searchString, setSearchString } = useContext(DAOSearchContext)!
 	const router = useRouter()
 	const toast = useCustomToast()
 	const [privateKey, setPrivateKey] = useState<string>('')
@@ -254,7 +251,6 @@ NavBar.defaultProps = {
 	bg: 'white',
 	showLogo: true,
 	showOpenDashboard: true,
-	showSearchBar: true,
 	showSubmitANewProposal: false,
 	showInviteProposals: false,
 	showAddMembers: false,

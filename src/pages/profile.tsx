@@ -35,6 +35,7 @@ import { useNetwork } from 'src/hooks/gasless/useNetwork'
 // APP LAYOUT & STATE
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { ApiClientsContext } from 'src/pages/_app'
+import _ from 'src/screens/profile'
 // CONSTANTS AND TYPES
 import type { DAOWorkspace } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
@@ -163,7 +164,7 @@ function Profile() {
 		}
 	}, [allDaoData])
 
-	const value = `<embed src="https://www.questbook.app/embed/?daoId=${daoID}&chainId=${chainID}" type="text/html" width="700" height="700" />`
+	const value = `<embed src="https://beta.questbook.app/embed/?daoId=${daoID}&chainId=${chainID}" type="text/html" width="700" height="700" />`
 	const { hasCopied, onCopy } = useClipboard(value)
 	const [codeActive, setCodeActive] = useState(false)
 	const closeModal = () => {
@@ -546,4 +547,4 @@ Profile.getLayout = function(page: React.ReactElement) {
 	)
 }
 
-export default Profile
+export default _
