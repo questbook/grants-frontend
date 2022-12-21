@@ -236,24 +236,25 @@ export function useGetPublicKeyOfMembers(
 			throw new Error('Cannot fetch members without workspaceId')
 		}
 
+		if(!applicationId) {
+			throw new Error('Cannot fetch application details without applicationId')
+		}
+
+		logger.info('Fetching members: ', { workspaceId, applicationId })
 		const result = await fetchMore({ workspaceId, applicationId }, true)
-		if(
-			!result?.length ||
-      !result[0]?.workspace ||
-      !result[0]?.grantApplication
-		) {
+		if(!result?.length || !result[0]?.workspace || !result[0]?.grantApplication) {
 			return {}
 		}
 
-		const ret: {
-      [address: string]: string
-    } = {}
+		const ret: {[address: string]: string} = {}
 		for(const member of [
 			...result[0].workspace.members,
 			...result[0].grantApplication.applicationReviewers.map((r) => r.member),
 			{ actorId: result[0].grantApplication.applicantId, publicKey: result[0].grantApplication.applicantPublicKey },
 		]) {
+			logger.info('Inspecting member: ', member)
 			if(!member?.publicKey) {
+				logger.info('No public key, skipping ', member)
 				continue
 			}
 
@@ -261,9 +262,11 @@ export function useGetPublicKeyOfMembers(
 				// check if the public key is valid or not
 				ethers.utils.computeAddress(member?.publicKey)
 			} catch(e) {
+				logger.info('Invalid public key, skipping ', member)
 				continue
 			}
 
+			logger.info('Adding member: ', member)
 			ret[member.actorId] = member?.publicKey
 		}
 
@@ -680,19 +683,20 @@ export function usePiiForComment(
 	workspaceId: string | undefined,
 	applicationId: string | undefined,
 	memberPublicKey: string | undefined,
-	// applicantId: string | undefined,
-	// applicantPublicKey: string | undefined | null,
 	chainId: SupportedChainId,
 ) {
+	const logger = useMemo(
+		() => MAIN_LOGGER.child({ type: 'PII for Comment' }),
+		[workspaceId],
+	)
+
+	logger.info(workspaceId, applicationId, memberPublicKey, chainId, 'Init variables')
+
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 	const { fetch } = useGetPublicKeyOfMembers(
 		workspaceId,
 		applicationId,
 		chainId,
-	)
-	const logger = useMemo(
-		() => MAIN_LOGGER.child({ workspaceId, applicationId, pii: true }),
-		[workspaceId],
 	)
 
 	/**

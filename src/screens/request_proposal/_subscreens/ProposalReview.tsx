@@ -4,6 +4,7 @@ import { BsArrowLeft } from 'react-icons/bs'
 import { Button, Flex, Text } from '@chakra-ui/react'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
+import SelectDropdown from 'src/screens/request_proposal/_components/SelectDropdown'
 import { DynamicInputValues } from 'src/types'
 
 interface Props {
@@ -44,8 +45,10 @@ function ProposalReview(
 					className='rightScreenCard'
 					flexDirection='column'
 					width='100%'
-					gap={6}
-					alignSelf='flex-start'>
+					height='100%'
+					gap={10}
+					alignSelf='flex-start'
+					marginRight={24}>
 					{/* TODO: Add Steps complete indicator */}
 					<StepIndicator step={step} />
 					<Text
@@ -53,32 +56,33 @@ function ProposalReview(
 						fontWeight='500'
 						fontSize='24px'
 						lineHeight='32px' >
-						Proposal Review
+						How will proposals be reviewed?
 					</Text>
 
 					<Flex
 						gap={4}
 						alignItems='baseline'>
-						<Text variant='requestProposalBody'>
+						<Text variant='v2_subheading'>
 							Assign
 						</Text>
 						<FlushedInput
-							placeholder='2'
+							placeholder='1'
 							value={numberOfReviewers.toString()}
 							type='number'
 							onChange={(e) => setNumberOfReviewers(parseInt(e.target.value))} />
-						<Text variant='requestProposalBody'>
-							reviewers for each proposal
+						<Text variant='v2_subheading'>
+							reviewers for an incoming proposal automatically.
+
 						</Text>
 					</Flex>
 
 					<Flex
 						gap={4}
 						alignItems='baseline'>
-						<Text variant='requestProposalBody'>
+						<Text variant='v2_subheading'>
 							Review will be based on
 						</Text>
-						<FlushedInput
+						{/* <FlushedInput
 							placeholder='Select one'
 							value={reviewMechanism}
 							isDisabled={true}
@@ -86,10 +90,14 @@ function ProposalReview(
 								(e) => {
 									setReviewMechanism(e.target.value)
 								}
-							} />
+							} /> */}
+						<SelectDropdown
+							options={reviewMechanismOptions}
+							placeholder='Select One'
+							onChange={(item) => handleOnChangeReviewMechanismOption(item)} />
 					</Flex>
 
-					<Flex
+					{/* <Flex
 						gap={4}
 						alignItems='baseline'>
 						<Button
@@ -97,7 +105,7 @@ function ProposalReview(
 							leftIcon={<AiOutlinePlus />}
 							borderColor='black'
 							onClick={() => setReviewMechanism('Voting')}>
-							Voting
+							Community Voting
 						</Button>
 						<Button
 							variant='outline'
@@ -106,7 +114,7 @@ function ProposalReview(
 							onClick={() => setReviewMechanism('Rubric')}>
 							Rubric
 						</Button>
-					</Flex>
+					</Flex> */}
 
 					{/* Rubric Selected */}
 					{
@@ -118,8 +126,8 @@ function ProposalReview(
 									gap={4}
 									alignItems='baseline'
 									wrap='wrap'>
-									<Text variant='requestProposalBody'>
-										Rubric includes
+									<Text variant='v2_subheading'>
+										Evaluation rubrics will include
 									</Text>
 
 									{
@@ -130,7 +138,7 @@ function ProposalReview(
 														placeholder='Add your own'
 														value={rubricInputValues[index]}
 														onChange={(e) => handleOnChange(e, index)} />
-													<Text variant='requestProposalBody'>
+													<Text variant='v2_subheading'>
 														,
 													</Text>
 												</>
@@ -158,7 +166,9 @@ function ProposalReview(
 					<Flex
 						gap={8}
 						width='100%'
-						justifyContent='flex-end'>
+						justifyContent='flex-end'
+						position='absolute'
+						bottom='50px'>
 						<Button
 							variant='link'
 							onClick={() => setStep(3)}>
@@ -189,8 +199,15 @@ function ProposalReview(
 	const [rubricInputValues, setRubricInputValues] = useState<DynamicInputValues>({ 0: 'Team competence', 1: 'Idea Quality', 2: 'Relevance to our ecosystem' })
 	const [rubricsCounter, setRubricsCounter] = useState(3)
 
+	const reviewMechanismOptions = [{ label: 'Voting', value: 'Voting' }, { label: 'Rubric', value: 'Rubric' }, { label: 'Community voting', value: 'Community voting', isDisabled: true }]
+
 	const handleClick = () => {
 		setRubricsCounter(rubricsCounter + 1)
+	}
+
+	const handleOnChangeReviewMechanismOption = (item: any) => {
+		// console.log('review changes to', item)
+		setReviewMechanism(item.value)
 	}
 
 	const handleOnClickContinue = () => {

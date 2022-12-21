@@ -13,6 +13,7 @@ import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import logger from 'src/libraries/logger'
+import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import { validateAndUploadToIpfs } from 'src/libraries/validator'
@@ -37,15 +38,20 @@ function RequestProposal() {
 			<Flex
 				className='card'
 				minWidth='90%'
-				gap={8}
+				// gap={8}
 				bgColor='white'
 				padding={4}
+				width='1276px'
 				justifyContent='center'
 				alignItems='center'
 				marginTop={8}
-				marginRight={16}
-				marginLeft={16}
-				marginBottom={4}>
+				// marginRight={16}
+				// marginLeft={16}
+				marginBottom={4}
+				alignSelf='center'
+				overflow='scroll'
+				position='relative'
+			>
 				{/* <Button onClick={() => createGrant()}>create grant</Button> */}
 				{renderBody()}
 			</Flex>
@@ -64,8 +70,6 @@ function RequestProposal() {
 					endDate={endDate}
 					setEndDate={setEndDate}
 					requiredDetails={requiredDetails}
-					moreDetails={moreDetails}
-					setMoreDetails={setMoreDetails}
 					link={link}
 					setLink={setLink}
 					doc={doc!}
@@ -74,6 +78,10 @@ function RequestProposal() {
 					setStep={setStep}
 					allApplicantDetails={allApplicantDetails}
 					setAllApplicantDetails={setAllApplicantDetails}
+					extraDetailsFields={extraDetailsFields}
+					setExtraDetailsFields={setExtraDetailsFields}
+
+
 				/>
 			)
 		case 2:
@@ -124,10 +132,13 @@ function RequestProposal() {
 					currentStepIndex={currentStepIndex!}
 					viewTxnLink={getExplorerUrlForTxHash(network, txHash)}
 					onClose={
-						() => {
+						async() => {
 							setCurrentStepIndex(undefined)
 							setRole('admin')
-							router.push({ pathname: '/dashboard' })
+							const ret = await router.push({ pathname: '/dashboard' })
+							if(ret) {
+								router.reload()
+							}
 						}
 					} />
 			</>
@@ -141,7 +152,7 @@ function RequestProposal() {
 	const [startDate, setStartDate] = useState(todayDate)
 	const [endDate, setEndDate] = useState('')
 
-	const applicantDetails: ApplicantDetailsFieldType[] = applicantDetailsList
+	const applicantDetails: ApplicantDetailsFieldType[] = applicantDetailsList.filter(detail => detail.isRequired)
 		.map(({
 			title, id, inputType, isRequired, pii
 		}) => {
@@ -155,9 +166,22 @@ function RequestProposal() {
 		})
 		.filter((obj) => obj !== null)
 
+	const extraDetailsFieldsList = applicantDetailsList.filter(detail => detail.isRequired === false).map(({
+		title, id, inputType, isRequired, pii
+	}) => {
+		return {
+			title,
+			required: isRequired || false,
+			id,
+			inputType,
+			pii
+		}
+	})
+		.filter((obj) => obj !== null)
+
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [requiredDetails, setRequiredDetails] = useState<ApplicantDetailsFieldType[]>(applicantDetails)
-	const [moreDetails, setMoreDetails] = useState([''])
+	const [extraDetailsFields, setExtraDetailsFields] = useState<ApplicantDetailsFieldType[]>(extraDetailsFieldsList)
 	const [allApplicantDetails, setAllApplicantDetails] = useState<{ [key: string]: ApplicantDetailsFieldType }>({})
 	const [link, setLink] = useState('')
 	const [doc, setDoc] = useState<FileList>()
@@ -165,7 +189,7 @@ function RequestProposal() {
 	const [step, setStep] = useState(1)
 
 	// State for Proposal Review
-	const [numberOfReviewers, setNumberOfReviewers] = useState(2)
+	const [numberOfReviewers, setNumberOfReviewers] = useState(1)
 	const [reviewMechanism, setReviewMechanism] = useState('')
 	const [rubrics, setRubrics] = useState({})
 
@@ -309,7 +333,7 @@ function RequestProposal() {
 				setWorkspaceId(workspaceId.toString())
 				const newWorkspace = `chain_${network}-0x${workspaceId.toString(16)}`
 				logger.info({ newWorkspace }, 'New workspace created')
-				localStorage.setItem('currentWorkspace', newWorkspace)
+				localStorage.setItem(DOMAIN_CACHE_KEY, newWorkspace)
 				await addAuthorizedOwner(workspaceId, webwallet?.address!, scwAddress, network.toString(),
 					'this is the safe addres - to be updated in the new flow')
 
@@ -417,7 +441,6 @@ function RequestProposal() {
 
 					setCurrentStepIndex(2)
 					setCurrentStepIndex(3) // 3 is the final step
-
 				} else {
 					logger.info('workspaceId not found')
 				}

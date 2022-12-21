@@ -2,7 +2,6 @@ import { useContext, useRef, useState } from 'react'
 import { Button, CircularProgress, Flex, Image, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import CopyIcon from 'src/libraries/ui/CopyIcon'
-import { formatLink } from 'src/libraries/ui/NavBar/_utils/formatLink'
 import { serialiseInviteInfoIntoUrl, useMakeInvite } from 'src/libraries/utils/invite'
 import { ApiClientsContext } from 'src/pages/_app'
 
@@ -57,11 +56,15 @@ function AddMemberButton() {
 										}
 										{
 											link && (
-												<Flex mt={2}>
+												<Flex
+													mt={2}
+												>
 													<Text
 														variant='v2_body'
+														noOfLines={4}
+														wordBreak='break-all'
 														mr={2}>
-														{formatLink(link)}
+														{link}
 													</Text>
 													<CopyIcon text={link} />
 												</Flex>

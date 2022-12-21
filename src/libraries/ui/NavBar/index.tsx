@@ -14,15 +14,19 @@ import AddMemberButton from 'src/libraries/ui/NavBar/_components/AddMemberButton
 import Domains from 'src/libraries/ui/NavBar/_components/Domains'
 import ImportConfirmationModal from 'src/libraries/ui/NavBar/_components/ImportConfirmationModal'
 import InviteProposalButton from 'src/libraries/ui/NavBar/_components/InviteProposalButton'
+import OpenDashboard from 'src/libraries/ui/NavBar/_components/OpenDashboard'
 import RecoveryModal from 'src/libraries/ui/NavBar/_components/RecoveryModal'
 import StatsButton from 'src/libraries/ui/NavBar/_components/StatsButton'
 import SubmitANewProposal from 'src/libraries/ui/NavBar/_components/SubmitANewProposal'
+import SwapButton from 'src/libraries/ui/NavBar/_components/SwapButton'
 import UpdateProfileModal from 'src/libraries/ui/NavBar/_components/UpdateProfileModal'
+import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import { ApiClientsContext } from 'src/pages/_app'
 import { getNonce } from 'src/utils/gaslessUtils'
 
 type Props = {
 	bg?: string
+	showOpenDashboard?: boolean
 	showLogo?: boolean
 	showSearchBar?: boolean
 	showSubmitANewProposal?: boolean
@@ -32,7 +36,7 @@ type Props = {
 	showStats?: boolean
 }
 
-function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInviteProposals, showStats, showDomains, showSearchBar }: Props) {
+function NavBar({ bg, showOpenDashboard, showLogo, showAddMembers, showSubmitANewProposal, showInviteProposals, showStats, showDomains, showSearchBar }: Props) {
 	const buildComponent = () => (
 		<>
 			<Container
@@ -52,38 +56,30 @@ function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInvi
 				py='16px'
 				minWidth={{ base: '-webkit-fill-available' }}
 			>
-				{
-					(showLogo || role === 'builder' || role === 'community') && (
-						<Image
-							onClick={
-								() => router.push({
-									pathname: '/',
-								})
-							}
-							display={{ base: 'none', lg: 'inherit' }}
-							mr='auto'
-							src='/ui_icons/qb.svg'
-							alt='Questbook'
-							cursor='pointer'
-						/>
-					)
-				}
-				{
-					(showLogo || role === 'builder' || role === 'community') && (
-						<Image
-							onClick={
-								() => router.push({
-									pathname: '/',
-								})
-							}
-							display={{ base: 'inherit', lg: 'none' }}
-							mr='auto'
-							src='/ui_icons/qb.svg'
-							alt='Questbook'
-							cursor='pointer'
-						/>
-					)
-				}
+				<Image
+					onClick={
+						() => router.push({
+							pathname: '/',
+						})
+					}
+					display={{ base: 'none', lg: 'inherit' }}
+					mr='auto'
+					src={router.pathname === '/dashboard' ? '/v2/images/qb-only-logo.svg' : '/ui_icons/qb.svg'}
+					alt='Questbook'
+					cursor='pointer'
+				/>
+				<Image
+					onClick={
+						() => router.push({
+							pathname: '/',
+						})
+					}
+					display={{ base: 'inherit', lg: 'none' }}
+					mr='auto'
+					src={router.pathname === '/dashboard' ? '/v2/images/qb-only-logo.svg' : '/ui_icons/qb.svg'}
+					alt='Questbook'
+					cursor='pointer'
+				/>
 				{
 					isQbAdmin && (
 						<>
@@ -98,7 +94,7 @@ function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInvi
 				}
 
 				{showDomains && (role === 'admin' || role === 'reviewer') && <Domains />}
-				{showStats && role === 'admin' && <StatsButton />}
+				{showStats && workspace && <StatsButton />}
 				{showSubmitANewProposal && (role === 'builder' || role === 'community') && <SubmitANewProposal />}
 				<Spacer />
 
@@ -122,8 +118,12 @@ function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInvi
 				}
 				<Spacer />
 
-				{showAddMembers && role === 'admin' && <AddMemberButton />}
+				{showAddMembers && workspace && <AddMemberButton />}
 				{showInviteProposals && <InviteProposalButton />}
+
+				{router.pathname === '/dashboard' && <SwapButton />}
+
+				{showOpenDashboard && router.pathname === '/' && <OpenDashboard />}
 
 				<AccountDetails
 					openModal={
@@ -157,7 +157,7 @@ function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInvi
 		</>
 	)
 
-	const { role, inviteInfo } = useContext(ApiClientsContext)!
+	const { workspace, role, inviteInfo } = useContext(ApiClientsContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString, setSearchString } = useContext(DAOSearchContext)!
 	const router = useRouter()
@@ -225,7 +225,7 @@ function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInvi
 			localStorage.setItem('webwalletPrivateKey', privateKey)
 			localStorage.setItem('nonce', nonce)
 			localStorage.removeItem('scwAddress')
-			localStorage.removeItem('currentWorkspace')
+			localStorage.removeItem(DOMAIN_CACHE_KEY)
 			toast({
 				status: 'info',
 				title: 'Wallet imported successfully',
@@ -253,6 +253,7 @@ function NavBar({ bg, showLogo, showAddMembers, showSubmitANewProposal, showInvi
 NavBar.defaultProps = {
 	bg: 'white',
 	showLogo: true,
+	showOpenDashboard: true,
 	showSearchBar: true,
 	showSubmitANewProposal: false,
 	showInviteProposals: false,

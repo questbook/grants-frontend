@@ -95,8 +95,6 @@ const VerifySignerModal = ({
 		}
 	}, [address])
 
-	// console.log(owners, phantomWallet?.publicKey)
-
 	useEffect(() => {
 		if(isOpen && walletClicked) {
 			if(networkType === NetworkType.EVM && address && owners.includes(address)) {
@@ -190,14 +188,12 @@ const VerifySignerModal = ({
 
 								<Text
 									mt={6}
-									variant='modalTitle'
 									fontWeight='500'
 								>
 									{t('/onboarding/create-domain.verify_signer_title')}
 								</Text>
 								<Text
-									variant='footerContent'
-									color='black.1'>
+									variant='v2_body'>
 									{t('/onboarding/create-domain.verify_signer_desc')}
 								</Text>
 
@@ -253,7 +249,8 @@ const VerifySignerModal = ({
 
 								<Text
 									mt={6}
-									variant='footerContentRegular'
+									variant='v2_body'
+									fontWeight='500'
 									cursor='pointer'>
 									Why should I verify?
 								</Text>

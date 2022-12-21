@@ -32,7 +32,9 @@ interface Props {
 
 function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 	const buildComponent = () => (
-		<Menu size='xl'>
+		<Menu
+			size='xl'
+			closeOnSelect>
 			<MenuButton
 				ml={3}
 				variant='ghost'
@@ -54,7 +56,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 					align='stretch'
 					bg='white'>
 					{
-						router.pathname === '/dashboard' && (
+						router.pathname === '/dashboard' && (role === 'admin' || role === 'reviewer') && (
 							<Flex
 								px={4}
 								pt={3}
@@ -155,7 +157,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 
 	const { workspace } = useContext(ApiClientsContext)!
 	const { t } = useTranslation()
-	const { role, setRole, possibleRoles } = useContext(ApiClientsContext)!
+	const { role } = useContext(ApiClientsContext)!
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 
 	const router = useRouter()
@@ -181,25 +183,6 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 			icon: '/v2/icons/key.svg',
 			title: t('account_details.menu.save_wallet'),
 			onClick: () => openModal?.('export')
-		},
-		{
-			icon: '/v2/icons/swap.svg',
-			title: t(role === 'builder' ? (possibleRoles.includes('admin') ? 'account_details.menu.swap_admin' : 'account_details.menu.swap_reviewer') : 'account_details.menu.swap_builder'),
-			onClick: () => {
-				if(role === 'builder') {
-					if(possibleRoles.includes('admin')) {
-						setRole('admin')
-					} else {
-						setRole('reviewer')
-					}
-				} else {
-					setRole('builder')
-				}
-
-				if(router.pathname !== '/dashboard') {
-					router.push({ pathname: '/dashboard' })
-				}
-			}
 		},
 		{
 			icon: '/v2/icons/add user.svg',

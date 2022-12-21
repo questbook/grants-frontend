@@ -47,6 +47,6 @@ export default [
 		title: 'Funding Ask',
 		id: 'fundingAsk',
 		inputType: 'long-form',
-		isRequired: true,
+		isRequired: false,
 	}
 ]

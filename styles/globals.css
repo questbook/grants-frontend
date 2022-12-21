@@ -169,8 +169,8 @@ a {
 }
 
 .continueBtn{
-  position: relative;
-  margin-right: 20px;
+  position:'absolute';
+	bottom:'50px'
 }
 
 .loader{

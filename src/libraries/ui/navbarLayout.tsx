@@ -64,10 +64,12 @@ function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar }: P
 					)
 				}
 				<Flex
+					className='body'
 					zIndex={0}
 					w={renderSidebar ? '80%' : '100%'}
 					overflowY='auto'
-					overscrollBehavior='none'>
+					overscrollBehavior='none'
+					justifyContent='center'>
 					{children}
 				</Flex>
 			</Flex>
