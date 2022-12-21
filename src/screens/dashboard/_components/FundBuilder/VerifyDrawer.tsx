@@ -1,5 +1,5 @@
 
-import { useCallback, useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Flex, Text, VStack } from '@chakra-ui/react'
 import { useSafeContext } from 'src/contexts/safeContext'
 import logger from 'src/libraries/logger'
@@ -9,7 +9,7 @@ import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/
 import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/PhantomLogo'
 import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
 import ConnectWalletButton from 'src/v2/components/ConnectWalletModal/ConnectWalletButton'
-import { useAccount, useConnect, useDisconnect, useNetwork, useSigner, useSwitchNetwork } from 'wagmi'
+import { useAccount, useConnect } from 'wagmi'
 
 const availableWallets = [{
 	name: 'Metamask',
@@ -42,16 +42,24 @@ interface Props {
 }
 
 
-const Verify = ({ setSignerVerifiedState }: Props) => {
+const VerifyDrawer = ({ setSignerVerifiedState }: Props) => {
 	const buildComponent = () => (
-		<Flex direction='column'>
+		<Flex
+			direction='column'
+			p={4}
+			alignItems='center'>
 			<Text
 				mt='24px'
-				fontSize='14px'
+				fontSize='16px'
 				lineHeight='20px'
 				fontWeight='500'
 			>
-				Connect your wallet which is a safe owner.
+				Connect your wallet
+			</Text>
+			<Text
+				fontSize='14px'
+				fontWeight='400'>
+				Connect your wallet which is a multisig owner.
 			</Text>
 
 			<VStack
@@ -74,12 +82,12 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 									() => {
 										if(!isConnected) {
 											const connector = connectors.find((x) => x.id === wallet.id)
-											logger.info({ connector }, 'connector')
 											// setConnectClicked(true)
 											if(connector) {
 												connect({ connector })
 											}
 										}
+
 										// setVerified(true)
 										// onVerified()
 									}
@@ -104,20 +112,10 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 	)
 
 	const { connect, connectors } = useConnect()
-	const { disconnect } = useDisconnect()
-	const { error, switchNetworkAsync } = useSwitchNetwork()
-	const { data: signer } = useSigner()
-	const { chain } = useNetwork()
 	const { safeObj } = useSafeContext()
 	const { phantomWallet, phantomWalletConnected } = usePhantomWallet()
 
-	const { isConnected, address, connector } = useAccount()
-
-	useEffect(() => {
-		if(isConnected) {
-			disconnect()
-		}
-	}, [])
+	const { isConnected, address } = useAccount()
 
 	const isEvmChain = useMemo(() => {
 		return safeObj.getIsEvm()
@@ -133,43 +131,19 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 		}
 	}
 
-	const switchNetworkIfNeed = async() => {
-		logger.info('isConnected address', address, connector)
-		logger.info('isConnected signer', signer)
-		logger.info('isConnected', isConnected)
-		logger.info('isConnected chain?.id', chain?.id)
-		// logger.info('isConnected safeObj?.chainId', safeObj?.chainId)
-		logger.info('isConnected signer network', await signer?.getChainId())
-		if(isConnected && chain?.id !== safeObj?.chainId) {
-			logger.info('Pre switch network')
-			try {
-				await switchNetworkAsync?.(safeObj?.chainId!)
-			} catch(e) {
-				logger.error(e)
-			}
-
-			logger.info('Post switch network')
-		}
-	}
-
-	useEffect(() => {
-		switchNetworkIfNeed()
-	}, [ connector ])
-
 	useEffect(() => {
 		if(isConnected || phantomWalletConnected) {
 			setSignerVerifiedState('verifying')
 		}
 
-		if(safeObj.getIsEvm() && isConnected && chain?.id === safeObj?.chainId) {
+		if(safeObj.getIsEvm() && isConnected) {
 			verifyOwner(address!)
 		} else if(phantomWalletConnected) {
 			verifyOwner(phantomWallet?.publicKey?.toString()!)
 		}
-	}, [chain, isConnected, phantomWalletConnected])
-
+	}, [isConnected, phantomWalletConnected])
 
 	return buildComponent()
 }
 
-export default Verify
+export default VerifyDrawer
