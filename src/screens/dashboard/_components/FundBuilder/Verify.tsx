@@ -1,5 +1,5 @@
 
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Flex, Text, VStack } from '@chakra-ui/react'
 import { debounce } from 'lodash'
 import { useSafeContext } from 'src/contexts/safeContext'
@@ -74,6 +74,7 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 								isPopular={wallet.isPopular}
 								onClick={
 									() => {
+										setVerifyingModal(true)
 										if(!isConnected) {
 											const connector = connectors.find((x) => x.id === wallet.id)
 											logger.info({ connector }, 'connector')
@@ -105,6 +106,7 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 		</Flex>
 	)
 
+	const [verifyingModal, setVerifyingModal] = useState(false)
 	const { connect, connectors } = useConnect()
 	const { disconnect } = useDisconnect()
 	const { error, switchNetworkAsync } = useSwitchNetwork()
@@ -115,6 +117,8 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 
 	const { isConnected, address, connector } = useAccount()
 	const toast = useCustomToast()
+	const toastIdRef = useRef()
+
 
 	useEffect(() => {
 		if(isConnected) {
@@ -131,6 +135,7 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 		const isVerified = await safeObj?.isOwner(address)
 		if(isVerified) {
 			setSignerVerifiedState('verified')
+			setVerifyingModal(false)
 			toast({
 				title: `Verified owner of multisig ${safeObj.safeAddress}.`,
 				status: 'success',
@@ -138,6 +143,7 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 			})
 		} else {
 			setSignerVerifiedState('failed')
+			setVerifyingModal(false)
 			toast({
 				title: 'This wallet is not a multisig owner. Try with another address.',
 				status: 'error',
@@ -145,6 +151,15 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 			})
 		}
 	}
+
+	useEffect(() => {
+		logger.info('verifyingModal', verifyingModal)
+		// if(verifyingModal) {
+		// 	toastIdRef = toast({ title: 'Verfying...' })
+		// } else if(!verifyingModal) {
+		// 	toast.close(toastIdRef)
+		// }
+	}, [verifyingModal])
 
 	const switchNetworkIfNeed = async() => {
 		if(isConnected && chain?.id !== safeObj?.chainId) {
