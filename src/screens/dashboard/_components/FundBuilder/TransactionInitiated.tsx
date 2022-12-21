@@ -1,4 +1,6 @@
-import { Button, Flex, Image, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Image, Text } from '@chakra-ui/react'
+import { logger } from 'ethers'
+import Link from 'next/link'
 import { useSafeContext } from 'src/contexts/safeContext'
 
 interface Props {
@@ -57,24 +59,27 @@ const TransactionInitiated = ({ safeProposalLink }: Props) => {
 				}
 			</Flex>
 
-			<Button
+			<Box
 				mt={8}
-				w='100%'
-				variant='primaryLarge'
-				onClick={
-					() => {
-						window.open(safeProposalLink, '_blank')
-					}
-				}>
-				<Image
-					src='/v2/icons/open link.svg'
-					mr='1rem' />
-				<Text
-					fontWeight='500'
-					color='white'>
-					Open multisig
-				</Text>
-			</Button>
+				w='100%'>
+				<a
+					href={safeProposalLink}
+					target='_blank'
+					rel='noreferrer'>
+					<Button
+						w='100%'
+						variant='primaryLarge'>
+						<Image
+							src='/v2/icons/open link.svg'
+							mr='1rem' />
+						<Text
+							fontWeight='500'
+							color='white'>
+							Open multisig
+						</Text>
+					</Button>
+				</a>
+			</Box>
 
 		</Flex>
 	)

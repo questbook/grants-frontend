@@ -133,23 +133,28 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 		}
 	}
 
-	const switchNetworkIfNeed = useCallback(async() => {
+	const switchNetworkIfNeed = async() => {
 		logger.info('isConnected address', address, connector)
 		logger.info('isConnected signer', signer)
 		logger.info('isConnected', isConnected)
 		logger.info('isConnected chain?.id', chain?.id)
-		logger.info('isConnected safeObj?.chainId', safeObj?.chainId)
+		// logger.info('isConnected safeObj?.chainId', safeObj?.chainId)
 		logger.info('isConnected signer network', await signer?.getChainId())
 		if(isConnected && chain?.id !== safeObj?.chainId) {
 			logger.info('Pre switch network')
-			switchNetworkAsync?.(safeObj?.chainId!)
+			try {
+				await switchNetworkAsync?.(safeObj?.chainId!)
+			} catch(e) {
+				logger.error(e)
+			}
+
 			logger.info('Post switch network')
 		}
-	}, [isConnected, chain, safeObj, signer, address, connector])
+	}
 
 	useEffect(() => {
 		switchNetworkIfNeed()
-	}, [isConnected, chain, safeObj, signer, address, connector])
+	}, [ connector ])
 
 	useEffect(() => {
 		if(isConnected || phantomWalletConnected) {
@@ -161,7 +166,7 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 		} else if(phantomWalletConnected) {
 			verifyOwner(phantomWallet?.publicKey?.toString()!)
 		}
-	}, [isConnected, phantomWalletConnected])
+	}, [chain, isConnected, phantomWalletConnected])
 
 
 	return buildComponent()

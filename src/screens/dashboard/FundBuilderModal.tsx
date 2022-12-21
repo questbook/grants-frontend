@@ -140,7 +140,7 @@ function FundBuilderModal() {
 						}
 
 						{
-							['transaction_initiated'].includes(signerVerifiedState) && (
+							['transaction_initiated'].includes(signerVerifiedState) && safeProposalLink && (
 								<TransactionInitiated
 									safeProposalLink={safeProposalLink!} />
 							)
@@ -212,14 +212,14 @@ function FundBuilderModal() {
 			let proposaladdress = ''
 			if(safeObj.getIsEvm()) {
 				proposaladdress = await safeObj?.proposeTransactions('', temp, '')
-				setSignerVerifiedState('transaction_initiated')
 				setSafeProposalAddress(proposaladdress)
 				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress, safeObj?.chainId))
+				setSignerVerifiedState('transaction_initiated')
 			} else {
 				proposaladdress = await safeObj?.proposeTransactions(selectedGrant?.title, temp, phantomWallet)
-				setSignerVerifiedState('transaction_initiated')
 				setSafeProposalAddress(proposaladdress)
 				setSafeProposalLink(getProposalUrl(safeObj.safeAddress, proposaladdress))
+				setSignerVerifiedState('transaction_initiated')
 			}
 
 			// disburseRewardFromSafe(proposaladdress?.toString()!)

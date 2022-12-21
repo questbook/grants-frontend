@@ -111,7 +111,7 @@ function FundBuilderDrawer() {
 				</Drawer>
 
 				{
-					['transaction_initiated'].includes(signerVerifiedState) && (
+					['transaction_initiated'].includes(signerVerifiedState) && safeProposalLink && (
 						<Modal
 							isOpen={isModalOpen}
 							size='2xl'
