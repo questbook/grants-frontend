@@ -1,7 +1,9 @@
 
 import { useCallback, useEffect, useMemo } from 'react'
 import { Flex, Text, VStack } from '@chakra-ui/react'
+import { debounce } from 'lodash'
 import { useSafeContext } from 'src/contexts/safeContext'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
@@ -112,6 +114,7 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 	const { phantomWallet, phantomWalletConnected } = usePhantomWallet()
 
 	const { isConnected, address, connector } = useAccount()
+	const toast = useCustomToast()
 
 	useEffect(() => {
 		if(isConnected) {
@@ -128,27 +131,28 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 		const isVerified = await safeObj?.isOwner(address)
 		if(isVerified) {
 			setSignerVerifiedState('verified')
+			toast({
+				title: `Verified owner of multisig ${safeObj.safeAddress}.`,
+				status: 'success',
+				duration: 3000,
+			})
 		} else {
 			setSignerVerifiedState('failed')
+			toast({
+				title: 'This wallet is not a multisig owner. Try with another address.',
+				status: 'error',
+				duration: 3000,
+			})
 		}
 	}
 
 	const switchNetworkIfNeed = async() => {
-		logger.info('isConnected address', address, connector)
-		logger.info('isConnected signer', signer)
-		logger.info('isConnected', isConnected)
-		logger.info('isConnected chain?.id', chain?.id)
-		// logger.info('isConnected safeObj?.chainId', safeObj?.chainId)
-		logger.info('isConnected signer network', await signer?.getChainId())
 		if(isConnected && chain?.id !== safeObj?.chainId) {
-			logger.info('Pre switch network')
 			try {
 				await switchNetworkAsync?.(safeObj?.chainId!)
 			} catch(e) {
 				logger.error(e)
 			}
-
-			logger.info('Post switch network')
 		}
 	}
 
