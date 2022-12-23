@@ -16,7 +16,9 @@ function PayFromChoose() {
 					Pay From
 				</Text>
 				<Flex alignItems='center'>
-					<Image src={safeObj.safeLogo} />
+					<Image
+						src={safeObj.safeLogo}
+						mr='8px' />
 					<Text>
 						{safeObj?.safeAddress ?? ''}
 					</Text>
