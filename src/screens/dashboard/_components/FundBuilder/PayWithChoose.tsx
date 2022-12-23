@@ -8,7 +8,7 @@ import { TokenInfo } from 'src/screens/dashboard/_utils/types'
 import { FundBuilderContext } from 'src/screens/dashboard/Context'
 
 type DropdownItem = TokenInfo & { index: number }
-function PayWithChoose() {
+function PayWithChoose({ selectedMode }) {
 	const buildComponent = () => {
 		return (
 			<Flex
@@ -30,7 +30,16 @@ function PayWithChoose() {
 	const dropdown = () => {
 		return (
 			<>
-				<Dropdown
+				{
+selectedMode.value === 'TON Wallet' ? (
+	<>
+		<Text>
+			TON
+		</Text>
+	</>
+) : (
+	<>
+		<Dropdown
 				options={
 					(safeTokenList ?? []).map((token: TokenInfo, index: number) => {
 						const ret = {
@@ -55,22 +64,25 @@ function PayWithChoose() {
 						setSelectedTokenIndex(value.index)
 					}
 				} />
-				<Text
+		<Text
 				color='#53514F'
 				fontSize='14px'
 				mt='8px'>
-					Available:
-					{' '}
-					{parseFloat(tokenInfo?.tokenValueAmount.toString()!).toFixed(2)}
-					{' '}
-					{tokenInfo?.tokenName}
-					{' '}
-					≈
-					{' '}
-					{parseFloat(tokenInfo?.usdValueAmount.toString()!).toFixed(2)}
-					{' '}
-					USD
-				</Text>
+			Available:
+			{' '}
+			{parseFloat(tokenInfo?.tokenValueAmount?.toString()!).toFixed(2)}
+			{' '}
+			{tokenInfo?.tokenName}
+			{' '}
+			≈
+			{' '}
+			{parseFloat(tokenInfo?.usdValueAmount?.toString()!).toFixed(2)}
+			{' '}
+			USD
+		</Text>
+	</>
+)
+}
 			</>
 		)
 	}

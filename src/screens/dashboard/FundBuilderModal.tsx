@@ -10,6 +10,7 @@ import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import MilestoneChoose from 'src/screens/dashboard/_components/FundBuilder/MilestoneChoose'
+import PaidByWallet from 'src/screens/dashboard/_components/FundBuilder/PaidByWallet'
 import PayFromChoose from 'src/screens/dashboard/_components/FundBuilder/PayFromChoose'
 import PayWithChoose from 'src/screens/dashboard/_components/FundBuilder/PayWithChoose'
 import ToChoose from 'src/screens/dashboard/_components/FundBuilder/ToChoose'
@@ -20,6 +21,7 @@ import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Cont
 import { getFieldString } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { TonWallet } from 'src/v2/constants/Ton'
 import { getGnosisTansactionLink } from 'src/v2/utils/gnosisUtils'
 import { getProposalUrl } from 'src/v2/utils/phantomUtils'
 
@@ -42,7 +44,7 @@ function FundBuilderModal() {
 					<ModalCloseButton />
 					<ModalBody>
 						{
-							['unverified', 'verified'].includes(signerVerifiedState) && (
+							['unverified', 'verified', 'initiate_TON_transaction'].includes(signerVerifiedState) && (
 								<Flex
 									p={6}
 									direction='column'
@@ -56,9 +58,13 @@ function FundBuilderModal() {
 										w='100%'
 										justify='center'
 										align='start'>
-										<Text>
-											$
-										</Text>
+										{
+											selectedMode.value !== 'TON Wallet' && (
+												<Text>
+													$
+												</Text>
+											)
+										}
 										<FlushedInput
 											borderBottom='2px solid'
 											textPadding={1}
@@ -74,7 +80,7 @@ function FundBuilderModal() {
 											placeholder='0' />
 									</Flex>
 									{
-										amounts?.[0] > 0 && tokenInfo?.fiatConversion ? (
+										selectedMode.value !== 'TON Wallet' && amounts?.[0] > 0 && tokenInfo?.fiatConversion ? (
 											<Text
 												color='#53514F'
 												fontSize='14px'
@@ -94,8 +100,10 @@ function FundBuilderModal() {
 												w='100%'
 												direction='column'
 												border='1px solid #E7E4DD'>
-												<PayFromChoose />
-												<PayWithChoose />
+												<PayFromChoose
+													selectedMode={selectedMode}
+													setSelectedMode={setSelectedMode} />
+												<PayWithChoose selectedMode={selectedMode} />
 												<ToChoose
 													type='single'
 													proposal={proposal}
@@ -155,6 +163,12 @@ function FundBuilderModal() {
 							)
 						}
 
+						{
+							['transaction_done_wallet'].includes(signerVerifiedState) && (
+								<PaidByWallet />
+							)
+						}
+
 					</ModalBody>
 				</ModalContent>
 			</Modal>
@@ -174,11 +188,23 @@ function FundBuilderModal() {
 		setTos,
 		tokenInfo,
 		signerVerifiedState,
-		setSignerVerifiedState
+		setSignerVerifiedState,
+		setTokenInfo,
 	} = useContext(FundBuilderContext)!
 	const { phantomWallet } = usePhantomWallet()
 	const [safeProposalAddress, setSafeProposalAddress] = useState<string | undefined>(undefined)
 	const [safeProposalLink, setSafeProposalLink] = useState<string | undefined>(undefined)
+	const Safe = {
+		icon: safeObj?.safeLogo,
+		value: safeObj?.safeAddress ?? ''
+	}
+
+	const Wallet = {
+		icon: '/wallet_icons/ton.svg',
+		value: 'TON Wallet'
+	}
+
+	const [selectedMode, setSelectedMode] = useState(Safe)
 
 	const proposal = useMemo(() => {
 		const index = selectedProposals.indexOf(true)
@@ -202,7 +228,29 @@ function FundBuilderModal() {
 	}, [amounts, tos, milestoneIndices, tokenInfo])
 
 	const onContinue = async() => {
-		if(signerVerifiedState === 'unverified') {
+		if(selectedMode.value === 'TON Wallet') {
+			setSignerVerifiedState('initiate_TON_transaction')
+
+			const tonWallet = new TonWallet()
+			tonWallet.checkTonReady(window)
+			const result = await tonWallet.sendMoney(tos[0], amounts[0])
+			if(result) {
+				toast({
+					title: 'Payouts done through TON Wallet',
+					status: 'success',
+					duration: 3000,
+				})
+				setIsModalOpen(false)
+			} else {
+				toast({
+					title: 'An error occurred while creating transaction on TON Wallet',
+					status: 'error',
+					duration: 3000,
+				})
+			}
+		}
+
+		if(selectedMode.value !== 'TON Wallet' && signerVerifiedState === 'unverified') {
 			setSignerVerifiedState('initiate_verification')
 		}
 	}
@@ -249,89 +297,6 @@ function FundBuilderModal() {
 				setSafeProposalAddress(proposaladdress as string)
 				setSafeProposalLink(getProposalUrl(safeObj.safeAddress, proposaladdress as string))
 				setSignerVerifiedState('transaction_initiated')
-			}
-
-			// disburseRewardFromSafe(proposaladdress?.toString()!)
-			// 	.then(() => {
-			// 	// console.log('Sent transaction to contract - EVM', proposaladdress)
-			// 	})
-			// 	.catch((err) => {
-			// 		console.log('sending transction error:', err)
-			// 	})
-		}
-
-		const { workspace } = useContext(ApiClientsContext)!
-
-		const workspacechainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
-
-		const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
-			chainId: workspacechainId ? workspacechainId.toString() : defaultChainId.toString(),
-		})
-		const [isBiconomyInitialisedDisburse, setIsBiconomyInitialisedDisburse] = useState(false)
-
-		useEffect(() => {
-
-			if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && workspacechainId &&
-			biconomy.networkId && biconomy.networkId?.toString() === workspacechainId.toString()) {
-				setIsBiconomyInitialisedDisburse(true)
-			}
-		}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialisedDisburse, workspacechainId])
-
-		const { nonce } = useQuestbookAccount()
-		const workspaceRegistryContract = useQBContract('workspace', workspacechainId)
-		const { webwallet } = useContext(WebwalletContext)!
-
-		const disburseRewardFromSafe = async(proposaladdress: string) => {
-			try {
-				logger.info({}, 'HERE 1')
-				if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
-					return
-				}
-
-				logger.info({}, 'HERE 2')
-
-				const methodArgs = [
-					// initiateTransactionData.map((element: any) => (parseInt(element.applicationId, 16))),
-					// initiateTransactionData.map((element: any) => (parseInt(element.selectedMilestone?.id?.split('.')[1]))),
-					// rewardAssetAddress,
-					// initiateTransactionData.map((element: any) => (element.selectedToken.tokenName.toLowerCase()))[0],
-					// 'nonEvmAssetAddress-toBeChanged',
-					// initiateTransactionData.map((element: any) => Math.floor(element.amount)),
-					workspace?.id,
-					proposaladdress
-				]
-
-				logger.info({}, 'HERE 3')
-
-				logger.info({ methodArgs }, 'methodArgs')
-
-				const transactionHash = await sendGaslessTransaction(
-					biconomy,
-					workspaceRegistryContract,
-					'disburseRewardFromSafe',
-					methodArgs,
-					workspaceRegistryContract.address,
-					biconomyWalletClient,
-					scwAddress,
-					webwallet,
-					`${workspacechainId}`,
-					bicoDapps[workspacechainId.toString()].webHookId,
-					nonce
-				)
-
-				logger.info({}, 'HERE 4')
-
-
-				if(!transactionHash) {
-					throw new Error('No transaction hash found!')
-				}
-
-				const { txFee } = await getTransactionDetails(transactionHash, workspacechainId.toString())
-
-				await chargeGas(Number(workspace?.id), Number(txFee), workspacechainId)
-
-			} catch(e) {
-				console.log('disburse error', e)
 			}
 		}
 	}
