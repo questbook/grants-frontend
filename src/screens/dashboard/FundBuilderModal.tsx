@@ -1,5 +1,6 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
+import { SupportedPayouts } from '@questbook/supported-safes'
 import { logger } from 'ethers'
 import { defaultChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
@@ -199,11 +200,6 @@ function FundBuilderModal() {
 		value: safeObj?.safeAddress ?? ''
 	}
 
-	const Wallet = {
-		icon: '/wallet_icons/ton.svg',
-		value: 'TON Wallet'
-	}
-
 	const [selectedMode, setSelectedMode] = useState(Safe)
 
 	const proposal = useMemo(() => {
@@ -231,7 +227,7 @@ function FundBuilderModal() {
 		if(selectedMode.value === 'TON Wallet') {
 			setSignerVerifiedState('initiate_TON_transaction')
 
-			const tonWallet = new TonWallet()
+			const tonWallet = new SupportedPayouts().getWallet('TON Wallet')
 			tonWallet.checkTonReady(window)
 			const result = await tonWallet.sendMoney(tos[0], amounts[0])
 			if(result) {

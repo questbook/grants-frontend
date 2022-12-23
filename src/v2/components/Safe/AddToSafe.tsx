@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { Flex, Image, Text, ToastId, useToast } from '@chakra-ui/react'
-import { SupportedSafes } from '@questbook/supported-safes'
+import { SupportedPayouts } from '@questbook/supported-safes'
 import { logger } from 'ethers'
 import { useRouter } from 'next/router'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
@@ -99,8 +99,8 @@ function AddToSafe() {
 
 	useEffect(() => {
 		const fetchSafeData = async() => {
-			const supportedSafes = new SupportedSafes()
-			const res = await supportedSafes.getSafeByAddress(safeAddress)
+			const supportedPayouts = new SupportedPayouts()
+			const res = await supportedPayouts.getSafeByAddress(safeAddress)
 			setLoadingSafeData(false)
 			setSafeData(res)
 		}

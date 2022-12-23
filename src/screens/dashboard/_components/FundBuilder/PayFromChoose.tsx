@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Button, Flex, Image, Text } from '@chakra-ui/react'
+import { SupportedPayouts } from '@questbook/supported-safes'
 import { PlaceholderProps, Select, SelectComponentsConfig } from 'chakra-react-select'
 import { useSafeContext } from 'src/contexts/safeContext'
 import Dropdown from 'src/screens/dashboard/_components/FundBuilder/Dropdown'
@@ -24,7 +25,7 @@ function PayFromChoose({ selectedMode, setSelectedMode }) {
 
 					<Dropdown
 						options={
-							[Safe, Wallet].map((item, index) => {
+							[Safe, ...Wallets].map((item, index) => {
 								return {
 									index,
 									...item
@@ -55,7 +56,7 @@ function PayFromChoose({ selectedMode, setSelectedMode }) {
 			leftIcon={
 				<Image
 					boxSize='16px'
-					src={data.icon} />
+					src={data.logo} />
 			}>
 			<Text
 				ml={2}
@@ -75,7 +76,7 @@ function PayFromChoose({ selectedMode, setSelectedMode }) {
 			m={0}
 		>
 			<Image
-				src={data.icon}
+				src={data.logo}
 				boxSize='16px' />
 			<Text
 				ml={2}
@@ -89,14 +90,16 @@ function PayFromChoose({ selectedMode, setSelectedMode }) {
 	const { safeObj } = useSafeContext()
 
 	const Safe = {
-		icon: safeObj.safeLogo,
+		logo: safeObj.safeLogo,
 		value: safeObj?.safeAddress ?? ''
 	}
 
-	const Wallet = {
-		icon: '/wallet_icons/ton.svg',
-		value: 'TON Wallet'
-	}
+	const Wallets = new SupportedPayouts().getAllWallets().map((wallet) => {
+		return {
+			logo: wallet.logo,
+			value: wallet.name
+		}
+	})
 
 	return buildComponent()
 }
