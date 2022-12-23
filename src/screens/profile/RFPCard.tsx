@@ -59,6 +59,8 @@ function RFPCard({
 
 			<Flex
 				w='100%'
+				gap={4}
+				// alignItems='center'
 			>
 				<RFPStats
 					value={amountPaid}
@@ -71,7 +73,6 @@ function RFPCard({
 					text='proposals' />
 				<Button
 					variant='primaryMedium'
-					isDisabled={!acceptingApplications}
 					onClick={
 						() => {
 							window.open(grantProgramUrl, '_blank')

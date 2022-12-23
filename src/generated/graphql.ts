@@ -5466,7 +5466,7 @@ export type GetWorkspaceGrantsProgramDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceGrantsProgramDetailsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, startDate?: string | null, startDateS?: number | null, deadline?: string | null, link?: string | null, docIpfsHash?: string | null, metadataHash: string, applications: Array<{ __typename?: 'GrantApplication', id: string }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, status: FundsTransferStatusType }>, workspace: { __typename?: 'Workspace', title: string, metadataHash: string, coverImageIpfsHash?: string | null, about: string, logoIpfsHash: string, totalGrantFundingDisbursedUSD: number, numberOfApplications: number, numberOfApplicationsSelected: number, safe?: { __typename?: 'WorkspaceSafe', id: string, address: string, chainId: string } | null } }> };
+export type GetWorkspaceGrantsProgramDetailsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, startDate?: string | null, startDateS?: number | null, deadline?: string | null, link?: string | null, docIpfsHash?: string | null, metadataHash: string, applications: Array<{ __typename?: 'GrantApplication', id: string, updatedAtS: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', id: string, value: string }> }> }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, status: FundsTransferStatusType }>, workspace: { __typename?: 'Workspace', title: string, metadataHash: string, coverImageIpfsHash?: string | null, about: string, logoIpfsHash: string, totalGrantFundingDisbursedUSD: number, numberOfApplications: number, numberOfApplicationsSelected: number, socials: Array<{ __typename?: 'Social', id: string, name: string, value: string }>, safe?: { __typename?: 'WorkspaceSafe', id: string, address: string, chainId: string } | null } }> };
 
 export type GrantDetailsQueryVariables = Exact<{
   grantId: Scalars['ID'];
@@ -9368,6 +9368,14 @@ export const GetWorkspaceGrantsProgramDetailsDocument = gql`
     id
     applications {
       id
+      updatedAtS
+      fields {
+        id
+        values {
+          id
+          value
+        }
+      }
     }
     fundTransfers {
       amount
@@ -9390,6 +9398,11 @@ export const GetWorkspaceGrantsProgramDetailsDocument = gql`
       totalGrantFundingDisbursedUSD
       numberOfApplications
       numberOfApplicationsSelected
+      socials {
+        id
+        name
+        value
+      }
       safe {
         id
         address

@@ -7,8 +7,16 @@ query getWorkspaceGrantsProgramDetails($workspaceId: String!) {
     id
     applications {
       id
+      updatedAtS
+      fields {
+        id
+        values {
+          id
+          value
+        }
+      }
     }
-    fundTransfers{
+    fundTransfers {
       amount
       status
     }
@@ -29,6 +37,11 @@ query getWorkspaceGrantsProgramDetails($workspaceId: String!) {
       totalGrantFundingDisbursedUSD
       numberOfApplications
       numberOfApplicationsSelected
+      socials {
+        id
+        name
+        value
+      }
       safe {
         id
         address

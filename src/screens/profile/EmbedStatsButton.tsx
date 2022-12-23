@@ -1,7 +1,7 @@
-import { Button, Image, Text } from '@chakra-ui/react'
+import { Button, ButtonProps, Image, Text } from '@chakra-ui/react'
 
 
-function EmbedStatsButton() {
+function EmbedStatsButton({ ...props }: ButtonProps) {
 	return (
 		<Button
 			variant='ghost'
@@ -9,7 +9,9 @@ function EmbedStatsButton() {
 				<Image
 					src='/v2/icons/embed code.svg'
 					boxSize='16px' />
-			}>
+			}
+			{...props}
+		>
 			<Text
 				variant='v2_body'
 				fontWeight='500'>

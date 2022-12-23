@@ -1,4 +1,4 @@
-import { Flex, Text } from '@chakra-ui/react'
+import { Divider, Flex, Text } from '@chakra-ui/react'
 
 export interface SummaryCardProps {
     imagePath?: string
@@ -9,9 +9,9 @@ export interface SummaryCardProps {
 function RFPStats({ text, value }: SummaryCardProps) {
 	return (
 		<Flex
-			gap={4}
+			// gap={4}
 			width='33%'
-			borderRight='1px solid gray.3'
+			justifyContent='space-between'
 		>
 			<Flex direction='column'>
 				<Text
@@ -26,6 +26,7 @@ function RFPStats({ text, value }: SummaryCardProps) {
 					{text}
 				</Text>
 			</Flex>
+			<Divider orientation='vertical' />
 		</Flex>
 	)
 }
