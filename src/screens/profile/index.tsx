@@ -329,15 +329,15 @@ function Profile() {
 			isDisabled: true
 		},
 		{
+			text: 'Recent Proposals',
+			isDisabled: false
+		},
+		{
 			text: 'More info',
 			isDisabled: false
 		},
 		{
 			text: 'Stats',
-			isDisabled: false
-		},
-		{
-			text: 'Recent Proposals',
 			isDisabled: false
 		}
 	]
