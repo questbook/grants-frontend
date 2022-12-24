@@ -15,7 +15,6 @@ import InviteProposalButton from 'src/libraries/ui/NavBar/_components/InviteProp
 import OpenDashboard from 'src/libraries/ui/NavBar/_components/OpenDashboard'
 import RecoveryModal from 'src/libraries/ui/NavBar/_components/RecoveryModal'
 import StatsButton from 'src/libraries/ui/NavBar/_components/StatsButton'
-import SubmitANewProposal from 'src/libraries/ui/NavBar/_components/SubmitANewProposal'
 import SwapButton from 'src/libraries/ui/NavBar/_components/SwapButton'
 import UpdateProfileModal from 'src/libraries/ui/NavBar/_components/UpdateProfileModal'
 import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
@@ -26,14 +25,14 @@ type Props = {
 	bg?: string
 	showOpenDashboard?: boolean
 	showLogo?: boolean
-	showSubmitANewProposal?: boolean
+	showSearchBar?: boolean
 	showInviteProposals?: boolean
 	showAddMembers?: boolean
 	showDomains?: boolean
 	showStats?: boolean
 }
 
-function NavBar({ bg, showOpenDashboard, showLogo, showAddMembers, showSubmitANewProposal, showInviteProposals, showStats, showDomains }: Props) {
+function NavBar({ bg, showOpenDashboard, showLogo, showAddMembers, showInviteProposals, showStats, showDomains, showSearchBar }: Props) {
 	const buildComponent = () => (
 		<>
 			<Container
@@ -61,7 +60,7 @@ function NavBar({ bg, showOpenDashboard, showLogo, showAddMembers, showSubmitANe
 					}
 					display={{ base: 'none', lg: 'inherit' }}
 					mr='auto'
-					src={router.pathname === '/dashboard' ? '/v2/images/qb-only-logo.svg' : '/ui_icons/qb.svg'}
+					src={router.pathname === '/dashboard' && (role === 'admin' || role === 'reviewer') ? '/v2/images/qb-only-logo.svg' : '/ui_icons/qb.svg'}
 					alt='Questbook'
 					cursor='pointer'
 				/>
@@ -73,7 +72,7 @@ function NavBar({ bg, showOpenDashboard, showLogo, showAddMembers, showSubmitANe
 					}
 					display={{ base: 'inherit', lg: 'none' }}
 					mr='auto'
-					src={router.pathname === '/dashboard' ? '/v2/images/qb-only-logo.svg' : '/ui_icons/qb.svg'}
+					src={router.pathname === '/dashboard' && (role === 'admin' || role === 'reviewer') ? '/v2/images/qb-only-logo.svg' : '/ui_icons/qb.svg'}
 					alt='Questbook'
 					cursor='pointer'
 				/>
@@ -91,8 +90,7 @@ function NavBar({ bg, showOpenDashboard, showLogo, showAddMembers, showSubmitANe
 				}
 
 				{showDomains && (role === 'admin' || role === 'reviewer') && <Domains />}
-				{showStats && workspace && <StatsButton />}
-				{showSubmitANewProposal && (role === 'builder' || role === 'community') && <SubmitANewProposal />}
+				{showStats && (role === 'admin' || role === 'reviewer') && <StatsButton />}
 				<Spacer />
 
 				{/* {
@@ -115,8 +113,8 @@ function NavBar({ bg, showOpenDashboard, showLogo, showAddMembers, showSubmitANe
 				} */}
 				<Spacer />
 
-				{showAddMembers && workspace && <AddMemberButton />}
-				{showInviteProposals && <InviteProposalButton />}
+				{showAddMembers && (role === 'admin' || role === 'reviewer') && <AddMemberButton />}
+				{showInviteProposals && (role === 'admin' || role === 'reviewer') && <InviteProposalButton />}
 
 				{router.pathname === '/dashboard' && <SwapButton />}
 
@@ -154,7 +152,7 @@ function NavBar({ bg, showOpenDashboard, showLogo, showAddMembers, showSubmitANe
 		</>
 	)
 
-	const { workspace, role } = useContext(ApiClientsContext)!
+	const { role, inviteInfo } = useContext(ApiClientsContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	// const { searchString, setSearchString } = useContext(DAOSearchContext)!
 	const router = useRouter()
@@ -251,7 +249,7 @@ NavBar.defaultProps = {
 	bg: 'white',
 	showLogo: true,
 	showOpenDashboard: true,
-	showSubmitANewProposal: false,
+	showSearchBar: true,
 	showInviteProposals: false,
 	showAddMembers: false,
 	showDomains: false,

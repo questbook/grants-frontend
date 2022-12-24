@@ -1,6 +1,7 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { Box, Button, Drawer, DrawerCloseButton, DrawerContent, DrawerOverlay, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
 import { useSafeContext } from 'src/contexts/safeContext'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import PayFromChoose from 'src/screens/dashboard/_components/FundBuilder/PayFromChoose'
 import PayWithChoose from 'src/screens/dashboard/_components/FundBuilder/PayWithChoose'
 import ProposalDetails from 'src/screens/dashboard/_components/FundBuilder/ProposalDetails'
@@ -195,6 +196,8 @@ function FundBuilderDrawer() {
 		}
 	}
 
+	const toast = useCustomToast()
+
 	const onInitiateTransaction = async() => {
 		if(signerVerifiedState === 'verified') {
 
@@ -208,9 +211,18 @@ function FundBuilderDrawer() {
 					amount: amounts?.[i],
 				}
 			})
-			let proposaladdress = ''
+			let proposaladdress: any = ''
 			if(safeObj.getIsEvm()) {
 				proposaladdress = await safeObj?.proposeTransactions('', transactionData, '')
+				if(proposaladdress?.error) {
+					toast({
+						title: 'An error occurred while creating transaction on Gnosis Safe',
+						status: 'error',
+						duration: 3000,
+					})
+					return
+				}
+
 				setSignerVerifiedState('transaction_initiated')
 				setIsDrawerOpen(false)
 				setIsModalOpen(true)
@@ -218,6 +230,15 @@ function FundBuilderDrawer() {
 				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress, safeObj?.chainId))
 			} else {
 				proposaladdress = await safeObj?.proposeTransactions(selectedGrant?.title, transactionData, phantomWallet)
+				if(proposaladdress?.error) {
+					toast({
+						title: 'An error occurred while creating transaction on Multi-sig',
+						status: 'error',
+						duration: 3000,
+					})
+					return
+				}
+
 				setSignerVerifiedState('transaction_initiated')
 				setIsDrawerOpen(false)
 				setIsModalOpen(true)

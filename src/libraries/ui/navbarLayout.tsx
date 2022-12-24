@@ -7,7 +7,7 @@ import Sidebar from 'src/v2/components/Sidebar'
 type NavbarConfig = {
 	bg?: string
 	showLogo?: boolean
-	showSubmitANewProposal?: boolean
+	showSearchBar?: boolean
 	showInviteProposals?: boolean
 	showAddMembers?: boolean
 	showDomains?: boolean
