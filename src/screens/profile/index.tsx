@@ -3,11 +3,12 @@ import { Button, Code, Divider, Flex, Heading, Image, Modal, ModalBody, ModalClo
 import { logger } from 'ethers'
 import { t } from 'i18next'
 import { useRouter } from 'next/router'
-import { GetWorkspaceGrantsProgramDetailsQuery, useGetWorkspaceGrantsProgramDetailsQuery } from 'src/generated/graphql'
+import { GetAllProposalsForAGrantProgramQuery, GetWorkspaceGrantsProgramDetailsQuery, useGetAllProposalsForAGrantProgramQuery, useGetWorkspaceGrantsProgramDetailsQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
 import EmbedStatsButton from 'src/screens/profile/EmbedStatsButton'
+// import RecentProposalCard from 'src/screens/profile/RecentProposalCard'
 import RFPCard from 'src/screens/profile/RFPCard'
 import SocialsButton from 'src/screens/profile/SocialsButton'
 import SummaryCard from 'src/screens/profile/SummaryCard'
@@ -256,7 +257,7 @@ function Profile() {
 						pt={4}
 					>
 						{activeMenuButton === 0 && (renderInviteForProposals())}
-						{activeMenuButton === 3 && (renderRecentProposals())}
+						{/* {activeMenuButton === 1 && (renderRecentProposals())} */}
 					</Flex>
 
 					{/* RFP Card */}
@@ -283,10 +284,16 @@ function Profile() {
 
 	const renderInviteForProposals = () => {
 		return data?.grants.map((rfp: GetWorkspaceGrantsProgramDetailsQuery['grants'][0]) => {
+			const fundTransfers = rfp.fundTransfers.filter(transfer => transfer.status === 'executed').map(t => parseInt(t.amount))
+			let amountPaid: number = 0
+			if(fundTransfers.length) {
+				amountPaid = fundTransfers.reduce((prev, currValue) => prev + currValue)
+			}
+
 			return (
 				<RFPCard
 					RFPTitle={rfp.title}
-					amountPaid='$1000'
+					amountPaid={amountPaid.toString()}
 					startDate={rfp.startDate!}
 					endDate={rfp.deadline!}
 					numberOfProposals={rfp.applications.length}
@@ -298,9 +305,27 @@ function Profile() {
 		})
 	}
 
-	const renderRecentProposals = () => {
-		// return data?.grants[]
-	}
+	// Recent proposals tab will be displayed in community view
+
+	// const renderRecentProposals = () => {
+	// 	// return data?.grants[]
+	// 	return proposalData?.map((proposal, i) => {
+	// 		const applicantName = getFieldString(proposal, 'applicantName')
+	// 		const proposalTitle = getFieldString(proposal, 'projectName')
+	// 		const tldr = getFieldString(proposal, 'tldr')
+	// 		const updatedAt = moment.unix(proposal.updatedAtS).format('DD MMM YYYY')
+	// 		return (
+	// 			<RecentProposalCard
+	// 				proposalTitle={proposalTitle}
+	// 				tldr={tldr}
+	// 				applicantName={applicantName}
+	// 				updatedAt={updatedAt}
+	// 				key={i}
+	// 			/>
+	// 		)
+	// 	})
+	// }
+
 
 	const closeModal = () => {
 		onClose()
@@ -328,10 +353,10 @@ function Profile() {
 			// text: `Invite for proposals (${data?.grants.length})`,
 			isDisabled: true
 		},
-		{
-			text: 'Recent Proposals',
-			isDisabled: false
-		},
+		// {
+		// 	text: 'Recent Proposals',
+		// 	isDisabled: false
+		// },
 		{
 			text: 'More info',
 			isDisabled: false
@@ -347,6 +372,7 @@ function Profile() {
 	const { onOpen, isOpen, onClose } = useDisclosure()
 
 	const [data, setData] = useState<GetWorkspaceGrantsProgramDetailsQuery>()
+	const [proposalData, setProposalData] = useState<GetAllProposalsForAGrantProgramQuery['grantApplications']>()
 	const [activeMenuButton, setActiveMenuButton] = useState(0)
 	const [codeActive, setCodeActive] = useState(false)
 
@@ -363,6 +389,12 @@ function Profile() {
 		chains: [chainId as unknown as SupportedChainId]
 	})
 
+	const { fetchMore: fetchMoreProposals } = useMultiChainQuery({
+		useQuery: useGetAllProposalsForAGrantProgramQuery,
+		options: {},
+		chains: [chainId as unknown as SupportedChainId]
+	})
+
 	const grants = useCallback(async() => {
 		const response = await fetchMore({
 			workspaceId: workspaceId
@@ -371,9 +403,18 @@ function Profile() {
 		setData(response[0])
 	}, [workspaceId, chainId])
 
+	const proposals = useCallback(async() => {
+		const response = await fetchMoreProposals({
+			workspaceId: workspaceId
+		}, true)
+		logger.info('response', response[0]?.grantApplications)
+		setProposalData(response[0]?.grantApplications)
+	}, [workspaceId, chainId])
+
 	useEffect(() => {
 		if(workspaceId && chainId) {
 			grants()
+			proposals()
 		}
 	}, [workspaceId, chainId])
 

@@ -5461,6 +5461,13 @@ export type GetGrantsProgramDetailsQueryVariables = Exact<{
 
 export type GetGrantsProgramDetailsQuery = { __typename?: 'Query', grantsProgram?: { __typename?: 'Workspace', id: string, title: string } | null };
 
+export type GetAllProposalsForAGrantProgramQueryVariables = Exact<{
+  workspaceId: Scalars['String'];
+}>;
+
+
+export type GetAllProposalsForAGrantProgramQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', applicantId: string, updatedAtS: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }> }> };
+
 export type GetWorkspaceGrantsProgramDetailsQueryVariables = Exact<{
   workspaceId: Scalars['String'];
 }>;
@@ -9357,6 +9364,55 @@ export type GetGrantsProgramDetailsLazyQueryHookResult = ReturnType<typeof useGe
 export type GetGrantsProgramDetailsQueryResult = Apollo.QueryResult<GetGrantsProgramDetailsQuery, GetGrantsProgramDetailsQueryVariables>;
 export function refetchGetGrantsProgramDetailsQuery(variables: GetGrantsProgramDetailsQueryVariables) {
       return { query: GetGrantsProgramDetailsDocument, variables: variables }
+    }
+export const GetAllProposalsForAGrantProgramDocument = gql`
+    query getAllProposalsForAGrantProgram($workspaceId: String!) {
+  grantApplications(
+    where: {grant_: {workspace: $workspaceId}}
+    orderBy: updatedAtS
+    orderDirection: desc
+  ) {
+    applicantId
+    updatedAtS
+    fields {
+      id
+      values {
+        value
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAllProposalsForAGrantProgramQuery__
+ *
+ * To run a query within a React component, call `useGetAllProposalsForAGrantProgramQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllProposalsForAGrantProgramQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllProposalsForAGrantProgramQuery({
+ *   variables: {
+ *      workspaceId: // value for 'workspaceId'
+ *   },
+ * });
+ */
+export function useGetAllProposalsForAGrantProgramQuery(baseOptions: Apollo.QueryHookOptions<GetAllProposalsForAGrantProgramQuery, GetAllProposalsForAGrantProgramQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllProposalsForAGrantProgramQuery, GetAllProposalsForAGrantProgramQueryVariables>(GetAllProposalsForAGrantProgramDocument, options);
+      }
+export function useGetAllProposalsForAGrantProgramLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllProposalsForAGrantProgramQuery, GetAllProposalsForAGrantProgramQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllProposalsForAGrantProgramQuery, GetAllProposalsForAGrantProgramQueryVariables>(GetAllProposalsForAGrantProgramDocument, options);
+        }
+export type GetAllProposalsForAGrantProgramQueryHookResult = ReturnType<typeof useGetAllProposalsForAGrantProgramQuery>;
+export type GetAllProposalsForAGrantProgramLazyQueryHookResult = ReturnType<typeof useGetAllProposalsForAGrantProgramLazyQuery>;
+export type GetAllProposalsForAGrantProgramQueryResult = Apollo.QueryResult<GetAllProposalsForAGrantProgramQuery, GetAllProposalsForAGrantProgramQueryVariables>;
+export function refetchGetAllProposalsForAGrantProgramQuery(variables: GetAllProposalsForAGrantProgramQueryVariables) {
+      return { query: GetAllProposalsForAGrantProgramDocument, variables: variables }
     }
 export const GetWorkspaceGrantsProgramDetailsDocument = gql`
     query getWorkspaceGrantsProgramDetails($workspaceId: String!) {

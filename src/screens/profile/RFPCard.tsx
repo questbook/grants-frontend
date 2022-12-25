@@ -63,7 +63,7 @@ function RFPCard({
 				// alignItems='center'
 			>
 				<RFPStats
-					value={amountPaid}
+					value={`$${amountPaid}`}
 					text='paid' />
 				<RFPStats
 					value={`${formattedStartDate} - ${formattedEndDate}`}

@@ -48,5 +48,11 @@ export default [
 		id: 'fundingAsk',
 		inputType: 'long-form',
 		isRequired: false,
+	},
+	{
+		title: 'tl,dr',
+		id: 'tldr',
+		inputType: 'short-form',
+		isRequired: false,
 	}
 ]
