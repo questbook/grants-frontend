@@ -6,6 +6,7 @@ documents:
   - src/screens/dashboard/_graphql/*.graphql
   - src/screens/discover/_graphql/*.graphql
   - src/screens/proposal_form/_graphql/*.graphql
+  - src/screens/profile/_graphql/*.graphql
 overwrite: true
 generates:
   ./src/generated/graphql.ts:
