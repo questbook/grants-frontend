@@ -71,11 +71,7 @@ function ProposalSubmission(
 						className='backBtn'
 						variant='linkV2'
 						leftIcon={<BsArrowLeft />}
-						onClick={
-							() => router.push({
-								pathname: '/discover'
-							})
-						}>
+						onClick={() => router.back()}>
 						Back
 					</Button>
 				</Flex>
