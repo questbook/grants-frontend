@@ -102,7 +102,7 @@ export type PayoutsType = Exclude<
 >;
 export type Payout = PayoutsType[number];
 
-export type SignerVerifiedState = 'unverified' | 'initiate_verification' | 'verifying'| 'failed' | 'verified' | 'transaction_initiated'
+export type SignerVerifiedState = 'unverified' | 'initiate_verification' | 'verifying'| 'failed' | 'verified' | 'transaction_initiated' | 'initiate_TON_transaction' | 'transaction_done_wallet'
 
 // export type CommentMessage = {
 //     sender: string

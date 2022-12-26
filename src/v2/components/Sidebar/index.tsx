@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { Divider, Flex } from '@chakra-ui/react'
-import { SupportedSafes } from '@questbook/supported-safes'
+import { SupportedPayouts } from '@questbook/supported-safes'
 import { useRouter } from 'next/router'
 import { useSafeContext } from 'src/contexts/safeContext'
 import { useGetWorkspaceMembersQuery } from 'src/generated/graphql'
@@ -70,7 +70,7 @@ function Sidebar() {
 
 	useEffect(() => {
 		if(workspace?.id!) {
-			const currentSafe = new SupportedSafes().getSafe(parseInt(workspace?.safe?.chainId!), workspace.safe?.address!)
+			const currentSafe = new SupportedPayouts().getSafe(parseInt(workspace?.safe?.chainId!), workspace.safe?.address!)
 			setSafeObj(currentSafe)
 		}
 	}, [workspace?.id!])
