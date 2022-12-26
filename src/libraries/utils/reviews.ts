@@ -1,5 +1,4 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { ReviewSetRequest } from '@questbook/service-validator-client'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetWorkspaceMembersPublicKeysQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
@@ -111,11 +110,12 @@ export function useLoadReview(
 				}
 
 				logger.info(
-					{ reviewId: review.id, walletAddress: reviewData.walletAddress },
+					{ reviewId: review.id, walletAddress: reviewData.walletAddress, reviewData },
 					'decrypting review using shared key'
 				)
 
 				const ipfsData = await getFromIPFS(reviewData!.dataIpfsHash)
+				logger.info({ ipfsData }, 'got encrypted review data from ipfs')
 				const { decrypt } = await getSecureChannelFromPublicKey(
 					webwallet!,
 					reviewData.publicKey,
@@ -124,6 +124,7 @@ export function useLoadReview(
 
 				logger.info({ walletAddress: reviewData!.walletAddress }, 'prepared secure channel for decryption')
 				const jsonReview = await decrypt(ipfsData)
+				logger.info({ review: JSON.parse(jsonReview) }, 'decrypted review data')
 				data = JSON.parse(jsonReview)
 			} else {
 				const ipfsData = await getFromIPFS(review.publicReviewDataHash!)
@@ -194,7 +195,6 @@ export const useGenerateReviewData = ({
 	applicationId,
 }: GenerateReviewDataProps) => {
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
-	const { validatorApi } = useContext(ApiClientsContext)!
 	const { fetch: fetchPubKeys } = useGetPublicKeysOfGrantManagers(grantId, chainId)
 
 	const generateReviewData = async(data: Pick<IReviewFeedback, 'items'>) => {
@@ -245,14 +245,12 @@ export const useGenerateReviewData = ({
 			dataHash = (await uploadToIPFS(jsonReview)).hash
 		}
 
-		const {
-			data: { ipfsHash },
-		} = await validatorApi.validateReviewSet({
+		const ipfsHash = (await uploadToIPFS(JSON.stringify({
 			reviewer: scwAddress!,
 			reviewerPublicKey: webwallet.publicKey,
 			publicReviewDataHash: dataHash,
 			encryptedReview,
-		} as ReviewSetRequest)
+		}))).hash
 
 		return {
 			ipfsHash

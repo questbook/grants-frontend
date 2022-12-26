@@ -146,14 +146,17 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 				skip += first
 			} while(shouldContinue)
 		} else if(role === 'reviewer' && selectedGrantIndex !== undefined) {
-			logger.info({}, 'As reviewer')
+			logger.info({ reviewerGrants }, 'As reviewer 1')
 			const proposalIds = [...reviewerGrants[selectedGrantIndex].grant.pendingApplications.map((app) => app.id), ...reviewerGrants[selectedGrantIndex].grant.doneApplications.map((app) => app.id)]
+			logger.info(proposalIds, 'As reviewer 2')
 			const results = await fetchMoreReviewerProposals({ proposalIds }, true)
+			logger.info(results, 'As reviewer 3')
 
 			if(results?.length === 0 || !results[0] || !results[0]?.grantApplications?.length) {
 				return 'no-proposals-reviewer'
 			}
 
+			logger.info({ reviewerProposals: results[0]?.grantApplications })
 			proposals.push(...results[0]?.grantApplications)
 		} else if(role === 'builder') {
 			logger.info({}, 'As builder')

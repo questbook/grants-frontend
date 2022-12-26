@@ -208,7 +208,7 @@ function TopBar() {
 		}
 
 		const index = grants.findIndex(grant => grant.id === selectedGrant?.id)
-		return index < grants.length - 1
+		return index >= 0 && index < grants.length - 1
 	}, [selectedGrant])
 
 	const toast = useCustomToast()

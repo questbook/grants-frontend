@@ -1,10 +1,14 @@
-import { useContext, useEffect, useMemo } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Flex, Text } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
+import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import { useLoadReview } from 'src/libraries/utils/reviews'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import useSubmitReview from 'src/screens/dashboard/_hooks/useSubmitReview'
 import { DashboardContext } from 'src/screens/dashboard/Context'
+import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 
 function ReviewProposal() {
 	const buildComponent = () => {
@@ -19,6 +23,8 @@ function ReviewProposal() {
 					mx={5}
 					fontWeight='500'>
 					Review Proposals
+					{' '}
+					{proposal?.id}
 				</Text>
 				<Flex
 					direction='column'
@@ -74,6 +80,7 @@ function ReviewProposal() {
 																	const temp = { ...review }
 																	if(temp?.items && rubricIndex <= temp?.items?.length) {
 																		temp.items[rubricIndex].rating = index + 1
+																		temp.total += index + 1
 																		setReview(temp)
 																	}
 																}
@@ -101,7 +108,16 @@ function ReviewProposal() {
 												lineHeight='20px'
 												maxLength={300}
 												borderBottom='1px solid #E7E4DD'
-												flexProps={{ mt: 3 }} />
+												flexProps={{ mt: 3 }}
+												onChange={
+													(e) => {
+														const temp = { ...review }
+														if(temp?.items && rubricIndex <= temp?.items?.length) {
+															temp.items[rubricIndex].comment = e.target.value
+															setReview(temp)
+														}
+													}
+												} />
 										)
 									}
 									{
@@ -125,19 +141,26 @@ function ReviewProposal() {
 							px={5}
 							py={4}>
 							<Button
-								disabled={review === undefined || review?.items?.some((item) => item.rating === 0)}
+								disabled={review === undefined || review?.items?.some((item) => item.rating === 0 || !isBiconomyInitialised)}
 								w='100%'
 								variant='primaryMedium'
-								onClick={
-									() => {
-
-									}
-								}>
+								onClick={submitReview}>
 								Submit Review
 							</Button>
 						</Flex>
 					)
 				}
+
+				<NetworkTransactionFlowStepperModal
+					isOpen={networkTransactionModalStep !== undefined}
+					currentStepIndex={networkTransactionModalStep || 0}
+					viewTxnLink={getExplorerUrlForTxHash(chainId, transactionHash)}
+					onClose={
+						() => {
+							setNetworkTransactionModalStep(undefined)
+							router.reload()
+						}
+					} />
 			</Flex>
 		)
 	}
@@ -145,6 +168,12 @@ function ReviewProposal() {
 	const { chainId } = useContext(ApiClientsContext)!
 	const { selectedProposals, proposals, selectedGrant, review, setReview } = useContext(DashboardContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
+
+	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
+	const [transactionHash, setTransactionHash] = useState<string>()
+	const { submitReview, isBiconomyInitialised } = useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash })
+
+	const router = useRouter()
 
 	const proposal = useMemo(() => {
 		const index = selectedProposals.indexOf(true)
