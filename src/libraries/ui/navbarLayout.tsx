@@ -8,11 +8,11 @@ type NavbarConfig = {
 	bg?: string
 	showLogo?: boolean
 	showSearchBar?: boolean
-	showSubmitANewProposal?: boolean
 	showInviteProposals?: boolean
 	showAddMembers?: boolean
 	showDomains?: boolean
 	showStats?: boolean
+	showOpenDashboard?: boolean
 }
 
 type Props = {
@@ -48,7 +48,7 @@ function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar }: P
 			<Flex
 				direction='row'
 				maxH='calc(100vh - 64px)'
-				bg='#F5F5F5'>
+				bg='gray.1'>
 				{
 					renderSidebar && (
 						<Flex

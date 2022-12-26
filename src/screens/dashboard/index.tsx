@@ -63,8 +63,7 @@ Dashboard.getLayout = function(page: ReactElement) {
 				{
 					bg: 'gray.1',
 					showLogo: false,
-					showSearchBar: false,
-					showSubmitANewProposal: true,
+					// showSubmitANewProposal: true,
 					showInviteProposals: true,
 					showAddMembers: true,
 					showDomains: true,

@@ -210,6 +210,17 @@ export default {
 					color: '#8D8B87',
 				}
 			},
+			menuButton: {
+				borderRadius: '2px',
+				color: 'black.1',
+				'&:disabled': {
+					bg: 'gray.3',
+					opacity: 1,
+					'&:hover': {
+						bg: 'gray.3',
+					},
+				}
+			}
 		},
 	},
 }

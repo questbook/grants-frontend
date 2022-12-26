@@ -293,7 +293,7 @@ export const getEventData = async(receipt: ethers.providers.TransactionReceipt, 
 
 	const eventFragment = abiFragments.filter(isValidEvent)
 
-	if(eventFragment.length !== 1) {
+	if(eventFragment.length === 0) {
 		throw Error('Invalid Given Event!')
 	}
 
