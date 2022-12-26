@@ -16,6 +16,9 @@ interface Props {
 	setStep: (value: number) => void
 	milestones: Array<string>
 	setMilestones: (value: Array<string>) => void
+	shouldCreateRFP: boolean
+	createRFP: () => void
+	setOpenNetworkTransactionModal: (value: boolean) => void
 }
 
 
@@ -27,7 +30,10 @@ function Payouts(
 		setAmount,
 		step,
 		setStep,
-		setMilestones
+		setMilestones,
+		shouldCreateRFP,
+		createRFP,
+		setOpenNetworkTransactionModal
 	}: Props) {
 	const buildComponent = () => {
 		// eslint-disable-next-line no-restricted-syntax
@@ -178,12 +184,12 @@ function Payouts(
 							h='48px'
 							onClick={
 								() => {
-									handleOnClickContinue()
+									shouldCreateRFP ? handleCreateRFP() : handleOnClickContinue()
 								}
 							}
 							isDisabled={!payoutMode || !amount}
 						>
-							Continue
+							{shouldCreateRFP ? 'Create RFP' : 'Continue'}
 						</Button>
 					</Flex>
 				</Flex>
@@ -199,6 +205,11 @@ function Payouts(
 	const handleOnChangePayoutTypeOption = (item: any) => {
 		// console.log('payout changes to', item)
 		setPayoutMode(item.label)
+	}
+
+	const handleCreateRFP = () => {
+		setOpenNetworkTransactionModal(true)
+		createRFP()
 	}
 
 	const handleClick = () => {

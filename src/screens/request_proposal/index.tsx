@@ -6,6 +6,7 @@ import { DEFAULT_NETWORK } from 'src/constants'
 import { APPLICATION_REGISTRY_ADDRESS, WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
 import { USD_ASSET, USD_DECIMALS, USD_ICON } from 'src/constants/chains'
+import GrantFactoryAbi from 'src/contracts/abi/GrantFactoryAbi.json'
 import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useQBContract from 'src/hooks/contracts/useQBContract'
@@ -18,6 +19,7 @@ import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import { validateAndUploadToIpfs } from 'src/libraries/validator'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { GRANT_CACHE_KEY } from 'src/screens/dashboard/_utils/constants'
 import BuilderDiscovery from 'src/screens/request_proposal/_subscreens/BuilderDiscovery'
 import LinkMultiSig from 'src/screens/request_proposal/_subscreens/LinkMultiSig'
 import Payouts from 'src/screens/request_proposal/_subscreens/Payouts'
@@ -98,15 +100,36 @@ function RequestProposal() {
 			)
 		case 3:
 			return (
-				<Payouts
-					payoutMode={payoutMode}
-					setPayoutMode={setPayoutMode}
-					amount={amount}
-					setAmount={setAmount}
-					step={step}
-					setStep={setStep}
-					milestones={milestones}
-					setMilestones={setMilestones} />
+				<>
+					<Payouts
+						payoutMode={payoutMode}
+						setPayoutMode={setPayoutMode}
+						amount={amount}
+						setAmount={setAmount}
+						step={step}
+						setStep={setStep}
+						milestones={milestones}
+						setMilestones={setMilestones}
+						shouldCreateRFP={shouldCreateRFP}
+						createRFP={createRFP}
+						setOpenNetworkTransactionModal={setIsNetworkTransactionModalOpen}
+					/>
+					<NetworkTransactionFlowStepperModal
+						isOpen={isNetworkTransactionModalOpen}
+						currentStepIndex={currentStepIndex!}
+						viewTxnLink={getExplorerUrlForTxHash(network, txHash)}
+						onClose={
+							async() => {
+								setCurrentStepIndex(undefined)
+								setRole('admin')
+								const ret = await router.push({ pathname: '/dashboard' })
+								if(ret) {
+									router.reload()
+								}
+							}
+						}
+					/>
+				</>
 			)
 		case 4: return (
 			<LinkMultiSig
@@ -126,7 +149,7 @@ function RequestProposal() {
 					setDomainImage={setDomainImage}
 					step={step}
 					setIsOpen={setIsNetworkTransactionModalOpen}
-					createWorkspace={createWorkspace} />
+					createWorkspace={createWorkspaceAndGrant} />
 				<NetworkTransactionFlowStepperModal
 					isOpen={isNetworkTransactionModalOpen}
 					currentStepIndex={currentStepIndex!}
@@ -140,17 +163,21 @@ function RequestProposal() {
 								router.reload()
 							}
 						}
-					} />
+					}
+				/>
 			</>
 		)
 		}
 	}
+
+	const { role, workspace, chainId } = useContext(ApiClientsContext)!
 
 	// State for proposal creation
 	const todayDate = today()
 	const [proposalName, setProposalName] = useState('')
 	const [startDate, setStartDate] = useState(todayDate)
 	const [endDate, setEndDate] = useState('')
+	const [shouldCreateRFP, setShouldCreateRFP] = useState(false)
 
 	const applicantDetails: ApplicantDetailsFieldType[] = applicantDetailsList.filter(detail => detail.isRequired)
 		.map(({
@@ -214,7 +241,7 @@ function RequestProposal() {
 	const [txHash, setTxHash] = useState('')
 
 	// state for workspace creation
-	const [workspaceId, setWorkspaceId] = useState('')
+	// const [workspaceId, setWorkspaceId] = useState('')
 
 	// Webwallet
 	const [shouldRefreshNonce, setShouldRefreshNonce] = useState<boolean>()
@@ -237,6 +264,12 @@ function RequestProposal() {
 	const router = useRouter()
 
 	const grantContract = useQBContract('grantFactory', network)
+
+	useEffect(() => {
+		if(role === 'admin' && workspace) {
+			setShouldCreateRFP(true)
+		}
+	}, [role, workspace])
 
 	useEffect(() => {
 		// console.log("add_user", nonce, webwallet)
@@ -266,9 +299,8 @@ function RequestProposal() {
 		}
 	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, selectedSafeNetwork?.networkId])
 
-
-	// create workspace
-	const createWorkspace = useCallback(async() => {
+	// create workspace and grant
+	const createWorkspaceAndGrant = useCallback(async() => {
 		try {
 			setCurrentStepIndex(0)
 			const uploadedImageHash = (await uploadToIPFS(domainImage)).hash
@@ -330,7 +362,6 @@ function RequestProposal() {
 			if(event) {
 				const workspaceId = Number(event.args[0].toBigInt())
 				logger.info('workspace_id', workspaceId)
-				setWorkspaceId(workspaceId.toString())
 				const newWorkspace = `chain_${network}-0x${workspaceId.toString(16)}`
 				logger.info({ newWorkspace }, 'New workspace created')
 				localStorage.setItem(DOMAIN_CACHE_KEY, newWorkspace)
@@ -431,15 +462,14 @@ function RequestProposal() {
 					}
 
 					// setCurrentStep(2)
+					setCurrentStepIndex(1)
 					const { txFee: createGrantTxFee, receipt: createGrantTxReceipt } = await getTransactionDetails(response, network!.toString())
+					setTxHash(createGrantTxReceipt?.transactionHash)
 					await subgraphClients[network!].waitForBlock(createGrantTxReceipt?.blockNumber)
 
-					setCurrentStepIndex(1)
-
+					setCurrentStepIndex(2)
 					await chargeGas(workspaceId, Number(createGrantTxFee), network!)
 
-
-					setCurrentStepIndex(2)
 					setCurrentStepIndex(3) // 3 is the final step
 				} else {
 					logger.info('workspaceId not found')
@@ -463,14 +493,149 @@ function RequestProposal() {
 				}),
 			})
 		}
-	}, [biconomyWalletClient, workspaceId, domainName, accountDataWebwallet, allApplicantDetails, link, doc, rubrics, amount, payoutMode, reviewMechanism, startDate, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, selectedSafeNetwork])
+	}, [biconomyWalletClient, domainName, accountDataWebwallet, allApplicantDetails, link, doc, rubrics, amount, payoutMode, reviewMechanism, startDate, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, selectedSafeNetwork])
+
+	const createRFP = useCallback(async() => {
+		try {
+			setCurrentStepIndex(0)
+			let fileIPFSHash = ''
+			if(doc) {
+				const fileCID = await uploadToIPFS(doc[0]!)
+				logger.info('fileCID', fileCID)
+				fileIPFSHash = fileCID.hash
+			}
+
+			let payout: string
+			if(payoutMode === 'in one go') {
+				payout = 'in_one_go'
+			} else if(payoutMode! === 'based on milestone') {
+				payout = 'milestones'
+			}
+
+			let review: string
+			if(reviewMechanism === 'Voting') {
+				review = 'voting'
+			} else if(reviewMechanism === 'Rubric') {
+				review = 'rubrics'
+			}
+
+			// validate grant data
+			const { hash: grantCreateIpfsHash } = await validateAndUploadToIpfs('GrantCreateRequest', {
+				title: proposalName!,
+				startDate: startDate!,
+				endDate: endDate!,
+				// details: allApplicantDetails!,
+				link: link!,
+				docIpfsHash: fileIPFSHash,
+				reward: {
+					asset: USD_ASSET!,
+					committed: amount.toString()!,
+					token: {
+						label: 'USD',
+						address: USD_ASSET!,
+						decimal: USD_DECIMALS.toString(),
+						iconHash: USD_ICON
+					}
+				},
+				payoutType: payout!,
+				reviewType: review!,
+				milestones: milestones!,
+				creatorId: accountDataWebwallet!.address!,
+				workspaceId: Number(workspace?.id).toString(),
+				fields: allApplicantDetails,
+			})
+
+			logger.info('grantCreateIpfsHash', grantCreateIpfsHash)
+			let rubricHash = ''
+			if(reviewMechanism === 'Rubric') {
+				const { hash: auxRubricHash } = await validateAndUploadToIpfs('RubricSetRequest', {
+					rubric: {
+						rubric: rubrics,
+						isPrivate: false
+					},
+				})
+
+				if(auxRubricHash) {
+					rubricHash = auxRubricHash
+				}
+			}
+
+			logger.info('rubric hash', rubricHash)
+			logger.info('workspace', workspace)
+			if(workspace) {
+				const methodArgs = [
+					Number(workspace?.id).toString(),
+					grantCreateIpfsHash,
+					rubricHash,
+					numberOfReviewers,
+					WORKSPACE_REGISTRY_ADDRESS[network!],
+					APPLICATION_REGISTRY_ADDRESS[network!],
+				]
+				logger.info('methodArgs for grant creation', methodArgs)
+				const response = await sendGaslessTransaction(
+					biconomy,
+					grantContract,
+					'createGrant',
+					methodArgs,
+					grantContract.address,
+						biconomyWalletClient!,
+						scwAddress!,
+						webwallet,
+						`${network}`,
+						bicoDapps[network!.toString()].webHookId,
+						nonce
+				)
+				if(!response) {
+					return
+				}
+
+				// setCurrentStep(2)
+				setCurrentStepIndex(1)
+				const { txFee: createGrantTxFee, receipt: createGrantTxReceipt } = await getTransactionDetails(response, network!.toString())
+				setTxHash(createGrantTxReceipt?.transactionHash)
+				await subgraphClients[network!].waitForBlock(createGrantTxReceipt?.blockNumber)
+
+				const event = await getEventData(createGrantTxReceipt, 'GrantCreated', GrantFactoryAbi)
+
+				if(event) {
+					const grantId = event.args[0].toString()
+					localStorage.setItem(`${GRANT_CACHE_KEY}-${chainId}-${workspace.id}`, grantId)
+					logger.info('grantId', grantId, chainId)
+					setCurrentStepIndex(2)
+					await chargeGas(Number(workspace?.id), Number(createGrantTxFee), network!)
+
+					setCurrentStepIndex(3) // 3 is the final step
+				}
+
+			}
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		} catch(e: any) {
+			setCurrentStepIndex(3) // 3 is the final step
+			const message = getErrorMessage(e)
+			logger.info('error', message)
+			toastRef.current = toast({
+				position: 'top',
+				render: () => ErrorToast({
+					content: message,
+					close: () => {
+						if(toastRef.current) {
+							toast.close(toastRef.current)
+						}
+					},
+				}),
+			})
+		}
+	}, [biconomyWalletClient, workspace, proposalName, accountDataWebwallet, allApplicantDetails, link, doc, rubrics, amount, payoutMode, reviewMechanism, startDate, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, selectedSafeNetwork])
 
 	return buildComponent()
 }
 
 RequestProposal.getLayout = function(page: ReactElement) {
 	return (
-		<NavbarLayout renderSidebar={false}>
+		<NavbarLayout
+			renderSidebar={false}
+			navbarConfig={{ showDomains: true }}
+		>
 			{page}
 		</NavbarLayout>
 	)
