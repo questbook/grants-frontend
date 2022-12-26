@@ -52,8 +52,10 @@ export interface TokenInfo {
 }
 
 export type FundBuilderContextType = {
-  tokenInfo?: TokenInfo
-  setTokenInfo: (tokenInfo: TokenInfo) => void
+  tokenList?: TokenInfo[]
+  setTokenList: (tokenList: TokenInfo[]) => void
+  selectedTokenInfo?: TokenInfo
+  setSelectedTokenInfo: (tokenInfo: TokenInfo) => void
   amounts: number[]
   setAmounts: (amount: number[]) => void
   tos: string[]

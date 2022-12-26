@@ -80,16 +80,16 @@ function FundBuilderModal() {
 											placeholder='0' />
 									</Flex>
 									{
-										selectedMode?.value !== 'TON Wallet' && amounts?.[0] > 0 && tokenInfo?.fiatConversion ? (
+										selectedMode?.value !== 'TON Wallet' && amounts?.[0] > 0 && selectedTokenInfo?.fiatConversion ? (
 											<Text
 												color='#53514F'
 												fontSize='14px'
 												mt='8px'>
 												≈
 												{' '}
-												{(amounts?.[0] / parseFloat(tokenInfo?.fiatConversion!.toString())).toFixed(2)}
+												{(amounts?.[0] / parseFloat(selectedTokenInfo?.fiatConversion!.toString())).toFixed(2)}
 												{' '}
-												{tokenInfo?.tokenName}
+												{selectedTokenInfo?.tokenName}
 											</Text>
 										) : null
 									}
@@ -185,7 +185,7 @@ function FundBuilderModal() {
 		setMilestoneIndices,
 		tos,
 		setTos,
-		tokenInfo,
+		selectedTokenInfo,
 		signerVerifiedState,
 		setSignerVerifiedState,
 		setTokenInfo,
@@ -281,7 +281,7 @@ function FundBuilderModal() {
 				to: tos?.[0],
 				applicationId: proposal?.id,
 				selectedMilestone: milestoneIndices?.[0],
-				selectedToken: { tokenName: tokenInfo?.tokenName, info: tokenInfo?.info },
+				selectedToken: { tokenName: selectedTokenInfo?.tokenName, info: selectedTokenInfo?.info },
 				amount: amounts?.[0],
 			}]
 

@@ -285,7 +285,8 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 }
 
 const FundBuilderProvider = ({ children }: PropsWithChildren<ReactNode>) => {
-	const [tokenInfo, setTokenInfo] = useState<TokenInfo>()
+	const [tokenList, setTokenList] = useState<TokenInfo[]>()
+	const [selectedTokenInfo, setSelectedTokenInfo] = useState<TokenInfo>()
 	const [amounts, setAmounts] = useState<number[]>([])
 	const [tos, setTos] = useState<string[]>([])
 	const [milestoneIndices, setMilestoneIndices] = useState<number[]>([])
@@ -295,7 +296,27 @@ const FundBuilderProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const [signerVerifiedState, setSignerVerifiedState] = useState<SignerVerifiedState>('unverified')
 
 	return (
-		<FundBuilderContext.Provider value={{ tokenInfo, setTokenInfo, amounts, setAmounts, tos, setTos, milestoneIndices, setMilestoneIndices, isModalOpen, setIsModalOpen, isDrawerOpen, setIsDrawerOpen, signerVerifiedState, setSignerVerifiedState }}>
+		<FundBuilderContext.Provider
+			value={
+				{
+					tokenList,
+					setTokenList,
+					selectedTokenInfo,
+					setSelectedTokenInfo,
+					amounts,
+					setAmounts,
+					tos,
+					setTos,
+					milestoneIndices,
+					setMilestoneIndices,
+					isModalOpen,
+					setIsModalOpen,
+					isDrawerOpen,
+					setIsDrawerOpen,
+					signerVerifiedState,
+					setSignerVerifiedState
+				}
+			}>
 			{children}
 		</FundBuilderContext.Provider>
 	)

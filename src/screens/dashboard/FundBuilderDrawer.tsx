@@ -71,7 +71,7 @@ function FundBuilderDrawer() {
 													key={selectedProposalData.id}
 													proposal={selectedProposalData}
 													index={index}
-													tokenInfo={tokenInfo!} />
+													tokenInfo={selectedTokenInfo!} />
 											))
 										}
 									</Flex>
@@ -162,7 +162,7 @@ function FundBuilderDrawer() {
 		setTos,
 		milestoneIndices,
 		setMilestoneIndices,
-		tokenInfo,
+		selectedTokenInfo,
 		signerVerifiedState,
 		setSignerVerifiedState
 	} = useContext(FundBuilderContext)!
@@ -218,8 +218,8 @@ function FundBuilderDrawer() {
 	}, [selectedProposalsData])
 
 	const isDisabled = useMemo(() => {
-		return !selectedProposalsData || !amounts?.every((amt) => amt !== undefined && amt > 0) || !tos?.every((to) => to !== undefined) || !milestoneIndices?.every((mi) => mi !== undefined) || !tokenInfo
-	}, [selectedProposalsData, amounts, tos, milestoneIndices, tokenInfo])
+		return !selectedProposalsData || !amounts?.every((amt) => amt !== undefined && amt > 0) || !tos?.every((to) => to !== undefined) || !milestoneIndices?.every((mi) => mi !== undefined) || !selectedTokenInfo
+	}, [selectedProposalsData, amounts, tos, milestoneIndices, selectedTokenInfo])
 
 	const onContinue = () => {
 		if(signerVerifiedState === 'unverified') {
@@ -237,7 +237,7 @@ function FundBuilderDrawer() {
 					to: to,
 					applicationId: proposals[i]?.id,
 					selectedMilestone: milestoneIndices?.[i],
-					selectedToken: { tokenName: tokenInfo?.tokenName, info: tokenInfo?.info },
+					selectedToken: { tokenName: selectedTokenInfo?.tokenName, info: selectedTokenInfo?.info },
 					amount: amounts?.[i],
 				}
 			})

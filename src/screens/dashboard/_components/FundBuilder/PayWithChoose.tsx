@@ -23,7 +23,7 @@ function PayWithChoose({ selectedMode }: { selectedMode: any}) {
 				<Text>
 					{
 						!safeObj && selectedMode.value === 'TON Wallet' ? 'TON'
-							: safeTokenList ? (safeTokenList.length ? dropdown() : 'No tokens in the safe') : 'Fetching...'
+							: tokenList ? (tokenList.length ? dropdown() : 'No tokens in the safe') : 'Fetching...'
 					}
 				</Text>
 			</Flex>
@@ -44,7 +44,7 @@ function PayWithChoose({ selectedMode }: { selectedMode: any}) {
 						<>
 							<Dropdown
 									options={
-										(safeTokenList ?? []).map((token: TokenInfo, index: number) => {
+										(tokenList ?? []).map((token: TokenInfo, index: number) => {
 											const ret = {
 												index,
 												...token
@@ -55,7 +55,7 @@ function PayWithChoose({ selectedMode }: { selectedMode: any}) {
 									placeholder='Select Token'
 									singleValue={singleValue}
 									makeOption={makeOption}
-									selected={{ ...safeTokenList?.[selectedTokenIndex]!, index: selectedTokenIndex }}
+									selected={{ ...tokenList?.[selectedTokenIndex]!, index: selectedTokenIndex }}
 									setSelected={
 										(value: DropdownItem | undefined) => {
 											logger.info({ value }, 'Clicked')
@@ -73,13 +73,13 @@ function PayWithChoose({ selectedMode }: { selectedMode: any}) {
 									mt='8px'>
 								Available:
 								{' '}
-								{parseFloat(tokenInfo?.tokenValueAmount?.toString()!).toFixed(2)}
+								{parseFloat(selectedTokenInfo?.tokenValueAmount?.toString()!).toFixed(2)}
 								{' '}
-								{tokenInfo?.tokenName}
+								{selectedTokenInfo?.tokenName}
 								{' '}
 								≈
 								{' '}
-								{parseFloat(tokenInfo?.usdValueAmount?.toString()!).toFixed(2)}
+								{parseFloat(selectedTokenInfo?.usdValueAmount?.toString()!).toFixed(2)}
 								{' '}
 								USD
 							</Text>
@@ -130,9 +130,8 @@ function PayWithChoose({ selectedMode }: { selectedMode: any}) {
 	)
 
 	const { safeObj } = useSafeContext()
-	const { setTokenInfo, tokenInfo } = useContext(FundBuilderContext)!
-	const [safeTokenList, setSafeTokenList] = useState<TokenInfo[]>()
-	const [selectedTokenIndex, setSelectedTokenIndex] = useState<number>(0)
+	const { tokenList, setTokenList, selectedTokenInfo, setSelectedTokenInfo } = useContext(FundBuilderContext)!
+	const [selectedTokenIndex, setSelectedTokenIndex] = useState<number>(selectedTokenInfo ? tokenList?.map((v) => v.tokenName).indexOf(selectedTokenInfo.tokenName)! : 0)
 
 	useEffect(() => {
 		if(!safeObj) {
@@ -140,22 +139,22 @@ function PayWithChoose({ selectedMode }: { selectedMode: any}) {
 		}
 
 		safeObj?.getTokenAndbalance().then((list: TokenInfo[]) => {
-			setSafeTokenList(list)
-			if(list.length) {
-				setTokenInfo(list[0])
+			setTokenList(list)
+			if(list.length && !selectedTokenInfo) {
+				setSelectedTokenInfo(list[0])
 				setSelectedTokenIndex(0)
 			}
 		})
 	}, [safeObj])
 
 	useEffect(() => {
-		if(!safeTokenList) {
+		if(!tokenList) {
 			return
 		}
 
-		if(selectedTokenIndex < safeTokenList.length) {
-			const token = safeTokenList[selectedTokenIndex]
-			setTokenInfo(token)
+		if(selectedTokenIndex < tokenList.length) {
+			const token = tokenList[selectedTokenIndex]
+			setSelectedTokenInfo(token)
 		}
 	}, [selectedTokenIndex])
 

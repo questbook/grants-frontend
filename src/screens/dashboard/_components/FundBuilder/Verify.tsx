@@ -117,8 +117,6 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 
 	const { isConnected, address, connector } = useAccount()
 	const toast = useCustomToast()
-	const toastIdRef = useRef()
-
 
 	useEffect(() => {
 		if(isConnected) {
@@ -151,15 +149,6 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 			})
 		}
 	}
-
-	useEffect(() => {
-		logger.info('verifyingModal', verifyingModal)
-		// if(verifyingModal) {
-		// 	toastIdRef = toast({ title: 'Verfying...' })
-		// } else if(!verifyingModal) {
-		// 	toast.close(toastIdRef)
-		// }
-	}, [verifyingModal])
 
 	const switchNetworkIfNeed = async() => {
 		if(isConnected && chain?.id !== safeObj?.chainId) {

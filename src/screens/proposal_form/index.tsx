@@ -2,6 +2,7 @@ import { ChangeEvent, ReactElement, useContext, useMemo, useState } from 'react'
 import { Button, Flex, Image, Text } from '@chakra-ui/react'
 import { convertToRaw } from 'draft-js'
 import { useRouter } from 'next/router'
+import { useSafeContext } from 'src/contexts/safeContext'
 import logger from 'src/libraries/logger'
 import BackButton from 'src/libraries/ui/BackButton'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
@@ -191,7 +192,7 @@ function ProposalForm() {
 							containsField(grant, 'applicantAddress') && (
 								<SectionInput
 									label='Wallet Address'
-									placeholder='0xEbd6dB5a58c9812df3297E2Bc2fF0BDFEac2453c'
+									placeholder={isEvm === undefined || isEvm ? '0xEbd6dB5a58c9812df3297E2Bc2fF0BDFEac2453c' : 'AdG9Gdjm6cLFTfhefR9reZRH3bx4PM1XSmu7JGchjnPp' }
 									value={findField(form, 'applicantAddress').value}
 									onChange={
 										(e) => {
@@ -407,6 +408,8 @@ function ProposalForm() {
 
 	const { setRole } = useContext(ApiClientsContext)!
 	const { type, grant, chainId, form, setForm, error } = useContext(ProposalFormContext)!
+	const { safeObj } = useSafeContext()
+	const isEvm = safeObj?.getIsEvm()
 
 	const router = useRouter()
 
