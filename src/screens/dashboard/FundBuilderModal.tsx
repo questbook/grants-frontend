@@ -1,5 +1,5 @@
-import { useContext, useEffect, useMemo, useState } from 'react'
-import { Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text, ToastId, useToast } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { logger } from 'ethers'
 import { defaultChainId } from 'src/constants/chains'
@@ -60,7 +60,7 @@ function FundBuilderModal() {
 										justify='center'
 										align='start'>
 										{
-											selectedMode.value !== 'TON Wallet' && (
+											selectedMode?.value !== 'TON Wallet' && (
 												<Text>
 													$
 												</Text>
@@ -81,7 +81,7 @@ function FundBuilderModal() {
 											placeholder='0' />
 									</Flex>
 									{
-										selectedMode.value !== 'TON Wallet' && amounts?.[0] > 0 && tokenInfo?.fiatConversion ? (
+										selectedMode?.value !== 'TON Wallet' && amounts?.[0] > 0 && tokenInfo?.fiatConversion ? (
 											<Text
 												color='#53514F'
 												fontSize='14px'
@@ -195,12 +195,28 @@ function FundBuilderModal() {
 	const { phantomWallet } = usePhantomWallet()
 	const [safeProposalAddress, setSafeProposalAddress] = useState<string | undefined>(undefined)
 	const [safeProposalLink, setSafeProposalLink] = useState<string | undefined>(undefined)
+	const [selectedMode, setSelectedMode] = useState<any>()
+	const [payoutInProcess, setPayoutInProcess] = useState(false)
+
+	const customToast = useCustomToast()
+	const toast = useToast()
+  	const payoutsInProcessToastRef = useRef<any>()
+
 	const Safe = {
-		icon: safeObj?.safeLogo,
+		logo: safeObj?.safeLogo,
 		value: safeObj?.safeAddress ?? ''
 	}
 
-	const [selectedMode, setSelectedMode] = useState(Safe)
+	const Wallets = new SupportedPayouts().getAllWallets().map((wallet) => {
+		return {
+			logo: wallet.logo,
+			value: wallet.name
+		}
+	})
+
+	useEffect(() => {
+		setSelectedMode(safeObj ? Safe : Wallets[0])
+	}, [safeObj])
 
 	const proposal = useMemo(() => {
 		const index = selectedProposals.indexOf(true)
@@ -220,41 +236,48 @@ function FundBuilderModal() {
 	}, [proposal])
 
 	const isDisabled = useMemo(() => {
-		return !proposal || amounts?.[0] === undefined || !tos?.[0] || milestoneIndices?.[0] === undefined || !tokenInfo || amounts?.[0] <= 0
-	}, [amounts, tos, milestoneIndices, tokenInfo])
+		return !proposal || amounts?.[0] === undefined || !tos?.[0] || milestoneIndices?.[0] === undefined || amounts?.[0] <= 0
+	}, [amounts, tos, milestoneIndices])
 
 	const onContinue = async() => {
-		if(selectedMode.value === 'TON Wallet') {
+		if(selectedMode?.value === 'TON Wallet') {
+			setPayoutInProcess(true)
 			setSignerVerifiedState('initiate_TON_transaction')
 
 			const tonWallet = new SupportedPayouts().getWallet('TON Wallet')
 			tonWallet.checkTonReady(window)
-			const result = await tonWallet.sendMoney(tos[0], amounts[0])
-			if(result) {
-				toast({
-					title: 'Payouts done through TON Wallet',
-					status: 'success',
-					duration: 3000,
-				})
-				setIsModalOpen(false)
-			} else {
-				toast({
-					title: 'An error occurred while creating transaction on TON Wallet',
-					status: 'error',
-					duration: 3000,
-				})
-			}
+			tonWallet.sendMoney(tos[0], amounts[0], (response: any) => {
+				logger.info('TON response', response)
+				setPayoutInProcess(false)
+				if(response?.error) {
+					customToast({
+						title: 'An error occurred while creating transaction on TON Wallet',
+						status: 'error',
+						duration: 5000,
+					})
+				} else {
+					customToast({
+						title: 'Payouts done through TON Wallet',
+						status: 'success',
+						duration: 5000,
+					})
+					setSafeProposalAddress(response?.transactionHash)
+					setIsModalOpen(false)
+				}
+
+			})
+
 		}
 
-		if(selectedMode.value !== 'TON Wallet' && signerVerifiedState === 'unverified') {
+		if(selectedMode?.value !== 'TON Wallet' && signerVerifiedState === 'unverified') {
 			setSignerVerifiedState('initiate_verification')
 		}
 	}
 
-	const toast = useCustomToast()
 
 	const onInitiateTransaction = async() => {
 		if(signerVerifiedState === 'verified') {
+			setPayoutInProcess(true)
 			const temp = [{
 				from: safeObj?.safeAddress?.toString(),
 				to: tos?.[0],
@@ -267,8 +290,9 @@ function FundBuilderModal() {
 			let proposaladdress: any = ''
 			if(safeObj.getIsEvm()) {
 				proposaladdress = await safeObj?.proposeTransactions('', temp, '')
+				setPayoutInProcess(false)
 				if(proposaladdress?.error) {
-					toast({
+					customToast({
 						title: 'An error occurred while creating transaction on Gnosis Safe',
 						status: 'error',
 						duration: 3000,
@@ -281,8 +305,9 @@ function FundBuilderModal() {
 				setSignerVerifiedState('transaction_initiated')
 			} else {
 				proposaladdress = await safeObj?.proposeTransactions(selectedGrant?.title, temp, phantomWallet)
+				setPayoutInProcess(false)
 				if(proposaladdress?.error) {
-					toast({
+					customToast({
 						title: 'An error occurred while creating transaction on Multi-sig',
 						status: 'error',
 						duration: 3000,
@@ -296,6 +321,14 @@ function FundBuilderModal() {
 			}
 		}
 	}
+
+	useEffect(() => {
+		if(payoutInProcess) {
+			payoutsInProcessToastRef.current = customToast({ title: 'Payouts is in process', duration: null, status: 'info' })
+		} else if(!payoutInProcess && payoutsInProcessToastRef.current) {
+			toast.close(payoutsInProcessToastRef.current)
+		}
+	}, [payoutInProcess])
 
 	return buildComponent()
 }

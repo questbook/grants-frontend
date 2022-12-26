@@ -21,7 +21,10 @@ function PayWithChoose({ selectedMode }) {
 					Pay With
 				</Text>
 				<Text>
-					{safeTokenList ? (safeTokenList.length ? dropdown() : 'No tokens in the safe') : 'Fetching...'}
+					{
+						!safeObj && selectedMode.value === 'TON Wallet' ? 'TON'
+							: safeTokenList ? (safeTokenList.length ? dropdown() : 'No tokens in the safe') : 'Fetching...'
+					}
 				</Text>
 			</Flex>
 		)

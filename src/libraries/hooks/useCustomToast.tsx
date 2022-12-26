@@ -11,7 +11,7 @@ function useCustomToast() {
 	const toast = useToast()
 
 	const showToast = ({ action, actionText, ...props }: Props) => {
-		toastRef.current = toast({
+		return toastRef.current = toast({
 			render: () => {
 				return (
 					<Flex
