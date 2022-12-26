@@ -1,5 +1,6 @@
-import { useContext, useEffect, useMemo, useState } from 'react'
-import { Box, Button, Drawer, DrawerCloseButton, DrawerContent, DrawerOverlay, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { Box, Button, Drawer, DrawerCloseButton, DrawerContent, DrawerOverlay, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text, useToast } from '@chakra-ui/react'
+import { SupportedPayouts } from '@questbook/supported-safes'
 import { logger } from 'ethers'
 import { defaultChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
@@ -60,8 +61,9 @@ function FundBuilderDrawer() {
 										direction='column'
 										border='1px solid #E7E4DD'
 										overflowY='auto'>
-										<PayFromChoose />
-										<PayWithChoose />
+										<PayFromChoose
+											selectedMode={selectedMode} />
+										<PayWithChoose selectedMode={selectedMode} />
 										<ToChoose type='multi' />
 										{
 											selectedProposalsData?.map((selectedProposalData, index) => (
@@ -167,6 +169,28 @@ function FundBuilderDrawer() {
 	const { phantomWallet } = usePhantomWallet()
 	const [safeProposalAddress, setSafeProposalAddress] = useState<string | undefined>(undefined)
 	const [safeProposalLink, setSafeProposalLink] = useState<string | undefined>(undefined)
+	const [selectedMode, setSelectedMode] = useState<any>()
+	const [payoutInProcess, setPayoutInProcess] = useState(false)
+
+	const customToast = useCustomToast()
+	const toast = useToast()
+  	const payoutsInProcessToastRef = useRef<any>()
+
+	const Safe = {
+		logo: safeObj?.safeLogo,
+		value: safeObj?.safeAddress ?? ''
+	}
+
+	const Wallets = new SupportedPayouts().getAllWallets().map((wallet) => {
+		return {
+			logo: wallet.logo,
+			value: wallet.name
+		}
+	})
+
+	useEffect(() => {
+		setSelectedMode(safeObj ? Safe : Wallets[0])
+	}, [safeObj])
 
 	const { proposals, selectedProposals, selectedGrant } = useContext(DashboardContext)!
 	const selectedProposalsData = useMemo(() => {
@@ -204,8 +228,6 @@ function FundBuilderDrawer() {
 		}
 	}
 
-	const toast = useCustomToast()
-
 	const onInitiateTransaction = async() => {
 		if(signerVerifiedState === 'verified') {
 
@@ -221,9 +243,9 @@ function FundBuilderDrawer() {
 			})
 			let proposaladdress: any = ''
 			if(safeObj.getIsEvm()) {
-				proposaladdress = await safeObj?.proposeTransactions('', temp, '')
+				proposaladdress = await safeObj?.proposeTransactions('', transactionData, '')
 				if(proposaladdress?.error) {
-					toast({
+					customToast({
 						title: 'An error occurred while creating transaction on Gnosis Safe',
 						status: 'error',
 						duration: 3000,
@@ -239,7 +261,7 @@ function FundBuilderDrawer() {
 			} else {
 				proposaladdress = await safeObj?.proposeTransactions(selectedGrant?.title, transactionData, phantomWallet)
 				if(proposaladdress?.error) {
-					toast({
+					customToast({
 						title: 'An error occurred while creating transaction on Multi-sig',
 						status: 'error',
 						duration: 3000,
@@ -264,80 +286,88 @@ function FundBuilderDrawer() {
 		}
 	}
 
-	const { workspace } = useContext(ApiClientsContext)!
+	// const { workspace } = useContext(ApiClientsContext)!
 
-	const workspacechainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+	// const workspacechainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
-		chainId: workspacechainId ? workspacechainId.toString() : defaultChainId.toString(),
-	})
-	const [isBiconomyInitialisedDisburse, setIsBiconomyInitialisedDisburse] = useState(false)
+	// const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
+	// 	chainId: workspacechainId ? workspacechainId.toString() : defaultChainId.toString(),
+	// })
+	// const [isBiconomyInitialisedDisburse, setIsBiconomyInitialisedDisburse] = useState(false)
+
+	// useEffect(() => {
+
+	// 	if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && workspacechainId &&
+	// 		biconomy.networkId && biconomy.networkId?.toString() === workspacechainId.toString()) {
+	// 		setIsBiconomyInitialisedDisburse(true)
+	// 	}
+	// }, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialisedDisburse, workspacechainId])
+
+	// const { nonce } = useQuestbookAccount()
+	// const workspaceRegistryContract = useQBContract('workspace', workspacechainId)
+	// const { webwallet } = useContext(WebwalletContext)!
+
+	// const disburseRewardFromSafe = async(proposaladdress: string) => {
+	// 	try {
+	// 		logger.info({}, 'HERE 1')
+	// 		if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
+	// 			return
+	// 		}
+
+	// 		logger.info({}, 'HERE 2')
+
+	// 		const methodArgs = [
+	// 			// initiateTransactionData.map((element: any) => (parseInt(element.applicationId, 16))),
+	// 			// initiateTransactionData.map((element: any) => (parseInt(element.selectedMilestone?.id?.split('.')[1]))),
+	// 			// rewardAssetAddress,
+	// 			// initiateTransactionData.map((element: any) => (element.selectedToken.tokenName.toLowerCase()))[0],
+	// 			// 'nonEvmAssetAddress-toBeChanged',
+	// 			// initiateTransactionData.map((element: any) => Math.floor(element.amount)),
+	// 			workspace?.id,
+	// 			proposaladdress
+	// 		]
+
+	// 		logger.info({}, 'HERE 3')
+
+	// 		logger.info({ methodArgs }, 'methodArgs')
+
+	// 		const transactionHash = await sendGaslessTransaction(
+	// 			biconomy,
+	// 			workspaceRegistryContract,
+	// 			'disburseRewardFromSafe',
+	// 			methodArgs,
+	// 			workspaceRegistryContract.address,
+	// 			biconomyWalletClient,
+	// 			scwAddress,
+	// 			webwallet,
+	// 			`${workspacechainId}`,
+	// 			bicoDapps[workspacechainId.toString()].webHookId,
+	// 			nonce
+	// 		)
+
+	// 		logger.info({}, 'HERE 4')
+
+
+	// 		if(!transactionHash) {
+	// 			throw new Error('No transaction hash found!')
+	// 		}
+
+	// 		const { txFee } = await getTransactionDetails(transactionHash, workspacechainId.toString())
+
+	// 		await chargeGas(Number(workspace?.id), Number(txFee), workspacechainId)
+
+	// 	} catch(e) {
+	// 		console.log('disburse error', e)
+	// 	}
+	// }
 
 	useEffect(() => {
-
-		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && workspacechainId &&
-			biconomy.networkId && biconomy.networkId?.toString() === workspacechainId.toString()) {
-			setIsBiconomyInitialisedDisburse(true)
+		if(payoutInProcess) {
+			payoutsInProcessToastRef.current = customToast({ title: 'Payouts is in process', duration: null, status: 'info' })
+		} else if(!payoutInProcess && payoutsInProcessToastRef.current) {
+			toast.close(payoutsInProcessToastRef.current)
 		}
-	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialisedDisburse, workspacechainId])
-
-	const { nonce } = useQuestbookAccount()
-	const workspaceRegistryContract = useQBContract('workspace', workspacechainId)
-	const { webwallet } = useContext(WebwalletContext)!
-
-	const disburseRewardFromSafe = async(proposaladdress: string) => {
-		try {
-			logger.info({}, 'HERE 1')
-			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
-				return
-			}
-
-			logger.info({}, 'HERE 2')
-
-			const methodArgs = [
-				// initiateTransactionData.map((element: any) => (parseInt(element.applicationId, 16))),
-				// initiateTransactionData.map((element: any) => (parseInt(element.selectedMilestone?.id?.split('.')[1]))),
-				// rewardAssetAddress,
-				// initiateTransactionData.map((element: any) => (element.selectedToken.tokenName.toLowerCase()))[0],
-				// 'nonEvmAssetAddress-toBeChanged',
-				// initiateTransactionData.map((element: any) => Math.floor(element.amount)),
-				workspace?.id,
-				proposaladdress
-			]
-
-			logger.info({}, 'HERE 3')
-
-			logger.info({ methodArgs }, 'methodArgs')
-
-			const transactionHash = await sendGaslessTransaction(
-				biconomy,
-				workspaceRegistryContract,
-				'disburseRewardFromSafe',
-				methodArgs,
-				workspaceRegistryContract.address,
-				biconomyWalletClient,
-				scwAddress,
-				webwallet,
-				`${workspacechainId}`,
-				bicoDapps[workspacechainId.toString()].webHookId,
-				nonce
-			)
-
-			logger.info({}, 'HERE 4')
-
-
-			if(!transactionHash) {
-				throw new Error('No transaction hash found!')
-			}
-
-			const { txFee } = await getTransactionDetails(transactionHash, workspacechainId.toString())
-
-			await chargeGas(Number(workspace?.id), Number(txFee), workspacechainId)
-
-		} catch(e) {
-			console.log('disburse error', e)
-		}
-	}
+	}, [payoutInProcess])
 
 	return buildComponent()
 }

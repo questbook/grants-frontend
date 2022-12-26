@@ -22,7 +22,6 @@ import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Cont
 import { getFieldString } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { TonWallet } from 'src/v2/constants/Ton'
 import { getGnosisTansactionLink } from 'src/v2/utils/gnosisUtils'
 import { getProposalUrl } from 'src/v2/utils/phantomUtils'
 
@@ -102,8 +101,7 @@ function FundBuilderModal() {
 												direction='column'
 												border='1px solid #E7E4DD'>
 												<PayFromChoose
-													selectedMode={selectedMode}
-													setSelectedMode={setSelectedMode} />
+													selectedMode={selectedMode} />
 												<PayWithChoose selectedMode={selectedMode} />
 												<ToChoose
 													type='single'

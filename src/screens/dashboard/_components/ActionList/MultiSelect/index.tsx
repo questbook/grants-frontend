@@ -1,5 +1,7 @@
 import { useContext } from 'react'
 import { Button, Divider, Flex, Text } from '@chakra-ui/react'
+import { useSafeContext } from 'src/contexts/safeContext'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { FundBuilderContext, SendAnUpdateContext } from 'src/screens/dashboard/Context'
 
 function MultiSelect() {
@@ -46,7 +48,15 @@ function MultiSelect() {
 					variant='primaryMedium'
 					onClick={
 						() => {
-							setIsDrawerOpen(true)
+							if(safeObj) {
+								setIsDrawerOpen(true)
+							} else {
+								customToast({
+									title: 'No multi sig connected for batched payout',
+									status: 'error',
+									duration: 3000,
+								})
+							}
 						}
 					}>
 					<Text
@@ -62,6 +72,8 @@ function MultiSelect() {
 
 	const { setIsDrawerOpen } = useContext(FundBuilderContext)!
 	const { setIsModalOpen } = useContext(SendAnUpdateContext)!
+	const { safeObj } = useSafeContext()
+	const customToast = useCustomToast()
 
 	return buildComponent()
 }

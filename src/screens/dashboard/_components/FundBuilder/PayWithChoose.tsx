@@ -8,7 +8,7 @@ import { TokenInfo } from 'src/screens/dashboard/_utils/types'
 import { FundBuilderContext } from 'src/screens/dashboard/Context'
 
 type DropdownItem = TokenInfo & { index: number }
-function PayWithChoose({ selectedMode }) {
+function PayWithChoose({ selectedMode }: { selectedMode: any}) {
 	const buildComponent = () => {
 		return (
 			<Flex
@@ -34,58 +34,58 @@ function PayWithChoose({ selectedMode }) {
 		return (
 			<>
 				{
-selectedMode.value === 'TON Wallet' ? (
-	<>
-		<Text>
-			TON
-		</Text>
-	</>
-) : (
-	<>
-		<Dropdown
-				options={
-					(safeTokenList ?? []).map((token: TokenInfo, index: number) => {
-						const ret = {
-							index,
-							...token
-						}
-						return ret
-					})
-				}
-				placeholder='Select Token'
-				singleValue={singleValue}
-				makeOption={makeOption}
-				selected={{ ...safeTokenList?.[selectedTokenIndex]!, index: selectedTokenIndex }}
-				setSelected={
-					(value: DropdownItem | undefined) => {
-						logger.info({ value }, 'Clicked')
-						if(!value) {
-							return
-						}
+					selectedMode.value === 'TON Wallet' ? (
+						<>
+							<Text>
+								TON
+							</Text>
+						</>
+					) : (
+						<>
+							<Dropdown
+									options={
+										(safeTokenList ?? []).map((token: TokenInfo, index: number) => {
+											const ret = {
+												index,
+												...token
+											}
+											return ret
+										})
+									}
+									placeholder='Select Token'
+									singleValue={singleValue}
+									makeOption={makeOption}
+									selected={{ ...safeTokenList?.[selectedTokenIndex]!, index: selectedTokenIndex }}
+									setSelected={
+										(value: DropdownItem | undefined) => {
+											logger.info({ value }, 'Clicked')
+											if(!value) {
+												return
+											}
 
-						logger.info({ value }, 'Selected Token')
-						setSelectedTokenIndex(value.index)
-					}
-				} />
-		<Text
-				color='#53514F'
-				fontSize='14px'
-				mt='8px'>
-			Available:
-			{' '}
-			{parseFloat(tokenInfo?.tokenValueAmount?.toString()!).toFixed(2)}
-			{' '}
-			{tokenInfo?.tokenName}
-			{' '}
-			≈
-			{' '}
-			{parseFloat(tokenInfo?.usdValueAmount?.toString()!).toFixed(2)}
-			{' '}
-			USD
-		</Text>
-	</>
-)
-}
+											logger.info({ value }, 'Selected Token')
+											setSelectedTokenIndex(value.index)
+										}
+									} />
+							<Text
+									color='#53514F'
+									fontSize='14px'
+									mt='8px'>
+								Available:
+								{' '}
+								{parseFloat(tokenInfo?.tokenValueAmount?.toString()!).toFixed(2)}
+								{' '}
+								{tokenInfo?.tokenName}
+								{' '}
+								≈
+								{' '}
+								{parseFloat(tokenInfo?.usdValueAmount?.toString()!).toFixed(2)}
+								{' '}
+								USD
+							</Text>
+						</>
+					)
+				}
 			</>
 		)
 	}

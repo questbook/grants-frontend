@@ -1,12 +1,6 @@
-import { useState } from 'react'
-import { Button, Flex, Image, Text } from '@chakra-ui/react'
-import { SupportedPayouts } from '@questbook/supported-safes'
-import { PlaceholderProps, Select, SelectComponentsConfig } from 'chakra-react-select'
-import { useSafeContext } from 'src/contexts/safeContext'
-import Dropdown from 'src/screens/dashboard/_components/FundBuilder/Dropdown'
-// import { formatAddress } from 'src/utils/formattingUtils'
+import { Flex, Image, Text } from '@chakra-ui/react'
 
-function PayFromChoose({ selectedMode, setSelectedMode }) {
+function PayFromChoose({ selectedMode }: { selectedMode: any}) {
 
 
 	const buildComponent = () => {
@@ -24,13 +18,13 @@ function PayFromChoose({ selectedMode, setSelectedMode }) {
 				<Flex alignItems='center'>
 
 					<Image
-						src={selectedMode.logo}
+						src={selectedMode?.logo}
 						boxSize='16px' />
 					<Text
 						ml={2}
 						variant='v2_body'
 					>
-						{selectedMode.value}
+						{selectedMode?.value}
 					</Text>
 
 				</Flex>
