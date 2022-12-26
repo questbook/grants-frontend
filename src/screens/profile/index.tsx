@@ -3,7 +3,7 @@ import { Button, Code, Divider, Flex, Heading, Image, Modal, ModalBody, ModalClo
 import { logger } from 'ethers'
 import { t } from 'i18next'
 import { useRouter } from 'next/router'
-import { GetAllProposalsForAGrantProgramQuery, GetWorkspaceGrantsProgramDetailsQuery, useGetAllProposalsForAGrantProgramQuery, useGetWorkspaceGrantsProgramDetailsQuery } from 'src/generated/graphql'
+import { GetAllProposalsForAGrantProgramQuery, GetWorkspaceDetailsQuery, GetWorkspaceGrantsProgramDetailsQuery, useGetAllProposalsForAGrantProgramQuery, useGetWorkspaceDetailsQuery, useGetWorkspaceGrantsProgramDetailsQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
@@ -43,7 +43,7 @@ function Profile() {
 						direction='column'
 					>
 						<Image
-							src={getUrlForIPFSHash(data?.grants[0].workspace.coverImageIpfsHash!)}
+							src={getUrlForIPFSHash(workspaceData?.workspace?.coverImageIpfsHash!)}
 							fallbackSrc='/v2/images/cover-image.svg'
 							w='100%'
 							height='182px'
@@ -51,7 +51,7 @@ function Profile() {
 						/>
 						<Image
 							boxSize={32}
-							src={getUrlForIPFSHash(data?.grants[0].workspace.logoIpfsHash!)}
+							src={getUrlForIPFSHash(workspaceData?.workspace?.logoIpfsHash!)}
 							position='absolute'
 							top='94px'
 							left='20px'
@@ -66,16 +66,17 @@ function Profile() {
 							// top='134px'
 							p={4}
 						>
+
 							<EmbedStatsButton onClick={() => onOpen()} />
 							{
-								data?.grants[0].workspace.socials.map((social, i) => {
+								data?.grants.length !== 0 ?	data?.grants[0].workspace.socials.map((social, i) => {
 									return (
 										<SocialsButton
 											key={i}
 											name={social.name!}
 											value={social.value} />
 									)
-								})
+								}) : <></>
 							}
 						</Flex>
 						{/* Socials end */}
@@ -95,11 +96,11 @@ function Profile() {
 						<Text
 							variant='v2_heading_3'
 							fontWeight='500'>
-							{data?.grants[0].workspace.title!}
+							{workspaceData?.workspace?.title!}
 						</Text>
 						{/* start about */}
 						{
-							data?.grants[0].workspace.about && (
+							workspaceData?.workspace?.about && (
 								<Flex
 									direction='column'
 									gap={2}
@@ -200,11 +201,14 @@ function Profile() {
 							{/* summary cards */}
 							{
 								summaryCardData.map((item: Partial<SummaryCardProps>, index: number) => {
+									const totalGrantFundingDisbursed = workspaceData?.workspace?.totalGrantFundingDisbursedUSD.toString()!
+									const numberOfProposals = workspaceData?.workspace?.numberOfApplications.toString()!
+									const totalProposalsSelected = workspaceData?.workspace?.numberOfApplicationsSelected.toString()!
 									return (
 										<SummaryCard
 											imagePath={item.imagePath}
 											text={item.text!}
-											value={index === 0 ? `$${data?.grants[0].workspace.totalGrantFundingDisbursedUSD.toString()!}` : index === 1 ? data?.grants[0].workspace.numberOfApplications!.toString()! : data?.grants[0].workspace.numberOfApplicationsSelected!.toString()!}
+											value={index === 0 ? `$${totalGrantFundingDisbursed}` : index === 1 ? numberOfProposals : totalProposalsSelected}
 											key={index}
 										/>
 									)
@@ -372,6 +376,7 @@ function Profile() {
 	const { onOpen, isOpen, onClose } = useDisclosure()
 
 	const [data, setData] = useState<GetWorkspaceGrantsProgramDetailsQuery>()
+	const [workspaceData, setWorkspaceData] = useState<GetWorkspaceDetailsQuery>()
 	const [proposalData, setProposalData] = useState<GetAllProposalsForAGrantProgramQuery['grantApplications']>()
 	const [activeMenuButton, setActiveMenuButton] = useState(0)
 	const [codeActive, setCodeActive] = useState(false)
@@ -395,6 +400,20 @@ function Profile() {
 		chains: [chainId as unknown as SupportedChainId]
 	})
 
+	const { fetchMore: fetchMoreWorkspaceDetails } = useMultiChainQuery({
+		useQuery: useGetWorkspaceDetailsQuery,
+		options: {},
+		chains: [chainId as unknown as SupportedChainId]
+	})
+
+	const workspace = useCallback(async() => {
+		const response = await fetchMoreWorkspaceDetails({
+			workspaceID: workspaceId
+		}, true)
+		logger.info('response', response[0]?.workspace)
+		setWorkspaceData(response[0])
+	}, [workspaceId, chainId])
+
 	const grants = useCallback(async() => {
 		const response = await fetchMore({
 			workspaceId: workspaceId
@@ -413,6 +432,7 @@ function Profile() {
 
 	useEffect(() => {
 		if(workspaceId && chainId) {
+			workspace()
 			grants()
 			proposals()
 		}

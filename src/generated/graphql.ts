@@ -5349,7 +5349,7 @@ export type GetWorkspaceDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, bio: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, safe?: { __typename?: 'WorkspaceSafe', address: string, chainId: string } | null, partners: Array<{ __typename?: 'Partner', name: string, industry: string, website?: string | null, partnerImageHash?: string | null }>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, updatedAt: number, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number, enabled: boolean, addedBy?: { __typename?: 'WorkspaceMember', id: string, actorId: string } | null }> } | null };
+export type GetWorkspaceDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, bio: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, totalGrantFundingDisbursedUSD: number, numberOfApplications: number, numberOfApplicationsSelected: number, safe?: { __typename?: 'WorkspaceSafe', address: string, chainId: string } | null, partners: Array<{ __typename?: 'Partner', name: string, industry: string, website?: string | null, partnerImageHash?: string | null }>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, updatedAt: number, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number, enabled: boolean, addedBy?: { __typename?: 'WorkspaceMember', id: string, actorId: string } | null }> } | null };
 
 export type GetWorkspaceMemberExistsQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -8187,6 +8187,9 @@ export const GetWorkspaceDetailsDocument = gql`
     logoIpfsHash
     coverImageIpfsHash
     supportedNetworks
+    totalGrantFundingDisbursedUSD
+    numberOfApplications
+    numberOfApplicationsSelected
     safe {
       address
       chainId
