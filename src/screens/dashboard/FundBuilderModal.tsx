@@ -336,7 +336,7 @@ function FundBuilderModal() {
 				setSignerVerifiedState('transaction_initiated')
 			}
 
-			disburseRewardFromSafe(proposaladdress?.toString()!, true)
+			disburseRewardFromSafe(proposaladdress?.toString()!)
 				.then(() => {
 				// console.log('Sent transaction to contract - EVM', proposaladdress)
 				})
@@ -365,7 +365,6 @@ function FundBuilderModal() {
 
 	const { nonce } = useQuestbookAccount()
 	const workspaceRegistryContract = useQBContract('workspace', workspacechainId)
-	const grantContract = useQBContract('grant', workspacechainId)
 	const { webwallet } = useContext(WebwalletContext)!
 
 	const disburseRewardFromSafe = async(proposaladdress: string) => {

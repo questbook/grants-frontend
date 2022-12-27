@@ -100,9 +100,10 @@ function AddToSafe() {
 	useEffect(() => {
 		const fetchSafeData = async() => {
 			const supportedPayouts = new SupportedPayouts()
-			const res = await supportedPayouts.getSafeByAddress(safeAddress)
-			setLoadingSafeData(false)
-			setSafeData(res)
+			supportedPayouts.getSafeByAddress(safeAddress, (res) => {
+				setLoadingSafeData(false)
+				setSafeData(res)
+			})
 		}
 
 		setLoadingSafeData(true)
