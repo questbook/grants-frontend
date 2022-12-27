@@ -290,6 +290,7 @@ const FundBuilderProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const [amounts, setAmounts] = useState<number[]>([])
 	const [tos, setTos] = useState<string[]>([])
 	const [milestoneIndices, setMilestoneIndices] = useState<number[]>([])
+	const [applicationIds, setApplicationIds] = useState<string[]>([])
 
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 	const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
@@ -299,6 +300,7 @@ const FundBuilderProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		<FundBuilderContext.Provider
 			value={
 				{
+
 					tokenList,
 					setTokenList,
 					selectedTokenInfo,

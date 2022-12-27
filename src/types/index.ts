@@ -4,6 +4,7 @@ import {
 	ApplicationRegistryAbi,
 	ApplicationReviewRegistryAbi,
 	CommunicationAbi,
+	GrantAbi,
 	GrantFactoryAbi,
 	WorkspaceRegistryAbi,
 } from 'src/generated/contracts'
@@ -93,6 +94,7 @@ export type AddressMap = { [C in SupportedChainId]: string };
 
 export type QBContract =
   | 'workspace'
+  | 'grant'
   | 'grantFactory'
   | 'applications'
   | 'reviews'
@@ -101,6 +103,7 @@ export type QBContract =
 export type QBContractABIMap = {
   workspace: WorkspaceRegistryAbi
   grantFactory: GrantFactoryAbi
+  grant: GrantAbi
   applications: ApplicationRegistryAbi
   reviews: ApplicationReviewRegistryAbi
   communication: CommunicationAbi

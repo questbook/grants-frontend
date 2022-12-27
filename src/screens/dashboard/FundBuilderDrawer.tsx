@@ -14,7 +14,6 @@ import PayWithChoose from 'src/screens/dashboard/_components/FundBuilder/PayWith
 import ProposalDetails from 'src/screens/dashboard/_components/FundBuilder/ProposalDetails'
 import ToChoose from 'src/screens/dashboard/_components/FundBuilder/ToChoose'
 import TransactionInitiated from 'src/screens/dashboard/_components/FundBuilder/TransactionInitiated'
-import Verify from 'src/screens/dashboard/_components/FundBuilder/Verify'
 import VerifyDrawer from 'src/screens/dashboard/_components/FundBuilder/VerifyDrawer'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
@@ -276,90 +275,90 @@ function FundBuilderDrawer() {
 				setSafeProposalLink(getProposalUrl(safeObj.safeAddress, proposaladdress))
 			}
 
-			// disburseRewardFromSafe(proposaladdress?.toString()!)
-			// 	.then(() => {
-			// 	// console.log('Sent transaction to contract - EVM', proposaladdress)
-			// 	})
-			// 	.catch((err) => {
-			// 		console.log('sending transction error:', err)
-			// 	})
+			disburseRewardFromSafe(proposaladdress?.toString()!)
+				.then(() => {
+				// console.log('Sent transaction to contract - EVM', proposaladdress)
+				})
+				.catch((err) => {
+					console.log('sending transction error:', err)
+				})
 		}
 	}
 
-	// const { workspace } = useContext(ApiClientsContext)!
+	const { workspace } = useContext(ApiClientsContext)!
 
-	// const workspacechainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+	const workspacechainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
 
-	// const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
-	// 	chainId: workspacechainId ? workspacechainId.toString() : defaultChainId.toString(),
-	// })
-	// const [isBiconomyInitialisedDisburse, setIsBiconomyInitialisedDisburse] = useState(false)
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
+		chainId: workspacechainId ? workspacechainId.toString() : defaultChainId.toString(),
+	})
+	const [isBiconomyInitialisedDisburse, setIsBiconomyInitialisedDisburse] = useState(false)
 
-	// useEffect(() => {
+	useEffect(() => {
 
-	// 	if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && workspacechainId &&
-	// 		biconomy.networkId && biconomy.networkId?.toString() === workspacechainId.toString()) {
-	// 		setIsBiconomyInitialisedDisburse(true)
-	// 	}
-	// }, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialisedDisburse, workspacechainId])
+		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && workspacechainId &&
+			biconomy.networkId && biconomy.networkId?.toString() === workspacechainId.toString()) {
+			setIsBiconomyInitialisedDisburse(true)
+		}
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialisedDisburse, workspacechainId])
 
-	// const { nonce } = useQuestbookAccount()
-	// const workspaceRegistryContract = useQBContract('workspace', workspacechainId)
-	// const { webwallet } = useContext(WebwalletContext)!
+	const { nonce } = useQuestbookAccount()
+	const workspaceRegistryContract = useQBContract('workspace', workspacechainId)
+	const { webwallet } = useContext(WebwalletContext)!
 
-	// const disburseRewardFromSafe = async(proposaladdress: string) => {
-	// 	try {
-	// 		logger.info({}, 'HERE 1')
-	// 		if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
-	// 			return
-	// 		}
+	const disburseRewardFromSafe = async(proposaladdress: string) => {
+		try {
+			logger.info({}, 'HERE 1')
+			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
+				return
+			}
 
-	// 		logger.info({}, 'HERE 2')
+			logger.info({}, 'HERE 2')
 
-	// 		const methodArgs = [
-	// 			// initiateTransactionData.map((element: any) => (parseInt(element.applicationId, 16))),
-	// 			// initiateTransactionData.map((element: any) => (parseInt(element.selectedMilestone?.id?.split('.')[1]))),
-	// 			// rewardAssetAddress,
-	// 			// initiateTransactionData.map((element: any) => (element.selectedToken.tokenName.toLowerCase()))[0],
-	// 			// 'nonEvmAssetAddress-toBeChanged',
-	// 			// initiateTransactionData.map((element: any) => Math.floor(element.amount)),
-	// 			workspace?.id,
-	// 			proposaladdress
-	// 		]
+			const methodArgs = [
+				selectedProposalsData.map((proposal) => parseInt(proposal?.id, 16)),
+				selectedProposalsData.map((proposal, i) => parseInt(proposal.milestones[milestoneIndices[i]].id?.split('.')[1])),
+				'0x0000000000000000000000000000000000000001',
+				selectedTokenInfo?.tokenName.toLowerCase(),
+				'nonEvmAssetAddress-toBeChanged',
+				amounts,
+				workspace?.id,
+				proposaladdress
+			]
 
-	// 		logger.info({}, 'HERE 3')
+			logger.info({}, 'HERE 3')
 
-	// 		logger.info({ methodArgs }, 'methodArgs')
+			logger.info({ methodArgs }, 'methodArgs')
 
-	// 		const transactionHash = await sendGaslessTransaction(
-	// 			biconomy,
-	// 			workspaceRegistryContract,
-	// 			'disburseRewardFromSafe',
-	// 			methodArgs,
-	// 			workspaceRegistryContract.address,
-	// 			biconomyWalletClient,
-	// 			scwAddress,
-	// 			webwallet,
-	// 			`${workspacechainId}`,
-	// 			bicoDapps[workspacechainId.toString()].webHookId,
-	// 			nonce
-	// 		)
+			const transactionHash = await sendGaslessTransaction(
+				biconomy,
+				workspaceRegistryContract,
+				'disburseRewardFromSafe',
+				methodArgs,
+				workspaceRegistryContract.address,
+				biconomyWalletClient,
+				scwAddress,
+				webwallet,
+				`${workspacechainId}`,
+				bicoDapps[workspacechainId.toString()].webHookId,
+				nonce
+			)
 
-	// 		logger.info({}, 'HERE 4')
+			logger.info({}, 'HERE 4')
 
 
-	// 		if(!transactionHash) {
-	// 			throw new Error('No transaction hash found!')
-	// 		}
+			if(!transactionHash) {
+				throw new Error('No transaction hash found!')
+			}
 
-	// 		const { txFee } = await getTransactionDetails(transactionHash, workspacechainId.toString())
+			const { txFee } = await getTransactionDetails(transactionHash, workspacechainId.toString())
 
-	// 		await chargeGas(Number(workspace?.id), Number(txFee), workspacechainId)
+			await chargeGas(Number(workspace?.id), Number(txFee), workspacechainId)
 
-	// 	} catch(e) {
-	// 		console.log('disburse error', e)
-	// 	}
-	// }
+		} catch(e) {
+			console.log('disburse error', e)
+		}
+	}
 
 	useEffect(() => {
 		if(payoutInProcess) {
