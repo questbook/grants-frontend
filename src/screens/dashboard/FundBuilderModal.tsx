@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text, ToastId, useToast } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
-import { logger } from 'ethers'
+import { ethers, logger } from 'ethers'
 import { defaultChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
 import useQBContract from 'src/hooks/contracts/useQBContract'
@@ -80,16 +80,16 @@ function FundBuilderModal() {
 											placeholder='0' />
 									</Flex>
 									{
-										selectedMode?.value !== 'TON Wallet' && amounts?.[0] > 0 && tokenInfo?.fiatConversion ? (
+										selectedMode?.value !== 'TON Wallet' && amounts?.[0] > 0 && selectedTokenInfo?.fiatConversion ? (
 											<Text
 												color='#53514F'
 												fontSize='14px'
 												mt='8px'>
 												≈
 												{' '}
-												{(amounts?.[0] / parseFloat(tokenInfo?.fiatConversion!.toString())).toFixed(2)}
+												{(amounts?.[0] / parseFloat(selectedTokenInfo?.fiatConversion!.toString())).toFixed(2)}
 												{' '}
-												{tokenInfo?.tokenName}
+												{selectedTokenInfo?.tokenName}
 											</Text>
 										) : null
 									}
@@ -185,10 +185,9 @@ function FundBuilderModal() {
 		setMilestoneIndices,
 		tos,
 		setTos,
-		tokenInfo,
+		selectedTokenInfo,
 		signerVerifiedState,
 		setSignerVerifiedState,
-		setTokenInfo,
 	} = useContext(FundBuilderContext)!
 	const { phantomWallet } = usePhantomWallet()
 	const [safeProposalAddress, setSafeProposalAddress] = useState<string | undefined>(undefined)
@@ -224,6 +223,10 @@ function FundBuilderModal() {
 		}
 	}, [proposals, selectedProposals])
 
+	const milestones = useMemo(() => {
+		return proposal?.milestones || []
+	}, [proposal])
+
 	useEffect(() => {
 		if(!proposal) {
 			return
@@ -236,6 +239,14 @@ function FundBuilderModal() {
 	const isDisabled = useMemo(() => {
 		return !proposal || amounts?.[0] === undefined || !tos?.[0] || milestoneIndices?.[0] === undefined || amounts?.[0] <= 0
 	}, [amounts, tos, milestoneIndices])
+
+	useEffect(() => {
+		if(payoutInProcess) {
+			payoutsInProcessToastRef.current = customToast({ title: 'Payouts is in process', duration: null, status: 'info' })
+		} else if(!payoutInProcess && payoutsInProcessToastRef.current) {
+			toast.close(payoutsInProcessToastRef.current)
+		}
+	}, [payoutInProcess])
 
 	const onContinue = async() => {
 		if(selectedMode?.value === 'TON Wallet') {
@@ -261,6 +272,13 @@ function FundBuilderModal() {
 					})
 					setSafeProposalAddress(response?.transactionHash)
 					setIsModalOpen(false)
+					// disburseRewardFromSafe(response?.transactionHash, false)
+					// 	.then(() => {
+					// 		// console.log('Sent transaction to contract - EVM', proposaladdress)
+					// 	})
+					// 	.catch((err) => {
+					// 		console.log('sending transction error:', err)
+					// 	})
 				}
 
 			})
@@ -281,7 +299,7 @@ function FundBuilderModal() {
 				to: tos?.[0],
 				applicationId: proposal?.id,
 				selectedMilestone: milestoneIndices?.[0],
-				selectedToken: { tokenName: tokenInfo?.tokenName, info: tokenInfo?.info },
+				selectedToken: { tokenName: selectedTokenInfo?.tokenName, info: selectedTokenInfo?.info },
 				amount: amounts?.[0],
 			}]
 
@@ -317,16 +335,93 @@ function FundBuilderModal() {
 				setSafeProposalLink(getProposalUrl(safeObj.safeAddress, proposaladdress as string))
 				setSignerVerifiedState('transaction_initiated')
 			}
+
+			disburseRewardFromSafe(proposaladdress?.toString()!)
+				.then(() => {
+				// console.log('Sent transaction to contract - EVM', proposaladdress)
+				})
+				.catch((err) => {
+					console.log('sending transction error:', err)
+				})
 		}
 	}
 
+	const { workspace } = useContext(ApiClientsContext)!
+
+	const workspacechainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
+		chainId: workspacechainId ? workspacechainId.toString() : defaultChainId.toString(),
+	})
+	const [isBiconomyInitialisedDisburse, setIsBiconomyInitialisedDisburse] = useState(false)
+
 	useEffect(() => {
-		if(payoutInProcess) {
-			payoutsInProcessToastRef.current = customToast({ title: 'Payouts is in process', duration: null, status: 'info' })
-		} else if(!payoutInProcess && payoutsInProcessToastRef.current) {
-			toast.close(payoutsInProcessToastRef.current)
+
+		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && workspacechainId &&
+			biconomy.networkId && biconomy.networkId?.toString() === workspacechainId.toString()) {
+			setIsBiconomyInitialisedDisburse(true)
 		}
-	}, [payoutInProcess])
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialisedDisburse, workspacechainId])
+
+	const { nonce } = useQuestbookAccount()
+	const workspaceRegistryContract = useQBContract('workspace', workspacechainId)
+	const { webwallet } = useContext(WebwalletContext)!
+
+	const disburseRewardFromSafe = async(proposaladdress: string) => {
+		try {
+			logger.info({}, 'HERE 1')
+			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
+				return
+			}
+
+			logger.info({}, 'HERE 2')
+
+			const methodArgs = [
+				[parseInt(proposal?.id!, 16)],
+				[parseInt(milestones[milestoneIndices[0]].id?.split('.')[1])],
+				'0x0000000000000000000000000000000000000001',
+				selectedTokenInfo?.tokenName.toLowerCase(),
+				'nonEvmAssetAddress-toBeChanged',
+				[amounts?.[0]],
+				workspace?.id,
+				proposaladdress
+			]
+
+
+			logger.info({}, 'HERE 3')
+
+			logger.info({ methodArgs }, 'methodArgs')
+
+			const transactionHash = await sendGaslessTransaction(
+				biconomy,
+				workspaceRegistryContract,
+				'disburseRewardFromSafe',
+				methodArgs,
+				workspaceRegistryContract.address,
+				biconomyWalletClient,
+				scwAddress,
+				webwallet,
+				`${workspacechainId}`,
+				bicoDapps[workspacechainId.toString()].webHookId,
+				nonce
+			)
+
+			logger.info({}, 'HERE 4')
+
+
+			if(!transactionHash) {
+				throw new Error('No transaction hash found!')
+			}
+
+			const { txFee } = await getTransactionDetails(transactionHash, workspacechainId.toString())
+
+			await chargeGas(Number(workspace?.id), Number(txFee), workspacechainId)
+
+		} catch(e) {
+			console.log('disburse error', e)
+		}
+	}
+
 
 	return buildComponent()
 }

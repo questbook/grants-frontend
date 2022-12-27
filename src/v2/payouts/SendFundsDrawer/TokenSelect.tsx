@@ -72,7 +72,6 @@ const TokenSelect = ({
   onChange: (value: any) => void
   placeholder: string
 }) => {
-	console.log('value', value)
 	let selected = undefined
 	if(safeTokenList?.length > 0) {
 		const foundToken = safeTokenList?.find((token) => token?.tokenName === value?.tokenName)

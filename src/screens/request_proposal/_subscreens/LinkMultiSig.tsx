@@ -321,9 +321,10 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 		logger.info('Multi-sig address entered', multiSigAddress)
 		const fetchSafeData = async() => {
 			const supportedPayouts = new SupportedPayouts()
-			const res = await supportedPayouts.getSafeByAddress(multiSigAddress)
-			setLoadingSafeData(false)
-			setSafeNetworks(res)
+			supportedPayouts.getSafeByAddress(multiSigAddress, (safe) => {
+				setLoadingSafeData(false)
+				setSafeNetworks(safe)
+			})
 		}
 
 		setLoadingSafeData(true)

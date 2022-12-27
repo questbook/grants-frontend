@@ -54,6 +54,10 @@ query proposalDetails($proposalId: ID!) {
         title
         supportedNetworks
         logoIpfsHash
+        safe {
+                address
+                chainId
+            }
       }
       fields {
         id
