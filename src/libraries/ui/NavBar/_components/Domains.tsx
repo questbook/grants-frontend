@@ -1,6 +1,6 @@
 import { useContext, useEffect, useMemo, useRef } from 'react'
 import { Flex, FlexProps, Image, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Text } from '@chakra-ui/react'
-import { SupportedSafes } from '@questbook/supported-safes'
+import { SupportedPayouts } from '@questbook/supported-safes'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import config from 'src/constants/config.json'
 import { SafeContext } from 'src/contexts/safeContext'
@@ -170,7 +170,7 @@ function Domains() {
 
 	useEffect(() => {
 		if(workspace?.id!) {
-			const currentSafe = new SupportedSafes().getSafe(parseInt(workspace?.safe?.chainId!), workspace.safe?.address!)
+			const currentSafe = new SupportedPayouts().getSafe(parseInt(workspace?.safe?.chainId!), workspace.safe?.address!)
 			setSafeObj(currentSafe)
 		}
 	}, [workspace?.id!])

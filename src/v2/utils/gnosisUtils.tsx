@@ -37,7 +37,6 @@ export function getGnosisTansactionLink(safeAddress: string, chainId: string) {
 
 export async function getTokenBalance(safeNetworkId: string, safeAddress: string) {
 	const gnosisUrl = `${SAFES_ENDPOINTS[safeNetworkId as ValidChainID]}v1/safes/${safeAddress}/balances/usd`
-	console.log('fetching tokens from ', gnosisUrl)
 	const response = await axios.get(gnosisUrl)
 
 	return response

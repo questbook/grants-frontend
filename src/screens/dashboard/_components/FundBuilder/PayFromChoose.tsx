@@ -1,8 +1,8 @@
 import { Flex, Image, Text } from '@chakra-ui/react'
-import { useSafeContext } from 'src/contexts/safeContext'
-// import { formatAddress } from 'src/utils/formattingUtils'
 
-function PayFromChoose() {
+function PayFromChoose({ selectedMode }: { selectedMode: any}) {
+
+
 	const buildComponent = () => {
 		return (
 			<Flex
@@ -16,18 +16,21 @@ function PayFromChoose() {
 					Pay From
 				</Text>
 				<Flex alignItems='center'>
+
 					<Image
-						src={safeObj.safeLogo}
-						mr='8px' />
-					<Text>
-						{safeObj?.safeAddress ?? ''}
+						src={selectedMode?.logo}
+						boxSize='16px' />
+					<Text
+						ml={2}
+						variant='v2_body'
+					>
+						{selectedMode?.value}
 					</Text>
+
 				</Flex>
 			</Flex>
 		)
 	}
-
-	const { safeObj } = useSafeContext()
 
 	return buildComponent()
 }

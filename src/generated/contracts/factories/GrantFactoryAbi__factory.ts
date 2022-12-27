@@ -498,7 +498,7 @@ const _abi = [
     stateMutability: "payable",
     type: "function",
   },
-] as const;
+];
 
 export class GrantFactoryAbi__factory {
   static readonly abi = _abi;
