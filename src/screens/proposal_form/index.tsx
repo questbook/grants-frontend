@@ -15,10 +15,11 @@ import SectionRichTextEditor from 'src/screens/proposal_form/_components/Section
 import SectionSelect from 'src/screens/proposal_form/_components/SectionSelect'
 import SelectArray from 'src/screens/proposal_form/_components/SelectArray'
 import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposal'
-import { containsField, findField } from 'src/screens/proposal_form/_utils'
+import { containsField, findField, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
 import { DEFAULT_MILESTONE, MILESTONE_INPUT_STYLE } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
 import getAvatar from 'src/utils/avatarUtils'
+import { chainNames } from 'src/utils/chainNames'
 import { getExplorerUrlForTxHash, getRewardAmountMilestones } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
@@ -184,8 +185,13 @@ function ProposalForm() {
 									onChange={
 										(e) => {
 											onChange(e, 'applicantEmail')
+											validateEmail(e.target.value, (isValid) => {
+												setEmailError(!isValid)
+											})
 										}
-									} />
+									}
+									isInvalid={emailError}
+									errorText='Invalid email address' />
 							)
 						}
 						{
@@ -197,8 +203,13 @@ function ProposalForm() {
 									onChange={
 										(e) => {
 											onChange(e, 'applicantAddress')
+											validateWalletAddress(e.target.value, safeObj, (isValid) => {
+												setWalletAddressError(!isValid)
+											})
 										}
-									} />
+									}
+									isInvalid={walletAddressError}
+									errorText={`Invalid address on ${chainNames?.get(safeObj?.chainId.toString()) !== undefined ? chainNames.get(safeObj?.chainId.toString())!.toString() : 'EVM based chain'}`} />
 							)
 						}
 
@@ -407,7 +418,9 @@ function ProposalForm() {
 	}
 
 	const { setRole } = useContext(ApiClientsContext)!
-	const { type, grant, chainId, form, setForm, error } = useContext(ProposalFormContext)!
+	const { type, grant, proposal, chainId, form, setForm, error } = useContext(ProposalFormContext)!
+	// console.log('grant', grant)
+	// console.log('proposal', proposal)
 	const { safeObj } = useSafeContext()
 	const isEvm = safeObj?.getIsEvm()
 
@@ -416,6 +429,9 @@ function ProposalForm() {
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
 	const [transactionHash, setTransactionHash] = useState<string>('')
 	const { submitProposal, isBiconomyInitialised } = useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash })
+
+	const [emailError, setEmailError] = useState<boolean>(false)
+	const [walletAddressError, setWalletAddressError] = useState<boolean>(false)
 
 	const chainInfo = useMemo(() => {
 		if(!grant || !chainId) {
@@ -462,6 +478,10 @@ function ProposalForm() {
 				logger.info({ index: milestone.index }, 'Milestone is empty')
 				return true
 			}
+		}
+
+		if(emailError || walletAddressError) {
+			return true
 		}
 
 		return false

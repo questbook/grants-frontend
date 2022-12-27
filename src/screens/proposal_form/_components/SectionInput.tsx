@@ -5,9 +5,10 @@ interface Props extends InputProps {
     label: string
     helperText?: string
     flexProps?: FlexProps
+	errorText?: string
 }
 
-function SectionInput({ label, helperText, flexProps, ...props }: Props) {
+function SectionInput({ label, helperText, flexProps, errorText, ...props }: Props) {
 	const buildComponent = () => {
 		return (
 			<Flex
@@ -71,6 +72,17 @@ function SectionInput({ label, helperText, flexProps, ...props }: Props) {
 							variant='v2_metadata'
 							color='gray.5'>
 							{helperText}
+						</Text>
+					)
+				}
+				{
+					props?.isInvalid && (
+						<Text
+							mt={1}
+							ml='30%'
+							variant='v2_metadata'
+							color='gray.5'>
+							{errorText}
 						</Text>
 					)
 				}
