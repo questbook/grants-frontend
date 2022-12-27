@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { BsArrowLeft } from 'react-icons/bs'
 import { Button, Flex, Image, Text } from '@chakra-ui/react'
-import { SupportedSafes } from '@questbook/supported-safes'
+import { SupportedPayouts } from '@questbook/supported-safes'
 import { logger } from 'ethers'
 import { NetworkType } from 'src/constants/Networks'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
@@ -320,10 +320,11 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 	useMemo(() => {
 		logger.info('Multi-sig address entered', multiSigAddress)
 		const fetchSafeData = async() => {
-			const supportedSafes = new SupportedSafes()
-			const res = await supportedSafes.getSafeByAddress(multiSigAddress)
-			setLoadingSafeData(false)
-			setSafeNetworks(res)
+			const supportedPayouts = new SupportedPayouts()
+			supportedPayouts.getSafeByAddress(multiSigAddress, (safe) => {
+				setLoadingSafeData(false)
+				setSafeNetworks(safe)
+			})
 		}
 
 		setLoadingSafeData(true)

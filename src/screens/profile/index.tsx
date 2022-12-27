@@ -1,8 +1,9 @@
-import { ReactElement, useCallback, useEffect, useState } from 'react'
+import { ReactElement, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Code, Divider, Flex, Heading, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useClipboard, useDisclosure } from '@chakra-ui/react'
 import { logger } from 'ethers'
 import { t } from 'i18next'
 import { useRouter } from 'next/router'
+import { defaultChainId } from 'src/constants/chains'
 import { GetAllProposalsForAGrantProgramQuery, GetWorkspaceDetailsQuery, GetWorkspaceGrantsProgramDetailsQuery, useGetAllProposalsForAGrantProgramQuery, useGetWorkspaceDetailsQuery, useGetWorkspaceGrantsProgramDetailsQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
@@ -381,9 +382,17 @@ function Profile() {
 	const [activeMenuButton, setActiveMenuButton] = useState(0)
 	const [codeActive, setCodeActive] = useState(false)
 
-	const { daoId, chainId } = router.query
+	const { daoId, chainId: _chainId } = router.query
+
 	const workspaceId = daoId as string
-	logger.info('workspaceId', workspaceId, chainId)
+
+	const chainId = useMemo(() => {
+		try {
+			return typeof _chainId === 'string' ? parseInt(_chainId) : -1
+		} catch(e) {
+			return -1
+		}
+	}, [_chainId])
 
 	const value = `<embed src="https://beta.questbook.app/embed/?daoId=${workspaceId}&chainId=${chainId}" type="text/html" width="700" height="700" />`
 	const { hasCopied, onCopy } = useClipboard(value)
@@ -391,19 +400,19 @@ function Profile() {
 	const { fetchMore } = useMultiChainQuery({
 		useQuery: useGetWorkspaceGrantsProgramDetailsQuery,
 		options: {},
-		chains: [chainId as unknown as SupportedChainId]
+		chains: [chainId === -1 ? defaultChainId : chainId]
 	})
 
 	const { fetchMore: fetchMoreProposals } = useMultiChainQuery({
 		useQuery: useGetAllProposalsForAGrantProgramQuery,
 		options: {},
-		chains: [chainId as unknown as SupportedChainId]
+		chains: [chainId === -1 ? defaultChainId : chainId]
 	})
 
 	const { fetchMore: fetchMoreWorkspaceDetails } = useMultiChainQuery({
 		useQuery: useGetWorkspaceDetailsQuery,
 		options: {},
-		chains: [chainId as unknown as SupportedChainId]
+		chains: [chainId === -1 ? defaultChainId : chainId]
 	})
 
 	const workspace = useCallback(async() => {

@@ -2,6 +2,7 @@
 import { useEffect, useMemo } from 'react'
 import { Flex, Text, VStack } from '@chakra-ui/react'
 import { useSafeContext } from 'src/contexts/safeContext'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
@@ -114,6 +115,7 @@ const VerifyDrawer = ({ setSignerVerifiedState }: Props) => {
 	const { connect, connectors } = useConnect()
 	const { safeObj } = useSafeContext()
 	const { phantomWallet, phantomWalletConnected } = usePhantomWallet()
+	const toast = useCustomToast()
 
 	const { isConnected, address } = useAccount()
 
@@ -126,8 +128,18 @@ const VerifyDrawer = ({ setSignerVerifiedState }: Props) => {
 		const isVerified = await safeObj?.isOwner(address)
 		if(isVerified) {
 			setSignerVerifiedState('verified')
+			toast({
+				title: `Verified owner of multisig ${safeObj.safeAddress}.`,
+				status: 'success',
+				duration: 3000,
+			})
 		} else {
 			setSignerVerifiedState('failed')
+			toast({
+				title: 'This wallet is not a multisig owner. Try with another address.',
+				status: 'error',
+				duration: 3000,
+			})
 		}
 	}
 

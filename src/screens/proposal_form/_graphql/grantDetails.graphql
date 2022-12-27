@@ -35,6 +35,10 @@ query grantDetails($grantId: ID!) {
       title
       supportedNetworks
       logoIpfsHash
+      safe {
+                address
+                chainId
+            }
     }
     fields {
       id

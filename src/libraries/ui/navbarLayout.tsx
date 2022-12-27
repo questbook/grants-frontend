@@ -12,6 +12,7 @@ type NavbarConfig = {
 	showAddMembers?: boolean
 	showDomains?: boolean
 	showStats?: boolean
+	showOpenDashboard?: boolean
 }
 
 type Props = {

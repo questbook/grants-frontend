@@ -1,8 +1,10 @@
 import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { SupportedPayouts } from '@questbook/supported-safes'
 import { EditorState } from 'draft-js'
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
 import { ALL_SUPPORTED_CHAIN_IDS, defaultChainId, USD_ASSET } from 'src/constants/chains'
+import { useSafeContext } from 'src/contexts/safeContext'
 import { useGrantDetailsQuery, useProposalDetailsQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
@@ -34,6 +36,7 @@ const ProposalFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	)
 
 	const { scwAddress } = useContext(WebwalletContext)!
+	const { setSafeObj } = useSafeContext()
 	const [type, setType] = useState<FormType>('submit')
 	const [grant, setGrant] = useState<Grant>()
 	const [proposal, setProposal] = useState<Proposal>()
@@ -118,6 +121,8 @@ const ProposalFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		}
 		setForm(initForm)
 		setGrant(result[0].grant)
+		const currentSafe = new SupportedPayouts().getSafe(parseInt(result[0].grant?.workspace?.safe?.chainId!), result[0].grant?.workspace?.safe?.address!)
+		setSafeObj(currentSafe)
 		return 'fetched-grant-details'
 	}, [grantId, chainId])
 
@@ -154,6 +159,8 @@ const ProposalFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		setForm(initForm)
 		setProposal(result[0].grantApplication)
 		setGrant(result[0].grantApplication.grant)
+		const currentSafe = new SupportedPayouts().getSafe(parseInt(result[0].grantApplication.grant?.workspace?.safe?.chainId!), result[0].grantApplication.grant?.workspace?.safe?.address!)
+		setSafeObj(currentSafe)
 		return 'fetched-proposal-details'
 	}, [proposalId, chainId])
 

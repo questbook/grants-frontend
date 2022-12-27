@@ -4,6 +4,7 @@ import {
 	ApplicationRegistryAbi,
 	ApplicationReviewRegistryAbi,
 	CommunicationAbi,
+	GrantAbi,
 	GrantFactoryAbi,
 	WorkspaceRegistryAbi,
 } from 'src/generated/contracts'
