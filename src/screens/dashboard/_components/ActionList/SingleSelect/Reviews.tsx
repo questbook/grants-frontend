@@ -1,11 +1,12 @@
 import { RefObject, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { Box, Button, Checkbox, Flex, Image, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text } from '@chakra-ui/react'
+import { Box, Button, Checkbox, Divider, Flex, Image, InputGroup, InputRightElement, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
 import { ApiClientsContext } from 'src/pages/_app'
 import DashboardInput from 'src/screens/dashboard/_components/DashboardInput'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { IReviewFeedback } from 'src/types'
+import { IReviewFeedback, ReviewType } from 'src/types'
+import { RubricItem } from 'src/types/gen'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAddress } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
@@ -169,7 +170,7 @@ function Reviews() {
 												(e) => {
 													logger.info({ checked: e.target.checked }, 'checkbox changed')
 													if(e.target.checked) {
-														const newMap: {[key: string]: boolean} = {}
+														const newMap: { [key: string]: boolean } = {}
 														workspace?.members?.forEach(m => {
 															newMap[m.id] = true
 														})
@@ -242,7 +243,7 @@ function Reviews() {
 									<Flex mt={6}>
 										<Button
 											variant='primaryMedium'
-											onClick={() => {}}>
+											onClick={() => { }}>
 											<Text
 												variant='v2_body'
 												color='white'
@@ -296,11 +297,58 @@ function Reviews() {
 		)
 	}
 
+	const reviewTypeCheckbox = (type: ReviewType, label: string) => {
+		return (
+			<Checkbox
+				isChecked={reviewType === type}
+				onChange={
+					(e) => {
+						if(e.target.checked) {
+							setReviewType(type)
+						}
+					}
+				}
+				mt={3}>
+				<Text
+					variant='v2_body'
+					fontWeight='500'>
+					{label}
+				</Text>
+			</Checkbox>
+		)
+	}
+
+	const rubricItem = (item: RubricItem, index: number) => {
+		return (
+			<Flex
+				key={index}
+				py={3}
+				borderBottom='1px solid #E7E4DD'>
+				<Text variant='v2_body'>
+					{item.title}
+				</Text>
+				<Image
+					ml='auto'
+					src='/v2/icons/delete.svg'
+					boxSize='16px'
+					cursor='pointer'
+					onClick={
+						() => {
+							if(rubrics.length > 1) {
+								const copy = [...rubrics]
+								setRubrics(copy.filter((r, i) => i !== index))
+							}
+						}
+					} />
+			</Flex>
+		)
+	}
+
 	const setReviewTypePopup = (popoverRef: RefObject<HTMLButtonElement>, type: 'setup' | 'edit') => {
 		return (
 			<Popover
 				isLazy
-				placement='left'
+				placement='top-start'
 				initialFocusRef={popoverRef}>
 				{
 					({ onClose }) => (
@@ -311,7 +359,123 @@ function Reviews() {
 							<PopoverContent>
 								<PopoverArrow />
 								<PopoverBody
-									maxH='40vh' />
+									maxH='80vh'
+									overflowY='auto'
+									px={4}
+									py={3} >
+									<Text
+										variant='v2_body'
+										fontWeight='500'>
+										Review By
+									</Text>
+									<Divider mt={3} />
+
+									{reviewTypeCheckbox(ReviewType.Voting, 'Voting')}
+
+									<Divider mt={3} />
+
+									{reviewTypeCheckbox(ReviewType.Rubrics, 'Rubrics')}
+
+									<Divider mt={3} />
+
+									{
+										reviewType === ReviewType.Rubrics && (
+											<Text
+												mt={6}
+												variant='v2_body'
+												fontWeight='500'>
+												Select Members
+											</Text>
+										)
+									}
+
+									{reviewType === ReviewType.Rubrics && rubrics?.map(rubricItem)}
+
+									{
+										anotherRubricTitle !== undefined && (
+											<InputGroup>
+												<DashboardInput
+													mt={3}
+													variant='unstyled'
+													border='none'
+													borderBottom='1px solid #E7E4DD'
+													borderRadius={0}
+													value={anotherRubricTitle}
+													onChange={
+														(e) => {
+															setAnotherRubricTitle(e.target.value)
+														}
+													}
+
+												/>
+												<InputRightElement>
+													<Image
+														src='/v2/icons/delete.svg'
+														cursor='pointer'
+														onClick={
+															() => {
+																setAnotherRubricTitle(undefined)
+															}
+														}
+														boxSize='16px' />
+													<Box
+														mx={2} />
+													<Image
+														src='/v2/icons/check double.svg'
+														cursor='pointer'
+														onClick={
+															() => {
+																const copy = [...rubrics, { title: anotherRubricTitle, description: '', maximumPoints: 5 }]
+																setRubrics(copy)
+																setAnotherRubricTitle(undefined)
+															}
+														}
+														boxSize='16px' />
+												</InputRightElement>
+											</InputGroup>
+
+										)
+									}
+
+									{
+										anotherRubricTitle === undefined && (
+											<Button
+												mt={3}
+												variant='link'
+												onClick={() => setAnotherRubricTitle('')}>
+												<Text
+													variant='v2_body'
+													fontWeight='500'>
+													Add Another
+												</Text>
+											</Button>
+										)
+									}
+
+									<Flex mt={4}>
+										<Button
+											variant='primaryMedium'
+											onClick={() => { }}>
+											<Text
+												variant='v2_body'
+												color='white'
+												fontWeight='500'>
+												Save
+											</Text>
+										</Button>
+										<Button
+											ml={2}
+											variant='primaryMedium'
+											bg='white'
+											border='1px solid #E7E4DD'
+											borderRadius='2px'
+											onClick={onClose}>
+											<Text variant='v2_body'>
+												Cancel
+											</Text>
+										</Button>
+									</Flex>
+								</PopoverBody>
 							</PopoverContent>
 						</>
 					)
@@ -483,6 +647,7 @@ function Reviews() {
 	const [reviewersExpanded, setReviewersExpanded] = useState<boolean[]>([])
 
 	const assignReviewerPopoverRef = useRef<HTMLButtonElement>(null)
+
 	const [numberOfReviewersPerApplication, setNumberOfReviewersPerApplication] = useState<number>()
 	useEffect(() => {
 		if(selectedGrant?.numberOfReviewersPerApplication !== null) {
@@ -491,9 +656,19 @@ function Reviews() {
 	}, [selectedGrant])
 
 	const [searchMemberName, setSearchMemberName] = useState<string>('')
-	const [members, setMembers] = useState<{[id: string]: boolean}>({})
+	const [members, setMembers] = useState<{ [id: string]: boolean }>({})
 
 	const setReviewTypePopoverRef = useRef<HTMLButtonElement>(null)
+
+	const [reviewType, setReviewType] = useState<ReviewType>(ReviewType.Rubrics)
+	const [rubrics, setRubrics] = useState<RubricItem[]>([])
+	const [anotherRubricTitle, setAnotherRubricTitle] = useState<string>()
+
+	useEffect(() => {
+		if(selectedGrant?.rubric?.items) {
+			setRubrics(selectedGrant?.rubric?.items)
+		}
+	}, [selectedGrant?.rubric?.items])
 
 	useEffect(() => {
 		if(proposals?.length === 0) {
