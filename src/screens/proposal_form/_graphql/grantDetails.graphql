@@ -47,5 +47,6 @@ query grantDetails($grantId: ID!) {
       possibleValues
       isPii
     }
+    milestones
   }
 }
