@@ -89,6 +89,16 @@ export default {
 				lineHeight: '48px',
 				color: 'black.1'
 			},
+			textButton: {
+				fontSize: '14px',
+				lineHeight: '20px',
+				color: 'black.1',
+				fontWeight: '500',
+				cursor: 'pointer',
+				_hover: {
+					textDecoration: 'underline'
+				}
+			}
 		},
 	},
 }

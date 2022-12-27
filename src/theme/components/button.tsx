@@ -141,6 +141,7 @@ export default {
 				bg: 'gray.3',
 				color: 'black.1',
 				lineHeight: '1.25rem',
+				borderRadius: '2px',
 				'&:hover': {
 					bg: 'gray.2',
 				},
@@ -162,8 +163,8 @@ export default {
 				},
 			},
 			linkV2: {
-				bg: 'white',
-				color: 'black.1',
+				bg: 'none',
+				color: 'black.3',
 				h: 8,
 				px: 3,
 				_hover: {
@@ -180,7 +181,7 @@ export default {
 			},
 			link: {
 				bg: 'white',
-				color: 'gray.5',
+				color: 'black.3',
 				fontWeight: '500',
 				fontSize: '16px',
 				lineHeight: '24px',

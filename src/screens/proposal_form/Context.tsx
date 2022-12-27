@@ -116,6 +116,7 @@ const ProposalFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			members: containsField(result[0].grant, 'teamMembers') ? [''] : [],
 			details: EditorState.createEmpty()
 		}
+		logger.info('grants', result[0])
 		setForm(initForm)
 		setGrant(result[0].grant)
 		return 'fetched-grant-details'
