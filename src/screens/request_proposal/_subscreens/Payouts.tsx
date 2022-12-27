@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { BsArrowLeft } from 'react-icons/bs'
 import { Button, Flex, Text } from '@chakra-ui/react'
@@ -200,6 +200,20 @@ function Payouts(
 	const [milestoneInputValues, setMilestoneInputValues] = useState<{ [key: number]: string }>({})
 	const [milestoneCounter, setMilestoneCounter] = useState(0)
 
+	const formatMilestones = () => {
+		const keys = Object.keys(milestoneInputValues)
+		const milestones = []
+		for(let i = 0; i < keys.length; i++) {
+			milestones.push(milestoneInputValues[i])
+		}
+
+		setMilestones(milestones)
+	}
+
+	useEffect(() => {
+		formatMilestones()
+	}, [milestoneInputValues])
+
 	const payoutTypeOptions = [{ value: 'in_one_go', label: 'in one go' }, { value: 'milestones', label: 'based on milestone' }]
 
 	const handleOnChangePayoutTypeOption = (item: any) => {
@@ -224,15 +238,7 @@ function Payouts(
 
 	const handleOnClickContinue = () => {
 		setStep(4)
-		const keys = Object.keys(milestoneInputValues)
-		const milestones = []
-		for(let i = 0; i < keys.length; i++) {
-			milestones.push(milestoneInputValues[i])
-		}
-
-		setMilestones(milestones)
 	}
-
 
 	return buildComponent()
 

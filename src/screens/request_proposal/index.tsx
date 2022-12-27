@@ -493,7 +493,7 @@ function RequestProposal() {
 				}),
 			})
 		}
-	}, [biconomyWalletClient, domainName, accountDataWebwallet, allApplicantDetails, link, doc, rubrics, amount, payoutMode, reviewMechanism, startDate, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, selectedSafeNetwork])
+	}, [biconomyWalletClient, domainName, accountDataWebwallet, allApplicantDetails, link, doc, rubrics, amount, payoutMode, reviewMechanism, startDate, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, selectedSafeNetwork, milestones])
 
 	const createRFP = useCallback(async() => {
 		try {
@@ -539,7 +539,7 @@ function RequestProposal() {
 				},
 				payoutType: payout!,
 				reviewType: review!,
-				milestones: milestones!,
+				milestones,
 				creatorId: accountDataWebwallet!.address!,
 				workspaceId: Number(workspace?.id).toString(),
 				fields: allApplicantDetails,
@@ -625,7 +625,7 @@ function RequestProposal() {
 				}),
 			})
 		}
-	}, [biconomyWalletClient, workspace, proposalName, accountDataWebwallet, allApplicantDetails, link, doc, rubrics, amount, payoutMode, reviewMechanism, startDate, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, selectedSafeNetwork])
+	}, [biconomyWalletClient, workspace, proposalName, accountDataWebwallet, allApplicantDetails, link, doc, rubrics, amount, payoutMode, reviewMechanism, startDate, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, selectedSafeNetwork, milestones])
 
 	return buildComponent()
 }

@@ -115,7 +115,7 @@ const ProposalFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 					value: id === 'isMultipleMilestones' ? 'true' : id === 'teamMembers' ? '1' : ''
 				}
 			}),
-			milestones: [DEFAULT_MILESTONE],
+			milestones: result[0].grant.milestones?.length ? result[0].grant.milestones?.map((m, index) => ({ title: m, index, amount: 0 })) : [DEFAULT_MILESTONE],
 			members: containsField(result[0].grant, 'teamMembers') ? [''] : [],
 			details: EditorState.createEmpty()
 		}

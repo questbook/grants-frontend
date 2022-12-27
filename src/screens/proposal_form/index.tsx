@@ -305,6 +305,7 @@ function ProposalForm() {
 										{
 											...MILESTONE_INPUT_STYLE[0],
 											value: milestone?.title,
+											isDisabled: index < (grant?.milestones?.length || 0),
 											onChange: (e) => {
 												const copy = { ...form }
 												copy.milestones[index] = { ...copy.milestones[index], title: e.target.value }
