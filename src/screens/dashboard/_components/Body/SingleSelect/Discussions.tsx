@@ -58,51 +58,8 @@ function Discussions() {
 										<Flex
 											key={index}
 											mt={3}>
-											{
-												reply1 && (
-													<Button
-														key={index}
-														// w='100%'
-														justifyContent='start'
-														py={1}
-														px={3}
-														bg='gray.2'
-														borderRadius='2px'
-														leftIcon={
-															<Image
-																boxSize='24px'
-																src={reply1.icon} />
-														}
-													>
-														<Text fontWeight='400'>
-															{reply1.title}
-														</Text>
-													</Button>
-												)
-											}
-											{
-												reply2 && (
-													<Button
-														key={index + 1}
-														ml={3}
-														// w='100%'
-														justifyContent='start'
-														py={1}
-														px={3}
-														bg='gray.2'
-														borderRadius='2px'
-														leftIcon={
-															<Image
-																boxSize='24px'
-																src={reply2.icon} />
-														}
-													>
-														<Text fontWeight='400'>
-															{reply2.title}
-														</Text>
-													</Button>
-												)
-											}
+											{reply1 && tagButton(reply1.icon, reply1.title, index * 2)}
+											{reply2 && tagButton(reply2.icon, reply2.title, index * 2 + 1)}
 										</Flex>
 									)
 								})
@@ -168,7 +125,7 @@ function Discussions() {
 								isDisabled={isDisabled}
 								onClick={
 									async() => {
-										const ret = await addComment(text)
+										const ret = await addComment(text, tags)
 										if(ret) {
 											setText(EditorState.createEmpty())
 										}
@@ -188,6 +145,45 @@ function Discussions() {
 
 				{comments.filter((comment) => comment.sender && (comment.workspace.members.some((member) => member.actorId.toLowerCase() === comment.sender?.toLowerCase()) || comment.sender?.toLowerCase() === proposal?.applicantId.toLowerCase())).map(renderComment)}
 			</Flex>
+		)
+	}
+
+	const tagButton = (icon: string, title: string, index: number) => {
+		return (
+			<Button
+				key={index}
+				ml={3}
+				// w='100%'
+				justifyContent='start'
+				py={1}
+				px={3}
+				borderRadius='2px'
+				leftIcon={
+					<Image
+						boxSize='24px'
+						src={icon} />
+				}
+				bg={index in selectedTags ? 'accent.azure' : 'gray.2'}
+				onClick={
+					() => {
+						const tags = { ...selectedTags }
+						logger.info('tags: ', tags)
+						if(tags[index]) {
+							delete tags[index]
+						} else {
+							tags[index] = true
+						}
+
+						setSelectedTags(tags)
+					}
+				}
+			>
+				<Text
+					fontWeight='400'
+					color={index in selectedTags ? 'white' : 'black.1'}>
+					{title}
+				</Text>
+			</Button>
 		)
 	}
 
@@ -242,6 +238,12 @@ function Discussions() {
 
 	const [step, setStep] = useState<number>()
 	const [transactionHash, setTransactionHash] = useState('')
+
+	const [ selectedTags, setSelectedTags ] = useState<{[key: number]: boolean}>({})
+
+	const tags = useMemo(() => {
+		return Object.keys(selectedTags).map((key) => parseInt(key, 10))
+	}, [selectedTags])
 
 	const [ text, setText ] = useState<EditorState>(EditorState.createEmpty())
 	const { addComment, isBiconomyInitialised } = useAddComment({ setStep, setTransactionHash })
