@@ -26,115 +26,7 @@ function ReviewProposal() {
 					{' '}
 					{proposal?.id}
 				</Text>
-				<Flex
-					direction='column'
-					overflowY='auto'>
-					{
-						review?.items?.map((item, rubricIndex) => {
-							return (
-								<Flex
-									key={rubricIndex}
-									px={5}
-									py={4}
-									borderBottom='1px solid #E7E4DD'
-									direction='column'>
-									<Text
-										variant='v2_body'>
-										{item.rubric.title}
-									</Text>
-									<Flex
-										mt={3}
-										w='100%'
-										direction='row'
-										justify='start'>
-										{
-											Array.from(Array(item.rubric.maximumPoints).keys()).map((_, index) => {
-												const isSelected = item?.rating === index + 1
-												return (
-													<Button
-														key={index}
-														px={3}
-														py={1}
-														variant='outline'
-														size='sm'
-														ml={index === 0 ? 0 : 3}
-														border='1px solid #E7E4DD'
-														bg={isSelected ? 'accent.azure' : 'white'}
-														isDisabled={!isReviewPending}
-														cursor={isReviewPending ? 'pointer' : 'not-allowed'}
-														_disabled={
-															{
-																_hover: {},
-																_active: {},
-																_focus: {},
-															}
-														}
-														_hover={
-															{
-																bg: isSelected ? 'accent.azure' : 'gray.3'
-															}
-														}
-														onClick={
-															isReviewPending ? () => {
-																if(isReviewPending) {
-																	const temp = { ...review }
-																	if(temp?.items && rubricIndex <= temp?.items?.length) {
-																		temp.items[rubricIndex].rating = index + 1
-																		temp.total += index + 1
-																		setReview(temp)
-																	}
-																}
-															} : undefined
-														}>
-														<Text
-															variant='v2_body'
-															color={isSelected ? 'white' : 'black.1'}>
-															{index + 1}
-														</Text>
-
-													</Button>
-												)
-											})
-										}
-									</Flex>
-									{
-										isReviewPending && (
-											<FlushedInput
-												w='100%'
-												value={item?.comment}
-												textAlign='left'
-												placeholder='Add comments'
-												fontSize='14px'
-												lineHeight='20px'
-												maxLength={300}
-												borderBottom='1px solid #E7E4DD'
-												flexProps={{ mt: 3 }}
-												onChange={
-													(e) => {
-														const temp = { ...review }
-														if(temp?.items && rubricIndex <= temp?.items?.length) {
-															temp.items[rubricIndex].comment = e.target.value
-															setReview(temp)
-														}
-													}
-												} />
-										)
-									}
-									{
-										!isReviewPending && (
-											<Text
-												mt={3}
-												variant='v2_body'
-												color='gray.5'>
-												{item?.comment}
-											</Text>
-										)
-									}
-								</Flex>
-							)
-						})
-					}
-				</Flex>
+				{selectedGrant?.reviewType === 'voting' ? vote() : rubric()}
 				{
 					isReviewPending && (
 						<Flex
@@ -161,6 +53,128 @@ function ReviewProposal() {
 							router.reload()
 						}
 					} />
+			</Flex>
+		)
+	}
+
+	const vote = () => {
+		return (
+			<Flex
+				direction='column'
+				overflowY='auto' />
+		)
+	}
+
+	const rubric = () => {
+		return (
+			<Flex
+				direction='column'
+				overflowY='auto'>
+				{
+					review?.items?.map((item, rubricIndex) => {
+						return (
+							<Flex
+								key={rubricIndex}
+								px={5}
+								py={4}
+								borderBottom='1px solid #E7E4DD'
+								direction='column'>
+								<Text
+									variant='v2_body'>
+									{item.rubric.title}
+								</Text>
+								<Flex
+									mt={3}
+									w='100%'
+									direction='row'
+									justify='start'>
+									{
+										Array.from(Array(item.rubric.maximumPoints).keys()).map((_, index) => {
+											const isSelected = item?.rating === index + 1
+											return (
+												<Button
+													key={index}
+													px={3}
+													py={1}
+													variant='outline'
+													size='sm'
+													ml={index === 0 ? 0 : 3}
+													border='1px solid #E7E4DD'
+													bg={isSelected ? 'accent.azure' : 'white'}
+													isDisabled={!isReviewPending}
+													cursor={isReviewPending ? 'pointer' : 'not-allowed'}
+													_disabled={
+														{
+															_hover: {},
+															_active: {},
+															_focus: {},
+														}
+													}
+													_hover={
+														{
+															bg: isSelected ? 'accent.azure' : 'gray.3'
+														}
+													}
+													onClick={
+														isReviewPending ? () => {
+															if(isReviewPending) {
+																const temp = { ...review }
+																if(temp?.items && rubricIndex <= temp?.items?.length) {
+																	temp.items[rubricIndex].rating = index + 1
+																	temp.total += index + 1
+																	setReview(temp)
+																}
+															}
+														} : undefined
+													}>
+													<Text
+														variant='v2_body'
+														color={isSelected ? 'white' : 'black.1'}>
+														{index + 1}
+													</Text>
+
+												</Button>
+											)
+										})
+									}
+								</Flex>
+								{
+									isReviewPending && (
+										<FlushedInput
+											w='100%'
+											value={item?.comment}
+											textAlign='left'
+											placeholder='Add comments'
+											fontSize='14px'
+											lineHeight='20px'
+											maxLength={300}
+											borderBottom='1px solid #E7E4DD'
+											flexProps={{ mt: 3 }}
+											onChange={
+												(e) => {
+													const temp = { ...review }
+													if(temp?.items && rubricIndex <= temp?.items?.length) {
+														temp.items[rubricIndex].comment = e.target.value
+														setReview(temp)
+													}
+												}
+											} />
+									)
+								}
+								{
+									!isReviewPending && (
+										<Text
+											mt={3}
+											variant='v2_body'
+											color='gray.5'>
+											{item?.comment}
+										</Text>
+									)
+								}
+							</Flex>
+						)
+					})
+				}
 			</Flex>
 		)
 	}

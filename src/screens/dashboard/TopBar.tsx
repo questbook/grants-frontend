@@ -56,6 +56,7 @@ function TopBar() {
 				</Text>
 				<Button
 					ml={2}
+					bg='gray.1'
 					variant='link'
 					color='black.1'
 					leftIcon={
@@ -173,6 +174,7 @@ function TopBar() {
 		return (
 			<Button
 				ml='auto'
+				bg='gray.1'
 				variant='link'
 				color='black.1'
 				leftIcon={

@@ -1,11 +1,14 @@
-import { useContext, useEffect, useMemo, useState } from 'react'
-import { Box, Flex, Image, Text } from '@chakra-ui/react'
+import { RefObject, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { Box, Button, Checkbox, Flex, Image, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
 import { ApiClientsContext } from 'src/pages/_app'
+import DashboardInput from 'src/screens/dashboard/_components/DashboardInput'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { IReviewFeedback } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
+import { formatAddress } from 'src/utils/formattingUtils'
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { useLoadReview } from 'src/utils/reviews'
 
 function Reviews() {
@@ -45,28 +48,8 @@ function Reviews() {
 				<Flex
 					display={expanded ? 'block' : 'none'}
 					direction='column'>
-					{
-						details.map((detail, index) => {
-							return (
-								<Flex
-									key={index}
-									mt={index === 0 ? 5 : 4}
-									w='100%'>
-									<Text
-										w='50%'
-										variant='v2_body'
-										color='gray.6'>
-										{detail.title}
-									</Text>
-									<Text
-										w='50%'
-										variant='v2_body'>
-										{detail.value}
-									</Text>
-								</Flex>
-							)
-						})
-					}
+					{reviewer()}
+					{reviewWith()}
 					{
 						(proposal?.applicationReviewers?.length || 0) > 0 && (
 							<Text
@@ -85,6 +68,279 @@ function Reviews() {
 						})
 					}
 				</Flex>
+			</Flex>
+		)
+	}
+
+	const setupButton = () => {
+		return (
+			<Button variant='link' >
+				<Text
+					variant='v2_body'
+					fontWeight='500'
+					color='black.1'>
+					Setup
+				</Text>
+			</Button>
+		)
+	}
+
+	const editButton = () => {
+		return (
+			<Button
+				ml={2}
+				variant='link'
+				leftIcon={
+					<Image
+						src='/v2/icons/pencil.svg'
+						boxSize='16px' />
+				}>
+				<Text
+					variant='v2_body'
+					fontWeight='500'>
+					Edit
+				</Text>
+			</Button>
+		)
+	}
+
+	const assignReviewerPopup = (popoverRef: RefObject<HTMLButtonElement>, type: 'setup' | 'edit') => {
+		return (
+			<Popover
+				isLazy
+				placement='top-start'
+				initialFocusRef={popoverRef}
+			>
+				{
+					({ onClose }) => (
+						<>
+							<PopoverTrigger>
+								{type === 'setup' ? setupButton() : editButton()}
+							</PopoverTrigger>
+							<PopoverContent>
+								<PopoverArrow />
+								<PopoverBody
+									maxH='80vh'
+									overflowY='auto'
+									px={4}
+									py={3} >
+									<Text
+										variant='v2_body'
+										fontWeight='500'>
+										Assign Reviewers
+									</Text>
+									<DashboardInput
+										value={numberOfReviewersPerApplication ? numberOfReviewersPerApplication : ''}
+										placeholder='Number of reviewers per application'
+										onChange={
+											(e) => {
+												if(!e.target.value) {
+													setNumberOfReviewersPerApplication(undefined)
+													return
+												}
+
+												const val = parseInt(e.target.value)
+												if(val > 0) {
+													setNumberOfReviewersPerApplication(val)
+												}
+											}
+										}
+										type='number' />
+									<Text
+										mt={6}
+										variant='v2_body'
+										fontWeight='500'>
+										Select Members
+									</Text>
+									<DashboardInput
+										value={searchMemberName}
+										placeholder='Search member by name'
+										onChange={
+											(e) => {
+												setSearchMemberName(e.target.value)
+											}
+										} />
+									<Flex
+										mt={3}
+										w='100%'>
+										<Checkbox
+											isChecked={workspace?.members?.every(m => members[m.id])}
+											onChange={
+												(e) => {
+													logger.info({ checked: e.target.checked }, 'checkbox changed')
+													if(e.target.checked) {
+														const newMap: {[key: string]: boolean} = {}
+														workspace?.members?.forEach(m => {
+															newMap[m.id] = true
+														})
+														setMembers(newMap)
+													} else {
+														setMembers({})
+													}
+												}
+											}>
+											<Text
+												variant='v2_body'
+												fontWeight='400'
+												color='gray.6'>
+												Select All
+											</Text>
+										</Checkbox>
+										<Text
+											ml='auto'
+											variant='v2_body'>
+											{workspace?.members?.filter(m => members[m.id]).length}
+											{' '}
+											/
+											{' '}
+											{workspace?.members?.length}
+											{' '}
+											selected
+										</Text>
+									</Flex>
+									<Flex
+										direction='column'
+										w='100%'
+										pt={2}>
+										{
+											workspace?.members?.filter(m => searchMemberName === '' || m.fullName?.indexOf(searchMemberName) !== -1).map(m => {
+												return (
+													<Flex
+														key={m.id}
+														align='center'
+														borderBottom='1px solid #E7E4DD'
+														py={3}>
+														<Checkbox
+															isChecked={m.id in members}
+															onChange={
+																() => {
+																	const newMap = { ...members }
+																	if(m.id in members) {
+																		delete newMap[m.id]
+																	} else {
+																		newMap[m.id] = true
+																	}
+
+																	setMembers(newMap)
+																}
+															} />
+														<Image
+															ml={4}
+															borderRadius='3xl'
+															src={m?.profilePictureIpfsHash ? getUrlForIPFSHash(m.profilePictureIpfsHash) : getAvatar(false, m?.actorId?.toLowerCase())}
+															boxSize='20px' />
+														<Text
+															ml={4}
+															variant='v2_body'>
+															{m.fullName ? m.fullName : formatAddress(m?.actorId)}
+														</Text>
+													</Flex>
+												)
+											})
+										}
+									</Flex>
+									<Flex mt={6}>
+										<Button
+											variant='primaryMedium'
+											onClick={() => {}}>
+											<Text
+												variant='v2_body'
+												color='white'
+												fontWeight='500'>
+												Enable
+											</Text>
+										</Button>
+										<Button
+											ml={2}
+											variant='primaryMedium'
+											bg='white'
+											border='1px solid #E7E4DD'
+											borderRadius='2px'
+											onClick={onClose}>
+											<Text variant='v2_body'>
+												Cancel
+											</Text>
+										</Button>
+									</Flex>
+								</PopoverBody>
+							</PopoverContent>
+						</>
+					)
+				}
+			</Popover>
+		)
+	}
+
+	const reviewer = () => {
+		return (
+			<Flex
+				mt={5}
+				w='100%'>
+				<Text
+					w='50%'
+					variant='v2_body'
+					color='gray.6'>
+					Reviewer
+				</Text>
+				{
+					selectedGrant?.numberOfReviewersPerApplication && (
+						<Text
+							variant='v2_body'>
+							{selectedGrant?.numberOfReviewersPerApplication}
+						</Text>
+					)
+				}
+				{selectedGrant?.numberOfReviewersPerApplication && <Box ml='auto' />}
+				{assignReviewerPopup(assignReviewerPopoverRef, selectedGrant?.numberOfReviewersPerApplication ? 'edit' : 'setup')}
+			</Flex>
+		)
+	}
+
+	const setReviewTypePopup = (popoverRef: RefObject<HTMLButtonElement>, type: 'setup' | 'edit') => {
+		return (
+			<Popover
+				isLazy
+				placement='left'
+				initialFocusRef={popoverRef}>
+				{
+					({ onClose }) => (
+						<>
+							<PopoverTrigger>
+								{type === 'setup' ? setupButton() : editButton()}
+							</PopoverTrigger>
+							<PopoverContent>
+								<PopoverArrow />
+								<PopoverBody
+									maxH='40vh' />
+							</PopoverContent>
+						</>
+					)
+				}
+			</Popover>
+		)
+	}
+
+	const reviewWith = () => {
+		return (
+			<Flex
+				mt={4}
+				w='100%'>
+				<Text
+					w='50%'
+					variant='v2_body'
+					color='gray.6'>
+					Review With
+				</Text>
+				{
+					selectedGrant?.reviewType && (
+						<Text
+							variant='v2_body'>
+							{selectedGrant.reviewType === 'rubrics' ? 'Rubrics' : 'Voting'}
+						</Text>
+					)
+				}
+				{selectedGrant?.reviewType && <Box ml='auto' />}
+				{setReviewTypePopup(setReviewTypePopoverRef, selectedGrant?.reviewType ? 'edit' : 'setup')}
 			</Flex>
 		)
 	}
@@ -218,13 +474,26 @@ function Reviews() {
 		)
 	}
 
-	const { chainId } = useContext(ApiClientsContext)!
+	const { workspace, chainId } = useContext(ApiClientsContext)!
 	const { proposals, selectedGrant, selectedProposals } = useContext(DashboardContext)!
 	const { loadReview } = useLoadReview(selectedGrant?.id, chainId)
 
 	const [expanded, setExpanded] = useState<boolean>(false)
 	const [reviews, setReviews] = useState<IReviewFeedback[]>([])
 	const [reviewersExpanded, setReviewersExpanded] = useState<boolean[]>([])
+
+	const assignReviewerPopoverRef = useRef<HTMLButtonElement>(null)
+	const [numberOfReviewersPerApplication, setNumberOfReviewersPerApplication] = useState<number>()
+	useEffect(() => {
+		if(selectedGrant?.numberOfReviewersPerApplication !== null) {
+			setNumberOfReviewersPerApplication(selectedGrant?.numberOfReviewersPerApplication)
+		}
+	}, [selectedGrant])
+
+	const [searchMemberName, setSearchMemberName] = useState<string>('')
+	const [members, setMembers] = useState<{[id: string]: boolean}>({})
+
+	const setReviewTypePopoverRef = useRef<HTMLButtonElement>(null)
 
 	useEffect(() => {
 		if(proposals?.length === 0) {
@@ -239,17 +508,6 @@ function Reviews() {
 			return proposals[index]
 		}
 	}, [proposals, selectedProposals])
-
-	const details = useMemo(() => {
-		const detailsList = []
-		if(selectedGrant?.numberOfReviewersPerApplication) {
-			detailsList.push({ title: 'Reviewer', value: selectedGrant.numberOfReviewersPerApplication })
-		}
-
-		detailsList.push({ title: 'Review with', value: !selectedGrant?.reviewType || selectedGrant.reviewType === 'rubrics' ? 'Rubrics' : 'Voting' })
-
-		return detailsList
-	}, [proposal])
 
 	useEffect(() => {
 		setReviewersExpanded(Array(proposal?.applicationReviewers?.length).fill(false))
