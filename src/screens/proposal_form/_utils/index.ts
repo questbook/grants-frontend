@@ -1,4 +1,6 @@
+import { PublicKey } from '@solana/web3.js'
 import { ContentState, convertFromRaw, EditorState } from 'draft-js'
+import { ethers } from 'ethers'
 import { Form, Grant } from 'src/screens/proposal_form/_utils/types'
 import { getFromIPFS, isIpfsHash } from 'src/utils/ipfsUtils'
 
@@ -31,4 +33,31 @@ const getProjectDetails = async(projectDetails: string) => {
 	}
 }
 
-export { containsField, findField, getProjectDetails }
+const validateEmail = (email: string, callback: (isValid: boolean) => void) => {
+	if(email) {
+		const re = /\S+@\S+\.\S+/
+		callback(re.test(email))
+	} else {
+		callback(true)
+	}
+}
+
+const validateWalletAddress = (address: string, safeObj: any, callback: (isValid: boolean) => void) => {
+	if(address) {
+		if(safeObj?.getIsEvm()) {
+			callback(ethers.utils.isAddress(address))
+		} else if(safeObj?.chainId === 900001) {
+			try {
+				callback(PublicKey.isOnCurve(address))
+			} catch(e) {
+				callback(false)
+			}
+		} else {
+			callback(true)
+		}
+	} else {
+		callback(true)
+	}
+}
+
+export { containsField, findField, getProjectDetails, validateEmail, validateWalletAddress }
