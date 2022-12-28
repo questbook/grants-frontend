@@ -690,8 +690,6 @@ export function usePiiForComment(
 		[workspaceId],
 	)
 
-	logger.info(workspaceId, applicationId, memberPublicKey, chainId, 'Init variables')
-
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 	const { fetch } = useGetPublicKeyOfMembers(
 		workspaceId,
@@ -827,9 +825,12 @@ export function usePiiForComment(
 	const encrypt = useCallback(
 		async(data: PIIForCommentType) => {
 			if(data) {
-				data.pii = await encryptPii(data)
+				const pii = await encryptPii(data)
+				data = { pii }
 				logger.info(data, 'Encrypted PII (Comment)')
 			}
+
+			return data
 		},
 		[encryptPii],
 	)

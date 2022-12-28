@@ -104,13 +104,11 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 					role,
 				}
 
-				if(role !== 'community') {
-					await encrypt(json)
-				}
+				const finalData = role !== 'community' ? await encrypt(json) : json
 
-				logger.info({ json }, 'Encrypted JSON (Comment)')
+				logger.info(finalData, 'Encrypted JSON (Comment)')
 
-				const commentHash = (await uploadToIPFS(JSON.stringify(json))).hash
+				const commentHash = (await uploadToIPFS(JSON.stringify(finalData))).hash
 				logger.info({ commentHash }, 'Comment Hash (Comment)')
 
 				const methodArgs = [

@@ -188,7 +188,6 @@ function Discussions() {
 	}
 
 	const renderComment = (comment: CommentType, index: number) => {
-		logger.info('Rendering comment: ', comment)
 		const member = comment.workspace.members.find((member) => member.actorId.toLowerCase() === comment.sender?.toLowerCase())
 
 		return (
