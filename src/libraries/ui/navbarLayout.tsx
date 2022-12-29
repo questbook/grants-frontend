@@ -38,7 +38,7 @@ function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar }: P
 		<Flex
 			direction='column'
 			w='100%'
-			h='100%'
+			h='100vh'
 			overscrollBehavior='none'>
 			{
 				renderNavbar && (

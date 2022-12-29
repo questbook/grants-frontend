@@ -168,10 +168,10 @@ a {
   margin-top: 20px;
 }
 
-.continueBtn{
+/* .continueBtn{
   position:'absolute';
 	bottom:'50px'
-}
+} */
 
 .loader{
   animation: rotation 1s infinite linear;
