@@ -91,7 +91,7 @@ export const serialiseInviteInfoIntoUrl = (info: InviteInfo) => {
 }
 
 
-export const useMakeInvite = (role: number) => {
+export const useMakeInvite = () => {
 	const { workspace } = useContext(ApiClientsContext)!
 	const chainId = getSupportedChainIdFromWorkspace(workspace)
 
@@ -116,7 +116,7 @@ export const useMakeInvite = (role: number) => {
 	const workspaceRegistry = useQBContract('workspace', chainId)
 
 	const makeInvite = useCallback(
-		async(didSign?: () => void, setTransactionHash?: (hash: string) => void): Promise<InviteInfo> => {
+		async(role: number, didSign?: () => void, setTransactionHash?: (hash: string) => void): Promise<InviteInfo> => {
 			switchNetwork?.(chainId!)
 			const { privateKey, address } = generateKeyPairAndAddress()
 			// convert "0x" encoded hex to a number
@@ -161,11 +161,11 @@ export const useMakeInvite = (role: number) => {
 
 			return inviteInfo
 		},
-		[role, workspace?.id, workspaceRegistry, biconomyWalletClient, chainId, scwAddress, biconomy, nonce, webwallet]
+		[workspace?.id, workspaceRegistry, biconomyWalletClient, chainId, scwAddress, biconomy, nonce, webwallet]
 	)
 
 	const getMakeInviteGasEstimate = useCallback(
-		async() => {
+		async(role: number) => {
 			if(!workspace) {
 				return undefined
 			}
@@ -181,7 +181,7 @@ export const useMakeInvite = (role: number) => {
 					fakeAddress,
 				)
 		},
-		[workspaceRegistry, role, workspace?.id]
+		[workspaceRegistry, workspace?.id]
 	)
 
 	return { makeInvite, getMakeInviteGasEstimate, isBiconomyInitialised }
