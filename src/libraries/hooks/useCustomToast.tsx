@@ -1,24 +1,23 @@
 import { useRef } from 'react'
-import { AlertStatus, Button, Flex, Image, Text, ToastId, useToast, UseToastOptions } from '@chakra-ui/react'
+import { Button, Flex, Image, Text, ToastId, useToast, UseToastOptions } from '@chakra-ui/react'
 
 type Props = {
 	action?: () => void
 	actionText?: string
-	status: AlertStatus | 'loading'
 } & UseToastOptions
 
 function useCustomToast() {
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()
 
-	const showToast = ({ action, actionText, status, ...props }: Props) => {
+	const showToast = ({ action, actionText, ...props }: Props) => {
 		toast.closeAll()
 		return toastRef.current = toast({
 			render: () => {
 				return (
 					<Flex
 						boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
-						bg={BG[status ?? 'info']}
+						bg={BG[props.status ?? 'info']}
 						direction='column'
 						p={4}>
 						<Flex>
@@ -31,7 +30,7 @@ function useCustomToast() {
 									/>
 								) : (
 									<Image
-										src={`/v2/icons/${status === 'success' ? 'check double' : 'error warning'}.svg`}
+										src={`/v2/icons/${props.status === 'success' ? 'check double' : 'error warning'}.svg`}
 										boxSize='20px' />
 								)
 							}
@@ -46,7 +45,7 @@ function useCustomToast() {
 									action && actionText && (
 										<Button
 											mt={2}
-											bg={BG[status ?? 'info']}
+											bg={BG[props.status ?? 'info']}
 											color='black.1'
 											fontWeight='500'
 											variant='link'
@@ -70,7 +69,6 @@ function useCustomToast() {
 		'success': 'accent.june',
 		'warning': 'accent.crayola',
 		'error': 'accent.melon',
-		'loading': 'black.1'
 	}
 
 	return showToast

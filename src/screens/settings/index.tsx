@@ -442,16 +442,15 @@ function Settings() {
 
 	const onChangeSocialValue = (e: React.ChangeEvent<HTMLInputElement>, name: string) => {
 		const { value } = e.target
-		console.log(grantProgramData)
-		if(grantProgramData?.socials.length === 0) {
+		if(grantProgramData?.socials?.length === 0 || !grantProgramData?.socials) {
 			setGrantProgramData({ ...grantProgramData, socials: [{ name, value }] })
 			return
 		}
 
-		const socialItem = grantProgramData?.socials.find((social) => social.name === name)
+		const socialItem = grantProgramData?.socials?.find((social) => social.name === name)
 
 		if(socialItem) {
-			const socials = grantProgramData?.socials.map((social) => {
+			const socials = grantProgramData?.socials?.map((social) => {
 				if(social.name === name) {
 					return { ...social, value }
 				}

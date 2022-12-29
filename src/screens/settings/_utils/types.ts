@@ -20,6 +20,6 @@ export type GrantProgramForm = {
     title: string
     about: string
     bio: string
-    socials: SocialLinks[] | undefined
+    socials?: SocialLinks[]
     logoIpfsHash: string
 }

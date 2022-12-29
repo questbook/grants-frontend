@@ -55,7 +55,8 @@ const SettingsFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 					name: social.name,
 					value: social.value
 				}
-			}) })
+			})
+		 })
 		return workspace
 	}, [chainId, workspace])
 
