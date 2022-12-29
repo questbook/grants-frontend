@@ -589,7 +589,7 @@ Settings.getLayout = function(page: ReactElement) {
 	return (
 		<NavbarLayout
 			renderSidebar={false}
-			navbarConfig={{ showDomains: true, showLogo: false, showInviteProposals: true, showAddMembers: true, bg: 'gray.1', }}
+			navbarConfig={{ showDomains: true, showLogo: false, showOpenDashboard: true, showAddMembers: true, bg: 'gray.1', }}
 		>
 			<SettingsFormProvider>
 				{page}

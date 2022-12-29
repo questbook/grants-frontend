@@ -118,7 +118,7 @@ function NavBar({ bg, showOpenDashboard, showLogo, showAddMembers, showInvitePro
 
 				{router.pathname === '/dashboard' && <SwapButton />}
 
-				{showOpenDashboard && router.pathname === '/' && <OpenDashboard />}
+				{showOpenDashboard && (router.pathname === '/' || router.pathname === '/settings') && <OpenDashboard />}
 
 				<AccountDetails
 					openModal={
