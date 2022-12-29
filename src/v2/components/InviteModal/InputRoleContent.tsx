@@ -22,7 +22,7 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 
 	const toast = useToast()
 
-	const { makeInvite, isBiconomyInitialised } = useMakeInvite(selectedRole || 0)
+	const { makeInvite, isBiconomyInitialised } = useMakeInvite()
 
 	const [transactionHash, setTransactionHash] = useState<string>()
 	const { t } = useTranslation()
@@ -37,6 +37,7 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 
 		try {
 			const info = await makeInvite(
+				selectedRole || 0,
 				() => setCreateLinkStep(1),
 				setTransactionHash,
 			)
