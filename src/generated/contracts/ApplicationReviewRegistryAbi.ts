@@ -35,6 +35,8 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
     "applicationsToGrant(address,uint256)": FunctionFragment;
     "assignReviewers(uint96,uint96,address,address[],bool[])": FunctionFragment;
     "assignReviewersRoundRobin(uint96,uint96,address)": FunctionFragment;
+    "disableAutoAssignment(uint96,address)": FunctionFragment;
+    "enableAutoAssignmentOfReviewers(uint96,address,address[],uint96)": FunctionFragment;
     "fulfillPayment(uint96,uint96[],address,uint96[],address,uint256)": FunctionFragment;
     "grantFactory()": FunctionFragment;
     "grantReviewStates(address)": FunctionFragment;
@@ -55,10 +57,10 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
     "setApplicationReg(address)": FunctionFragment;
     "setGrantFactory(address)": FunctionFragment;
     "setRubrics(uint96,address,uint96,string)": FunctionFragment;
-    "setRubricsAndEnableAutoAssign(uint96,address,address[],bool[],uint96,string)": FunctionFragment;
     "setWorkspaceReg(address)": FunctionFragment;
     "submitReview(address,uint96,uint96,address,string)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "updateAutoAssignmentOfReviewers(uint96,address,address[],uint96,bool)": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
     "workspaceReg()": FunctionFragment;
@@ -71,6 +73,8 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
       | "applicationsToGrant"
       | "assignReviewers"
       | "assignReviewersRoundRobin"
+      | "disableAutoAssignment"
+      | "enableAutoAssignmentOfReviewers"
       | "fulfillPayment"
       | "grantFactory"
       | "grantReviewStates"
@@ -91,10 +95,10 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
       | "setApplicationReg"
       | "setGrantFactory"
       | "setRubrics"
-      | "setRubricsAndEnableAutoAssign"
       | "setWorkspaceReg"
       | "submitReview"
       | "transferOwnership"
+      | "updateAutoAssignmentOfReviewers"
       | "upgradeTo"
       | "upgradeToAndCall"
       | "workspaceReg"
@@ -128,6 +132,19 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "disableAutoAssignment",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "enableAutoAssignmentOfReviewers",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>[],
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
@@ -232,17 +249,6 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "setRubricsAndEnableAutoAssign",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>[],
-      PromiseOrValue<boolean>[],
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>
-    ]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setWorkspaceReg",
     values: [PromiseOrValue<string>]
   ): string;
@@ -259,6 +265,16 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateAutoAssignmentOfReviewers",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>[],
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "upgradeTo",
@@ -291,6 +307,14 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "assignReviewersRoundRobin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "disableAutoAssignment",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "enableAutoAssignmentOfReviewers",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -359,10 +383,6 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "setRubrics", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "setRubricsAndEnableAutoAssign",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "setWorkspaceReg",
     data: BytesLike
   ): Result;
@@ -372,6 +392,10 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateAutoAssignmentOfReviewers",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
@@ -386,6 +410,7 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
 
   events: {
     "AdminChanged(address,address)": EventFragment;
+    "AutoAssignmentUpdated(uint96,address,address[],uint96,bool,address,uint256)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
@@ -393,6 +418,7 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
     "ReviewPaymentFulfilled(uint96[],address,address,address,uint256,uint256)": EventFragment;
     "ReviewPaymentMarkedDone(uint96[],address,address,uint256,string,uint256)": EventFragment;
     "ReviewSubmitted(uint96,address,uint96,uint96,address,string,uint256)": EventFragment;
+    "ReviewerDataReset(uint96,address,address,uint256)": EventFragment;
     "ReviewersAssigned(uint96[],uint96,uint96,address,address[],bool[],uint256)": EventFragment;
     "RubricsSet(uint96,address,string,uint256)": EventFragment;
     "RubricsSetV2(uint96,address,uint96,string,uint256)": EventFragment;
@@ -400,6 +426,7 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AutoAssignmentUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
@@ -407,6 +434,7 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "ReviewPaymentFulfilled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ReviewPaymentMarkedDone"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ReviewSubmitted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ReviewerDataReset"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ReviewersAssigned"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RubricsSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RubricsSetV2"): EventFragment;
@@ -423,6 +451,23 @@ export type AdminChangedEvent = TypedEvent<
 >;
 
 export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
+
+export interface AutoAssignmentUpdatedEventObject {
+  _workspaceId: BigNumber;
+  _grantAddress: string;
+  _reviewers: string[];
+  _numberOfReviewersPerApplication: BigNumber;
+  _enabled: boolean;
+  _updatedBy: string;
+  time: BigNumber;
+}
+export type AutoAssignmentUpdatedEvent = TypedEvent<
+  [BigNumber, string, string[], BigNumber, boolean, string, BigNumber],
+  AutoAssignmentUpdatedEventObject
+>;
+
+export type AutoAssignmentUpdatedEventFilter =
+  TypedEventFilter<AutoAssignmentUpdatedEvent>;
 
 export interface BeaconUpgradedEventObject {
   beacon: string;
@@ -514,6 +559,20 @@ export type ReviewSubmittedEvent = TypedEvent<
 >;
 
 export type ReviewSubmittedEventFilter = TypedEventFilter<ReviewSubmittedEvent>;
+
+export interface ReviewerDataResetEventObject {
+  _workspaceId: BigNumber;
+  _grantAddress: string;
+  _resetBy: string;
+  time: BigNumber;
+}
+export type ReviewerDataResetEvent = TypedEvent<
+  [BigNumber, string, string, BigNumber],
+  ReviewerDataResetEventObject
+>;
+
+export type ReviewerDataResetEventFilter =
+  TypedEventFilter<ReviewerDataResetEvent>;
 
 export interface ReviewersAssignedEventObject {
   _reviewIds: BigNumber[];
@@ -620,6 +679,20 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       _workspaceId: PromiseOrValue<BigNumberish>,
       _applicationId: PromiseOrValue<BigNumberish>,
       _grantAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    disableAutoAssignment(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    enableAutoAssignmentOfReviewers(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _reviewers: PromiseOrValue<string>[],
+      _numOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -746,16 +819,6 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setRubricsAndEnableAutoAssign(
-      _workspaceId: PromiseOrValue<BigNumberish>,
-      _grantAddress: PromiseOrValue<string>,
-      _reviewers: PromiseOrValue<string>[],
-      _active: PromiseOrValue<boolean>[],
-      _numOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
-      _rubricMetadataHash: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     setWorkspaceReg(
       _workspaceReg: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -772,6 +835,15 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    updateAutoAssignmentOfReviewers(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _reviewers: PromiseOrValue<string>[],
+      _numOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
+      _isMock: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -816,6 +888,20 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     _workspaceId: PromiseOrValue<BigNumberish>,
     _applicationId: PromiseOrValue<BigNumberish>,
     _grantAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  disableAutoAssignment(
+    _workspaceId: PromiseOrValue<BigNumberish>,
+    _grantAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  enableAutoAssignmentOfReviewers(
+    _workspaceId: PromiseOrValue<BigNumberish>,
+    _grantAddress: PromiseOrValue<string>,
+    _reviewers: PromiseOrValue<string>[],
+    _numOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -942,16 +1028,6 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setRubricsAndEnableAutoAssign(
-    _workspaceId: PromiseOrValue<BigNumberish>,
-    _grantAddress: PromiseOrValue<string>,
-    _reviewers: PromiseOrValue<string>[],
-    _active: PromiseOrValue<boolean>[],
-    _numOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
-    _rubricMetadataHash: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   setWorkspaceReg(
     _workspaceReg: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -968,6 +1044,15 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
 
   transferOwnership(
     newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  updateAutoAssignmentOfReviewers(
+    _workspaceId: PromiseOrValue<BigNumberish>,
+    _grantAddress: PromiseOrValue<string>,
+    _reviewers: PromiseOrValue<string>[],
+    _numOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
+    _isMock: PromiseOrValue<boolean>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1012,6 +1097,20 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       _workspaceId: PromiseOrValue<BigNumberish>,
       _applicationId: PromiseOrValue<BigNumberish>,
       _grantAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    disableAutoAssignment(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    enableAutoAssignmentOfReviewers(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _reviewers: PromiseOrValue<string>[],
+      _numOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1134,16 +1233,6 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setRubricsAndEnableAutoAssign(
-      _workspaceId: PromiseOrValue<BigNumberish>,
-      _grantAddress: PromiseOrValue<string>,
-      _reviewers: PromiseOrValue<string>[],
-      _active: PromiseOrValue<boolean>[],
-      _numOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
-      _rubricMetadataHash: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     setWorkspaceReg(
       _workspaceReg: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1160,6 +1249,15 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateAutoAssignmentOfReviewers(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _reviewers: PromiseOrValue<string>[],
+      _numOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
+      _isMock: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1186,6 +1284,25 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       previousAdmin?: null,
       newAdmin?: null
     ): AdminChangedEventFilter;
+
+    "AutoAssignmentUpdated(uint96,address,address[],uint96,bool,address,uint256)"(
+      _workspaceId?: null,
+      _grantAddress?: null,
+      _reviewers?: null,
+      _numberOfReviewersPerApplication?: null,
+      _enabled?: null,
+      _updatedBy?: null,
+      time?: null
+    ): AutoAssignmentUpdatedEventFilter;
+    AutoAssignmentUpdated(
+      _workspaceId?: null,
+      _grantAddress?: null,
+      _reviewers?: null,
+      _numberOfReviewersPerApplication?: null,
+      _enabled?: null,
+      _updatedBy?: null,
+      time?: null
+    ): AutoAssignmentUpdatedEventFilter;
 
     "BeaconUpgraded(address)"(
       beacon?: PromiseOrValue<string> | null
@@ -1274,6 +1391,19 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       time?: null
     ): ReviewSubmittedEventFilter;
 
+    "ReviewerDataReset(uint96,address,address,uint256)"(
+      _workspaceId?: null,
+      _grantAddress?: null,
+      _resetBy?: null,
+      time?: null
+    ): ReviewerDataResetEventFilter;
+    ReviewerDataReset(
+      _workspaceId?: null,
+      _grantAddress?: null,
+      _resetBy?: null,
+      time?: null
+    ): ReviewerDataResetEventFilter;
+
     "ReviewersAssigned(uint96[],uint96,uint96,address,address[],bool[],uint256)"(
       _reviewIds?: PromiseOrValue<BigNumberish>[] | null,
       _workspaceId?: null,
@@ -1357,6 +1487,20 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       _workspaceId: PromiseOrValue<BigNumberish>,
       _applicationId: PromiseOrValue<BigNumberish>,
       _grantAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    disableAutoAssignment(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    enableAutoAssignmentOfReviewers(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _reviewers: PromiseOrValue<string>[],
+      _numOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1465,16 +1609,6 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setRubricsAndEnableAutoAssign(
-      _workspaceId: PromiseOrValue<BigNumberish>,
-      _grantAddress: PromiseOrValue<string>,
-      _reviewers: PromiseOrValue<string>[],
-      _active: PromiseOrValue<boolean>[],
-      _numOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
-      _rubricMetadataHash: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     setWorkspaceReg(
       _workspaceReg: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1491,6 +1625,15 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    updateAutoAssignmentOfReviewers(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _reviewers: PromiseOrValue<string>[],
+      _numOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
+      _isMock: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1536,6 +1679,20 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       _workspaceId: PromiseOrValue<BigNumberish>,
       _applicationId: PromiseOrValue<BigNumberish>,
       _grantAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    disableAutoAssignment(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    enableAutoAssignmentOfReviewers(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _reviewers: PromiseOrValue<string>[],
+      _numOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1644,16 +1801,6 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    setRubricsAndEnableAutoAssign(
-      _workspaceId: PromiseOrValue<BigNumberish>,
-      _grantAddress: PromiseOrValue<string>,
-      _reviewers: PromiseOrValue<string>[],
-      _active: PromiseOrValue<boolean>[],
-      _numOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
-      _rubricMetadataHash: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     setWorkspaceReg(
       _workspaceReg: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1670,6 +1817,15 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateAutoAssignmentOfReviewers(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _reviewers: PromiseOrValue<string>[],
+      _numOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
+      _isMock: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

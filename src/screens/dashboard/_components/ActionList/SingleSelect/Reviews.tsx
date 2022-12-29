@@ -3,6 +3,7 @@ import { Box, Button, Checkbox, Divider, Flex, Image, InputGroup, InputRightElem
 import logger from 'src/libraries/logger'
 import { ApiClientsContext } from 'src/pages/_app'
 import DashboardInput from 'src/screens/dashboard/_components/DashboardInput'
+import useAssignReviewers from 'src/screens/dashboard/_hooks/useAssignReviewers'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { IReviewFeedback, ReviewType } from 'src/types'
@@ -243,7 +244,11 @@ function Reviews() {
 									<Flex mt={6}>
 										<Button
 											variant='primaryMedium'
-											onClick={() => { }}>
+											onClick={
+												() => {
+													assignReviewers()
+												}
+											}>
 											<Text
 												variant='v2_body'
 												color='white'
@@ -649,6 +654,7 @@ function Reviews() {
 	const assignReviewerPopoverRef = useRef<HTMLButtonElement>(null)
 
 	const [numberOfReviewersPerApplication, setNumberOfReviewersPerApplication] = useState<number>()
+
 	useEffect(() => {
 		if(selectedGrant?.numberOfReviewersPerApplication !== null) {
 			setNumberOfReviewersPerApplication(selectedGrant?.numberOfReviewersPerApplication)
@@ -657,6 +663,8 @@ function Reviews() {
 
 	const [searchMemberName, setSearchMemberName] = useState<string>('')
 	const [members, setMembers] = useState<{ [id: string]: boolean }>({})
+
+	const { assignReviewers } = useAssignReviewers()
 
 	const setReviewTypePopoverRef = useRef<HTMLButtonElement>(null)
 
