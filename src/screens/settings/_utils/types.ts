@@ -1,9 +1,25 @@
-import { GetWorkspaceDetailsQuery, GetWorkspaceMembersByWorkspaceIdQuery, GetWorkspaceMembersQuery } from 'src/generated/graphql'
+import { GetWorkspaceDetailsQuery, GetWorkspaceMembersByWorkspaceIdQuery } from 'src/generated/graphql'
+import { MinimalWorkspace } from 'src/types'
 
 export type SettingsFormContextType = {
-    workspace: Workspace
+    workspace: MinimalWorkspace
     workspaceMembers: WorkspaceMembers
+    grantProgramData: GrantProgramForm
+    setGrantProgramData: (data: GrantProgramForm) => void
 }
 
 export type Workspace = GetWorkspaceDetailsQuery['workspace']
 export type WorkspaceMembers = GetWorkspaceMembersByWorkspaceIdQuery['workspaceMembers']
+
+export type SocialLinks = {
+    name: string
+    value: string
+}
+
+export type GrantProgramForm = {
+    title: string
+    about: string
+    bio: string
+    socials: SocialLinks[] | undefined
+    logoIpfsHash: string
+}

@@ -1,11 +1,9 @@
-import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { defaultChainId } from 'src/constants/chains'
+import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 import { useGetWorkspaceDetailsQuery, useGetWorkspaceMembersByWorkspaceIdQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
-import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
-import { WebwalletContext } from 'src/pages/_app'
-import { SettingsFormContextType, Workspace, WorkspaceMember, WorkspaceMembers } from 'src/screens/settings/_utils/types'
+import { ApiClientsContext } from 'src/pages/_app'
+import { GrantProgramForm, SettingsFormContextType, WorkspaceMembers } from 'src/screens/settings/_utils/types'
 
 const SettingsFormContext = createContext<SettingsFormContextType | undefined>(undefined)
 
@@ -15,69 +13,71 @@ const SettingsFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			value={
 				{
 					workspace: workspace!,
-					workspaceMembers: workspaceMembers!
+					workspaceMembers: workspaceMembers!,
+					grantProgramData: grantProgramData!,
+					setGrantProgramData: setGrantProgramData!,
 				}
 			}>
 			{children}
 		</SettingsFormContext.Provider>
 	)
 
-	const { scwAddress } = useContext(WebwalletContext)!
-	const [workspace, setWorkspace] = useState<Workspace>()
+	const [grantProgramData, setGrantProgramData] = useState<GrantProgramForm>()
 	const [workspaceMembers, setWorkspaceMembers] = useState<WorkspaceMembers>()
-	const [workspaceId, setWorkspaceId] = useState<string>()
-	const [chainId, setChainId] = useState<number>(-1)
 
-	const { fetchMore: fetchWorkspaceDetails } = useMultiChainQuery({
+	const { workspace, chainId } = useContext(ApiClientsContext)!
+
+	const { fetchMore: fetchGrantProgram } = useMultiChainQuery({
 		useQuery: useGetWorkspaceDetailsQuery,
 		options: {},
-		chains: [chainId === -1 ? defaultChainId : chainId ]
+		chains: [chainId]
 	})
 
 	const { fetchMore: fetchWorkspaceMembers } = useMultiChainQuery({
 		useQuery: useGetWorkspaceMembersByWorkspaceIdQuery,
 		options: {},
-		chains: [chainId === -1 ? defaultChainId : chainId ]
+		chains: [chainId ]
 	})
 
-	const fetchWorkspace = useCallback(async() => {
-		const response = await fetchWorkspaceDetails({
-			workspaceID: workspaceId
-		}, true)
-		logger.info('Workspace details fetched', response[0])
-		setWorkspace(response[0]?.workspace)
+
+	const fetchGrantProgramDetails = useCallback(async() => {
+		const response = await fetchGrantProgram({
+			workspaceID: workspace?.id
+		})
+		logger.info('Grant program fetched', response)
+		setGrantProgramData({
+			title: response[0]?.workspace?.title!,
+			about: response[0]?.workspace?.about!,
+			bio: response[0]?.workspace?.bio!,
+			logoIpfsHash: response[0]?.workspace?.logoIpfsHash!,
+			socials: response[0]?.workspace?.socials!.map(social => {
+				return {
+					name: social.name,
+					value: social.value
+				}
+			}) })
 		return workspace
-	}, [chainId, scwAddress])
+	}, [chainId, workspace])
+
 
 	const fetchWorkspaceMembersDetails = useCallback(async() => {
 		const response = await fetchWorkspaceMembers({
-			workspaceId: workspaceId
+			workspaceId: workspace?.id
 		})
 		logger.info('Workspace members fetched', response)
 		setWorkspaceMembers(response[0]?.workspaceMembers)
 		return workspaceMembers
-	}, [chainId, scwAddress])
+	}, [chainId, workspace])
 
 	useEffect(() => {
-		const savedWorkspaceData = localStorage.getItem(DOMAIN_CACHE_KEY)
-		if(savedWorkspaceData) {
-			const savedWorkspaceDataChainId = savedWorkspaceData.split('-')[0].split('_')[1]
-			const savedWorkspaceDataId = savedWorkspaceData.split('-')[1]
-
-			setWorkspaceId(savedWorkspaceDataId)
-			setChainId(Number(savedWorkspaceDataChainId))
-		}
-
-	})
-
-	useEffect(() => {
-		fetchWorkspace().then((message) => {
-			logger.info({ message }, 'Fetch grant details message')
+		fetchGrantProgramDetails().then((message) => {
+			logger.info({ message }, 'Fetch grant program message')
 		})
+
 		fetchWorkspaceMembersDetails().then((message) => {
 			logger.info({ message }, 'Fetch grant members message')
 		})
-	}, [workspaceId, chainId])
+	}, [workspace, chainId])
 
 	return providerComponent()
 }

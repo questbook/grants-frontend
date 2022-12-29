@@ -2,6 +2,7 @@ Validations:
   title: All
   oneOf:
     - $ref: 'WorkspaceCreateRequest'
+    - $ref: 'WorkspaceUpdateRequest'
     - $ref: 'WorkspaceMemberUpdate'
     - $ref: 'GrantApplicationRequest'
     - $ref: 'GrantUpdateRequest'

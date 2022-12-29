@@ -1,5 +1,5 @@
 import { EditorState } from 'draft-js'
-import { GetWorkspaceDetailsQuery, GrantDetailsQuery, GrantField, ProposalDetailsQuery } from 'src/generated/graphql'
+import { GrantDetailsQuery, GrantField, ProposalDetailsQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 
 export type FormType = 'submit' | 'resubmit'

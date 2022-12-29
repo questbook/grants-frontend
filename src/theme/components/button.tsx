@@ -154,7 +154,7 @@ export default {
 					borderRadius: '2px'
 				},
 				'&:disabled': {
-					bg: 'gray.4',
+					bg: 'gray.3',
 					opacity: 1,
 					color: 'gray.5',
 					'&:hover': {

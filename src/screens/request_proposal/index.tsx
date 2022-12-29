@@ -265,11 +265,11 @@ function RequestProposal() {
 
 	const grantContract = useQBContract('grantFactory', network)
 
-	useEffect(() => {
-		if(role === 'admin' && workspace) {
-			setShouldCreateRFP(true)
-		}
-	}, [role, workspace])
+	// useEffect(() => {
+	// 	if(role === 'admin' && workspace) {
+	// 		setShouldCreateRFP(true)
+	// 	}
+	// }, [role, workspace])
 
 	useEffect(() => {
 		// console.log("add_user", nonce, webwallet)
