@@ -169,11 +169,11 @@ function Domains() {
 	}, [workspaces, workspace])
 
 	useEffect(() => {
-		if(workspace?.id!) {
+		if(workspace?.id) {
 			const currentSafe = new SupportedPayouts().getSafe(parseInt(workspace?.safe?.chainId!), workspace.safe?.address!)
 			setSafeObj(currentSafe)
 		}
-	}, [workspace?.id!])
+	}, [workspace?.id])
 
 	useEffect(() => {
 		if(accountData?.address) {

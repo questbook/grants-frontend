@@ -33,6 +33,7 @@ query getWorkspaceGrantsProgramDetails($workspaceId: String!) {
       metadataHash
       coverImageIpfsHash
       about
+      bio
       logoIpfsHash
       totalGrantFundingDisbursedUSD
       numberOfApplications

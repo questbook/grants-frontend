@@ -2,12 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AlertDialogOverlay, Box, Flex, Modal, ModalBody, ModalContent, Text, useToast, VStack } from '@chakra-ui/react'
 import { NetworkType } from 'src/constants/Networks'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
 import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/PhantomLogo'
 import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
 import ConnectWalletButton from 'src/v2/components/ConnectWalletModal/ConnectWalletButton'
-import ErrorToast from 'src/v2/components/Toasts/errorToast'
-import SuccessToast from 'src/v2/components/Toasts/successToast'
 import VerifySignerErrorState from 'src/v2/components/VerifySignerModal/VeirfySignerErrorState'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
@@ -35,6 +34,7 @@ const VerifySignerModal = ({
 	const { phantomWallet } = usePhantomWallet()
 	const { disconnectAsync } = useDisconnect()
 	const toast = useToast()
+	const customToast = useCustomToast()
 	const { t } = useTranslation()
 
 	const {
@@ -101,30 +101,26 @@ const VerifySignerModal = ({
 				setIsOwner(true)
 				// setOwnerAddress(address)
 				// alert('Your safe ownership is proved.')
-				toast.closeAll()
-				toast({
+				// customToast.closeAll()
+				customToast({
 					duration: 3000,
 					isClosable: true,
 					position: 'top-right',
-					render: () => SuccessToast({
-						content: t('/onboarding/create-domain.successful_verification'),
-						close: () => { }
-					}),
+					title: t('/onboarding/create-domain.successful_verification'),
+					status: 'success',
 				})
 			// eslint-disable-next-line sonarjs/no-duplicated-branches
 			} else if(networkType === NetworkType.Solana && phantomWallet?.publicKey && owners.includes(phantomWallet?.publicKey.toString())) {
 				setIsOwner(true)
 				// setOwnerAddress(phantomWallet?.publicKey.toString())
 				// alert('Your safe ownership is proved.')
-				toast.closeAll()
-				toast({
+				// customToast.closeAll()
+				customToast({
 					duration: 3000,
 					isClosable: true,
 					position: 'top-right',
-					render: () => SuccessToast({
-						content: t('/onboarding/create-domain.successful_verification'),
-						close: () => { }
-					}),
+					title: t('/onboarding/create-domain.successful_verification'),
+					status: 'success',
 				})
 			} else if(phantomWallet?.publicKey || address) {
 				// setIsOwner(false)
@@ -134,16 +130,14 @@ const VerifySignerModal = ({
 
 				phantomWallet?.disconnect()
 
-				toast.closeAll()
+				// customToast.closeAll()
 				// alert('Whoops! Looks like this wallet is not a signer on the safe.')
-				toast({
+				customToast({
 					duration: 3000,
 					isClosable: true,
 					position: 'top-right',
-					render: () => ErrorToast({
-						content: 'Whoops! Looks like this wallet is not an owner of the safe.',
-						close: () => { }
-					}),
+					title: 'Whoops! Looks like this wallet is not an owner of the safe.',
+					status: 'error',
 				})
 			}
 

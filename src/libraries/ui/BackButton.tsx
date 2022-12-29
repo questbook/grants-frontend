@@ -6,7 +6,8 @@ function BackButton(props: ButtonProps) {
 		return (
 			<Button
 				{...props}
-				variant='link'
+				variant='linkV2'
+				fontWeight='500'
 				leftIcon={<Image src='/v2/icons/arrow left/enabled.svg' />}
 				onClick={
 					() => {

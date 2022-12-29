@@ -33,7 +33,7 @@ for(const key in schemaJson) {
 
 
 export async function validateRequest(
-	type: 'GrantUpdateRequest' | 'GrantCreateRequest' | 'RubricSetRequest' | 'WorkspaceCreateRequest' | 'WorkspaceMemberUpdate' | 'GrantApplicationUpdate',
+	type: 'GrantUpdateRequest' | 'GrantCreateRequest' | 'RubricSetRequest' | 'WorkspaceCreateRequest' | 'WorkspaceUpdateRequest' | 'WorkspaceMemberUpdate' | 'GrantApplicationUpdate',
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	data: any
 ) {
@@ -45,7 +45,7 @@ export async function validateRequest(
 }
 
 export async function validateAndUploadToIpfs(
-	type: 'GrantUpdateRequest' | 'GrantCreateRequest' | 'RubricSetRequest' | 'WorkspaceCreateRequest' | 'WorkspaceMemberUpdate' | 'GrantApplicationUpdate',
+	type: 'GrantUpdateRequest' | 'GrantCreateRequest' | 'RubricSetRequest' | 'WorkspaceCreateRequest' | 'WorkspaceUpdateRequest' | 'WorkspaceMemberUpdate' | 'GrantApplicationUpdate',
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	data: any
 ) {

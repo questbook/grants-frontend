@@ -119,6 +119,7 @@ const ProposalFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			members: containsField(result[0].grant, 'teamMembers') ? [''] : [],
 			details: EditorState.createEmpty()
 		}
+		logger.info('grants', result[0])
 		setForm(initForm)
 		setGrant(result[0].grant)
 		const currentSafe = new SupportedPayouts().getSafe(parseInt(result[0].grant?.workspace?.safe?.chainId!), result[0].grant?.workspace?.safe?.address!)
