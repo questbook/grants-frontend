@@ -123,8 +123,7 @@ function AddMemberButton() {
 				disabled={!isBiconomyInitialised}
 				onClick={
 					async() => {
-						setSelectedRole(id)
-						await createLink()
+						await createLink(id)
 					}
 				}>
 				<Text
@@ -159,19 +158,20 @@ function AddMemberButton() {
 	const router = useRouter()
 
 	const popoverRef = useRef<HTMLButtonElement>(null)
-	const [selectedRole, setSelectedRole] = useState<number>()
-	const { makeInvite, isBiconomyInitialised } = useMakeInvite(selectedRole ?? 0)
+	const { makeInvite, isBiconomyInitialised } = useMakeInvite()
 	const [ createLinkStep, setCreateLinkStep ] = useState<number>()
 	const [ , setTransactionHash ] = useState<string>()
 	const [ link, setLink ] = useState<string>()
 
 	const toast = useToast()
 
-	const createLink = async() => {
+	const createLink = async(role: number) => {
+
 		setCreateLinkStep(0)
 
 		try {
 			const info = await makeInvite(
+				role,
 				() => setCreateLinkStep(1),
 				setTransactionHash,
 			)

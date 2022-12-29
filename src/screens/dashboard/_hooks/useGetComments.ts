@@ -40,20 +40,6 @@ function useGetComments() {
 
 	const [comments, setComments] = useState<CommentType[]>([])
 
-	// const test = useCallback(async() => {
-	// 	const pii = [
-	// 		{ id: '0x1738d3f0207267ade0fb113dd62222082dac58f0', data: 'UDzeKLTFrjiyNvqrNdOHgiTGpNAJmYdWsseTDsrkvxzCuqSUIRWh4cXLVDbJKqBJKu4FrNtqcx3Pm7/eHdRIB4z3MZCyYeYJwzTklJfrq9Y5zUyTJt8mwCPOUpKo9Qr12MVimad9DYoW68GetbWJcph9Ib6sx5miHqRbRPrS3aiTULcP8cOB1MXYVp2MmiZTEOny5B0SxjQLL3Q4GaD3wg==', },
-	// 		{ id: '0xd1bfd92ab161983e007aade98312b83eeca14f9a', data: 'p7ay6gNRG3YZlwQAqvkL7CC5D5ta0DU25KHyH2B06JlTcpbVSSJwk4+qUJzwnMpKhHbbxHLPXELA0cJJrB2K4zfyv95iyXlgY2MQ/2GllJgbcA53mg3rRFMoQXgYAvQwtLNBIo4pWr8Q7KTrZgjWrZkz1A4aSMH4mPaYpiwyWh/gAfrJDeVnkQY6x3ZZalMD6ol7lXQmIDK75WzP/J+ggw==' }
-	// 	]
-
-	// 	const ret = await decrypt({ commentsEncryptedData: pii })
-	// 	logger.info(ret, 'comment decrypted (Comment)')
-	// }, [proposal, webwallet, chainId])
-
-	// useEffect(() => {
-	// 	test()
-	// }, [proposal, webwallet, chainId])
-
 	const getComments = useCallback(async() => {
 		const finalComments: CommentType[] = []
 		const localComments: Exclude<GetCommentsQuery['comments'], null | undefined> = []

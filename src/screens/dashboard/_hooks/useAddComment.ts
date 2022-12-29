@@ -9,6 +9,7 @@ import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import { usePiiForComment } from 'src/libraries/utils/pii'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import useQuickReplies from 'src/screens/dashboard/_hooks/useQuickReplies'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import getErrorMessage from 'src/utils/errorUtils'
 import {
@@ -28,6 +29,8 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 	const { role, subgraphClients } = useContext(ApiClientsContext)!
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
+
+	const { quickReplies } = useQuickReplies()
 
 	const proposal = useMemo(() => {
 		const index = selectedProposals.indexOf(true)
@@ -78,7 +81,7 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 	const communicationContract = useQBContract('communication', chainId)
 
 	const addComment = useCallback(
-		async(message: EditorState) => {
+		async(message: EditorState, tags: number[]) => {
 			try {
 				if(
 					!webwallet || !biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress || !proposal?.id || !proposal?.grant?.id || !proposal?.grant?.workspace?.id
@@ -97,16 +100,15 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 					sender: scwAddress,
 					message: messageHash,
 					timestamp: Math.floor(Date.now() / 1000),
+					tags: quickReplies[role]?.filter((_, index) => tags.includes(index)).map((reply) => reply.id),
 					role,
 				}
 
-				if(role !== 'community') {
-					await encrypt(json)
-				}
+				const finalData = role !== 'community' ? await encrypt(json) : json
 
-				logger.info({ json }, 'Encrypted JSON (Comment)')
+				logger.info(finalData, 'Encrypted JSON (Comment)')
 
-				const commentHash = (await uploadToIPFS(JSON.stringify(json))).hash
+				const commentHash = (await uploadToIPFS(JSON.stringify(finalData))).hash
 				logger.info({ commentHash }, 'Comment Hash (Comment)')
 
 				const methodArgs = [

@@ -11,6 +11,7 @@ function useCustomToast() {
 	const toast = useToast()
 
 	const showToast = ({ action, actionText, ...props }: Props) => {
+		toast.closeAll()
 		return toastRef.current = toast({
 			render: () => {
 				return (
@@ -20,9 +21,19 @@ function useCustomToast() {
 						direction='column'
 						p={4}>
 						<Flex>
-							<Image
-								src={`/v2/icons/${props.status === 'success' ? 'check double' : 'error warning'}.svg`}
-								boxSize='20px' />
+							{
+								props.title === 'Linking your multisig' ? (
+									<Image
+										className='loader'
+										src='/ui_icons/loader.svg'
+										color='black.1'
+									/>
+								) : (
+									<Image
+										src={`/v2/icons/${props.status === 'success' ? 'check double' : 'error warning'}.svg`}
+										boxSize='20px' />
+								)
+							}
 							<Flex
 								align='start'
 								direction='column'
@@ -57,7 +68,7 @@ function useCustomToast() {
 		'info': 'accent.columbia',
 		'success': 'accent.june',
 		'warning': 'accent.crayola',
-		'error': 'accent.melon'
+		'error': 'accent.melon',
 	}
 
 	return showToast

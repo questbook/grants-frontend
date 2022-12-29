@@ -2,36 +2,25 @@ import { useState } from 'react'
 import { Flex, FlexProps, Input, InputProps, Text } from '@chakra-ui/react'
 
 interface Props extends InputProps {
-    label: string
     helperText?: string
+    width?: string
     flexProps?: FlexProps
-	errorText?: string
 }
 
-function SectionInput({ label, helperText, flexProps, errorText, ...props }: Props) {
+function SettingsInput({ helperText, width, flexProps, ...props }: Props) {
 	const buildComponent = () => {
 		return (
 			<Flex
 				{...flexProps}
 				direction='column'
-				mt={8}
+				// mt={8}
 				w='100%'>
 				<Flex
-					w='100%'
-					align='end'>
-					<Text
-						mr={8}
-						pb={2}
-						variant='v2_subheading'
-						w='calc(30% - 32px)'
-						fontWeight='500'
-						textAlign='right'>
-						{label}
-					</Text>
-
+					w={width}
+				>
 					<Input
 						{...props}
-						w='70%'
+						w={width}
 						variant='flushed'
 						textAlign='left'
 						borderColor='gray.3'
@@ -75,17 +64,6 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 						</Text>
 					)
 				}
-				{
-					props?.isInvalid && (
-						<Text
-							mt={1}
-							ml='30%'
-							variant='v2_metadata'
-							color='gray.5'>
-							{errorText}
-						</Text>
-					)
-				}
 			</Flex>
 		)
 	}
@@ -95,4 +73,4 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 	return buildComponent()
 }
 
-export default SectionInput
+export default SettingsInput

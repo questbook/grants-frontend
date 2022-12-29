@@ -65,6 +65,7 @@ function Profile() {
 							alignItems='baseline'
 							position='relative'
 							// top='134px'
+							gap={2}
 							p={4}
 						>
 
@@ -114,7 +115,7 @@ function Profile() {
 									{
 								data?.grants[0].workspace.about!.startsWith('{') ? (<TextViewer text={data?.grants[0].workspace.about!} />) : (
 									<Text>
-										{data?.grants[0].workspace.about}
+										{data?.grants[0].workspace.bio}
 									</Text>
 								)
 									}
@@ -263,6 +264,7 @@ function Profile() {
 					>
 						{activeMenuButton === 0 && (renderInviteForProposals())}
 						{/* {activeMenuButton === 1 && (renderRecentProposals())} */}
+						{activeMenuButton === 1 && (renderMoreInfo())}
 					</Flex>
 
 					{/* RFP Card */}
@@ -308,6 +310,14 @@ function Profile() {
 					key={rfp.id} />
 			)
 		})
+	}
+
+	const renderMoreInfo = () => {
+		return (
+			<Text>
+				{data?.grants[0].workspace.about}
+			</Text>
+		)
 	}
 
 	// Recent proposals tab will be displayed in community view
