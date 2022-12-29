@@ -189,6 +189,11 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 			title: t('account_details.menu.use_another_wallet'),
 			onClick: () => openModal?.('import')
 		},
+		{
+			icon: '/v2/icons/settings.svg',
+			title: 'Settings',
+			onClick: () => router.push('/settings')
+		}
 	]
 
 	function copyScwAddress() {
