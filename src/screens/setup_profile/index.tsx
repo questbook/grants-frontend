@@ -4,6 +4,7 @@ import { generateInputForAuthorisation } from '@questbook/anon-authoriser'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
 import useQBContract from 'src/hooks/contracts/useQBContract'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useSetupProfile from 'src/libraries/hooks/useSetupProfile'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
@@ -123,8 +124,15 @@ function SetupProfile() {
 							setNetworkTransactionModalStep(undefined)
 							setTransactionHash('')
 							setRole('reviewer')
-							router.push({
-								pathname: '/dashboard'
+							toast({
+								title: 'Profile created successfully',
+								status: 'success',
+								duration: 3000,
+								onCloseComplete: () => {
+									router.push({
+										pathname: '/dashboard'
+									})
+								}
 							})
 						}
 					} />
@@ -182,6 +190,8 @@ function SetupProfile() {
 			name, email, imageFile, role: inviteInfo.role, signature
 		})
 	}
+
+	const toast = useCustomToast()
 
 	return buildComponent()
 }
