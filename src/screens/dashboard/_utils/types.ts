@@ -18,6 +18,8 @@ type BaseDashboardContextType = {
   selectedGrant: AdminGrant | ReviewerGrant | undefined
   review: ReviewInfo | undefined
   setReview: (reviews: ReviewInfo) => void
+  showSubmitReviewPanel: boolean
+  setShowSubmitReviewPanel: (show: boolean) => void
 };
 
 type OptionalDashboardContextType =

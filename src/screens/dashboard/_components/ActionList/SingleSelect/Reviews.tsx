@@ -1,7 +1,7 @@
 import { RefObject, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Box, Button, Checkbox, Divider, Flex, Image, InputGroup, InputRightElement, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
-import { ApiClientsContext } from 'src/pages/_app'
+import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import DashboardInput from 'src/screens/dashboard/_components/DashboardInput'
 import useAssignReviewers from 'src/screens/dashboard/_hooks/useAssignReviewers'
 import useSetRubrics from 'src/screens/dashboard/_hooks/useSetRubrics'
@@ -610,7 +610,7 @@ function Reviews() {
 						}
 					}>
 					<Flex
-						maxW='70%'
+						maxW={review?.items?.[0]?.rubric?.maximumPoints === 1 ? '100%' : '70%'}
 						align='center'
 					>
 						<Image
@@ -624,10 +624,12 @@ function Reviews() {
 							ml={3}
 							noOfLines={3}>
 							{reviewer?.fullName}
-							{review && review.items?.[0]?.rubric?.maximumPoints === 1 && ' voted'}
+							{review?.items?.[0]?.rubric?.maximumPoints === 1 && ' voted'}
 							{
-								review && review.items?.[0]?.rubric?.maximumPoints === 1 && (
+								review?.items?.[0]?.rubric?.maximumPoints === 1 && (
 									<Text
+										ml={1}
+										display='inline-block'
 										variant='v2_body'
 										fontWeight='600'
 										color={review.items?.[0]?.rating === 0 ? 'accent.royal' : 'accent.june'}>
@@ -671,7 +673,7 @@ function Reviews() {
 					}
 
 					{
-						!review && (
+						!review && reviewer.actorId.toLowerCase() !== scwAddress?.toLowerCase() && (
 							<Text
 								bg='gray.4'
 								py={1}
@@ -682,6 +684,24 @@ function Reviews() {
 								fontWeight='500'>
 								Pending
 							</Text>
+						)
+					}
+
+					{
+						!review && reviewer.actorId.toLowerCase() === scwAddress?.toLowerCase() && (
+							<Button variant='link'>
+								<Text
+									color='accent.azure'
+									variant='v2_body'
+									fontWeight='500'
+									onClick={
+										() => {
+											setShowSubmitReviewPanel(true)
+										}
+									}>
+									Review Proposal
+								</Text>
+							</Button>
 						)
 					}
 
@@ -734,7 +754,8 @@ function Reviews() {
 	}
 
 	const { workspace, chainId } = useContext(ApiClientsContext)!
-	const { proposals, selectedGrant, selectedProposals } = useContext(DashboardContext)!
+	const { scwAddress } = useContext(WebwalletContext)!
+	const { proposals, selectedGrant, selectedProposals, setShowSubmitReviewPanel } = useContext(DashboardContext)!
 	const { loadReview } = useLoadReview(selectedGrant?.id, chainId)
 
 	const [expanded, setExpanded] = useState<boolean>(false)

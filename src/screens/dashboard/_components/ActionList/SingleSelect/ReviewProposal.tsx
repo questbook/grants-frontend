@@ -2,6 +2,7 @@ import { useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Flex, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import logger from 'src/libraries/logger'
+import BackButton from 'src/libraries/ui/BackButton'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import { useLoadReview } from 'src/libraries/utils/reviews'
@@ -20,8 +21,23 @@ function ReviewProposal() {
 				align='stretch'
 				w='100%'
 				h='100%'>
+				{
+					showSubmitReviewPanel && (
+						<BackButton
+							mx={5}
+							variant='link'
+							w='100%'
+							justifyContent='flex-start'
+							onClick={
+								() => {
+									setShowSubmitReviewPanel(false)
+								}
+							} />
+					)
+				}
 				<Text
 					mx={5}
+					mt={showSubmitReviewPanel ? 4 : 0}
 					fontWeight='500'>
 					Review Proposals
 					{' '}
@@ -268,7 +284,7 @@ function ReviewProposal() {
 	}
 
 	const { chainId } = useContext(ApiClientsContext)!
-	const { selectedProposals, proposals, selectedGrant, review, setReview } = useContext(DashboardContext)!
+	const { selectedProposals, proposals, selectedGrant, review, setReview, showSubmitReviewPanel, setShowSubmitReviewPanel } = useContext(DashboardContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
 
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()

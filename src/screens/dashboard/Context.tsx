@@ -53,6 +53,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const [selectedProposals, setSelectedProposals] = useState<boolean[]>([])
 	const [review, setReview] = useState<ReviewInfo>()
 	const [isLoading, setIsLoading] = useState<boolean>(true)
+	const [showSubmitReviewPanel, setShowSubmitReviewPanel] = useState<boolean>(false)
 
 	useEffect(() => {
 		logger.info({ isLoading }, 'Loading')
@@ -253,7 +254,9 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			selectedGrant,
 			review,
 			setReview,
-			isLoading
+			isLoading,
+			showSubmitReviewPanel,
+			setShowSubmitReviewPanel,
 		}
 	}, [proposals,
 		selectedGrantIndex,
@@ -263,7 +266,9 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		selectedGrant,
 		review,
 		setReview,
-		isLoading])
+		isLoading,
+		showSubmitReviewPanel,
+		setShowSubmitReviewPanel])
 
 	return (
 		<DashboardContext.Provider

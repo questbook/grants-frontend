@@ -12,7 +12,7 @@ import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function SingleSelect() {
 	const buildComponent = () => {
-		return role === 'admin' ? adminComponent() : role === 'reviewer' ? reviewerComponent() : role === 'builder' ? builderComponent() : <Flex />
+		return (role === 'admin' && !showSubmitReviewPanel) ? adminComponent() : (role === 'reviewer' || showSubmitReviewPanel) ? reviewerComponent() : role === 'builder' ? builderComponent() : <Flex />
 	}
 
 	const adminComponent = () => {
@@ -91,7 +91,7 @@ function SingleSelect() {
 	const router = useRouter()
 	const { role } = useContext(ApiClientsContext)!
 	const { setIsModalOpen } = useContext(FundBuilderContext)!
-	const { proposals, selectedProposals } = useContext(DashboardContext)!
+	const { proposals, selectedProposals, showSubmitReviewPanel } = useContext(DashboardContext)!
 
 	const proposal = useMemo(() => {
 		const index = selectedProposals.indexOf(true)
