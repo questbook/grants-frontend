@@ -291,14 +291,14 @@ function Reviews() {
 					Reviewer
 				</Text>
 				{
-					selectedGrant?.numberOfReviewersPerApplication && (
+					(selectedGrant?.numberOfReviewersPerApplication || 0) > 0 && (
 						<Text
 							variant='v2_body'>
 							{selectedGrant?.numberOfReviewersPerApplication}
 						</Text>
 					)
 				}
-				{selectedGrant?.numberOfReviewersPerApplication && <Box ml='auto' />}
+				{(selectedGrant?.numberOfReviewersPerApplication || 0) > 0 && <Box ml='auto' />}
 				{assignReviewerPopup(assignReviewerPopoverRef, selectedGrant?.numberOfReviewersPerApplication ? 'edit' : 'setup')}
 			</Flex>
 		)
@@ -355,7 +355,7 @@ function Reviews() {
 		return (
 			<Popover
 				isLazy
-				placement='top-start'
+				placement='bottom'
 				initialFocusRef={popoverRef}>
 				{
 					({ onClose }) => (
@@ -386,12 +386,12 @@ function Reviews() {
 									<Divider mt={3} />
 
 									{
-										reviewType === ReviewType.Rubrics && (
+										reviewType === ReviewType.Rubrics && (rubrics.length > 0 || anotherRubricTitle !== undefined) && (
 											<Text
 												mt={6}
 												variant='v2_body'
 												fontWeight='500'>
-												Select Members
+												Rubric Includes
 											</Text>
 										)
 									}
@@ -399,7 +399,7 @@ function Reviews() {
 									{reviewType === ReviewType.Rubrics && rubrics?.map(rubricItem)}
 
 									{
-										anotherRubricTitle !== undefined && (
+										reviewType === ReviewType.Rubrics && anotherRubricTitle !== undefined && (
 											<InputGroup>
 												<DashboardInput
 													mt={3}
@@ -445,7 +445,7 @@ function Reviews() {
 									}
 
 									{
-										anotherRubricTitle === undefined && (
+										reviewType === ReviewType.Rubrics && anotherRubricTitle === undefined && (
 											<Button
 												mt={3}
 												variant='link'
@@ -453,11 +453,28 @@ function Reviews() {
 												<Text
 													variant='v2_body'
 													fontWeight='500'>
-													Add Another
+													{rubrics.length === 0 ? 'Start adding Rubric' : 'Add Another'}
 												</Text>
 											</Button>
 										)
 									}
+
+									{reviewType === ReviewType.Rubrics && <Divider mt={3} />}
+
+									<Checkbox
+										mt={3}
+										isChecked={isReviewPrivate}
+										onChange={
+											(e) => {
+												setIsReviewPrivate(e.target.checked)
+											}
+										}>
+										<Text
+											variant='v2_body'
+											fontWeight='500'>
+											Keep reviews private
+										</Text>
+									</Checkbox>
 
 									<Flex mt={4}>
 										<Button
@@ -654,10 +671,16 @@ function Reviews() {
 	const [reviewersExpanded, setReviewersExpanded] = useState<boolean[]>([])
 
 	const assignReviewerPopoverRef = useRef<HTMLButtonElement>(null)
-
 	const [numberOfReviewersPerApplication, setNumberOfReviewersPerApplication] = useState<number>()
 	const [searchMemberName, setSearchMemberName] = useState<string>('')
 	const [members, setMembers] = useState<{ [id: string]: boolean }>({})
+	const { assignReviewers } = useAssignReviewers()
+
+	const setReviewTypePopoverRef = useRef<HTMLButtonElement>(null)
+	const [reviewType, setReviewType] = useState<ReviewType>(ReviewType.Rubrics)
+	const [isReviewPrivate, setIsReviewPrivate] = useState<boolean>(false)
+	const [rubrics, setRubrics] = useState<RubricItem[]>([])
+	const [anotherRubricTitle, setAnotherRubricTitle] = useState<string>()
 
 	useEffect(() => {
 		if(selectedGrant?.numberOfReviewersPerApplication !== null) {
@@ -675,21 +698,17 @@ function Reviews() {
 
 			setMembers(currMembers)
 		}
-	}, [selectedGrant])
 
-	const { assignReviewers } = useAssignReviewers()
+		setReviewType(selectedGrant?.reviewType === 'voting' ? ReviewType.Voting : ReviewType.Rubrics)
 
-	const setReviewTypePopoverRef = useRef<HTMLButtonElement>(null)
-
-	const [reviewType, setReviewType] = useState<ReviewType>(ReviewType.Rubrics)
-	const [rubrics, setRubrics] = useState<RubricItem[]>([])
-	const [anotherRubricTitle, setAnotherRubricTitle] = useState<string>()
-
-	useEffect(() => {
 		if(selectedGrant?.rubric?.items) {
 			setRubrics(selectedGrant?.rubric?.items)
 		}
-	}, [selectedGrant?.rubric?.items])
+
+		if(selectedGrant?.rubric?.isPrivate !== undefined) {
+			setIsReviewPrivate(selectedGrant?.rubric?.isPrivate)
+		}
+	}, [selectedGrant])
 
 	useEffect(() => {
 		if(proposals?.length === 0) {
