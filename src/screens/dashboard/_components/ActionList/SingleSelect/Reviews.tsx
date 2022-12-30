@@ -4,6 +4,7 @@ import logger from 'src/libraries/logger'
 import { ApiClientsContext } from 'src/pages/_app'
 import DashboardInput from 'src/screens/dashboard/_components/DashboardInput'
 import useAssignReviewers from 'src/screens/dashboard/_hooks/useAssignReviewers'
+import useSetRubrics from 'src/screens/dashboard/_hooks/useSetRubrics'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { IReviewFeedback, ReviewType } from 'src/types'
@@ -64,11 +65,63 @@ function Reviews() {
 						)
 					}
 
+					{(proposal?.applicationReviewers?.length || 0) > 0 && voteGraph()}
+
 					{
 						proposal?.applicationReviewers?.map((reviewer, index) => {
 							return reviewerItem(reviewer?.member, reviews.find(r => r.reviewer === reviewer?.member.actorId), index)
 						})
 					}
+				</Flex>
+			</Flex>
+		)
+	}
+
+	const voteGraph = () => {
+		const votes = reviews.filter(r => r.items?.[0]?.rubric?.maximumPoints === 1)
+		const forVotes = votes.filter(v => v.items?.[0]?.rating === 1).length
+		const againstVotes = votes.filter(v => v.items?.[0]?.rating === 0).length
+		return (
+			<Flex
+				direction='column'
+				mt={2}>
+				<Flex
+					w='100%'
+					justify='space-between'>
+					{
+						[forVotes, againstVotes].map((vote, index) => {
+							return (
+								<Flex
+									direction='column'
+									align={index === 0 ? 'start' : 'end'}
+									key={index}>
+									<Text
+										variant='v2_subheading'
+										fontWeight='500'>
+										{vote}
+									</Text>
+									<Text
+										mt={1}
+										variant='v2_body' >
+										{index === 0 ? 'For' : 'Against'}
+									</Text>
+								</Flex>
+							)
+						})
+					}
+				</Flex>
+				<Flex
+					w='100%'
+					mt={2}
+					h='12px'>
+					<Flex
+						bg='accent.june'
+						w={`${(forVotes / votes.length) * 100}%`}
+						h='100%' />
+					<Flex
+						bg='accent.royal'
+						w={`${100 - ((forVotes / votes.length) * 100)}%`}
+						h='100%' />
 				</Flex>
 			</Flex>
 		)
@@ -244,6 +297,7 @@ function Reviews() {
 									<Flex mt={6}>
 										<Button
 											variant='primaryMedium'
+											isDisabled={networkTransactionModalStep !== undefined}
 											onClick={
 												() => {
 													if(numberOfReviewersPerApplication) {
@@ -341,9 +395,9 @@ function Reviews() {
 					cursor='pointer'
 					onClick={
 						() => {
-							if(rubrics.length > 1) {
-								const copy = [...rubrics]
-								setRubrics(copy.filter((r, i) => i !== index))
+							if(rubricItems.length > 1) {
+								const copy = [...rubricItems]
+								setRubricItems(copy.filter((r, i) => i !== index))
 							}
 						}
 					} />
@@ -386,7 +440,7 @@ function Reviews() {
 									<Divider mt={3} />
 
 									{
-										reviewType === ReviewType.Rubrics && (rubrics.length > 0 || anotherRubricTitle !== undefined) && (
+										reviewType === ReviewType.Rubrics && (rubricItems.length > 0 || anotherRubricTitle !== undefined) && (
 											<Text
 												mt={6}
 												variant='v2_body'
@@ -396,7 +450,7 @@ function Reviews() {
 										)
 									}
 
-									{reviewType === ReviewType.Rubrics && rubrics?.map(rubricItem)}
+									{reviewType === ReviewType.Rubrics && rubricItems?.map(rubricItem)}
 
 									{
 										reviewType === ReviewType.Rubrics && anotherRubricTitle !== undefined && (
@@ -432,8 +486,8 @@ function Reviews() {
 														cursor='pointer'
 														onClick={
 															() => {
-																const copy = [...rubrics, { title: anotherRubricTitle, description: '', maximumPoints: 5 }]
-																setRubrics(copy)
+																const copy = [...rubricItems, { title: anotherRubricTitle, description: '', maximumPoints: 5 }]
+																setRubricItems(copy)
 																setAnotherRubricTitle(undefined)
 															}
 														}
@@ -453,7 +507,7 @@ function Reviews() {
 												<Text
 													variant='v2_body'
 													fontWeight='500'>
-													{rubrics.length === 0 ? 'Start adding Rubric' : 'Add Another'}
+													{rubricItems.length === 0 ? 'Start adding Rubric' : 'Add Another'}
 												</Text>
 											</Button>
 										)
@@ -479,7 +533,13 @@ function Reviews() {
 									<Flex mt={4}>
 										<Button
 											variant='primaryMedium'
-											onClick={() => { }}>
+											isDisabled={networkTransactionModalStep !== undefined}
+											onClick={
+												() => {
+													logger.info({ reviewType, isReviewPrivate, rubricItems }, 'setRubrics')
+													setRubrics(reviewType, isReviewPrivate, rubricItems)
+												}
+											}>
 											<Text
 												variant='v2_body'
 												color='white'
@@ -564,13 +624,24 @@ function Reviews() {
 							ml={3}
 							noOfLines={3}>
 							{reviewer?.fullName}
+							{review && review.items?.[0]?.rubric?.maximumPoints === 1 && ' voted'}
+							{
+								review && review.items?.[0]?.rubric?.maximumPoints === 1 && (
+									<Text
+										variant='v2_body'
+										fontWeight='600'
+										color={review.items?.[0]?.rating === 0 ? 'accent.royal' : 'accent.june'}>
+										{review.items?.[0]?.rating === 0 ? ' against' : ' for'}
+									</Text>
+								)
+							}
 						</Text>
 					</Flex>
 
 					<Box ml='auto' />
 
 					{
-						review && (
+						review && review.items?.[0]?.rubric?.maximumPoints > 1 && (
 							<Flex
 								align='center'
 								justify='end'
@@ -670,6 +741,9 @@ function Reviews() {
 	const [reviews, setReviews] = useState<IReviewFeedback[]>([])
 	const [reviewersExpanded, setReviewersExpanded] = useState<boolean[]>([])
 
+	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
+	const [, setTransactionHash] = useState<string>('')
+
 	const assignReviewerPopoverRef = useRef<HTMLButtonElement>(null)
 	const [numberOfReviewersPerApplication, setNumberOfReviewersPerApplication] = useState<number>()
 	const [searchMemberName, setSearchMemberName] = useState<string>('')
@@ -679,8 +753,9 @@ function Reviews() {
 	const setReviewTypePopoverRef = useRef<HTMLButtonElement>(null)
 	const [reviewType, setReviewType] = useState<ReviewType>(ReviewType.Rubrics)
 	const [isReviewPrivate, setIsReviewPrivate] = useState<boolean>(false)
-	const [rubrics, setRubrics] = useState<RubricItem[]>([])
+	const [rubricItems, setRubricItems] = useState<RubricItem[]>([])
 	const [anotherRubricTitle, setAnotherRubricTitle] = useState<string>()
+	const { setRubrics } = useSetRubrics({ setNetworkTransactionModalStep, setTransactionHash })
 
 	useEffect(() => {
 		if(selectedGrant?.numberOfReviewersPerApplication !== null) {
@@ -702,7 +777,7 @@ function Reviews() {
 		setReviewType(selectedGrant?.reviewType === 'voting' ? ReviewType.Voting : ReviewType.Rubrics)
 
 		if(selectedGrant?.rubric?.items) {
-			setRubrics(selectedGrant?.rubric?.items)
+			setRubricItems(selectedGrant?.rubric?.items)
 		}
 
 		if(selectedGrant?.rubric?.isPrivate !== undefined) {

@@ -95,7 +95,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 				return 'some-error-reviewer'
 			}
 
-			logger.info({ results }, 'Fetched grants (Reviewer)')
+			logger.info({ reviewerGrants: results[0].grantReviewerCounters }, 'Fetched grants (Reviewer)')
 			setReviewerGrants(results[0].grantReviewerCounters)
 
 			if(!grantID) {
@@ -156,7 +156,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 				return 'no-proposals-reviewer'
 			}
 
-			logger.info({ reviewerProposals: results[0]?.grantApplications })
+			logger.info({ reviewerProposals: results[0]?.grantApplications }, 'Fetched proposals (Reviewer)')
 			proposals.push(...results[0]?.grantApplications)
 		} else if(role === 'builder') {
 			logger.info({}, 'As builder')
@@ -293,7 +293,6 @@ const FundBuilderProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const [amounts, setAmounts] = useState<number[]>([])
 	const [tos, setTos] = useState<string[]>([])
 	const [milestoneIndices, setMilestoneIndices] = useState<number[]>([])
-	const [applicationIds, setApplicationIds] = useState<string[]>([])
 
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 	const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)

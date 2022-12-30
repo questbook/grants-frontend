@@ -2,7 +2,6 @@ import { useContext, useMemo } from 'react'
 import { Box, Button, Divider, Flex } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
-import logger from 'src/libraries/logger'
 import { ApiClientsContext } from 'src/pages/_app'
 import Milestones from 'src/screens/dashboard/_components/ActionList/SingleSelect/Milestones'
 import Payouts from 'src/screens/dashboard/_components/ActionList/SingleSelect/Payouts'
@@ -13,7 +12,6 @@ import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function SingleSelect() {
 	const buildComponent = () => {
-		logger.info({ role }, 'Action List Role')
 		return role === 'admin' ? adminComponent() : role === 'reviewer' ? reviewerComponent() : role === 'builder' ? builderComponent() : <Flex />
 	}
 

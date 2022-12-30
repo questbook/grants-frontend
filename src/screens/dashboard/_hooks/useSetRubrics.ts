@@ -1,6 +1,7 @@
 import { useCallback, useContext, useMemo } from 'react'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
+import logger from 'src/libraries/logger'
 import { validateAndUploadToIpfs } from 'src/libraries/validator'
 import { ApiClientsContext } from 'src/pages/_app'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -18,7 +19,7 @@ function useSetRubrics({ setNetworkTransactionModalStep, setTransactionHash }: P
 
 	const applicationReviewRegistry = useQBContract('reviews', chainId)
 
-	const { call } = useFunctionCall({ chainId, contractName: 'reviews' })
+	const { call } = useFunctionCall({ chainId, contractName: 'reviews', setTransactionStep: setNetworkTransactionModalStep, setTransactionHash })
 
 	const setRubrics = useCallback(
 		async(reviewType: ReviewType, isPrivate: boolean, items: RubricItem[]) => {
@@ -26,19 +27,35 @@ function useSetRubrics({ setNetworkTransactionModalStep, setTransactionHash }: P
 				return
 			}
 
+			logger.info(reviewType, 'RubricSetRequest reviewType')
+			logger.info(isPrivate, 'RubricSetRequest isPrivate')
+			logger.info(items, 'RubricSetRequest items')
+
 			const rubric: {[_ in string]: {
 				title: string
 				details: string
 				maximumPoints: number
 			}} = {}
 
-			for(let i = 0; i < items.length; i++) {
-				rubric[i] = {
-					title: items[i].title,
-					details: '',
-					maximumPoints: 5,
+			if(reviewType === ReviewType.Rubrics) {
+				for(let i = 0; i < items.length; i++) {
+					rubric[i] = {
+						title: items[i].title,
+						details: items[i].details ?? '',
+						maximumPoints: items[i].maximumPoints,
+					}
 				}
+			} else if(reviewType === ReviewType.Voting) {
+				rubric[0] = {
+					title: 'Vote for',
+					details: '',
+					maximumPoints: 1,
+				}
+			} else {
+				return
 			}
+
+			logger.info(rubric, 'RubricSetRequest')
 
 			const rubricJson = {
 				reviewType: reviewType === ReviewType.Rubrics ? 'rubrics' : 'voting',
@@ -48,20 +65,24 @@ function useSetRubrics({ setNetworkTransactionModalStep, setTransactionHash }: P
 				},
 			}
 
+			logger.info(rubricJson, 'RubricSetRequest json')
+
 			const { hash } = await validateAndUploadToIpfs('RubricSetRequest', rubricJson)
+
+			logger.info(hash, 'RubricSetRequest hash')
 
 			await call({
 				method: 'setRubrics',
 				args: [workspace.id, selectedGrant.id, selectedGrant.numberOfReviewersPerApplication ?? 0, hash]
 			})
 		},
-		[applicationReviewRegistry, selectedGrant],
+		[applicationReviewRegistry, selectedGrant, workspace],
 	)
 
 	return {
-		assignReviewers: useMemo(
+		setRubrics: useMemo(
 			() => setRubrics,
-			[applicationReviewRegistry, selectedGrant],
+			[applicationReviewRegistry, selectedGrant, workspace],
 		),
 	}
 }

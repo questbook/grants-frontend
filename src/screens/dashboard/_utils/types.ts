@@ -86,8 +86,8 @@ export type ReviewInfo = {
   isApproved?: boolean
   createdAtS?: number
   reviewer?: string
-  items: ReviewData[]
-  total: number
+  items?: ReviewData[]
+  total?: number
 };
 export type AdminGrant = GetGrantsForAdminQuery['grants'][number];
 export type ReviewerGrant =
