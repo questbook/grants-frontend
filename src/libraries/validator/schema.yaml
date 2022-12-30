@@ -458,6 +458,8 @@ Rubric:
     - isPrivate
     - rubric
   properties:
+    reviewType:
+      $ref: 'ReviewType'
     isPrivate:
       type: boolean
     rubric:

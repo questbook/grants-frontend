@@ -18,7 +18,7 @@ function FlushedInput({ helperText, textPadding = 2, flexProps, ...props }: Prop
 			>
 				<Input
 					variant='flushed'
-					borderBottom='2px solid #0A84FF'
+					// borderBottom='2px solid #0A84FF'
 					borderColor={value ? 'black' : 'gray.300'}
 					fontWeight='400'
 					fontSize='20px'

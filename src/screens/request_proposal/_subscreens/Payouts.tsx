@@ -1,11 +1,11 @@
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { BsArrowLeft } from 'react-icons/bs'
-import { Button, Flex, Text } from '@chakra-ui/react'
+import { IoMdClose } from 'react-icons/io'
+import { Button, Flex, Icon, Text } from '@chakra-ui/react'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
 import SelectDropdown from 'src/screens/request_proposal/_components/SelectDropdown'
-import { DynamicInputValues } from 'src/types'
 
 interface Props {
 	payoutMode: string
@@ -30,6 +30,7 @@ function Payouts(
 		setAmount,
 		step,
 		setStep,
+		milestones,
 		setMilestones,
 		shouldCreateRFP,
 		createRFP,
@@ -132,8 +133,23 @@ function Payouts(
 													</Text>
 													<FlushedInput
 														placeholder='Add milestone'
-														value={milestoneInputValues[index]}
+														value={milestones[index]}
 														onChange={(e) => handleOnChange(e, index)} />
+													<Icon
+														as={IoMdClose}
+														cursor='pointer'
+														onClick={
+															() => {
+																if(milestoneCounter > 0) {
+																	setMilestoneCounter(milestoneCounter - 1)
+																}
+
+																setMilestones(milestones.filter((_, i) => i !== index))
+
+															}
+														}
+														// onMouseOver={() => setShowCrossIcon(true)}
+													/>
 												</Flex>
 											</>
 										)
@@ -175,8 +191,9 @@ function Payouts(
 						gap={8}
 						width='100%'
 						justifyContent='flex-end'
-						position='absolute'
-						bottom='50px' >
+						// position='absolute'
+						// bottom='50px'
+					>
 						<Button
 							className='continueBtn'
 							variant='primaryMedium'
@@ -197,25 +214,11 @@ function Payouts(
 		)
 	}
 
-	const [milestoneInputValues, setMilestoneInputValues] = useState<{ [key: number]: string }>({})
 	const [milestoneCounter, setMilestoneCounter] = useState(0)
-
-	const formatMilestones = () => {
-		const keys = Object.keys(milestoneInputValues)
-		const milestones = []
-		for(let i = 0; i < keys.length; i++) {
-			milestones.push(milestoneInputValues[i])
-		}
-
-		setMilestones(milestones)
-	}
-
-	useEffect(() => {
-		formatMilestones()
-	}, [milestoneInputValues])
 
 	const payoutTypeOptions = [{ value: 'in_one_go', label: 'in one go' }, { value: 'milestones', label: 'based on milestone' }]
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const handleOnChangePayoutTypeOption = (item: any) => {
 		// console.log('payout changes to', item)
 		setPayoutMode(item.label)
@@ -231,9 +234,15 @@ function Payouts(
 	}
 
 	const handleOnChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-		const milestones: DynamicInputValues = {}
-		milestones[index] = e.target.value
-		setMilestoneInputValues({ ...milestoneInputValues, ...milestones })
+		const _milestones: string[] = [...milestones]
+		debugger
+		if(index < _milestones.length) {
+			_milestones[index] = e.target.value
+			setMilestones(_milestones)
+		} else {
+			_milestones.push(e.target.value)
+			setMilestones(_milestones)
+		}
 	}
 
 	const handleOnClickContinue = () => {

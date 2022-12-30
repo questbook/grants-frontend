@@ -149,7 +149,9 @@ function ProposalReview(
 								</Flex>
 								<Flex
 									gap={4}
-									alignItems='baseline'>
+									alignItems='baseline'
+									position='relative'
+								>
 									<Button
 										variant='outline'
 										leftIcon={<AiOutlinePlus />}
@@ -167,8 +169,9 @@ function ProposalReview(
 						gap={8}
 						width='100%'
 						justifyContent='flex-end'
-						position='absolute'
-						bottom='50px'>
+						// position='absolute'
+						// bottom='50px'
+					>
 						<Button
 							variant='link'
 							onClick={() => setStep(3)}>
@@ -205,6 +208,7 @@ function ProposalReview(
 		setRubricsCounter(rubricsCounter + 1)
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const handleOnChangeReviewMechanismOption = (item: any) => {
 		// console.log('review changes to', item)
 		setReviewMechanism(item.value)
