@@ -246,7 +246,9 @@ function Reviews() {
 											variant='primaryMedium'
 											onClick={
 												() => {
-													assignReviewers()
+													if(numberOfReviewersPerApplication) {
+														assignReviewers(Object.keys(members).map(m => m.split('.')[1]), numberOfReviewersPerApplication)
+													}
 												}
 											}>
 											<Text
@@ -654,15 +656,26 @@ function Reviews() {
 	const assignReviewerPopoverRef = useRef<HTMLButtonElement>(null)
 
 	const [numberOfReviewersPerApplication, setNumberOfReviewersPerApplication] = useState<number>()
+	const [searchMemberName, setSearchMemberName] = useState<string>('')
+	const [members, setMembers] = useState<{ [id: string]: boolean }>({})
 
 	useEffect(() => {
 		if(selectedGrant?.numberOfReviewersPerApplication !== null) {
 			setNumberOfReviewersPerApplication(selectedGrant?.numberOfReviewersPerApplication)
 		}
-	}, [selectedGrant])
 
-	const [searchMemberName, setSearchMemberName] = useState<string>('')
-	const [members, setMembers] = useState<{ [id: string]: boolean }>({})
+		if(selectedGrant?.autoAssignReviewers) {
+			const currMembers: {[key: string]: boolean} = {}
+			logger.info('Current member state 1: ', currMembers)
+			for(const reviewer of selectedGrant?.autoAssignReviewers) {
+				currMembers[reviewer.id] = true
+			}
+
+			logger.info('Current member state 2: ', currMembers)
+
+			setMembers(currMembers)
+		}
+	}, [selectedGrant])
 
 	const { assignReviewers } = useAssignReviewers()
 
@@ -711,6 +724,10 @@ function Reviews() {
 			setReviews(reviews)
 		})
 	}, [])
+
+	// const isDisabled = useMemo(() => {
+	// 	if (selectedGrant?.numberOfReviewersPerApplication === numberOfReviewersPerApplication && Object.keys(members).length === selectedGrant?)
+	// }, [numberOfReviewersPerApplication, members])
 
 	return buildComponent()
 }
