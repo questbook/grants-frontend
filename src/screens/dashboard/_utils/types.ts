@@ -18,6 +18,8 @@ type BaseDashboardContextType = {
   selectedGrant: AdminGrant | ReviewerGrant | undefined
   review: ReviewInfo | undefined
   setReview: (reviews: ReviewInfo) => void
+  showSubmitReviewPanel: boolean
+  setShowSubmitReviewPanel: (show: boolean) => void
 };
 
 type OptionalDashboardContextType =
@@ -86,8 +88,8 @@ export type ReviewInfo = {
   isApproved?: boolean
   createdAtS?: number
   reviewer?: string
-  items: ReviewData[]
-  total: number
+  items?: ReviewData[]
+  total?: number
 };
 export type AdminGrant = GetGrantsForAdminQuery['grants'][number];
 export type ReviewerGrant =

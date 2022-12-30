@@ -5,7 +5,6 @@ function BackButton(props: ButtonProps) {
 	const buildComponent = () => {
 		return (
 			<Button
-				{...props}
 				variant='linkV2'
 				fontWeight='500'
 				leftIcon={<Image src='/v2/icons/arrow left/enabled.svg' />}
@@ -13,7 +12,8 @@ function BackButton(props: ButtonProps) {
 					() => {
 						router.back()
 					}
-				}>
+				}
+				{...props}>
 				<Text variant='v2_body'>
 					Back
 				</Text>

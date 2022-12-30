@@ -458,8 +458,6 @@ Rubric:
     - isPrivate
     - rubric
   properties:
-    reviewType:
-      $ref: 'ReviewType'
     isPrivate:
       type: boolean
     rubric:
@@ -472,6 +470,8 @@ RubricSetRequest:
   required:
     - rubric
   properties:
+    reviewType:
+      $ref: 'ReviewType'
     rubric:
       $ref: 'Rubric'
 GrantCreateRequest:

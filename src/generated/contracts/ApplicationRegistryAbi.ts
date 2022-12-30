@@ -37,9 +37,11 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     "approveMilestone(uint96,uint48,uint96,string)": FunctionFragment;
     "batchUpdateApplicationState(uint96[],uint8[],uint96,string[])": FunctionFragment;
     "completeApplication(uint96,uint96,string)": FunctionFragment;
+    "getApplicationGrant(uint96)": FunctionFragment;
     "getApplicationOwner(uint96)": FunctionFragment;
     "getApplicationWorkspace(uint96)": FunctionFragment;
     "initialize()": FunctionFragment;
+    "isSubmittedApplication(uint96)": FunctionFragment;
     "migrateWallet(address,address)": FunctionFragment;
     "owner()": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
@@ -65,9 +67,11 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
       | "approveMilestone"
       | "batchUpdateApplicationState"
       | "completeApplication"
+      | "getApplicationGrant"
       | "getApplicationOwner"
       | "getApplicationWorkspace"
       | "initialize"
+      | "isSubmittedApplication"
       | "migrateWallet"
       | "owner"
       | "proxiableUUID"
@@ -127,6 +131,10 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "getApplicationGrant",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getApplicationOwner",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -137,6 +145,10 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "initialize",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isSubmittedApplication",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "migrateWallet",
@@ -239,6 +251,10 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getApplicationGrant",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getApplicationOwner",
     data: BytesLike
   ): Result;
@@ -247,6 +263,10 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isSubmittedApplication",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "migrateWallet",
     data: BytesLike
@@ -504,6 +524,11 @@ export interface ApplicationRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    getApplicationGrant(
+      _applicationId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     getApplicationOwner(
       _applicationId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -517,6 +542,11 @@ export interface ApplicationRegistryAbi extends BaseContract {
     initialize(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    isSubmittedApplication(
+      _applicationId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     migrateWallet(
       fromWallet: PromiseOrValue<string>,
@@ -640,6 +670,11 @@ export interface ApplicationRegistryAbi extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  getApplicationGrant(
+    _applicationId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   getApplicationOwner(
     _applicationId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -653,6 +688,11 @@ export interface ApplicationRegistryAbi extends BaseContract {
   initialize(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  isSubmittedApplication(
+    _applicationId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   migrateWallet(
     fromWallet: PromiseOrValue<string>,
@@ -776,6 +816,11 @@ export interface ApplicationRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    getApplicationGrant(
+      _applicationId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     getApplicationOwner(
       _applicationId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -787,6 +832,11 @@ export interface ApplicationRegistryAbi extends BaseContract {
     ): Promise<BigNumber>;
 
     initialize(overrides?: CallOverrides): Promise<void>;
+
+    isSubmittedApplication(
+      _applicationId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     migrateWallet(
       fromWallet: PromiseOrValue<string>,
@@ -995,6 +1045,11 @@ export interface ApplicationRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    getApplicationGrant(
+      _applicationId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getApplicationOwner(
       _applicationId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1007,6 +1062,11 @@ export interface ApplicationRegistryAbi extends BaseContract {
 
     initialize(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    isSubmittedApplication(
+      _applicationId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     migrateWallet(
@@ -1123,6 +1183,11 @@ export interface ApplicationRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    getApplicationGrant(
+      _applicationId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getApplicationOwner(
       _applicationId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1135,6 +1200,11 @@ export interface ApplicationRegistryAbi extends BaseContract {
 
     initialize(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    isSubmittedApplication(
+      _applicationId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     migrateWallet(

@@ -420,18 +420,18 @@ function RequestProposal() {
 				})
 
 				let rubricHash = ''
-				if(reviewMechanism === 'Rubric') {
-					const { hash: auxRubricHash } = await validateAndUploadToIpfs('RubricSetRequest', {
-						rubric: {
-							rubric: rubrics,
-							isPrivate: false
-						},
-					})
+				// if(reviewMechanism === 'Rubric') {
+				const { hash: auxRubricHash } = await validateAndUploadToIpfs('RubricSetRequest', {
+					rubric: {
+						rubric: rubrics,
+						isPrivate: false
+					},
+				})
 
-					if(auxRubricHash) {
-						rubricHash = auxRubricHash
-					}
+				if(auxRubricHash) {
+					rubricHash = auxRubricHash
 				}
+				// }
 
 				logger.info('rubric hash', rubricHash)
 				if(workspaceId) {
@@ -547,18 +547,18 @@ function RequestProposal() {
 
 			logger.info('grantCreateIpfsHash', grantCreateIpfsHash)
 			let rubricHash = ''
-			if(reviewMechanism === 'Rubric') {
-				const { hash: auxRubricHash } = await validateAndUploadToIpfs('RubricSetRequest', {
-					rubric: {
-						rubric: rubrics,
-						isPrivate: false
-					},
-				})
+			// if(reviewMechanism === 'Rubric') {
+			const { hash: auxRubricHash } = await validateAndUploadToIpfs('RubricSetRequest', {
+				rubric: {
+					rubric: rubrics,
+					isPrivate: false
+				},
+			})
 
-				if(auxRubricHash) {
-					rubricHash = auxRubricHash
-				}
+			if(auxRubricHash) {
+				rubricHash = auxRubricHash
 			}
+			// }
 
 			logger.info('rubric hash', rubricHash)
 			logger.info('workspace', workspace)

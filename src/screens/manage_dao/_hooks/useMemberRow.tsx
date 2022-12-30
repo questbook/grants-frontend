@@ -134,7 +134,6 @@ function useMemberRow(member: Partial<WorkspaceMember>) {
 
 	const canAccessEncryptedData = () => {
 		try {
-			logger.info({ actorId: member?.actorId, pubKey: member?.publicKey }, 'WorkspaceMember')
 			if(!member?.publicKey) {
 				return false
 			}

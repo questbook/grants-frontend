@@ -297,13 +297,13 @@ export interface GrantReward1 {
   token?: Token;
 }
 export interface RubricSetRequest {
+  reviewType?: "voting" | "rubrics";
   rubric: Rubric;
 }
 /**
  * Map of evaluation rubric ID to rubric data
  */
 export interface Rubric {
-  reviewType?: "voting" | "rubrics";
   isPrivate: boolean;
   rubric: {
     [k: string]: RubricItem;
