@@ -5,17 +5,21 @@ import { Button, Flex, Text } from '@chakra-ui/react'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
 import SelectDropdown from 'src/screens/request_proposal/_components/SelectDropdown'
-import { DynamicInputValues } from 'src/types'
+import { DropdownOption, RFPFormType } from 'src/screens/request_proposal/_utils/types'
 
 interface Props {
 	numberOfReviewers: number
 	setNumberOfReviewers: (value: number) => void
-	reviewMechanism: string
-	setReviewMechanism: (value: string) => void
+	reviewMechanism: DropdownOption
+	setReviewMechanism: (value: DropdownOption) => void
 	rubrics: {}
 	setRubrics: (value: {}) => void
+	rubricInputValues: string[]
+	setRubricInputValues: (value: string[]) => void
 	step: number
 	setStep: (value: number) => void
+	rfpFormSubmissionType: RFPFormType
+	handleOnEdit: (fieldName: string, value: string | string []) => void
 }
 
 function ProposalReview(
@@ -24,9 +28,13 @@ function ProposalReview(
 		setNumberOfReviewers,
 		reviewMechanism,
 		setReviewMechanism,
+		rubricInputValues,
+		setRubricInputValues,
 		setRubrics,
 		step,
-		setStep
+		setStep,
+		rfpFormSubmissionType,
+		handleOnEdit
 	}: Props) {
 
 	const buildComponent = () => {
@@ -69,7 +77,12 @@ function ProposalReview(
 							placeholder='1'
 							value={numberOfReviewers.toString()}
 							type='number'
-							onChange={(e) => setNumberOfReviewers(parseInt(e.target.value))} />
+							onChange={
+								(e) => {
+									setNumberOfReviewers(parseInt(e.target.value))
+									handleOnEdit('numberOfReviewers', e.target.value)
+								}
+							} />
 						<Text variant='v2_subheading'>
 							reviewers for an incoming proposal automatically.
 
@@ -94,7 +107,14 @@ function ProposalReview(
 						<SelectDropdown
 							options={reviewMechanismOptions}
 							placeholder='Select One'
-							onChange={(item) => handleOnChangeReviewMechanismOption(item)} />
+							value={reviewMechanism}
+							onChange={
+								(item) => {
+									handleOnChangeReviewMechanismOption(item)
+									handleOnEdit('reviewMechanism', item?.value!)
+								}
+							}
+						/>
 					</Flex>
 
 					{/* <Flex
@@ -118,7 +138,7 @@ function ProposalReview(
 
 					{/* Rubric Selected */}
 					{
-						reviewMechanism === 'Rubric'
+						reviewMechanism.label === 'Rubric'
 						&&
 						(
 							<>
@@ -173,6 +193,7 @@ function ProposalReview(
 						// bottom='50px'
 					>
 						<Button
+							display={rfpFormSubmissionType === 'edit' ? 'none' : 'block'}
 							variant='link'
 							onClick={() => setStep(3)}>
 							Skip for now
@@ -188,7 +209,7 @@ function ProposalReview(
 								}
 							}
 							isDisabled={!reviewMechanism} >
-							Continue
+							{ rfpFormSubmissionType === 'edit' ? 'Save & Continue' : 'Continue'}
 
 						</Button>
 					</Flex>
@@ -199,10 +220,10 @@ function ProposalReview(
 		)
 	}
 
-	const [rubricInputValues, setRubricInputValues] = useState<DynamicInputValues>({ 0: 'Team competence', 1: 'Idea Quality', 2: 'Relevance to our ecosystem' })
-	const [rubricsCounter, setRubricsCounter] = useState(3)
+	// const [rubricInputValues, setRubricInputValues] = useState<DynamicInputValues>({ 0: 'Team competence', 1: 'Idea Quality', 2: 'Relevance to our ecosystem' })
+	const [rubricsCounter, setRubricsCounter] = useState(rubricInputValues.length)
 
-	const reviewMechanismOptions = [{ label: 'Voting', value: 'Voting' }, { label: 'Rubric', value: 'Rubric' }, { label: 'Community voting', value: 'Community voting', isDisabled: true }]
+	const reviewMechanismOptions = [{ label: 'Voting', value: 'voting' }, { label: 'Rubric', value: 'rubrics' }, { label: 'Community voting', value: 'Community voting', isDisabled: true }]
 
 	const handleClick = () => {
 		setRubricsCounter(rubricsCounter + 1)
@@ -211,13 +232,16 @@ function ProposalReview(
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const handleOnChangeReviewMechanismOption = (item: any) => {
 		// console.log('review changes to', item)
-		setReviewMechanism(item.value)
+		setReviewMechanism({
+			label: item.label,
+			value: item.value
+		})
 	}
 
 	const handleOnClickContinue = () => {
 		setStep(3)
 		const rubrics: { [key: number]: { title: string, details: string, maximumPoints: number } } = {}
-		Object.keys(rubricInputValues).forEach((key, index) => {
+		rubricInputValues.forEach((key, index) => {
 			rubrics[index] = {
 				title: rubricInputValues[index],
 				details: '',
@@ -225,13 +249,15 @@ function ProposalReview(
 			}
 
 		})
+		// console.log('rubrics on click continue', rubrics)
 		setRubrics(rubrics)
+		handleOnEdit('rubrics', rubricInputValues)
 	}
 
 	const handleOnChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-		const inputValues: DynamicInputValues = {}
+		const inputValues: string[] = [...rubricInputValues]
 		inputValues[index] = e.target.value
-		setRubricInputValues({ ...rubricInputValues, ...inputValues })
+		setRubricInputValues(inputValues)
 	}
 
 

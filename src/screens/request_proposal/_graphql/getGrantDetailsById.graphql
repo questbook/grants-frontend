@@ -1,0 +1,51 @@
+query getGrantDetailsById($grantID: ID!) {
+  grant(
+    subgraphError: allow
+    id: $grantID
+  ) {
+    id
+    creatorId
+    title
+    summary
+    details
+    link
+    docIpfsHash
+    numberOfReviewersPerApplication
+    payoutType
+    reviewType
+    rubric {
+      id
+    }
+    fields {
+      id
+      title
+      inputType
+      isPii
+    }
+    reward {
+      id
+      asset
+      committed
+      token {
+        address
+        label
+        decimal
+        iconHash
+      }
+    }
+    startDate
+    deadline
+    funding
+    acceptingApplications
+    milestones
+    rubric {
+      isPrivate
+      items {
+        id
+        title
+        details
+        maximumPoints
+      }
+    }
+  }
+}
