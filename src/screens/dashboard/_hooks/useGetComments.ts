@@ -39,6 +39,7 @@ function useGetComments() {
 	)
 
 	const [comments, setComments] = useState<CommentType[]>([])
+	const [shouldRefresh, setShoulRefresh] = useState<boolean>(true)
 
 	const getComments = useCallback(async() => {
 		const finalComments: CommentType[] = []
@@ -85,7 +86,7 @@ function useGetComments() {
 	}, [proposal])
 
 	useEffect(() => {
-		if(!proposal?.id) {
+		if(!proposal?.id || !shouldRefresh) {
 			return
 		}
 
@@ -94,11 +95,16 @@ function useGetComments() {
 				return
 			}
 
+			setShoulRefresh(false)
 			setComments(_)
 		})
-	}, [proposal])
+	}, [proposal, shouldRefresh])
 
-	return comments
+	const refresh = useCallback(() => {
+		setShoulRefresh(true)
+	}, [setShoulRefresh])
+
+	return { comments, refresh }
 }
 
 export default useGetComments
