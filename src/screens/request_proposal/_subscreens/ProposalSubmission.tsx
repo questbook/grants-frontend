@@ -462,6 +462,8 @@ function ProposalSubmission(
 		if(rfpFormSubmissionType === 'edit') {
 			handleOnEditProposalSubmission('allApplicantDetails', allFieldsArray)
 			setStep(3)
+		} else {
+			setStep(2)
 		}
 	}
 
