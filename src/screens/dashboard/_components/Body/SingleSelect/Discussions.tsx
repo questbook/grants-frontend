@@ -1,11 +1,9 @@
 import { useContext, useMemo, useState } from 'react'
-import { ExternalLinkIcon } from '@chakra-ui/icons'
-import { Button, CircularProgress, Divider, Flex, IconButton, Image, Text } from '@chakra-ui/react'
+import { Button, CircularProgress, Divider, Flex, Image, Text } from '@chakra-ui/react'
 import { convertToRaw, EditorState } from 'draft-js'
 import logger from 'src/libraries/logger'
 import TextEditor from 'src/libraries/ui/RichTextEditor/textEditor'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
-import { TXN_STEPS } from 'src/libraries/utils/constants'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import useAddComment from 'src/screens/dashboard/_hooks/useAddComment'
 import useGetComments from 'src/screens/dashboard/_hooks/useGetComments'
@@ -14,7 +12,7 @@ import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { CommentType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import getAvatar from 'src/utils/avatarUtils'
-import { formatAddress, getExplorerUrlForTxHash, getFieldString } from 'src/utils/formattingUtils'
+import { formatAddress, getFieldString } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 function Discussions() {
@@ -100,9 +98,9 @@ function Discussions() {
 										<Text
 											ml={2}
 											variant='v2_body'>
-											{[...TXN_STEPS, 'Refresh the page to view the update!'][step]}
+											Adding comment...
 										</Text>
-										{
+										{/* {
 											transactionHash && (
 												<IconButton
 													ml={1}
@@ -115,7 +113,7 @@ function Discussions() {
 														}
 													} />
 											)
-										}
+										} */}
 									</Flex>
 								)
 							}
@@ -128,6 +126,7 @@ function Discussions() {
 										const ret = await addComment(text, tags)
 										if(ret) {
 											setText(EditorState.createEmpty())
+											refresh()
 										}
 									}
 								}>
@@ -231,12 +230,12 @@ function Discussions() {
 	}
 
 	const { scwAddress } = useContext(WebwalletContext)!
-	const { workspace, chainId, role } = useContext(ApiClientsContext)!
+	const { workspace, role } = useContext(ApiClientsContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 	const { quickReplies } = useQuickReplies()
 
 	const [step, setStep] = useState<number>()
-	const [transactionHash, setTransactionHash] = useState('')
+	const [, setTransactionHash] = useState('')
 
 	const [ selectedTags, setSelectedTags ] = useState<{[key: number]: boolean}>({})
 
@@ -246,7 +245,7 @@ function Discussions() {
 
 	const [ text, setText ] = useState<EditorState>(EditorState.createEmpty())
 	const { addComment, isBiconomyInitialised } = useAddComment({ setStep, setTransactionHash })
-	const comments = useGetComments()
+	const { comments, refresh } = useGetComments()
 
 	const proposal = useMemo(() => {
 		const index = selectedProposals.indexOf(true)

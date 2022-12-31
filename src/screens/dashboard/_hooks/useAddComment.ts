@@ -134,7 +134,6 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 					nonce,
 				)
 				logger.info({ response }, 'Response (Comment)')
-				setStep(1)
 
 				if(response) {
 					const { receipt, txFee } = await getTransactionDetails(
@@ -142,16 +141,20 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 						chainId.toString(),
 					)
 
-					setStep(2)
+					setStep(1)
 					setTransactionHash(receipt?.transactionHash)
 					logger.info({ receipt, txFee }, 'Receipt: (Comment)')
 					await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
 
-					setStep(3)
+					setStep(2)
 
 					toast({
 						duration: 5000,
 						title: 'Added comment successfully!',
+						status: 'success',
+						onCloseComplete: () => {
+							setStep(undefined)
+						}
 					})
 					return true
 				} else {
