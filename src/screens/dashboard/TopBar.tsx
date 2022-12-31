@@ -1,6 +1,7 @@
 import { useContext, useMemo, useRef } from 'react'
 import { Button, Flex, IconButton, Image, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text } from '@chakra-ui/react'
 import { logger } from 'ethers'
+import router from 'next/router'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { copyGrantLink } from 'src/libraries/utils/copy'
 import { ApiClientsContext } from 'src/pages/_app'
@@ -59,6 +60,19 @@ function TopBar() {
 					bg='gray.1'
 					variant='link'
 					color='black.1'
+					onClick={
+						() => {
+							router.push(
+								{
+									pathname: '/request_proposal/',
+									query: {
+										grantId: selectedGrant?.id,
+										workspaceId: workspace?.id
+									},
+								})
+
+						}
+					}
 					leftIcon={
 						<Image
 							src='/v2/icons/pencil.svg'
@@ -192,7 +206,7 @@ function TopBar() {
 	}
 
 	const popoverRef = useRef<HTMLButtonElement>(null)
-	const { chainId } = useContext(ApiClientsContext)!
+	const { chainId, workspace } = useContext(ApiClientsContext)!
 	const { selectedGrant, selectedGrantIndex, setSelectedGrantIndex, grants } = useContext(DashboardContext)!
 
 	const isLeftArrowEnabled = useMemo(() => {

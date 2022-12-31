@@ -46,7 +46,9 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 					// alignItems='center'
 					marginRight={24}
 				>
-					<StepIndicator step={step} />
+					<StepIndicator
+						step={step}
+						formType='submit' />
 					<Flex
 						direction='column'
 						alignItems='center'

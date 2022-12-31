@@ -1,15 +1,13 @@
-import { useState } from 'react'
-import { Divider, Flex, Text } from '@chakra-ui/react'
 import { Select, SingleValue, } from 'chakra-react-select'
-
 
 interface Props<T> {
     options: T[]
+	value?: SingleValue<T>
     onChange: (value: SingleValue<T>) => void
     placeholder?: string
 }
 
-function SelectDropdown<T>({ options, placeholder, onChange }: Props<T>) {
+function SelectDropdown<T>({ options, placeholder, value, onChange }: Props<T>) {
 	return (
 		<Select<T>
 			variant='flushed'
@@ -17,6 +15,7 @@ function SelectDropdown<T>({ options, placeholder, onChange }: Props<T>) {
 			placeholder={placeholder}
 			selectedOptionStyle='check'
 			onChange={onChange}
+			value={value}
 			chakraStyles={
 				{
 					container: (provided) => ({

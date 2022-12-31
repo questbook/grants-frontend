@@ -20,12 +20,16 @@ import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransact
 import { validateAndUploadToIpfs } from 'src/libraries/validator'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { GRANT_CACHE_KEY } from 'src/screens/dashboard/_utils/constants'
+import useUpdateRFP from 'src/screens/request_proposal/_hooks/useUpdateRFP'
 import BuilderDiscovery from 'src/screens/request_proposal/_subscreens/BuilderDiscovery'
 import LinkMultiSig from 'src/screens/request_proposal/_subscreens/LinkMultiSig'
 import Payouts from 'src/screens/request_proposal/_subscreens/Payouts'
 import ProposalReview from 'src/screens/request_proposal/_subscreens/ProposalReview'
 import ProposalSubmission from 'src/screens/request_proposal/_subscreens/ProposalSubmission'
+import { PayoutMode } from 'src/screens/request_proposal/_utils/constants'
+import { DropdownOption } from 'src/screens/request_proposal/_utils/types'
 import { today } from 'src/screens/request_proposal/_utils/utils'
+import { RFPFormContext, RFPFormProvider } from 'src/screens/request_proposal/Context'
 import { ApplicantDetailsFieldType } from 'src/types'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
@@ -67,9 +71,9 @@ function RequestProposal() {
 				<ProposalSubmission
 					proposalName={proposalName}
 					setProposalName={setProposalName}
-					startdate={startDate}
+					startdate={startDate!}
 					setStartdate={setStartDate}
-					endDate={endDate}
+					endDate={endDate!}
 					setEndDate={setEndDate}
 					requiredDetails={requiredDetails}
 					link={link}
@@ -82,8 +86,8 @@ function RequestProposal() {
 					setAllApplicantDetails={setAllApplicantDetails}
 					extraDetailsFields={extraDetailsFields}
 					setExtraDetailsFields={setExtraDetailsFields}
-
-
+					handleOnEditProposalSubmission={handleOnEdit}
+					rfpFormSubmissionType={rfpFormType}
 				/>
 			)
 		case 2:
@@ -91,12 +95,17 @@ function RequestProposal() {
 				<ProposalReview
 					numberOfReviewers={numberOfReviewers}
 					setNumberOfReviewers={setNumberOfReviewers}
-					reviewMechanism={reviewMechanism}
+					reviewMechanism={reviewMechanism!}
 					setReviewMechanism={setReviewMechanism}
 					step={step}
 					setStep={setStep}
+					rubricInputValues={rubricInputValues}
+					setRubricInputValues={setRubricInputValues}
 					rubrics={rubrics}
-					setRubrics={setRubrics} />
+					setRubrics={setRubrics}
+					rfpFormSubmissionType={rfpFormType}
+					handleOnEdit={handleOnEdit}
+				 />
 			)
 		case 3:
 			return (
@@ -113,11 +122,14 @@ function RequestProposal() {
 						shouldCreateRFP={shouldCreateRFP}
 						createRFP={createRFP}
 						setOpenNetworkTransactionModal={setIsNetworkTransactionModalOpen}
+						rfpFormSubmissionType={rfpFormType}
+						handleOnEdit={handleOnEdit}
+						updateRFP={updateRFP}
 					/>
 					<NetworkTransactionFlowStepperModal
 						isOpen={isNetworkTransactionModalOpen}
 						currentStepIndex={currentStepIndex!}
-						viewTxnLink={getExplorerUrlForTxHash(network, txHash)}
+						viewTxnLink={getExplorerUrlForTxHash(network, rfpUpdateTxHash)}
 						onClose={
 							async() => {
 								setCurrentStepIndex(undefined)
@@ -173,11 +185,13 @@ function RequestProposal() {
 	const { role, workspace, chainId } = useContext(ApiClientsContext)!
 
 	// State for proposal creation
-	const todayDate = today()
+	// const todayDate = today()
 	const [proposalName, setProposalName] = useState('')
-	const [startDate, setStartDate] = useState(todayDate)
-	const [endDate, setEndDate] = useState('')
+	const [startDate, setStartDate] = useState<string>()
+	const [endDate, setEndDate] = useState<string>()
 	const [shouldCreateRFP, setShouldCreateRFP] = useState(false)
+
+	// const [submitType, setSubmitType] = useState<RFPFormType>('submit')
 
 	const applicantDetails: ApplicantDetailsFieldType[] = applicantDetailsList.filter(detail => detail.isRequired)
 		.map(({
@@ -217,11 +231,19 @@ function RequestProposal() {
 
 	// State for Proposal Review
 	const [numberOfReviewers, setNumberOfReviewers] = useState(1)
-	const [reviewMechanism, setReviewMechanism] = useState('')
+	const [reviewMechanism, setReviewMechanism] = useState<DropdownOption>({
+		label: '',
+		value: ''
+
+	})
 	const [rubrics, setRubrics] = useState({})
+	const [rubricInputValues, setRubricInputValues] = useState<string[]>(['Team competence', 'Idea Quality', 'Relevance to our ecosystem'])
 
 	// State for Payouts
-	const [payoutMode, setPayoutMode] = useState('')
+	const [payoutMode, setPayoutMode] = useState<DropdownOption>({
+		label: '',
+		value: ''
+	})
 	const [amount, setAmount] = useState(0)
 	const [milestones, setMilestones] = useState<string[]>([])
 
@@ -265,6 +287,9 @@ function RequestProposal() {
 
 	const grantContract = useQBContract('grantFactory', network)
 
+	const { rfpData, rfpFormType, RFPEditFormData, setRFPEditFormData } = useContext(RFPFormContext)!
+	const { updateRFP, txHash: rfpUpdateTxHash } = useUpdateRFP(setCurrentStepIndex, setIsNetworkTransactionModalOpen)
+
 	// useEffect(() => {
 	// 	if(role === 'admin' && workspace) {
 	// 		setShouldCreateRFP(true)
@@ -298,6 +323,56 @@ function RequestProposal() {
 			}
 		}
 	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, selectedSafeNetwork?.networkId])
+
+	useEffect(() => {
+		if(rfpData) {
+			// setRequiredDetails(rfpData.allApplicantDetails)
+			setExtraDetailsFields(rfpData.allApplicantDetails!)
+			setNumberOfReviewers(rfpData.numberOfReviewers)
+			setLink(rfpData.link)
+			setRubrics(rfpData.rubrics)
+			// setPayoutMode(rfpData.payoutMode)
+			setAmount(parseInt(rfpData.amount))
+			setMilestones(rfpData.milestones)
+			setProposalName(rfpData.proposalName)
+			setStartDate(rfpData.startDate)
+			setEndDate(rfpData.endDate)
+
+			if(rfpData.reviewMechanism === 'voting') {
+				setReviewMechanism({
+					label: 'Voting',
+					value: 'voting',
+				})
+			} else if(rfpData.reviewMechanism === 'rubrics') {
+				setReviewMechanism({
+					label: 'Rubric',
+					value: 'rubrics',
+				})
+			}
+
+			if(rfpData.payoutMode === 'in_one_go') {
+				setPayoutMode({
+					label: PayoutMode.IN_ONE_GO,
+					value: 'in_one_go',
+				})
+			} else if(rfpData.payoutMode === 'milestones') {
+				setPayoutMode({
+					label: PayoutMode.BASED_ON_MILESTONE,
+					value: 'milestones',
+				})
+			}
+
+			if(rfpData.rubrics.length > 0) {
+				setRubricInputValues(rfpData.rubrics)
+			}
+
+			if(rfpData.milestones.length > 0) {
+				setMilestones(rfpData.milestones)
+			}
+
+
+		}
+	}, [rfpData])
 
 	// create workspace and grant
 	const createWorkspaceAndGrant = useCallback(async() => {
@@ -380,19 +455,20 @@ function RequestProposal() {
 				}
 
 				let payout: string
-				if(payoutMode === 'in one go') {
+				if(payoutMode.label === PayoutMode.IN_ONE_GO) {
 					payout = 'in_one_go'
-				} else if(payoutMode! === 'based on milestone') {
+				} else if(payoutMode!.label === PayoutMode.BASED_ON_MILESTONE) {
 					payout = 'milestones'
 				}
 
 				let review: string
-				if(reviewMechanism === 'Voting') {
+				if(reviewMechanism.label === 'Voting') {
 					review = 'voting'
-				} else if(reviewMechanism === 'Rubric') {
+				} else if(reviewMechanism.label === 'Rubric') {
 					review = 'rubrics'
 				}
 
+				console.log('validate grant create', allApplicantDetails)
 				// validate grant data
 				const { hash: grantCreateIpfsHash } = await validateAndUploadToIpfs('GrantCreateRequest', {
 					title: proposalName!,
@@ -420,18 +496,18 @@ function RequestProposal() {
 				})
 
 				let rubricHash = ''
-				// if(reviewMechanism === 'Rubric') {
-				const { hash: auxRubricHash } = await validateAndUploadToIpfs('RubricSetRequest', {
-					rubric: {
-						rubric: rubrics,
-						isPrivate: false
-					},
-				})
+				if(reviewMechanism.label === 'Rubric') {
+					const { hash: auxRubricHash } = await validateAndUploadToIpfs('RubricSetRequest', {
+						rubric: {
+							rubric: rubrics,
+							isPrivate: false
+						},
+					})
 
-				if(auxRubricHash) {
-					rubricHash = auxRubricHash
+					if(auxRubricHash) {
+						rubricHash = auxRubricHash
+					}
 				}
-				// }
 
 				logger.info('rubric hash', rubricHash)
 				if(workspaceId) {
@@ -495,6 +571,13 @@ function RequestProposal() {
 		}
 	}, [biconomyWalletClient, domainName, accountDataWebwallet, allApplicantDetails, link, doc, rubrics, amount, payoutMode, reviewMechanism, startDate, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, selectedSafeNetwork, milestones])
 
+	const handleOnEdit = (field: string, value: string | ApplicantDetailsFieldType[] | string []) => {
+		// const { value } = e.target
+		console.log('rfp edited', { ...RFPEditFormData, [field]: value })
+		setRFPEditFormData({ ...RFPEditFormData, [field]: value })
+	}
+
+
 	const createRFP = useCallback(async() => {
 		try {
 			setCurrentStepIndex(0)
@@ -506,16 +589,16 @@ function RequestProposal() {
 			}
 
 			let payout: string
-			if(payoutMode === 'in one go') {
+			if(payoutMode.label === PayoutMode.IN_ONE_GO) {
 				payout = 'in_one_go'
-			} else if(payoutMode! === 'based on milestone') {
+			} else if(payoutMode!.label === PayoutMode.BASED_ON_MILESTONE) {
 				payout = 'milestones'
 			}
 
 			let review: string
-			if(reviewMechanism === 'Voting') {
+			if(reviewMechanism?.label === 'Voting') {
 				review = 'voting'
-			} else if(reviewMechanism === 'Rubric') {
+			} else if(reviewMechanism?.label === 'Rubric') {
 				review = 'rubrics'
 			}
 
@@ -547,7 +630,7 @@ function RequestProposal() {
 
 			logger.info('grantCreateIpfsHash', grantCreateIpfsHash)
 			let rubricHash = ''
-			// if(reviewMechanism === 'Rubric') {
+
 			const { hash: auxRubricHash } = await validateAndUploadToIpfs('RubricSetRequest', {
 				rubric: {
 					rubric: rubrics,
@@ -625,7 +708,7 @@ function RequestProposal() {
 				}),
 			})
 		}
-	}, [biconomyWalletClient, workspace, proposalName, accountDataWebwallet, allApplicantDetails, link, doc, rubrics, amount, payoutMode, reviewMechanism, startDate, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, selectedSafeNetwork, milestones])
+	}, [biconomyWalletClient, workspace, proposalName, rubrics, accountDataWebwallet, allApplicantDetails, link, doc, rubrics, amount, payoutMode, reviewMechanism, startDate, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, selectedSafeNetwork, milestones])
 
 	return buildComponent()
 }
@@ -634,9 +717,11 @@ RequestProposal.getLayout = function(page: ReactElement) {
 	return (
 		<NavbarLayout
 			renderSidebar={false}
-			navbarConfig={{ showDomains: true }}
+			// navbarConfig={{ showDomains: true }}
 		>
-			{page}
+			<RFPFormProvider>
+				{page}
+			</RFPFormProvider>
 		</NavbarLayout>
 	)
 }

@@ -6,10 +6,11 @@ import { Button, Flex, Icon, Text } from '@chakra-ui/react'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
 import SelectDropdown from 'src/screens/request_proposal/_components/SelectDropdown'
+import { DropdownOption, RFPFormType } from 'src/screens/request_proposal/_utils/types'
 
 interface Props {
-	payoutMode: string
-	setPayoutMode: (value: string) => void
+	payoutMode: DropdownOption
+	setPayoutMode: (value: DropdownOption) => void
 	amount: number
 	setAmount: (value: number) => void
 	step: number
@@ -19,6 +20,9 @@ interface Props {
 	shouldCreateRFP: boolean
 	createRFP: () => void
 	setOpenNetworkTransactionModal: (value: boolean) => void
+	rfpFormSubmissionType: RFPFormType
+	handleOnEdit: (fieldName: string, value: string | string []) => void
+	updateRFP: () => void
 }
 
 
@@ -34,7 +38,10 @@ function Payouts(
 		setMilestones,
 		shouldCreateRFP,
 		createRFP,
-		setOpenNetworkTransactionModal
+		setOpenNetworkTransactionModal,
+		rfpFormSubmissionType,
+		handleOnEdit,
+		updateRFP
 	}: Props) {
 	const buildComponent = () => {
 		// eslint-disable-next-line no-restricted-syntax
@@ -50,7 +57,15 @@ function Payouts(
 						className='backBtn'
 						variant='linkV2'
 						leftIcon={<BsArrowLeft />}
-						onClick={() => setStep(2)}>
+						onClick={
+							() => {
+								if(rfpFormSubmissionType === 'edit') {
+									setStep(1)
+								} else {
+									setStep(2)
+								}
+							}
+						}>
 						Back
 					</Button>
 				</Flex>
@@ -63,7 +78,9 @@ function Payouts(
 					alignSelf='flex-start'
 					marginRight={24}
 				>
-					<StepIndicator step={step} />
+					<StepIndicator
+						step={step}
+						formType={rfpFormSubmissionType} />
 					<Text
 						alignSelf='center'
 						fontWeight='500'
@@ -87,7 +104,13 @@ function Payouts(
 
 						<SelectDropdown
 							options={payoutTypeOptions}
-							onChange={(item) => handleOnChangePayoutTypeOption(item)}
+							value={payoutMode}
+							onChange={
+								(item) => {
+									handleOnChangePayoutTypeOption(item)
+									handleOnEdit('payoutMode', item?.value!)
+								}
+							}
 
 						/>
 					</Flex>
@@ -116,7 +139,7 @@ function Payouts(
 					</Flex> */}
 
 					{
-						payoutMode === PayoutMode.BASED_ON_MILESTONE && (
+						payoutMode.label === PayoutMode.BASED_ON_MILESTONE && (
 							<>
 
 								{
@@ -180,7 +203,12 @@ function Payouts(
 							placeholder='enter your grant’s sweetspot'
 							type='number'
 							value={amount.toString()}
-							onChange={(e) => setAmount(parseInt(e.target.value))} />
+							onChange={
+								(e) => {
+									setAmount(parseInt(e.target.value))
+									handleOnEdit('amount', e.target.value)
+								}
+							} />
 						<Text variant='v2_subheading'>
 							USD. You can payout in any token.
 						</Text>
@@ -206,7 +234,8 @@ function Payouts(
 							}
 							isDisabled={!payoutMode || !amount}
 						>
-							{shouldCreateRFP ? 'Create RFP' : 'Continue'}
+							{/* {shouldCreateRFP ? 'Create RFP' : 'Continue'} */}
+							{ rfpFormSubmissionType === 'edit' ? 'Save All' : 'Continue'}
 						</Button>
 					</Flex>
 				</Flex>
@@ -214,14 +243,18 @@ function Payouts(
 		)
 	}
 
-	const [milestoneCounter, setMilestoneCounter] = useState(0)
+	const [milestoneCounter, setMilestoneCounter] = useState(milestones.length)
 
 	const payoutTypeOptions = [{ value: 'in_one_go', label: 'in one go' }, { value: 'milestones', label: 'based on milestone' }]
+
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const handleOnChangePayoutTypeOption = (item: any) => {
 		// console.log('payout changes to', item)
-		setPayoutMode(item.label)
+		setPayoutMode({
+			label: item.label,
+			value: item.value,
+		})
 	}
 
 	const handleCreateRFP = () => {
@@ -235,18 +268,30 @@ function Payouts(
 
 	const handleOnChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
 		const _milestones: string[] = [...milestones]
-		debugger
 		if(index < _milestones.length) {
 			_milestones[index] = e.target.value
 			setMilestones(_milestones)
+			handleOnEdit('milestones', [..._milestones])
 		} else {
 			_milestones.push(e.target.value)
 			setMilestones(_milestones)
+			handleOnEdit('milestones', [..._milestones])
 		}
+
+
 	}
 
 	const handleOnClickContinue = () => {
-		setStep(4)
+		if(rfpFormSubmissionType === 'edit') {
+			handleSaveChanges()
+		} else {
+			setStep(4)
+		}
+	}
+
+	const handleSaveChanges = () => {
+		setOpenNetworkTransactionModal(true)
+		updateRFP()
 	}
 
 	return buildComponent()

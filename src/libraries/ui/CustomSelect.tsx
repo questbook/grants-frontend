@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Divider, Flex, Text } from '@chakra-ui/react'
 import { CreatableSelect } from 'chakra-react-select'
-import { logger } from 'ethers'
 import { ApplicantDetailsFieldType } from 'src/types'
 
 

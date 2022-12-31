@@ -411,6 +411,7 @@ export enum FundsTransferType {
   FundsDeposited = 'funds_deposited',
   FundsDisbursed = 'funds_disbursed',
   FundsDisbursedFromSafe = 'funds_disbursed_from_safe',
+  FundsDisbursedFromWallet = 'funds_disbursed_from_wallet',
   FundsWithdrawn = 'funds_withdrawn',
   ReviewPaymentDone = 'review_payment_done'
 }
@@ -2217,6 +2218,7 @@ export enum NotificationType {
   FundsDeposited = 'funds_deposited',
   FundsDisbursed = 'funds_disbursed',
   FundsDisbursedFromSafe = 'funds_disbursed_from_safe',
+  FundsDisbursedFromWallet = 'funds_disbursed_from_wallet',
   FundsWithdrawn = 'funds_withdrawn',
   MilestoneAccepted = 'milestone_accepted',
   MilestoneRejected = 'milestone_rejected',
@@ -5514,6 +5516,13 @@ export type ProposalDetailsQueryVariables = Exact<{
 
 
 export type ProposalDetailsQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, applicantId: string, applicantPublicKey?: string | null, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', id: string, value: string }> }>, pii: Array<{ __typename?: 'PIIAnswer', id: string, data: string }>, milestones: Array<{ __typename?: 'ApplicationMilestone', title: string, amount: string }>, grant: { __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, startDate?: string | null, deadline?: string | null, startDateS?: number | null, deadlineS: number, payoutType?: PayoutType | null, reviewType?: ReviewType | null, numberOfReviewersPerApplication: number, link?: string | null, docIpfsHash?: string | null, acceptingApplications: boolean, metadataHash: string, funding: string, reward: { __typename?: 'Reward', id: string, asset: string, committed: string, token?: { __typename?: 'Token', id: string, label: string, address: string, decimal: number, iconHash: string, chainId?: string | null } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, supportedNetworks: Array<SupportedNetwork>, logoIpfsHash: string, safe?: { __typename?: 'WorkspaceSafe', address: string, chainId: string } | null }, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, possibleValues?: Array<string> | null, isPii: boolean }> } } | null };
+
+export type GetGrantDetailsByIdQueryVariables = Exact<{
+  grantID: Scalars['ID'];
+}>;
+
+
+export type GetGrantDetailsByIdQuery = { __typename?: 'Query', grant?: { __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, link?: string | null, docIpfsHash?: string | null, numberOfReviewersPerApplication: number, payoutType?: PayoutType | null, reviewType?: ReviewType | null, startDate?: string | null, deadline?: string | null, funding: string, acceptingApplications: boolean, milestones?: Array<string> | null, rubric?: { __typename?: 'Rubric', id: string, isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, isPii: boolean }>, reward: { __typename?: 'Reward', id: string, asset: string, committed: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } } | null };
 
 
 export const GetProfileDetailsDocument = gql`
@@ -9722,4 +9731,85 @@ export type ProposalDetailsLazyQueryHookResult = ReturnType<typeof useProposalDe
 export type ProposalDetailsQueryResult = Apollo.QueryResult<ProposalDetailsQuery, ProposalDetailsQueryVariables>;
 export function refetchProposalDetailsQuery(variables: ProposalDetailsQueryVariables) {
       return { query: ProposalDetailsDocument, variables: variables }
+    }
+export const GetGrantDetailsByIdDocument = gql`
+    query getGrantDetailsById($grantID: ID!) {
+  grant(subgraphError: allow, id: $grantID) {
+    id
+    creatorId
+    title
+    summary
+    details
+    link
+    docIpfsHash
+    numberOfReviewersPerApplication
+    payoutType
+    reviewType
+    rubric {
+      id
+    }
+    fields {
+      id
+      title
+      inputType
+      isPii
+    }
+    reward {
+      id
+      asset
+      committed
+      token {
+        address
+        label
+        decimal
+        iconHash
+      }
+    }
+    startDate
+    deadline
+    funding
+    acceptingApplications
+    milestones
+    rubric {
+      isPrivate
+      items {
+        id
+        title
+        details
+        maximumPoints
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetGrantDetailsByIdQuery__
+ *
+ * To run a query within a React component, call `useGetGrantDetailsByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGrantDetailsByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGrantDetailsByIdQuery({
+ *   variables: {
+ *      grantID: // value for 'grantID'
+ *   },
+ * });
+ */
+export function useGetGrantDetailsByIdQuery(baseOptions: Apollo.QueryHookOptions<GetGrantDetailsByIdQuery, GetGrantDetailsByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetGrantDetailsByIdQuery, GetGrantDetailsByIdQueryVariables>(GetGrantDetailsByIdDocument, options);
+      }
+export function useGetGrantDetailsByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetGrantDetailsByIdQuery, GetGrantDetailsByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetGrantDetailsByIdQuery, GetGrantDetailsByIdQueryVariables>(GetGrantDetailsByIdDocument, options);
+        }
+export type GetGrantDetailsByIdQueryHookResult = ReturnType<typeof useGetGrantDetailsByIdQuery>;
+export type GetGrantDetailsByIdLazyQueryHookResult = ReturnType<typeof useGetGrantDetailsByIdLazyQuery>;
+export type GetGrantDetailsByIdQueryResult = Apollo.QueryResult<GetGrantDetailsByIdQuery, GetGrantDetailsByIdQueryVariables>;
+export function refetchGetGrantDetailsByIdQuery(variables: GetGrantDetailsByIdQueryVariables) {
+      return { query: GetGrantDetailsByIdDocument, variables: variables }
     }

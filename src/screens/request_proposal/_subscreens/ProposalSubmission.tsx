@@ -8,8 +8,8 @@ import { useRouter } from 'next/router'
 import { CustomSelect } from 'src/libraries/ui/CustomSelect'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
+import { RFPForm, RFPFormType } from 'src/screens/request_proposal/_utils/types'
 import { ApplicantDetailsFieldType } from 'src/types'
-import { uploadToIPFS } from 'src/utils/ipfsUtils'
 
 
 interface Props {
@@ -30,6 +30,10 @@ interface Props {
     setStep: (value: number) => void
     allApplicantDetails: {[key: string]: ApplicantDetailsFieldType}
     setAllApplicantDetails: (value: {[key: string]: ApplicantDetailsFieldType}) => void
+	rfpFormSubmissionType: RFPFormType
+	rfpData?: RFPForm
+	setRFPData?: (value: RFPForm) => void
+	handleOnEditProposalSubmission: (fieldName: string, value: string | ApplicantDetailsFieldType[]) => void
 }
 
 function ProposalSubmission(
@@ -49,10 +53,14 @@ function ProposalSubmission(
 		setDoc,
 		step,
 		setStep,
-		setAllApplicantDetails
+		setAllApplicantDetails,
+		handleOnEditProposalSubmission,
+		rfpFormSubmissionType
 	}: Props) {
 
 	const uploaDocInputref = useRef(null)
+	const startdateRef = useRef<HTMLInputElement>(null)
+	const endDateRef = useRef<HTMLInputElement>(null)
 
 	const openInput = () => {
 		if(uploaDocInputref.current) {
@@ -85,7 +93,9 @@ function ProposalSubmission(
 					marginRight={24}
 				>
 					{/* TODO: Add Steps complete indicator */}
-					<StepIndicator step={step} />
+					<StepIndicator
+						step={step}
+						formType={rfpFormSubmissionType} />
 					<Text
 						alignSelf='center'
 						fontWeight='500'
@@ -108,6 +118,7 @@ function ProposalSubmission(
 							onChange={
 								(e) => {
 									setProposalName(e.target.value)
+									handleOnEditProposalSubmission('proposalName', e.target.value)
 								}
 							} />
 					</Flex>
@@ -116,37 +127,77 @@ function ProposalSubmission(
 					<Flex
 						gap={4}
 						alignItems='baseline'>
-						<Text variant='v2_subheading'>
+						<Text
+							variant='v2_subheading'
+							minW='max-content'>
 							Builders can submit proposals between
 						</Text>
-						<FlushedInput
-							type='datetime-local'
-							placeholder='start date'
-							value={startdate}
+						<Input
+							type={rfpFormSubmissionType === 'submit' ? 'string' : 'datetime-local'}
+							variant='flushed'
+							placeholder='enter start date'
+							isDisabled={rfpFormSubmissionType === 'edit'}
+							ref={startdateRef}
+							onFocus={
+								() => {
+									if(startdateRef.current && rfpFormSubmissionType !== 'edit') {
+										startdateRef.current.type = 'datetime-local'
+									}
+
+								}
+							}
+							value={startdate ? startdate.split('.')[0] : ''}
 							step='1'
-							textPadding={8}
+							// textPadding={8}
 							min={new Date().toISOString().split('.')[0]}
+
 							onChange={
 								(e) => {
-									// console.log('start date', new Date().toLocaleString())
+									if(e.target.value === '' && startdateRef.current) {
+										startdateRef.current.type = 'string'
+									}
+
+									handleOnEditProposalSubmission('startDate', e.target.value)
 									setStartdate(e.target.value)
 								}
-							} />
+							}
+							// borderColor={endDateRef?.current.value ? 'black' : 'gray.300'}
+							fontWeight='400'
+							fontSize='20px'
+						/>
 						<Text variant='v2_subheading'>
 							till
 						</Text>
-						<FlushedInput
-							type='datetime-local'
-							placeholder='end date'
+						<Input
+							type={rfpFormSubmissionType === 'submit' ? 'string' : 'datetime-local'}
+							variant='flushed'
+							placeholder='enter end date'
 							min={startdate}
-							value={endDate}
+							value={endDate ? endDate.split('.')[0] : ''}
 							step='1'
-							textPadding={8}
+							ref={endDateRef}
+							onFocus={
+								() => {
+									if(endDateRef.current) {
+										endDateRef.current.type = 'datetime-local'
+									}
+
+								}
+							}
+							// textPadding={8}
 							onChange={
 								(e) => {
+									if(e.target.value === '' && endDateRef.current) {
+										endDateRef.current.type = 'string'
+									}
+
+									handleOnEditProposalSubmission('endDate', e.target.value)
 									setEndDate(e.target.value)
 								}
-							} />
+							}
+							fontWeight='400'
+							fontSize='20px'
+						/>
 					</Flex>
 
 
@@ -263,11 +314,18 @@ function ProposalSubmission(
 						<FlushedInput
 							placeholder='Add a link'
 							value={link}
-							onChange={(e) => setLink(e.target.value)}
+							onChange={
+								(e) => {
+									setLink(e.target.value)
+									handleOnEditProposalSubmission('link', e.target.value)
+								}
+							}
 							width='100%'
 							// flexProps={{ grow: 1, shrink: 1 }}
 						/>
-						<Text variant='v2_subheading'>
+						<Text
+							display={rfpFormSubmissionType === 'edit' ? 'none' : ''}
+							variant='v2_subheading'>
 							Or
 						</Text>
 
@@ -276,6 +334,7 @@ function ProposalSubmission(
 						<FlushedInput
 							id='upload-doc-id'
 							placeholder='Upload a doc'
+							display={rfpFormSubmissionType === 'edit' ? 'none' : ''}
 							onClick={openInput}
 							value={doc ? doc[0].name : ''}
 							onChange={(e) => handleFile(e)}
@@ -307,7 +366,7 @@ function ProposalSubmission(
 								handleOnClickContinue()
 							}
 						}>
-						Continue
+						{ rfpFormSubmissionType === 'edit' ? 'Save & Continue' : 'Continue'}
 					</Button>
 
 				</Flex>
@@ -340,11 +399,12 @@ function ProposalSubmission(
 
 	const [showExtraFieldDropdown, setShowExtraFieldDropdown] = useState(false)
 
-
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const handleFile = async(e: any) => {
-		await uploadToIPFS(e.target.files[0])
 		setDoc(e.target.files)
+		if(rfpFormSubmissionType === 'edit') {
+			handleOnEditProposalSubmission('doc', e.target.files)
+		}
 	}
 
 	const handleClickAddAnother = () => {
@@ -368,13 +428,20 @@ function ProposalSubmission(
 
 	const handleOnClickContinue = () => {
 		logger.info('step 2')
-		setStep(2)
+		// setStep(2)
 
-		//filter true values
-		const filteredExtraDetails = extraDetailsFields.filter((field) => field.required === true).map(item => {
+		//filter true values from extra details fields and add custom field ids
+		const filteredExtraDetails = extraDetailsFields.filter((field) => field.required === true).map((item, index) => {
+			let inputType: string = item.inputType
+			if(item.inputType === 'long_form') {
+				inputType = 'long-form'
+			} else if(item.inputType === 'short_form') {
+				inputType = 'short-form'
+			}
+
 			return {
-				id: item.id,
-				inputType: item.inputType,
+				id: `customField${index}-${item.title}`,
+				inputType: inputType,
 				required: item.required,
 				title: item.title,
 				pii: item.pii
@@ -391,6 +458,11 @@ function ProposalSubmission(
 		// const allFieldsObject = [...requiredDetails, ...extraDetailsFields]
 		logger.info('all applicant details', [...requiredDetails, ...filteredExtraDetails])
 		setAllApplicantDetails(allFieldsObject)
+
+		if(rfpFormSubmissionType === 'edit') {
+			handleOnEditProposalSubmission('allApplicantDetails', allFieldsArray)
+			setStep(3)
+		}
 	}
 
 	return buildComponent()

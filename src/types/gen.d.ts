@@ -171,7 +171,6 @@ export interface GrantProposedMilestone {
 }
 export interface GrantUpdateRequest {
   title?: string;
-  summary?: string;
   /**
    * Start date for proposal acceptations
    */
@@ -182,7 +181,7 @@ export interface GrantUpdateRequest {
   endDate?: string;
   details?: string;
   /**
-   * Link to sny external document
+   * Link to any external document
    */
   link?: string;
   /**
@@ -198,6 +197,10 @@ export interface GrantUpdateRequest {
    */
   workspaceId?: string;
   fields?: GrantFieldMap;
+  /**
+   * @maxItems 20
+   */
+  milestones?: string[];
   /**
    * @minItems 1
    */
