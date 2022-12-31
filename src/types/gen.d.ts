@@ -170,12 +170,7 @@ export interface GrantProposedMilestone {
   [k: string]: unknown;
 }
 export interface GrantUpdateRequest {
-<<<<<<< HEAD
-  title?: string
-=======
   title?: string;
-  summary?: string;
->>>>>>> 1881f6a3ef42379468e07cad094669c7a602bf52
   /**
    * Start date for proposal acceptations
    */
@@ -205,7 +200,7 @@ export interface GrantUpdateRequest {
   /**
    * @maxItems 20
    */
-  milestones?: string[]
+  milestones?: string[];
   /**
    * @minItems 1
    */

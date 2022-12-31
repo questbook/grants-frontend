@@ -129,7 +129,7 @@ function RequestProposal() {
 					<NetworkTransactionFlowStepperModal
 						isOpen={isNetworkTransactionModalOpen}
 						currentStepIndex={currentStepIndex!}
-						viewTxnLink={getExplorerUrlForTxHash(network, txHash)}
+						viewTxnLink={getExplorerUrlForTxHash(network, rfpUpdateTxHash)}
 						onClose={
 							async() => {
 								setCurrentStepIndex(undefined)
@@ -288,7 +288,7 @@ function RequestProposal() {
 	const grantContract = useQBContract('grantFactory', network)
 
 	const { rfpData, rfpFormType, RFPEditFormData, setRFPEditFormData } = useContext(RFPFormContext)!
-	const { updateRFP } = useUpdateRFP(setCurrentStepIndex, setIsNetworkTransactionModalOpen)
+	const { updateRFP, txHash: rfpUpdateTxHash } = useUpdateRFP(setCurrentStepIndex, setIsNetworkTransactionModalOpen)
 
 	// useEffect(() => {
 	// 	if(role === 'admin' && workspace) {
@@ -630,13 +630,13 @@ function RequestProposal() {
 
 			logger.info('grantCreateIpfsHash', grantCreateIpfsHash)
 			let rubricHash = ''
-			if(reviewMechanism?.label === 'Rubric') {
-				const { hash: auxRubricHash } = await validateAndUploadToIpfs('RubricSetRequest', {
-					rubric: {
-						rubric: rubrics,
-						isPrivate: false
-					},
-				})
+
+			const { hash: auxRubricHash } = await validateAndUploadToIpfs('RubricSetRequest', {
+				rubric: {
+					rubric: rubrics,
+					isPrivate: false
+				},
+			})
 
 			if(auxRubricHash) {
 				rubricHash = auxRubricHash

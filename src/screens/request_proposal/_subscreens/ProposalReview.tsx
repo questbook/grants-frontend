@@ -59,7 +59,9 @@ function ProposalReview(
 					alignSelf='flex-start'
 					marginRight={24}>
 					{/* TODO: Add Steps complete indicator */}
-					<StepIndicator step={step} />
+					<StepIndicator
+						step={step}
+						formType={rfpFormSubmissionType} />
 					<Text
 						alignSelf='center'
 						fontWeight='500'
@@ -242,13 +244,13 @@ function ProposalReview(
 	const handleOnClickContinue = () => {
 		setStep(3)
 		const rubrics: { [key: number]: { title: string, details: string, maximumPoints: number } } = {}
-		if(reviewMechanism === 'Voting') {
+		if(reviewMechanism.label === 'Voting') {
 			rubrics[0] = {
 				title: 'Vote for',
 				details: '',
 				maximumPoints: 1
 			}
-		} else if(reviewMechanism === 'Rubric') {
+		} else if(reviewMechanism.label === 'Rubric') {
 			Object.keys(rubricInputValues).forEach((key, index) => {
 				rubrics[index] = {
 					title: rubricInputValues[index],

@@ -24,7 +24,6 @@ export default function useUpdateRFP(setCurrentStep: (step: number | undefined) 
 
 	const currentChainId = useChainId()
 
-	const apiClients = useContext(ApiClientsContext)!
 	const { role, workspace, chainId, subgraphClients } = useContext(ApiClientsContext)!
 
 
@@ -76,18 +75,24 @@ export default function useUpdateRFP(setCurrentStep: (step: number | undefined) 
 	}, [webwallet, nonce])
 
 	async function validate() {
-		setLoading(true)
-		console.log(RFPEditFormData)
+		if(role !== 'admin') {
+			customToast({
+				title: 'You are not authorized to perform this action',
+				status: 'error'
+			})
 
-		const { proposalName, startDate, endDate, allApplicantDetails, link, doc, numberOfReviewers, reviewMechanism, rubrics, payoutMode, amount, milestones } = RFPEditFormData
+			return
+		}
+
+		setLoading(true)
+
+		const { proposalName, startDate, endDate, allApplicantDetails, link, reviewMechanism, payoutMode, amount, milestones } = RFPEditFormData
 		const allFieldsObject: {[key: string]: ApplicantDetailsFieldType} = {}
 
 		if(allApplicantDetails) {
 			for(let i = 0; i < allApplicantDetails.length; i++) {
 				allFieldsObject[allApplicantDetails[i].id] = allApplicantDetails[i]
 			}
-
-			console.log('all fields object', allFieldsObject)
 		}
 
 		const processedData = {
@@ -198,7 +203,8 @@ export default function useUpdateRFP(setCurrentStep: (step: number | undefined) 
 			workspace,]),
 		txHash: getExplorerUrlForTxHash(currentChainId, transactionData?.transactionHash),
 		loading,
-		error
+		error,
+		role
 	}
 
 }

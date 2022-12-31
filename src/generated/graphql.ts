@@ -411,6 +411,7 @@ export enum FundsTransferType {
   FundsDeposited = 'funds_deposited',
   FundsDisbursed = 'funds_disbursed',
   FundsDisbursedFromSafe = 'funds_disbursed_from_safe',
+  FundsDisbursedFromWallet = 'funds_disbursed_from_wallet',
   FundsWithdrawn = 'funds_withdrawn',
   ReviewPaymentDone = 'review_payment_done'
 }
@@ -2217,6 +2218,7 @@ export enum NotificationType {
   FundsDeposited = 'funds_deposited',
   FundsDisbursed = 'funds_disbursed',
   FundsDisbursedFromSafe = 'funds_disbursed_from_safe',
+  FundsDisbursedFromWallet = 'funds_disbursed_from_wallet',
   FundsWithdrawn = 'funds_withdrawn',
   MilestoneAccepted = 'milestone_accepted',
   MilestoneRejected = 'milestone_rejected',
@@ -5436,11 +5438,7 @@ export type GetGrantsForAdminQueryVariables = Exact<{
 }>;
 
 
-<<<<<<< HEAD
-export type GetGrantsForAdminQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, reviewType?: ReviewType | null, payoutType?: PayoutType | null, numberOfReviewersPerApplication: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, rubric?: { __typename?: 'Rubric', id: string, isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null }> };
-=======
 export type GetGrantsForAdminQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, reviewType?: ReviewType | null, payoutType?: PayoutType | null, numberOfReviewersPerApplication: number, shouldAutoAssignReviewers: boolean, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, rubric?: { __typename?: 'Rubric', id: string, isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null, autoAssignReviewers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, profilePictureIpfsHash?: string | null }> }> };
->>>>>>> 1881f6a3ef42379468e07cad094669c7a602bf52
 
 export type GetGrantsForReviewerQueryVariables = Exact<{
   reviewerAddress: Scalars['Bytes'];
@@ -5448,11 +5446,7 @@ export type GetGrantsForReviewerQueryVariables = Exact<{
 }>;
 
 
-<<<<<<< HEAD
-export type GetGrantsForReviewerQuery = { __typename?: 'Query', grantReviewerCounters: Array<{ __typename?: 'GrantReviewerCounter', id: string, counter: number, pendingCounter: number, doneCounter: number, grant: { __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, reviewType?: ReviewType | null, payoutType?: PayoutType | null, numberOfReviewersPerApplication: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, rubric?: { __typename?: 'Rubric', id: string, isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null, pendingApplications: Array<{ __typename?: 'GrantApplication', id: string }>, doneApplications: Array<{ __typename?: 'GrantApplication', id: string }> } }> };
-=======
 export type GetGrantsForReviewerQuery = { __typename?: 'Query', grantReviewerCounters: Array<{ __typename?: 'GrantReviewerCounter', id: string, counter: number, pendingCounter: number, doneCounter: number, grant: { __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, reviewType?: ReviewType | null, payoutType?: PayoutType | null, numberOfReviewersPerApplication: number, shouldAutoAssignReviewers: boolean, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, rubric?: { __typename?: 'Rubric', id: string, isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null, autoAssignReviewers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, profilePictureIpfsHash?: string | null }>, pendingApplications: Array<{ __typename?: 'GrantApplication', id: string }>, doneApplications: Array<{ __typename?: 'GrantApplication', id: string }> } }> };
->>>>>>> 1881f6a3ef42379468e07cad094669c7a602bf52
 
 export type GetPayoutsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -5522,7 +5516,6 @@ export type ProposalDetailsQueryVariables = Exact<{
 
 
 export type ProposalDetailsQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, applicantId: string, applicantPublicKey?: string | null, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', id: string, value: string }> }>, pii: Array<{ __typename?: 'PIIAnswer', id: string, data: string }>, milestones: Array<{ __typename?: 'ApplicationMilestone', title: string, amount: string }>, grant: { __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, startDate?: string | null, deadline?: string | null, startDateS?: number | null, deadlineS: number, payoutType?: PayoutType | null, reviewType?: ReviewType | null, numberOfReviewersPerApplication: number, link?: string | null, docIpfsHash?: string | null, acceptingApplications: boolean, metadataHash: string, funding: string, reward: { __typename?: 'Reward', id: string, asset: string, committed: string, token?: { __typename?: 'Token', id: string, label: string, address: string, decimal: number, iconHash: string, chainId?: string | null } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, supportedNetworks: Array<SupportedNetwork>, logoIpfsHash: string, safe?: { __typename?: 'WorkspaceSafe', address: string, chainId: string } | null }, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, possibleValues?: Array<string> | null, isPii: boolean }> } } | null };
-<<<<<<< HEAD
 
 export type GetGrantDetailsByIdQueryVariables = Exact<{
   grantID: Scalars['ID'];
@@ -5530,8 +5523,6 @@ export type GetGrantDetailsByIdQueryVariables = Exact<{
 
 
 export type GetGrantDetailsByIdQuery = { __typename?: 'Query', grant?: { __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, link?: string | null, docIpfsHash?: string | null, numberOfReviewersPerApplication: number, payoutType?: PayoutType | null, reviewType?: ReviewType | null, startDate?: string | null, deadline?: string | null, funding: string, acceptingApplications: boolean, milestones?: Array<string> | null, rubric?: { __typename?: 'Rubric', id: string, isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, isPii: boolean }>, reward: { __typename?: 'Reward', id: string, asset: string, committed: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } } | null };
-=======
->>>>>>> 1881f6a3ef42379468e07cad094669c7a602bf52
 
 
 export const GetProfileDetailsDocument = gql`

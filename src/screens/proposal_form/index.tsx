@@ -419,7 +419,7 @@ function ProposalForm() {
 	}
 
 	const { setRole } = useContext(ApiClientsContext)!
-	const { type, grant, proposal, chainId, form, setForm, error } = useContext(ProposalFormContext)!
+	const { type, grant, chainId, form, setForm, error } = useContext(ProposalFormContext)!
 	// console.log('grant', grant)
 	// console.log('proposal', proposal)
 	const { safeObj } = useSafeContext()

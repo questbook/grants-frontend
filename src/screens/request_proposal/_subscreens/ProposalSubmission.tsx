@@ -94,7 +94,9 @@ function ProposalSubmission(
 					marginRight={24}
 				>
 					{/* TODO: Add Steps complete indicator */}
-					<StepIndicator step={step} />
+					<StepIndicator
+						step={step}
+						formType={rfpFormSubmissionType} />
 					<Text
 						alignSelf='center'
 						fontWeight='500'
@@ -425,7 +427,7 @@ function ProposalSubmission(
 
 	const handleOnClickContinue = () => {
 		logger.info('step 2')
-		setStep(2)
+		// setStep(2)
 
 		//filter true values from extra details fields and add custom field ids
 		const filteredExtraDetails = extraDetailsFields.filter((field) => field.required === true).map((item, index) => {
@@ -458,6 +460,7 @@ function ProposalSubmission(
 
 		if(rfpFormSubmissionType === 'edit') {
 			handleOnEditProposalSubmission('allApplicantDetails', allFieldsArray)
+			setStep(3)
 		}
 	}
 

@@ -57,7 +57,15 @@ function Payouts(
 						className='backBtn'
 						variant='linkV2'
 						leftIcon={<BsArrowLeft />}
-						onClick={() => setStep(2)}>
+						onClick={
+							() => {
+								if(rfpFormSubmissionType === 'edit') {
+									setStep(1)
+								} else {
+									setStep(2)
+								}
+							}
+						}>
 						Back
 					</Button>
 				</Flex>
@@ -70,7 +78,9 @@ function Payouts(
 					alignSelf='flex-start'
 					marginRight={24}
 				>
-					<StepIndicator step={step} />
+					<StepIndicator
+						step={step}
+						formType={rfpFormSubmissionType} />
 					<Text
 						alignSelf='center'
 						fontWeight='500'
