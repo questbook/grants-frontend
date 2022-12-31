@@ -10,7 +10,6 @@ import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
 import { RFPForm, RFPFormType } from 'src/screens/request_proposal/_utils/types'
 import { ApplicantDetailsFieldType } from 'src/types'
-import { uploadToIPFS } from 'src/utils/ipfsUtils'
 
 
 interface Props {
@@ -324,7 +323,9 @@ function ProposalSubmission(
 							width='100%'
 							// flexProps={{ grow: 1, shrink: 1 }}
 						/>
-						<Text variant='v2_subheading'>
+						<Text
+							display={rfpFormSubmissionType === 'edit' ? 'none' : ''}
+							variant='v2_subheading'>
 							Or
 						</Text>
 
@@ -333,6 +334,7 @@ function ProposalSubmission(
 						<FlushedInput
 							id='upload-doc-id'
 							placeholder='Upload a doc'
+							display={rfpFormSubmissionType === 'edit' ? 'none' : ''}
 							onClick={openInput}
 							value={doc ? doc[0].name : ''}
 							onChange={(e) => handleFile(e)}
@@ -399,7 +401,6 @@ function ProposalSubmission(
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const handleFile = async(e: any) => {
-		await uploadToIPFS(e.target.files[0])
 		setDoc(e.target.files)
 		if(rfpFormSubmissionType === 'edit') {
 			handleOnEditProposalSubmission('doc', e.target.files)
