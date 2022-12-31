@@ -1,0 +1,53 @@
+query getWorkspaceGrantsProgramDetails($workspaceId: String!) {
+  grants(
+    orderBy: createdAtS
+    orderDirection: desc
+    where: {workspace: $workspaceId}
+  ) {
+    id
+    applications {
+      id
+      updatedAtS
+      fields {
+        id
+        values {
+          id
+          value
+        }
+      }
+    }
+    fundTransfers {
+      amount
+      status
+    }
+    title
+    acceptingApplications
+    startDate
+    startDateS
+    deadline
+    link
+    docIpfsHash
+    metadataHash
+    workspace {
+      title
+      metadataHash
+      coverImageIpfsHash
+      about
+      bio
+      logoIpfsHash
+      totalGrantFundingDisbursedUSD
+      numberOfApplications
+      numberOfApplicationsSelected
+      socials {
+        id
+        name
+        value
+      }
+      safe {
+        id
+        address
+        chainId
+      }
+    }
+  }
+}

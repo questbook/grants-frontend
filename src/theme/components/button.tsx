@@ -137,13 +137,11 @@ export default {
 					},
 				},
 			},
-			ghost: {
-				color: '#555570',
-			},
 			secondaryV2: {
 				bg: 'gray.3',
 				color: 'black.1',
 				lineHeight: '1.25rem',
+				borderRadius: '2px',
 				'&:hover': {
 					bg: 'gray.2',
 				},
@@ -156,7 +154,7 @@ export default {
 					borderRadius: '2px'
 				},
 				'&:disabled': {
-					bg: 'gray.4',
+					bg: 'gray.3',
 					opacity: 1,
 					color: 'gray.5',
 					'&:hover': {
@@ -165,8 +163,8 @@ export default {
 				},
 			},
 			linkV2: {
-				bg: 'white',
-				color: 'black.1',
+				bg: 'none',
+				color: 'black.3',
 				h: 8,
 				px: 3,
 				_hover: {
@@ -180,6 +178,49 @@ export default {
 					color: 'gray.5',
 				},
 				py: 2,
+			},
+			link: {
+				bg: 'white',
+				color: 'black.3',
+				fontWeight: '500',
+				fontSize: '16px',
+				lineHeight: '24px',
+			},
+			primaryLarge: {
+				bg: '#0A84FF',
+				color: 'white',
+				paddingY: '14px',
+				paddingX: '40px',
+				fontWeight: '500',
+				h: '48px',
+				borderRadius: '2px',
+			},
+			primaryMedium: {
+				bg: 'accent.azure',
+				color: 'white',
+				paddingY: '8px',
+				paddingX: '16px',
+				fontWeight: '500',
+				fontSize: '14px',
+				lineHeight: '24px',
+				// w: '170px', // Note: the values for height and width will be changed
+				h: '32px',
+				borderRadius: '2px',
+				_disabled: {
+					bg: '#E7E4DD',
+					color: '#8D8B87',
+				}
+			},
+			menuButton: {
+				borderRadius: '2px',
+				color: 'black.1',
+				'&:disabled': {
+					bg: 'gray.3',
+					opacity: 1,
+					'&:hover': {
+						bg: 'gray.3',
+					},
+				}
 			}
 		},
 	},

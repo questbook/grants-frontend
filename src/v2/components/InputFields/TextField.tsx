@@ -21,7 +21,6 @@ interface Props extends FlexProps {
 
 function TextField({ label, optionalText, helperText, helperLinkText, helperLinkUrl, placeholder, maxLength, value, onChange, isVerified, isDisabled, errorText, onPasteClick, ...props }: Props) {
 	const [currentLength, setCurrentLength] = React.useState(value?.toString().length)
-
 	React.useEffect(() => {
 		setCurrentLength(value?.toString().length)
 	}, [value])

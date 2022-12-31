@@ -19,5 +19,6 @@ query getWorkspaceMembersByWorkspaceId(
         accessLevel
         addedAt
         publicKey
+        email
     }
 }

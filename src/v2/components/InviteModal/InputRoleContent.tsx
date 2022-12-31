@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Button, Divider, HStack, Image, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, Spacer, Text, useToast, VStack } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
-import { serialiseInviteInfoIntoUrl, useMakeInvite } from 'src/screens/discover/_utils/invite'
+import { serialiseInviteInfoIntoUrl, useMakeInvite } from 'src/libraries/utils/invite'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { getRoleTitle } from 'src/v2/components/AcceptInviteModal/RoleDataDisplay'
 import RoleSelect from 'src/v2/components/InviteModal/RoleSelect'
@@ -22,7 +22,7 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 
 	const toast = useToast()
 
-	const { makeInvite, isBiconomyInitialised } = useMakeInvite(selectedRole || 0)
+	const { makeInvite, isBiconomyInitialised } = useMakeInvite()
 
 	const [transactionHash, setTransactionHash] = useState<string>()
 	const { t } = useTranslation()
@@ -37,6 +37,7 @@ const InputRoleContent = ({ onLinkCreated, onClose }: InputRoleContentProps) => 
 
 		try {
 			const info = await makeInvite(
+				selectedRole || 0,
 				() => setCreateLinkStep(1),
 				setTransactionHash,
 			)

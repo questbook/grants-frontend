@@ -118,7 +118,10 @@ export default function useCreateGrant(
 						asset: USD_ASSET
 					}
 				}
-
+				console.log('grant data', data)
+				console.log('workspace',  getSupportedValidatorNetworkFromChainId(
+					(chainId || getSupportedChainIdFromWorkspace(workspace))!,
+				))
 				const {
 					data: { ipfsHash },
 				} = await validatorApi.validateGrantCreate({
@@ -157,11 +160,12 @@ export default function useCreateGrant(
 				}
 
 				setCurrentStep(1)
-
+				console.log('method args', workspaceId, Number(workspace?.id).toString())
 				const methodArgs = [
 					workspaceId || Number(workspace?.id).toString(),
 					ipfsHash,
 					rubricHash,
+					2,
 					WORKSPACE_REGISTRY_ADDRESS[currentChainId!],
 					APPLICATION_REGISTRY_ADDRESS[currentChainId!],
 				]

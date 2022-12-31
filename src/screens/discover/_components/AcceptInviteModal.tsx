@@ -6,8 +6,9 @@ import { ROLES } from 'src/constants'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useDAOName from 'src/hooks/useDAOName'
+import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
+import { InviteInfo, useJoinInvite } from 'src/libraries/utils/invite'
 import { WebwalletContext } from 'src/pages/_app'
-import { InviteInfo, useJoinInvite } from 'src/screens/discover/_utils/invite'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { addAuthorizedUser } from 'src/utils/gaslessUtils'
@@ -125,7 +126,7 @@ export default ({ inviteInfo, onClose }: AcceptInviteModalProps) => {
 			if(inviteInfo?.chainId && inviteInfo?.workspaceId) {
 				const newWorkspace = `chain_${inviteInfo?.chainId.toString()}-0x${inviteInfo?.workspaceId.toString(16)}`
 				logger.info({ newWorkspace }, 'Setting workspace in cache')
-				localStorage.setItem('currentWorkspace', newWorkspace)
+				localStorage.setItem(DOMAIN_CACHE_KEY, newWorkspace)
 			}
 
 			setInviteJoinStep(5)

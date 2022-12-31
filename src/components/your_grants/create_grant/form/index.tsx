@@ -60,7 +60,7 @@ function Form({
 
 	const applicantDetails = applicantDetailsList
 		.map(({
-			title, tooltip, id, inputType, isRequired,
+			title, id, inputType, isRequired,
 		}, index) => {
 			if(index === applicantDetailsList.length - 1) {
 				return null
@@ -74,7 +74,6 @@ function Form({
 				title,
 				required: isRequired || false,
 				id,
-				tooltip,
 				index,
 				inputType,
 			}
@@ -249,7 +248,7 @@ function Form({
 				}
 			}
 
-			if(shouldEncrypt) {
+			if(shouldEncrypt){
 				if(fields.applicantEmail) {
 					fields.applicantEmail = { ...fields.applicantEmail, pii: true }
 				}
@@ -284,7 +283,7 @@ function Form({
 					},
 				)
 			}
-
+			
 			const s = {
 				title,
 				summary,
@@ -298,6 +297,8 @@ function Form({
 					rubric: { }
 				},
 			}
+
+			console.log("Form requirements", s)
 
 			onSubmit(s)
 		}

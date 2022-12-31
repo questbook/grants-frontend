@@ -1,5 +1,11 @@
 export default {
 	Text: {
+		baseStyle: {
+			color: 'black.1',
+			fontSize: '16px',
+			lineHeight: '20px',
+			fontWeight: '400'
+		},
 		variants: {
 			heading: {
 				color: '#122224',
@@ -47,6 +53,7 @@ export default {
 				color: '#122224',
 				fontWeight: '500',
 			},
+			// New v2 starts here
 			v2_metadata: {
 				fontSize: '12px',
 				lineHeight: '16px',
@@ -82,10 +89,15 @@ export default {
 				lineHeight: '48px',
 				color: 'black.1'
 			},
-			proposalHeading: {
-				fontSize: '24px',
-				lineHeight: '32px',
+			textButton: {
+				fontSize: '14px',
+				lineHeight: '20px',
+				color: 'black.1',
 				fontWeight: '500',
+				cursor: 'pointer',
+				_hover: {
+					textDecoration: 'underline'
+				}
 			}
 		},
 	},

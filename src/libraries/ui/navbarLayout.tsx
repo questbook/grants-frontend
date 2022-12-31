@@ -1,25 +1,36 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Flex } from '@chakra-ui/react'
 import NavBar from 'src/libraries/ui/NavBar'
-import { ApiClientsContext } from 'src/pages/_app'
 import logger from 'src/utils/logger'
 import Sidebar from 'src/v2/components/Sidebar'
 
-interface Props {
-  children: React.ReactNode
-  renderNavbar?: boolean
-	renderSidebar?: boolean
-	renderSearchBar?: boolean
+type NavbarConfig = {
+	bg?: string
+	showLogo?: boolean
+	showSearchBar?: boolean
+	showInviteProposals?: boolean
+	showAddMembers?: boolean
+	showDomains?: boolean
+	showStats?: boolean
+	showOpenDashboard?: boolean
 }
 
-function NavbarLayout({ children, renderNavbar, renderSidebar, renderSearchBar }: Props) {
-	const { connected, setConnected } = useContext(ApiClientsContext)!
+type Props = {
+	children: React.ReactNode
 
+	//Navbar configs
+	renderNavbar?: boolean
+	navbarConfig?: NavbarConfig
+
+	//Sidebar configs
+	renderSidebar?: boolean
+}
+
+function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar }: Props) {
 	const [renderCount, setRenderCount] = useState(0)
 
 	useEffect(() => {
 		logger.info({ renderNavbar, renderSidebar }, 'Render Navbar Layout')
-		setConnected(true)
 		setRenderCount(renderCount + 1)
 	}, [])
 
@@ -27,19 +38,19 @@ function NavbarLayout({ children, renderNavbar, renderSidebar, renderSearchBar }
 		<Flex
 			direction='column'
 			w='100%'
-			h='100%'
+			h='100vh'
 			overscrollBehavior='none'>
 			{
 				renderNavbar && (
-					<NavBar showSearchBar={renderSearchBar ?? false} />
+					<NavBar {...navbarConfig} />
 				)
 			}
 			<Flex
 				direction='row'
 				maxH='calc(100vh - 64px)'
-				bg='#F5F5F5'>
+				bg='gray.1'>
 				{
-					renderSidebar && connected && (
+					renderSidebar && (
 						<Flex
 							display={{ base: 'none', lg: 'flex' }}
 							w='20%'
@@ -53,10 +64,12 @@ function NavbarLayout({ children, renderNavbar, renderSidebar, renderSearchBar }
 					)
 				}
 				<Flex
+					className='body'
 					zIndex={0}
-					w={renderSidebar && connected ? '80%' : '100%'}
+					w={renderSidebar ? '80%' : '100%'}
 					overflowY='auto'
-					overscrollBehavior='none'>
+					overscrollBehavior='none'
+					justifyContent='center'>
 					{children}
 				</Flex>
 			</Flex>

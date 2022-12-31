@@ -30,7 +30,8 @@ function LoadMoreCard({
 				<Text
 					textAlign='center'
 					fontSize='14px'
-					fontWeight='500'>
+					fontWeight='500'
+					color='white'>
 					{t('/.show_more')}
 				</Text>
 			</Box>

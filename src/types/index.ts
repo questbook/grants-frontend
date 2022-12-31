@@ -4,6 +4,7 @@ import {
 	ApplicationRegistryAbi,
 	ApplicationReviewRegistryAbi,
 	CommunicationAbi,
+	GrantAbi,
 	GrantFactoryAbi,
 	WorkspaceRegistryAbi,
 } from 'src/generated/contracts'
@@ -161,8 +162,26 @@ export type SafeToken = {
   }
 }
 
+export type ApplicantDetailsFieldType = {
+  title: string
+  id: string
+  inputType: string
+  required: boolean
+  pii?: boolean
+}
+
+export type DynamicInputValues = {
+  [key: number]: string
+}
+
 export type CustomField = {
 	title: string
 	value: string
 	isError: boolean
+}
+
+// eslint-disable-next-line no-restricted-syntax
+export enum ReviewType {
+  'Voting',
+  'Rubrics'
 }

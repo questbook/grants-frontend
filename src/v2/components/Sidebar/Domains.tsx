@@ -97,7 +97,7 @@ function Domains({ workspaces, onWorkspaceClick }: Props) {
 					areWorkspaceEqual(workspace!, workspaceLocal) && (
 						<CheckIcon
 							alignSelf='center'
-							color='green.2' />
+							color='brand.green' />
 					)
 				}
 			</Flex>

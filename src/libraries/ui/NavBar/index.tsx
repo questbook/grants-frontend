@@ -1,23 +1,38 @@
 import { ChangeEvent, useContext, useEffect, useState } from 'react'
-import { Search2Icon } from '@chakra-ui/icons'
-import { Center, Container, Image, Input, InputGroup, InputLeftElement, Spacer, useToast } from '@chakra-ui/react'
+import { Container, Image, Spacer } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import { ethers } from 'ethers'
 import saveAs from 'file-saver'
 import { useRouter } from 'next/router'
-import { DAOSearchContext } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
-import AccountDetails from 'src/libraries/ui/NavBar/AccountDetails'
-import ImportConfirmationModal from 'src/libraries/ui/NavBar/ImportConfirmationModal'
-import RecoveryModal from 'src/libraries/ui/NavBar/RecoveryModal'
+import AccountDetails from 'src/libraries/ui/NavBar/_components/AccountDetails'
+import AddMemberButton from 'src/libraries/ui/NavBar/_components/AddMemberButton'
+import Domains from 'src/libraries/ui/NavBar/_components/Domains'
+import ImportConfirmationModal from 'src/libraries/ui/NavBar/_components/ImportConfirmationModal'
+import InviteProposalButton from 'src/libraries/ui/NavBar/_components/InviteProposalButton'
+import OpenDashboard from 'src/libraries/ui/NavBar/_components/OpenDashboard'
+import RecoveryModal from 'src/libraries/ui/NavBar/_components/RecoveryModal'
+import StatsButton from 'src/libraries/ui/NavBar/_components/StatsButton'
+import SwapButton from 'src/libraries/ui/NavBar/_components/SwapButton'
+import UpdateProfileModal from 'src/libraries/ui/NavBar/_components/UpdateProfileModal'
+import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
+import { ApiClientsContext } from 'src/pages/_app'
 import { getNonce } from 'src/utils/gaslessUtils'
 
 type Props = {
-	showSearchBar: boolean
+	bg?: string
+	showOpenDashboard?: boolean
+	showLogo?: boolean
+	showSearchBar?: boolean
+	showInviteProposals?: boolean
+	showAddMembers?: boolean
+	showDomains?: boolean
+	showStats?: boolean
 }
 
-function NavBar({ showSearchBar }: Props) {
+function NavBar({ bg, showOpenDashboard, showLogo, showAddMembers, showInviteProposals, showStats, showDomains, showSearchBar }: Props) {
 	const buildComponent = () => (
 		<>
 			<Container
@@ -26,11 +41,12 @@ function NavBar({ showSearchBar }: Props) {
 				left={0}
 				right={0}
 				zIndex={1}
-				variant='header-container'
+				// variant='header-container'
 				maxH='64px'
 				display='flex'
+				alignItems='center'
 				maxW='100vw'
-				bg='white'
+				bg={bg}
 				ps='42px'
 				pe='15px'
 				py='16px'
@@ -44,7 +60,7 @@ function NavBar({ showSearchBar }: Props) {
 					}
 					display={{ base: 'none', lg: 'inherit' }}
 					mr='auto'
-					src='/ui_icons/qb.svg'
+					src={router.pathname === '/dashboard' && (role === 'admin' || role === 'reviewer') ? '/v2/images/qb-only-logo.svg' : '/ui_icons/qb.svg'}
 					alt='Questbook'
 					cursor='pointer'
 				/>
@@ -56,7 +72,7 @@ function NavBar({ showSearchBar }: Props) {
 					}
 					display={{ base: 'inherit', lg: 'none' }}
 					mr='auto'
-					src='/ui_icons/qb.svg'
+					src={router.pathname === '/dashboard' && (role === 'admin' || role === 'reviewer') ? '/v2/images/qb-only-logo.svg' : '/ui_icons/qb.svg'}
 					alt='Questbook'
 					cursor='pointer'
 				/>
@@ -72,43 +88,13 @@ function NavBar({ showSearchBar }: Props) {
 						</>
 					)
 				}
+
+				{showDomains && (role === 'admin' || role === 'reviewer') && <Domains />}
+				{showStats && (role === 'admin' || role === 'reviewer') && <StatsButton />}
 				<Spacer />
+
 				{/* {
-				// @TODO-gasless: FIX HERE
-				true && (
-					<Flex
-						align="center"
-						justify="center"
-						borderRadius="2px"
-						bg="#F0F0F7"
-						px={2.5}
-						py={2.5}>
-						<Image
-							src='/ui_icons/ellipse.svg'
-							boxSize="8px"
-							mr={2}
-							display="inline-block" />
-						<Text
-							fontSize="14px"
-							lineHeight="20px"
-							fontWeight="500"
-							color="#122224">
-							{
-								chainId
-									? CHAIN_INFO[chainId].isTestNetwork && !SHOW_TEST_NETS
-										? 'Unsupported Network'
-										: CHAIN_INFO[chainId].name
-									: 'Unsupported Network'
-							}
-						</Text>
-					</Flex>
-
-				)
-			} */}
-
-				{/* @TODO-gasless: FIX HERE */}
-				{
-					showSearchBar && (
+					showSearchBar && !inviteInfo && (
 						<Center>
 							<InputGroup mx='20px'>
 								<InputLeftElement pointerEvents='none'>
@@ -124,24 +110,24 @@ function NavBar({ showSearchBar }: Props) {
 							</InputGroup>
 						</Center>
 					)
-				}
+				} */}
 				<Spacer />
+
+				{showAddMembers && (role === 'admin' || role === 'reviewer') && <AddMemberButton />}
+				{showInviteProposals && (role === 'admin' || role === 'reviewer') && <InviteProposalButton />}
+
+				{router.pathname === '/dashboard' && <SwapButton />}
+
+				{showOpenDashboard && (router.pathname === '/' || router.pathname === '/settings') && <OpenDashboard />}
+
 				<AccountDetails
 					openModal={
 						(type) => {
 							setType(type)
 							setIsRecoveryModalOpen(true)
 						}
-					} />
-
-				{/* {!connected && <GetStarted onGetStartedClick={onGetStartedClick} />} */}
-				{/* {
-				isDisconnected && false && (
-					<ConnectWallet
-						onGetStartedBtnClicked={onGetStartedBtnClicked}
-						setGetStartedClicked={setGetStartedClicked} />
-				)
-			} */}
+					}
+					setIsUpdateProfileModalOpen={setIsUpdateProfileModalOpen} />
 			</Container>
 			<RecoveryModal
 				isOpen={isRecoveryModalOpen}
@@ -159,19 +145,30 @@ function NavBar({ showSearchBar }: Props) {
 				onClose={() => setImportConfirmationModalOpen(false)}
 				saveWallet={saveWallet} />
 
+			<UpdateProfileModal
+				isOpen={isUpdateProfileModalOpen}
+				onClose={() => setIsUpdateProfileModalOpen(false)} />
+
 		</>
 	)
 
+	const { role, inviteInfo } = useContext(ApiClientsContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
-	const { searchString, setSearchString } = useContext(DAOSearchContext)!
+	// const { searchString, setSearchString } = useContext(DAOSearchContext)!
 	const router = useRouter()
-	const toast = useToast()
+	const toast = useCustomToast()
 	const [privateKey, setPrivateKey] = useState<string>('')
 	const [privateKeyError, setPrivateKeyError] = useState<string>('')
 
 	const [isRecoveryModalOpen, setIsRecoveryModalOpen] = useState<boolean>(false)
 	const [isImportConfirmationModalOpen, setImportConfirmationModalOpen] = useState<boolean>(false)
 	const [type, setType] = useState<'import' | 'export'>('export')
+
+	const [isUpdateProfileModalOpen, setIsUpdateProfileModalOpen] = useState<boolean>(false)
+
+	useEffect(() => {
+		logger.info({ role, condition: showLogo || role === 'builder' || role === 'community' }, 'condition')
+	}, [role])
 
 	useEffect(() => {
 		logger.info({ type, privateKey }, 'RecoveryModal')
@@ -208,8 +205,8 @@ function NavBar({ showSearchBar }: Props) {
 		const copied = copy(privateKey)
 		if(copied) {
 			toast({
-				title: 'Copied to clipboard',
 				status: 'success',
+				title: 'Copied to clipboard',
 				duration: 3000,
 				isClosable: true,
 			})
@@ -223,11 +220,11 @@ function NavBar({ showSearchBar }: Props) {
 			localStorage.setItem('webwalletPrivateKey', privateKey)
 			localStorage.setItem('nonce', nonce)
 			localStorage.removeItem('scwAddress')
-			localStorage.removeItem('currentWorkspace')
+			localStorage.removeItem(DOMAIN_CACHE_KEY)
 			toast({
+				status: 'info',
 				title: 'Wallet imported successfully',
-				status: 'success',
-				duration: 3000,
+				duration: 2000,
 				isClosable: true,
 				onCloseComplete() {
 					router.reload()
@@ -235,9 +232,9 @@ function NavBar({ showSearchBar }: Props) {
 			})
 		} else {
 			toast({
+				status: 'error',
 				title: 'Wallet could not be imported',
 				description: 'User not authorised. Nonce not present, contact support!',
-				status: 'warning',
 				duration: 3000,
 				isClosable: true,
 			})
@@ -247,5 +244,26 @@ function NavBar({ showSearchBar }: Props) {
 
 	return buildComponent()
 }
+
+NavBar.defaultProps = {
+	bg: 'white',
+	showLogo: true,
+	showOpenDashboard: true,
+	showSearchBar: true,
+	showInviteProposals: false,
+	showAddMembers: false,
+	showDomains: false,
+	showStats: false
+}
+
+// NavBar.defaultProps = {
+// 	bg: 'gray.1',
+// 	showLogo: false,
+// 	showSearchBar: false,
+// 	showInviteProposals: true,
+// 	showAddMembers: true,
+// 	showDomains: true,
+// 	showStats: true
+// }
 
 export default NavBar

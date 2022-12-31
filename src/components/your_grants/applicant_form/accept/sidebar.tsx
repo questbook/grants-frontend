@@ -124,7 +124,7 @@ function Sidebar({ applicationData }: any) {
 						fontWeight='500'
 						fontStyle='normal'
 						color='#414E50'
-						href={`/explore_grants/about_grant?grantId=${applicationData?.grant?.id}&chainId=${chainId}`}
+						href={`/proposal_form?grantId=${applicationData?.grant?.id}&chainId=${chainId}`}
 					>
 						View Grant
 						{' '}

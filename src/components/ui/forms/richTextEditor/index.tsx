@@ -53,7 +53,7 @@ function RichTextEditor({
 				fontWeight='bold'
 				mb={1}>
 				{label}
-				{tooltip && tooltip.length ? <Tooltip label={tooltip} /> : null}
+				{tooltip?.length ? <Tooltip label={tooltip} /> : null}
 			</Text>
 			<TextEditor
 				placeholder={placeholder}
@@ -62,10 +62,9 @@ function RichTextEditor({
 				readOnly={disabled}
 			/>
 			{
-				(subtext && subtext.length)
-      || (isError && errorText && errorText?.length) ? (
-	<Box mt={1} />
-					) : null
+				(subtext?.length) || (isError && errorText && errorText?.length) ? (
+					<Box mt={1} />
+				) : null
 			}
 			{
 				isError && errorText && errorText?.length && (
@@ -80,7 +79,7 @@ function RichTextEditor({
 				)
 			}
 			{
-				subtext && subtext?.length && (
+				subtext?.length && (
 					<Text
 						fontSize='12px'
 						color='#717A7C'

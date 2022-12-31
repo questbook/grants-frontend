@@ -21,7 +21,7 @@ export function getSafeURL(safeAddress: string, chainId: string) {
 	} else if(chainId === '40') {
 		return `https://safe.telos.net/${NETWORK_PREFIX[chainId]}:${safeAddress}`
 	} else {
-		return `https://gnosis-safe.io/app/${NETWORK_PREFIX[chainId]}:${safeAddress}`
+		return `https://app.safe.global/${NETWORK_PREFIX[chainId]}:${safeAddress}`
 	}
 }
 
@@ -31,13 +31,12 @@ export function getGnosisTansactionLink(safeAddress: string, chainId: string) {
 	} else if(chainId === '40') {
 		return `https://safe.telos.net/${NETWORK_PREFIX[chainId]}:${safeAddress}/transactions/queue`
 	} else {
-		return `https://gnosis-safe.io/app/${NETWORK_PREFIX[chainId]}:${safeAddress}/transactions/queue`
+		return `https://app.safe.global/${NETWORK_PREFIX[chainId]}:${safeAddress}/transactions/queue`
 	}
 }
 
 export async function getTokenBalance(safeNetworkId: string, safeAddress: string) {
 	const gnosisUrl = `${SAFES_ENDPOINTS[safeNetworkId as ValidChainID]}v1/safes/${safeAddress}/balances/usd`
-	console.log('fetching tokens from ', gnosisUrl)
 	const response = await axios.get(gnosisUrl)
 
 	return response

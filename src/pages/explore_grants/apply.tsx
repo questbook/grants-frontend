@@ -2,11 +2,11 @@ import React, {
 	ReactElement, useContext, useEffect, useState,
 } from 'react'
 import { Flex } from '@chakra-ui/react'
-import { SupportedSafes } from '@questbook/supported-safes'
+import { SupportedPayouts } from '@questbook/supported-safes'
 import { useRouter } from 'next/router'
 import Form from 'src/components/explore_grants/apply_grant/form'
 import Sidebar from 'src/components/explore_grants/apply_grant/sidebar'
-import { defaultChainId, USD_ASSET } from 'src/constants/chains'
+import { defaultChainId } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import config from 'src/constants/config.json'
 import { useSafeContext } from 'src/contexts/safeContext'
@@ -133,7 +133,7 @@ function ApplyGrant() {
 		setTitle(grantData?.title)
 		setWorkspaceId(grantData?.workspace?.id)
 		logger.info({ chainId: grantData?.workspace?.safe?.address, grantData }, 'safe chainid')
-		const currentSafe = new SupportedSafes().getSafe(parseInt(grantData?.workspace?.safe?.chainId!), grantData?.workspace?.safe?.address!)
+		const currentSafe = new SupportedPayouts().getSafe(parseInt(grantData?.workspace?.safe?.chainId!), grantData?.workspace?.safe?.address!)
 		setSafeObj(currentSafe)
 		setDaoId(grantData?.workspace?.id)
 		setDaoLogo(grantData?.workspace?.logoIpfsHash === config.defaultDAOImageHash ?

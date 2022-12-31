@@ -1,0 +1,71 @@
+query proposalDetails($proposalId: ID!) {
+    grantApplication(id: $proposalId) {
+    id
+    applicantId
+    applicantPublicKey
+    fields {
+      id
+      values {
+        id
+        value
+      }
+    }
+    pii {
+      id
+      data
+    }
+    milestones {
+      title
+      amount
+    }
+    grant {
+      id
+      creatorId
+      title
+      summary
+      details
+      reward {
+        id
+        asset
+        committed
+        token {
+          id
+          label
+          address
+          decimal
+          iconHash
+          chainId
+        }
+      }
+      startDate
+      deadline
+      startDateS
+      deadlineS
+      payoutType
+      reviewType
+      numberOfReviewersPerApplication
+      link
+      docIpfsHash
+      acceptingApplications
+      metadataHash
+      funding
+      workspace {
+        id
+        title
+        supportedNetworks
+        logoIpfsHash
+        safe {
+                address
+                chainId
+            }
+      }
+      fields {
+        id
+        title
+        inputType
+        possibleValues
+        isPii
+      }
+    }
+  }
+}

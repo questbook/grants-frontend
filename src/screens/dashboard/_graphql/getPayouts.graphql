@@ -1,0 +1,30 @@
+query getPayouts($first: Int, $skip: Int, $proposalID: String!) {
+    fundsTransfers(first: $first, skip: $skip, where: {application: $proposalID, type_in: [funds_disbursed, funds_disbursed_from_safe]}) {
+        amount
+        asset
+        type
+        createdAtS
+        to
+        transactionHash
+        status
+        executionTimestamp
+        milestone {
+            id
+        }
+        grant {
+            reward {
+                id
+                asset
+                committed
+                token {
+                id
+                label
+                address
+                decimal
+                chainId
+                iconHash
+                }
+            } 
+        }
+    }
+}

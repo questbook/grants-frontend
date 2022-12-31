@@ -225,6 +225,73 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint96[]",
+        name: "applicationIds",
+        type: "uint96[]",
+      },
+      {
+        indexed: false,
+        internalType: "uint96[]",
+        name: "milestoneIds",
+        type: "uint96[]",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "asset",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "tokenName",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "nonEvmAssetAddress",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "transactionHash",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "amounts",
+        type: "uint256[]",
+      },
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "isP2P",
+        type: "bool",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "time",
+        type: "uint256",
+      },
+    ],
+    name: "DisburseRewardFromWallet",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint96[]",
         name: "applicationId",
         type: "uint96[]",
       },
@@ -745,6 +812,54 @@ const _abi = [
       },
     ],
     name: "disburseRewardFromSafe",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint96[]",
+        name: "_applicationIds",
+        type: "uint96[]",
+      },
+      {
+        internalType: "uint96[]",
+        name: "_milestoneIds",
+        type: "uint96[]",
+      },
+      {
+        internalType: "contract IERC20",
+        name: "_erc20Interface",
+        type: "address",
+      },
+      {
+        internalType: "string",
+        name: "_tokenName",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "nonEvmAssetAddress",
+        type: "string",
+      },
+      {
+        internalType: "uint256[]",
+        name: "_amounts",
+        type: "uint256[]",
+      },
+      {
+        internalType: "uint96",
+        name: "_workspaceId",
+        type: "uint96",
+      },
+      {
+        internalType: "string",
+        name: "transactionHash",
+        type: "string",
+      },
+    ],
+    name: "disburseRewardFromWallet",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1304,7 +1419,7 @@ const _abi = [
     stateMutability: "view",
     type: "function",
   },
-];
+] as const;
 
 export class WorkspaceRegistryAbi__factory {
   static readonly abi = _abi;

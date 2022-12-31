@@ -9,6 +9,7 @@ import type {
   CallOverrides,
   ContractTransaction,
   Overrides,
+  PayableOverrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -29,11 +30,52 @@ import type {
 
 export interface CommunicationAbiInterface extends utils.Interface {
   functions: {
+    "addComment(uint96,address,uint96,bool,string)": FunctionFragment;
+    "applicationReg()": FunctionFragment;
     "createLink(uint256,string,string)": FunctionFragment;
+    "initialize()": FunctionFragment;
+    "owner()": FunctionFragment;
+    "proxiableUUID()": FunctionFragment;
+    "renounceOwnership()": FunctionFragment;
+    "setApplicationReg(address)": FunctionFragment;
+    "setWorkspaceReg(address)": FunctionFragment;
+    "transferOwnership(address)": FunctionFragment;
+    "upgradeTo(address)": FunctionFragment;
+    "upgradeToAndCall(address,bytes)": FunctionFragment;
+    "workspaceReg()": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "createLink"): FunctionFragment;
+  getFunction(
+    nameOrSignatureOrTopic:
+      | "addComment"
+      | "applicationReg"
+      | "createLink"
+      | "initialize"
+      | "owner"
+      | "proxiableUUID"
+      | "renounceOwnership"
+      | "setApplicationReg"
+      | "setWorkspaceReg"
+      | "transferOwnership"
+      | "upgradeTo"
+      | "upgradeToAndCall"
+      | "workspaceReg"
+  ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "addComment",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>,
+      PromiseOrValue<string>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "applicationReg",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "createLink",
     values: [
@@ -42,15 +84,137 @@ export interface CommunicationAbiInterface extends utils.Interface {
       PromiseOrValue<string>
     ]
   ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "proxiableUUID",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setApplicationReg",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setWorkspaceReg",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferOwnership",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "upgradeTo",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "upgradeToAndCall",
+    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "workspaceReg",
+    values?: undefined
+  ): string;
 
+  decodeFunctionResult(functionFragment: "addComment", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "applicationReg",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "createLink", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "proxiableUUID",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setApplicationReg",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setWorkspaceReg",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "upgradeToAndCall",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "workspaceReg",
+    data: BytesLike
+  ): Result;
 
   events: {
+    "AdminChanged(address,address)": EventFragment;
+    "BeaconUpgraded(address)": EventFragment;
+    "CommentAdded(uint96,address,uint96,bool,string,address,uint256)": EventFragment;
     "EmailAdded(uint256,string,string,address,uint256)": EventFragment;
+    "Initialized(uint8)": EventFragment;
+    "OwnershipTransferred(address,address)": EventFragment;
+    "Upgraded(address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "CommentAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EmailAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
+
+export interface AdminChangedEventObject {
+  previousAdmin: string;
+  newAdmin: string;
+}
+export type AdminChangedEvent = TypedEvent<
+  [string, string],
+  AdminChangedEventObject
+>;
+
+export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
+
+export interface BeaconUpgradedEventObject {
+  beacon: string;
+}
+export type BeaconUpgradedEvent = TypedEvent<
+  [string],
+  BeaconUpgradedEventObject
+>;
+
+export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
+
+export interface CommentAddedEventObject {
+  workspaceId: BigNumber;
+  grantAddress: string;
+  applicationId: BigNumber;
+  isPrivate: boolean;
+  commentMetadataHash: string;
+  sender: string;
+  timestamp: BigNumber;
+}
+export type CommentAddedEvent = TypedEvent<
+  [BigNumber, string, BigNumber, boolean, string, string, BigNumber],
+  CommentAddedEventObject
+>;
+
+export type CommentAddedEventFilter = TypedEventFilter<CommentAddedEvent>;
 
 export interface EmailAddedEventObject {
   chainId: BigNumber;
@@ -65,6 +229,32 @@ export type EmailAddedEvent = TypedEvent<
 >;
 
 export type EmailAddedEventFilter = TypedEventFilter<EmailAddedEvent>;
+
+export interface InitializedEventObject {
+  version: number;
+}
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
+
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
+
+export interface OwnershipTransferredEventObject {
+  previousOwner: string;
+  newOwner: string;
+}
+export type OwnershipTransferredEvent = TypedEvent<
+  [string, string],
+  OwnershipTransferredEventObject
+>;
+
+export type OwnershipTransferredEventFilter =
+  TypedEventFilter<OwnershipTransferredEvent>;
+
+export interface UpgradedEventObject {
+  implementation: string;
+}
+export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
+
+export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 
 export interface CommunicationAbi extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -93,31 +283,215 @@ export interface CommunicationAbi extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    createLink(
-      chainId: PromiseOrValue<BigNumberish>,
-      emailHash: PromiseOrValue<string>,
-      message: PromiseOrValue<string>,
+    addComment(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _applicationId: PromiseOrValue<BigNumberish>,
+      _isPrivate: PromiseOrValue<boolean>,
+      _commentMetadataHash: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    applicationReg(overrides?: CallOverrides): Promise<[string]>;
+
+    createLink(
+      _chainId: PromiseOrValue<BigNumberish>,
+      _emailHash: PromiseOrValue<string>,
+      _message: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    initialize(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<[string]>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setApplicationReg(
+      _applicationReg: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setWorkspaceReg(
+      _workspaceReg: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    upgradeTo(
+      newImplementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    upgradeToAndCall(
+      newImplementation: PromiseOrValue<string>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    workspaceReg(overrides?: CallOverrides): Promise<[string]>;
   };
 
-  createLink(
-    chainId: PromiseOrValue<BigNumberish>,
-    emailHash: PromiseOrValue<string>,
-    message: PromiseOrValue<string>,
+  addComment(
+    _workspaceId: PromiseOrValue<BigNumberish>,
+    _grantAddress: PromiseOrValue<string>,
+    _applicationId: PromiseOrValue<BigNumberish>,
+    _isPrivate: PromiseOrValue<boolean>,
+    _commentMetadataHash: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  applicationReg(overrides?: CallOverrides): Promise<string>;
+
+  createLink(
+    _chainId: PromiseOrValue<BigNumberish>,
+    _emailHash: PromiseOrValue<string>,
+    _message: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  initialize(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  owner(overrides?: CallOverrides): Promise<string>;
+
+  proxiableUUID(overrides?: CallOverrides): Promise<string>;
+
+  renounceOwnership(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setApplicationReg(
+    _applicationReg: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setWorkspaceReg(
+    _workspaceReg: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  transferOwnership(
+    newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  upgradeTo(
+    newImplementation: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  upgradeToAndCall(
+    newImplementation: PromiseOrValue<string>,
+    data: PromiseOrValue<BytesLike>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  workspaceReg(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
-    createLink(
-      chainId: PromiseOrValue<BigNumberish>,
-      emailHash: PromiseOrValue<string>,
-      message: PromiseOrValue<string>,
+    addComment(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _applicationId: PromiseOrValue<BigNumberish>,
+      _isPrivate: PromiseOrValue<boolean>,
+      _commentMetadataHash: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    applicationReg(overrides?: CallOverrides): Promise<string>;
+
+    createLink(
+      _chainId: PromiseOrValue<BigNumberish>,
+      _emailHash: PromiseOrValue<string>,
+      _message: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    initialize(overrides?: CallOverrides): Promise<void>;
+
+    owner(overrides?: CallOverrides): Promise<string>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<string>;
+
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    setApplicationReg(
+      _applicationReg: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setWorkspaceReg(
+      _workspaceReg: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    upgradeTo(
+      newImplementation: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    upgradeToAndCall(
+      newImplementation: PromiseOrValue<string>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    workspaceReg(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
+    "AdminChanged(address,address)"(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): AdminChangedEventFilter;
+    AdminChanged(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): AdminChangedEventFilter;
+
+    "BeaconUpgraded(address)"(
+      beacon?: PromiseOrValue<string> | null
+    ): BeaconUpgradedEventFilter;
+    BeaconUpgraded(
+      beacon?: PromiseOrValue<string> | null
+    ): BeaconUpgradedEventFilter;
+
+    "CommentAdded(uint96,address,uint96,bool,string,address,uint256)"(
+      workspaceId?: null,
+      grantAddress?: null,
+      applicationId?: null,
+      isPrivate?: null,
+      commentMetadataHash?: null,
+      sender?: null,
+      timestamp?: null
+    ): CommentAddedEventFilter;
+    CommentAdded(
+      workspaceId?: null,
+      grantAddress?: null,
+      applicationId?: null,
+      isPrivate?: null,
+      commentMetadataHash?: null,
+      sender?: null,
+      timestamp?: null
+    ): CommentAddedEventFilter;
+
     "EmailAdded(uint256,string,string,address,uint256)"(
       chainId?: null,
       emailHash?: null,
@@ -132,23 +506,144 @@ export interface CommunicationAbi extends BaseContract {
       sender?: null,
       timestamp?: null
     ): EmailAddedEventFilter;
+
+    "Initialized(uint8)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
+
+    "OwnershipTransferred(address,address)"(
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
+    ): OwnershipTransferredEventFilter;
+    OwnershipTransferred(
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
+    ): OwnershipTransferredEventFilter;
+
+    "Upgraded(address)"(
+      implementation?: PromiseOrValue<string> | null
+    ): UpgradedEventFilter;
+    Upgraded(
+      implementation?: PromiseOrValue<string> | null
+    ): UpgradedEventFilter;
   };
 
   estimateGas: {
-    createLink(
-      chainId: PromiseOrValue<BigNumberish>,
-      emailHash: PromiseOrValue<string>,
-      message: PromiseOrValue<string>,
+    addComment(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _applicationId: PromiseOrValue<BigNumberish>,
+      _isPrivate: PromiseOrValue<boolean>,
+      _commentMetadataHash: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    applicationReg(overrides?: CallOverrides): Promise<BigNumber>;
+
+    createLink(
+      _chainId: PromiseOrValue<BigNumberish>,
+      _emailHash: PromiseOrValue<string>,
+      _message: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    initialize(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setApplicationReg(
+      _applicationReg: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setWorkspaceReg(
+      _workspaceReg: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    upgradeTo(
+      newImplementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    upgradeToAndCall(
+      newImplementation: PromiseOrValue<string>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    workspaceReg(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    createLink(
-      chainId: PromiseOrValue<BigNumberish>,
-      emailHash: PromiseOrValue<string>,
-      message: PromiseOrValue<string>,
+    addComment(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _applicationId: PromiseOrValue<BigNumberish>,
+      _isPrivate: PromiseOrValue<boolean>,
+      _commentMetadataHash: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    applicationReg(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    createLink(
+      _chainId: PromiseOrValue<BigNumberish>,
+      _emailHash: PromiseOrValue<string>,
+      _message: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    initialize(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setApplicationReg(
+      _applicationReg: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setWorkspaceReg(
+      _workspaceReg: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    upgradeTo(
+      newImplementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    upgradeToAndCall(
+      newImplementation: PromiseOrValue<string>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    workspaceReg(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

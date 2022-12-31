@@ -5,11 +5,11 @@
   Spartan:
     400, 600, 700
 */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Spartan:wght@400;600;700&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Spartan:wght@400;600;700&display=swap'); */
 
 @font-face {
   font-family: 'Neue-Haas-Grotesk-Display';
-  src: url('../public/fonts/neue-haas-grotesk-pro/NeueHaasDisplayLight.ttf');
+  src: url('../public/fonts/v2/NueHaas/NHaasGroteskTXPro-55Rg.ttf');
   font-weight: normal;
   font-style: normal;
   /* font-display: block; */
@@ -17,7 +17,7 @@
 
 @font-face {
   font-family: 'Neue-Haas-Grotesk-Display';
-  src: url('../public/fonts/neue-haas-grotesk-pro/NeueHaasDisplayLightItalic.ttf');
+  src: url('../public/fonts/v2/NueHaas/NHaasGroteskTXPro-56It.ttf');
   font-weight: normal;
   font-style: italic;
   /* font-display: block; */
@@ -25,7 +25,7 @@
 
 @font-face {
   font-family: 'Neue-Haas-Grotesk-Display';
-  src: url('../public/fonts/neue-haas-grotesk-pro/NeueHaasDisplayMedium.ttf');
+  src: url('../public/fonts/v2/NueHaas/NHaasGroteskTXPro-65Md.ttf');
   font-weight: 500;
   font-style: normal;
   /* font-display: block; */
@@ -33,7 +33,7 @@
 
 @font-face {
   font-family: 'Neue-Haas-Grotesk-Display';
-  src: url('../public/fonts/neue-haas-grotesk-pro/NeueHaasDisplayMediumItalic.ttf');
+  src: url('../public/fonts/v2/NueHaas/NHaasGroteskTXPro-66MdIt.ttf');
   font-weight: 500;
   font-style: italic;
   /* font-display: block; */
@@ -41,7 +41,7 @@
 
 @font-face {
   font-family: 'Neue-Haas-Grotesk-Display';
-  src: url('../public/fonts/neue-haas-grotesk-pro/NeueHaasDisplayBold.ttf');
+  src: url('../public/fonts/v2/NueHaas/NHaasGroteskTXPro-75Bd.ttf');
   font-weight: bold;
   font-style: normal;
   /* font-display: block; */
@@ -49,7 +49,7 @@
 
 @font-face {
   font-family: 'Neue-Haas-Grotesk-Display';
-  src: url('../public/fonts/neue-haas-grotesk-pro/NeueHaasDisplayBoldItalic.ttf');
+  src: url('../public/fonts/v2/NueHaas/NHaasGroteskTXPro-76BdIt.ttf');
   font-weight: bold;
   font-style: italic;
   /* font-display: block; */
@@ -148,6 +148,42 @@ a {
 
 .richTextContainer.focus {
   border-color: #8850EA;
+}
+
+.dao-card:hover{
+  box-shadow: rgba(55, 56, 55, 0.484) 1px 2px 15px 5px;
+}
+
+.card{
+  height: 80vh;
+}
+
+.backBtn{
+  position: relative;
+  margin-top: 20px;
+}
+
+.rightScreenCard{
+  position: relative;
+  margin-top: 20px;
+}
+
+/* .continueBtn{
+  position:'absolute';
+	bottom:'50px'
+} */
+
+.loader{
+  animation: rotation 1s infinite linear;
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
 }
 
 .barhover {

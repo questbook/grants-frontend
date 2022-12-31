@@ -100,7 +100,7 @@ function GrantRewardsInput({
 						}
 
 						setDate(e.target.value)
-
+						console.log('Date deadline', e.target.value)
 
 						// const date = new Date()
 						// if(new Date(e.target.value) <= date) {

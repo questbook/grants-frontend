@@ -1,0 +1,24 @@
+query getComments($proposalId: String!, $first: Int, $skip: Int) {
+  comments(
+    first: $first,
+    skip: $skip,
+    where: { application: $proposalId }
+    orderBy: createdAt
+    orderDirection: desc
+  ) {
+    id
+    isPrivate
+    commentsPublicHash
+    commentsEncryptedData {
+      id
+      data
+    }
+    workspace {
+      members {
+        actorId
+        fullName
+        profilePictureIpfsHash
+      }
+    }
+  }
+}
