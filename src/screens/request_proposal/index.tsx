@@ -182,7 +182,7 @@ function RequestProposal() {
 		}
 	}
 
-	const { role, workspace, chainId } = useContext(ApiClientsContext)!
+	// const { role, workspace, chainId } = useContext(ApiClientsContext)!
 
 	// State for proposal creation
 	// const todayDate = today()
@@ -270,10 +270,9 @@ function RequestProposal() {
 	const { data: accountDataWebwallet, nonce } = useQuestbookAccount(shouldRefreshNonce)
 	const { webwallet } = useContext(WebwalletContext)!
 
-	const { subgraphClients, setRole } = useContext(ApiClientsContext)!
+	const { subgraphClients, setRole, chainId, workspace } = useContext(ApiClientsContext)!
 	const { network } = useNetwork()
 	const targetContractObject = useQBContract('workspace', network as unknown as SupportedChainId)
-
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: process.env.NEXT_PUBLIC_IS_TEST === 'true' ? '5' : selectedSafeNetwork?.networkId ? networksMapping[selectedSafeNetwork?.networkId?.toString()] : DEFAULT_NETWORK,
 		shouldRefreshNonce: shouldRefreshNonce
@@ -315,7 +314,7 @@ function RequestProposal() {
 	useEffect(() => {
 
 		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && biconomy.networkId) {
-			if(!selectedSafeNetwork?.networkId) {
+			if(!selectedSafeNetwork?.networkId && process.env.NEXT_PUBLIC_IS_TEST === 'true') {
 				setIsBiconomyInitialised(true)
 			// eslint-disable-next-line sonarjs/no-duplicated-branches
 			} else if(selectedSafeNetwork?.networkId && biconomy.networkId.toString() === networksMapping[selectedSafeNetwork?.networkId?.toString()]) {
