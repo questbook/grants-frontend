@@ -1,6 +1,8 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { Checkbox, Flex, Image, Text } from '@chakra-ui/react'
 import config from 'src/constants/config.json'
+import logger from 'src/libraries/logger'
+import useProposalTags from 'src/screens/dashboard/_hooks/useProposalTags'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -82,11 +84,32 @@ function ProposalCard({ index, proposal }: Props) {
 						{role === 'builder' ? proposal?.grant?.workspace?.title : getFieldString(proposal, 'applicantName')}
 					</Text>
 				</Flex>
+				<Flex>
+					{
+						tag?.title !== '' && (
+							<Text
+								mt={2}
+								bg={tag?.color}
+								variant='v2_metadata'
+								borderRadius='2px'
+								px={1}>
+								{tag?.title}
+							</Text>
+						)
+					}
+				</Flex>
+
 			</Flex>
 		)
 	}
 
 	const { role, selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
+
+	const { tag } = useProposalTags({ proposal })
+
+	useEffect(() => {
+		logger.info('useProposalTags ', tag)
+	}, [tag])
 
 	const onClick = (isText: boolean = false) => {
 		const count = selectedProposals.filter((_) => _).length

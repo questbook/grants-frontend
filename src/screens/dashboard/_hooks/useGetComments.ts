@@ -5,15 +5,23 @@ import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
 import { usePiiForComment } from 'src/libraries/utils/pii'
 import { WebwalletContext } from 'src/pages/_app'
-import { CommentType } from 'src/screens/dashboard/_utils/types'
+import { CommentType, ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
-function useGetComments() {
+interface Props {
+	selectedProposal?: ProposalType
+}
+
+function useGetComments({ selectedProposal }: Props) {
 	const { webwallet } = useContext(WebwalletContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 	const proposal = useMemo(() => {
+		if(selectedProposal) {
+			return selectedProposal
+		}
+
 		const index = selectedProposals.indexOf(true)
 
 		if(index !== -1) {

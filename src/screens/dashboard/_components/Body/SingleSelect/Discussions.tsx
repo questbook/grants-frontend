@@ -245,7 +245,7 @@ function Discussions() {
 
 	const [ text, setText ] = useState<EditorState>(EditorState.createEmpty())
 	const { addComment, isBiconomyInitialised } = useAddComment({ setStep, setTransactionHash })
-	const { comments, refresh } = useGetComments()
+	const { comments, refresh } = useGetComments({})
 
 	const proposal = useMemo(() => {
 		const index = selectedProposals.indexOf(true)
