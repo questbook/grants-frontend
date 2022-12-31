@@ -53,6 +53,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const [selectedProposals, setSelectedProposals] = useState<boolean[]>([])
 	const [review, setReview] = useState<ReviewInfo>()
 	const [isLoading, setIsLoading] = useState<boolean>(true)
+	const [showSubmitReviewPanel, setShowSubmitReviewPanel] = useState<boolean>(false)
 
 	useEffect(() => {
 		logger.info({ isLoading }, 'Loading')
@@ -95,7 +96,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 				return 'some-error-reviewer'
 			}
 
-			logger.info({ results }, 'Fetched grants (Reviewer)')
+			logger.info({ reviewerGrants: results[0].grantReviewerCounters }, 'Fetched grants (Reviewer)')
 			setReviewerGrants(results[0].grantReviewerCounters)
 
 			if(!grantID) {
@@ -146,14 +147,17 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 				skip += first
 			} while(shouldContinue)
 		} else if(role === 'reviewer' && selectedGrantIndex !== undefined) {
-			logger.info({}, 'As reviewer')
+			logger.info({ reviewerGrants }, 'As reviewer 1')
 			const proposalIds = [...reviewerGrants[selectedGrantIndex].grant.pendingApplications.map((app) => app.id), ...reviewerGrants[selectedGrantIndex].grant.doneApplications.map((app) => app.id)]
+			logger.info(proposalIds, 'As reviewer 2')
 			const results = await fetchMoreReviewerProposals({ proposalIds }, true)
+			logger.info(results, 'As reviewer 3')
 
 			if(results?.length === 0 || !results[0] || !results[0]?.grantApplications?.length) {
 				return 'no-proposals-reviewer'
 			}
 
+			logger.info({ reviewerProposals: results[0]?.grantApplications }, 'Fetched proposals (Reviewer)')
 			proposals.push(...results[0]?.grantApplications)
 		} else if(role === 'builder') {
 			logger.info({}, 'As builder')
@@ -250,7 +254,9 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			selectedGrant,
 			review,
 			setReview,
-			isLoading
+			isLoading,
+			showSubmitReviewPanel,
+			setShowSubmitReviewPanel,
 		}
 	}, [proposals,
 		selectedGrantIndex,
@@ -260,7 +266,9 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		selectedGrant,
 		review,
 		setReview,
-		isLoading])
+		isLoading,
+		showSubmitReviewPanel,
+		setShowSubmitReviewPanel])
 
 	return (
 		<DashboardContext.Provider
@@ -290,7 +298,6 @@ const FundBuilderProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const [amounts, setAmounts] = useState<number[]>([])
 	const [tos, setTos] = useState<string[]>([])
 	const [milestoneIndices, setMilestoneIndices] = useState<number[]>([])
-	const [applicationIds, setApplicationIds] = useState<string[]>([])
 
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 	const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)

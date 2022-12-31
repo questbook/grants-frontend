@@ -10,17 +10,9 @@ query getProposalsForReviewer($proposalIds: [ID!]) {
     state
     fields {
       id
-      field {
-        id
-        title
-        inputType
-        possibleValues
-        isPii
-      }
       values {
         id
         value
-        walletId
       }
     }
     pii {

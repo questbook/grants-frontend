@@ -2,6 +2,7 @@ import { ChangeEvent, useState } from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { BsArrowLeft } from 'react-icons/bs'
 import { Button, Flex, Text } from '@chakra-ui/react'
+import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
 import SelectDropdown from 'src/screens/request_proposal/_components/SelectDropdown'
@@ -241,15 +242,23 @@ function ProposalReview(
 	const handleOnClickContinue = () => {
 		setStep(3)
 		const rubrics: { [key: number]: { title: string, details: string, maximumPoints: number } } = {}
-		rubricInputValues.forEach((key, index) => {
-			rubrics[index] = {
-				title: rubricInputValues[index],
+		if(reviewMechanism === 'Voting') {
+			rubrics[0] = {
+				title: 'Vote for',
 				details: '',
-				maximumPoints: 5
+				maximumPoints: 1
 			}
+		} else if(reviewMechanism === 'Rubric') {
+			Object.keys(rubricInputValues).forEach((key, index) => {
+				rubrics[index] = {
+					title: rubricInputValues[index],
+					details: '',
+					maximumPoints: 5
+				}
+			})
+		}
 
-		})
-		// console.log('rubrics on click continue', rubrics)
+		logger.info('Setting rubrics: ', rubrics)
 		setRubrics(rubrics)
 		handleOnEdit('rubrics', rubricInputValues)
 	}

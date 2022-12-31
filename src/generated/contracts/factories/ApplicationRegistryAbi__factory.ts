@@ -426,6 +426,25 @@ const _abi = [
         type: "uint96",
       },
     ],
+    name: "getApplicationGrant",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint96",
+        name: "_applicationId",
+        type: "uint96",
+      },
+    ],
     name: "getApplicationOwner",
     outputs: [
       {
@@ -461,6 +480,25 @@ const _abi = [
     name: "initialize",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint96",
+        name: "_applicationId",
+        type: "uint96",
+      },
+    ],
+    name: "isSubmittedApplication",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {

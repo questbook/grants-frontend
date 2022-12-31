@@ -13,6 +13,7 @@ function SingleSelect() {
 				<Proposal />
 				<Box mt={5} />
 				<Discussions />
+				<Box mt={5} />
 			</Flex>
 		)
 	}

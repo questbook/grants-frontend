@@ -56,7 +56,7 @@ function ProposalCard({ index, proposal }: Props) {
 								ml={2}
 								variant='v2_metadata'
 								color='black.3'>
-								{`(${proposal.id})`}
+								{`(${proposal.id}) - ${proposal.state}`}
 							</Text>
 						)
 					}

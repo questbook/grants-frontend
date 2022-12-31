@@ -234,7 +234,7 @@ function Profile() {
 					{/* Menu buttons */}
 					<Flex gap={2}>
 						{
-							MenuButtons.map((item: any, index: number) => {
+							MenuButtons.map((item, index) => {
 								return (
 									<Button
 										variant='menuButton'
@@ -388,7 +388,7 @@ function Profile() {
 
 	const [data, setData] = useState<GetWorkspaceGrantsProgramDetailsQuery>()
 	const [workspaceData, setWorkspaceData] = useState<GetWorkspaceDetailsQuery>()
-	const [proposalData, setProposalData] = useState<GetAllProposalsForAGrantProgramQuery['grantApplications']>()
+	const [, setProposalData] = useState<GetAllProposalsForAGrantProgramQuery['grantApplications']>()
 	const [activeMenuButton, setActiveMenuButton] = useState(0)
 	const [codeActive, setCodeActive] = useState(false)
 

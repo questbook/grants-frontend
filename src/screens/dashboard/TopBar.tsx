@@ -57,6 +57,7 @@ function TopBar() {
 				</Text>
 				<Button
 					ml={2}
+					bg='gray.1'
 					variant='link'
 					color='black.1'
 					onClick={
@@ -187,6 +188,7 @@ function TopBar() {
 		return (
 			<Button
 				ml='auto'
+				bg='gray.1'
 				variant='link'
 				color='black.1'
 				leftIcon={
@@ -208,22 +210,26 @@ function TopBar() {
 	const { selectedGrant, selectedGrantIndex, setSelectedGrantIndex, grants } = useContext(DashboardContext)!
 
 	const isLeftArrowEnabled = useMemo(() => {
-		if(!grants?.length || selectedGrantIndex === undefined) {
+		if(!grants?.length || selectedGrantIndex === undefined || !selectedGrant?.id) {
+			logger.info({ cond1: grants?.length, cond2: selectedGrantIndex }, '(Left arrow) Conditions not met')
 			return false
 		}
 
-		const index = grants.findIndex(grant => grant.id === selectedGrant?.id)
+		const index = grants.findIndex(grant => grant.id.indexOf(selectedGrant.id) !== -1)
+		logger.info({ index, id: selectedGrant?.id, grants }, '(Left arrow) Index')
 		return index > 0
-	}, [selectedGrant])
+	}, [grants, selectedGrant])
 
 	const isRightArrowEnabled = useMemo(() => {
-		if(!grants?.length || selectedGrantIndex === undefined) {
+		if(!grants?.length || selectedGrantIndex === undefined || !selectedGrant?.id) {
+			logger.info({ cond1: grants?.length, cond2: selectedGrantIndex }, '(Right arrow) Conditions not met')
 			return false
 		}
 
-		const index = grants.findIndex(grant => grant.id === selectedGrant?.id)
-		return index < grants.length - 1
-	}, [selectedGrant])
+		const index = grants.findIndex(grant => grant.id.indexOf(selectedGrant.id) !== -1)
+		logger.info({ index, id: selectedGrant?.id, grants }, '(Right arrow) Index')
+		return index >= 0 && index < grants.length - 1
+	}, [grants, selectedGrant])
 
 	const toast = useCustomToast()
 

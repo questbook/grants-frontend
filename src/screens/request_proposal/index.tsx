@@ -638,10 +638,10 @@ function RequestProposal() {
 					},
 				})
 
-				if(auxRubricHash) {
-					rubricHash = auxRubricHash
-				}
+			if(auxRubricHash) {
+				rubricHash = auxRubricHash
 			}
+			// }
 
 			logger.info('rubric hash', rubricHash)
 			logger.info('workspace', workspace)

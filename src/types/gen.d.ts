@@ -24,110 +24,110 @@ export type All =
 export type GrantApplicationFieldAnswer = GrantApplicationFieldAnswerItem[];
 
 export interface WorkspaceCreateRequest {
-  title: string
-  bio?: string
-  about: string
-  partners?: Partner[]
+  title: string;
+  bio?: string;
+  about: string;
+  partners?: Partner[];
   /**
    * IPFS hash of the logo of the workspace
    */
-  logoIpfsHash: string
+  logoIpfsHash: string;
   /**
    * IPFS hash of the cover of the workspace
    */
-  coverImageIpfsHash?: string
-  creatorId: string
+  coverImageIpfsHash?: string;
+  creatorId: string;
   /**
    * The public encryption key associated with the account address
    */
-  creatorPublicKey?: string
+  creatorPublicKey?: string;
   /**
    * @maxItems 25
    */
-  supportedNetworks: ('42220' | '5' | '10' | '137')[]
+  supportedNetworks: ("42220" | "5" | "10" | "137")[];
   /**
    * @maxItems 10
    */
-  socials: SocialItem[]
+  socials: SocialItem[];
 }
 export interface Partner {
   /**
    * Partner name
    */
-  name: string
+  name: string;
   /**
    * Partner industry
    */
-  industry: string
+  industry: string;
   /**
    * Partner website
    */
-  website?: string
+  website?: string;
   /**
    * IPFS hash of partner picture
    */
-  partnerImageHash?: string
-  [k: string]: unknown
+  partnerImageHash?: string;
+  [k: string]: unknown;
 }
 export interface SocialItem {
-  name: string
-  value: string
+  name: string;
+  value: string;
 }
 export interface WorkspaceUpdateRequest {
-  title?: string
-  bio?: string
-  about?: string
+  title?: string;
+  bio?: string;
+  about?: string;
   /**
    * IPFS hash of the logo of the workspace
    */
-  logoIpfsHash?: string
-  partners?: Partner[]
+  logoIpfsHash?: string;
+  partners?: Partner[];
   /**
    * IPFS hash of the cover of the workspace
    */
-  coverImageIpfsHash?: string
+  coverImageIpfsHash?: string;
   /**
    * @maxItems 10
    */
-  socials?: SocialItem[]
+  socials?: SocialItem[];
   /**
    * The public encryption key associated with the account address
    */
-  publicKey?: string
-  tokens?: Token[]
+  publicKey?: string;
+  tokens?: Token[];
 }
 export interface Token {
   /**
    * Token Symbol to be displayed
    */
-  label: string
-  address: string
+  label: string;
+  address: string;
   /**
    * The chain the token is on, leave undefined to denote same chain
    */
-  chainId?: number
+  chainId?: number;
   /**
    * Decimal for token
    */
-  decimal: string
+  decimal: string;
   /**
    * IPFS hash of token icon
    */
-  iconHash: string
-  [k: string]: unknown
+  iconHash: string;
+  [k: string]: unknown;
 }
 export interface WorkspaceMemberUpdate {
-  fullName?: string
+  fullName?: string;
   /**
    * IPFS hash of the profile picture
    */
-  profilePictureIpfsHash?: string
+  profilePictureIpfsHash?: string;
   /**
    * The public encryption key associated with the account address
    */
-  publicKey?: string
-  pii?: PIIAnswers
-  [k: string]: unknown
+  publicKey?: string;
+  pii?: PIIAnswers;
+  [k: string]: unknown;
 }
 /**
  * Map of encrypted information mapped by the wallet ID, whose public key was used to map the specific information
@@ -136,67 +136,72 @@ export interface PIIAnswers {
   /**
    * JSON serialized object, encrypted with a specific user's public key
    */
-  [k: string]: string
+  [k: string]: string;
 }
 export interface GrantApplicationRequest {
-  grantId: string
-  applicantId: string
+  grantId: string;
+  applicantId: string;
   /**
    * The public encryption key associated with the account address
    */
-  applicantPublicKey?: string
-  fields: GrantApplicationFieldAnswers
-  pii?: PIIAnswers
+  applicantPublicKey?: string;
+  fields: GrantApplicationFieldAnswers;
+  pii?: PIIAnswers;
   /**
    * @maxItems 100
    */
-  milestones: GrantProposedMilestone[]
+  milestones: GrantProposedMilestone[];
 }
 /**
  * Maps ID of the field to the answer by the applicant
  */
 export interface GrantApplicationFieldAnswers {
-  [k: string]: GrantApplicationFieldAnswer
+  [k: string]: GrantApplicationFieldAnswer;
 }
 export interface GrantApplicationFieldAnswerItem {
-  value: string
+  value: string;
 }
 export interface GrantProposedMilestone {
-  title: string
+  title: string;
   /**
    * Positive integer amount of currency. Is a string to allow bigint inputs
    */
-  amount: string
-  [k: string]: unknown
+  amount: string;
+  [k: string]: unknown;
 }
 export interface GrantUpdateRequest {
+<<<<<<< HEAD
   title?: string
+=======
+  title?: string;
+  summary?: string;
+>>>>>>> 1881f6a3ef42379468e07cad094669c7a602bf52
   /**
    * Start date for proposal acceptations
    */
-  startDate?: string
+  startDate?: string;
   /**
    * Deadline for proposal submission
    */
-  endDate?: string
-  details?: string
+  endDate?: string;
+  details?: string;
   /**
    * Link to any external document
    */
-  link?: string
+  link?: string;
   /**
    * IPFS hash of the document uploaded by grant admin
    */
-  docIpfsHash?: string
-  reward?: GrantReward
-  payoutType?: 'in_one_go' | 'milestones'
-  reviewType?: 'voting' | 'rubrics'
-  creatorId?: string
+  docIpfsHash?: string;
+  reward?: GrantReward;
+  payoutType?: "in_one_go" | "milestones";
+  reviewType?: "voting" | "rubrics";
+  creatorId?: string;
   /**
    * the workspace the grant is from
    */
-  workspaceId?: string
-  fields?: GrantFieldMap
+  workspaceId?: string;
+  fields?: GrantFieldMap;
   /**
    * @maxItems 20
    */
@@ -204,7 +209,7 @@ export interface GrantUpdateRequest {
   /**
    * @minItems 1
    */
-  grantManagers?: [string, ...string[]]
+  grantManagers?: [string, ...string[]];
 }
 /**
  * Grant reward amount in USD
@@ -213,80 +218,80 @@ export interface GrantReward {
   /**
    * Positive integer amount of currency. Is a string to allow bigint inputs
    */
-  committed: string
-  asset: string
-  token?: Token
+  committed: string;
+  asset: string;
+  token?: Token;
 }
 export interface GrantFieldMap {
-  applicantName: GrantField
-  applicantEmail: GrantField
-  projectName: GrantField
-  projectDetails: GrantField
-  fundingBreakdown?: GrantField
-  [k: string]: GrantField
+  applicantName: GrantField;
+  applicantEmail: GrantField;
+  projectName: GrantField;
+  projectDetails: GrantField;
+  fundingBreakdown?: GrantField;
+  [k: string]: GrantField;
 }
 export interface GrantField {
   /**
    * field id if any
    */
-  id?: string
+  id?: string;
   /**
    * Human readable title of the field
    */
-  title: string
+  title: string;
   /**
    * Denotes if the field is required
    */
-  required?: boolean
-  inputType: 'short-form' | 'long-form' | 'numeric' | 'array'
+  required?: boolean;
+  inputType: "short-form" | "long-form" | "numeric" | "array";
   /**
    * Constraint possible inputs for this field
    *
    * @maxItems 20
    */
-  enum?: string[]
+  enum?: string[];
   /**
    * Whether this field is PII (personally identifiable information) or not
    */
-  pii?: boolean
+  pii?: boolean;
 }
 export interface GrantCreateRequest {
-  title: string
-  summary?: string
+  title: string;
+  summary?: string;
   /**
    * Start date for proposal acceptations
    */
-  startDate?: string
+  startDate?: string;
   /**
    * Deadline for proposal submission
    */
-  endDate?: string
-  details?: string
+  endDate?: string;
+  details?: string;
   /**
    * Link to any external document
    */
-  link?: string
+  link?: string;
   /**
    * IPFS hash of the document uploaded by grant admin
    */
-  docIpfsHash?: string
-  reward: GrantReward1
-  payoutType?: 'in_one_go' | 'milestones'
-  reviewType?: 'voting' | 'rubrics'
-  creatorId: string
+  docIpfsHash?: string;
+  reward: GrantReward1;
+  payoutType?: "in_one_go" | "milestones";
+  reviewType?: "voting" | "rubrics";
+  creatorId: string;
   /**
    * the workspace the grant is from
    */
-  workspaceId: string
-  fields: GrantFieldMap
+  workspaceId: string;
+  fields: GrantFieldMap;
   /**
    * @maxItems 20
    */
-  milestones?: string[]
+  milestones?: string[];
   /**
    * @minItems 1
    */
-  grantManagers?: [string, ...string[]]
+  grantManagers?: [string, ...string[]];
 }
 /**
  * Grant reward amount in USD
@@ -295,59 +300,60 @@ export interface GrantReward1 {
   /**
    * Positive integer amount of currency. Is a string to allow bigint inputs
    */
-  committed: string
-  asset: string
-  token?: Token
+  committed: string;
+  asset: string;
+  token?: Token;
 }
 export interface RubricSetRequest {
-  rubric: Rubric
+  reviewType?: "voting" | "rubrics";
+  rubric: Rubric;
 }
 /**
  * Map of evaluation rubric ID to rubric data
  */
 export interface Rubric {
-  isPrivate: boolean
+  isPrivate: boolean;
   rubric: {
-    [k: string]: RubricItem
-  }
-  [k: string]: unknown
+    [k: string]: RubricItem;
+  };
+  [k: string]: unknown;
 }
 export interface RubricItem {
-  title: string
+  title: string;
   /**
    * Details about the evaluatation rubric
    */
-  details?: string
-  maximumPoints: number
+  details?: string;
+  maximumPoints: number;
 }
 export interface ReviewSetRequest {
-  reviewer: string
+  reviewer: string;
   /**
    * The public encryption key associated with the account address
    */
-  reviewerPublicKey?: string
-  publicReviewDataHash?: string
+  reviewerPublicKey?: string;
+  publicReviewDataHash?: string;
   /**
    * Encrypted review data. Map of the grant manager address => IPFS hash of the review encrypted with their public key
    */
   encryptedReview: {
-    [k: string]: string
-  }
-  [k: string]: unknown
+    [k: string]: string;
+  };
+  [k: string]: unknown;
 }
 export interface ApplicationMilestoneUpdate {
-  text: string
+  text: string;
 }
 export interface GrantApplicationUpdate {
-  fields?: GrantApplicationFieldAnswers
-  pii?: PIIAnswers
+  fields?: GrantApplicationFieldAnswers;
+  pii?: PIIAnswers;
   /**
    * @maxItems 100
    */
-  milestones?: GrantProposedMilestone[]
-  feedback?: string
+  milestones?: GrantProposedMilestone[];
+  feedback?: string;
 }
 export interface PrivateCommentAddRequest {
-  pii: PIIAnswers
-  [k: string]: unknown
+  pii: PIIAnswers;
+  [k: string]: unknown;
 }

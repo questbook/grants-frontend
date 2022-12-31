@@ -470,6 +470,8 @@ RubricSetRequest:
   required:
     - rubric
   properties:
+    reviewType:
+      $ref: 'ReviewType'
     rubric:
       $ref: 'Rubric'
 GrantCreateRequest:

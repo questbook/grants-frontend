@@ -154,6 +154,7 @@ function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep
 			toast({
 				position: 'top',
 				title: message,
+				status: 'error'
 			})
 		}
 	}
