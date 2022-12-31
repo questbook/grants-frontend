@@ -539,9 +539,6 @@ GrantUpdateRequest:
     title:
       type: string
       maxLength: 255
-    summary:
-          type: string
-          maxLength: 1024
     startDate:
       type: string
       format: date-time
@@ -555,7 +552,7 @@ GrantUpdateRequest:
       maxLength: 4096
     link:
       type: string
-      description: Link to sny external document
+      description: Link to any external document
     docIpfsHash:
       type: string
       maxLength: 128
@@ -575,6 +572,12 @@ GrantUpdateRequest:
       maxLength: 128
     fields:
       $ref: 'GrantFieldMap'
+    milestones:
+      type: array
+      items:
+        type: string
+        maxLength: 1024
+      maxItems: 20
     grantManagers:
       type: array
       items:
