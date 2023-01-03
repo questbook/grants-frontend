@@ -397,7 +397,7 @@ function Settings() {
 									color='#273B4A' />
 								<Text
 									variant='v2_body'>
-									{`Looks like this address is on ${safeNetworks.length} networks`}
+									{`Looks like this address is on ${safeNetworks.length} network${safeNetworks.length > 1 ? 's' : ''}`}
 								</Text>
 
 							</>

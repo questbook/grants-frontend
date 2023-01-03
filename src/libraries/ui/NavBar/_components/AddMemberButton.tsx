@@ -10,7 +10,6 @@ function AddMemberButton() {
 		return (
 			<Popover
 				isLazy
-				matchWidth
 				initialFocusRef={popoverRef}>
 				{
 					({ onClose }) => (
@@ -18,7 +17,7 @@ function AddMemberButton() {
 							<PopoverTrigger>
 								{popoverButton()}
 							</PopoverTrigger>
-							<PopoverContent>
+							<PopoverContent maxW='fit-content'>
 								<PopoverArrow />
 								<PopoverBody
 									maxH='30vh'
@@ -70,7 +69,7 @@ function AddMemberButton() {
 												</Flex>
 											)
 										}
-										<Flex mt={2}>
+										<Flex mt={3}>
 											<Image
 												src='/v2/icons/group.svg'
 												boxSize='18px' />
@@ -80,13 +79,7 @@ function AddMemberButton() {
 												variant='link'
 												onClick={
 													() => {
-														router.push({
-															pathname: '/manage_dao/',
-															query: {
-																tab: 'members',
-																state: 'view'
-															},
-														})
+														router.push('/settings')
 														onClose()
 													}
 												}>
@@ -129,7 +122,7 @@ function AddMemberButton() {
 				<Text
 					variant='v2_body'
 					fontWeight='400'>
-					{id === 0 ? 'Admin' : 'Reviewer'}
+					{id === 0 ? 'Member' : 'Reviewer'}
 				</Text>
 
 			</Button>

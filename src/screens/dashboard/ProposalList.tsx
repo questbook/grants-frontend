@@ -33,7 +33,7 @@ function ProposalList() {
 			{/* TODO - Search Box */}
 
 			{
-				role === 'admin' && (
+				(role === 'admin' && selectedProposals?.length > 0) && (
 					<Flex
 						mt={4}
 						pl={5}>

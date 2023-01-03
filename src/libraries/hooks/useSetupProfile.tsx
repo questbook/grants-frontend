@@ -145,8 +145,7 @@ function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep
 			await createMapping({ email })
 			await chargeGas(Number(workspaceId), Number(txFee), chainId)
 
-			setNetworkTransactionModalStep(undefined)
-
+			setNetworkTransactionModalStep(3)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			setNetworkTransactionModalStep(undefined)

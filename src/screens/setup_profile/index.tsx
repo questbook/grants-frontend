@@ -6,7 +6,6 @@ import { defaultChainId } from 'src/constants/chains'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useSetupProfile from 'src/libraries/hooks/useSetupProfile'
-import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
@@ -123,11 +122,11 @@ function SetupProfile() {
 						() => {
 							setNetworkTransactionModalStep(undefined)
 							setTransactionHash('')
-							setRole('reviewer')
+							setRole(inviteInfo?.role === 0 ? 'admin' : 'reviewer')
 							toast({
 								title: 'Profile created successfully',
 								status: 'success',
-								duration: 3000,
+								duration: 1000,
 								onCloseComplete: () => {
 									router.push({
 										pathname: '/dashboard'
@@ -177,9 +176,8 @@ function SetupProfile() {
 		})
 
 	const isDisabled = useMemo(() => {
-		logger.info({ 1: name === '', 2: email === '', 3: isBiconomyInitialised }, 'Is Disabled Create')
 		return name === '' || email === '' || !isBiconomyInitialised
-	}, [name, email])
+	}, [name, email, isBiconomyInitialised])
 
 	const onCreateClick = async() => {
 		if(inviteInfo?.role === undefined || !signature) {
