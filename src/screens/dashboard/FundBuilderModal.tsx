@@ -302,7 +302,7 @@ function FundBuilderModal() {
 				amount: amounts?.[0],
 			}]
 
-			let proposaladdress: string = ''
+			let proposaladdress: any = ''
 			if(safeObj.getIsEvm()) {
 				proposaladdress = await safeObj?.proposeTransactions('', temp, '')
 				setPayoutInProcess(false)
