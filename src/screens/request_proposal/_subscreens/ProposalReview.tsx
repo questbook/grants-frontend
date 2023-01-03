@@ -87,8 +87,10 @@ function ProposalReview(
 								}
 							} />
 						<Text variant='v2_subheading'>
-							reviewers for an incoming proposal automatically.
-
+							reviewer
+							{numberOfReviewers > 1 ? 's' : ''}
+							{' '}
+							for an incoming proposal automatically.
 						</Text>
 					</Flex>
 

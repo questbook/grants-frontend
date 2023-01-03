@@ -361,11 +361,11 @@ function RequestProposal() {
 				})
 			}
 
-			if(rfpData.rubrics.length > 0) {
+			if(rfpData.rubrics?.length > 0) {
 				setRubricInputValues(rfpData.rubrics)
 			}
 
-			if(rfpData.milestones.length > 0) {
+			if(rfpData.milestones?.length > 0) {
 				setMilestones(rfpData.milestones)
 			}
 

@@ -108,6 +108,7 @@ function Domains() {
 	const popoverButton = () => {
 		return (
 			<Flex
+				minW='220px'
 				ml={3}
 				bg='white'
 				px={3}

@@ -67,7 +67,6 @@ function FundBuilderModal() {
 										}
 										<FlushedInput
 											borderBottom='2px solid'
-											textPadding={1}
 											type='number'
 											minW='5ch'
 											value={amounts?.[0] || ''}

@@ -32,7 +32,7 @@ type Props = {
 	showStats?: boolean
 }
 
-function NavBar({ bg, showOpenDashboard, showLogo, showAddMembers, showInviteProposals, showStats, showDomains, showSearchBar }: Props) {
+function NavBar({ bg = 'gray.1', showOpenDashboard, showLogo, showAddMembers, showInviteProposals, showStats, showDomains }: Props) {
 	const buildComponent = () => (
 		<>
 			<Container
@@ -47,8 +47,8 @@ function NavBar({ bg, showOpenDashboard, showLogo, showAddMembers, showInvitePro
 				alignItems='center'
 				maxW='100vw'
 				bg={bg}
-				ps='42px'
-				pe='15px'
+				ps={router.pathname === '/' ? 24 : '42px'}
+				pe={router.pathname === '/' ? 24 : '15px'}
 				py='16px'
 				minWidth={{ base: '-webkit-fill-available' }}
 			>
@@ -152,7 +152,7 @@ function NavBar({ bg, showOpenDashboard, showLogo, showAddMembers, showInvitePro
 		</>
 	)
 
-	const { role, inviteInfo } = useContext(ApiClientsContext)!
+	const { role } = useContext(ApiClientsContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	// const { searchString, setSearchString } = useContext(DAOSearchContext)!
 	const router = useRouter()

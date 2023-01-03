@@ -33,11 +33,16 @@ const RFPFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 	const { chainId } = useContext(ApiClientsContext)!
 
+
 	const router = useRouter()
 	const { grantId: _grantId, workspaceId: _workspaceId } = router.query
 
 	const grantId = typeof(_grantId) === 'string' ? _grantId : ''
 	const workspaceId = typeof(_workspaceId) === 'string' ? _workspaceId : ''
+
+	useEffect(() => {
+		logger.info({ workspaceId, grantId, chainId }, 'RFP form edit')
+	}, [workspaceId, grantId, chainId])
 
 	const { fetchMore: fetchRFP } = useMultiChainQuery({
 		useQuery: useGetGrantDetailsByIdQuery,
