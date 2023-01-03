@@ -120,7 +120,8 @@ function ProposalSubmission(
 									setProposalName(e.target.value)
 									handleOnEditProposalSubmission('proposalName', e.target.value)
 								}
-							} />
+							}
+						/>
 					</Flex>
 
 					{/* Proposal dates */}
