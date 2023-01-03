@@ -63,21 +63,14 @@ function BuilderDiscovery({ domainName, setDomainName, setDomainImage, setIsOpen
 									setDomainLogoFile(f.file)
 								}
 							} />
-						<Flex direction='column'>
-							<FlushedInput
-								placeholder='Name'
-								width='100%'
-								textAlign='start'
-								value={domainName}
-								onChange={(e) => setDomainName(e.target.value)}
-								// helperText='Examples: Uniswap Foundation. Polygon Village DAO. Celo Climate Collective'
-							/>
-							<Text
-								variant='v2_body'
-								color='gray.5'>
-								Examples: Uniswap Foundation. Polygon Village DAO. Celo Climate Collective
-							</Text>
-						</Flex>
+						<FlushedInput
+							placeholder='Name'
+							width='100%'
+							textAlign='start'
+							value={domainName}
+							onChange={(e) => setDomainName(e.target.value)}
+							helperText='Examples: Uniswap Foundation. Polygon Village DAO. Celo Climate Collective'
+						/>
 					</Box>
 				</Flex>
 

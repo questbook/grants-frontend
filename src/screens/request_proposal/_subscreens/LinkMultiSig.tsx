@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { BsArrowLeft } from 'react-icons/bs'
-import { Button, Flex, Image, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Image, Text } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { logger } from 'ethers'
 import { NetworkType } from 'src/constants/Networks'
@@ -98,6 +98,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 									} />
 							</Flex>
 
+							{/* <Box mt={1} /> */}
 							{safeState === 0 && (renderSearchingSafe())}
 							{safeState === 1 && (renderSingleSafe())}
 							{safeState === 2 && (renderSafeDropdown())}
@@ -197,7 +198,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 				gap={2}
 				position='relative'
 				left='386px'
-				top='-40px' >
+				top='-36px' >
 				<Image
 					className='loader'
 					src='/ui_icons/loader.svg'
@@ -220,17 +221,17 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 				alignItems='baseline'>
 				<Text variant='v2_subheading'>
 					This multisig  is on
-					{' '}
-					<span style={{ textDecorationLine: 'underline' }}>
-						{safeNetworks[0].networkName}
-					</span>
-					{' '}
+				</Text>
+				<FlushedInput
+					value={safeNetworks[0].networkName}
+					isDisabled />
+				<Text variant='v2_subheading'>
 					and currently has a balance of
-					{' '}
-					<span style={{ textDecorationLine: 'underline' }}>
-						{safeNetworks[0].amount}
-					</span>
-					{' '}
+				</Text>
+				<FlushedInput
+					value={safeNetworks[0].amount}
+					isDisabled />
+				<Text variant='v2_subheading'>
 					USD
 				</Text>
 			</Flex>

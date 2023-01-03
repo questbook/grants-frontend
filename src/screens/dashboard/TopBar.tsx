@@ -108,8 +108,8 @@ function TopBar() {
 										popoverBodyItem.map((item, index) => {
 											return (
 												<Flex
-													py={3}
-													px={4}
+													py={1}
+													px={2}
 													key={index}
 													direction='column'
 													align='start'>
@@ -140,6 +140,7 @@ function TopBar() {
 														}>
 														<Text
 															variant='v2_body'
+															fontWeight='500'
 															color='accent.azure'>
 															{item.buttonText}
 														</Text>
