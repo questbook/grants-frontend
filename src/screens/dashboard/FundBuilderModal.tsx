@@ -1,13 +1,13 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text, ToastId, useToast } from '@chakra-ui/react'
+import { Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text, useToast } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
-import { ethers, logger } from 'ethers'
 import { defaultChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
+import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import MilestoneChoose from 'src/screens/dashboard/_components/FundBuilder/MilestoneChoose'
@@ -340,7 +340,7 @@ function FundBuilderModal() {
 				// console.log('Sent transaction to contract - EVM', proposaladdress)
 				})
 				.catch((err) => {
-					console.log('sending transction error:', err)
+					logger.error('sending transction error:', err)
 				})
 		}
 	}
@@ -417,7 +417,7 @@ function FundBuilderModal() {
 			await chargeGas(Number(workspace?.id), Number(txFee), workspacechainId)
 
 		} catch(e) {
-			console.log('disburse error', e)
+			logger.error('disburse error', e)
 		}
 	}
 

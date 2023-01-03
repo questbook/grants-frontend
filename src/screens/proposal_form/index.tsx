@@ -370,10 +370,13 @@ function ProposalForm() {
 						{
 							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1).startsWith('customField')).map((field) => {
 								const id = field.id.substring(field.id.indexOf('.') + 1)
+								const title = field.title.substring(field.title.indexOf('-') + 1)
+									.split('\\s')
+									.join(' ')
 								return (
 									<SectionInput
 										key={field.id}
-										label={field.title}
+										label={title}
 										value={findField(form, id).value}
 										onChange={
 											(e) => {
