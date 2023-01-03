@@ -17,7 +17,7 @@ function FlushedInput({ helperText, flexProps, ...props }: Props) {
 			<Input
 				variant='flushed'
 				// borderBottom='2px solid #0A84FF'
-				borderColor={value !== undefined ? 'black' : 'gray.3'}
+				borderColor={value === undefined || !value ? 'gray.3' : 'black'}
 				fontWeight='400'
 				fontSize='20px'
 				value={props.value}
@@ -25,7 +25,7 @@ function FlushedInput({ helperText, flexProps, ...props }: Props) {
 				_placeholder={{ color: 'gray.5' }}
 				onWheel={(e) => (e.target as HTMLElement).blur()}
 				// minWidth={props?.minWidth ? props.minWidth : `${(props?.placeholder?.length || 0) + textPadding * 2}ch`}
-				width={props?.width ? props.width : value === undefined || value === 'NaN' ? `${(placeholder?.length!)}ch` : `${(value?.toString()?.length!)}ch` }
+				width={props?.width ? props.width : (value === 'NaN' || !value) ? `${(placeholder?.length!)}ch` : `${(value?.toString()?.length!)}ch` }
 				textAlign={props?.textAlign ? props?.textAlign : 'center'}
 				onChange={onChange}
 				{...props}
