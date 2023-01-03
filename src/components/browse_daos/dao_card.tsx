@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { Box, Divider, Flex, Image, Switch, Tag, Text } from '@chakra-ui/react'
+import { Box, Divider, Flex, Image, Switch, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { formatAddress } from 'src/utils/formattingUtils'
@@ -29,10 +29,16 @@ function DomainCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfAppl
 			background='white'
 			p='24px'
 			position='relative'
-			boxShadow='0px 10px 18px rgba(31, 31, 51, 0.05), 0px 0px 1px rgba(31, 31, 51, 0.31);'
-			borderRadius='4px'
+			// boxShadow='0px 10px 18px rgba(31, 31, 51, 0.05), 0px 0px 1px rgba(31, 31, 51, 0.31);'
+			borderRadius='2px'
+			border='1px solid #E7E4DD'
+			_hover={
+				{
+					border: 'none',
+				}
+			}
 			cursor='pointer'
-			className='dao-card'
+			// className='dao-card'
 			onClick={
 				(e) => {
 					// returning as onClick fired from dao visibility toggle switch for admins
@@ -80,29 +86,29 @@ function DomainCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfAppl
 				</Flex>
 
 				<Text
-					fontSize='20px'
+					variant='v2_subheading'
+					fontSize='18px'
 					fontWeight='500'
 					noOfLines={1}>
 					{name}
 				</Text>
-				<Tag
+				<Text
 					mt='-14px'
-					color='#767471'
-					bgColor='#F1EEE8'
-					fontSize='12px'
+					px={1}
+					variant='v2_body'
+					color='gray.6'
+					bgColor='gray.2'
+					borderRadius='3px'
 					fontWeight='500'
-					lineHeight='16px'
 					maxWidth='max-content'
 					minHeight='0'
-					paddingStart={1}
-					paddingEnd={1}
 					onClick={
 						() => {
 							window.open(safeUrl, '_blank')
 						}
 					}>
 					{safeAddress ? formatAddress(safeAddress) : ''}
-				</Tag>
+				</Text>
 				<Divider />
 				<Flex
 					justifyContent='space-between'
@@ -117,7 +123,7 @@ function DomainCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfAppl
 						<Text
 							ml='5px'
 							fontSize='14px'
-							color='#555570'>
+							color='black.3'>
 							{t('/.cards.in_grants')}
 						</Text>
 					</Flex>
@@ -130,7 +136,7 @@ function DomainCard({ logo, isAdmin, name, safeAddress, daoId, chainId, noOfAppl
 						<Text
 							ml='5px'
 							fontSize='14px'
-							color='#555570'>
+							color='black.3'>
 							Proposals
 						</Text>
 					</Flex>

@@ -136,6 +136,7 @@ function ProposalSubmission(
 							type={rfpFormSubmissionType === 'submit' ? 'string' : 'datetime-local'}
 							variant='flushed'
 							placeholder='enter start date'
+							_placeholder={{ color: 'gray.5' }}
 							isDisabled={rfpFormSubmissionType === 'edit'}
 							ref={startdateRef}
 							onFocus={
@@ -172,6 +173,7 @@ function ProposalSubmission(
 							type={rfpFormSubmissionType === 'submit' ? 'string' : 'datetime-local'}
 							variant='flushed'
 							placeholder='enter end date'
+							_placeholder={{ color: 'gray.5' }}
 							min={startdate}
 							value={endDate ? endDate.split('.')[0] : ''}
 							step='1'
@@ -211,7 +213,7 @@ function ProposalSubmission(
 						</Text>
 
 						{
-							requiredDetails.map((detail) => {
+							requiredDetails.map((detail, index) => {
 								const {
 									title
 								} = detail as ApplicantDetailsFieldType
@@ -220,16 +222,21 @@ function ProposalSubmission(
 										<FlushedInput
 											placeholder={title}
 											value={title}
-											isDisabled={true} />
-										<Text variant='v2_subheading'>
-											,
-										</Text>
+											isDisabled={true}
+											flexProps={{ w: 'fit-content' }} />
+										{
+											(index < requiredDetails.length - 1 || extraDetailsFields?.filter(detail => detail.required).length > 0) && (
+												<Text variant='v2_subheading'>
+													,
+												</Text>
+											)
+										}
 									</>
 								)
 							})
 						}
 						{
-							extraDetailsFields.filter(detail => detail.required).map((detail) => {
+							extraDetailsFields?.filter(detail => detail.required).map((detail, index) => {
 								const {
 									title
 								} = detail as ApplicantDetailsFieldType
@@ -256,11 +263,15 @@ function ProposalSubmission(
 													} />
 											)
 										}
-										<Text
-											variant='v2_subheading'
-										>
-											,
-										</Text>
+										{
+											(index < extraDetailsFields?.filter(detail => detail.required).length - 1) && (
+												<Text
+													variant='v2_subheading'
+												>
+													,
+												</Text>
+											)
+										}
 									</>
 								)
 							})
@@ -314,6 +325,7 @@ function ProposalSubmission(
 						<FlushedInput
 							placeholder='Add a link'
 							value={link}
+							type='url'
 							onChange={
 								(e) => {
 									setLink(e.target.value)

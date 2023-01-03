@@ -110,7 +110,7 @@ function Discover() {
 
 					{/* Start Stats Banner */}
 					<Flex
-						bgColor='#F1EEE8'
+						bgColor='gray.2'
 						padding={8}
 						gap={4}
 						justifyContent='space-evenly'>

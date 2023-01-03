@@ -80,13 +80,7 @@ function AddMemberButton() {
 												variant='link'
 												onClick={
 													() => {
-														router.push({
-															pathname: '/manage_dao/',
-															query: {
-																tab: 'members',
-																state: 'view'
-															},
-														})
+														router.push('/settings')
 														onClose()
 													}
 												}>
