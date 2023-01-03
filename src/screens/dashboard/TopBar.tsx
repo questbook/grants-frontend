@@ -55,35 +55,41 @@ function TopBar() {
 					bg={selectedGrant?.acceptingApplications ? 'accent.june' : 'accent.royal'}>
 					{selectedGrant?.acceptingApplications ? 'OPEN' : 'CLOSED'}
 				</Text>
-				<Button
-					ml={2}
-					bg='gray.1'
-					variant='link'
-					color='black.1'
-					onClick={
-						() => {
-							router.push(
-								{
-									pathname: '/request_proposal/',
-									query: {
-										grantId: selectedGrant?.id,
-										workspaceId: workspace?.id
-									},
-								})
+				{
+					proposals.length === 0 && (
+						<Button
+							ml={2}
+							bg='gray.1'
+							variant='link'
+							color='black.1'
+							onClick={
+								() => {
+									router.push(
+										{
+											pathname: '/request_proposal/',
+											query: {
+												grantId: selectedGrant?.id,
+												workspaceId: workspace?.id
+											},
+										})
 
-						}
-					}
-					leftIcon={
-						<Image
-							src='/v2/icons/pencil.svg'
-							boxSize='16px' />
-					}>
-					<Text
-						variant='v2_body'
-						fontWeight='500'>
-						Edit
-					</Text>
-				</Button>
+								}
+							}
+							leftIcon={
+								<Image
+									src='/v2/icons/pencil.svg'
+									boxSize='16px' />
+							}>
+
+							<Text
+								variant='v2_body'
+								fontWeight='500'>
+								Edit
+							</Text>
+
+						</Button>
+					)
+				}
 				{sharePopover()}
 			</Flex>
 		)
@@ -208,7 +214,7 @@ function TopBar() {
 
 	const popoverRef = useRef<HTMLButtonElement>(null)
 	const { chainId, workspace } = useContext(ApiClientsContext)!
-	const { selectedGrant, selectedGrantIndex, setSelectedGrantIndex, grants } = useContext(DashboardContext)!
+	const { selectedGrant, selectedGrantIndex, setSelectedGrantIndex, grants, proposals } = useContext(DashboardContext)!
 
 	const isLeftArrowEnabled = useMemo(() => {
 		if(!grants?.length || selectedGrantIndex === undefined || !selectedGrant?.id) {
