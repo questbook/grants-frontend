@@ -72,7 +72,9 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 								isDisabled={type === 'export'}
 								value={privateKey}
 								// errorText={privateKeyError}
-								onChange={onChange} />
+								onChange={onChange}
+								fontSize='14px'
+								flexProps={{ w: '100%' }} />
 
 							{
 								type === 'import' && (

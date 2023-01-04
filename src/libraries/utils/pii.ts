@@ -18,8 +18,8 @@ import {
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
-import { PIIForCommentType } from 'src/libraries/utils/types'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { PIIForCommentType } from 'src/types'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import MAIN_LOGGER from 'src/utils/logger'
 

@@ -2,8 +2,8 @@ import { useTranslation } from 'react-i18next'
 import { Box, Divider, Flex, Image, Switch, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import SupportedChainId from 'src/generated/SupportedChainId'
-import { formatAddress } from 'src/utils/formattingUtils'
 import { getSafeURL } from 'src/libraries/utils/gnosisUtils'
+import { formatAddress } from 'src/utils/formattingUtils'
 
 type DomainCardProps = {
 	logo: string

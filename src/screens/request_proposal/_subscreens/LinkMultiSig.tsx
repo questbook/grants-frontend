@@ -8,8 +8,8 @@ import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
 // import useSafeUSDBalances from "src/hooks/useSafeUSDBalances";
 import VerifySignerModal from 'src/libraries/ui/VerifySignerModal'
-import { SafeSelectOption } from 'src/libraries/utils/types'
 import SafeSelect from 'src/screens/request_proposal/_components/SafeSelect'
+import { SafeSelectOption } from 'src/types'
 
 
 interface Props {

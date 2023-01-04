@@ -6,7 +6,7 @@ import {
 	GetProposalsForAdminQuery,
 	RubricItem,
 } from 'src/generated/graphql'
-import { PIIForCommentType } from 'src/libraries/utils/types'
+import { PIIForCommentType } from 'src/types'
 
 type BaseDashboardContextType = {
   isLoading: boolean

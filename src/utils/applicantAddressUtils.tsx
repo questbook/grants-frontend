@@ -5,7 +5,6 @@ import unstoppableDomains from 'src/constants/unstoppableDomains'
 import logger from 'src/libraries/logger'
 
 export const resolveUnstoppableDomains = async(chainId: string, applicantAddress: string) => {
-
 	const token = process.env.UD_KEY
 	const response = await axios.get(`https://resolve.unstoppabledomains.com/domains/${applicantAddress}`, {
 		headers: {
