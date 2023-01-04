@@ -5418,11 +5418,11 @@ export type GetAdminPublicKeysQuery = { __typename?: 'Query', workspace?: { __ty
 
 export type GetMemberPublicKeysQueryVariables = Exact<{
   workspaceId: Scalars['ID'];
-  applicationId: Scalars['ID'];
+  applicationIds: Array<Scalars['ID']> | Scalars['ID'];
 }>;
 
 
-export type GetMemberPublicKeysQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', actorId: string, publicKey?: string | null }> } | null, grantApplication?: { __typename?: 'GrantApplication', applicantId: string, applicantPublicKey?: string | null, applicationReviewers: Array<{ __typename?: 'GrantApplicationReviewer', member: { __typename?: 'WorkspaceMember', actorId: string, publicKey?: string | null } }> } | null };
+export type GetMemberPublicKeysQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', actorId: string, publicKey?: string | null }> } | null, grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, applicantPublicKey?: string | null, applicationReviewers: Array<{ __typename?: 'GrantApplicationReviewer', member: { __typename?: 'WorkspaceMember', actorId: string, publicKey?: string | null } }> }> };
 
 export type GetCommentsQueryVariables = Exact<{
   proposalId: Scalars['String'];
@@ -8549,14 +8549,15 @@ export function refetchGetAdminPublicKeysQuery(variables: GetAdminPublicKeysQuer
       return { query: GetAdminPublicKeysDocument, variables: variables }
     }
 export const GetMemberPublicKeysDocument = gql`
-    query getMemberPublicKeys($workspaceId: ID!, $applicationId: ID!) {
+    query getMemberPublicKeys($workspaceId: ID!, $applicationIds: [ID!]!) {
   workspace(id: $workspaceId) {
     members(where: {accessLevel_not: reviewer, enabled: true}) {
       actorId
       publicKey
     }
   }
-  grantApplication(id: $applicationId) {
+  grantApplications(where: {id_in: $applicationIds}) {
+    id
     applicantId
     applicantPublicKey
     applicationReviewers(where: {member_: {enabled: true}}) {
@@ -8582,7 +8583,7 @@ export const GetMemberPublicKeysDocument = gql`
  * const { data, loading, error } = useGetMemberPublicKeysQuery({
  *   variables: {
  *      workspaceId: // value for 'workspaceId'
- *      applicationId: // value for 'applicationId'
+ *      applicationIds: // value for 'applicationIds'
  *   },
  * });
  */

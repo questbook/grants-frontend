@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo } from 'react'
+import { useCallback, useContext, useMemo } from 'react'
 import { convertToRaw, EditorState } from 'draft-js'
 import { COMMUNICATION_ADDRESS } from 'src/constants/addresses'
 import { defaultChainId } from 'src/constants/chains'
@@ -40,10 +40,6 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 		}
 	}, [proposals, selectedProposals])
 
-	useEffect(() => {
-		logger.info('Proposal Changed (Comment)', proposal)
-	}, [proposal])
-
 	const chainId = useMemo(() => {
 		return (getSupportedChainIdFromWorkspace(proposal?.grant?.workspace) ?? defaultChainId)
 	}, [proposal?.grant?.workspace])
@@ -72,7 +68,7 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 
 	const { encrypt } = usePiiForComment(
 		proposal?.grant?.workspace?.id,
-		proposal?.id,
+		[proposal?.id ?? ''],
 		webwallet?.publicKey,
 		chainId,
 	)

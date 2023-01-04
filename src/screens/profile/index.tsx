@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react'
 import { Button, Code, Divider, Flex, Heading, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useClipboard, useDisclosure } from '@chakra-ui/react'
 import { logger } from 'ethers'
 import { t } from 'i18next'
@@ -314,9 +314,7 @@ function Profile() {
 
 	const renderMoreInfo = () => {
 		return (
-			<Text>
-				{data?.grants[0].workspace.about}
-			</Text>
+			<TextViewer text={data?.grants[0].workspace.about ?? ''} />
 		)
 	}
 

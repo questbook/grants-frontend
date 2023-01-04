@@ -222,7 +222,7 @@ export function useGetPublicKeyOfAdmins(
 
 export function useGetPublicKeyOfMembers(
 	workspaceId: string | undefined,
-	applicationId: string | undefined,
+	applicationIds: string[] | undefined,
 	chainId: SupportedChainId,
 ) {
 	const { fetchMore } = useMultiChainQuery({
@@ -236,42 +236,47 @@ export function useGetPublicKeyOfMembers(
 			throw new Error('Cannot fetch members without workspaceId')
 		}
 
-		if(!applicationId) {
+		if(!applicationIds) {
 			throw new Error('Cannot fetch application details without applicationId')
 		}
 
-		logger.info('Fetching members: ', { workspaceId, applicationId })
-		const result = await fetchMore({ workspaceId, applicationId }, true)
-		if(!result?.length || !result[0]?.workspace || !result[0]?.grantApplication) {
+		logger.info('Fetching members: ', { workspaceId, applicationIds })
+		const result = await fetchMore({ workspaceId, applicationIds }, true)
+		logger.info('Members fetched: ', result)
+		if(!result?.length || !result[0]?.workspace || !result[0]?.grantApplications) {
 			return {}
 		}
 
-		const ret: {[address: string]: string} = {}
-		for(const member of [
-			...result[0].workspace.members,
-			...result[0].grantApplication.applicationReviewers.map((r) => r.member),
-			{ actorId: result[0].grantApplication.applicantId, publicKey: result[0].grantApplication.applicantPublicKey },
-		]) {
-			logger.info('Inspecting member: ', member)
-			if(!member?.publicKey) {
-				logger.info('No public key, skipping ', member)
-				continue
-			}
+		const ret: {[appId: string]: {[address: string]: string}} = {}
+		for(const grantApplication of result[0].grantApplications) {
+			ret[grantApplication.id] = {}
+			for(const member of [
+				...result[0].workspace.members,
+				...grantApplication.applicationReviewers.map((r) => r.member),
+				{ actorId: grantApplication.applicantId, publicKey: grantApplication.applicantPublicKey },
+			]) {
+				logger.info('Inspecting member: ', member)
+				if(!member?.publicKey) {
+					logger.info('No public key, skipping ', member)
+					continue
+				}
 
-			try {
-				// check if the public key is valid or not
-				ethers.utils.computeAddress(member?.publicKey)
-			} catch(e) {
-				logger.info('Invalid public key, skipping ', member)
-				continue
-			}
+				try {
+					// check if the public key is valid or not
+					ethers.utils.computeAddress(member?.publicKey)
+				} catch(e) {
+					logger.info('Invalid public key, skipping ', member)
+					continue
+				}
 
-			logger.info('Adding member: ', member)
-			ret[member.actorId] = member?.publicKey
+				logger.info('Adding member: ', member)
+				ret[grantApplication.id][member.actorId] = member?.publicKey
+			}
 		}
 
+		logger.info('Returning members: ', ret)
 		return ret
-	}, [workspaceId, applicationId, fetchMore])
+	}, [workspaceId, applicationIds, fetchMore])
 
 	return { fetch }
 }
@@ -681,7 +686,7 @@ export function usePiiForWorkspaceMember(
 
 export function usePiiForComment(
 	workspaceId: string | undefined,
-	applicationId: string | undefined,
+	applicationIds: string[] | undefined,
 	memberPublicKey: string | undefined,
 	chainId: SupportedChainId,
 ) {
@@ -693,7 +698,7 @@ export function usePiiForComment(
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 	const { fetch } = useGetPublicKeyOfMembers(
 		workspaceId,
-		applicationId,
+		applicationIds,
 		chainId,
 	)
 
@@ -711,7 +716,7 @@ export function usePiiForComment(
 				throw new Error('Workspace ID not provided')
 			}
 
-			if(!applicationId) {
+			if(!applicationIds) {
 				throw new Error('Application ID not provided')
 			}
 
@@ -721,66 +726,60 @@ export function usePiiForComment(
 
 			// JSON serialize the data for it to be encrypted
 			const piiFieldsJson = JSON.stringify(piiData)
-			const piiMap: GrantApplicationRequest['pii'] = {}
-			let publicKeys = await fetch()
+			const piiMap: {[appId: string]: Exclude<GrantApplicationRequest['pii'], undefined>} = {}
+			const publicKeysPerApplication = await fetch()
 
-			publicKeys = {
-				...publicKeys,
+			logger.info(publicKeysPerApplication, 'Public Keys Per Application')
+
+			for(const applicationId in publicKeysPerApplication) {
+				piiMap[applicationId] = {}
+				const publicKeys = {
+					...publicKeysPerApplication[applicationId],
+				}
+
+				logger.info({ applicationId, members: publicKeys }, 'Comment')
+
+				await Promise.all(
+					Object.entries(publicKeys).map(async([address, publicKey]) => {
+						if(!publicKey) {
+							logger.info({ address }, 'pub key not present, ignoring...')
+							return
+						}
+
+						try {
+							const secureChannel = await getSecureChannelFromPublicKey(
+								webwallet,
+								publicKey,
+								getKeyForApplication(applicationId),
+							)
+							const data = await secureChannel.encrypt(piiFieldsJson)
+
+							logger.info({ address }, 'encrypted data')
+							// the subgraph can handle about 7000 bytes in a single field
+							// so if the data is too big, we upload it to IPFS, and set the hash
+							// we can unambigously determine if the encrypted data is an IPFS hash or not
+							// using a simple isIpfsHash function
+							if(data.length < 7000) {
+								piiMap[applicationId][address] = data
+							} else {
+								logger.info(
+									{ data: data.length },
+									'data too large, uploading to IPFS...',
+								)
+								const { hash: ipfsHash } = await uploadToIPFS(data)
+								piiMap[applicationId][address] = ipfsHash
+							}
+						} catch(e) {
+							logger.error({ address, error: e }, 'failed to encrypt')
+						}
+					}),
+				)
 			}
 
-			logger.info({ members: publicKeys }, 'Comment')
-
-			// // add our wallet's public key
-			// // so we can access the sent information too
-			// publicKeys = {
-			// 	...publicKeys,
-			// 	[scwAddress]: memberPublicKey!,
-			// }
-
-			// logger.info({
-			// 	fields: Object.keys(piiFields).length,
-			// 	members: Object.keys(publicKeys).length,
-			// }, 'encrypting fields')
-
-			await Promise.all(
-				Object.entries(publicKeys).map(async([address, publicKey]) => {
-					if(!publicKey) {
-						logger.info({ address }, 'pub key not present, ignoring...')
-						return
-					}
-
-					try {
-						const secureChannel = await getSecureChannelFromPublicKey(
-							webwallet,
-							publicKey,
-							getKeyForApplication(applicationId),
-						)
-						const data = await secureChannel.encrypt(piiFieldsJson)
-
-						logger.info({ address }, 'encrypted data')
-						// the subgraph can handle about 7000 bytes in a single field
-						// so if the data is too big, we upload it to IPFS, and set the hash
-						// we can unambigously determine if the encrypted data is an IPFS hash or not
-						// using a simple isIpfsHash function
-						if(data.length < 7000) {
-							piiMap[address] = data
-						} else {
-							logger.info(
-								{ data: data.length },
-								'data too large, uploading to IPFS...',
-							)
-							const { hash: ipfsHash } = await uploadToIPFS(data)
-							piiMap[address] = ipfsHash
-						}
-					} catch(e) {
-						logger.error({ address, error: e }, 'failed to encrypt')
-					}
-				}),
-			)
-
+			logger.info({ piiMap }, 'encrypted pii map')
 			return piiMap
 		},
-		[scwAddress, webwallet, workspaceId, applicationId, fetch, scwAddress],
+		[scwAddress, webwallet, workspaceId, applicationIds, fetch, scwAddress],
 	)
 
 	/**
@@ -794,43 +793,50 @@ export function usePiiForComment(
 				throw new Error('Zero Wallet not connected')
 			}
 
-			if(!workspaceId || !applicationId) {
+			if(!workspaceId || !applicationIds) {
 				throw new Error(
 					'Workspace ID or application ID not provided',
 				)
 			}
 
-			const secureChannel = await getSecureChannelFromPublicKey(
-				webwallet,
+			const ret: {[appId: string]: PIIForCommentType} = {}
+
+			for(const applicationId of applicationIds) {
+				const secureChannel = await getSecureChannelFromPublicKey(
+					webwallet,
 				memberPublicKey!,
 				getKeyForApplication(applicationId),
-			)
+				)
 
-			logger.info({ memberPublicKey, piiData }, 'got secure channel with member')
+				logger.info({ memberPublicKey, piiData }, 'got secure channel with member')
 
-			const decrypted = await secureChannel.decrypt(piiData)
+				const decrypted = await secureChannel.decrypt(piiData)
 
-			logger.info({ decrypted }, 'decrypted PII data')
+				logger.info({ decrypted }, 'decrypted PII data')
 
-			// logger.info('decrypted PII data')
+				// logger.info('decrypted PII data')
 
-			const json = JSON.parse(decrypted) as PIIForCommentType
-			logger.info({ json }, 'Decrypted JSON')
+				const json = JSON.parse(decrypted) as PIIForCommentType
+				logger.info({ json }, 'Decrypted JSON')
+				ret[applicationId] = json
+			}
 
-			return json
+			return ret
 		},
-		[scwAddress, webwallet, workspaceId, applicationId, memberPublicKey, logger],
+		[scwAddress, webwallet, workspaceId, applicationIds, memberPublicKey, logger],
 	)
 
 	const encrypt = useCallback(
 		async(data: PIIForCommentType) => {
-			if(data) {
-				const pii = await encryptPii(data)
-				data = { pii }
-				logger.info(data, 'Encrypted PII (Comment)')
+			const pii = await encryptPii(data)
+			logger.info({ pii }, 'output of encrypt pii')
+
+			const ret: {[appId: string]: PIIForCommentType} = {}
+			for(const applicationId in pii) {
+				ret[applicationId] = { pii: pii[applicationId] }
 			}
 
-			return data
+			return ret
 		},
 		[encryptPii],
 	)
@@ -843,9 +849,9 @@ export function usePiiForComment(
 		async(comment: Pick<Exclude<GetCommentsQuery['comments'], null | undefined>[number], 'commentsEncryptedData'> & PIIForCommentType) => {
 			if(comment?.commentsEncryptedData?.length) {
 				logger.info('Encrypted Data', comment)
-				if(!scwAddress || !memberPublicKey || !workspaceId || !applicationId) {
+				if(!scwAddress || !memberPublicKey || !workspaceId || !applicationIds) {
 					logger.info(
-						{ scwAddress, memberPublicKey, workspaceId, applicationId },
+						{ scwAddress, memberPublicKey, workspaceId, applicationIds },
 						'skipping decryption, as details not present',
 					)
 					return
@@ -880,7 +886,7 @@ export function usePiiForComment(
 
 			return comment
 		},
-		[scwAddress, webwallet, applicationId, memberPublicKey, workspaceId, decryptPii],
+		[scwAddress, webwallet, applicationIds, memberPublicKey, workspaceId, decryptPii],
 	)
 
 	return {

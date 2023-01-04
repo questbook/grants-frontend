@@ -196,6 +196,39 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint96",
+        "name": "_workspaceId",
+        "type": "uint96"
+      },
+      {
+        "internalType": "address",
+        "name": "_grantAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint96[]",
+        "name": "_applicationIds",
+        "type": "uint96[]"
+      },
+      {
+        "internalType": "bool",
+        "name": "_isPrivate",
+        "type": "bool"
+      },
+      {
+        "internalType": "string",
+        "name": "_commentMetadataHash",
+        "type": "string"
+      }
+    ],
+    "name": "addComments",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "applicationReg",
     "outputs": [
