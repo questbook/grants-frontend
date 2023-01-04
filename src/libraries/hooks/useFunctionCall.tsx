@@ -1,9 +1,10 @@
-import { useCallback, useContext, useMemo } from 'react'
+import { useCallback, useContext, useEffect, useMemo } from 'react'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
+import logger from 'src/libraries/logger'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { QBContract } from 'src/types'
 import getErrorMessage from 'src/utils/errorUtils'
@@ -21,10 +22,13 @@ interface Props {
 interface CallProps { method: string, args: unknown[] }
 
 function useFunctionCall({ chainId, contractName, setTransactionStep, setTransactionHash, title }: Props) {
+	useEffect(() => {
+		logger.info('useFunctionCall', { chainId, contractName, setTransactionStep, setTransactionHash, title })
+	}, [chainId])
 	const { subgraphClients } = useContext(ApiClientsContext)!
 	const { webwallet } = useContext(WebwalletContext)!
 
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({ chainId: chainId?.toString()! })
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({ chainId: chainId?.toString() })
 	const { nonce } = useQuestbookAccount()
 	const contract = useQBContract(contractName, chainId)
 
@@ -46,6 +50,7 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 			}
 
 			if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+				logger.info({ biconomyWalletClient, scwAddress }, 'Biconomy not ready')
 				throw new Error('Zero wallet is not ready')
 			}
 
@@ -65,6 +70,8 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 				bicoDapps[chainId].webHookId,
 				nonce
 			)
+
+			logger.info('Transaction sent', { tx })
 
 			if(tx) {
 				setTransactionStep?.(1)

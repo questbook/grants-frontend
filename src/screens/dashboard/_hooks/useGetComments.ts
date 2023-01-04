@@ -6,28 +6,15 @@ import logger from 'src/libraries/logger'
 import { usePiiForComment } from 'src/libraries/utils/pii'
 import { WebwalletContext } from 'src/pages/_app'
 import { CommentType, ProposalType } from 'src/screens/dashboard/_utils/types'
-import { DashboardContext } from 'src/screens/dashboard/Context'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 interface Props {
-	selectedProposal?: ProposalType
+	proposal?: ProposalType
 }
 
-function useGetComments({ selectedProposal }: Props) {
+function useGetComments({ proposal }: Props) {
 	const { webwallet } = useContext(WebwalletContext)!
-	const { proposals, selectedProposals } = useContext(DashboardContext)!
-	const proposal = useMemo(() => {
-		if(selectedProposal) {
-			return selectedProposal
-		}
-
-		const index = selectedProposals.indexOf(true)
-
-		if(index !== -1) {
-			return proposals[index]
-		}
-	}, [proposals, selectedProposals])
 
 	const chainId = useMemo(() => {
 		return getSupportedChainIdFromWorkspace(proposal?.grant?.workspace) ?? defaultChainId
@@ -41,15 +28,23 @@ function useGetComments({ selectedProposal }: Props) {
 
 	const { decrypt } = usePiiForComment(
 		proposal?.grant?.workspace?.id,
-		[proposal?.id ?? ''],
+		proposal?.id ? [proposal.id] : [],
 		webwallet?.publicKey,
 		chainId,
 	)
 
 	const [comments, setComments] = useState<CommentType[]>([])
-	const [shouldRefresh, setShoulRefresh] = useState<boolean>(true)
+	const [shouldRefresh, setShouldRefresh] = useState<boolean>(true)
+
+	useEffect(() => {
+		setShouldRefresh(true)
+	}, [proposal])
 
 	const getComments = useCallback(async() => {
+		if(!proposal?.id) {
+			return []
+		}
+
 		const finalComments: CommentType[] = []
 		const localComments: Exclude<GetCommentsQuery['comments'], null | undefined> = []
 
@@ -70,7 +65,8 @@ function useGetComments({ selectedProposal }: Props) {
 		for(const comment of localComments) {
 			if(comment.isPrivate) {
 				if(comment?.commentsEncryptedData) {
-					const decryptedData = await decrypt(comment)
+					logger.info({ comment }, 'comment before decryption (Comment)')
+					const decryptedData = await decrypt(comment, proposal.id)
 					logger.info({ decryptedData }, 'comment decrypted (Comment)')
 
 					if(decryptedData?.message) {
@@ -90,8 +86,9 @@ function useGetComments({ selectedProposal }: Props) {
 			}
 		}
 
+		logger.info({ finalComments }, 'final comments (Comment)')
 		return finalComments
-	}, [proposal])
+	}, [proposal, shouldRefresh])
 
 	useEffect(() => {
 		if(!proposal?.id || !shouldRefresh) {
@@ -103,14 +100,14 @@ function useGetComments({ selectedProposal }: Props) {
 				return
 			}
 
-			setShoulRefresh(false)
+			setShouldRefresh(false)
 			setComments(_)
 		})
 	}, [proposal, shouldRefresh])
 
 	const refresh = useCallback(() => {
-		setShoulRefresh(true)
-	}, [setShoulRefresh])
+		setShouldRefresh(true)
+	}, [setShouldRefresh])
 
 	return { comments, refresh }
 }
