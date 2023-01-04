@@ -118,8 +118,9 @@ export default function useCreateGrant(
 						asset: USD_ASSET
 					}
 				}
+
 				console.log('grant data', data)
-				console.log('workspace',  getSupportedValidatorNetworkFromChainId(
+				console.log('workspace', getSupportedValidatorNetworkFromChainId(
 					(chainId || getSupportedChainIdFromWorkspace(workspace))!,
 				))
 				const {
