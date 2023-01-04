@@ -229,9 +229,9 @@ const _abi = [
         type: "bool",
       },
       {
-        internalType: "string",
-        name: "_commentMetadataHash",
-        type: "string",
+        internalType: "string[]",
+        name: "_commentMetadataHashes",
+        type: "string[]",
       },
     ],
     name: "addComments",

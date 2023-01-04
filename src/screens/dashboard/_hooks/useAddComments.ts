@@ -39,7 +39,7 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 		return p
 	}, [proposals, selectedProposals])
 
-	const { encrypt } = usePiiForComment(
+	const { encrypt, decrypt } = usePiiForComment(
 		workspace?.id,
 		selectedProposalsData?.map((proposal) => proposal.id),
 		webwallet?.publicKey,
@@ -52,6 +52,7 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 		setTransactionHash,
 		setTransactionStep: setStep,
 	})
+
 	const addComments = useCallback(
 		async(message: EditorState, tags: number[]) => {
 			if(
@@ -82,9 +83,24 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 				map[selectedProposalsData[i].id] = json
 			}
 
+			logger.info({ map }, 'Map (Comment)')
+
 			const encryptedData = role !== 'community' ? await encrypt(map) : map
 
 			logger.info({ encryptedData }, 'Encrypted Data (Comment)')
+
+			for(const proposal of selectedProposalsData) {
+				const formatData = []
+				for(const id in encryptedData[proposal.id]['pii']) {
+					formatData.push({ id, data: encryptedData[proposal.id]['pii']![id] })
+				}
+
+				logger.info({ proposal: proposal.id }, 'Proposal (Comment)')
+				logger.info({ formatData }, 'Format Data (Comment)')
+
+				const decryptedData = await decrypt({ commentsEncryptedData: formatData }, proposal.id)
+				logger.info({ decryptedData }, 'Decrypted Data (Comment)')
+			}
 
 			const commentHashes: string[] = []
 			for(const proposal of selectedProposalsData) {

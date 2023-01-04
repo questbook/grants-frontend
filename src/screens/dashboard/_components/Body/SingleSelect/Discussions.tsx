@@ -245,7 +245,6 @@ function Discussions() {
 
 	const [ text, setText ] = useState<EditorState>(EditorState.createEmpty())
 	const { addComment, isBiconomyInitialised } = useAddComment({ setStep, setTransactionHash })
-	const { comments, refresh } = useGetComments({})
 
 	const proposal = useMemo(() => {
 		const index = selectedProposals.indexOf(true)
@@ -255,13 +254,15 @@ function Discussions() {
 		}
 	}, [proposals, selectedProposals])
 
+	const { comments, refresh } = useGetComments({ proposal })
+
 	const isDisabled = useMemo(() => {
 		if(!isBiconomyInitialised || step !== undefined) {
 			return true
 		}
 
 		const raw = convertToRaw(text.getCurrentContent())
-		return raw.blocks.some((block) => block.text.length > 0)
+		return !raw.blocks.some((block) => block.text.length > 0)
 	}, [text, step])
 
 	const getCommentDisplayName = (comment: CommentType) => {
