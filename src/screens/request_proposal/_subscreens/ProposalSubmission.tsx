@@ -138,7 +138,7 @@ function ProposalSubmission(
 							variant='flushed'
 							placeholder='enter start date'
 							_placeholder={{ color: 'gray.5' }}
-							isDisabled={rfpFormSubmissionType === 'edit'}
+							// isDisabled={rfpFormSubmissionType === 'edit'}
 							ref={startdateRef}
 							onFocus={
 								() => {
