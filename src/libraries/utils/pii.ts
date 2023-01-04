@@ -851,7 +851,7 @@ export function usePiiForComment(
 
 				const piiData = comment.commentsEncryptedData.find((p) => {
 					const idLowerCase = p.id.toLowerCase()
-					return idLowerCase.endsWith(scwAddress.toLowerCase())
+					return idLowerCase.indexOf(scwAddress.toLowerCase()) !== -1
 				})
 				logger.info({ piiData }, 'pii data (decrypt)')
 				if(piiData) {
