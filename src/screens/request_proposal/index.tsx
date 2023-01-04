@@ -329,7 +329,6 @@ function RequestProposal() {
 			// setRequiredDetails(rfpData.allApplicantDetails)
 			setExtraDetailsFields(rfpData.allApplicantDetails!)
 			setNumberOfReviewers(rfpData.numberOfReviewers)
-			setLink(rfpData.link)
 			setRubrics(rfpData.rubrics)
 			// setPayoutMode(rfpData.payoutMode)
 			setAmount(parseInt(rfpData.amount))
@@ -337,6 +336,12 @@ function RequestProposal() {
 			setProposalName(rfpData.proposalName)
 			setStartDate(rfpData.startDate)
 			setEndDate(rfpData.endDate)
+
+			if(rfpData.link) {
+				setLink(rfpData.link)
+			} else {
+				setLink('')
+			}
 
 			if(rfpData.reviewMechanism === 'voting') {
 				setReviewMechanism({
@@ -368,9 +373,9 @@ function RequestProposal() {
 
 			if(rfpData.milestones?.length > 0) {
 				setMilestones(rfpData.milestones)
+			} else {
+				setMilestones([])
 			}
-
-
 		}
 	}, [rfpData])
 
@@ -468,7 +473,6 @@ function RequestProposal() {
 					review = 'rubrics'
 				}
 
-				console.log('validate grant create', allApplicantDetails)
 				// validate grant data
 				const { hash: grantCreateIpfsHash } = await validateAndUploadToIpfs('GrantCreateRequest', {
 					title: proposalName!,

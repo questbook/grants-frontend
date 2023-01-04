@@ -98,8 +98,8 @@ const RFPFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 				}
 			}),
 			amount: response[0]?.grant?.reward.committed!,
-			link: response[0]?.grant?.link!,
-			doc: response[0]?.grant?.docIpfsHash!,
+			link: response[0]?.grant?.link ? response[0]?.grant?.link : '',
+			doc: response[0]?.grant?.docIpfsHash ? response[0]?.grant?.docIpfsHash : '',
 			milestones: response[0]?.grant?.milestones!,
 			numberOfReviewers: response[0]?.grant?.numberOfReviewersPerApplication!,
 			payoutMode: response[0]?.grant?.payoutType!,

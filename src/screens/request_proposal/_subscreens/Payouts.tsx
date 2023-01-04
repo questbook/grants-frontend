@@ -115,31 +115,8 @@ function Payouts(
 						/>
 					</Flex>
 
-					{/* <Flex
-						gap={4}
-						alignItems='baseline'>
-						<Button
-							variant='outline'
-							leftIcon={<AiOutlinePlus />}
-							borderColor='black'
-							onClick={() => setPayoutMode('in one go')}>
-							in one go
-						</Button>
-						<Button
-							variant='outline'
-							leftIcon={<AiOutlinePlus />}
-							borderColor='black'
-							onClick={
-								() => {
-									setPayoutMode('based on milestone'); handleClick()
-								}
-							}>
-							based on milestone
-						</Button>
-					</Flex> */}
-
 					{
-						payoutMode.label === PayoutMode.BASED_ON_MILESTONE && (
+						(payoutMode.label === PayoutMode.BASED_ON_MILESTONE) && (
 							<>
 
 								{
@@ -243,7 +220,7 @@ function Payouts(
 		)
 	}
 
-	const [milestoneCounter, setMilestoneCounter] = useState(milestones.length)
+	const [milestoneCounter, setMilestoneCounter] = useState(!milestones ? 0 : milestones.length)
 
 	const payoutTypeOptions = [{ value: 'in_one_go', label: 'in one go' }, { value: 'milestones', label: 'based on milestone' }]
 
@@ -255,6 +232,7 @@ function Payouts(
 			label: item.label,
 			value: item.value,
 		})
+		handleOnEdit('payoutMode', item.value)
 	}
 
 	const handleCreateRFP = () => {
