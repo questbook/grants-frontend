@@ -68,7 +68,7 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 
 	const { encrypt } = usePiiForComment(
 		proposal?.grant?.workspace?.id,
-		proposal?.id,
+		[proposal?.id ?? ''],
 		webwallet?.publicKey,
 		chainId,
 	)

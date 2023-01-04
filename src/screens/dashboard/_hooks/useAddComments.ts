@@ -3,6 +3,7 @@ import { convertToRaw, EditorState } from 'draft-js'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
 import { usePiiForComment } from 'src/libraries/utils/pii'
+import { PIIForCommentType } from 'src/libraries/utils/types'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import useQuickReplies from 'src/screens/dashboard/_hooks/useQuickReplies'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
@@ -34,23 +35,16 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 			}
 		}
 
+		p.sort((a, b) => parseInt(a.id, 16) - parseInt(b.id, 16))
 		return p
 	}, [proposals, selectedProposals])
 
-	const encrypt = useMemo(() => {
-		const ret = []
-		for(const proposalData of selectedProposalsData) {
-			const { encrypt } = usePiiForComment(
-				workspace?.id,
-				proposalData.id,
-				webwallet?.publicKey,
-				chainId,
-			)
-			ret.push(encrypt)
-		}
-
-		return ret
-	}, [selectedProposalsData])
+	const { encrypt } = usePiiForComment(
+		workspace?.id,
+		selectedProposalsData?.map((proposal) => proposal.id),
+		webwallet?.publicKey,
+		chainId,
+	)
 
 	const { call, isBiconomyInitialised } = useFunctionCall({
 		chainId,
@@ -83,15 +77,22 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 				role,
 			}
 
-			const commentHashes = []
+			const map: {[appId: string]: PIIForCommentType} = {}
 			for(let i = 0; i < selectedProposalsData.length; i++) {
-				const encryptedData = role !== 'community' ? encrypt[i](json) : json
-
-				const commentHash = (await uploadToIPFS(JSON.stringify(encryptedData)))
-					.hash
-				commentHashes.push(commentHash)
-				logger.info({ commentHash }, 'Comment Hash (Comment)')
+				map[selectedProposalsData[i].id] = json
 			}
+
+			const encryptedData = role !== 'community' ? await encrypt(map) : map
+
+			logger.info({ encryptedData }, 'Encrypted Data (Comment)')
+
+			const commentHashes: string[] = []
+			for(const proposal of selectedProposalsData) {
+				const hash = (await uploadToIPFS(JSON.stringify(encryptedData[proposal.id]))).hash
+				commentHashes.push(hash)
+			}
+
+			logger.info({ commentHashes }, 'Comment Hashes')
 
 			const methodArgs = [
 				workspace.id,

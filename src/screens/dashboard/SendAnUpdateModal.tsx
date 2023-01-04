@@ -1,5 +1,5 @@
 import { useContext, useMemo, useState } from 'react'
-import { Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
 import { convertToRaw, EditorState } from 'draft-js'
 import logger from 'src/libraries/logger'
 import TextEditor from 'src/libraries/ui/RichTextEditor/textEditor'
@@ -57,6 +57,7 @@ function SendAnUpdateModal() {
 								})
 							}
 						</Flex>
+						<Box mt={4} />
 						<TextEditor
 							value={text}
 							onChange={setText}
@@ -84,7 +85,7 @@ function SendAnUpdateModal() {
 		return (
 			<Button
 				key={index}
-				ml={3}
+				ml={index % 2 === 0 ? 0 : 3}
 				// w='100%'
 				justifyContent='start'
 				py={1}
@@ -141,8 +142,8 @@ function SendAnUpdateModal() {
 		}
 
 		const raw = convertToRaw(text.getCurrentContent())
-		return raw.blocks.some((block) => block.text.length > 0)
-	}, [text, networkTransactionModalStep])
+		return !raw.blocks.some((block) => block.text.length > 0)
+	}, [text, networkTransactionModalStep, isBiconomyInitialised])
 
 	return buildComponent()
 }
