@@ -13,8 +13,9 @@ import ImageUpload from 'src/libraries/ui/ImageUpload'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import TextEditor from 'src/libraries/ui/RichTextEditor/textEditor'
+import VerifySignerModal from 'src/libraries/ui/VerifySignerModal'
 import { getProjectDetails } from 'src/screens/proposal_form/_utils'
-import VerifySignerModal from 'src/screens/request_proposal/_components/VerifySignerModal'
+import SafeSelect, { SafeSelectOption } from 'src/screens/request_proposal/_components/SafeSelect'
 import { DropdownIcon } from 'src/screens/settings/_components/DropdownIcon'
 import SettingsInput from 'src/screens/settings/_components/SettingsInput'
 import useLinkMultiSig from 'src/screens/settings/_hooks/useLinkMultiSig'
@@ -23,7 +24,6 @@ import { SettingsFormContext, SettingsFormProvider } from 'src/screens/settings/
 import WorkspaceMemberCard from 'src/screens/settings/WorkspaceMemberCard'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
-import SafeSelect, { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 
 function Settings() {
 	function buildComponent() {

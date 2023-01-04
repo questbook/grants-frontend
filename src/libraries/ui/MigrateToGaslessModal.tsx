@@ -6,7 +6,9 @@ import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO } from 'src/constants/chains'
 import { GetWorkspaceMembersQuery, useGetProfileDetailsQuery, useGetWorkspaceMembersQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useQBContract from 'src/hooks/contracts/useQBContract'
-import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
+import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
+import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
+import VerifySignerModal from 'src/libraries/ui/VerifySignerModal'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { MinimalWorkspace } from 'src/types'
 import getErrorMessage from 'src/utils/errorUtils'
@@ -15,8 +17,6 @@ import { addAuthorizedOwner } from 'src/utils/gaslessUtils'
 import { delay } from 'src/utils/generics'
 import logger from 'src/utils/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import ConnectWalletModal from 'src/v2/components/ConnectWalletModal'
-import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 import { useAccount, useNetwork, useSigner, useSwitchNetwork } from 'wagmi'
 
 type MigrationState = 'no-domain-found' | 'no-application-found' | 'no-profile-found' | 'no-profile-found-all-chains' | 'migrate'
@@ -127,41 +127,14 @@ function MigrateToGasless() {
 					</Flex>
 				</ModalContent>
 			</Modal>
-			<ConnectWalletModal
+			<VerifySignerModal
 				isOpen={isConnectWalletModalOpen}
-				onClose={() => setIsConnectWalletModalOpen(false)} />
-			<NetworkTransactionModal
+				onClose={() => setIsConnectWalletModalOpen(false)}
+			/>
+			<NetworkTransactionFlowStepperModal
 				currentStepIndex={networkModalStep || 0}
 				isOpen={networkModalStep !== undefined}
-				subtitle='Migrating your profile'
-				description={
-					<Flex
-						direction='column'
-						align='start'
-						maxW='100%'>
-						<Text
-							fontWeight='bold'
-							color='#3F8792'>
-							Migrating wallet for
-						</Text>
-						<Text
-							noOfLines={1}
-							fontSize='sm'
-							color='#3F8792'>
-							{walletAddress || ''}
-						</Text>
-					</Flex>
-				}
-				steps={
-					[
-						'Setting up ZeroWallet',
-						'Sign Migration Transaction',
-						'Waiting for confirmation',
-						'Waiting for indexing to complete',
-						'Migration successful'
-					]
-				}
-				viewLink={getExplorerUrlForTxHash(walletChain?.id, transactionHash)}
+				viewTxnLink={getExplorerUrlForTxHash(walletChain?.id, transactionHash)}
 				onClose={
 					() => {
 						setNetworkModalStep(undefined)
@@ -202,7 +175,7 @@ function MigrateToGasless() {
 			variables: {
 				actorId: walletAddress || ''
 			}
-		}
+		},
 	})
 
 	const { results: ownedWorkspacesResults, fetchMore: fetchMoreOwnedWorkspaces } = useMultiChainQuery({

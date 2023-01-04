@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { Flex } from '@chakra-ui/react'
 import NavBar from 'src/libraries/ui/NavBar'
 import logger from 'src/utils/logger'
-import Sidebar from 'src/v2/components/Sidebar'
 
 type NavbarConfig = {
 	bg?: string
@@ -21,16 +20,13 @@ type Props = {
 	//Navbar configs
 	renderNavbar?: boolean
 	navbarConfig?: NavbarConfig
-
-	//Sidebar configs
-	renderSidebar?: boolean
 }
 
-function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar }: Props) {
+function NavbarLayout({ children, renderNavbar, navbarConfig }: Props) {
 	const [renderCount, setRenderCount] = useState(0)
 
 	useEffect(() => {
-		logger.info({ renderNavbar, renderSidebar }, 'Render Navbar Layout')
+		logger.info({ renderNavbar }, 'Render Navbar Layout')
 		setRenderCount(renderCount + 1)
 	}, [])
 
@@ -46,32 +42,15 @@ function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar }: P
 				)
 			}
 			<Flex
-				direction='row'
+				className='body'
+				zIndex={0}
 				maxH='calc(100vh - 64px)'
-				bg='gray.1'>
-				{
-					renderSidebar && (
-						<Flex
-							display={{ base: 'none', lg: 'flex' }}
-							w='20%'
-							pos='sticky'
-							top='64px'
-							left={0}
-							bottom={0}
-						>
-							<Sidebar />
-						</Flex>
-					)
-				}
-				<Flex
-					className='body'
-					zIndex={0}
-					w={renderSidebar ? '80%' : '100%'}
-					overflowY='auto'
-					overscrollBehavior='none'
-					justifyContent='center'>
-					{children}
-				</Flex>
+				bg='gray.1'
+				w='100%'
+				overflowY='auto'
+				overscrollBehavior='none'
+				justifyContent='center'>
+				{children}
 			</Flex>
 		</Flex>
 	)

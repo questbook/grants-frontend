@@ -1,7 +1,7 @@
 import { ChangeEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button, Flex, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
-import TextField from 'src/v2/components/InputFields/TextField'
+import FlushedInput from 'src/libraries/ui/FlushedInput'
 
 interface Props {
     isOpen: boolean
@@ -66,12 +66,12 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 									</Text>
 								)
 							}
-							<TextField
+							<FlushedInput
 								w='100%'
 								mt={4}
 								isDisabled={type === 'export'}
 								value={privateKey}
-								errorText={privateKeyError}
+								// errorText={privateKeyError}
 								onChange={onChange} />
 
 							{

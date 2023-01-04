@@ -1,7 +1,6 @@
-import { ReactElement, useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { Flex, ToastId, useToast } from '@chakra-ui/react'
+import { ReactElement, useCallback, useContext, useEffect, useState } from 'react'
+import { Flex } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { DEFAULT_NETWORK } from 'src/constants'
 import { APPLICATION_REGISTRY_ADDRESS, WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
@@ -13,6 +12,7 @@ import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
@@ -20,6 +20,7 @@ import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransact
 import { validateAndUploadToIpfs } from 'src/libraries/validator'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { GRANT_CACHE_KEY } from 'src/screens/dashboard/_utils/constants'
+import { SafeSelectOption } from 'src/screens/request_proposal/_components/SafeSelect'
 import useUpdateRFP from 'src/screens/request_proposal/_hooks/useUpdateRFP'
 import BuilderDiscovery from 'src/screens/request_proposal/_subscreens/BuilderDiscovery'
 import LinkMultiSig from 'src/screens/request_proposal/_subscreens/LinkMultiSig'
@@ -36,7 +37,6 @@ import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { addAuthorizedOwner, addAuthorizedUser, bicoDapps, chargeGas, getEventData, getTransactionDetails, networksMapping, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
-import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 
 function RequestProposal() {
 	const buildComponent = () => {
@@ -182,7 +182,7 @@ function RequestProposal() {
 		}
 	}
 
-	const { role, workspace, chainId } = useContext(ApiClientsContext)!
+	const { workspace, chainId } = useContext(ApiClientsContext)!
 
 	// State for proposal creation
 	// const todayDate = today()
@@ -280,8 +280,7 @@ function RequestProposal() {
 	})
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
 
-	const toastRef = useRef<ToastId>()
-	const toast = useToast()
+	const toast = useCustomToast()
 
 	const router = useRouter()
 
@@ -561,23 +560,17 @@ function RequestProposal() {
 			setCurrentStepIndex(3) // 3 is the final step
 			const message = getErrorMessage(e)
 			logger.info('error', message)
-			toastRef.current = toast({
+			toast({
 				position: 'top',
-				render: () => ErrorToast({
-					content: message,
-					close: () => {
-						if(toastRef.current) {
-							toast.close(toastRef.current)
-						}
-					},
-				}),
+				status: 'error',
+				title: message,
 			})
 		}
 	}, [biconomyWalletClient, domainName, accountDataWebwallet, allApplicantDetails, link, doc, rubrics, amount, payoutMode, reviewMechanism, startDate, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, selectedSafeNetwork, milestones])
 
 	const handleOnEdit = (field: string, value: string | ApplicantDetailsFieldType[] | string []) => {
 		// const { value } = e.target
-		console.log('rfp edited', { ...RFPEditFormData, [field]: value })
+		logger.info('rfp edited', { ...RFPEditFormData, [field]: value })
 		setRFPEditFormData({ ...RFPEditFormData, [field]: value })
 	}
 
@@ -700,16 +693,10 @@ function RequestProposal() {
 			setCurrentStepIndex(3) // 3 is the final step
 			const message = getErrorMessage(e)
 			logger.info('error', message)
-			toastRef.current = toast({
+			toast({
 				position: 'top',
-				render: () => ErrorToast({
-					content: message,
-					close: () => {
-						if(toastRef.current) {
-							toast.close(toastRef.current)
-						}
-					},
-				}),
+				status: 'error',
+				title: message,
 			})
 		}
 	}, [biconomyWalletClient, workspace, proposalName, rubrics, accountDataWebwallet, allApplicantDetails, link, doc, rubrics, amount, payoutMode, reviewMechanism, startDate, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, selectedSafeNetwork, milestones])

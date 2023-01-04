@@ -1,8 +1,6 @@
-import { ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { Box, Button, Center, Container, Flex, Image, Text, ToastId, useToast } from '@chakra-ui/react'
+import { ReactElement, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { Box, Button, Center, Container, Flex, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import Loader from 'src/components/ui/loader'
-import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { defaultChainId } from 'src/constants/chains'
 import {
 	GetDaOsForExploreQuery,
@@ -14,18 +12,20 @@ import {
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { DAOSearchContext } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
-import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
-import useUpdateDaoVisibility from 'src/hooks/useUpdateDaoVisibility'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
+import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
+import Loader from 'src/libraries/ui/Loader'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
+import NetworkTransactionModal from 'src/libraries/ui/NetworkTransactionModal'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import DomainGrid from 'src/screens/discover/_components/DaosGrid'
 import RightArrowIcon from 'src/screens/discover/_components/RightArrowIcon'
 import { useMultichainDaosPaginatedQuery } from 'src/screens/discover/_hooks/useMultiChainPaginatedQuery'
+import useUpdateDaoVisibility from 'src/screens/discover/_hooks/useUpdateDaoVisibility'
 import { mergeSortedArrays } from 'src/screens/discover/_utils/mergeSortedArrays'
 import { chainNames } from 'src/utils/chainNames'
 import getErrorMessage from 'src/utils/errorUtils'
-import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
 const PAGE_SIZE = 10
 
@@ -222,16 +222,10 @@ function Discover() {
 													setUnsavedDaosState({})
 													setNetworkTransactionModalStep(undefined)
 													const message = getErrorMessage(e as Error)
-													toastRef.current = toast({
+													toast({
 														position: 'top',
-														render: () => ErrorToast({
-															content: message,
-															close: () => {
-																if(toastRef.current) {
-																	toast.close(toastRef.current)
-																}
-															},
-														}),
+														status: 'error',
+														title: message,
 													})
 												}
 											}
@@ -363,8 +357,7 @@ function Discover() {
 
 	const [grantsProgramTitle, setGrantsProgramTitle] = useState<string>()
 
-	const toastRef = useRef<ToastId>()
-	const toast = useToast()
+	const toast = useCustomToast()
 
 	const router = useRouter()
 

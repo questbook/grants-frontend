@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useState } from 'react'
 import { BsArrowLeft } from 'react-icons/bs'
-import { Box, Button, Flex, Image, Text } from '@chakra-ui/react'
+import { Button, Flex, Image, Text } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { logger } from 'ethers'
 import { NetworkType } from 'src/constants/Networks'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
 // import useSafeUSDBalances from "src/hooks/useSafeUSDBalances";
-import VerifySignerModal from 'src/screens/request_proposal/_components/VerifySignerModal'
-import SafeSelect, { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
-// import useSafeOwners from "src/hooks/useSafeOwners";
+import VerifySignerModal from 'src/libraries/ui/VerifySignerModal'
+import { SafeSelectOption } from 'src/libraries/utils/types'
+import SafeSelect from 'src/screens/request_proposal/_components/SafeSelect'
 
 
 interface Props {

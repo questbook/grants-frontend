@@ -3,8 +3,7 @@ import {
 	Box,
 	Flex, Text, } from '@chakra-ui/react'
 import { EditorState } from 'draft-js'
-import TextEditor from 'src/components/ui/forms/richTextEditor/textEditor'
-import Tooltip from 'src/components/ui/tooltip'
+import TextEditor from 'src/libraries/ui/RichTextEditor/textEditor'
 
 interface RichTextEditorProps {
   label?: string
@@ -16,7 +15,6 @@ interface RichTextEditorProps {
   subtext?: string | null | undefined
   maxLength?: number
   disabled?: boolean
-  tooltip?: string
   visible?: boolean
 }
 
@@ -39,7 +37,6 @@ function RichTextEditor({
 	isError,
 	errorText,
 	subtext,
-	tooltip,
 	visible,
 	disabled,
 }: RichTextEditorProps) {
@@ -53,7 +50,6 @@ function RichTextEditor({
 				fontWeight='bold'
 				mb={1}>
 				{label}
-				{tooltip?.length ? <Tooltip label={tooltip} /> : null}
 			</Text>
 			<TextEditor
 				placeholder={placeholder}

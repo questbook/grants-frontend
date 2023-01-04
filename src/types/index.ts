@@ -1,10 +1,8 @@
 import { EditorState } from 'draft-js'
-import { FeedbackType } from 'src/components/your_grants/feedbackDrawer'
 import {
 	ApplicationRegistryAbi,
 	ApplicationReviewRegistryAbi,
 	CommunicationAbi,
-	GrantAbi,
 	GrantFactoryAbi,
 	WorkspaceRegistryAbi,
 } from 'src/generated/contracts'
@@ -16,6 +14,7 @@ import {
 	GetReviewersForAWorkspaceQuery,
 	GetWorkspaceDetailsQuery,
 	GetWorkspaceMembersQuery,
+	RubricItem,
 	SupportedNetwork,
 } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
@@ -61,6 +60,12 @@ export type IApplicantData = {
 export type IReview = IApplicantData['reviews'][0]
 
 export type IReviewer = { id: string, fullName?: string | null }
+
+export type FeedbackType = {
+	rubric: RubricItem
+	rating: number
+	comment: string
+}
 
 export type IReviewFeedback = {
   isApproved?: boolean

@@ -8,7 +8,7 @@ import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import useChainId from 'src/hooks/utils/useChainId'
+import useChainId from 'src/libraries/hooks/useChainId'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { delay } from 'src/utils/generics'
@@ -190,7 +190,6 @@ export const useMakeInvite = () => {
 type JoinInviteStep = 'ipfs-uploaded' | 'tx-signed' | 'tx-confirmed'
 
 export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemberUpdate, shouldRefreshNonce: boolean) => {
-
 	const connectedChainId = useChainId()
 	const { network, switchNetwork } = useNetwork()
 

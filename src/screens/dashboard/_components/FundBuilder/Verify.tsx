@@ -1,17 +1,16 @@
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Flex, Text, VStack } from '@chakra-ui/react'
-import { debounce } from 'lodash'
 import { useSafeContext } from 'src/contexts/safeContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
+import ConnectWalletButton from 'src/libraries/ui/VerifySignerModal/ConnectWalletButton'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
 import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
 import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/PhantomLogo'
 import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
-import ConnectWalletButton from 'src/v2/components/ConnectWalletModal/ConnectWalletButton'
-import { useAccount, useConnect, useDisconnect, useNetwork, useSigner, useSwitchNetwork } from 'wagmi'
+import { useAccount, useConnect, useDisconnect, useNetwork, useSwitchNetwork } from 'wagmi'
 
 const availableWallets = [{
 	name: 'Metamask',
@@ -106,11 +105,10 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 		</Flex>
 	)
 
-	const [verifyingModal, setVerifyingModal] = useState(false)
+	const [, setVerifyingModal] = useState(false)
 	const { connect, connectors } = useConnect()
 	const { disconnect } = useDisconnect()
-	const { error, switchNetworkAsync } = useSwitchNetwork()
-	const { data: signer } = useSigner()
+	const { switchNetworkAsync } = useSwitchNetwork()
 	const { chain } = useNetwork()
 	const { safeObj } = useSafeContext()
 	const { phantomWallet, phantomWalletConnected } = usePhantomWallet()

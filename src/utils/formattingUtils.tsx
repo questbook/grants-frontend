@@ -1,9 +1,10 @@
 import { BigNumber, ethers } from 'ethers'
 import moment from 'moment'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
-import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO, SupportedChainId, USD_ASSET } from 'src/constants/chains'
+import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO, SupportedChainId } from 'src/constants/chains'
+import { GrantApplication } from 'src/generated/graphql'
 import { ChainInfo, CustomField, FundTransfer } from 'src/types'
-import { InitialApplicationType } from 'src/v2/components/Dashboard/ReviewerDashboard/ApplicationsTable'
+// import { InitialApplicationType } from 'src/v2/components/Dashboard/ReviewerDashboard/ApplicationsTable'
 
 export function timeToString(
 	timestamp: number,
@@ -223,8 +224,8 @@ export const getCustomFields = (applicationData: any): CustomField[] => applicat
 	})
 
 export const getRewardAmount = (decimals: number | undefined, application: {
-	fields: InitialApplicationType['fields']
-	milestones: InitialApplicationType['milestones']
+	fields: GrantApplication['fields']
+	milestones: GrantApplication['milestones']
 }) => {
 	if(typeof decimals === 'undefined') {
 		decimals = 18

@@ -1,6 +1,4 @@
 import React, { useContext, useEffect } from 'react'
-import { ToastId, useToast } from '@chakra-ui/react'
-import ErrorToast from 'src/components/ui/toasts/errorToast'
 import {
 	APPLICATION_REGISTRY_ADDRESS,
 	WORKSPACE_REGISTRY_ADDRESS,
@@ -11,7 +9,8 @@ import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import useChainId from 'src/hooks/utils/useChainId'
+import useChainId from 'src/libraries/hooks/useChainId'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { ApiClientsContext } from 'src/pages/_app'
 import { WebwalletContext } from 'src/pages/_app'
 import getErrorMessage from 'src/utils/errorUtils'
@@ -52,8 +51,7 @@ export default function useCreateGrant(
 	const { data: networkData, switchNetwork } = useNetwork()
 	const grantContract = useQBContract('grantFactory', chainId)
 
-	const toastRef = React.useRef<ToastId>()
-	const toast = useToast()
+	const toast = useCustomToast()
 	const currentChainId = useChainId()
 
 	useEffect(() => {
@@ -210,16 +208,10 @@ export default function useCreateGrant(
 				const message = getErrorMessage(e)
 				setError(message)
 				setLoading(false)
-				toastRef.current = toast({
+				toast({
 					position: 'top',
-					render: () => ErrorToast({
-						content: message,
-						close: () => {
-							if(toastRef.current) {
-								toast.close(toastRef.current)
-							}
-						},
-					}),
+					status: 'error',
+					title: message,
 				})
 			}
 		}
@@ -283,16 +275,10 @@ export default function useCreateGrant(
 			const message = getErrorMessage(e)
 			setError(message)
 			setLoading(false)
-			toastRef.current = toast({
+			toast({
 				position: 'top',
-				render: () => ErrorToast({
-					content: message,
-					close: () => {
-						if(toastRef.current) {
-							toast.close(toastRef.current)
-						}
-					},
-				}),
+				status: 'error',
+				title: message,
 			})
 		}
 

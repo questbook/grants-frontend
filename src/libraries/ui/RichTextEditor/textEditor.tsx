@@ -15,7 +15,7 @@ import {
 	getDefaultKeyBinding,
 	RichUtils,
 } from 'draft-js'
-import Loader from 'src/components/ui/loader'
+import Loader from 'src/libraries/ui/Loader'
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
 import 'draft-js/dist/Draft.css'
 import '@draft-js-plugins/image/lib/plugin.css'

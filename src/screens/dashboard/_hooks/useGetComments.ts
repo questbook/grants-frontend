@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { defaultChainId } from 'src/constants/chains'
 import { GetCommentsQuery, useGetCommentsQuery } from 'src/generated/graphql'
-import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
+import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
 import { usePiiForComment } from 'src/libraries/utils/pii'
 import { WebwalletContext } from 'src/pages/_app'
