@@ -1,7 +1,7 @@
 import { Button, Flex, IconButton, Text } from '@chakra-ui/react'
-import { BackArrow } from 'src/v2/assets/custom chakra icons/Arrows/BackArrow'
-import { Cancel } from 'src/v2/assets/custom chakra icons/Cancel'
-import { ErrorAlert } from 'src/v2/assets/custom chakra icons/ErrorAlertV2'
+import { BackArrow } from 'src/libraries/assets/custom chakra icons/Arrows/BackArrow'
+import { Cancel } from 'src/libraries/assets/custom chakra icons/Cancel'
+import { ErrorAlert } from 'src/libraries/assets/custom chakra icons/ErrorAlertV2'
 
 const VerifySignerErrorState = ({
 	onBack,

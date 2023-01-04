@@ -1,6 +1,6 @@
 import { AlertDialogOverlay, Box, Button, Flex, HStack, Modal, ModalBody, ModalContent, ModalHeader, Text, VStack } from '@chakra-ui/react'
-import { CheckCircle } from 'src/v2/assets/custom chakra icons/CheckCircle'
-import { ExternalLink } from 'src/v2/assets/custom chakra icons/ExternalLink'
+import { CheckCircle } from 'src/libraries/assets/custom chakra icons/CheckCircle'
+import { ExternalLink } from 'src/libraries/assets/custom chakra icons/ExternalLink'
 
 interface Props {
     isOpen: boolean

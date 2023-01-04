@@ -3,7 +3,7 @@ import { Box, Divider, Flex, Image, Switch, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { formatAddress } from 'src/utils/formattingUtils'
-import { getSafeURL } from 'src/v2/utils/gnosisUtils'
+import { getSafeURL } from 'src/libraries/utils/gnosisUtils'
 
 type DomainCardProps = {
 	logo: string

@@ -8,6 +8,8 @@ import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
+import { getGnosisTansactionLink } from 'src/libraries/utils/gnosisUtils'
+import { getProposalUrl } from 'src/libraries/utils/phantomUtils'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import PayFromChoose from 'src/screens/dashboard/_components/FundBuilder/PayFromChoose'
 import PayWithChoose from 'src/screens/dashboard/_components/FundBuilder/PayWithChoose'
@@ -21,8 +23,6 @@ import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Cont
 import { getFieldString } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { getGnosisTansactionLink } from 'src/v2/utils/gnosisUtils'
-import { getProposalUrl } from 'src/v2/utils/phantomUtils'
 
 function FundBuilderDrawer() {
 	const buildComponent = () => {

@@ -9,6 +9,8 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
+import { getGnosisTansactionLink } from 'src/libraries/utils/gnosisUtils'
+import { getProposalUrl } from 'src/libraries/utils/phantomUtils'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import MilestoneChoose from 'src/screens/dashboard/_components/FundBuilder/MilestoneChoose'
 import PaidByWallet from 'src/screens/dashboard/_components/FundBuilder/PaidByWallet'
@@ -22,8 +24,6 @@ import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Cont
 import { getFieldString } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { getGnosisTansactionLink } from 'src/v2/utils/gnosisUtils'
-import { getProposalUrl } from 'src/v2/utils/phantomUtils'
 
 function FundBuilderModal() {
 	const buildComponent = () => {

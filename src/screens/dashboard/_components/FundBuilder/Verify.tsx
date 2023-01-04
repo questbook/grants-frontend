@@ -7,9 +7,9 @@ import logger from 'src/libraries/logger'
 import ConnectWalletButton from 'src/libraries/ui/VerifySignerModal/ConnectWalletButton'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
-import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
-import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/PhantomLogo'
-import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
+import { MetamaskFox } from 'src/libraries/assets/custom chakra icons/SupportedWallets/MetamaskFox'
+import { PhantomLogo } from 'src/libraries/assets/custom chakra icons/SupportedWallets/PhantomLogo'
+import { WalletConnectLogo } from 'src/libraries/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
 import { useAccount, useConnect, useDisconnect, useNetwork, useSwitchNetwork } from 'wagmi'
 
 const availableWallets = [{

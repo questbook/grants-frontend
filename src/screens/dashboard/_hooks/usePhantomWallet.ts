@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { PhantomProvider, WindowWithSolana } from 'src/v2/types/phantom'
+import { PhantomProvider, WindowWithSolana } from 'src/libraries/utils/types'
 
 export default function usePhantomWallet() {
 

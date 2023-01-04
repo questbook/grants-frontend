@@ -1,7 +1,7 @@
 import { ReactNode } from 'react'
 import { Box, Text } from '@chakra-ui/react'
 import { PlaceholderProps, Select, SelectComponentsConfig } from 'chakra-react-select'
-import { SelectDropdownArrow } from 'src/v2/assets/custom chakra icons/Arrows/SelectDropdownArrow'
+import { SelectDropdownArrow } from 'src/libraries/assets/custom chakra icons/Arrows/SelectDropdownArrow'
 
 type DropdownSelectProps<T> = {
 	options: T[]
