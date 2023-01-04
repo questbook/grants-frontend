@@ -46,7 +46,8 @@ export default function Dropdown<T>({ options, placeholder, makeOption, singleVa
 					menuList: (provided) => ({
 						...provided,
 						py: '0',
-						border: 'none'
+						border: 'none',
+						width: 'fit-content',
 					}),
 					menu: (provided) => ({
 						...provided,
@@ -59,6 +60,7 @@ export default function Dropdown<T>({ options, placeholder, makeOption, singleVa
 						...provided,
 						display: 'flex',
 						padding: '0px',
+						justifyContent: 'flex-start',
 					}),
 				}
 			}
