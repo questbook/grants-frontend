@@ -31,7 +31,7 @@ import type {
 export interface CommunicationAbiInterface extends utils.Interface {
   functions: {
     "addComment(uint96,address,uint96,bool,string)": FunctionFragment;
-    "addComments(uint96,address,uint96[],bool,string)": FunctionFragment;
+    "addComments(uint96,address,uint96[],bool,string[])": FunctionFragment;
     "applicationReg()": FunctionFragment;
     "createLink(uint256,string,string)": FunctionFragment;
     "initialize()": FunctionFragment;
@@ -81,7 +81,7 @@ export interface CommunicationAbiInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>[],
       PromiseOrValue<boolean>,
-      PromiseOrValue<string>
+      PromiseOrValue<string>[]
     ]
   ): string;
   encodeFunctionData(
@@ -313,7 +313,7 @@ export interface CommunicationAbi extends BaseContract {
       _grantAddress: PromiseOrValue<string>,
       _applicationIds: PromiseOrValue<BigNumberish>[],
       _isPrivate: PromiseOrValue<boolean>,
-      _commentMetadataHash: PromiseOrValue<string>,
+      _commentMetadataHashes: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -381,7 +381,7 @@ export interface CommunicationAbi extends BaseContract {
     _grantAddress: PromiseOrValue<string>,
     _applicationIds: PromiseOrValue<BigNumberish>[],
     _isPrivate: PromiseOrValue<boolean>,
-    _commentMetadataHash: PromiseOrValue<string>,
+    _commentMetadataHashes: PromiseOrValue<string>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -449,7 +449,7 @@ export interface CommunicationAbi extends BaseContract {
       _grantAddress: PromiseOrValue<string>,
       _applicationIds: PromiseOrValue<BigNumberish>[],
       _isPrivate: PromiseOrValue<boolean>,
-      _commentMetadataHash: PromiseOrValue<string>,
+      _commentMetadataHashes: PromiseOrValue<string>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -585,7 +585,7 @@ export interface CommunicationAbi extends BaseContract {
       _grantAddress: PromiseOrValue<string>,
       _applicationIds: PromiseOrValue<BigNumberish>[],
       _isPrivate: PromiseOrValue<boolean>,
-      _commentMetadataHash: PromiseOrValue<string>,
+      _commentMetadataHashes: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -654,7 +654,7 @@ export interface CommunicationAbi extends BaseContract {
       _grantAddress: PromiseOrValue<string>,
       _applicationIds: PromiseOrValue<BigNumberish>[],
       _isPrivate: PromiseOrValue<boolean>,
-      _commentMetadataHash: PromiseOrValue<string>,
+      _commentMetadataHashes: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

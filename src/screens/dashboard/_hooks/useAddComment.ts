@@ -8,6 +8,7 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import { usePiiForComment } from 'src/libraries/utils/pii'
+import { PIIForCommentType } from 'src/libraries/utils/types'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import useQuickReplies from 'src/screens/dashboard/_hooks/useQuickReplies'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -100,11 +101,13 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 					role,
 				}
 
-				const finalData = role !== 'community' ? await encrypt(json) : json
+				const data: {[appId: string]: PIIForCommentType} = {}
+				data[proposal.id] = json
+				const finalData = role !== 'community' ? await encrypt(data) : data
 
 				logger.info(finalData, 'Encrypted JSON (Comment)')
 
-				const commentHash = (await uploadToIPFS(JSON.stringify(finalData))).hash
+				const commentHash = (await uploadToIPFS(JSON.stringify(finalData[proposal.id]))).hash
 				logger.info({ commentHash }, 'Comment Hash (Comment)')
 
 				const methodArgs = [

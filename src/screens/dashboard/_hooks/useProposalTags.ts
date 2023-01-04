@@ -12,7 +12,7 @@ function useProposalTags({ proposal }: Props) {
 	const { role } = useContext(ApiClientsContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
 
-	const { comments } = useGetComments({ selectedProposal: proposal })
+	const { comments } = useGetComments({ proposal })
 
 	const cutoffTimestamp = 1 * 24 * 60 * 60
 
