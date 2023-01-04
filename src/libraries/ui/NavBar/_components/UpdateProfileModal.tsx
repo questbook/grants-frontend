@@ -98,9 +98,10 @@ function UpdateProfileModal({ isOpen, onClose }: Props) {
 										Email
 									</Text>
 									<FlushedInput
-										placeholder='name@sample.com'
-										value={email}
-										onChange={(e) => setEmail(e.target.value)}
+										placeholder={email.data === '' && email.state === 'loaded' ? 'name@sample.com' : 'Loading...'}
+										value={email.data}
+										isDisabled={email.state === 'loading'}
+										onChange={(e) => setEmail({ data: e.target.value, state: 'loaded' })}
 										fontSize='16px'
 										fontWeight='400'
 										lineHeight='20px'
@@ -147,7 +148,10 @@ function UpdateProfileModal({ isOpen, onClose }: Props) {
 	const { decrypt } = usePiiForWorkspaceMember(workspace?.id, member?.id, member?.publicKey, chainId)
 
 	const [name, setName] = useState<string>('')
-	const [email, setEmail] = useState<string>('')
+	const [email, setEmail] = useState<{data: string, state: 'loading' | 'loaded'}>({ data: '', state: 'loaded' })
+	useEffect(() => {
+		logger.info(email, 'UpdateProfileModal: email')
+	}, [email])
 	const [imageFile, setImageFile] = useState<{file: File | null, hash?: string}>({ file: null })
 
 	useEffect(() => {
@@ -161,15 +165,18 @@ function UpdateProfileModal({ isOpen, onClose }: Props) {
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
 	const [transactionHash, setTransactionHash] = useState<string>('')
 
-	// TODO: Uncomment this once we have the PII decryption working upon subrgaph sync complete
 	useEffect(() => {
+		logger.info('UpdateProfileModal: decryption start')
 		if(member?.pii) {
+			setEmail({ data: '', state: 'loading' })
 			decrypt({ pii: member?.pii }).then((res) => {
 				logger.info({ res }, 'Decrypted PII')
-				setEmail(res?.email ?? '')
+				setEmail({ data: res?.email ?? '', state: 'loaded' })
 			})
+		} else {
+			setEmail({ data: '', state: 'loaded' })
 		}
-	}, [])
+	}, [member?.pii])
 
 	useEffect(() => {
 		if(transactionHash !== '') {
@@ -196,7 +203,7 @@ function UpdateProfileModal({ isOpen, onClose }: Props) {
 		})
 
 	const isDisabled = useMemo(() => {
-		return name === '' || email === '' || !isBiconomyInitialised
+		return name === '' || email.data === '' || !isBiconomyInitialised
 	}, [name, email, isBiconomyInitialised])
 
 	const onClick = async() => {
@@ -206,7 +213,7 @@ function UpdateProfileModal({ isOpen, onClose }: Props) {
 
 		await setupProfile({
 			name,
-			email,
+			email: email.data,
 			imageFile: imageFile.file,
 			role: member?.accessLevel === 'reviewer' ? 1 : 0
 		})

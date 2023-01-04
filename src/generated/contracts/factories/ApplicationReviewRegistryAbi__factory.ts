@@ -552,6 +552,39 @@ const _abi = [
         type: "uint96",
       },
       {
+        internalType: "address",
+        name: "_grantAddress",
+        type: "address",
+      },
+      {
+        internalType: "uint96[]",
+        name: "_applicationIds",
+        type: "uint96[]",
+      },
+      {
+        internalType: "address[]",
+        name: "_reviewers",
+        type: "address[]",
+      },
+      {
+        internalType: "bool[]",
+        name: "_active",
+        type: "bool[]",
+      },
+    ],
+    name: "assignReviewersBatch",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint96",
+        name: "_workspaceId",
+        type: "uint96",
+      },
+      {
         internalType: "uint96",
         name: "_applicationId",
         type: "uint96",
@@ -756,6 +789,25 @@ const _abi = [
         type: "address",
       },
     ],
+    name: "lastAssignedApplicationIndices",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
     name: "lastAssignedReviewerIndices",
     outputs: [
       {
@@ -862,6 +914,24 @@ const _abi = [
   {
     inputs: [],
     name: "renounceOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint96",
+        name: "_workspaceId",
+        type: "uint96",
+      },
+      {
+        internalType: "address",
+        name: "_grantAddress",
+        type: "address",
+      },
+    ],
+    name: "resetAllRubrics",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

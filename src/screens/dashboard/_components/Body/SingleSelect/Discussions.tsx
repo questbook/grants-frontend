@@ -260,7 +260,8 @@ function Discussions() {
 			return true
 		}
 
-		return convertToRaw(text.getCurrentContent()).blocks[0].text.length === 0
+		const raw = convertToRaw(text.getCurrentContent())
+		return raw.blocks.some((block) => block.text.length > 0)
 	}, [text, step])
 
 	const getCommentDisplayName = (comment: CommentType) => {
