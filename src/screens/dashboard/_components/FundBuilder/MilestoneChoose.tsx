@@ -65,6 +65,8 @@ function MilestoneChoose({ proposal, index, ...props }: Props) {
 			{...innerProps}
 			direction='column'
 			cursor='pointer'
+			minWidth='max-content'
+			p={2}
 		>
 			<Text
 				color='gray.4'
@@ -74,7 +76,8 @@ function MilestoneChoose({ proposal, index, ...props }: Props) {
 			</Text>
 			<Text
 				mt={1}
-				variant='v2_body'>
+				variant='v2_body'
+			>
 				{data?.title}
 			</Text>
 		</Flex>

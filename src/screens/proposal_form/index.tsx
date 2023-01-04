@@ -32,12 +32,12 @@ function ProposalForm() {
 		return (
 			<Flex
 				w='100%'
-				// h='calc(100vh - 64px)'
+				h='calc(100vh - 64px)'
 				align='start'
 				justify='center'>
 				<Flex
 					w='90%'
-					// h='calc(100vh - 100px)'
+					h='calc(100vh - 100px)'
 					bg='white'
 					boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
 					overflowY='auto'
