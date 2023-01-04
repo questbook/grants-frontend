@@ -24,9 +24,17 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 	const { subgraphClients } = useContext(ApiClientsContext)!
 	const { webwallet } = useContext(WebwalletContext)!
 
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({ chainId: chainId?.toString()! })
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({ chainId: chainId?.toString()! })
 	const { nonce } = useQuestbookAccount()
 	const contract = useQBContract(contractName, chainId)
+
+	const isBiconomyInitialised = useMemo(() => {
+		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && biconomy?.networkId) {
+			return true
+		} else {
+			return false
+		}
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading])
 
 	const toast = useCustomToast()
 
@@ -88,7 +96,7 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 		}
 	}, [contract, biconomy, biconomyWalletClient, scwAddress, webwallet, chainId, nonce])
 
-	return { call: useMemo(() => call, []) }
+	return { call: useMemo(() => call, [contract, biconomy, biconomyWalletClient, scwAddress, webwallet, chainId, nonce]), isBiconomyInitialised }
 }
 
 export default useFunctionCall

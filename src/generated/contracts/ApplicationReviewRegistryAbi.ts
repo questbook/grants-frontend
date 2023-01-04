@@ -34,6 +34,7 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
     "applicationReg()": FunctionFragment;
     "applicationsToGrant(address,uint256)": FunctionFragment;
     "assignReviewers(uint96,uint96,address,address[],bool[])": FunctionFragment;
+    "assignReviewersBatch(uint96,address,uint96[],address[],bool[])": FunctionFragment;
     "assignReviewersRoundRobin(uint96,uint96,address)": FunctionFragment;
     "disableAutoAssignment(uint96,address)": FunctionFragment;
     "enableAutoAssignmentOfReviewers(uint96,address,address[],uint96)": FunctionFragment;
@@ -43,12 +44,14 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
     "hasAutoAssigningEnabled(address)": FunctionFragment;
     "initialize()": FunctionFragment;
     "isAutoAssigningEnabled(address)": FunctionFragment;
+    "lastAssignedApplicationIndices(address)": FunctionFragment;
     "lastAssignedReviewerIndices(address)": FunctionFragment;
     "markPaymentDone(uint96,uint96[],address,uint96[],address,uint256,string)": FunctionFragment;
     "migrateWallet(address,address,uint96)": FunctionFragment;
     "owner()": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
+    "resetAllRubrics(uint96,address)": FunctionFragment;
     "reviewCount()": FunctionFragment;
     "reviewPaymentsStatus(uint96)": FunctionFragment;
     "reviewerAssignmentCounts(address,address)": FunctionFragment;
@@ -72,6 +75,7 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
       | "applicationReg"
       | "applicationsToGrant"
       | "assignReviewers"
+      | "assignReviewersBatch"
       | "assignReviewersRoundRobin"
       | "disableAutoAssignment"
       | "enableAutoAssignmentOfReviewers"
@@ -81,12 +85,14 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
       | "hasAutoAssigningEnabled"
       | "initialize"
       | "isAutoAssigningEnabled"
+      | "lastAssignedApplicationIndices"
       | "lastAssignedReviewerIndices"
       | "markPaymentDone"
       | "migrateWallet"
       | "owner"
       | "proxiableUUID"
       | "renounceOwnership"
+      | "resetAllRubrics"
       | "reviewCount"
       | "reviewPaymentsStatus"
       | "reviewerAssignmentCounts"
@@ -122,6 +128,16 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
+      PromiseOrValue<string>[],
+      PromiseOrValue<boolean>[]
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "assignReviewersBatch",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>[],
       PromiseOrValue<string>[],
       PromiseOrValue<boolean>[]
     ]
@@ -179,6 +195,10 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "lastAssignedApplicationIndices",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "lastAssignedReviewerIndices",
     values: [PromiseOrValue<string>]
   ): string;
@@ -210,6 +230,10 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "resetAllRubrics",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "reviewCount",
@@ -306,6 +330,10 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "assignReviewersBatch",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "assignReviewersRoundRobin",
     data: BytesLike
   ): Result;
@@ -339,6 +367,10 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "lastAssignedApplicationIndices",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "lastAssignedReviewerIndices",
     data: BytesLike
   ): Result;
@@ -357,6 +389,10 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "resetAllRubrics",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -675,6 +711,15 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    assignReviewersBatch(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _applicationIds: PromiseOrValue<BigNumberish>[],
+      _reviewers: PromiseOrValue<string>[],
+      _active: PromiseOrValue<boolean>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     assignReviewersRoundRobin(
       _workspaceId: PromiseOrValue<BigNumberish>,
       _applicationId: PromiseOrValue<BigNumberish>,
@@ -735,6 +780,11 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    lastAssignedApplicationIndices(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     lastAssignedReviewerIndices(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -763,6 +813,12 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    resetAllRubrics(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -884,6 +940,15 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  assignReviewersBatch(
+    _workspaceId: PromiseOrValue<BigNumberish>,
+    _grantAddress: PromiseOrValue<string>,
+    _applicationIds: PromiseOrValue<BigNumberish>[],
+    _reviewers: PromiseOrValue<string>[],
+    _active: PromiseOrValue<boolean>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   assignReviewersRoundRobin(
     _workspaceId: PromiseOrValue<BigNumberish>,
     _applicationId: PromiseOrValue<BigNumberish>,
@@ -944,6 +1009,11 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  lastAssignedApplicationIndices(
+    arg0: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   lastAssignedReviewerIndices(
     arg0: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -972,6 +1042,12 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
   proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  resetAllRubrics(
+    _workspaceId: PromiseOrValue<BigNumberish>,
+    _grantAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1093,6 +1169,15 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    assignReviewersBatch(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _applicationIds: PromiseOrValue<BigNumberish>[],
+      _reviewers: PromiseOrValue<string>[],
+      _active: PromiseOrValue<boolean>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     assignReviewersRoundRobin(
       _workspaceId: PromiseOrValue<BigNumberish>,
       _applicationId: PromiseOrValue<BigNumberish>,
@@ -1151,6 +1236,11 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    lastAssignedApplicationIndices(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     lastAssignedReviewerIndices(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1179,6 +1269,12 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    resetAllRubrics(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     reviewCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1483,6 +1579,15 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    assignReviewersBatch(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _applicationIds: PromiseOrValue<BigNumberish>[],
+      _reviewers: PromiseOrValue<string>[],
+      _active: PromiseOrValue<boolean>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     assignReviewersRoundRobin(
       _workspaceId: PromiseOrValue<BigNumberish>,
       _applicationId: PromiseOrValue<BigNumberish>,
@@ -1535,6 +1640,11 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    lastAssignedApplicationIndices(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     lastAssignedReviewerIndices(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1563,6 +1673,12 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    resetAllRubrics(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1675,6 +1791,15 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    assignReviewersBatch(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _applicationIds: PromiseOrValue<BigNumberish>[],
+      _reviewers: PromiseOrValue<string>[],
+      _active: PromiseOrValue<boolean>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     assignReviewersRoundRobin(
       _workspaceId: PromiseOrValue<BigNumberish>,
       _applicationId: PromiseOrValue<BigNumberish>,
@@ -1727,6 +1852,11 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    lastAssignedApplicationIndices(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     lastAssignedReviewerIndices(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1755,6 +1885,12 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    resetAllRubrics(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

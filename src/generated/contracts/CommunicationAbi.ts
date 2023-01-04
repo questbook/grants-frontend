@@ -31,6 +31,7 @@ import type {
 export interface CommunicationAbiInterface extends utils.Interface {
   functions: {
     "addComment(uint96,address,uint96,bool,string)": FunctionFragment;
+    "addComments(uint96,address,uint96[],bool,string)": FunctionFragment;
     "applicationReg()": FunctionFragment;
     "createLink(uint256,string,string)": FunctionFragment;
     "initialize()": FunctionFragment;
@@ -48,6 +49,7 @@ export interface CommunicationAbiInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "addComment"
+      | "addComments"
       | "applicationReg"
       | "createLink"
       | "initialize"
@@ -68,6 +70,16 @@ export interface CommunicationAbiInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>,
+      PromiseOrValue<string>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addComments",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>[],
       PromiseOrValue<boolean>,
       PromiseOrValue<string>
     ]
@@ -123,6 +135,10 @@ export interface CommunicationAbiInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "addComment", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "addComments",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "applicationReg",
     data: BytesLike
@@ -292,6 +308,15 @@ export interface CommunicationAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    addComments(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _applicationIds: PromiseOrValue<BigNumberish>[],
+      _isPrivate: PromiseOrValue<boolean>,
+      _commentMetadataHash: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     applicationReg(overrides?: CallOverrides): Promise<[string]>;
 
     createLink(
@@ -351,6 +376,15 @@ export interface CommunicationAbi extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  addComments(
+    _workspaceId: PromiseOrValue<BigNumberish>,
+    _grantAddress: PromiseOrValue<string>,
+    _applicationIds: PromiseOrValue<BigNumberish>[],
+    _isPrivate: PromiseOrValue<boolean>,
+    _commentMetadataHash: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   applicationReg(overrides?: CallOverrides): Promise<string>;
 
   createLink(
@@ -405,6 +439,15 @@ export interface CommunicationAbi extends BaseContract {
       _workspaceId: PromiseOrValue<BigNumberish>,
       _grantAddress: PromiseOrValue<string>,
       _applicationId: PromiseOrValue<BigNumberish>,
+      _isPrivate: PromiseOrValue<boolean>,
+      _commentMetadataHash: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    addComments(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _applicationIds: PromiseOrValue<BigNumberish>[],
       _isPrivate: PromiseOrValue<boolean>,
       _commentMetadataHash: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -537,6 +580,15 @@ export interface CommunicationAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    addComments(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _applicationIds: PromiseOrValue<BigNumberish>[],
+      _isPrivate: PromiseOrValue<boolean>,
+      _commentMetadataHash: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     applicationReg(overrides?: CallOverrides): Promise<BigNumber>;
 
     createLink(
@@ -592,6 +644,15 @@ export interface CommunicationAbi extends BaseContract {
       _workspaceId: PromiseOrValue<BigNumberish>,
       _grantAddress: PromiseOrValue<string>,
       _applicationId: PromiseOrValue<BigNumberish>,
+      _isPrivate: PromiseOrValue<boolean>,
+      _commentMetadataHash: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addComments(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _applicationIds: PromiseOrValue<BigNumberish>[],
       _isPrivate: PromiseOrValue<boolean>,
       _commentMetadataHash: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

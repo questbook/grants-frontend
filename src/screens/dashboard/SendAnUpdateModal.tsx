@@ -1,5 +1,9 @@
-import { useContext } from 'react'
-import { Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text, Textarea } from '@chakra-ui/react'
+import { useContext, useMemo, useState } from 'react'
+import { Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
+import { convertToRaw, EditorState } from 'draft-js'
+import logger from 'src/libraries/logger'
+import TextEditor from 'src/libraries/ui/RichTextEditor/textEditor'
+import useAddComments from 'src/screens/dashboard/_hooks/useAddComments'
 import useQuickReplies from 'src/screens/dashboard/_hooks/useQuickReplies'
 import { DashboardContext, SendAnUpdateContext } from 'src/screens/dashboard/Context'
 
@@ -46,72 +50,28 @@ function SendAnUpdateModal() {
 										<Flex
 											key={index}
 											mt={3}>
-											{
-												reply1 && (
-													<Button
-														key={index}
-														// w='100%'
-														justifyContent='start'
-														py={1}
-														px={3}
-														bg='gray.2'
-														borderRadius='2px'
-														leftIcon={
-															<Image
-																boxSize='24px'
-																src={reply1.icon} />
-														}
-													>
-														<Text fontWeight='400'>
-															{reply1.title}
-														</Text>
-													</Button>
-												)
-											}
-											{
-												reply2 && (
-													<Button
-														key={index + 1}
-														ml={3}
-														// w='100%'
-														justifyContent='start'
-														py={1}
-														px={3}
-														bg='gray.2'
-														borderRadius='2px'
-														leftIcon={
-															<Image
-																boxSize='24px'
-																src={reply2.icon} />
-														}
-													>
-														<Text fontWeight='400'>
-															{reply2.title}
-														</Text>
-													</Button>
-												)
-											}
+											{reply1 && tagButton(reply1.icon, reply1.title, index * 2)}
+											{reply2 && tagButton(reply2.icon, reply2.title, index * 2 + 1)}
 										</Flex>
 									)
 								})
 							}
 						</Flex>
-						<Textarea
-							w='100%'
-							mt={6}
-							textAlign='left'
-							placeholder='Ask a question or post an update'
-							fontSize='16px'
-							fontWeight='400'
-							lineHeight='24px'
-							size='sm'
-							resize='none'
-						/>
+						<TextEditor
+							value={text}
+							onChange={setText}
+							placeholder='Add a comment here' />
 
 						<Button
 							mt={8}
 							w='100%'
-							variant='primaryLarge'>
+							variant='primaryLarge'
+							isDisabled={isDisabled}
+							onClick={
+								async() => {
+									await addComments(text, tags)
+								}
+							}>
 							Post
 						</Button>
 					</Flex>
@@ -120,9 +80,69 @@ function SendAnUpdateModal() {
 		)
 	}
 
+	const tagButton = (icon: string, title: string, index: number) => {
+		return (
+			<Button
+				key={index}
+				ml={3}
+				// w='100%'
+				justifyContent='start'
+				py={1}
+				px={3}
+				borderRadius='2px'
+				leftIcon={
+					<Image
+						boxSize='24px'
+						src={icon} />
+				}
+				bg={index in selectedTags ? 'accent.azure' : 'gray.2'}
+				onClick={
+					() => {
+						const tags = { ...selectedTags }
+						logger.info('tags: ', tags)
+						if(tags[index]) {
+							delete tags[index]
+						} else {
+							tags[index] = true
+						}
+
+						setSelectedTags(tags)
+					}
+				}
+			>
+				<Text
+					fontWeight='400'
+					color={index in selectedTags ? 'white' : 'black.1'}>
+					{title}
+				</Text>
+			</Button>
+		)
+	}
+
 	const { isModalOpen, setIsModalOpen } = useContext(SendAnUpdateContext)!
 	const { role } = useContext(DashboardContext)!
 	const { quickReplies } = useQuickReplies()
+	const [ text, setText ] = useState<EditorState>(EditorState.createEmpty())
+
+	const [ selectedTags, setSelectedTags ] = useState<{[key: number]: boolean}>({})
+
+	const tags = useMemo(() => {
+		return Object.keys(selectedTags).map((key) => parseInt(key, 10))
+	}, [selectedTags])
+
+	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
+	const [, setTransactionHash] = useState<string>('')
+
+	const { addComments, isBiconomyInitialised } = useAddComments({ setStep: setNetworkTransactionModalStep, setTransactionHash })
+
+	const isDisabled = useMemo(() => {
+		if(!isBiconomyInitialised || networkTransactionModalStep !== undefined) {
+			return true
+		}
+
+		const raw = convertToRaw(text.getCurrentContent())
+		return raw.blocks.some((block) => block.text.length > 0)
+	}, [text, networkTransactionModalStep])
 
 	return buildComponent()
 }

@@ -65,7 +65,7 @@ function Reviews() {
 						)
 					}
 
-					{(proposal?.applicationReviewers?.length || 0) > 0 && voteGraph()}
+					{(selectedGrant?.reviewType === 'voting' && (proposal?.applicationReviewers?.length || 0) > 0) && voteGraph()}
 
 					{
 						proposal?.applicationReviewers?.map((reviewer, index) => {
