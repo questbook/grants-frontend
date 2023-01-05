@@ -10,7 +10,6 @@ query getGrantDetailsById($grantID: ID!) {
     details
     link
     docIpfsHash
-    numberOfReviewersPerApplication
     payoutType
     reviewType
     rubric {

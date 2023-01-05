@@ -73,7 +73,7 @@ function useSetRubrics({ setNetworkTransactionModalStep, setTransactionHash }: P
 
 			await call({
 				method: 'setRubrics',
-				args: [workspace.id, selectedGrant.id, selectedGrant.numberOfReviewersPerApplication ?? 0, hash]
+				args: [workspace.id, selectedGrant.id, hash]
 			})
 		},
 		[applicationReviewRegistry, selectedGrant, workspace],
