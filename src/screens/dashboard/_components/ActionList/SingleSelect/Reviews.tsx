@@ -184,28 +184,21 @@ function Reviews() {
 										fontWeight='500'>
 										Assign Reviewers
 									</Text>
-									<DashboardInput
-										value={numberOfReviewersPerApplication ? numberOfReviewersPerApplication : ''}
-										placeholder='Number of reviewers per application'
-										onChange={
-											(e) => {
-												if(!e.target.value) {
-													setNumberOfReviewersPerApplication(undefined)
-													return
-												}
-
-												const val = parseInt(e.target.value)
-												if(val > 0) {
-													setNumberOfReviewersPerApplication(val)
-												}
-											}
-										}
-										type='number' />
 									<Text
-										mt={6}
-										variant='v2_body'
-										fontWeight='500'>
-										Select Members
+										mt={2}
+										color='black.3'
+										variant='v2_body' >
+										This will be applicable
+										{' '}
+										<Text
+											variant='v2_body'
+											color='black.3'
+											display='inline-block'
+											fontWeight='500'>
+											only
+										</Text>
+										{' '}
+										for this proposal.
 									</Text>
 									<DashboardInput
 										value={searchMemberName}
@@ -266,7 +259,8 @@ function Reviews() {
 														borderBottom='1px solid #E7E4DD'
 														py={3}>
 														<Checkbox
-															isChecked={m.id in members}
+															isChecked={m.id in members || proposal?.doneReviewerAddresses?.indexOf(m.actorId) !== -1}
+															isDisabled={proposal?.doneReviewerAddresses?.indexOf(m.actorId) !== -1}
 															onChange={
 																() => {
 																	const newMap = { ...members }
@@ -299,10 +293,29 @@ function Reviews() {
 											variant='primaryMedium'
 											isDisabled={networkTransactionModalStep !== undefined}
 											onClick={
-												() => {
-													if(numberOfReviewersPerApplication) {
-														assignReviewers(Object.keys(members).map(m => m.split('.')[1]), numberOfReviewersPerApplication)
+												async() => {
+													const selectedReviewers: string[] = []
+													const active: boolean[] = []
+													for(const reviewer of proposal?.applicationReviewers ?? []) {
+														if(proposal?.doneReviewerAddresses.indexOf(reviewer?.member?.actorId.toLowerCase()) !== -1) {
+															continue
+														}
+
+														if(!members[reviewer.id]) {
+															selectedReviewers.push(reviewer.id)
+															active.push(false)
+														}
 													}
+
+													Object.keys(members).forEach(m => {
+														const member = workspace?.members?.find(m2 => m2.id === m)
+														if(member) {
+															selectedReviewers.push(member.actorId)
+															active.push(true)
+														}
+													})
+
+													await assignReviewers(selectedReviewers, active)
 												}
 											}>
 											<Text
@@ -345,15 +358,15 @@ function Reviews() {
 					Reviewer
 				</Text>
 				{
-					(selectedGrant?.numberOfReviewersPerApplication || 0) > 0 && (
+					(proposal?.applicationReviewers?.length || 0) > 0 && (
 						<Text
 							variant='v2_body'>
-							{selectedGrant?.numberOfReviewersPerApplication}
+							{proposal?.applicationReviewers?.length}
 						</Text>
 					)
 				}
-				{(selectedGrant?.numberOfReviewersPerApplication || 0) > 0 && <Box ml='auto' />}
-				{assignReviewerPopup(assignReviewerPopoverRef, selectedGrant?.numberOfReviewersPerApplication ? 'edit' : 'setup')}
+				{(proposal?.applicationReviewers?.length || 0) > 0 && <Box ml='auto' />}
+				{assignReviewerPopup(assignReviewerPopoverRef, (proposal?.applicationReviewers?.length || 0) > 0 ? 'edit' : 'setup')}
 			</Flex>
 		)
 	}
@@ -428,6 +441,22 @@ function Reviews() {
 										variant='v2_body'
 										fontWeight='500'>
 										Review By
+									</Text>
+									<Text
+										mt={2}
+										color='black.3'
+										variant='v2_body' >
+										This will be applicable for
+										{' '}
+										<Text
+											variant='v2_body'
+											color='black.3'
+											display='inline-block'
+											fontWeight='500'>
+											all
+										</Text>
+										{' '}
+										the proposals.
 									</Text>
 									<Divider mt={3} />
 
@@ -580,20 +609,21 @@ function Reviews() {
 					Review With
 				</Text>
 				{
-					selectedGrant?.reviewType && (
+					(selectedGrant?.reviewType || (selectedGrant?.rubric && selectedGrant?.rubric?.items?.length > 0)) && (
 						<Text
 							variant='v2_body'>
-							{selectedGrant.reviewType === 'rubrics' ? 'Rubrics' : 'Voting'}
+							{selectedGrant.reviewType === 'voting' ? 'Voting' : 'Rubrics'}
 						</Text>
 					)
 				}
-				{selectedGrant?.reviewType && <Box ml='auto' />}
-				{setReviewTypePopup(setReviewTypePopoverRef, selectedGrant?.reviewType ? 'edit' : 'setup')}
+				{(selectedGrant?.reviewType || (selectedGrant?.rubric && selectedGrant?.rubric?.items?.length > 0)) && <Box ml='auto' />}
+				{setReviewTypePopup(setReviewTypePopoverRef, (selectedGrant?.reviewType || (selectedGrant?.rubric && selectedGrant?.rubric?.items?.length > 0)) ? 'edit' : 'setup')}
 			</Flex>
 		)
 	}
 
 	const reviewerItem = (reviewer: ProposalType['applicationReviewers'][number]['member'], review: IReviewFeedback | undefined, index: number) => {
+		logger.info({ reviewer, review, done: proposal?.doneReviewerAddresses }, 'Reviewer Item')
 		return (
 			<Flex
 				mt={index === 0 ? 5 : 3}
@@ -766,7 +796,6 @@ function Reviews() {
 	const [, setTransactionHash] = useState<string>('')
 
 	const assignReviewerPopoverRef = useRef<HTMLButtonElement>(null)
-	const [numberOfReviewersPerApplication, setNumberOfReviewersPerApplication] = useState<number>()
 	const [searchMemberName, setSearchMemberName] = useState<string>('')
 	const [members, setMembers] = useState<{ [id: string]: boolean }>({})
 	const { assignReviewers } = useAssignReviewers()
@@ -779,22 +808,6 @@ function Reviews() {
 	const { setRubrics } = useSetRubrics({ setNetworkTransactionModalStep, setTransactionHash })
 
 	useEffect(() => {
-		if(selectedGrant?.numberOfReviewersPerApplication !== null) {
-			setNumberOfReviewersPerApplication(selectedGrant?.numberOfReviewersPerApplication)
-		}
-
-		if(selectedGrant?.autoAssignReviewers) {
-			const currMembers: {[key: string]: boolean} = {}
-			logger.info('Current member state 1: ', currMembers)
-			for(const reviewer of selectedGrant?.autoAssignReviewers) {
-				currMembers[reviewer.id] = true
-			}
-
-			logger.info('Current member state 2: ', currMembers)
-
-			setMembers(currMembers)
-		}
-
 		setReviewType(selectedGrant?.reviewType === 'voting' ? ReviewType.Voting : ReviewType.Rubrics)
 
 		if(selectedGrant?.rubric?.items) {
@@ -822,6 +835,19 @@ function Reviews() {
 
 	useEffect(() => {
 		setReviewersExpanded(Array(proposal?.applicationReviewers?.length).fill(false))
+
+		if(proposal?.applicationReviewers) {
+			const currMembers: {[key: string]: boolean} = {}
+			logger.info('Current member state 1: ', currMembers)
+			for(const reviewer of proposal?.applicationReviewers) {
+				currMembers[reviewer.member.id] = true
+			}
+
+			logger.info('Current member state 2: ', currMembers)
+
+			setMembers(currMembers)
+		}
+
 	}, [proposal])
 
 	useEffect(() => {

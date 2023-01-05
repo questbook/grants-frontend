@@ -17,7 +17,6 @@ export type RFPForm = {
     allApplicantDetails: ApplicantDetailsFieldType[] | undefined
     link: string
     doc: string
-    numberOfReviewers: number
     reviewMechanism: string
     rubrics: string[]
     payoutMode: string

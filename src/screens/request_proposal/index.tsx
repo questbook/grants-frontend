@@ -93,8 +93,6 @@ function RequestProposal() {
 		case 2:
 			return (
 				<ProposalReview
-					numberOfReviewers={numberOfReviewers}
-					setNumberOfReviewers={setNumberOfReviewers}
 					reviewMechanism={reviewMechanism!}
 					setReviewMechanism={setReviewMechanism}
 					step={step}
@@ -230,7 +228,6 @@ function RequestProposal() {
 	const [step, setStep] = useState(1)
 
 	// State for Proposal Review
-	const [numberOfReviewers, setNumberOfReviewers] = useState(1)
 	const [reviewMechanism, setReviewMechanism] = useState<DropdownOption>({
 		label: '',
 		value: ''
@@ -327,7 +324,6 @@ function RequestProposal() {
 		if(rfpData) {
 			// setRequiredDetails(rfpData.allApplicantDetails)
 			setExtraDetailsFields(rfpData.allApplicantDetails!)
-			setNumberOfReviewers(rfpData.numberOfReviewers)
 			setRubrics(rfpData.rubrics)
 			// setPayoutMode(rfpData.payoutMode)
 			setAmount(parseInt(rfpData.amount))
@@ -657,7 +653,6 @@ function RequestProposal() {
 					Number(workspace?.id).toString(),
 					grantCreateIpfsHash,
 					rubricHash,
-					numberOfReviewers,
 					WORKSPACE_REGISTRY_ADDRESS[network!],
 					APPLICATION_REGISTRY_ADDRESS[network!],
 				]

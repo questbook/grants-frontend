@@ -9,8 +9,6 @@ import SelectDropdown from 'src/screens/request_proposal/_components/SelectDropd
 import { DropdownOption, RFPFormType } from 'src/screens/request_proposal/_utils/types'
 
 interface Props {
-	numberOfReviewers: number
-	setNumberOfReviewers: (value: number) => void
 	reviewMechanism: DropdownOption
 	setReviewMechanism: (value: DropdownOption) => void
 	rubrics: {}

@@ -36,13 +36,6 @@ query getGrantsForReviewer($reviewerAddress: Bytes!, $workspaceId: String!) {
       }
       reviewType
       payoutType
-      numberOfReviewersPerApplication
-      autoAssignReviewers {
-        id
-        actorId
-        profilePictureIpfsHash
-      }
-      shouldAutoAssignReviewers
       pendingApplications: applications(
         where: { pendingReviewerAddresses_contains_nocase: [$reviewerAddress] }
       ) {

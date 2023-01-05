@@ -24,7 +24,6 @@ query grantDetails($grantId: ID!) {
     deadlineS
     payoutType
     reviewType
-    numberOfReviewersPerApplication
     link
     docIpfsHash
     acceptingApplications
