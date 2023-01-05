@@ -28,7 +28,7 @@ function StepIndicator({ step, formType }: Props) {
 			{/* <Container borderRadius='1px' bgColor={step>0 ? 'azure.1' : 'gray.2'} height={5} width={1} alignSelf='flex-end'></Container> */}
 			{/* </Flex> */}
 
-			{
+			{/* {
 				formType !== 'edit' && (
 					<Container
 						width='100%'
@@ -37,7 +37,13 @@ function StepIndicator({ step, formType }: Props) {
 						height={1}
 					/>
 				)
-			}
+			} */}
+			<Container
+				width='100%'
+				borderRadius='1px'
+				bgColor={step > 1 ? 'accent.azure' : 'gray.2'}
+				height={1}
+			/>
 			<Container
 				width='100%'
 				borderRadius='1px'

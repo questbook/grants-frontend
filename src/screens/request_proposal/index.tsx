@@ -27,7 +27,7 @@ import Payouts from 'src/screens/request_proposal/_subscreens/Payouts'
 import ProposalReview from 'src/screens/request_proposal/_subscreens/ProposalReview'
 import ProposalSubmission from 'src/screens/request_proposal/_subscreens/ProposalSubmission'
 import { PayoutMode } from 'src/screens/request_proposal/_utils/constants'
-import { DropdownOption } from 'src/screens/request_proposal/_utils/types'
+import { DropdownOption, GrantFields } from 'src/screens/request_proposal/_utils/types'
 // import { today } from 'src/screens/request_proposal/_utils/utils'
 import { RFPFormContext, RFPFormProvider } from 'src/screens/request_proposal/Context'
 import { ApplicantDetailsFieldType } from 'src/types'
@@ -465,15 +465,14 @@ function RequestProposal() {
 					payout = 'milestones'
 				}
 
-				let review: string
+				let review: string = ''
 				if(reviewMechanism.label === 'Voting') {
 					review = 'voting'
 				} else if(reviewMechanism.label === 'Rubric') {
 					review = 'rubrics'
 				}
 
-				// validate grant data
-				const { hash: grantCreateIpfsHash } = await validateAndUploadToIpfs('GrantCreateRequest', {
+				const data: GrantFields = {
 					title: proposalName!,
 					startDate: startDate!,
 					endDate: endDate!,
@@ -491,12 +490,18 @@ function RequestProposal() {
 						}
 					},
 					payoutType: payout!,
-					reviewType: review!,
 					milestones: milestones!,
 					creatorId: accountDataWebwallet!.address!,
 					workspaceId: workspaceId.toString()!,
 					fields: allApplicantDetails,
-				})
+				}
+
+				if(review) {
+					data['reviewType'] = review
+				}
+
+				// validate grant data
+				const { hash: grantCreateIpfsHash } = await validateAndUploadToIpfs('GrantCreateRequest', data)
 
 				let rubricHash = ''
 				if(reviewMechanism.label === 'Rubric') {
@@ -518,7 +523,6 @@ function RequestProposal() {
 						workspaceId.toString(),
 						grantCreateIpfsHash,
 						rubricHash,
-						numberOfReviewers,
 						WORKSPACE_REGISTRY_ADDRESS[network!],
 						APPLICATION_REGISTRY_ADDRESS[network!],
 					]

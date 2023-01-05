@@ -59,11 +59,7 @@ function Payouts(
 						leftIcon={<BsArrowLeft />}
 						onClick={
 							() => {
-								if(rfpFormSubmissionType === 'edit') {
-									setStep(1)
-								} else {
-									setStep(2)
-								}
+								setStep(2)
 							}
 						}>
 						Back
