@@ -24,6 +24,30 @@ export type RFPForm = {
     milestones: string[]
 }
 
+export type GrantFields = {
+    title: string
+    startDate: string
+    endDate: string
+    fields: any
+    link: string
+    docIpfsHash: string
+    payoutType: string
+    reward: {
+        asset: string
+        committed: string
+        token: {
+            label: string
+            address: string
+            decimal: string
+            iconHash: string
+        }
+    }
+    creatorId: string
+    workspaceId: string
+    reviewType?: string
+    milestones?: string[]
+}
+
 export type RubricType = { [key: number]: { title: string, details: string, maximumPoints: number } }
 
 export type DropdownOption = {

@@ -23,6 +23,8 @@ interface Props {
 
 function ProposalReview(
 	{
+		// numberOfReviewers,
+		// setNumberOfReviewers,
 		reviewMechanism,
 		setReviewMechanism,
 		rubricInputValues,
@@ -196,7 +198,7 @@ function ProposalReview(
 						<Button
 							display={rfpFormSubmissionType === 'edit' ? 'none' : 'block'}
 							variant='link'
-							onClick={() => setStep(3)}>
+							onClick={handleSkip}>
 							Skip for now
 						</Button>
 						<Button
@@ -237,6 +239,14 @@ function ProposalReview(
 			label: item.label,
 			value: item.value
 		})
+	}
+
+	const handleSkip = () => {
+		setReviewMechanism({
+			label: '',
+			value: ''
+		})
+		setStep(3)
 	}
 
 	const handleOnClickContinue = () => {
