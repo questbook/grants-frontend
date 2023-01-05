@@ -8,6 +8,7 @@ import useChainId from 'src/hooks/utils/useChainId'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { validateAndUploadToIpfs } from 'src/libraries/validator'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { GrantFields } from 'src/screens/request_proposal/_utils/types'
 import { RFPFormContext } from 'src/screens/request_proposal/Context'
 import { ApplicantDetailsFieldType } from 'src/types'
 import getErrorMessage from 'src/utils/errorUtils'
@@ -86,7 +87,7 @@ export default function useUpdateRFP(setCurrentStep: (step: number | undefined) 
 
 		setLoading(true)
 
-		const { proposalName, startDate, endDate, allApplicantDetails, link, reviewMechanism, payoutMode, amount, milestones } = RFPEditFormData
+		const { proposalName, startDate, endDate, rubrics, allApplicantDetails, link, reviewMechanism, payoutMode, amount, milestones } = RFPEditFormData
 		const allFieldsObject: {[key: string]: ApplicantDetailsFieldType} = {}
 
 		if(allApplicantDetails) {
@@ -95,7 +96,18 @@ export default function useUpdateRFP(setCurrentStep: (step: number | undefined) 
 			}
 		}
 
-		const processedData = {
+		const processedRubrics: { [key: number]: { title: string, details: string, maximumPoints: number } } = {}
+		if(rubrics) {
+			Object.keys(rubrics).forEach((key, index) => {
+				processedRubrics[index] = {
+					title: rubrics[index],
+					details: '',
+					maximumPoints: 5
+				}
+			})
+		}
+
+		const processedData: GrantFields = {
 			title: proposalName,
 			startDate: startDate,
 			endDate: endDate,
@@ -103,7 +115,7 @@ export default function useUpdateRFP(setCurrentStep: (step: number | undefined) 
 			link: link,
 			docIpfsHash: '',
 			payoutType: payoutMode,
-			reviewType: reviewMechanism,
+			// reviewType: reviewMechanism,
 			reward: {
 				asset: USD_ASSET!,
 				committed: amount.toString()!,
@@ -114,10 +126,19 @@ export default function useUpdateRFP(setCurrentStep: (step: number | undefined) 
 					iconHash: USD_ICON
 				}
 			},
-			milestones: milestones,
+			// milestones: milestones,
 			creatorId: accountDataWebwallet!.address!,
 			workspaceId: Number(workspaceId).toString(),
 		}
+
+		if(reviewMechanism) {
+			processedData['reviewType'] = reviewMechanism
+		}
+
+		if(milestones) {
+			processedData['milestones'] = milestones
+		}
+
 		try {
 			setIsNetworkTransactionModalOpen(true)
 			setCurrentStep(0)
@@ -133,8 +154,25 @@ export default function useUpdateRFP(setCurrentStep: (step: number | undefined) 
 
 			logger.info({ rfpUpdateIpfsHash }, 'UpdateWorkspace IPFS')
 
+			let rubricHash = ''
+			if(reviewMechanism === 'rubrics') {
+				logger.info('rubrics', processedRubrics)
+				const { hash: auxRubricHash } = await validateAndUploadToIpfs('RubricSetRequest', {
+					rubric: {
+						rubric: processedRubrics,
+						isPrivate: false
+					},
+				})
+
+				if(auxRubricHash) {
+					rubricHash = auxRubricHash
+				}
+			}
+
+			logger.info('rubric hash', rubricHash)
+
 			setCurrentStep(1)
-			const methodArgs = [grantId, Number(workspaceId), WORKSPACE_REGISTRY_ADDRESS[chainId], rfpUpdateIpfsHash ]
+			const methodArgs = [grantId, Number(workspaceId), rfpUpdateIpfsHash, rubricHash, WORKSPACE_REGISTRY_ADDRESS[chainId] ]
 			const response = await sendGaslessTransaction(
 				biconomy,
 				grantFactoryContract,
