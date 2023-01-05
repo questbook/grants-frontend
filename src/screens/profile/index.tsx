@@ -1,5 +1,5 @@
 import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react'
-import { Button, Code, Divider, Flex, Heading, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useClipboard, useDisclosure } from '@chakra-ui/react'
+import { Button, Code, Divider, Flex, Heading, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, Textarea, useClipboard, useDisclosure } from '@chakra-ui/react'
 import { logger } from 'ethers'
 import { t } from 'i18next'
 import { useRouter } from 'next/router'
@@ -112,13 +112,9 @@ function Profile() {
 										color='gray.5'>
 										About
 									</Text>
-									{
-								data?.grants[0].workspace.about!.startsWith('{') ? (<TextViewer text={data?.grants[0].workspace.about!} />) : (
 									<Text>
 										{data?.grants[0].workspace.bio}
 									</Text>
-								)
-									}
 								</Flex>
 							)
 						}
@@ -242,6 +238,7 @@ function Profile() {
 										isDisabled={index === activeMenuButton}
 										onClick={
 											() => {
+												logger.info('Menu button clicked', { index })
 												setActiveMenuButton(index)
 											}
 										}
@@ -313,10 +310,14 @@ function Profile() {
 	}
 
 	const renderMoreInfo = () => {
+		logger.info('data', data?.grants[0].workspace.about)
 		return (
-			<TextViewer text={data?.grants[0].workspace.about ?? ''} />
+			<Text>
+				{data?.grants[0].workspace.about ?? 'YOO'}
+			</Text>
 		)
 	}
+
 
 	// Recent proposals tab will be displayed in community view
 
@@ -446,6 +447,10 @@ function Profile() {
 		logger.info('response', response[0]?.grantApplications)
 		setProposalData(response[0]?.grantApplications)
 	}, [workspaceId, chainId])
+
+	useEffect(() => {
+		logger.info('grantProgramData', data?.grants[0].workspace)
+	}, [data?.grants[0]?.workspace])
 
 	useEffect(() => {
 		if(workspaceId && chainId) {
