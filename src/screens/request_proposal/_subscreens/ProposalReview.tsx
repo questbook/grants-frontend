@@ -25,8 +25,8 @@ interface Props {
 
 function ProposalReview(
 	{
-		numberOfReviewers,
-		setNumberOfReviewers,
+		// numberOfReviewers,
+		// setNumberOfReviewers,
 		reviewMechanism,
 		setReviewMechanism,
 		rubricInputValues,
@@ -70,7 +70,7 @@ function ProposalReview(
 						How will proposals be reviewed?
 					</Text>
 
-					<Flex
+					{/* <Flex
 						gap={4}
 						alignItems='baseline'>
 						<Text variant='v2_subheading'>
@@ -92,7 +92,7 @@ function ProposalReview(
 							{' '}
 							for an incoming proposal automatically.
 						</Text>
-					</Flex>
+					</Flex> */}
 
 					<Flex
 						gap={4}
@@ -200,7 +200,7 @@ function ProposalReview(
 						<Button
 							display={rfpFormSubmissionType === 'edit' ? 'none' : 'block'}
 							variant='link'
-							onClick={() => setStep(3)}>
+							onClick={handleSkip}>
 							Skip for now
 						</Button>
 						<Button
@@ -241,6 +241,14 @@ function ProposalReview(
 			label: item.label,
 			value: item.value
 		})
+	}
+
+	const handleSkip = () => {
+		setReviewMechanism({
+			label: '',
+			value: ''
+		})
+		setStep(3)
 	}
 
 	const handleOnClickContinue = () => {
