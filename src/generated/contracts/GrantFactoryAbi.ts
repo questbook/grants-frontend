@@ -31,7 +31,7 @@ import type {
 export interface GrantFactoryAbiInterface extends utils.Interface {
   functions: {
     "applicationReviewReg()": FunctionFragment;
-    "createGrant(uint96,string,string,uint96,address,address)": FunctionFragment;
+    "createGrant(uint96,string,string,address,address)": FunctionFragment;
     "grantImplementation()": FunctionFragment;
     "initialize()": FunctionFragment;
     "owner()": FunctionFragment;
@@ -42,7 +42,7 @@ export interface GrantFactoryAbiInterface extends utils.Interface {
     "setApplicationReviewReg(address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unpause()": FunctionFragment;
-    "updateGrant(address,uint96,address,string)": FunctionFragment;
+    "updateGrant(address,uint96,string,string,address)": FunctionFragment;
     "updateGrantAccessibility(address,uint96,address,bool)": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
@@ -78,7 +78,6 @@ export interface GrantFactoryAbiInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
       PromiseOrValue<string>
     ]
@@ -116,6 +115,7 @@ export interface GrantFactoryAbiInterface extends utils.Interface {
     values: [
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<string>
     ]
@@ -189,7 +189,6 @@ export interface GrantFactoryAbiInterface extends utils.Interface {
     "AdminChanged(address,address)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
     "GrantCreated(address,uint96,string,uint256)": EventFragment;
-    "GrantCreated(address,uint96,string,uint96,uint256)": EventFragment;
     "GrantImplementationUpdated(address,bool,bytes)": EventFragment;
     "GrantUpdatedFromFactory(address,uint96,string,bool,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
@@ -201,12 +200,7 @@ export interface GrantFactoryAbiInterface extends utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "GrantCreated(address,uint96,string,uint256)"
-  ): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "GrantCreated(address,uint96,string,uint96,uint256)"
-  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "GrantCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "GrantImplementationUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "GrantUpdatedFromFactory"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
@@ -237,35 +231,18 @@ export type BeaconUpgradedEvent = TypedEvent<
 
 export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
 
-export interface GrantCreated_address_uint96_string_uint256_EventObject {
+export interface GrantCreatedEventObject {
   grantAddress: string;
   workspaceId: BigNumber;
   metadataHash: string;
   time: BigNumber;
 }
-export type GrantCreated_address_uint96_string_uint256_Event = TypedEvent<
+export type GrantCreatedEvent = TypedEvent<
   [string, BigNumber, string, BigNumber],
-  GrantCreated_address_uint96_string_uint256_EventObject
+  GrantCreatedEventObject
 >;
 
-export type GrantCreated_address_uint96_string_uint256_EventFilter =
-  TypedEventFilter<GrantCreated_address_uint96_string_uint256_Event>;
-
-export interface GrantCreated_address_uint96_string_uint96_uint256_EventObject {
-  grantAddress: string;
-  workspaceId: BigNumber;
-  metadataHash: string;
-  numberOfReviewersPerApplication: BigNumber;
-  time: BigNumber;
-}
-export type GrantCreated_address_uint96_string_uint96_uint256_Event =
-  TypedEvent<
-    [string, BigNumber, string, BigNumber, BigNumber],
-    GrantCreated_address_uint96_string_uint96_uint256_EventObject
-  >;
-
-export type GrantCreated_address_uint96_string_uint96_uint256_EventFilter =
-  TypedEventFilter<GrantCreated_address_uint96_string_uint96_uint256_Event>;
+export type GrantCreatedEventFilter = TypedEventFilter<GrantCreatedEvent>;
 
 export interface GrantImplementationUpdatedEventObject {
   grantAddress: string;
@@ -368,7 +345,6 @@ export interface GrantFactoryAbi extends BaseContract {
       _workspaceId: PromiseOrValue<BigNumberish>,
       _metadataHash: PromiseOrValue<string>,
       _rubricsMetadataHash: PromiseOrValue<string>,
-      _numberOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
       _workspaceReg: PromiseOrValue<string>,
       _applicationReg: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -409,10 +385,11 @@ export interface GrantFactoryAbi extends BaseContract {
     ): Promise<ContractTransaction>;
 
     updateGrant(
-      grantAddress: PromiseOrValue<string>,
+      _grantAddress: PromiseOrValue<string>,
       _workspaceId: PromiseOrValue<BigNumberish>,
-      _workspaceReg: PromiseOrValue<string>,
       _metadataHash: PromiseOrValue<string>,
+      _rubricsMetadataHash: PromiseOrValue<string>,
+      _workspaceReg: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -442,7 +419,6 @@ export interface GrantFactoryAbi extends BaseContract {
     _workspaceId: PromiseOrValue<BigNumberish>,
     _metadataHash: PromiseOrValue<string>,
     _rubricsMetadataHash: PromiseOrValue<string>,
-    _numberOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
     _workspaceReg: PromiseOrValue<string>,
     _applicationReg: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -483,10 +459,11 @@ export interface GrantFactoryAbi extends BaseContract {
   ): Promise<ContractTransaction>;
 
   updateGrant(
-    grantAddress: PromiseOrValue<string>,
+    _grantAddress: PromiseOrValue<string>,
     _workspaceId: PromiseOrValue<BigNumberish>,
-    _workspaceReg: PromiseOrValue<string>,
     _metadataHash: PromiseOrValue<string>,
+    _rubricsMetadataHash: PromiseOrValue<string>,
+    _workspaceReg: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -516,7 +493,6 @@ export interface GrantFactoryAbi extends BaseContract {
       _workspaceId: PromiseOrValue<BigNumberish>,
       _metadataHash: PromiseOrValue<string>,
       _rubricsMetadataHash: PromiseOrValue<string>,
-      _numberOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
       _workspaceReg: PromiseOrValue<string>,
       _applicationReg: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -549,10 +525,11 @@ export interface GrantFactoryAbi extends BaseContract {
     unpause(overrides?: CallOverrides): Promise<void>;
 
     updateGrant(
-      grantAddress: PromiseOrValue<string>,
+      _grantAddress: PromiseOrValue<string>,
       _workspaceId: PromiseOrValue<BigNumberish>,
-      _workspaceReg: PromiseOrValue<string>,
       _metadataHash: PromiseOrValue<string>,
+      _rubricsMetadataHash: PromiseOrValue<string>,
+      _workspaceReg: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -598,14 +575,13 @@ export interface GrantFactoryAbi extends BaseContract {
       workspaceId?: null,
       metadataHash?: null,
       time?: null
-    ): GrantCreated_address_uint96_string_uint256_EventFilter;
-    "GrantCreated(address,uint96,string,uint96,uint256)"(
+    ): GrantCreatedEventFilter;
+    GrantCreated(
       grantAddress?: null,
       workspaceId?: null,
       metadataHash?: null,
-      numberOfReviewersPerApplication?: null,
       time?: null
-    ): GrantCreated_address_uint96_string_uint96_uint256_EventFilter;
+    ): GrantCreatedEventFilter;
 
     "GrantImplementationUpdated(address,bool,bytes)"(
       grantAddress?: null,
@@ -666,7 +642,6 @@ export interface GrantFactoryAbi extends BaseContract {
       _workspaceId: PromiseOrValue<BigNumberish>,
       _metadataHash: PromiseOrValue<string>,
       _rubricsMetadataHash: PromiseOrValue<string>,
-      _numberOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
       _workspaceReg: PromiseOrValue<string>,
       _applicationReg: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -707,10 +682,11 @@ export interface GrantFactoryAbi extends BaseContract {
     ): Promise<BigNumber>;
 
     updateGrant(
-      grantAddress: PromiseOrValue<string>,
+      _grantAddress: PromiseOrValue<string>,
       _workspaceId: PromiseOrValue<BigNumberish>,
-      _workspaceReg: PromiseOrValue<string>,
       _metadataHash: PromiseOrValue<string>,
+      _rubricsMetadataHash: PromiseOrValue<string>,
+      _workspaceReg: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -743,7 +719,6 @@ export interface GrantFactoryAbi extends BaseContract {
       _workspaceId: PromiseOrValue<BigNumberish>,
       _metadataHash: PromiseOrValue<string>,
       _rubricsMetadataHash: PromiseOrValue<string>,
-      _numberOfReviewersPerApplication: PromiseOrValue<BigNumberish>,
       _workspaceReg: PromiseOrValue<string>,
       _applicationReg: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -786,10 +761,11 @@ export interface GrantFactoryAbi extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     updateGrant(
-      grantAddress: PromiseOrValue<string>,
+      _grantAddress: PromiseOrValue<string>,
       _workspaceId: PromiseOrValue<BigNumberish>,
-      _workspaceReg: PromiseOrValue<string>,
       _metadataHash: PromiseOrValue<string>,
+      _rubricsMetadataHash: PromiseOrValue<string>,
+      _workspaceReg: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
