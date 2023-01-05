@@ -9,8 +9,6 @@ import SelectDropdown from 'src/screens/request_proposal/_components/SelectDropd
 import { DropdownOption, RFPFormType } from 'src/screens/request_proposal/_utils/types'
 
 interface Props {
-	numberOfReviewers: number
-	setNumberOfReviewers: (value: number) => void
 	reviewMechanism: DropdownOption
 	setReviewMechanism: (value: DropdownOption) => void
 	rubrics: {}
@@ -25,8 +23,6 @@ interface Props {
 
 function ProposalReview(
 	{
-		numberOfReviewers,
-		setNumberOfReviewers,
 		reviewMechanism,
 		setReviewMechanism,
 		rubricInputValues,
@@ -70,7 +66,7 @@ function ProposalReview(
 						How will proposals be reviewed?
 					</Text>
 
-					<Flex
+					{/* <Flex
 						gap={4}
 						alignItems='baseline'>
 						<Text variant='v2_subheading'>
@@ -92,7 +88,7 @@ function ProposalReview(
 							{' '}
 							for an incoming proposal automatically.
 						</Text>
-					</Flex>
+					</Flex> */}
 
 					<Flex
 						gap={4}

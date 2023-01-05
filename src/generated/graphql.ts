@@ -657,8 +657,6 @@ export type Grant = {
   acceptingApplications: Scalars['Boolean'];
   /** List of applications for the grant */
   applications: Array<GrantApplication>;
-  /** Reviewers who would be auto assigned */
-  autoAssignReviewers: Array<WorkspaceMember>;
   /** in seconds since epoch */
   createdAtS: Scalars['Int'];
   /** Address of who created the grant */
@@ -687,8 +685,6 @@ export type Grant = {
   milestones?: Maybe<Array<Scalars['String']>>;
   /** Number of applications in the grant */
   numberOfApplications: Scalars['Int'];
-  /** Number of Reviewers per application for the grant */
-  numberOfReviewersPerApplication: Scalars['Int'];
   /** type of payout */
   payoutType?: Maybe<PayoutType>;
   /** Review type */
@@ -697,8 +693,6 @@ export type Grant = {
   reward: Reward;
   /** Rubric for evaulating the grant */
   rubric?: Maybe<Rubric>;
-  /** Whether reviewers should be auto assigned to applications or not */
-  shouldAutoAssignReviewers: Scalars['Boolean'];
   /** ISO formatted date string */
   startDate?: Maybe<Scalars['String']>;
   /** Start time for accepting applications, in seconds since epoch */
@@ -719,15 +713,6 @@ export type GrantApplicationsArgs = {
   orderDirection?: InputMaybe<OrderDirection>;
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<GrantApplication_Filter>;
-};
-
-
-export type GrantAutoAssignReviewersArgs = {
-  first?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<WorkspaceMember_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<WorkspaceMember_Filter>;
 };
 
 
@@ -1658,13 +1643,6 @@ export type Grant_Filter = {
   acceptingApplications_not?: InputMaybe<Scalars['Boolean']>;
   acceptingApplications_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   applications_?: InputMaybe<GrantApplication_Filter>;
-  autoAssignReviewers?: InputMaybe<Array<Scalars['String']>>;
-  autoAssignReviewers_?: InputMaybe<WorkspaceMember_Filter>;
-  autoAssignReviewers_contains?: InputMaybe<Array<Scalars['String']>>;
-  autoAssignReviewers_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
-  autoAssignReviewers_not?: InputMaybe<Array<Scalars['String']>>;
-  autoAssignReviewers_not_contains?: InputMaybe<Array<Scalars['String']>>;
-  autoAssignReviewers_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
   createdAtS?: InputMaybe<Scalars['Int']>;
   createdAtS_gt?: InputMaybe<Scalars['Int']>;
   createdAtS_gte?: InputMaybe<Scalars['Int']>;
@@ -1832,14 +1810,6 @@ export type Grant_Filter = {
   numberOfApplications_lte?: InputMaybe<Scalars['Int']>;
   numberOfApplications_not?: InputMaybe<Scalars['Int']>;
   numberOfApplications_not_in?: InputMaybe<Array<Scalars['Int']>>;
-  numberOfReviewersPerApplication?: InputMaybe<Scalars['Int']>;
-  numberOfReviewersPerApplication_gt?: InputMaybe<Scalars['Int']>;
-  numberOfReviewersPerApplication_gte?: InputMaybe<Scalars['Int']>;
-  numberOfReviewersPerApplication_in?: InputMaybe<Array<Scalars['Int']>>;
-  numberOfReviewersPerApplication_lt?: InputMaybe<Scalars['Int']>;
-  numberOfReviewersPerApplication_lte?: InputMaybe<Scalars['Int']>;
-  numberOfReviewersPerApplication_not?: InputMaybe<Scalars['Int']>;
-  numberOfReviewersPerApplication_not_in?: InputMaybe<Array<Scalars['Int']>>;
   payoutType?: InputMaybe<PayoutType>;
   payoutType_in?: InputMaybe<Array<PayoutType>>;
   payoutType_not?: InputMaybe<PayoutType>;
@@ -1890,10 +1860,6 @@ export type Grant_Filter = {
   rubric_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
   rubric_starts_with?: InputMaybe<Scalars['String']>;
   rubric_starts_with_nocase?: InputMaybe<Scalars['String']>;
-  shouldAutoAssignReviewers?: InputMaybe<Scalars['Boolean']>;
-  shouldAutoAssignReviewers_in?: InputMaybe<Array<Scalars['Boolean']>>;
-  shouldAutoAssignReviewers_not?: InputMaybe<Scalars['Boolean']>;
-  shouldAutoAssignReviewers_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   startDate?: InputMaybe<Scalars['String']>;
   startDateS?: InputMaybe<Scalars['Int']>;
   startDateS_gt?: InputMaybe<Scalars['Int']>;
@@ -1996,7 +1962,6 @@ export type Grant_Filter = {
 export enum Grant_OrderBy {
   AcceptingApplications = 'acceptingApplications',
   Applications = 'applications',
-  AutoAssignReviewers = 'autoAssignReviewers',
   CreatedAtS = 'createdAtS',
   CreatorId = 'creatorId',
   Deadline = 'deadline',
@@ -2012,12 +1977,10 @@ export enum Grant_OrderBy {
   MetadataHash = 'metadataHash',
   Milestones = 'milestones',
   NumberOfApplications = 'numberOfApplications',
-  NumberOfReviewersPerApplication = 'numberOfReviewersPerApplication',
   PayoutType = 'payoutType',
   ReviewType = 'reviewType',
   Reward = 'reward',
   Rubric = 'rubric',
-  ShouldAutoAssignReviewers = 'shouldAutoAssignReviewers',
   StartDate = 'startDate',
   StartDateS = 'startDateS',
   Summary = 'summary',
@@ -5438,7 +5401,7 @@ export type GetGrantsForAdminQueryVariables = Exact<{
 }>;
 
 
-export type GetGrantsForAdminQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, reviewType?: ReviewType | null, payoutType?: PayoutType | null, numberOfReviewersPerApplication: number, shouldAutoAssignReviewers: boolean, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, rubric?: { __typename?: 'Rubric', id: string, isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null, autoAssignReviewers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, profilePictureIpfsHash?: string | null }> }> };
+export type GetGrantsForAdminQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, reviewType?: ReviewType | null, payoutType?: PayoutType | null, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, rubric?: { __typename?: 'Rubric', id: string, isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null }> };
 
 export type GetGrantsForReviewerQueryVariables = Exact<{
   reviewerAddress: Scalars['Bytes'];
@@ -5446,7 +5409,7 @@ export type GetGrantsForReviewerQueryVariables = Exact<{
 }>;
 
 
-export type GetGrantsForReviewerQuery = { __typename?: 'Query', grantReviewerCounters: Array<{ __typename?: 'GrantReviewerCounter', id: string, counter: number, pendingCounter: number, doneCounter: number, grant: { __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, reviewType?: ReviewType | null, payoutType?: PayoutType | null, numberOfReviewersPerApplication: number, shouldAutoAssignReviewers: boolean, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, rubric?: { __typename?: 'Rubric', id: string, isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null, autoAssignReviewers: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, profilePictureIpfsHash?: string | null }>, pendingApplications: Array<{ __typename?: 'GrantApplication', id: string }>, doneApplications: Array<{ __typename?: 'GrantApplication', id: string }> } }> };
+export type GetGrantsForReviewerQuery = { __typename?: 'Query', grantReviewerCounters: Array<{ __typename?: 'GrantReviewerCounter', id: string, counter: number, pendingCounter: number, doneCounter: number, grant: { __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, reviewType?: ReviewType | null, payoutType?: PayoutType | null, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, rubric?: { __typename?: 'Rubric', id: string, isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null, pendingApplications: Array<{ __typename?: 'GrantApplication', id: string }>, doneApplications: Array<{ __typename?: 'GrantApplication', id: string }> } }> };
 
 export type GetPayoutsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -5508,21 +5471,21 @@ export type GrantDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GrantDetailsQuery = { __typename?: 'Query', grant?: { __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, startDate?: string | null, deadline?: string | null, startDateS?: number | null, deadlineS: number, payoutType?: PayoutType | null, reviewType?: ReviewType | null, numberOfReviewersPerApplication: number, link?: string | null, docIpfsHash?: string | null, acceptingApplications: boolean, metadataHash: string, funding: string, milestones?: Array<string> | null, reward: { __typename?: 'Reward', id: string, asset: string, committed: string, token?: { __typename?: 'Token', id: string, label: string, address: string, decimal: number, iconHash: string, chainId?: string | null } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, supportedNetworks: Array<SupportedNetwork>, logoIpfsHash: string, safe?: { __typename?: 'WorkspaceSafe', address: string, chainId: string } | null }, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, possibleValues?: Array<string> | null, isPii: boolean }> } | null };
+export type GrantDetailsQuery = { __typename?: 'Query', grant?: { __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, startDate?: string | null, deadline?: string | null, startDateS?: number | null, deadlineS: number, payoutType?: PayoutType | null, reviewType?: ReviewType | null, link?: string | null, docIpfsHash?: string | null, acceptingApplications: boolean, metadataHash: string, funding: string, milestones?: Array<string> | null, reward: { __typename?: 'Reward', id: string, asset: string, committed: string, token?: { __typename?: 'Token', id: string, label: string, address: string, decimal: number, iconHash: string, chainId?: string | null } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, supportedNetworks: Array<SupportedNetwork>, logoIpfsHash: string, safe?: { __typename?: 'WorkspaceSafe', address: string, chainId: string } | null }, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, possibleValues?: Array<string> | null, isPii: boolean }> } | null };
 
 export type ProposalDetailsQueryVariables = Exact<{
   proposalId: Scalars['ID'];
 }>;
 
 
-export type ProposalDetailsQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, applicantId: string, applicantPublicKey?: string | null, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', id: string, value: string }> }>, pii: Array<{ __typename?: 'PIIAnswer', id: string, data: string }>, milestones: Array<{ __typename?: 'ApplicationMilestone', title: string, amount: string }>, grant: { __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, startDate?: string | null, deadline?: string | null, startDateS?: number | null, deadlineS: number, payoutType?: PayoutType | null, reviewType?: ReviewType | null, numberOfReviewersPerApplication: number, link?: string | null, docIpfsHash?: string | null, acceptingApplications: boolean, metadataHash: string, funding: string, reward: { __typename?: 'Reward', id: string, asset: string, committed: string, token?: { __typename?: 'Token', id: string, label: string, address: string, decimal: number, iconHash: string, chainId?: string | null } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, supportedNetworks: Array<SupportedNetwork>, logoIpfsHash: string, safe?: { __typename?: 'WorkspaceSafe', address: string, chainId: string } | null }, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, possibleValues?: Array<string> | null, isPii: boolean }> } } | null };
+export type ProposalDetailsQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, applicantId: string, applicantPublicKey?: string | null, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', id: string, value: string }> }>, pii: Array<{ __typename?: 'PIIAnswer', id: string, data: string }>, milestones: Array<{ __typename?: 'ApplicationMilestone', title: string, amount: string }>, grant: { __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, startDate?: string | null, deadline?: string | null, startDateS?: number | null, deadlineS: number, payoutType?: PayoutType | null, reviewType?: ReviewType | null, link?: string | null, docIpfsHash?: string | null, acceptingApplications: boolean, metadataHash: string, funding: string, reward: { __typename?: 'Reward', id: string, asset: string, committed: string, token?: { __typename?: 'Token', id: string, label: string, address: string, decimal: number, iconHash: string, chainId?: string | null } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, supportedNetworks: Array<SupportedNetwork>, logoIpfsHash: string, safe?: { __typename?: 'WorkspaceSafe', address: string, chainId: string } | null }, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, possibleValues?: Array<string> | null, isPii: boolean }> } } | null };
 
 export type GetGrantDetailsByIdQueryVariables = Exact<{
   grantID: Scalars['ID'];
 }>;
 
 
-export type GetGrantDetailsByIdQuery = { __typename?: 'Query', grant?: { __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, link?: string | null, docIpfsHash?: string | null, numberOfReviewersPerApplication: number, payoutType?: PayoutType | null, reviewType?: ReviewType | null, startDate?: string | null, deadline?: string | null, funding: string, acceptingApplications: boolean, milestones?: Array<string> | null, rubric?: { __typename?: 'Rubric', id: string, isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, isPii: boolean }>, reward: { __typename?: 'Reward', id: string, asset: string, committed: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } } | null };
+export type GetGrantDetailsByIdQuery = { __typename?: 'Query', grant?: { __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, link?: string | null, docIpfsHash?: string | null, payoutType?: PayoutType | null, reviewType?: ReviewType | null, startDate?: string | null, deadline?: string | null, funding: string, acceptingApplications: boolean, milestones?: Array<string> | null, rubric?: { __typename?: 'Rubric', id: string, isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, isPii: boolean }>, reward: { __typename?: 'Reward', id: string, asset: string, committed: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } } | null };
 
 
 export const GetProfileDetailsDocument = gql`
@@ -8689,13 +8652,6 @@ export const GetGrantsForAdminDocument = gql`
     }
     reviewType
     payoutType
-    numberOfReviewersPerApplication
-    autoAssignReviewers {
-      id
-      actorId
-      profilePictureIpfsHash
-    }
-    shouldAutoAssignReviewers
   }
 }
     `;
@@ -8766,13 +8722,6 @@ export const GetGrantsForReviewerDocument = gql`
       }
       reviewType
       payoutType
-      numberOfReviewersPerApplication
-      autoAssignReviewers {
-        id
-        actorId
-        profilePictureIpfsHash
-      }
-      shouldAutoAssignReviewers
       pendingApplications: applications(
         where: {pendingReviewerAddresses_contains_nocase: [$reviewerAddress]}
       ) {
@@ -9571,7 +9520,6 @@ export const GrantDetailsDocument = gql`
     deadlineS
     payoutType
     reviewType
-    numberOfReviewersPerApplication
     link
     docIpfsHash
     acceptingApplications
@@ -9675,7 +9623,6 @@ export const ProposalDetailsDocument = gql`
       deadlineS
       payoutType
       reviewType
-      numberOfReviewersPerApplication
       link
       docIpfsHash
       acceptingApplications
@@ -9743,7 +9690,6 @@ export const GetGrantDetailsByIdDocument = gql`
     details
     link
     docIpfsHash
-    numberOfReviewersPerApplication
     payoutType
     reviewType
     rubric {
