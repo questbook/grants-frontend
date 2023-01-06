@@ -54,9 +54,14 @@ function NavBar({ bg = 'gray.1', showOpenDashboard, showLogo, showAddMembers, sh
 			>
 				<Image
 					onClick={
-						() => router.push({
-							pathname: '/',
-						})
+						() => {
+							if(router.pathname === '/dashboard') {
+								router.push({
+									pathname: '/',
+									query: { fromDashboard: 'true' }
+								})
+							}
+						}
 					}
 					display={{ base: 'none', lg: 'inherit' }}
 					mr='auto'
@@ -66,9 +71,14 @@ function NavBar({ bg = 'gray.1', showOpenDashboard, showLogo, showAddMembers, sh
 				/>
 				<Image
 					onClick={
-						() => router.push({
-							pathname: '/',
-						})
+						() => {
+							if(router.pathname === '/dashboard') {
+								router.push({
+									pathname: '/',
+									query: { fromDashboard: 'true' }
+								})
+							}
+						}
 					}
 					display={{ base: 'inherit', lg: 'none' }}
 					mr='auto'
@@ -118,7 +128,7 @@ function NavBar({ bg = 'gray.1', showOpenDashboard, showLogo, showAddMembers, sh
 
 				{router.pathname === '/dashboard' && <SwapButton />}
 
-				{showOpenDashboard && (router.pathname === '/' || router.pathname === '/settings') && <OpenDashboard />}
+				{showOpenDashboard && ((router.pathname === '/' && fromDashboard === 'true') || router.pathname === '/settings') && <OpenDashboard />}
 
 				<AccountDetails
 					openModal={
@@ -156,6 +166,7 @@ function NavBar({ bg = 'gray.1', showOpenDashboard, showLogo, showAddMembers, sh
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	// const { searchString, setSearchString } = useContext(DAOSearchContext)!
 	const router = useRouter()
+	const { fromDashboard } = router.query
 	const toast = useCustomToast()
 	const [privateKey, setPrivateKey] = useState<string>('')
 	const [privateKeyError, setPrivateKeyError] = useState<string>('')
