@@ -8,7 +8,6 @@ import { ethers, Wallet } from 'ethers'
 import { arrayify, keccak256 } from 'ethers/lib/utils'
 import {
 	GetAdminPublicKeysQuery,
-	GetCommentsQuery,
 	GetProposalsForAdminQuery,
 	PiiData,
 	useGetAdminPublicKeysQuery,
@@ -18,7 +17,6 @@ import {
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
-import { PIIForCommentType } from 'src/libraries/utils/types'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import MAIN_LOGGER from 'src/utils/logger'
@@ -678,214 +676,215 @@ export function usePiiForWorkspaceMember(
 	}
 }
 
-export function usePiiForComment(
-	workspaceId: string | undefined,
-	applicationIds: string[] | undefined,
-	memberPublicKey: string | undefined,
-	chainId: SupportedChainId,
-) {
-	const logger = useMemo(
-		() => MAIN_LOGGER.child({ type: 'PII for Comment' }),
-		[workspaceId],
-	)
+// export function usePiiForComment(
+// 	workspaceId: string | undefined,
+// 	applicationIds: string[] | undefined,
+// 	memberPublicKey: string | undefined,
+// 	chainId: SupportedChainId,
+// ) {
+// 	const logger = useMemo(
+// 		() => MAIN_LOGGER.child({ type: 'PII for Comment' }),
+// 		[workspaceId],
+// 	)
 
-	const { webwallet, scwAddress } = useContext(WebwalletContext)!
-	const { fetch } = useGetPublicKeyOfMembers(
-		workspaceId,
-		applicationIds,
-		chainId,
-	)
+// 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
+// 	const { fetch } = useGetPublicKeyOfMembers(
+// 		workspaceId,
+// 		applicationIds,
+// 		chainId,
+// 	)
 
-	/**
-   * @param data All the fields to encrypt
-   * @returns The ready to push PII data
-   */
-	const encryptPii = useCallback(
-		async(piiData: {[appId: string]: PIIForCommentType}) => {
-			if(!webwallet || !scwAddress) {
-				throw new Error('Zero Wallet not connected')
-			}
+// 	/**
+//    * @param data All the fields to encrypt
+//    * @returns The ready to push PII data
+//    */
+// 	const encryptPii = useCallback(
+// 		async(piiData: {[appId: string]: PIIForCommentType}) => {
+// 			if(!webwallet || !scwAddress) {
+// 				throw new Error('Zero Wallet not connected')
+// 			}
 
-			if(!workspaceId) {
-				throw new Error('Workspace ID not provided')
-			}
+// 			if(!workspaceId) {
+// 				throw new Error('Workspace ID not provided')
+// 			}
 
-			if(!applicationIds) {
-				throw new Error('Application ID not provided')
-			}
+// 			if(!applicationIds) {
+// 				throw new Error('Application ID not provided')
+// 			}
 
-			// if(!applicantId || !applicantPublicKey) {
-			// 	throw new Error('Applicant ID or public key not provided')
-			// }
+// 			// if(!applicantId || !applicantPublicKey) {
+// 			// 	throw new Error('Applicant ID or public key not provided')
+// 			// }
 
-			// JSON serialize the data for it to be encrypted
-			const piiMap: {[appId: string]: Exclude<GrantApplicationRequest['pii'], undefined>} = {}
-			const publicKeysPerApplication = await fetch()
+// 			// JSON serialize the data for it to be encrypted
+// 			const piiMap: {[appId: string]: Exclude<GrantApplicationRequest['pii'], undefined>} = {}
+// 			const publicKeysPerApplication = await fetch()
 
-			logger.info(publicKeysPerApplication, 'Public Keys Per Application')
+// 			logger.info(publicKeysPerApplication, 'Public Keys Per Application')
 
-			for(const applicationId in publicKeysPerApplication) {
-				piiMap[applicationId] = {}
-				logger.info({ piiData }, 'pii data')
-				const piiFieldsJson = JSON.stringify(piiData[applicationId])
-				logger.info({ piiFieldsJson }, 'pii fields json')
-				const publicKeys = {
-					...publicKeysPerApplication[applicationId],
-				}
+// 			for(const applicationId in publicKeysPerApplication) {
+// 				piiMap[applicationId] = {}
+// 				logger.info({ piiData }, 'pii data')
+// 				const piiFieldsJson = JSON.stringify(piiData[applicationId])
+// 				logger.info({ piiFieldsJson }, 'pii fields json')
+// 				const publicKeys = {
+// 					...publicKeysPerApplication[applicationId],
+// 				}
 
-				logger.info({ applicationId, members: publicKeys }, 'Comment')
+// 				logger.info({ applicationId, members: publicKeys }, 'Comment')
 
-				await Promise.all(
-					Object.entries(publicKeys).map(async([address, publicKey]) => {
-						if(!publicKey) {
-							logger.info({ address }, 'pub key not present, ignoring...')
-							return
-						}
+// 				await Promise.all(
+// 					Object.entries(publicKeys).map(async([address, publicKey]) => {
+// 						if(!publicKey) {
+// 							logger.info({ address }, 'pub key not present, ignoring...')
+// 							return
+// 						}
 
-						try {
-							const secureChannel = await getSecureChannelFromPublicKey(
-								webwallet,
-								publicKey,
-								getKeyForApplication(applicationId),
-							)
-							const data = await secureChannel.encrypt(piiFieldsJson)
+// 						try {
+// 							const secureChannel = await getSecureChannelFromPublicKey(
+// 								webwallet,
+// 								publicKey,
+// 								getKeyForApplication(applicationId),
+// 							)
+// 							const data = await secureChannel.encrypt(piiFieldsJson)
 
-							logger.info({ applicationId, address, data }, 'encrypted data')
-							// the subgraph can handle about 7000 bytes in a single field
-							// so if the data is too big, we upload it to IPFS, and set the hash
-							// we can unambigously determine if the encrypted data is an IPFS hash or not
-							// using a simple isIpfsHash function
-							if(data.length < 7000) {
-								piiMap[applicationId][address] = data
-							} else {
-								logger.info(
-									{ data: data.length },
-									'data too large, uploading to IPFS...',
-								)
-								const { hash: ipfsHash } = await uploadToIPFS(data)
-								piiMap[applicationId][address] = ipfsHash
-							}
-						} catch(e) {
-							logger.error({ address, error: e }, 'failed to encrypt')
-						}
-					}),
-				)
-			}
+// 							logger.info({ privateKey: webwallet.privateKey, publicKey, data: piiFieldsJson, answer: data, extraInfo: getKeyForApplication(applicationId) }, 'encrypted data (ENCRYPT TEST)')
+// 							// the subgraph can handle about 7000 bytes in a single field
+// 							// so if the data is too big, we upload it to IPFS, and set the hash
+// 							// we can unambigously determine if the encrypted data is an IPFS hash or not
+// 							// using a simple isIpfsHash function
+// 							if(data.length < 7000) {
+// 								piiMap[applicationId][address] = data
+// 							} else {
+// 								logger.info(
+// 									{ data: data.length },
+// 									'data too large, uploading to IPFS...',
+// 								)
+// 								const { hash: ipfsHash } = await uploadToIPFS(data)
+// 								piiMap[applicationId][address] = ipfsHash
+// 							}
+// 						} catch(e) {
+// 							logger.error({ address, error: e }, 'failed to encrypt')
+// 						}
+// 					}),
+// 				)
+// 			}
 
-			logger.info({ piiMap }, 'encrypted pii map')
-			return piiMap
-		},
-		[scwAddress, webwallet, workspaceId, applicationIds, fetch, scwAddress],
-	)
+// 			logger.info({ piiMap }, 'encrypted pii map')
+// 			return piiMap
+// 		},
+// 		[scwAddress, webwallet, workspaceId, applicationIds, fetch, scwAddress],
+// 	)
 
-	/**
-   * decrypted encrypted PII data
-   * @param piiData the enc data
-   * @returns Decrypted fields data
-   */
-	const decryptPii = useCallback(
-		async(piiData: string, appId: string) => {
-			if(!webwallet) {
-				throw new Error('Zero Wallet not connected')
-			}
+// 	/**
+//    * decrypted encrypted PII data
+//    * @param piiData the enc data
+//    * @returns Decrypted fields data
+//    */
+// 	const decryptPii = useCallback(
+// 		async(piiData: string, appId: string) => {
+// 			if(!webwallet) {
+// 				throw new Error('Zero Wallet not connected')
+// 			}
 
-			if(!workspaceId || !applicationIds) {
-				throw new Error(
-					'Workspace ID or application ID not provided',
-				)
-			}
+// 			if(!workspaceId || !applicationIds) {
+// 				throw new Error(
+// 					'Workspace ID or application ID not provided',
+// 				)
+// 			}
 
-			const secureChannel = await getSecureChannelFromPublicKey(
-				webwallet,
-					memberPublicKey!,
-					getKeyForApplication(appId),
-			)
+// 			const secureChannel = await getSecureChannelFromPublicKey(
+// 				webwallet,
+// 				memberPublicKey!,
+// 				getKeyForApplication(appId),
+// 			)
 
-			logger.info({ appId, memberPublicKey, piiData }, 'got secure channel with member for comment')
+// 			// logger.info({ appId, memberPublicKey, piiData }, 'got secure channel with member for comment')
+// 			logger.info({ privateKey: webwallet.privateKey, publicKey: memberPublicKey, data: piiData, extraInfo: getKeyForApplication(appId) }, 'decrypted data (DECRYPT TEST)')
 
-			const decrypted = await secureChannel.decrypt(piiData)
+// 			const decrypted = await secureChannel.decrypt(piiData)
 
-			logger.info({ decrypted }, 'decrypted PII data')
+// 			logger.info({ decrypted }, 'decrypted PII data')
 
-			// logger.info('decrypted PII data')
+// 			// logger.info('decrypted PII data')
 
-			const json = JSON.parse(decrypted) as PIIForCommentType
-			logger.info({ json }, 'Decrypted JSON')
+// 			const json = JSON.parse(decrypted) as PIIForCommentType
+// 			logger.info({ json }, 'Decrypted JSON')
 
-			return json
-		},
-		[scwAddress, webwallet, workspaceId, applicationIds, memberPublicKey, logger],
-	)
+// 			return json
+// 		},
+// 		[scwAddress, webwallet, workspaceId, applicationIds, memberPublicKey, logger],
+// 	)
 
-	const encrypt = useCallback(
-		async(data: {[appId: string]: PIIForCommentType}) => {
-			logger.info({ data }, 'data received for encryption')
-			const pii = await encryptPii(data)
-			logger.info({ pii }, 'output of encrypt pii')
+// 	const encrypt = useCallback(
+// 		async(data: {[appId: string]: PIIForCommentType}) => {
+// 			logger.info({ data }, 'data received for encryption (encrypt)')
+// 			const pii = await encryptPii(data)
+// 			logger.info({ pii }, 'output of encrypt pii (encrypt)')
 
-			const ret: {[appId: string]: PIIForCommentType} = {}
-			for(const applicationId in pii) {
-				ret[applicationId] = { pii: pii[applicationId] }
-			}
+// 			const ret: {[appId: string]: PIIForCommentType} = {}
+// 			for(const applicationId in pii) {
+// 				ret[applicationId] = { pii: pii[applicationId] }
+// 			}
 
-			return ret
-		},
-		[encryptPii],
-	)
+// 			return ret
+// 		},
+// 		[encryptPii],
+// 	)
 
-	/**
-   * decrypt a member email;
-   * otherwise return as is
-   */
-	const decrypt = useCallback(
-		async(comment: Pick<Exclude<GetCommentsQuery['comments'], null | undefined>[number], 'commentsEncryptedData'> & PIIForCommentType, appId: string) => {
-			if(comment?.commentsEncryptedData?.length) {
-				logger.info('Encrypted Data', comment)
-				if(!scwAddress || !memberPublicKey || !workspaceId || !applicationIds) {
-					logger.info(
-						{ scwAddress, memberPublicKey, workspaceId, applicationIds },
-						'skipping decryption, as details not present',
-					)
-					return
-				}
+// 	/**
+//    * decrypt a member email;
+//    * otherwise return as is
+//    */
+// 	const decrypt = useCallback(
+// 		async(comment: Pick<Exclude<GetCommentsQuery['comments'], null | undefined>[number], 'commentsEncryptedData'> & PIIForCommentType, appId: string) => {
+// 			if(comment?.commentsEncryptedData?.length) {
+// 				logger.info('Encrypted Data', comment)
+// 				if(!scwAddress || !memberPublicKey || !workspaceId || !applicationIds) {
+// 					logger.info(
+// 						{ scwAddress, memberPublicKey, workspaceId, applicationIds },
+// 						'skipping decryption, as details not present',
+// 					)
+// 					return
+// 				}
 
-				const piiData = comment.commentsEncryptedData.find((p) => {
-					const idLowerCase = p.id.toLowerCase()
-					return idLowerCase.indexOf(scwAddress.toLowerCase()) !== -1
-				})
-				logger.info({ piiData }, 'pii data (decrypt)')
-				if(piiData) {
-					try {
-						const data = await decryptPii(piiData.data, appId)
-						logger.info({ data, comment }, 'PII data decrypted')
-						// hacky way to copy the object
-						comment = JSON.parse(
-							JSON.stringify({
-								...comment,
-								...data,
-								// also remove PII from the application
-								// since we don't require that anymore
-								commentsEncryptedData: undefined,
-							}),
-						)
-					} catch(err) {
-						logger.error({ err }, 'error in decrypting PII')
-					}
-				} else {
-					logger.warn('member has PII, but not encrypted for user')
-				}
-			}
+// 				const piiData = comment.commentsEncryptedData.find((p) => {
+// 					const idLowerCase = p.id.toLowerCase()
+// 					return idLowerCase.indexOf(scwAddress.toLowerCase()) !== -1
+// 				})
+// 				logger.info({ piiData }, 'pii data (decrypt)')
+// 				if(piiData) {
+// 					try {
+// 						const data = await decryptPii(piiData.data, appId)
+// 						logger.info({ data, comment }, 'PII data decrypted')
+// 						// hacky way to copy the object
+// 						comment = JSON.parse(
+// 							JSON.stringify({
+// 								...comment,
+// 								...data,
+// 								// also remove PII from the application
+// 								// since we don't require that anymore
+// 								commentsEncryptedData: undefined,
+// 							}),
+// 						)
+// 					} catch(err) {
+// 						logger.error({ err }, 'error in decrypting PII')
+// 					}
+// 				} else {
+// 					logger.warn('member has PII, but not encrypted for user')
+// 				}
+// 			}
 
-			return comment
-		},
-		[scwAddress, webwallet, applicationIds, memberPublicKey, workspaceId, decryptPii],
-	)
+// 			return comment
+// 		},
+// 		[scwAddress, webwallet, applicationIds, memberPublicKey, workspaceId, decryptPii],
+// 	)
 
-	return {
-		encrypt,
-		decrypt,
-	}
-}
+// 	return {
+// 		encrypt,
+// 		decrypt,
+// 	}
+// }
 
 // /**
 //  * retreives the public key from a transaction

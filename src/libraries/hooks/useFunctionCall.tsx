@@ -1,7 +1,8 @@
-import { useCallback, useContext, useEffect, useMemo } from 'react'
+import { useContext, useEffect, useMemo } from 'react'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
+import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
@@ -28,7 +29,21 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 	const { subgraphClients } = useContext(ApiClientsContext)!
 	const { webwallet } = useContext(WebwalletContext)!
 
+	const { network, switchNetwork } = useNetwork()
+
+	useEffect(() => {
+		logger.info({ network, chainId }, 'useFunctionCall: Networks')
+		if(network !== chainId) {
+			switchNetwork(chainId)
+		}
+	}, [chainId, network])
+
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({ chainId: chainId?.toString() })
+
+	useEffect(() => {
+		logger.info({ biconomy, biconomyWalletClient, scwAddress, biconomyLoading }, 'useFunctionCall: Biconomy')
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading])
+
 	const { nonce } = useQuestbookAccount()
 	const contract = useQBContract(contractName, chainId)
 
@@ -42,7 +57,7 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 
 	const toast = useCustomToast()
 
-	const call = useCallback(async({ method, args }: CallProps) => {
+	const call = async({ method, args }: CallProps) => {
 		const logger = MAIN_LOGGER.child({ chainId, contractName, method })
 		try {
 			if(!contract) {
@@ -88,6 +103,7 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 					status: 'success',
 					duration: 3000,
 				})
+				return true
 			} else {
 				throw new Error('Transaction not sent')
 			}
@@ -100,10 +116,11 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 				title: message,
 				status: 'error'
 			})
+			return false
 		}
-	}, [contract, biconomy, biconomyWalletClient, scwAddress, webwallet, chainId, nonce])
+	}
 
-	return { call: useMemo(() => call, [contract, biconomy, biconomyWalletClient, scwAddress, webwallet, chainId, nonce]), isBiconomyInitialised }
+	return { call, isBiconomyInitialised }
 }
 
 export default useFunctionCall

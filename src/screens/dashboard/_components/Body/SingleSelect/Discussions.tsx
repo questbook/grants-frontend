@@ -208,9 +208,9 @@ function Discussions() {
 							ml={3}
 							variant='v2_metadata'
 							borderRadius='3px'
-							bg={comment?.role === 'admin' || comment?.role === 'reviewer' ? 'gray.3' : 'accent.vodka'}
+							bg={comment?.role === 'admin' ? 'gray.3' : comment?.role === 'reviewer' ? 'accent.crayola' : comment?.role === 'accent.vodka' ? 'Builder' : 'accent.melon'}
 							px={1}>
-							{comment?.role === 'admin' || comment?.role === 'reviewer' ? 'Member' : 'Builder'}
+							{comment?.role === 'admin' ? 'Admin' : comment?.role === 'reviewer' ? 'Reviewer' : comment?.role === 'builder' ? 'Builder' : 'Community'}
 						</Text>
 						{
 							comment?.timestamp && (
