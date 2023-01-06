@@ -45,7 +45,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 				<HStack>
 					<Image
 						borderRadius='3xl'
-						src={getAvatar(false, scwAddress!)}
+						src={getAvatar(false, scwAddress ?? 'generic')}
 						boxSize='24px'
 					/>
 				</HStack>

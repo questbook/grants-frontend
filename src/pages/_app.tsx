@@ -132,6 +132,7 @@ export const ApiClientsContext = createContext<{
 	possibleRoles: Roles[]
 	inviteInfo: InviteInfo | undefined
 	setInviteInfo: (inviteInfo: InviteInfo) => void
+	isNewUser: boolean
 		} | null>(null)
 
 export const WebwalletContext = createContext<{
@@ -175,6 +176,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [biconomyWalletClients, setBiconomyWalletClients] = useState<{[key: string]: BiconomyWalletClient}>()
 	const [nonce, setNonce] = useState<string>()
 	const [loadingNonce, setLoadingNonce] = useState<boolean>(false)
+	const [isNewUser, setIsNewUser] = useState<boolean>(true)
 
 	const [biconomyLoading, setBiconomyLoading] = useState<{ [chainId: string]: boolean }>({})
 
@@ -397,6 +399,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 	const getNetwork = () => defaultChainId
 
+	useEffect(() => {
+		logger.info({ isNewUser }, '(Navigation) Is New User changed')
+	}, [isNewUser])
+
 	const createWebWallet = () => {
 
 		const privateKey = localStorage.getItem('webwalletPrivateKey')
@@ -404,15 +410,18 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		let newWebwallet = Wallet.createRandom()
 
 		if(!privateKey) {
+			setIsNewUser(true)
 			localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
 			return newWebwallet
 		}
 
 		try {
 			newWebwallet = new Wallet(privateKey)
+			setIsNewUser(false)
 			return newWebwallet
 		} catch{
 			localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
+			setIsNewUser(true)
 			return newWebwallet
 		}
 	}
@@ -644,8 +653,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			inviteInfo,
 			setInviteInfo,
 			subgraphClients: clients,
+			isNewUser,
 		}),
-		[validatorApi, workspace, setWorkspace, clients, connected, setConnected, chainId, role, setRole, possibleRoles]
+		[validatorApi, workspace, setWorkspace, clients, connected, setConnected, chainId, role, setRole, possibleRoles, inviteInfo, isNewUser]
 	)
 
 	const seo = getSeo()
