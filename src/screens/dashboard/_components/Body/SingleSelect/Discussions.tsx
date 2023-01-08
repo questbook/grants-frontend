@@ -1,8 +1,6 @@
 import { useContext, useMemo, useState } from 'react'
-import { Button, CircularProgress, Divider, Flex, Image, Text } from '@chakra-ui/react'
-import { convertToRaw, EditorState } from 'draft-js'
+import { Button, CircularProgress, Divider, Flex, Image, Text, Textarea } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
-import TextEditor from 'src/libraries/ui/RichTextEditor/textEditor'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import useAddComment from 'src/screens/dashboard/_hooks/useAddComment'
@@ -77,9 +75,13 @@ function Discussions() {
 						ml={4}
 						direction='column'
 						w='100%'>
-						<TextEditor
+						<Textarea
 							value={text}
-							onChange={setText}
+							onChange={
+								(e) => {
+									setText(e.target.value)
+								}
+							}
 							placeholder='Add a comment here' />
 						<Flex
 							mt={4}
@@ -95,11 +97,15 @@ function Discussions() {
 													size='18px' />
 											)
 										}
-										<Text
-											ml={2}
-											variant='v2_body'>
-											Adding comment...
-										</Text>
+										{
+											step < 3 && (
+												<Text
+													ml={2}
+													variant='v2_body'>
+													Adding comment...
+												</Text>
+											)
+										}
 										{/* {
 											transactionHash && (
 												<IconButton
@@ -125,7 +131,8 @@ function Discussions() {
 									async() => {
 										const ret = await addComment(text, tags)
 										if(ret) {
-											setText(EditorState.createEmpty())
+											setText('')
+											setSelectedTags({})
 											refresh()
 										}
 									}
@@ -142,7 +149,7 @@ function Discussions() {
 					color='gray.3'
 					height={1} />
 
-				{comments.filter((comment) => comment.sender && (comment.workspace.members.some((member) => member.actorId.toLowerCase() === comment.sender?.toLowerCase()) || comment.sender?.toLowerCase() === proposal?.applicantId.toLowerCase())).map(renderComment)}
+				{comments.filter((comment) => comment.sender && (comment.workspace.members.some((member) => member.actorId === comment.sender?.toLowerCase()) || comment.sender?.toLowerCase() === proposal?.applicantId.toLowerCase())).map(renderComment)}
 			</Flex>
 		)
 	}
@@ -243,7 +250,7 @@ function Discussions() {
 		return Object.keys(selectedTags).map((key) => parseInt(key, 10))
 	}, [selectedTags])
 
-	const [ text, setText ] = useState<EditorState>(EditorState.createEmpty())
+	const [ text, setText ] = useState<string>('')
 	const { addComment, isBiconomyInitialised } = useAddComment({ setStep, setTransactionHash })
 
 	const proposal = useMemo(() => {
@@ -261,8 +268,7 @@ function Discussions() {
 			return true
 		}
 
-		const raw = convertToRaw(text.getCurrentContent())
-		return !raw.blocks.some((block) => block.text.length > 0)
+		return text === ''
 	}, [text, step])
 
 	const getCommentDisplayName = (comment: CommentType) => {

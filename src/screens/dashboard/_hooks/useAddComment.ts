@@ -1,11 +1,13 @@
 import { useCallback, useContext, useMemo } from 'react'
-import { convertToRaw, EditorState } from 'draft-js'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetMemberPublicKeysQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
-import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
+import {
+	getKeyForApplication,
+	getSecureChannelFromPublicKey,
+} from 'src/libraries/utils/pii'
 import { PIIForCommentType } from 'src/libraries/utils/types'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import useQuickReplies from 'src/screens/dashboard/_hooks/useQuickReplies'
@@ -34,7 +36,10 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 	}, [proposals, selectedProposals])
 
 	const chainId = useMemo(() => {
-		return (getSupportedChainIdFromWorkspace(proposal?.grant?.workspace) ?? defaultChainId)
+		return (
+			getSupportedChainIdFromWorkspace(proposal?.grant?.workspace) ??
+      defaultChainId
+		)
 	}, [proposal?.grant?.workspace])
 
 	const { call, isBiconomyInitialised } = useFunctionCall({
@@ -47,7 +52,10 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 	const { fetchMore: fetchMorePublicKeys } = useMultiChainQuery({
 		useQuery: useGetMemberPublicKeysQuery,
 		options: {},
-		chains: [getSupportedChainIdFromWorkspace(proposal?.grant?.workspace) ?? defaultChainId],
+		chains: [
+			getSupportedChainIdFromWorkspace(proposal?.grant?.workspace) ??
+        defaultChainId,
+		],
 	})
 
 	const fetchPublicKeys = useCallback(async() => {
@@ -60,80 +68,102 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 			applicationIds: [proposal?.id],
 		})
 
-		return [...(results?.[0]?.workspace?.members?.map(m => ({ actorId: m.actorId, publicKey: m.publicKey })) ?? []), { actorId: results?.[0]?.grantApplications?.[0]?.applicantId, publicKey: results?.[0]?.grantApplications?.[0]?.applicantPublicKey }].filter(k => k.publicKey)
+		return [
+			...(results?.[0]?.workspace?.members?.map((m) => ({
+				actorId: m.actorId,
+				publicKey: m.publicKey,
+			})) ?? []),
+			{
+				actorId: results?.[0]?.grantApplications?.[0]?.applicantId,
+				publicKey: results?.[0]?.grantApplications?.[0]?.applicantPublicKey,
+			},
+		].filter((k) => k.publicKey)
 	}, [proposal])
 
-	const addComment = useCallback(
-		async(message: EditorState, tags: number[]) => {
-			if(
-				!webwallet || !scwAddress || !proposal?.id || !proposal?.grant?.id || !proposal?.grant?.workspace?.id
-			) {
-				logger.info({ webwallet, scwAddress, proposal, grant: proposal?.grant?.id, workspace: !proposal?.grant?.workspace?.id }, 'Missing Data (Comment)')
-				return
-			}
+	const addComment = async(message: string, tags: number[]) => {
+		if(
+			!webwallet ||
+      !scwAddress ||
+      !proposal?.id ||
+      !proposal?.grant?.id ||
+      !proposal?.grant?.workspace?.id
+		) {
+			logger.info(
+				{
+					webwallet,
+					scwAddress,
+					proposal,
+					grant: proposal?.grant?.id,
+					workspace: !proposal?.grant?.workspace?.id,
+				},
+				'Missing Data (Comment)',
+			)
+			return
+		}
 
-			setStep(0)
-			const messageHash = (
-				await uploadToIPFS(
-					JSON.stringify(convertToRaw(message.getCurrentContent())),
-				)
-			).hash
-			let json: PIIForCommentType = {
-				sender: scwAddress,
-				message: messageHash,
-				timestamp: Math.floor(Date.now() / 1000),
-				tags: quickReplies[role]?.filter((_, index) => tags.includes(index)).map((reply) => reply.id),
-				role,
-			}
+		setStep(0)
 
-			if(role !== 'community') {
-				const publicKeys = await fetchPublicKeys()
+		const messageHash = (await uploadToIPFS(message)).hash
+		let json: PIIForCommentType = {
+			sender: scwAddress,
+			message: messageHash,
+			timestamp: Math.floor(Date.now() / 1000),
+			tags: quickReplies[role]
+				?.filter((_, index) => tags.includes(index))
+				.map((reply) => reply.id),
+			role,
+		}
 
-				const piiMap: {[actorId: string]: string} = {}
-				for(const { actorId, publicKey } of publicKeys) {
-					if(!publicKey || !actorId) {
-						continue
-					}
+		if(role !== 'community') {
+			const publicKeys = await fetchPublicKeys()
 
-					const channel = await getSecureChannelFromPublicKey(webwallet, publicKey, getKeyForApplication(proposal.id))
-					const encryptedData = await channel.encrypt(JSON.stringify(json))
-					logger.info({ privateKey: webwallet.privateKey, publicKey, extraInfo: getKeyForApplication(proposal.id), data: json, answer: encryptedData }, 'Encrypted Data (Comment)')
-					piiMap[actorId] = encryptedData
+			const piiMap: { [actorId: string]: string } = {}
+			for(const { actorId, publicKey } of publicKeys) {
+				if(!publicKey || !actorId) {
+					continue
 				}
 
-				json = { pii: piiMap }
+				const channel = await getSecureChannelFromPublicKey(
+					webwallet,
+					publicKey,
+					getKeyForApplication(proposal.id),
+				)
+				const encryptedData = await channel.encrypt(JSON.stringify(json))
+				logger.info(
+					{
+						privateKey: webwallet.privateKey,
+						publicKey,
+						extraInfo: getKeyForApplication(proposal.id),
+						data: json,
+						answer: encryptedData,
+					},
+					'Encrypted Data (Comment)',
+				)
+				piiMap[actorId] = encryptedData
 			}
 
-			logger.info(json, 'JSON (Comment)')
+			json = { pii: piiMap }
+		}
 
-			const commentHash = (await uploadToIPFS(JSON.stringify(json))).hash
-			logger.info({ commentHash }, 'Comment Hash (Comment)')
+		logger.info(json, 'JSON (Comment)')
 
-			const methodArgs = [
-				proposal.grant.workspace.id,
-				proposal.grant.id,
-				proposal.id,
-				role !== 'community',
-				commentHash,
-			]
-			logger.info({ methodArgs }, 'Method Args (Comment)')
+		const commentHash = (await uploadToIPFS(JSON.stringify(json))).hash
+		logger.info({ commentHash }, 'Comment Hash (Comment)')
 
-			return await call({ method: 'addComment', args: methodArgs })
-		},
-		[
-			webwallet,
-			scwAddress,
-			chainId,
-			role,
-			proposal,
-		],
-	)
+		const methodArgs = [
+			proposal.grant.workspace.id,
+			proposal.grant.id,
+			proposal.id,
+			role !== 'community',
+			commentHash,
+		]
+		logger.info({ methodArgs }, 'Method Args (Comment)')
+
+		return await call({ method: 'addComment', args: methodArgs })
+	}
 
 	return {
-		addComment: useMemo(
-			() => addComment,
-			[webwallet, scwAddress, chainId, role, proposal],
-		),
+		addComment,
 		isBiconomyInitialised,
 	}
 }
