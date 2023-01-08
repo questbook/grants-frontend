@@ -302,7 +302,7 @@ function Reviews() {
 														}
 
 														if(!members[reviewer.id]) {
-															selectedReviewers.push(reviewer.id)
+															selectedReviewers.push(reviewer.member.actorId)
 															active.push(false)
 														}
 													}
