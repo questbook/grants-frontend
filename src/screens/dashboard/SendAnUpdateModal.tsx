@@ -66,6 +66,7 @@ function SendAnUpdateModal() {
 							w='100%'
 							variant='primaryLarge'
 							isDisabled={isDisabled}
+							isLoading={networkTransactionModalStep !== undefined}
 							onClick={
 								async() => {
 									const ret = await addComments(text, tags)
@@ -140,7 +141,7 @@ function SendAnUpdateModal() {
 	const { addComments, isBiconomyInitialised } = useAddComments({ setStep: setNetworkTransactionModalStep, setTransactionHash })
 
 	const isDisabled = useMemo(() => {
-		if(!isBiconomyInitialised || networkTransactionModalStep !== undefined) {
+		if(!isBiconomyInitialised) {
 			return true
 		}
 

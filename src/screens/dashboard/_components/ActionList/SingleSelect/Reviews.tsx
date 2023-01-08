@@ -291,7 +291,8 @@ function Reviews() {
 									<Flex mt={6}>
 										<Button
 											variant='primaryMedium'
-											isDisabled={networkTransactionModalStep !== undefined}
+											isDisabled={!isBiconomyInitialised}
+											isLoading={networkTransactionModalStep !== undefined}
 											onClick={
 												async() => {
 													const selectedReviewers: string[] = []
@@ -562,7 +563,8 @@ function Reviews() {
 									<Flex mt={4}>
 										<Button
 											variant='primaryMedium'
-											isDisabled={networkTransactionModalStep !== undefined}
+											isDisabled={!isBiconomyInitialised}
+											isLoading={networkTransactionModalStep !== undefined}
 											onClick={
 												() => {
 													logger.info({ reviewType, isReviewPrivate, rubricItems }, 'setRubrics')
@@ -798,7 +800,7 @@ function Reviews() {
 	const assignReviewerPopoverRef = useRef<HTMLButtonElement>(null)
 	const [searchMemberName, setSearchMemberName] = useState<string>('')
 	const [members, setMembers] = useState<{ [id: string]: boolean }>({})
-	const { assignReviewers } = useAssignReviewers()
+	const { assignReviewers, isBiconomyInitialised } = useAssignReviewers()
 
 	const setReviewTypePopoverRef = useRef<HTMLButtonElement>(null)
 	const [reviewType, setReviewType] = useState<ReviewType>(ReviewType.Rubrics)

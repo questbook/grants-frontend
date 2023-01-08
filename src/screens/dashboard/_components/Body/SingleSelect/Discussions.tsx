@@ -127,6 +127,7 @@ function Discussions() {
 								ml='auto'
 								variant='primaryMedium'
 								isDisabled={isDisabled}
+								isLoading={step !== undefined}
 								onClick={
 									async() => {
 										const ret = await addComment(text, tags)
@@ -265,7 +266,7 @@ function Discussions() {
 	const { comments, refresh } = useGetComments({ proposal })
 
 	const isDisabled = useMemo(() => {
-		if(!isBiconomyInitialised || step !== undefined) {
+		if(!isBiconomyInitialised) {
 			return true
 		}
 
