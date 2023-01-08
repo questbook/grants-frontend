@@ -1,5 +1,4 @@
 import { useContext, useMemo } from 'react'
-import { convertToRaw, EditorState } from 'draft-js'
 import { useGetMemberPublicKeysQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
@@ -7,7 +6,7 @@ import logger from 'src/libraries/logger'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { PIIForCommentType } from 'src/libraries/utils/types'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
-import useQuickReplies from 'src/screens/dashboard/_hooks/useQuickReplies'
+import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
@@ -23,7 +22,7 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 	const { proposals, selectedProposals, selectedGrant } =
     useContext(DashboardContext)!
 
-	const { quickReplies } = useQuickReplies()
+	const { proposalTags } = useProposalTags()
 
 	const selectedProposalsData = useMemo(() => {
 		if(!proposals || !selectedProposals) {
@@ -71,7 +70,7 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 	}
 
 	const addComments =
-		async(message: EditorState, tags: number[]) => {
+		async(message: string, tags: number[]) => {
 			if(
 				!workspace?.id ||
         !selectedGrant?.id ||
@@ -80,16 +79,12 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 				return
 			}
 
-			const messageHash = (
-				await uploadToIPFS(
-					JSON.stringify(convertToRaw(message.getCurrentContent())),
-				)
-			).hash
+			const messageHash = (await uploadToIPFS(message)).hash
 			const json: PIIForCommentType = {
 				sender: scwAddress,
 				message: messageHash,
 				timestamp: Math.floor(Date.now() / 1000),
-				tags: quickReplies[role]
+				tags: proposalTags
 					?.filter((_, index) => tags.includes(index))
 					.map((reply) => reply.id),
 				role,

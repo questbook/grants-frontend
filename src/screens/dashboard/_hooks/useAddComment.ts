@@ -10,7 +10,7 @@ import {
 } from 'src/libraries/utils/pii'
 import { PIIForCommentType } from 'src/libraries/utils/types'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
-import useQuickReplies from 'src/screens/dashboard/_hooks/useQuickReplies'
+import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -25,7 +25,7 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 
-	const { quickReplies } = useQuickReplies()
+	const { proposalTags } = useProposalTags()
 
 	const proposal = useMemo(() => {
 		const index = selectedProposals.indexOf(true)
@@ -108,7 +108,7 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 			sender: scwAddress,
 			message: messageHash,
 			timestamp: Math.floor(Date.now() / 1000),
-			tags: quickReplies[role]
+			tags: proposalTags
 				?.filter((_, index) => tags.includes(index))
 				.map((reply) => reply.id),
 			role,

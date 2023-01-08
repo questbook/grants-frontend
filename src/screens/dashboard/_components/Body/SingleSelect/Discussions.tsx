@@ -5,7 +5,7 @@ import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import useAddComment from 'src/screens/dashboard/_hooks/useAddComment'
 import useGetComments from 'src/screens/dashboard/_hooks/useGetComments'
-import useQuickReplies from 'src/screens/dashboard/_hooks/useQuickReplies'
+import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { CommentType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -47,9 +47,9 @@ function Discussions() {
 							direction='column'
 						>
 							{
-								Array.from(Array(Math.floor(quickReplies[role].length / 2)).keys()).map((_, index) => {
-									const reply1 = quickReplies[role]?.[index * 2]
-									const reply2 = quickReplies[role]?.[index * 2 + 1]
+								Array.from(Array(Math.floor(proposalTags.length / 2)).keys()).map((_, index) => {
+									const reply1 = proposalTags?.[index * 2]
+									const reply2 = proposalTags?.[index * 2 + 1]
 									return (
 										<Flex
 											key={index}
@@ -183,6 +183,7 @@ function Discussions() {
 						setSelectedTags(tags)
 					}
 				}
+				isDisabled={Object.keys(selectedTags).length > 0 && !(index in selectedTags)}
 			>
 				<Text
 					fontWeight='400'
@@ -239,7 +240,7 @@ function Discussions() {
 	const { scwAddress } = useContext(WebwalletContext)!
 	const { workspace, role } = useContext(ApiClientsContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
-	const { quickReplies } = useQuickReplies()
+	const { proposalTags } = useProposalTags()
 
 	const [step, setStep] = useState<number>()
 	const [, setTransactionHash] = useState('')
