@@ -76,15 +76,23 @@ function useGetComments({ proposal }: Props) {
 						logger.info({ privateKey: webwallet.privateKey, publicKey, role }, 'CHANNEL CONFIG (COMMENT DECRYPT)')
 					}
 
-					const data = comment?.commentsEncryptedData?.find(c => c.id.indexOf(scwAddress.toLowerCase()) !== -1)?.data ?? ''
+					const data = comment?.commentsEncryptedData?.find(c => c.id.indexOf(scwAddress.toLowerCase()) !== -1)?.data
+					if(!data) {
+						continue
+					}
+
 					logger.info({ data }, 'DATA TO DECRYPT (COMMENT DECRYPT)')
 					logger.info({ comment }, 'comment before decryption (Comment)')
-					const decryptedData = JSON.parse(await channel.decrypt(data))
-					logger.info({ decryptedData }, 'comment decrypted (COMMENT DECRYPT)')
+					try {
+						const decryptedData = JSON.parse(await channel.decrypt(data))
+						logger.info({ decryptedData }, 'comment decrypted (COMMENT DECRYPT)')
 
-					if(decryptedData?.message) {
-						const message = await getFromIPFS(decryptedData.message)
-						finalComments.push({ ...comment, ...decryptedData, message, })
+						if(decryptedData?.message) {
+							const message = await getFromIPFS(decryptedData.message)
+							finalComments.push({ ...comment, ...decryptedData, message, })
+						}
+					} catch(e) {
+						logger.error({ comment, e }, 'Error decrypting comment (COMMENT DECRYPT)')
 					}
 				}
 			} else {

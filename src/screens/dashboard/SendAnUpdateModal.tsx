@@ -70,7 +70,11 @@ function SendAnUpdateModal() {
 							isDisabled={isDisabled}
 							onClick={
 								async() => {
-									await addComments(text, tags)
+									const ret = await addComments(text, tags)
+									if(ret) {
+										setIsModalOpen(false)
+										setText(EditorState.createEmpty())
+									}
 								}
 							}>
 							Post
