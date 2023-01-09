@@ -1,5 +1,5 @@
 import {
-	GetCommentsQuery,
+	GetCommentsForBuilderQuery,
 	GetGrantsForAdminQuery,
 	GetGrantsForReviewerQuery,
 	GetPayoutsQuery,
@@ -7,6 +7,8 @@ import {
 	RubricItem,
 } from 'src/generated/graphql'
 import { PIIForCommentType } from 'src/libraries/utils/types'
+
+export type CommentMap = {[key: string]: CommentType[]}
 
 type BaseDashboardContextType = {
   isLoading: boolean
@@ -20,6 +22,8 @@ type BaseDashboardContextType = {
   setReview: (reviews: ReviewInfo) => void
   showSubmitReviewPanel: boolean
   setShowSubmitReviewPanel: (show: boolean) => void
+  commentMap: CommentMap
+  setCommentMap: (coments: CommentMap) => void
 };
 
 type OptionalDashboardContextType =
@@ -116,6 +120,6 @@ export type SignerVerifiedState = 'unverified' | 'initiate_verification' | 'veri
 //   }
 
 export type CommentType = Exclude<
-  GetCommentsQuery['comments'],
+  GetCommentsForBuilderQuery['comments'],
   null | undefined
 >[number] & PIIForCommentType;

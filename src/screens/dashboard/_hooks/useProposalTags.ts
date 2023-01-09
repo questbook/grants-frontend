@@ -1,8 +1,8 @@
 import { useContext, useMemo } from 'react'
 import logger from 'src/libraries/logger'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
-import useGetComments from 'src/screens/dashboard/_hooks/useGetComments'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
+import { DashboardContext } from 'src/screens/dashboard/Context'
 
 interface Props {
     proposal: ProposalType
@@ -11,8 +11,16 @@ interface Props {
 function useProposalTags({ proposal }: Props) {
 	const { role } = useContext(ApiClientsContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
+	const { commentMap } = useContext(DashboardContext)!
 
-	const { comments } = useGetComments({ proposal })
+	const comments = useMemo(() => {
+		if(!proposal || !commentMap) {
+			return []
+		}
+
+		const key = `${proposal.id}-${proposal.grant.workspace.supportedNetworks[0].split('_')[1]}`
+		return commentMap[key] ?? []
+	}, [proposal, commentMap])
 
 	const cutoffTimestamp = 1 * 24 * 60 * 60
 
