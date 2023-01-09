@@ -800,7 +800,7 @@ function Reviews() {
 	const assignReviewerPopoverRef = useRef<HTMLButtonElement>(null)
 	const [searchMemberName, setSearchMemberName] = useState<string>('')
 	const [members, setMembers] = useState<{ [id: string]: boolean }>({})
-	const { assignReviewers, isBiconomyInitialised } = useAssignReviewers()
+	const { assignReviewers, isBiconomyInitialised } = useAssignReviewers({ setNetworkTransactionModalStep, setTransactionHash })
 
 	const setReviewTypePopoverRef = useRef<HTMLButtonElement>(null)
 	const [reviewType, setReviewType] = useState<ReviewType>(ReviewType.Rubrics)

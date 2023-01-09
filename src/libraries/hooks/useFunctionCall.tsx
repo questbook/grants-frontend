@@ -102,6 +102,9 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 					title: title ?? 'Transaction executed and indexed',
 					status: 'success',
 					duration: 3000,
+					onCloseComplete: () => {
+						setTransactionStep?.(undefined)
+					}
 				})
 				return true
 			} else {

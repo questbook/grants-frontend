@@ -4,7 +4,12 @@ import logger from 'src/libraries/logger'
 import { ApiClientsContext } from 'src/pages/_app'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 
-function useAssignReviewers() {
+interface Props {
+	setNetworkTransactionModalStep: (step: number | undefined) => void
+	setTransactionHash: (hash: string) => void
+}
+
+function useAssignReviewers({ setNetworkTransactionModalStep, setTransactionHash }: Props) {
 	const { workspace, chainId } = useContext(ApiClientsContext)!
 	const { selectedGrant, selectedProposals, proposals } = useContext(DashboardContext)!
 
@@ -16,7 +21,7 @@ function useAssignReviewers() {
 		}
 	}, [proposals, selectedProposals])
 
-	const { call, isBiconomyInitialised } = useFunctionCall({ chainId, contractName: 'reviews' })
+	const { call, isBiconomyInitialised } = useFunctionCall({ chainId, contractName: 'reviews', setTransactionStep: setNetworkTransactionModalStep, setTransactionHash })
 
 	const assignReviewers = async(reviewers: string[], active: boolean[]) => {
 		if(!selectedGrant || !workspace || !proposal) {
