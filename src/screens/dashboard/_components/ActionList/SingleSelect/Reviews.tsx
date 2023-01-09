@@ -323,7 +323,7 @@ function Reviews() {
 												variant='v2_body'
 												color='white'
 												fontWeight='500'>
-												Enable
+												Save
 											</Text>
 										</Button>
 										<Button
