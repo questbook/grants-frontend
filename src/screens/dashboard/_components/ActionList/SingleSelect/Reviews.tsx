@@ -323,7 +323,7 @@ function Reviews() {
 												variant='v2_body'
 												color='white'
 												fontWeight='500'>
-												Enable
+												Save
 											</Text>
 										</Button>
 										<Button
@@ -800,7 +800,7 @@ function Reviews() {
 	const assignReviewerPopoverRef = useRef<HTMLButtonElement>(null)
 	const [searchMemberName, setSearchMemberName] = useState<string>('')
 	const [members, setMembers] = useState<{ [id: string]: boolean }>({})
-	const { assignReviewers, isBiconomyInitialised } = useAssignReviewers()
+	const { assignReviewers, isBiconomyInitialised } = useAssignReviewers({ setNetworkTransactionModalStep, setTransactionHash })
 
 	const setReviewTypePopoverRef = useRef<HTMLButtonElement>(null)
 	const [reviewType, setReviewType] = useState<ReviewType>(ReviewType.Rubrics)

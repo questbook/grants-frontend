@@ -1,0 +1,29 @@
+query getCommentsForBuilder($actorId: Bytes!, $first: Int, $skip: Int) {
+  comments(
+    first: $first,
+    skip: $skip,
+    where: { application_: {applicantId: $actorId} }
+    orderBy: createdAt
+    orderDirection: asc
+  ) {
+    id
+    isPrivate
+    commentsPublicHash
+    commentsEncryptedData {
+      id
+      data
+    }
+    workspace {
+      members {
+        actorId
+        fullName
+        profilePictureIpfsHash
+        publicKey
+      }
+    }
+    application {
+      id
+      applicantPublicKey
+    }
+  }
+}
