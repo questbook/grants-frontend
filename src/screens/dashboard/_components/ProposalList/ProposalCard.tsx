@@ -84,10 +84,11 @@ function ProposalCard({ index, proposal }: Props) {
 						{role === 'builder' ? proposal?.grant?.workspace?.title : getFieldString(proposal, 'applicantName')}
 					</Text>
 				</Flex>
-				<Flex>
+				<Flex gap={2}>
 					{
-						tag?.title !== '' && (
+						tags?.map((tag, index) => tag?.title !== '' && (
 							<Text
+								key={index}
 								mt={2}
 								bg={tag?.color}
 								variant='v2_metadata'
@@ -95,7 +96,7 @@ function ProposalCard({ index, proposal }: Props) {
 								px={1}>
 								{tag?.title}
 							</Text>
-						)
+						))
 					}
 				</Flex>
 
@@ -105,11 +106,11 @@ function ProposalCard({ index, proposal }: Props) {
 
 	const { role, selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
 
-	const { tag } = useProposalTags({ proposal })
+	const { tags } = useProposalTags({ proposal })
 
 	useEffect(() => {
-		logger.info('useProposalTags ', tag)
-	}, [tag])
+		logger.info('useProposalTags ', tags)
+	}, [tags])
 
 	const onClick = (isText: boolean = false) => {
 		const count = selectedProposals.filter((_) => _).length

@@ -5387,14 +5387,23 @@ export type GetMemberPublicKeysQueryVariables = Exact<{
 
 export type GetMemberPublicKeysQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', actorId: string, publicKey?: string | null }> } | null, grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, applicantPublicKey?: string | null, applicationReviewers: Array<{ __typename?: 'GrantApplicationReviewer', member: { __typename?: 'WorkspaceMember', actorId: string, publicKey?: string | null } }> }> };
 
-export type GetCommentsQueryVariables = Exact<{
-  proposalId: Scalars['String'];
+export type GetCommentsForBuilderQueryVariables = Exact<{
+  actorId: Scalars['Bytes'];
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type GetCommentsQuery = { __typename?: 'Query', comments: Array<{ __typename?: 'Comment', id: string, isPrivate: boolean, commentsPublicHash?: string | null, commentsEncryptedData?: Array<{ __typename?: 'PIIData', id: string, data: string }> | null, workspace: { __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, publicKey?: string | null }> }, application: { __typename?: 'GrantApplication', id: string } }> };
+export type GetCommentsForBuilderQuery = { __typename?: 'Query', comments: Array<{ __typename?: 'Comment', id: string, isPrivate: boolean, commentsPublicHash?: string | null, commentsEncryptedData?: Array<{ __typename?: 'PIIData', id: string, data: string }> | null, workspace: { __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, publicKey?: string | null }> }, application: { __typename?: 'GrantApplication', id: string, applicantPublicKey?: string | null } }> };
+
+export type GetCommentsForGpMemberQueryVariables = Exact<{
+  grantId: Scalars['String'];
+  first?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type GetCommentsForGpMemberQuery = { __typename?: 'Query', comments: Array<{ __typename?: 'Comment', id: string, isPrivate: boolean, commentsPublicHash?: string | null, commentsEncryptedData?: Array<{ __typename?: 'PIIData', id: string, data: string }> | null, workspace: { __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, publicKey?: string | null }> }, application: { __typename?: 'GrantApplication', id: string, applicantPublicKey?: string | null } }> };
 
 export type GetGrantsForAdminQueryVariables = Exact<{
   domainID: Scalars['String'];
@@ -8564,12 +8573,12 @@ export type GetMemberPublicKeysQueryResult = Apollo.QueryResult<GetMemberPublicK
 export function refetchGetMemberPublicKeysQuery(variables: GetMemberPublicKeysQueryVariables) {
       return { query: GetMemberPublicKeysDocument, variables: variables }
     }
-export const GetCommentsDocument = gql`
-    query getComments($proposalId: String!, $first: Int, $skip: Int) {
+export const GetCommentsForBuilderDocument = gql`
+    query getCommentsForBuilder($actorId: Bytes!, $first: Int, $skip: Int) {
   comments(
     first: $first
     skip: $skip
-    where: {application: $proposalId}
+    where: {application_: {applicantId: $actorId}}
     orderBy: createdAt
     orderDirection: asc
   ) {
@@ -8590,42 +8599,107 @@ export const GetCommentsDocument = gql`
     }
     application {
       id
+      applicantPublicKey
     }
   }
 }
     `;
 
 /**
- * __useGetCommentsQuery__
+ * __useGetCommentsForBuilderQuery__
  *
- * To run a query within a React component, call `useGetCommentsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetCommentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetCommentsForBuilderQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCommentsForBuilderQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetCommentsQuery({
+ * const { data, loading, error } = useGetCommentsForBuilderQuery({
  *   variables: {
- *      proposalId: // value for 'proposalId'
+ *      actorId: // value for 'actorId'
  *      first: // value for 'first'
  *      skip: // value for 'skip'
  *   },
  * });
  */
-export function useGetCommentsQuery(baseOptions: Apollo.QueryHookOptions<GetCommentsQuery, GetCommentsQueryVariables>) {
+export function useGetCommentsForBuilderQuery(baseOptions: Apollo.QueryHookOptions<GetCommentsForBuilderQuery, GetCommentsForBuilderQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetCommentsQuery, GetCommentsQueryVariables>(GetCommentsDocument, options);
+        return Apollo.useQuery<GetCommentsForBuilderQuery, GetCommentsForBuilderQueryVariables>(GetCommentsForBuilderDocument, options);
       }
-export function useGetCommentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCommentsQuery, GetCommentsQueryVariables>) {
+export function useGetCommentsForBuilderLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCommentsForBuilderQuery, GetCommentsForBuilderQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetCommentsQuery, GetCommentsQueryVariables>(GetCommentsDocument, options);
+          return Apollo.useLazyQuery<GetCommentsForBuilderQuery, GetCommentsForBuilderQueryVariables>(GetCommentsForBuilderDocument, options);
         }
-export type GetCommentsQueryHookResult = ReturnType<typeof useGetCommentsQuery>;
-export type GetCommentsLazyQueryHookResult = ReturnType<typeof useGetCommentsLazyQuery>;
-export type GetCommentsQueryResult = Apollo.QueryResult<GetCommentsQuery, GetCommentsQueryVariables>;
-export function refetchGetCommentsQuery(variables: GetCommentsQueryVariables) {
-      return { query: GetCommentsDocument, variables: variables }
+export type GetCommentsForBuilderQueryHookResult = ReturnType<typeof useGetCommentsForBuilderQuery>;
+export type GetCommentsForBuilderLazyQueryHookResult = ReturnType<typeof useGetCommentsForBuilderLazyQuery>;
+export type GetCommentsForBuilderQueryResult = Apollo.QueryResult<GetCommentsForBuilderQuery, GetCommentsForBuilderQueryVariables>;
+export function refetchGetCommentsForBuilderQuery(variables: GetCommentsForBuilderQueryVariables) {
+      return { query: GetCommentsForBuilderDocument, variables: variables }
+    }
+export const GetCommentsForGpMemberDocument = gql`
+    query getCommentsForGPMember($grantId: String!, $first: Int, $skip: Int) {
+  comments(
+    first: $first
+    skip: $skip
+    where: {grant: $grantId}
+    orderBy: createdAt
+    orderDirection: asc
+  ) {
+    id
+    isPrivate
+    commentsPublicHash
+    commentsEncryptedData {
+      id
+      data
+    }
+    workspace {
+      members {
+        actorId
+        fullName
+        profilePictureIpfsHash
+        publicKey
+      }
+    }
+    application {
+      id
+      applicantPublicKey
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetCommentsForGpMemberQuery__
+ *
+ * To run a query within a React component, call `useGetCommentsForGpMemberQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCommentsForGpMemberQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCommentsForGpMemberQuery({
+ *   variables: {
+ *      grantId: // value for 'grantId'
+ *      first: // value for 'first'
+ *      skip: // value for 'skip'
+ *   },
+ * });
+ */
+export function useGetCommentsForGpMemberQuery(baseOptions: Apollo.QueryHookOptions<GetCommentsForGpMemberQuery, GetCommentsForGpMemberQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCommentsForGpMemberQuery, GetCommentsForGpMemberQueryVariables>(GetCommentsForGpMemberDocument, options);
+      }
+export function useGetCommentsForGpMemberLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCommentsForGpMemberQuery, GetCommentsForGpMemberQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCommentsForGpMemberQuery, GetCommentsForGpMemberQueryVariables>(GetCommentsForGpMemberDocument, options);
+        }
+export type GetCommentsForGpMemberQueryHookResult = ReturnType<typeof useGetCommentsForGpMemberQuery>;
+export type GetCommentsForGpMemberLazyQueryHookResult = ReturnType<typeof useGetCommentsForGpMemberLazyQuery>;
+export type GetCommentsForGpMemberQueryResult = Apollo.QueryResult<GetCommentsForGpMemberQuery, GetCommentsForGpMemberQueryVariables>;
+export function refetchGetCommentsForGpMemberQuery(variables: GetCommentsForGpMemberQueryVariables) {
+      return { query: GetCommentsForGpMemberDocument, variables: variables }
     }
 export const GetGrantsForAdminDocument = gql`
     query getGrantsForAdmin($domainID: String!) {

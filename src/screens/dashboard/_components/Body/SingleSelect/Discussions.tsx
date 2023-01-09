@@ -4,7 +4,6 @@ import logger from 'src/libraries/logger'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import useAddComment from 'src/screens/dashboard/_hooks/useAddComment'
-import useGetComments from 'src/screens/dashboard/_hooks/useGetComments'
 import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { CommentType } from 'src/screens/dashboard/_utils/types'
@@ -134,7 +133,7 @@ function Discussions() {
 										if(ret) {
 											setText('')
 											setSelectedTags({})
-											refresh()
+											// refresh()
 										}
 									}
 								}>
@@ -240,7 +239,7 @@ function Discussions() {
 
 	const { scwAddress } = useContext(WebwalletContext)!
 	const { workspace, role } = useContext(ApiClientsContext)!
-	const { proposals, selectedProposals } = useContext(DashboardContext)!
+	const { proposals, selectedProposals, commentMap } = useContext(DashboardContext)!
 	const { proposalTags } = useProposalTags()
 
 	const [step, setStep] = useState<number>()
@@ -263,7 +262,14 @@ function Discussions() {
 		}
 	}, [proposals, selectedProposals])
 
-	const { comments, refresh } = useGetComments({ proposal })
+	const comments = useMemo(() => {
+		if(!proposal || !commentMap) {
+			return []
+		}
+
+		const key = `${proposal.id}.${proposal.grant.workspace.supportedNetworks[0].split('_')[1]}`
+		return commentMap[key] ?? []
+	}, [proposal, commentMap])
 
 	const isDisabled = useMemo(() => {
 		if(!isBiconomyInitialised) {
