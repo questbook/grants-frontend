@@ -1,11 +1,9 @@
 import { useContext, useMemo, useState } from 'react'
-import { Box, Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
-import { convertToRaw, EditorState } from 'draft-js'
+import { Box, Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text, Textarea } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
-import TextEditor from 'src/libraries/ui/RichTextEditor/textEditor'
 import useAddComments from 'src/screens/dashboard/_hooks/useAddComments'
-import useQuickReplies from 'src/screens/dashboard/_hooks/useQuickReplies'
-import { DashboardContext, SendAnUpdateContext } from 'src/screens/dashboard/Context'
+import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
+import { SendAnUpdateContext } from 'src/screens/dashboard/Context'
 
 function SendAnUpdateModal() {
 	const buildComponent = () => {
@@ -43,9 +41,9 @@ function SendAnUpdateModal() {
 							direction='column'
 						>
 							{
-								Array.from(Array(Math.floor(quickReplies[role].length / 2)).keys()).map((_, index) => {
-									const reply1 = quickReplies[role]?.[index * 2]
-									const reply2 = quickReplies[role]?.[index * 2 + 1]
+								Array.from(Array(Math.floor(proposalTags.length / 2)).keys()).map((_, index) => {
+									const reply1 = proposalTags?.[index * 2]
+									const reply2 = proposalTags?.[index * 2 + 1]
 									return (
 										<Flex
 											key={index}
@@ -58,9 +56,9 @@ function SendAnUpdateModal() {
 							}
 						</Flex>
 						<Box mt={4} />
-						<TextEditor
+						<Textarea
 							value={text}
-							onChange={setText}
+							onChange={(e) => setText(e.target.value)}
 							placeholder='Add a comment here' />
 
 						<Button
@@ -68,9 +66,15 @@ function SendAnUpdateModal() {
 							w='100%'
 							variant='primaryLarge'
 							isDisabled={isDisabled}
+							isLoading={networkTransactionModalStep !== undefined}
 							onClick={
 								async() => {
-									await addComments(text, tags)
+									const ret = await addComments(text, tags)
+									if(ret) {
+										setIsModalOpen(false)
+										setText('')
+										setSelectedTags
+									}
 								}
 							}>
 							Post
@@ -110,6 +114,7 @@ function SendAnUpdateModal() {
 						setSelectedTags(tags)
 					}
 				}
+				isDisabled={Object.keys(selectedTags).length > 0 && !(index in selectedTags)}
 			>
 				<Text
 					fontWeight='400'
@@ -121,9 +126,8 @@ function SendAnUpdateModal() {
 	}
 
 	const { isModalOpen, setIsModalOpen } = useContext(SendAnUpdateContext)!
-	const { role } = useContext(DashboardContext)!
-	const { quickReplies } = useQuickReplies()
-	const [ text, setText ] = useState<EditorState>(EditorState.createEmpty())
+	const { proposalTags } = useProposalTags()
+	const [ text, setText ] = useState<string>('')
 
 	const [ selectedTags, setSelectedTags ] = useState<{[key: number]: boolean}>({})
 
@@ -137,12 +141,11 @@ function SendAnUpdateModal() {
 	const { addComments, isBiconomyInitialised } = useAddComments({ setStep: setNetworkTransactionModalStep, setTransactionHash })
 
 	const isDisabled = useMemo(() => {
-		if(!isBiconomyInitialised || networkTransactionModalStep !== undefined) {
+		if(!isBiconomyInitialised) {
 			return true
 		}
 
-		const raw = convertToRaw(text.getCurrentContent())
-		return !raw.blocks.some((block) => block.text.length > 0)
+		return text === ''
 	}, [text, networkTransactionModalStep, isBiconomyInitialised])
 
 	return buildComponent()
