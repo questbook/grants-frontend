@@ -1,5 +1,4 @@
-import { useCallback, useContext, useMemo } from 'react'
-import useQBContract from 'src/hooks/contracts/useQBContract'
+import { useContext, useMemo } from 'react'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
 import { ApiClientsContext } from 'src/pages/_app'
@@ -17,10 +16,9 @@ function useAssignReviewers() {
 		}
 	}, [proposals, selectedProposals])
 
-	const applicationReviewRegistry = useQBContract('reviews', chainId)
-	const { call } = useFunctionCall({ chainId, contractName: 'reviews' })
+	const { call, isBiconomyInitialised } = useFunctionCall({ chainId, contractName: 'reviews' })
 
-	const assignReviewers = useCallback(async(reviewers: string[], active: boolean[]) => {
+	const assignReviewers = async(reviewers: string[], active: boolean[]) => {
 		if(!selectedGrant || !workspace || !proposal) {
 			return
 		}
@@ -29,9 +27,9 @@ function useAssignReviewers() {
 
 		await call({ method: 'assignReviewers', args: [workspace.id, proposal.id, selectedGrant.id, reviewers, active] })
 
-	}, [applicationReviewRegistry, selectedGrant, proposal, workspace])
+	}
 
-	return { assignReviewers: useMemo(() => assignReviewers, [applicationReviewRegistry, selectedGrant, proposal, workspace]) }
+	return { assignReviewers, isBiconomyInitialised }
 }
 
 export default useAssignReviewers

@@ -517,7 +517,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [isBuilder, setIsBuilder] = useState<'fetching' | 'yes' | 'no'>('fetching')
 
 	const chainId = useMemo(() => {
-		return getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
+		const chainId = getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId
+		switchNetwork(chainId)
+		return chainId
 	}, [workspace])
 
 	useEffect(() => {

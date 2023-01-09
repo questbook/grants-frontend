@@ -1,13 +1,11 @@
 import { useContext, useMemo, useState } from 'react'
-import { Button, CircularProgress, Divider, Flex, Image, Text } from '@chakra-ui/react'
-import { convertToRaw, EditorState } from 'draft-js'
+import { Button, CircularProgress, Divider, Flex, Image, Text, Textarea } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
-import TextEditor from 'src/libraries/ui/RichTextEditor/textEditor'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import useAddComment from 'src/screens/dashboard/_hooks/useAddComment'
 import useGetComments from 'src/screens/dashboard/_hooks/useGetComments'
-import useQuickReplies from 'src/screens/dashboard/_hooks/useQuickReplies'
+import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { CommentType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -49,9 +47,9 @@ function Discussions() {
 							direction='column'
 						>
 							{
-								Array.from(Array(Math.floor(quickReplies[role].length / 2)).keys()).map((_, index) => {
-									const reply1 = quickReplies[role]?.[index * 2]
-									const reply2 = quickReplies[role]?.[index * 2 + 1]
+								Array.from(Array(Math.floor(proposalTags.length / 2)).keys()).map((_, index) => {
+									const reply1 = proposalTags?.[index * 2]
+									const reply2 = proposalTags?.[index * 2 + 1]
 									return (
 										<Flex
 											key={index}
@@ -77,9 +75,13 @@ function Discussions() {
 						ml={4}
 						direction='column'
 						w='100%'>
-						<TextEditor
+						<Textarea
 							value={text}
-							onChange={setText}
+							onChange={
+								(e) => {
+									setText(e.target.value)
+								}
+							}
 							placeholder='Add a comment here' />
 						<Flex
 							mt={4}
@@ -95,11 +97,15 @@ function Discussions() {
 													size='18px' />
 											)
 										}
-										<Text
-											ml={2}
-											variant='v2_body'>
-											Adding comment...
-										</Text>
+										{
+											step < 3 && (
+												<Text
+													ml={2}
+													variant='v2_body'>
+													Adding comment...
+												</Text>
+											)
+										}
 										{/* {
 											transactionHash && (
 												<IconButton
@@ -121,11 +127,13 @@ function Discussions() {
 								ml='auto'
 								variant='primaryMedium'
 								isDisabled={isDisabled}
+								isLoading={step !== undefined}
 								onClick={
 									async() => {
 										const ret = await addComment(text, tags)
 										if(ret) {
-											setText(EditorState.createEmpty())
+											setText('')
+											setSelectedTags({})
 											refresh()
 										}
 									}
@@ -142,7 +150,7 @@ function Discussions() {
 					color='gray.3'
 					height={1} />
 
-				{comments.filter((comment) => comment.sender && (comment.workspace.members.some((member) => member.actorId.toLowerCase() === comment.sender?.toLowerCase()) || comment.sender?.toLowerCase() === proposal?.applicantId.toLowerCase())).map(renderComment)}
+				{comments.filter((comment) => comment.sender && (comment.workspace.members.some((member) => member.actorId === comment.sender?.toLowerCase()) || comment.sender?.toLowerCase() === proposal?.applicantId.toLowerCase())).map(renderComment)}
 			</Flex>
 		)
 	}
@@ -176,6 +184,7 @@ function Discussions() {
 						setSelectedTags(tags)
 					}
 				}
+				isDisabled={Object.keys(selectedTags).length > 0 && !(index in selectedTags)}
 			>
 				<Text
 					fontWeight='400'
@@ -208,9 +217,9 @@ function Discussions() {
 							ml={3}
 							variant='v2_metadata'
 							borderRadius='3px'
-							bg={comment?.role === 'admin' || comment?.role === 'reviewer' ? 'gray.3' : 'accent.vodka'}
+							bg={comment?.role === 'admin' ? 'gray.3' : comment?.role === 'reviewer' ? 'accent.crayola' : comment?.role === 'accent.vodka' ? 'Builder' : 'accent.melon'}
 							px={1}>
-							{comment?.role === 'admin' || comment?.role === 'reviewer' ? 'Member' : 'Builder'}
+							{comment?.role === 'admin' ? 'Admin' : comment?.role === 'reviewer' ? 'Reviewer' : comment?.role === 'builder' ? 'Builder' : 'Community'}
 						</Text>
 						{
 							comment?.timestamp && (
@@ -232,7 +241,7 @@ function Discussions() {
 	const { scwAddress } = useContext(WebwalletContext)!
 	const { workspace, role } = useContext(ApiClientsContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
-	const { quickReplies } = useQuickReplies()
+	const { proposalTags } = useProposalTags()
 
 	const [step, setStep] = useState<number>()
 	const [, setTransactionHash] = useState('')
@@ -243,7 +252,7 @@ function Discussions() {
 		return Object.keys(selectedTags).map((key) => parseInt(key, 10))
 	}, [selectedTags])
 
-	const [ text, setText ] = useState<EditorState>(EditorState.createEmpty())
+	const [ text, setText ] = useState<string>('')
 	const { addComment, isBiconomyInitialised } = useAddComment({ setStep, setTransactionHash })
 
 	const proposal = useMemo(() => {
@@ -257,12 +266,11 @@ function Discussions() {
 	const { comments, refresh } = useGetComments({ proposal })
 
 	const isDisabled = useMemo(() => {
-		if(!isBiconomyInitialised || step !== undefined) {
+		if(!isBiconomyInitialised) {
 			return true
 		}
 
-		const raw = convertToRaw(text.getCurrentContent())
-		return !raw.blocks.some((block) => block.text.length > 0)
+		return text === ''
 	}, [text, step])
 
 	const getCommentDisplayName = (comment: CommentType) => {

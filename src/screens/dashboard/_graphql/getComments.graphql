@@ -4,7 +4,7 @@ query getComments($proposalId: String!, $first: Int, $skip: Int) {
     skip: $skip,
     where: { application: $proposalId }
     orderBy: createdAt
-    orderDirection: desc
+    orderDirection: asc
   ) {
     id
     isPrivate
@@ -18,7 +18,11 @@ query getComments($proposalId: String!, $first: Int, $skip: Int) {
         actorId
         fullName
         profilePictureIpfsHash
+        publicKey
       }
+    }
+    application {
+      id
     }
   }
 }

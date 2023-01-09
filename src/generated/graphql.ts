@@ -5394,7 +5394,7 @@ export type GetCommentsQueryVariables = Exact<{
 }>;
 
 
-export type GetCommentsQuery = { __typename?: 'Query', comments: Array<{ __typename?: 'Comment', id: string, isPrivate: boolean, commentsPublicHash?: string | null, commentsEncryptedData?: Array<{ __typename?: 'PIIData', id: string, data: string }> | null, workspace: { __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null }> } }> };
+export type GetCommentsQuery = { __typename?: 'Query', comments: Array<{ __typename?: 'Comment', id: string, isPrivate: boolean, commentsPublicHash?: string | null, commentsEncryptedData?: Array<{ __typename?: 'PIIData', id: string, data: string }> | null, workspace: { __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, publicKey?: string | null }> }, application: { __typename?: 'GrantApplication', id: string } }> };
 
 export type GetGrantsForAdminQueryVariables = Exact<{
   domainID: Scalars['String'];
@@ -8571,7 +8571,7 @@ export const GetCommentsDocument = gql`
     skip: $skip
     where: {application: $proposalId}
     orderBy: createdAt
-    orderDirection: desc
+    orderDirection: asc
   ) {
     id
     isPrivate
@@ -8585,7 +8585,11 @@ export const GetCommentsDocument = gql`
         actorId
         fullName
         profilePictureIpfsHash
+        publicKey
       }
+    }
+    application {
+      id
     }
   }
 }
