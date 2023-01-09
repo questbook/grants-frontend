@@ -101,7 +101,6 @@ const RFPFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			link: response[0]?.grant?.link ? response[0]?.grant?.link : '',
 			doc: response[0]?.grant?.docIpfsHash ? response[0]?.grant?.docIpfsHash : '',
 			milestones: response[0]?.grant?.milestones!,
-			numberOfReviewers: response[0]?.grant?.numberOfReviewersPerApplication!,
 			payoutMode: response[0]?.grant?.payoutType!,
 			reviewMechanism: response[0]?.grant?.reviewType!,
 			rubrics: rubricData!

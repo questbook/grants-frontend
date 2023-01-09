@@ -31,12 +31,5 @@ query getGrantsForAdmin($domainID: String!) {
     }
     reviewType
     payoutType
-    numberOfReviewersPerApplication
-    autoAssignReviewers {
-      id
-      actorId
-      profilePictureIpfsHash
-    }
-    shouldAutoAssignReviewers
   }
 }

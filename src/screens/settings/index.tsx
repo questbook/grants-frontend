@@ -1,7 +1,7 @@
 import { ReactElement, useContext, useEffect, useState } from 'react'
 import { BsArrowLeft } from 'react-icons/bs'
 import { ArrowForwardIcon, Search2Icon } from '@chakra-ui/icons'
-import { Button, Checkbox, Divider, Flex, Image, Input, InputGroup, InputLeftElement, Spacer, Text } from '@chakra-ui/react'
+import { Button, Checkbox, Divider, Flex, Image, Input, InputGroup, InputLeftElement, Spacer, Text, Textarea } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { convertToRaw, EditorState } from 'draft-js'
 import router from 'next/router'
@@ -172,7 +172,7 @@ function Settings() {
 									More Info
 								</Text>
 								<Divider />
-								<TextEditor
+								{/* <TextEditor
 									value={moreInfo}
 									placeholder='Details about opportunities in your ecosystem for builders. Additionally, you can write about various active grant, and bounty programs.'
 									onChange={
@@ -184,13 +184,13 @@ function Settings() {
 											)
 											setGrantProgramData(data)
 										}
-									} />
-								{/* <Textarea
+									} /> */}
+								<Textarea
 									variant='outline'
 									minH='200px'
 									value={grantProgramData?.about}
 									onChange={(e) => onChange(e, 'about')}
-									placeholder='Details about opportunities in your ecosystem for builders. Additionally, you can write about various active grant, and bounty programs.' /> */}
+									placeholder='Details about opportunities in your ecosystem for builders. Additionally, you can write about various active grant, and bounty programs.' />
 							</Flex>
 
 
@@ -506,7 +506,6 @@ function Settings() {
 
 	const [imageFile, setImageFile] = useState<{file: File | null, hash?: string}>({ file: null })
 	const [searchString, setSearchString] = useState('')
-	const [ moreInfo, setMoreInfo ] = useState<EditorState>(EditorState.createEmpty())
 
 	const [multisigAddress, setMultisigAddress] = useState('')
 	const [isLinkMultisigButtonClicked, setIsLinkMultisigButtonClicked] = useState(false)
@@ -531,9 +530,9 @@ function Settings() {
 	// const customToastRef = useRef()
 	// const toast = useToast()
 
-	useEffect(() => {
-		getProjectDetails(grantProgramData?.about).then(setMoreInfo)
-	}, [grantProgramData])
+	// useEffect(() => {
+	// 	getProjectDetails(grantProgramData?.about).then(setMoreInfo)
+	// }, [grantProgramData?.about])
 
 	useEffect(() => {
 		logger.info('Multi-sig address entered', multisigAddress)

@@ -17,12 +17,35 @@ export type RFPForm = {
     allApplicantDetails: ApplicantDetailsFieldType[] | undefined
     link: string
     doc: string
-    numberOfReviewers: number
     reviewMechanism: string
     rubrics: string[]
     payoutMode: string
     amount: string
     milestones: string[]
+}
+
+export type GrantFields = {
+    title: string
+    startDate: string
+    endDate: string
+    fields: any
+    link: string
+    docIpfsHash: string
+    payoutType: string
+    reward: {
+        asset: string
+        committed: string
+        token: {
+            label: string
+            address: string
+            decimal: string
+            iconHash: string
+        }
+    }
+    creatorId: string
+    workspaceId: string
+    reviewType?: string
+    milestones?: string[]
 }
 
 export type RubricType = { [key: number]: { title: string, details: string, maximumPoints: number } }

@@ -1,10 +1,12 @@
 import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { GetGrantsForAdminQuery, GetGrantsForReviewerQuery, useGetGrantsForAdminQuery, useGetGrantsForReviewerQuery, useGetProposalsForAdminQuery, useGetProposalsForBuilderQuery, useGetProposalsForReviewerQuery } from 'src/generated/graphql'
+import { GetCommentsForBuilderQuery, GetGrantsForAdminQuery, GetGrantsForReviewerQuery, useGetCommentsForBuilderQuery, useGetCommentsForGpMemberQuery, useGetGrantsForAdminQuery, useGetGrantsForReviewerQuery, useGetProposalsForAdminQuery, useGetProposalsForBuilderQuery, useGetProposalsForReviewerQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
+import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { GRANT_CACHE_KEY } from 'src/screens/dashboard/_utils/constants'
-import { DashboardContextType, FundBuilderContextType, Proposals, ReviewInfo, SendAnUpdateContextType, SignerVerifiedState, TokenInfo } from 'src/screens/dashboard/_utils/types'
+import { CommentMap, DashboardContextType, FundBuilderContextType, Proposals, ReviewInfo, SendAnUpdateContextType, SignerVerifiedState, TokenInfo } from 'src/screens/dashboard/_utils/types'
+import { getFromIPFS } from 'src/utils/ipfsUtils'
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined)
 const FundBuilderContext = createContext<FundBuilderContextType | undefined>(undefined)
@@ -15,7 +17,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	useEffect(() => {
 		logger.info({ role }, 'Tracking role')
 	}, [role])
-	const { scwAddress } = useContext(WebwalletContext)!
+	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 
 	const { fetchMore: fetchMoreAdminGrants } = useMultiChainQuery({
 		useQuery: useGetGrantsForAdminQuery,
@@ -46,6 +48,17 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		options: {},
 	})
 
+	const { fetchMore: fetchMoreGpMemberComments } = useMultiChainQuery({
+		useQuery: useGetCommentsForGpMemberQuery,
+		options: {},
+		chains: [chainId]
+	})
+
+	const { fetchMore: fetchMoreBuilderComments } = useMultiChainQuery({
+		useQuery: useGetCommentsForBuilderQuery,
+		options: {},
+	})
+
 	const [adminGrants, setAdminGrants] = useState<GetGrantsForAdminQuery['grants']>([])
 	const [reviewerGrants, setReviewerGrants] = useState<GetGrantsForReviewerQuery['grantReviewerCounters']>([])
 	const [selectedGrantIndex, setSelectedGrantIndex] = useState<number>()
@@ -54,6 +67,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const [review, setReview] = useState<ReviewInfo>()
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 	const [showSubmitReviewPanel, setShowSubmitReviewPanel] = useState<boolean>(false)
+	const [commentMap, setCommentMap] = useState<CommentMap>({})
 
 	useEffect(() => {
 		logger.info({ isLoading }, 'Loading')
@@ -118,8 +132,80 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		}
 	}, [workspace, role])
 
+	const handleComments = async(allComments: Exclude<GetCommentsForBuilderQuery['comments'], null | undefined>) => {
+		if(!webwallet || !scwAddress) {
+			return {}
+		}
+
+		const commentMap: CommentMap = {}
+		for(const comment of allComments) {
+			if(comment.id.indexOf(scwAddress.toLowerCase()) === -1) {
+				continue
+			}
+
+			const sender = comment.id.split('.')[1]
+			let channel: {
+				encrypt(plaintext: string): Promise<string>
+				decrypt(ciphertext: string): Promise<string>
+			}
+			if(sender === scwAddress.toLowerCase()) {
+				channel = await getSecureChannelFromPublicKey(webwallet, webwallet.publicKey, getKeyForApplication(comment.application.id))
+				logger.info({ privateKey: webwallet.privateKey, publicKey: webwallet.publicKey, role }, 'CHANNEL CONFIG (COMMENT DECRYPT)')
+			} else {
+				const publicKey = comment.application.applicantPublicKey
+				if(!publicKey) {
+					continue
+				}
+
+				logger.info({ publicKey }, 'PUBLIC KEY (COMMENT DECRYPT)')
+				channel = await getSecureChannelFromPublicKey(webwallet, publicKey, getKeyForApplication(comment.application.id))
+				logger.info({ privateKey: webwallet.privateKey, publicKey, role }, 'CHANNEL CONFIG (COMMENT DECRYPT)')
+			}
+
+			logger.info({ comment }, 'comment before decrypt (COMMENT DECRYPT)')
+			if(comment.isPrivate) {
+				for(const encrypted of comment.commentsEncryptedData?.filter(c => c.id.indexOf(scwAddress.toLowerCase()) !== -1) ?? []) {
+					try {
+						const decryptedData = JSON.parse(await channel.decrypt(encrypted.data))
+						logger.info({ decryptedData }, 'comment decrypted (COMMENT DECRYPT)')
+
+						if(decryptedData?.message) {
+							const message = await getFromIPFS(decryptedData.message)
+							const key = `${comment.application.id}.${chainId}`
+							if(!commentMap[key]) {
+								commentMap[key] = []
+							}
+
+							commentMap[key].push({ ...comment, ...decryptedData, message })
+						}
+					} catch(e) {
+						logger.error({ comment, e }, 'Error decrypting comment (COMMENT DECRYPT)')
+					}
+				}
+			} else {
+				if(comment?.commentsPublicHash) {
+					const message = await getFromIPFS(comment.commentsPublicHash)
+					const key = `${comment.application.id}.${chainId}`
+					if(!commentMap[key]) {
+						commentMap[key] = []
+					}
+
+					commentMap[key].push({ ...comment, message })
+				}
+			}
+		}
+
+		return commentMap
+	}
+
 	const getProposals = useCallback(async() => {
 		logger.info({ role, adminGrants, reviewerGrants, selectedGrantIndex, scwAddress }, 'Fetching proposals')
+		if(!webwallet) {
+			return 'no-webwallet'
+		} else if(!scwAddress) {
+			return 'no-scw-address'
+		}
+
 		if((role === 'admin' || role === 'reviewer') && selectedGrantIndex === undefined) {
 			return 'no-selected-grant-index'
 		} else if((role === 'admin' && adminGrants.length === 0) || (role === 'reviewer' && reviewerGrants.length === 0)) {
@@ -185,6 +271,41 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 			logger.info({ proposals }, 'Fetched proposals (Builder)')
 		}
+
+		const adminCondition = ((role === 'admin' || role === 'reviewer') && selectedGrantIndex !== undefined)
+		const builderCondition = role === 'builder'
+		if(adminCondition || builderCondition) {
+			const allComments = []
+			const first = 100
+			let skip = 0
+			let shouldContinue = true
+			do {
+				const results = adminCondition ? await fetchMoreGpMemberComments({ first, skip, grantId: adminGrants[selectedGrantIndex].id }, true) : await fetchMoreBuilderComments({ first, skip, actorId: scwAddress }, true)
+				logger.info({ results }, 'Results (Comments)')
+				if(results?.length === 0 || results?.every((r) => !r?.comments?.length)) {
+					shouldContinue = false
+					break
+				}
+
+				for(const result of results) {
+					if(!result?.comments?.length) {
+						continue
+					}
+
+					allComments.push(...result?.comments)
+				}
+
+				skip += first
+			} while(shouldContinue)
+
+			logger.info({ allComments }, 'Fetched comments')
+			const commentMap = await handleComments(allComments)
+			logger.info(commentMap, 'Comment map')
+			setCommentMap(commentMap)
+		} else if(role === 'community') {
+			setCommentMap({})
+		}
+
 
 		setProposals(proposals)
 		return 'grant-details-fetched'
@@ -257,6 +378,8 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			isLoading,
 			showSubmitReviewPanel,
 			setShowSubmitReviewPanel,
+			commentMap,
+			setCommentMap
 		}
 	}, [proposals,
 		selectedGrantIndex,
@@ -268,7 +391,9 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		setReview,
 		isLoading,
 		showSubmitReviewPanel,
-		setShowSubmitReviewPanel])
+		setShowSubmitReviewPanel,
+		commentMap,
+		setCommentMap])
 
 	return (
 		<DashboardContext.Provider
@@ -323,7 +448,7 @@ const FundBuilderProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 					isDrawerOpen,
 					setIsDrawerOpen,
 					signerVerifiedState,
-					setSignerVerifiedState
+					setSignerVerifiedState,
 				}
 			}>
 			{children}

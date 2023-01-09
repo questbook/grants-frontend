@@ -1,5 +1,4 @@
-import { useCallback, useContext, useMemo } from 'react'
-import useQBContract from 'src/hooks/contracts/useQBContract'
+import { useContext } from 'react'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
 import { validateAndUploadToIpfs } from 'src/libraries/validator'
@@ -17,11 +16,9 @@ function useSetRubrics({ setNetworkTransactionModalStep, setTransactionHash }: P
 	const { workspace, chainId } = useContext(ApiClientsContext)!
 	const { selectedGrant } = useContext(DashboardContext)!
 
-	const applicationReviewRegistry = useQBContract('reviews', chainId)
+	const { call, isBiconomyInitialised } = useFunctionCall({ chainId, contractName: 'reviews', setTransactionStep: setNetworkTransactionModalStep, setTransactionHash })
 
-	const { call } = useFunctionCall({ chainId, contractName: 'reviews', setTransactionStep: setNetworkTransactionModalStep, setTransactionHash })
-
-	const setRubrics = useCallback(
+	const setRubrics =
 		async(reviewType: ReviewType, isPrivate: boolean, items: RubricItem[]) => {
 			if(!selectedGrant || !workspace) {
 				return
@@ -73,17 +70,12 @@ function useSetRubrics({ setNetworkTransactionModalStep, setTransactionHash }: P
 
 			await call({
 				method: 'setRubrics',
-				args: [workspace.id, selectedGrant.id, selectedGrant.numberOfReviewersPerApplication ?? 0, hash]
+				args: [workspace.id, selectedGrant.id, hash]
 			})
-		},
-		[applicationReviewRegistry, selectedGrant, workspace],
-	)
+		}
 
 	return {
-		setRubrics: useMemo(
-			() => setRubrics,
-			[applicationReviewRegistry, selectedGrant, workspace],
-		),
+		setRubrics, isBiconomyInitialised
 	}
 }
 

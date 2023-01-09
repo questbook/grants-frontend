@@ -1,10 +1,10 @@
-query getComments($proposalId: String!, $first: Int, $skip: Int) {
+query getCommentsForGPMember($grantId: String!, $first: Int, $skip: Int) {
   comments(
     first: $first,
     skip: $skip,
-    where: { application: $proposalId }
+    where: { grant: $grantId }
     orderBy: createdAt
-    orderDirection: desc
+    orderDirection: asc
   ) {
     id
     isPrivate
@@ -18,7 +18,12 @@ query getComments($proposalId: String!, $first: Int, $skip: Int) {
         actorId
         fullName
         profilePictureIpfsHash
+        publicKey
       }
+    }
+    application {
+      id
+      applicantPublicKey
     }
   }
 }

@@ -21,6 +21,7 @@ import logger from 'src/libraries/logger'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAddress } from 'src/utils/formattingUtils'
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 const IN_APP_WALLET_LEARN_MORE_URL =
 	'https://blog.questbook.xyz/posts/aug-2022-release/#:~:text=App%20Specific%20Wallet%20%2D%20Zero%20Wallet'
@@ -45,7 +46,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 				<HStack>
 					<Image
 						borderRadius='3xl'
-						src={getAvatar(false, scwAddress!)}
+						src={member?.profilePictureIpfsHash ? getUrlForIPFSHash(member.profilePictureIpfsHash) : getAvatar(false, scwAddress ?? 'generic')}
 						boxSize='24px'
 					/>
 				</HStack>
@@ -64,7 +65,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 								<Image
 									boxShadow='0px 4px 16px rgba(31, 31, 51, 0.15)'
 									borderRadius='3xl'
-									src={getAvatar(false, scwAddress!)}
+									src={member?.profilePictureIpfsHash ? getUrlForIPFSHash(member.profilePictureIpfsHash) : getAvatar(false, scwAddress!)}
 									boxSize='24px' />
 								<Text
 									ml={3}
