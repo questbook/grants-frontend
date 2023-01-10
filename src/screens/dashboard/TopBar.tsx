@@ -16,30 +16,38 @@ function TopBar() {
 				px={8}
 				py={4}
 				align='center'>
-				<IconButton
-					disabled={!isLeftArrowEnabled}
-					variant='ghost'
-					aria-label='left-arrow'
-					icon={<Image src={`/v2/icons/arrow left/${isLeftArrowEnabled ? 'enabled' : 'disabled'}.svg`} />}
-					onClick={
-						() => {
-							if(isLeftArrowEnabled) {
-								setSelectedGrantIndex((selectedGrantIndex! - 1) % grants.length)
-							}
-						}
-					} />
-				<IconButton
-					disabled={!isRightArrowEnabled}
-					variant='ghost'
-					aria-label='right-arrow'
-					icon={<Image src={`/v2/icons/arrow right/${isRightArrowEnabled ? 'enabled' : 'disabled'}.svg`} />}
-					onClick={
-						() => {
-							if(isRightArrowEnabled) {
-								setSelectedGrantIndex((selectedGrantIndex! + 1) % grants.length)
-							}
-						}
-					} />
+				{
+					grants.length > 1 && (
+						<IconButton
+							disabled={!isLeftArrowEnabled}
+							variant='ghost'
+							aria-label='left-arrow'
+							icon={<Image src={`/v2/icons/arrow left/${isLeftArrowEnabled ? 'enabled' : 'disabled'}.svg`} />}
+							onClick={
+								() => {
+									if(isLeftArrowEnabled) {
+										setSelectedGrantIndex((selectedGrantIndex! - 1) % grants.length)
+									}
+								}
+							} />
+					)
+				}
+				{
+					grants.length > 1 && (
+						<IconButton
+							disabled={!isRightArrowEnabled}
+							variant='ghost'
+							aria-label='right-arrow'
+							icon={<Image src={`/v2/icons/arrow right/${isRightArrowEnabled ? 'enabled' : 'disabled'}.svg`} />}
+							onClick={
+								() => {
+									if(isRightArrowEnabled) {
+										setSelectedGrantIndex((selectedGrantIndex! + 1) % grants.length)
+									}
+								}
+							} />
+					)
+				}
 				<Text
 					ml={2}
 					variant='v2_subheading'
@@ -56,7 +64,7 @@ function TopBar() {
 					{selectedGrant?.acceptingApplications ? 'OPEN' : 'CLOSED'}
 				</Text>
 				{
-					proposals.length === 0 && (
+					(proposals.length === 0 && selectedGrant?.acceptingApplications) && (
 						<Button
 							ml={2}
 							bg='gray.1'

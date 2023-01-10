@@ -20,6 +20,7 @@ query getCommentsForGPMember($grantId: String!, $first: Int, $skip: Int) {
         profilePictureIpfsHash
         publicKey
       }
+      supportedNetworks
     }
     application {
       id

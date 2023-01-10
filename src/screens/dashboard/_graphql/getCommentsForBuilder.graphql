@@ -20,6 +20,7 @@ query getCommentsForBuilder($actorId: Bytes!, $first: Int, $skip: Int) {
         profilePictureIpfsHash
         publicKey
       }
+      supportedNetworks
     }
     application {
       id
