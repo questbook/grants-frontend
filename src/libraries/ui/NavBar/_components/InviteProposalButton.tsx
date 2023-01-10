@@ -10,16 +10,18 @@ function InviteProposalButton() {
 				variant='primaryMedium'
 				py={1}
 				px={2}
-				leftIcon={
-					<Image
-						src='/v2/icons/add/white.svg'
-						boxSize='20px' />
-				}
+				// leftIcon={
+				// 	<Image
+				// 		src='/v2/icons/add/white.svg'
+				// 		boxSize='20px' />
+				// }
 				onClick={onClick}>
 				<Text
 					variant='v2_body'
-					color='white'>
-					Invite Proposal
+					color='white'
+					fontWeight='500'
+				>
+					Run a grant program
 				</Text>
 			</Button>
 		)
