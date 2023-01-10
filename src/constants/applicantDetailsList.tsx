@@ -38,12 +38,6 @@ export default [
 		isRequired: true,
 	},
 	{
-		title: 'Milestones',
-		id: 'isMultipleMilestones',
-		inputType: 'array',
-		isRequired: false,
-	},
-	{
 		title: 'Funding Ask',
 		id: 'fundingAsk',
 		inputType: 'long-form',

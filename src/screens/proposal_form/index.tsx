@@ -309,7 +309,7 @@ function ProposalForm() {
 
 						<SelectArray
 							label='Milestones'
-							allowMultiple={grant?.payoutType === 'milestones'}
+							allowMultiple={grant?.payoutType === 'milestones' || (containsField(grant, 'isMultipleMilestones') ?? false)}
 							config={
 								form?.milestones?.map((milestone, index) => {
 									return [

@@ -1,7 +1,6 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { Box, Button, CircularProgress, Flex, Image, Text } from '@chakra-ui/react'
-import { ethers } from 'ethers'
-import { defaultChainId, USD_ASSET } from 'src/constants/chains'
+import { defaultChainId } from 'src/constants/chains'
 import logger from 'src/libraries/logger'
 import CopyIcon from 'src/libraries/ui/CopyIcon'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
@@ -203,7 +202,7 @@ function Proposal() {
 					{projectDetails ? <TextViewer text={projectDetails} /> : null}
 				</Flex>
 
-				<Flex
+				{/* <Flex
 					w='100%'
 					mt={4}
 					direction='column'>
@@ -244,7 +243,7 @@ function Proposal() {
 							)
 						})
 					}
-				</Flex>
+				</Flex> */}
 			</Flex>
 		)
 	}
