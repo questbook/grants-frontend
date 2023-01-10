@@ -11,15 +11,14 @@ import { getFieldString } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 interface Props {
-    index: number
     proposal: ProposalType
 }
 
-function ProposalCard({ index, proposal }: Props) {
+function ProposalCard({ proposal }: Props) {
 	const buildComponent = () => {
 		return (
 			<Flex
-				bg={selectedProposals[index] ? 'gray.1' : 'white'}
+				bg={selectedProposals.has(proposal.id) ? 'gray.1' : 'white'}
 				direction='column'
 				mt={2}
 				pl={5}
@@ -29,7 +28,7 @@ function ProposalCard({ index, proposal }: Props) {
 					{
 						role === 'admin' && (
 							<Checkbox
-								isChecked={selectedProposals[index]}
+								isChecked={selectedProposals.has(proposal.id)}
 								spacing={1}
 								onChange={
 									() => {
@@ -104,7 +103,7 @@ function ProposalCard({ index, proposal }: Props) {
 		)
 	}
 
-	const { role, selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
+	const { role, proposals, selectedProposals, updateSelectedProposal } = useContext(DashboardContext)!
 
 	const { tags } = useProposalTags({ proposal })
 
@@ -113,14 +112,19 @@ function ProposalCard({ index, proposal }: Props) {
 	}, [tags])
 
 	const onClick = (isText: boolean = false) => {
-		const count = selectedProposals.filter((_) => _).length
-		if(count === 1 && selectedProposals[index]) {
+		if(selectedProposals.size === 1 && selectedProposals.has(proposal.id)) {
 			return
 		}
 
-		const copy = isText ? Array(selectedProposals.length).fill(false) : [...selectedProposals]
-		copy[index] = !copy[index]
-		setSelectedProposals(copy)
+		if(isText) {
+			for(const proposal of proposals) {
+				updateSelectedProposal(proposal.id, 'remove')
+			}
+
+			updateSelectedProposal(proposal.id, 'add')
+		} else {
+			updateSelectedProposal(proposal.id, selectedProposals.has(proposal.id) ? 'remove' : 'add')
+		}
 	}
 
 	return buildComponent()

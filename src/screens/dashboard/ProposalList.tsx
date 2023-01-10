@@ -1,12 +1,14 @@
 // This renders the list of proposals that show up as the first column
 
-import { useContext, useMemo } from 'react'
+import { useContext, useMemo, useState } from 'react'
 import { Checkbox, Flex, Text } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
+import SearchField from 'src/libraries/ui/SearchBox'
 import { ApiClientsContext } from 'src/pages/_app'
 import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
 import { DashboardContext } from 'src/screens/dashboard/Context'
+import { getFieldString } from 'src/utils/formattingUtils'
 
 function ProposalList() {
 	const buildComponent = () => (
@@ -30,19 +32,37 @@ function ProposalList() {
 				</Text>
 			</Text>
 
-			{/* TODO - Search Box */}
+			<Flex
+				mx={5}
+				my={4}>
+				<SearchField
+					value={searchText}
+					onChange={
+						(e) => {
+							setSearchText(e.target.value)
+						}
+					} />
+			</Flex>
+
 
 			{
-				(role === 'admin' && selectedProposals?.length > 0) && (
+				(role === 'admin' && selectedProposals?.size > 0) && (
 					<Flex
 						mt={4}
 						pl={5}>
 						<Checkbox
-							isChecked={selectedProposals?.length !== undefined && selectedProposals.every((_) => _)}
+							isChecked={selectedProposals?.size !== undefined && proposals.every((_) => selectedProposals?.has(_.id))}
 							onChange={
 								(e) => {
 									logger.info({ value: e.target.checked }, '(Proposal List) Select All Checkbox')
-									setSelectedProposals(Array(proposals.length).fill(e.target.checked))
+									for(const proposal of proposals) {
+										updateSelectedProposal(proposal.id, e.target.checked ? 'add' : 'remove')
+									}
+
+									logger.info({ size: selectedProposals.size, proposalsLength: proposals.length, selectedProposals }, '(Proposal List) Select All Checkbox {size, proposalsLength, selectedProposals')
+									if(selectedProposals.size === 0 && proposals.length > 0) {
+										updateSelectedProposal(proposals[0].id, 'add')
+									}
 								}
 							}>
 							<Text
@@ -61,12 +81,12 @@ function ProposalList() {
 				direction='column'
 				overflowY='auto'>
 				{
-					proposalCount > 0 && proposals?.map((proposal, index) => {
+					proposalCount > 0 && filteredProposals?.map(proposal => {
 						return (
 							<ProposalCard
 								key={proposal.id}
 								proposal={proposal}
-								index={index} />
+							/>
 						)
 					})
 				}
@@ -75,11 +95,29 @@ function ProposalList() {
 		</Flex>
 	)
 
+	const [searchText, setSearchText] = useState<string>('')
+
 	const { role } = useContext(ApiClientsContext)!
-	const { proposals, selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
+	const { proposals, selectedProposals, updateSelectedProposal } = useContext(DashboardContext)!
+
+	const filteredProposals = useMemo(() => {
+		if(searchText === '') {
+			return proposals
+		}
+
+		return proposals.filter((proposal) => {
+			const projectName = getFieldString(proposal, 'projectName') as string | undefined
+			if(!projectName) {
+				return false
+			}
+
+			return (projectName?.toLowerCase().includes(searchText.toLowerCase()))
+		})
+	}, [proposals, searchText])
+
 	const proposalCount = useMemo(() => {
-		return proposals.filter((_) => _).length
-	}, [proposals])
+		return filteredProposals.filter((_) => _).length
+	}, [filteredProposals])
 
 	return buildComponent()
 }

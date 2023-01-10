@@ -15,8 +15,8 @@ type BaseDashboardContextType = {
   proposals: Proposals
   selectedGrantIndex: number | undefined
   setSelectedGrantIndex: (index: number) => void
-  selectedProposals: boolean[]
-  setSelectedProposals: (proposal: boolean[]) => void
+  selectedProposals: Set<string>
+  updateSelectedProposal: (id: string, type: 'add' | 'remove') => void
   selectedGrant: AdminGrant | ReviewerGrant | undefined
   review: ReviewInfo | undefined
   setReview: (reviews: ReviewInfo) => void

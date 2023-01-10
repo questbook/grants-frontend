@@ -199,7 +199,7 @@ function FundBuilderDrawer() {
 
 		const p: ProposalType[] = []
 		for(let i = 0; i < proposals.length; i++) {
-			if(selectedProposals[i]) {
+			if(selectedProposals.has(proposals[i].id)) {
 				p.push(proposals[i])
 			}
 		}

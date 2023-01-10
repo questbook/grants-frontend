@@ -65,7 +65,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const [reviewerGrants, setReviewerGrants] = useState<GetGrantsForReviewerQuery['grantReviewerCounters']>([])
 	const [selectedGrantIndex, setSelectedGrantIndex] = useState<number>()
 	const [proposals, setProposals] = useState<Proposals>([])
-	const [selectedProposals, setSelectedProposals] = useState<boolean[]>([])
+	const [selectedProposals, setSelectedProposals] = useState<Set<string>>(new Set<string>())
 	const [review, setReview] = useState<ReviewInfo>()
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 	const [showSubmitReviewPanel, setShowSubmitReviewPanel] = useState<boolean>(false)
@@ -356,13 +356,14 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 	useEffect(() => {
 		if(proposals.length === 0) {
-			setSelectedProposals([])
+			setSelectedProposals(new Set<string>())
 			return
 		}
 
-		const arr = Array(proposals.length).fill(false)
-		arr[0] = true
-		setSelectedProposals(arr)
+		const initialSelectionSet = new Set<string>()
+		initialSelectionSet.add(proposals[0].id)
+		logger.info({ initialSelectionSet }, 'selectedProposals')
+		setSelectedProposals(initialSelectionSet)
 	}, [proposals])
 
 	useEffect(() => {
@@ -377,7 +378,16 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			selectedGrantIndex,
 			setSelectedGrantIndex,
 			selectedProposals,
-			setSelectedProposals,
+			updateSelectedProposal: (id: string, type: 'add' | 'remove') => {
+				const newSet = new Set(selectedProposals)
+				if(type === 'add') {
+					newSet.add(id)
+				} else {
+					newSet.delete(id)
+				}
+
+				setSelectedProposals(newSet)
+			},
 			selectedGrant,
 			review,
 			setReview,

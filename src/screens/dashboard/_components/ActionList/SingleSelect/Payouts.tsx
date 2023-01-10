@@ -150,11 +150,7 @@ function Payouts() {
 	const [payouts, setPayouts] = useState<PayoutsType>([])
 
 	const proposal = useMemo(() => {
-		const index = selectedProposals.indexOf(true)
-
-		if(index !== -1) {
-			return proposals[index]
-		}
+		return proposals.find(p => selectedProposals.has(p.id))
 	}, [proposals, selectedProposals])
 
 	const { fetchMore } = useMultiChainQuery({
