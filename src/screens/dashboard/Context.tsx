@@ -286,7 +286,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			let skip = 0
 			let shouldContinue = true
 			do {
-				const results = adminCondition ? await fetchMoreGpMemberComments({ first, skip, grantId: adminGrants[selectedGrantIndex].id }, true) : await fetchMoreBuilderComments({ first, skip, actorId: scwAddress }, true)
+				const results = adminCondition ? await fetchMoreGpMemberComments({ first, skip, grantId: role === 'admin' ? adminGrants[selectedGrantIndex].id : reviewerGrants[selectedGrantIndex].grant.id }, true) : await fetchMoreBuilderComments({ first, skip, actorId: scwAddress }, true)
 				logger.info({ results }, 'Results (Comments)')
 				if(results?.length === 0 || results?.every((r) => !r?.comments?.length)) {
 					shouldContinue = false
