@@ -268,6 +268,7 @@ function Discussions() {
 		}
 
 		const key = `${proposal.id}.${proposal.grant.workspace.supportedNetworks[0].split('_')[1]}`
+		logger.info({ key, commentMap }, 'PUBLIC COMMENT 6')
 		return commentMap[key] ?? []
 	}, [proposal, commentMap])
 

@@ -5394,7 +5394,7 @@ export type GetCommentsForBuilderQueryVariables = Exact<{
 }>;
 
 
-export type GetCommentsForBuilderQuery = { __typename?: 'Query', comments: Array<{ __typename?: 'Comment', id: string, isPrivate: boolean, commentsPublicHash?: string | null, commentsEncryptedData?: Array<{ __typename?: 'PIIData', id: string, data: string }> | null, workspace: { __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, publicKey?: string | null }> }, application: { __typename?: 'GrantApplication', id: string, applicantPublicKey?: string | null } }> };
+export type GetCommentsForBuilderQuery = { __typename?: 'Query', comments: Array<{ __typename?: 'Comment', id: string, isPrivate: boolean, commentsPublicHash?: string | null, commentsEncryptedData?: Array<{ __typename?: 'PIIData', id: string, data: string }> | null, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, publicKey?: string | null }> }, application: { __typename?: 'GrantApplication', id: string, applicantPublicKey?: string | null } }> };
 
 export type GetCommentsForGpMemberQueryVariables = Exact<{
   grantId: Scalars['String'];
@@ -5403,7 +5403,7 @@ export type GetCommentsForGpMemberQueryVariables = Exact<{
 }>;
 
 
-export type GetCommentsForGpMemberQuery = { __typename?: 'Query', comments: Array<{ __typename?: 'Comment', id: string, isPrivate: boolean, commentsPublicHash?: string | null, commentsEncryptedData?: Array<{ __typename?: 'PIIData', id: string, data: string }> | null, workspace: { __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, publicKey?: string | null }> }, application: { __typename?: 'GrantApplication', id: string, applicantPublicKey?: string | null } }> };
+export type GetCommentsForGpMemberQuery = { __typename?: 'Query', comments: Array<{ __typename?: 'Comment', id: string, isPrivate: boolean, commentsPublicHash?: string | null, commentsEncryptedData?: Array<{ __typename?: 'PIIData', id: string, data: string }> | null, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, publicKey?: string | null }> }, application: { __typename?: 'GrantApplication', id: string, applicantPublicKey?: string | null } }> };
 
 export type GetGrantsForAdminQueryVariables = Exact<{
   domainID: Scalars['String'];
@@ -8596,6 +8596,7 @@ export const GetCommentsForBuilderDocument = gql`
         profilePictureIpfsHash
         publicKey
       }
+      supportedNetworks
     }
     application {
       id
@@ -8660,6 +8661,7 @@ export const GetCommentsForGpMemberDocument = gql`
         profilePictureIpfsHash
         publicKey
       }
+      supportedNetworks
     }
     application {
       id

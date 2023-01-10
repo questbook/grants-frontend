@@ -1,4 +1,5 @@
 import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { defaultChainId } from 'src/constants/chains'
 import { GetCommentsForBuilderQuery, GetGrantsForAdminQuery, GetGrantsForReviewerQuery, useGetCommentsForBuilderQuery, useGetCommentsForGpMemberQuery, useGetGrantsForAdminQuery, useGetGrantsForReviewerQuery, useGetProposalsForAdminQuery, useGetProposalsForBuilderQuery, useGetProposalsForReviewerQuery } from 'src/generated/graphql'
 import logger from 'src/libraries/logger'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
@@ -7,6 +8,7 @@ import { GRANT_CACHE_KEY } from 'src/screens/dashboard/_utils/constants'
 import { CommentMap, DashboardContextType, FundBuilderContextType, Proposals, ReviewInfo, SendAnUpdateContextType, SignerVerifiedState, TokenInfo } from 'src/screens/dashboard/_utils/types'
 import { useMultiChainQuery } from 'src/screens/proposal/_hooks/useMultiChainQuery'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined)
 const FundBuilderContext = createContext<FundBuilderContextType | undefined>(undefined)
@@ -143,27 +145,27 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 				continue
 			}
 
-			const sender = comment.id.split('.')[1]
-			let channel: {
+			logger.info({ comment }, 'comment before decrypt (COMMENT DECRYPT)')
+			if(comment.isPrivate) {
+				const sender = comment.id.split('.')[1]
+				let channel: {
 				encrypt(plaintext: string): Promise<string>
 				decrypt(ciphertext: string): Promise<string>
 			}
-			if(sender === scwAddress.toLowerCase()) {
-				channel = await getSecureChannelFromPublicKey(webwallet, webwallet.publicKey, getKeyForApplication(comment.application.id))
-				logger.info({ privateKey: webwallet.privateKey, publicKey: webwallet.publicKey, role }, 'CHANNEL CONFIG (COMMENT DECRYPT)')
-			} else {
-				const publicKey = comment.application.applicantPublicKey
-				if(!publicKey) {
-					continue
+				if(sender === scwAddress.toLowerCase()) {
+					channel = await getSecureChannelFromPublicKey(webwallet, webwallet.publicKey, getKeyForApplication(comment.application.id))
+					logger.info({ privateKey: webwallet.privateKey, publicKey: webwallet.publicKey, role }, 'CHANNEL CONFIG (COMMENT DECRYPT)')
+				} else {
+					const publicKey = comment.application.applicantPublicKey
+					if(!publicKey) {
+						continue
+					}
+
+					logger.info({ publicKey }, 'PUBLIC KEY (COMMENT DECRYPT)')
+					channel = await getSecureChannelFromPublicKey(webwallet, publicKey, getKeyForApplication(comment.application.id))
+					logger.info({ privateKey: webwallet.privateKey, publicKey, role }, 'CHANNEL CONFIG (COMMENT DECRYPT)')
 				}
 
-				logger.info({ publicKey }, 'PUBLIC KEY (COMMENT DECRYPT)')
-				channel = await getSecureChannelFromPublicKey(webwallet, publicKey, getKeyForApplication(comment.application.id))
-				logger.info({ privateKey: webwallet.privateKey, publicKey, role }, 'CHANNEL CONFIG (COMMENT DECRYPT)')
-			}
-
-			logger.info({ comment }, 'comment before decrypt (COMMENT DECRYPT)')
-			if(comment.isPrivate) {
 				for(const encrypted of comment.commentsEncryptedData?.filter(c => c.id.indexOf(scwAddress.toLowerCase()) !== -1) ?? []) {
 					try {
 						const decryptedData = JSON.parse(await channel.decrypt(encrypted.data))
@@ -171,7 +173,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 						if(decryptedData?.message) {
 							const message = await getFromIPFS(decryptedData.message)
-							const key = `${comment.application.id}.${chainId}`
+							const key = `${comment.application.id}.${getSupportedChainIdFromWorkspace(comment.workspace) ?? defaultChainId}`
 							if(!commentMap[key]) {
 								commentMap[key] = []
 							}
@@ -183,14 +185,18 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 					}
 				}
 			} else {
+				logger.info(comment, 'PUBLIC COMMENT')
 				if(comment?.commentsPublicHash) {
-					const message = await getFromIPFS(comment.commentsPublicHash)
-					const key = `${comment.application.id}.${chainId}`
-					if(!commentMap[key]) {
-						commentMap[key] = []
-					}
+					const commentData = JSON.parse(await getFromIPFS(comment.commentsPublicHash))
+					if(commentData?.message) {
+						const message = await getFromIPFS(commentData.message)
+						const key = `${comment.application.id}.${getSupportedChainIdFromWorkspace(comment.workspace) ?? defaultChainId}`
+						if(!commentMap[key]) {
+							commentMap[key] = []
+						}
 
-					commentMap[key].push({ ...comment, message })
+						commentMap[key].push({ ...comment, ...commentData, message })
+					}
 				}
 			}
 		}
@@ -280,7 +286,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			let skip = 0
 			let shouldContinue = true
 			do {
-				const results = adminCondition ? await fetchMoreGpMemberComments({ first, skip, grantId: adminGrants[selectedGrantIndex].id }, true) : await fetchMoreBuilderComments({ first, skip, actorId: scwAddress }, true)
+				const results = adminCondition ? await fetchMoreGpMemberComments({ first, skip, grantId: role === 'admin' ? adminGrants[selectedGrantIndex].id : reviewerGrants[selectedGrantIndex].grant.id }, true) : await fetchMoreBuilderComments({ first, skip, actorId: scwAddress }, true)
 				logger.info({ results }, 'Results (Comments)')
 				if(results?.length === 0 || results?.every((r) => !r?.comments?.length)) {
 					shouldContinue = false

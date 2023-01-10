@@ -122,7 +122,7 @@ function AddMemberButton() {
 				<Text
 					variant='v2_body'
 					fontWeight='400'>
-					{id === 0 ? 'Member' : 'Reviewer'}
+					{id === 0 ? 'Admin' : 'Reviewer'}
 				</Text>
 
 			</Button>
