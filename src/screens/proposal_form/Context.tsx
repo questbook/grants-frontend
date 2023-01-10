@@ -3,6 +3,7 @@ import { SupportedPayouts } from '@questbook/supported-safes'
 import { EditorState } from 'draft-js'
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
+import applicantDetailsList from 'src/constants/applicantDetailsList'
 import { ALL_SUPPORTED_CHAIN_IDS, defaultChainId, USD_ASSET } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
 import { useGrantDetailsQuery, useProposalDetailsQuery } from 'src/generated/graphql'
@@ -106,8 +107,10 @@ const ProposalFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		}
 
 
+		const fieldIDs = applicantDetailsList.map(d => d.id)
+		logger.info({ fieldIDs }, 'ProposalForm: fetchGrant (fieldIDs)')
 		const initForm: Form = {
-			fields: result[0].grant.fields.map((field) => {
+			fields: result[0].grant.fields.filter(f => fieldIDs.indexOf(f.title) !== -1).map((field) => {
 				const id = field.id.substring(field.id.indexOf('.') + 1)
 				return {
 					...field,
