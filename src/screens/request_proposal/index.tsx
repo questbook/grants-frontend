@@ -60,6 +60,21 @@ function RequestProposal() {
 			>
 				{/* <Button onClick={() => createGrant()}>create grant</Button> */}
 				{renderBody()}
+				<NetworkTransactionFlowStepperModal
+					isOpen={isNetworkTransactionModalOpen}
+					currentStepIndex={currentStepIndex!}
+					viewTxnLink={getExplorerUrlForTxHash(network, txHash)}
+					onClose={
+						async() => {
+							setCurrentStepIndex(undefined)
+							setRole('admin')
+							const ret = await router.push({ pathname: '/dashboard' })
+							if(ret) {
+								router.reload()
+							}
+						}
+					}
+				/>
 			</Flex>
 		)
 	}
@@ -124,21 +139,6 @@ function RequestProposal() {
 						handleOnEdit={handleOnEdit}
 						updateRFP={updateRFP}
 					/>
-					<NetworkTransactionFlowStepperModal
-						isOpen={isNetworkTransactionModalOpen}
-						currentStepIndex={currentStepIndex!}
-						viewTxnLink={getExplorerUrlForTxHash(network, rfpUpdateTxHash)}
-						onClose={
-							async() => {
-								setCurrentStepIndex(undefined)
-								setRole('admin')
-								const ret = await router.push({ pathname: '/dashboard' })
-								if(ret) {
-									router.reload()
-								}
-							}
-						}
-					/>
 				</>
 			)
 		case 4: return (
@@ -160,21 +160,6 @@ function RequestProposal() {
 					step={step}
 					setIsOpen={setIsNetworkTransactionModalOpen}
 					createWorkspace={createWorkspaceAndGrant} />
-				<NetworkTransactionFlowStepperModal
-					isOpen={isNetworkTransactionModalOpen}
-					currentStepIndex={currentStepIndex!}
-					viewTxnLink={getExplorerUrlForTxHash(network, txHash)}
-					onClose={
-						async() => {
-							setCurrentStepIndex(undefined)
-							setRole('admin')
-							const ret = await router.push({ pathname: '/dashboard' })
-							if(ret) {
-								router.reload()
-							}
-						}
-					}
-				/>
 			</>
 		)
 		}
@@ -573,11 +558,11 @@ function RequestProposal() {
 				}),
 			})
 		}
-	}, [biconomyWalletClient, domainName, accountDataWebwallet, allApplicantDetails, link, doc, rubrics, amount, payoutMode, reviewMechanism, startDate, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, selectedSafeNetwork, milestones])
+	}, [biconomyWalletClient, domainName, accountDataWebwallet, allApplicantDetails, link, doc, rubrics, amount, payoutMode, domainImage, reviewMechanism, startDate, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, selectedSafeNetwork, milestones])
 
 	const handleOnEdit = (field: string, value: string | ApplicantDetailsFieldType[] | string []) => {
 		// const { value } = e.target
-		console.log('rfp edited', { ...RFPEditFormData, [field]: value })
+		// console.log('rfp edited', { ...RFPEditFormData, [field]: value })
 		setRFPEditFormData({ ...RFPEditFormData, [field]: value })
 	}
 

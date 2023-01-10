@@ -3,7 +3,6 @@ import { BsArrowLeft } from 'react-icons/bs'
 import { ArrowForwardIcon, Search2Icon } from '@chakra-ui/icons'
 import { Button, Checkbox, Divider, Flex, Image, Input, InputGroup, InputLeftElement, Spacer, Text, Textarea } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
-import { convertToRaw, EditorState } from 'draft-js'
 import router from 'next/router'
 import { NetworkType } from 'src/constants/Networks'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
@@ -12,8 +11,6 @@ import logger from 'src/libraries/logger'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
-import TextEditor from 'src/libraries/ui/RichTextEditor/textEditor'
-import { getProjectDetails } from 'src/screens/proposal_form/_utils'
 import VerifySignerModal from 'src/screens/request_proposal/_components/VerifySignerModal'
 import { DropdownIcon } from 'src/screens/settings/_components/DropdownIcon'
 import SettingsInput from 'src/screens/settings/_components/SettingsInput'
@@ -104,7 +101,8 @@ function Settings() {
 								{/* <Image src={getUrlForIPFSHash(workspace?.logoIpfsHash)} /> */}
 								<ImageUpload
 									imageFile={imageFile}
-									setImageFile={setImageFile} />
+									setImageFile={setImageFile}
+								/>
 							</Flex>
 							{
 								workspace?.safe?.address || isMultisigLinked ? (

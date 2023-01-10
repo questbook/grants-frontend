@@ -72,6 +72,7 @@
     "react-icons": "^4.6.0",
     "react-image-picker-editor": "^1.2.0",
     "react-linkify": "^1.0.0-alpha",
+    "recharts": "^2.2.0",
     "urql": "^2.2.1",
     "wagmi": "^0.6.5"
   },
