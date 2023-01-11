@@ -1,0 +1,58 @@
+query getAllGrantsForExplore($first: Int, $skip: Int) {
+  grants(
+    first: $first, 
+    skip: $skip, 
+    subgraphError: allow, 
+    orderBy: deadlineS, 
+    orderDirection: desc,
+    where: {workspace_:{isVisible: true}}
+  ) {
+    id,
+    creatorId,
+    title,
+    createdAtS,
+    applications{
+      applicantId
+      state
+    }
+    acceptingApplications
+    fundTransfers{
+      amount
+      type
+      tokenUSDValue
+      asset
+      tokenName
+    }
+    workspace{
+      id,
+      isVisible
+      logoIpfsHash
+      numberOfApplications
+      totalGrantFundingDisbursedUSD
+      supportedNetworks
+      safe{
+        address
+        chainId
+      }
+      isVisible
+    }
+    reward {
+      committed,
+      id,
+      asset,
+      token {
+      address,
+      label,
+      decimal,
+      iconHash
+      }
+    },
+    deadlineS
+    deadline,
+    numberOfApplications,
+    fundTransfers {
+      id
+      status
+    }
+  }
+}

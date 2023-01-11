@@ -2,6 +2,7 @@ import { BigNumber, ethers } from 'ethers'
 import moment from 'moment'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
 import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO, SupportedChainId, USD_ASSET } from 'src/constants/chains'
+import { MONTH_MAP } from 'src/libraries/utils/constants'
 import { ChainInfo, CustomField, FundTransfer } from 'src/types'
 import { InitialApplicationType } from 'src/v2/components/Dashboard/ReviewerDashboard/ApplicationsTable'
 
@@ -52,6 +53,16 @@ export function parseAmount(number: string, contractAddress?: string, decimal?: 
 		?.decimals || decimal
 
 	return ethers.utils.parseUnits(number, decimal).toString()
+}
+
+export function extractDateFromDateTime(date: string) {
+	if(!date) {
+		return ''
+	}
+
+	const splittedDate = date.split('T')[0]
+	const [year, month, day] = splittedDate.split('-')
+	return `${day} ${MONTH_MAP[month]}, ${year}`
 }
 
 export function nFormatter(value: string, digits = 3) {
@@ -247,4 +258,8 @@ export const getRewardAmountMilestones = (decimals: number, application: any) =>
 	application?.milestones?.forEach(
 		(milestone: any) => sum = sum.add(milestone.amount))
 	return parseInt(ethers.utils.formatUnits(sum.toString(), decimals)).toLocaleString()?.split('.')[0]
+}
+
+export function titleCase(str: string) {
+	return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase())
 }

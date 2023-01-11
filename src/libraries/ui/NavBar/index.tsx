@@ -123,7 +123,7 @@ function NavBar({ bg = 'gray.1', showOpenDashboard, showLogo, showAddMembers, sh
 				} */}
 				<Spacer />
 
-				{/* {showAddMembers && (role === 'admin' || role === 'reviewer') && <AddMemberButton />} */}
+				{showAddMembers && (role === 'admin' || role === 'reviewer') && <AddMemberButton />}
 				{showInviteProposals && (role === 'admin' || role === 'reviewer') && <InviteProposalButton />}
 
 				{router.pathname === '/dashboard' && <SwapButton />}
