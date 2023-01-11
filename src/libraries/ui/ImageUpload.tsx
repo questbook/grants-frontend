@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { Button, Flex, FlexProps, Image } from '@chakra-ui/react'
+import { ImageAdd } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
@@ -43,9 +44,7 @@ function ImageUpload({ imageFile, setImageFile, ...props }: Props) {
 							alignItems='center'
 							justifyItems='center'
 							onClick={() => openInput()}>
-							<Image
-								src='/v2/icons/image add.svg'
-								boxSize='26px' />
+							<ImageAdd boxSize='26px' />
 						</Button>
 					)
 				}

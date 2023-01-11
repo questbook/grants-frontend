@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { Button, Flex, Image, Text, ToastId, useToast, UseToastOptions } from '@chakra-ui/react'
+import { CheckDouble, ErrorWarning } from 'src/generated/icons'
 
 type Props = {
 	action?: () => void
@@ -29,9 +30,7 @@ function useCustomToast() {
 										color='black.1'
 									/>
 								) : (
-									<Image
-										src={`/v2/icons/${props.status === 'success' ? 'check double' : 'error warning'}.svg`}
-										boxSize='20px' />
+									props.status === 'success' ? <CheckDouble boxSize='20px' /> : <ErrorWarning boxSize='20px' />
 								)
 							}
 							<Flex

@@ -19,10 +19,9 @@ interface Props {
 function useAddComments({ setStep, setTransactionHash }: Props) {
 	const { role, workspace, chainId } = useContext(ApiClientsContext)!
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
-	const { proposals, selectedProposals, selectedGrant } =
-    useContext(DashboardContext)!
+	const { proposals, selectedProposals, selectedGrant } = useContext(DashboardContext)!
 
-	const { proposalTags } = useProposalTags()
+	const { proposalTags } = useProposalTags({ proposals: proposals.filter(p => selectedProposals.has(p.id)) })
 
 	const selectedProposalsData = useMemo(() => {
 		if(!proposals || !selectedProposals) {
@@ -31,7 +30,7 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 
 		const p: ProposalType[] = []
 		for(let i = 0; i < proposals.length; i++) {
-			if(selectedProposals[i]) {
+			if(selectedProposals.has(proposals[i].id)) {
 				p.push(proposals[i])
 			}
 		}

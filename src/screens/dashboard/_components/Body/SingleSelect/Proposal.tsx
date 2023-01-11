@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { Box, Button, CircularProgress, Flex, Image, Text } from '@chakra-ui/react'
-import { ethers } from 'ethers'
-import { defaultChainId, USD_ASSET } from 'src/constants/chains'
+import { defaultChainId } from 'src/constants/chains'
+import { Mail } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import CopyIcon from 'src/libraries/ui/CopyIcon'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
@@ -84,9 +84,8 @@ function Proposal() {
 											bg='gray.3'
 											borderRadius='3xl'
 											justify='center'>
-											<Image
+											<Mail
 												alignSelf='center'
-												src='/v2/icons/mail.svg'
 												boxSize='12px' />
 										</Flex>
 									}>
@@ -119,8 +118,7 @@ function Proposal() {
 													borderRadius='3xl'
 													justify='center'>
 													<CopyIcon
-														alignSelf='center'
-														boxSize='12px'
+														// boxSize='12px'
 														text={getFieldString(proposal, 'applicantAddress')} />
 												</Flex>
 											}>
@@ -203,7 +201,7 @@ function Proposal() {
 					{projectDetails ? <TextViewer text={projectDetails} /> : null}
 				</Flex>
 
-				<Flex
+				{/* <Flex
 					w='100%'
 					mt={4}
 					direction='column'>
@@ -244,7 +242,7 @@ function Proposal() {
 							)
 						})
 					}
-				</Flex>
+				</Flex> */}
 			</Flex>
 		)
 	}
@@ -252,11 +250,7 @@ function Proposal() {
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 
 	const proposal = useMemo(() => {
-		const index = selectedProposals.indexOf(true)
-
-		if(index !== -1) {
-			return proposals[index]
-		}
+		return proposals.find(p => selectedProposals.has(p.id))
 	}, [proposals, selectedProposals])
 
 	const chainId = useMemo(() => {

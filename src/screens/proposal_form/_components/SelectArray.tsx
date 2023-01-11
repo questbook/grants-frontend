@@ -1,4 +1,5 @@
-import { Button, Flex, FlexProps, IconButton, Image, Input, InputProps, Text } from '@chakra-ui/react'
+import { Button, Flex, FlexProps, IconButton, Input, InputProps, Text } from '@chakra-ui/react'
+import { Add, Close } from 'src/generated/icons'
 
 interface Props {
     label: string
@@ -107,11 +108,7 @@ function SelectArray({ label, allowMultiple, flexProps, config, onAdd, onRemove 
 													onRemove(index)
 												}
 											}
-											icon={
-												<Image
-													src='/v2/icons/close.svg'
-													boxSize='20px' />
-											} />
+											icon={<Close boxSize='20px' />} />
 									</Flex>
 								)
 							})
@@ -122,11 +119,7 @@ function SelectArray({ label, allowMultiple, flexProps, config, onAdd, onRemove 
 								<Flex mt={6}>
 									<Button
 										variant='link'
-										leftIcon={
-											<Image
-												src='/v2/icons/add/black.svg'
-												boxSize='28px' />
-										}
+										leftIcon={<Add boxSize='28px' />}
 										onClick={onAdd}>
 										<Text
 											variant='v2_subheading'
