@@ -478,6 +478,7 @@ function RequestProposal() {
 					creatorId: accountDataWebwallet!.address!,
 					workspaceId: workspaceId.toString()!,
 					fields: allApplicantDetails,
+					grantManagers: [accountDataWebwallet!.address!],
 				}
 
 				if(review) {
@@ -564,7 +565,7 @@ function RequestProposal() {
 
 	const handleOnEdit = (field: string, value: string | ApplicantDetailsFieldType[] | string []) => {
 		// const { value } = e.target
-		console.log('rfp edited', { ...RFPEditFormData, [field]: value })
+		logger.info('rfp edited', { ...RFPEditFormData, [field]: value })
 		setRFPEditFormData({ ...RFPEditFormData, [field]: value })
 	}
 
@@ -617,6 +618,7 @@ function RequestProposal() {
 				creatorId: accountDataWebwallet!.address!,
 				workspaceId: Number(workspace?.id).toString(),
 				fields: allApplicantDetails,
+				grantManagers: [accountDataWebwallet!.address!],
 			})
 
 			logger.info('grantCreateIpfsHash', grantCreateIpfsHash)

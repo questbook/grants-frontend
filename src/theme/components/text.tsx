@@ -89,6 +89,12 @@ export default {
 				lineHeight: '48px',
 				color: 'black.1'
 			},
+			v2_subtitle: {
+				fontSize: '13px',
+				lineHeight: '18px',
+				fontWeight: '400',
+				color: 'black.3'
+			},
 			textButton: {
 				fontSize: '14px',
 				lineHeight: '20px',

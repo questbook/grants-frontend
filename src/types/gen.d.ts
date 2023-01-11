@@ -261,6 +261,10 @@ export interface GrantCreateRequest {
    * Deadline for proposal submission
    */
   endDate?: string
+  /**
+   * same as endDate property. Introduced this field for backward compatibility
+   */
+  deadline?: string
   details?: string
   /**
    * Link to any external document
@@ -347,6 +351,10 @@ export interface GrantApplicationUpdate {
    */
   milestones?: GrantProposedMilestone[]
   feedback?: string
+  /**
+   * The public encryption key associated with the account address
+   */
+  applicantPublicKey?: string
 }
 export interface PrivateCommentAddRequest {
   pii: PIIAnswers

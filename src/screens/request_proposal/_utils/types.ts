@@ -46,6 +46,7 @@ export type GrantFields = {
     workspaceId: string
     reviewType?: string
     milestones?: string[]
+    grantManagers?: string[]
 }
 
 export type RubricType = { [key: number]: { title: string, details: string, maximumPoints: number } }

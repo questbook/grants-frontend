@@ -1,0 +1,64 @@
+query getAllGrantsForMember($first: Int $skip: Int $memberId: String ) {
+  grants(
+    first: $first, 
+    skip: $skip, 
+    subgraphError: allow, 
+    orderBy: createdAtS, 
+    orderDirection: desc,
+    where: {managers_ :{member_contains_nocase: $memberId} workspace_:{isVisible: true}}
+    # where:{creatorId: "0x0268c8cddce70669d4431967f2b15edf2fd65b91"}
+  ) {
+    id,
+    creatorId,
+    title,
+    createdAtS,
+    startDate
+    applications{
+      applicantId
+      state
+    }
+    acceptingApplications
+    managers{
+      member{
+        actorId
+        fullName
+        accessLevel
+      }
+    }
+    fundTransfers{
+      amount
+      type
+      tokenUSDValue
+      asset
+      tokenName
+    }
+     workspace{
+      id,
+      isVisible
+      logoIpfsHash
+      numberOfApplications
+      totalGrantFundingDisbursedUSD
+      supportedNetworks
+      ownerId
+      isVisible
+      safe{
+        address
+        chainId
+      }
+    }
+    reward {
+      committed,
+      id,
+      asset,
+      token {
+      address,
+      label,
+      decimal,
+      iconHash
+      }
+    },
+    deadlineS
+    deadline,
+    numberOfApplications,
+  }
+}
