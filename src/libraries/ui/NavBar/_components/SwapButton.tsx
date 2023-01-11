@@ -1,5 +1,6 @@
 import { useContext, useMemo } from 'react'
-import { Button, Image, Text } from '@chakra-ui/react'
+import { Button, Text } from '@chakra-ui/react'
+import { Swap } from 'src/generated/icons'
 import { ApiClientsContext } from 'src/pages/_app'
 
 function SwapButton() {
@@ -9,11 +10,7 @@ function SwapButton() {
 				variant='ghost'
 				ml={6}
 				display={getSwitchRole === '' ? 'none' : 'flex'}
-				leftIcon={
-					<Image
-						src='/v2/icons/swap.svg'
-						fontSize='20px' />
-				}
+				leftIcon={<Swap boxSize='20px' />}
 				onClick={
 					() => {
 						if(getSwitchRole !== '') {

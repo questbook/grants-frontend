@@ -1,7 +1,8 @@
 import { useContext, useMemo, useRef } from 'react'
-import { Button, Flex, IconButton, Image, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text } from '@chakra-ui/react'
+import { Button, Flex, IconButton, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text } from '@chakra-ui/react'
 import { logger } from 'ethers'
 import router from 'next/router'
+import { ArrowLeft, ArrowRight, Copy, Embed, Pencil, ShareForward } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { copyGrantLink } from 'src/libraries/utils/copy'
 import { ApiClientsContext } from 'src/pages/_app'
@@ -22,7 +23,7 @@ function TopBar() {
 							disabled={!isLeftArrowEnabled}
 							variant='ghost'
 							aria-label='left-arrow'
-							icon={<Image src={`/v2/icons/arrow left/${isLeftArrowEnabled ? 'enabled' : 'disabled'}.svg`} />}
+							icon={<ArrowLeft color={isLeftArrowEnabled ? 'black.1' : 'gray.3'} />}
 							onClick={
 								() => {
 									if(isLeftArrowEnabled) {
@@ -38,7 +39,7 @@ function TopBar() {
 							disabled={!isRightArrowEnabled}
 							variant='ghost'
 							aria-label='right-arrow'
-							icon={<Image src={`/v2/icons/arrow right/${isRightArrowEnabled ? 'enabled' : 'disabled'}.svg`} />}
+							icon={<ArrowRight color={isRightArrowEnabled ? 'black.1' : 'gray.3'} />}
 							onClick={
 								() => {
 									if(isRightArrowEnabled) {
@@ -83,11 +84,7 @@ function TopBar() {
 
 								}
 							}
-							leftIcon={
-								<Image
-									src='/v2/icons/pencil.svg'
-									boxSize='16px' />
-							}>
+							leftIcon={<Pencil boxSize='16px' />}>
 
 							<Text
 								variant='v2_body'
@@ -139,11 +136,7 @@ function TopBar() {
 													</Text>
 													<Button
 														justifyContent='flex-start'
-														leftIcon={
-															<Image
-																src={item.buttonIcon}
-																boxSize='20px' />
-														}
+														leftIcon={item.buttonIcon}
 														mt={4}
 														variant='link'
 														onClick={
@@ -176,7 +169,9 @@ function TopBar() {
 		{
 			title: 'Share',
 			description: 'Attract builders with a link, or embed your stats on any website.',
-			buttonIcon: '/v2/icons/copy/azure.svg',
+			buttonIcon: <Copy
+				color='accent.azure'
+				boxSize='20px' />,
 			buttonText: 'Copy Link',
 			onButtonClick: async() => {
 				if(selectedGrant?.id) {
@@ -193,7 +188,9 @@ function TopBar() {
 		{
 			title: 'Embed',
 			description: 'Add your stats and link to any website with embed.',
-			buttonIcon: '/v2/icons/embed.svg',
+			buttonIcon: <Embed
+				color='accent.azure'
+				boxSize='20px' />,
 			buttonText: 'Embed code',
 			onButtonClick: () => {}
 		}
@@ -206,11 +203,7 @@ function TopBar() {
 				bg='gray.1'
 				variant='link'
 				color='black.1'
-				leftIcon={
-					<Image
-						src='/v2/icons/share forward.svg'
-						boxSize='16px' />
-				}>
+				leftIcon={<ShareForward boxSize='16px' />}>
 				<Text
 					variant='v2_body'
 					fontWeight='500'>

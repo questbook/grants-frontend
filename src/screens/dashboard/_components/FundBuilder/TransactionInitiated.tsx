@@ -1,6 +1,4 @@
 import { Box, Button, Flex, Image, Text } from '@chakra-ui/react'
-import { logger } from 'ethers'
-import Link from 'next/link'
 import { useSafeContext } from 'src/contexts/safeContext'
 
 interface Props {

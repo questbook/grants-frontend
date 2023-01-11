@@ -1,6 +1,7 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { Box, Button, CircularProgress, Flex, Image, Text } from '@chakra-ui/react'
 import { defaultChainId } from 'src/constants/chains'
+import { Mail } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import CopyIcon from 'src/libraries/ui/CopyIcon'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
@@ -83,9 +84,8 @@ function Proposal() {
 											bg='gray.3'
 											borderRadius='3xl'
 											justify='center'>
-											<Image
+											<Mail
 												alignSelf='center'
-												src='/v2/icons/mail.svg'
 												boxSize='12px' />
 										</Flex>
 									}>
@@ -118,8 +118,7 @@ function Proposal() {
 													borderRadius='3xl'
 													justify='center'>
 													<CopyIcon
-														alignSelf='center'
-														boxSize='12px'
+														// boxSize='12px'
 														text={getFieldString(proposal, 'applicantAddress')} />
 												</Flex>
 											}>

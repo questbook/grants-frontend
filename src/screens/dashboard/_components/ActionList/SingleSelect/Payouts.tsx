@@ -1,6 +1,7 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { Button, Flex, Image, Text } from '@chakra-ui/react'
+import { Button, Flex, Text } from '@chakra-ui/react'
 import { useGetPayoutsQuery } from 'src/generated/graphql'
+import { Dropdown, NewTab } from 'src/generated/icons'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
@@ -33,11 +34,9 @@ function Payouts() {
 					</Text>
 					{
 						proposals?.length > 0 && (
-							<Image
+							<Dropdown
 								mr={2}
-								src='/v2/icons/dropdown.svg'
 								transform={expanded ? 'rotate(180deg)' : 'rotate(0deg)'}
-								alt='options'
 								cursor='pointer'
 							/>
 						)
@@ -113,11 +112,7 @@ function Payouts() {
 						w='50%'
 						variant='link'
 						justifyContent='flex-start'
-						rightIcon={
-							<Image
-								src='/v2/icons/new tab.svg'
-								boxSize='16px' />
-						}
+						rightIcon={<NewTab boxSize='16px' />}
 						onClick={
 							() => {
 								if(payout?.transactionHash !== null) {

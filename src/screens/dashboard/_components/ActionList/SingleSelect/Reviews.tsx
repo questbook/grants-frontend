@@ -1,5 +1,6 @@
 import { RefObject, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Box, Button, Checkbox, Divider, Flex, Image, InputGroup, InputRightElement, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text } from '@chakra-ui/react'
+import { CheckDouble, Dropdown, Pencil } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import DashboardInput from 'src/screens/dashboard/_components/DashboardInput'
@@ -37,11 +38,9 @@ function Reviews() {
 					</Text>
 					{
 						proposals?.length > 0 && (
-							<Image
+							<Dropdown
 								mr={2}
-								src='/v2/icons/dropdown.svg'
 								transform={expanded ? 'rotate(180deg)' : 'rotate(0deg)'}
-								alt='options'
 								cursor='pointer'
 							/>
 						)
@@ -145,11 +144,7 @@ function Reviews() {
 			<Button
 				ml={2}
 				variant='link'
-				leftIcon={
-					<Image
-						src='/v2/icons/pencil.svg'
-						boxSize='16px' />
-				}>
+				leftIcon={<Pencil boxSize='16px' />}>
 				<Text
 					variant='v2_body'
 					fontWeight='500'>
@@ -511,8 +506,7 @@ function Reviews() {
 														boxSize='16px' />
 													<Box
 														mx={2} />
-													<Image
-														src='/v2/icons/check double.svg'
+													<CheckDouble
 														cursor='pointer'
 														onClick={
 															() => {
@@ -680,11 +674,9 @@ function Reviews() {
 								align='center'
 								justify='end'
 							>
-								<Image
+								<Dropdown
 									mr={2}
-									src='/v2/icons/dropdown.svg'
 									transform={reviewersExpanded[index] ? 'rotate(180deg)' : 'rotate(0deg)'}
-									alt='options'
 									cursor='pointer'
 								/>
 								<Text

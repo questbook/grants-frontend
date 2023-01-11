@@ -1,15 +1,12 @@
-import { Button, ButtonProps, Image, Text } from '@chakra-ui/react'
+import { Button, ButtonProps, Text } from '@chakra-ui/react'
+import { Embed } from 'src/generated/icons'
 
 
 function EmbedStatsButton({ ...props }: ButtonProps) {
 	return (
 		<Button
 			variant='ghost'
-			leftIcon={
-				<Image
-					src='/v2/icons/embed code.svg'
-					boxSize='16px' />
-			}
+			leftIcon={<Embed boxSize='16px' />}
 			{...props}
 		>
 			<Text

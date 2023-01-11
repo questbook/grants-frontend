@@ -1,7 +1,8 @@
 import { useContext, useMemo, useState } from 'react'
-import { Flex, Image, Text } from '@chakra-ui/react'
+import { Flex, Text } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import { defaultChainId, USD_ASSET } from 'src/constants/chains'
+import { Dropdown } from 'src/generated/icons'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -30,11 +31,9 @@ function Milestones() {
 					</Text>
 					{
 						proposals?.length > 0 && (
-							<Image
+							<Dropdown
 								mr={2}
-								src='/v2/icons/dropdown.svg'
 								transform={expanded ? 'rotate(180deg)' : 'rotate(0deg)'}
-								alt='options'
 								cursor='pointer'
 							/>
 						)
