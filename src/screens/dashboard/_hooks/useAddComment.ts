@@ -25,15 +25,11 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 
-	const { proposalTags } = useProposalTags()
-
 	const proposal = useMemo(() => {
-		const index = selectedProposals.indexOf(true)
-
-		if(index !== -1) {
-			return proposals[index]
-		}
+		return proposals.find(p => selectedProposals.has(p.id))
 	}, [proposals, selectedProposals])
+
+	const { proposalTags } = useProposalTags({ proposals: proposal ? [proposal] : [] })
 
 	const chainId = useMemo(() => {
 		return (

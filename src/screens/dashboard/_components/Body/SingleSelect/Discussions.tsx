@@ -1,8 +1,9 @@
 import { useContext, useMemo, useState } from 'react'
-import { Button, CircularProgress, Divider, Flex, Image, Text, Textarea } from '@chakra-ui/react'
+import { Button, Checkbox, Divider, Flex, Image, Text, Textarea } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import QuickReplyButton from 'src/screens/dashboard/_components/QuickReplyButton'
 import useAddComment from 'src/screens/dashboard/_hooks/useAddComment'
 import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
@@ -43,19 +44,33 @@ function Discussions() {
 							FEW WAYS TO START THE DISCUSSION.
 						</Text>
 						<Flex
-							direction='column'
-						>
+							mt={2}
+							gap={3}>
 							{
-								Array.from(Array(Math.floor(proposalTags.length / 2)).keys()).map((_, index) => {
-									const reply1 = proposalTags?.[index * 2]
-									const reply2 = proposalTags?.[index * 2 + 1]
+								proposalTags.map((tag, index) => {
 									return (
-										<Flex
+										<QuickReplyButton
 											key={index}
-											mt={3}>
-											{reply1 && tagButton(reply1.icon, reply1.title, index * 2)}
-											{reply2 && tagButton(reply2.icon, reply2.title, index * 2 + 1)}
-										</Flex>
+											tag={tag}
+											selectedTags={selectedTags}
+											onClick={
+												() => {
+													const tags = { ...selectedTags }
+													logger.info('tags: ', tags)
+													if(tags[index]) {
+														delete tags[index]
+														setIsCommentPrivate(false)
+													} else {
+														tags[index] = true
+														setIsCommentPrivate(tag.isPrivate)
+													}
+
+
+													setSelectedTags(tags)
+												}
+											}
+											isDisabled={(Object.keys(selectedTags).length > 0 && !(index in selectedTags)) || (isCommentPrivate && !tag.isPrivate)}
+											index={index} />
 									)
 								})
 							}
@@ -85,43 +100,20 @@ function Discussions() {
 						<Flex
 							mt={4}
 							align='center'>
-							{
-								step !== undefined && (
-									<Flex align='center'>
-										{
-											step < 3 && (
-												<CircularProgress
-													isIndeterminate
-													color='black'
-													size='18px' />
-											)
-										}
-										{
-											step < 3 && (
-												<Text
-													ml={2}
-													variant='v2_body'>
-													Adding comment...
-												</Text>
-											)
-										}
-										{/* {
-											transactionHash && (
-												<IconButton
-													ml={1}
-													variant='ghost'
-													icon={<ExternalLinkIcon />}
-													aria-label='txn-link'
-													onClick={
-														() => {
-															window.open(getExplorerUrlForTxHash(chainId, transactionHash), '_blank')
-														}
-													} />
-											)
-										} */}
-									</Flex>
-								)
-							}
+							<Checkbox
+								isChecked={isCommentPrivate}
+								onChange={
+									(e) => {
+										setSelectedTags({})
+										setIsCommentPrivate(e.target.checked)
+									}
+								}>
+								<Text
+									variant='v2_body'
+									color='gray.5'>
+									Show only to reviewers and builder
+								</Text>
+							</Checkbox>
 							<Button
 								ml='auto'
 								variant='primaryMedium'
@@ -151,46 +143,6 @@ function Discussions() {
 
 				{comments.filter((comment) => comment.sender && (comment.workspace.members.some((member) => member.actorId === comment.sender?.toLowerCase()) || comment.sender?.toLowerCase() === proposal?.applicantId.toLowerCase())).map(renderComment)}
 			</Flex>
-		)
-	}
-
-	const tagButton = (icon: string, title: string, index: number) => {
-		return (
-			<Button
-				key={index}
-				ml={3}
-				// w='100%'
-				justifyContent='start'
-				py={1}
-				px={3}
-				borderRadius='2px'
-				leftIcon={
-					<Image
-						boxSize='24px'
-						src={icon} />
-				}
-				bg={index in selectedTags ? 'accent.azure' : 'gray.2'}
-				onClick={
-					() => {
-						const tags = { ...selectedTags }
-						logger.info('tags: ', tags)
-						if(tags[index]) {
-							delete tags[index]
-						} else {
-							tags[index] = true
-						}
-
-						setSelectedTags(tags)
-					}
-				}
-				isDisabled={Object.keys(selectedTags).length > 0 && !(index in selectedTags)}
-			>
-				<Text
-					fontWeight='400'
-					color={index in selectedTags ? 'white' : 'black.1'}>
-					{title}
-				</Text>
-			</Button>
 		)
 	}
 
@@ -240,10 +192,10 @@ function Discussions() {
 	const { scwAddress } = useContext(WebwalletContext)!
 	const { workspace, role } = useContext(ApiClientsContext)!
 	const { proposals, selectedProposals, commentMap } = useContext(DashboardContext)!
-	const { proposalTags } = useProposalTags()
 
 	const [step, setStep] = useState<number>()
 	const [, setTransactionHash] = useState('')
+	const [isCommentPrivate, setIsCommentPrivate] = useState<boolean>(false)
 
 	const [ selectedTags, setSelectedTags ] = useState<{[key: number]: boolean}>({})
 
@@ -255,12 +207,10 @@ function Discussions() {
 	const { addComment, isBiconomyInitialised } = useAddComment({ setStep, setTransactionHash })
 
 	const proposal = useMemo(() => {
-		const index = selectedProposals.indexOf(true)
-
-		if(index !== -1) {
-			return proposals[index]
-		}
+		return proposals.find(p => selectedProposals.has(p.id))
 	}, [proposals, selectedProposals])
+
+	const { proposalTags } = useProposalTags({ proposals: proposal ? [proposal] : [] })
 
 	const comments = useMemo(() => {
 		if(!proposal || !commentMap) {

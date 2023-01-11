@@ -14,11 +14,7 @@ function useAssignReviewers({ setNetworkTransactionModalStep, setTransactionHash
 	const { selectedGrant, selectedProposals, proposals } = useContext(DashboardContext)!
 
 	const proposal = useMemo(() => {
-		const index = selectedProposals.indexOf(true)
-
-		if(index !== -1) {
-			return proposals[index]
-		}
+		return proposals.find(p => selectedProposals.has(p.id))
 	}, [proposals, selectedProposals])
 
 	const { call, isBiconomyInitialised } = useFunctionCall({ chainId, contractName: 'reviews', setTransactionStep: setNetworkTransactionModalStep, setTransactionHash })

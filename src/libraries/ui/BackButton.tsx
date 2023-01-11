@@ -1,5 +1,6 @@
-import { Button, ButtonProps, Image, Text } from '@chakra-ui/react'
+import { Button, ButtonProps, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { ArrowLeft } from 'src/generated/icons'
 
 function BackButton(props: ButtonProps) {
 	const buildComponent = () => {
@@ -7,7 +8,7 @@ function BackButton(props: ButtonProps) {
 			<Button
 				variant='linkV2'
 				fontWeight='500'
-				leftIcon={<Image src='/v2/icons/arrow left/enabled.svg' />}
+				leftIcon={<ArrowLeft />}
 				onClick={
 					() => {
 						router.back()

@@ -1,3 +1,4 @@
+import { ReactElement } from 'react'
 import {
 	GetCommentsForBuilderQuery,
 	GetGrantsForAdminQuery,
@@ -15,8 +16,8 @@ type BaseDashboardContextType = {
   proposals: Proposals
   selectedGrantIndex: number | undefined
   setSelectedGrantIndex: (index: number) => void
-  selectedProposals: boolean[]
-  setSelectedProposals: (proposal: boolean[]) => void
+  selectedProposals: Set<string>
+  setSelectedProposals: (set: Set<string>) => void
   selectedGrant: AdminGrant | ReviewerGrant | undefined
   review: ReviewInfo | undefined
   setReview: (reviews: ReviewInfo) => void
@@ -112,14 +113,14 @@ export type Payout = PayoutsType[number];
 
 export type SignerVerifiedState = 'unverified' | 'initiate_verification' | 'verifying'| 'failed' | 'verified' | 'transaction_initiated' | 'initiate_TON_transaction' | 'transaction_done_wallet'
 
-// export type CommentMessage = {
-//     sender: string
-//     message: string
-//     timestamp: number
-//     role: string
-//   }
-
 export type CommentType = Exclude<
   GetCommentsForBuilderQuery['comments'],
   null | undefined
 >[number] & PIIForCommentType;
+
+export type TagType = {
+  id: string
+  title: string
+  icon: ReactElement
+  isPrivate: boolean
+}

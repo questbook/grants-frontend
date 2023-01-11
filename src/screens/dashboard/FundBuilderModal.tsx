@@ -215,11 +215,7 @@ function FundBuilderModal() {
 	}, [safeObj])
 
 	const proposal = useMemo(() => {
-		const index = selectedProposals.indexOf(true)
-
-		if(index !== -1) {
-			return proposals[index]
-		}
+		return proposals.find(p => selectedProposals.has(p.id))
 	}, [proposals, selectedProposals])
 
 	const milestones = useMemo(() => {

@@ -12,7 +12,8 @@
     "gen:types": "ts-node src/libraries/validator/utils/generateTypes.ts",
     "generate:typechain": "typechain --target ethers-v5 --out-dir src/generated/contracts src/contracts/abi/*.json",
     "generate:graphql": "graphql-codegen --config codegen.yaml",
-    "generate": "npm run generate:graphql && npm run generate:typechain"
+    "generate:icons": "create-chakra-icons -i public/v2/icons -o src/generated/icons.ts --ts",
+    "generate": "npm run generate:graphql && npm run generate:typechain && npm run generate:icons"
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^9.1.0",
@@ -43,6 +44,7 @@
     "bn.js": "^5.2.0",
     "chakra-react-select": "^4.4.3",
     "copy-to-clipboard": "^3.3.1",
+    "create-chakra-icons": "^1.1.0",
     "crypto-js": "^4.1.1",
     "dotenv": "^16.0.0",
     "draft-js": "^0.11.7",

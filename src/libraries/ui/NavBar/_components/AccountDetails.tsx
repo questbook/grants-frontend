@@ -16,6 +16,7 @@ import {
 } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import { useRouter } from 'next/router'
+import { AddUser, ArrowRight, Key, Pencil, Settings } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
@@ -80,11 +81,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 									ml='auto'
 									aria-label='setup-profile'
 									size='24px'
-									icon={
-										<Image
-											src={!member?.fullName ? '/v2/icons/arrow right/enabled.svg' : '/v2/icons/pencil.svg'}
-											boxSize='18px' />
-									}
+									icon={!member?.fullName ? <ArrowRight boxSize='18px' /> : <Pencil boxSize='18px' />}
 									onClick={() => setIsUpdateProfileModalOpen(true)} />
 							</Flex>
 						)
@@ -133,9 +130,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 									key={index}
 									ml={3}
 									mt={index === 0 ? 3 : 2}>
-									<Image
-										src={item.icon}
-										boxSize='18px' />
+									{item.icon}
 									<Text
 										ml={2}
 										_hover={{ textDecoration: 'underline', cursor: 'pointer' }}
@@ -181,17 +176,17 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 
 	const menuItems = [
 		{
-			icon: '/v2/icons/key.svg',
+			icon: <Key boxSize='18px' />,
 			title: t('account_details.menu.save_wallet'),
 			onClick: () => openModal?.('export')
 		},
 		{
-			icon: '/v2/icons/add user.svg',
+			icon: <AddUser boxSize='18px' />,
 			title: t('account_details.menu.use_another_wallet'),
 			onClick: () => openModal?.('import')
 		},
 		{
-			icon: '/v2/icons/settings.svg',
+			icon: <Settings boxSize='18px' />,
 			title: 'Settings',
 			onClick: () => router.push('/settings')
 		}
