@@ -18,6 +18,112 @@ export type Scalars = {
   Bytes: string;
 };
 
+export type ApplicationAction = {
+  __typename?: 'ApplicationAction';
+  application: GrantApplication;
+  feedback?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  state: ApplicationState;
+  updatedAtS: Scalars['Int'];
+  updatedBy: WorkspaceMember;
+};
+
+export type ApplicationAction_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  application?: InputMaybe<Scalars['String']>;
+  application_?: InputMaybe<GrantApplication_Filter>;
+  application_contains?: InputMaybe<Scalars['String']>;
+  application_contains_nocase?: InputMaybe<Scalars['String']>;
+  application_ends_with?: InputMaybe<Scalars['String']>;
+  application_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  application_gt?: InputMaybe<Scalars['String']>;
+  application_gte?: InputMaybe<Scalars['String']>;
+  application_in?: InputMaybe<Array<Scalars['String']>>;
+  application_lt?: InputMaybe<Scalars['String']>;
+  application_lte?: InputMaybe<Scalars['String']>;
+  application_not?: InputMaybe<Scalars['String']>;
+  application_not_contains?: InputMaybe<Scalars['String']>;
+  application_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  application_not_ends_with?: InputMaybe<Scalars['String']>;
+  application_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  application_not_in?: InputMaybe<Array<Scalars['String']>>;
+  application_not_starts_with?: InputMaybe<Scalars['String']>;
+  application_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  application_starts_with?: InputMaybe<Scalars['String']>;
+  application_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  feedback?: InputMaybe<Scalars['String']>;
+  feedback_contains?: InputMaybe<Scalars['String']>;
+  feedback_contains_nocase?: InputMaybe<Scalars['String']>;
+  feedback_ends_with?: InputMaybe<Scalars['String']>;
+  feedback_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  feedback_gt?: InputMaybe<Scalars['String']>;
+  feedback_gte?: InputMaybe<Scalars['String']>;
+  feedback_in?: InputMaybe<Array<Scalars['String']>>;
+  feedback_lt?: InputMaybe<Scalars['String']>;
+  feedback_lte?: InputMaybe<Scalars['String']>;
+  feedback_not?: InputMaybe<Scalars['String']>;
+  feedback_not_contains?: InputMaybe<Scalars['String']>;
+  feedback_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  feedback_not_ends_with?: InputMaybe<Scalars['String']>;
+  feedback_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  feedback_not_in?: InputMaybe<Array<Scalars['String']>>;
+  feedback_not_starts_with?: InputMaybe<Scalars['String']>;
+  feedback_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  feedback_starts_with?: InputMaybe<Scalars['String']>;
+  feedback_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  state?: InputMaybe<ApplicationState>;
+  state_in?: InputMaybe<Array<ApplicationState>>;
+  state_not?: InputMaybe<ApplicationState>;
+  state_not_in?: InputMaybe<Array<ApplicationState>>;
+  updatedAtS?: InputMaybe<Scalars['Int']>;
+  updatedAtS_gt?: InputMaybe<Scalars['Int']>;
+  updatedAtS_gte?: InputMaybe<Scalars['Int']>;
+  updatedAtS_in?: InputMaybe<Array<Scalars['Int']>>;
+  updatedAtS_lt?: InputMaybe<Scalars['Int']>;
+  updatedAtS_lte?: InputMaybe<Scalars['Int']>;
+  updatedAtS_not?: InputMaybe<Scalars['Int']>;
+  updatedAtS_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  updatedBy?: InputMaybe<Scalars['String']>;
+  updatedBy_?: InputMaybe<WorkspaceMember_Filter>;
+  updatedBy_contains?: InputMaybe<Scalars['String']>;
+  updatedBy_contains_nocase?: InputMaybe<Scalars['String']>;
+  updatedBy_ends_with?: InputMaybe<Scalars['String']>;
+  updatedBy_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  updatedBy_gt?: InputMaybe<Scalars['String']>;
+  updatedBy_gte?: InputMaybe<Scalars['String']>;
+  updatedBy_in?: InputMaybe<Array<Scalars['String']>>;
+  updatedBy_lt?: InputMaybe<Scalars['String']>;
+  updatedBy_lte?: InputMaybe<Scalars['String']>;
+  updatedBy_not?: InputMaybe<Scalars['String']>;
+  updatedBy_not_contains?: InputMaybe<Scalars['String']>;
+  updatedBy_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  updatedBy_not_ends_with?: InputMaybe<Scalars['String']>;
+  updatedBy_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  updatedBy_not_in?: InputMaybe<Array<Scalars['String']>>;
+  updatedBy_not_starts_with?: InputMaybe<Scalars['String']>;
+  updatedBy_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  updatedBy_starts_with?: InputMaybe<Scalars['String']>;
+  updatedBy_starts_with_nocase?: InputMaybe<Scalars['String']>;
+};
+
+export enum ApplicationAction_OrderBy {
+  Application = 'application',
+  Feedback = 'feedback',
+  Id = 'id',
+  State = 'state',
+  UpdatedAtS = 'updatedAtS',
+  UpdatedBy = 'updatedBy'
+}
+
 /** the milestone of a grant application */
 export type ApplicationMilestone = {
   __typename?: 'ApplicationMilestone';
@@ -744,6 +850,8 @@ export type GrantManagersArgs = {
 
 export type GrantApplication = {
   __typename?: 'GrantApplication';
+  /** Actions taken on an application */
+  actions?: Maybe<Array<ApplicationAction>>;
   /** Address of the applicant */
   applicantId: Scalars['Bytes'];
   /** Public key of the applicant, used for PII */
@@ -781,6 +889,15 @@ export type GrantApplication = {
   updatedAtS: Scalars['Int'];
   /** Version of the application, incremented on resubmission */
   version: Scalars['Int'];
+};
+
+
+export type GrantApplicationActionsArgs = {
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<ApplicationAction_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<ApplicationAction_Filter>;
 };
 
 
@@ -1076,6 +1193,7 @@ export enum GrantApplicationRevision_OrderBy {
 export type GrantApplication_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  actions_?: InputMaybe<ApplicationAction_Filter>;
   applicantId?: InputMaybe<Scalars['Bytes']>;
   applicantId_contains?: InputMaybe<Scalars['Bytes']>;
   applicantId_in?: InputMaybe<Array<Scalars['Bytes']>>;
@@ -1251,6 +1369,7 @@ export type GrantApplication_Filter = {
 };
 
 export enum GrantApplication_OrderBy {
+  Actions = 'actions',
   ApplicantId = 'applicantId',
   ApplicantPublicKey = 'applicantPublicKey',
   ApplicationReviewers = 'applicationReviewers',
@@ -2589,6 +2708,8 @@ export type Query = {
   __typename?: 'Query';
   /** Access to subgraph metadata */
   _meta?: Maybe<_Meta_>;
+  applicationAction?: Maybe<ApplicationAction>;
+  applicationActions: Array<ApplicationAction>;
   applicationMilestone?: Maybe<ApplicationMilestone>;
   applicationMilestones: Array<ApplicationMilestone>;
   comment?: Maybe<Comment>;
@@ -2648,6 +2769,24 @@ export type Query = {
 
 export type Query_MetaArgs = {
   block?: InputMaybe<Block_Height>;
+};
+
+
+export type QueryApplicationActionArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryApplicationActionsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<ApplicationAction_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<ApplicationAction_Filter>;
 };
 
 
@@ -3568,6 +3707,8 @@ export type Subscription = {
   __typename?: 'Subscription';
   /** Access to subgraph metadata */
   _meta?: Maybe<_Meta_>;
+  applicationAction?: Maybe<ApplicationAction>;
+  applicationActions: Array<ApplicationAction>;
   applicationMilestone?: Maybe<ApplicationMilestone>;
   applicationMilestones: Array<ApplicationMilestone>;
   comment?: Maybe<Comment>;
@@ -3627,6 +3768,24 @@ export type Subscription = {
 
 export type Subscription_MetaArgs = {
   block?: InputMaybe<Block_Height>;
+};
+
+
+export type SubscriptionApplicationActionArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionApplicationActionsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<ApplicationAction_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<ApplicationAction_Filter>;
 };
 
 
