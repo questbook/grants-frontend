@@ -6,6 +6,13 @@ query getGrant($grantId: ID!, $actorId: Bytes!) {
     id
     title
     acceptingApplications
+    fields {
+      id
+      title
+      inputType
+      possibleValues
+      isPii
+    }
     reward {
       committed
       id

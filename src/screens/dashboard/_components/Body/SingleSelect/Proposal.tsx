@@ -7,6 +7,7 @@ import CopyIcon from 'src/libraries/ui/CopyIcon'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
 import { getChainInfo } from 'src/libraries/utils/token'
+import { GrantsProgramContext } from 'src/pages/_app'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -201,6 +202,30 @@ function Proposal() {
 					{projectDetails ? <TextViewer text={projectDetails} /> : null}
 				</Flex>
 
+				{
+					grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1).startsWith('customField')).map((field, index) => {
+						const id = field.id.substring(field.id.indexOf('.') + 1)
+						const title = field.title.substring(field.title.indexOf('-') + 1)
+							.split('\\s')
+							.join(' ')
+						const value = getFieldString(proposal, id)
+						return (
+							<Flex
+								key={index}
+								w='100%'
+								mt={4}
+								direction='column'>
+								<Text color='gray.5'>
+									{title}
+								</Text>
+								<Text mt={1}>
+									{value}
+								</Text>
+							</Flex>
+						)
+					})
+				}
+
 				{/* <Flex
 					w='100%'
 					mt={4}
@@ -247,6 +272,7 @@ function Proposal() {
 		)
 	}
 
+	const { grant } = useContext(GrantsProgramContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 
 	const proposal = useMemo(() => {
