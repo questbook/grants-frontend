@@ -15,6 +15,7 @@ function Payouts() {
 	const buildComponent = () => {
 		return (
 			<Flex
+				display={payouts?.length > 0 ? 'block' : 'none'}
 				px={5}
 				py={4}
 				direction='column'

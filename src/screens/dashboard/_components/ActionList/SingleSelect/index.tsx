@@ -27,33 +27,37 @@ function SingleSelect() {
 				<Payouts />
 				<Box mt='auto' />
 				<Divider />
-				<Flex
-					px={5}
-					py={4}>
-					<Button
-						disabled={role === 'builder' ? (proposal?.applicantId !== scwAddress?.toLowerCase() || proposal?.state !== 'submitted') : proposal?.state !== 'submitted'}
-						w='100%'
-						variant='primaryMedium'
-						onClick={
-							() => {
-								if(role === 'community') {
-									router.push({ pathname: '/proposal_form', query: {
-										grantId: grant?.id,
-										chainId,
-									} })
-								} else if(role === 'builder') {
-									router.push({ pathname: '/proposal_form', query: {
-										proposalId: proposal?.id,
-										chainId,
-									} })
-								} else {
-									setIsModalOpen(true)
-								}
-							}
-						}>
-						{role === 'community' ? 'Submit Proposal' : role === 'builder' ? 'Resubmit proposal' : 'Fund builder'}
-					</Button>
-				</Flex>
+				{
+					role !== 'reviewer' && (
+						<Flex
+							px={5}
+							py={4}>
+							<Button
+								disabled={role === 'builder' ? (proposal?.applicantId !== scwAddress?.toLowerCase() || proposal?.state !== 'submitted') : proposal?.state !== 'submitted'}
+								w='100%'
+								variant='primaryMedium'
+								onClick={
+									() => {
+										if(role === 'community') {
+											router.push({ pathname: '/proposal_form', query: {
+												grantId: grant?.id,
+												chainId,
+											} })
+										} else if(role === 'builder') {
+											router.push({ pathname: '/proposal_form', query: {
+												proposalId: proposal?.id,
+												chainId,
+											} })
+										} else {
+											setIsModalOpen(true)
+										}
+									}
+								}>
+								{role === 'community' ? 'Submit Proposal' : role === 'builder' ? 'Resubmit proposal' : 'Fund builder'}
+							</Button>
+						</Flex>
+					)
+				}
 			</Flex>
 		)
 	}

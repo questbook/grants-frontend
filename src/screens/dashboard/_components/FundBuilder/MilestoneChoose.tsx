@@ -47,6 +47,10 @@ function MilestoneChoose({ proposal, index, ...props }: Props) {
 								const newMilestoneIndices = [...milestoneIndices]
 								newMilestoneIndices[index] = value.index
 								setMilestoneIndices(newMilestoneIndices)
+
+								const copy = [...amounts]
+								copy[index] = parseFloat(value.amount)
+								setAmounts(copy)
 							}
 						} />
 					{/*  */}
@@ -93,7 +97,7 @@ function MilestoneChoose({ proposal, index, ...props }: Props) {
 		</Text>
 	)
 
-	const { milestoneIndices, setMilestoneIndices } = useContext(FundBuilderContext)!
+	const { milestoneIndices, setMilestoneIndices, amounts, setAmounts } = useContext(FundBuilderContext)!
 
 	const milestones = useMemo(() => {
 		return proposal?.milestones || []

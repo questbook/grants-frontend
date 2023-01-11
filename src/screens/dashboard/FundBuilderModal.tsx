@@ -228,6 +228,7 @@ function FundBuilderModal() {
 			return
 		}
 
+		setAmounts([proposal?.milestones?.[0]?.amount ? parseInt(proposal?.milestones?.[0]?.amount) : 0])
 		setTos([getFieldString(proposal, 'applicantAddress') ?? tos?.[0]])
 		setMilestoneIndices([0])
 	}, [proposal])

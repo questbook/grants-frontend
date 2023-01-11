@@ -625,15 +625,15 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 					localStorage.setItem(DOMAIN_CACHE_KEY, 'undefined')
 				}
 
-				const member = newWorkspace?.members?.find((member) => member.actorId === scwAddress?.toLowerCase())
-				if(member) {
-					const newRole = member.accessLevel === 'reviewer' ? 'reviewer' : 'admin'
-					logger.info({ newRole }, 'Setting role 6')
-					setRole(newRole)
-					localStorage.setItem(ROLE_CACHE, newRole)
-				}
+				// const member = newWorkspace?.members?.find((member) => member.actorId === scwAddress?.toLowerCase())
+				// if(member) {
+				// 	const newRole = member.accessLevel === 'reviewer' ? 'reviewer' : 'admin'
+				// 	logger.info({ newRole }, 'Setting role 6')
+				// 	setRole(newRole)
+				// 	localStorage.setItem(ROLE_CACHE, newRole)
+				// }
 
-				setWorkspace(newWorkspace)
+				// setWorkspace(newWorkspace)
 			},
 			chainId,
 			inviteInfo,

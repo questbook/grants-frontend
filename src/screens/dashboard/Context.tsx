@@ -76,6 +76,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 		for(const member of _grant?.workspace?.members ?? []) {
 			if(member.actorId === scwAddress.toLowerCase()) {
+				logger.info({ member }, 'Member (ROLE)')
 				possibleRoles.push(member.accessLevel === 'reviewer' ? 'reviewer' : 'admin')
 				break
 			}
