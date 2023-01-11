@@ -1,6 +1,7 @@
 import { useContext, useMemo, useState } from 'react'
-import { Box, Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text, Textarea } from '@chakra-ui/react'
+import { Box, Button, Flex, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text, Textarea } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
+import QuickReplyButton from 'src/screens/dashboard/_components/QuickReplyButton'
 import useAddComments from 'src/screens/dashboard/_hooks/useAddComments'
 import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
 import { SendAnUpdateContext } from 'src/screens/dashboard/Context'
@@ -38,19 +39,29 @@ function SendAnUpdateModal() {
 							FEW WAYS TO START THE DISCUSSION.
 						</Text>
 						<Flex
-							direction='column'
-						>
+							mt={2}
+							gap={3}>
 							{
-								Array.from(Array(Math.floor(proposalTags.length / 2)).keys()).map((_, index) => {
-									const reply1 = proposalTags?.[index * 2]
-									const reply2 = proposalTags?.[index * 2 + 1]
+								proposalTags.map((tag, index) => {
 									return (
-										<Flex
+										<QuickReplyButton
 											key={index}
-											mt={3}>
-											{reply1 && tagButton(reply1.icon, reply1.title, index * 2)}
-											{reply2 && tagButton(reply2.icon, reply2.title, index * 2 + 1)}
-										</Flex>
+											tag={tag}
+											selectedTags={selectedTags}
+											onTagClick={
+												() => {
+													const tags = { ...selectedTags }
+													logger.info('tags: ', tags)
+													if(tags[index]) {
+														delete tags[index]
+													} else {
+														tags[index] = true
+													}
+
+													setSelectedTags(tags)
+												}
+											}
+											index={index} />
 									)
 								})
 							}
@@ -82,46 +93,6 @@ function SendAnUpdateModal() {
 					</Flex>
 				</ModalContent>
 			</Modal>
-		)
-	}
-
-	const tagButton = (icon: string, title: string, index: number) => {
-		return (
-			<Button
-				key={index}
-				ml={index % 2 === 0 ? 0 : 3}
-				// w='100%'
-				justifyContent='start'
-				py={1}
-				px={3}
-				borderRadius='2px'
-				leftIcon={
-					<Image
-						boxSize='24px'
-						src={icon} />
-				}
-				bg={index in selectedTags ? 'accent.azure' : 'gray.2'}
-				onClick={
-					() => {
-						const tags = { ...selectedTags }
-						logger.info('tags: ', tags)
-						if(tags[index]) {
-							delete tags[index]
-						} else {
-							tags[index] = true
-						}
-
-						setSelectedTags(tags)
-					}
-				}
-				isDisabled={Object.keys(selectedTags).length > 0 && !(index in selectedTags)}
-			>
-				<Text
-					fontWeight='400'
-					color={index in selectedTags ? 'white' : 'black.1'}>
-					{title}
-				</Text>
-			</Button>
 		)
 	}
 
