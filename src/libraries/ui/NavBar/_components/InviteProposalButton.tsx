@@ -1,6 +1,5 @@
 import { Button, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { Add } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 
 function InviteProposalButton() {
@@ -11,16 +10,13 @@ function InviteProposalButton() {
 				variant='primaryMedium'
 				py={1}
 				px={2}
-				leftIcon={
-					<Add
-						boxSize='20px'
-						color='white' />
-				}
 				onClick={onClick}>
 				<Text
 					variant='v2_body'
-					color='white'>
-					Invite Proposal
+					color='white'
+					fontWeight='500'
+				>
+					Run a grant program
 				</Text>
 			</Button>
 		)

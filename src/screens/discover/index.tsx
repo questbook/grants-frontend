@@ -111,7 +111,7 @@ function Discover() {
 											pathname: '/request_proposal',
 										})
 									}>
-									Invite Proposals
+									Run a grant program
 								</Button>
 							</Flex>
 

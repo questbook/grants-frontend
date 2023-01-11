@@ -60,6 +60,21 @@ function RequestProposal() {
 			>
 				{/* <Button onClick={() => createGrant()}>create grant</Button> */}
 				{renderBody()}
+				<NetworkTransactionFlowStepperModal
+					isOpen={isNetworkTransactionModalOpen}
+					currentStepIndex={currentStepIndex!}
+					viewTxnLink={getExplorerUrlForTxHash(network, txHash)}
+					onClose={
+						async() => {
+							setCurrentStepIndex(undefined)
+							setRole('admin')
+							const ret = await router.push({ pathname: '/dashboard' })
+							if(ret) {
+								router.reload()
+							}
+						}
+					}
+				/>
 			</Flex>
 		)
 	}
@@ -118,26 +133,11 @@ function RequestProposal() {
 						milestones={milestones}
 						setMilestones={setMilestones}
 						shouldCreateRFP={shouldCreateRFP}
-						createRFP={createRFP}
+						createRFP={createWorkspaceAndGrant}
 						setOpenNetworkTransactionModal={setIsNetworkTransactionModalOpen}
 						rfpFormSubmissionType={rfpFormType}
 						handleOnEdit={handleOnEdit}
 						updateRFP={updateRFP}
-					/>
-					<NetworkTransactionFlowStepperModal
-						isOpen={isNetworkTransactionModalOpen}
-						currentStepIndex={currentStepIndex!}
-						viewTxnLink={getExplorerUrlForTxHash(network, rfpUpdateTxHash)}
-						onClose={
-							async() => {
-								setCurrentStepIndex(undefined)
-								setRole('admin')
-								const ret = await router.push({ pathname: '/dashboard' })
-								if(ret) {
-									router.reload()
-								}
-							}
-						}
 					/>
 				</>
 			)
@@ -159,21 +159,7 @@ function RequestProposal() {
 					setDomainImage={setDomainImage}
 					step={step}
 					setIsOpen={setIsNetworkTransactionModalOpen}
-					createWorkspace={createWorkspaceAndGrant} />
-				<NetworkTransactionFlowStepperModal
-					isOpen={isNetworkTransactionModalOpen}
-					currentStepIndex={currentStepIndex!}
-					viewTxnLink={getExplorerUrlForTxHash(network, txHash)}
-					onClose={
-						async() => {
-							setCurrentStepIndex(undefined)
-							setRole('admin')
-							const ret = await router.push({ pathname: '/dashboard' })
-							if(ret) {
-								router.reload()
-							}
-						}
-					}
+					createWorkspace={createWorkspaceAndGrant}
 				/>
 			</>
 		)
@@ -187,7 +173,7 @@ function RequestProposal() {
 	const [proposalName, setProposalName] = useState('')
 	const [startDate, setStartDate] = useState<string>()
 	const [endDate, setEndDate] = useState<string>()
-	const [shouldCreateRFP, setShouldCreateRFP] = useState(false)
+	const [shouldCreateRFP, setShouldCreateRFP] = useState(true)
 
 	// const [submitType, setSubmitType] = useState<RFPFormType>('submit')
 
@@ -381,7 +367,7 @@ function RequestProposal() {
 			setCurrentStepIndex(0)
 			const uploadedImageHash = (await uploadToIPFS(domainImage)).hash
 			const { hash: workspaceCreateIpfsHash } = await validateAndUploadToIpfs('WorkspaceCreateRequest', {
-				title: domainName!,
+				title: proposalName!,
 				about: '',
 				logoIpfsHash: uploadedImageHash,
 				creatorId: accountDataWebwallet!.address!,
