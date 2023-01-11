@@ -849,16 +849,17 @@ function Reviews() {
 			return
 		}
 
+		logger.info({ proposal }, 'Proposal (REVIEW DECRYPT)')
 		const decryptedReviews: Promise<IReviewFeedback>[] = []
 		for(const review of proposal?.reviews || []) {
 			decryptedReviews.push(loadReview(review, proposal?.id))
 		}
 
 		Promise.all(decryptedReviews).then((reviews) => {
-			logger.info({ reviews }, 'Decrypted reviews')
+			logger.info({ reviews }, 'Decrypted reviews (REVIEW DECRYPT)')
 			setReviews(reviews)
 		})
-	}, [])
+	}, [proposal])
 
 	// const isDisabled = useMemo(() => {
 	// 	if (grant?.numberOfReviewersPerApplication === numberOfReviewersPerApplication && Object.keys(members).length === grant?)
