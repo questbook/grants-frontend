@@ -1,6 +1,7 @@
 import { useContext, useEffect } from 'react'
 import { Checkbox, Flex, Image, Text } from '@chakra-ui/react'
 import config from 'src/constants/config.json'
+import { CheckDouble, Close } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import useProposalTags from 'src/screens/dashboard/_hooks/useProposalTags'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
@@ -82,6 +83,17 @@ function ProposalCard({ proposal }: Props) {
 						variant='v2_metadata'>
 						{role === 'builder' ? proposal?.grant?.workspace?.title : getFieldString(proposal, 'applicantName')}
 					</Text>
+					{
+						(proposal?.state === 'approved' || proposal?.state === 'rejected') && (
+							<Flex
+								ml='auto'
+								p={2}
+								borderRadius='4px'
+								bg={proposal?.state === 'approved' ? 'accent.columbia' : 'accent.melon'}>
+								{proposal?.state === 'approved' ? <CheckDouble /> : <Close />}
+							</Flex>
+						)
+					}
 				</Flex>
 				<Flex gap={2}>
 					{
@@ -103,7 +115,7 @@ function ProposalCard({ proposal }: Props) {
 		)
 	}
 
-	const { role, proposals, selectedProposals, updateSelectedProposal } = useContext(DashboardContext)!
+	const { role, selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
 
 	const { tags } = useProposalTags({ proposal })
 
@@ -116,14 +128,21 @@ function ProposalCard({ proposal }: Props) {
 			return
 		}
 
-		if(isText) {
-			for(const proposal of proposals) {
-				updateSelectedProposal(proposal.id, 'remove')
+		if(selectedProposals.size === 1 && isText) {
+			// Only 1 proposal was selected and the user clicked on its name
+			setSelectedProposals(new Set<string>([proposal.id]))
+		} else {
+			// Either more proposals are selected or the user clicked on the checkbox
+			// In both cases, we want to add / remove the proposal to / from the set respectively
+
+			const newSet = new Set<string>(selectedProposals)
+			if(newSet.has(proposal.id)) {
+				newSet.delete(proposal.id)
+			} else {
+				newSet.add(proposal.id)
 			}
 
-			updateSelectedProposal(proposal.id, 'add')
-		} else {
-			updateSelectedProposal(proposal.id, selectedProposals.has(proposal.id) ? 'remove' : 'add')
+			setSelectedProposals(newSet)
 		}
 	}
 

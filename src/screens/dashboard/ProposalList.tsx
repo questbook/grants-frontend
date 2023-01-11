@@ -34,7 +34,7 @@ function ProposalList() {
 
 			<Flex
 				mx={5}
-				my={4}>
+				mt={4}>
 				<SearchField
 					placeholder='Search'
 					value={searchText}
@@ -56,14 +56,13 @@ function ProposalList() {
 							onChange={
 								(e) => {
 									logger.info({ value: e.target.checked }, '(Proposal List) Select All Checkbox')
-									for(const proposal of proposals) {
-										updateSelectedProposal(proposal.id, e.target.checked ? 'add' : 'remove')
+									if(e.target.checked) {
+										setSelectedProposals(new Set<string>(proposals.map((_) => _.id)))
+									} else {
+										setSelectedProposals(new Set<string>([proposals?.[0]?.id]))
 									}
 
 									logger.info({ size: selectedProposals.size, proposalsLength: proposals.length, selectedProposals }, '(Proposal List) Select All Checkbox {size, proposalsLength, selectedProposals')
-									if(selectedProposals.size === 0 && proposals.length > 0) {
-										updateSelectedProposal(proposals[0].id, 'add')
-									}
 								}
 							}>
 							<Text
@@ -99,7 +98,7 @@ function ProposalList() {
 	const [searchText, setSearchText] = useState<string>('')
 
 	const { role } = useContext(ApiClientsContext)!
-	const { proposals, selectedProposals, updateSelectedProposal } = useContext(DashboardContext)!
+	const { proposals, selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
 
 	const filteredProposals = useMemo(() => {
 		if(searchText === '') {

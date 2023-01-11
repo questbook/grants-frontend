@@ -372,22 +372,17 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		}
 	}, [scwAddress])
 
+	useEffect(() => {
+		logger.info({ selectedProposals }, 'Selected proposals changed')
+	}, [selectedProposals])
+
 	const baseValue = useMemo(() => {
 		return {
 			proposals,
 			selectedGrantIndex,
 			setSelectedGrantIndex,
 			selectedProposals,
-			updateSelectedProposal: (id: string, type: 'add' | 'remove') => {
-				const newSet = new Set(selectedProposals)
-				if(type === 'add') {
-					newSet.add(id)
-				} else {
-					newSet.delete(id)
-				}
-
-				setSelectedProposals(newSet)
-			},
+			setSelectedProposals,
 			selectedGrant,
 			review,
 			setReview,
