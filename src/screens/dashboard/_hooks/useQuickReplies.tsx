@@ -9,7 +9,7 @@ function useProposalTags() {
 			{ id: 'accept', title: 'Accept', icon: <CheckDouble color='accent.jeans' />, isPrivate: false },
 			{ id: 'reject', title: 'Pass / Reject', icon: <Close color='accent.carrot' />, isPrivate: false },
 			{ id: 'resubmit', title: 'Resubmit', icon: <Resubmit color='accent.royal' />, isPrivate: false },
-			{ id: 'interview', title: 'Interview', icon: <Call color='accent.azure' />, isPrivate: false }
+			{ id: 'interview', title: 'Interview', icon: <Call color='accent.azure' />, isPrivate: true }
 		],
 		reviewer: [],
 		builder: [],

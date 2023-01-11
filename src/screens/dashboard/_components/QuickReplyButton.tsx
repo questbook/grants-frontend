@@ -1,14 +1,13 @@
-import { Button, Text } from '@chakra-ui/react'
+import { Button, ButtonProps, Text } from '@chakra-ui/react'
 import { TagType } from 'src/screens/dashboard/_utils/types'
 
-interface Props {
+type Props = {
     tag: TagType
     selectedTags: {[key: number]: boolean}
-    onTagClick: () => void
     index: number
-}
+} & ButtonProps
 
-function QuickReplyButton({ tag, selectedTags, onTagClick, index }: Props) {
+function QuickReplyButton({ tag, selectedTags, index, ...props }: Props) {
 	const buildComponent = () => {
 		return (
 			<Button
@@ -21,8 +20,7 @@ function QuickReplyButton({ tag, selectedTags, onTagClick, index }: Props) {
 				leftIcon={tag.icon}
 				bg={ index in selectedTags ? 'gray.3' : 'white'}
 				border='1px solid #E7E4DD'
-				onClick={onTagClick}
-				isDisabled={Object.keys(selectedTags).length > 0 && !(index in selectedTags)}
+				{...props}
 			>
 				<Text
 					variant='v2_body'

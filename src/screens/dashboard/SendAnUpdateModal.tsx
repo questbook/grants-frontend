@@ -48,7 +48,7 @@ function SendAnUpdateModal() {
 											key={index}
 											tag={tag}
 											selectedTags={selectedTags}
-											onTagClick={
+											onClick={
 												() => {
 													const tags = { ...selectedTags }
 													logger.info('tags: ', tags)

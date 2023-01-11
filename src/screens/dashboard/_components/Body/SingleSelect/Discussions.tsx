@@ -1,5 +1,5 @@
 import { useContext, useMemo, useState } from 'react'
-import { Button, CircularProgress, Divider, Flex, Image, Text, Textarea } from '@chakra-ui/react'
+import { Button, Checkbox, Divider, Flex, Image, Text, Textarea } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
@@ -53,19 +53,23 @@ function Discussions() {
 											key={index}
 											tag={tag}
 											selectedTags={selectedTags}
-											onTagClick={
+											onClick={
 												() => {
 													const tags = { ...selectedTags }
 													logger.info('tags: ', tags)
 													if(tags[index]) {
 														delete tags[index]
+														setIsCommentPrivate(false)
 													} else {
 														tags[index] = true
+														setIsCommentPrivate(tag.isPrivate)
 													}
+
 
 													setSelectedTags(tags)
 												}
 											}
+											isDisabled={(Object.keys(selectedTags).length > 0 && !(index in selectedTags)) || (isCommentPrivate && !tag.isPrivate)}
 											index={index} />
 									)
 								})
@@ -96,43 +100,20 @@ function Discussions() {
 						<Flex
 							mt={4}
 							align='center'>
-							{
-								step !== undefined && (
-									<Flex align='center'>
-										{
-											step < 3 && (
-												<CircularProgress
-													isIndeterminate
-													color='black'
-													size='18px' />
-											)
-										}
-										{
-											step < 3 && (
-												<Text
-													ml={2}
-													variant='v2_body'>
-													Adding comment...
-												</Text>
-											)
-										}
-										{/* {
-											transactionHash && (
-												<IconButton
-													ml={1}
-													variant='ghost'
-													icon={<ExternalLinkIcon />}
-													aria-label='txn-link'
-													onClick={
-														() => {
-															window.open(getExplorerUrlForTxHash(chainId, transactionHash), '_blank')
-														}
-													} />
-											)
-										} */}
-									</Flex>
-								)
-							}
+							<Checkbox
+								isChecked={isCommentPrivate}
+								onChange={
+									(e) => {
+										setSelectedTags({})
+										setIsCommentPrivate(e.target.checked)
+									}
+								}>
+								<Text
+									variant='v2_body'
+									color='gray.5'>
+									Show only to reviewers and builder
+								</Text>
+							</Checkbox>
 							<Button
 								ml='auto'
 								variant='primaryMedium'
@@ -215,6 +196,7 @@ function Discussions() {
 
 	const [step, setStep] = useState<number>()
 	const [, setTransactionHash] = useState('')
+	const [isCommentPrivate, setIsCommentPrivate] = useState<boolean>(false)
 
 	const [ selectedTags, setSelectedTags ] = useState<{[key: number]: boolean}>({})
 
