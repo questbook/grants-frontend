@@ -1,10 +1,8 @@
 import { ReactElement } from 'react'
 import {
-	GetCommentsForBuilderQuery,
-	GetGrantsForAdminQuery,
-	GetGrantsForReviewerQuery,
+	GetCommentsQuery,
 	GetPayoutsQuery,
-	GetProposalsForAdminQuery,
+	GetProposalsQuery,
 	RubricItem,
 } from 'src/generated/graphql'
 import { PIIForCommentType } from 'src/libraries/utils/types'
@@ -12,13 +10,9 @@ import { PIIForCommentType } from 'src/libraries/utils/types'
 export type CommentMap = {[key: string]: CommentType[]}
 
 type BaseDashboardContextType = {
-  isLoading: boolean
   proposals: Proposals
-  selectedGrantIndex: number | undefined
-  setSelectedGrantIndex: (index: number) => void
   selectedProposals: Set<string>
   setSelectedProposals: (set: Set<string>) => void
-  selectedGrant: AdminGrant | ReviewerGrant | undefined
   review: ReviewInfo | undefined
   setReview: (reviews: ReviewInfo) => void
   showSubmitReviewPanel: boolean
@@ -27,22 +21,7 @@ type BaseDashboardContextType = {
   setCommentMap: (coments: CommentMap) => void
 };
 
-type OptionalDashboardContextType =
-  | {
-      role: 'admin'
-      grants: GetGrantsForAdminQuery['grants']
-    }
-  | {
-      role: 'reviewer'
-      grants: GetGrantsForReviewerQuery['grantReviewerCounters']
-    }
-  | {
-      role: 'builder'
-      grants: []
-    };
-
-export type DashboardContextType = BaseDashboardContextType &
-  OptionalDashboardContextType;
+export type DashboardContextType = BaseDashboardContextType
 export interface TokenInfo {
   tokenIcon: string
   tokenName: string
@@ -96,12 +75,9 @@ export type ReviewInfo = {
   items?: ReviewData[]
   total?: number
 };
-export type AdminGrant = GetGrantsForAdminQuery['grants'][number];
-export type ReviewerGrant =
-  GetGrantsForReviewerQuery['grantReviewerCounters'][number]['grant'];
 
 export type Proposals = Exclude<
-  GetProposalsForAdminQuery['grantApplications'],
+  GetProposalsQuery['grantApplications'],
   null | undefined
 >;
 export type ProposalType = Proposals[number];
@@ -114,7 +90,7 @@ export type Payout = PayoutsType[number];
 export type SignerVerifiedState = 'unverified' | 'initiate_verification' | 'verifying'| 'failed' | 'verified' | 'transaction_initiated' | 'initiate_TON_transaction' | 'transaction_done_wallet'
 
 export type CommentType = Exclude<
-  GetCommentsForBuilderQuery['comments'],
+  GetCommentsQuery['comments'],
   null | undefined
 >[number] & PIIForCommentType;
 

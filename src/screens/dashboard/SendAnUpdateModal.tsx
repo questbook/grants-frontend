@@ -31,41 +31,49 @@ function SendAnUpdateModal() {
 							textAlign='center'>
 							Send an update
 						</Text>
-						<Text
-							mt={6}
-							variant='v2_metadata'
-							fontWeight='500'
-							color='gray.6'>
-							FEW WAYS TO START THE DISCUSSION.
-						</Text>
-						<Flex
-							mt={2}
-							gap={3}>
-							{
-								proposalTags.map((tag, index) => {
-									return (
-										<QuickReplyButton
-											key={index}
-											tag={tag}
-											selectedTags={selectedTags}
-											onClick={
-												() => {
-													const tags = { ...selectedTags }
-													logger.info('tags: ', tags)
-													if(tags[index]) {
-														delete tags[index]
-													} else {
-														tags[index] = true
-													}
+						{
+							proposalTags?.length > 0 && (
+								<Text
+									mt={6}
+									variant='v2_metadata'
+									fontWeight='500'
+									color='gray.6'>
+									FEW WAYS TO START THE DISCUSSION.
+								</Text>
+							)
+						}
+						{
+							proposalTags?.length > 0 && (
+								<Flex
+									mt={2}
+									gap={3}>
+									{
+										proposalTags?.map((tag, index) => {
+											return (
+												<QuickReplyButton
+													key={index}
+													tag={tag}
+													selectedTags={selectedTags}
+													onClick={
+														() => {
+															const tags = { ...selectedTags }
+															logger.info('tags: ', tags)
+															if(tags[index]) {
+																delete tags[index]
+															} else {
+																tags[index] = true
+															}
 
-													setSelectedTags(tags)
-												}
-											}
-											index={index} />
-									)
-								})
-							}
-						</Flex>
+															setSelectedTags(tags)
+														}
+													}
+													index={index} />
+											)
+										})
+									}
+								</Flex>
+							)
+						}
 						<Box mt={4} />
 						<Textarea
 							value={text}
@@ -80,7 +88,8 @@ function SendAnUpdateModal() {
 							isLoading={networkTransactionModalStep !== undefined}
 							onClick={
 								async() => {
-									const ret = await addComments(text, tags)
+									// TODO: Make batch comments private or public
+									const ret = await addComments(text, tags, false)
 									if(ret) {
 										setIsModalOpen(false)
 										setText('')

@@ -5540,6 +5540,14 @@ export type GetAdminPublicKeysQueryVariables = Exact<{
 
 export type GetAdminPublicKeysQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, publicKey?: string | null }> } | null };
 
+export type GetGrantQueryVariables = Exact<{
+  grantId: Scalars['ID'];
+  actorId: Scalars['Bytes'];
+}>;
+
+
+export type GetGrantQuery = { __typename?: 'Query', grant?: { __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, reviewType?: ReviewType | null, payoutType?: PayoutType | null, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, possibleValues?: Array<string> | null, isPii: boolean }>, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, rubric?: { __typename?: 'Rubric', id: string, isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null, applications: Array<{ __typename?: 'GrantApplication', id: string }>, workspace: { __typename?: 'Workspace', id: string, ownerId: string, logoIpfsHash: string, title: string, supportedNetworks: Array<SupportedNetwork>, safe?: { __typename?: 'WorkspaceSafe', id: string, chainId: string, address: string } | null, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, fullName?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number, profilePictureIpfsHash?: string | null, pii: Array<{ __typename?: 'PIIData', id: string, data: string }> }> } } | null };
+
 export type GetMemberPublicKeysQueryVariables = Exact<{
   workspaceId: Scalars['ID'];
   applicationIds: Array<Scalars['ID']> | Scalars['ID'];
@@ -5548,38 +5556,14 @@ export type GetMemberPublicKeysQueryVariables = Exact<{
 
 export type GetMemberPublicKeysQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', actorId: string, publicKey?: string | null }> } | null, grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, applicantPublicKey?: string | null, applicationReviewers: Array<{ __typename?: 'GrantApplicationReviewer', member: { __typename?: 'WorkspaceMember', actorId: string, publicKey?: string | null } }> }> };
 
-export type GetCommentsForBuilderQueryVariables = Exact<{
-  actorId: Scalars['Bytes'];
-  first?: InputMaybe<Scalars['Int']>;
-  skip?: InputMaybe<Scalars['Int']>;
-}>;
-
-
-export type GetCommentsForBuilderQuery = { __typename?: 'Query', comments: Array<{ __typename?: 'Comment', id: string, isPrivate: boolean, commentsPublicHash?: string | null, commentsEncryptedData?: Array<{ __typename?: 'PIIData', id: string, data: string }> | null, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, publicKey?: string | null }> }, application: { __typename?: 'GrantApplication', id: string, applicantPublicKey?: string | null } }> };
-
-export type GetCommentsForGpMemberQueryVariables = Exact<{
+export type GetCommentsQueryVariables = Exact<{
   grantId: Scalars['String'];
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type GetCommentsForGpMemberQuery = { __typename?: 'Query', comments: Array<{ __typename?: 'Comment', id: string, isPrivate: boolean, commentsPublicHash?: string | null, commentsEncryptedData?: Array<{ __typename?: 'PIIData', id: string, data: string }> | null, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, publicKey?: string | null }> }, application: { __typename?: 'GrantApplication', id: string, applicantPublicKey?: string | null } }> };
-
-export type GetGrantsForAdminQueryVariables = Exact<{
-  domainID: Scalars['String'];
-}>;
-
-
-export type GetGrantsForAdminQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, reviewType?: ReviewType | null, payoutType?: PayoutType | null, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, rubric?: { __typename?: 'Rubric', id: string, isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null }> };
-
-export type GetGrantsForReviewerQueryVariables = Exact<{
-  reviewerAddress: Scalars['Bytes'];
-  workspaceId: Scalars['String'];
-}>;
-
-
-export type GetGrantsForReviewerQuery = { __typename?: 'Query', grantReviewerCounters: Array<{ __typename?: 'GrantReviewerCounter', id: string, counter: number, pendingCounter: number, doneCounter: number, grant: { __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, reviewType?: ReviewType | null, payoutType?: PayoutType | null, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, rubric?: { __typename?: 'Rubric', id: string, isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null, pendingApplications: Array<{ __typename?: 'GrantApplication', id: string }>, doneApplications: Array<{ __typename?: 'GrantApplication', id: string }> } }> };
+export type GetCommentsQuery = { __typename?: 'Query', comments: Array<{ __typename?: 'Comment', id: string, isPrivate: boolean, commentsPublicHash?: string | null, commentsEncryptedData?: Array<{ __typename?: 'PIIData', id: string, data: string }> | null, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, publicKey?: string | null }> }, application: { __typename?: 'GrantApplication', id: string, applicantPublicKey?: string | null } }> };
 
 export type GetPayoutsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -5590,30 +5574,14 @@ export type GetPayoutsQueryVariables = Exact<{
 
 export type GetPayoutsQuery = { __typename?: 'Query', fundsTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, asset: string, type: FundsTransferType, createdAtS: number, to: string, transactionHash?: string | null, status: FundsTransferStatusType, executionTimestamp?: number | null, milestone?: { __typename?: 'ApplicationMilestone', id: string } | null, grant: { __typename?: 'Grant', reward: { __typename?: 'Reward', id: string, asset: string, committed: string, token?: { __typename?: 'Token', id: string, label: string, address: string, decimal: number, chainId?: string | null, iconHash: string } | null } } }> };
 
-export type GetProposalsForAdminQueryVariables = Exact<{
+export type GetProposalsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
   grantID: Scalars['String'];
 }>;
 
 
-export type GetProposalsForAdminQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, applicantPublicKey?: string | null, state: ApplicationState, createdAtS: number, updatedAtS: number, feedbackDao?: string | null, feedbackDev?: string | null, pendingReviewerAddresses: Array<string>, doneReviewerAddresses: Array<string>, version: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', id: string, value: string }> }>, pii: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string, member?: { __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, publicKey?: string | null, addedAt: number, updatedAt: number, enabled: boolean } | null } | null }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, title: string, state: MilestoneState, amount: string, amountPaid: string, updatedAtS?: number | null, feedbackDao?: string | null, feedbackDaoUpdatedAtS?: number | null, feedbackDev?: string | null, feedbackDevUpdatedAtS?: number | null }>, reviews: Array<{ __typename?: 'Review', id: string, createdAtS: number, publicReviewDataHash?: string | null, reviewer: { __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, publicKey?: string | null, addedAt: number, updatedAt: number, enabled: boolean }, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string, member?: { __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, publicKey?: string | null, addedAt: number, updatedAt: number, enabled: boolean } | null } | null }> }>, applicationReviewers: Array<{ __typename?: 'GrantApplicationReviewer', id: string, assignedAtS: number, member: { __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, publicKey?: string | null, addedAt: number, updatedAt: number, enabled: boolean } }>, grant: { __typename?: 'Grant', id: string, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } } }> };
-
-export type GetProposalsForBuilderQueryVariables = Exact<{
-  first?: InputMaybe<Scalars['Int']>;
-  skip?: InputMaybe<Scalars['Int']>;
-  builderId: Scalars['Bytes'];
-}>;
-
-
-export type GetProposalsForBuilderQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, applicantPublicKey?: string | null, state: ApplicationState, createdAtS: number, updatedAtS: number, feedbackDao?: string | null, feedbackDev?: string | null, pendingReviewerAddresses: Array<string>, doneReviewerAddresses: Array<string>, version: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', id: string, value: string }> }>, pii: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string, member?: { __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, publicKey?: string | null, addedAt: number, updatedAt: number, enabled: boolean } | null } | null }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, title: string, state: MilestoneState, amount: string, amountPaid: string, updatedAtS?: number | null, feedbackDao?: string | null, feedbackDaoUpdatedAtS?: number | null, feedbackDev?: string | null, feedbackDevUpdatedAtS?: number | null }>, reviews: Array<{ __typename?: 'Review', id: string, createdAtS: number, publicReviewDataHash?: string | null, reviewer: { __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, publicKey?: string | null, addedAt: number, updatedAt: number, enabled: boolean }, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string, member?: { __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, publicKey?: string | null, addedAt: number, updatedAt: number, enabled: boolean } | null } | null }> }>, applicationReviewers: Array<{ __typename?: 'GrantApplicationReviewer', id: string, assignedAtS: number, member: { __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, publicKey?: string | null, addedAt: number, updatedAt: number, enabled: boolean } }>, grant: { __typename?: 'Grant', id: string, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } } }> };
-
-export type GetProposalsForReviewerQueryVariables = Exact<{
-  proposalIds?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
-}>;
-
-
-export type GetProposalsForReviewerQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, applicantPublicKey?: string | null, state: ApplicationState, createdAtS: number, updatedAtS: number, feedbackDao?: string | null, feedbackDev?: string | null, pendingReviewerAddresses: Array<string>, doneReviewerAddresses: Array<string>, version: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', id: string, value: string }> }>, pii: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string, member?: { __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, publicKey?: string | null, addedAt: number, updatedAt: number, enabled: boolean } | null } | null }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, title: string, state: MilestoneState, amount: string, amountPaid: string, updatedAtS?: number | null, feedbackDao?: string | null, feedbackDaoUpdatedAtS?: number | null, feedbackDev?: string | null, feedbackDevUpdatedAtS?: number | null }>, reviews: Array<{ __typename?: 'Review', id: string, createdAtS: number, publicReviewDataHash?: string | null, reviewer: { __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, publicKey?: string | null, addedAt: number, updatedAt: number, enabled: boolean }, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string, member?: { __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, publicKey?: string | null, addedAt: number, updatedAt: number, enabled: boolean } | null } | null }> }>, applicationReviewers: Array<{ __typename?: 'GrantApplicationReviewer', id: string, assignedAtS: number, member: { __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, publicKey?: string | null, addedAt: number, updatedAt: number, enabled: boolean } }>, grant: { __typename?: 'Grant', id: string, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } } }> };
+export type GetProposalsQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, applicantPublicKey?: string | null, state: ApplicationState, createdAtS: number, updatedAtS: number, feedbackDao?: string | null, feedbackDev?: string | null, pendingReviewerAddresses: Array<string>, doneReviewerAddresses: Array<string>, version: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', id: string, value: string }> }>, pii: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string, member?: { __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, publicKey?: string | null, addedAt: number, updatedAt: number, enabled: boolean } | null } | null }>, milestones: Array<{ __typename?: 'ApplicationMilestone', id: string, title: string, state: MilestoneState, amount: string, amountPaid: string, updatedAtS?: number | null, feedbackDao?: string | null, feedbackDaoUpdatedAtS?: number | null, feedbackDev?: string | null, feedbackDevUpdatedAtS?: number | null }>, reviews: Array<{ __typename?: 'Review', id: string, createdAtS: number, publicReviewDataHash?: string | null, reviewer: { __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, publicKey?: string | null, addedAt: number, updatedAt: number, enabled: boolean }, data: Array<{ __typename?: 'PIIAnswer', id: string, data: string, manager?: { __typename?: 'GrantManager', id: string, member?: { __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, publicKey?: string | null, addedAt: number, updatedAt: number, enabled: boolean } | null } | null }> }>, applicationReviewers: Array<{ __typename?: 'GrantApplicationReviewer', id: string, assignedAtS: number, member: { __typename?: 'WorkspaceMember', id: string, actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, accessLevel: WorkspaceMemberAccessLevel, publicKey?: string | null, addedAt: number, updatedAt: number, enabled: boolean } }>, grant: { __typename?: 'Grant', id: string, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } } }> };
 
 export type GetAllGrantsForBuilderQueryVariables = Exact<{
   applicantId?: InputMaybe<Scalars['Bytes']>;
@@ -8789,6 +8757,117 @@ export type GetAdminPublicKeysQueryResult = Apollo.QueryResult<GetAdminPublicKey
 export function refetchGetAdminPublicKeysQuery(variables: GetAdminPublicKeysQueryVariables) {
       return { query: GetAdminPublicKeysDocument, variables: variables }
     }
+export const GetGrantDocument = gql`
+    query getGrant($grantId: ID!, $actorId: Bytes!) {
+  grant(id: $grantId) {
+    id
+    title
+    acceptingApplications
+    fields {
+      id
+      title
+      inputType
+      possibleValues
+      isPii
+    }
+    reward {
+      committed
+      id
+      asset
+      token {
+        address
+        label
+        decimal
+        iconHash
+      }
+    }
+    rubric {
+      id
+      isPrivate
+      items {
+        id
+        title
+        details
+        maximumPoints
+      }
+    }
+    reviewType
+    payoutType
+    applications(where: {applicantId: $actorId}) {
+      id
+    }
+    workspace {
+      id
+      ownerId
+      logoIpfsHash
+      title
+      supportedNetworks
+      safe {
+        id
+        chainId
+        address
+      }
+      tokens {
+        address
+        label
+        decimal
+        iconHash
+      }
+      safe {
+        address
+        chainId
+      }
+      members(where: {enabled: true}) {
+        id
+        actorId
+        publicKey
+        fullName
+        email
+        accessLevel
+        outstandingReviewIds
+        lastReviewSubmittedAt
+        profilePictureIpfsHash
+        pii {
+          id
+          data
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetGrantQuery__
+ *
+ * To run a query within a React component, call `useGetGrantQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGrantQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGrantQuery({
+ *   variables: {
+ *      grantId: // value for 'grantId'
+ *      actorId: // value for 'actorId'
+ *   },
+ * });
+ */
+export function useGetGrantQuery(baseOptions: Apollo.QueryHookOptions<GetGrantQuery, GetGrantQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetGrantQuery, GetGrantQueryVariables>(GetGrantDocument, options);
+      }
+export function useGetGrantLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetGrantQuery, GetGrantQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetGrantQuery, GetGrantQueryVariables>(GetGrantDocument, options);
+        }
+export type GetGrantQueryHookResult = ReturnType<typeof useGetGrantQuery>;
+export type GetGrantLazyQueryHookResult = ReturnType<typeof useGetGrantLazyQuery>;
+export type GetGrantQueryResult = Apollo.QueryResult<GetGrantQuery, GetGrantQueryVariables>;
+export function refetchGetGrantQuery(variables: GetGrantQueryVariables) {
+      return { query: GetGrantDocument, variables: variables }
+    }
 export const GetMemberPublicKeysDocument = gql`
     query getMemberPublicKeys($workspaceId: ID!, $applicationIds: [ID!]!) {
   workspace(id: $workspaceId) {
@@ -8842,73 +8921,8 @@ export type GetMemberPublicKeysQueryResult = Apollo.QueryResult<GetMemberPublicK
 export function refetchGetMemberPublicKeysQuery(variables: GetMemberPublicKeysQueryVariables) {
       return { query: GetMemberPublicKeysDocument, variables: variables }
     }
-export const GetCommentsForBuilderDocument = gql`
-    query getCommentsForBuilder($actorId: Bytes!, $first: Int, $skip: Int) {
-  comments(
-    first: $first
-    skip: $skip
-    where: {application_: {applicantId: $actorId}}
-    orderBy: createdAt
-    orderDirection: asc
-  ) {
-    id
-    isPrivate
-    commentsPublicHash
-    commentsEncryptedData {
-      id
-      data
-    }
-    workspace {
-      members {
-        actorId
-        fullName
-        profilePictureIpfsHash
-        publicKey
-      }
-      supportedNetworks
-    }
-    application {
-      id
-      applicantPublicKey
-    }
-  }
-}
-    `;
-
-/**
- * __useGetCommentsForBuilderQuery__
- *
- * To run a query within a React component, call `useGetCommentsForBuilderQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetCommentsForBuilderQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetCommentsForBuilderQuery({
- *   variables: {
- *      actorId: // value for 'actorId'
- *      first: // value for 'first'
- *      skip: // value for 'skip'
- *   },
- * });
- */
-export function useGetCommentsForBuilderQuery(baseOptions: Apollo.QueryHookOptions<GetCommentsForBuilderQuery, GetCommentsForBuilderQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetCommentsForBuilderQuery, GetCommentsForBuilderQueryVariables>(GetCommentsForBuilderDocument, options);
-      }
-export function useGetCommentsForBuilderLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCommentsForBuilderQuery, GetCommentsForBuilderQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetCommentsForBuilderQuery, GetCommentsForBuilderQueryVariables>(GetCommentsForBuilderDocument, options);
-        }
-export type GetCommentsForBuilderQueryHookResult = ReturnType<typeof useGetCommentsForBuilderQuery>;
-export type GetCommentsForBuilderLazyQueryHookResult = ReturnType<typeof useGetCommentsForBuilderLazyQuery>;
-export type GetCommentsForBuilderQueryResult = Apollo.QueryResult<GetCommentsForBuilderQuery, GetCommentsForBuilderQueryVariables>;
-export function refetchGetCommentsForBuilderQuery(variables: GetCommentsForBuilderQueryVariables) {
-      return { query: GetCommentsForBuilderDocument, variables: variables }
-    }
-export const GetCommentsForGpMemberDocument = gql`
-    query getCommentsForGPMember($grantId: String!, $first: Int, $skip: Int) {
+export const GetCommentsDocument = gql`
+    query getComments($grantId: String!, $first: Int, $skip: Int) {
   comments(
     first: $first
     skip: $skip
@@ -8941,16 +8955,16 @@ export const GetCommentsForGpMemberDocument = gql`
     `;
 
 /**
- * __useGetCommentsForGpMemberQuery__
+ * __useGetCommentsQuery__
  *
- * To run a query within a React component, call `useGetCommentsForGpMemberQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetCommentsForGpMemberQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetCommentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCommentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetCommentsForGpMemberQuery({
+ * const { data, loading, error } = useGetCommentsQuery({
  *   variables: {
  *      grantId: // value for 'grantId'
  *      first: // value for 'first'
@@ -8958,164 +8972,19 @@ export const GetCommentsForGpMemberDocument = gql`
  *   },
  * });
  */
-export function useGetCommentsForGpMemberQuery(baseOptions: Apollo.QueryHookOptions<GetCommentsForGpMemberQuery, GetCommentsForGpMemberQueryVariables>) {
+export function useGetCommentsQuery(baseOptions: Apollo.QueryHookOptions<GetCommentsQuery, GetCommentsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetCommentsForGpMemberQuery, GetCommentsForGpMemberQueryVariables>(GetCommentsForGpMemberDocument, options);
+        return Apollo.useQuery<GetCommentsQuery, GetCommentsQueryVariables>(GetCommentsDocument, options);
       }
-export function useGetCommentsForGpMemberLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCommentsForGpMemberQuery, GetCommentsForGpMemberQueryVariables>) {
+export function useGetCommentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCommentsQuery, GetCommentsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetCommentsForGpMemberQuery, GetCommentsForGpMemberQueryVariables>(GetCommentsForGpMemberDocument, options);
+          return Apollo.useLazyQuery<GetCommentsQuery, GetCommentsQueryVariables>(GetCommentsDocument, options);
         }
-export type GetCommentsForGpMemberQueryHookResult = ReturnType<typeof useGetCommentsForGpMemberQuery>;
-export type GetCommentsForGpMemberLazyQueryHookResult = ReturnType<typeof useGetCommentsForGpMemberLazyQuery>;
-export type GetCommentsForGpMemberQueryResult = Apollo.QueryResult<GetCommentsForGpMemberQuery, GetCommentsForGpMemberQueryVariables>;
-export function refetchGetCommentsForGpMemberQuery(variables: GetCommentsForGpMemberQueryVariables) {
-      return { query: GetCommentsForGpMemberDocument, variables: variables }
-    }
-export const GetGrantsForAdminDocument = gql`
-    query getGrantsForAdmin($domainID: String!) {
-  grants(where: {workspace: $domainID}, orderBy: createdAtS, orderDirection: desc) {
-    id
-    title
-    acceptingApplications
-    reward {
-      committed
-      id
-      asset
-      token {
-        address
-        label
-        decimal
-        iconHash
-      }
-    }
-    rubric {
-      id
-      isPrivate
-      items {
-        id
-        title
-        details
-        maximumPoints
-      }
-    }
-    reviewType
-    payoutType
-  }
-}
-    `;
-
-/**
- * __useGetGrantsForAdminQuery__
- *
- * To run a query within a React component, call `useGetGrantsForAdminQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetGrantsForAdminQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetGrantsForAdminQuery({
- *   variables: {
- *      domainID: // value for 'domainID'
- *   },
- * });
- */
-export function useGetGrantsForAdminQuery(baseOptions: Apollo.QueryHookOptions<GetGrantsForAdminQuery, GetGrantsForAdminQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetGrantsForAdminQuery, GetGrantsForAdminQueryVariables>(GetGrantsForAdminDocument, options);
-      }
-export function useGetGrantsForAdminLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetGrantsForAdminQuery, GetGrantsForAdminQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetGrantsForAdminQuery, GetGrantsForAdminQueryVariables>(GetGrantsForAdminDocument, options);
-        }
-export type GetGrantsForAdminQueryHookResult = ReturnType<typeof useGetGrantsForAdminQuery>;
-export type GetGrantsForAdminLazyQueryHookResult = ReturnType<typeof useGetGrantsForAdminLazyQuery>;
-export type GetGrantsForAdminQueryResult = Apollo.QueryResult<GetGrantsForAdminQuery, GetGrantsForAdminQueryVariables>;
-export function refetchGetGrantsForAdminQuery(variables: GetGrantsForAdminQueryVariables) {
-      return { query: GetGrantsForAdminDocument, variables: variables }
-    }
-export const GetGrantsForReviewerDocument = gql`
-    query getGrantsForReviewer($reviewerAddress: Bytes!, $workspaceId: String!) {
-  grantReviewerCounters(
-    where: {reviewerAddress: $reviewerAddress, grant_: {workspace: $workspaceId}}
-  ) {
-    id
-    counter
-    pendingCounter
-    doneCounter
-    grant {
-      id
-      title
-      acceptingApplications
-      reward {
-        committed
-        id
-        asset
-        token {
-          address
-          label
-          decimal
-          iconHash
-        }
-      }
-      rubric {
-        id
-        isPrivate
-        items {
-          id
-          title
-          details
-          maximumPoints
-        }
-      }
-      reviewType
-      payoutType
-      pendingApplications: applications(
-        where: {pendingReviewerAddresses_contains_nocase: [$reviewerAddress]}
-      ) {
-        id
-      }
-      doneApplications: applications(
-        where: {doneReviewerAddresses_contains_nocase: [$reviewerAddress]}
-      ) {
-        id
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useGetGrantsForReviewerQuery__
- *
- * To run a query within a React component, call `useGetGrantsForReviewerQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetGrantsForReviewerQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetGrantsForReviewerQuery({
- *   variables: {
- *      reviewerAddress: // value for 'reviewerAddress'
- *      workspaceId: // value for 'workspaceId'
- *   },
- * });
- */
-export function useGetGrantsForReviewerQuery(baseOptions: Apollo.QueryHookOptions<GetGrantsForReviewerQuery, GetGrantsForReviewerQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetGrantsForReviewerQuery, GetGrantsForReviewerQueryVariables>(GetGrantsForReviewerDocument, options);
-      }
-export function useGetGrantsForReviewerLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetGrantsForReviewerQuery, GetGrantsForReviewerQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetGrantsForReviewerQuery, GetGrantsForReviewerQueryVariables>(GetGrantsForReviewerDocument, options);
-        }
-export type GetGrantsForReviewerQueryHookResult = ReturnType<typeof useGetGrantsForReviewerQuery>;
-export type GetGrantsForReviewerLazyQueryHookResult = ReturnType<typeof useGetGrantsForReviewerLazyQuery>;
-export type GetGrantsForReviewerQueryResult = Apollo.QueryResult<GetGrantsForReviewerQuery, GetGrantsForReviewerQueryVariables>;
-export function refetchGetGrantsForReviewerQuery(variables: GetGrantsForReviewerQueryVariables) {
-      return { query: GetGrantsForReviewerDocument, variables: variables }
+export type GetCommentsQueryHookResult = ReturnType<typeof useGetCommentsQuery>;
+export type GetCommentsLazyQueryHookResult = ReturnType<typeof useGetCommentsLazyQuery>;
+export type GetCommentsQueryResult = Apollo.QueryResult<GetCommentsQuery, GetCommentsQueryVariables>;
+export function refetchGetCommentsQuery(variables: GetCommentsQueryVariables) {
+      return { query: GetCommentsDocument, variables: variables }
     }
 export const GetPayoutsDocument = gql`
     query getPayouts($first: Int, $skip: Int, $proposalID: String!) {
@@ -9186,8 +9055,8 @@ export type GetPayoutsQueryResult = Apollo.QueryResult<GetPayoutsQuery, GetPayou
 export function refetchGetPayoutsQuery(variables: GetPayoutsQueryVariables) {
       return { query: GetPayoutsDocument, variables: variables }
     }
-export const GetProposalsForAdminDocument = gql`
-    query getProposalsForAdmin($first: Int, $skip: Int, $grantID: String!) {
+export const GetProposalsDocument = gql`
+    query getProposals($first: Int, $skip: Int, $grantID: String!) {
   grantApplications(
     where: {grant: $grantID}
     first: $first
@@ -9317,16 +9186,16 @@ export const GetProposalsForAdminDocument = gql`
     `;
 
 /**
- * __useGetProposalsForAdminQuery__
+ * __useGetProposalsQuery__
  *
- * To run a query within a React component, call `useGetProposalsForAdminQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetProposalsForAdminQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetProposalsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProposalsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetProposalsForAdminQuery({
+ * const { data, loading, error } = useGetProposalsQuery({
  *   variables: {
  *      first: // value for 'first'
  *      skip: // value for 'skip'
@@ -9334,339 +9203,19 @@ export const GetProposalsForAdminDocument = gql`
  *   },
  * });
  */
-export function useGetProposalsForAdminQuery(baseOptions: Apollo.QueryHookOptions<GetProposalsForAdminQuery, GetProposalsForAdminQueryVariables>) {
+export function useGetProposalsQuery(baseOptions: Apollo.QueryHookOptions<GetProposalsQuery, GetProposalsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetProposalsForAdminQuery, GetProposalsForAdminQueryVariables>(GetProposalsForAdminDocument, options);
+        return Apollo.useQuery<GetProposalsQuery, GetProposalsQueryVariables>(GetProposalsDocument, options);
       }
-export function useGetProposalsForAdminLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProposalsForAdminQuery, GetProposalsForAdminQueryVariables>) {
+export function useGetProposalsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProposalsQuery, GetProposalsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetProposalsForAdminQuery, GetProposalsForAdminQueryVariables>(GetProposalsForAdminDocument, options);
+          return Apollo.useLazyQuery<GetProposalsQuery, GetProposalsQueryVariables>(GetProposalsDocument, options);
         }
-export type GetProposalsForAdminQueryHookResult = ReturnType<typeof useGetProposalsForAdminQuery>;
-export type GetProposalsForAdminLazyQueryHookResult = ReturnType<typeof useGetProposalsForAdminLazyQuery>;
-export type GetProposalsForAdminQueryResult = Apollo.QueryResult<GetProposalsForAdminQuery, GetProposalsForAdminQueryVariables>;
-export function refetchGetProposalsForAdminQuery(variables: GetProposalsForAdminQueryVariables) {
-      return { query: GetProposalsForAdminDocument, variables: variables }
-    }
-export const GetProposalsForBuilderDocument = gql`
-    query getProposalsForBuilder($first: Int, $skip: Int, $builderId: Bytes!) {
-  grantApplications(
-    where: {applicantId: $builderId}
-    first: $first
-    skip: $skip
-    orderBy: updatedAtS
-    orderDirection: desc
-  ) {
-    id
-    applicantId
-    applicantPublicKey
-    state
-    fields {
-      id
-      values {
-        id
-        value
-      }
-    }
-    pii {
-      id
-      manager {
-        id
-        member {
-          id
-          actorId
-          fullName
-          profilePictureIpfsHash
-          accessLevel
-          publicKey
-          addedAt
-          updatedAt
-          enabled
-        }
-      }
-      data
-    }
-    createdAtS
-    updatedAtS
-    milestones {
-      id
-      title
-      state
-      amount
-      amountPaid
-      updatedAtS
-      feedbackDao
-      feedbackDaoUpdatedAtS
-      feedbackDev
-      feedbackDevUpdatedAtS
-    }
-    feedbackDao
-    feedbackDev
-    reviews {
-      id
-      reviewer {
-        id
-        actorId
-        fullName
-        profilePictureIpfsHash
-        accessLevel
-        publicKey
-        addedAt
-        updatedAt
-        enabled
-      }
-      createdAtS
-      publicReviewDataHash
-      data {
-        id
-        manager {
-          id
-          member {
-            id
-            actorId
-            fullName
-            profilePictureIpfsHash
-            accessLevel
-            publicKey
-            addedAt
-            updatedAt
-            enabled
-          }
-        }
-        data
-      }
-    }
-    pendingReviewerAddresses
-    doneReviewerAddresses
-    applicationReviewers {
-      id
-      member {
-        id
-        actorId
-        fullName
-        profilePictureIpfsHash
-        accessLevel
-        publicKey
-        addedAt
-        updatedAt
-        enabled
-      }
-      assignedAtS
-    }
-    version
-    grant {
-      id
-      reward {
-        committed
-        id
-        asset
-        token {
-          address
-          label
-          decimal
-          iconHash
-        }
-      }
-      workspace {
-        id
-        title
-        logoIpfsHash
-        supportedNetworks
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useGetProposalsForBuilderQuery__
- *
- * To run a query within a React component, call `useGetProposalsForBuilderQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetProposalsForBuilderQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetProposalsForBuilderQuery({
- *   variables: {
- *      first: // value for 'first'
- *      skip: // value for 'skip'
- *      builderId: // value for 'builderId'
- *   },
- * });
- */
-export function useGetProposalsForBuilderQuery(baseOptions: Apollo.QueryHookOptions<GetProposalsForBuilderQuery, GetProposalsForBuilderQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetProposalsForBuilderQuery, GetProposalsForBuilderQueryVariables>(GetProposalsForBuilderDocument, options);
-      }
-export function useGetProposalsForBuilderLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProposalsForBuilderQuery, GetProposalsForBuilderQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetProposalsForBuilderQuery, GetProposalsForBuilderQueryVariables>(GetProposalsForBuilderDocument, options);
-        }
-export type GetProposalsForBuilderQueryHookResult = ReturnType<typeof useGetProposalsForBuilderQuery>;
-export type GetProposalsForBuilderLazyQueryHookResult = ReturnType<typeof useGetProposalsForBuilderLazyQuery>;
-export type GetProposalsForBuilderQueryResult = Apollo.QueryResult<GetProposalsForBuilderQuery, GetProposalsForBuilderQueryVariables>;
-export function refetchGetProposalsForBuilderQuery(variables: GetProposalsForBuilderQueryVariables) {
-      return { query: GetProposalsForBuilderDocument, variables: variables }
-    }
-export const GetProposalsForReviewerDocument = gql`
-    query getProposalsForReviewer($proposalIds: [ID!]) {
-  grantApplications(
-    where: {id_in: $proposalIds}
-    orderBy: updatedAtS
-    orderDirection: desc
-  ) {
-    id
-    applicantId
-    applicantPublicKey
-    state
-    fields {
-      id
-      values {
-        id
-        value
-      }
-    }
-    pii {
-      id
-      manager {
-        id
-        member {
-          id
-          actorId
-          fullName
-          profilePictureIpfsHash
-          accessLevel
-          publicKey
-          addedAt
-          updatedAt
-          enabled
-        }
-      }
-      data
-    }
-    createdAtS
-    updatedAtS
-    milestones {
-      id
-      title
-      state
-      amount
-      amountPaid
-      updatedAtS
-      feedbackDao
-      feedbackDaoUpdatedAtS
-      feedbackDev
-      feedbackDevUpdatedAtS
-    }
-    feedbackDao
-    feedbackDev
-    reviews {
-      id
-      reviewer {
-        id
-        actorId
-        fullName
-        profilePictureIpfsHash
-        accessLevel
-        publicKey
-        addedAt
-        updatedAt
-        enabled
-      }
-      createdAtS
-      publicReviewDataHash
-      data {
-        id
-        manager {
-          id
-          member {
-            id
-            actorId
-            fullName
-            profilePictureIpfsHash
-            accessLevel
-            publicKey
-            addedAt
-            updatedAt
-            enabled
-          }
-        }
-        data
-      }
-    }
-    pendingReviewerAddresses
-    doneReviewerAddresses
-    applicationReviewers {
-      id
-      member {
-        id
-        actorId
-        fullName
-        profilePictureIpfsHash
-        accessLevel
-        publicKey
-        addedAt
-        updatedAt
-        enabled
-      }
-      assignedAtS
-    }
-    version
-    grant {
-      id
-      reward {
-        committed
-        id
-        asset
-        token {
-          address
-          label
-          decimal
-          iconHash
-        }
-      }
-      workspace {
-        id
-        title
-        logoIpfsHash
-        supportedNetworks
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useGetProposalsForReviewerQuery__
- *
- * To run a query within a React component, call `useGetProposalsForReviewerQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetProposalsForReviewerQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetProposalsForReviewerQuery({
- *   variables: {
- *      proposalIds: // value for 'proposalIds'
- *   },
- * });
- */
-export function useGetProposalsForReviewerQuery(baseOptions?: Apollo.QueryHookOptions<GetProposalsForReviewerQuery, GetProposalsForReviewerQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetProposalsForReviewerQuery, GetProposalsForReviewerQueryVariables>(GetProposalsForReviewerDocument, options);
-      }
-export function useGetProposalsForReviewerLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProposalsForReviewerQuery, GetProposalsForReviewerQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetProposalsForReviewerQuery, GetProposalsForReviewerQueryVariables>(GetProposalsForReviewerDocument, options);
-        }
-export type GetProposalsForReviewerQueryHookResult = ReturnType<typeof useGetProposalsForReviewerQuery>;
-export type GetProposalsForReviewerLazyQueryHookResult = ReturnType<typeof useGetProposalsForReviewerLazyQuery>;
-export type GetProposalsForReviewerQueryResult = Apollo.QueryResult<GetProposalsForReviewerQuery, GetProposalsForReviewerQueryVariables>;
-export function refetchGetProposalsForReviewerQuery(variables?: GetProposalsForReviewerQueryVariables) {
-      return { query: GetProposalsForReviewerDocument, variables: variables }
+export type GetProposalsQueryHookResult = ReturnType<typeof useGetProposalsQuery>;
+export type GetProposalsLazyQueryHookResult = ReturnType<typeof useGetProposalsLazyQuery>;
+export type GetProposalsQueryResult = Apollo.QueryResult<GetProposalsQuery, GetProposalsQueryVariables>;
+export function refetchGetProposalsQuery(variables: GetProposalsQueryVariables) {
+      return { query: GetProposalsDocument, variables: variables }
     }
 export const GetAllGrantsForBuilderDocument = gql`
     query getAllGrantsForBuilder($applicantId: Bytes) {

@@ -2,7 +2,7 @@ import { RefObject, useContext, useEffect, useMemo, useRef, useState } from 'rea
 import { Box, Button, Checkbox, Divider, Flex, Image, InputGroup, InputRightElement, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text } from '@chakra-ui/react'
 import { CheckDouble, Dropdown, Pencil } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import DashboardInput from 'src/screens/dashboard/_components/DashboardInput'
 import useAssignReviewers from 'src/screens/dashboard/_hooks/useAssignReviewers'
 import useSetRubrics from 'src/screens/dashboard/_hooks/useSetRubrics'
@@ -64,7 +64,7 @@ function Reviews() {
 						)
 					}
 
-					{(selectedGrant?.reviewType === 'voting' && (proposal?.applicationReviewers?.length || 0) > 0) && voteGraph()}
+					{(grant?.reviewType === 'voting' && (proposal?.applicationReviewers?.length || 0) > 0) && voteGraph()}
 
 					{
 						proposal?.applicationReviewers?.map((reviewer, index) => {
@@ -128,7 +128,9 @@ function Reviews() {
 
 	const setupButton = () => {
 		return (
-			<Button variant='link' >
+			<Button
+				variant='link'
+				isDisabled={role !== 'admin'} >
 				<Text
 					variant='v2_body'
 					fontWeight='500'
@@ -142,6 +144,7 @@ function Reviews() {
 	const editButton = () => {
 		return (
 			<Button
+				isDisabled={role !== 'admin'}
 				ml={2}
 				variant='link'
 				leftIcon={<Pencil boxSize='16px' />}>
@@ -605,15 +608,15 @@ function Reviews() {
 					Review With
 				</Text>
 				{
-					(selectedGrant?.reviewType || (selectedGrant?.rubric && selectedGrant?.rubric?.items?.length > 0)) && (
+					(grant?.reviewType || (grant?.rubric && grant?.rubric?.items?.length > 0)) && (
 						<Text
 							variant='v2_body'>
-							{selectedGrant.reviewType === 'voting' ? 'Voting' : 'Rubrics'}
+							{grant.reviewType === 'voting' ? 'Voting' : 'Rubrics'}
 						</Text>
 					)
 				}
-				{(selectedGrant?.reviewType || (selectedGrant?.rubric && selectedGrant?.rubric?.items?.length > 0)) && <Box ml='auto' />}
-				{setReviewTypePopup(setReviewTypePopoverRef, (selectedGrant?.reviewType || (selectedGrant?.rubric && selectedGrant?.rubric?.items?.length > 0)) ? 'edit' : 'setup')}
+				{(grant?.reviewType || (grant?.rubric && grant?.rubric?.items?.length > 0)) && <Box ml='auto' />}
+				{setReviewTypePopup(setReviewTypePopoverRef, (grant?.reviewType || (grant?.rubric && grant?.rubric?.items?.length > 0)) ? 'edit' : 'setup')}
 			</Flex>
 		)
 	}
@@ -713,7 +716,9 @@ function Reviews() {
 
 					{
 						!review && reviewer.actorId.toLowerCase() === scwAddress?.toLowerCase() && (
-							<Button variant='link'>
+							<Button
+								variant='link'
+								isDisabled={proposal?.state !== 'submitted'}>
 								<Text
 									color='accent.azure'
 									variant='v2_body'
@@ -779,8 +784,9 @@ function Reviews() {
 
 	const { workspace, chainId } = useContext(ApiClientsContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
-	const { proposals, selectedGrant, selectedProposals, setShowSubmitReviewPanel } = useContext(DashboardContext)!
-	const { loadReview } = useLoadReview(selectedGrant?.id, chainId)
+	const { grant, role } = useContext(GrantsProgramContext)!
+	const { proposals, selectedProposals, setShowSubmitReviewPanel } = useContext(DashboardContext)!
+	const { loadReview } = useLoadReview(grant?.id, chainId)
 
 	const [expanded, setExpanded] = useState<boolean>(false)
 	const [reviews, setReviews] = useState<IReviewFeedback[]>([])
@@ -802,16 +808,16 @@ function Reviews() {
 	const { setRubrics } = useSetRubrics({ setNetworkTransactionModalStep, setTransactionHash })
 
 	useEffect(() => {
-		setReviewType(selectedGrant?.reviewType === 'voting' ? ReviewType.Voting : ReviewType.Rubrics)
+		setReviewType(grant?.reviewType === 'voting' ? ReviewType.Voting : ReviewType.Rubrics)
 
-		if(selectedGrant?.rubric?.items) {
-			setRubricItems(selectedGrant?.rubric?.items)
+		if(grant?.rubric?.items) {
+			setRubricItems(grant?.rubric?.items)
 		}
 
-		if(selectedGrant?.rubric?.isPrivate !== undefined) {
-			setIsReviewPrivate(selectedGrant?.rubric?.isPrivate)
+		if(grant?.rubric?.isPrivate !== undefined) {
+			setIsReviewPrivate(grant?.rubric?.isPrivate)
 		}
-	}, [selectedGrant])
+	}, [grant])
 
 	useEffect(() => {
 		if(proposals?.length === 0) {
@@ -845,19 +851,20 @@ function Reviews() {
 			return
 		}
 
+		logger.info({ proposal }, 'Proposal (REVIEW DECRYPT)')
 		const decryptedReviews: Promise<IReviewFeedback>[] = []
 		for(const review of proposal?.reviews || []) {
 			decryptedReviews.push(loadReview(review, proposal?.id))
 		}
 
 		Promise.all(decryptedReviews).then((reviews) => {
-			logger.info({ reviews }, 'Decrypted reviews')
+			logger.info({ reviews }, 'Decrypted reviews (REVIEW DECRYPT)')
 			setReviews(reviews)
 		})
-	}, [])
+	}, [proposal])
 
 	// const isDisabled = useMemo(() => {
-	// 	if (selectedGrant?.numberOfReviewersPerApplication === numberOfReviewersPerApplication && Object.keys(members).length === selectedGrant?)
+	// 	if (grant?.numberOfReviewersPerApplication === numberOfReviewersPerApplication && Object.keys(members).length === grant?)
 	// }, [numberOfReviewersPerApplication, members])
 
 	return buildComponent()

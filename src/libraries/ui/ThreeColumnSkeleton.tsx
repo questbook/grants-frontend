@@ -1,51 +1,29 @@
 import { useContext } from 'react'
 import { Flex, Skeleton, SkeletonText } from '@chakra-ui/react'
-import { DashboardContext } from 'src/screens/dashboard/Context'
+import { GrantsProgramContext } from 'src/pages/_app'
 
 function ThreeColumnSkeleton() {
 	const buildComponent = () => {
 		return (
 			<Flex
-				direction='column'
+				direction='row'
 				w='100vw'
 				h='calc(100vh - 64px)'
 				justify='space-between'>
-				<Flex
-					w='100%'
-					h='64px'
-					justify='center'
-					align='center'>
-					<SkeletonText
-						w='98%'
-						h='32px' />
-				</Flex>
-				<Flex
-					direction='row'
-					justify='space-between'
-					w='100%'
-					h='calc(100vh - 128px)'>
-					<Flex
-						direction='column'
-						w='25%'
-						bg='white'
-						h='100%'>
-						{loadingComponent()}
-					</Flex>
-					<Flex
-						direction='column'
-						w='48%'
-						bg='white'
-						h='100%'>
-						{loadingComponent()}
-					</Flex>
-					<Flex
-						direction='column'
-						w='25%'
-						bg='white'
-						h='100%'>
-						{loadingComponent()}
-					</Flex>
-				</Flex>
+				{
+					['25%', '48%', '25%'].map((width, index) => {
+						return (
+							<Flex
+								key={index}
+								direction='column'
+								w={width}
+								bg='white'
+								h='100%'>
+								{loadingComponent()}
+							</Flex>
+						)
+					})
+				}
 			</Flex>
 		)
 	}
@@ -70,7 +48,7 @@ function ThreeColumnSkeleton() {
 		)
 	}
 
-	const { isLoading } = useContext(DashboardContext)!
+	const { isLoading } = useContext(GrantsProgramContext)!
 
 	return buildComponent()
 }

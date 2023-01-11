@@ -9,7 +9,7 @@ import {
 	getSecureChannelFromPublicKey,
 } from 'src/libraries/utils/pii'
 import { PIIForCommentType } from 'src/libraries/utils/types'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
@@ -21,7 +21,7 @@ interface Props {
 }
 
 function useAddComment({ setStep, setTransactionHash }: Props) {
-	const { role } = useContext(ApiClientsContext)!
+	const { role } = useContext(GrantsProgramContext)!
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 
@@ -76,7 +76,7 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 		].filter((k) => k.publicKey)
 	}, [proposal])
 
-	const addComment = async(message: string, tags: number[]) => {
+	const addComment = async(message: string, tags: number[], isPrivate: boolean) => {
 		if(
 			!webwallet ||
       !scwAddress ||
@@ -110,7 +110,7 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 			role,
 		}
 
-		if(role !== 'community') {
+		if(isPrivate) {
 			const publicKeys = await fetchPublicKeys()
 
 			const piiMap: { [actorId: string]: string } = {}
@@ -150,7 +150,7 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 			proposal.grant.workspace.id,
 			proposal.grant.id,
 			proposal.id,
-			role !== 'community',
+			isPrivate,
 			commentHash,
 		]
 		logger.info({ methodArgs }, 'Method Args (Comment)')

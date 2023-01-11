@@ -1,16 +1,16 @@
-import { ReactElement, useContext } from 'react'
+import { ReactElement, useContext, useEffect } from 'react'
 import { Flex } from '@chakra-ui/react'
+import logger from 'src/libraries/logger'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import ThreeColumnSkeleton from 'src/libraries/ui/ThreeColumnSkeleton'
-import { ApiClientsContext } from 'src/pages/_app'
+import { GrantsProgramContext } from 'src/pages/_app'
 import ActionList from 'src/screens/dashboard/ActionList'
 import Body from 'src/screens/dashboard/Body'
-import { DashboardContext, DashboardProvider, FundBuilderProvider, SendAnUpdateProvider } from 'src/screens/dashboard/Context'
+import { DashboardProvider, FundBuilderProvider, SendAnUpdateProvider } from 'src/screens/dashboard/Context'
 import FundBuilderDrawer from 'src/screens/dashboard/FundBuilderDrawer'
 import FundBuilderModal from 'src/screens/dashboard/FundBuilderModal'
 import ProposalList from 'src/screens/dashboard/ProposalList'
 import SendAnUpdateModal from 'src/screens/dashboard/SendAnUpdateModal'
-import TopBar from 'src/screens/dashboard/TopBar'
 
 function Dashboard() {
 	const buildComponent = () => (
@@ -18,11 +18,11 @@ function Dashboard() {
 			direction='column'
 			w='100vw'
 			h='calc(100vh - 64px)'>
-			{!isLoading && (role === 'admin' || role === 'reviewer') && <TopBar />}
+			{/* {!isLoading && (role === 'admin' || role === 'reviewer') && <TopBar />} */}
 			{
 				!isLoading && (
 					<Flex
-						h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 128px)' : '100vh'}
+						h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
 						overflowY='clip'>
 						<ProposalList />
 						<Body />
@@ -48,8 +48,11 @@ function Dashboard() {
 		</Flex>
 	)
 
-	const { role } = useContext(ApiClientsContext)!
-	const { isLoading } = useContext(DashboardContext)!
+	const { role, isLoading } = useContext(GrantsProgramContext)!
+
+	useEffect(() => {
+		logger.info({ isLoading }, 'Loading state changed')
+	}, [isLoading])
 
 	return buildComponent()
 }

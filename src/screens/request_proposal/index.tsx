@@ -18,7 +18,7 @@ import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import { validateAndUploadToIpfs } from 'src/libraries/validator'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { GRANT_CACHE_KEY } from 'src/screens/dashboard/_utils/constants'
 import useUpdateRFP from 'src/screens/request_proposal/_hooks/useUpdateRFP'
 import BuilderDiscovery from 'src/screens/request_proposal/_subscreens/BuilderDiscovery'
@@ -166,7 +166,7 @@ function RequestProposal() {
 		}
 	}
 
-	const { role, workspace, chainId } = useContext(ApiClientsContext)!
+	const { workspace, chainId } = useContext(ApiClientsContext)!
 
 	// State for proposal creation
 	// const todayDate = today()
@@ -253,7 +253,8 @@ function RequestProposal() {
 	const { data: accountDataWebwallet, nonce } = useQuestbookAccount(shouldRefreshNonce)
 	const { webwallet } = useContext(WebwalletContext)!
 
-	const { subgraphClients, setRole } = useContext(ApiClientsContext)!
+	const { subgraphClients } = useContext(ApiClientsContext)!
+	const { setRole } = useContext(GrantsProgramContext)!
 	const { network } = useNetwork()
 	const targetContractObject = useQBContract('workspace', network as unknown as SupportedChainId)
 

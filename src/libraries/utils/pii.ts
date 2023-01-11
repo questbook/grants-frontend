@@ -8,7 +8,7 @@ import { ethers, Wallet } from 'ethers'
 import { arrayify, keccak256 } from 'ethers/lib/utils'
 import {
 	GetAdminPublicKeysQuery,
-	GetProposalsForAdminQuery,
+	GetProposalsQuery,
 	PiiData,
 	useGetAdminPublicKeysQuery,
 	useGetGrantManagersWithPublicKeyQuery,
@@ -424,7 +424,7 @@ export function useEncryptPiiForApplication(
 		async(
 			app: Pick<
         Exclude<
-          GetProposalsForAdminQuery['grantApplications'],
+          GetProposalsQuery['grantApplications'],
           null | undefined
         >[number],
         'pii' | 'fields' | 'id'

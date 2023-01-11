@@ -1,6 +1,8 @@
-query getProposalsForReviewer($proposalIds: [ID!]) {
+query getProposals($first: Int, $skip: Int, $grantID: String!) {
   grantApplications(
-    where: { id_in: $proposalIds }
+    where: { grant: $grantID }
+    first: $first
+    skip: $skip
     orderBy: updatedAtS
     orderDirection: desc
   ) {

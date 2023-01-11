@@ -4,7 +4,7 @@ import { useContext, useMemo, useState } from 'react'
 import { Checkbox, Flex, Text } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
 import SearchField from 'src/libraries/ui/SearchBox'
-import { ApiClientsContext } from 'src/pages/_app'
+import { GrantsProgramContext } from 'src/pages/_app'
 import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -98,7 +98,7 @@ function ProposalList() {
 
 	const [searchText, setSearchText] = useState<string>('')
 
-	const { role } = useContext(ApiClientsContext)!
+	const { role } = useContext(GrantsProgramContext)!
 	const { proposals, selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
 
 	const filteredProposals = useMemo(() => {

@@ -38,23 +38,7 @@ const PAGE_SIZE = 10
 
 function Discover() {
 	const router = useRouter()
-	const { fromDashboard } = router.query
-	const { isNewUser, role, setRole, possibleRoles, inviteInfo } = useContext(ApiClientsContext)!
-
-	useEffect(() => {
-		if(inviteInfo || fromDashboard === 'true') {
-			return
-		}
-
-		logger.info({ isNewUser, role, possibleRoles }, '(Navigation) Is New User')
-		if(!isNewUser && (possibleRoles.length > 1 || role !== 'community')) {
-			if(role === 'community') {
-				setRole(possibleRoles[1])
-			}
-
-			router.replace({ pathname: '/dashboard' })
-		}
-	}, [isNewUser, role, possibleRoles, inviteInfo, fromDashboard])
+	const { inviteInfo } = useContext(ApiClientsContext)!
 
 	const buildComponent = () => {
 		return inviteInfo ? inviteView() : normalView()
