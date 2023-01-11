@@ -1,21 +1,25 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Flex, Text } from '@chakra-ui/react'
+import { ethers } from 'ethers'
+import { defaultChainId, USD_ASSET } from 'src/constants/chains'
 import { useGetPayoutsQuery } from 'src/generated/graphql'
 import { Dropdown, NewTab } from 'src/generated/icons'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
-import { ApiClientsContext } from 'src/pages/_app'
+import { getChainInfo } from 'src/libraries/utils/token'
+import { ApiClientsContext, GrantsProgramContext } from 'src/pages/_app'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { Payout, PayoutsType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function Payouts() {
 	const buildComponent = () => {
 		return (
 			<Flex
-				display={payouts?.length > 0 ? 'block' : 'none'}
+				// display={payouts?.length > 0 ? 'block' : 'none'}
 				px={5}
 				py={4}
 				direction='column'
@@ -74,19 +78,25 @@ function Payouts() {
 					</Text>
 				</Flex>
 
-				<Flex mt={2}>
-					<Text
-						w='50%'
-						variant='v2_body'
-						color='gray.6'>
-						Amount
-					</Text>
-					<Text
-						w='50%'
-						variant='v2_body'>
-						10000 USD
-					</Text>
-				</Flex>
+				{
+					chainInfo && (
+						<Flex mt={2}>
+							<Text
+								w='50%'
+								variant='v2_body'
+								color='gray.6'>
+								Amount
+							</Text>
+							<Text
+								w='50%'
+								variant='v2_body'>
+								{chainInfo?.address === USD_ASSET ? payout.amount : ethers.utils.formatUnits(payout.amount, chainInfo.decimals)}
+								{' '}
+								{chainInfo?.label}
+							</Text>
+						</Flex>
+					)
+				}
 
 				<Flex mt={2}>
 					<Text
@@ -140,6 +150,7 @@ function Payouts() {
 	}
 
 	const { chainId } = useContext(ApiClientsContext)!
+	const { grant } = useContext(GrantsProgramContext)!
 
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 	const [expanded, setExpanded] = useState(false)
@@ -149,10 +160,18 @@ function Payouts() {
 		return proposals.find(p => selectedProposals.has(p.id))
 	}, [proposals, selectedProposals])
 
+	const chainInfo = useMemo(() => {
+		if(!grant?.id || !chainId) {
+			return
+		}
+
+		return getChainInfo(grant, chainId)
+	}, [proposal?.grant, chainId])
+
 	const { fetchMore } = useMultiChainQuery({
 		useQuery: useGetPayoutsQuery,
 		options: {},
-		chains: [chainId]
+		chains: [getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId]
 	})
 
 	const getPayouts = useCallback(async() => {
