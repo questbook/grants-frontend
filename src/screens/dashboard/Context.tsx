@@ -22,10 +22,6 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 	const { grant, setGrant, role, setRole, isLoading, setIsLoading } = useContext(GrantsProgramContext)!
 
-	useEffect(() => {
-		logger.info({ role }, 'Tracking role')
-	}, [role])
-
 	const chainId = useMemo(() => {
 		try {
 			return typeof _chainId === 'string' ? parseInt(_chainId) : -1
@@ -74,6 +70,10 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 		const possibleRoles: Roles[] = ['community']
 
+		if(_grant?.applications?.length > 0) {
+			possibleRoles.push('builder')
+		}
+
 		for(const member of _grant?.workspace?.members ?? []) {
 			if(member.actorId === scwAddress.toLowerCase()) {
 				possibleRoles.push(member.accessLevel === 'reviewer' ? 'reviewer' : 'admin')
@@ -81,24 +81,25 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			}
 		}
 
-		if(_grant?.applications?.length > 0) {
-			possibleRoles.push('builder')
-		}
-
-
+		logger.info({ possibleRoles }, 'Possible roles (ROLE)')
 		if(_role) {
+			logger.info({ role: _role, check: possibleRoles.includes(_role as Roles) }, 'From params (ROLE)')
 			// Check if the role the user is trying to access is valid
 			if(possibleRoles.includes(_role as Roles)) {
 				setRole(_role as Roles)
 			} else {
 				// Assign a role to the user based on the grant
-				setRole(possibleRoles[-1])
+				setRole(possibleRoles[possibleRoles.length - 1])
 			}
 		} else {
 			// Assign a role to the user based on the grant
-			setRole(possibleRoles[-1])
+			setRole(possibleRoles[possibleRoles.length - 1])
 		}
 	}, [grantId, chainId, scwAddress])
+
+	useEffect(() => {
+		logger.info(role, 'Role changed (ROLE)')
+	}, [role])
 
 	const handleComments = async(allComments: Exclude<GetCommentsQuery['comments'], null | undefined>) => {
 		if(!webwallet || !scwAddress) {

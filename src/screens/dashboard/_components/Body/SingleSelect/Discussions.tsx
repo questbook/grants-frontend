@@ -28,55 +28,59 @@ function Discussions() {
 				<Text fontWeight='500'>
 					Discussion
 				</Text>
-				<Flex
-					mt={4}
-					w='100%'>
-					<Image
-						src='/v2/images/qb-discussion.svg'
-						boxSize='36px' />
-					<Flex
-						ml={4}
-						direction='column'>
-						<Text
-							variant='v2_metadata'
-							fontWeight='500'
-							color='gray.6'>
-							FEW WAYS TO START THE DISCUSSION.
-						</Text>
+				{
+					proposalTags?.length > 0 && (
 						<Flex
-							mt={2}
-							gap={3}>
-							{
-								proposalTags.map((tag, index) => {
-									return (
-										<QuickReplyButton
-											key={index}
-											tag={tag}
-											selectedTags={selectedTags}
-											onClick={
-												() => {
-													const tags = { ...selectedTags }
-													logger.info('tags: ', tags)
-													if(tags[index]) {
-														delete tags[index]
-														setIsCommentPrivate(false)
-													} else {
-														tags[index] = true
-														setIsCommentPrivate(tag.isPrivate)
+							mt={4}
+							w='100%'>
+							<Image
+								src='/v2/images/qb-discussion.svg'
+								boxSize='36px' />
+							<Flex
+								ml={4}
+								direction='column'>
+								<Text
+									variant='v2_metadata'
+									fontWeight='500'
+									color='gray.6'>
+									FEW WAYS TO START THE DISCUSSION.
+								</Text>
+								<Flex
+									mt={2}
+									gap={3}>
+									{
+										proposalTags?.map((tag, index) => {
+											return (
+												<QuickReplyButton
+													key={index}
+													tag={tag}
+													selectedTags={selectedTags}
+													onClick={
+														() => {
+															const tags = { ...selectedTags }
+															logger.info('tags: ', tags)
+															if(tags[index]) {
+																delete tags[index]
+																setIsCommentPrivate(false)
+															} else {
+																tags[index] = true
+																setIsCommentPrivate(tag.isPrivate)
+															}
+
+
+															setSelectedTags(tags)
+														}
 													}
-
-
-													setSelectedTags(tags)
-												}
-											}
-											isDisabled={(Object.keys(selectedTags).length > 0 && !(index in selectedTags)) || (isCommentPrivate && !tag.isPrivate)}
-											index={index} />
-									)
-								})
-							}
+													isDisabled={(Object.keys(selectedTags).length > 0 && !(index in selectedTags)) || (isCommentPrivate && !tag.isPrivate)}
+													index={index} />
+											)
+										})
+									}
+								</Flex>
+							</Flex>
 						</Flex>
-					</Flex>
-				</Flex>
+					)
+				}
 				<Flex
 					mt={4}
 					w='100%'>
@@ -100,20 +104,24 @@ function Discussions() {
 						<Flex
 							mt={4}
 							align='center'>
-							<Checkbox
-								isChecked={isCommentPrivate}
-								onChange={
-									(e) => {
-										setSelectedTags({})
-										setIsCommentPrivate(e.target.checked)
-									}
-								}>
-								<Text
-									variant='v2_body'
-									color='gray.5'>
-									Show only to reviewers and builder
-								</Text>
-							</Checkbox>
+							{
+								role === 'admin' && (
+									<Checkbox
+										isChecked={isCommentPrivate}
+										onChange={
+											(e) => {
+												setSelectedTags({})
+												setIsCommentPrivate(e.target.checked)
+											}
+										}>
+										<Text
+											variant='v2_body'
+											color='gray.5'>
+											Show only to reviewers and builder
+										</Text>
+									</Checkbox>
+								)
+							}
 							<Button
 								ml='auto'
 								variant='primaryMedium'
@@ -121,7 +129,7 @@ function Discussions() {
 								isLoading={step !== undefined}
 								onClick={
 									async() => {
-										const ret = await addComment(text, tags)
+										const ret = await addComment(text, tags, isCommentPrivate)
 										if(ret) {
 											setText('')
 											setSelectedTags({})
@@ -136,12 +144,16 @@ function Discussions() {
 					</Flex>
 				</Flex>
 
-				<Divider
-					my={4}
-					color='gray.3'
-					height={1} />
+				{
+					comments.length > 0 && (
+						<Divider
+							my={4}
+							color='gray.3'
+							height={1} />
+					)
+				}
 
-				{comments.filter((comment) => comment.sender && (comment.workspace.members.some((member) => member.actorId === comment.sender?.toLowerCase()) || comment.sender?.toLowerCase() === proposal?.applicantId.toLowerCase())).map(renderComment)}
+				{comments.map(renderComment)}
 			</Flex>
 		)
 	}

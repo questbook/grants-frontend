@@ -121,7 +121,7 @@ function NavBar({ bg = 'gray.1' }: Props) {
 				<Box ml={4} />
 
 				{
-					(role === 'admin' && grant?.acceptingApplications) && (
+					(role === 'admin' && grant?.acceptingApplications && !isLoading) && (
 						<Pencil
 							cursor='pointer'
 							boxSize='20px'
@@ -142,7 +142,7 @@ function NavBar({ bg = 'gray.1' }: Props) {
 				}
 
 				{
-					role === 'admin' && (
+					(role === 'admin' && !isLoading) && (
 						<Settings
 							boxSize='20px'
 							ml={3}
@@ -159,8 +159,8 @@ function NavBar({ bg = 'gray.1' }: Props) {
 					)
 				}
 
-				{role === 'admin' && (<Box ml={3} />)}
-				<SharePopover />
+				{(role === 'admin' && !isLoading) && (<Box ml={3} />)}
+				{!isLoading && <SharePopover />}
 
 				<Spacer />
 

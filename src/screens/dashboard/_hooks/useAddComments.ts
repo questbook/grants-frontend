@@ -70,7 +70,7 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 	}
 
 	const addComments =
-		async(message: string, tags: number[]) => {
+		async(message: string, tags: number[], isPrivate: boolean) => {
 			if(
 				!workspace?.id ||
         !grant?.id ||
@@ -91,28 +91,34 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 			}
 
 			const commentHashes: string[] = []
-			for(const proposal of selectedProposalsData) {
-				const publicKeys = await fetchPublicKeys(proposal)
-				logger.info({ id: proposal.id, publicKeys }, 'Public Keys (COMMENT ENCRYPT)')
 
-				const piiMap: {[actorId: string]: string} = {}
-				for(const { actorId, publicKey } of publicKeys) {
-					if(!publicKey || !actorId) {
-						continue
+			if(isPrivate) {
+				for(const proposal of selectedProposalsData) {
+					const publicKeys = await fetchPublicKeys(proposal)
+					logger.info({ id: proposal.id, publicKeys }, 'Public Keys (COMMENT ENCRYPT)')
+
+					const piiMap: {[actorId: string]: string} = {}
+					for(const { actorId, publicKey } of publicKeys) {
+						if(!publicKey || !actorId) {
+							continue
+						}
+
+						const channel = await getSecureChannelFromPublicKey(webwallet, publicKey, getKeyForApplication(proposal.id))
+						const encryptedData = await channel.encrypt(JSON.stringify(json))
+						logger.info({ actorId, privateKey: webwallet.privateKey, publicKey, extraInfo: getKeyForApplication(proposal.id), data: json, answer: encryptedData }, 'Encrypted Data (COMMENT ENCRYPT)')
+						piiMap[actorId] = encryptedData
 					}
 
-					const channel = await getSecureChannelFromPublicKey(webwallet, publicKey, getKeyForApplication(proposal.id))
-					const encryptedData = await channel.encrypt(JSON.stringify(json))
-					logger.info({ actorId, privateKey: webwallet.privateKey, publicKey, extraInfo: getKeyForApplication(proposal.id), data: json, answer: encryptedData }, 'Encrypted Data (COMMENT ENCRYPT)')
-					piiMap[actorId] = encryptedData
+					logger.info({ id: proposal.id, piiMap }, 'PII Map (COMMENT ENCRYPT)')
+					const modifiedJson = { pii: piiMap }
+					logger.info({ id: proposal.id, json: modifiedJson }, 'JSON (Comment)')
+
+					const hash = (await uploadToIPFS(JSON.stringify(modifiedJson))).hash
+					commentHashes.push(hash)
 				}
-
-				logger.info({ id: proposal.id, piiMap }, 'PII Map (COMMENT ENCRYPT)')
-				const modifiedJson = { pii: piiMap }
-				logger.info({ id: proposal.id, json: modifiedJson }, 'JSON (Comment)')
-
-				const hash = (await uploadToIPFS(JSON.stringify(modifiedJson))).hash
-				commentHashes.push(hash)
+			} else {
+				const hash = (await uploadToIPFS(JSON.stringify(json))).hash
+				commentHashes.push(...proposals.map(() => hash))
 			}
 
 			logger.info({ commentHashes }, 'Comment Hashes')
@@ -121,7 +127,7 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 				workspace.id,
 				grant.id,
 				selectedProposalsData.map((proposal) => proposal.id),
-				role !== 'community',
+				isPrivate,
 				commentHashes,
 			]
 			logger.info({ methodArgs }, 'Method Args (Comment)')

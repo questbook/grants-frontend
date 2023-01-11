@@ -128,7 +128,9 @@ function Reviews() {
 
 	const setupButton = () => {
 		return (
-			<Button variant='link' >
+			<Button
+				variant='link'
+				isDisabled={role !== 'admin'} >
 				<Text
 					variant='v2_body'
 					fontWeight='500'
@@ -142,6 +144,7 @@ function Reviews() {
 	const editButton = () => {
 		return (
 			<Button
+				isDisabled={role !== 'admin'}
 				ml={2}
 				variant='link'
 				leftIcon={<Pencil boxSize='16px' />}>
@@ -779,7 +782,7 @@ function Reviews() {
 
 	const { workspace, chainId } = useContext(ApiClientsContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
-	const { grant } = useContext(GrantsProgramContext)!
+	const { grant, role } = useContext(GrantsProgramContext)!
 	const { proposals, selectedProposals, setShowSubmitReviewPanel } = useContext(DashboardContext)!
 	const { loadReview } = useLoadReview(grant?.id, chainId)
 

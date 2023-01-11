@@ -2,7 +2,7 @@ import { useContext, useMemo } from 'react'
 import { Box, Button, Divider, Flex } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
-import { GrantsProgramContext } from 'src/pages/_app'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import Milestones from 'src/screens/dashboard/_components/ActionList/SingleSelect/Milestones'
 import Payouts from 'src/screens/dashboard/_components/ActionList/SingleSelect/Payouts'
 import ReviewProposal from 'src/screens/dashboard/_components/ActionList/SingleSelect/ReviewProposal'
@@ -12,7 +12,7 @@ import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function SingleSelect() {
 	const buildComponent = () => {
-		return (role === 'admin' && !showSubmitReviewPanel) ? adminComponent() : (role === 'reviewer' || showSubmitReviewPanel) ? reviewerComponent() : role === 'builder' ? builderComponent() : <Flex />
+		return showSubmitReviewPanel ? reviewerComponent() : adminComponent()
 	}
 
 	const adminComponent = () => {
@@ -31,15 +31,27 @@ function SingleSelect() {
 					px={5}
 					py={4}>
 					<Button
-						disabled={proposals?.length === 0}
+						disabled={role === 'builder' ? (proposal?.applicantId !== scwAddress?.toLowerCase() || proposal?.state !== 'submitted') : proposal?.state !== 'submitted'}
 						w='100%'
 						variant='primaryMedium'
 						onClick={
 							() => {
-								setIsModalOpen(true)
+								if(role === 'community') {
+									router.push({ pathname: '/proposal_form', query: {
+										grantId: grant?.id,
+										chainId,
+									} })
+								} else if(role === 'builder') {
+									router.push({ pathname: '/proposal_form', query: {
+										proposalId: proposal?.id,
+										chainId,
+									} })
+								} else {
+									setIsModalOpen(true)
+								}
 							}
 						}>
-						Fund builder
+						{role === 'community' ? 'Submit Proposal' : role === 'builder' ? 'Resubmit proposal' : 'Fund builder'}
 					</Button>
 				</Flex>
 			</Flex>
@@ -56,40 +68,9 @@ function SingleSelect() {
 		)
 	}
 
-	const builderComponent = () => {
-		return (
-			<Flex
-				h='100%'
-				direction='column'>
-				<Milestones />
-				<Divider />
-				<Payouts />
-				<Box mt='auto' />
-				<Divider />
-				<Flex
-					px={5}
-					py={4}>
-					<Button
-						disabled={proposals?.length === 0}
-						w='100%'
-						variant='primaryMedium'
-						onClick={
-							() => {
-								router.push({ pathname: '/proposal_form', query: {
-									proposalId: proposal?.id,
-									chainId,
-								} })
-							}
-						}>
-						Resubmit proposal
-					</Button>
-				</Flex>
-			</Flex>
-		)
-	}
-
 	const router = useRouter()
-	const { role } = useContext(GrantsProgramContext)!
+	const { scwAddress } = useContext(WebwalletContext)!
+	const { grant, role } = useContext(GrantsProgramContext)!
 	const { setIsModalOpen } = useContext(FundBuilderContext)!
 	const { proposals, selectedProposals, showSubmitReviewPanel } = useContext(DashboardContext)!
 
