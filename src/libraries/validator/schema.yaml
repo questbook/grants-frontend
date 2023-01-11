@@ -235,6 +235,8 @@ GrantApplicationUpdate:
       type: string
       minLength: 1
       maxLength: 4096
+    applicantPublicKey:
+      $ref: 'PublicKey'
 PrivateCommentAddRequest:
   type: object
   required:
