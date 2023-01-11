@@ -36,6 +36,7 @@ function ProposalList() {
 				mx={5}
 				my={4}>
 				<SearchField
+					placeholder='Search'
 					value={searchText}
 					onChange={
 						(e) => {
