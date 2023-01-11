@@ -21,10 +21,11 @@ function ProposalCard({ proposal }: Props) {
 			<Flex
 				bg={selectedProposals.has(proposal.id) ? 'gray.1' : 'white'}
 				direction='column'
-				mt={2}
+				// mt={2}
 				pl={5}
 				pr={2}
-				py={2}>
+				py={4}
+				borderBottom='1px solid #E7E4DD'>
 				<Flex align='center'>
 					{
 						role === 'admin' && (

@@ -50,6 +50,7 @@ function ProposalList() {
 				(role === 'admin' && selectedProposals?.size > 0) && (
 					<Flex
 						mt={4}
+						mb={2}
 						pl={5}>
 						<Checkbox
 							isChecked={selectedProposals?.size !== undefined && proposals.every((_) => selectedProposals?.has(_.id))}
