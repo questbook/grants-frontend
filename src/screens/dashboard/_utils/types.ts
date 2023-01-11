@@ -12,13 +12,9 @@ import { PIIForCommentType } from 'src/libraries/utils/types'
 export type CommentMap = {[key: string]: CommentType[]}
 
 type BaseDashboardContextType = {
-  isLoading: boolean
   proposals: Proposals
-  selectedGrantIndex: number | undefined
-  setSelectedGrantIndex: (index: number) => void
   selectedProposals: Set<string>
   setSelectedProposals: (set: Set<string>) => void
-  selectedGrant: AdminGrant | ReviewerGrant | undefined
   review: ReviewInfo | undefined
   setReview: (reviews: ReviewInfo) => void
   showSubmitReviewPanel: boolean
@@ -27,22 +23,7 @@ type BaseDashboardContextType = {
   setCommentMap: (coments: CommentMap) => void
 };
 
-type OptionalDashboardContextType =
-  | {
-      role: 'admin'
-      grants: GetGrantsForAdminQuery['grants']
-    }
-  | {
-      role: 'reviewer'
-      grants: GetGrantsForReviewerQuery['grantReviewerCounters']
-    }
-  | {
-      role: 'builder'
-      grants: []
-    };
-
-export type DashboardContextType = BaseDashboardContextType &
-  OptionalDashboardContextType;
+export type DashboardContextType = BaseDashboardContextType
 export interface TokenInfo {
   tokenIcon: string
   tokenName: string

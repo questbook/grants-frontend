@@ -8,7 +8,7 @@ import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import PayFromChoose from 'src/screens/dashboard/_components/FundBuilder/PayFromChoose'
 import PayWithChoose from 'src/screens/dashboard/_components/FundBuilder/PayWithChoose'
 import ProposalDetails from 'src/screens/dashboard/_components/FundBuilder/ProposalDetails'
@@ -191,7 +191,8 @@ function FundBuilderDrawer() {
 		setSelectedMode(safeObj ? Safe : Wallets[0])
 	}, [safeObj])
 
-	const { proposals, selectedProposals, selectedGrant } = useContext(DashboardContext)!
+	const { grant } = useContext(GrantsProgramContext)!
+	const { proposals, selectedProposals } = useContext(DashboardContext)!
 	const selectedProposalsData = useMemo(() => {
 		if(!proposals || !selectedProposals) {
 			return []
@@ -258,7 +259,7 @@ function FundBuilderDrawer() {
 				setSafeProposalAddress(proposaladdress)
 				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress, safeObj?.chainId))
 			} else {
-				proposaladdress = await safeObj?.proposeTransactions(selectedGrant?.title, transactionData, phantomWallet)
+				proposaladdress = await safeObj?.proposeTransactions(grant?.title, transactionData, phantomWallet)
 				if(proposaladdress?.error) {
 					customToast({
 						title: 'An error occurred while creating transaction on Multi-sig',

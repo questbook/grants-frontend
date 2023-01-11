@@ -5,7 +5,7 @@ import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { PIIForCommentType } from 'src/libraries/utils/types'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -17,9 +17,10 @@ interface Props {
 }
 
 function useAddComments({ setStep, setTransactionHash }: Props) {
-	const { role, workspace, chainId } = useContext(ApiClientsContext)!
+	const { workspace, chainId } = useContext(ApiClientsContext)!
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
-	const { proposals, selectedProposals, selectedGrant } = useContext(DashboardContext)!
+	const { grant, role } = useContext(GrantsProgramContext)!
+	const { proposals, selectedProposals } = useContext(DashboardContext)!
 
 	const { proposalTags } = useProposalTags({ proposals: proposals.filter(p => selectedProposals.has(p.id)) })
 
@@ -72,7 +73,7 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 		async(message: string, tags: number[]) => {
 			if(
 				!workspace?.id ||
-        !selectedGrant?.id ||
+        !grant?.id ||
         !selectedProposalsData.length || !webwallet
 			) {
 				return
@@ -118,7 +119,7 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 
 			const methodArgs = [
 				workspace.id,
-				selectedGrant.id,
+				grant.id,
 				selectedProposalsData.map((proposal) => proposal.id),
 				role !== 'community',
 				commentHashes,

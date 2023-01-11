@@ -3,6 +3,7 @@ import { Checkbox, Flex, Image, Text } from '@chakra-ui/react'
 import config from 'src/constants/config.json'
 import { CheckDouble, Close } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
+import { GrantsProgramContext } from 'src/pages/_app'
 import useProposalTags from 'src/screens/dashboard/_hooks/useProposalTags'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
@@ -116,8 +117,8 @@ function ProposalCard({ proposal }: Props) {
 		)
 	}
 
-	const { role, selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
-
+	const { selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
+	const { role } = useContext(GrantsProgramContext)!
 	const { tags } = useProposalTags({ proposal })
 
 	useEffect(() => {

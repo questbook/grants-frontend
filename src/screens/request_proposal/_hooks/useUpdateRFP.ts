@@ -7,7 +7,7 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useChainId from 'src/hooks/utils/useChainId'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { validateAndUploadToIpfs } from 'src/libraries/validator'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { GrantFields } from 'src/screens/request_proposal/_utils/types'
 import { RFPFormContext } from 'src/screens/request_proposal/Context'
 import { ApplicantDetailsFieldType } from 'src/types'
@@ -25,7 +25,8 @@ export default function useUpdateRFP(setCurrentStep: (step: number | undefined) 
 
 	const currentChainId = useChainId()
 
-	const { role, workspace, chainId, subgraphClients } = useContext(ApiClientsContext)!
+	const { workspace, chainId, subgraphClients } = useContext(ApiClientsContext)!
+	const { role } = useContext(GrantsProgramContext)!
 
 
 	const { RFPEditFormData, grantId, workspaceId } = useContext(RFPFormContext)!

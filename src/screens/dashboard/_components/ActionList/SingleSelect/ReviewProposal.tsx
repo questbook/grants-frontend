@@ -6,7 +6,7 @@ import BackButton from 'src/libraries/ui/BackButton'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import { useLoadReview } from 'src/libraries/utils/reviews'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import useSubmitReview from 'src/screens/dashboard/_hooks/useSubmitReview'
 import { ReviewData } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -43,7 +43,7 @@ function ReviewProposal() {
 					{' '}
 					{process.env.NODE_ENV === 'development' && proposal?.id}
 				</Text>
-				{/* {selectedGrant?.reviewType === 'voting' ? vote() : rubric()} */}
+				{/* {grant?.reviewType === 'voting' ? vote() : rubric()} */}
 				{
 					!isReviewPending && review?.items?.map((r, index) => {
 						logger.info({ r, index }, 'Review item')
@@ -59,7 +59,7 @@ function ReviewProposal() {
 						<Flex
 							direction='column'
 							overflowY='auto'>
-							{review?.items?.map(selectedGrant?.reviewType === 'voting' ? voteItem : rubricItem)}
+							{review?.items?.map(grant?.reviewType === 'voting' ? voteItem : rubricItem)}
 						</Flex>
 					)
 				}
@@ -69,7 +69,7 @@ function ReviewProposal() {
 							px={5}
 							py={4}>
 							<Button
-								disabled={review === undefined || review?.items?.some((item) => (item.rating === 0 && selectedGrant?.reviewType === 'rubrics') || (item.rating === -1 && selectedGrant?.reviewType === 'voting')) || !isBiconomyInitialised}
+								disabled={review === undefined || review?.items?.some((item) => (item.rating === 0 && grant?.reviewType === 'rubrics') || (item.rating === -1 && grant?.reviewType === 'voting')) || !isBiconomyInitialised}
 								w='100%'
 								variant='primaryMedium'
 								onClick={submitReview}>
@@ -284,7 +284,8 @@ function ReviewProposal() {
 	}
 
 	const { chainId } = useContext(ApiClientsContext)!
-	const { selectedProposals, proposals, selectedGrant, review, setReview, showSubmitReviewPanel, setShowSubmitReviewPanel } = useContext(DashboardContext)!
+	const { grant } = useContext(GrantsProgramContext)!
+	const { selectedProposals, proposals, review, setReview, showSubmitReviewPanel, setShowSubmitReviewPanel } = useContext(DashboardContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
 
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
@@ -301,31 +302,31 @@ function ReviewProposal() {
 		return proposal?.pendingReviewerAddresses?.indexOf(scwAddress?.toLowerCase() ?? '') !== -1 && proposal?.state === 'submitted'
 	}, [proposal, scwAddress])
 
-	const { loadReview } = useLoadReview(selectedGrant?.id, chainId)
+	const { loadReview } = useLoadReview(grant?.id, chainId)
 
 	useEffect(() => {
-		if(selectedGrant?.reviewType === 'voting') {
-			if(!selectedGrant?.rubric?.items?.[0]) {
+		if(grant?.reviewType === 'voting') {
+			if(!grant?.rubric?.items?.[0]) {
 				return
 			}
 
 			setReview({
-				items: [{ rating: -1, comment: '', rubric: selectedGrant?.rubric?.items?.[0] }],
+				items: [{ rating: -1, comment: '', rubric: grant?.rubric?.items?.[0] }],
 				total: 0
 			})
 		} else {
-			if(!selectedGrant?.rubric?.items) {
+			if(!grant?.rubric?.items) {
 				return
 			}
 
 			setReview({
-				items: selectedGrant.rubric.items.map((rubric) => {
+				items: grant.rubric.items.map((rubric) => {
 					return { rating: 0, comment: '', rubric }
 				}),
 				total: 0
 			})
 		}
-	}, [selectedGrant, proposal])
+	}, [grant, proposal])
 
 	useEffect(() => {
 		const reviewToBeDecrypted = proposal?.reviews?.find((review) => review.reviewer.actorId === scwAddress?.toLowerCase())

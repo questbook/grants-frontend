@@ -1,0 +1,30 @@
+query getComments($grantId: String!, $first: Int, $skip: Int) {
+  comments(
+    first: $first,
+    skip: $skip,
+    where: { grant: $grantId }
+    orderBy: createdAt
+    orderDirection: asc
+  ) {
+    id
+    isPrivate
+    commentsPublicHash
+    commentsEncryptedData {
+      id
+      data
+    }
+    workspace {
+      members {
+        actorId
+        fullName
+        profilePictureIpfsHash
+        publicKey
+      }
+      supportedNetworks
+    }
+    application {
+      id
+      applicantPublicKey
+    }
+  }
+}

@@ -2,7 +2,7 @@ import { useContext, useMemo } from 'react'
 import { Box, Button, Divider, Flex } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
-import { ApiClientsContext } from 'src/pages/_app'
+import { GrantsProgramContext } from 'src/pages/_app'
 import Milestones from 'src/screens/dashboard/_components/ActionList/SingleSelect/Milestones'
 import Payouts from 'src/screens/dashboard/_components/ActionList/SingleSelect/Payouts'
 import ReviewProposal from 'src/screens/dashboard/_components/ActionList/SingleSelect/ReviewProposal'
@@ -89,7 +89,7 @@ function SingleSelect() {
 	}
 
 	const router = useRouter()
-	const { role } = useContext(ApiClientsContext)!
+	const { role } = useContext(GrantsProgramContext)!
 	const { setIsModalOpen } = useContext(FundBuilderContext)!
 	const { proposals, selectedProposals, showSubmitReviewPanel } = useContext(DashboardContext)!
 

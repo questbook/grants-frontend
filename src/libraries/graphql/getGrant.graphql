@@ -1,0 +1,73 @@
+# This query fetches all the grants for a given domain
+query getGrant($grantId: ID!, $actorId: Bytes!) {
+  grant(
+    id: $grantId
+  ) {
+    id
+    title
+    acceptingApplications
+    reward {
+      committed
+      id
+      asset
+      token {
+        address
+        label
+        decimal
+        iconHash
+      }
+    }
+    rubric {
+      id
+      isPrivate
+      items {
+        id
+        title
+        details
+        maximumPoints
+      }
+    }
+    reviewType
+    payoutType
+    applications (where: {applicantId: $actorId}) {
+      id
+    }
+    workspace {
+      id
+      ownerId
+      logoIpfsHash
+      title
+      supportedNetworks
+      safe {
+        id
+        chainId
+        address
+      }
+      tokens {
+        address
+        label
+        decimal
+        iconHash
+      }
+      safe {
+        address
+        chainId
+      }
+      members(where: { enabled: true }) {
+        id
+        actorId
+        publicKey
+        fullName
+        email
+        accessLevel
+        outstandingReviewIds
+        lastReviewSubmittedAt
+        profilePictureIpfsHash
+        pii {
+          id
+          data
+        }
+      }
+    }
+  }
+}

@@ -2,8 +2,7 @@ import { useContext } from 'react'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
 import { validateAndUploadToIpfs } from 'src/libraries/validator'
-import { ApiClientsContext } from 'src/pages/_app'
-import { DashboardContext } from 'src/screens/dashboard/Context'
+import { ApiClientsContext, GrantsProgramContext } from 'src/pages/_app'
 import { ReviewType } from 'src/types'
 import { RubricItem } from 'src/types/gen'
 
@@ -14,13 +13,13 @@ interface Props {
 
 function useSetRubrics({ setNetworkTransactionModalStep, setTransactionHash }: Props) {
 	const { workspace, chainId } = useContext(ApiClientsContext)!
-	const { selectedGrant } = useContext(DashboardContext)!
+	const { grant } = useContext(GrantsProgramContext)!
 
 	const { call, isBiconomyInitialised } = useFunctionCall({ chainId, contractName: 'reviews', setTransactionStep: setNetworkTransactionModalStep, setTransactionHash })
 
 	const setRubrics =
 		async(reviewType: ReviewType, isPrivate: boolean, items: RubricItem[]) => {
-			if(!selectedGrant || !workspace) {
+			if(!grant || !workspace) {
 				return
 			}
 
@@ -70,7 +69,7 @@ function useSetRubrics({ setNetworkTransactionModalStep, setTransactionHash }: P
 
 			await call({
 				method: 'setRubrics',
-				args: [workspace.id, selectedGrant.id, hash]
+				args: [workspace.id, grant.id, hash]
 			})
 		}
 

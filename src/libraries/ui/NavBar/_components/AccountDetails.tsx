@@ -16,10 +16,10 @@ import {
 } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import { useRouter } from 'next/router'
-import { AddUser, ArrowRight, Key, Pencil, Settings } from 'src/generated/icons'
+import { AddUser, ArrowRight, Key, Pencil } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAddress } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
@@ -153,7 +153,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 
 	const { workspace } = useContext(ApiClientsContext)!
 	const { t } = useTranslation()
-	const { role } = useContext(ApiClientsContext)!
+	const { role } = useContext(GrantsProgramContext)!
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 
 	const router = useRouter()
@@ -185,11 +185,11 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 			title: t('account_details.menu.use_another_wallet'),
 			onClick: () => openModal?.('import')
 		},
-		{
-			icon: <Settings boxSize='18px' />,
-			title: 'Settings',
-			onClick: () => router.push('/settings')
-		}
+		// {
+		// 	icon: <Settings boxSize='18px' />,
+		// 	title: 'Settings',
+		// 	onClick: () => router.push('/settings')
+		// }
 	]
 
 	function copyScwAddress() {

@@ -9,7 +9,7 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import MilestoneChoose from 'src/screens/dashboard/_components/FundBuilder/MilestoneChoose'
 import PaidByWallet from 'src/screens/dashboard/_components/FundBuilder/PaidByWallet'
 import PayFromChoose from 'src/screens/dashboard/_components/FundBuilder/PayFromChoose'
@@ -174,7 +174,8 @@ function FundBuilderModal() {
 	}
 
 	const { safeObj } = useSafeContext()
-	const { proposals, selectedProposals, selectedGrant } = useContext(DashboardContext)!
+	const { grant } = useContext(GrantsProgramContext)!
+	const { proposals, selectedProposals } = useContext(DashboardContext)!
 	const {
 		isModalOpen,
 		setIsModalOpen,
@@ -315,7 +316,7 @@ function FundBuilderModal() {
 				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress, safeObj?.chainId))
 				setSignerVerifiedState('transaction_initiated')
 			} else {
-				proposaladdress = await safeObj?.proposeTransactions(selectedGrant?.title, temp, phantomWallet)
+				proposaladdress = await safeObj?.proposeTransactions(grant?.title, temp, phantomWallet)
 				setPayoutInProcess(false)
 				if(proposaladdress?.error) {
 					customToast({

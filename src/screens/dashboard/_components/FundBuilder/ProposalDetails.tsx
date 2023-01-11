@@ -3,10 +3,10 @@ import { Flex, Image, Text } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
-import { ApiClientsContext } from 'src/pages/_app'
+import { ApiClientsContext, GrantsProgramContext } from 'src/pages/_app'
 import MilestoneChoose from 'src/screens/dashboard/_components/FundBuilder/MilestoneChoose'
 import { ProposalType, TokenInfo } from 'src/screens/dashboard/_utils/types'
-import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
+import { FundBuilderContext } from 'src/screens/dashboard/Context'
 import { getFieldString } from 'src/utils/formattingUtils'
 
 interface Props {
@@ -112,12 +112,12 @@ function ProposalDetails({ proposal, index, tokenInfo }: Props) {
 	}
 
 	const { chainId } = useContext(ApiClientsContext)!
-	const { selectedGrant } = useContext(DashboardContext)!
+	const { grant } = useContext(GrantsProgramContext)!
 	const { amounts, setAmounts, tos, setTos } = useContext(FundBuilderContext)!
 	const [decryptedProposal, setDecryptedProposal] = useState<ProposalType | undefined>(proposal)
 
 	const { decrypt } = useEncryptPiiForApplication(
-		selectedGrant?.id,
+		grant?.id,
 		proposal?.applicantPublicKey,
 		chainId
 	)

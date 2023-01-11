@@ -1,38 +1,30 @@
-import { ChangeEvent, useContext, useEffect, useState } from 'react'
-import { Container, Image, Spacer } from '@chakra-ui/react'
+import { ChangeEvent, useContext, useEffect, useMemo, useState } from 'react'
+import { Box, Container, Flex, Image, Spacer, Text } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import { ethers } from 'ethers'
 import saveAs from 'file-saver'
 import { useRouter } from 'next/router'
+import config from 'src/constants/config.json'
+import { Pencil, Settings } from 'src/generated/icons'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import AccountDetails from 'src/libraries/ui/NavBar/_components/AccountDetails'
-import AddMemberButton from 'src/libraries/ui/NavBar/_components/AddMemberButton'
-import Domains from 'src/libraries/ui/NavBar/_components/Domains'
 import ImportConfirmationModal from 'src/libraries/ui/NavBar/_components/ImportConfirmationModal'
-import InviteProposalButton from 'src/libraries/ui/NavBar/_components/InviteProposalButton'
-import OpenDashboard from 'src/libraries/ui/NavBar/_components/OpenDashboard'
 import RecoveryModal from 'src/libraries/ui/NavBar/_components/RecoveryModal'
-import StatsButton from 'src/libraries/ui/NavBar/_components/StatsButton'
-import SwapButton from 'src/libraries/ui/NavBar/_components/SwapButton'
+import SharePopover from 'src/libraries/ui/NavBar/_components/SharePopover'
 import UpdateProfileModal from 'src/libraries/ui/NavBar/_components/UpdateProfileModal'
 import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
-import { ApiClientsContext } from 'src/pages/_app'
+import { GrantsProgramContext } from 'src/pages/_app'
+import getAvatar from 'src/utils/avatarUtils'
 import { getNonce } from 'src/utils/gaslessUtils'
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 type Props = {
 	bg?: string
-	showOpenDashboard?: boolean
-	showLogo?: boolean
-	showSearchBar?: boolean
-	showInviteProposals?: boolean
-	showAddMembers?: boolean
-	showDomains?: boolean
-	showStats?: boolean
 }
 
-function NavBar({ bg = 'gray.1', showOpenDashboard, showLogo, showAddMembers, showInviteProposals, showStats, showDomains }: Props) {
+function NavBar({ bg = 'gray.1' }: Props) {
 	const buildComponent = () => (
 		<>
 			<Container
@@ -47,8 +39,8 @@ function NavBar({ bg = 'gray.1', showOpenDashboard, showLogo, showAddMembers, sh
 				alignItems='center'
 				maxW='100vw'
 				bg={bg}
-				ps={router.pathname === '/' ? 24 : '42px'}
-				pe={router.pathname === '/' ? 24 : '15px'}
+				ps={24}
+				pe={24}
 				py='16px'
 				minWidth={{ base: '-webkit-fill-available' }}
 			>
@@ -57,15 +49,14 @@ function NavBar({ bg = 'gray.1', showOpenDashboard, showLogo, showAddMembers, sh
 						() => {
 							if(router.pathname === '/dashboard') {
 								router.push({
-									pathname: '/',
-									query: { fromDashboard: 'true' }
+									pathname: '/'
 								})
 							}
 						}
 					}
 					display={{ base: 'none', lg: 'inherit' }}
 					mr='auto'
-					src={router.pathname === '/dashboard' && (role === 'admin' || role === 'reviewer') ? '/v2/images/qb-only-logo.svg' : '/ui_icons/qb.svg'}
+					src='/ui_icons/qb.svg'
 					alt='Questbook'
 					cursor='pointer'
 				/>
@@ -75,14 +66,13 @@ function NavBar({ bg = 'gray.1', showOpenDashboard, showLogo, showAddMembers, sh
 							if(router.pathname === '/dashboard') {
 								router.push({
 									pathname: '/',
-									query: { fromDashboard: 'true' }
 								})
 							}
 						}
 					}
 					display={{ base: 'inherit', lg: 'none' }}
 					mr='auto'
-					src={router.pathname === '/dashboard' && (role === 'admin' || role === 'reviewer') ? '/v2/images/qb-only-logo.svg' : '/ui_icons/qb.svg'}
+					src='/ui_icons/qb.svg'
 					alt='Questbook'
 					cursor='pointer'
 				/>
@@ -98,37 +88,81 @@ function NavBar({ bg = 'gray.1', showOpenDashboard, showLogo, showAddMembers, sh
 						</>
 					)
 				}
-
-				{showDomains && (role === 'admin' || role === 'reviewer') && <Domains />}
-				{showStats && (role === 'admin' || role === 'reviewer') && <StatsButton />}
 				<Spacer />
 
-				{/* {
-					showSearchBar && !inviteInfo && (
-						<Center>
-							<InputGroup mx='20px'>
-								<InputLeftElement pointerEvents='none'>
-									<Search2Icon color='gray.300' />
-								</InputLeftElement>
-								<Input
-									type='search'
-									placeholder='Search'
-									size='md'
-									defaultValue={searchString}
-									width='25vw'
-									onChange={(e) => setSearchString(e.target.value)} />
-							</InputGroup>
-						</Center>
+				{
+					shouldShowTitle && (
+						<Flex
+							align='center'
+							gap={3}>
+							<Image
+								boxSize='32px'
+								borderRadius='4px'
+								src={grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)} />
+							<Text
+								fontWeight='500'
+								variant='v2_subheading'>
+								{grant?.title}
+							</Text>
+							<Text
+								px={2}
+								py={1}
+								variant='v2_metadata'
+								fontWeight='500'
+								bg={grant?.acceptingApplications ? 'rgba(242, 148, 62, 0.2)' : 'accent.columbia'}
+								color={grant?.acceptingApplications ? 'accent.carrot' : 'accent.azure'}>
+								{grant?.acceptingApplications ? 'Open' : 'Close'}
+							</Text>
+						</Flex>
+
 					)
-				} */}
+				}
+
+				<Box ml={4} />
+
+				{
+					(role === 'admin' && grant?.acceptingApplications) && (
+						<Pencil
+							cursor='pointer'
+							boxSize='20px'
+							onClick={
+								() => {
+									router.push(
+										{
+											pathname: '/request_proposal/',
+											query: {
+												grantId: grant?.id,
+												workspaceId: grant?.workspace?.id
+											},
+										})
+
+								}
+							} />
+					)
+				}
+
+				{
+					role === 'admin' && (
+						<Settings
+							boxSize='20px'
+							ml={3}
+							cursor='pointer'
+							onClick={
+								() => {
+									router.push(
+										{
+											pathname: '/settings'
+										})
+
+								}
+							} />
+					)
+				}
+
+				{role === 'admin' && (<Box ml={3} />)}
+				<SharePopover />
+
 				<Spacer />
-
-				{/* {showAddMembers && (role === 'admin' || role === 'reviewer') && <AddMemberButton />} */}
-				{showInviteProposals && (role === 'admin' || role === 'reviewer') && <InviteProposalButton />}
-
-				{router.pathname === '/dashboard' && <SwapButton />}
-
-				{showOpenDashboard && ((router.pathname === '/' && fromDashboard === 'true') || router.pathname === '/settings') && <OpenDashboard />}
 
 				<AccountDetails
 					openModal={
@@ -162,11 +196,10 @@ function NavBar({ bg = 'gray.1', showOpenDashboard, showLogo, showAddMembers, sh
 		</>
 	)
 
-	const { role } = useContext(ApiClientsContext)!
+	const { grant, role, isLoading } = useContext(GrantsProgramContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	// const { searchString, setSearchString } = useContext(DAOSearchContext)!
 	const router = useRouter()
-	const { fromDashboard } = router.query
 	const toast = useCustomToast()
 	const [privateKey, setPrivateKey] = useState<string>('')
 	const [privateKeyError, setPrivateKeyError] = useState<string>('')
@@ -177,9 +210,9 @@ function NavBar({ bg = 'gray.1', showOpenDashboard, showLogo, showAddMembers, sh
 
 	const [isUpdateProfileModalOpen, setIsUpdateProfileModalOpen] = useState<boolean>(false)
 
-	useEffect(() => {
-		logger.info({ role, condition: showLogo || role === 'builder' || role === 'community' }, 'condition')
-	}, [role])
+	const shouldShowTitle = useMemo(() => {
+		return (router.pathname === '/dashboard' && !isLoading && grant)
+	}, [grant, isLoading, router.pathname])
 
 	useEffect(() => {
 		logger.info({ type, privateKey }, 'RecoveryModal')
@@ -257,14 +290,7 @@ function NavBar({ bg = 'gray.1', showOpenDashboard, showLogo, showAddMembers, sh
 }
 
 NavBar.defaultProps = {
-	bg: 'white',
-	showLogo: true,
-	showOpenDashboard: true,
-	showSearchBar: true,
-	showInviteProposals: false,
-	showAddMembers: false,
-	showDomains: false,
-	showStats: false
+	bg: 'white'
 }
 
 // NavBar.defaultProps = {

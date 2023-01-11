@@ -30,7 +30,7 @@ import MigrateToGasless from 'src/libraries/ui/MigrateToGaslessModal'
 import { DOMAIN_CACHE_KEY, ROLE_CACHE } from 'src/libraries/ui/NavBar/_utils/constants'
 import { extractInviteInfo, InviteInfo } from 'src/libraries/utils/invite'
 import theme from 'src/theme'
-import { MinimalWorkspace } from 'src/types'
+import { GrantProgramContextType, GrantType, MinimalWorkspace, Roles } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import { addAuthorizedUser, bicoDapps, deploySCW, getNonce, jsonRpcProviders, networksMapping } from 'src/utils/gaslessUtils'
 import { delay } from 'src/utils/generics'
@@ -119,21 +119,18 @@ const client = createClient({
 	provider,
 })
 
-export type Roles = 'admin' | 'reviewer' | 'builder' | 'community'
-
 export const ApiClientsContext = createContext<{
 	validatorApi: ValidationApi
 	workspace?: MinimalWorkspace
 	setWorkspace: (workspace?: MinimalWorkspace) => void
 	subgraphClients: { [chainId: string]: SubgraphClient }
 	chainId: SupportedChainId
-	role: Roles
-	setRole: (role: Roles) => void
-	possibleRoles: Roles[]
 	inviteInfo: InviteInfo | undefined
 	setInviteInfo: (inviteInfo: InviteInfo) => void
 	isNewUser: boolean
 		} | null>(null)
+
+export const GrantsProgramContext = createContext<GrantProgramContextType | null>(null)
 
 export const WebwalletContext = createContext<{
 	webwallet?: Wallet
@@ -167,9 +164,12 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [network, switchNetwork] = useState<SupportedChainId>(defaultChainId)
 	const [webwallet, setWebwallet] = useState<Wallet>()
 	const [workspace, setWorkspace] = useState<MinimalWorkspace>()
-	const [role, setRole] = useState<Roles>('community')
 	const [possibleRoles, setPossibleRoles] = useState<Roles[]>([])
 	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
+
+	const [grant, setGrant] = useState<GrantType>()
+	const [role, setRole] = useState<Roles>('community')
+	const [isLoading, setIsLoading] = useState<boolean>(true)
 
 	const [scwAddress, setScwAddress] = useState<string>()
 	const [biconomyDaoObjs, setBiconomyDaoObjs] = useState<{[key: string]: typeof BiconomyContext}>()
@@ -399,14 +399,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 	const getNetwork = () => defaultChainId
 
-	useEffect(() => {
-		logger.info({ isNewUser }, '(Navigation) Is New User changed')
-	}, [isNewUser])
-
 	const createWebWallet = () => {
-
 		const privateKey = localStorage.getItem('webwalletPrivateKey')
-
 		let newWebwallet = Wallet.createRandom()
 
 		if(!privateKey) {
@@ -645,22 +639,26 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				setWorkspace(newWorkspace)
 			},
 			chainId,
-			role,
-			setRole: (newRole: Roles) => {
-				logger.info({ newRole }, 'Setting role 5')
-				localStorage.setItem(ROLE_CACHE, newRole)
-				setRole(newRole)
-			},
-			possibleRoles,
 			inviteInfo,
 			setInviteInfo,
 			subgraphClients: clients,
 			isNewUser,
 		}),
-		[validatorApi, workspace, setWorkspace, clients, connected, setConnected, chainId, role, setRole, possibleRoles, inviteInfo, isNewUser]
+		[validatorApi, workspace, setWorkspace, clients, connected, setConnected, chainId, inviteInfo, isNewUser]
 	)
 
 	const seo = getSeo()
+
+	const grantProgram = useMemo(() => {
+		return {
+			grant,
+			setGrant,
+			role,
+			setRole,
+			isLoading,
+			setIsLoading
+		}
+	}, [grant, setGrant, role, setRole, isLoading, setIsLoading])
 
 	const getLayout = Component.getLayout || ((page) => page)
 	return (
@@ -709,16 +707,18 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 						<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
 							<SafeProvider>
 								<DAOSearchContextMaker>
-									<QBAdminsContextMaker>
-										<ChakraProvider theme={theme}>
-											{getLayout(<Component {...pageProps} />)}
-											{
-												typeof window !== 'undefined' && (
-													<MigrateToGasless />
-												)
-											}
-										</ChakraProvider>
-									</QBAdminsContextMaker>
+									<GrantsProgramContext.Provider value={grantProgram}>
+										<QBAdminsContextMaker>
+											<ChakraProvider theme={theme}>
+												{getLayout(<Component {...pageProps} />)}
+												{
+													typeof window !== 'undefined' && (
+														<MigrateToGasless />
+													)
+												}
+											</ChakraProvider>
+										</QBAdminsContextMaker>
+									</GrantsProgramContext.Provider>
 								</DAOSearchContextMaker>
 							</SafeProvider>
 						</BiconomyContext.Provider>

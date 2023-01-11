@@ -2,8 +2,7 @@ import { useContext } from 'react'
 import { Button, Flex, Image, Text } from '@chakra-ui/react'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { copyGrantLink } from 'src/libraries/utils/copy'
-import { ApiClientsContext } from 'src/pages/_app'
-import { DashboardContext } from 'src/screens/dashboard/Context'
+import { ApiClientsContext, GrantsProgramContext } from 'src/pages/_app'
 
 function Empty() {
 	const buildComponent = () => {
@@ -52,8 +51,8 @@ function Empty() {
 						variant='primaryMedium'
 						onClick={
 							async() => {
-								if(selectedGrant?.id) {
-									const ret = await copyGrantLink(selectedGrant.id, chainId)
+								if(grant?.id) {
+									const ret = await copyGrantLink(grant.id, chainId)
 									toast({
 										title: ret ? 'Copied!' : 'Failed to copy',
 										status: ret ? 'success' : 'error',
@@ -84,7 +83,7 @@ function Empty() {
 	}
 
 	const { workspace, chainId } = useContext(ApiClientsContext)!
-	const { selectedGrant } = useContext(DashboardContext)!
+	const { grant } = useContext(GrantsProgramContext)!
 
 	const toast = useCustomToast()
 
