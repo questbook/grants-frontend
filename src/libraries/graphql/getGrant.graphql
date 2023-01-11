@@ -13,6 +13,9 @@ query getGrant($grantId: ID!, $actorId: Bytes!) {
       possibleValues
       isPii
     }
+    applications (first: 1) {
+      id
+    }
     reward {
       committed
       id

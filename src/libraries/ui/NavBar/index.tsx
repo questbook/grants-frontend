@@ -121,7 +121,7 @@ function NavBar({ bg = 'gray.1' }: Props) {
 				<Box ml={4} />
 
 				{
-					(role === 'admin' && grant?.acceptingApplications && !isLoading) && (
+					(role === 'admin' && grant?.acceptingApplications && !isLoading && grant?.applications?.length === 0) && (
 						<Pencil
 							cursor='pointer'
 							boxSize='20px'

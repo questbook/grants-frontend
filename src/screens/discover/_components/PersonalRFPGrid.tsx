@@ -54,7 +54,7 @@ function PersonalRFPGrid({
 								chainId={workspaceChainId}
 								noOfApplicants={grant.applications.length}
 								totalAmount={grant.workspace.totalGrantFundingDisbursedUSD}
-								role={grant.managers.filter(manager => manager.member?.actorId === grant.workspace.ownerId)[0].member?.accessLevel}
+								role={grant.managers.filter(manager => manager.member?.actorId === grant.workspace.ownerId)[0]?.member?.accessLevel}
 								grantId={grant.id}
 								isAcceptingApplications={grant.acceptingApplications}
 							/>
