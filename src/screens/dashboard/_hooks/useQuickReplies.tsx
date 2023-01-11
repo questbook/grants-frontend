@@ -1,9 +1,13 @@
 import { useContext } from 'react'
 import { Call, CheckDouble, Close, Resubmit } from 'src/generated/icons'
 import { ApiClientsContext } from 'src/pages/_app'
-import { TagType } from 'src/screens/dashboard/_utils/types'
+import { ProposalType, TagType } from 'src/screens/dashboard/_utils/types'
 
-function useProposalTags() {
+interface Props {
+	proposals: ProposalType[]
+}
+
+function useProposalTags({ proposals }: Props) {
 	const allTags: {[key: string]: TagType[]} = {
 		admin: [
 			{ id: 'accept', title: 'Accept', icon: <CheckDouble color='accent.jeans' />, isPrivate: false },
@@ -18,7 +22,15 @@ function useProposalTags() {
 
 	const { role } = useContext(ApiClientsContext)!
 
-	return { proposalTags: allTags[role] }
+	if(role === 'admin') {
+		if(proposals.every(p => p.state === 'submitted')) {
+			return { proposalTags: allTags['admin'] }
+		} else {
+			return { proposalTags: allTags['admin'].slice(3) }
+		}
+	} else {
+		return { proposalTags: allTags[role] }
+	}
 }
 
 export default useProposalTags

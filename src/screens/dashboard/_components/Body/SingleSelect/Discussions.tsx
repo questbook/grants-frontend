@@ -192,7 +192,6 @@ function Discussions() {
 	const { scwAddress } = useContext(WebwalletContext)!
 	const { workspace, role } = useContext(ApiClientsContext)!
 	const { proposals, selectedProposals, commentMap } = useContext(DashboardContext)!
-	const { proposalTags } = useProposalTags()
 
 	const [step, setStep] = useState<number>()
 	const [, setTransactionHash] = useState('')
@@ -210,6 +209,8 @@ function Discussions() {
 	const proposal = useMemo(() => {
 		return proposals.find(p => selectedProposals.has(p.id))
 	}, [proposals, selectedProposals])
+
+	const { proposalTags } = useProposalTags({ proposals: proposal ? [proposal] : [] })
 
 	const comments = useMemo(() => {
 		if(!proposal || !commentMap) {

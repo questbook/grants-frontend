@@ -4,7 +4,7 @@ import logger from 'src/libraries/logger'
 import QuickReplyButton from 'src/screens/dashboard/_components/QuickReplyButton'
 import useAddComments from 'src/screens/dashboard/_hooks/useAddComments'
 import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
-import { SendAnUpdateContext } from 'src/screens/dashboard/Context'
+import { DashboardContext, SendAnUpdateContext } from 'src/screens/dashboard/Context'
 
 function SendAnUpdateModal() {
 	const buildComponent = () => {
@@ -96,8 +96,9 @@ function SendAnUpdateModal() {
 		)
 	}
 
+	const { selectedProposals, proposals } = useContext(DashboardContext)!
 	const { isModalOpen, setIsModalOpen } = useContext(SendAnUpdateContext)!
-	const { proposalTags } = useProposalTags()
+	const { proposalTags } = useProposalTags({ proposals: proposals.filter(p => selectedProposals.has(p.id)) })
 	const [ text, setText ] = useState<string>('')
 
 	const [ selectedTags, setSelectedTags ] = useState<{[key: number]: boolean}>({})
