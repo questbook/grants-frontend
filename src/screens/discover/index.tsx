@@ -571,7 +571,7 @@ function Discover() {
 			// const mergedArray = mergeSortedArrays(allFetchedGrants, grants, (a, b) => {
 			// 	return a.createdAtS > b.createdAtS
 			// })
-			// logger.info('merged array', mergedArray, grants.length)
+			logger.info('Owner grants', grants)
 			allFetchedGrants.push(...grants)
 		}
 
@@ -593,8 +593,9 @@ function Discover() {
 			// const mergedArray = mergeSortedArrays(allFetchedGrants, grants, (a, b) => {
 			// 	return a.createdAtS > b.createdAtS
 			// })
-			// logger.info('merged array', mergedArray, grants.length)
+
 			const filteredGrants = grants.filter(e => e.grant.workspace.isVisible === true)
+			logger.info('Reviewer grants fetched', grants, filteredGrants)
 			allFetchedGrants.push(...filteredGrants)
 		}
 
@@ -617,7 +618,7 @@ function Discover() {
 			// const mergedArray = mergeSortedArrays(allFetchedGrants, grants, (a, b) => {
 			// 	return a.createdAtS > b.createdAtS
 			// })
-			// logger.info('merged array', mergedArray, grants.length)
+			logger.info('Builder grants fetched', grants)
 			allFetchedGrants.push(...grants)
 		}
 
