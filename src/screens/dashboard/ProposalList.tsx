@@ -1,7 +1,8 @@
 // This renders the list of proposals that show up as the first column
 
 import { useContext, useMemo, useState } from 'react'
-import { Checkbox, Flex, Text } from '@chakra-ui/react'
+import { Button, Checkbox, Flex, Text } from '@chakra-ui/react'
+import router from 'next/router'
 import logger from 'src/libraries/logger'
 import SearchField from 'src/libraries/ui/SearchBox'
 import { GrantsProgramContext } from 'src/pages/_app'
@@ -9,6 +10,7 @@ import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { getFieldString } from 'src/utils/formattingUtils'
+import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 
 function ProposalList() {
 	const buildComponent = () => (
@@ -19,18 +21,50 @@ function ProposalList() {
 			direction='column'
 			boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
 			py={4}>
-			<Text
-				pl={5}
-				fontWeight='700'
-				color='black.1'>
-				Proposals
+			<Flex
+				justifyContent='space-between'
+				// px={4}
+				w='100%'
+			>
 				<Text
-					ml={1}
-					display='inline-block'
-					color='black.3'>
-					{`(${proposalCount})`}
+					pl={5}
+					fontWeight='700'
+					color='black.1'>
+					Proposals
+					<Text
+						ml={1}
+						display='inline-block'
+						color='black.3'>
+						{`(${proposalCount})`}
+					</Text>
 				</Text>
-			</Text>
+				{
+					(role !== 'admin') && (
+						<Button
+							variant='secondaryV2'
+							// w='103px'
+							// h='32px'
+							mr={4}
+							fontSize='14px'
+							onClick={
+								() => {
+									const href = window.location.href.split('/')
+									const protocol = href[0]
+									const domain = href[2]
+									const chainId = getSupportedChainIdFromSupportedNetwork(grant?.workspace.supportedNetworks[0])
+
+									const URL = `${protocol}//${domain}/proposal_form/?grantId=${grant?.id}&chainId=${chainId}`
+
+									window.open(URL, '_blank')
+								}
+							}
+						>
+							Submit new
+						</Button>
+					)
+				}
+			</Flex>
+
 
 			<Flex
 				mx={5}
@@ -98,7 +132,7 @@ function ProposalList() {
 
 	const [searchText, setSearchText] = useState<string>('')
 
-	const { role } = useContext(GrantsProgramContext)!
+	const { role, grant } = useContext(GrantsProgramContext)!
 	const { proposals, selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
 
 	const filteredProposals = useMemo(() => {
