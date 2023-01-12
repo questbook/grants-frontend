@@ -370,7 +370,7 @@ function RequestProposal() {
 	}, [rfpData])
 
 	// create workspace and grant
-	const createWorkspaceAndGrant = useCallback(async() => {
+	const createWorkspaceAndGrant = async() => {
 		try {
 			setCurrentStepIndex(0)
 			const uploadedImageHash = (await uploadToIPFS(domainImage)).hash
@@ -578,7 +578,7 @@ function RequestProposal() {
 				}),
 			})
 		}
-	}, [biconomyWalletClient, domainName, accountDataWebwallet, allApplicantDetails, link, doc, rubrics, amount, payoutMode, reviewMechanism, startDate, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, selectedSafeNetwork, milestones])
+	}
 
 	const handleOnEdit = (field: string, value: string | ApplicantDetailsFieldType[] | string []) => {
 		// const { value } = e.target
@@ -587,7 +587,7 @@ function RequestProposal() {
 	}
 
 
-	const createRFP = useCallback(async() => {
+	const createRFP = async() => {
 		try {
 			setCurrentStepIndex(0)
 			let fileIPFSHash = ''
@@ -717,7 +717,7 @@ function RequestProposal() {
 				}),
 			})
 		}
-	}, [biconomyWalletClient, workspace, proposalName, rubrics, accountDataWebwallet, allApplicantDetails, link, doc, rubrics, amount, payoutMode, reviewMechanism, startDate, network, biconomy, targetContractObject, scwAddress, webwallet, nonce, selectedSafeNetwork, milestones])
+	}
 
 	return buildComponent()
 }

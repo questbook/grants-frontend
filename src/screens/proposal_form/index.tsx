@@ -1,5 +1,5 @@
 import { ChangeEvent, ReactElement, useContext, useMemo, useState } from 'react'
-import { Button, Flex, Image, Text } from '@chakra-ui/react'
+import { Button, Container, Divider, Flex, Image, Text } from '@chakra-ui/react'
 import { convertToRaw } from 'draft-js'
 import { useRouter } from 'next/router'
 import { useSafeContext } from 'src/contexts/safeContext'
@@ -20,7 +20,7 @@ import { DEFAULT_MILESTONE, MILESTONE_INPUT_STYLE } from 'src/screens/proposal_f
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
 import getAvatar from 'src/utils/avatarUtils'
 import { chainNames } from 'src/utils/chainNames'
-import { getExplorerUrlForTxHash, getRewardAmountMilestones } from 'src/utils/formattingUtils'
+import { extractDate, extractDateFromDateTime, getExplorerUrlForTxHash, getRewardAmountMilestones } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 function ProposalForm() {
@@ -133,6 +133,7 @@ function ProposalForm() {
 	}
 
 	const formComponent = () => {
+		const isOpen = grant?.deadline! > new Date().toISOString() ? 'Open' : 'Closed'
 		return (
 			<Flex
 				w='100%'
@@ -167,6 +168,102 @@ function ProposalForm() {
 							pb={4}>
 							Submit Proposal
 						</Text>
+						{/* Grant Name */}
+						<Flex
+							gap={2}
+							alignItems='center'
+							pt={4}
+						>
+							<Text
+								variant='v2_heading_3'
+								fontWeight='500'
+							>
+								{grant?.title}
+							</Text>
+							<Text
+								color={isOpen ? 'accent.carrot' : 'gray.5'}
+								background={isOpen ? 'rgba(242, 148, 62, 0.2)' : 'gray.2'}
+								borderRadius='2px'
+								px={2}
+								py={1}
+								fontSize='12px'
+								fontWeight='500'
+							>
+								{isOpen}
+							</Text>
+						</Flex>
+
+						{/* Grant Info */}
+						<Container
+							mt={4}
+							p={4}
+							border='1px solid #E7E4DD'
+							className='container'
+							width='max-content'
+						>
+							<Flex
+								justifyContent='space-between'
+								width='max-content'
+								gap={8}
+							>
+								<Flex
+									alignItems='center'
+
+								>
+									<Flex gap={4}>
+										<Image src='/v2/icons/calendar-color.svg' />
+										<Flex direction='column'>
+											<Text
+												variant='v2_title'
+												fontWeight='400'
+												color='black.1'
+											>
+												Accepting proposals until
+												{' '}
+											</Text>
+											<Text
+												variant='v2_title'
+												fontWeight='500'
+												color='black.1'
+											>
+												{extractDateFromDateTime(grant?.deadline!)}
+											</Text>
+										</Flex>
+									</Flex>
+								</Flex>
+								{/* <Divider
+									orientation='vertical'
+									h='100%' /> */}
+								{
+									grant?.link && (
+										<Flex alignItems='center'>
+											<Flex gap={4}>
+												<Image src='/v2/icons/doc.svg' />
+												<Flex direction='column'>
+													<Text
+														variant='v2_title'
+														fontWeight='400'
+													>
+														Grant program details
+														{' '}
+													</Text>
+													<Text
+														variant='v2_title'
+														fontWeight='500'
+														color='black.1'
+														cursor='pointer'
+														onClick={() => window.open(grant?.link!, '_blank')}
+													>
+														Read here
+													</Text>
+												</Flex>
+											</Flex>
+										</Flex>
+									)
+								}
+
+							</Flex>
+						</Container>
 
 						{/* Builder Details */}
 						<SectionHeader mt={8}>
