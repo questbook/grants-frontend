@@ -24,6 +24,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 	const chainId = useMemo(() => {
 		try {
+			logger.info({ _chainId }, 'Getting chainId from router query')
 			return typeof _chainId === 'string' ? parseInt(_chainId) : -1
 		} catch(e) {
 			return -1
@@ -59,7 +60,9 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			return
 		}
 
+		logger.info({ grantId, scwAddress }, 'Getting grant (ROLE)')
 		const details = await fetchGrantDetails({ grantId, actorId: scwAddress.toLowerCase() }, true)
+		logger.info({ details }, 'Grant details (ROLE)')
 		if(!details?.[0]?.grant) {
 			return
 		}
