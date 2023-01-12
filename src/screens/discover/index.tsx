@@ -594,7 +594,8 @@ function Discover() {
 			// 	return a.createdAtS > b.createdAtS
 			// })
 			// logger.info('merged array', mergedArray, grants.length)
-			allFetchedGrants.push(...grants)
+			const filteredGrants = grants.filter(e => e.grant.workspace.isVisible === true)
+			allFetchedGrants.push(...filteredGrants)
 		}
 
 		setReviewerGrants(allFetchedGrants)
