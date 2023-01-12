@@ -68,7 +68,9 @@ function RequestProposal() {
 						async() => {
 							setCurrentStepIndex(undefined)
 							setRole('admin')
-							const ret = await router.push({ pathname: '/dashboard' })
+							const ret = await router.push({
+								pathname: '/',
+							})
 							if(ret) {
 								router.reload()
 							}
@@ -270,6 +272,8 @@ function RequestProposal() {
 	const router = useRouter()
 
 	const grantContract = useQBContract('grantFactory', network)
+
+	const [grantId, setGrantId] = useState<string>('')
 
 	const { rfpData, rfpFormType, RFPEditFormData, setRFPEditFormData } = useContext(RFPFormContext)!
 	const { updateRFP, txHash: rfpUpdateTxHash } = useUpdateRFP(setCurrentStepIndex, setIsNetworkTransactionModalOpen)
@@ -533,12 +537,22 @@ function RequestProposal() {
 					setCurrentStepIndex(1)
 					const { txFee: createGrantTxFee, receipt: createGrantTxReceipt } = await getTransactionDetails(response, network!.toString())
 					setTxHash(createGrantTxReceipt?.transactionHash)
+					logger.info('createGrantTxReceipt', createGrantTxReceipt)
 					await subgraphClients[network!].waitForBlock(createGrantTxReceipt?.blockNumber)
+					logger.info('waiting for indexing')
+					const grantEvent = await getEventData(createGrantTxReceipt, 'GrantCreated', GrantFactoryAbi)
+					logger.info('grantEvent', grantEvent)
+					if(grantEvent) {
+						const grantId = grantEvent.args[0].toString()
+						localStorage.setItem(`${GRANT_CACHE_KEY}-${chainId}-${event.args[0].toBigInt()}`, grantId)
+						logger.info('grantId', grantId, chainId)
+						setGrantId(grantId)
+						setCurrentStepIndex(2)
+						logger.info('waiting for charge gas')
+						await chargeGas(Number(workspaceId), Number(createGrantTxFee), network!)
 
-					setCurrentStepIndex(2)
-					await chargeGas(workspaceId, Number(createGrantTxFee), network!)
-
-					setCurrentStepIndex(3) // 3 is the final step
+						setCurrentStepIndex(3) // 3 is the final step
+					}
 				} else {
 					logger.info('workspaceId not found')
 				}
