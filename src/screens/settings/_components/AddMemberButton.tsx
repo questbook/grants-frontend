@@ -1,9 +1,8 @@
-import { useContext, useRef, useState } from 'react'
-import { Button, CircularProgress, Flex, Image, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text, useToast } from '@chakra-ui/react'
-import { useRouter } from 'next/router'
+import { useRef, useState } from 'react'
+import { Button, CircularProgress, Flex, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text, useToast } from '@chakra-ui/react'
+import { Link } from 'src/generated/icons'
 import CopyIcon from 'src/libraries/ui/CopyIcon'
 import { serialiseInviteInfoIntoUrl, useMakeInvite } from 'src/libraries/utils/invite'
-import { ApiClientsContext } from 'src/pages/_app'
 
 function AddMemberButton() {
 	const buildComponent = () => {
@@ -27,9 +26,7 @@ function AddMemberButton() {
 										align='start'
 									>
 										<Flex align='center'>
-											<Image
-												src='/v2/icons/link.svg'
-												boxSize='18px' />
+											<Link boxSize='18px' />
 											<Text
 												variant='v2_body'
 												ml={3}>
@@ -69,27 +66,6 @@ function AddMemberButton() {
 												</Flex>
 											)
 										}
-										<Flex mt={3}>
-											<Image
-												src='/v2/icons/group.svg'
-												boxSize='18px' />
-											<Button
-												disabled={!workspace?.id}
-												ml={3}
-												variant='link'
-												onClick={
-													() => {
-														router.push('/settings')
-														onClose()
-													}
-												}>
-												<Text
-													variant='v2_body'
-													fontWeight='400'>
-													See all Members
-												</Text>
-											</Button>
-										</Flex>
 									</Flex>
 								</PopoverBody>
 							</PopoverContent>
@@ -131,24 +107,11 @@ function AddMemberButton() {
 
 	const popoverButton = () => {
 		return (
-			<Button
-				variant='ghost'
-				leftIcon={
-					<Image
-						src='/v2/icons/add user.svg'
-						boxSize='16px' />
-				}>
-				<Text
-					variant='v2_body'
-					fontWeight='500'>
-					Add Members
-				</Text>
+			<Button variant='secondaryV2'>
+				Add members
 			</Button>
 		)
 	}
-
-	const { workspace } = useContext(ApiClientsContext)!
-	const router = useRouter()
 
 	const popoverRef = useRef<HTMLButtonElement>(null)
 	const { makeInvite, isBiconomyInitialised } = useMakeInvite()

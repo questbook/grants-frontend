@@ -4,7 +4,6 @@ import {
 	ApplicationRegistryAbi,
 	ApplicationReviewRegistryAbi,
 	CommunicationAbi,
-	GrantAbi,
 	GrantFactoryAbi,
 	WorkspaceRegistryAbi,
 } from 'src/generated/contracts'
@@ -13,6 +12,7 @@ import {
 	GetApplicationMilestonesQuery,
 	GetDaoDetailsQuery,
 	GetFundSentForApplicationQuery,
+	GetGrantQuery,
 	GetReviewersForAWorkspaceQuery,
 	GetWorkspaceDetailsQuery,
 	GetWorkspaceMembersQuery,
@@ -184,4 +184,17 @@ export type CustomField = {
 export enum ReviewType {
   'Voting',
   'Rubrics'
+}
+
+export type Roles = 'admin' | 'reviewer' | 'builder' | 'community'
+
+export type GrantType = GetGrantQuery['grant']
+
+export type GrantProgramContextType = {
+  grant: GrantType
+  setGrant: (grant: GrantType) => void
+  role: Roles
+  setRole: (role: Roles) => void
+  isLoading: boolean
+  setIsLoading: (isLoading: boolean) => void
 }

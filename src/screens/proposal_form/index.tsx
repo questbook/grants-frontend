@@ -8,7 +8,7 @@ import BackButton from 'src/libraries/ui/BackButton'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import { getChainInfo } from 'src/libraries/utils/token'
-import { ApiClientsContext } from 'src/pages/_app'
+import { GrantsProgramContext } from 'src/pages/_app'
 import SectionHeader from 'src/screens/proposal_form/_components/SectionHeader'
 import SectionInput from 'src/screens/proposal_form/_components/SectionInput'
 import SectionRichTextEditor from 'src/screens/proposal_form/_components/SectionRichTextEditor'
@@ -309,7 +309,7 @@ function ProposalForm() {
 
 						<SelectArray
 							label='Milestones'
-							allowMultiple={grant?.payoutType === 'milestones'}
+							allowMultiple={grant?.payoutType === 'milestones' || (containsField(grant, 'isMultipleMilestones') ?? false)}
 							config={
 								form?.milestones?.map((milestone, index) => {
 									return [
@@ -421,7 +421,7 @@ function ProposalForm() {
 		)
 	}
 
-	const { setRole } = useContext(ApiClientsContext)!
+	const { setRole } = useContext(GrantsProgramContext)!
 	const { type, grant, chainId, form, setForm, error } = useContext(ProposalFormContext)!
 	// console.log('grant', grant)
 	// console.log('proposal', proposal)

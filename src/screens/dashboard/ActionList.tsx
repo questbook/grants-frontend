@@ -1,6 +1,6 @@
 // This renders the action-section, namely Reviews, Milestones and Payouts, that will show up as the third column
 
-import { useContext, useMemo } from 'react'
+import { useContext } from 'react'
 import { Flex } from '@chakra-ui/react'
 import MultiSelect from 'src/screens/dashboard/_components/ActionList/MultiSelect'
 import SingleSelect from 'src/screens/dashboard/_components/ActionList/SingleSelect'
@@ -13,14 +13,11 @@ function ActionList() {
 			bg='white'
 			boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
 			direction='column'>
-			{selectedProposalCount > 1 ? <MultiSelect /> : <SingleSelect /> }
+			{selectedProposals.size > 1 ? <MultiSelect /> : <SingleSelect /> }
 		</Flex>
 	)
 
 	const { selectedProposals } = useContext(DashboardContext)!
-	const selectedProposalCount = useMemo(() => {
-		return selectedProposals.filter((_) => _).length
-	}, [selectedProposals])
 
 	return buildComponent()
 }

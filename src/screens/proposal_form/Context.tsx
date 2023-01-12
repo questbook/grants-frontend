@@ -110,7 +110,7 @@ const ProposalFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		const fieldIDs = applicantDetailsList.map(d => d.id)
 		logger.info({ fieldIDs }, 'ProposalForm: fetchGrant (fieldIDs)')
 		const initForm: Form = {
-			fields: result[0].grant.fields.filter(f => fieldIDs.indexOf(f.title) !== -1).map((field) => {
+			fields: result[0].grant.fields.filter(f => fieldIDs.indexOf(f.title) !== -1 || f.title.includes('customField')).map((field) => {
 				const id = field.id.substring(field.id.indexOf('.') + 1)
 				return {
 					...field,

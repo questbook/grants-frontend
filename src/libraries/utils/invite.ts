@@ -9,7 +9,7 @@ import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useChainId from 'src/hooks/utils/useChainId'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { delay } from 'src/utils/generics'
 import logger from 'src/utils/logger'
@@ -92,8 +92,8 @@ export const serialiseInviteInfoIntoUrl = (info: InviteInfo) => {
 
 
 export const useMakeInvite = () => {
-	const { workspace } = useContext(ApiClientsContext)!
-	const chainId = getSupportedChainIdFromWorkspace(workspace)
+	const { grant } = useContext(GrantsProgramContext)!
+	const chainId = getSupportedChainIdFromWorkspace(grant?.workspace)
 
 	const { network, switchNetwork } = useNetwork()
 
@@ -120,7 +120,7 @@ export const useMakeInvite = () => {
 			switchNetwork?.(chainId!)
 			const { privateKey, address } = generateKeyPairAndAddress()
 			// convert "0x" encoded hex to a number
-			const workspaceId = parseInt(workspace!.id.replace('0x', ''), 16)
+			const workspaceId = parseInt(grant!.workspace!.id.replace('0x', ''), 16)
 
 			logger.info({ workspaceId, role, address }, 'creating invite ')
 			// console.log("inviteee", biconomyWalletClient, scwAddress, chainId);
@@ -133,7 +133,7 @@ export const useMakeInvite = () => {
 				biconomy,
 				targetContractObject,
 				'createInviteLink',
-				[workspace!.id, role, address],
+				[grant!.workspace!.id, role, address],
 				workspaceRegistry.address,
 				biconomyWalletClient,
 				scwAddress,
@@ -161,12 +161,12 @@ export const useMakeInvite = () => {
 
 			return inviteInfo
 		},
-		[workspace?.id, workspaceRegistry, biconomyWalletClient, chainId, scwAddress, biconomy, nonce, webwallet]
+		[grant?.workspace?.id, workspaceRegistry, biconomyWalletClient, chainId, scwAddress, biconomy, nonce, webwallet]
 	)
 
 	const getMakeInviteGasEstimate = useCallback(
 		async(role: number) => {
-			if(!workspace) {
+			if(!grant?.workspace) {
 				return undefined
 			}
 
@@ -175,13 +175,13 @@ export const useMakeInvite = () => {
 			return await workspaceRegistry
 				.estimateGas
 				.createInviteLink(
-					workspace?.id,
+					grant.workspace.id,
 					role,
 					// testing address
 					fakeAddress,
 				)
 		},
-		[workspaceRegistry, workspace?.id]
+		[workspaceRegistry, grant?.workspace?.id]
 	)
 
 	return { makeInvite, getMakeInviteGasEstimate, isBiconomyInitialised }

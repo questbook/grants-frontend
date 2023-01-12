@@ -198,7 +198,7 @@ function Payouts(
 						<Button
 							className='continueBtn'
 							variant='primaryMedium'
-							w='166px'
+							w='261px'
 							h='48px'
 							onClick={
 								() => {
@@ -208,7 +208,7 @@ function Payouts(
 							isDisabled={!payoutMode || !amount}
 						>
 							{/* {shouldCreateRFP ? 'Create RFP' : 'Continue'} */}
-							{ rfpFormSubmissionType === 'edit' ? 'Save All' : 'Continue'}
+							{ rfpFormSubmissionType === 'edit' ? 'Save All' : 'Create grant program'}
 						</Button>
 					</Flex>
 				</Flex>
@@ -259,7 +259,7 @@ function Payouts(
 		if(rfpFormSubmissionType === 'edit') {
 			handleSaveChanges()
 		} else {
-			setStep(4)
+			createRFP()
 		}
 	}
 

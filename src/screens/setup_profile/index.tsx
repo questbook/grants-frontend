@@ -10,7 +10,7 @@ import FlushedInput from 'src/libraries/ui/FlushedInput'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 
 function SetupProfile() {
@@ -139,7 +139,8 @@ function SetupProfile() {
 		)
 	}
 
-	const { inviteInfo, setRole } = useContext(ApiClientsContext)!
+	const { inviteInfo } = useContext(ApiClientsContext)!
+	const { setRole } = useContext(GrantsProgramContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
 	const router = useRouter()
 

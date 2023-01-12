@@ -1,9 +1,10 @@
 import { useContext, useMemo, useState } from 'react'
-import { Box, Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text, Textarea } from '@chakra-ui/react'
+import { Box, Button, Flex, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text, Textarea } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
+import QuickReplyButton from 'src/screens/dashboard/_components/QuickReplyButton'
 import useAddComments from 'src/screens/dashboard/_hooks/useAddComments'
 import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
-import { SendAnUpdateContext } from 'src/screens/dashboard/Context'
+import { DashboardContext, SendAnUpdateContext } from 'src/screens/dashboard/Context'
 
 function SendAnUpdateModal() {
 	const buildComponent = () => {
@@ -30,31 +31,49 @@ function SendAnUpdateModal() {
 							textAlign='center'>
 							Send an update
 						</Text>
-						<Text
-							mt={6}
-							variant='v2_metadata'
-							fontWeight='500'
-							color='gray.6'>
-							FEW WAYS TO START THE DISCUSSION.
-						</Text>
-						<Flex
-							direction='column'
-						>
-							{
-								Array.from(Array(Math.floor(proposalTags.length / 2)).keys()).map((_, index) => {
-									const reply1 = proposalTags?.[index * 2]
-									const reply2 = proposalTags?.[index * 2 + 1]
-									return (
-										<Flex
-											key={index}
-											mt={3}>
-											{reply1 && tagButton(reply1.icon, reply1.title, index * 2)}
-											{reply2 && tagButton(reply2.icon, reply2.title, index * 2 + 1)}
-										</Flex>
-									)
-								})
-							}
-						</Flex>
+						{
+							proposalTags?.length > 0 && (
+								<Text
+									mt={6}
+									variant='v2_metadata'
+									fontWeight='500'
+									color='gray.6'>
+									FEW WAYS TO START THE DISCUSSION.
+								</Text>
+							)
+						}
+						{
+							proposalTags?.length > 0 && (
+								<Flex
+									mt={2}
+									gap={3}>
+									{
+										proposalTags?.map((tag, index) => {
+											return (
+												<QuickReplyButton
+													key={index}
+													tag={tag}
+													selectedTags={selectedTags}
+													onClick={
+														() => {
+															const tags = { ...selectedTags }
+															logger.info('tags: ', tags)
+															if(tags[index]) {
+																delete tags[index]
+															} else {
+																tags[index] = true
+															}
+
+															setSelectedTags(tags)
+														}
+													}
+													index={index} />
+											)
+										})
+									}
+								</Flex>
+							)
+						}
 						<Box mt={4} />
 						<Textarea
 							value={text}
@@ -69,7 +88,8 @@ function SendAnUpdateModal() {
 							isLoading={networkTransactionModalStep !== undefined}
 							onClick={
 								async() => {
-									const ret = await addComments(text, tags)
+									// TODO: Make batch comments private or public
+									const ret = await addComments(text, tags, false)
 									if(ret) {
 										setIsModalOpen(false)
 										setText('')
@@ -85,48 +105,9 @@ function SendAnUpdateModal() {
 		)
 	}
 
-	const tagButton = (icon: string, title: string, index: number) => {
-		return (
-			<Button
-				key={index}
-				ml={index % 2 === 0 ? 0 : 3}
-				// w='100%'
-				justifyContent='start'
-				py={1}
-				px={3}
-				borderRadius='2px'
-				leftIcon={
-					<Image
-						boxSize='24px'
-						src={icon} />
-				}
-				bg={index in selectedTags ? 'accent.azure' : 'gray.2'}
-				onClick={
-					() => {
-						const tags = { ...selectedTags }
-						logger.info('tags: ', tags)
-						if(tags[index]) {
-							delete tags[index]
-						} else {
-							tags[index] = true
-						}
-
-						setSelectedTags(tags)
-					}
-				}
-				isDisabled={Object.keys(selectedTags).length > 0 && !(index in selectedTags)}
-			>
-				<Text
-					fontWeight='400'
-					color={index in selectedTags ? 'white' : 'black.1'}>
-					{title}
-				</Text>
-			</Button>
-		)
-	}
-
+	const { selectedProposals, proposals } = useContext(DashboardContext)!
 	const { isModalOpen, setIsModalOpen } = useContext(SendAnUpdateContext)!
-	const { proposalTags } = useProposalTags()
+	const { proposalTags } = useProposalTags({ proposals: proposals.filter(p => selectedProposals.has(p.id)) })
 	const [ text, setText ] = useState<string>('')
 
 	const [ selectedTags, setSelectedTags ] = useState<{[key: number]: boolean}>({})

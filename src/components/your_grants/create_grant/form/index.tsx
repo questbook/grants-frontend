@@ -248,7 +248,7 @@ function Form({
 				}
 			}
 
-			if(shouldEncrypt){
+			if(shouldEncrypt) {
 				if(fields.applicantEmail) {
 					fields.applicantEmail = { ...fields.applicantEmail, pii: true }
 				}
@@ -283,7 +283,7 @@ function Form({
 					},
 				)
 			}
-			
+
 			const s = {
 				title,
 				summary,
@@ -298,7 +298,7 @@ function Form({
 				},
 			}
 
-			console.log("Form requirements", s)
+			console.log('Form requirements', s)
 
 			onSubmit(s)
 		}

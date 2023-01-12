@@ -235,6 +235,8 @@ GrantApplicationUpdate:
       type: string
       minLength: 1
       maxLength: 4096
+    applicantPublicKey:
+      $ref: 'PublicKey'
 PrivateCommentAddRequest:
   type: object
   required:
@@ -498,6 +500,10 @@ GrantCreateRequest:
       type: string
       format: date-time
       description: Deadline for proposal submission
+    deadline:
+      type: string
+      format: date-time
+      description: same as endDate property. Introduced this field for backward compatibility
     details:
       type: string
       maxLength: 4096

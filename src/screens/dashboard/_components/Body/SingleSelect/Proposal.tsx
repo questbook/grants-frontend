@@ -1,12 +1,13 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { Box, Button, CircularProgress, Flex, Image, Text } from '@chakra-ui/react'
-import { ethers } from 'ethers'
-import { defaultChainId, USD_ASSET } from 'src/constants/chains'
+import { defaultChainId } from 'src/constants/chains'
+import { Mail } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import CopyIcon from 'src/libraries/ui/CopyIcon'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
 import { getChainInfo } from 'src/libraries/utils/token'
+import { GrantsProgramContext } from 'src/pages/_app'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -84,9 +85,8 @@ function Proposal() {
 											bg='gray.3'
 											borderRadius='3xl'
 											justify='center'>
-											<Image
+											<Mail
 												alignSelf='center'
-												src='/v2/icons/mail.svg'
 												boxSize='12px' />
 										</Flex>
 									}>
@@ -119,8 +119,7 @@ function Proposal() {
 													borderRadius='3xl'
 													justify='center'>
 													<CopyIcon
-														alignSelf='center'
-														boxSize='12px'
+														// boxSize='12px'
 														text={getFieldString(proposal, 'applicantAddress')} />
 												</Flex>
 											}>
@@ -203,7 +202,31 @@ function Proposal() {
 					{projectDetails ? <TextViewer text={projectDetails} /> : null}
 				</Flex>
 
-				<Flex
+				{
+					grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1).startsWith('customField')).map((field, index) => {
+						const id = field.id.substring(field.id.indexOf('.') + 1)
+						const title = field.title.substring(field.title.indexOf('-') + 1)
+							.split('\\s')
+							.join(' ')
+						const value = getFieldString(proposal, id)
+						return (
+							<Flex
+								key={index}
+								w='100%'
+								mt={4}
+								direction='column'>
+								<Text color='gray.5'>
+									{title}
+								</Text>
+								<Text mt={1}>
+									{value}
+								</Text>
+							</Flex>
+						)
+					})
+				}
+
+				{/* <Flex
 					w='100%'
 					mt={4}
 					direction='column'>
@@ -244,19 +267,16 @@ function Proposal() {
 							)
 						})
 					}
-				</Flex>
+				</Flex> */}
 			</Flex>
 		)
 	}
 
+	const { grant } = useContext(GrantsProgramContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 
 	const proposal = useMemo(() => {
-		const index = selectedProposals.indexOf(true)
-
-		if(index !== -1) {
-			return proposals[index]
-		}
+		return proposals.find(p => selectedProposals.has(p.id))
 	}, [proposals, selectedProposals])
 
 	const chainId = useMemo(() => {

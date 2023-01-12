@@ -1,9 +1,11 @@
-import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
+import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { defaultChainId } from 'src/constants/chains'
 import { useGetWorkspaceDetailsQuery, useGetWorkspaceMembersByWorkspaceIdQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
-import { ApiClientsContext } from 'src/pages/_app'
+import { GrantsProgramContext } from 'src/pages/_app'
 import { GrantProgramForm, SettingsFormContextType, WorkspaceMembers } from 'src/screens/settings/_utils/types'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 const SettingsFormContext = createContext<SettingsFormContextType | undefined>(undefined)
 
@@ -12,7 +14,7 @@ const SettingsFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		<SettingsFormContext.Provider
 			value={
 				{
-					workspace: workspace!,
+					workspace: grant?.workspace!,
 					workspaceMembers: workspaceMembers!,
 					grantProgramData: grantProgramData!,
 					setGrantProgramData: setGrantProgramData!,
@@ -25,7 +27,11 @@ const SettingsFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const [grantProgramData, setGrantProgramData] = useState<GrantProgramForm>()
 	const [workspaceMembers, setWorkspaceMembers] = useState<WorkspaceMembers>()
 
-	const { workspace, chainId } = useContext(ApiClientsContext)!
+	const { grant } = useContext(GrantsProgramContext)!
+
+	const chainId = useMemo(() => {
+		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
+	}, [grant])
 
 	const { fetchMore: fetchGrantProgram } = useMultiChainQuery({
 		useQuery: useGetWorkspaceDetailsQuery,
@@ -36,13 +42,13 @@ const SettingsFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const { fetchMore: fetchWorkspaceMembers } = useMultiChainQuery({
 		useQuery: useGetWorkspaceMembersByWorkspaceIdQuery,
 		options: {},
-		chains: [chainId ]
+		chains: [chainId]
 	})
 
 
 	const fetchGrantProgramDetails = useCallback(async() => {
 		const response = await fetchGrantProgram({
-			workspaceID: workspace?.id
+			workspaceID: grant?.workspace?.id
 		})
 		logger.info('Grant program fetched', response)
 		setGrantProgramData({
@@ -57,18 +63,18 @@ const SettingsFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 				}
 			})
 		 })
-		return workspace
-	}, [chainId, workspace])
+		return grant?.workspace
+	}, [chainId, grant])
 
 
 	const fetchWorkspaceMembersDetails = useCallback(async() => {
 		const response = await fetchWorkspaceMembers({
-			workspaceId: workspace?.id
+			workspaceId: grant?.workspace?.id
 		})
 		logger.info('Workspace members fetched', response)
 		setWorkspaceMembers(response[0]?.workspaceMembers)
 		return workspaceMembers
-	}, [chainId, workspace])
+	}, [chainId, grant])
 
 	useEffect(() => {
 		fetchGrantProgramDetails().then((message) => {
@@ -78,7 +84,7 @@ const SettingsFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		fetchWorkspaceMembersDetails().then((message) => {
 			logger.info({ message }, 'Fetch grant members message')
 		})
-	}, [workspace, chainId])
+	}, [grant, chainId])
 
 	return providerComponent()
 }

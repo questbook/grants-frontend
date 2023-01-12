@@ -1,5 +1,6 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
+import { defaultChainId } from 'src/constants/chains'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useSetupProfile from 'src/libraries/hooks/useSetupProfile'
 import logger from 'src/libraries/logger'
@@ -7,8 +8,9 @@ import FlushedInput from 'src/libraries/ui/FlushedInput'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
 import { TXN_STEPS } from 'src/libraries/utils/constants'
 import { usePiiForWorkspaceMember } from 'src/libraries/utils/pii'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 interface Props {
 	isOpen: boolean
@@ -136,16 +138,20 @@ function UpdateProfileModal({ isOpen, onClose }: Props) {
 		)
 	}
 
-	const { workspace, chainId } = useContext(ApiClientsContext)!
+	const { grant } = useContext(GrantsProgramContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
 
 	const member = useMemo(() => {
-		return workspace?.members?.find((member) => member.actorId === scwAddress?.toLowerCase())
-	}, [workspace, scwAddress])
+		return grant?.workspace?.members?.find((member) => member.actorId === scwAddress?.toLowerCase())
+	}, [grant, scwAddress])
+
+	const chainId = useMemo(() => {
+		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
+	}, [grant])
 
 	const toast = useCustomToast()
 
-	const { decrypt } = usePiiForWorkspaceMember(workspace?.id, member?.id, member?.publicKey, chainId)
+	const { decrypt } = usePiiForWorkspaceMember(grant?.workspace?.id, member?.id, member?.publicKey, chainId)
 
 	const [name, setName] = useState<string>('')
 	const [email, setEmail] = useState<{data: string, state: 'loading' | 'loaded'}>({ data: '', state: 'loaded' })
@@ -194,7 +200,7 @@ function UpdateProfileModal({ isOpen, onClose }: Props) {
 
 	const { setupProfile, isBiconomyInitialised } = useSetupProfile(
 		{
-			workspaceId: workspace?.id,
+			workspaceId: grant?.workspace?.id,
 			memberId: member?.id,
 			chainId,
 			type: 'update',

@@ -18,7 +18,7 @@ import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import { validateAndUploadToIpfs } from 'src/libraries/validator'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { GRANT_CACHE_KEY } from 'src/screens/dashboard/_utils/constants'
 import useUpdateRFP from 'src/screens/request_proposal/_hooks/useUpdateRFP'
 import BuilderDiscovery from 'src/screens/request_proposal/_subscreens/BuilderDiscovery'
@@ -60,6 +60,21 @@ function RequestProposal() {
 			>
 				{/* <Button onClick={() => createGrant()}>create grant</Button> */}
 				{renderBody()}
+				<NetworkTransactionFlowStepperModal
+					isOpen={isNetworkTransactionModalOpen}
+					currentStepIndex={currentStepIndex!}
+					viewTxnLink={getExplorerUrlForTxHash(network, txHash)}
+					onClose={
+						async() => {
+							setCurrentStepIndex(undefined)
+							setRole('admin')
+							const ret = await router.push({ pathname: '/dashboard' })
+							if(ret) {
+								router.reload()
+							}
+						}
+					}
+				/>
 			</Flex>
 		)
 	}
@@ -118,26 +133,11 @@ function RequestProposal() {
 						milestones={milestones}
 						setMilestones={setMilestones}
 						shouldCreateRFP={shouldCreateRFP}
-						createRFP={createRFP}
+						createRFP={createWorkspaceAndGrant}
 						setOpenNetworkTransactionModal={setIsNetworkTransactionModalOpen}
 						rfpFormSubmissionType={rfpFormType}
 						handleOnEdit={handleOnEdit}
 						updateRFP={updateRFP}
-					/>
-					<NetworkTransactionFlowStepperModal
-						isOpen={isNetworkTransactionModalOpen}
-						currentStepIndex={currentStepIndex!}
-						viewTxnLink={getExplorerUrlForTxHash(network, rfpUpdateTxHash)}
-						onClose={
-							async() => {
-								setCurrentStepIndex(undefined)
-								setRole('admin')
-								const ret = await router.push({ pathname: '/dashboard' })
-								if(ret) {
-									router.reload()
-								}
-							}
-						}
 					/>
 				</>
 			)
@@ -159,35 +159,21 @@ function RequestProposal() {
 					setDomainImage={setDomainImage}
 					step={step}
 					setIsOpen={setIsNetworkTransactionModalOpen}
-					createWorkspace={createWorkspaceAndGrant} />
-				<NetworkTransactionFlowStepperModal
-					isOpen={isNetworkTransactionModalOpen}
-					currentStepIndex={currentStepIndex!}
-					viewTxnLink={getExplorerUrlForTxHash(network, txHash)}
-					onClose={
-						async() => {
-							setCurrentStepIndex(undefined)
-							setRole('admin')
-							const ret = await router.push({ pathname: '/dashboard' })
-							if(ret) {
-								router.reload()
-							}
-						}
-					}
+					createWorkspace={createWorkspaceAndGrant}
 				/>
 			</>
 		)
 		}
 	}
 
-	// const { role, workspace, chainId } = useContext(ApiClientsContext)!
+	const { workspace, chainId } = useContext(ApiClientsContext)!
 
 	// State for proposal creation
 	// const todayDate = today()
 	const [proposalName, setProposalName] = useState('')
 	const [startDate, setStartDate] = useState<string>()
 	const [endDate, setEndDate] = useState<string>()
-	const [shouldCreateRFP, setShouldCreateRFP] = useState(false)
+	const [shouldCreateRFP, setShouldCreateRFP] = useState(true)
 
 	// const [submitType, setSubmitType] = useState<RFPFormType>('submit')
 
@@ -267,7 +253,8 @@ function RequestProposal() {
 	const { data: accountDataWebwallet, nonce } = useQuestbookAccount(shouldRefreshNonce)
 	const { webwallet } = useContext(WebwalletContext)!
 
-	const { subgraphClients, setRole, chainId, workspace } = useContext(ApiClientsContext)!
+	const { subgraphClients } = useContext(ApiClientsContext)!
+	const { setRole } = useContext(GrantsProgramContext)!
 	const { network } = useNetwork()
 	const targetContractObject = useQBContract('workspace', network as unknown as SupportedChainId)
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
@@ -380,7 +367,7 @@ function RequestProposal() {
 			setCurrentStepIndex(0)
 			const uploadedImageHash = (await uploadToIPFS(domainImage)).hash
 			const { hash: workspaceCreateIpfsHash } = await validateAndUploadToIpfs('WorkspaceCreateRequest', {
-				title: domainName!,
+				title: proposalName!,
 				about: '',
 				logoIpfsHash: uploadedImageHash,
 				creatorId: accountDataWebwallet!.address!,
@@ -490,6 +477,7 @@ function RequestProposal() {
 					creatorId: accountDataWebwallet!.address!,
 					workspaceId: workspaceId.toString()!,
 					fields: allApplicantDetails,
+					grantManagers: [accountDataWebwallet!.address!],
 				}
 
 				if(review) {
@@ -576,7 +564,7 @@ function RequestProposal() {
 
 	const handleOnEdit = (field: string, value: string | ApplicantDetailsFieldType[] | string []) => {
 		// const { value } = e.target
-		console.log('rfp edited', { ...RFPEditFormData, [field]: value })
+		logger.info('rfp edited', { ...RFPEditFormData, [field]: value })
 		setRFPEditFormData({ ...RFPEditFormData, [field]: value })
 	}
 
@@ -629,6 +617,7 @@ function RequestProposal() {
 				creatorId: accountDataWebwallet!.address!,
 				workspaceId: Number(workspace?.id).toString(),
 				fields: allApplicantDetails,
+				grantManagers: [accountDataWebwallet!.address!],
 			})
 
 			logger.info('grantCreateIpfsHash', grantCreateIpfsHash)

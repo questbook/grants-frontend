@@ -1,7 +1,9 @@
 import { useContext, useEffect } from 'react'
 import { Checkbox, Flex, Image, Text } from '@chakra-ui/react'
 import config from 'src/constants/config.json'
+import { CheckDouble, Close } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
+import { GrantsProgramContext } from 'src/pages/_app'
 import useProposalTags from 'src/screens/dashboard/_hooks/useProposalTags'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
@@ -11,25 +13,25 @@ import { getFieldString } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 interface Props {
-    index: number
     proposal: ProposalType
 }
 
-function ProposalCard({ index, proposal }: Props) {
+function ProposalCard({ proposal }: Props) {
 	const buildComponent = () => {
 		return (
 			<Flex
-				bg={selectedProposals[index] ? 'gray.1' : 'white'}
+				bg={selectedProposals.has(proposal.id) ? 'gray.1' : 'white'}
 				direction='column'
-				mt={2}
+				// mt={2}
 				pl={5}
 				pr={2}
-				py={2}>
+				py={4}
+				borderBottom='1px solid #E7E4DD'>
 				<Flex align='center'>
 					{
 						role === 'admin' && (
 							<Checkbox
-								isChecked={selectedProposals[index]}
+								isChecked={selectedProposals.has(proposal.id)}
 								spacing={1}
 								onChange={
 									() => {
@@ -83,6 +85,17 @@ function ProposalCard({ index, proposal }: Props) {
 						variant='v2_metadata'>
 						{role === 'builder' ? proposal?.grant?.workspace?.title : getFieldString(proposal, 'applicantName')}
 					</Text>
+					{
+						(proposal?.state === 'approved' || proposal?.state === 'rejected') && (
+							<Flex
+								ml='auto'
+								p={2}
+								borderRadius='4px'
+								bg={proposal?.state === 'approved' ? 'accent.columbia' : 'accent.melon'}>
+								{proposal?.state === 'approved' ? <CheckDouble /> : <Close />}
+							</Flex>
+						)
+					}
 				</Flex>
 				<Flex gap={2}>
 					{
@@ -104,8 +117,8 @@ function ProposalCard({ index, proposal }: Props) {
 		)
 	}
 
-	const { role, selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
-
+	const { selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
+	const { role } = useContext(GrantsProgramContext)!
 	const { tags } = useProposalTags({ proposal })
 
 	useEffect(() => {
@@ -113,14 +126,26 @@ function ProposalCard({ index, proposal }: Props) {
 	}, [tags])
 
 	const onClick = (isText: boolean = false) => {
-		const count = selectedProposals.filter((_) => _).length
-		if(count === 1 && selectedProposals[index]) {
+		if(selectedProposals.size === 1 && selectedProposals.has(proposal.id)) {
 			return
 		}
 
-		const copy = isText ? Array(selectedProposals.length).fill(false) : [...selectedProposals]
-		copy[index] = !copy[index]
-		setSelectedProposals(copy)
+		if(selectedProposals.size === 1 && isText) {
+			// Only 1 proposal was selected and the user clicked on its name
+			setSelectedProposals(new Set<string>([proposal.id]))
+		} else {
+			// Either more proposals are selected or the user clicked on the checkbox
+			// In both cases, we want to add / remove the proposal to / from the set respectively
+
+			const newSet = new Set<string>(selectedProposals)
+			if(newSet.has(proposal.id)) {
+				newSet.delete(proposal.id)
+			} else {
+				newSet.add(proposal.id)
+			}
+
+			setSelectedProposals(newSet)
+		}
 	}
 
 	return buildComponent()

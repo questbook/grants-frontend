@@ -5,7 +5,14 @@ import Loader from 'src/components/ui/loader'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
 import { defaultChainId } from 'src/constants/chains'
 import {
+	GetAllGrantsForExploreQuery,
+	GetAllGrantsForMemberQuery,
+	GetAllGrantsForReviewerExploreQuery,
 	GetDaOsForExploreQuery,
+	useGetAllGrantsForBuilderQuery,
+	useGetAllGrantsForExploreQuery,
+	useGetAllGrantsForMemberQuery,
+	useGetAllGrantsForReviewerExploreQuery,
 	useGetDaOsForExploreQuery,
 	useGetGrantsProgramDetailsQuery,
 	Workspace_Filter as WorkspaceFilter,
@@ -19,10 +26,12 @@ import useUpdateDaoVisibility from 'src/hooks/useUpdateDaoVisibility'
 import logger from 'src/libraries/logger'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
-import DomainGrid from 'src/screens/discover/_components/DaosGrid'
+import PersonalRFPGrid from 'src/screens/discover/_components/PersonalRFPGrid'
+import AllRFPsGrid from 'src/screens/discover/_components/rfpGrid'
 import RightArrowIcon from 'src/screens/discover/_components/RightArrowIcon'
 import { useMultichainDaosPaginatedQuery } from 'src/screens/discover/_hooks/useMultiChainPaginatedQuery'
 import { mergeSortedArrays } from 'src/screens/discover/_utils/mergeSortedArrays'
+import { BuilderGrant, Grant, PersonalGrant, ReviewerGrant } from 'src/screens/discover/_utils/types'
 import { chainNames } from 'src/utils/chainNames'
 import getErrorMessage from 'src/utils/errorUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
@@ -31,23 +40,7 @@ const PAGE_SIZE = 10
 
 function Discover() {
 	const router = useRouter()
-	const { fromDashboard } = router.query
-	const { isNewUser, role, setRole, possibleRoles, inviteInfo } = useContext(ApiClientsContext)!
-
-	useEffect(() => {
-		if(inviteInfo || fromDashboard === 'true') {
-			return
-		}
-
-		logger.info({ isNewUser, role, possibleRoles }, '(Navigation) Is New User')
-		if(!isNewUser && (possibleRoles.length > 1 || role !== 'community')) {
-			if(role === 'community') {
-				setRole(possibleRoles[1])
-			}
-
-			router.replace({ pathname: '/dashboard' })
-		}
-	}, [isNewUser, role, possibleRoles, inviteInfo, fromDashboard])
+	const { inviteInfo } = useContext(ApiClientsContext)!
 
 	const buildComponent = () => {
 		return inviteInfo ? inviteView() : normalView()
@@ -58,7 +51,8 @@ function Discover() {
 			<>
 				<Flex
 					direction='column'
-					w='100%'>
+					w='100%'
+				>
 					{/* Start Hero Container */}
 					<Flex
 						direction='row'
@@ -111,7 +105,7 @@ function Discover() {
 											pathname: '/request_proposal',
 										})
 									}>
-									Invite Proposals
+									Run a grant program
 								</Button>
 							</Flex>
 
@@ -189,7 +183,7 @@ function Discover() {
 					<Container
 						className='domainGrid'
 						minWidth='100%'
-						p={10}
+						p={12}
 						w='100%'>
 						{
 							isQbAdmin === undefined ? (
@@ -203,16 +197,36 @@ function Discover() {
 											fontWeight='500'
 											fontSize='24px'
 											lineHeight='32px'>
+											For You
+										</Text>
+									</Box>
+									<PersonalRFPGrid
+										personalGrants={personalGrants!}
+										builderGrants={builderGrants!}
+										reviewerGrants={reviewerGrants!}
+										unsavedDomainVisibleState={unsavedDomainState}
+										onDaoVisibilityUpdate={onDaoVisibilityUpdate}
+										hasMore={hasMoreDaos}
+										fetchMore={fetchMoreDaos}
+										isAdmin={isQbAdmin}
+									/>
+
+									<Box my={4}>
+										<Text
+											fontWeight='500'
+											fontSize='24px'
+											lineHeight='32px'>
 											Discover
 										</Text>
 									</Box>
-									<DomainGrid
+
+									<AllRFPsGrid
 										isAdmin={isQbAdmin}
 										unsavedDomainVisibleState={unsavedDomainState}
 										onDaoVisibilityUpdate={onDaoVisibilityUpdate}
 										hasMore={hasMoreDaos}
 										fetchMore={fetchMoreDaos}
-										workspaces={totalDaos} />
+										grants={grants!} />
 								</>
 							)
 						}
@@ -379,7 +393,34 @@ function Discover() {
 		chains: inviteInfo?.chainId ? [inviteInfo.chainId] : [defaultChainId]
 	})
 
+	const { fetchMore: fetchAllGrantProgram } = useMultiChainQuery({
+		useQuery: useGetAllGrantsForExploreQuery,
+		options: {},
+	})
+
+	const { fetchMore: fetchAllGrantsForMember } = useMultiChainQuery({
+		useQuery: useGetAllGrantsForMemberQuery,
+		options: {}
+	})
+
+	const { fetchMore: fetchAllGrantsForBuilder } = useMultiChainQuery({
+		useQuery: useGetAllGrantsForBuilderQuery,
+		options: {}
+	})
+
+	const { fetchMore: fetchAllGrantsForReviewer } = useMultiChainQuery({
+		useQuery: useGetAllGrantsForReviewerExploreQuery,
+		options: {}
+	})
+
 	const [grantsProgramTitle, setGrantsProgramTitle] = useState<string>()
+
+	const [first, setFirst] = useState(10)
+	const [skip, setSkip] = useState(0)
+	const [grants, setGrants] = useState<Grant[]>()
+	const [personalGrants, setPersonalGrants] = useState<PersonalGrant[]>()
+	const [builderGrants, setBuilderGrants] = useState<BuilderGrant[]>()
+	const [reviewerGrants, setReviewerGrants] = useState<ReviewerGrant[]>()
 
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()
@@ -489,9 +530,113 @@ function Discover() {
 		setGrantsProgramTitle(results[0]?.grantsProgram?.title)
 	}, [inviteInfo])
 
+	const fetchAllGrantProgramForExplore = useCallback(async() => {
+		const response = (await fetchAllGrantProgram({
+			first: first,
+			skip: skip,
+		})).filter(e => e !== undefined)
+
+
+		logger.info('Grant program fetched', response)
+		// return workspace
+		const allFetchedGrants: GetAllGrantsForExploreQuery['grants'] = []
+
+		for(const res of response) {
+			if(!res) {
+				continue
+			}
+
+			const grants = res.grants
+			// const mergedArray = mergeSortedArrays(allFetchedGrants, grants, (a, b) => {
+			// 	return b.deadlineS > a.deadlineS
+			// })
+			allFetchedGrants.push(...grants)
+		}
+
+		logger.info('all fetched grants', allFetchedGrants)
+		setGrants(allFetchedGrants)
+	}, [first, skip])
+
+	const fetchAllGrantsForMemberExplore = useCallback(async() => {
+		const response = await fetchAllGrantsForMember({
+			memberId: scwAddress
+		})
+		const allFetchedGrants: GetAllGrantsForMemberQuery['grants'] = []
+		for(const res of response) {
+			if(!res) {
+				continue
+			}
+
+			const grants = res.grants
+			// const mergedArray = mergeSortedArrays(allFetchedGrants, grants, (a, b) => {
+			// 	return a.createdAtS > b.createdAtS
+			// })
+			logger.info('Owner grants', grants)
+			allFetchedGrants.push(...grants)
+		}
+
+		setPersonalGrants(allFetchedGrants)
+
+	}, [first, skip, isBiconomyInitialised, scwAddress])
+
+	const fetchAllGrantsForReviewerExplore = useCallback(async() => {
+		const response = await fetchAllGrantsForReviewer({
+			memberId: scwAddress
+		})
+		const allFetchedGrants: GetAllGrantsForReviewerExploreQuery['grantReviewerCounters'] = []
+		for(const res of response) {
+			if(!res) {
+				continue
+			}
+
+			const grants = res.grantReviewerCounters
+			// const mergedArray = mergeSortedArrays(allFetchedGrants, grants, (a, b) => {
+			// 	return a.createdAtS > b.createdAtS
+			// })
+
+			const filteredGrants = grants.filter(e => e.grant.workspace.isVisible === true)
+			logger.info('Reviewer grants fetched', grants, filteredGrants)
+			allFetchedGrants.push(...filteredGrants)
+		}
+
+		setReviewerGrants(allFetchedGrants)
+
+	}, [first, skip, isBiconomyInitialised, scwAddress])
+
+	const fetchAllGrantsForBuilderExplore = useCallback(async() => {
+		const response = await fetchAllGrantsForBuilder({
+			applicantId: scwAddress
+		})
+
+		const allFetchedGrants: GetAllGrantsForMemberQuery['grants'] = []
+		for(const res of response) {
+			if(!res) {
+				continue
+			}
+
+			const grants = res.grants
+			// const mergedArray = mergeSortedArrays(allFetchedGrants, grants, (a, b) => {
+			// 	return a.createdAtS > b.createdAtS
+			// })
+			logger.info('Builder grants fetched', grants)
+			allFetchedGrants.push(...grants)
+		}
+
+		setBuilderGrants(allFetchedGrants)
+
+	}, [first, skip, isBiconomyInitialised, scwAddress])
+
+
 	useEffect(() => {
 		fetchDetails()
 	}, [inviteInfo])
+
+	useEffect(() => {
+		fetchAllGrantProgramForExplore()
+		fetchAllGrantsForMemberExplore()
+		fetchAllGrantsForBuilderExplore()
+		fetchAllGrantsForReviewerExplore()
+	}, [first, skip, isBiconomyInitialised, scwAddress])
 
 	const onGetStartedClick = () => {
 		router.push({ pathname: '/setup_profile' })
@@ -523,7 +668,7 @@ function useMultiChainDaosForExplore(
 		mergeResults(results) {
 			let final: GetDaOsForExploreQuery['workspaces'] = []
 			for(const { workspaces } of results) {
-				// logger.info({ workspaces }, 'Browse DAO Workspaces')
+				logger.info({ workspaces }, 'Browse DAO Workspaces')
 				final = mergeSortedArrays(final, workspaces, (a, b) => {
 					// @ts-ignore
 					// basically, we use the order key to fetch the sorting property

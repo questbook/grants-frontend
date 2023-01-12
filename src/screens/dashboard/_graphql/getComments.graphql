@@ -1,4 +1,4 @@
-query getCommentsForGPMember($grantId: String!, $first: Int, $skip: Int) {
+query getComments($grantId: String!, $first: Int, $skip: Int) {
   comments(
     first: $first,
     skip: $skip,

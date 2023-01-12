@@ -9,7 +9,7 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import MilestoneChoose from 'src/screens/dashboard/_components/FundBuilder/MilestoneChoose'
 import PaidByWallet from 'src/screens/dashboard/_components/FundBuilder/PaidByWallet'
 import PayFromChoose from 'src/screens/dashboard/_components/FundBuilder/PayFromChoose'
@@ -174,7 +174,8 @@ function FundBuilderModal() {
 	}
 
 	const { safeObj } = useSafeContext()
-	const { proposals, selectedProposals, selectedGrant } = useContext(DashboardContext)!
+	const { grant } = useContext(GrantsProgramContext)!
+	const { proposals, selectedProposals } = useContext(DashboardContext)!
 	const {
 		isModalOpen,
 		setIsModalOpen,
@@ -215,11 +216,7 @@ function FundBuilderModal() {
 	}, [safeObj])
 
 	const proposal = useMemo(() => {
-		const index = selectedProposals.indexOf(true)
-
-		if(index !== -1) {
-			return proposals[index]
-		}
+		return proposals.find(p => selectedProposals.has(p.id))
 	}, [proposals, selectedProposals])
 
 	const milestones = useMemo(() => {
@@ -231,6 +228,7 @@ function FundBuilderModal() {
 			return
 		}
 
+		setAmounts([proposal?.milestones?.[0]?.amount ? parseInt(proposal?.milestones?.[0]?.amount) : 0])
 		setTos([getFieldString(proposal, 'applicantAddress') ?? tos?.[0]])
 		setMilestoneIndices([0])
 	}, [proposal])
@@ -319,7 +317,7 @@ function FundBuilderModal() {
 				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress, safeObj?.chainId))
 				setSignerVerifiedState('transaction_initiated')
 			} else {
-				proposaladdress = await safeObj?.proposeTransactions(selectedGrant?.title, temp, phantomWallet)
+				proposaladdress = await safeObj?.proposeTransactions(grant?.title, temp, phantomWallet)
 				setPayoutInProcess(false)
 				if(proposaladdress?.error) {
 					customToast({
@@ -345,9 +343,7 @@ function FundBuilderModal() {
 		}
 	}
 
-	const { workspace } = useContext(ApiClientsContext)!
-
-	const workspacechainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+	const workspacechainId = getSupportedChainIdFromWorkspace(grant?.workspace) || defaultChainId
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: workspacechainId ? workspacechainId.toString() : defaultChainId.toString(),
@@ -382,7 +378,7 @@ function FundBuilderModal() {
 				selectedTokenInfo?.tokenName.toLowerCase(),
 				'nonEvmAssetAddress-toBeChanged',
 				[amounts?.[0]],
-				workspace?.id,
+				grant?.workspace?.id,
 				proposaladdress
 			]
 
@@ -414,7 +410,7 @@ function FundBuilderModal() {
 
 			const { txFee } = await getTransactionDetails(transactionHash, workspacechainId.toString())
 
-			await chargeGas(Number(workspace?.id), Number(txFee), workspacechainId)
+			await chargeGas(Number(grant?.workspace?.id), Number(txFee), workspacechainId)
 
 		} catch(e) {
 			logger.error('disburse error', e)

@@ -8,7 +8,7 @@ import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import PayFromChoose from 'src/screens/dashboard/_components/FundBuilder/PayFromChoose'
 import PayWithChoose from 'src/screens/dashboard/_components/FundBuilder/PayWithChoose'
 import ProposalDetails from 'src/screens/dashboard/_components/FundBuilder/ProposalDetails'
@@ -191,7 +191,8 @@ function FundBuilderDrawer() {
 		setSelectedMode(safeObj ? Safe : Wallets[0])
 	}, [safeObj])
 
-	const { proposals, selectedProposals, selectedGrant } = useContext(DashboardContext)!
+	const { grant } = useContext(GrantsProgramContext)!
+	const { proposals, selectedProposals } = useContext(DashboardContext)!
 	const selectedProposalsData = useMemo(() => {
 		if(!proposals || !selectedProposals) {
 			return []
@@ -199,7 +200,7 @@ function FundBuilderDrawer() {
 
 		const p: ProposalType[] = []
 		for(let i = 0; i < proposals.length; i++) {
-			if(selectedProposals[i]) {
+			if(selectedProposals.has(proposals[i].id)) {
 				p.push(proposals[i])
 			}
 		}
@@ -258,7 +259,7 @@ function FundBuilderDrawer() {
 				setSafeProposalAddress(proposaladdress)
 				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress, safeObj?.chainId))
 			} else {
-				proposaladdress = await safeObj?.proposeTransactions(selectedGrant?.title, transactionData, phantomWallet)
+				proposaladdress = await safeObj?.proposeTransactions(grant?.title, transactionData, phantomWallet)
 				if(proposaladdress?.error) {
 					customToast({
 						title: 'An error occurred while creating transaction on Multi-sig',
@@ -285,9 +286,7 @@ function FundBuilderDrawer() {
 		}
 	}
 
-	const { workspace } = useContext(ApiClientsContext)!
-
-	const workspacechainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+	const workspacechainId = getSupportedChainIdFromWorkspace(grant?.workspace) || defaultChainId
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: workspacechainId ? workspacechainId.toString() : defaultChainId.toString(),
@@ -322,7 +321,7 @@ function FundBuilderDrawer() {
 				selectedTokenInfo?.tokenName.toLowerCase(),
 				'nonEvmAssetAddress-toBeChanged',
 				amounts,
-				workspace?.id,
+				grant?.workspace?.id,
 				proposaladdress
 			]
 
@@ -353,7 +352,7 @@ function FundBuilderDrawer() {
 
 			const { txFee } = await getTransactionDetails(transactionHash, workspacechainId.toString())
 
-			await chargeGas(Number(workspace?.id), Number(txFee), workspacechainId)
+			await chargeGas(Number(grant?.workspace?.id), Number(txFee), workspacechainId)
 
 		} catch(e) {
 			console.log('disburse error', e)

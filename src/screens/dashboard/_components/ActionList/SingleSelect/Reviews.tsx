@@ -1,7 +1,9 @@
 import { RefObject, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Box, Button, Checkbox, Divider, Flex, Image, InputGroup, InputRightElement, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text } from '@chakra-ui/react'
+import { defaultChainId } from 'src/constants/chains'
+import { CheckDouble, Dropdown, Pencil } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import DashboardInput from 'src/screens/dashboard/_components/DashboardInput'
 import useAssignReviewers from 'src/screens/dashboard/_hooks/useAssignReviewers'
 import useSetRubrics from 'src/screens/dashboard/_hooks/useSetRubrics'
@@ -13,6 +15,7 @@ import getAvatar from 'src/utils/avatarUtils'
 import { formatAddress } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { useLoadReview } from 'src/utils/reviews'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function Reviews() {
 	const buildComponent = () => {
@@ -37,11 +40,9 @@ function Reviews() {
 					</Text>
 					{
 						proposals?.length > 0 && (
-							<Image
+							<Dropdown
 								mr={2}
-								src='/v2/icons/dropdown.svg'
 								transform={expanded ? 'rotate(180deg)' : 'rotate(0deg)'}
-								alt='options'
 								cursor='pointer'
 							/>
 						)
@@ -65,7 +66,7 @@ function Reviews() {
 						)
 					}
 
-					{(selectedGrant?.reviewType === 'voting' && (proposal?.applicationReviewers?.length || 0) > 0) && voteGraph()}
+					{(grant?.reviewType === 'voting' && (proposal?.applicationReviewers?.length || 0) > 0) && voteGraph()}
 
 					{
 						proposal?.applicationReviewers?.map((reviewer, index) => {
@@ -129,7 +130,9 @@ function Reviews() {
 
 	const setupButton = () => {
 		return (
-			<Button variant='link' >
+			<Button
+				variant='link'
+				isDisabled={role !== 'admin'} >
 				<Text
 					variant='v2_body'
 					fontWeight='500'
@@ -143,13 +146,10 @@ function Reviews() {
 	const editButton = () => {
 		return (
 			<Button
+				isDisabled={role !== 'admin'}
 				ml={2}
 				variant='link'
-				leftIcon={
-					<Image
-						src='/v2/icons/pencil.svg'
-						boxSize='16px' />
-				}>
+				leftIcon={<Pencil boxSize='16px' />}>
 				<Text
 					variant='v2_body'
 					fontWeight='500'>
@@ -212,13 +212,13 @@ function Reviews() {
 										mt={3}
 										w='100%'>
 										<Checkbox
-											isChecked={workspace?.members?.every(m => members[m.id])}
+											isChecked={grant?.workspace?.members?.every(m => members[m.id])}
 											onChange={
 												(e) => {
 													logger.info({ checked: e.target.checked }, 'checkbox changed')
 													if(e.target.checked) {
 														const newMap: { [key: string]: boolean } = {}
-														workspace?.members?.forEach(m => {
+														grant?.workspace?.members?.forEach(m => {
 															newMap[m.id] = true
 														})
 														setMembers(newMap)
@@ -237,11 +237,11 @@ function Reviews() {
 										<Text
 											ml='auto'
 											variant='v2_body'>
-											{workspace?.members?.filter(m => members[m.id]).length}
+											{grant?.workspace?.members?.filter(m => members[m.id]).length}
 											{' '}
 											/
 											{' '}
-											{workspace?.members?.length}
+											{grant?.workspace?.members?.length}
 											{' '}
 											selected
 										</Text>
@@ -251,7 +251,7 @@ function Reviews() {
 										w='100%'
 										pt={2}>
 										{
-											workspace?.members?.filter(m => searchMemberName === '' || m.fullName?.indexOf(searchMemberName) !== -1).map(m => {
+											grant?.workspace?.members?.filter(m => searchMemberName === '' || m.fullName?.indexOf(searchMemberName) !== -1).map(m => {
 												return (
 													<Flex
 														key={m.id}
@@ -309,7 +309,7 @@ function Reviews() {
 													}
 
 													Object.keys(members).forEach(m => {
-														const member = workspace?.members?.find(m2 => m2.id === m)
+														const member = grant?.workspace?.members?.find(m2 => m2.id === m)
 														if(member) {
 															selectedReviewers.push(member.actorId)
 															active.push(true)
@@ -511,8 +511,7 @@ function Reviews() {
 														boxSize='16px' />
 													<Box
 														mx={2} />
-													<Image
-														src='/v2/icons/check double.svg'
+													<CheckDouble
 														cursor='pointer'
 														onClick={
 															() => {
@@ -611,15 +610,15 @@ function Reviews() {
 					Review With
 				</Text>
 				{
-					(selectedGrant?.reviewType || (selectedGrant?.rubric && selectedGrant?.rubric?.items?.length > 0)) && (
+					(grant?.reviewType || (grant?.rubric && grant?.rubric?.items?.length > 0)) && (
 						<Text
 							variant='v2_body'>
-							{selectedGrant.reviewType === 'voting' ? 'Voting' : 'Rubrics'}
+							{grant.reviewType === 'voting' ? 'Voting' : 'Rubrics'}
 						</Text>
 					)
 				}
-				{(selectedGrant?.reviewType || (selectedGrant?.rubric && selectedGrant?.rubric?.items?.length > 0)) && <Box ml='auto' />}
-				{setReviewTypePopup(setReviewTypePopoverRef, (selectedGrant?.reviewType || (selectedGrant?.rubric && selectedGrant?.rubric?.items?.length > 0)) ? 'edit' : 'setup')}
+				{(grant?.reviewType || (grant?.rubric && grant?.rubric?.items?.length > 0)) && <Box ml='auto' />}
+				{setReviewTypePopup(setReviewTypePopoverRef, (grant?.reviewType || (grant?.rubric && grant?.rubric?.items?.length > 0)) ? 'edit' : 'setup')}
 			</Flex>
 		)
 	}
@@ -680,11 +679,9 @@ function Reviews() {
 								align='center'
 								justify='end'
 							>
-								<Image
+								<Dropdown
 									mr={2}
-									src='/v2/icons/dropdown.svg'
 									transform={reviewersExpanded[index] ? 'rotate(180deg)' : 'rotate(0deg)'}
-									alt='options'
 									cursor='pointer'
 								/>
 								<Text
@@ -721,7 +718,9 @@ function Reviews() {
 
 					{
 						!review && reviewer.actorId.toLowerCase() === scwAddress?.toLowerCase() && (
-							<Button variant='link'>
+							<Button
+								variant='link'
+								isDisabled={proposal?.state !== 'submitted'}>
 								<Text
 									color='accent.azure'
 									variant='v2_body'
@@ -785,10 +784,14 @@ function Reviews() {
 		)
 	}
 
-	const { workspace, chainId } = useContext(ApiClientsContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
-	const { proposals, selectedGrant, selectedProposals, setShowSubmitReviewPanel } = useContext(DashboardContext)!
-	const { loadReview } = useLoadReview(selectedGrant?.id, chainId)
+	const { grant, role } = useContext(GrantsProgramContext)!
+	const { proposals, selectedProposals, setShowSubmitReviewPanel } = useContext(DashboardContext)!
+
+	const chainId = useMemo(() => {
+		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
+	}, [grant])
+	const { loadReview } = useLoadReview(grant?.id, chainId)
 
 	const [expanded, setExpanded] = useState<boolean>(false)
 	const [reviews, setReviews] = useState<IReviewFeedback[]>([])
@@ -810,16 +813,16 @@ function Reviews() {
 	const { setRubrics } = useSetRubrics({ setNetworkTransactionModalStep, setTransactionHash })
 
 	useEffect(() => {
-		setReviewType(selectedGrant?.reviewType === 'voting' ? ReviewType.Voting : ReviewType.Rubrics)
+		setReviewType(grant?.reviewType === 'voting' ? ReviewType.Voting : ReviewType.Rubrics)
 
-		if(selectedGrant?.rubric?.items) {
-			setRubricItems(selectedGrant?.rubric?.items)
+		if(grant?.rubric?.items) {
+			setRubricItems(grant?.rubric?.items)
 		}
 
-		if(selectedGrant?.rubric?.isPrivate !== undefined) {
-			setIsReviewPrivate(selectedGrant?.rubric?.isPrivate)
+		if(grant?.rubric?.isPrivate !== undefined) {
+			setIsReviewPrivate(grant?.rubric?.isPrivate)
 		}
-	}, [selectedGrant])
+	}, [grant])
 
 	useEffect(() => {
 		if(proposals?.length === 0) {
@@ -828,11 +831,7 @@ function Reviews() {
 	}, [proposals])
 
 	const proposal = useMemo(() => {
-		const index = selectedProposals.indexOf(true)
-
-		if(index !== -1) {
-			return proposals[index]
-		}
+		return proposals.find(p => selectedProposals.has(p.id))
 	}, [proposals, selectedProposals])
 
 	useEffect(() => {
@@ -857,19 +856,20 @@ function Reviews() {
 			return
 		}
 
+		logger.info({ proposal }, 'Proposal (REVIEW DECRYPT)')
 		const decryptedReviews: Promise<IReviewFeedback>[] = []
 		for(const review of proposal?.reviews || []) {
 			decryptedReviews.push(loadReview(review, proposal?.id))
 		}
 
 		Promise.all(decryptedReviews).then((reviews) => {
-			logger.info({ reviews }, 'Decrypted reviews')
+			logger.info({ reviews }, 'Decrypted reviews (REVIEW DECRYPT)')
 			setReviews(reviews)
 		})
-	}, [])
+	}, [proposal])
 
 	// const isDisabled = useMemo(() => {
-	// 	if (selectedGrant?.numberOfReviewersPerApplication === numberOfReviewersPerApplication && Object.keys(members).length === selectedGrant?)
+	// 	if (grant?.numberOfReviewersPerApplication === numberOfReviewersPerApplication && Object.keys(members).length === grant?)
 	// }, [numberOfReviewersPerApplication, members])
 
 	return buildComponent()

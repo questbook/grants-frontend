@@ -1,15 +1,17 @@
 import { useContext, useMemo } from 'react'
+import { defaultChainId } from 'src/constants/chains'
 import { useGetMemberPublicKeysQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { PIIForCommentType } from 'src/libraries/utils/types'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 interface Props {
   setStep: (step: number | undefined) => void
@@ -17,12 +19,11 @@ interface Props {
 }
 
 function useAddComments({ setStep, setTransactionHash }: Props) {
-	const { role, workspace, chainId } = useContext(ApiClientsContext)!
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
-	const { proposals, selectedProposals, selectedGrant } =
-    useContext(DashboardContext)!
+	const { grant, role } = useContext(GrantsProgramContext)!
+	const { proposals, selectedProposals } = useContext(DashboardContext)!
 
-	const { proposalTags } = useProposalTags()
+	const { proposalTags } = useProposalTags({ proposals: proposals.filter(p => selectedProposals.has(p.id)) })
 
 	const selectedProposalsData = useMemo(() => {
 		if(!proposals || !selectedProposals) {
@@ -31,7 +32,7 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 
 		const p: ProposalType[] = []
 		for(let i = 0; i < proposals.length; i++) {
-			if(selectedProposals[i]) {
+			if(selectedProposals.has(proposals[i].id)) {
 				p.push(proposals[i])
 			}
 		}
@@ -39,6 +40,10 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 		p.sort((a, b) => parseInt(a.id, 16) - parseInt(b.id, 16))
 		return p
 	}, [proposals, selectedProposals])
+
+	const chainId = useMemo(() => {
+		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
+	}, [grant])
 
 	const { call, isBiconomyInitialised } = useFunctionCall({
 		chainId,
@@ -70,10 +75,9 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 	}
 
 	const addComments =
-		async(message: string, tags: number[]) => {
-			if(
-				!workspace?.id ||
-        !selectedGrant?.id ||
+		async(message: string, tags: number[], isPrivate: boolean) => {
+			if(!grant?.workspace?.id ||
+        !grant?.id ||
         !selectedProposalsData.length || !webwallet
 			) {
 				return
@@ -91,37 +95,43 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 			}
 
 			const commentHashes: string[] = []
-			for(const proposal of selectedProposalsData) {
-				const publicKeys = await fetchPublicKeys(proposal)
-				logger.info({ id: proposal.id, publicKeys }, 'Public Keys (COMMENT ENCRYPT)')
 
-				const piiMap: {[actorId: string]: string} = {}
-				for(const { actorId, publicKey } of publicKeys) {
-					if(!publicKey || !actorId) {
-						continue
+			if(isPrivate) {
+				for(const proposal of selectedProposalsData) {
+					const publicKeys = await fetchPublicKeys(proposal)
+					logger.info({ id: proposal.id, publicKeys }, 'Public Keys (COMMENT ENCRYPT)')
+
+					const piiMap: {[actorId: string]: string} = {}
+					for(const { actorId, publicKey } of publicKeys) {
+						if(!publicKey || !actorId) {
+							continue
+						}
+
+						const channel = await getSecureChannelFromPublicKey(webwallet, publicKey, getKeyForApplication(proposal.id))
+						const encryptedData = await channel.encrypt(JSON.stringify(json))
+						logger.info({ actorId, privateKey: webwallet.privateKey, publicKey, extraInfo: getKeyForApplication(proposal.id), data: json, answer: encryptedData }, 'Encrypted Data (COMMENT ENCRYPT)')
+						piiMap[actorId] = encryptedData
 					}
 
-					const channel = await getSecureChannelFromPublicKey(webwallet, publicKey, getKeyForApplication(proposal.id))
-					const encryptedData = await channel.encrypt(JSON.stringify(json))
-					logger.info({ actorId, privateKey: webwallet.privateKey, publicKey, extraInfo: getKeyForApplication(proposal.id), data: json, answer: encryptedData }, 'Encrypted Data (COMMENT ENCRYPT)')
-					piiMap[actorId] = encryptedData
+					logger.info({ id: proposal.id, piiMap }, 'PII Map (COMMENT ENCRYPT)')
+					const modifiedJson = { pii: piiMap }
+					logger.info({ id: proposal.id, json: modifiedJson }, 'JSON (Comment)')
+
+					const hash = (await uploadToIPFS(JSON.stringify(modifiedJson))).hash
+					commentHashes.push(hash)
 				}
-
-				logger.info({ id: proposal.id, piiMap }, 'PII Map (COMMENT ENCRYPT)')
-				const modifiedJson = { pii: piiMap }
-				logger.info({ id: proposal.id, json: modifiedJson }, 'JSON (Comment)')
-
-				const hash = (await uploadToIPFS(JSON.stringify(modifiedJson))).hash
-				commentHashes.push(hash)
+			} else {
+				const hash = (await uploadToIPFS(JSON.stringify(json))).hash
+				commentHashes.push(...proposals.map(() => hash))
 			}
 
 			logger.info({ commentHashes }, 'Comment Hashes')
 
 			const methodArgs = [
-				workspace.id,
-				selectedGrant.id,
+				grant.workspace.id,
+				grant.id,
 				selectedProposalsData.map((proposal) => proposal.id),
-				role !== 'community',
+				isPrivate,
 				commentHashes,
 			]
 			logger.info({ methodArgs }, 'Method Args (Comment)')
