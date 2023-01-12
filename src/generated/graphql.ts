@@ -5599,6 +5599,13 @@ export type GetAllGrantsForMemberQueryVariables = Exact<{
 
 export type GetAllGrantsForMemberQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, startDate?: string | null, acceptingApplications: boolean, deadlineS: number, deadline?: string | null, numberOfApplications: number, applications: Array<{ __typename?: 'GrantApplication', applicantId: string, state: ApplicationState }>, managers: Array<{ __typename?: 'GrantManager', member?: { __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, accessLevel: WorkspaceMemberAccessLevel } | null }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, tokenUSDValue?: string | null, asset: string, tokenName?: string | null }>, workspace: { __typename?: 'Workspace', id: string, isVisible: boolean, logoIpfsHash: string, numberOfApplications: number, totalGrantFundingDisbursedUSD: number, supportedNetworks: Array<SupportedNetwork>, ownerId: string, safe?: { __typename?: 'WorkspaceSafe', address: string, chainId: string } | null }, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } }> };
 
+export type GetAllGrantsForReviewerExploreQueryVariables = Exact<{
+  memberId?: InputMaybe<Scalars['Bytes']>;
+}>;
+
+
+export type GetAllGrantsForReviewerExploreQuery = { __typename?: 'Query', grantReviewerCounters: Array<{ __typename?: 'GrantReviewerCounter', grant: { __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, startDate?: string | null, acceptingApplications: boolean, deadlineS: number, deadline?: string | null, numberOfApplications: number, applications: Array<{ __typename?: 'GrantApplication', applicantId: string, state: ApplicationState }>, managers: Array<{ __typename?: 'GrantManager', member?: { __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, accessLevel: WorkspaceMemberAccessLevel } | null }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, tokenUSDValue?: string | null, asset: string, tokenName?: string | null }>, workspace: { __typename?: 'Workspace', id: string, isVisible: boolean, logoIpfsHash: string, numberOfApplications: number, totalGrantFundingDisbursedUSD: number, supportedNetworks: Array<SupportedNetwork>, ownerId: string, safe?: { __typename?: 'WorkspaceSafe', address: string, chainId: string } | null }, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } } }> };
+
 export type GetGrantsProgramDetailsQueryVariables = Exact<{
   workspaceID: Scalars['ID'];
 }>;
@@ -9406,6 +9413,97 @@ export type GetAllGrantsForMemberLazyQueryHookResult = ReturnType<typeof useGetA
 export type GetAllGrantsForMemberQueryResult = Apollo.QueryResult<GetAllGrantsForMemberQuery, GetAllGrantsForMemberQueryVariables>;
 export function refetchGetAllGrantsForMemberQuery(variables?: GetAllGrantsForMemberQueryVariables) {
       return { query: GetAllGrantsForMemberDocument, variables: variables }
+    }
+export const GetAllGrantsForReviewerExploreDocument = gql`
+    query getAllGrantsForReviewerExplore($memberId: Bytes) {
+  grantReviewerCounters(where: {reviewerAddress: $memberId}) {
+    grant {
+      id
+      creatorId
+      title
+      createdAtS
+      startDate
+      applications {
+        applicantId
+        state
+      }
+      acceptingApplications
+      managers {
+        member {
+          actorId
+          fullName
+          accessLevel
+        }
+      }
+      fundTransfers {
+        amount
+        type
+        tokenUSDValue
+        asset
+        tokenName
+      }
+      workspace {
+        id
+        isVisible
+        logoIpfsHash
+        numberOfApplications
+        totalGrantFundingDisbursedUSD
+        supportedNetworks
+        ownerId
+        isVisible
+        safe {
+          address
+          chainId
+        }
+      }
+      reward {
+        committed
+        id
+        asset
+        token {
+          address
+          label
+          decimal
+          iconHash
+        }
+      }
+      deadlineS
+      deadline
+      numberOfApplications
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAllGrantsForReviewerExploreQuery__
+ *
+ * To run a query within a React component, call `useGetAllGrantsForReviewerExploreQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllGrantsForReviewerExploreQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllGrantsForReviewerExploreQuery({
+ *   variables: {
+ *      memberId: // value for 'memberId'
+ *   },
+ * });
+ */
+export function useGetAllGrantsForReviewerExploreQuery(baseOptions?: Apollo.QueryHookOptions<GetAllGrantsForReviewerExploreQuery, GetAllGrantsForReviewerExploreQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllGrantsForReviewerExploreQuery, GetAllGrantsForReviewerExploreQueryVariables>(GetAllGrantsForReviewerExploreDocument, options);
+      }
+export function useGetAllGrantsForReviewerExploreLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllGrantsForReviewerExploreQuery, GetAllGrantsForReviewerExploreQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllGrantsForReviewerExploreQuery, GetAllGrantsForReviewerExploreQueryVariables>(GetAllGrantsForReviewerExploreDocument, options);
+        }
+export type GetAllGrantsForReviewerExploreQueryHookResult = ReturnType<typeof useGetAllGrantsForReviewerExploreQuery>;
+export type GetAllGrantsForReviewerExploreLazyQueryHookResult = ReturnType<typeof useGetAllGrantsForReviewerExploreLazyQuery>;
+export type GetAllGrantsForReviewerExploreQueryResult = Apollo.QueryResult<GetAllGrantsForReviewerExploreQuery, GetAllGrantsForReviewerExploreQueryVariables>;
+export function refetchGetAllGrantsForReviewerExploreQuery(variables?: GetAllGrantsForReviewerExploreQueryVariables) {
+      return { query: GetAllGrantsForReviewerExploreDocument, variables: variables }
     }
 export const GetGrantsProgramDetailsDocument = gql`
     query getGrantsProgramDetails($workspaceID: ID!) {

@@ -2,7 +2,7 @@ import { Grid, GridItem } from '@chakra-ui/react'
 import config from 'src/constants/config.json'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import RFPCard from 'src/screens/discover/_components/RFPCard'
-import { BuilderGrant, PersonalGrant } from 'src/screens/discover/_utils/types'
+import { BuilderGrant, PersonalGrant, ReviewerGrant } from 'src/screens/discover/_utils/types'
 import getAvatar from 'src/utils/avatarUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
@@ -10,6 +10,7 @@ import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUti
 
 type PersonalRFPGridProps = {
   personalGrants: PersonalGrant[]
+  reviewerGrants: ReviewerGrant[]
   isAdmin: boolean
   builderGrants: BuilderGrant[]
   unsavedDomainVisibleState?: { [_: number]: { [_: string]: boolean } }
@@ -23,7 +24,8 @@ function PersonalRFPGrid({
 	onDaoVisibilityUpdate,
 	unsavedDomainVisibleState,
 	isAdmin,
-	builderGrants
+	builderGrants,
+	reviewerGrants
 }: PersonalRFPGridProps) {
 	return (
 		<Grid
@@ -63,6 +65,34 @@ function PersonalRFPGrid({
 				})
 			}
 			{
+				reviewerGrants?.map((reviewerGrant, index: number) => {
+					const workspaceChainId = getSupportedChainIdFromSupportedNetwork(reviewerGrant.grant.workspace.supportedNetworks[0])
+
+					return (
+						<GridItem key={index}>
+							<RFPCard
+								isAdmin={isAdmin}
+								isVisible={unsavedDomainVisibleState?.[workspaceChainId!]?.[reviewerGrant.grant.workspace.id] ?? reviewerGrant.grant.workspace.isVisible}
+								onVisibilityUpdate={(visibleState) => onDaoVisibilityUpdate?.(reviewerGrant.grant.workspace.id, workspaceChainId!, visibleState)}
+								logo={
+									reviewerGrant.grant.workspace.logoIpfsHash === config.defaultDAOImageHash ?
+										getAvatar(true, reviewerGrant.grant.title) :
+										getUrlForIPFSHash(reviewerGrant.grant.workspace.logoIpfsHash!)
+								}
+								name={reviewerGrant.grant.title}
+								deadline={reviewerGrant.grant.deadline!}
+								chainId={workspaceChainId}
+								noOfApplicants={reviewerGrant.grant.applications.length}
+								totalAmount={reviewerGrant.grant.workspace.totalGrantFundingDisbursedUSD}
+								role='Reviewer'
+								grantId={reviewerGrant.grant.id}
+								isAcceptingApplications={reviewerGrant.grant.acceptingApplications}
+							/>
+						</GridItem>
+					)
+				})
+			}
+			{
 				builderGrants?.map((grant, index: number) => {
 					const workspaceChainId = getSupportedChainIdFromSupportedNetwork(grant.workspace.supportedNetworks[0])
 
@@ -90,6 +120,7 @@ function PersonalRFPGrid({
 					)
 				})
 			}
+
 			{/* {
 				hasMore && (
 					<GridItem key='load-more'>

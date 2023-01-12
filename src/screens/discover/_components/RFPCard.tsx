@@ -71,7 +71,7 @@ function RFPCard({ logo, isAdmin, isAcceptingApplications, name, chainId, role, 
 				>
 					<Image
 						src={logo}
-						my='8px'
+						// my='8px'
 						w='56px'
 						h='56px'
 						objectFit='cover'

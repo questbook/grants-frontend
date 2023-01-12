@@ -7,10 +7,12 @@ import { defaultChainId } from 'src/constants/chains'
 import {
 	GetAllGrantsForExploreQuery,
 	GetAllGrantsForMemberQuery,
+	GetAllGrantsForReviewerExploreQuery,
 	GetDaOsForExploreQuery,
 	useGetAllGrantsForBuilderQuery,
 	useGetAllGrantsForExploreQuery,
 	useGetAllGrantsForMemberQuery,
+	useGetAllGrantsForReviewerExploreQuery,
 	useGetDaOsForExploreQuery,
 	useGetGrantsProgramDetailsQuery,
 	Workspace_Filter as WorkspaceFilter,
@@ -29,7 +31,7 @@ import AllRFPsGrid from 'src/screens/discover/_components/rfpGrid'
 import RightArrowIcon from 'src/screens/discover/_components/RightArrowIcon'
 import { useMultichainDaosPaginatedQuery } from 'src/screens/discover/_hooks/useMultiChainPaginatedQuery'
 import { mergeSortedArrays } from 'src/screens/discover/_utils/mergeSortedArrays'
-import { BuilderGrant, Grant, PersonalGrant } from 'src/screens/discover/_utils/types'
+import { BuilderGrant, Grant, PersonalGrant, ReviewerGrant } from 'src/screens/discover/_utils/types'
 import { chainNames } from 'src/utils/chainNames'
 import getErrorMessage from 'src/utils/errorUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
@@ -49,7 +51,8 @@ function Discover() {
 			<>
 				<Flex
 					direction='column'
-					w='100%'>
+					w='100%'
+				>
 					{/* Start Hero Container */}
 					<Flex
 						direction='row'
@@ -181,8 +184,6 @@ function Discover() {
 						className='domainGrid'
 						minWidth='100%'
 						p={12}
-						ml={8}
-						mr={8}
 						w='100%'>
 						{
 							isQbAdmin === undefined ? (
@@ -202,12 +203,13 @@ function Discover() {
 									<PersonalRFPGrid
 										personalGrants={personalGrants!}
 										builderGrants={builderGrants!}
+										reviewerGrants={reviewerGrants!}
 										unsavedDomainVisibleState={unsavedDomainState}
 										onDaoVisibilityUpdate={onDaoVisibilityUpdate}
 										hasMore={hasMoreDaos}
 										fetchMore={fetchMoreDaos}
 										isAdmin={isQbAdmin}
-									 />
+									/>
 
 									<Box my={4}>
 										<Text
@@ -406,6 +408,11 @@ function Discover() {
 		options: {}
 	})
 
+	const { fetchMore: fetchAllGrantsForReviewer } = useMultiChainQuery({
+		useQuery: useGetAllGrantsForReviewerExploreQuery,
+		options: {}
+	})
+
 	const [grantsProgramTitle, setGrantsProgramTitle] = useState<string>()
 
 	const [first, setFirst] = useState(10)
@@ -413,6 +420,7 @@ function Discover() {
 	const [grants, setGrants] = useState<Grant[]>()
 	const [personalGrants, setPersonalGrants] = useState<PersonalGrant[]>()
 	const [builderGrants, setBuilderGrants] = useState<BuilderGrant[]>()
+	const [reviewerGrants, setReviewerGrants] = useState<ReviewerGrant[]>()
 
 	const toastRef = useRef<ToastId>()
 	const toast = useToast()
@@ -571,6 +579,29 @@ function Discover() {
 
 	}, [first, skip, isBiconomyInitialised, scwAddress])
 
+	const fetchAllGrantsForReviewerExplore = useCallback(async() => {
+		const response = await fetchAllGrantsForReviewer({
+			memberId: scwAddress
+		})
+		const allFetchedGrants: GetAllGrantsForReviewerExploreQuery['grantReviewerCounters'] = []
+		for(const res of response) {
+			if(!res) {
+				continue
+			}
+
+			const grants = res.grantReviewerCounters
+			// const mergedArray = mergeSortedArrays(allFetchedGrants, grants, (a, b) => {
+			// 	return a.createdAtS > b.createdAtS
+			// })
+			// logger.info('merged array', mergedArray, grants.length)
+			const filteredGrants = grants.filter(e => e.grant.workspace.isVisible === true)
+			allFetchedGrants.push(...filteredGrants)
+		}
+
+		setReviewerGrants(allFetchedGrants)
+
+	}, [first, skip, isBiconomyInitialised, scwAddress])
+
 	const fetchAllGrantsForBuilderExplore = useCallback(async() => {
 		const response = await fetchAllGrantsForBuilder({
 			applicantId: scwAddress
@@ -603,6 +634,7 @@ function Discover() {
 		fetchAllGrantProgramForExplore()
 		fetchAllGrantsForMemberExplore()
 		fetchAllGrantsForBuilderExplore()
+		fetchAllGrantsForReviewerExplore()
 	}, [first, skip, isBiconomyInitialised, scwAddress])
 
 	const onGetStartedClick = () => {

@@ -1,0 +1,60 @@
+query getAllGrantsForReviewerExplore($memberId: Bytes){
+  grantReviewerCounters (
+    where: {reviewerAddress: $memberId}
+  ) {
+    grant {
+      id
+      creatorId
+      title
+      createdAtS
+      startDate
+      applications {
+        applicantId
+        state
+      }
+      acceptingApplications
+      managers {
+        member {
+          actorId
+          fullName
+          accessLevel
+        }
+      }
+      fundTransfers {
+        amount
+        type
+        tokenUSDValue
+        asset
+        tokenName
+      }
+      workspace {
+        id
+        isVisible
+        logoIpfsHash
+        numberOfApplications
+        totalGrantFundingDisbursedUSD
+        supportedNetworks
+        ownerId
+        isVisible
+        safe {
+          address
+          chainId
+        }
+      }
+      reward {
+        committed
+        id
+        asset
+        token {
+          address
+          label
+          decimal
+          iconHash
+        }
+      }
+      deadlineS
+      deadline
+      numberOfApplications
+    }
+  }
+}
