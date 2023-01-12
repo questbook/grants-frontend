@@ -68,12 +68,16 @@ function RequestProposal() {
 						async() => {
 							setCurrentStepIndex(undefined)
 							setRole('admin')
-							const ret = await router.push({
-								pathname: '/',
+							router.push({
+								pathname: '/dashboard',
+								query: {
+									grantId: grantId.toLowerCase(),
+									chainId: chainId,
+								}
 							})
-							if(ret) {
-								router.reload()
-							}
+							// if(ret) {
+							// 	router.reload()
+							// }
 						}
 					}
 				/>

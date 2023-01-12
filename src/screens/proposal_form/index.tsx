@@ -82,9 +82,18 @@ function ProposalForm() {
 							mt={12}
 							variant='primaryLarge'
 							onClick={
-								() => {
+								async() => {
 									setRole('builder')
-									router.push({ pathname: '/dashboard' })
+									const ret = await router.push({
+										pathname: '/dashboard',
+										query: {
+											grantId: grant?.id,
+											chainId: chainId
+										}
+									})
+									if(ret) {
+										router.reload()
+									}
 								}
 							}>
 							<Text
