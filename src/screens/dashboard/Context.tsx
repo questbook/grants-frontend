@@ -109,12 +109,13 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 		const commentMap: CommentMap = {}
 		for(const comment of allComments) {
-			if(comment.id.indexOf(scwAddress.toLowerCase()) === -1) {
-				continue
-			}
-
 			logger.info({ comment }, 'comment before decrypt (COMMENT DECRYPT)')
 			if(comment.isPrivate) {
+				if(comment.id.indexOf(scwAddress.toLowerCase()) === -1) {
+					logger.info({ comment }, 'public key not found (COMMENT DECRYPT)')
+					continue
+				}
+
 				const sender = comment.id.split('.')[1]
 				let channel: {
 				encrypt(plaintext: string): Promise<string>
