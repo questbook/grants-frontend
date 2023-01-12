@@ -13,6 +13,7 @@ import ImageUpload from 'src/libraries/ui/ImageUpload'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import VerifySignerModal from 'src/screens/request_proposal/_components/VerifySignerModal'
+import AddMemberButton from 'src/screens/settings/_components/AddMemberButton'
 import { DropdownIcon } from 'src/screens/settings/_components/DropdownIcon'
 import SettingsInput from 'src/screens/settings/_components/SettingsInput'
 import useLinkMultiSig from 'src/screens/settings/_hooks/useLinkMultiSig'
@@ -210,9 +211,7 @@ function Settings() {
 									Members
 								</Text>
 								<Spacer />
-								<Button variant='secondaryV2'>
-									Add members
-								</Button>
+								<AddMemberButton />
 							</Flex>
 							<Divider />
 							<InputGroup
