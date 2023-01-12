@@ -59,7 +59,7 @@ function ProposalList() {
 								}
 							}
 						>
-							Submit Proposals
+							Submit new
 						</Button>
 					)
 				}
