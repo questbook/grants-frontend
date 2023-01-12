@@ -1,7 +1,7 @@
 import { ReactElement, useContext, useEffect, useState } from 'react'
 import { BsArrowLeft } from 'react-icons/bs'
 import { ArrowForwardIcon, Search2Icon } from '@chakra-ui/icons'
-import { Button, Checkbox, Divider, Flex, Image, Input, InputGroup, InputLeftElement, Spacer, Text, Textarea } from '@chakra-ui/react'
+import { Button, Divider, Flex, Image, Input, InputGroup, InputLeftElement, Spacer, Text, Textarea } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import router from 'next/router'
 import { NetworkType } from 'src/constants/Networks'
@@ -132,11 +132,11 @@ function Settings() {
 									)
 							}
 
-							<Checkbox>
+							{/* <Checkbox>
 								<Text>
 									Run the grant program in a community first fashion (recommended)
 								</Text>
-							</Checkbox>
+							</Checkbox> */}
 							<SettingsInput
 								placeholder='Add a brief intro'
 								value={grantProgramData?.bio}

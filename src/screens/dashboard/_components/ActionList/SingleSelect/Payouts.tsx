@@ -8,7 +8,7 @@ import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import { getChainInfo } from 'src/libraries/utils/token'
-import { ApiClientsContext, GrantsProgramContext } from 'src/pages/_app'
+import { GrantsProgramContext } from 'src/pages/_app'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { Payout, PayoutsType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -149,12 +149,15 @@ function Payouts() {
 		)
 	}
 
-	const { chainId } = useContext(ApiClientsContext)!
 	const { grant } = useContext(GrantsProgramContext)!
 
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 	const [expanded, setExpanded] = useState(false)
 	const [payouts, setPayouts] = useState<PayoutsType>([])
+
+	const chainId = useMemo(() => {
+		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
+	}, [grant])
 
 	const proposal = useMemo(() => {
 		return proposals.find(p => selectedProposals.has(p.id))

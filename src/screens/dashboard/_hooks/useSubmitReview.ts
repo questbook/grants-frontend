@@ -1,5 +1,6 @@
 import { useCallback, useContext, useMemo } from 'react'
 import { APPLICATION_REVIEW_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import { defaultChainId } from 'src/constants/chains'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
@@ -8,6 +9,7 @@ import { useGenerateReviewData } from 'src/libraries/utils/reviews'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { bicoDapps, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 interface Props {
 	setNetworkTransactionModalStep: (step: number | undefined) => void
@@ -15,10 +17,14 @@ interface Props {
 }
 
 function useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash }: Props) {
-	const { workspace, subgraphClients, chainId } = useContext(ApiClientsContext)!
+	const { subgraphClients } = useContext(ApiClientsContext)!
 	const { webwallet } = useContext(WebwalletContext)!
 	const { grant } = useContext(GrantsProgramContext)!
 	const { selectedProposals, proposals, review } = useContext(DashboardContext)!
+
+	const chainId = useMemo(() => {
+		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
+	}, [grant])
 
 	const applicationReviewRegistryContract = useQBContract('reviews', chainId)
 
@@ -44,7 +50,7 @@ function useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash }:
 
 	const submitReview = useCallback(async() => {
 		try {
-			if(!webwallet || !biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress || !workspace?.id || !grant || !proposal?.id || !review) {
+			if(!webwallet || !biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress || !grant?.workspace?.id || !grant || !proposal?.id || !review) {
 				return
 			}
 
@@ -55,7 +61,7 @@ function useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash }:
 
 			const { ipfsHash } = await generateReviewData({ items: review?.items! })
 
-			const methodArgs = [scwAddress, workspace.id, proposal.id, grant.id, ipfsHash]
+			const methodArgs = [scwAddress, grant?.workspace.id, proposal.id, grant.id, ipfsHash]
 			logger.info({ methodArgs }, 'useSubmitProposal: (Method args)')
 
 			const response = await sendGaslessTransaction(
@@ -90,12 +96,12 @@ function useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash }:
 			logger.error(e, 'useSubmitReview: (Error)')
 			setNetworkTransactionModalStep(undefined)
 		}
-	}, [chainId, webwallet, biconomy, biconomyWalletClient, scwAddress, biconomyLoading, workspace, grant, proposal, review])
+	}, [chainId, webwallet, biconomy, biconomyWalletClient, scwAddress, biconomyLoading, grant, proposal, review])
 
 	return {
 		submitReview: useMemo(() => {
 			return submitReview
-		}, [chainId, webwallet, biconomy, biconomyWalletClient, scwAddress, biconomyLoading, workspace, grant, proposal, review]), isBiconomyInitialised
+		}, [chainId, webwallet, biconomy, biconomyWalletClient, scwAddress, biconomyLoading, grant, proposal, review]), isBiconomyInitialised
 	}
 }
 

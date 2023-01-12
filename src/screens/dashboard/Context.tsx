@@ -190,6 +190,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		let shouldContinue = true
 		do {
 			const results = await fetchMoreProposals({ first, skip, grantID: grant.id }, true)
+			logger.info({ results }, 'Results (Proposals)')
 			if(results?.length === 0 || !results[0] || !results[0]?.grantApplications?.length) {
 				shouldContinue = false
 				break
@@ -258,6 +259,10 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	useEffect(() => {
 		if(proposals.length === 0) {
 			setSelectedProposals(new Set<string>())
+			if(scwAddress && grant) {
+				setIsLoading(false)
+			}
+
 			return
 		}
 
@@ -267,7 +272,6 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		setSelectedProposals(initialSelectionSet)
 
 		logger.info({ grant, scwAddress, role, proposals }, 'Loading state set to false')
-		setIsLoading(false)
 		setIsLoading(false)
 	}, [proposals])
 

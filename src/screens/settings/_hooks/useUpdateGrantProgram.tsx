@@ -1,17 +1,19 @@
 import React, { useCallback, useContext, useEffect, useMemo } from 'react'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import { defaultChainId } from 'src/constants/chains'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useChainId from 'src/hooks/utils/useChainId'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { validateAndUploadToIpfs } from 'src/libraries/validator'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { SettingsFormContext } from 'src/screens/settings/Context'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import logger from 'src/utils/logger'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 export default function useUpdateGrantProgram(setCurrentStep: (step: number | undefined) => void, setIsNetworkTransactionModalOpen: (isOpen: boolean) => void) {
 	const [error, setError] = React.useState<string>()
@@ -22,8 +24,12 @@ export default function useUpdateGrantProgram(setCurrentStep: (step: number | un
 	const { nonce } = useQuestbookAccount()
 	const currentChainId = useChainId()
 
-	const apiClients = useContext(ApiClientsContext)!
-	const { workspace, chainId, subgraphClients } = apiClients
+	const { subgraphClients } = useContext(ApiClientsContext)!
+	const { grant } = useContext(GrantsProgramContext)!
+
+	const chainId = useMemo(() => {
+		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
+	}, [grant])
 
 	const { grantProgramData } = useContext(SettingsFormContext)!
 
@@ -61,7 +67,7 @@ export default function useUpdateGrantProgram(setCurrentStep: (step: number | un
 		try {
 			setIsNetworkTransactionModalOpen(true)
 			setCurrentStep(0)
-			if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+			if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress || !grant) {
 				throw new Error('Zero wallet is not ready')
 			}
 
@@ -72,14 +78,13 @@ export default function useUpdateGrantProgram(setCurrentStep: (step: number | un
 			}
 
 			logger.info({ workspaceUpdateIpfsHash }, 'UpdateWorkspace IPFS')
-
 			setCurrentStep(1)
 
 			const response = await sendGaslessTransaction(
 				biconomy,
 				workspaceRegistryContract,
 				'updateWorkspaceMetadata',
-				[+workspace!.id,
+				[+grant?.workspace!.id,
 					workspaceUpdateIpfsHash, ],
 				WORKSPACE_REGISTRY_ADDRESS[chainId],
 				biconomyWalletClient,
@@ -101,7 +106,7 @@ export default function useUpdateGrantProgram(setCurrentStep: (step: number | un
 				await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
 
 				setCurrentStep(4)
-				await chargeGas(Number(workspace?.id), Number(txFee), chainId)
+				await chargeGas(Number(grant?.workspace?.id), Number(txFee), chainId)
 			}
 
 			setCurrentStep(5)
@@ -128,7 +133,7 @@ export default function useUpdateGrantProgram(setCurrentStep: (step: number | un
 		chainId,
 		biconomy,
 		webwallet,
-		workspace,
+		grant,
 		grantProgramData,
 	])
 
@@ -141,7 +146,7 @@ export default function useUpdateGrantProgram(setCurrentStep: (step: number | un
 			chainId,
 			biconomy,
 			webwallet,
-			workspace,]),
+			grant,]),
 		txHash: getExplorerUrlForTxHash(currentChainId, transactionData?.transactionHash),
 		loading,
 		error

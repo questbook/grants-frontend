@@ -1,15 +1,17 @@
 import { useContext, useMemo } from 'react'
+import { defaultChainId } from 'src/constants/chains'
 import { useGetMemberPublicKeysQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { PIIForCommentType } from 'src/libraries/utils/types'
-import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 interface Props {
   setStep: (step: number | undefined) => void
@@ -17,7 +19,6 @@ interface Props {
 }
 
 function useAddComments({ setStep, setTransactionHash }: Props) {
-	const { workspace, chainId } = useContext(ApiClientsContext)!
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 	const { grant, role } = useContext(GrantsProgramContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
@@ -39,6 +40,10 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 		p.sort((a, b) => parseInt(a.id, 16) - parseInt(b.id, 16))
 		return p
 	}, [proposals, selectedProposals])
+
+	const chainId = useMemo(() => {
+		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
+	}, [grant])
 
 	const { call, isBiconomyInitialised } = useFunctionCall({
 		chainId,
@@ -71,8 +76,7 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 
 	const addComments =
 		async(message: string, tags: number[], isPrivate: boolean) => {
-			if(
-				!workspace?.id ||
+			if(!grant?.workspace?.id ||
         !grant?.id ||
         !selectedProposalsData.length || !webwallet
 			) {
@@ -124,7 +128,7 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 			logger.info({ commentHashes }, 'Comment Hashes')
 
 			const methodArgs = [
-				workspace.id,
+				grant.workspace.id,
 				grant.id,
 				selectedProposalsData.map((proposal) => proposal.id),
 				isPrivate,

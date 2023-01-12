@@ -1,10 +1,12 @@
-import { useContext } from 'react'
+import { useContext, useMemo } from 'react'
+import { defaultChainId } from 'src/constants/chains'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
 import { validateAndUploadToIpfs } from 'src/libraries/validator'
-import { ApiClientsContext, GrantsProgramContext } from 'src/pages/_app'
+import { GrantsProgramContext } from 'src/pages/_app'
 import { ReviewType } from 'src/types'
 import { RubricItem } from 'src/types/gen'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 interface Props {
 	setNetworkTransactionModalStep: (step: number | undefined) => void
@@ -12,14 +14,17 @@ interface Props {
 }
 
 function useSetRubrics({ setNetworkTransactionModalStep, setTransactionHash }: Props) {
-	const { workspace, chainId } = useContext(ApiClientsContext)!
 	const { grant } = useContext(GrantsProgramContext)!
+
+	const chainId = useMemo(() => {
+		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
+	}, [grant])
 
 	const { call, isBiconomyInitialised } = useFunctionCall({ chainId, contractName: 'reviews', setTransactionStep: setNetworkTransactionModalStep, setTransactionHash })
 
 	const setRubrics =
 		async(reviewType: ReviewType, isPrivate: boolean, items: RubricItem[]) => {
-			if(!grant || !workspace) {
+			if(!grant) {
 				return
 			}
 
@@ -69,7 +74,7 @@ function useSetRubrics({ setNetworkTransactionModalStep, setTransactionHash }: P
 
 			await call({
 				method: 'setRubrics',
-				args: [workspace.id, grant.id, hash]
+				args: [grant.workspace.id, grant.id, hash]
 			})
 		}
 

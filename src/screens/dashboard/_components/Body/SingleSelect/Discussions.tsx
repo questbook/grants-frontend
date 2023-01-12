@@ -2,7 +2,7 @@ import { useContext, useMemo, useState } from 'react'
 import { Button, Checkbox, Divider, Flex, Image, Text, Textarea } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
-import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import QuickReplyButton from 'src/screens/dashboard/_components/QuickReplyButton'
 import useAddComment from 'src/screens/dashboard/_hooks/useAddComment'
 import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
@@ -87,7 +87,7 @@ function Discussions() {
 					<Image
 						borderRadius='3xl'
 						boxSize='36px'
-						src={(role === 'builder' || role === 'community') ? getAvatar(false, scwAddress?.toLowerCase()) : workspace?.members?.find(member => member.actorId.toLowerCase() === scwAddress?.toLowerCase())?.profilePictureIpfsHash ? getUrlForIPFSHash(workspace?.members?.find(member => member.actorId.toLowerCase() === scwAddress?.toLowerCase())?.profilePictureIpfsHash ?? '') : getAvatar(false, scwAddress?.toLowerCase())}
+						src={(role === 'builder' || role === 'community') ? getAvatar(false, scwAddress?.toLowerCase()) : grant?.workspace?.members?.find(member => member.actorId.toLowerCase() === scwAddress?.toLowerCase())?.profilePictureIpfsHash ? getUrlForIPFSHash(grant?.workspace?.members?.find(member => member.actorId.toLowerCase() === scwAddress?.toLowerCase())?.profilePictureIpfsHash ?? '') : getAvatar(false, scwAddress?.toLowerCase())}
 					/>
 					<Flex
 						ml={4}
@@ -202,8 +202,7 @@ function Discussions() {
 	}
 
 	const { scwAddress } = useContext(WebwalletContext)!
-	const { workspace } = useContext(ApiClientsContext)!
-	const { role } = useContext(GrantsProgramContext)!
+	const { grant, role } = useContext(GrantsProgramContext)!
 	const { proposals, selectedProposals, commentMap } = useContext(DashboardContext)!
 
 	const [step, setStep] = useState<number>()

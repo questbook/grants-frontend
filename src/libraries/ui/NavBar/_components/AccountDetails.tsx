@@ -19,7 +19,7 @@ import { useRouter } from 'next/router'
 import { AddUser, ArrowRight, Key, Pencil } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
-import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAddress } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
@@ -151,9 +151,8 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 		</Menu>
 	)
 
-	const { workspace } = useContext(ApiClientsContext)!
 	const { t } = useTranslation()
-	const { role } = useContext(GrantsProgramContext)!
+	const { grant, role } = useContext(GrantsProgramContext)!
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 
 	const router = useRouter()
@@ -171,8 +170,8 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 	}, [scwAddress, webwallet?.address])
 
 	const member = useMemo(() => {
-		return workspace?.members?.find((member) => member.actorId === scwAddress?.toLowerCase())
-	}, [workspace, scwAddress])
+		return grant?.workspace?.members?.find((member) => member.actorId === scwAddress?.toLowerCase())
+	}, [grant, scwAddress])
 
 	const menuItems = [
 		{

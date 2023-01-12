@@ -343,9 +343,7 @@ function FundBuilderModal() {
 		}
 	}
 
-	const { workspace } = useContext(ApiClientsContext)!
-
-	const workspacechainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+	const workspacechainId = getSupportedChainIdFromWorkspace(grant?.workspace) || defaultChainId
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: workspacechainId ? workspacechainId.toString() : defaultChainId.toString(),
@@ -380,7 +378,7 @@ function FundBuilderModal() {
 				selectedTokenInfo?.tokenName.toLowerCase(),
 				'nonEvmAssetAddress-toBeChanged',
 				[amounts?.[0]],
-				workspace?.id,
+				grant?.workspace?.id,
 				proposaladdress
 			]
 
@@ -412,7 +410,7 @@ function FundBuilderModal() {
 
 			const { txFee } = await getTransactionDetails(transactionHash, workspacechainId.toString())
 
-			await chargeGas(Number(workspace?.id), Number(txFee), workspacechainId)
+			await chargeGas(Number(grant?.workspace?.id), Number(txFee), workspacechainId)
 
 		} catch(e) {
 			logger.error('disburse error', e)
