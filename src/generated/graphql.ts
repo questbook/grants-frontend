@@ -9229,7 +9229,9 @@ export function refetchGetProposalsQuery(variables: GetProposalsQueryVariables) 
     }
 export const GetAllGrantsForBuilderDocument = gql`
     query getAllGrantsForBuilder($applicantId: Bytes) {
-  grants(where: {applications_: {applicantId: $applicantId}}) {
+  grants(
+    where: {applications_: {applicantId: $applicantId}, workspace_: {isVisible: true}}
+  ) {
     id
     creatorId
     title

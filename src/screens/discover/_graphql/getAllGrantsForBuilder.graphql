@@ -1,6 +1,6 @@
 query getAllGrantsForBuilder($applicantId: Bytes){
   grants(
-    where: {applications_: {applicantId: $applicantId}}
+    where: {applications_: {applicantId: $applicantId} workspace_:{isVisible: true}}
   ) {  
       id
       creatorId
