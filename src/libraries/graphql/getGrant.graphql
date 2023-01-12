@@ -39,7 +39,7 @@ query getGrant($grantId: ID!, $actorId: Bytes!) {
     }
     reviewType
     payoutType
-    applications (where: {applicantId: $actorId}) {
+    myApplications: applications (where: {applicantId: $actorId}) {
       id
     }
     workspace {

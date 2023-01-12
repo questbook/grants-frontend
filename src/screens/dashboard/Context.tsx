@@ -70,7 +70,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 		const possibleRoles: Roles[] = ['community']
 
-		if(_grant?.applications?.length > 0) {
+		if(_grant?.myApplications?.length > 0) {
 			possibleRoles.push('builder')
 		}
 
