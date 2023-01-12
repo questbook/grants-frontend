@@ -8,7 +8,7 @@ import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
-import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import PayFromChoose from 'src/screens/dashboard/_components/FundBuilder/PayFromChoose'
 import PayWithChoose from 'src/screens/dashboard/_components/FundBuilder/PayWithChoose'
 import ProposalDetails from 'src/screens/dashboard/_components/FundBuilder/ProposalDetails'
@@ -286,9 +286,7 @@ function FundBuilderDrawer() {
 		}
 	}
 
-	const { workspace } = useContext(ApiClientsContext)!
-
-	const workspacechainId = getSupportedChainIdFromWorkspace(workspace) || defaultChainId
+	const workspacechainId = getSupportedChainIdFromWorkspace(grant?.workspace) || defaultChainId
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: workspacechainId ? workspacechainId.toString() : defaultChainId.toString(),
@@ -323,7 +321,7 @@ function FundBuilderDrawer() {
 				selectedTokenInfo?.tokenName.toLowerCase(),
 				'nonEvmAssetAddress-toBeChanged',
 				amounts,
-				workspace?.id,
+				grant?.workspace?.id,
 				proposaladdress
 			]
 
@@ -354,7 +352,7 @@ function FundBuilderDrawer() {
 
 			const { txFee } = await getTransactionDetails(transactionHash, workspacechainId.toString())
 
-			await chargeGas(Number(workspace?.id), Number(txFee), workspacechainId)
+			await chargeGas(Number(grant?.workspace?.id), Number(txFee), workspacechainId)
 
 		} catch(e) {
 			console.log('disburse error', e)

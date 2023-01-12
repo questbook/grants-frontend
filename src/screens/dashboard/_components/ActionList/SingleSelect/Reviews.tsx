@@ -1,8 +1,9 @@
 import { RefObject, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Box, Button, Checkbox, Divider, Flex, Image, InputGroup, InputRightElement, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text } from '@chakra-ui/react'
+import { defaultChainId } from 'src/constants/chains'
 import { CheckDouble, Dropdown, Pencil } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
-import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import DashboardInput from 'src/screens/dashboard/_components/DashboardInput'
 import useAssignReviewers from 'src/screens/dashboard/_hooks/useAssignReviewers'
 import useSetRubrics from 'src/screens/dashboard/_hooks/useSetRubrics'
@@ -14,6 +15,7 @@ import getAvatar from 'src/utils/avatarUtils'
 import { formatAddress } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { useLoadReview } from 'src/utils/reviews'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function Reviews() {
 	const buildComponent = () => {
@@ -210,13 +212,13 @@ function Reviews() {
 										mt={3}
 										w='100%'>
 										<Checkbox
-											isChecked={workspace?.members?.every(m => members[m.id])}
+											isChecked={grant?.workspace?.members?.every(m => members[m.id])}
 											onChange={
 												(e) => {
 													logger.info({ checked: e.target.checked }, 'checkbox changed')
 													if(e.target.checked) {
 														const newMap: { [key: string]: boolean } = {}
-														workspace?.members?.forEach(m => {
+														grant?.workspace?.members?.forEach(m => {
 															newMap[m.id] = true
 														})
 														setMembers(newMap)
@@ -235,11 +237,11 @@ function Reviews() {
 										<Text
 											ml='auto'
 											variant='v2_body'>
-											{workspace?.members?.filter(m => members[m.id]).length}
+											{grant?.workspace?.members?.filter(m => members[m.id]).length}
 											{' '}
 											/
 											{' '}
-											{workspace?.members?.length}
+											{grant?.workspace?.members?.length}
 											{' '}
 											selected
 										</Text>
@@ -249,7 +251,7 @@ function Reviews() {
 										w='100%'
 										pt={2}>
 										{
-											workspace?.members?.filter(m => searchMemberName === '' || m.fullName?.indexOf(searchMemberName) !== -1).map(m => {
+											grant?.workspace?.members?.filter(m => searchMemberName === '' || m.fullName?.indexOf(searchMemberName) !== -1).map(m => {
 												return (
 													<Flex
 														key={m.id}
@@ -307,7 +309,7 @@ function Reviews() {
 													}
 
 													Object.keys(members).forEach(m => {
-														const member = workspace?.members?.find(m2 => m2.id === m)
+														const member = grant?.workspace?.members?.find(m2 => m2.id === m)
 														if(member) {
 															selectedReviewers.push(member.actorId)
 															active.push(true)
@@ -782,10 +784,13 @@ function Reviews() {
 		)
 	}
 
-	const { workspace, chainId } = useContext(ApiClientsContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
 	const { grant, role } = useContext(GrantsProgramContext)!
 	const { proposals, selectedProposals, setShowSubmitReviewPanel } = useContext(DashboardContext)!
+
+	const chainId = useMemo(() => {
+		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
+	}, [grant])
 	const { loadReview } = useLoadReview(grant?.id, chainId)
 
 	const [expanded, setExpanded] = useState<boolean>(false)

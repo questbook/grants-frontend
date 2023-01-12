@@ -1,16 +1,18 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Flex, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { defaultChainId } from 'src/constants/chains'
 import logger from 'src/libraries/logger'
 import BackButton from 'src/libraries/ui/BackButton'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import { useLoadReview } from 'src/libraries/utils/reviews'
-import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import useSubmitReview from 'src/screens/dashboard/_hooks/useSubmitReview'
 import { ReviewData } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function ReviewProposal() {
 	const buildComponent = () => {
@@ -283,7 +285,6 @@ function ReviewProposal() {
 		)
 	}
 
-	const { chainId } = useContext(ApiClientsContext)!
 	const { grant } = useContext(GrantsProgramContext)!
 	const { selectedProposals, proposals, review, setReview, showSubmitReviewPanel, setShowSubmitReviewPanel } = useContext(DashboardContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
@@ -301,6 +302,10 @@ function ReviewProposal() {
 	const isReviewPending = useMemo(() => {
 		return proposal?.pendingReviewerAddresses?.indexOf(scwAddress?.toLowerCase() ?? '') !== -1 && proposal?.state === 'submitted'
 	}, [proposal, scwAddress])
+
+	const chainId = useMemo(() => {
+		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
+	}, [grant])
 
 	const { loadReview } = useLoadReview(grant?.id, chainId)
 

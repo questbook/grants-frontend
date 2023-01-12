@@ -121,7 +121,7 @@ function NavBar({ bg = 'gray.1' }: Props) {
 				<Box ml={4} />
 
 				{
-					(role === 'admin' && grant?.acceptingApplications && !isLoading && grant?.applications?.length === 0) && (
+					(shouldShowTitle && role === 'admin' && grant?.acceptingApplications && grant?.applications?.length === 0) && (
 						<Pencil
 							cursor='pointer'
 							boxSize='20px'
@@ -142,7 +142,7 @@ function NavBar({ bg = 'gray.1' }: Props) {
 				}
 
 				{
-					(role === 'admin' && !isLoading) && (
+					(shouldShowTitle && role === 'admin') && (
 						<Settings
 							boxSize='20px'
 							ml={3}
@@ -160,7 +160,7 @@ function NavBar({ bg = 'gray.1' }: Props) {
 				}
 
 				{(role === 'admin' && !isLoading) && (<Box ml={3} />)}
-				{!isLoading && <SharePopover />}
+				{(!isLoading && router.pathname === '/dashboard') && <SharePopover />}
 
 				<Spacer />
 

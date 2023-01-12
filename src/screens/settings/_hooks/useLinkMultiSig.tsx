@@ -1,11 +1,12 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { logger } from 'ethers'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
+import { defaultChainId } from 'src/constants/chains'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import getErrorMessage from 'src/utils/errorUtils'
 import { bicoDapps, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -18,27 +19,32 @@ interface Props {
 
 function useLinkMultiSig({ multisigAddress, selectedSafeNetwork }: Props) {
 
-	const { subgraphClients, workspace, chainId } = useContext(ApiClientsContext)!
+	const { subgraphClients } = useContext(ApiClientsContext)!
+	const { grant } = useContext(GrantsProgramContext)!
 	const { webwallet } = useContext(WebwalletContext)!
+
+	const chainId = useMemo(() => {
+		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
+	}, [grant])
 
 	const { nonce } = useQuestbookAccount()
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: chainId?.toString(),
 	})
 
-	const workspaceContract = useQBContract('workspace', getSupportedChainIdFromWorkspace(workspace!))
+	const workspaceContract = useQBContract('workspace', getSupportedChainIdFromWorkspace(grant?.workspace!))
 
 	const [isMultisigLinked, setIsMultisigLinked] = useState(false)
 
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
 
 	useEffect(() => {
-		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && workspace?.id &&
-            biconomy.networkId && biconomy.networkId.toString() === workspace?.id.toString()) {
+		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && grant?.workspace?.id &&
+            biconomy.networkId && biconomy.networkId.toString() === grant?.workspace?.id.toString()) {
 			setIsBiconomyInitialised(true)
 		}
 
-	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, workspace])
+	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, grant])
 
 
 	const customToast = useCustomToast()
@@ -57,18 +63,18 @@ function useLinkMultiSig({ multisigAddress, selectedSafeNetwork }: Props) {
 				throw new Error('Biconomy wallet client not initialised')
 			}
 
-			const chainId = getSupportedChainIdFromWorkspace(workspace!)
+			const chainId = getSupportedChainIdFromWorkspace(grant?.workspace!)
 
 			if(!chainId) {
 				throw new Error('No network specified')
 			}
 
-			logger.info('method args', [Number(workspace?.id), new Uint8Array(32), multisigAddress, parseInt(selectedSafeNetwork.networkId)])
+			logger.info('method args', [Number(grant?.workspace?.id), new Uint8Array(32), multisigAddress, parseInt(selectedSafeNetwork.networkId)])
 			const transactionHash = await sendGaslessTransaction(
 				biconomy,
 				workspaceContract,
 				'updateWorkspaceSafe',
-				[Number(workspace?.id), new Uint8Array(32), multisigAddress, parseInt(selectedSafeNetwork.networkId)],
+				[Number(grant?.workspace?.id), new Uint8Array(32), multisigAddress, parseInt(selectedSafeNetwork.networkId)],
 				WORKSPACE_REGISTRY_ADDRESS[chainId],
 				biconomyWalletClient,
 				scwAddress,
@@ -97,12 +103,12 @@ function useLinkMultiSig({ multisigAddress, selectedSafeNetwork }: Props) {
 				title: message
 			})
 		}
-	}, [workspace, chainId, biconomy, biconomyWalletClient, scwAddress, webwallet, nonce, selectedSafeNetwork])
+	}, [grant, chainId, biconomy, biconomyWalletClient, scwAddress, webwallet, nonce, selectedSafeNetwork])
 
 	return {
 		linkMultisig: useMemo(() => {
 			return linkMultisig
-		}, [workspace, chainId, biconomy, biconomyWalletClient, scwAddress, webwallet, nonce, selectedSafeNetwork]),
+		}, [grant, chainId, biconomy, biconomyWalletClient, scwAddress, webwallet, nonce, selectedSafeNetwork]),
 		isMultisigLinked
 	}
 
