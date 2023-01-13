@@ -20,9 +20,9 @@ function SingleSelect() {
 			<Flex
 				h='100%'
 				direction='column'>
-				<Reviews />
-				<Divider />
 				<Milestones />
+				<Divider />
+				<Reviews />
 				<Divider />
 				<Payouts />
 				<Box mt='auto' />
