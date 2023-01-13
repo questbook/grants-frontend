@@ -77,7 +77,7 @@ function SharePopover() {
 	const popoverBodyItem = [
 		{
 			title: 'Share',
-			description: 'Attract builders with a link, or embed your stats on any website.',
+			description: 'Attract builders with a link',
 			buttonIcon: <Copy
 				color='accent.azure'
 				boxSize='20px' />,

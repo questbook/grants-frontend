@@ -30,7 +30,7 @@ function RFPCard({ logo, isAdmin, isAcceptingApplications, name, chainId, role, 
 		<Box
 			w='100%'
 			background='white'
-			p='24px'
+			p={5}
 			position='relative'
 			// boxShadow='0px 10px 18px rgba(31, 31, 51, 0.05), 0px 0px 1px rgba(31, 31, 51, 0.31);'
 			borderRadius='2px'
@@ -109,13 +109,14 @@ function RFPCard({ logo, isAdmin, isAcceptingApplications, name, chainId, role, 
 				</Flex>
 				<Flex
 					direction='column'
-					gap={2}>
+					gap={2}
+				>
 					<Flex
 						gap={2}
 						alignItems='center'
 					>
 						<Text
-							variant='v2_subheading'
+							variant='v2_title'
 							fontSize='18px'
 							fontWeight='500'
 							noOfLines={3}

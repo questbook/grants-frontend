@@ -56,59 +56,28 @@ function Proposal() {
 					</Text>
 				</Flex>
 
-				<Flex
-					mt={4}
-					direction='column'>
-					<Text color='gray.5'>
-						By
-					</Text>
-					<Flex align='center'>
-						<Image
-							borderRadius='3xl'
-							boxSize='36px'
-							src={getAvatar(false, proposal.applicantId)}
-						/>
+				{
+					role === 'admin' && (
 						<Flex
-							ml={2}
+							mt={4}
 							direction='column'>
-							<Text fontWeight='500'>
-								{getFieldString(decryptedProposal, 'applicantName')}
+							<Text color='gray.5'>
+								By
 							</Text>
-							<Flex
-								align='center'>
-								<Button
-									variant='link'
-									rightIcon={
-										<Flex
-											w='20px'
-											h='20px'
-											bg='gray.3'
-											borderRadius='3xl'
-											justify='center'>
-											<Mail
-												alignSelf='center'
-												boxSize='12px' />
-										</Flex>
-									}>
-									<Text
-										fontWeight='400'
-										variant='v2_body'
-										color='gray.5'>
-										{getFieldString(decryptedProposal, 'applicantEmail')}
+							<Flex align='center'>
+								<Image
+									borderRadius='3xl'
+									boxSize='36px'
+									src={getAvatar(false, proposal.applicantId)}
+								/>
+								<Flex
+									ml={2}
+									direction='column'>
+									<Text fontWeight='500'>
+										{getFieldString(decryptedProposal, 'applicantName')}
 									</Text>
-								</Button>
-
-								{
-									getFieldString(proposal, 'applicantAddress') && (
-										<Image
-											src='/v2/icons/dot.svg'
-											boxSize='4px'
-											mx={2} />
-									)
-								}
-
-								{
-									getFieldString(proposal, 'applicantAddress') && (
+									<Flex
+										align='center'>
 										<Button
 											variant='link'
 											rightIcon={
@@ -118,24 +87,59 @@ function Proposal() {
 													bg='gray.3'
 													borderRadius='3xl'
 													justify='center'>
-													<CopyIcon
-														// boxSize='12px'
-														text={getFieldString(proposal, 'applicantAddress')} />
+													<Mail
+														alignSelf='center'
+														boxSize='12px' />
 												</Flex>
 											}>
 											<Text
 												fontWeight='400'
 												variant='v2_body'
 												color='gray.5'>
-												{formatAddress(getFieldString(proposal, 'applicantAddress'))}
+												{getFieldString(decryptedProposal, 'applicantEmail')}
 											</Text>
 										</Button>
-									)
-								}
+
+										{
+											getFieldString(proposal, 'applicantAddress') && (
+												<Image
+													src='/v2/icons/dot.svg'
+													boxSize='4px'
+													mx={2} />
+											)
+										}
+
+										{
+											getFieldString(proposal, 'applicantAddress') && (
+												<Button
+													variant='link'
+													rightIcon={
+														<Flex
+															w='20px'
+															h='20px'
+															bg='gray.3'
+															borderRadius='3xl'
+															justify='center'>
+															<CopyIcon
+																// boxSize='12px'
+																text={getFieldString(proposal, 'applicantAddress')} />
+														</Flex>
+													}>
+													<Text
+														fontWeight='400'
+														variant='v2_body'
+														color='gray.5'>
+														{formatAddress(getFieldString(proposal, 'applicantAddress'))}
+													</Text>
+												</Button>
+											)
+										}
+									</Flex>
+								</Flex>
 							</Flex>
 						</Flex>
-					</Flex>
-				</Flex>
+					)
+				}
 
 				<Flex
 					mt={4}
@@ -272,7 +276,7 @@ function Proposal() {
 		)
 	}
 
-	const { grant } = useContext(GrantsProgramContext)!
+	const { grant, role } = useContext(GrantsProgramContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 
 	const proposal = useMemo(() => {
