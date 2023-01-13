@@ -431,7 +431,7 @@ function RequestProposal() {
 			setTxHash(workspaceCreateReceipt?.transactionHash)
 			logger.info({ network, subgraphClients }, 'Network and Client')
 			await subgraphClients[network]?.waitForBlock(workspaceCreateReceipt?.blockNumber)
-
+			setCurrentStepIndex(1)
 			// setCurrentStepIndex(1)
 			const event = await getEventData(workspaceCreateReceipt, 'WorkspaceCreated', WorkspaceRegistryAbi)
 			if(event) {
@@ -440,11 +440,6 @@ function RequestProposal() {
 				const newWorkspace = `chain_${network}-0x${workspaceId.toString(16)}`
 				logger.info({ newWorkspace }, 'New workspace created')
 				localStorage.setItem(DOMAIN_CACHE_KEY, newWorkspace)
-				await addAuthorizedOwner(workspaceId, webwallet?.address!, scwAddress, network.toString(),
-					'this is the safe addres - to be updated in the new flow')
-
-				await chargeGas(workspaceId, Number(workspaceCreateTxFee), network)
-
 
 				// createGrant()
 				let fileIPFSHash = ''
@@ -542,12 +537,19 @@ function RequestProposal() {
 					}
 
 					// setCurrentStep(2)
-					setCurrentStepIndex(1)
+
+					await addAuthorizedOwner(workspaceId, webwallet?.address!, scwAddress, network.toString(),
+						'this is the safe addres - to be updated in the new flow')
+
+					// await chargeGas(workspaceId, Number(workspaceCreateTxFee), network)
+
+
 					const { txFee: createGrantTxFee, receipt: createGrantTxReceipt } = await getTransactionDetails(response, network!.toString())
 					setTxHash(createGrantTxReceipt?.transactionHash)
 					logger.info('createGrantTxReceipt', createGrantTxReceipt)
 					await subgraphClients[network!].waitForBlock(createGrantTxReceipt?.blockNumber)
 					logger.info('waiting for indexing')
+					setCurrentStepIndex(2)
 					const grantEvent = await getEventData(createGrantTxReceipt, 'GrantCreated', GrantFactoryAbi)
 					logger.info('grantEvent', grantEvent)
 					if(grantEvent) {
@@ -555,9 +557,8 @@ function RequestProposal() {
 						localStorage.setItem(`${GRANT_CACHE_KEY}-${chainId}-${event.args[0].toBigInt()}`, grantId)
 						logger.info('grantId', grantId, chainId)
 						setGrantId(grantId)
-						setCurrentStepIndex(2)
 						logger.info('waiting for charge gas')
-						await chargeGas(Number(workspaceId), Number(createGrantTxFee), network!)
+						await chargeGas(Number(workspaceId), Number(createGrantTxFee) + Number(workspaceCreateTxFee), network!)
 
 						setCurrentStepIndex(3) // 3 is the final step
 					}
@@ -589,139 +590,6 @@ function RequestProposal() {
 		// const { value } = e.target
 		logger.info('rfp edited', { ...RFPEditFormData, [field]: value })
 		setRFPEditFormData({ ...RFPEditFormData, [field]: value })
-	}
-
-
-	const createRFP = async() => {
-		try {
-			setCurrentStepIndex(0)
-			let fileIPFSHash = ''
-			if(doc) {
-				const fileCID = await uploadToIPFS(doc[0]!)
-				logger.info('fileCID', fileCID)
-				fileIPFSHash = fileCID.hash
-			}
-
-			let payout: string
-			if(payoutMode.label === PayoutMode.IN_ONE_GO) {
-				payout = 'in_one_go'
-			} else if(payoutMode!.label === PayoutMode.BASED_ON_MILESTONE) {
-				payout = 'milestones'
-			}
-
-			let review: string
-			if(reviewMechanism?.label === 'Voting') {
-				review = 'voting'
-			} else if(reviewMechanism?.label === 'Rubric') {
-				review = 'rubrics'
-			}
-
-			// validate grant data
-			const { hash: grantCreateIpfsHash } = await validateAndUploadToIpfs('GrantCreateRequest', {
-				title: proposalName!,
-				startDate: startDate!,
-				endDate: endDate!,
-				// details: allApplicantDetails!,
-				link: link!,
-				docIpfsHash: fileIPFSHash,
-				reward: {
-					asset: USD_ASSET!,
-					committed: amount.toString()!,
-					token: {
-						label: 'USD',
-						address: USD_ASSET!,
-						decimal: USD_DECIMALS.toString(),
-						iconHash: USD_ICON
-					}
-				},
-				payoutType: payout!,
-				reviewType: review!,
-				milestones,
-				creatorId: accountDataWebwallet!.address!,
-				workspaceId: Number(workspace?.id).toString(),
-				fields: allApplicantDetails,
-				grantManagers: [accountDataWebwallet!.address!],
-			})
-
-			logger.info('grantCreateIpfsHash', grantCreateIpfsHash)
-			let rubricHash = ''
-
-			const { hash: auxRubricHash } = await validateAndUploadToIpfs('RubricSetRequest', {
-				rubric: {
-					rubric: rubrics,
-					isPrivate: false
-				},
-			})
-
-			if(auxRubricHash) {
-				rubricHash = auxRubricHash
-			}
-			// }
-
-			logger.info('rubric hash', rubricHash)
-			logger.info('workspace', workspace)
-			if(workspace) {
-				const methodArgs = [
-					Number(workspace?.id).toString(),
-					grantCreateIpfsHash,
-					rubricHash,
-					WORKSPACE_REGISTRY_ADDRESS[network!],
-					APPLICATION_REGISTRY_ADDRESS[network!],
-				]
-				logger.info('methodArgs for grant creation', methodArgs)
-				const response = await sendGaslessTransaction(
-					biconomy,
-					grantContract,
-					'createGrant',
-					methodArgs,
-					grantContract.address,
-						biconomyWalletClient!,
-						scwAddress!,
-						webwallet,
-						`${network}`,
-						bicoDapps[network!.toString()].webHookId,
-						nonce
-				)
-				if(!response) {
-					return
-				}
-
-				// setCurrentStep(2)
-				setCurrentStepIndex(1)
-				const { txFee: createGrantTxFee, receipt: createGrantTxReceipt } = await getTransactionDetails(response, network!.toString())
-				setTxHash(createGrantTxReceipt?.transactionHash)
-				await subgraphClients[network!].waitForBlock(createGrantTxReceipt?.blockNumber)
-
-				const event = await getEventData(createGrantTxReceipt, 'GrantCreated', GrantFactoryAbi)
-
-				if(event) {
-					const grantId = event.args[0].toString()
-					localStorage.setItem(`${GRANT_CACHE_KEY}-${chainId}-${workspace.id}`, grantId)
-					logger.info('grantId', grantId, chainId)
-					setCurrentStepIndex(2)
-					await chargeGas(Number(workspace?.id), Number(createGrantTxFee), network!)
-
-					setCurrentStepIndex(3) // 3 is the final step
-				}
-
-			}
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} catch(e: any) {
-			setCurrentStepIndex(3) // 3 is the final step
-			const message = getErrorMessage(e)
-			logger.info('error', message)
-			toastRef.current = toast({
-				position: 'top',
-				render: () => ErrorToast({
-					content: message,
-					close: () => {
-						if(toastRef.current) {
-							toast.close(toastRef.current)
-						}
-					},
-				}),
-			})
-		}
 	}
 
 	return buildComponent()
