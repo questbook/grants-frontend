@@ -53,7 +53,7 @@ function ProposalList() {
 									const domain = href[2]
 									const chainId = getSupportedChainIdFromSupportedNetwork(grant?.workspace.supportedNetworks[0])
 
-									const URL = `${protocol}//${domain}/proposal_form/?grantId=${grant?.id}&chainId=${chainId}`
+									const URL = `${protocol}//${domain}/proposal_form/?grantId=${grant?.id}&chainId=${chainId}&newTab=true`
 
 									window.open(URL, '_blank')
 								}
