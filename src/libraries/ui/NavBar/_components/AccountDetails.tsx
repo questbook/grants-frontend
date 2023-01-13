@@ -1,17 +1,18 @@
-import React, { useContext, useEffect, useMemo } from 'react'
+import React, { useContext, useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ChevronDownIcon } from '@chakra-ui/icons'
 import {
 	Box,
 	Button,
 	Flex,
-	HStack,
 	IconButton,
 	Image,
 	Link,
-	Menu,
-	MenuButton,
-	MenuList,
+	Popover,
+	PopoverArrow,
+	PopoverBody,
+	PopoverContent,
+	PopoverTrigger,
 	Text,
 } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
@@ -34,107 +35,118 @@ interface Props {
 
 function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 	const buildComponent = () => (
-		<Menu
-			size='xl'
-			closeOnSelect>
-			<MenuButton
-				ml={3}
-				variant='ghost'
-				disabled={isConnecting}
-				as={Button}
-				rightIcon={<ChevronDownIcon />}
-			>
-				<HStack>
-					<Image
-						borderRadius='3xl'
-						src={member?.profilePictureIpfsHash ? getUrlForIPFSHash(member.profilePictureIpfsHash) : getAvatar(false, scwAddress ?? 'generic')}
-						boxSize='24px'
-					/>
-				</HStack>
-			</MenuButton>
-			<MenuList p={0}>
-				<Flex
-					direction='column'
-					align='stretch'
-					bg='white'>
-					{
-						router.pathname === '/dashboard' && (role === 'admin' || role === 'reviewer') && (
-							<Flex
-								px={4}
-								pt={3}
-								align='center'>
+		<Popover
+			placement='bottom-end'
+			isLazy
+			initialFocusRef={popoverRef}>
+			{
+				({ onClose }) => (
+					<>
+						<PopoverTrigger>
+							<Button
+								variant='ghost'
+								bg='gray.1'
+								disabled={isConnecting}
+								as={Button}
+								rightIcon={<ChevronDownIcon />}
+							>
 								<Image
-									boxShadow='0px 4px 16px rgba(31, 31, 51, 0.15)'
 									borderRadius='3xl'
-									src={member?.profilePictureIpfsHash ? getUrlForIPFSHash(member.profilePictureIpfsHash) : getAvatar(false, scwAddress!)}
-									boxSize='24px' />
-								<Text
-									ml={3}
-									variant='v2_body'
-									fontWeight='500'>
-									{!member?.fullName ? 'Setup' : 'Update'}
-									{' '}
-									your profile
-								</Text>
-								<IconButton
-									variant='ghost'
-									ml='auto'
-									aria-label='setup-profile'
-									size='24px'
-									icon={!member?.fullName ? <ArrowRight boxSize='18px' /> : <Pencil boxSize='18px' />}
-									onClick={() => setIsUpdateProfileModalOpen(true)} />
-							</Flex>
-						)
-					}
+									src={member?.profilePictureIpfsHash ? getUrlForIPFSHash(member.profilePictureIpfsHash) : getAvatar(false, scwAddress ?? 'generic')}
+									boxSize='24px'
+								/>
+							</Button>
+						</PopoverTrigger>
+						<PopoverContent>
+							<PopoverArrow />
+							<PopoverBody>
+								<Flex
+									direction='column'
+									align='stretch'
+									bg='white'>
+									{
+										(router.pathname === '/dashboard' && (role === 'admin' || role === 'reviewer')) && (
+											<Flex
+												px={4}
+												pt={3}
+												align='center'>
+												<Image
+													boxShadow='0px 4px 16px rgba(31, 31, 51, 0.15)'
+													borderRadius='3xl'
+													src={member?.profilePictureIpfsHash ? getUrlForIPFSHash(member.profilePictureIpfsHash) : getAvatar(false, scwAddress!)}
+													boxSize='24px' />
+												<Text
+													ml={3}
+													variant='v2_body'
+													fontWeight='500'>
+													{!member?.fullName ? 'Setup' : 'Update'}
+													{' '}
+													your profile
+												</Text>
+												<IconButton
+													variant='ghost'
+													ml='auto'
+													aria-label='setup-profile'
+													size='24px'
+													icon={!member?.fullName ? <ArrowRight boxSize='18px' /> : <Pencil boxSize='18px' />}
+													onClick={() => setIsUpdateProfileModalOpen(true)} />
+											</Flex>
+										)
+									}
 
-					<Flex
-						align='center'
-						px={3}
-						mt={3}
-					>
-						<Text
-							variant='v2_body'
-							color='gray.5'>
-							Your zero wallet
-						</Text>
+									<Flex
+										align='center'
+										px={3}
+										mt={4}
+									>
+										<Text
+											variant='v2_body'
+											color='gray.5'>
+											Your zero wallet
+										</Text>
 
-						<Link
-							ml='auto'
-							target='_blank'
-							href={IN_APP_WALLET_LEARN_MORE_URL}>
-							<Text
-								variant='v2_body'>
-								Learn More
-							</Text>
-						</Link>
-					</Flex>
+										<Link
+											ml='auto'
+											target='_blank'
+											href={IN_APP_WALLET_LEARN_MORE_URL}>
+											<Text
+												variant='v2_body'>
+												Learn More
+											</Text>
+										</Link>
+									</Flex>
 
-					<Flex
-						fontSize='sm'
-						px={3}
-						pt={1}>
-						<Link onClick={copyScwAddress}>
-							<Text variant='v2_body'>
-								{formatAddress(scwAddress ?? '')}
-							</Text>
-						</Link>
+									<Flex
+										fontSize='sm'
+										px={3}
+										pt={1}>
+										<Link onClick={copyScwAddress}>
+											<Text variant='v2_body'>
+												{formatAddress(scwAddress ?? '')}
+											</Text>
+										</Link>
 
-						<Box w={3} />
-					</Flex>
+										<Box w={3} />
+									</Flex>
 
-					{
-						openModal &&
+									{
+										openModal &&
 						menuItems.map((item, index) => {
 							return (
 								<Flex
 									key={index}
 									ml={3}
-									mt={index === 0 ? 3 : 2}>
+									mt={4}>
 									{item.icon}
 									<Text
 										ml={2}
 										_hover={{ textDecoration: 'underline', cursor: 'pointer' }}
-										onClick={item.onClick}
+										onClick={
+											() => {
+												onClose()
+												item.onClick()
+											}
+										}
 										variant='v2_body'
 									>
 										{item.title}
@@ -143,14 +155,19 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 
 							)
 						})
-					}
+									}
 
-					<Box mb={2} />
-				</Flex>
-			</MenuList>
-		</Menu>
+									<Box mb={2} />
+								</Flex>
+							</PopoverBody>
+						</PopoverContent>
+					</>
+				)
+			}
+		</Popover>
 	)
 
+	const popoverRef = useRef<HTMLButtonElement>(null)
 	const { t } = useTranslation()
 	const { grant, role } = useContext(GrantsProgramContext)!
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!

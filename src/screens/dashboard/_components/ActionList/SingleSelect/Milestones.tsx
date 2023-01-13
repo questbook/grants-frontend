@@ -82,7 +82,7 @@ function Milestones() {
 	}
 
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
-	const [expanded, setExpanded] = useState(false)
+	const [expanded, setExpanded] = useState(true)
 
 	const proposal = useMemo(() => {
 		return proposals.find(p => selectedProposals.has(p.id))

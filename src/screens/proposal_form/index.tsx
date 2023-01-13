@@ -149,9 +149,13 @@ function ProposalForm() {
 					my={5}
 					px={6}
 					py={10}>
-					<Flex justify='start'>
-						<BackButton />
-					</Flex>
+					{
+						newTab !== 'true' && (
+							<Flex justify='start'>
+								<BackButton />
+							</Flex>
+						)
+					}
 					<Flex
 						mx='auto'
 						direction='column'
@@ -537,6 +541,7 @@ function ProposalForm() {
 	const isEvm = safeObj?.getIsEvm()
 
 	const router = useRouter()
+	const { newTab } = router.query
 
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
 	const [transactionHash, setTransactionHash] = useState<string>('')
