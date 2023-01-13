@@ -193,24 +193,29 @@ function Discover() {
 								</Center>
 							) : (
 								<>
-									<Box my={4}>
-										<Text
-											fontWeight='500'
-											fontSize='24px'
-											lineHeight='32px'>
-											For You
-										</Text>
+									<Box
+										display={(personalGrants?.length || builderGrants?.length) ? '' : 'none'}
+									>
+										<Box my={4}>
+											<Text
+												fontWeight='500'
+												fontSize='24px'
+												lineHeight='32px'>
+												For You
+											</Text>
+										</Box>
+										<PersonalRFPGrid
+											personalGrants={personalGrants!}
+											builderGrants={builderGrants!}
+											reviewerGrants={reviewerGrants!}
+											unsavedDomainVisibleState={unsavedDomainState}
+											onDaoVisibilityUpdate={onDaoVisibilityUpdate}
+											hasMore={hasMoreDaos}
+											fetchMore={fetchMoreDaos}
+											isAdmin={isQbAdmin}
+										/>
+
 									</Box>
-									<PersonalRFPGrid
-										personalGrants={personalGrants!}
-										builderGrants={builderGrants!}
-										reviewerGrants={reviewerGrants!}
-										unsavedDomainVisibleState={unsavedDomainState}
-										onDaoVisibilityUpdate={onDaoVisibilityUpdate}
-										hasMore={hasMoreDaos}
-										fetchMore={fetchMoreDaos}
-										isAdmin={isQbAdmin}
-									/>
 
 									<Box my={4}>
 										<Text
