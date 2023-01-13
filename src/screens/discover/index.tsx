@@ -106,7 +106,7 @@ function Discover() {
 											pathname: '/request_proposal',
 										})
 									}>
-									Run a grant program
+									Start a grant program
 								</Button>
 							</Flex>
 
@@ -217,14 +217,14 @@ function Discover() {
 
 									</Box>
 
-									<Box my={4}>
-										<Text
-											fontWeight='500'
-											fontSize='24px'
-											lineHeight='32px'>
-											Discover
-										</Text>
-									</Box>
+									<Text
+										my={12}
+										mb={4}
+										fontWeight='500'
+										fontSize='24px'
+										lineHeight='32px'>
+										Discover
+									</Text>
 
 									<AllRFPsGrid
 										isAdmin={isQbAdmin}

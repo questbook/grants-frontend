@@ -16,7 +16,7 @@ function InviteProposalButton() {
 					color='white'
 					fontWeight='500'
 				>
-					Run a grant program
+					Start a grant program
 				</Text>
 			</Button>
 		)

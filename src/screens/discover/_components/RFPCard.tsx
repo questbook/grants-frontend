@@ -110,24 +110,31 @@ function RFPCard({ logo, isAdmin, isAcceptingApplications, name, chainId, role, 
 				<Flex
 					direction='column'
 					gap={2}>
-					<Flex gap={2}>
+					<Flex
+						gap={2}
+						alignItems='center'
+					>
 						<Text
 							variant='v2_subheading'
 							fontSize='18px'
 							fontWeight='500'
-							noOfLines={1}>
-							{name}
-						</Text>
-						<Text
-							color={isOpen ? 'accent.carrot' : 'gray.5'}
-							background={isOpen ? 'rgba(242, 148, 62, 0.2)' : 'gray.2'}
-							borderRadius='2px'
-							px={2}
-							py={1}
-							fontSize='12px'
-							fontWeight='500'
+							noOfLines={3}
 						>
-							{isOpen ? 'Open' : 'Closed'}
+							{name}
+
+							<Text
+								color={isOpen ? 'accent.carrot' : 'gray.5'}
+								background={isOpen ? 'rgba(242, 148, 62, 0.2)' : 'gray.2'}
+								borderRadius='2px'
+								px={2}
+								py={1}
+								fontSize='12px'
+								fontWeight='500'
+								ml={2}
+								display='inline-block'
+							>
+								{isOpen ? 'Open' : 'Closed'}
+							</Text>
 						</Text>
 					</Flex>
 

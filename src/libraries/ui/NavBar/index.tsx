@@ -47,11 +47,9 @@ function NavBar({ bg = 'gray.1' }: Props) {
 				<Image
 					onClick={
 						() => {
-							if(router.pathname === '/dashboard') {
-								router.push({
-									pathname: '/'
-								})
-							}
+							router.push({
+								pathname: '/'
+							})
 						}
 					}
 					display={{ base: 'none', lg: 'inherit' }}
@@ -63,11 +61,9 @@ function NavBar({ bg = 'gray.1' }: Props) {
 				<Image
 					onClick={
 						() => {
-							if(router.pathname === '/dashboard') {
-								router.push({
-									pathname: '/',
-								})
-							}
+							router.push({
+								pathname: '/',
+							})
 						}
 					}
 					display={{ base: 'inherit', lg: 'none' }}
