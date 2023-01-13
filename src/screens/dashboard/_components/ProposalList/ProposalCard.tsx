@@ -1,5 +1,5 @@
 import { useContext, useEffect } from 'react'
-import { Checkbox, Flex, Image, Text } from '@chakra-ui/react'
+import { Checkbox, Flex, Image, Text, Tooltip } from '@chakra-ui/react'
 import config from 'src/constants/config.json'
 import { CheckDouble, Close } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
@@ -87,13 +87,17 @@ function ProposalCard({ proposal }: Props) {
 					</Text>
 					{
 						(proposal?.state === 'approved' || proposal?.state === 'rejected') && (
-							<Flex
-								ml='auto'
-								p={2}
-								borderRadius='4px'
-								bg={proposal?.state === 'approved' ? 'accent.columbia' : 'accent.melon'}>
-								{proposal?.state === 'approved' ? <CheckDouble /> : <Close />}
-							</Flex>
+							<Tooltip
+								hasArrow
+								label={proposal?.state === 'approved' ? 'Accepted Proposal' : 'Rejected Proposal'}>
+								<Flex
+									ml='auto'
+									p={2}
+									borderRadius='4px'
+									bg={proposal?.state === 'approved' ? 'accent.columbia' : 'accent.melon'}>
+									{proposal?.state === 'approved' ? <CheckDouble /> : <Close />}
+								</Flex>
+							</Tooltip>
 						)
 					}
 				</Flex>
