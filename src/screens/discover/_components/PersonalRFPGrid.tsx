@@ -84,7 +84,7 @@ function PersonalRFPGrid({
 								chainId={workspaceChainId}
 								noOfApplicants={reviewerGrant.grant.applications.length}
 								totalAmount={reviewerGrant.grant.workspace.totalGrantFundingDisbursedUSD}
-								role='Reviewer'
+								role='reviewer'
 								grantId={reviewerGrant.grant.id}
 								isAcceptingApplications={reviewerGrant.grant.acceptingApplications}
 							/>
@@ -112,7 +112,7 @@ function PersonalRFPGrid({
 								chainId={workspaceChainId}
 								noOfApplicants={grant.applications.length}
 								totalAmount={grant.workspace.totalGrantFundingDisbursedUSD}
-								role='Builder'
+								role='builder'
 								grantId={grant.id}
 								isAcceptingApplications={grant.acceptingApplications}
 							/>
