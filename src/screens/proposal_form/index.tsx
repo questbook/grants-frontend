@@ -16,7 +16,7 @@ import SectionSelect from 'src/screens/proposal_form/_components/SectionSelect'
 import SelectArray from 'src/screens/proposal_form/_components/SelectArray'
 import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposal'
 import { containsField, findField, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
-import { DEFAULT_MILESTONE, MILESTONE_INPUT_STYLE } from 'src/screens/proposal_form/_utils/constants'
+import { customSteps, customStepsHeader, DEFAULT_MILESTONE, MILESTONE_INPUT_STYLE } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
 import getAvatar from 'src/utils/avatarUtils'
 import { chainNames } from 'src/utils/chainNames'
@@ -518,6 +518,8 @@ function ProposalForm() {
 					isOpen={networkTransactionModalStep !== undefined}
 					currentStepIndex={networkTransactionModalStep || 0}
 					viewTxnLink={getExplorerUrlForTxHash(chainId, transactionHash)}
+					customSteps={customSteps}
+					customStepsHeader={customStepsHeader}
 					onClose={
 						() => {
 							setNetworkTransactionModalStep(undefined)

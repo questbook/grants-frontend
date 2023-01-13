@@ -41,7 +41,7 @@ function NetworkTransactionFlowStepperModal({ isOpen, currentStepIndex, viewTxnL
 					</ModalHeader>
 
 
-					<ModalBody p={4}>
+					<ModalBody py={4}>
 						<VStack align='stretch'>
 
 							<Text
