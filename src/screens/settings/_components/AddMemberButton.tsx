@@ -9,70 +9,64 @@ function AddMemberButton() {
 		return (
 			<Popover
 				isLazy
+				placement='left'
 				initialFocusRef={popoverRef}>
-				{
-					({ onClose }) => (
-						<>
-							<PopoverTrigger>
-								{popoverButton()}
-							</PopoverTrigger>
-							<PopoverContent maxW='fit-content'>
-								<PopoverArrow />
-								<PopoverBody
-									maxH='30vh'
-									overflowY='auto'>
-									<Flex
-										direction='column'
-										align='start'
-									>
-										<Flex align='center'>
-											<Link boxSize='18px' />
-											<Text
-												variant='v2_body'
-												ml={3}>
-												Invite
-											</Text>
-											{memberButton(0)}
-											{memberButton(1)}
-										</Flex>
-										{
-											createLinkStep !== undefined && (
-												<Flex mt={2}>
-													<CircularProgress
-														isIndeterminate
-														color='black'
-														size='18px' />
-													<Text
-														ml={3}
-														variant='v2_body'>
-														Generating link on-chain...
-													</Text>
-												</Flex>
-											)
-										}
-										{
-											link && (
-												<Flex
-													mt={2}
-												>
-													<Text
-														variant='v2_body'
-														noOfLines={4}
-														wordBreak='break-all'
-														mr={2}>
-														{link}
-													</Text>
-													<CopyIcon text={link} />
-												</Flex>
-											)
-										}
+				<PopoverTrigger>
+					{popoverButton()}
+				</PopoverTrigger>
+				<PopoverContent maxW='fit-content'>
+					<PopoverArrow />
+					<PopoverBody
+						maxH='30vh'
+						overflowY='auto'>
+						<Flex
+							direction='column'
+							align='start'
+						>
+							<Flex align='center'>
+								<Link boxSize='18px' />
+								<Text
+									variant='v2_body'
+									ml={3}>
+									Invite
+								</Text>
+								{memberButton(0)}
+								{memberButton(1)}
+							</Flex>
+							{
+								createLinkStep !== undefined && (
+									<Flex mt={2}>
+										<CircularProgress
+											isIndeterminate
+											color='black'
+											size='18px' />
+										<Text
+											ml={3}
+											variant='v2_body'>
+											Generating link on-chain...
+										</Text>
 									</Flex>
-								</PopoverBody>
-							</PopoverContent>
-						</>
-					)
-				}
-
+								)
+							}
+							{
+								link && (
+									<Flex
+										mt={2}
+									>
+										<Text
+											variant='v2_body'
+											noOfLines={4}
+											wordBreak='break-all'
+											mr={2}>
+											{link}
+										</Text>
+										<CopyIcon text={link} />
+									</Flex>
+								)
+							}
+						</Flex>
+					</PopoverBody>
+				</PopoverContent>
 			</Popover>
 		)
 	}

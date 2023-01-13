@@ -12,7 +12,7 @@
     "gen:types": "ts-node src/libraries/validator/utils/generateTypes.ts",
     "generate:typechain": "typechain --target ethers-v5 --out-dir src/generated/contracts src/contracts/abi/*.json",
     "generate:graphql": "graphql-codegen --config codegen.yaml",
-    "generate:icons": "create-chakra-icons -i public/v2/icons -o src/generated/icons.ts --ts",
+    "generate:icons": "create-chakra-icons -i public/v2/icons/generate -o src/generated/icons.ts --ts -T F",
     "generate": "npm run generate:graphql && npm run generate:typechain && npm run generate:icons"
   },
   "dependencies": {

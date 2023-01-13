@@ -39,12 +39,16 @@ function WorkspaceMemberCard({ role, email, address, name, pfp }: WorkspaceMembe
 					</Text>
 				</Flex>
 				<Flex gap={2}>
-					<Text
-						variant='v2_body'
-						color='gray.5'>
-						{email}
-					</Text>
-					<Image src='/v2/icons/ellipse.svg' />
+					{
+						email && (
+							<Text
+								variant='v2_body'
+								color='gray.5'>
+								{email}
+							</Text>
+						)
+					}
+					{email && <Image src='/v2/icons/dot.svg' />}
 					<Text
 						variant='v2_body'
 						color='gray.5'
@@ -56,7 +60,7 @@ function WorkspaceMemberCard({ role, email, address, name, pfp }: WorkspaceMembe
 					<Text variant='textButton'>
 						Edit
 					</Text>
-					<Image src='/v2/icons/ellipse.svg' />
+					<Image src='/v2/icons/dot.svg' />
 					<Text variant='textButton'>
 						Revoke Access
 					</Text>

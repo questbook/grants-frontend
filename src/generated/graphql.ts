@@ -5607,11 +5607,11 @@ export type GetAllGrantsForReviewerExploreQueryVariables = Exact<{
 export type GetAllGrantsForReviewerExploreQuery = { __typename?: 'Query', grantReviewerCounters: Array<{ __typename?: 'GrantReviewerCounter', grant: { __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, startDate?: string | null, acceptingApplications: boolean, deadlineS: number, deadline?: string | null, numberOfApplications: number, applications: Array<{ __typename?: 'GrantApplication', applicantId: string, state: ApplicationState }>, managers: Array<{ __typename?: 'GrantManager', member?: { __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, accessLevel: WorkspaceMemberAccessLevel } | null }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, tokenUSDValue?: string | null, asset: string, tokenName?: string | null }>, workspace: { __typename?: 'Workspace', id: string, isVisible: boolean, logoIpfsHash: string, numberOfApplications: number, totalGrantFundingDisbursedUSD: number, supportedNetworks: Array<SupportedNetwork>, ownerId: string, safe?: { __typename?: 'WorkspaceSafe', address: string, chainId: string } | null }, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } } }> };
 
 export type GetGrantsProgramDetailsQueryVariables = Exact<{
-  workspaceID: Scalars['ID'];
+  workspaceID: Scalars['String'];
 }>;
 
 
-export type GetGrantsProgramDetailsQuery = { __typename?: 'Query', grantsProgram?: { __typename?: 'Workspace', id: string, title: string } | null };
+export type GetGrantsProgramDetailsQuery = { __typename?: 'Query', grantsProgram: Array<{ __typename?: 'Grant', id: string, title: string, workspace: { __typename?: 'Workspace', id: string, title: string } }> };
 
 export type GetAllProposalsForAGrantProgramQueryVariables = Exact<{
   workspaceId: Scalars['String'];
@@ -9508,10 +9508,18 @@ export function refetchGetAllGrantsForReviewerExploreQuery(variables?: GetAllGra
       return { query: GetAllGrantsForReviewerExploreDocument, variables: variables }
     }
 export const GetGrantsProgramDetailsDocument = gql`
-    query getGrantsProgramDetails($workspaceID: ID!) {
-  grantsProgram: workspace(id: $workspaceID, subgraphError: allow) {
+    query getGrantsProgramDetails($workspaceID: String!) {
+  grantsProgram: grants(
+    where: {workspace: $workspaceID}
+    orderBy: createdAtS
+    orderDirection: desc
+  ) {
     id
     title
+    workspace {
+      id
+      title
+    }
   }
 }
     `;

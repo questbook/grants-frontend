@@ -58,6 +58,7 @@ function RFPCard({ logo, isAdmin, isAcceptingApplications, name, chainId, role, 
 						query: {
 							grantId,
 							chainId,
+							role: role === 'owner' ? 'admin' : role,
 						},
 					})
 				}
