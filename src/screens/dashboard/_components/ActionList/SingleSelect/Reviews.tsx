@@ -132,7 +132,7 @@ function Reviews() {
 		return (
 			<Button
 				variant='link'
-				isDisabled={role !== 'admin'} >
+				isDisabled={role !== 'admin' || proposal?.state !== 'submitted'} >
 				<Text
 					variant='v2_body'
 					fontWeight='500'

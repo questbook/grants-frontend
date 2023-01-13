@@ -9,6 +9,7 @@ import {
 	GetAllGrantsForMemberQuery,
 	GetAllGrantsForReviewerExploreQuery,
 	GetDaOsForExploreQuery,
+	GetGrantsProgramDetailsQuery,
 	useGetAllGrantsForBuilderQuery,
 	useGetAllGrantsForExploreQuery,
 	useGetAllGrantsForMemberQuery,
@@ -311,7 +312,7 @@ function Discover() {
 					variant='v2_title'>
 					You’re invited to
 					{' '}
-					{grantsProgramTitle}
+					{grantsProgram?.title}
 					{' '}
 					as
 					{' '}
@@ -331,6 +332,7 @@ function Discover() {
 				<Button
 					mt={12}
 					variant='primaryLarge'
+					isDisabled={grantsProgram?.id === undefined}
 					onClick={onGetStartedClick}>
 					<Text color='white'>
 						Get Started
@@ -413,7 +415,7 @@ function Discover() {
 		options: {}
 	})
 
-	const [grantsProgramTitle, setGrantsProgramTitle] = useState<string>()
+	const [grantsProgram, setGrantsProgram] = useState<Exclude<GetGrantsProgramDetailsQuery['grantsProgram'], null | undefined>[number]>()
 
 	const [first, setFirst] = useState(10)
 	const [skip, setSkip] = useState(0)
@@ -527,7 +529,7 @@ function Discover() {
 		}
 
 		logger.info({ grantsProgram: results[0] }, 'Results')
-		setGrantsProgramTitle(results[0]?.grantsProgram?.title)
+		setGrantsProgram(results[0]?.grantsProgram?.[0])
 	}, [inviteInfo])
 
 	const fetchAllGrantProgramForExplore = useCallback(async() => {
@@ -639,7 +641,11 @@ function Discover() {
 	}, [first, skip, isBiconomyInitialised, scwAddress])
 
 	const onGetStartedClick = () => {
-		router.push({ pathname: '/setup_profile' })
+		if(!grantsProgram?.id) {
+			return
+		}
+
+		router.push({ pathname: '/setup_profile', query: { grantId: grantsProgram.id } })
 	}
 
 	return buildComponent()

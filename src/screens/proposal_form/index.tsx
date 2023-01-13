@@ -1,5 +1,5 @@
 import { ChangeEvent, ReactElement, useContext, useMemo, useState } from 'react'
-import { Button, Container, Divider, Flex, Image, Text } from '@chakra-ui/react'
+import { Button, Container, Flex, Image, Text } from '@chakra-ui/react'
 import { convertToRaw } from 'draft-js'
 import { useRouter } from 'next/router'
 import { useSafeContext } from 'src/contexts/safeContext'
@@ -20,7 +20,7 @@ import { DEFAULT_MILESTONE, MILESTONE_INPUT_STYLE } from 'src/screens/proposal_f
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
 import getAvatar from 'src/utils/avatarUtils'
 import { chainNames } from 'src/utils/chainNames'
-import { extractDate, extractDateFromDateTime, getExplorerUrlForTxHash, getRewardAmountMilestones } from 'src/utils/formattingUtils'
+import { extractDateFromDateTime, getExplorerUrlForTxHash, getRewardAmountMilestones } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 function ProposalForm() {

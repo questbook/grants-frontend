@@ -1,6 +1,10 @@
-query getGrantsProgramDetails($workspaceID: ID!) {
-    grantsProgram: workspace(id: $workspaceID, subgraphError: allow) {
+query getGrantsProgramDetails($workspaceID: String!) {
+    grantsProgram: grants(where: {workspace: $workspaceID}, orderBy: createdAtS, orderDirection: desc) {
         id
         title
+        workspace {
+            id
+            title
+        }
     }
 }
