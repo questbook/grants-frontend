@@ -134,7 +134,7 @@ function ProposalSubmission(
 							Builders can submit proposals between
 						</Text>
 						<Input
-							type={rfpFormSubmissionType === 'submit' ? 'string' : 'datetime-local'}
+							type={rfpFormSubmissionType === 'submit' ? 'string' : 'date'}
 							variant='flushed'
 							placeholder='enter start date'
 							_placeholder={{ color: 'gray.5' }}
@@ -143,15 +143,15 @@ function ProposalSubmission(
 							onFocus={
 								() => {
 									if(startdateRef.current && rfpFormSubmissionType !== 'edit') {
-										startdateRef.current.type = 'datetime-local'
+										startdateRef.current.type = 'date'
 									}
 
 								}
 							}
-							value={startdate ? startdate.split('.')[0] : ''}
+							value={startdate ? startdate.split('T')[0] : ''}
 							step='1'
 							// textPadding={8}
-							min={new Date().toISOString().split('.')[0]}
+							min={new Date().toISOString().split('T')[0]}
 
 							onChange={
 								(e) => {
@@ -159,8 +159,9 @@ function ProposalSubmission(
 										startdateRef.current.type = 'string'
 									}
 
+									console.log('e.target.value', new Date(e.target.value!).toISOString())
 									handleOnEditProposalSubmission('startDate', e.target.value)
-									setStartdate(e.target.value)
+									setStartdate(new Date(e.target.value!).toISOString())
 								}
 							}
 							// borderColor={endDateRef?.current.value ? 'black' : 'gray.300'}
@@ -171,18 +172,18 @@ function ProposalSubmission(
 							till
 						</Text>
 						<Input
-							type={rfpFormSubmissionType === 'submit' ? 'string' : 'datetime-local'}
+							type={rfpFormSubmissionType === 'submit' ? 'string' : 'date'}
 							variant='flushed'
 							placeholder='enter end date'
 							_placeholder={{ color: 'gray.5' }}
 							min={startdate}
-							value={endDate ? endDate.split('.')[0] : ''}
+							value={endDate ? endDate.split('T')[0] : ''}
 							step='1'
 							ref={endDateRef}
 							onFocus={
 								() => {
 									if(endDateRef.current) {
-										endDateRef.current.type = 'datetime-local'
+										endDateRef.current.type = 'date'
 									}
 
 								}
@@ -195,7 +196,7 @@ function ProposalSubmission(
 									}
 
 									handleOnEditProposalSubmission('endDate', e.target.value)
-									setEndDate(e.target.value)
+									setEndDate(new Date(e.target.value!).toISOString())
 								}
 							}
 							fontWeight='400'
