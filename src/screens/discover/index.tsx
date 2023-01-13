@@ -106,7 +106,7 @@ function Discover() {
 											pathname: '/request_proposal',
 										})
 									}>
-									Run a grant program
+									Start a grant program
 								</Button>
 							</Flex>
 
@@ -193,33 +193,38 @@ function Discover() {
 								</Center>
 							) : (
 								<>
-									<Box my={4}>
-										<Text
-											fontWeight='500'
-											fontSize='24px'
-											lineHeight='32px'>
-											For You
-										</Text>
-									</Box>
-									<PersonalRFPGrid
-										personalGrants={personalGrants!}
-										builderGrants={builderGrants!}
-										reviewerGrants={reviewerGrants!}
-										unsavedDomainVisibleState={unsavedDomainState}
-										onDaoVisibilityUpdate={onDaoVisibilityUpdate}
-										hasMore={hasMoreDaos}
-										fetchMore={fetchMoreDaos}
-										isAdmin={isQbAdmin}
-									/>
+									<Box
+										display={(personalGrants?.length || builderGrants?.length) ? '' : 'none'}
+									>
+										<Box my={4}>
+											<Text
+												fontWeight='500'
+												fontSize='24px'
+												lineHeight='32px'>
+												For You
+											</Text>
+										</Box>
+										<PersonalRFPGrid
+											personalGrants={personalGrants!}
+											builderGrants={builderGrants!}
+											reviewerGrants={reviewerGrants!}
+											unsavedDomainVisibleState={unsavedDomainState}
+											onDaoVisibilityUpdate={onDaoVisibilityUpdate}
+											hasMore={hasMoreDaos}
+											fetchMore={fetchMoreDaos}
+											isAdmin={isQbAdmin}
+										/>
 
-									<Box my={4}>
-										<Text
-											fontWeight='500'
-											fontSize='24px'
-											lineHeight='32px'>
-											Discover
-										</Text>
 									</Box>
+
+									<Text
+										my={12}
+										mb={4}
+										fontWeight='500'
+										fontSize='24px'
+										lineHeight='32px'>
+										Discover
+									</Text>
 
 									<AllRFPsGrid
 										isAdmin={isQbAdmin}

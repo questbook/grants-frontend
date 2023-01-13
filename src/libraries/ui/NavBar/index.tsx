@@ -47,11 +47,9 @@ function NavBar({ bg = 'gray.1' }: Props) {
 				<Image
 					onClick={
 						() => {
-							if(router.pathname === '/dashboard') {
-								router.push({
-									pathname: '/'
-								})
-							}
+							router.push({
+								pathname: '/'
+							})
 						}
 					}
 					display={{ base: 'none', lg: 'inherit' }}
@@ -63,11 +61,9 @@ function NavBar({ bg = 'gray.1' }: Props) {
 				<Image
 					onClick={
 						() => {
-							if(router.pathname === '/dashboard') {
-								router.push({
-									pathname: '/',
-								})
-							}
+							router.push({
+								pathname: '/',
+							})
 						}
 					}
 					display={{ base: 'inherit', lg: 'none' }}
@@ -111,7 +107,7 @@ function NavBar({ bg = 'gray.1' }: Props) {
 								fontWeight='500'
 								bg={grant?.acceptingApplications ? 'rgba(242, 148, 62, 0.2)' : 'accent.columbia'}
 								color={grant?.acceptingApplications ? 'accent.carrot' : 'accent.azure'}>
-								{grant?.acceptingApplications ? 'Open' : 'Close'}
+								{grant?.acceptingApplications ? 'Open' : 'Closed'}
 							</Text>
 						</Flex>
 
