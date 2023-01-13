@@ -1,8 +1,7 @@
 // This renders the list of proposals that show up as the first column
 
 import { useContext, useMemo, useState } from 'react'
-import { Button, Checkbox, Flex, Text } from '@chakra-ui/react'
-import router from 'next/router'
+import { Box, Button, Checkbox, Flex, Text } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
 import SearchField from 'src/libraries/ui/SearchBox'
 import { GrantsProgramContext } from 'src/pages/_app'
@@ -24,6 +23,7 @@ function ProposalList() {
 			<Flex
 				justifyContent='space-between'
 				// px={4}
+				align='center'
 				w='100%'
 			>
 				<Text
@@ -39,7 +39,7 @@ function ProposalList() {
 					</Text>
 				</Text>
 				{
-					(role !== 'admin') && (
+					(role === 'community') && (
 						<Button
 							variant='secondaryV2'
 							// w='103px'
@@ -53,7 +53,7 @@ function ProposalList() {
 									const domain = href[2]
 									const chainId = getSupportedChainIdFromSupportedNetwork(grant?.workspace.supportedNetworks[0])
 
-									const URL = `${protocol}//${domain}/proposal_form/?grantId=${grant?.id}&chainId=${chainId}`
+									const URL = `${protocol}//${domain}/proposal_form/?grantId=${grant?.id}&chainId=${chainId}&newTab=true`
 
 									window.open(URL, '_blank')
 								}
@@ -79,11 +79,11 @@ function ProposalList() {
 					} />
 			</Flex>
 
+			<Box mt={4} />
 
 			{
 				(role === 'admin' && selectedProposals?.size > 0) && (
 					<Flex
-						mt={4}
 						mb={2}
 						pl={5}>
 						<Checkbox
