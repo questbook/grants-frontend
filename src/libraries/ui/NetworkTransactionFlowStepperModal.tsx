@@ -8,6 +8,8 @@ interface Props {
     viewTxnLink: string
     showViewTransactionButton?: boolean
     onClose: () => void
+	customStepsHeader?: string[]
+	customSteps?: string[]
 }
 
 type ModalStepProps = {
@@ -19,7 +21,7 @@ type ModalStepProps = {
 const stepsHeader = ['On-chain transaction..', 'This shouldn’t take long..', 'Transaction successful..']
 const steps = ['Initiate transaction', 'Complete indexing', 'Complete transaction']
 
-function NetworkTransactionFlowStepperModal({ isOpen, currentStepIndex, viewTxnLink, showViewTransactionButton, onClose }: Props) {
+function NetworkTransactionFlowStepperModal({ isOpen, currentStepIndex, viewTxnLink, showViewTransactionButton, onClose, customStepsHeader, customSteps }: Props) {
 	const buildComponent = () => {
 		return (
 			<Modal
@@ -35,11 +37,11 @@ function NetworkTransactionFlowStepperModal({ isOpen, currentStepIndex, viewTxnL
 
 				<ModalContent>
 					<ModalHeader>
-						{stepsHeader[0]}
+						{customStepsHeader?.length ? customStepsHeader[0] : stepsHeader[0]}
 					</ModalHeader>
 
 
-					<ModalBody p='5'>
+					<ModalBody p={4}>
 						<VStack align='stretch'>
 
 							<Text
@@ -50,28 +52,47 @@ function NetworkTransactionFlowStepperModal({ isOpen, currentStepIndex, viewTxnL
 							</Text>
 
 							{
-								steps.map((step, index) => (
-									<ModalStep
-										key={step}
-										state={
-											index === currentStepIndex
-												? 'loading'
-												: (
-													currentStepIndex > index
-														? 'done'
-														: 'to-do'
-												)
-										}
-										isLastStep={index === steps.length - 1}
-										text={step}
-									/>
-								))
+								customSteps?.length ? (
+									customSteps.map((step, index) => (
+										<ModalStep
+											key={step}
+											state={
+												index === currentStepIndex
+													? 'loading'
+													: (
+														currentStepIndex > index
+															? 'done'
+															: 'to-do'
+													)
+											}
+											isLastStep={index === steps.length - 1}
+											text={step}
+										/>
+									))
+								) :
+									steps.map((step, index) => (
+										<ModalStep
+											key={step}
+											state={
+												index === currentStepIndex
+													? 'loading'
+													: (
+														currentStepIndex > index
+															? 'done'
+															: 'to-do'
+													)
+											}
+											isLastStep={index === steps.length - 1}
+											text={step}
+										/>
+									))
 							}
-
 
 							{
 								(viewTxnLink?.length || 0) > 0 && (
-									<Flex mt='4'>
+									<Flex
+										mt='4'
+										pt={4}>
 										{
 											(showViewTransactionButton ?? true) && (
 												<Button
