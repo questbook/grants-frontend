@@ -170,7 +170,7 @@ function Payouts(
 						gap={4}
 						alignItems='baseline'>
 						<Text variant='v2_subheading'>
-							Proposals should ideally ask for an amount around
+							Per proposal payout is capped at
 						</Text>
 						<FlushedInput
 							placeholder='enter your grant’s sweetspot'
@@ -183,10 +183,15 @@ function Payouts(
 								}
 							} />
 						<Text variant='v2_subheading'>
-							USD. You can payout in any token.
+							USD.
 						</Text>
 					</Flex>
-
+					<Text
+						as='i'
+						color='black.3'
+					>
+						Note: You can payout in any token.
+					</Text>
 					{/* CTA */}
 					<Flex
 						gap={8}

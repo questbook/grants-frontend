@@ -39,6 +39,8 @@ import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUti
 import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 
 function RequestProposal() {
+	const customStepsHeader = ['Creating your grant program on chain']
+	const customSteps = ['Submitting transaction on chain', 'Uploading data to decentralized storage', 'Indexing the data to a subgraph']
 	const buildComponent = () => {
 		return (
 			<Flex
@@ -80,6 +82,8 @@ function RequestProposal() {
 							// }
 						}
 					}
+					customStepsHeader={customStepsHeader}
+					customSteps={customSteps}
 				/>
 			</Flex>
 		)
