@@ -28,22 +28,23 @@ function SingleSelect() {
 				<Box mt='auto' />
 				<Divider />
 				{
-					role !== 'reviewer' && (
+					(role !== 'reviewer' && role !== 'community') && (
 						<Flex
 							px={5}
 							py={4}>
 							<Button
-								disabled={role === 'community' ? false : role === 'builder' ? (proposal?.applicantId !== scwAddress?.toLowerCase() || proposal?.state !== 'submitted') : proposal?.state !== 'submitted'}
+								disabled={role === 'builder' ? (proposal?.applicantId !== scwAddress?.toLowerCase() || proposal?.state !== 'submitted') : proposal?.state !== 'submitted'}
 								w='100%'
 								variant='primaryMedium'
 								onClick={
 									() => {
-										if(role === 'community') {
-											router.push({ pathname: '/proposal_form', query: {
-												grantId: grant?.id,
-												chainId,
-											} })
-										} else if(role === 'builder') {
+										// if(role === 'community') {
+										// 	router.push({ pathname: '/proposal_form', query: {
+										// 		grantId: grant?.id,
+										// 		chainId,
+										// 	} })
+										// } else
+										if(role === 'builder') {
 											router.push({ pathname: '/proposal_form', query: {
 												proposalId: proposal?.id,
 												chainId,
@@ -53,7 +54,7 @@ function SingleSelect() {
 										}
 									}
 								}>
-								{role === 'community' ? 'Submit Proposal' : role === 'builder' ? 'Resubmit proposal' : 'Fund builder'}
+								{role === 'builder' ? 'Resubmit proposal' : 'Fund builder'}
 							</Button>
 						</Flex>
 					)
@@ -74,7 +75,7 @@ function SingleSelect() {
 
 	const router = useRouter()
 	const { scwAddress } = useContext(WebwalletContext)!
-	const { grant, role } = useContext(GrantsProgramContext)!
+	const { role } = useContext(GrantsProgramContext)!
 	const { setIsModalOpen } = useContext(FundBuilderContext)!
 	const { proposals, selectedProposals, showSubmitReviewPanel } = useContext(DashboardContext)!
 
