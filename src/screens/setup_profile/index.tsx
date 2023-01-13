@@ -129,7 +129,8 @@ function SetupProfile() {
 								duration: 1000,
 								onCloseComplete: () => {
 									router.push({
-										pathname: '/dashboard'
+										pathname: '/dashboard',
+										query: { ...router.query, chainId: inviteInfo?.chainId }
 									})
 								}
 							})
