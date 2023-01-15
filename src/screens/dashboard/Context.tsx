@@ -23,7 +23,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const { grantId, chainId: _chainId, role: _role } = router.query
 	const { setWorkspace } = useContext(ApiClientsContext)!
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
-	const { grant, setGrant, role, setRole, isLoading, setIsLoading } = useContext(GrantsProgramContext)!
+	const { grant, setGrant, role, setRole, setIsLoading } = useContext(GrantsProgramContext)!
 
 	const chainId = useMemo(() => {
 		try {
@@ -249,14 +249,6 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	useEffect(() => {
 		getProposals().then((r) => logger.info({ r }, 'Get proposals result'))
 	}, [grant, chainId, scwAddress])
-
-	useEffect(() => {
-		logger.info(grant, 'Grant changed')
-	}, [grant])
-
-	useEffect(() => {
-		logger.info({ isLoading }, 'Loading state changed')
-	}, [isLoading])
 
 	useEffect(() => {
 		if(!grant || !scwAddress || !role) {
