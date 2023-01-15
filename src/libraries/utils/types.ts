@@ -3,6 +3,6 @@ export type PIIForCommentType = {
     message?: string
     timestamp?: number
     role?: string
-    tags?: string[]
+    tag?: string
     pii?: {[key: string]: string}
 }

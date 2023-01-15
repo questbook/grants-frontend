@@ -3,11 +3,11 @@ import { TagType } from 'src/screens/dashboard/_utils/types'
 
 type Props = {
     tag: TagType
-    selectedTags: {[key: number]: boolean}
+    isSelected: boolean
     index: number
 } & ButtonProps
 
-function QuickReplyButton({ tag, selectedTags, index, ...props }: Props) {
+function QuickReplyButton({ tag, isSelected, index, ...props }: Props) {
 	const buildComponent = () => {
 		return (
 			<Button
@@ -18,13 +18,13 @@ function QuickReplyButton({ tag, selectedTags, index, ...props }: Props) {
 				px={3}
 				borderRadius='12px'
 				leftIcon={tag.icon}
-				bg={ index in selectedTags ? 'gray.3' : 'white'}
+				bg={ isSelected ? 'gray.3' : 'white'}
 				border='1px solid #E7E4DD'
 				{...props}
 			>
 				<Text
 					variant='v2_body'
-					fontWeight={index in selectedTags ? 'bold' : 'normal'}
+					fontWeight={isSelected ? 'bold' : 'normal'}
 				>
 					{tag.title}
 				</Text>

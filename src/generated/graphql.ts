@@ -5556,6 +5556,13 @@ export type GetMemberPublicKeysQueryVariables = Exact<{
 
 export type GetMemberPublicKeysQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', members: Array<{ __typename?: 'WorkspaceMember', actorId: string, publicKey?: string | null }> } | null, grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, applicantPublicKey?: string | null, applicationReviewers: Array<{ __typename?: 'GrantApplicationReviewer', member: { __typename?: 'WorkspaceMember', actorId: string, publicKey?: string | null } }> }> };
 
+export type GetApplicationActionsQueryVariables = Exact<{
+  grantId: Scalars['String'];
+}>;
+
+
+export type GetApplicationActionsQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantPublicKey?: string | null, actions?: Array<{ __typename?: 'ApplicationAction', id: string, updatedBy: string, updatedAtS: number, state: ApplicationState, feedback?: string | null }> | null, grant: { __typename?: 'Grant', id: string, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, publicKey?: string | null }> } } }> };
+
 export type GetCommentsQueryVariables = Exact<{
   grantId: Scalars['String'];
   first?: InputMaybe<Scalars['Int']>;
@@ -8930,6 +8937,64 @@ export type GetMemberPublicKeysLazyQueryHookResult = ReturnType<typeof useGetMem
 export type GetMemberPublicKeysQueryResult = Apollo.QueryResult<GetMemberPublicKeysQuery, GetMemberPublicKeysQueryVariables>;
 export function refetchGetMemberPublicKeysQuery(variables: GetMemberPublicKeysQueryVariables) {
       return { query: GetMemberPublicKeysDocument, variables: variables }
+    }
+export const GetApplicationActionsDocument = gql`
+    query getApplicationActions($grantId: String!) {
+  grantApplications(where: {grant: $grantId}) {
+    id
+    applicantPublicKey
+    actions {
+      id
+      updatedBy
+      updatedAtS
+      state
+      feedback
+    }
+    grant {
+      id
+      workspace {
+        members {
+          actorId
+          fullName
+          profilePictureIpfsHash
+          publicKey
+        }
+        supportedNetworks
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetApplicationActionsQuery__
+ *
+ * To run a query within a React component, call `useGetApplicationActionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetApplicationActionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetApplicationActionsQuery({
+ *   variables: {
+ *      grantId: // value for 'grantId'
+ *   },
+ * });
+ */
+export function useGetApplicationActionsQuery(baseOptions: Apollo.QueryHookOptions<GetApplicationActionsQuery, GetApplicationActionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetApplicationActionsQuery, GetApplicationActionsQueryVariables>(GetApplicationActionsDocument, options);
+      }
+export function useGetApplicationActionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetApplicationActionsQuery, GetApplicationActionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetApplicationActionsQuery, GetApplicationActionsQueryVariables>(GetApplicationActionsDocument, options);
+        }
+export type GetApplicationActionsQueryHookResult = ReturnType<typeof useGetApplicationActionsQuery>;
+export type GetApplicationActionsLazyQueryHookResult = ReturnType<typeof useGetApplicationActionsLazyQuery>;
+export type GetApplicationActionsQueryResult = Apollo.QueryResult<GetApplicationActionsQuery, GetApplicationActionsQueryVariables>;
+export function refetchGetApplicationActionsQuery(variables: GetApplicationActionsQueryVariables) {
+      return { query: GetApplicationActionsDocument, variables: variables }
     }
 export const GetCommentsDocument = gql`
     query getComments($grantId: String!, $first: Int, $skip: Int) {
