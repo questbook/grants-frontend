@@ -3,7 +3,7 @@ import { Button, Divider, Flex, Text } from '@chakra-ui/react'
 import { useSafeContext } from 'src/contexts/safeContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { GrantsProgramContext } from 'src/pages/_app'
-import { FundBuilderContext, SendAnUpdateContext } from 'src/screens/dashboard/Context'
+import { FundBuilderContext, ModalContext } from 'src/screens/dashboard/Context'
 
 function MultiSelect() {
 	const buildComponent = () => {
@@ -23,7 +23,7 @@ function MultiSelect() {
 					isDisabled={role !== 'admin'}
 					onClick={
 						() => {
-							setIsModalOpen(true)
+							setIsSendAnUpdateModalOpen(true)
 						}
 					}>
 					<Text
@@ -75,7 +75,7 @@ function MultiSelect() {
 
 	const { role } = useContext(GrantsProgramContext)!
 	const { setIsDrawerOpen } = useContext(FundBuilderContext)!
-	const { setIsModalOpen } = useContext(SendAnUpdateContext)!
+	const { setIsSendAnUpdateModalOpen } = useContext(ModalContext)!
 	const { safeObj } = useSafeContext()
 	const customToast = useCustomToast()
 

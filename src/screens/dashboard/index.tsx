@@ -6,9 +6,10 @@ import ThreeColumnSkeleton from 'src/libraries/ui/ThreeColumnSkeleton'
 import { GrantsProgramContext } from 'src/pages/_app'
 import ActionList from 'src/screens/dashboard/ActionList'
 import Body from 'src/screens/dashboard/Body'
-import { DashboardProvider, FundBuilderProvider, SendAnUpdateProvider } from 'src/screens/dashboard/Context'
+import { DashboardProvider, FundBuilderProvider, ModalProvider } from 'src/screens/dashboard/Context'
 import FundBuilderDrawer from 'src/screens/dashboard/FundBuilderDrawer'
 import FundBuilderModal from 'src/screens/dashboard/FundBuilderModal'
+import LinkYourMultisigModal from 'src/screens/dashboard/LinkYourMultisigModal'
 import ProposalList from 'src/screens/dashboard/ProposalList'
 import SendAnUpdateModal from 'src/screens/dashboard/SendAnUpdateModal'
 
@@ -42,6 +43,7 @@ function Dashboard() {
 			{/* Modals */}
 			<FundBuilderModal />
 			<SendAnUpdateModal />
+			<LinkYourMultisigModal />
 
 			{/* Drawers */}
 			<FundBuilderDrawer />
@@ -75,9 +77,9 @@ Dashboard.getLayout = function(page: ReactElement) {
 			}>
 			<DashboardProvider>
 				<FundBuilderProvider>
-					<SendAnUpdateProvider>
+					<ModalProvider>
 						{page}
-					</SendAnUpdateProvider>
+					</ModalProvider>
 				</FundBuilderProvider>
 			</DashboardProvider>
 		</NavbarLayout>

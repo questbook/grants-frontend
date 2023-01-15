@@ -5,7 +5,7 @@ import { GetCommentsQuery, useGetCommentsQuery, useGetGrantQuery, useGetProposal
 import logger from 'src/libraries/logger'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
-import { CommentMap, DashboardContextType, FundBuilderContextType, Proposals, ReviewInfo, SendAnUpdateContextType, SignerVerifiedState, TokenInfo } from 'src/screens/dashboard/_utils/types'
+import { CommentMap, DashboardContextType, FundBuilderContextType, ModalContextType, Proposals, ReviewInfo, SignerVerifiedState, TokenInfo } from 'src/screens/dashboard/_utils/types'
 import { useMultiChainQuery } from 'src/screens/proposal/_hooks/useMultiChainQuery'
 import { Roles } from 'src/types'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
@@ -13,7 +13,7 @@ import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined)
 const FundBuilderContext = createContext<FundBuilderContextType | undefined>(undefined)
-const SendAnUpdateContext = createContext<SendAnUpdateContextType | undefined>(undefined)
+const ModalContext = createContext<ModalContextType | undefined>(undefined)
 
 const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const router = useRouter()
@@ -338,14 +338,15 @@ const FundBuilderProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	)
 }
 
-const SendAnUpdateProvider = ({ children }: PropsWithChildren<ReactNode>) => {
-	const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+const ModalProvider = ({ children }: PropsWithChildren<ReactNode>) => {
+	const [isSendAnUpdateModalOpen, setIsSendAnUpdateModalOpen] = useState<boolean>(false)
+	const [isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen] = useState<boolean>(true)
 
 	return (
-		<SendAnUpdateContext.Provider value={{ isModalOpen, setIsModalOpen }}>
+		<ModalContext.Provider value={{ isSendAnUpdateModalOpen, setIsSendAnUpdateModalOpen, isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen }}>
 			{children}
-		</SendAnUpdateContext.Provider>
+		</ModalContext.Provider>
 	)
 }
 
-export { DashboardContext, DashboardProvider, FundBuilderContext, FundBuilderProvider, SendAnUpdateContext, SendAnUpdateProvider }
+export { DashboardContext, DashboardProvider, FundBuilderContext, FundBuilderProvider, ModalContext, ModalProvider }
