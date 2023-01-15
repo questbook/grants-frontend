@@ -1,6 +1,8 @@
 import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { SupportedPayouts } from '@questbook/supported-safes'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
+import { useSafeContext } from 'src/contexts/safeContext'
 import { GetCommentsQuery, useGetCommentsQuery, useGetGrantQuery, useGetProposalsQuery } from 'src/generated/graphql'
 import logger from 'src/libraries/logger'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
@@ -17,6 +19,7 @@ const SendAnUpdateContext = createContext<SendAnUpdateContextType | undefined>(u
 
 const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const router = useRouter()
+	const { setSafeObj } = useSafeContext()
 	const { grantId, chainId: _chainId, role: _role } = router.query
 	const { setWorkspace } = useContext(ApiClientsContext)!
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
@@ -63,13 +66,16 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		logger.info({ grantId, scwAddress }, 'Getting grant (ROLE)')
 		const details = await fetchGrantDetails({ grantId, actorId: scwAddress.toLowerCase() }, true)
 		logger.info({ details }, 'Grant details (ROLE)')
-		if(!details?.[0]?.grant) {
+		if(!details?.[0]?.grant || !details?.[0]?.grant?.workspace?.safe) {
 			return
 		}
 
 		const _grant = details[0].grant
 		setGrant(_grant)
 		setWorkspace(_grant.workspace)
+
+		const currentSafe = new SupportedPayouts().getSafe(_grant.workspace?.safe?.chainId ? parseInt(_grant.workspace?.safe?.chainId) : defaultChainId, _grant.workspace?.safe?.address ?? '')
+		setSafeObj(currentSafe)
 
 		const possibleRoles: Roles[] = ['community']
 
