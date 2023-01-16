@@ -561,6 +561,14 @@ function Discover() {
 		}
 
 		logger.info('all fetched grants', allFetchedGrants)
+		// const sortedArray = allFetchedGrants.sort((a, b) => {
+		// 	if(b.createdAtS > a.createdAtS) {
+		// 		return 1
+		// 	} else if(b.createdAtS < a.createdAtS) {
+		// 		return -1
+		// 	}
+		// })
+		// logger.info('sorted array', sortedArray)
 		setGrants(allFetchedGrants)
 	}, [first, skip])
 
