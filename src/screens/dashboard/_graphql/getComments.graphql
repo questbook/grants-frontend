@@ -1,7 +1,7 @@
 query getComments($grantId: String!, $first: Int, $skip: Int) {
   comments(
-    first: $first,
-    skip: $skip,
+    first: $first
+    skip: $skip
     where: { grant: $grantId }
     orderBy: createdAt
     orderDirection: asc
