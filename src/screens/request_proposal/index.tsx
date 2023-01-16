@@ -561,15 +561,17 @@ function RequestProposal() {
 						await chargeGas(Number(workspaceId), Number(createGrantTxFee) + Number(workspaceCreateTxFee), network!)
 
 						setCurrentStepIndex(3) // 3 is the final step
+						setCurrentStepIndex(-1)
 					}
 				} else {
 					logger.info('workspaceId not found')
+					setCurrentStepIndex(-1)
 				}
 			}
 
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
-			setCurrentStepIndex(3) // 3 is the final step
+			setCurrentStepIndex(-1) // 3 is the final step
 			const message = getErrorMessage(e)
 			logger.info('error', message)
 			toastRef.current = toast({
