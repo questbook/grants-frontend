@@ -163,7 +163,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 					}
 				}
 			} else {
-				logger.info({ comment, condition1: comment?.commentsPublicHash !== undefined, condition2: comment?.message !== undefined }, 'PUBLIC COMMENT (ELSE)')
+				logger.info({ comment }, 'PUBLIC COMMENT (ELSE)')
 				// Cases
 				// 1. It is an IPFS hash
 				// 2. It is an empty string
@@ -188,7 +188,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 					let message = comment?.message
 					if(message?.trim() === '') {
-						message = `This proposal was ${comment.tag === 'approved' ? 'approved' : comment.tag === 'rejected' ? 'rejected' : 'asked to be resubmitted'}`
+						message = comment.role === 'builder' && comment.tag === 'submitted' ? 'This proposal was resubmitted' : `This proposal was ${comment.tag === 'approved' ? 'approved' : comment.tag === 'rejected' ? 'rejected' : 'asked to be resubmitted'}`
 					}
 
 					commentMap[key].push({ ...comment, message })
