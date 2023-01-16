@@ -4,8 +4,7 @@ query getAllGrantsForExplore($first: Int, $skip: Int) {
     skip: $skip, 
     subgraphError: allow, 
     orderBy: createdAtS, 
-    orderDirection: desc,
-    where: {workspace_:{isVisible: true}}
+    orderDirection: desc
   ) {
     id,
     creatorId,

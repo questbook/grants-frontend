@@ -5,7 +5,7 @@ query getAllGrantsForMember($first: Int $skip: Int $memberId: String ) {
     subgraphError: allow, 
     orderBy: createdAtS, 
     orderDirection: desc,
-    where: {managers_ :{member_contains_nocase: $memberId} workspace_:{isVisible: true}}
+    where: {managers_ :{member_contains_nocase: $memberId}}
     # where:{creatorId: "0x0268c8cddce70669d4431967f2b15edf2fd65b91"}
   ) {
     id,

@@ -109,25 +109,31 @@ function NavBar({ bg = 'gray.1' }: Props) {
 									variant='v2_subheading'>
 									{grant?.title}
 								</Text>
-								<Text
-									variant='v2_metadata'
-									display={grant?.link ? '' : 'none'}>
-									Program details
-									<Text
-										variant='v2_metadata'
-										display='inline-block'
-										fontWeight={500}
-										marginLeft={1}
-										cursor='pointer'
-										onClick={
-											() => {
-												window.open(grant?.link!, '_blank')
-											}
-										}
-									>
-										here
-									</Text>
-								</Text>
+								{
+									(grant?.link !== undefined && grant?.link !== null) && (
+										<Text
+											variant='v2_metadata'
+											display={grant?.link ? '' : 'none'}>
+											Program details
+											<Text
+												variant='v2_metadata'
+												display='inline-block'
+												fontWeight={500}
+												marginLeft={1}
+												cursor='pointer'
+												onClick={
+													() => {
+														if(grant.link !== null) {
+															window.open(grant.link, '_blank')
+														}
+													}
+												}
+											>
+												here
+											</Text>
+										</Text>
+									)
+								}
 							</Flex>
 
 							<Text

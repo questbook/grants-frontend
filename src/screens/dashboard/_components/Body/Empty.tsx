@@ -45,41 +45,30 @@ function Empty() {
 					{' '}
 					{grant?.workspace?.title}
 					{' '}
-					with a link, or use embed.
+					with a link.
 				</Text>
 
-				<Flex mt={6}>
-					<Button
-						variant='primaryMedium'
-						onClick={
-							async() => {
-								if(grant?.id) {
-									const ret = await copyGrantLink(grant.id, getSupportedChainIdFromWorkspace(grant.workspace) ?? defaultChainId)
-									toast({
-										title: ret ? 'Copied!' : 'Failed to copy',
-										status: ret ? 'success' : 'error',
-										duration: 3000,
-									})
-								}
+				<Button
+					variant='primaryMedium'
+					mt={6}
+					onClick={
+						async() => {
+							if(grant?.id) {
+								const ret = await copyGrantLink(grant.id, getSupportedChainIdFromWorkspace(grant.workspace) ?? defaultChainId)
+								toast({
+									title: ret ? 'Copied!' : 'Failed to copy',
+									status: ret ? 'success' : 'error',
+									duration: 3000,
+								})
 							}
-						}>
-						<Text
-							variant='v2_body'
-							color='white'>
-							Copy Link
-						</Text>
-					</Button>
-
-					<Button
-						ml={6}
-						variant='primaryMedium'
-						bg='gray.3'>
-						<Text
-							variant='v2_body'>
-							Use embed
-						</Text>
-					</Button>
-				</Flex>
+						}
+					}>
+					<Text
+						variant='v2_body'
+						color='white'>
+						Copy Link
+					</Text>
+				</Button>
 			</Flex>
 		)
 	}
