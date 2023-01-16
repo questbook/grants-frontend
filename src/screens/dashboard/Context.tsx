@@ -1,11 +1,11 @@
 import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
-import { GetCommentsQuery, useGetCommentsQuery, useGetGrantQuery, useGetProposalsQuery } from 'src/generated/graphql'
+import { useGetApplicationActionsQuery, useGetCommentsQuery, useGetGrantQuery, useGetProposalsQuery } from 'src/generated/graphql'
 import logger from 'src/libraries/logger'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
-import { CommentMap, DashboardContextType, FundBuilderContextType, Proposals, ReviewInfo, SendAnUpdateContextType, SignerVerifiedState, TokenInfo } from 'src/screens/dashboard/_utils/types'
+import { CommentMap, CommentType, DashboardContextType, FundBuilderContextType, Proposals, ReviewInfo, SendAnUpdateContextType, SignerVerifiedState, TokenInfo } from 'src/screens/dashboard/_utils/types'
 import { useMultiChainQuery } from 'src/screens/proposal/_hooks/useMultiChainQuery'
 import { Roles } from 'src/types'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
@@ -20,7 +20,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const { grantId, chainId: _chainId, role: _role } = router.query
 	const { setWorkspace } = useContext(ApiClientsContext)!
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
-	const { grant, setGrant, role, setRole, isLoading, setIsLoading } = useContext(GrantsProgramContext)!
+	const { grant, setGrant, role, setRole, setIsLoading } = useContext(GrantsProgramContext)!
 
 	const chainId = useMemo(() => {
 		try {
@@ -45,6 +45,12 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 	const { fetchMore: fetchMoreComments } = useMultiChainQuery({
 		useQuery: useGetCommentsQuery,
+		options: {},
+		chains: [chainId === -1 ? defaultChainId : chainId]
+	})
+
+	const { fetchMore: fetchMoreApplicationActions } = useMultiChainQuery({
+		useQuery: useGetApplicationActionsQuery,
 		options: {},
 		chains: [chainId === -1 ? defaultChainId : chainId]
 	})
@@ -105,7 +111,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		logger.info(role, 'Role changed (ROLE)')
 	}, [role])
 
-	const handleComments = async(allComments: Exclude<GetCommentsQuery['comments'], null | undefined>) => {
+	const handleComments = async(allComments: CommentType[]) => {
 		if(!webwallet || !scwAddress) {
 			return {}
 		}
@@ -157,18 +163,35 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 					}
 				}
 			} else {
-				logger.info(comment, 'PUBLIC COMMENT')
-				if(comment?.commentsPublicHash) {
-					const commentData = JSON.parse(await getFromIPFS(comment.commentsPublicHash))
-					if(commentData?.message) {
-						const message = await getFromIPFS(commentData.message)
-						const key = `${comment.application.id}.${getSupportedChainIdFromWorkspace(comment.workspace) ?? defaultChainId}`
-						if(!commentMap[key]) {
-							commentMap[key] = []
-						}
+				logger.info({ comment, condition1: comment?.commentsPublicHash !== undefined, condition2: comment?.message !== undefined }, 'PUBLIC COMMENT (ELSE)')
+				// Cases
+				// 1. It is an IPFS hash
+				// 2. It is an empty string
+				// 3. It has some comment in string format
+				const key = `${comment.application.id}.${getSupportedChainIdFromWorkspace(comment.workspace) ?? defaultChainId}`
+				if(comment?.commentsPublicHash !== undefined) {
+					if(comment?.commentsPublicHash?.startsWith('Qm')) {
+						const commentData = JSON.parse(await getFromIPFS(comment.commentsPublicHash))
+						if(commentData?.message) {
+							const message = await getFromIPFS(commentData.message)
+							if(!commentMap[key]) {
+								commentMap[key] = []
+							}
 
-						commentMap[key].push({ ...comment, ...commentData, message })
+							commentMap[key].push({ ...comment, ...commentData, message })
+						}
 					}
+				} else if(comment?.message !== undefined) {
+					if(!commentMap[key]) {
+						commentMap[key] = []
+					}
+
+					let message = comment?.message
+					if(message?.trim() === '') {
+						message = `This proposal was ${comment.tag === 'approved' ? 'approved' : comment.tag === 'rejected' ? 'rejected' : 'asked to be resubmitted'}`
+					}
+
+					commentMap[key].push({ ...comment, message })
 				}
 			}
 		}
@@ -204,7 +227,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			skip += first
 		} while(shouldContinue)
 
-		const allComments = []
+		const allComments: CommentType[] = []
 		first = 100
 		skip = 0
 		shouldContinue = true
@@ -227,9 +250,46 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			skip += first
 		} while(shouldContinue)
 
-		logger.info({ allComments }, 'Fetched comments')
+		logger.info({ allComments }, 'Fetched comments before actions')
+
+		const results = await fetchMoreApplicationActions({ grantId: grant.id }, true)
+		logger.info({ results }, 'Results (Application Actions)')
+		if(results?.length > 0) {
+			const result = results[0]
+			for(const proposal of result?.grantApplications ?? []) {
+				for(const action of proposal?.actions ?? []) {
+					const comment: CommentType = {
+						id: action.id,
+						isPrivate: false,
+						commentsPublicHash: action.feedback?.trim()?.startsWith('Qm') ? action.feedback : undefined,
+						application: {
+							id: proposal.id,
+							applicantPublicKey: proposal.applicantPublicKey,
+						},
+						workspace: proposal.grant.workspace,
+						tag: action.state,
+						timestamp: action.updatedAtS,
+						sender: action.updatedBy,
+						role: proposal.grant.workspace.members.map(m => m.actorId).includes(action.updatedBy.toLowerCase()) ? 'admin' : 'builder',
+						message: action.feedback?.trim()?.startsWith('Qm') ? undefined : action.feedback === null ? '' : action.feedback,
+					}
+					logger.info(comment, 'Dummy Comment')
+
+					allComments.push(comment)
+				}
+			}
+		}
+
+		logger.info({ allComments }, 'Fetched comments after actions')
 		const commentMap = await handleComments(allComments)
 		logger.info(commentMap, 'Comment map')
+
+		for(const key in commentMap) {
+			const comments = commentMap[key]
+			const sortedComments = comments.sort((a, b) => (a.timestamp ?? 0) - (b.timestamp ?? 0))
+			commentMap[key] = sortedComments
+		}
+
 		setCommentMap(commentMap)
 
 		setProposals(proposals)
@@ -243,14 +303,6 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	useEffect(() => {
 		getProposals().then((r) => logger.info({ r }, 'Get proposals result'))
 	}, [grant, chainId, scwAddress])
-
-	useEffect(() => {
-		logger.info(grant, 'Grant changed')
-	}, [grant])
-
-	useEffect(() => {
-		logger.info({ isLoading }, 'Loading state changed')
-	}, [isLoading])
 
 	useEffect(() => {
 		if(!grant || !scwAddress || !role) {

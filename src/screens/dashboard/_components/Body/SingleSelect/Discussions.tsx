@@ -54,24 +54,17 @@ function Discussions() {
 												<QuickReplyButton
 													key={index}
 													tag={tag}
-													selectedTags={selectedTags}
+													isSelected={tag.id === selectedTag}
 													onClick={
 														() => {
-															const tags = { ...selectedTags }
-															logger.info('tags: ', tags)
-															if(tags[index]) {
-																delete tags[index]
-																setIsCommentPrivate(false)
+															if(selectedTag) {
+																setSelectedTag(undefined)
 															} else {
-																tags[index] = true
-																setIsCommentPrivate(tag.isPrivate)
+																setSelectedTag(tag.id)
 															}
-
-
-															setSelectedTags(tags)
 														}
 													}
-													isDisabled={(Object.keys(selectedTags).length > 0 && !(index in selectedTags)) || (isCommentPrivate && !tag.isPrivate)}
+													isDisabled={(selectedTag !== undefined && selectedTag !== tag.id) || (isCommentPrivate && !tag.isPrivate)}
 													index={index} />
 											)
 										})
@@ -110,7 +103,7 @@ function Discussions() {
 										isChecked={isCommentPrivate}
 										onChange={
 											(e) => {
-												setSelectedTags({})
+												setSelectedTag(undefined)
 												setIsCommentPrivate(e.target.checked)
 											}
 										}>
@@ -129,10 +122,10 @@ function Discussions() {
 								isLoading={step !== undefined}
 								onClick={
 									async() => {
-										const ret = await addComment(text, tags, isCommentPrivate)
+										const ret = await addComment(text, isCommentPrivate, selectedTag)
 										if(ret) {
 											setText('')
-											setSelectedTags({})
+											setSelectedTag(undefined)
 											// refresh()
 										}
 									}
@@ -209,11 +202,7 @@ function Discussions() {
 	const [, setTransactionHash] = useState('')
 	const [isCommentPrivate, setIsCommentPrivate] = useState<boolean>(false)
 
-	const [ selectedTags, setSelectedTags ] = useState<{[key: number]: boolean}>({})
-
-	const tags = useMemo(() => {
-		return Object.keys(selectedTags).map((key) => parseInt(key, 10))
-	}, [selectedTags])
+	const [ selectedTag, setSelectedTag ] = useState<string>()
 
 	const [ text, setText ] = useState<string>('')
 	const { addComment, isBiconomyInitialised } = useAddComment({ setStep, setTransactionHash })

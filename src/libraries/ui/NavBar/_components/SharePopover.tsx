@@ -1,12 +1,9 @@
 import { useContext, useRef } from 'react'
 import { Button, Flex, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text } from '@chakra-ui/react'
-import { defaultChainId } from 'src/constants/chains'
 import { Copy, ShareForward } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
-import { copyGrantLink } from 'src/libraries/utils/copy'
 import { GrantsProgramContext } from 'src/pages/_app'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function SharePopover() {
 	const buildComponent = () => (
@@ -84,7 +81,7 @@ function SharePopover() {
 			buttonText: 'Copy Link',
 			onButtonClick: async() => {
 				if(grant?.id) {
-					const ret = await copyGrantLink(grant.id, getSupportedChainIdFromWorkspace(grant.workspace) ?? defaultChainId)
+					const ret = copyShareGrantLink()
 					logger.info('copyGrantLink', ret)
 					toast({
 						title: ret ? 'Copied!' : 'Failed to copy',

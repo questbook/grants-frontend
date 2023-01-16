@@ -1,7 +1,7 @@
 import { useContext, useEffect } from 'react'
 import { Checkbox, Flex, Image, Text, Tooltip } from '@chakra-ui/react'
 import config from 'src/constants/config.json'
-import { CheckDouble, Close } from 'src/generated/icons'
+import { CheckDouble, Close, Resubmit } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import { GrantsProgramContext } from 'src/pages/_app'
 import useProposalTags from 'src/screens/dashboard/_hooks/useProposalTags'
@@ -86,16 +86,16 @@ function ProposalCard({ proposal }: Props) {
 						{role === 'builder' ? proposal?.grant?.workspace?.title : getFieldString(proposal, 'applicantName')}
 					</Text>
 					{
-						(proposal?.state === 'approved' || proposal?.state === 'rejected') && (
+						(proposal?.state !== 'submitted') && (
 							<Tooltip
 								hasArrow
-								label={proposal?.state === 'approved' ? 'Accepted Proposal' : 'Rejected Proposal'}>
+								label={proposal?.state === 'approved' ? 'Accepted Proposal' : proposal?.state === 'rejected' ? 'Rejected Proposal' : 'Awaiting resubmission'}>
 								<Flex
 									ml='auto'
 									p={2}
 									borderRadius='4px'
-									bg={proposal?.state === 'approved' ? 'accent.columbia' : 'accent.melon'}>
-									{proposal?.state === 'approved' ? <CheckDouble /> : <Close />}
+									bg={proposal?.state === 'approved' ? 'accent.columbia' : proposal?.state === 'rejected' ? 'accent.melon' : 'accent.vodka'}>
+									{proposal?.state === 'approved' ? <CheckDouble /> : proposal?.state === 'rejected' ? <Close /> : <Resubmit />}
 								</Flex>
 							</Tooltip>
 						)

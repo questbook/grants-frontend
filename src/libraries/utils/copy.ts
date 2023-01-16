@@ -42,4 +42,11 @@ const copyGrantLink = async(grantID: string, chainId: number) => {
 	// return copy(data.link)
 }
 
-export { copyGrantLink }
+const copyShareGrantLink = () => {
+	const link = window.location.href.split('&role')[0]
+	logger.info('copied share grant link', link)
+	copy(link)
+	return (link)
+}
+
+export { copyGrantLink, copyShareGrantLink }
