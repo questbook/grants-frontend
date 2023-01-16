@@ -50,7 +50,7 @@ function useProposalTags({ proposal }: Props) {
 
 			const recentComments = comments.filter(c => now - (c.timestamp || 0) <= cutoffTimestamp && c.sender?.toLowerCase() !== scwAddress.toLowerCase())
 			if(recentComments.length > 0) {
-				const milestoneUpdateComments = recentComments.filter(c => c.tags?.indexOf('milestone-update') !== -1)
+				const milestoneUpdateComments = recentComments.filter(c => c.tag?.indexOf('milestone-update') !== -1)
 				if(milestoneUpdateComments.length > 0) {
 					return [{ title: 'New milestone update', color: 'accent.melon' }]
 				} else {
