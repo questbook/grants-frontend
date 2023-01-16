@@ -26,7 +26,7 @@ import { DAOSearchContextMaker } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContextMaker } from 'src/hooks/QBAdminsContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import MigrateToGasless from 'src/libraries/ui/MigrateToGaslessModal'
-import { DOMAIN_CACHE_KEY, ROLE_CACHE } from 'src/libraries/ui/NavBar/_utils/constants'
+import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import { extractInviteInfo, InviteInfo } from 'src/libraries/utils/invite'
 import theme from 'src/theme'
 import { GrantProgramContextType, GrantType, MinimalWorkspace, Roles } from 'src/types'
@@ -513,86 +513,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		return chainId
 	}, [workspace])
 
-	// useEffect(() => {
-	// 	if(!scwAddress) {
-	// 		return
-	// 	}
-
-	// 	const fetch = async() => {
-	// 		const roles: Roles[] = ['community']
-	// 		for(const chainId of ALL_SUPPORTED_CHAIN_IDS) {
-	// 			const ret = await clients[chainId].client.query({
-	// 				query: DoesHaveProposalsDocument,
-	// 				variables: {
-	// 					builderId: scwAddress
-	// 				}
-	// 			})
-
-	// 			if(ret.data?.grantApplications?.length && roles.indexOf('builder') === -1) {
-	// 				roles.push('builder')
-	// 			}
-
-	// 			for(const member of ret.data?.workspaceMembers) {
-	// 				if((member.accessLevel === 'admin' || member.accessLevel === 'owner') && roles.indexOf('admin') === -1) {
-	// 					roles.push('admin')
-	// 				} else if(member.accessLevel === 'reviewer' && roles.indexOf('reviewer') === -1) {
-	// 					roles.push('reviewer')
-	// 				}
-	// 			}
-	// 		}
-
-	// 		if(roles.indexOf('builder') !== -1) {
-	// 			setIsBuilder('yes')
-	// 		} else {
-	// 			setIsBuilder('no')
-	// 		}
-
-	// 		setPossibleRoles(roles)
-	// 	}
-
-	// 	fetch()
-	// }, [scwAddress])
-
-	// useEffect(() => {
-	// 	const allRoles = ['builder', 'community', 'reviewer', 'admin']
-	// 	const storedRole = localStorage.getItem(ROLE_CACHE)
-	// 	logger.info({ storedRole }, 'Stored Role')
-
-	// 	if(storedRole && allRoles.indexOf(storedRole as Roles) !== -1) {
-	// 		logger.info({ storedRole }, 'Setting role 1')
-	// 		setRole(storedRole as Roles)
-	// 		return
-	// 	}
-
-	// 	if(!workspace && possibleRoles.indexOf('admin') === -1 && possibleRoles.indexOf('reviewer') === -1) {
-	// 		const newRole = isBuilder === 'yes' ? 'builder' : 'community'
-	// 		logger.info({ newRole }, 'Setting role 2')
-	// 		setRole(newRole)
-	// 		localStorage.setItem(ROLE_CACHE, newRole)
-	// 		return
-	// 	} else if(!workspace) {
-	// 		const newRole = possibleRoles.indexOf('admin') === -1 ? 'reviewer' : 'admin'
-	// 		logger.info({ newRole }, 'Setting role 3')
-	// 		setRole(newRole)
-	// 		localStorage.setItem(ROLE_CACHE, newRole)
-	// 		return
-	// 	}
-
-	// 	for(const member of workspace.members) {
-	// 		if(member.actorId === scwAddress?.toLowerCase()) {
-	// 			const newRole = member.accessLevel === 'reviewer' ? 'reviewer' : 'admin'
-	// 			logger.info({ newRole }, 'Setting role 4')
-	// 			setRole(newRole)
-	// 			localStorage.setItem(ROLE_CACHE, newRole)
-	// 			return
-	// 		}
-	// 	}
-
-	// 	logger.info({ newRole: 'community' }, 'Setting role 5')
-	// 	setRole('community')
-	// 	localStorage.setItem(ROLE_CACHE, 'community')
-	// }, [workspace, isBuilder, scwAddress])
-
 	const toast = useCustomToast()
 
 	useEffect(() => {
@@ -624,16 +544,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				} else {
 					localStorage.setItem(DOMAIN_CACHE_KEY, 'undefined')
 				}
-
-				// const member = newWorkspace?.members?.find((member) => member.actorId === scwAddress?.toLowerCase())
-				// if(member) {
-				// 	const newRole = member.accessLevel === 'reviewer' ? 'reviewer' : 'admin'
-				// 	logger.info({ newRole }, 'Setting role 6')
-				// 	setRole(newRole)
-				// 	localStorage.setItem(ROLE_CACHE, newRole)
-				// }
-
-				// setWorkspace(newWorkspace)
 			},
 			chainId,
 			inviteInfo,

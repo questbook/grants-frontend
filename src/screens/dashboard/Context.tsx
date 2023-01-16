@@ -5,7 +5,7 @@ import { useGetApplicationActionsQuery, useGetCommentsQuery, useGetGrantQuery, u
 import logger from 'src/libraries/logger'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
-import { CommentMap, CommentType, DashboardContextType, FundBuilderContextType, Proposals, ReviewInfo, SendAnUpdateContextType, SignerVerifiedState, TokenInfo } from 'src/screens/dashboard/_utils/types'
+import { CommentMap, CommentType, DashboardContextType, FundBuilderContextType, Proposals, ProposalType, ReviewInfo, SendAnUpdateContextType, SignerVerifiedState, TokenInfo } from 'src/screens/dashboard/_utils/types'
 import { useMultiChainQuery } from 'src/screens/proposal/_hooks/useMultiChainQuery'
 import { Roles } from 'src/types'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
@@ -56,6 +56,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	})
 
 	const [proposals, setProposals] = useState<Proposals>([])
+	const [decryptedProposals, setDecryptedProposals] = useState<{[key: string]: ProposalType}>({})
 	const [commentMap, setCommentMap] = useState<CommentMap>({})
 	const [selectedProposals, setSelectedProposals] = useState<Set<string>>(new Set<string>())
 	const [review, setReview] = useState<ReviewInfo>()
@@ -331,6 +332,10 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		setIsLoading(false)
 	}, [proposals])
 
+	useEffect(() => {
+		logger.info({ decryptedProposals }, 'Decrypted proposals')
+	}, [decryptedProposals])
+
 	return (
 		<DashboardContext.Provider
 			value={
@@ -343,7 +348,9 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 					showSubmitReviewPanel,
 					setShowSubmitReviewPanel,
 					commentMap,
-					setCommentMap
+					setCommentMap,
+					decryptedProposals,
+					setDecryptedProposals
 				}
 			}>
 			{children}

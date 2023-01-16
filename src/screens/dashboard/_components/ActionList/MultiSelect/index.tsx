@@ -1,9 +1,13 @@
 import { useContext } from 'react'
 import { Button, Divider, Flex, Text } from '@chakra-ui/react'
+import { RawDraftContentState } from 'draft-js'
 import { useSafeContext } from 'src/contexts/safeContext'
+import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
+import logger from 'src/libraries/logger'
 import { GrantsProgramContext } from 'src/pages/_app'
-import { FundBuilderContext, SendAnUpdateContext } from 'src/screens/dashboard/Context'
+import { DashboardContext, FundBuilderContext, SendAnUpdateContext } from 'src/screens/dashboard/Context'
+import { getFieldStrings } from 'src/utils/formattingUtils'
 
 function MultiSelect() {
 	const buildComponent = () => {
@@ -34,7 +38,7 @@ function MultiSelect() {
 				</Button>
 				<Flex
 					align='center'
-					my={4}>
+				>
 					<Divider />
 					<Text
 						mx={3}
@@ -47,6 +51,7 @@ function MultiSelect() {
 				</Flex>
 				<Button
 					w='100%'
+					mt={4}
 					variant='primaryMedium'
 					isDisabled={role !== 'admin'}
 					onClick={
@@ -69,15 +74,99 @@ function MultiSelect() {
 						Payout selected builders
 					</Text>
 				</Button>
+				{
+					isQbAdmin && (
+						<Button
+							w='100%'
+							mt={4}
+							variant='primaryMedium'
+							isDisabled={role !== 'admin'}
+							onClick={exportData}>
+							<Text
+								variant='v2_body'
+								fontWeight='500'
+								color='white'>
+								Export data
+							</Text>
+						</Button>
+					)
+				}
 			</Flex>
 		)
 	}
 
+	const { isQbAdmin } = useContext(QBAdminsContext)!
+	const { decryptedProposals } = useContext(DashboardContext)!
 	const { role } = useContext(GrantsProgramContext)!
 	const { setIsDrawerOpen } = useContext(FundBuilderContext)!
 	const { setIsModalOpen } = useContext(SendAnUpdateContext)!
 	const { safeObj } = useSafeContext()
 	const customToast = useCustomToast()
+
+	const parseDetails = (details: RawDraftContentState) => {
+		const blocks = details.blocks
+		const mappedBlocks = blocks.map(
+			block => (!block.text.trim() && '\n') || block.text
+		)
+
+		let newText = ''
+		for(let i = 0; i < mappedBlocks.length; i++) {
+			const block = mappedBlocks[i]
+
+			// handle last block
+			if(i === mappedBlocks.length - 1) {
+				newText += block
+			} else {
+				// otherwise we join with \n, except if the block is already a \n
+				if(block === '\n') {
+					newText += block
+				} else {
+					newText += block + '\n'
+				}
+			}
+		}
+
+		return newText
+	}
+
+	const exportData = async() => {
+		const rows = []
+		for(const proposalId in decryptedProposals) {
+			// logger.info('proposalId', proposalId)
+			// logger.info('decryptedProposals[proposalId]', decryptedProposals[proposalId])
+
+			const proposal = decryptedProposals[proposalId]
+			const json: {[key: string]: string} = { 'ID': proposalId, 'State': proposal?.state }
+			for(const field of proposal.fields) {
+				if(field.id.includes('isMultipleMilestones') || field.id.includes('teamMembers') || field.id.includes('memberDetails')) {
+					continue
+				}
+
+				let title = field.id.split('.')[1]
+				if(field.values.length === 1) {
+					if(title.startsWith('customField')) {
+						title = title.split('-')[1].replaceAll('\\s', ' ').replaceAll('"', '').trim()
+					} else {
+						title = title.replace(/([A-Z])/g, ' $1')
+						title = title.charAt(0).toUpperCase() + title.slice(1)
+					}
+
+					if(field.id.includes('projectDetails')) {
+						json[title] = parseDetails(JSON.parse(field.values[0].value))
+					} else {
+						json[title] = field.values[0].value
+					}
+				}
+			}
+
+			json['Member Details'] = getFieldStrings(proposal, 'memberDetails')?.map((m: string, i: number) => `${i + 1}. ${m}`).join('\n')
+			json['Milestones'] = proposal.milestones.map((m, i) => `${i + 1}. ${m.title} - ${m.amount} USD`).join('\n')
+
+			rows.push(json)
+		}
+
+		logger.info(rows)
+	}
 
 	return buildComponent()
 }

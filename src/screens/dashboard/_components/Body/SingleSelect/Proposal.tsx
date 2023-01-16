@@ -12,7 +12,7 @@ import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import getAvatar from 'src/utils/avatarUtils'
-import { formatAddress, getFieldString, getRewardAmountMilestones } from 'src/utils/formattingUtils'
+import { formatAddress, getFieldString, getFieldStrings, getRewardAmountMilestones } from 'src/utils/formattingUtils'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
@@ -207,6 +207,31 @@ function Proposal() {
 				</Flex>
 
 				{
+					getFieldString(decryptedProposal, 'memberDetails') && (
+						<Flex
+							w='100%'
+							mt={4}
+							direction='column'>
+							<Text color='gray.5'>
+								Member Details
+							</Text>
+							{
+								getFieldStrings(decryptedProposal, 'memberDetails').map((member: string, index: number) => (
+									<Text
+										key={index}
+										mt={2}>
+										{index + 1}
+										.
+										{' '}
+										{member}
+									</Text>
+								))
+							}
+						</Flex>
+					)
+				}
+
+				{
 					grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1).startsWith('customField')).map((field, index) => {
 						const id = field.id.substring(field.id.indexOf('.') + 1)
 						const title = field.title.substring(field.title.indexOf('-') + 1)
@@ -229,55 +254,12 @@ function Proposal() {
 						)
 					})
 				}
-
-				{/* <Flex
-					w='100%'
-					mt={4}
-					direction='column'>
-					<Text color='gray.5'>
-						Milestones
-					</Text>
-					{
-						proposal.milestones.map((milestone, index) => {
-
-							return (
-								<Flex
-									align='center'
-									w='100%'
-									key={index}
-									mt={index === 0 ? 4 : 2}
-								>
-									<Text
-										color='gray.4'
-										variant='v2_heading_3'
-										fontWeight='500'>
-										{index < 9 ? `0${index + 1}` : (index + 1)}
-									</Text>
-									<Text
-										ml={3}
-										variant='v2_body'>
-										{milestone?.title}
-									</Text>
-									{
-										chainInfo && (
-											<Text ml='auto'>
-												{chainInfo?.address === USD_ASSET ? milestone.amount : ethers.utils.formatUnits(milestone.amount, chainInfo.decimals)}
-												{' '}
-												{chainInfo?.label}
-											</Text>
-										)
-									}
-								</Flex>
-							)
-						})
-					}
-				</Flex> */}
 			</Flex>
 		)
 	}
 
 	const { grant, role } = useContext(GrantsProgramContext)!
-	const { proposals, selectedProposals } = useContext(DashboardContext)!
+	const { proposals, selectedProposals, decryptedProposals: _decryptedProposals, setDecryptedProposals } = useContext(DashboardContext)!
 
 	const proposal = useMemo(() => {
 		return proposals.find(p => selectedProposals.has(p.id))
@@ -313,6 +295,16 @@ function Proposal() {
 			logger.info({ decryptedProposal, details }, '(Proposal) decrypted proposal')
 			setDecryptedProposal({ ...proposal, ...decryptedProposal })
 			setProjectDetails(details)
+
+			const decryptedProposals = { ..._decryptedProposals }
+			for(const field of decryptedProposal?.fields ?? []) {
+				if(field.id.includes('projectDetails')) {
+					field.values[0].value = details
+				}
+			}
+
+			decryptedProposals[proposal.id] = { ...proposal, ...decryptedProposal }
+			setDecryptedProposals(decryptedProposals)
 		})
 	}, [proposal])
 
