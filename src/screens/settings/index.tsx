@@ -1,57 +1,53 @@
-import { ReactElement, useContext, useEffect, useState } from 'react'
-import { BsArrowLeft } from 'react-icons/bs'
-import { ArrowForwardIcon, Search2Icon } from '@chakra-ui/icons'
-import { Button, Divider, Flex, Image, Input, InputGroup, InputLeftElement, Spacer, Text, Textarea } from '@chakra-ui/react'
-import { SupportedPayouts } from '@questbook/supported-safes'
+import { ReactElement, useContext, useEffect, useRef, useState } from 'react'
+import { Search2Icon, SettingsIcon } from '@chakra-ui/icons'
+import { Box, Button, Divider, Flex, Grid, Image, Input, InputGroup, InputLeftElement, Spacer, Text, Tooltip } from '@chakra-ui/react'
+import copy from 'copy-to-clipboard'
 import router from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
-import { NetworkType } from 'src/constants/Networks'
-import { Settings as SettingsIcon } from 'src/generated/icons'
+import { ImageAdd } from 'src/generated/icons'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
+import BackButton from 'src/libraries/ui/BackButton'
+import CopyIcon from 'src/libraries/ui/CopyIcon'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import { GrantsProgramContext } from 'src/pages/_app'
-import VerifySignerModal from 'src/screens/request_proposal/_components/VerifySignerModal'
 import AddMemberButton from 'src/screens/settings/_components/AddMemberButton'
 import { DropdownIcon } from 'src/screens/settings/_components/DropdownIcon'
-import SettingsInput from 'src/screens/settings/_components/SettingsInput'
-import useLinkMultiSig from 'src/screens/settings/_hooks/useLinkMultiSig'
 import useUpdateGrantProgram from 'src/screens/settings/_hooks/useUpdateGrantProgram'
 import { SettingsFormContext, SettingsFormProvider } from 'src/screens/settings/Context'
 import WorkspaceMemberCard from 'src/screens/settings/WorkspaceMemberCard'
-import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import { formatAddress, getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import SafeSelect, { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
+
 
 function Settings() {
+
 	function buildComponent() {
 		return (
-			<>
+			<Flex
+				h='calc(100vh - 64px)'
+				width='100vw'
+				direction='column'
+				justifyContent='flex-start'
+				px={8}
+				// py={4}
+				gap={2}
+			>
+				<BackButton alignSelf='flex-start' />
 				<Flex
-					h='calc(100vh - 64px)'
-					width='100vw'
+					bg='white'
+					h='max-content'
+					p={8}
 					direction='column'
-					justifyContent='flex-start'
-					px={8}
-					// py={4}
-					gap={2}
+					gap={4.5}
+					border='1px solid #E7E4DD'
+					boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
 				>
-					<Button
-						className='backBtn'
-						variant='linkV2'
-						// bgColor='gray.1'
-						leftIcon={<BsArrowLeft />}
-						width='fit-content'
-						onClick={() => router.back()}>
-						Back
-					</Button>
-					<Flex
-						gap={2}
-						p={2}>
+					<Flex>
 						<SettingsIcon
 							boxSize={6} />
 						<Text
@@ -59,168 +55,244 @@ function Settings() {
 							fontWeight='500'>
 							Settings
 						</Text>
-					</Flex>
-					<Flex gap={8}>
-						<Flex
-							bg='white'
-							width='70%'
-							p={8}
-							direction='column'
-							gap={10}
-							border='1px solid #E7E4DD'
-							boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
+						<Spacer />
+						<Button
+						// isLoading={isNetworkTransactionModalOpen}
+							variant='primaryMedium'
+							disabled={!imageChanged}
+							onClick={handleOnClickSave}
 						>
-							<Flex
-								width='100%'
-								direction='column'
-								gap={4}
-							>
-								<Flex>
-									<Text
-										variant='v2_body'
-										fontWeight='500'>
-										{' '}
-										Builder Discovery
-									</Text>
-									<Spacer />
-									<Button
-										isLoading={isNetworkTransactionModalOpen}
-										variant='primaryMedium'
-										onClick={handleOnClickSave}
-									>
-										Save
-									</Button>
-								</Flex>
-								<Divider />
-							</Flex>
+							Save
+						</Button>
+					</Flex>
+					<Divider />
+					{/* Actions */}
+					<Flex gap={6}>
 
-							<Flex
-								alignItems='end'
-								gap={8}>
-								<SettingsInput
-								// width='70%'
-									value={grantProgramData?.title}
-									helperText='Examples: Uniswap Foundation. Polygon Village DAO. Celo Climate Collective'
-									onChange={(e) => onChange(e, 'title')}
-								/>
-								{/* <Image src={getUrlForIPFSHash(workspace?.logoIpfsHash)} /> */}
-								<ImageUpload
-									imageFile={imageFile}
-									setImageFile={setImageFile} />
-							</Flex>
-							{
-								workspace?.safe?.address || isMultisigLinked ? (
+						{/* Link multi sig card */}
+						{
+							workspace?.safe?.address ? (
+								<>
+									<Box
+										border='1px solid #E7E4DD'
+										p={4}
+									>
+										<Flex gap={2}>
+											<Flex
+											>
+												<Image
+													boxSize={8}
+													src='/v2/icons/safe.svg'
+												/>
+											</Flex>
+
+											<Flex
+												direction='column'
+												gap={2}
+												alignItems='flex-start'
+											>
+												<Text
+													variant='v2_title'
+													fontWeight='500'
+													cursor='pointer'
+												>
+													Your multisig is linked to your grant program
+												</Text>
+												<Button
+													variant='link'
+													rightIcon={
+														<>
+															<Flex
+																gap={1}
+															>
+																<Tooltip label={tooltipLabel}>
+																	<Image
+																		src='/v2/icons/copy.svg'
+																		onClick={
+																			() => {
+																				copy(workspace?.safe?.address!)
+																				setTooltipLabel(copiedTooltip)
+																			}
+																		}
+																	/>
+																</Tooltip>
+
+																<Image
+																	src='/v2/icons/share.svg'
+																	onClick={
+																		() => {
+																			window.open(safeURL, '_blank')
+																		}
+																	}
+																/>
+															</Flex>
+
+														</>
+													}>
+													<Text
+														fontWeight='400'
+														variant='v2_subtitle'
+														color='black.1'
+													>
+														{formatAddress(workspace.safe.address)}
+													</Text>
+												</Button>
+											</Flex>
+										</Flex>
+									</Box>
+								</>
+							) : (
+								<Box
+									border='1px solid #E7E4DD'
+									p={4}
+								>
 									<Flex
-										w='100%'
+										gap={2}
 										alignItems='center'
 									>
-										<Text
-											variant='v2_title'
-											fontWeight='500'
-											width='15%'
+										<Flex
 										>
-											Multisig Linked
-										</Text>
-										<SettingsInput
-											isDisabled={true}
-											width='100%'
-											placeholder='0x2F05BFDc43e1bAAebdc3D507785fb942eE5cDFde'
-											value={workspace?.safe?.address || multisigAddress}
-											 />
+											<Image
+												boxSize={8}
+												src='/v2/icons/realms.svg'
+											/>
+											<Image
+												boxSize={8}
+												ml='-18px'
+												src='/v2/icons/safe.svg'
+											/>
+											<Image
+												boxSize={8}
+												ml='-18px'
+												src='/v2/icons/celo.svg'
+											/>
+										</Flex>
+
+										<Flex
+											direction='column'
+											gap={2}
+										>
+											<Text
+												variant='v2_title'
+												fontWeight='500'
+												cursor='pointer'
+											>
+												Link your multisig
+											</Text>
+											<Text
+												variant='v2_subtitle'
+											>
+												Link your multisig to fund builders on Questbook
+											</Text>
+										</Flex>
 									</Flex>
-								)
-									: (
-										<>
-											{renderLinkMultisigButton()}
-											{renderLinkMultisigInput()}
-										</>
-									)
-							}
-
-							{/* <Checkbox>
-								<Text>
-									Run the grant program in a community first fashion (recommended)
-								</Text>
-							</Checkbox> */}
-							<SettingsInput
-								placeholder='Add a brief intro'
-								value={grantProgramData?.bio}
-								onChange={(e) => onChange(e, 'bio')}
-							 />
-							<Flex gap={4}>
-								<SettingsInput
-									placeholder='Telegram username'
-									value={getSocialValue('telegram')}
-									onChange={(e) => onChangeSocialValue(e, 'telegram')}
-								/>
-								<SettingsInput
-									placeholder='Discord server'
-									value={getSocialValue('discord')}
-									onChange={(e) => onChangeSocialValue(e, 'discord')}
-								 />
-								<SettingsInput
-									placeholder='Twitter username'
-									value={getSocialValue('twitter')}
-									onChange={(e) => onChangeSocialValue(e, 'twitter')}
-								/>
-							</Flex>
-							<Flex
-								direction='column'
-								gap={6}
-							>
-								<Text
-									variant='v2_body'
-									fontWeight='500'>
-									More Info
-								</Text>
-								<Divider />
-								{/* <TextEditor
-									value={moreInfo}
-									placeholder='Details about opportunities in your ecosystem for builders. Additionally, you can write about various active grant, and bounty programs.'
-									onChange={
-										(e) => {
-											setMoreInfo(e)
-											const data = { ...grantProgramData }
-											data.about = JSON.stringify(
-												convertToRaw(e.getCurrentContent()),
-											)
-											setGrantProgramData(data)
-										}
-									} /> */}
-								<Textarea
-									variant='outline'
-									minH='200px'
-									value={grantProgramData?.about}
-									onChange={(e) => onChange(e, 'about')}
-									placeholder='Details about opportunities in your ecosystem for builders. Additionally, you can write about various active grant, and bounty programs.' />
-							</Flex>
+								</Box>
+							)
+						}
 
 
-						</Flex>
-
-						{/* Right column */}
-						<Flex
-							w='30%'
-							bg='white'
-							p={4}
-							direction='column'
-							gap={4}
+						{/* Update profile image */}
+						<Box
 							border='1px solid #E7E4DD'
-							boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
+							p={4}
 						>
-							<Flex>
-								<Text
-									variant='v2_title'
-									fontWeight='500'>
-									Members
-								</Text>
-								<Spacer />
-								<AddMemberButton />
+							<Flex
+								gap={2}
+								alignItems='center'>
+								<Flex
+									w='72px'
+									h='72px'>
+									<input
+										style={{ visibility: 'hidden', height: 0, width: 0 }}
+										ref={ref}
+										type='file'
+										name='myImage'
+										onChange={handleImageChange}
+										accept='image/jpg, image/jpeg, image/png' />
+									{
+										!(!imageFile || (imageFile?.file === null && !imageFile?.hash)) && (
+											<Image
+												src={imageFile?.file ? URL.createObjectURL(imageFile?.file) : imageFile?.hash ? getUrlForIPFSHash(imageFile?.hash) : ''}
+												onClick={() => openInput()}
+												cursor='pointer'
+												fit='fill'
+												w='100%'
+												h='100%' />
+										)
+									}
+									{
+										(!imageFile || (imageFile?.file === null && !imageFile?.hash)) && (
+											<Button
+												w='100%'
+												h='100%'
+												bg='gray.3'
+												borderRadius='2px'
+												alignItems='center'
+												justifyItems='center'
+												onClick={() => openInput()}>
+												<ImageAdd boxSize='26px' />
+											</Button>
+										)
+									}
+								</Flex>
+								<Flex
+									direction='column'
+									gap={2}
+								>
+									<Text
+										variant='v2_title'
+										fontWeight='500'
+										cursor='pointer'
+									>
+										Your grant program logo
+									</Text>
+									<Flex
+										gap={2}
+									>
+										<Text
+											variant='textButton'
+											onClick={() => openInput()}
+										>
+											Change
+										</Text>
+										{/* <Image src='/v2/icons/dot.svg' /> */}
+										{/* <Text
+											variant='textButton'
+											onClick={
+												() => {
+													setImageFile(undefined)
+												}
+											}
+										>
+											Remove
+										</Text> */}
+									</Flex>
+								</Flex>
 							</Flex>
-							<Divider />
+						</Box>
+
+					</Flex>
+
+					{/* Members Section */}
+					<Flex
+						direction='column'
+						gap={4.5}
+					>
+						<Flex
+							gap={2}
+							alignItems='center'
+						>
+							<Text
+								variant='v2_body'
+								fontWeight='500'
+							>
+								Members
+							</Text>
+							<Spacer />
 							<InputGroup
-								width='100%'
-								borderRadius='2px'>
+								className='search'
+								width='195px'
+							>
 								<InputLeftElement pointerEvents='none'>
 									<Search2Icon color='gray.4' />
 								</InputLeftElement>
@@ -229,41 +301,58 @@ function Settings() {
 									placeholder='Search'
 									// size='md'
 									borderRadius='2px'
-									defaultValue={searchString}
+									// alignSelf='flex-end'
+									// defaultValue={searchString}
+									value={searchString}
 									width='25vw'
-									onChange={(e) => setSearchString(e.target.value)} />
+									onChange={(e) => setSearchString(e.target.value)}
+								/>
 							</InputGroup>
-							<Flex
-								gap={2}
-								alignItems='center'>
-								<Text>
-									All
-								</Text>
-								<DropdownIcon />
-							</Flex>
-
-							<Flex
-								direction='column'
-								gap={8}>
-
-
-								{
-									workspaceMembers ?	workspaceMembers.map((member, index) => (
-										<WorkspaceMemberCard
-											key={index}
-											role={member.accessLevel}
-											address={member.actorId}
-											email={member.email!}
-											name={member.fullName!}
-											pfp={member.profilePictureIpfsHash!}
-										 />
-									))
-										: null
-								}
-							</Flex>
+							<AddMemberButton />
 						</Flex>
-					</Flex>
+						<Divider />
 
+						{/* Filter */}
+						<Flex
+							gap={2}
+							alignItems='center'>
+							<Text
+								variant='v2_body'
+							>
+								All
+							</Text>
+							<DropdownIcon />
+						</Flex>
+
+						{/* Members grid */}
+						<Grid
+							templateColumns='repeat(4, 1fr)'
+							gap={6}
+						>
+							{
+								workspaceMembers ?	workspaceMembers.filter((member) => {
+									if(searchString === '') {
+										return true
+									// eslint-disable-next-line sonarjs/no-duplicated-branches
+									} else if(member.fullName && member.fullName!.toLowerCase().includes(searchString.toLowerCase())) {
+										return true
+									} else {
+										return false
+									}
+								}).map((member, index) => (
+									<WorkspaceMemberCard
+										key={index}
+										role={member.accessLevel}
+										address={member.actorId}
+										email={member.email!}
+										name={member.fullName!}
+										pfp={member.profilePictureIpfsHash!}
+										 />
+								))
+									: null
+							}
+						</Grid>
+					</Flex>
 				</Flex>
 				<NetworkTransactionFlowStepperModal
 					isOpen={isNetworkTransactionModalOpen}
@@ -279,218 +368,37 @@ function Settings() {
 						}
 					}
 				/>
-			</>
-		)
-	}
-
-	const renderLinkMultisigButton = () => {
-		return (
-			<Flex
-				alignItems='center'
-				gap={2}
-				display={isLinkMultisigButtonClicked ? 'none' : 'flex'}
-			>
-				<Text
-					color='accent.azure'
-					fontWeight='500'
-					cursor='pointer'
-					_hover={{ textDecoration: 'underline' }}
-					onClick={
-						() => {
-							setIsLinkMultisigButtonClicked(true)
-						}
-					}
-				>
-					Link your multisig
-				</Text>
-				<ArrowForwardIcon
-					width={6}
-					height={6}
-					color='accent.azure' />
 			</Flex>
 		)
 	}
 
-	const renderLinkMultisigInput = () => {
-		return (
-			<Flex
-				direction='column'
-				gap={4}
-				display={!isLinkMultisigButtonClicked ? 'none' : 'flex'}
-			>
-				<Flex
-					direction='column'
-					width='70%'>
-					<SettingsInput
-						value={multisigAddress}
-						onChange={
-							(e) => {
-								if(e.target.value.includes(':')) {
-									setMultisigAddress(e.target.value.split(':')[1])
-								} else {
-									setMultisigAddress(e.target.value)
-								}
+	const defaultTooltip = 'Copy'
+	const copiedTooltip = 'Copied'
 
-							}
-						}
-
-						placeholder='Solana or EVM address' />
-					{safeState === 'safe-searching' && renderSearchingSafe()}
-					{safeState === 'safe-found' && renderSafeDropdown()}
-				</Flex>
-
-				<Flex
-					mt={4}
-					gap={4}
-					alignItems='center'>
-					<Button
-						variant='secondaryV2'
-						isDisabled={!selectedSafeNetwork}
-						onClick={() => setIsVerifySignerModalOpen(true)}
-					>
-						Link Multisig
-					</Button>
-					<Button
-						variant='linkV2'
-						color='black.1'>
-						Cancel
-					</Button>
-				</Flex>
-				<VerifySignerModal
-					owners={selectedSafeNetwork ? selectedSafeNetwork.owners : []}
-					// setOwnerAddress={(newOwnerAddress) => setOwnerAddress(newOwnerAddress)}
-					setIsOwner={
-						(newState) => {
-							setIsOwner(newState)
-						}
-					}
-					networkType={selectedSafeNetwork?.networkType ?? NetworkType.EVM}
-					isOpen={IsVerifySignerModalOpen}
-					onClose={() => setIsVerifySignerModalOpen(false)} />
-			</Flex>
-		)
-	}
-
-	const renderSearchingSafe = () => {
-		return (
-			<Flex
-				className='loaderHelperText'
-				gap={2}
-				// position='relative'
-				// left='386px'
-				// top='-40px'
-			>
-				<Image
-					className='loader'
-					src='/ui_icons/loader.svg'
-					color='black.1'
-				/>
-				<Text
-					variant='v2_body'
-					color='black.3'>
-					Searching for this address on different networks..
-				</Text>
-			</Flex>
-		)
-	}
-
-	const renderSafeDropdown = () => {
-		return (
-			<>
-				<Flex
-					className='loaderHelperText'
-					// position='relative'
-					// left='386px'
-					// top='-40px'
-					gap={2}
-					mb={4}
-				>
-					{
-						safeNetworks.length > 0 ? (
-							<>
-								<Image
-									src='/ui_icons/Done_all_alt_round.svg'
-									color='#273B4A' />
-								<Text
-									variant='v2_body'>
-									{`Looks like this address is on ${safeNetworks.length} network${safeNetworks.length > 1 ? 's' : ''}`}
-								</Text>
-
-							</>
-						) : (
-							<Button
-								variant='link'
-								color='red'
-								fontSize='14px'
-								style={{ cursor: 'pointer' }}
-							>
-								But this address doesn’t exist on any of the 20 supported chains.
-							</Button>
-						)
-					}
-
-
-				</Flex>
-				{
-					safeNetworks.length ? (
-						<SafeSelect
-							safesOptions={safeNetworks}
-							label=''
-							helperText=''
-							value={selectedSafeNetwork}
-							onChange={
-								(safeSelected: SafeSelectOption | undefined) => {
-									if(safeSelected) {
-										setSelectedSafeNetwork(safeSelected)
-									}
-								}
-							} />
-					) : <></>
-				}
-			</>
-		)
-	}
-
-	const onChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>, field: string) => {
-		const { value } = e.target
-		setGrantProgramData({ ...grantProgramData, [field]: value })
-	}
-
-	const onChangeSocialValue = (e: React.ChangeEvent<HTMLInputElement>, name: string) => {
-		const { value } = e.target
-		if(grantProgramData?.socials?.length === 0 || !grantProgramData?.socials) {
-			setGrantProgramData({ ...grantProgramData, socials: [{ name, value }] })
-			return
+	const ref = useRef(null)
+	const toast = useCustomToast()
+	const openInput = () => {
+		if(ref.current) {
+			(ref.current as HTMLInputElement).click()
 		}
-
-		const socialItem = grantProgramData?.socials?.find((social) => social.name === name)
-
-		if(socialItem) {
-			const socials = grantProgramData?.socials?.map((social) => {
-				if(social.name === name) {
-					return { ...social, value }
-				}
-
-				return social
-			})
-			setGrantProgramData({ ...grantProgramData, socials })
-			return
-		} else {
-			const s = grantProgramData?.socials.map(social => {
-				return {
-					name: social.name,
-					value: social.value
-				}
-			})
-			const socials = [...s!, { name, value }]
-			setGrantProgramData({ ...grantProgramData, socials })
-			return
-		}
-
-
-		// console.log('socials', socials)
-		// setGrantProgramData({ ...grantProgramData, socials })
 	}
+
+	const [tooltipLabel, setTooltipLabel] = useState(defaultTooltip)
+
+	const [imageFile, setImageFile] = useState<{file: File | null, hash?: string}>({ file: null })
+	const [searchString, setSearchString] = useState<string>('')
+
+	const { network } = useNetwork()
+
+	const [isNetworkTransactionModalOpen, setIsNetworkTransactionModalOpen] = useState(false)
+	const [currentStepIndex, setCurrentStepIndex] = useState<number| undefined>()
+
+	const [imageChanged, setImageChanged] = useState(false)
+
+	const { workspace, workspaceMembers, grantProgramData, setGrantProgramData, safeURL } = useContext(SettingsFormContext)!
+	const { grant } = useContext(GrantsProgramContext)!
+
+	const { updateGrantProgram, txHash } = useUpdateGrantProgram(setCurrentStepIndex, setIsNetworkTransactionModalOpen)
 
 	const handleOnClickSave = async() => {
 		const logoIpfsHash = imageFile !== null ? (await uploadToIPFS(imageFile.file)).hash : ''
@@ -500,109 +408,34 @@ function Settings() {
 		updateGrantProgram(newGrantProgramData)
 	}
 
-	const getSocialValue = (name: string) => {
-		return grantProgramData?.socials?.find((social) => social.name === name)?.value ?? ''
+	const maxImageSize = 2
+
+	const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		if(event.target.files?.[0]) {
+			const img = event.target.files[0]
+			if(img.size / 1024 / 1024 <= maxImageSize) {
+				const copy = { ...imageFile }
+				copy.file = img
+				setImageFile(copy)
+				setImageChanged(true)
+			} else {
+				toast({
+					position: 'top',
+					title: `Image size exceeds ${maxImageSize} MB`,
+					status: 'error',
+				})
+			}
+
+			// @ts-ignore
+			event.target.value = null
+		}
 	}
-
-	const { workspace, workspaceMembers, grantProgramData, setGrantProgramData } = useContext(SettingsFormContext)!
-	const { grant } = useContext(GrantsProgramContext)!
-
-	const [imageFile, setImageFile] = useState<{file: File | null, hash?: string}>({ file: null })
-	const [searchString, setSearchString] = useState('')
-
-	const [multisigAddress, setMultisigAddress] = useState('')
-	const [isLinkMultisigButtonClicked, setIsLinkMultisigButtonClicked] = useState(false)
-
-	const [loadingSafeData, setLoadingSafeData] = useState(false)
-	const [safeNetworks, setSafeNetworks] = useState<SafeSelectOption[]>([])
-	const [safeState, setSafeState] = useState('')
-	const [selectedSafeNetwork, setSelectedSafeNetwork] = useState<SafeSelectOption>()
-
-	const [IsVerifySignerModalOpen, setIsVerifySignerModalOpen] = useState(false)
-	const [isOwner, setIsOwner] = useState(false)
-
-	const [isNetworkTransactionModalOpen, setIsNetworkTransactionModalOpen] = useState(false)
-	const [currentStepIndex, setCurrentStepIndex] = useState<number| undefined>()
-
-	const { network } = useNetwork()
-
-	const { linkMultisig, isMultisigLinked } = useLinkMultiSig({ multisigAddress, selectedSafeNetwork })
-	const { updateGrantProgram, txHash } = useUpdateGrantProgram(setCurrentStepIndex, setIsNetworkTransactionModalOpen)
-
-	const customToast = useCustomToast()
 
 	useEffect(() => {
 		if(grantProgramData?.logoIpfsHash !== undefined && imageFile?.file === null) {
 			setImageFile({ file: null, hash: grantProgramData.logoIpfsHash })
 		}
 	}, [grantProgramData])
-
-	useEffect(() => {
-		logger.info('Multi-sig address entered', multisigAddress)
-		const fetchSafeData = async() => {
-			const supportedPayouts = new SupportedPayouts()
-			supportedPayouts.getSafeByAddress(multisigAddress, (safe) => {
-				setLoadingSafeData(false)
-				setSafeNetworks(safe)
-			})
-		}
-
-		setLoadingSafeData(true)
-		setSelectedSafeNetwork(undefined)
-		if(multisigAddress) {
-			setSafeState('safe-searching')
-		} else {
-			setSafeState('')
-		}
-
-		fetchSafeData()
-	}, [multisigAddress])
-
-	useEffect(() => {
-		if(multisigAddress && loadingSafeData && safeNetworks.length < 1) {
-			//search for safe in supported safes
-			setSafeState('safe-searching')
-		} else if(multisigAddress && safeNetworks.length > 0) {
-			// show dropdown
-			setSafeState('safe-found')
-		}
-
-	}, [safeNetworks])
-
-	useEffect(() => {
-		if(isOwner) {
-			setIsVerifySignerModalOpen(false)
-		}
-	}, [isOwner])
-
-	useEffect(() => {
-		if(isOwner && !IsVerifySignerModalOpen && !isMultisigLinked) {
-			linkMultisig()
-			// if(toast) {
-			// 	customToastRef.current = customToast
-			// }
-
-			customToast({
-				title: 'Linking your multisig',
-				status: 'info',
-				isClosable: true,
-				duration: 30000,
-				position: 'top',
-			})
-		}
-	}, [isOwner, IsVerifySignerModalOpen])
-
-	useEffect(() => {
-		if(isMultisigLinked) {
-			customToast({
-				title: 'Multisig linked successfully!',
-				status: 'success',
-				isClosable: true,
-				position: 'top',
-			})
-		}
-	}, [isMultisigLinked])
-
 
 	return buildComponent()
 }
@@ -611,7 +444,7 @@ Settings.getLayout = function(page: ReactElement) {
 	return (
 		<NavbarLayout
 			renderSidebar={false}
-			navbarConfig={{ showDomains: true, showLogo: false, showOpenDashboard: true, showAddMembers: true, bg: 'gray.1', }}
+			navbarConfig={{ showDomains: true, showLogo: false, showOpenDashboard: true, showAddMembers: true, bg: 'gray.1' }}
 		>
 			<SettingsFormProvider>
 				{page}
@@ -619,6 +452,5 @@ Settings.getLayout = function(page: ReactElement) {
 		</NavbarLayout>
 	)
 }
-
 
 export default Settings

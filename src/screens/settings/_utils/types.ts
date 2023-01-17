@@ -6,6 +6,7 @@ export type SettingsFormContextType = {
     workspaceMembers: WorkspaceMembers
     grantProgramData: GrantProgramForm
     setGrantProgramData: (data: GrantProgramForm) => void
+    safeURL: string
 }
 
 export type Workspace = GetWorkspaceDetailsQuery['workspace']
