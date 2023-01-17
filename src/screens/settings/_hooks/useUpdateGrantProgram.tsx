@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { defaultChainId } from 'src/constants/chains'
 import useQBContract from 'src/hooks/contracts/useQBContract'
@@ -8,7 +8,7 @@ import useChainId from 'src/hooks/utils/useChainId'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { validateAndUploadToIpfs } from 'src/libraries/validator'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
-import { SettingsFormContext } from 'src/screens/settings/Context'
+import { GrantProgramForm } from 'src/screens/settings/_utils/types'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
@@ -16,11 +16,11 @@ import logger from 'src/utils/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 export default function useUpdateGrantProgram(setCurrentStep: (step: number | undefined) => void, setIsNetworkTransactionModalOpen: (isOpen: boolean) => void) {
-	const [error, setError] = React.useState<string>()
-	const [loading, setLoading] = React.useState(false)
-	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
+	const [error, setError] = useState<string>()
+	const [loading, setLoading] = useState(false)
+	const [incorrectNetwork, setIncorrectNetwork] = useState(false)
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const [transactionData, setTransactionData] = React.useState<any>()
+	const [transactionData, setTransactionData] = useState<any>()
 	const { nonce } = useQuestbookAccount()
 	const currentChainId = useChainId()
 
@@ -31,8 +31,6 @@ export default function useUpdateGrantProgram(setCurrentStep: (step: number | un
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
 	}, [grant])
 
-	const { grantProgramData } = useContext(SettingsFormContext)!
-
 	const workspaceRegistryContract = useQBContract('workspace', chainId)
 
 	const { webwallet } = useContext(WebwalletContext)!
@@ -41,7 +39,7 @@ export default function useUpdateGrantProgram(setCurrentStep: (step: number | un
 		chainId: chainId?.toString()
 	})
 
-	const [isBiconomyInitialised, setIsBiconomyInitialised] = React.useState(false)
+	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
 
 	const customToast = useCustomToast()
 
@@ -60,8 +58,7 @@ export default function useUpdateGrantProgram(setCurrentStep: (step: number | un
 
 	}, [workspaceRegistryContract])
 
-
-	async function validate() {
+	const updateGrantProgram = async(grantProgramData: GrantProgramForm) => {
 		setLoading(true)
 		// console.log(data)
 		try {
@@ -126,27 +123,8 @@ export default function useUpdateGrantProgram(setCurrentStep: (step: number | un
 		}
 	}
 
-	const updateGrantProgram = useCallback(validate, [
-		workspaceRegistryContract,
-		biconomyWalletClient,
-		scwAddress,
-		chainId,
-		biconomy,
-		webwallet,
-		grant,
-		grantProgramData,
-	])
-
 	return {
-		updateGrantProgram: useMemo(() => {
-			return updateGrantProgram
-		}, [grantProgramData, workspaceRegistryContract,
-			biconomyWalletClient,
-			scwAddress,
-			chainId,
-			biconomy,
-			webwallet,
-			grant,]),
+		updateGrantProgram,
 		txHash: getExplorerUrlForTxHash(currentChainId, transactionData?.transactionHash),
 		loading,
 		error

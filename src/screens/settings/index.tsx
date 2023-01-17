@@ -4,6 +4,7 @@ import { ArrowForwardIcon, Search2Icon } from '@chakra-ui/icons'
 import { Button, Divider, Flex, Image, Input, InputGroup, InputLeftElement, Spacer, Text, Textarea } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import router from 'next/router'
+import { defaultChainId } from 'src/constants/chains'
 import { NetworkType } from 'src/constants/Networks'
 import { Settings as SettingsIcon } from 'src/generated/icons'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
@@ -12,6 +13,7 @@ import logger from 'src/libraries/logger'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
+import { GrantsProgramContext } from 'src/pages/_app'
 import VerifySignerModal from 'src/screens/request_proposal/_components/VerifySignerModal'
 import AddMemberButton from 'src/screens/settings/_components/AddMemberButton'
 import { DropdownIcon } from 'src/screens/settings/_components/DropdownIcon'
@@ -22,6 +24,7 @@ import { SettingsFormContext, SettingsFormProvider } from 'src/screens/settings/
 import WorkspaceMemberCard from 'src/screens/settings/WorkspaceMemberCard'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import SafeSelect, { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 
 function Settings() {
@@ -81,6 +84,7 @@ function Settings() {
 									</Text>
 									<Spacer />
 									<Button
+										isLoading={isNetworkTransactionModalOpen}
 										variant='primaryMedium'
 										onClick={handleOnClickSave}
 									>
@@ -268,7 +272,7 @@ function Settings() {
 					onClose={
 						async() => {
 							setCurrentStepIndex(undefined)
-							const ret = await router.push({ pathname: '/dashboard' })
+							const ret = await router.push({ pathname: '/dashboard', query: { grantId: grant?.id, chainId: getSupportedChainIdFromWorkspace(workspace) ?? defaultChainId } })
 							if(ret) {
 								router.reload()
 							}
@@ -490,8 +494,10 @@ function Settings() {
 
 	const handleOnClickSave = async() => {
 		const logoIpfsHash = imageFile !== null ? (await uploadToIPFS(imageFile.file)).hash : ''
-		setGrantProgramData({ ...grantProgramData, logoIpfsHash })
-		updateGrantProgram()
+		const newGrantProgramData = { ...grantProgramData, logoIpfsHash }
+		logger.info('newGrantProgramData', newGrantProgramData)
+		setGrantProgramData(newGrantProgramData)
+		updateGrantProgram(newGrantProgramData)
 	}
 
 	const getSocialValue = (name: string) => {
@@ -499,6 +505,7 @@ function Settings() {
 	}
 
 	const { workspace, workspaceMembers, grantProgramData, setGrantProgramData } = useContext(SettingsFormContext)!
+	const { grant } = useContext(GrantsProgramContext)!
 
 	const [imageFile, setImageFile] = useState<{file: File | null, hash?: string}>({ file: null })
 	const [searchString, setSearchString] = useState('')
@@ -523,12 +530,12 @@ function Settings() {
 	const { updateGrantProgram, txHash } = useUpdateGrantProgram(setCurrentStepIndex, setIsNetworkTransactionModalOpen)
 
 	const customToast = useCustomToast()
-	// const customToastRef = useRef()
-	// const toast = useToast()
 
-	// useEffect(() => {
-	// 	getProjectDetails(grantProgramData?.about).then(setMoreInfo)
-	// }, [grantProgramData?.about])
+	useEffect(() => {
+		if(grantProgramData?.logoIpfsHash !== undefined && imageFile?.file === null) {
+			setImageFile({ file: null, hash: grantProgramData.logoIpfsHash })
+		}
+	}, [grantProgramData])
 
 	useEffect(() => {
 		logger.info('Multi-sig address entered', multisigAddress)
