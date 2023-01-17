@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { Button, Flex, Image, Text } from '@chakra-ui/react'
+import { Button, Flex, Text } from '@chakra-ui/react'
 import { defaultChainId } from 'src/constants/chains'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { copyGrantLink } from 'src/libraries/utils/copy'
@@ -26,12 +26,6 @@ function Empty() {
 				<Text mt={1}>
 					Builders can start submitting proposals from today.
 				</Text>
-
-				<Image
-					mt={8}
-					src='/v2/images/empty-body.svg'
-					w='329px'
-					h='152px' />
 
 				<Text
 					mt={6}

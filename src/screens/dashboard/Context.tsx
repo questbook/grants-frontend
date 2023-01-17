@@ -66,22 +66,25 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 	const getGrant = useCallback(async() => {
 		if(!grantId || chainId === -1 || typeof grantId !== 'string' || !scwAddress) {
-			return
+			return 'params-missing'
 		}
 
-		logger.info({ grantId, scwAddress }, 'Getting grant (ROLE)')
+		logger.info({ grantId, scwAddress }, 'Getting grant (GET GRANT)')
 		const details = await fetchGrantDetails({ grantId, actorId: scwAddress.toLowerCase() }, true)
-		logger.info({ details }, 'Grant details (ROLE)')
-		if(!details?.[0]?.grant || !details?.[0]?.grant?.workspace?.safe) {
-			return
+		logger.info({ details }, 'Grant details (GET GRANT)')
+		if(!details?.[0]?.grant) {
+			return 'no-grant-in-query'
 		}
 
 		const _grant = details[0].grant
+		logger.info({ _grant }, 'Setting grant (GET GRANT)')
 		setGrant(_grant)
 		setWorkspace(_grant.workspace)
 
-		const currentSafe = new SupportedPayouts().getSafe(_grant.workspace?.safe?.chainId ? parseInt(_grant.workspace?.safe?.chainId) : defaultChainId, _grant.workspace?.safe?.address ?? '')
-		setSafeObj(currentSafe)
+		if(_grant?.workspace?.safe) {
+			const currentSafe = new SupportedPayouts().getSafe(_grant.workspace?.safe?.chainId ? parseInt(_grant.workspace?.safe?.chainId) : defaultChainId, _grant.workspace?.safe?.address ?? '')
+			setSafeObj(currentSafe)
+		}
 
 		const possibleRoles: Roles[] = ['community']
 
@@ -97,9 +100,9 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			}
 		}
 
-		logger.info({ possibleRoles }, 'Possible roles (ROLE)')
+		logger.info({ possibleRoles }, 'Possible roles (GET GRANT)')
 		if(_role) {
-			logger.info({ role: _role, check: possibleRoles.includes(_role as Roles) }, 'From params (ROLE)')
+			logger.info({ role: _role, check: possibleRoles.includes(_role as Roles) }, 'Role from params (GET GRANT)')
 			// Check if the role the user is trying to access is valid
 			if(possibleRoles.includes(_role as Roles)) {
 				setRole(_role as Roles)
@@ -111,11 +114,9 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			// Assign a role to the user based on the grant
 			setRole(possibleRoles[possibleRoles.length - 1])
 		}
-	}, [grantId, chainId, scwAddress])
 
-	useEffect(() => {
-		logger.info(role, 'Role changed (ROLE)')
-	}, [role])
+		return 'grant-details-fetched'
+	}, [grantId, chainId, scwAddress])
 
 	const handleComments = async(allComments: CommentType[]) => {
 		if(!webwallet || !scwAddress) {
@@ -207,13 +208,13 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	}
 
 	const getProposals = useCallback(async() => {
-		logger.info({ role, grant, scwAddress }, 'Fetching proposals')
+		logger.info({ role, grantId, scwAddress }, 'Fetching proposals (GET PROPOSALS)')
 		if(!webwallet) {
 			return 'no-webwallet'
 		} else if(!scwAddress) {
 			return 'no-scw-address'
-		} else if(!grant) {
-			return 'no-grant'
+		} else if(!grantId || typeof grantId !== 'string') {
+			return 'no-grant-id'
 		}
 
 		const proposals: Proposals = []
@@ -222,7 +223,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		let skip = 0
 		let shouldContinue = true
 		do {
-			const results = await fetchMoreProposals({ first, skip, grantID: grant.id }, true)
+			const results = await fetchMoreProposals({ first, skip, grantID: grantId }, true)
 			logger.info({ results }, 'Results (Proposals)')
 			if(results?.length === 0 || !results[0] || !results[0]?.grantApplications?.length) {
 				shouldContinue = false
@@ -238,7 +239,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		skip = 0
 		shouldContinue = true
 		do {
-			const results = await fetchMoreComments({ first, skip, grantId: grant.id }, true)
+			const results = await fetchMoreComments({ first, skip, grantId }, true)
 			logger.info({ results }, 'Results (Comments)')
 			if(results?.length === 0 || results?.every((r) => !r?.comments?.length)) {
 				shouldContinue = false
@@ -258,7 +259,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 		logger.info({ allComments }, 'Fetched comments before actions')
 
-		const results = await fetchMoreApplicationActions({ grantId: grant.id }, true)
+		const results = await fetchMoreApplicationActions({ grantId }, true)
 		logger.info({ results }, 'Results (Application Actions)')
 		if(results?.length > 0) {
 			const result = results[0]
@@ -299,20 +300,19 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		setCommentMap(commentMap)
 
 		setProposals(proposals)
-		return 'grant-details-fetched'
-	}, [role, grant, scwAddress])
+		return 'proposals-fetched'
+	}, [role, grantId, scwAddress, webwallet])
 
 	useEffect(() => {
-		getGrant()
+		getGrant().then((r) => logger.info({ r }, 'Get grant result'))
 	}, [grantId, chainId, scwAddress])
 
 	useEffect(() => {
 		getProposals().then((r) => logger.info({ r }, 'Get proposals result'))
-	}, [grant, chainId, scwAddress])
+	}, [grantId, chainId, scwAddress, webwallet])
 
 	useEffect(() => {
 		if(!grant || !scwAddress || !role) {
-			logger.info({ grant, scwAddress, role }, 'Loading state set to true')
 			setIsLoading(true)
 			return
 		}

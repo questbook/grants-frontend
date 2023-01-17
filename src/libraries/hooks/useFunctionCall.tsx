@@ -32,17 +32,12 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 	const { network, switchNetwork } = useNetwork()
 
 	useEffect(() => {
-		logger.info({ network, chainId }, 'useFunctionCall: Networks')
 		if(network !== chainId) {
 			switchNetwork(chainId)
 		}
 	}, [chainId, network])
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({ chainId: chainId?.toString() })
-
-	useEffect(() => {
-		logger.info({ biconomy, biconomyWalletClient, scwAddress, biconomyLoading }, 'useFunctionCall: Biconomy')
-	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading])
 
 	const { nonce } = useQuestbookAccount()
 	const contract = useQBContract(contractName, chainId)
