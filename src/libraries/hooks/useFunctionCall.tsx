@@ -5,7 +5,6 @@ import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
-import logger from 'src/libraries/logger'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { QBContract } from 'src/types'
 import getErrorMessage from 'src/utils/errorUtils'
@@ -20,12 +19,9 @@ interface Props {
 	title?: string
 }
 
-interface CallProps { method: string, args: unknown[] }
+interface CallProps { method: string, args: unknown[], isDummy?: boolean }
 
 function useFunctionCall({ chainId, contractName, setTransactionStep, setTransactionHash, title }: Props) {
-	useEffect(() => {
-		logger.info('useFunctionCall', { chainId, contractName, setTransactionStep, setTransactionHash, title })
-	}, [chainId])
 	const { subgraphClients } = useContext(ApiClientsContext)!
 	const { webwallet } = useContext(WebwalletContext)!
 
@@ -52,7 +48,7 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 
 	const toast = useCustomToast()
 
-	const call = async({ method, args }: CallProps) => {
+	const call = async({ method, args, isDummy = false }: CallProps) => {
 		const logger = MAIN_LOGGER.child({ chainId, contractName, method })
 		try {
 			if(!contract) {
@@ -65,6 +61,10 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 			}
 
 			logger.info('Calling function', { args })
+
+			if(isDummy) {
+				return
+			}
 
 			setTransactionStep?.(0)
 			const tx = await sendGaslessTransaction(

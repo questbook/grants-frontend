@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { Box, Flex, Image, Link, Text } from '@chakra-ui/react'
+import { Box, Flex, FlexProps, Image, Link, Text } from '@chakra-ui/react'
 import { GroupBase, OptionBase, OptionProps, SingleValueProps } from 'chakra-react-select'
 import { NetworkType } from 'src/constants/Networks'
 import DropdownSelect from 'src/v2/components/DropdownSelect'
@@ -15,6 +15,7 @@ interface Props {
 	onChange: (e: SafeSelectOption | undefined) => void
 	isError?: boolean
 	safesOptions?: SafeSelectOption[]
+	flexProps: FlexProps
 }
 
 export interface NoteDetails {
@@ -37,7 +38,7 @@ export interface SafeSelectOption extends OptionBase {
 	currency?: string // USD
 	isNote?: boolean
 	noteDetails?: NoteDetails
-	owners: any
+	owners: string[]
 }
 
 const Option = ({ innerProps, data }: OptionProps<SafeSelectOption, boolean, GroupBase<SafeSelectOption>>) => (
@@ -155,55 +156,12 @@ const SingleValue = ({ innerProps, data }: SingleValueProps<SafeSelectOption, bo
 
 )
 
-// const dummyData: SafeSelectOption[] = [
-// 	{
-// 		networkId: '',
-// 		networkName: '',
-// 		networkIcon: '',
-// 		safeType: '',
-// 		safeIcon: '',
-// 		amount: 0,
-// 		currency: '',
-// 		isNote: true,
-// 		isDisabled: true,
-// 	},
-// 	{
-// 		networkId: '',
-// 		networkName: 'Polygon',
-// 		networkIcon: '/ui_icons/polygon.svg',
-// 		safeType: 'Gnosis',
-// 		safeIcon: '/ui_icons/gnosis.svg',
-// 		amount: 1000,
-// 		currency: 'USD',
-// 	},
-// 	{
-// 		networkId: '',
-// 		networkName: 'Optimism',
-// 		networkIcon: '/ui_icons/optimism.svg',
-// 		safeType: 'Gnosis',
-// 		safeIcon: '/ui_icons/gnosis.svg',
-// 		amount: 1000,
-// 		currency: 'USD',
-// 	},
-// 	{
-// 		networkId: '',
-// 		networkName: 'Polygon',
-// 		networkIcon: '/ui_icons/polygon.svg',
-// 		safeType: 'Gnosis',
-// 		safeIcon: '/ui_icons/gnosis.svg',
-// 		amount: 100,
-// 		currency: 'USD',
-// 		isDisabled: true,
-// 	},
-// ]
-
-function SafeSelect({ label, optionalText, helperText, helperLinkText, helperLinkUrl, value, onChange, safesOptions }: Props) {
-	useEffect(() => {
-		// console.log('SELECTED DROPDOWN: ', value)
-	}, [value])
+function SafeSelect({ label, optionalText, helperText, helperLinkText, helperLinkUrl, value, onChange, safesOptions, flexProps }: Props) {
 	const { t } = useTranslation()
 	return (
-		<Flex direction='column'>
+		<Flex
+			direction='column'
+			{...flexProps}>
 			<Flex>
 				<Text
 					variant='requestProposalBody'

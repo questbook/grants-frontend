@@ -1,12 +1,13 @@
 import { ReactElement, useContext, useEffect } from 'react'
 import { Flex } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
+import LinkYourMultisigModal from 'src/libraries/ui/LinkYourMultisigModal'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import ThreeColumnSkeleton from 'src/libraries/ui/ThreeColumnSkeleton'
 import { GrantsProgramContext } from 'src/pages/_app'
 import ActionList from 'src/screens/dashboard/ActionList'
 import Body from 'src/screens/dashboard/Body'
-import { DashboardProvider, FundBuilderProvider, SendAnUpdateProvider } from 'src/screens/dashboard/Context'
+import { DashboardProvider, FundBuilderProvider, ModalContext, ModalProvider } from 'src/screens/dashboard/Context'
 import FundBuilderDrawer from 'src/screens/dashboard/FundBuilderDrawer'
 import FundBuilderModal from 'src/screens/dashboard/FundBuilderModal'
 import ProposalList from 'src/screens/dashboard/ProposalList'
@@ -42,12 +43,20 @@ function Dashboard() {
 			{/* Modals */}
 			<FundBuilderModal />
 			<SendAnUpdateModal />
+			<LinkYourMultisigModal
+				isOpen={isLinkYourMultisigModalOpen}
+				onClose={
+					() => {
+						setIsLinkYourMultisigModalOpen(false)
+					}
+				} />
 
 			{/* Drawers */}
 			<FundBuilderDrawer />
 		</Flex>
 	)
 
+	const { isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen } = useContext(ModalContext)!
 	const { role, isLoading } = useContext(GrantsProgramContext)!
 
 	useEffect(() => {
@@ -75,9 +84,9 @@ Dashboard.getLayout = function(page: ReactElement) {
 			}>
 			<DashboardProvider>
 				<FundBuilderProvider>
-					<SendAnUpdateProvider>
+					<ModalProvider>
 						{page}
-					</SendAnUpdateProvider>
+					</ModalProvider>
 				</FundBuilderProvider>
 			</DashboardProvider>
 		</NavbarLayout>
