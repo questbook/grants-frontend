@@ -422,7 +422,7 @@ function Discover() {
 
 	const [grantsProgram, setGrantsProgram] = useState<Exclude<GetGrantsProgramDetailsQuery['grantsProgram'], null | undefined>[number]>()
 
-	const [first, setFirst] = useState(10)
+	const [first, setFirst] = useState(40)
 	const [skip, setSkip] = useState(0)
 	const [grants, setGrants] = useState<Grant[]>()
 	const [personalGrants, setPersonalGrants] = useState<PersonalGrant[]>()
