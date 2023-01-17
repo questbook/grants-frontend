@@ -15,7 +15,7 @@ interface Props {
 	onChange: (e: SafeSelectOption | undefined) => void
 	isError?: boolean
 	safesOptions?: SafeSelectOption[]
-	flexProps: FlexProps
+	flexProps?: FlexProps
 }
 
 export interface NoteDetails {
