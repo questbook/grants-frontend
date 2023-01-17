@@ -1,6 +1,5 @@
 import { useContext, useMemo, useState } from 'react'
 import { Box, Button, Flex, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text, Textarea } from '@chakra-ui/react'
-import logger from 'src/libraries/logger'
 import QuickReplyButton from 'src/screens/dashboard/_components/QuickReplyButton'
 import useAddComments from 'src/screens/dashboard/_hooks/useAddComments'
 import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
@@ -53,20 +52,17 @@ function SendAnUpdateModal() {
 												<QuickReplyButton
 													key={index}
 													tag={tag}
-													selectedTags={selectedTags}
+													isSelected={selectedTag === tag.id}
 													onClick={
 														() => {
-															const tags = { ...selectedTags }
-															logger.info('tags: ', tags)
-															if(tags[index]) {
-																delete tags[index]
+															if(selectedTag) {
+																setSelectedTag(undefined)
 															} else {
-																tags[index] = true
+																setSelectedTag(tag.id)
 															}
-
-															setSelectedTags(tags)
 														}
 													}
+													isDisabled={selectedTag !== undefined && selectedTag !== tag.id}
 													index={index} />
 											)
 										})
@@ -89,11 +85,11 @@ function SendAnUpdateModal() {
 							onClick={
 								async() => {
 									// TODO: Make batch comments private or public
-									const ret = await addComments(text, tags, false)
+									const ret = await addComments(text, false, selectedTag)
 									if(ret) {
 										setIsModalOpen(false)
 										setText('')
-										setSelectedTags
+										setSelectedTag(undefined)
 									}
 								}
 							}>
@@ -110,11 +106,7 @@ function SendAnUpdateModal() {
 	const { proposalTags } = useProposalTags({ proposals: proposals.filter(p => selectedProposals.has(p.id)) })
 	const [ text, setText ] = useState<string>('')
 
-	const [ selectedTags, setSelectedTags ] = useState<{[key: number]: boolean}>({})
-
-	const tags = useMemo(() => {
-		return Object.keys(selectedTags).map((key) => parseInt(key, 10))
-	}, [selectedTags])
+	const [ selectedTag, setSelectedTag ] = useState<string>()
 
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
 	const [, setTransactionHash] = useState<string>('')

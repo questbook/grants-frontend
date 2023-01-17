@@ -7,7 +7,6 @@ import logger from 'src/libraries/logger'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { PIIForCommentType } from 'src/libraries/utils/types'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
-import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
@@ -22,8 +21,6 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 	const { grant, role } = useContext(GrantsProgramContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
-
-	const { proposalTags } = useProposalTags({ proposals: proposals.filter(p => selectedProposals.has(p.id)) })
 
 	const selectedProposalsData = useMemo(() => {
 		if(!proposals || !selectedProposals) {
@@ -45,9 +42,16 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
 	}, [grant])
 
-	const { call, isBiconomyInitialised } = useFunctionCall({
+	const { call: commentCall, isBiconomyInitialised } = useFunctionCall({
 		chainId,
 		contractName: 'communication',
+		setTransactionHash,
+		setTransactionStep: setStep,
+	})
+
+	const { call: updateCall } = useFunctionCall({
+		chainId,
+		contractName: 'applications',
 		setTransactionHash,
 		setTransactionStep: setStep,
 	})
@@ -75,7 +79,7 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 	}
 
 	const addComments =
-		async(message: string, tags: number[], isPrivate: boolean) => {
+		async(message: string, isPrivate: boolean, tag?: string) => {
 			if(!grant?.workspace?.id ||
         !grant?.id ||
         !selectedProposalsData.length || !webwallet
@@ -88,9 +92,7 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 				sender: scwAddress,
 				message: messageHash,
 				timestamp: Math.floor(Date.now() / 1000),
-				tags: proposalTags
-					?.filter((_, index) => tags.includes(index))
-					.map((reply) => reply.id),
+				tag,
 				role,
 			}
 
@@ -127,16 +129,33 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 
 			logger.info({ commentHashes }, 'Comment Hashes')
 
-			const methodArgs = [
-				grant.workspace.id,
-				grant.id,
-				selectedProposalsData.map((proposal) => proposal.id),
-				isPrivate,
-				commentHashes,
-			]
-			logger.info({ methodArgs }, 'Method Args (Comment)')
+			if(tag === 'accept' || tag === 'reject' || tag === 'resubmit') {
+				const toState = tag === 'accept' ? 2 : tag === 'reject' ? 3 : 1
+				const applicationUpdateHash = (await uploadToIPFS(JSON.stringify({
+					feedback: commentHashes[0]
+				}))).hash
 
-			return await call({ method: 'addComments', args: methodArgs })
+				const methodArgs = [
+					selectedProposalsData.map((proposal) => proposal.id),
+					selectedProposalsData.map(() => toState),
+					grant.workspace.id,
+					selectedProposalsData.map(() => applicationUpdateHash),
+				]
+				logger.info({ methodArgs }, 'Method Args (Comment)')
+
+				return await updateCall({ method: 'batchUpdateApplicationState', args: methodArgs })
+			} else {
+				const methodArgs = [
+					grant.workspace.id,
+					grant.id,
+					selectedProposalsData.map((proposal) => proposal.id),
+					isPrivate,
+					commentHashes,
+				]
+				logger.info({ methodArgs }, 'Method Args (Comment)')
+
+				return await commentCall({ method: 'addComments', args: methodArgs })
+			}
 		}
 
 

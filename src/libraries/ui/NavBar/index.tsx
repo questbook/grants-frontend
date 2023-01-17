@@ -90,19 +90,57 @@ function NavBar({ bg = 'gray.1' }: Props) {
 					shouldShowTitle && (
 						<Flex
 							align='center'
-							gap={3}>
+							gap={2}
+							direction='row'
+							alignItems='center'
+						>
+
 							<Image
-								boxSize='32px'
+								boxSize={8}
 								borderRadius='4px'
-								src={grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)} />
-							<Text
-								fontWeight='500'
-								variant='v2_subheading'>
-								{grant?.title}
-							</Text>
+								src={grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)}
+							/>
+							<Flex
+								gap={0}
+								direction='column'
+							>
+								<Text
+									fontWeight='500'
+									variant='v2_subheading'>
+									{grant?.title}
+								</Text>
+								{
+									(grant?.link !== undefined && grant?.link !== null) && (
+										<Text
+											variant='v2_metadata'
+											display={grant?.link ? '' : 'none'}>
+											Program details
+											<Text
+												variant='v2_metadata'
+												display='inline-block'
+												fontWeight={500}
+												marginLeft={1}
+												cursor='pointer'
+												onClick={
+													() => {
+														if(grant.link !== null) {
+															window.open(grant.link, '_blank')
+														}
+													}
+												}
+											>
+												here
+											</Text>
+										</Text>
+									)
+								}
+							</Flex>
+
 							<Text
 								px={2}
 								py={1}
+								ml={2}
+								alignSelf='center'
 								variant='v2_metadata'
 								fontWeight='500'
 								bg={grant?.acceptingApplications ? 'rgba(242, 148, 62, 0.2)' : 'accent.columbia'}

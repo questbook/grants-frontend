@@ -3,9 +3,8 @@ query getAllGrantsForExplore($first: Int, $skip: Int) {
     first: $first, 
     skip: $skip, 
     subgraphError: allow, 
-    orderBy: deadlineS, 
-    orderDirection: desc,
-    where: {workspace_:{isVisible: true}}
+    orderBy: createdAtS, 
+    orderDirection: desc
   ) {
     id,
     creatorId,
