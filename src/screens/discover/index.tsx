@@ -422,7 +422,7 @@ function Discover() {
 
 	const [grantsProgram, setGrantsProgram] = useState<Exclude<GetGrantsProgramDetailsQuery['grantsProgram'], null | undefined>[number]>()
 
-	const [first, setFirst] = useState(10)
+	const [first, setFirst] = useState(40)
 	const [skip, setSkip] = useState(0)
 	const [grants, setGrants] = useState<Grant[]>()
 	const [personalGrants, setPersonalGrants] = useState<PersonalGrant[]>()
@@ -557,7 +557,8 @@ function Discover() {
 			// const mergedArray = mergeSortedArrays(allFetchedGrants, grants, (a, b) => {
 			// 	return b.deadlineS > a.deadlineS
 			// })
-			allFetchedGrants.push(...grants)
+			const filteredGrants = grants.filter(grant => grant.workspace.isVisible === true)
+			allFetchedGrants.push(...filteredGrants)
 		}
 
 		logger.info('all fetched grants', allFetchedGrants)
@@ -609,9 +610,9 @@ function Discover() {
 			// 	return a.createdAtS > b.createdAtS
 			// })
 
-			const filteredGrants = grants.filter(e => e.grant.workspace.isVisible === true)
-			logger.info('Reviewer grants fetched', grants, filteredGrants)
-			allFetchedGrants.push(...filteredGrants)
+			// const filteredGrants = grants.filter(e => e.grant.workspace.isVisible === true)
+			logger.info('Reviewer grants fetched', grants)
+			allFetchedGrants.push(...grants)
 		}
 
 		setReviewerGrants(allFetchedGrants)

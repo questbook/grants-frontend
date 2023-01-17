@@ -6231,7 +6231,6 @@ export const GetAllGrantsForExploreDocument = gql`
     subgraphError: allow
     orderBy: createdAtS
     orderDirection: desc
-    where: {workspace_: {isVisible: true}}
   ) {
     id
     creatorId
@@ -9392,7 +9391,7 @@ export const GetAllGrantsForMemberDocument = gql`
     subgraphError: allow
     orderBy: createdAtS
     orderDirection: desc
-    where: {managers_: {member_contains_nocase: $memberId}, workspace_: {isVisible: true}}
+    where: {managers_: {member_contains_nocase: $memberId}}
   ) {
     id
     creatorId
