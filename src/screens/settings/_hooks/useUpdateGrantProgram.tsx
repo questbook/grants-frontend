@@ -4,13 +4,11 @@ import { defaultChainId } from 'src/constants/chains'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import useChainId from 'src/hooks/utils/useChainId'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { validateAndUploadToIpfs } from 'src/libraries/validator'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { GrantProgramForm } from 'src/screens/settings/_utils/types'
 import getErrorMessage from 'src/utils/errorUtils'
-import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import logger from 'src/utils/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -22,7 +20,6 @@ export default function useUpdateGrantProgram(setCurrentStep: (step: number | un
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const [transactionData, setTransactionData] = useState<any>()
 	const { nonce } = useQuestbookAccount()
-	const currentChainId = useChainId()
 
 	const { subgraphClients } = useContext(ApiClientsContext)!
 	const { grant } = useContext(GrantsProgramContext)!
@@ -125,7 +122,7 @@ export default function useUpdateGrantProgram(setCurrentStep: (step: number | un
 
 	return {
 		updateGrantProgram,
-		txHash: getExplorerUrlForTxHash(currentChainId, transactionData?.transactionHash),
+		txHash: transactionData?.transactionHash,
 		loading,
 		error
 	}
