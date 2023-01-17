@@ -9,7 +9,7 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
-import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import MilestoneChoose from 'src/screens/dashboard/_components/FundBuilder/MilestoneChoose'
 import PaidByWallet from 'src/screens/dashboard/_components/FundBuilder/PaidByWallet'
 import PayFromChoose from 'src/screens/dashboard/_components/FundBuilder/PayFromChoose'
@@ -72,7 +72,8 @@ function FundBuilderModal() {
 											value={amounts?.[0] || ''}
 											onChange={
 												(e) => {
-													const val = parseFloat(e.target.value)
+													const val = parseInt(e.target.value)
+													logger.info({ entered: e.target.value, parsed: val }, 'FundBuilderModal: entered amount')
 													setAmounts([val])
 												}
 											}
