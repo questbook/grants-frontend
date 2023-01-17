@@ -1,11 +1,13 @@
 import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { SupportedPayouts } from '@questbook/supported-safes'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
+import { useSafeContext } from 'src/contexts/safeContext'
 import { useGetApplicationActionsQuery, useGetCommentsQuery, useGetGrantQuery, useGetProposalsQuery } from 'src/generated/graphql'
 import logger from 'src/libraries/logger'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
-import { CommentMap, CommentType, DashboardContextType, FundBuilderContextType, Proposals, ReviewInfo, SendAnUpdateContextType, SignerVerifiedState, TokenInfo } from 'src/screens/dashboard/_utils/types'
+import { CommentMap, CommentType, DashboardContextType, FundBuilderContextType, ModalContextType, Proposals, ReviewInfo, SignerVerifiedState, TokenInfo } from 'src/screens/dashboard/_utils/types'
 import { useMultiChainQuery } from 'src/screens/proposal/_hooks/useMultiChainQuery'
 import { Roles } from 'src/types'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
@@ -13,10 +15,11 @@ import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined)
 const FundBuilderContext = createContext<FundBuilderContextType | undefined>(undefined)
-const SendAnUpdateContext = createContext<SendAnUpdateContextType | undefined>(undefined)
+const ModalContext = createContext<ModalContextType | undefined>(undefined)
 
 const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const router = useRouter()
+	const { setSafeObj } = useSafeContext()
 	const { grantId, chainId: _chainId, role: _role } = router.query
 	const { setWorkspace } = useContext(ApiClientsContext)!
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
@@ -63,19 +66,25 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 	const getGrant = useCallback(async() => {
 		if(!grantId || chainId === -1 || typeof grantId !== 'string' || !scwAddress) {
-			return
+			return 'params-missing'
 		}
 
-		logger.info({ grantId, scwAddress }, 'Getting grant (ROLE)')
+		logger.info({ grantId, scwAddress }, 'Getting grant (GET GRANT)')
 		const details = await fetchGrantDetails({ grantId, actorId: scwAddress.toLowerCase() }, true)
-		logger.info({ details }, 'Grant details (ROLE)')
+		logger.info({ details }, 'Grant details (GET GRANT)')
 		if(!details?.[0]?.grant) {
-			return
+			return 'no-grant-in-query'
 		}
 
 		const _grant = details[0].grant
+		logger.info({ _grant }, 'Setting grant (GET GRANT)')
 		setGrant(_grant)
 		setWorkspace(_grant.workspace)
+
+		if(_grant?.workspace?.safe) {
+			const currentSafe = new SupportedPayouts().getSafe(_grant.workspace?.safe?.chainId ? parseInt(_grant.workspace?.safe?.chainId) : defaultChainId, _grant.workspace?.safe?.address ?? '')
+			setSafeObj(currentSafe)
+		}
 
 		const possibleRoles: Roles[] = ['community']
 
@@ -91,9 +100,9 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			}
 		}
 
-		logger.info({ possibleRoles }, 'Possible roles (ROLE)')
+		logger.info({ possibleRoles }, 'Possible roles (GET GRANT)')
 		if(_role) {
-			logger.info({ role: _role, check: possibleRoles.includes(_role as Roles) }, 'From params (ROLE)')
+			logger.info({ role: _role, check: possibleRoles.includes(_role as Roles) }, 'Role from params (GET GRANT)')
 			// Check if the role the user is trying to access is valid
 			if(possibleRoles.includes(_role as Roles)) {
 				setRole(_role as Roles)
@@ -105,11 +114,9 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			// Assign a role to the user based on the grant
 			setRole(possibleRoles[possibleRoles.length - 1])
 		}
-	}, [grantId, chainId, scwAddress])
 
-	useEffect(() => {
-		logger.info(role, 'Role changed (ROLE)')
-	}, [role])
+		return 'grant-details-fetched'
+	}, [grantId, chainId, scwAddress])
 
 	const handleComments = async(allComments: CommentType[]) => {
 		if(!webwallet || !scwAddress) {
@@ -201,13 +208,13 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	}
 
 	const getProposals = useCallback(async() => {
-		logger.info({ role, grant, scwAddress }, 'Fetching proposals')
+		logger.info({ role, grantId, scwAddress }, 'Fetching proposals (GET PROPOSALS)')
 		if(!webwallet) {
 			return 'no-webwallet'
 		} else if(!scwAddress) {
 			return 'no-scw-address'
-		} else if(!grant) {
-			return 'no-grant'
+		} else if(!grantId || typeof grantId !== 'string') {
+			return 'no-grant-id'
 		}
 
 		const proposals: Proposals = []
@@ -216,7 +223,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		let skip = 0
 		let shouldContinue = true
 		do {
-			const results = await fetchMoreProposals({ first, skip, grantID: grant.id }, true)
+			const results = await fetchMoreProposals({ first, skip, grantID: grantId }, true)
 			logger.info({ results }, 'Results (Proposals)')
 			if(results?.length === 0 || !results[0] || !results[0]?.grantApplications?.length) {
 				shouldContinue = false
@@ -232,7 +239,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		skip = 0
 		shouldContinue = true
 		do {
-			const results = await fetchMoreComments({ first, skip, grantId: grant.id }, true)
+			const results = await fetchMoreComments({ first, skip, grantId }, true)
 			logger.info({ results }, 'Results (Comments)')
 			if(results?.length === 0 || results?.every((r) => !r?.comments?.length)) {
 				shouldContinue = false
@@ -252,7 +259,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 		logger.info({ allComments }, 'Fetched comments before actions')
 
-		const results = await fetchMoreApplicationActions({ grantId: grant.id }, true)
+		const results = await fetchMoreApplicationActions({ grantId }, true)
 		logger.info({ results }, 'Results (Application Actions)')
 		if(results?.length > 0) {
 			const result = results[0]
@@ -293,20 +300,19 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		setCommentMap(commentMap)
 
 		setProposals(proposals)
-		return 'grant-details-fetched'
-	}, [role, grant, scwAddress])
+		return 'proposals-fetched'
+	}, [role, grantId, scwAddress, webwallet])
 
 	useEffect(() => {
-		getGrant()
+		getGrant().then((r) => logger.info({ r }, 'Get grant result'))
 	}, [grantId, chainId, scwAddress])
 
 	useEffect(() => {
 		getProposals().then((r) => logger.info({ r }, 'Get proposals result'))
-	}, [grant, chainId, scwAddress])
+	}, [grantId, chainId, scwAddress, webwallet])
 
 	useEffect(() => {
 		if(!grant || !scwAddress || !role) {
-			logger.info({ grant, scwAddress, role }, 'Loading state set to true')
 			setIsLoading(true)
 			return
 		}
@@ -390,14 +396,15 @@ const FundBuilderProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	)
 }
 
-const SendAnUpdateProvider = ({ children }: PropsWithChildren<ReactNode>) => {
-	const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+const ModalProvider = ({ children }: PropsWithChildren<ReactNode>) => {
+	const [isSendAnUpdateModalOpen, setIsSendAnUpdateModalOpen] = useState<boolean>(false)
+	const [isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen] = useState<boolean>(false)
 
 	return (
-		<SendAnUpdateContext.Provider value={{ isModalOpen, setIsModalOpen }}>
+		<ModalContext.Provider value={{ isSendAnUpdateModalOpen, setIsSendAnUpdateModalOpen, isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen }}>
 			{children}
-		</SendAnUpdateContext.Provider>
+		</ModalContext.Provider>
 	)
 }
 
-export { DashboardContext, DashboardProvider, FundBuilderContext, FundBuilderProvider, SendAnUpdateContext, SendAnUpdateProvider }
+export { DashboardContext, DashboardProvider, FundBuilderContext, FundBuilderProvider, ModalContext, ModalProvider }

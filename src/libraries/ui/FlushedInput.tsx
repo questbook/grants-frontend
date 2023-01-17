@@ -1,13 +1,15 @@
-import { Flex, FlexProps, Input, InputProps, Text } from '@chakra-ui/react'
+import { Flex, FlexProps, forwardRef, Input, InputProps, Text } from '@chakra-ui/react'
+import logger from 'src/libraries/logger'
 
-interface Props extends InputProps {
+type Props = {
     helperText?: string
 	flexProps?: FlexProps
-}
+} & InputProps
 
-function FlushedInput({ helperText, flexProps, ...props }: Props) {
-	const { value, placeholder, onChange } = props
-	// const [value, setValue] = useState<string>(props?.value?.toString() || '')
+const FlushedInput = forwardRef<Props, 'input'>((props, ref) => {
+	const { value, placeholder, onChange, flexProps, helperText } = props
+
+	logger.info(props, 'FlushedInput props')
 
 	return (
 		<Flex
@@ -15,11 +17,10 @@ function FlushedInput({ helperText, flexProps, ...props }: Props) {
 			{...flexProps}
 		>
 			<Input
+				ref={ref}
 				variant='flushed'
 				// borderBottom='2px solid #0A84FF'
 				borderColor={value === undefined || !value ? 'gray.3' : 'black'}
-				fontWeight='400'
-				fontSize='20px'
 				value={props.value}
 				placeholder={placeholder}
 				_placeholder={{ color: 'gray.5' }}
@@ -62,6 +63,6 @@ function FlushedInput({ helperText, flexProps, ...props }: Props) {
 			}
 		</Flex>
 	)
-}
+})
 
 export default FlushedInput
