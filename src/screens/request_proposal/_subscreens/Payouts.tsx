@@ -3,6 +3,7 @@ import { AiOutlinePlus } from 'react-icons/ai'
 import { BsArrowLeft } from 'react-icons/bs'
 import { IoMdClose } from 'react-icons/io'
 import { Button, Flex, Icon, Text } from '@chakra-ui/react'
+import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
 import SelectDropdown from 'src/screens/request_proposal/_components/SelectDropdown'
@@ -17,7 +18,6 @@ interface Props {
 	setStep: (value: number) => void
 	milestones: Array<string>
 	setMilestones: (value: Array<string>) => void
-	shouldCreateRFP: boolean
 	createRFP: () => void
 	rfpFormSubmissionType: RFPFormType
 	handleOnEdit: (fieldName: string, value: string | string []) => void
@@ -35,7 +35,6 @@ function Payouts(
 		setStep,
 		milestones,
 		setMilestones,
-		shouldCreateRFP,
 		createRFP,
 		rfpFormSubmissionType,
 		handleOnEdit,
@@ -203,11 +202,7 @@ function Payouts(
 							variant='primaryMedium'
 							w='261px'
 							h='48px'
-							onClick={
-								() => {
-									shouldCreateRFP ? createRFP() : handleOnClickContinue()
-								}
-							}
+							onClick={handleOnClickContinue}
 							isDisabled={!payoutMode || !amount}
 						>
 							{/* {shouldCreateRFP ? 'Create RFP' : 'Continue'} */}
@@ -254,6 +249,7 @@ function Payouts(
 	}
 
 	const handleOnClickContinue = () => {
+		logger.info({ rfpFormSubmissionType }, 'rfpFormSubmissionType')
 		if(rfpFormSubmissionType === 'edit') {
 			updateRFP()
 		} else {

@@ -1,5 +1,4 @@
 import { Flex, FlexProps, forwardRef, Input, InputProps, Text } from '@chakra-ui/react'
-import logger from 'src/libraries/logger'
 
 type Props = {
     helperText?: string
@@ -8,8 +7,6 @@ type Props = {
 
 const FlushedInput = forwardRef<Props, 'input'>((props, ref) => {
 	const { value, placeholder, onChange, flexProps, helperText } = props
-
-	logger.info(props, 'FlushedInput props')
 
 	return (
 		<Flex
