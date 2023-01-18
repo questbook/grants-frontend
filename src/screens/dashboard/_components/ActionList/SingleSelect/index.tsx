@@ -7,7 +7,7 @@ import Milestones from 'src/screens/dashboard/_components/ActionList/SingleSelec
 import Payouts from 'src/screens/dashboard/_components/ActionList/SingleSelect/Payouts'
 import ReviewProposal from 'src/screens/dashboard/_components/ActionList/SingleSelect/ReviewProposal'
 import Reviews from 'src/screens/dashboard/_components/ActionList/SingleSelect/Reviews'
-import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
+import { DashboardContext, FundBuilderContext, ModalContext } from 'src/screens/dashboard/Context'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function SingleSelect() {
@@ -33,24 +33,22 @@ function SingleSelect() {
 							px={5}
 							py={4}>
 							<Button
-								disabled={role === 'builder' ? (proposal?.applicantId !== scwAddress?.toLowerCase() || proposal?.state !== 'submitted') : proposal?.state !== 'submitted'}
+								disabled={role === 'builder' ? (proposal?.applicantId !== scwAddress?.toLowerCase() || proposal?.state !== 'submitted') : proposal?.state === 'submitted'}
 								w='100%'
 								variant='primaryMedium'
 								onClick={
 									() => {
-										// if(role === 'community') {
-										// 	router.push({ pathname: '/proposal_form', query: {
-										// 		grantId: grant?.id,
-										// 		chainId,
-										// 	} })
-										// } else
 										if(role === 'builder') {
 											router.push({ pathname: '/proposal_form', query: {
 												proposalId: proposal?.id,
 												chainId,
 											} })
 										} else {
-											setIsModalOpen(true)
+											if(grant?.workspace?.safe) {
+												setIsModalOpen(true)
+											} else {
+												setIsLinkYourMultisigModalOpen(true)
+											}
 										}
 									}
 								}>
@@ -75,7 +73,8 @@ function SingleSelect() {
 
 	const router = useRouter()
 	const { scwAddress } = useContext(WebwalletContext)!
-	const { role } = useContext(GrantsProgramContext)!
+	const { grant, role } = useContext(GrantsProgramContext)!
+	const { setIsLinkYourMultisigModalOpen } = useContext(ModalContext)!
 	const { setIsModalOpen } = useContext(FundBuilderContext)!
 	const { proposals, selectedProposals, showSubmitReviewPanel } = useContext(DashboardContext)!
 
