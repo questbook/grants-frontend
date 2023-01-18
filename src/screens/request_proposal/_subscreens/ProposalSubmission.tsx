@@ -195,8 +195,11 @@ function ProposalSubmission(
 										endDateRef.current.type = 'string'
 									}
 
-									handleOnEditProposalSubmission('endDate', new Date(e.target.value!).toISOString())
-									setEndDate(new Date(e.target.value!).toISOString())
+									const eod = new Date(e.target.value!)
+									eod.setUTCHours(23, 59, 59, 999)
+
+									handleOnEditProposalSubmission('endDate', eod.toISOString())
+									setEndDate(eod.toISOString())
 								}
 							}
 							fontWeight='400'
