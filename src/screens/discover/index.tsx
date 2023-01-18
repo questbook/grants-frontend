@@ -1,19 +1,12 @@
-import { ReactElement, useCallback, useContext, useEffect, useState } from 'react'
+import { ReactElement, useContext, useState } from 'react'
 import { Box, Button, Center, Container, Flex, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import Loader from 'src/components/ui/loader'
-import { defaultChainId } from 'src/constants/chains'
-import {
-	GetGrantsProgramDetailsQuery,
-	useGetGrantsProgramDetailsQuery,
-} from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { DAOSearchContext } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
-import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import useUpdateDaoVisibility from 'src/hooks/useUpdateDaoVisibility'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
-import logger from 'src/libraries/logger'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { ApiClientsContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import RFPGrid from 'src/screens/discover/_components/RFPGrid'
@@ -166,7 +159,7 @@ function Discover() {
 					variant='v2_title'>
 					You’re invited to
 					{' '}
-					{grantsProgram?.title}
+					{grantProgram?.title}
 					{' '}
 					as
 					{' '}
@@ -186,7 +179,7 @@ function Discover() {
 				<Button
 					mt={12}
 					variant='primaryLarge'
-					isDisabled={grantsProgram?.id === undefined}
+					isDisabled={grantProgram?.id === undefined}
 					onClick={onGetStartedClick}>
 					<Text color='white'>
 						Get Started
@@ -231,24 +224,13 @@ function Discover() {
 		)
 	}
 
-	const { grantsForYou, grantsForAll } = useContext(DiscoverContext)!
+	const { grantsForYou, grantsForAll, grantProgram } = useContext(DiscoverContext)!
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number | undefined>()
 	const [unsavedDomainState, setUnsavedDaosState] = useState<{ [_: number]: { [_: string]: boolean } }>({})
 
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 
 	const { searchString } = useContext(DAOSearchContext)!
-	const { fetchMore } = useMultiChainQuery({
-		useQuery: useGetGrantsProgramDetailsQuery,
-		options: {
-			variables: {
-				workspaceID: inviteInfo ? `0x${inviteInfo.workspaceId.toString(16)}` : ''
-			}
-		},
-		chains: inviteInfo?.chainId ? [inviteInfo.chainId] : [defaultChainId]
-	})
-
-	const [grantsProgram, setGrantsProgram] = useState<Exclude<GetGrantsProgramDetailsQuery['grantsProgram'], null | undefined>[number]>()
 
 	const toast = useCustomToast()
 
@@ -273,38 +255,12 @@ function Discover() {
 		setUnsavedDaosState({ ...unsavedDomainState })
 	}
 
-	const fetchDetails = useCallback(async() => {
-		if(!inviteInfo?.workspaceId || !inviteInfo?.chainId) {
-			return
-		}
-
-		logger.info({ inviteInfo }, 'Invite Info')
-
-		const workspaceID = `0x${inviteInfo.workspaceId.toString(16)}`
-		logger.info({ workspaceID }, 'Workspace ID')
-		const results = await fetchMore({ workspaceID }, true)
-		logger.info({ results }, 'Results')
-
-		if(!results?.length) {
-			return
-		}
-
-		logger.info({ grantsProgram: results[0] }, 'Results')
-		setGrantsProgram(results[0]?.grantsProgram?.[0])
-	}, [inviteInfo])
-
-	useEffect(() => {
-		if(inviteInfo) {
-			fetchDetails()
-		}
-	}, [inviteInfo])
-
 	const onGetStartedClick = () => {
-		if(!grantsProgram?.id) {
+		if(!grantProgram?.id) {
 			return
 		}
 
-		router.push({ pathname: '/setup_profile', query: { grantId: grantsProgram.id } })
+		router.push({ pathname: '/setup_profile', query: { grantId: grantProgram.id } })
 	}
 
 	return buildComponent()

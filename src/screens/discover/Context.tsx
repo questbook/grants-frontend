@@ -1,9 +1,10 @@
 import { createContext, PropsWithChildren, ReactNode, useContext, useEffect, useState } from 'react'
-import { GetWorkspacesAndBuilderGrantsQuery, useGetAllGrantsForMemberQuery, useGetAllGrantsQuery, useGetWorkspacesAndBuilderGrantsQuery } from 'src/generated/graphql'
+import { defaultChainId } from 'src/constants/chains'
+import { GetGrantsProgramDetailsQuery, GetWorkspacesAndBuilderGrantsQuery, useGetAllGrantsForMemberQuery, useGetAllGrantsQuery, useGetGrantsProgramDetailsQuery, useGetWorkspacesAndBuilderGrantsQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
-import { WebwalletContext } from 'src/pages/_app'
-import { DiscoverContextType, GrantType } from 'src/screens/discover/_utils/types'
+import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { DiscoverContextType, GrantProgramType, GrantType } from 'src/screens/discover/_utils/types'
 import { Roles } from 'src/types'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
@@ -14,14 +15,18 @@ const PAGE_SIZE = 40
 const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const provider = () => {
 		return (
-			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll }}>
+			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram }}>
 				{children}
 			</DiscoverContext.Provider>
 		)
 	}
 
+	const { scwAddress } = useContext(WebwalletContext)!
+	const { inviteInfo } = useContext(ApiClientsContext)!
+
 	const [grantsForYou, setGrantsForYou] = useState<GrantType[]>([])
 	const [grantsForAll, setGrantsForAll] = useState<GrantType[]>([])
+	const [grantsProgram, setGrantsProgram] = useState<GrantProgramType>()
 
 	const { fetchMore: fetchMoreWorkspaces } = useMultiChainQuery({
 		useQuery: useGetWorkspacesAndBuilderGrantsQuery,
@@ -36,6 +41,16 @@ const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const { fetchMore: fetchMoreExploreGrants } = useMultiChainQuery({
 		useQuery: useGetAllGrantsQuery,
 		options: {}
+	})
+
+	const { fetchMore: fetchGrantProgramData } = useMultiChainQuery({
+		useQuery: useGetGrantsProgramDetailsQuery,
+		options: {
+			variables: {
+				workspaceID: inviteInfo ? `0x${inviteInfo.workspaceId.toString(16)}` : ''
+			}
+		},
+		chains: inviteInfo?.chainId ? [inviteInfo.chainId] : [defaultChainId]
 	})
 
 	const getGrantsForYou = async() => {
@@ -137,7 +152,25 @@ const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		return 'grants-for-all-fetched'
 	}
 
-	const { scwAddress } = useContext(WebwalletContext)!
+	const fetchDetails = async() => {
+		if(!inviteInfo?.workspaceId || !inviteInfo?.chainId) {
+			return
+		}
+
+		logger.info({ inviteInfo }, 'Invite Info')
+
+		const workspaceID = `0x${inviteInfo.workspaceId.toString(16)}`
+		logger.info({ workspaceID }, 'Workspace ID')
+		const results = await fetchGrantProgramData({ workspaceID }, true)
+		logger.info({ results }, 'Results')
+
+		if(!results?.length) {
+			return
+		}
+
+		logger.info({ grantsProgram: results[0] }, 'Results')
+		setGrantsProgram(results[0]?.grantsProgram?.[0])
+	}
 
 	useEffect(() => {
 		getGrantsForAll().then(r => logger.info(r, 'Get Grants for all'))
@@ -146,6 +179,12 @@ const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	useEffect(() => {
 		getGrantsForYou().then(r => logger.info(r, 'Get Grants for you'))
 	}, [scwAddress])
+
+	useEffect(() => {
+		if(inviteInfo) {
+			fetchDetails()
+		}
+	}, [inviteInfo])
 
 	return provider()
 }
