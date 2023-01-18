@@ -1,6 +1,6 @@
 import { createContext, PropsWithChildren, ReactNode, useContext, useEffect, useState } from 'react'
 import { defaultChainId } from 'src/constants/chains'
-import { GetGrantsProgramDetailsQuery, GetWorkspacesAndBuilderGrantsQuery, useGetAllGrantsForMemberQuery, useGetAllGrantsQuery, useGetGrantsProgramDetailsQuery, useGetWorkspacesAndBuilderGrantsQuery } from 'src/generated/graphql'
+import { GetWorkspacesAndBuilderGrantsQuery, useGetAllGrantsForMemberQuery, useGetAllGrantsQuery, useGetGrantProgramDetailsQuery, useGetWorkspacesAndBuilderGrantsQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
@@ -26,7 +26,7 @@ const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 	const [grantsForYou, setGrantsForYou] = useState<GrantType[]>([])
 	const [grantsForAll, setGrantsForAll] = useState<GrantType[]>([])
-	const [grantsProgram, setGrantsProgram] = useState<GrantProgramType>()
+	const [grantProgram, setGrantProgram] = useState<GrantProgramType>()
 
 	const { fetchMore: fetchMoreWorkspaces } = useMultiChainQuery({
 		useQuery: useGetWorkspacesAndBuilderGrantsQuery,
@@ -44,7 +44,7 @@ const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	})
 
 	const { fetchMore: fetchGrantProgramData } = useMultiChainQuery({
-		useQuery: useGetGrantsProgramDetailsQuery,
+		useQuery: useGetGrantProgramDetailsQuery,
 		options: {
 			variables: {
 				workspaceID: inviteInfo ? `0x${inviteInfo.workspaceId.toString(16)}` : ''
@@ -168,8 +168,8 @@ const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			return
 		}
 
-		logger.info({ grantsProgram: results[0] }, 'Results')
-		setGrantsProgram(results[0]?.grantsProgram?.[0])
+		logger.info({ grantProgram: results[0] }, 'Results')
+		setGrantProgram(results[0]?.grantProgram?.[0])
 	}
 
 	useEffect(() => {

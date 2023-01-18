@@ -5591,12 +5591,12 @@ export type GetAllGrantsForMemberQueryVariables = Exact<{
 
 export type GetAllGrantsForMemberQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, deadlineS: number, deadline?: string | null, numberOfApplications: number, createdAtS: number, updatedAtS?: number | null, applications: Array<{ __typename?: 'GrantApplication', applicantId: string, state: ApplicationState }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, tokenUSDValue?: string | null, asset: string, tokenName?: string | null }>, workspace: { __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, totalGrantFundingDisbursedUSD: number, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, accessLevel: WorkspaceMemberAccessLevel }> }, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } }> };
 
-export type GetGrantsProgramDetailsQueryVariables = Exact<{
+export type GetGrantProgramDetailsQueryVariables = Exact<{
   workspaceID: Scalars['String'];
 }>;
 
 
-export type GetGrantsProgramDetailsQuery = { __typename?: 'Query', grantsProgram: Array<{ __typename?: 'Grant', id: string, title: string, workspace: { __typename?: 'Workspace', id: string, title: string } }> };
+export type GetGrantProgramDetailsQuery = { __typename?: 'Query', grantProgram: Array<{ __typename?: 'Grant', id: string, title: string, workspace: { __typename?: 'Workspace', id: string, title: string } }> };
 
 export type GetWorkspacesAndBuilderGrantsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -9288,9 +9288,9 @@ export type GetAllGrantsForMemberQueryResult = Apollo.QueryResult<GetAllGrantsFo
 export function refetchGetAllGrantsForMemberQuery(variables: GetAllGrantsForMemberQueryVariables) {
       return { query: GetAllGrantsForMemberDocument, variables: variables }
     }
-export const GetGrantsProgramDetailsDocument = gql`
-    query getGrantsProgramDetails($workspaceID: String!) {
-  grantsProgram: grants(
+export const GetGrantProgramDetailsDocument = gql`
+    query getGrantProgramDetails($workspaceID: String!) {
+  grantProgram: grants(
     where: {workspace: $workspaceID}
     orderBy: createdAtS
     orderDirection: desc
@@ -9306,34 +9306,34 @@ export const GetGrantsProgramDetailsDocument = gql`
     `;
 
 /**
- * __useGetGrantsProgramDetailsQuery__
+ * __useGetGrantProgramDetailsQuery__
  *
- * To run a query within a React component, call `useGetGrantsProgramDetailsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetGrantsProgramDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetGrantProgramDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGrantProgramDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetGrantsProgramDetailsQuery({
+ * const { data, loading, error } = useGetGrantProgramDetailsQuery({
  *   variables: {
  *      workspaceID: // value for 'workspaceID'
  *   },
  * });
  */
-export function useGetGrantsProgramDetailsQuery(baseOptions: Apollo.QueryHookOptions<GetGrantsProgramDetailsQuery, GetGrantsProgramDetailsQueryVariables>) {
+export function useGetGrantProgramDetailsQuery(baseOptions: Apollo.QueryHookOptions<GetGrantProgramDetailsQuery, GetGrantProgramDetailsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetGrantsProgramDetailsQuery, GetGrantsProgramDetailsQueryVariables>(GetGrantsProgramDetailsDocument, options);
+        return Apollo.useQuery<GetGrantProgramDetailsQuery, GetGrantProgramDetailsQueryVariables>(GetGrantProgramDetailsDocument, options);
       }
-export function useGetGrantsProgramDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetGrantsProgramDetailsQuery, GetGrantsProgramDetailsQueryVariables>) {
+export function useGetGrantProgramDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetGrantProgramDetailsQuery, GetGrantProgramDetailsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetGrantsProgramDetailsQuery, GetGrantsProgramDetailsQueryVariables>(GetGrantsProgramDetailsDocument, options);
+          return Apollo.useLazyQuery<GetGrantProgramDetailsQuery, GetGrantProgramDetailsQueryVariables>(GetGrantProgramDetailsDocument, options);
         }
-export type GetGrantsProgramDetailsQueryHookResult = ReturnType<typeof useGetGrantsProgramDetailsQuery>;
-export type GetGrantsProgramDetailsLazyQueryHookResult = ReturnType<typeof useGetGrantsProgramDetailsLazyQuery>;
-export type GetGrantsProgramDetailsQueryResult = Apollo.QueryResult<GetGrantsProgramDetailsQuery, GetGrantsProgramDetailsQueryVariables>;
-export function refetchGetGrantsProgramDetailsQuery(variables: GetGrantsProgramDetailsQueryVariables) {
-      return { query: GetGrantsProgramDetailsDocument, variables: variables }
+export type GetGrantProgramDetailsQueryHookResult = ReturnType<typeof useGetGrantProgramDetailsQuery>;
+export type GetGrantProgramDetailsLazyQueryHookResult = ReturnType<typeof useGetGrantProgramDetailsLazyQuery>;
+export type GetGrantProgramDetailsQueryResult = Apollo.QueryResult<GetGrantProgramDetailsQuery, GetGrantProgramDetailsQueryVariables>;
+export function refetchGetGrantProgramDetailsQuery(variables: GetGrantProgramDetailsQueryVariables) {
+      return { query: GetGrantProgramDetailsDocument, variables: variables }
     }
 export const GetWorkspacesAndBuilderGrantsDocument = gql`
     query getWorkspacesAndBuilderGrants($first: Int, $skip: Int, $actorId: Bytes!) {
