@@ -15,7 +15,7 @@ import RecoveryModal from 'src/libraries/ui/NavBar/_components/RecoveryModal'
 import SharePopover from 'src/libraries/ui/NavBar/_components/SharePopover'
 import UpdateProfileModal from 'src/libraries/ui/NavBar/_components/UpdateProfileModal'
 import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
-import { GrantsProgramContext } from 'src/pages/_app'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import getAvatar from 'src/utils/avatarUtils'
 import { getNonce } from 'src/utils/gaslessUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
@@ -231,6 +231,7 @@ function NavBar({ bg = 'gray.1' }: Props) {
 	)
 
 	const { grant, role, isLoading } = useContext(GrantsProgramContext)!
+	const { webwallet } = useContext(WebwalletContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	// const { searchString, setSearchString } = useContext(DAOSearchContext)!
 	const router = useRouter()
@@ -251,10 +252,9 @@ function NavBar({ bg = 'gray.1' }: Props) {
 	useEffect(() => {
 		logger.info({ type, privateKey }, 'RecoveryModal')
 		if(type === 'export') {
-			const privateKey = localStorage.getItem('webwalletPrivateKey')
-			setPrivateKey(privateKey ?? '')
+			setPrivateKey(webwallet?.privateKey ?? '')
 		}
-	}, [type])
+	}, [type, webwallet])
 
 	const onChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setPrivateKey(e.target.value)

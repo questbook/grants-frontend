@@ -11,6 +11,7 @@ function Empty() {
 				align='center'>
 				<Text
 					my='auto'
+					mx='auto'
 					textAlign='center'>
 					Proposals from builders show up here.
 				</Text>

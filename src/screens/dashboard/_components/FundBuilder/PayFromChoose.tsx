@@ -1,8 +1,6 @@
 import { Flex, Image, Text } from '@chakra-ui/react'
 
 function PayFromChoose({ selectedMode }: { selectedMode: any}) {
-
-
 	const buildComponent = () => {
 		return (
 			<Flex
@@ -16,7 +14,6 @@ function PayFromChoose({ selectedMode }: { selectedMode: any}) {
 					Pay From
 				</Text>
 				<Flex alignItems='center'>
-
 					<Image
 						src={selectedMode?.logo}
 						boxSize='16px' />
@@ -26,7 +23,6 @@ function PayFromChoose({ selectedMode }: { selectedMode: any}) {
 					>
 						{selectedMode?.value}
 					</Text>
-
 				</Flex>
 			</Flex>
 		)

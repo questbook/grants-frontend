@@ -213,6 +213,10 @@ function Proposal() {
 							.split('\\s')
 							.join(' ')
 						const value = getFieldString(proposal, id)
+						if(value === undefined) {
+							return <Flex key={index} />
+						}
+
 						return (
 							<Flex
 								key={index}

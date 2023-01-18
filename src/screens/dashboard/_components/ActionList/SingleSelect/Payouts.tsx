@@ -48,11 +48,26 @@ function Payouts() {
 					}
 				</Flex>
 
-				<Flex
-					display={expanded ? 'block' : 'none'}
-					direction='column'>
-					{payouts.map(payoutItem)}
-				</Flex>
+				{
+					payouts.length > 0 && (
+						<Flex
+							display={expanded ? 'block' : 'none'}
+							direction='column'>
+							{payouts.map(payoutItem)}
+						</Flex>
+					)
+				}
+
+				{
+					payouts.length === 0 && (
+						<Text
+							display={expanded ? 'block' : 'none'}
+							mt={2}
+							color='gray.6'>
+							No payouts yet
+						</Text>
+					)
+				}
 			</Flex>
 		)
 	}

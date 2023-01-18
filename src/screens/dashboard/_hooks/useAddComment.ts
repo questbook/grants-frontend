@@ -25,14 +25,11 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 
 	const proposal = useMemo(() => {
-		return proposals.find(p => selectedProposals.has(p.id))
+		return proposals.find((p) => selectedProposals.has(p.id))
 	}, [proposals, selectedProposals])
 
 	const chainId = useMemo(() => {
-		return (
-			getSupportedChainIdFromWorkspace(proposal?.grant?.workspace) ??
-      defaultChainId
-		)
+		return (getSupportedChainIdFromWorkspace(proposal?.grant?.workspace) ?? defaultChainId)
 	}, [proposal?.grant?.workspace])
 
 	const { call: commentCall, isBiconomyInitialised } = useFunctionCall({
@@ -80,7 +77,11 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 		].filter((k) => k.publicKey)
 	}, [proposal])
 
-	const addComment = async(message: string, isPrivate: boolean, tag?: string) => {
+	const addComment = async(
+		message: string,
+		isPrivate: boolean,
+		tag?: string,
+	) => {
 		if(
 			!webwallet ||
       !scwAddress ||
@@ -150,9 +151,13 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 
 		if(tag === 'accept' || tag === 'reject' || tag === 'resubmit') {
 			const toState = tag === 'accept' ? 2 : tag === 'reject' ? 3 : 1
-			const applicationUpdateHash = (await uploadToIPFS(JSON.stringify({
-				feedback: commentHash
-			}))).hash
+			const applicationUpdateHash = (
+				await uploadToIPFS(
+					JSON.stringify({
+						feedback: commentHash,
+					}),
+				)
+			).hash
 
 			const methodArgs = [
 				proposal.id,
@@ -162,7 +167,10 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 			]
 			logger.info({ methodArgs }, 'Method Args (Comment)')
 
-			return await updateCall({ method: 'updateApplicationState', args: methodArgs })
+			return await updateCall({
+				method: 'updateApplicationState',
+				args: methodArgs,
+			})
 		} else {
 			const methodArgs = [
 				proposal.grant.workspace.id,

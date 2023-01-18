@@ -3,7 +3,7 @@
 import { useContext, useMemo, useState } from 'react'
 import { Box, Button, Checkbox, Flex, Text } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
-import SearchField from 'src/libraries/ui/SearchBox'
+import SearchField from 'src/libraries/ui/SearchField'
 import { GrantsProgramContext } from 'src/pages/_app'
 import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
