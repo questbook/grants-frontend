@@ -28,6 +28,7 @@ query getWorkspacesAndBuilderGrants($first: Int, $skip: Int, $actorId: Bytes!) {
     id
     title
     applications(where: { applicantId: $actorId }) {
+      id
       applicantId
       state
     }

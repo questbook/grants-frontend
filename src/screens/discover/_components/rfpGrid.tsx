@@ -1,11 +1,8 @@
 import { Grid, GridItem } from '@chakra-ui/react'
-import config from 'src/constants/config.json'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import logger from 'src/libraries/logger'
 import RFPCard from 'src/screens/discover/_components/RFPCard'
 import { GrantType } from 'src/screens/discover/_utils/types'
-import getAvatar from 'src/utils/avatarUtils'
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 
 
@@ -39,20 +36,9 @@ function RFPGrid({
 							<RFPCard
 								isVisible={unsavedDomainVisibleState?.[workspaceChainId!]?.[grant.workspace.id] ?? grant.workspace.isVisible}
 								onVisibilityUpdate={(visibleState) => onDaoVisibilityUpdate?.(grant.workspace.id, workspaceChainId!, visibleState)}
-								// logo={
-								// 	grant.workspace.logoIpfsHash === config.defaultDAOImageHash ?
-								// 		getAvatar(true, grant.title) :
-								// 		getUrlForIPFSHash(grant.workspace.logoIpfsHash!)
-								// }
-								logo={grant.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)}
-								name={grant.title}
-								deadline={grant.deadline!}
 								chainId={workspaceChainId}
-								noOfApplicants={grant.numberOfApplications}
-								totalAmount={grant.workspace.totalGrantFundingDisbursedUSD}
-								grantId={grant.id}
+								grant={grant}
 								role={role}
-								isAcceptingApplications={grant.acceptingApplications}
 							/>
 						</GridItem>
 					)

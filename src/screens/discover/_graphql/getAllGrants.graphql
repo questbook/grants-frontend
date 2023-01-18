@@ -9,6 +9,7 @@ query GetAllGrants($first: Int, $skip: Int, $searchString: String!) {
     id
     title
     applications(first: 1) {
+      id
       applicantId
       state
     }

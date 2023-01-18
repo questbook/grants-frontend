@@ -1,4 +1,4 @@
-import { ReactElement, useContext, useState } from 'react'
+import { ReactElement, useContext, useRef, useState } from 'react'
 import { Box, Button, Center, Container, Flex, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import Loader from 'src/components/ui/loader'
@@ -69,6 +69,7 @@ function Discover() {
 									</Box>
 
 									<Flex
+										ref={discoverRef}
 										my={12}
 										mb={4}>
 										<Text
@@ -156,6 +157,21 @@ function Discover() {
 					}
 				</Flex>
 				{buildNetworkModal()}
+				{/* <Tooltip label='Scroll to discover section'>
+					<ArrowDownCircle
+						position='absolute'
+						left={4}
+						bottom={4}
+						boxSize='5%'
+						cursor='pointer'
+						onClick={
+							() => {
+								discoverRef?.current?.scrollIntoView({ behavior: 'smooth' })
+							}
+						}>
+						Scroll to Discover
+					</ArrowDownCircle>
+				</Tooltip> */}
 			</>
 		)
 	}
@@ -246,16 +262,17 @@ function Discover() {
 		)
 	}
 
-	const { grantsForYou, grantsForAll, grantProgram, setSearch } = useContext(DiscoverContext)!
-	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number | undefined>()
-	const [unsavedDomainState, setUnsavedDaosState] = useState<{ [_: number]: { [_: string]: boolean } }>({})
+	const discoverRef = useRef<HTMLDivElement>(null)
 
+	const { grantsForYou, grantsForAll, grantProgram, setSearch } = useContext(DiscoverContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString, setSearchString } = useContext(DAOSearchContext)!
 
 	const toast = useCustomToast()
-
 	const { isBiconomyInitialised, updateDaoVisibility } = useUpdateDaoVisibility()
+
+	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number | undefined>()
+	const [unsavedDomainState, setUnsavedDaosState] = useState<{ [_: number]: { [_: string]: boolean } }>({})
 
 	const onDaoVisibilityUpdate = (daoId: string, chainId: SupportedChainId, visibleState: boolean) => {
 		if(unsavedDomainState[chainId]) {

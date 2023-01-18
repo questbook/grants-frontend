@@ -18,6 +18,7 @@ query getAllGrantsForMember(
     id
     title
     applications(where: { applicantId: $actorId }) {
+      id
       applicantId
       state
     }
