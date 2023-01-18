@@ -14,4 +14,6 @@ export type DiscoverContextType = {
     grantsForYou: GrantType[]
     grantsForAll: GrantType[]
     grantProgram: GrantProgramType | undefined
+    search: string
+    setSearch: (search: string) => void
 }

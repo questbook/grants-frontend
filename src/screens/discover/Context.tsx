@@ -15,7 +15,7 @@ const PAGE_SIZE = 40
 const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const provider = () => {
 		return (
-			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram }}>
+			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram, search, setSearch }}>
 				{children}
 			</DiscoverContext.Provider>
 		)
@@ -27,6 +27,7 @@ const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const [grantsForYou, setGrantsForYou] = useState<GrantType[]>([])
 	const [grantsForAll, setGrantsForAll] = useState<GrantType[]>([])
 	const [grantProgram, setGrantProgram] = useState<GrantProgramType>()
+	const [search, setSearch] = useState<string>('')
 
 	const { fetchMore: fetchMoreWorkspaces } = useMultiChainQuery({
 		useQuery: useGetWorkspacesAndBuilderGrantsQuery,
@@ -132,7 +133,7 @@ const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	}
 
 	const getGrantsForAll = async() => {
-		const results = await fetchMoreExploreGrants({ first: PAGE_SIZE, skip: 0 }, true)
+		const results = await fetchMoreExploreGrants({ first: PAGE_SIZE, skip: 0, searchString: search }, true)
 
 		if(results?.length === 0 || results?.every((r) => !r?.grants?.length)) {
 			return 'no-grants'
@@ -174,7 +175,7 @@ const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 	useEffect(() => {
 		getGrantsForAll().then(r => logger.info(r, 'Get Grants for all'))
-	}, [])
+	}, [search])
 
 	useEffect(() => {
 		getGrantsForYou().then(r => logger.info(r, 'Get Grants for you'))

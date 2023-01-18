@@ -1,10 +1,10 @@
-import { Input, InputGroup, InputLeftElement, InputProps } from '@chakra-ui/react'
+import { Input, InputGroup, InputGroupProps, InputLeftElement, InputProps } from '@chakra-ui/react'
 import { Search } from 'src/generated/icons'
 
-function SearchField(props: InputProps) {
+function SearchField(props: InputProps & {inputGroupProps?: InputGroupProps}) {
 	const buildComponent = () => {
 		return (
-			<InputGroup>
+			<InputGroup {...props.inputGroupProps}>
 				<InputLeftElement
 					pointerEvents='none'
 				>

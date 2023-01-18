@@ -1,5 +1,11 @@
-query GetAllGrants($first: Int, $skip: Int) {
-  grants(first: $first, skip: $skip, orderBy: createdAtS, orderDirection: desc, where: {workspace_: {isVisible: true}}) {
+query GetAllGrants($first: Int, $skip: Int, $searchString: String!) {
+  grants(
+    first: $first
+    skip: $skip
+    orderBy: createdAtS
+    orderDirection: desc
+    where: {workspace_: {isVisible: true}, title_contains: $searchString}
+  ) {
     id
     title
     applications(first: 1) {
@@ -21,7 +27,7 @@ query GetAllGrants($first: Int, $skip: Int) {
       logoIpfsHash
       totalGrantFundingDisbursedUSD
       supportedNetworks
-      members (first: 1) {
+      members(first: 1) {
         id
         actorId
         accessLevel

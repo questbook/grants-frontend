@@ -5575,6 +5575,7 @@ export type GetProposalsQuery = { __typename?: 'Query', grantApplications: Array
 export type GetAllGrantsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
+  searchString: Scalars['String'];
 }>;
 
 
@@ -9112,13 +9113,13 @@ export function refetchGetProposalsQuery(variables: GetProposalsQueryVariables) 
       return { query: GetProposalsDocument, variables: variables }
     }
 export const GetAllGrantsDocument = gql`
-    query GetAllGrants($first: Int, $skip: Int) {
+    query GetAllGrants($first: Int, $skip: Int, $searchString: String!) {
   grants(
     first: $first
     skip: $skip
     orderBy: createdAtS
     orderDirection: desc
-    where: {workspace_: {isVisible: true}}
+    where: {workspace_: {isVisible: true}, title_contains: $searchString}
   ) {
     id
     title
@@ -9181,10 +9182,11 @@ export const GetAllGrantsDocument = gql`
  *   variables: {
  *      first: // value for 'first'
  *      skip: // value for 'skip'
+ *      searchString: // value for 'searchString'
  *   },
  * });
  */
-export function useGetAllGrantsQuery(baseOptions?: Apollo.QueryHookOptions<GetAllGrantsQuery, GetAllGrantsQueryVariables>) {
+export function useGetAllGrantsQuery(baseOptions: Apollo.QueryHookOptions<GetAllGrantsQuery, GetAllGrantsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetAllGrantsQuery, GetAllGrantsQueryVariables>(GetAllGrantsDocument, options);
       }
@@ -9195,7 +9197,7 @@ export function useGetAllGrantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetAllGrantsQueryHookResult = ReturnType<typeof useGetAllGrantsQuery>;
 export type GetAllGrantsLazyQueryHookResult = ReturnType<typeof useGetAllGrantsLazyQuery>;
 export type GetAllGrantsQueryResult = Apollo.QueryResult<GetAllGrantsQuery, GetAllGrantsQueryVariables>;
-export function refetchGetAllGrantsQuery(variables?: GetAllGrantsQueryVariables) {
+export function refetchGetAllGrantsQuery(variables: GetAllGrantsQueryVariables) {
       return { query: GetAllGrantsDocument, variables: variables }
     }
 export const GetAllGrantsForMemberDocument = gql`

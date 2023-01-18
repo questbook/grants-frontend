@@ -8,6 +8,7 @@ import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
 import useUpdateDaoVisibility from 'src/hooks/useUpdateDaoVisibility'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
+import SearchField from 'src/libraries/ui/SearchField'
 import { ApiClientsContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import RFPGrid from 'src/screens/discover/_components/RFPGrid'
 import { DiscoverContext, DiscoverProvider } from 'src/screens/discover/Context'
@@ -67,20 +68,41 @@ function Discover() {
 
 									</Box>
 
-									<Text
+									<Flex
 										my={12}
-										mb={4}
-										fontWeight='500'
-										fontSize='24px'
-										lineHeight='32px'>
-										Discover
-									</Text>
+										mb={4}>
+										<Text
+											fontWeight='500'
+											fontSize='24px'
+											lineHeight='32px'>
+											Discover
+										</Text>
+										<SearchField
+											bg='white'
+											w='30%'
+											inputGroupProps={{ ml: 4 }}
+											placeholder='Enter Grant Program Name to search'
+											value={searchString}
+											onKeyDown={
+												(e) => {
+													if(e.key === 'Enter' && searchString !== undefined) {
+														setSearch(searchString)
+													}
+												}
+											}
+											onChange={
+												(e) => {
+													setSearchString(e.target.value.trim())
+												}
+											} />
+
+									</Flex>
 
 									<RFPGrid
 										type='all'
 										unsavedDomainVisibleState={unsavedDomainState}
 										onDaoVisibilityUpdate={onDaoVisibilityUpdate}
-										grants={grantsForAll} />
+										grants={searchString === undefined || searchString === '' ? grantsForAll : grantsForAll?.filter(g => g.title.includes(searchString))} />
 								</>
 							)
 						}
@@ -224,13 +246,12 @@ function Discover() {
 		)
 	}
 
-	const { grantsForYou, grantsForAll, grantProgram } = useContext(DiscoverContext)!
+	const { grantsForYou, grantsForAll, grantProgram, setSearch } = useContext(DiscoverContext)!
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number | undefined>()
 	const [unsavedDomainState, setUnsavedDaosState] = useState<{ [_: number]: { [_: string]: boolean } }>({})
 
 	const { isQbAdmin } = useContext(QBAdminsContext)!
-
-	const { searchString } = useContext(DAOSearchContext)!
+	const { searchString, setSearchString } = useContext(DAOSearchContext)!
 
 	const toast = useCustomToast()
 
