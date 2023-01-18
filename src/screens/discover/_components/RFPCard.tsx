@@ -1,7 +1,9 @@
+import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Box, Divider, Flex, Image, Switch, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import SupportedChainId from 'src/generated/SupportedChainId'
+import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
 import { extractDateFromDateTime, titleCase } from 'src/utils/formattingUtils'
 
 type RFPCardProps = {
@@ -10,7 +12,6 @@ type RFPCardProps = {
     deadline: string
 	isVisible: boolean
 	onVisibilityUpdate?: (visibleState: boolean) => void
-	isAdmin: boolean
 	chainId: SupportedChainId | undefined
 	noOfApplicants: number
     grantId: string
@@ -19,14 +20,8 @@ type RFPCardProps = {
     isAcceptingApplications: boolean
 }
 
-function RFPCard({ logo, isAdmin, isAcceptingApplications, name, chainId, role, grantId, deadline, noOfApplicants, totalAmount, onVisibilityUpdate, isVisible }: RFPCardProps) {
-	const router = useRouter()
-	const { t } = useTranslation()
-	const formattedDeadline = extractDateFromDateTime(deadline)
-
-	const isOpen = isAcceptingApplications === true ? deadline > new Date().toISOString() : false
-
-	return (
+function RFPCard({ logo, isAcceptingApplications, name, chainId, role, grantId, deadline, noOfApplicants, totalAmount, onVisibilityUpdate, isVisible }: RFPCardProps) {
+	const buildComponent = () => (
 		<Box
 			w='100%'
 			background='white'
@@ -45,7 +40,7 @@ function RFPCard({ logo, isAdmin, isAcceptingApplications, name, chainId, role, 
 			onClick={
 				(e) => {
 					// returning as onClick fired from dao visibility toggle switch for admins
-					if(isAdmin && [
+					if(isQbAdmin && [
 						'[object HTMLSpanElement]',
 						'[object HTMLLabelElement]',
 						'[object HTMLInputElement]',
@@ -94,7 +89,7 @@ function RFPCard({ logo, isAdmin, isAcceptingApplications, name, chainId, role, 
 						)
 					}
 					{
-						isAdmin && (
+						isQbAdmin && (
 							<Switch
 								size='md'
 								mx='10px'
@@ -191,6 +186,15 @@ function RFPCard({ logo, isAdmin, isAcceptingApplications, name, chainId, role, 
 			</Flex>
 		</Box>
 	)
+
+	const router = useRouter()
+	const { t } = useTranslation()
+	const formattedDeadline = extractDateFromDateTime(deadline)
+
+	const { isQbAdmin } = useContext(QBAdminsContext)!
+
+	const isOpen = isAcceptingApplications === true ? deadline > new Date().toISOString() : false
+	return buildComponent()
 }
 
 export default RFPCard

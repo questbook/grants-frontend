@@ -1,15 +1,25 @@
-query getAllGrantsForMember(
-  $first: Int
-  $skip: Int
-  $workspaces: [String!]!
-  $supportedNetwork: [SupportedNetwork!]!
-  $actorId: Bytes!
-) {
-  grants(
-    where: {
-      workspace_in: $workspaces
-      workspace_: { supportedNetworks: $supportedNetwork }
+query getWorkspacesAndBuilderGrants($first: Int, $skip: Int, $actorId: Bytes!) {
+  workspaceMembers(
+    where: { actorId: $actorId, workspace_: { grants_not: [] } }
+    orderBy: addedAt
+    orderDirection: desc
+    first: $first
+    skip: $skip
+    subgraphError: allow
+  ) {
+    id
+    accessLevel
+    enabled
+    workspace {
+      id
+      title
+      supportedNetworks
+      grants
     }
+  }
+
+  grants(
+    where: { applications_: { applicantId: $actorId } }
     first: $first
     skip: $skip
     orderBy: createdAtS
@@ -36,7 +46,7 @@ query getAllGrantsForMember(
       logoIpfsHash
       totalGrantFundingDisbursedUSD
       supportedNetworks
-      members(where: { actorId: $actorId }) {
+      members (first: 1) {
         id
         actorId
         accessLevel
