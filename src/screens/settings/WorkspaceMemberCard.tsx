@@ -1,4 +1,6 @@
 import { Box, Flex, Image, Text } from '@chakra-ui/react'
+import logger from 'src/libraries/logger'
+import ConfimationModal from 'src/libraries/ui/ConfirmationModal'
 import getAvatar from 'src/utils/avatarUtils'
 import { truncateStringFromMiddle } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
@@ -9,10 +11,13 @@ interface WorkspaceMemberCardProps {
     address: string
     name: string
     pfp: string
+	openConfirmationModal: boolean
+	setOpenConfirmationModal: (openConfirmationModal: boolean) => void
+	revokeAccess: (memberAddress: string, role: number, enable: boolean) => void
     // isOwner: boolean
 }
 
-function WorkspaceMemberCard({ role, email, address, name, pfp }: WorkspaceMemberCardProps) {
+function WorkspaceMemberCard({ role, email, address, name, pfp, openConfirmationModal, setOpenConfirmationModal, revokeAccess }: WorkspaceMemberCardProps) {
 
 	return (
 		<Box
@@ -73,12 +78,38 @@ function WorkspaceMemberCard({ role, email, address, name, pfp }: WorkspaceMembe
 						<Image src='/v2/icons/dot.svg' /> */}
 						<Text
 							variant='textButton'
+							onClick={
+								() => {
+									setOpenConfirmationModal(true)
+									logger.info('revoke clicked', address)
+									// revokeAccess(address, 2, false)
+								}
+							}
 						>
 							Revoke Access
 						</Text>
 					</Flex>
 				</Flex>
 			</Flex>
+			{
+				openConfirmationModal && (
+					<ConfimationModal
+						isOpen={openConfirmationModal}
+						onClose={() => setOpenConfirmationModal(false)}
+						title='Revoke access for the member?'
+						subTitle='Are you sure you want to remove the access for the member? This cannot be undone.'
+						actionText='Revoke Access'
+						action={
+							() => {
+								revokeAccess(address, 2, false)
+								setOpenConfirmationModal(false)
+							}
+						}
+						onCancel={() => setOpenConfirmationModal(false)}
+						// modalBodyProps
+					/>
+				)
+			}
 		</Box>
 
 	)
