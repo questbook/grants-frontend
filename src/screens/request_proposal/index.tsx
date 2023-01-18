@@ -65,7 +65,7 @@ function RequestProposal() {
 				<NetworkTransactionFlowStepperModal
 					isOpen={currentStepIndex !== undefined}
 					currentStepIndex={currentStepIndex || 0}
-					viewTxnLink={getExplorerUrlForTxHash(network, txHash)}
+					viewTxnLink={rfpFormType === 'edit' ? getExplorerUrlForTxHash(network, updateRFPTxHash) : getExplorerUrlForTxHash(network, txHash)}
 					onClose={
 						async() => {
 							setCurrentStepIndex(undefined)
@@ -73,7 +73,7 @@ function RequestProposal() {
 							router.push({
 								pathname: '/dashboard',
 								query: {
-									grantId: grantId.toLowerCase(),
+									grantId: rfpFormType === 'edit' ? updateGrantId : grantId,
 									chainId: chainId,
 								}
 							})
@@ -142,7 +142,6 @@ function RequestProposal() {
 						setStep={setStep}
 						milestones={milestones}
 						setMilestones={setMilestones}
-						shouldCreateRFP={shouldCreateRFP}
 						createRFP={createWorkspaceAndGrant}
 						rfpFormSubmissionType={rfpFormType}
 						handleOnEdit={handleOnEdit}
@@ -182,7 +181,6 @@ function RequestProposal() {
 	const [proposalName, setProposalName] = useState('')
 	const [startDate, setStartDate] = useState<string>()
 	const [endDate, setEndDate] = useState<string>()
-	const [shouldCreateRFP, setShouldCreateRFP] = useState(true)
 
 	// const [submitType, setSubmitType] = useState<RFPFormType>('submit')
 
@@ -281,14 +279,8 @@ function RequestProposal() {
 
 	const [grantId, setGrantId] = useState<string>('')
 
-	const { rfpData, rfpFormType, RFPEditFormData, setRFPEditFormData } = useContext(RFPFormContext)!
-	const { updateRFP } = useUpdateRFP(setCurrentStepIndex)
-
-	// useEffect(() => {
-	// 	if(role === 'admin' && workspace) {
-	// 		setShouldCreateRFP(true)
-	// 	}
-	// }, [role, workspace])
+	const { rfpData, rfpFormType, RFPEditFormData, setRFPEditFormData, grantId: updateGrantId } = useContext(RFPFormContext)!
+	const { updateRFP, txHash: updateRFPTxHash } = useUpdateRFP(setCurrentStepIndex)
 
 	useEffect(() => {
 		// console.log("add_user", nonce, webwallet)
@@ -406,12 +398,13 @@ function RequestProposal() {
 			}
 
 			// setCurrentStepIndex(1)
-
+			const methodArgs = [workspaceCreateIpfsHash, new Uint8Array(32), multiSigAddress, selectedSafeNetwork ? parseInt(selectedSafeNetwork.networkId) : '0']
+			logger.info({ methodArgs }, 'Workspace create method args')
 			const transactionHash = await sendGaslessTransaction(
 				biconomy,
 				targetContractObject,
 				'createWorkspace',
-				[workspaceCreateIpfsHash, new Uint8Array(32), multiSigAddress, selectedSafeNetwork ? parseInt(selectedSafeNetwork.networkId) : '0'],
+				methodArgs,
 				WORKSPACE_REGISTRY_ADDRESS[network],
 				biconomyWalletClient,
 				scwAddress,
