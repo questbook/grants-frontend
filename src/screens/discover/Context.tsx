@@ -1,10 +1,10 @@
 import { createContext, PropsWithChildren, ReactNode, useContext, useEffect, useState } from 'react'
 import { defaultChainId } from 'src/constants/chains'
-import { GetWorkspacesAndBuilderGrantsQuery, useGetAllGrantsForMemberQuery, useGetAllGrantsQuery, useGetGrantProgramDetailsQuery, useGetWorkspacesAndBuilderGrantsQuery } from 'src/generated/graphql'
+import { useGetAllGrantsForMemberQuery, useGetAllGrantsQuery, useGetGrantProgramDetailsQuery, useGetWorkspacesAndBuilderGrantsQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
-import { DiscoverContextType, GrantProgramType, GrantType } from 'src/screens/discover/_utils/types'
+import { DiscoverContextType, GrantProgramType, GrantType, WorkspaceMemberType } from 'src/screens/discover/_utils/types'
 import { Roles } from 'src/types'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
@@ -58,7 +58,7 @@ const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			return 'no-scw-address'
 		}
 
-		const allWorkspaceMembers: {[key: number]: Exclude<GetWorkspacesAndBuilderGrantsQuery['workspaceMembers'], null | undefined>} = {}
+		const allWorkspaceMembers: {[key: number]: WorkspaceMemberType} = {}
 		const builderGrants: GrantType[] = []
 		const membersGrants: GrantType[] = []
 		let first = 100
