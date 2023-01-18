@@ -3,16 +3,16 @@ import { Box, Button, Flex, Modal, ModalCloseButton, ModalContent, ModalOverlay,
 import QuickReplyButton from 'src/screens/dashboard/_components/QuickReplyButton'
 import useAddComments from 'src/screens/dashboard/_hooks/useAddComments'
 import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
-import { DashboardContext, SendAnUpdateContext } from 'src/screens/dashboard/Context'
+import { DashboardContext, ModalContext } from 'src/screens/dashboard/Context'
 
 function SendAnUpdateModal() {
 	const buildComponent = () => {
 		return (
 			<Modal
-				isOpen={isModalOpen}
+				isOpen={isSendAnUpdateModalOpen}
 				onClose={
 					() => {
-						setIsModalOpen(false)
+						setIsSendAnUpdateModalOpen(false)
 					}
 				}
 				size='2xl'
@@ -87,7 +87,7 @@ function SendAnUpdateModal() {
 									// TODO: Make batch comments private or public
 									const ret = await addComments(text, false, selectedTag)
 									if(ret) {
-										setIsModalOpen(false)
+										setIsSendAnUpdateModalOpen(false)
 										setText('')
 										setSelectedTag(undefined)
 									}
@@ -102,7 +102,7 @@ function SendAnUpdateModal() {
 	}
 
 	const { selectedProposals, proposals } = useContext(DashboardContext)!
-	const { isModalOpen, setIsModalOpen } = useContext(SendAnUpdateContext)!
+	const { isSendAnUpdateModalOpen, setIsSendAnUpdateModalOpen } = useContext(ModalContext)!
 	const { proposalTags } = useProposalTags({ proposals: proposals.filter(p => selectedProposals.has(p.id)) })
 	const [ text, setText ] = useState<string>('')
 

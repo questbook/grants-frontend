@@ -6,7 +6,7 @@ import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import { GrantsProgramContext } from 'src/pages/_app'
-import { DashboardContext, FundBuilderContext, SendAnUpdateContext } from 'src/screens/dashboard/Context'
+import { DashboardContext, FundBuilderContext, ModalContext } from 'src/screens/dashboard/Context'
 import { getFieldStrings } from 'src/utils/formattingUtils'
 
 function MultiSelect() {
@@ -27,7 +27,7 @@ function MultiSelect() {
 					isDisabled={role !== 'admin'}
 					onClick={
 						() => {
-							setIsModalOpen(true)
+							setIsSendAnUpdateModalOpen(true)
 						}
 					}>
 					<Text
@@ -99,7 +99,7 @@ function MultiSelect() {
 	const { decryptedProposals } = useContext(DashboardContext)!
 	const { role } = useContext(GrantsProgramContext)!
 	const { setIsDrawerOpen } = useContext(FundBuilderContext)!
-	const { setIsModalOpen } = useContext(SendAnUpdateContext)!
+	const { setIsSendAnUpdateModalOpen } = useContext(ModalContext)!
 	const { safeObj } = useSafeContext()
 	const customToast = useCustomToast()
 

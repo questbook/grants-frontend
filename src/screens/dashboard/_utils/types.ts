@@ -60,9 +60,11 @@ export type FundBuilderContextType = {
   setSignerVerifiedState: (state: SignerVerifiedState) => void
 };
 
-export type SendAnUpdateContextType = {
-  isModalOpen: boolean
-  setIsModalOpen: (isOpen: boolean) => void
+export type ModalContextType = {
+  isSendAnUpdateModalOpen: boolean
+  setIsSendAnUpdateModalOpen: (isOpen: boolean) => void
+  isLinkYourMultisigModalOpen: boolean
+  setIsLinkYourMultisigModalOpen: (isOpen: boolean) => void
 };
 
 export type ReviewData = {

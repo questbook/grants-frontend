@@ -1,5 +1,6 @@
-import { Box, Button, Flex, Image, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Text } from '@chakra-ui/react'
 import { useSafeContext } from 'src/contexts/safeContext'
+import { Link } from 'src/generated/icons'
 
 interface Props {
     safeProposalLink: string
@@ -67,8 +68,7 @@ const TransactionInitiated = ({ safeProposalLink }: Props) => {
 					<Button
 						w='100%'
 						variant='primaryLarge'>
-						<Image
-							src='/v2/icons/open link.svg'
+						<Link
 							mr='1rem' />
 						<Text
 							fontWeight='500'

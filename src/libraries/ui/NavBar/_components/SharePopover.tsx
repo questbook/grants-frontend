@@ -3,6 +3,7 @@ import { Button, Flex, Popover, PopoverArrow, PopoverBody, PopoverContent, Popov
 import { Copy, ShareForward } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
+import { copyShareGrantLink } from 'src/libraries/utils/copy'
 import { GrantsProgramContext } from 'src/pages/_app'
 
 function SharePopover() {

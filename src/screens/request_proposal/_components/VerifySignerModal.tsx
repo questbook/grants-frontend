@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { AlertDialogOverlay, Box, Flex, Modal, ModalBody, ModalContent, Text, useToast, VStack } from '@chakra-ui/react'
 import { NetworkType } from 'src/constants/Networks'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
+import logger from 'src/libraries/logger'
 import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
 import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/PhantomLogo'
 import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
@@ -96,6 +97,7 @@ const VerifySignerModal = ({
 	}, [address])
 
 	useEffect(() => {
+		logger.info('VerifySignerModal', { owners, isOpen, walletClicked, networkType, phantomWallet, address })
 		if(isOpen && walletClicked) {
 			if(networkType === NetworkType.EVM && address && owners.includes(address)) {
 				setIsOwner(true)
@@ -123,7 +125,7 @@ const VerifySignerModal = ({
 					status: 'success',
 				})
 			} else if(phantomWallet?.publicKey || address) {
-				// setIsOwner(false)
+				setIsOwner(false)
 				if(address) {
 					disconnectAsync()
 				}
