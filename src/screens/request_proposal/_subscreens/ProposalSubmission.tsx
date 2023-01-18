@@ -159,8 +159,8 @@ function ProposalSubmission(
 										startdateRef.current.type = 'string'
 									}
 
-									console.log('e.target.value', new Date(e.target.value!).toISOString())
-									handleOnEditProposalSubmission('startDate', e.target.value)
+									logger.info('e.target.value', new Date(e.target.value!).toISOString())
+									handleOnEditProposalSubmission('startDate', new Date(e.target.value!).toISOString())
 									setStartdate(new Date(e.target.value!).toISOString())
 								}
 							}
@@ -195,7 +195,7 @@ function ProposalSubmission(
 										endDateRef.current.type = 'string'
 									}
 
-									handleOnEditProposalSubmission('endDate', e.target.value)
+									handleOnEditProposalSubmission('endDate', new Date(e.target.value!).toISOString())
 									setEndDate(new Date(e.target.value!).toISOString())
 								}
 							}
