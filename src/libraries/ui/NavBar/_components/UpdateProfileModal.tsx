@@ -6,7 +6,6 @@ import useSetupProfile from 'src/libraries/hooks/useSetupProfile'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
-import { TXN_STEPS } from 'src/libraries/utils/constants'
 import { usePiiForWorkspaceMember } from 'src/libraries/utils/pii'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
@@ -124,11 +123,12 @@ function UpdateProfileModal({ isOpen, onClose }: Props) {
 								isDisabled={isDisabled}
 								variant='primaryLarge'
 								w='100%'
+								isLoading={networkTransactionModalStep !== undefined}
 								onClick={onClick}>
 								<Text
 									color='white'
 									fontWeight='500'>
-									{networkTransactionModalStep === undefined ? 'Save' : `${TXN_STEPS[networkTransactionModalStep]}...`}
+									Save
 								</Text>
 							</Button>
 						</Flex>

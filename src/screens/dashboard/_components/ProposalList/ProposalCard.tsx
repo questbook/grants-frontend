@@ -1,5 +1,5 @@
 import { useContext, useEffect } from 'react'
-import { Checkbox, Flex, Image, Text, Tooltip } from '@chakra-ui/react'
+import { Checkbox, Flex, FlexProps, forwardRef, Image, Text, Tooltip } from '@chakra-ui/react'
 import config from 'src/constants/config.json'
 import { CheckDouble, Close, Resubmit } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
@@ -12,114 +12,116 @@ import getAvatar from 'src/utils/avatarUtils'
 import { getFieldString } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
-interface Props {
-    proposal: ProposalType
-}
+type Props = {
+	proposal: ProposalType
+} & FlexProps
 
-function ProposalCard({ proposal }: Props) {
-	const buildComponent = () => {
-		return (
-			<Flex
-				bg={selectedProposals.has(proposal.id) ? 'gray.1' : 'white'}
-				direction='column'
-				// mt={2}
-				pl={5}
-				pr={2}
-				py={4}
-				borderBottom='1px solid #E7E4DD'>
-				<Flex align='center'>
-					{
-						role === 'admin' && (
-							<Checkbox
-								isChecked={selectedProposals.has(proposal.id)}
-								spacing={1}
-								onChange={
-									() => {
-										onClick()
-									}
-								} />
-						)
-					}
-					<Text
-						ml={role === 'admin' ? 2 : 0}
-						variant='v2_body'
-						fontWeight='500'
-						cursor='pointer'
-						onClick={
-							() => {
-								onClick(true)
-							}
+const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
+	const buildComponent = () => (
+		<Flex
+			ref={ref}
+			bg={selectedProposals.has(proposal.id) ? 'gray.1' : 'white'}
+			direction='column'
+			// mt={2}
+			pl={5}
+			pr={2}
+			py={4}
+			borderBottom='1px solid #E7E4DD'
+			{...props}>
+			<Flex align='center'>
+				{
+					role === 'admin' && (
+						<Checkbox
+							isChecked={selectedProposals.has(proposal.id)}
+							spacing={1}
+							onChange={
+								() => {
+									onClick()
+								}
+							} />
+					)
+				}
+				<Text
+					ml={role === 'admin' ? 2 : 0}
+					variant='v2_body'
+					fontWeight='500'
+					cursor='pointer'
+					onClick={
+						() => {
+							onClick(true)
 						}
-						_hover={{ textDecoration: 'underline' }}
-					>
-						{getFieldString(proposal, 'projectName')}
-					</Text>
-					{
-						process.env.NODE_ENV === 'development' && (
-							<Text
-								ml={2}
-								variant='v2_metadata'
-								color='black.3'>
-								{`(${proposal.id}) - ${proposal.state}`}
-							</Text>
-						)
 					}
-					<Text
-						ml='auto'
-						color='gray.5'
-						variant='v2_metadata'>
-						{formatTime(proposal.updatedAtS)}
-					</Text>
-				</Flex>
-				<Flex
-					align='center'
-					mt={2}>
-					<Image
-						borderWidth='1px'
-						borderColor='black.1'
-						borderRadius='3xl'
-						src={role === 'builder' ? (proposal?.grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, proposal?.grant?.workspace?.title) : getUrlForIPFSHash(proposal?.grant?.workspace?.logoIpfsHash!)) : getAvatar(false, proposal.applicantId)}
-						boxSize='16px' />
-					<Text
-						ml={2}
-						variant='v2_metadata'>
-						{role === 'builder' ? proposal?.grant?.workspace?.title : getFieldString(proposal, 'applicantName')}
-					</Text>
-					{
-						(proposal?.state !== 'submitted') && (
-							<Tooltip
-								hasArrow
-								label={proposal?.state === 'approved' ? 'Accepted Proposal' : proposal?.state === 'rejected' ? 'Rejected Proposal' : 'Awaiting resubmission'}>
-								<Flex
-									ml='auto'
-									p={2}
-									borderRadius='4px'
-									bg={proposal?.state === 'approved' ? 'accent.columbia' : proposal?.state === 'rejected' ? 'accent.melon' : 'accent.vodka'}>
-									{proposal?.state === 'approved' ? <CheckDouble /> : proposal?.state === 'rejected' ? <Close /> : <Resubmit />}
-								</Flex>
-							</Tooltip>
-						)
-					}
-				</Flex>
-				<Flex gap={2}>
-					{
-						tags?.map((tag, index) => tag?.title !== '' && (
-							<Text
-								key={index}
-								mt={2}
-								bg={tag?.color}
-								variant='v2_metadata'
-								borderRadius='2px'
-								px={1}>
-								{tag?.title}
-							</Text>
-						))
-					}
-				</Flex>
-
+					_hover={{ textDecoration: 'underline' }}
+				>
+					{getFieldString(proposal, 'projectName')}
+				</Text>
+				{
+					process.env.NODE_ENV === 'development' && (
+						<Text
+							ml={2}
+							variant='v2_metadata'
+							color='black.3'>
+							{`(${proposal.id}) - ${proposal.state}`}
+						</Text>
+					)
+				}
+				<Text
+					ml='auto'
+					color='gray.5'
+					variant='v2_metadata'>
+					{formatTime(proposal.updatedAtS)}
+				</Text>
 			</Flex>
-		)
-	}
+			<Flex
+				align='center'
+				mt={2}>
+				<Image
+					borderWidth='1px'
+					borderColor='black.1'
+					borderRadius='3xl'
+					src={role === 'builder' ? (proposal?.grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, proposal?.grant?.workspace?.title) : getUrlForIPFSHash(proposal?.grant?.workspace?.logoIpfsHash!)) : getAvatar(false, proposal.applicantId)}
+					boxSize='16px' />
+				<Text
+					ml={2}
+					variant='v2_metadata'>
+					{role === 'builder' ? proposal?.grant?.workspace?.title : getFieldString(proposal, 'applicantName')}
+				</Text>
+				{
+					(proposal?.state !== 'submitted') && (
+						<Tooltip
+							hasArrow
+							label={proposal?.state === 'approved' ? 'Accepted Proposal' : proposal?.state === 'rejected' ? 'Rejected Proposal' : 'Awaiting resubmission'}>
+							<Flex
+								ml='auto'
+								p={2}
+								borderRadius='4px'
+								bg={proposal?.state === 'approved' ? 'accent.columbia' : proposal?.state === 'rejected' ? 'accent.melon' : 'accent.vodka'}>
+								{proposal?.state === 'approved' ? <CheckDouble /> : proposal?.state === 'rejected' ? <Close /> : <Resubmit />}
+							</Flex>
+						</Tooltip>
+					)
+				}
+			</Flex>
+			<Flex gap={2}>
+				{
+					tags?.map((tag, index) => tag?.title !== '' && (
+						<Text
+							key={index}
+							mt={2}
+							bg={tag?.color}
+							variant='v2_metadata'
+							borderRadius='2px'
+							px={1}>
+							{tag?.title}
+						</Text>
+					))
+				}
+			</Flex>
+
+		</Flex>
+	)
+
+	const { proposal } = props
 
 	const { selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
 	const { role } = useContext(GrantsProgramContext)!
@@ -154,5 +156,5 @@ function ProposalCard({ proposal }: Props) {
 
 	return buildComponent()
 }
-
+)
 export default ProposalCard
