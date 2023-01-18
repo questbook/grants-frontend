@@ -9,11 +9,11 @@ interface Props {
     domainImage: File
     setDomainImage: (domainImage: File) => void
     step: number
-    setIsOpen: (value: boolean) => void
+    setStep: (step: number) => void
     createWorkspace: () => void
 }
 
-function BuilderDiscovery({ domainName, setDomainName, setDomainImage, setIsOpen, createWorkspace }: Props) {
+function BuilderDiscovery({ domainName, setDomainName, setDomainImage, createWorkspace }: Props) {
 
 	const buildScreen = () => {
 
@@ -84,7 +84,6 @@ function BuilderDiscovery({ domainName, setDomainName, setDomainImage, setIsOpen
 						() => {
 							setDomainImage(domainLogoFile!)
 							createWorkspace()
-							setIsOpen(true)
 						}
 					}
 				>

@@ -19,7 +19,6 @@ interface Props {
 	setMilestones: (value: Array<string>) => void
 	shouldCreateRFP: boolean
 	createRFP: () => void
-	setOpenNetworkTransactionModal: (value: boolean) => void
 	rfpFormSubmissionType: RFPFormType
 	handleOnEdit: (fieldName: string, value: string | string []) => void
 	updateRFP: () => void
@@ -38,7 +37,6 @@ function Payouts(
 		setMilestones,
 		shouldCreateRFP,
 		createRFP,
-		setOpenNetworkTransactionModal,
 		rfpFormSubmissionType,
 		handleOnEdit,
 		updateRFP
@@ -207,7 +205,7 @@ function Payouts(
 							h='48px'
 							onClick={
 								() => {
-									shouldCreateRFP ? handleCreateRFP() : handleOnClickContinue()
+									shouldCreateRFP ? createRFP() : handleOnClickContinue()
 								}
 							}
 							isDisabled={!payoutMode || !amount}
@@ -236,11 +234,6 @@ function Payouts(
 		handleOnEdit('payoutMode', item.value)
 	}
 
-	const handleCreateRFP = () => {
-		setOpenNetworkTransactionModal(true)
-		createRFP()
-	}
-
 	const handleClick = () => {
 		setMilestoneCounter(milestoneCounter + 1)
 	}
@@ -262,15 +255,10 @@ function Payouts(
 
 	const handleOnClickContinue = () => {
 		if(rfpFormSubmissionType === 'edit') {
-			handleSaveChanges()
+			updateRFP()
 		} else {
 			createRFP()
 		}
-	}
-
-	const handleSaveChanges = () => {
-		setOpenNetworkTransactionModal(true)
-		updateRFP()
 	}
 
 	return buildComponent()

@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { ReactElement, useContext, useEffect, useRef, useState } from 'react'
 import { Flex, ToastId, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import ErrorToast from 'src/components/ui/toasts/errorToast'
@@ -63,8 +63,8 @@ function RequestProposal() {
 				{/* <Button onClick={() => createGrant()}>create grant</Button> */}
 				{renderBody()}
 				<NetworkTransactionFlowStepperModal
-					isOpen={isNetworkTransactionModalOpen}
-					currentStepIndex={currentStepIndex!}
+					isOpen={currentStepIndex !== undefined}
+					currentStepIndex={currentStepIndex || 0}
 					viewTxnLink={getExplorerUrlForTxHash(network, txHash)}
 					onClose={
 						async() => {
@@ -144,7 +144,6 @@ function RequestProposal() {
 						setMilestones={setMilestones}
 						shouldCreateRFP={shouldCreateRFP}
 						createRFP={createWorkspaceAndGrant}
-						setOpenNetworkTransactionModal={setIsNetworkTransactionModalOpen}
 						rfpFormSubmissionType={rfpFormType}
 						handleOnEdit={handleOnEdit}
 						updateRFP={updateRFP}
@@ -168,7 +167,7 @@ function RequestProposal() {
 					domainImage={domainImage!}
 					setDomainImage={setDomainImage}
 					step={step}
-					setIsOpen={setIsNetworkTransactionModalOpen}
+					setStep={setStep}
 					createWorkspace={createWorkspaceAndGrant}
 				/>
 			</>
@@ -176,7 +175,7 @@ function RequestProposal() {
 		}
 	}
 
-	const { workspace, chainId } = useContext(ApiClientsContext)!
+	const { chainId } = useContext(ApiClientsContext)!
 
 	// State for proposal creation
 	// const todayDate = today()
@@ -249,7 +248,6 @@ function RequestProposal() {
 	const [domainImage, setDomainImage] = useState<File | null>(null)
 
 	// State for Network Transaction Flow
-	const [isNetworkTransactionModalOpen, setIsNetworkTransactionModalOpen] = useState(false)
 	const [currentStepIndex, setCurrentStepIndex] = useState<number>()
 
 	// state for gasless transactions
@@ -284,7 +282,7 @@ function RequestProposal() {
 	const [grantId, setGrantId] = useState<string>('')
 
 	const { rfpData, rfpFormType, RFPEditFormData, setRFPEditFormData } = useContext(RFPFormContext)!
-	const { updateRFP, txHash: rfpUpdateTxHash } = useUpdateRFP(setCurrentStepIndex, setIsNetworkTransactionModalOpen)
+	const { updateRFP } = useUpdateRFP(setCurrentStepIndex)
 
 	// useEffect(() => {
 	// 	if(role === 'admin' && workspace) {
@@ -430,7 +428,7 @@ function RequestProposal() {
 			const { txFee: workspaceCreateTxFee, receipt: workspaceCreateReceipt } = await getTransactionDetails(transactionHash, network.toString())
 			setTxHash(workspaceCreateReceipt?.transactionHash)
 			logger.info({ network, subgraphClients }, 'Network and Client')
-			await subgraphClients[network]?.waitForBlock(workspaceCreateReceipt?.blockNumber)
+			// await subgraphClients[network]?.waitForBlock(workspaceCreateReceipt?.blockNumber)
 			setCurrentStepIndex(1)
 			// setCurrentStepIndex(1)
 			const event = await getEventData(workspaceCreateReceipt, 'WorkspaceCreated', WorkspaceRegistryAbi)
@@ -561,7 +559,6 @@ function RequestProposal() {
 						await chargeGas(Number(workspaceId), Number(createGrantTxFee) + Number(workspaceCreateTxFee), network!)
 
 						setCurrentStepIndex(3) // 3 is the final step
-						setCurrentStepIndex(-1)
 					}
 				} else {
 					logger.info('workspaceId not found')

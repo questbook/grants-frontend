@@ -16,7 +16,7 @@ import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { addAuthorizedUser, bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import logger from 'src/utils/logger'
 
-export default function useUpdateRFP(setCurrentStep: (step: number | undefined) => void, setIsNetworkTransactionModalOpen: (isOpen: boolean) => void) {
+export default function useUpdateRFP(setCurrentStep: (step: number | undefined) => void) {
 	const [error, setError] = React.useState<string>()
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
@@ -141,7 +141,6 @@ export default function useUpdateRFP(setCurrentStep: (step: number | undefined) 
 		}
 
 		try {
-			setIsNetworkTransactionModalOpen(true)
 			setCurrentStep(0)
 			if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
 				throw new Error('Zero wallet is not ready')
