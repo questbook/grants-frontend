@@ -40,6 +40,7 @@ import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/Safe
 
 function RequestProposal() {
 	const customStepsHeader = ['Creating your grant program on chain']
+	const updateRFPStepsHeader = ['Updating your grant program on chain']
 	const customSteps = ['Submitting transaction on chain', 'Uploading data to decentralized storage', 'Indexing the data to a subgraph']
 	const buildComponent = () => {
 		return (
@@ -82,7 +83,7 @@ function RequestProposal() {
 							// }
 						}
 					}
-					customStepsHeader={customStepsHeader}
+					customStepsHeader={rfpFormType === 'edit' ? updateRFPStepsHeader : customStepsHeader}
 					customSteps={customSteps}
 				/>
 			</Flex>
