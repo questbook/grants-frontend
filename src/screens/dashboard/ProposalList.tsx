@@ -1,7 +1,8 @@
 // This renders the list of proposals that show up as the first column
 
-import { useContext, useMemo, useState } from 'react'
+import { createRef, useContext, useEffect, useMemo, useState } from 'react'
 import { Box, Button, Checkbox, Flex, Text } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 import logger from 'src/libraries/logger'
 import SearchField from 'src/libraries/ui/SearchField'
 import { GrantsProgramContext } from 'src/pages/_app'
@@ -116,9 +117,10 @@ function ProposalList() {
 				direction='column'
 				overflowY='auto'>
 				{
-					proposalCount > 0 && filteredProposals?.map(proposal => {
+					proposalCount > 0 && filteredProposals?.map((proposal, index) => {
 						return (
 							<ProposalCard
+								ref={cardRefs[index]}
 								key={proposal.id}
 								proposal={proposal}
 							/>
@@ -130,10 +132,13 @@ function ProposalList() {
 		</Flex>
 	)
 
-	const [searchText, setSearchText] = useState<string>('')
+	const router = useRouter()
+	const { proposalId } = router.query
 
 	const { role, grant } = useContext(GrantsProgramContext)!
 	const { proposals, selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
+
+	const [searchText, setSearchText] = useState<string>('')
 
 	const filteredProposals = useMemo(() => {
 		if(searchText === '') {
@@ -153,6 +158,21 @@ function ProposalList() {
 	const proposalCount = useMemo(() => {
 		return filteredProposals.filter((_) => _).length
 	}, [filteredProposals])
+
+	const cardRefs = useMemo(() => {
+		return proposals.map(() => createRef<HTMLDivElement>())
+	}, [proposals])
+
+	useEffect(() => {
+		if(proposalId && typeof proposalId === 'string') {
+			// Scroll to the proposal
+			const proposalIndex = proposals.findIndex((_) => _.id === proposalId)
+			if(proposalIndex !== -1) {
+				setSelectedProposals(new Set<string>([proposalId]))
+				cardRefs[proposalIndex].current?.scrollIntoView({ behavior: 'smooth' })
+			}
+		}
+	}, [proposalId])
 
 	return buildComponent()
 }

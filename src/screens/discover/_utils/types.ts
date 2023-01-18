@@ -1,9 +1,19 @@
-import { GetAllGrantsForBuilderQuery, GetAllGrantsForExploreQuery, GetAllGrantsForMemberQuery, GetAllGrantsForReviewerExploreQuery } from 'src/generated/graphql'
+import { GetAllGrantsForMemberQuery, GetAllGrantsQuery, GetGrantProgramDetailsQuery, GetWorkspacesAndBuilderGrantsQuery } from 'src/generated/graphql'
+import { Roles } from 'src/types'
 
-export type Grant = GetAllGrantsForExploreQuery['grants'][0]
+export type WorkspaceMemberType = Exclude<GetWorkspacesAndBuilderGrantsQuery['workspaceMembers'], null | undefined>
+export type BuilderGrants = Exclude<GetWorkspacesAndBuilderGrantsQuery['grants'], null | undefined>
+export type MemberGrants = Exclude<GetAllGrantsForMemberQuery['grants'], null | undefined>
+export type AllGrants = Exclude<GetAllGrantsQuery['grants'], null | undefined>
 
-export type PersonalGrant = GetAllGrantsForMemberQuery['grants'][0]
+export type GrantType = (BuilderGrants[number] | MemberGrants[number] | AllGrants[number]) & {role: Roles}
 
-export type BuilderGrant = GetAllGrantsForBuilderQuery['grants'][0]
+export type GrantProgramType = Exclude<GetGrantProgramDetailsQuery['grantProgram'], null | undefined>[number]
 
-export type ReviewerGrant = GetAllGrantsForReviewerExploreQuery['grantReviewerCounters'][0]
+export type DiscoverContextType = {
+    grantsForYou: GrantType[]
+    grantsForAll: GrantType[]
+    grantProgram: GrantProgramType | undefined
+    search: string
+    setSearch: (search: string) => void
+}

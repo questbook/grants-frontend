@@ -1,43 +1,22 @@
-import { ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { Box, Button, Center, Container, Flex, Image, Text, ToastId, useToast } from '@chakra-ui/react'
+import { ReactElement, useContext, useRef, useState } from 'react'
+import { Box, Button, Center, Container, Flex, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import Loader from 'src/components/ui/loader'
-import ErrorToast from 'src/components/ui/toasts/errorToast'
-import { defaultChainId } from 'src/constants/chains'
-import {
-	GetAllGrantsForExploreQuery,
-	GetAllGrantsForMemberQuery,
-	GetAllGrantsForReviewerExploreQuery,
-	GetDaOsForExploreQuery,
-	GetGrantsProgramDetailsQuery,
-	useGetAllGrantsForBuilderQuery,
-	useGetAllGrantsForExploreQuery,
-	useGetAllGrantsForMemberQuery,
-	useGetAllGrantsForReviewerExploreQuery,
-	useGetDaOsForExploreQuery,
-	useGetGrantsProgramDetailsQuery,
-	Workspace_Filter as WorkspaceFilter,
-	Workspace_OrderBy as WorkspaceOrderBy,
-} from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { DAOSearchContext } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
-import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import useUpdateDaoVisibility from 'src/hooks/useUpdateDaoVisibility'
-import logger from 'src/libraries/logger'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
-import PersonalRFPGrid from 'src/screens/discover/_components/PersonalRFPGrid'
-import AllRFPsGrid from 'src/screens/discover/_components/rfpGrid'
-import RightArrowIcon from 'src/screens/discover/_components/RightArrowIcon'
-import { useMultichainDaosPaginatedQuery } from 'src/screens/discover/_hooks/useMultiChainPaginatedQuery'
-import { mergeSortedArrays } from 'src/screens/discover/_utils/mergeSortedArrays'
-import { BuilderGrant, Grant, PersonalGrant, ReviewerGrant } from 'src/screens/discover/_utils/types'
+import SearchField from 'src/libraries/ui/SearchField'
+import { ApiClientsContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
+import RFPGrid from 'src/screens/discover/_components/RFPGrid'
+import { DiscoverContext, DiscoverProvider } from 'src/screens/discover/Context'
+import HeroBanner from 'src/screens/discover/HeroBanner'
+import StatsBanner from 'src/screens/discover/StatsBanner'
 import { chainNames } from 'src/utils/chainNames'
 import getErrorMessage from 'src/utils/errorUtils'
 import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
-
-const PAGE_SIZE = 10
 
 function Discover() {
 	const router = useRouter()
@@ -54,133 +33,9 @@ function Discover() {
 					direction='column'
 					w='100%'
 				>
-					{/* Start Hero Container */}
-					<Flex
-						direction='row'
-						w='100%'
-						alignItems='stretch'
-						alignContent='stretch'
-						h='460px'>
-						<Flex
-							bgColor='black.1'
-							padding={24}
-							flexDirection='column'
-							textColor='white'
-							width='600px'>
-							<Text
-								fontWeight='500'
-								fontSize='40px'
-								lineHeight='48px'
-								color='white'>
-								Home for
-								<Text
-									fontWeight='500'
-									fontSize='40px'
-									lineHeight='48px'
-									color='#FFE900'
-									as='span'>
-									{' '}
-									high quality
-									{' '}
-								</Text>
-								{' '}
-								builders
-							</Text>
+					<HeroBanner />
+					<StatsBanner />
 
-							<Text
-								mt={2}
-								fontSize='16px'
-								lineHeight='24px'
-								fontWeight='400'
-								color='white'>
-								Invite proposals from builders. Review and fund proposals with milestones - all on chain.
-							</Text>
-
-							<Flex>
-								<Button
-									variant='primaryLarge'
-									mt={8}
-									rightIcon={<RightArrowIcon />}
-									onClick={
-										() => router.push({
-											pathname: '/request_proposal',
-										})
-									}>
-									Start a grant program
-								</Button>
-							</Flex>
-
-						</Flex>
-						<Flex
-							bgColor='brand.green'
-							flexGrow={1}
-							justifyContent='center'>
-							<Image
-								mt={10}
-								src='/illustrations/Browsers.svg' />
-						</Flex>
-					</Flex>
-					{/* End Hero Container */}
-
-					{/* Start Stats Banner */}
-					<Flex
-						bgColor='gray.2'
-						padding={8}
-						gap={4}
-						justifyContent='space-evenly'>
-						<Flex
-							flexDirection='column'
-							alignItems='center'>
-							<Text
-								fontWeight='500'
-								fontSize='40px'
-								lineHeight='48px'>
-								20000+
-							</Text>
-							<Text
-								fontWeight='500'
-								fontSize='15px'
-								lineHeight='22px'
-								textTransform='uppercase'>
-								Builders
-							</Text>
-						</Flex>
-						<Flex
-							flexDirection='column'
-							alignItems='center'>
-							<Text
-								fontWeight='500'
-								fontSize='40px'
-								lineHeight='48px'>
-								$2m+
-							</Text>
-							<Text
-								fontWeight='500'
-								fontSize='15px'
-								lineHeight='22px'
-								textTransform='uppercase'>
-								Paid Out
-							</Text>
-						</Flex>
-						<Flex
-							flexDirection='column'
-							alignItems='center'>
-							<Text
-								fontWeight='500'
-								fontSize='40px'
-								lineHeight='48px'>
-								1000+
-							</Text>
-							<Text
-								fontWeight='500'
-								fontSize='15px'
-								lineHeight='22px'
-								textTransform='uppercase'>
-								Proposals
-							</Text>
-						</Flex>
-					</Flex>
-					{/* End Stats Banner */}
 					<Container
 						className='domainGrid'
 						minWidth='100%'
@@ -194,7 +49,7 @@ function Discover() {
 							) : (
 								<>
 									<Box
-										display={(personalGrants?.length || builderGrants?.length) ? '' : 'none'}
+										display={grantsForYou?.length ? '' : 'none'}
 									>
 										<Box my={4}>
 											<Text
@@ -204,35 +59,51 @@ function Discover() {
 												For You
 											</Text>
 										</Box>
-										<PersonalRFPGrid
-											personalGrants={personalGrants!}
-											builderGrants={builderGrants!}
-											reviewerGrants={reviewerGrants!}
+										<RFPGrid
+											type='personal'
+											grants={grantsForYou}
 											unsavedDomainVisibleState={unsavedDomainState}
 											onDaoVisibilityUpdate={onDaoVisibilityUpdate}
-											hasMore={hasMoreDaos}
-											fetchMore={fetchMoreDaos}
-											isAdmin={isQbAdmin}
 										/>
 
 									</Box>
 
-									<Text
+									<Flex
+										ref={discoverRef}
 										my={12}
-										mb={4}
-										fontWeight='500'
-										fontSize='24px'
-										lineHeight='32px'>
-										Discover
-									</Text>
+										mb={4}>
+										<Text
+											fontWeight='500'
+											fontSize='24px'
+											lineHeight='32px'>
+											Discover
+										</Text>
+										<SearchField
+											bg='white'
+											w='30%'
+											inputGroupProps={{ ml: 4 }}
+											placeholder='Enter Grant Program Name to search'
+											value={searchString}
+											onKeyDown={
+												(e) => {
+													if(e.key === 'Enter' && searchString !== undefined) {
+														setSearch(searchString)
+													}
+												}
+											}
+											onChange={
+												(e) => {
+													setSearchString(e.target.value.trim())
+												}
+											} />
 
-									<AllRFPsGrid
-										isAdmin={isQbAdmin}
+									</Flex>
+
+									<RFPGrid
+										type='all'
 										unsavedDomainVisibleState={unsavedDomainState}
 										onDaoVisibilityUpdate={onDaoVisibilityUpdate}
-										hasMore={hasMoreDaos}
-										fetchMore={fetchMoreDaos}
-										grants={grants!} />
+										grants={searchString === undefined || searchString === '' ? grantsForAll : grantsForAll?.filter(g => g.title.includes(searchString))} />
 								</>
 							)
 						}
@@ -261,16 +132,10 @@ function Discover() {
 													setUnsavedDaosState({})
 													setNetworkTransactionModalStep(undefined)
 													const message = getErrorMessage(e as Error)
-													toastRef.current = toast({
+													toast({
 														position: 'top',
-														render: () => ErrorToast({
-															content: message,
-															close: () => {
-																if(toastRef.current) {
-																	toast.close(toastRef.current)
-																}
-															},
-														}),
+														title: message,
+														status: 'error',
 													})
 												}
 											}
@@ -292,6 +157,21 @@ function Discover() {
 					}
 				</Flex>
 				{buildNetworkModal()}
+				{/* <Tooltip label='Scroll to discover section'>
+					<ArrowDownCircle
+						position='absolute'
+						left={4}
+						bottom={4}
+						boxSize='5%'
+						cursor='pointer'
+						onClick={
+							() => {
+								discoverRef?.current?.scrollIntoView({ behavior: 'smooth' })
+							}
+						}>
+						Scroll to Discover
+					</ArrowDownCircle>
+				</Tooltip> */}
 			</>
 		)
 	}
@@ -317,7 +197,7 @@ function Discover() {
 					variant='v2_title'>
 					You’re invited to
 					{' '}
-					{grantsProgram?.title}
+					{grantProgram?.title}
 					{' '}
 					as
 					{' '}
@@ -337,7 +217,7 @@ function Discover() {
 				<Button
 					mt={12}
 					variant='primaryLarge'
-					isDisabled={grantsProgram?.id === undefined}
+					isDisabled={grantProgram?.id === undefined}
 					onClick={onGetStartedClick}>
 					<Text color='white'>
 						Get Started
@@ -382,57 +262,17 @@ function Discover() {
 		)
 	}
 
+	const discoverRef = useRef<HTMLDivElement>(null)
+
+	const { grantsForYou, grantsForAll, grantProgram, setSearch } = useContext(DiscoverContext)!
+	const { isQbAdmin } = useContext(QBAdminsContext)!
+	const { searchString, setSearchString } = useContext(DAOSearchContext)!
+
+	const toast = useCustomToast()
+	const { isBiconomyInitialised, updateDaoVisibility } = useUpdateDaoVisibility()
+
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number | undefined>()
 	const [unsavedDomainState, setUnsavedDaosState] = useState<{ [_: number]: { [_: string]: boolean } }>({})
-
-	const { scwAddress } = useContext(WebwalletContext)!
-
-	const { isQbAdmin } = useContext(QBAdminsContext)!
-
-	const { searchString } = useContext(DAOSearchContext)!
-	const { fetchMore } = useMultiChainQuery({
-		useQuery: useGetGrantsProgramDetailsQuery,
-		options: {
-			variables: {
-				workspaceID: inviteInfo ? `0x${inviteInfo.workspaceId.toString(16)}` : ''
-			}
-		},
-		chains: inviteInfo?.chainId ? [inviteInfo.chainId] : [defaultChainId]
-	})
-
-	const { fetchMore: fetchAllGrantProgram } = useMultiChainQuery({
-		useQuery: useGetAllGrantsForExploreQuery,
-		options: {},
-	})
-
-	const { fetchMore: fetchAllGrantsForMember } = useMultiChainQuery({
-		useQuery: useGetAllGrantsForMemberQuery,
-		options: {}
-	})
-
-	const { fetchMore: fetchAllGrantsForBuilder } = useMultiChainQuery({
-		useQuery: useGetAllGrantsForBuilderQuery,
-		options: {}
-	})
-
-	const { fetchMore: fetchAllGrantsForReviewer } = useMultiChainQuery({
-		useQuery: useGetAllGrantsForReviewerExploreQuery,
-		options: {}
-	})
-
-	const [grantsProgram, setGrantsProgram] = useState<Exclude<GetGrantsProgramDetailsQuery['grantsProgram'], null | undefined>[number]>()
-
-	const [first, setFirst] = useState(40)
-	const [skip, setSkip] = useState(0)
-	const [grants, setGrants] = useState<Grant[]>()
-	const [personalGrants, setPersonalGrants] = useState<PersonalGrant[]>()
-	const [builderGrants, setBuilderGrants] = useState<BuilderGrant[]>()
-	const [reviewerGrants, setReviewerGrants] = useState<ReviewerGrant[]>()
-
-	const toastRef = useRef<ToastId>()
-	const toast = useToast()
-
-	const { isBiconomyInitialised, updateDaoVisibility } = useUpdateDaoVisibility()
 
 	const onDaoVisibilityUpdate = (daoId: string, chainId: SupportedChainId, visibleState: boolean) => {
 		if(unsavedDomainState[chainId]) {
@@ -453,213 +293,12 @@ function Discover() {
 		setUnsavedDaosState({ ...unsavedDomainState })
 	}
 
-	const getExploreDaosRequestFilters = (additionalFilters?: WorkspaceFilter) => {
-		let filters: WorkspaceFilter = {}
-
-		if(searchString) {
-			// eslint-disable-next-line camelcase
-			filters.title_contains_nocase = searchString
-		}
-
-		if(!isQbAdmin) {
-			filters.isVisible = true
-		}
-
-		filters = {
-			...filters,
-			...additionalFilters,
-		}
-
-		return filters
-	}
-
-	const {
-		results: daos,
-		hasMore: hasMoreDaos,
-		fetchMore: fetchMoreDaos,
-	} = useMultiChainDaosForExplore(getExploreDaosRequestFilters())
-
-	const {
-		results: myDaos,
-		fetchMore: fetchMoreMyDaos,
-	} = useMultiChainDaosForExplore(
-		getExploreDaosRequestFilters({
-			members_: { actorId: scwAddress },
-			isVisible: undefined,
-		}),
-	)
-
-	const totalDaos = useMemo(() => {
-		let exploreDaos = [...(daos ?? [])]
-
-		// removing myDaos from explore daos
-		exploreDaos = exploreDaos.filter((exploreDao) => {
-			const filtered = myDaos.filter(e => e.id === exploreDao.id)
-			return !filtered.length
-		})
-
-		return [
-			...(scwAddress ? myDaos : []),
-			...exploreDaos,
-		]
-	}, [daos, myDaos])
-
-	useEffect(() => {
-		(async() => {
-			if(isQbAdmin === undefined) {
-				return
-			}
-
-			fetchMoreDaos(true)
-			if(scwAddress) {
-				fetchMoreMyDaos(true)
-			}
-		})()
-	}, [scwAddress, isQbAdmin, searchString])
-
-	const fetchDetails = useCallback(async() => {
-		if(!inviteInfo?.workspaceId || !inviteInfo?.chainId) {
-			return
-		}
-
-		logger.info({ inviteInfo }, 'Invite Info')
-
-		const workspaceID = `0x${inviteInfo.workspaceId.toString(16)}`
-		logger.info({ workspaceID }, 'Workspace ID')
-		const results = await fetchMore({ workspaceID }, true)
-		logger.info({ results }, 'Results')
-
-		if(!results?.length) {
-			return
-		}
-
-		logger.info({ grantsProgram: results[0] }, 'Results')
-		setGrantsProgram(results[0]?.grantsProgram?.[0])
-	}, [inviteInfo])
-
-	const fetchAllGrantProgramForExplore = useCallback(async() => {
-		const response = (await fetchAllGrantProgram({
-			first: first,
-			skip: skip,
-		})).filter(e => e !== undefined)
-
-
-		logger.info('Grant program fetched', response)
-		// return workspace
-		const allFetchedGrants: GetAllGrantsForExploreQuery['grants'] = []
-
-		for(const res of response) {
-			if(!res) {
-				continue
-			}
-
-			const grants = res.grants
-			// const mergedArray = mergeSortedArrays(allFetchedGrants, grants, (a, b) => {
-			// 	return b.deadlineS > a.deadlineS
-			// })
-			const filteredGrants = grants.filter(grant => grant.workspace.isVisible === true)
-			allFetchedGrants.push(...filteredGrants)
-		}
-
-		logger.info('all fetched grants', allFetchedGrants)
-		// const sortedArray = allFetchedGrants.sort((a, b) => {
-		// 	if(b.createdAtS > a.createdAtS) {
-		// 		return 1
-		// 	} else if(b.createdAtS < a.createdAtS) {
-		// 		return -1
-		// 	}
-		// })
-		// logger.info('sorted array', sortedArray)
-		setGrants(allFetchedGrants)
-	}, [first, skip])
-
-	const fetchAllGrantsForMemberExplore = useCallback(async() => {
-		const response = await fetchAllGrantsForMember({
-			memberId: scwAddress
-		})
-		const allFetchedGrants: GetAllGrantsForMemberQuery['grants'] = []
-		for(const res of response) {
-			if(!res) {
-				continue
-			}
-
-			const grants = res.grants
-			// const mergedArray = mergeSortedArrays(allFetchedGrants, grants, (a, b) => {
-			// 	return a.createdAtS > b.createdAtS
-			// })
-			logger.info('Owner grants', grants)
-			allFetchedGrants.push(...grants)
-		}
-
-		setPersonalGrants(allFetchedGrants)
-
-	}, [first, skip, isBiconomyInitialised, scwAddress])
-
-	const fetchAllGrantsForReviewerExplore = useCallback(async() => {
-		const response = await fetchAllGrantsForReviewer({
-			memberId: scwAddress
-		})
-		const allFetchedGrants: GetAllGrantsForReviewerExploreQuery['grantReviewerCounters'] = []
-		for(const res of response) {
-			if(!res) {
-				continue
-			}
-
-			const grants = res.grantReviewerCounters
-			// const mergedArray = mergeSortedArrays(allFetchedGrants, grants, (a, b) => {
-			// 	return a.createdAtS > b.createdAtS
-			// })
-
-			// const filteredGrants = grants.filter(e => e.grant.workspace.isVisible === true)
-			logger.info('Reviewer grants fetched', grants)
-			allFetchedGrants.push(...grants)
-		}
-
-		setReviewerGrants(allFetchedGrants)
-
-	}, [first, skip, isBiconomyInitialised, scwAddress])
-
-	const fetchAllGrantsForBuilderExplore = useCallback(async() => {
-		const response = await fetchAllGrantsForBuilder({
-			applicantId: scwAddress
-		})
-
-		const allFetchedGrants: GetAllGrantsForMemberQuery['grants'] = []
-		for(const res of response) {
-			if(!res) {
-				continue
-			}
-
-			const grants = res.grants
-			// const mergedArray = mergeSortedArrays(allFetchedGrants, grants, (a, b) => {
-			// 	return a.createdAtS > b.createdAtS
-			// })
-			logger.info('Builder grants fetched', grants)
-			allFetchedGrants.push(...grants)
-		}
-
-		setBuilderGrants(allFetchedGrants)
-
-	}, [first, skip, isBiconomyInitialised, scwAddress])
-
-
-	useEffect(() => {
-		fetchDetails()
-	}, [inviteInfo])
-
-	useEffect(() => {
-		fetchAllGrantProgramForExplore()
-		fetchAllGrantsForMemberExplore()
-		fetchAllGrantsForBuilderExplore()
-		fetchAllGrantsForReviewerExplore()
-	}, [first, skip, isBiconomyInitialised, scwAddress])
-
 	const onGetStartedClick = () => {
-		if(!grantsProgram?.id) {
+		if(!grantProgram?.id) {
 			return
 		}
 
-		router.push({ pathname: '/setup_profile', query: { grantId: grantsProgram.id } })
+		router.push({ pathname: '/setup_profile', query: { grantId: grantProgram.id } })
 	}
 
 	return buildComponent()
@@ -670,36 +309,11 @@ Discover.getLayout = function(page: ReactElement) {
 		<NavbarLayout
 			renderSidebar={false}
 		>
-			{page}
+			<DiscoverProvider>
+				{page}
+			</DiscoverProvider>
 		</NavbarLayout>
 	)
-}
-
-function useMultiChainDaosForExplore(
-	filter?: WorkspaceFilter,
-) {
-	const orderBy = WorkspaceOrderBy.TotalGrantFundingDisbursedUsd
-
-	return useMultichainDaosPaginatedQuery({
-		useQuery: useGetDaOsForExploreQuery,
-		listGetter: (e) => e.workspaces,
-		pageSize: PAGE_SIZE,
-		variables: { orderBy, filter: filter ?? {} },
-		mergeResults(results) {
-			let final: GetDaOsForExploreQuery['workspaces'] = []
-			for(const { workspaces } of results) {
-				logger.info({ workspaces }, 'Browse DAO Workspaces')
-				final = mergeSortedArrays(final, workspaces, (a, b) => {
-					// @ts-ignore
-					// basically, we use the order key to fetch the sorting property
-					// and sort the results
-					return b[orderBy] < a[orderBy]
-				})
-			}
-
-			return final
-		},
-	})
 }
 
 export default Discover
