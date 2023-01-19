@@ -1,4 +1,4 @@
-import { Box, Flex } from '@chakra-ui/react'
+import { Flex } from '@chakra-ui/react'
 import Discussions from 'src/screens/dashboard/_components/Body/SingleSelect/Discussions'
 import Proposal from 'src/screens/dashboard/_components/Body/SingleSelect/Proposal'
 
@@ -11,9 +11,7 @@ function SingleSelect() {
 				w='100%'
 				h='100%'>
 				<Proposal />
-				<Box mt={5} />
 				<Discussions />
-				<Box mt={5} />
 			</Flex>
 		)
 	}
