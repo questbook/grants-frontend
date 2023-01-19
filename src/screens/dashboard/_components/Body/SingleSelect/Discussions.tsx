@@ -124,7 +124,7 @@ function Discussions() {
 										if(ret) {
 											setText('')
 											setSelectedTag(undefined)
-											// refresh()
+											refreshComments(true)
 										}
 									}
 								}>
@@ -194,7 +194,7 @@ function Discussions() {
 
 	const { scwAddress } = useContext(WebwalletContext)!
 	const { grant, role } = useContext(GrantsProgramContext)!
-	const { proposals, selectedProposals, commentMap } = useContext(DashboardContext)!
+	const { proposals, selectedProposals, commentMap, refreshComments } = useContext(DashboardContext)!
 
 	const [step, setStep] = useState<number>()
 	const [, setTransactionHash] = useState('')
