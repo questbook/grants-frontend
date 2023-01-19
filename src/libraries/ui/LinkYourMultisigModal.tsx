@@ -100,6 +100,7 @@ function LinkYourMultisigModal({ isOpen, onClose, multisigAddress: _multisigAddr
 								if(isOwner) {
 									// link the safe
 									await link(multiSigAddress)
+									onClose()
 								} else {
 									setIsVerifySignerModalOpen(true)
 								}

@@ -146,7 +146,7 @@ function Payouts() {
 									if(grant?.workspace?.safe?.chainId === '900001') {
 										window.open(getProposalUrl(grant?.workspace?.safe?.address, payout.transactionHash), '_blank')
 									} else {
-										window.open(getGnosisTansactionLink(grant?.workspace?.safe?.address, chainId.toString()), '_blank')
+										window.open(getGnosisTansactionLink(grant?.workspace?.safe?.address, chainId.toString(), payout?.transactionHash), '_blank')
 									}
 								} else {
 									toast({
