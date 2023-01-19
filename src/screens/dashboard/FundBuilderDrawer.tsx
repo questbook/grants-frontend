@@ -257,7 +257,7 @@ function FundBuilderDrawer() {
 				setIsDrawerOpen(false)
 				setIsModalOpen(true)
 				setSafeProposalAddress(proposaladdress)
-				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress, safeObj?.chainId))
+				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress, safeObj?.chainId, proposaladdress))
 			} else {
 				proposaladdress = await safeObj?.proposeTransactions(grant?.title, transactionData, phantomWallet)
 				if(proposaladdress?.error) {
