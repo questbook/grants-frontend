@@ -234,8 +234,8 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			skip += first
 		} while(shouldContinue)
 
-		await getComments()
 		setProposals(proposals)
+		await getComments()
 
 		return 'proposals-fetched'
 	}, [role, grantId, scwAddress, webwallet])

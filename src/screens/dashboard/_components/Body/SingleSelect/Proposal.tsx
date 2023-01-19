@@ -1,7 +1,9 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { Box, Button, CircularProgress, Flex, Image, Text } from '@chakra-ui/react'
+import copy from 'copy-to-clipboard'
 import { defaultChainId } from 'src/constants/chains'
-import { Mail } from 'src/generated/icons'
+import { Mail, ShareForward } from 'src/generated/icons'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import CopyIcon from 'src/libraries/ui/CopyIcon'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
@@ -43,11 +45,32 @@ function Proposal() {
 					w='100%'
 					align='center'
 					justify='space-between'>
-					<Text
-						variant='v2_heading_3'
-						fontWeight='500'>
-						{getFieldString(proposal, 'projectName')}
-					</Text>
+					<Flex align='center'>
+						<Text
+							variant='v2_heading_3'
+							fontWeight='500'>
+							{getFieldString(proposal, 'projectName')}
+						</Text>
+						<ShareForward
+							ml={4}
+							boxSize='20px'
+							cursor='pointer'
+							onClick={
+								() => {
+									const href = window.location.href.split('/')
+									const protocol = href[0]
+									const domain = href[2]
+
+									const link = `${protocol}//${domain}/dashboard/?grantId=${proposal.grant.id}&chainId=${chainId}&proposalId=${proposal.id}`
+									copy(link)
+									toast({
+										title: 'Copied!',
+										status: 'success',
+										duration: 3000,
+									})
+								}
+							} />
+					</Flex>
 					<Text
 						variant='v2_body'
 						color='gray.5'>
@@ -281,6 +304,7 @@ function Proposal() {
 
 	const { grant, role } = useContext(GrantsProgramContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
+	const toast = useCustomToast()
 
 	const proposal = useMemo(() => {
 		return proposals.find(p => selectedProposals.has(p.id))
