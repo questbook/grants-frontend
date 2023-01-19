@@ -33,8 +33,7 @@ function Proposal() {
 		return (
 			<Flex
 				w='100%'
-				h='60%'
-				overflowY='auto'
+				// overflowY='auto'
 				px={5}
 				py={6}
 				direction='column'

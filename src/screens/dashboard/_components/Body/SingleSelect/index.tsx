@@ -11,9 +11,7 @@ function SingleSelect() {
 				w='100%'
 				h='100%'>
 				<Proposal />
-				<Box mt={5} />
 				<Discussions />
-				<Box mt={5} />
 			</Flex>
 		)
 	}

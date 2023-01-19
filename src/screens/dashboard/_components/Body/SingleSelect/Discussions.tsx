@@ -20,8 +20,6 @@ function Discussions() {
 				px={5}
 				py={4}
 				w='100%'
-				h='35%'
-				overflowY='auto'
 				boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
 				bg='white'
 				direction='column'>
