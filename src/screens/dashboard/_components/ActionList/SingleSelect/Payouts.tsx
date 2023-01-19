@@ -24,6 +24,7 @@ function Payouts() {
 				px={5}
 				py={4}
 				direction='column'
+				overflowY='auto'
 				align='stretch'
 				w='100%'>
 				<Flex

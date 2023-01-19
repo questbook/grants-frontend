@@ -219,7 +219,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 		const proposals: Proposals = []
 
-		let first = 100
+		const first = 100
 		let skip = 0
 		let shouldContinue = true
 		do {
@@ -234,10 +234,26 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			skip += first
 		} while(shouldContinue)
 
+		setProposals(proposals)
+		await getComments()
+
+		return 'proposals-fetched'
+	}, [role, grantId, scwAddress, webwallet])
+
+	const getComments = useCallback(async() => {
+		logger.info({ role, grantId, scwAddress }, 'Fetching comments (GET COMMENTS)')
+		if(!webwallet) {
+			return 'no-webwallet'
+		} else if(!scwAddress) {
+			return 'no-scw-address'
+		} else if(!grantId || typeof grantId !== 'string') {
+			return 'no-grant-id'
+		}
+
 		const allComments: CommentType[] = []
-		first = 100
-		skip = 0
-		shouldContinue = true
+		const first = 100
+		let skip = 0
+		let shouldContinue = true
 		do {
 			const results = await fetchMoreComments({ first, skip, grantId }, true)
 			logger.info({ results }, 'Results (Comments)')
@@ -298,9 +314,6 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		}
 
 		setCommentMap(commentMap)
-
-		setProposals(proposals)
-		return 'proposals-fetched'
 	}, [role, grantId, scwAddress, webwallet])
 
 	useEffect(() => {
@@ -349,7 +362,12 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 					showSubmitReviewPanel,
 					setShowSubmitReviewPanel,
 					commentMap,
-					setCommentMap
+					setCommentMap,
+					refreshComments: (refresh: boolean) => {
+						if(refresh) {
+							getComments()
+						}
+					}
 				}
 			}>
 			{children}

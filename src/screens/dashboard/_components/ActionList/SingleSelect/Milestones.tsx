@@ -16,6 +16,7 @@ function Milestones() {
 				py={4}
 				direction='column'
 				align='stretch'
+				overflowY='auto'
 				w='100%'>
 				<Flex
 					justify='space-between'

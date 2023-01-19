@@ -1,5 +1,5 @@
 import { useContext, useMemo, useState } from 'react'
-import { Box, Button, Flex, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text, Textarea } from '@chakra-ui/react'
+import { Box, Button, Checkbox, Flex, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text, Textarea } from '@chakra-ui/react'
 import QuickReplyButton from 'src/screens/dashboard/_components/QuickReplyButton'
 import useAddComments from 'src/screens/dashboard/_hooks/useAddComments'
 import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
@@ -76,6 +76,22 @@ function SendAnUpdateModal() {
 							onChange={(e) => setText(e.target.value)}
 							placeholder='Add a comment here' />
 
+						<Checkbox
+							mt={4}
+							isChecked={isCommentPrivate}
+							onChange={
+								(e) => {
+									setSelectedTag(undefined)
+									setIsCommentPrivate(e.target.checked)
+								}
+							}>
+							<Text
+								variant='v2_body'
+								color='gray.5'>
+								Show only to reviewers and builder
+							</Text>
+						</Checkbox>
+
 						<Button
 							mt={8}
 							w='100%'
@@ -85,11 +101,12 @@ function SendAnUpdateModal() {
 							onClick={
 								async() => {
 									// TODO: Make batch comments private or public
-									const ret = await addComments(text, false, selectedTag)
+									const ret = await addComments(text, isCommentPrivate, selectedTag)
 									if(ret) {
 										setIsSendAnUpdateModalOpen(false)
 										setText('')
 										setSelectedTag(undefined)
+										refreshComments(true)
 									}
 								}
 							}>
@@ -101,12 +118,13 @@ function SendAnUpdateModal() {
 		)
 	}
 
-	const { selectedProposals, proposals } = useContext(DashboardContext)!
+	const { selectedProposals, proposals, refreshComments } = useContext(DashboardContext)!
 	const { isSendAnUpdateModalOpen, setIsSendAnUpdateModalOpen } = useContext(ModalContext)!
 	const { proposalTags } = useProposalTags({ proposals: proposals.filter(p => selectedProposals.has(p.id)) })
 	const [ text, setText ] = useState<string>('')
 
 	const [ selectedTag, setSelectedTag ] = useState<string>()
+	const [ isCommentPrivate, setIsCommentPrivate ] = useState<boolean>(false)
 
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
 	const [, setTransactionHash] = useState<string>('')
