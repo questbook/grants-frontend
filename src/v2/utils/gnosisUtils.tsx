@@ -25,13 +25,14 @@ export function getSafeURL(safeAddress: string, chainId: string) {
 	}
 }
 
-export function getGnosisTansactionLink(safeAddress: string, chainId: string) {
+export function getGnosisTansactionLink(safeAddress: string, chainId: string, txnHash: string) {
 	if(chainId === '42220') {
-		return `https://safe.celo.org/#/safes/${safeAddress}/transactions`
+		return `https://safe.celo.org/#/safes/${safeAddress}/transactions/tx?id=multisig_${safeAddress}_${txnHash}`
 	} else if(chainId === '40') {
-		return `https://safe.telos.net/${NETWORK_PREFIX[chainId]}:${safeAddress}/transactions/queue`
+		return `https://safe.telos.net/${NETWORK_PREFIX[chainId]}:${safeAddress}/transactions/tx?id=multisig_${safeAddress}_${txnHash}`
 	} else {
-		return `https://app.safe.global/${NETWORK_PREFIX[chainId]}:${safeAddress}/transactions/queue`
+		//https://app.safe.global/gor:0xC113838A0d214a2Bd15d038701ec5957E83C4381/transactions/tx?id=multisig_0xC113838A0d214a2Bd15d038701ec5957E83C4381_0x9bae709b06a962681f9e0ff443b80685071ef95d713aae506ab22b07e6721aeb
+		return `https://app.safe.global/${NETWORK_PREFIX[chainId]}:${safeAddress}/transactions/tx?id=multisig_${safeAddress}_${txnHash}`
 	}
 }
 
