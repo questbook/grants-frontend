@@ -570,9 +570,10 @@ function ProposalForm() {
 			return true
 		}
 
+		const optionalFields = ['projectDetails', 'fundingAsk', 'fundingBreakdown', 'projectGoals', 'projectLink']
 		const { fields, members, details, milestones } = form
 		for(const field of fields) {
-			if(field.value === '' && field.id !== 'projectDetails' && field.id !== 'fundingAsk') {
+			if(field.value === '' && !optionalFields.includes(field.id)) {
 				logger.info({ field }, 'Field is empty')
 				return true
 			}
