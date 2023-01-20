@@ -315,7 +315,7 @@ function FundBuilderModal() {
 				}
 
 				setSafeProposalAddress(proposaladdress as string)
-				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress, safeObj?.chainId))
+				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress, safeObj?.chainId, proposaladdress as string))
 				setSignerVerifiedState('transaction_initiated')
 			} else {
 				proposaladdress = await safeObj?.proposeTransactions(grant?.title, temp, phantomWallet)

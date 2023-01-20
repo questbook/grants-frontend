@@ -159,8 +159,8 @@ function ProposalSubmission(
 										startdateRef.current.type = 'string'
 									}
 
-									console.log('e.target.value', new Date(e.target.value!).toISOString())
-									handleOnEditProposalSubmission('startDate', e.target.value)
+									logger.info('e.target.value', new Date(e.target.value!).toISOString())
+									handleOnEditProposalSubmission('startDate', new Date(e.target.value!).toISOString())
 									setStartdate(new Date(e.target.value!).toISOString())
 								}
 							}
@@ -195,8 +195,11 @@ function ProposalSubmission(
 										endDateRef.current.type = 'string'
 									}
 
-									handleOnEditProposalSubmission('endDate', e.target.value)
-									setEndDate(new Date(e.target.value!).toISOString())
+									const eod = new Date(e.target.value!)
+									eod.setUTCHours(23, 59, 59, 999)
+
+									handleOnEditProposalSubmission('endDate', eod.toISOString())
+									setEndDate(eod.toISOString())
 								}
 							}
 							fontWeight='400'
