@@ -3,6 +3,7 @@ import { AiOutlinePlus } from 'react-icons/ai'
 import { BsArrowLeft } from 'react-icons/bs'
 import { IoMdClose } from 'react-icons/io'
 import { Button, Flex, Icon, Text } from '@chakra-ui/react'
+import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
 import SelectDropdown from 'src/screens/request_proposal/_components/SelectDropdown'
@@ -17,9 +18,7 @@ interface Props {
 	setStep: (value: number) => void
 	milestones: Array<string>
 	setMilestones: (value: Array<string>) => void
-	shouldCreateRFP: boolean
 	createRFP: () => void
-	setOpenNetworkTransactionModal: (value: boolean) => void
 	rfpFormSubmissionType: RFPFormType
 	handleOnEdit: (fieldName: string, value: string | string []) => void
 	updateRFP: () => void
@@ -36,9 +35,7 @@ function Payouts(
 		setStep,
 		milestones,
 		setMilestones,
-		shouldCreateRFP,
 		createRFP,
-		setOpenNetworkTransactionModal,
 		rfpFormSubmissionType,
 		handleOnEdit,
 		updateRFP
@@ -205,11 +202,7 @@ function Payouts(
 							variant='primaryMedium'
 							w='261px'
 							h='48px'
-							onClick={
-								() => {
-									shouldCreateRFP ? handleCreateRFP() : handleOnClickContinue()
-								}
-							}
+							onClick={handleOnClickContinue}
 							isDisabled={!payoutMode || !amount}
 						>
 							{/* {shouldCreateRFP ? 'Create RFP' : 'Continue'} */}
@@ -236,11 +229,6 @@ function Payouts(
 		handleOnEdit('payoutMode', item.value)
 	}
 
-	const handleCreateRFP = () => {
-		setOpenNetworkTransactionModal(true)
-		createRFP()
-	}
-
 	const handleClick = () => {
 		setMilestoneCounter(milestoneCounter + 1)
 	}
@@ -261,16 +249,12 @@ function Payouts(
 	}
 
 	const handleOnClickContinue = () => {
+		logger.info({ rfpFormSubmissionType }, 'rfpFormSubmissionType')
 		if(rfpFormSubmissionType === 'edit') {
-			handleSaveChanges()
+			updateRFP()
 		} else {
 			createRFP()
 		}
-	}
-
-	const handleSaveChanges = () => {
-		setOpenNetworkTransactionModal(true)
-		updateRFP()
 	}
 
 	return buildComponent()

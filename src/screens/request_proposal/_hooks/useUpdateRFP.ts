@@ -1,10 +1,9 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { GRANT_FACTORY_ADDRESS, WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
-import { USD_ASSET, USD_DECIMALS, USD_ICON } from 'src/constants/chains'
+import { defaultChainId, USD_ASSET, USD_DECIMALS, USD_ICON } from 'src/constants/chains'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import useChainId from 'src/hooks/utils/useChainId'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { validateAndUploadToIpfs } from 'src/libraries/validator'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
@@ -12,22 +11,23 @@ import { GrantFields } from 'src/screens/request_proposal/_utils/types'
 import { RFPFormContext } from 'src/screens/request_proposal/Context'
 import { ApplicantDetailsFieldType } from 'src/types'
 import getErrorMessage from 'src/utils/errorUtils'
-import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { addAuthorizedUser, bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import logger from 'src/utils/logger'
+import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
-export default function useUpdateRFP(setCurrentStep: (step: number | undefined) => void, setIsNetworkTransactionModalOpen: (isOpen: boolean) => void) {
+export default function useUpdateRFP(setCurrentStep: (step: number | undefined) => void) {
 	const [error, setError] = React.useState<string>()
 	const [loading, setLoading] = React.useState(false)
 	const [incorrectNetwork, setIncorrectNetwork] = React.useState(false)
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const [transactionData, setTransactionData] = React.useState<any>()
 
-	const currentChainId = useChainId()
+	const { subgraphClients } = useContext(ApiClientsContext)!
+	const { grant, role } = useContext(GrantsProgramContext)!
 
-	const { workspace, chainId, subgraphClients } = useContext(ApiClientsContext)!
-	const { role } = useContext(GrantsProgramContext)!
-
+	const chainId = useMemo(() => {
+		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
+	}, [grant])
 
 	const { RFPEditFormData, grantId, workspaceId } = useContext(RFPFormContext)!
 
@@ -76,7 +76,7 @@ export default function useUpdateRFP(setCurrentStep: (step: number | undefined) 
 		}
 	}, [webwallet, nonce])
 
-	async function validate() {
+	const updateRFP = async() => {
 		if(role !== 'admin') {
 			customToast({
 				title: 'You are not authorized to perform this action',
@@ -141,7 +141,6 @@ export default function useUpdateRFP(setCurrentStep: (step: number | undefined) 
 		}
 
 		try {
-			setIsNetworkTransactionModalOpen(true)
 			setCurrentStep(0)
 			if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
 				throw new Error('Zero wallet is not ready')
@@ -172,8 +171,8 @@ export default function useUpdateRFP(setCurrentStep: (step: number | undefined) 
 
 			logger.info('rubric hash', rubricHash)
 
-			setCurrentStep(1)
 			const methodArgs = [grantId, Number(workspaceId), rfpUpdateIpfsHash, rubricHash, WORKSPACE_REGISTRY_ADDRESS[chainId] ]
+			logger.info({ methodArgs }, 'Update RFP Method args')
 			const response = await sendGaslessTransaction(
 				biconomy,
 				grantFactoryContract,
@@ -188,21 +187,23 @@ export default function useUpdateRFP(setCurrentStep: (step: number | undefined) 
 				nonce
 			)
 
-			setCurrentStep(2)
+			setCurrentStep(1)
 
 			if(response) {
 				const { receipt, txFee } = await getTransactionDetails(response, chainId.toString())
 				setTransactionData(receipt)
 
-				setCurrentStep(3)
+				setCurrentStep(2)
 
 				await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
 
-				setCurrentStep(4)
-				await chargeGas(Number(workspace?.id), Number(txFee), chainId)
+				setCurrentStep(3)
+				if(grant?.workspace?.id) {
+					await chargeGas(Number(grant?.workspace?.id), Number(txFee), chainId)
+				}
 			}
 
-			setCurrentStep(5)
+			setCurrentStep(4)
 
 			setLoading(false)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -219,28 +220,9 @@ export default function useUpdateRFP(setCurrentStep: (step: number | undefined) 
 		}
 	}
 
-	const updateRFP = useCallback(validate, [
-		grantFactoryContract,
-		biconomyWalletClient,
-		scwAddress,
-		chainId,
-		biconomy,
-		webwallet,
-		workspace,
-		RFPEditFormData,
-	])
-
 	return {
-		updateRFP: useMemo(() => {
-			return updateRFP
-		}, [RFPEditFormData, grantFactoryContract,
-			biconomyWalletClient,
-			scwAddress,
-			chainId,
-			biconomy,
-			webwallet,
-			workspace,]),
-		txHash: getExplorerUrlForTxHash(currentChainId, transactionData?.transactionHash),
+		updateRFP,
+		txHash: transactionData?.transactionHash,
 		loading,
 		error,
 		role

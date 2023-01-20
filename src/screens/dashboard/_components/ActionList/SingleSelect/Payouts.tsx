@@ -12,8 +12,9 @@ import { GrantsProgramContext } from 'src/pages/_app'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { Payout, PayoutsType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { getGnosisTansactionLink } from 'src/v2/utils/gnosisUtils'
+import { getProposalUrl } from 'src/v2/utils/phantomUtils'
 
 function Payouts() {
 	const buildComponent = () => {
@@ -23,6 +24,7 @@ function Payouts() {
 				px={5}
 				py={4}
 				direction='column'
+				overflowY='auto'
 				align='stretch'
 				w='100%'>
 				<Flex
@@ -141,8 +143,12 @@ function Payouts() {
 						rightIcon={<NewTab boxSize='16px' />}
 						onClick={
 							() => {
-								if(payout?.transactionHash !== null) {
-									window.open(getExplorerUrlForTxHash(chainId, payout?.transactionHash), '_blank')
+								if(payout?.transactionHash && grant?.workspace?.safe?.address) {
+									if(grant?.workspace?.safe?.chainId === '900001') {
+										window.open(getProposalUrl(grant?.workspace?.safe?.address, payout.transactionHash), '_blank')
+									} else {
+										window.open(getGnosisTansactionLink(grant?.workspace?.safe?.address, chainId.toString(), payout?.transactionHash), '_blank')
+									}
 								} else {
 									toast({
 										status: 'warning',

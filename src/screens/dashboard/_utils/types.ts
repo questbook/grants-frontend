@@ -19,6 +19,7 @@ type BaseDashboardContextType = {
   setShowSubmitReviewPanel: (show: boolean) => void
   commentMap: CommentMap
   setCommentMap: (coments: CommentMap) => void
+  refreshComments: (refresh: boolean) => void
 };
 
 export type DashboardContextType = BaseDashboardContextType

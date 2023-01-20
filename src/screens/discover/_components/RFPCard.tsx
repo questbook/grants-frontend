@@ -1,32 +1,29 @@
+import { useContext, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Box, Divider, Flex, Image, Switch, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import config from 'src/constants/config.json'
 import SupportedChainId from 'src/generated/SupportedChainId'
+import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
+import logger from 'src/libraries/logger'
+import { GrantType } from 'src/screens/discover/_utils/types'
+import getAvatar from 'src/utils/avatarUtils'
 import { extractDateFromDateTime, titleCase } from 'src/utils/formattingUtils'
+import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+
 
 type RFPCardProps = {
-	logo: string
-	name: string
-    deadline: string
+	grant: GrantType
 	isVisible: boolean
 	onVisibilityUpdate?: (visibleState: boolean) => void
-	isAdmin: boolean
+	onSectionGrantsUpdate?: () => void
 	chainId: SupportedChainId | undefined
-	noOfApplicants: number
-    grantId: string
-	totalAmount: number
     role?: string
-    isAcceptingApplications: boolean
+	changedVisibilityState?: string
 }
 
-function RFPCard({ logo, isAdmin, isAcceptingApplications, name, chainId, role, grantId, deadline, noOfApplicants, totalAmount, onVisibilityUpdate, isVisible }: RFPCardProps) {
-	const router = useRouter()
-	const { t } = useTranslation()
-	const formattedDeadline = extractDateFromDateTime(deadline)
-
-	const isOpen = isAcceptingApplications === true ? deadline > new Date().toISOString() : false
-
-	return (
+function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpdate, isVisible, changedVisibilityState }: RFPCardProps) {
+	const buildComponent = () => (
 		<Box
 			w='100%'
 			background='white'
@@ -45,7 +42,7 @@ function RFPCard({ logo, isAdmin, isAcceptingApplications, name, chainId, role, 
 			onClick={
 				(e) => {
 					// returning as onClick fired from dao visibility toggle switch for admins
-					if(isAdmin && [
+					if(isQbAdmin && [
 						'[object HTMLSpanElement]',
 						'[object HTMLLabelElement]',
 						'[object HTMLInputElement]',
@@ -56,9 +53,10 @@ function RFPCard({ logo, isAdmin, isAcceptingApplications, name, chainId, role, 
 					router.push({
 						pathname: '/dashboard/',
 						query: {
-							grantId,
+							grantId: grant.id,
 							chainId,
 							role: role === 'owner' ? 'admin' : (role ?? 'community'),
+							proposalId: role === 'builder' ? grant.applications[0].id : undefined
 						},
 					})
 				}
@@ -71,7 +69,7 @@ function RFPCard({ logo, isAdmin, isAcceptingApplications, name, chainId, role, 
 					alignItems='flex-start'
 				>
 					<Image
-						src={logo}
+						src={grant.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)}
 						// my='8px'
 						w='56px'
 						h='56px'
@@ -94,16 +92,34 @@ function RFPCard({ logo, isAdmin, isAcceptingApplications, name, chainId, role, 
 						)
 					}
 					{
-						isAdmin && (
-							<Switch
-								size='md'
-								mx='10px'
-								height='20px'
-								borderRadius={0}
-								colorScheme='green'
-								isChecked={isVisible}
-								onChange={() => onVisibilityUpdate?.(!isVisible)}
-							/>
+						isQbAdmin && (
+							<>
+								<Switch
+									size='md'
+									// mx='10px'
+									height='20px'
+									borderRadius={0}
+									colorScheme='green'
+									isChecked={isVisible}
+									disabled={changedVisibilityState === 'checkbox'}
+									onChange={
+										() => {
+											onVisibilityUpdate?.(!isVisible)
+										}
+									}
+								/>
+								<Switch
+									disabled={changedVisibilityState === 'toggle'}
+									onChange={
+										() => {
+											logger.info('clicked')
+											onSectionGrantsUpdate?.()
+										}
+									}
+								>
+									Add to Section
+								</Switch>
+							</>
 						)
 					}
 				</Flex>
@@ -121,7 +137,7 @@ function RFPCard({ logo, isAdmin, isAcceptingApplications, name, chainId, role, 
 							fontWeight='500'
 							noOfLines={3}
 						>
-							{name}
+							{grant.title}
 
 							<Text
 								color={isOpen ? 'accent.carrot' : 'gray.5'}
@@ -165,7 +181,7 @@ function RFPCard({ logo, isAdmin, isAcceptingApplications, name, chainId, role, 
 							fontSize='18px'
 							fontWeight='500'>
 							$
-							{totalAmount ? totalAmount.toLocaleString() : 0}
+							{grant.workspace.totalGrantFundingDisbursedUSD ? grant.workspace.totalGrantFundingDisbursedUSD.toLocaleString() : 0}
 						</Text>
 						<Text
 							ml='5px'
@@ -178,7 +194,7 @@ function RFPCard({ logo, isAdmin, isAcceptingApplications, name, chainId, role, 
 						<Text
 							fontSize='18px'
 							fontWeight='500'>
-							{noOfApplicants}
+							{grant.numberOfApplications}
 						</Text>
 						<Text
 							ml='5px'
@@ -191,6 +207,17 @@ function RFPCard({ logo, isAdmin, isAcceptingApplications, name, chainId, role, 
 			</Flex>
 		</Box>
 	)
+
+	const router = useRouter()
+	const { t } = useTranslation()
+	const formattedDeadline = extractDateFromDateTime(grant.deadline!)
+
+	const { isQbAdmin } = useContext(QBAdminsContext)!
+
+	const isOpen = useMemo(() => {
+		return grant.acceptingApplications === true && grant.deadline ? grant.deadline > new Date().toISOString() : false
+	}, [grant])
+	return buildComponent()
 }
 
 export default RFPCard
