@@ -3,23 +3,27 @@ import { Search2Icon, SettingsIcon } from '@chakra-ui/icons'
 import { Box, Button, Divider, Flex, Grid, Image, Input, InputGroup, InputLeftElement, Spacer, Text, Tooltip } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import router from 'next/router'
+import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { defaultChainId } from 'src/constants/chains'
 import { ImageAdd } from 'src/generated/icons'
+import useQBContract from 'src/hooks/contracts/useQBContract'
+import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
+import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import BackButton from 'src/libraries/ui/BackButton'
-import CopyIcon from 'src/libraries/ui/CopyIcon'
-import ImageUpload from 'src/libraries/ui/ImageUpload'
+import LinkYourMultisigModal from 'src/libraries/ui/LinkYourMultisigModal'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
-import { GrantsProgramContext } from 'src/pages/_app'
+import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import AddMemberButton from 'src/screens/settings/_components/AddMemberButton'
 import { DropdownIcon } from 'src/screens/settings/_components/DropdownIcon'
 import useUpdateGrantProgram from 'src/screens/settings/_hooks/useUpdateGrantProgram'
 import { SettingsFormContext, SettingsFormProvider } from 'src/screens/settings/Context'
 import WorkspaceMemberCard from 'src/screens/settings/WorkspaceMemberCard'
 import { formatAddress, getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { bicoDapps, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
@@ -171,6 +175,8 @@ function Settings() {
 										<Flex
 											direction='column'
 											gap={2}
+											onClick={() => setIsLinkYourMultisigModalOpen(true)}
+											cursor='pointer'
 										>
 											<Text
 												variant='v2_title'
@@ -347,7 +353,10 @@ function Settings() {
 										email={member.email!}
 										name={member.fullName!}
 										pfp={member.profilePictureIpfsHash!}
-										 />
+										revokeAccess={revokeAccess}
+										openConfirmationModal={openConfirmationModal}
+										setOpenConfirmationModal={setOpenConfirmationModal}
+									/>
 								))
 									: null
 							}
@@ -357,7 +366,7 @@ function Settings() {
 				<NetworkTransactionFlowStepperModal
 					isOpen={isNetworkTransactionModalOpen}
 					currentStepIndex={currentStepIndex!}
-					viewTxnLink={getExplorerUrlForTxHash(network, txHash)}
+					viewTxnLink={getExplorerUrlForTxHash(network, txHash ?? revokeTxHash)}
 					onClose={
 						async() => {
 							setCurrentStepIndex(undefined)
@@ -367,6 +376,10 @@ function Settings() {
 							}
 						}
 					}
+				/>
+				<LinkYourMultisigModal
+					isOpen={isLinkYourMultisigModalOpen}
+					onClose={() => setIsLinkYourMultisigModalOpen(false)}
 				/>
 			</Flex>
 		)
@@ -387,16 +400,30 @@ function Settings() {
 
 	const [imageFile, setImageFile] = useState<{file: File | null, hash?: string}>({ file: null })
 	const [searchString, setSearchString] = useState<string>('')
+	const [revokeTxHash, setRevokeTxHash] = useState('')
 
 	const { network } = useNetwork()
 
 	const [isNetworkTransactionModalOpen, setIsNetworkTransactionModalOpen] = useState(false)
 	const [currentStepIndex, setCurrentStepIndex] = useState<number| undefined>()
+	const [openConfirmationModal, setOpenConfirmationModal] = useState(false)
+	const [isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen] = useState(false)
+
+	const [multiSigAddress, setMultiSigAddress] = useState('')
 
 	const [imageChanged, setImageChanged] = useState(false)
 
 	const { workspace, workspaceMembers, grantProgramData, setGrantProgramData, safeURL } = useContext(SettingsFormContext)!
 	const { grant } = useContext(GrantsProgramContext)!
+	const { webwallet } = useContext(WebwalletContext)!
+	const { subgraphClients, chainId } = useContext(ApiClientsContext)!
+	const { nonce } = useQuestbookAccount()
+
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		chainId: chainId?.toString(),
+	})
+
+	const workspaceContract = useQBContract('workspace', getSupportedChainIdFromWorkspace(workspace!))
 
 	const { updateGrantProgram, txHash } = useUpdateGrantProgram(setCurrentStepIndex, setIsNetworkTransactionModalOpen)
 
@@ -429,6 +456,41 @@ function Settings() {
 			// @ts-ignore
 			event.target.value = null
 		}
+	}
+
+	const revokeAccess = async(memberAddress: string, role: number, enable: boolean) => {
+		setIsNetworkTransactionModalOpen(true)
+		setCurrentStepIndex(0)
+
+		const methodArgs = [Number(workspace?.id), [memberAddress], [role], [enable], ['']]
+		logger.info('methodArgs', methodArgs)
+		// return
+		const transactionHash = await sendGaslessTransaction(
+			biconomy,
+			workspaceContract,
+			'updateWorkspaceMembers',
+			[Number(workspace?.id), [memberAddress], [role], [enable], ['']],
+			WORKSPACE_REGISTRY_ADDRESS[chainId],
+			biconomyWalletClient!,
+			scwAddress!,
+			webwallet,
+			`${chainId}`,
+			bicoDapps[chainId].webHookId,
+			nonce
+		)
+
+		if(!transactionHash) {
+			throw new Error('Transaction hash not received')
+		}
+
+		setCurrentStepIndex(1)
+
+		const { receipt } = await getTransactionDetails(transactionHash, chainId.toString())
+		setCurrentStepIndex(2)
+		setRevokeTxHash(receipt?.transactionHash)
+
+		await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
+		setCurrentStepIndex(3)
 	}
 
 	useEffect(() => {
