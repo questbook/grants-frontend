@@ -11,13 +11,17 @@ type RFPGridProps = {
 	grants: GrantType[]
 	unsavedDomainVisibleState?: { [_: number]: { [_: string]: boolean } }
 	onDaoVisibilityUpdate?: (daoId: string, chainId: SupportedChainId, visibleState: boolean) => void
+	onSectionGrantsUpdate?: (chainId: SupportedChainId, grantId: string) => void
+	changedVisibilityState?: string
 }
 
 function RFPGrid({
 	type,
 	grants,
 	onDaoVisibilityUpdate,
+	onSectionGrantsUpdate,
 	unsavedDomainVisibleState,
+	changedVisibilityState,
 }: RFPGridProps) {
 	const buildComponent = () => (
 		<Grid
@@ -36,9 +40,11 @@ function RFPGrid({
 							<RFPCard
 								isVisible={unsavedDomainVisibleState?.[workspaceChainId!]?.[grant.workspace.id] ?? grant.workspace.isVisible}
 								onVisibilityUpdate={(visibleState) => onDaoVisibilityUpdate?.(grant.workspace.id, workspaceChainId!, visibleState)}
+								onSectionGrantsUpdate={() => onSectionGrantsUpdate?.(workspaceChainId!, grant.id)}
 								chainId={workspaceChainId}
 								grant={grant}
 								role={role}
+								changedVisibilityState={changedVisibilityState}
 							/>
 						</GridItem>
 					)

@@ -1,4 +1,4 @@
-import { ReactElement, useContext, useRef, useState } from 'react'
+import { ReactElement, useContext, useEffect, useRef, useState } from 'react'
 import { Box, Button, Center, Container, Flex, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import Loader from 'src/components/ui/loader'
@@ -7,6 +7,7 @@ import { DAOSearchContext } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
 import useUpdateDaoVisibility from 'src/hooks/useUpdateDaoVisibility'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
+import logger from 'src/libraries/logger'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import SearchField from 'src/libraries/ui/SearchField'
 import { ApiClientsContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
@@ -64,6 +65,8 @@ function Discover() {
 											grants={grantsForYou}
 											unsavedDomainVisibleState={unsavedDomainState}
 											onDaoVisibilityUpdate={onDaoVisibilityUpdate}
+											onSectionGrantsUpdate={onGrantsSectionUpdate}
+											changedVisibilityState={changedVisibility}
 										/>
 
 									</Box>
@@ -103,13 +106,16 @@ function Discover() {
 										type='all'
 										unsavedDomainVisibleState={unsavedDomainState}
 										onDaoVisibilityUpdate={onDaoVisibilityUpdate}
-										grants={searchString === undefined || searchString === '' ? grantsForAll : grantsForAll?.filter(g => g.title.includes(searchString))} />
+										onSectionGrantsUpdate={onGrantsSectionUpdate}
+										grants={searchString === undefined || searchString === '' ? grantsForAll : grantsForAll?.filter(g => g.title.includes(searchString))}
+										changedVisibilityState={changedVisibility}
+									 />
 								</>
 							)
 						}
 					</Container>
 					{
-						isQbAdmin && Object.keys(unsavedDomainState).length !== 0 && (
+						isQbAdmin && (Object.keys(unsavedDomainState).length !== 0 || Object.keys(unsavedSectionGrants).length !== 0) && (
 							<Box
 								background='#f0f0f7'
 								bottom={0}
@@ -123,21 +129,27 @@ function Discover() {
 									<Button
 										onClick={
 											async() => {
-												try {
-													await updateDaoVisibility(
-														unsavedDomainState,
-														setNetworkTransactionModalStep,
-													)
-												} catch(e) {
-													setUnsavedDaosState({})
-													setNetworkTransactionModalStep(undefined)
-													const message = getErrorMessage(e as Error)
-													toast({
-														position: 'top',
-														title: message,
-														status: 'error',
-													})
+												if(changedVisibility === 'toggle') {
+													try {
+														await updateDaoVisibility(
+															unsavedDomainState,
+															setNetworkTransactionModalStep,
+														)
+													} catch(e) {
+														setUnsavedDaosState({})
+														setNetworkTransactionModalStep(undefined)
+														const message = getErrorMessage(e as Error)
+														toast({
+															position: 'top',
+															title: message,
+															status: 'error',
+														})
+													}
+												} else if(changedVisibility === 'checkbox') {
+													logger.info('Updating grants section')
+													setAddSectionModalOpen(true)
 												}
+
 											}
 										}
 										variant='primaryV2'
@@ -148,13 +160,19 @@ function Discover() {
 									<Button
 										bg='transparent'
 										style={{ fontWeight: 'bold' }}
-										onClick={() => setUnsavedDaosState({})}>
+										onClick={
+											() => {
+												setUnsavedDaosState({})
+												setChangedVisibility('none')
+											}
+										}>
 										Cancel
 									</Button>
 								</Flex>
 							</Box>
 						)
 					}
+
 				</Flex>
 				{buildNetworkModal()}
 				{/* <Tooltip label='Scroll to discover section'>
@@ -273,25 +291,66 @@ function Discover() {
 
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number | undefined>()
 	const [unsavedDomainState, setUnsavedDaosState] = useState<{ [_: number]: { [_: string]: boolean } }>({})
+	const [unsavedSectionGrants, setUnsavedSectionGrants] = useState<{ [_: number]: string[] }>({})
+
+	const [changedVisibility, setChangedVisibility] = useState('none')
+
+	const [addSectionModalOpen, setAddSectionModalOpen] = useState(false)
 
 	const onDaoVisibilityUpdate = (daoId: string, chainId: SupportedChainId, visibleState: boolean) => {
+		// check if any changes have been made for the chain id passed
 		if(unsavedDomainState[chainId]) {
+			// if yes, check if the dao id passed is present in the chain id
 			if(unsavedDomainState[chainId][daoId] !== undefined) {
+				// if yes, remove that dao id from the chain id because it must have gotten here
+				// because of a change in visibility state to true
 				delete unsavedDomainState[chainId][daoId]
 
+				// if the chain id has no more dao ids, remove the chain id from the unsaved state
 				if(!Object.keys(unsavedDomainState[chainId]).length) {
 					delete unsavedDomainState[chainId]
 				}
-			} else {
+			} else { // if no, add the dao id to the chain id
 				unsavedDomainState[chainId][daoId] = visibleState
 			}
-		} else {
+		} else { // if no, add the chain id and dao id to the unsaved state
 			unsavedDomainState[chainId] = {}
 			unsavedDomainState[chainId][daoId] = visibleState
 		}
 
+		if(!Object.keys(unsavedDomainState).length) {
+			setChangedVisibility('none')
+		} else {
+			setChangedVisibility('toggle')
+		}
+
 		setUnsavedDaosState({ ...unsavedDomainState })
 	}
+
+	const onGrantsSectionUpdate = (chainId: SupportedChainId, grantId: string) => {
+		logger.info('onGrantsSectionUpdate', unsavedSectionGrants, chainId, grantId)
+		if(unsavedSectionGrants[chainId]) {
+			if(unsavedSectionGrants[chainId].includes(grantId)) {
+				unsavedSectionGrants[chainId] = unsavedSectionGrants[chainId].filter(e => e !== grantId)
+			} else {
+				unsavedSectionGrants[chainId].push(grantId)
+			}
+		} else {
+			unsavedSectionGrants[chainId] = [grantId]
+		}
+
+		if(!Object.keys(unsavedSectionGrants).length) {
+			setChangedVisibility('none')
+		}
+
+		logger.info('onGrantsSectionUpdate', unsavedSectionGrants)
+		setUnsavedSectionGrants({ ...unsavedSectionGrants })
+		setChangedVisibility('checkbox')
+	}
+
+	useEffect(() => {
+		logger.info('section update', unsavedSectionGrants)
+	}, [unsavedSectionGrants])
 
 	const onGetStartedClick = () => {
 		if(!grantProgram?.id) {
