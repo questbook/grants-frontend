@@ -1,5 +1,5 @@
 import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
-import { Box, Button, Center, Container, Flex, Image, Input, Text } from '@chakra-ui/react'
+import { Box, Button, Center, Container, Divider, Flex, Image, Input, Skeleton, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import Loader from 'src/components/ui/loader'
 import SupportedChainId from 'src/generated/SupportedChainId'
@@ -218,6 +218,14 @@ function Discover() {
 		setChangedVisibility('checkbox')
 	}
 
+	// const loadingState = () => {
+	// 	return (
+	// 		<Skeleton>
+	// 			<
+	// 		</Skeleton>
+	// 	)
+	// }
+
 	const normalView = useMemo(() => {
 		return (
 			<>
@@ -261,31 +269,57 @@ function Discover() {
 								</Center>
 							) : (
 								<>
-									<Box
+									{/* <Box
 										display={grantsForYou?.length ? '' : 'none'}
-									>
-										<Box my={4}>
-											<Text
-												fontWeight='500'
-												fontSize='24px'
-												lineHeight='32px'>
-												For You
-											</Text>
-										</Box>
-										<RFPGrid
-											type='personal'
-											grants={grantsForYou}
-											unsavedDomainVisibleState={unsavedDomainState}
-											onDaoVisibilityUpdate={onDaoVisibilityUpdate}
-											onSectionGrantsUpdate={onGrantsSectionUpdate}
-											changedVisibilityState={changedVisibility}
-											filter={filterGrantName}
-										/>
+									> */}
+									<Box my={4}>
+										<Text
+											fontWeight='500'
+											fontSize='24px'
+											lineHeight='32px'>
+											For You
+										</Text>
 									</Box>
+									{
+										grantsForYou.length ?
+											(
+												<>
+
+													<RFPGrid
+														type='personal'
+														grants={grantsForYou}
+														unsavedDomainVisibleState={unsavedDomainState}
+														onDaoVisibilityUpdate={onDaoVisibilityUpdate}
+														onSectionGrantsUpdate={onGrantsSectionUpdate}
+														changedVisibilityState={changedVisibility}
+														filter={filterGrantName}
+													/>
+													<Divider
+														width='100%'
+														borderColor='gray.3'
+														mt={8}
+										 />
+												</>
+											) : (
+												<Skeleton
+													width='100%'
+													h='5%'
+													startColor='gray.3'
+													endColor='gray.4'
+												/>
+											)
+									}
+									{/* </Box> */}
 									<Box
 										display={sectionGrants?.length ? '' : 'none'}
 									>
-
+										<Text
+											variant='v2_heading_3'
+											fontWeight='500'
+											mt={4}
+										>
+											Explore grant programs
+										</Text>
 										{
 
 											(sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
@@ -305,16 +339,15 @@ function Discover() {
 														>
 															<Image
 																src={getUrlForIPFSHash(sectionImage)}
-																boxSize={8} />
+																boxSize={6} />
 															<Text
 																fontWeight='500'
-																fontSize='24px'
-																lineHeight='32px'
+																variant='v2_subheading'
 															>
 																{sectionName}
 															</Text>
 															<Text
-																fontSize='16px'
+																fontSize='14px'
 																color='gray.5'
 																fontWeight='500'
 																ml='-6px'
@@ -326,7 +359,7 @@ function Discover() {
 														</Flex>
 
 														<RFPGrid
-															type='personal'
+															type='all'
 															grants={grants}
 															unsavedDomainVisibleState={unsavedDomainState}
 															onDaoVisibilityUpdate={onDaoVisibilityUpdate}
@@ -374,6 +407,7 @@ function Discover() {
 								</>
 							)
 						}
+
 					</Container>
 					{
 						isQbAdmin && (
