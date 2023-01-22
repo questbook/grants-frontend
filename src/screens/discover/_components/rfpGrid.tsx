@@ -34,7 +34,7 @@ function RFPGrid({
 					const workspaceChainId = getSupportedChainIdFromSupportedNetwork(grant.workspace.supportedNetworks[0])
 
 					const role = type === 'all' ? undefined : grant.role
-					logger.info('role', role)
+					logger.info('role', role, grant)
 					return (
 						<GridItem key={index}>
 							<RFPCard

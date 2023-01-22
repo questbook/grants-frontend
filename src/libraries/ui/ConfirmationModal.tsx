@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next'
 import { Button, Flex, Modal, ModalBody, ModalBodyProps, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
 
 interface Props {
@@ -12,7 +11,7 @@ interface Props {
     modalBodyProps?: ModalBodyProps
 }
 
-function ConfirmationModal({ isOpen, onClose, title, subTitle, actionText, action, onCancel, modalBodyProps, ...props }: Props) {
+function ConfirmationModal({ isOpen, onClose, title, subTitle, actionText, action, modalBodyProps }: Props) {
 	const buildComponent = () => {
 		return (
 			<Modal
@@ -27,7 +26,9 @@ function ConfirmationModal({ isOpen, onClose, title, subTitle, actionText, actio
 						<Flex
 							align='flex-start'
 							direction='column'
-							p={6}>
+							p={6}
+							gap={4}
+						>
 							<Text
 								variant='v2_title'
 								fontWeight='500'
@@ -40,7 +41,7 @@ function ConfirmationModal({ isOpen, onClose, title, subTitle, actionText, actio
 							>
 								{subTitle}
 							</Text>
-							{modalBodyProps?.children}
+							{modalBodyProps}
 							<Flex mt={4}>
 								<Button
                             		onClick={action}
