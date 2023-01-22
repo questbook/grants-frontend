@@ -232,6 +232,26 @@ function Discover() {
 						minWidth='100%'
 						p={12}
 						w='100%'>
+						<SearchField
+							bg='white'
+							w='100%'
+							// inputGroupProps={{ ml: 4 }}
+							placeholder='Enter Grant Program Name to search'
+							value={searchString}
+							onKeyDown={
+								(e) => {
+									if(e.key === 'Enter' && searchString !== undefined) {
+										setSearch(searchString)
+									}
+								}
+							}
+							onChange={
+								(e) => {
+									setSearchString(e.target.value.trim())
+								}
+							}
+						/>
+
 						{
 							isQbAdmin === undefined ? (
 								<Center>
