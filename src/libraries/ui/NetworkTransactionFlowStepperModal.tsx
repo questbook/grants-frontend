@@ -18,7 +18,7 @@ type ModalStepProps = {
     text: string
 }
 
-const stepsHeader = ['On-chain transaction..', 'This shouldn’t take long..', 'Transaction successful..']
+const stepsHeader = ['On-chain transaction', 'This shouldn’t take long..', 'Transaction successful..']
 const steps = ['Initiate transaction', 'Complete indexing', 'Complete transaction']
 
 function NetworkTransactionFlowStepperModal({ isOpen, currentStepIndex, viewTxnLink, showViewTransactionButton, onClose, customStepsHeader, customSteps }: Props) {

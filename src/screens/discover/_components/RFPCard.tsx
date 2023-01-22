@@ -5,20 +5,24 @@ import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
+import logger from 'src/libraries/logger'
 import { GrantType } from 'src/screens/discover/_utils/types'
 import getAvatar from 'src/utils/avatarUtils'
 import { extractDateFromDateTime, titleCase } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
+
 type RFPCardProps = {
 	grant: GrantType
 	isVisible: boolean
 	onVisibilityUpdate?: (visibleState: boolean) => void
+	onSectionGrantsUpdate?: () => void
 	chainId: SupportedChainId | undefined
     role?: string
+	changedVisibilityState?: string
 }
 
-function RFPCard({ grant, chainId, role, onVisibilityUpdate, isVisible }: RFPCardProps) {
+function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpdate, isVisible, changedVisibilityState }: RFPCardProps) {
 	const buildComponent = () => (
 		<Box
 			w='100%'
@@ -89,15 +93,33 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, isVisible }: RFPCar
 					}
 					{
 						isQbAdmin && (
-							<Switch
-								size='md'
-								mx='10px'
-								height='20px'
-								borderRadius={0}
-								colorScheme='green'
-								isChecked={isVisible}
-								onChange={() => onVisibilityUpdate?.(!isVisible)}
-							/>
+							<>
+								<Switch
+									size='md'
+									// mx='10px'
+									height='20px'
+									borderRadius={0}
+									colorScheme='green'
+									isChecked={isVisible}
+									disabled={changedVisibilityState === 'checkbox'}
+									onChange={
+										() => {
+											onVisibilityUpdate?.(!isVisible)
+										}
+									}
+								/>
+								<Switch
+									disabled={changedVisibilityState === 'toggle'}
+									onChange={
+										() => {
+											logger.info('clicked')
+											onSectionGrantsUpdate?.()
+										}
+									}
+								>
+									Add to Section
+								</Switch>
+							</>
 						)
 					}
 				</Flex>

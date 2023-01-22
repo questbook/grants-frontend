@@ -1,0 +1,48 @@
+query getSectionGrants {
+  sections {
+    grants {
+      id
+      title
+      applications {
+        id
+        applicantId
+        state
+      }
+      acceptingApplications
+      fundTransfers {
+        amount
+        type
+        tokenUSDValue
+        asset
+        tokenName
+      }
+      workspace {
+        id
+        title
+        isVisible
+        logoIpfsHash
+        totalGrantFundingDisbursedUSD
+        supportedNetworks
+      }
+      reward {
+        committed
+        id
+        asset
+        token {
+          address
+          label
+          decimal
+          iconHash
+        }
+      }
+      deadlineS
+      deadline
+      numberOfApplications
+      createdAtS
+      updatedAtS
+    }
+    sectionName
+    sectionLogoIpfsHash
+    id
+  }
+}
