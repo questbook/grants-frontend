@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { Button, Divider, Flex, Text } from '@chakra-ui/react'
 import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
-import { useSafeContext } from 'src/contexts/safeContext'
+import { useSafeContext } from 'src/contexts/SafeContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { FundBuilderContext, ModalContext } from 'src/screens/dashboard/Context'
 

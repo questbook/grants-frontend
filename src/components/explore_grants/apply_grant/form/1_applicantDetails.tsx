@@ -6,7 +6,7 @@ import {
 } from '@chakra-ui/react'
 import { logger } from 'ethers'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
-import { useSafeContext } from 'src/contexts/safeContext'
+import { useSafeContext } from 'src/contexts/SafeContext'
 import { resolveApplicantAddress } from 'src/utils/applicantAddressUtils'
 import { chainNames } from 'src/utils/chainNames'
 import { isValidEthereumAddress, isValidSolanaAddress } from 'src/utils/validationUtils'

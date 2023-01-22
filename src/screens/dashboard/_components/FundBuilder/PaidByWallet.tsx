@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Image, Text } from '@chakra-ui/react'
 import { logger } from 'ethers'
 import Link from 'next/link'
-import { useSafeContext } from 'src/contexts/safeContext'
+import { useSafeContext } from 'src/contexts/SafeContext'
 
 
 const PaidByWallet = () => {

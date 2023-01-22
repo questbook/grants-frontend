@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Flex, Text, VStack } from '@chakra-ui/react'
 import { debounce } from 'lodash'
-import { useSafeContext } from 'src/contexts/safeContext'
+import { useSafeContext } from 'src/contexts/SafeContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
