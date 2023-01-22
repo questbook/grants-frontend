@@ -328,6 +328,31 @@ const _abi = [
     inputs: [
       {
         indexed: false,
+        internalType: "address[]",
+        name: "grantIds",
+        type: "address[]",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "sectionName",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "sectionLogoIpfsHash",
+        type: "string",
+      },
+    ],
+    name: "GrantsSectionUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         internalType: "uint8",
         name: "version",
         type: "uint8",
@@ -1228,6 +1253,29 @@ const _abi = [
       },
     ],
     name: "updateFundsTransferTransactionStatus",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "_grantIds",
+        type: "address[]",
+      },
+      {
+        internalType: "string",
+        name: "_sectionName",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_sectionLogoIpfsHash",
+        type: "string",
+      },
+    ],
+    name: "updateGrantsSection",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

@@ -7,7 +7,9 @@ import { BiconomyContext } from 'src/contexts/BiconomyContext'
 import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import logger from 'src/libraries/logger'
 import { bicoDapps, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { uploadToIPFS } from 'src/utils/ipfsUtils'
 
 export default function useUpdateDaoVisibility() {
 	const { nonce } = useQuestbookAccount()
@@ -116,8 +118,100 @@ export default function useUpdateDaoVisibility() {
 		[workspace?.id, workspaceContractGoerli, workspaceContractPolygon, workspaceContractCelo, workspaceContractOptimism, initialBiconomyWalletClients, scwAddress, nonce, webwallet]
 	)
 
+	const updateSection = async(data: { [_: number]: string[] }, sectionName: string, imageFile: {file: File | null, hash?: string}, setCurrentStep?: (step: number) => void) => {
+		// update section
+
+		// let currentStep = -1
+		// const incrementStep = () => {
+		// 	currentStep++
+		// 	setCurrentStep?.(currentStep)
+		// }
+
+		if(!scwAddress) {
+			return undefined!
+		}
+
+		const chains = Object.keys(data)
+
+		let chainIdx
+		for(chainIdx = 0; chainIdx < chains.length; chainIdx ++) {
+			const chain = chains[chainIdx]
+			const chainId = +chain
+
+			const workspaceContract = contractsMap[chain as unknown as SupportedChainId]
+			if(!workspaceContract) {
+				continue
+			}
+
+			// incrementStep()
+			setCurrentStep?.(0)
+			const initBiconomyRes = await initiateBiconomy(chain)
+
+			if(!initBiconomyRes) {
+				continue
+			}
+
+			const { biconomyWalletClient, biconomyDaoObj: biconomy } = initBiconomyRes
+
+			// const grantIds: string[] = []
+
+			const grantIds = data[chainId]
+			const logoIpfsHash = imageFile !== null ? (await uploadToIPFS(imageFile.file)).hash : ''
+			logger.info('update section', data, sectionName, grantIds)
+			// incrementStep()
+			setCurrentStep?.(1)
+
+			logger.info('update section',
+				{ biconomy,
+					workspaceContract,
+					method: 'updateGrantsSection',
+					methodArgs: [grantIds, sectionName, logoIpfsHash],
+					address: WORKSPACE_REGISTRY_ADDRESS[chain as unknown as SupportedChainId],
+					biconomyWalletClient,
+					scwAddress,
+					webwallet,
+					chain,
+					webhookId: bicoDapps[chain].webHookId,
+					nonce }
+			)
+			const response = await sendGaslessTransaction(
+				biconomy,
+				workspaceContract,
+				'updateGrantsSection',
+				[grantIds, sectionName, logoIpfsHash],
+				WORKSPACE_REGISTRY_ADDRESS[chain as unknown as SupportedChainId],
+				biconomyWalletClient,
+				scwAddress,
+				webwallet,
+				chain,
+				bicoDapps[chain].webHookId,
+				nonce
+			)
+			logger.info('update section response', response)
+			// incrementStep()
+			setCurrentStep?.(2)
+
+			if(response) {
+				const { receipt } = await getTransactionDetails(response, chainId.toString())
+				// incrementStep()
+
+				await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
+				// incrementStep()
+				setCurrentStep?.(3)
+
+				// not charging qb admins when making dao visibility changes
+				// if(workspace) {
+				// 	await chargeGas(Number(workspace?.id), Number(txFee), getSupportedChainIdFromWorkspace(workspace))
+				// }
+			}
+		}
+
+
+	}
+
 	return {
 		isBiconomyInitialised: initialBiconomyWalletClients?.[defaultChainId],
 		updateDaoVisibility,
+		updateSection,
 	}
 }

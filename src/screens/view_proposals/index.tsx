@@ -12,7 +12,7 @@ import Modal from 'src/components/ui/modal'
 import { TableFilters } from 'src/components/your_grants/view_applicants/table/TableFilters'
 import ChangeAccessibilityModalContent from 'src/components/your_grants/yourGrantCard/changeAccessibilityModalContent'
 import { CHAIN_INFO, defaultChainId, SupportedChainId } from 'src/constants/chains'
-import { useSafeContext } from 'src/contexts/SafeContext'
+import { useSafeContext } from 'src/contexts/safeContext'
 import {
 	useGetAllFundsTransfersForADaoQuery,
 	useGetApplicantsForAGrantQuery,

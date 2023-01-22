@@ -1,7 +1,7 @@
 /* eslint-disable indent */
 import { useContext, useEffect, useState } from 'react'
 import { Button, Flex, Image, Text } from '@chakra-ui/react'
-import { useSafeContext } from 'src/contexts/SafeContext'
+import { useSafeContext } from 'src/contexts/safeContext'
 import logger from 'src/libraries/logger'
 import Dropdown from 'src/screens/dashboard/_components/FundBuilder/Dropdown'
 import { TokenInfo } from 'src/screens/dashboard/_utils/types'

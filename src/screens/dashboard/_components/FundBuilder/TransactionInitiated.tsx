@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Text } from '@chakra-ui/react'
-import { useSafeContext } from 'src/contexts/SafeContext'
+import { useSafeContext } from 'src/contexts/safeContext'
 import { Link } from 'src/generated/icons'
 
 interface Props {

@@ -2,10 +2,10 @@ import { createContext, PropsWithChildren, ReactNode, useContext, useEffect, use
 import { defaultChainId } from 'src/constants/chains'
 import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
 import { WebwalletContext } from 'src/contexts/WebwalletContext'
-import { useGetAllGrantsForMemberQuery, useGetAllGrantsQuery, useGetGrantProgramDetailsQuery, useGetWorkspacesAndBuilderGrantsQuery } from 'src/generated/graphql'
+import { useGetAllGrantsForMemberQuery, useGetAllGrantsQuery, useGetGrantProgramDetailsQuery, useGetSectionGrantsQuery, useGetWorkspacesAndBuilderGrantsQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
-import { DiscoverContextType, GrantProgramType, GrantType, WorkspaceMemberType } from 'src/screens/discover/_utils/types'
+import { DiscoverContextType, GrantProgramType, GrantType, SectionGrants, WorkspaceMemberType } from 'src/screens/discover/_utils/types'
 import { Roles } from 'src/types'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
@@ -16,7 +16,7 @@ const PAGE_SIZE = 40
 const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const provider = () => {
 		return (
-			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram, search, setSearch }}>
+			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram, search, setSearch, sectionGrants }}>
 				{children}
 			</DiscoverContext.Provider>
 		)
@@ -28,6 +28,7 @@ const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const [grantsForYou, setGrantsForYou] = useState<GrantType[]>([])
 	const [grantsForAll, setGrantsForAll] = useState<GrantType[]>([])
 	const [grantProgram, setGrantProgram] = useState<GrantProgramType>()
+	const [sectionGrants, setSectionGrants] = useState<SectionGrants>()
 	const [search, setSearch] = useState<string>('')
 
 	const { fetchMore: fetchMoreWorkspaces } = useMultiChainQuery({
@@ -53,6 +54,11 @@ const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			}
 		},
 		chains: inviteInfo?.chainId ? [inviteInfo.chainId] : [defaultChainId]
+	})
+
+	const { fetchMore: fetchMoreSectionGrants } = useMultiChainQuery({
+		useQuery: useGetSectionGrantsQuery,
+		options: {}
 	})
 
 	const getGrantsForYou = async() => {
@@ -174,12 +180,37 @@ const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		setGrantProgram(results[0]?.grantProgram?.[0])
 	}
 
+	const getSectionGrants = async() => {
+		const results = await fetchMoreSectionGrants()
+		logger.info({ results }, 'Section Grants')
+
+		if(results?.length === 0 || results?.every((r) => !r?.sections?.length)) {
+			return 'no-grants'
+		}
+
+		const allSectionGrants: SectionGrants = []
+
+		for(const result of results) {
+			if(result?.sections?.length) {
+				allSectionGrants.push(...result?.sections.map(g => ({ [g.sectionName]: { ...g } })))
+			}
+		}
+
+		logger.info({ allSectionGrants }, 'All section grants (DISCOVER CONTEXT)')
+
+		setSectionGrants(allSectionGrants)
+	}
+
 	useEffect(() => {
 		getGrantsForAll().then(r => logger.info(r, 'Get Grants for all'))
 	}, [search])
 
 	useEffect(() => {
 		getGrantsForYou().then(r => logger.info(r, 'Get Grants for you'))
+	}, [scwAddress])
+
+	useEffect(() => {
+		getSectionGrants().then(r => logger.info(r, 'Get Section Grants'))
 	}, [scwAddress])
 
 	useEffect(() => {

@@ -66,7 +66,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 									align='stretch'
 									bg='white'>
 									{
-										(router.pathname === '/dashboard' && (role === 'admin' || role === 'reviewer')) && (
+										((router.pathname === '/dashboard' || router.pathname === '/settings') && (role === 'admin' || role === 'reviewer')) && (
 											<Flex
 												px={4}
 												pt={3}
