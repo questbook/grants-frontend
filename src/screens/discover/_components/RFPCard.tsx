@@ -76,21 +76,29 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						objectFit='cover'
 						borderRadius='4px'
 					/>
-					{
-						role && (
-							<Text
-								fontWeight='500'
-								fontSize='12px'
-								color='black.3'
-								bg='gray.2'
-								borderRadius='6px'
-								py={1.5}
-								px={3}
-							>
-								{titleCase(role)}
-							</Text>
-						)
-					}
+					<Flex gap={2}>
+						<Text
+							variant={isOpen ? 'openTag' : 'closedTag'}
+						>
+							{isOpen ? 'Open' : 'Closed'}
+						</Text>
+						{
+							role && (
+								<Text
+									fontWeight='500'
+									fontSize='12px'
+									color='black.3'
+									bg='gray.2'
+									borderRadius='6px'
+									py={1.5}
+									px={3}
+								>
+									{titleCase(role)}
+								</Text>
+							)
+						}
+					</Flex>
+
 					{
 						isQbAdmin && (
 							<>
@@ -135,11 +143,11 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 							variant='v2_title'
 							fontSize='18px'
 							fontWeight='500'
-							noOfLines={3}
+							noOfLines={2}
 						>
 							{grant.title}
 
-							<Text
+							{/* <Text
 								color={isOpen ? 'accent.carrot' : 'gray.5'}
 								background={isOpen ? 'rgba(242, 148, 62, 0.2)' : 'gray.2'}
 								borderRadius='2px'
@@ -151,7 +159,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 								display='inline-block'
 							>
 								{isOpen ? 'Open' : 'Closed'}
-							</Text>
+							</Text> */}
 						</Text>
 					</Flex>
 
