@@ -13,6 +13,7 @@ type RFPGridProps = {
 	onDaoVisibilityUpdate?: (daoId: string, chainId: SupportedChainId, visibleState: boolean) => void
 	onSectionGrantsUpdate?: (chainId: SupportedChainId, grantId: string) => void
 	changedVisibilityState?: string
+	filter?: string
 }
 
 function RFPGrid({
@@ -22,6 +23,7 @@ function RFPGrid({
 	onSectionGrantsUpdate,
 	unsavedDomainVisibleState,
 	changedVisibilityState,
+	filter,
 }: RFPGridProps) {
 	const buildComponent = () => (
 		<Grid
@@ -30,7 +32,7 @@ function RFPGrid({
 			gap={8}
 		>
 			{
-				grants?.map((grant, index: number) => {
+				grants?.filter((g) => g.title.toLowerCase().includes(filter?.toLowerCase() || '')).map((grant, index: number) => {
 					const workspaceChainId = getSupportedChainIdFromSupportedNetwork(grant.workspace.supportedNetworks[0])
 
 					const role = type === 'all' ? undefined : grant.role

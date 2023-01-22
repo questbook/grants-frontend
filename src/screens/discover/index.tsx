@@ -1,4 +1,4 @@
-import { ReactElement, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
 import { Box, Button, Center, Container, Flex, Image, Input, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import Loader from 'src/components/ui/loader'
@@ -144,9 +144,9 @@ function Discover() {
 		)
 	}
 
-	const discoverRef = useRef<HTMLDivElement>(null)
+	// const discoverRef = useRef<HTMLDivElement>(null)
 
-	const { grantsForYou, grantsForAll, grantProgram, setSearch, sectionGrants } = useContext(DiscoverContext)!
+	const { grantsForYou, grantsForAll, grantProgram, sectionGrants } = useContext(DiscoverContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString, setSearchString } = useContext(DAOSearchContext)!
 
@@ -163,6 +163,7 @@ function Discover() {
 	const [networkTransactionModalOpen, setNetworkTransactionModalOpen] = useState(false)
 	const [currentStepIndex, setCurrentStepIndex] = useState(-1)
 	const [sectionName, setSectionName] = useState('')
+	const [filterGrantName, setFilterGrantName] = useState('')
 
 	const [imageFile, setImageFile] = useState<{file: File | null, hash?: string}>({ file: null })
 
@@ -236,18 +237,19 @@ function Discover() {
 							bg='white'
 							w='100%'
 							// inputGroupProps={{ ml: 4 }}
+							mb={6}
 							placeholder='Enter Grant Program Name to search'
-							value={searchString}
+							value={filterGrantName}
 							onKeyDown={
 								(e) => {
-									if(e.key === 'Enter' && searchString !== undefined) {
-										setSearch(searchString)
+									if(e.key === 'Enter' && filterGrantName !== undefined) {
+										setFilterGrantName(filterGrantName)
 									}
 								}
 							}
 							onChange={
 								(e) => {
-									setSearchString(e.target.value.trim())
+									setFilterGrantName(e.target.value.trim())
 								}
 							}
 						/>
@@ -260,6 +262,27 @@ function Discover() {
 							) : (
 								<>
 									<Box
+										display={grantsForYou?.length ? '' : 'none'}
+									>
+										<Box my={4}>
+											<Text
+												fontWeight='500'
+												fontSize='24px'
+												lineHeight='32px'>
+												For You
+											</Text>
+										</Box>
+										<RFPGrid
+											type='personal'
+											grants={grantsForYou}
+											unsavedDomainVisibleState={unsavedDomainState}
+											onDaoVisibilityUpdate={onDaoVisibilityUpdate}
+											onSectionGrantsUpdate={onGrantsSectionUpdate}
+											changedVisibilityState={changedVisibility}
+											filter={filterGrantName}
+										/>
+									</Box>
+									<Box
 										display={sectionGrants?.length ? '' : 'none'}
 									>
 
@@ -269,7 +292,7 @@ function Discover() {
 												logger.info('section', { section, sectionGrants })
 												const sectionName = Object.keys(section)[0]
 												const sectionImage = section[sectionName].sectionLogoIpfsHash
-												const grants = section[sectionName].grants.map(grant => ({ ...grant, role: 'community' as Roles }))
+												const grants = section[sectionName].grants.filter((grant) => grant.title.toLowerCase().includes(filterGrantName.toLowerCase())).map(grant => ({ ...grant, role: 'community' as Roles }))
 												return (
 													<Box
 														my={6}
@@ -315,29 +338,8 @@ function Discover() {
 											}) : null
 										}
 									</Box>
-									<Box
-										display={grantsForYou?.length ? '' : 'none'}
-									>
-										<Box my={4}>
-											<Text
-												fontWeight='500'
-												fontSize='24px'
-												lineHeight='32px'>
-												For You
-											</Text>
-										</Box>
-										<RFPGrid
-											type='personal'
-											grants={grantsForYou}
-											unsavedDomainVisibleState={unsavedDomainState}
-											onDaoVisibilityUpdate={onDaoVisibilityUpdate}
-											onSectionGrantsUpdate={onGrantsSectionUpdate}
-											changedVisibilityState={changedVisibility}
-										/>
 
-									</Box>
-
-									<Flex
+									{/* <Flex
 										ref={discoverRef}
 										my={12}
 										mb={4}>
@@ -367,77 +369,94 @@ function Discover() {
 											}
 										/>
 
-									</Flex>
+									</Flex> */}
 
-									<RFPGrid
-										type='all'
-										unsavedDomainVisibleState={unsavedDomainState}
-										onDaoVisibilityUpdate={onDaoVisibilityUpdate}
-										onSectionGrantsUpdate={onGrantsSectionUpdate}
-										grants={searchString === undefined || searchString === '' ? grantsForAll : grantsForAll?.filter(g => g.title.includes(searchString))}
-										changedVisibilityState={changedVisibility}
-									 />
 								</>
 							)
 						}
 					</Container>
 					{
-						isQbAdmin && (Object.keys(unsavedDomainState).length !== 0 || Object.keys(unsavedSectionGrants).length !== 0) && (
-							<Box
-								background='#f0f0f7'
-								bottom={0}
-								style={{ position: 'sticky' }}>
-								<Flex
-									px='25px'
-									py='20px'
-									alignItems='center'
-									justifyContent='center'>
-									You have made changes to your Discover page on Questbook.
-									<Button
-										onClick={
-											async() => {
-												if(changedVisibility === 'toggle') {
-													try {
-														await updateDaoVisibility(
-															unsavedDomainState,
-															setNetworkTransactionModalStep,
-														)
-													} catch(e) {
-														setUnsavedDaosState({})
-														setNetworkTransactionModalStep(undefined)
-														const message = getErrorMessage(e as Error)
-														toast({
-															position: 'top',
-															title: message,
-															status: 'error',
-														})
-													}
-												} else if(changedVisibility === 'checkbox') {
-													logger.info('Updating grants section')
-													setAddSectionModalOpen(true)
-												}
+						isQbAdmin && (
+							<>
+								<Text
+									fontWeight='500'
+									fontSize='24px'
+									lineHeight='32px'>
+									Discover
+								</Text>
+								<RFPGrid
+									type='all'
+									unsavedDomainVisibleState={unsavedDomainState}
+									onDaoVisibilityUpdate={onDaoVisibilityUpdate}
+									onSectionGrantsUpdate={onGrantsSectionUpdate}
+									grants={searchString === undefined || searchString === '' ? grantsForAll : grantsForAll?.filter(g => g.title.includes(searchString))}
+									changedVisibilityState={changedVisibility}
+									filter={filterGrantName}
+						    	/>
+							</>
 
+						)
+					}
+					{
+						isQbAdmin && (Object.keys(unsavedDomainState).length !== 0 || Object.keys(unsavedSectionGrants).length !== 0) && (
+							<>
+								<Box
+									background='#f0f0f7'
+									bottom={0}
+									style={{ position: 'sticky' }}>
+									<Flex
+										px='25px'
+										py='20px'
+										alignItems='center'
+										justifyContent='center'>
+										You have made changes to your Discover page on Questbook.
+										<Button
+											onClick={
+												async() => {
+													if(changedVisibility === 'toggle') {
+														try {
+															await updateDaoVisibility(
+																unsavedDomainState,
+																setNetworkTransactionModalStep,
+															)
+														} catch(e) {
+															setUnsavedDaosState({})
+															setNetworkTransactionModalStep(undefined)
+															const message = getErrorMessage(e as Error)
+															toast({
+																position: 'top',
+																title: message,
+																status: 'error',
+															})
+														}
+													} else if(changedVisibility === 'checkbox') {
+														logger.info('Updating grants section')
+														setAddSectionModalOpen(true)
+													}
+
+												}
 											}
-										}
-										variant='primaryV2'
-										disabled={!isBiconomyInitialised}
-										mx='20px'>
-										Save
-									</Button>
-									<Button
-										bg='transparent'
-										style={{ fontWeight: 'bold' }}
-										onClick={
-											() => {
-												setUnsavedDaosState({})
-												setUnsavedSectionGrants({})
-												setChangedVisibility('none')
-											}
-										}>
-										Cancel
-									</Button>
-								</Flex>
-							</Box>
+											variant='primaryV2'
+											disabled={!isBiconomyInitialised}
+											mx='20px'>
+											Save
+										</Button>
+										<Button
+											bg='transparent'
+											style={{ fontWeight: 'bold' }}
+											onClick={
+												() => {
+													setUnsavedDaosState({})
+													setUnsavedSectionGrants({})
+													setChangedVisibility('none')
+												}
+											}>
+											Cancel
+										</Button>
+									</Flex>
+								</Box>
+							</>
+
 						)
 					}
 
@@ -460,7 +479,7 @@ function Discover() {
 				</Tooltip> */}
 			</>
 		)
-	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants])
+	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName])
 
 
 	useEffect(() => {

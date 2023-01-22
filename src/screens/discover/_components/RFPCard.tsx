@@ -109,7 +109,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 									}
 								/>
 								<Switch
-									disabled={changedVisibilityState === 'toggle'}
+									disabled={changedVisibilityState === 'toggle' || !isVisible}
 									onChange={
 										() => {
 											logger.info('clicked')
