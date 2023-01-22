@@ -3,7 +3,7 @@ import { Box, Button, Drawer, DrawerCloseButton, DrawerContent, DrawerOverlay, F
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { logger } from 'ethers'
 import { defaultChainId } from 'src/constants/chains'
-import { useSafeContext } from 'src/contexts/safeContext'
+import { useSafeContext } from 'src/contexts/SafeContext'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
