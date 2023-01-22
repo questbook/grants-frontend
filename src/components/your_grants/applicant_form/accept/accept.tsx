@@ -8,7 +8,7 @@ import {
 } from '@chakra-ui/react'
 import Loader from 'src/components/ui/loader'
 import { CHAIN_INFO } from 'src/constants/chains'
-import { ApiClientsContext } from 'src/pages/_app'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
 import { formatAmount, getRewardAmount } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'

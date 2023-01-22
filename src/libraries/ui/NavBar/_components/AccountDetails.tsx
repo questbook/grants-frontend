@@ -20,7 +20,8 @@ import { useRouter } from 'next/router'
 import { AddUser, ArrowRight, Key, Pencil } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
-import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAddress } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
@@ -169,7 +170,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 
 	const popoverRef = useRef<HTMLButtonElement>(null)
 	const { t } = useTranslation()
-	const { grant, role } = useContext(GrantsProgramContext)!
+	const { grant, role } = useContext(GrantProgramContext)!
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 
 	const router = useRouter()

@@ -5,11 +5,11 @@ import {
 	Flex
 } from '@chakra-ui/react'
 import { Wallet } from 'ethers'
+import { BiconomyContext } from 'src/contexts/BiconomyContext'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
-import { BiconomyContext, WebwalletContext } from 'src/pages/_app'
 
 function SignupWebwallet() {
-
 	const { setWebwallet, setScwAddress, setNonce } = useContext(WebwalletContext)!
 	const { setBiconomyDaoObjs } = useContext(BiconomyContext)!
 

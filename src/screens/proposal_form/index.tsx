@@ -2,13 +2,13 @@ import { ChangeEvent, ReactElement, useContext, useMemo, useState } from 'react'
 import { Button, Container, Flex, Image, Text } from '@chakra-ui/react'
 import { convertToRaw } from 'draft-js'
 import { useRouter } from 'next/router'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
 import { useSafeContext } from 'src/contexts/safeContext'
 import logger from 'src/libraries/logger'
 import BackButton from 'src/libraries/ui/BackButton'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import { getChainInfo } from 'src/libraries/utils/token'
-import { GrantsProgramContext } from 'src/pages/_app'
 import SectionHeader from 'src/screens/proposal_form/_components/SectionHeader'
 import SectionInput from 'src/screens/proposal_form/_components/SectionInput'
 import SectionRichTextEditor from 'src/screens/proposal_form/_components/SectionRichTextEditor'
@@ -533,7 +533,7 @@ function ProposalForm() {
 		)
 	}
 
-	const { setRole } = useContext(GrantsProgramContext)!
+	const { setRole } = useContext(GrantProgramContext)!
 	const { type, grant, chainId, form, setForm, error } = useContext(ProposalFormContext)!
 	// console.log('grant', grant)
 	// console.log('proposal', proposal)

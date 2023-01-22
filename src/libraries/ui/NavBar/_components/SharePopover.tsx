@@ -1,10 +1,10 @@
 import { useContext, useRef } from 'react'
 import { Button, Flex, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text } from '@chakra-ui/react'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
 import { Copy, ShareForward } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import { copyShareGrantLink } from 'src/libraries/utils/copy'
-import { GrantsProgramContext } from 'src/pages/_app'
 
 function SharePopover() {
 	const buildComponent = () => (
@@ -104,7 +104,7 @@ function SharePopover() {
 	]
 
 	const popoverRef = useRef<HTMLButtonElement>(null)
-	const { grant } = useContext(GrantsProgramContext)!
+	const { grant } = useContext(GrantProgramContext)!
 	const toast = useCustomToast()
 
 	return buildComponent()

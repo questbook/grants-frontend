@@ -6,6 +6,9 @@ import { DEFAULT_NETWORK } from 'src/constants'
 import { APPLICATION_REGISTRY_ADDRESS, WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
 import { USD_ASSET, USD_DECIMALS, USD_ICON } from 'src/constants/chains'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import GrantFactoryAbi from 'src/contracts/abi/GrantFactoryAbi.json'
 import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
 import SupportedChainId from 'src/generated/SupportedChainId'
@@ -18,7 +21,6 @@ import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import { validateAndUploadToIpfs } from 'src/libraries/validator'
-import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { GRANT_CACHE_KEY } from 'src/screens/dashboard/_utils/constants'
 import useUpdateRFP from 'src/screens/request_proposal/_hooks/useUpdateRFP'
 import BuilderDiscovery from 'src/screens/request_proposal/_subscreens/BuilderDiscovery'
@@ -261,7 +263,7 @@ function RequestProposal() {
 	const { webwallet } = useContext(WebwalletContext)!
 
 	const { subgraphClients } = useContext(ApiClientsContext)!
-	const { setRole } = useContext(GrantsProgramContext)!
+	const { setRole } = useContext(GrantProgramContext)!
 	const { network } = useNetwork()
 	const targetContractObject = useQBContract('workspace', network as unknown as SupportedChainId)
 

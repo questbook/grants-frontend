@@ -15,7 +15,7 @@ import applicantDetailsList from 'src/constants/applicantDetailsList'
 import SAFES_ENDPOINTS_MAINNETS from 'src/constants/safesEndpoints.json'
 import SAFES_ENDPOINTS_TESTNETS from 'src/constants/safesEndpointsTest.json'
 import strings from 'src/constants/strings.json'
-import { ApiClientsContext } from 'src/pages/_app'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 const SAFES_ENDPOINTS = { ...SAFES_ENDPOINTS_MAINNETS, ...SAFES_ENDPOINTS_TESTNETS }

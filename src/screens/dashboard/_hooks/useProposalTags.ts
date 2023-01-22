@@ -1,6 +1,7 @@
 import { useContext, useMemo } from 'react'
 import logger from 'src/libraries/logger'
-import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 
@@ -9,7 +10,7 @@ interface Props {
 }
 
 function useProposalTags({ proposal }: Props) {
-	const { role } = useContext(GrantsProgramContext)!
+	const { role } = useContext(GrantProgramContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
 	const { commentMap } = useContext(DashboardContext)!
 

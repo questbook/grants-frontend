@@ -1,10 +1,10 @@
 import { ReactElement, useContext, useEffect } from 'react'
 import { Flex } from '@chakra-ui/react'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
 import logger from 'src/libraries/logger'
 import LinkYourMultisigModal from 'src/libraries/ui/LinkYourMultisigModal'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import ThreeColumnSkeleton from 'src/libraries/ui/ThreeColumnSkeleton'
-import { GrantsProgramContext } from 'src/pages/_app'
 import ActionList from 'src/screens/dashboard/ActionList'
 import Body from 'src/screens/dashboard/Body'
 import { DashboardProvider, FundBuilderProvider, ModalContext, ModalProvider } from 'src/screens/dashboard/Context'
@@ -57,7 +57,7 @@ function Dashboard() {
 	)
 
 	const { isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen } = useContext(ModalContext)!
-	const { role, isLoading } = useContext(GrantsProgramContext)!
+	const { role, isLoading } = useContext(GrantProgramContext)!
 
 	useEffect(() => {
 		logger.info({ isLoading }, 'Loading state changed')

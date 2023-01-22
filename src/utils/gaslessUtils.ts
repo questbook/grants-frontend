@@ -5,7 +5,7 @@ import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { defaultChainId } from 'src/constants/chains'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import logger from 'src/libraries/logger'
-import { BiconomyContext } from 'src/pages/_app'
+import { BiconomyContextType } from 'src/libraries/utils/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import { TransactionReceipt } from 'web3-core'
 
@@ -165,7 +165,7 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 	return scwAddress
 }
 
-export const sendGaslessTransaction = async(biconomy: typeof BiconomyContext, targetContractObject: Contract, targetContractMethod: string,
+export const sendGaslessTransaction = async(biconomy: BiconomyContextType, targetContractObject: Contract, targetContractMethod: string,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	targetContractArgs: any, targetContractAddress: string, biconomyWalletClient: BiconomyWalletClient,
 	scwAddress: string, webwallet: Wallet | undefined, chainId: string, webHookId: string, nonce: string | undefined) => {

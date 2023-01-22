@@ -1,7 +1,9 @@
+import { ValidationApi } from '@questbook/service-validator-client'
 import { Wallet } from 'ethers'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import SubgraphClient from 'src/graphql/subgraph'
 import { InviteInfo } from 'src/libraries/utils/invite'
+import { MinimalWorkspace } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
 
 export type PIIForCommentType = {
@@ -14,6 +16,10 @@ export type PIIForCommentType = {
 };
 
 export type ApiClientsContextType = {
+  validatorApi: ValidationApi
+  workspace?: MinimalWorkspace
+  setWorkspace: (workspace: MinimalWorkspace) => void
+  chainId: SupportedChainId
   subgraphClients: { [chainId: string]: SubgraphClient }
   inviteInfo: InviteInfo | undefined
   setInviteInfo: (inviteInfo: InviteInfo) => void

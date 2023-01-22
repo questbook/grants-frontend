@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react'
 import { useNonce } from 'src/hooks/gasless/useNonce'
-import { WebwalletContext } from 'src/pages/_app'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 
 export const useQuestbookAccount = (shouldRefreshNonce?: boolean) => {
 	const { webwallet, scwAddress, setNonce } = useContext(WebwalletContext)!

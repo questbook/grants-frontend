@@ -6,7 +6,9 @@ import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
-import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
 import getErrorMessage from 'src/utils/errorUtils'
 import { bicoDapps, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -20,7 +22,7 @@ interface Props {
 function useLinkMultiSig({ multisigAddress, selectedSafeNetwork }: Props) {
 
 	const { subgraphClients } = useContext(ApiClientsContext)!
-	const { grant } = useContext(GrantsProgramContext)!
+	const { grant } = useContext(GrantProgramContext)!
 	const { webwallet } = useContext(WebwalletContext)!
 
 	const chainId = useMemo(() => {

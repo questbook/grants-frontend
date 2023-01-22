@@ -19,11 +19,11 @@ import applicantDetailsList from 'src/constants/applicantDetailsList'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import SAFES_ENDPOINTS_MAINNETS from 'src/constants/safesEndpoints.json'
 import SAFES_ENDPOINTS_TESTNETS from 'src/constants/safesEndpointsTest.json'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useUpdateWorkspacePublicKeys from 'src/hooks/useUpdateWorkspacePublicKeys'
 import useChainId from 'src/hooks/utils/useChainId'
 import useCustomToast from 'src/hooks/utils/useCustomToast'
-import { ApiClientsContext } from 'src/pages/_app'
 import { SafeToken } from 'src/types'
 
 const SAFES_ENDPOINTS = { ...SAFES_ENDPOINTS_MAINNETS, ...SAFES_ENDPOINTS_TESTNETS }

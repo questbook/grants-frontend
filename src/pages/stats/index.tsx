@@ -14,7 +14,7 @@ import {
 	useGetAllGrantsForCreatorQuery,
 } from 'src/generated/graphql'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
-import { ApiClientsContext } from 'src/pages/_app'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
 import { UNIX_TIMESTAMP_MAX, UNIX_TIMESTAMP_MIN } from 'src/utils/generics'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 

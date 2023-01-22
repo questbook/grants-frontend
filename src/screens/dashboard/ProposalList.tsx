@@ -3,9 +3,9 @@
 import { createRef, useContext, useEffect, useMemo, useState } from 'react'
 import { Box, Button, Checkbox, Flex, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
 import logger from 'src/libraries/logger'
 import SearchField from 'src/libraries/ui/SearchField'
-import { GrantsProgramContext } from 'src/pages/_app'
 import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -135,7 +135,7 @@ function ProposalList() {
 	const router = useRouter()
 	const { proposalId } = router.query
 
-	const { role, grant } = useContext(GrantsProgramContext)!
+	const { role, grant } = useContext(GrantProgramContext)!
 	const { proposals, selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
 
 	const [searchText, setSearchText] = useState<string>('')

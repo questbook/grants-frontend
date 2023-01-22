@@ -1,7 +1,8 @@
 import { useContext, useMemo } from 'react'
 import { defaultChainId } from 'src/constants/chains'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import { useGetQbAdminsQuery } from 'src/generated/graphql'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { ContextGenerator } from 'src/utils/contextGenerator'
 
 const useGetQBAdmins = () => {

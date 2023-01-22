@@ -12,7 +12,7 @@ import useBatchUpdateApplicationState from 'src/hooks/useBatchUpdateApplicationS
 import useUpdateApplicationState from 'src/hooks/useUpdateApplicationState'
 import logger from 'src/libraries/logger'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
-import { ApiClientsContext } from 'src/pages/_app'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
 import ActionPanel from 'src/screens/proposal/_components/ActionPanel'
 import ConfirmationModal from 'src/screens/proposal/_components/ConfirmationModal'
 import MilestoneDoneModal from 'src/screens/proposal/_components/milestoneDoneModal'

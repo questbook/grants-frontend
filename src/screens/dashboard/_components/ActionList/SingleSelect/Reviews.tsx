@@ -3,7 +3,8 @@ import { Box, Button, Checkbox, Divider, Flex, Image, InputGroup, InputRightElem
 import { defaultChainId } from 'src/constants/chains'
 import { CheckDouble, Dropdown, Pencil } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
-import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import DashboardInput from 'src/screens/dashboard/_components/DashboardInput'
 import useAssignReviewers from 'src/screens/dashboard/_hooks/useAssignReviewers'
 import useSetRubrics from 'src/screens/dashboard/_hooks/useSetRubrics'
@@ -786,7 +787,7 @@ function Reviews() {
 	}
 
 	const { scwAddress } = useContext(WebwalletContext)!
-	const { grant, role } = useContext(GrantsProgramContext)!
+	const { grant, role } = useContext(GrantProgramContext)!
 	const { proposals, selectedProposals, setShowSubmitReviewPanel } = useContext(DashboardContext)!
 
 	const chainId = useMemo(() => {

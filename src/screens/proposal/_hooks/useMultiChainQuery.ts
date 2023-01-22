@@ -2,7 +2,7 @@ import { useCallback, useContext, useMemo, useState } from 'react'
 import { QueryHookOptions, QueryResult } from '@apollo/client'
 import { ALL_SUPPORTED_CHAIN_IDS } from 'src/constants/chains'
 import SupportedChainId from 'src/generated/SupportedChainId'
-import { ApiClientsContext } from 'src/pages/_app'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
 
 export type UseMultiChainQueryOptions<Q, V> = {
 	/** specify chains to query from, set undefined to query all */

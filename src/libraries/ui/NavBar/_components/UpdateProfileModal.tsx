@@ -7,7 +7,8 @@ import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
 import { usePiiForWorkspaceMember } from 'src/libraries/utils/pii'
-import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
@@ -138,7 +139,7 @@ function UpdateProfileModal({ isOpen, onClose }: Props) {
 		)
 	}
 
-	const { grant } = useContext(GrantsProgramContext)!
+	const { grant } = useContext(GrantProgramContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
 
 	const member = useMemo(() => {

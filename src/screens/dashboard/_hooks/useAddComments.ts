@@ -6,7 +6,8 @@ import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { PIIForCommentType } from 'src/libraries/utils/types'
-import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
@@ -19,7 +20,7 @@ interface Props {
 
 function useAddComments({ setStep, setTransactionHash }: Props) {
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
-	const { grant, role } = useContext(GrantsProgramContext)!
+	const { grant, role } = useContext(GrantProgramContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 
 	const selectedProposalsData = useMemo(() => {

@@ -1,8 +1,8 @@
 import { useContext, useMemo } from 'react'
 import { defaultChainId } from 'src/constants/chains'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
-import { GrantsProgramContext } from 'src/pages/_app'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
@@ -12,7 +12,7 @@ interface Props {
 }
 
 function useAssignReviewers({ setNetworkTransactionModalStep, setTransactionHash }: Props) {
-	const { grant } = useContext(GrantsProgramContext)!
+	const { grant } = useContext(GrantProgramContext)!
 	const { selectedProposals, proposals } = useContext(DashboardContext)!
 
 	const proposal = useMemo(() => {

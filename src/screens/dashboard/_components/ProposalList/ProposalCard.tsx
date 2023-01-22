@@ -1,9 +1,9 @@
 import { useContext, useEffect } from 'react'
 import { Checkbox, Flex, FlexProps, forwardRef, Image, Text, Tooltip } from '@chakra-ui/react'
 import config from 'src/constants/config.json'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
 import { CheckDouble, Close, Resubmit } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
-import { GrantsProgramContext } from 'src/pages/_app'
 import useProposalTags from 'src/screens/dashboard/_hooks/useProposalTags'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
@@ -124,7 +124,7 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 	const { proposal } = props
 
 	const { selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
-	const { role } = useContext(GrantsProgramContext)!
+	const { role } = useContext(GrantProgramContext)!
 	const { tags } = useProposalTags({ proposal })
 
 	useEffect(() => {

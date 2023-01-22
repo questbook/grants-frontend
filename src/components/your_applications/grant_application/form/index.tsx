@@ -28,7 +28,7 @@ import CustomFields from 'src/components/your_applications/grant_application/for
 import { defaultChainId, SupportedChainId, USD_ASSET } from 'src/constants/chains'
 import useResubmitApplication from 'src/hooks/useResubmitApplication'
 import logger from 'src/libraries/logger'
-import { WebwalletContext } from 'src/pages/_app'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import {
 	GrantApplicationFieldsSubgraph,
 	GrantApplicationProps,

@@ -17,7 +17,8 @@ import {
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import MAIN_LOGGER from 'src/utils/logger'
 

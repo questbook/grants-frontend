@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useGetNumberOfApplicationsQuery } from 'src/generated/graphql'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
-import { ApiClientsContext } from 'src/pages/_app'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
 
 export const TABS = {
 	'discover': { name: 'Discover', path: '' },

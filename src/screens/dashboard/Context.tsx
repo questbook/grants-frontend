@@ -2,11 +2,13 @@ import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, u
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
 import { useSafeContext } from 'src/contexts/safeContext'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import { useGetApplicationActionsQuery, useGetCommentsQuery, useGetGrantQuery, useGetProposalsQuery } from 'src/generated/graphql'
 import logger from 'src/libraries/logger'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
-import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { CommentMap, CommentType, DashboardContextType, FundBuilderContextType, ModalContextType, Proposals, ReviewInfo, SignerVerifiedState, TokenInfo } from 'src/screens/dashboard/_utils/types'
 import { useMultiChainQuery } from 'src/screens/proposal/_hooks/useMultiChainQuery'
 import { Roles } from 'src/types'
@@ -23,7 +25,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const { grantId, chainId: _chainId, role: _role } = router.query
 	const { setWorkspace } = useContext(ApiClientsContext)!
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
-	const { grant, setGrant, role, setRole, setIsLoading } = useContext(GrantsProgramContext)!
+	const { grant, setGrant, role, setRole, setIsLoading } = useContext(GrantProgramContext)!
 
 	const chainId = useMemo(() => {
 		try {

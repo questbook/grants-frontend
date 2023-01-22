@@ -1,6 +1,6 @@
 import { useContext } from 'react'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
 import { Call, CheckDouble, Close, Resubmit } from 'src/generated/icons'
-import { GrantsProgramContext } from 'src/pages/_app'
 import { ProposalType, TagType } from 'src/screens/dashboard/_utils/types'
 
 interface Props {
@@ -20,7 +20,7 @@ function useProposalTags({ proposals }: Props) {
 		community: []
 	}
 
-	const { role } = useContext(GrantsProgramContext)!
+	const { role } = useContext(GrantProgramContext)!
 
 	if(role === 'admin') {
 		if(proposals.every(p => p.state === 'submitted')) {

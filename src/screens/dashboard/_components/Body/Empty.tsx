@@ -1,9 +1,9 @@
 import { useContext } from 'react'
 import { Button, Flex, Text } from '@chakra-ui/react'
 import { defaultChainId } from 'src/constants/chains'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { copyGrantLink } from 'src/libraries/utils/copy'
-import { GrantsProgramContext } from 'src/pages/_app'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function Empty() {
@@ -67,7 +67,7 @@ function Empty() {
 		)
 	}
 
-	const { grant } = useContext(GrantsProgramContext)!
+	const { grant } = useContext(GrantProgramContext)!
 
 	const toast = useCustomToast()
 

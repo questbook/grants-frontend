@@ -1,9 +1,9 @@
 import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { defaultChainId } from 'src/constants/chains'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
 import { useGetWorkspaceDetailsQuery, useGetWorkspaceMembersByWorkspaceIdQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
-import { GrantsProgramContext } from 'src/pages/_app'
 import { GrantProgramForm, SettingsFormContextType, WorkspaceMembers } from 'src/screens/settings/_utils/types'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
@@ -27,7 +27,7 @@ const SettingsFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const [grantProgramData, setGrantProgramData] = useState<GrantProgramForm>()
 	const [workspaceMembers, setWorkspaceMembers] = useState<WorkspaceMembers>()
 
-	const { grant } = useContext(GrantsProgramContext)!
+	const { grant } = useContext(GrantProgramContext)!
 
 	const chainId = useMemo(() => {
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId

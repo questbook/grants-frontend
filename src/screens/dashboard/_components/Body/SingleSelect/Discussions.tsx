@@ -2,7 +2,8 @@ import { useContext, useMemo, useState } from 'react'
 import { Button, Checkbox, Divider, Flex, Image, Text, Textarea } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
-import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import QuickReplyButton from 'src/screens/dashboard/_components/QuickReplyButton'
 import useAddComment from 'src/screens/dashboard/_hooks/useAddComment'
 import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
@@ -193,7 +194,7 @@ function Discussions() {
 	}
 
 	const { scwAddress } = useContext(WebwalletContext)!
-	const { grant, role } = useContext(GrantsProgramContext)!
+	const { grant, role } = useContext(GrantProgramContext)!
 	const { proposals, selectedProposals, commentMap, refreshComments } = useContext(DashboardContext)!
 
 	const [step, setStep] = useState<number>()

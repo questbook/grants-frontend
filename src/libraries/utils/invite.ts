@@ -3,13 +3,15 @@ import { generateInputForAuthorisation, generateKeyPairAndAddress } from '@quest
 import { WorkspaceMemberUpdate } from '@questbook/service-validator-client'
 import { base58 } from 'ethers/lib/utils'
 import { defaultChainId } from 'src/constants/chains'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import { useGetWorkspaceMemberExistsQuery } from 'src/generated/graphql'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useChainId from 'src/hooks/utils/useChainId'
-import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { delay } from 'src/utils/generics'
 import logger from 'src/utils/logger'
@@ -92,7 +94,7 @@ export const serialiseInviteInfoIntoUrl = (info: InviteInfo) => {
 
 
 export const useMakeInvite = () => {
-	const { grant } = useContext(GrantsProgramContext)!
+	const { grant } = useContext(GrantProgramContext)!
 	const chainId = getSupportedChainIdFromWorkspace(grant?.workspace)
 
 	const { network, switchNetwork } = useNetwork()

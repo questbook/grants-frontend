@@ -17,7 +17,7 @@ import {
 	useGetAllGrantsForADaoQuery,
 	useGetDaoDetailsQuery,
 } from 'src/generated/graphql'
-import { ApiClientsContext } from 'src/pages/_app'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
 import type { DAOWorkspace } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
 import { calculateUSDValue } from 'src/utils/calculatingUtils'

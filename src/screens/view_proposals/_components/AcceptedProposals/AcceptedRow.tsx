@@ -3,7 +3,7 @@ import { Badge, Button, Checkbox, Fade, Flex, GridItem, Image, Text, Tooltip } f
 import { useRouter } from 'next/router'
 import CopyIcon from 'src/components/ui/copy_icon'
 import { defaultChainId } from 'src/constants/chains'
-import { ApiClientsContext } from 'src/pages/_app'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
 import { IApplicantData } from 'src/types'
 import getAvatar from 'src/utils/avatarUtils'
 import { getRewardAmountMilestones } from 'src/utils/formattingUtils'

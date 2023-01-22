@@ -2,9 +2,11 @@ import { useCallback, useContext } from 'react'
 import { Contract } from 'ethers'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { defaultChainId, SupportedChainId } from 'src/constants/chains'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
+import { BiconomyContext } from 'src/contexts/BiconomyContext'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import { ApiClientsContext, BiconomyContext, WebwalletContext } from 'src/pages/_app'
 import { bicoDapps, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 
 export default function useUpdateDaoVisibility() {

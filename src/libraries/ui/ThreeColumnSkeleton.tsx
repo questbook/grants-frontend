@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { Flex, Skeleton, SkeletonText } from '@chakra-ui/react'
-import { GrantsProgramContext } from 'src/pages/_app'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
 
 function ThreeColumnSkeleton() {
 	const buildComponent = () => {
@@ -48,7 +48,7 @@ function ThreeColumnSkeleton() {
 		)
 	}
 
-	const { isLoading } = useContext(GrantsProgramContext)!
+	const { isLoading } = useContext(GrantProgramContext)!
 
 	return buildComponent()
 }

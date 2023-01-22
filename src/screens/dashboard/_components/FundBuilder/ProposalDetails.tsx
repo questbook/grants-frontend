@@ -1,10 +1,10 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { Flex, Image, Text } from '@chakra-ui/react'
 import { defaultChainId } from 'src/constants/chains'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
-import { GrantsProgramContext } from 'src/pages/_app'
 import MilestoneChoose from 'src/screens/dashboard/_components/FundBuilder/MilestoneChoose'
 import { ProposalType, TokenInfo } from 'src/screens/dashboard/_utils/types'
 import { FundBuilderContext } from 'src/screens/dashboard/Context'
@@ -113,7 +113,7 @@ function ProposalDetails({ proposal, index, tokenInfo }: Props) {
 		)
 	}
 
-	const { grant } = useContext(GrantsProgramContext)!
+	const { grant } = useContext(GrantProgramContext)!
 	const { amounts, setAmounts, tos, setTos } = useContext(FundBuilderContext)!
 	const [decryptedProposal, setDecryptedProposal] = useState<ProposalType | undefined>(proposal)
 

@@ -2,13 +2,13 @@ import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Flex, Text } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import { defaultChainId, USD_ASSET } from 'src/constants/chains'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
 import { useGetPayoutsQuery } from 'src/generated/graphql'
 import { Dropdown, NewTab } from 'src/generated/icons'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import { getChainInfo } from 'src/libraries/utils/token'
-import { GrantsProgramContext } from 'src/pages/_app'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { Payout, PayoutsType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -170,7 +170,7 @@ function Payouts() {
 		)
 	}
 
-	const { grant } = useContext(GrantsProgramContext)!
+	const { grant } = useContext(GrantProgramContext)!
 
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 	const [expanded, setExpanded] = useState(false)

@@ -17,6 +17,8 @@ import {
 import { useRouter } from 'next/router'
 import Loader from 'src/components/ui/loader'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import {
 	ApplicationState,
 	GetInitialToBeReviewedApplicationGrantsQuery,
@@ -24,7 +26,6 @@ import {
 	useGetMoreToBeReviewedApplicationsLazyQuery,
 } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { IReview, IReviewFeedback } from 'src/types'
 import {
 	getFieldString,

@@ -9,7 +9,7 @@ import useUpdateDaoVisibility from 'src/hooks/useUpdateDaoVisibility'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import SearchField from 'src/libraries/ui/SearchField'
-import { ApiClientsContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext' //TODO - move to /libraries/zero-wallet/context
 import RFPGrid from 'src/screens/discover/_components/rfpGrid'
 import { DiscoverContext, DiscoverProvider } from 'src/screens/discover/Context'
 import HeroBanner from 'src/screens/discover/HeroBanner'

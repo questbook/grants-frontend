@@ -2,7 +2,8 @@ import { useContext, useMemo } from 'react'
 import { Box, Button, Divider, Flex } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
-import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import Milestones from 'src/screens/dashboard/_components/ActionList/SingleSelect/Milestones'
 import Payouts from 'src/screens/dashboard/_components/ActionList/SingleSelect/Payouts'
 import ReviewProposal from 'src/screens/dashboard/_components/ActionList/SingleSelect/ReviewProposal'
@@ -73,7 +74,7 @@ function SingleSelect() {
 
 	const router = useRouter()
 	const { scwAddress } = useContext(WebwalletContext)!
-	const { grant, role } = useContext(GrantsProgramContext)!
+	const { grant, role } = useContext(GrantProgramContext)!
 	const { setIsLinkYourMultisigModalOpen } = useContext(ModalContext)!
 	const { setIsModalOpen } = useContext(FundBuilderContext)!
 	const { proposals, selectedProposals, showSubmitReviewPanel } = useContext(DashboardContext)!

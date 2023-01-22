@@ -7,7 +7,7 @@ import {
 	useGetInitialToBeReviewedApplicationGrantsQuery,
 } from 'src/generated/graphql'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import { ApiClientsContext } from 'src/pages/_app'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
 import {
 	getSupportedChainIdFromWorkspace,
 } from 'src/utils/validationUtils'

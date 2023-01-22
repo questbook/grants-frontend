@@ -1,11 +1,11 @@
 import { useContext, useMemo, useState } from 'react'
 import { defaultChainId } from 'src/constants/chains'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
-import { GrantsProgramContext } from 'src/pages/_app'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function useLinkYourMultisig() {
-	const { grant } = useContext(GrantsProgramContext)!
+	const { grant } = useContext(GrantProgramContext)!
 
 	const chainId = useMemo(() => {
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId

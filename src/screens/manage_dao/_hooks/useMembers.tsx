@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import { useGetWorkspaceMembersByWorkspaceIdQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
-import { ApiClientsContext } from 'src/pages/_app'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function useMembers() {

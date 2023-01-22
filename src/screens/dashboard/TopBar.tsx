@@ -5,7 +5,7 @@
 // import { ArrowLeft, ArrowRight, Copy, Embed, Pencil, ShareForward } from 'src/generated/icons'
 // import useCustomToast from 'src/libraries/hooks/useCustomToast'
 // import { copyGrantLink } from 'src/libraries/utils/copy'
-// import { ApiClientsContext } from 'src/pages/_app'
+// import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
 // import { DashboardContext } from 'src/screens/dashboard/Context'
 
 // function TopBar() {

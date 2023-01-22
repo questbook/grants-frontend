@@ -1,8 +1,8 @@
 import { useContext } from 'react'
 import { Button, Divider, Flex, Text } from '@chakra-ui/react'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
 import { useSafeContext } from 'src/contexts/safeContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
-import { GrantsProgramContext } from 'src/pages/_app'
 import { FundBuilderContext, ModalContext } from 'src/screens/dashboard/Context'
 
 function MultiSelect() {
@@ -73,7 +73,7 @@ function MultiSelect() {
 		)
 	}
 
-	const { role } = useContext(GrantsProgramContext)!
+	const { role } = useContext(GrantProgramContext)!
 	const { setIsDrawerOpen } = useContext(FundBuilderContext)!
 	const { setIsSendAnUpdateModalOpen } = useContext(ModalContext)!
 	const { safeObj } = useSafeContext()

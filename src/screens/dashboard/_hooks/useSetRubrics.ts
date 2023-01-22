@@ -1,9 +1,9 @@
 import { useContext, useMemo } from 'react'
 import { defaultChainId } from 'src/constants/chains'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
 import { validateAndUploadToIpfs } from 'src/libraries/validator'
-import { GrantsProgramContext } from 'src/pages/_app'
 import { ReviewType } from 'src/types'
 import { RubricItem } from 'src/types/gen'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -14,7 +14,7 @@ interface Props {
 }
 
 function useSetRubrics({ setNetworkTransactionModalStep, setTransactionHash }: Props) {
-	const { grant } = useContext(GrantsProgramContext)!
+	const { grant } = useContext(GrantProgramContext)!
 
 	const chainId = useMemo(() => {
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId

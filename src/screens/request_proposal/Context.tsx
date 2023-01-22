@@ -1,9 +1,9 @@
 import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
 import { useGetGrantDetailsByIdQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
-import { ApiClientsContext } from 'src/pages/_app'
 import { RFPForm, RFPFormContextType, RFPFormType } from 'src/screens/request_proposal/_utils/types'
 
 const RFPFormContext = createContext<RFPFormContextType | undefined>(undefined)
@@ -32,7 +32,6 @@ const RFPFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	// const [workspaceMembers, setWorkspaceMembers] = useState<WorkspaceMembers>()
 
 	const { chainId } = useContext(ApiClientsContext)!
-
 
 	const router = useRouter()
 	const { grantId: _grantId, workspaceId: _workspaceId } = router.query

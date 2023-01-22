@@ -9,7 +9,8 @@ import {
 	getSecureChannelFromPublicKey,
 } from 'src/libraries/utils/pii'
 import { PIIForCommentType } from 'src/libraries/utils/types'
-import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -20,7 +21,7 @@ interface Props {
 }
 
 function useAddComment({ setStep, setTransactionHash }: Props) {
-	const { role } = useContext(GrantsProgramContext)!
+	const { role } = useContext(GrantProgramContext)!
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 

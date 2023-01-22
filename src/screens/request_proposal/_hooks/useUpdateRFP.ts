@@ -1,12 +1,14 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { GRANT_FACTORY_ADDRESS, WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { defaultChainId, USD_ASSET, USD_DECIMALS, USD_ICON } from 'src/constants/chains'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { validateAndUploadToIpfs } from 'src/libraries/validator'
-import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { GrantFields } from 'src/screens/request_proposal/_utils/types'
 import { RFPFormContext } from 'src/screens/request_proposal/Context'
 import { ApplicantDetailsFieldType } from 'src/types'
@@ -23,7 +25,7 @@ export default function useUpdateRFP(setCurrentStep: (step: number | undefined) 
 	const [transactionData, setTransactionData] = React.useState<any>()
 
 	const { subgraphClients } = useContext(ApiClientsContext)!
-	const { grant, role } = useContext(GrantsProgramContext)!
+	const { grant, role } = useContext(GrantProgramContext)!
 
 	const chainId = useMemo(() => {
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId

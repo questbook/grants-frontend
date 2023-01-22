@@ -3,6 +3,9 @@ import { Button, Flex, Text } from '@chakra-ui/react'
 import { generateInputForAuthorisation } from '@questbook/anon-authoriser'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useSetupProfile from 'src/libraries/hooks/useSetupProfile'
@@ -10,7 +13,6 @@ import FlushedInput from 'src/libraries/ui/FlushedInput'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
-import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 
 function SetupProfile() {
@@ -141,7 +143,7 @@ function SetupProfile() {
 	}
 
 	const { inviteInfo } = useContext(ApiClientsContext)!
-	const { setRole } = useContext(GrantsProgramContext)!
+	const { setRole } = useContext(GrantProgramContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
 	const router = useRouter()
 

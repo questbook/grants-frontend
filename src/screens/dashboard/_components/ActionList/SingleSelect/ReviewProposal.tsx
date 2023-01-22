@@ -7,7 +7,8 @@ import BackButton from 'src/libraries/ui/BackButton'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import { useLoadReview } from 'src/libraries/utils/reviews'
-import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import useSubmitReview from 'src/screens/dashboard/_hooks/useSubmitReview'
 import { ReviewData } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -285,7 +286,7 @@ function ReviewProposal() {
 		)
 	}
 
-	const { grant } = useContext(GrantsProgramContext)!
+	const { grant } = useContext(GrantProgramContext)!
 	const { selectedProposals, proposals, review, setReview, showSubmitReviewPanel, setShowSubmitReviewPanel } = useContext(DashboardContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
 

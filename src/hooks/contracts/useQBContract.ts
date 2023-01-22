@@ -1,5 +1,5 @@
 import { useContext, useMemo } from 'react'
-import { WebwalletContext } from 'src/pages/_app'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import { SupportedChainId } from 'src/constants/chains'
 import { CHAIN_INFO } from 'src/constants/chains'
 import ApplicationRegistryAbi from 'src/contracts/abi/ApplicationRegistryAbi.json'

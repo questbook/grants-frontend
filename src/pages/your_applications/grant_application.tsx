@@ -10,12 +10,13 @@ import Form from 'src/components/your_applications/grant_application/form'
 import { CHAIN_INFO, defaultChainId, USD_ASSET, USD_ICON } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import config from 'src/constants/config.json'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import {
 	GetApplicationDetailsQuery,
 	useGetApplicationDetailsQuery,
 } from 'src/generated/graphql'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { GrantApplicationProps } from 'src/types/application'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAmount, getFieldString, getRewardAmount } from 'src/utils/formattingUtils'

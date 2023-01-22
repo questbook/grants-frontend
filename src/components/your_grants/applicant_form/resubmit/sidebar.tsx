@@ -4,7 +4,7 @@ import {
 } from '@chakra-ui/react'
 import FloatingSidebar from 'src/components/ui/sidebar/floatingSidebar'
 import MailTo from 'src/components/your_grants/mail_to/mailTo'
-import { ApiClientsContext } from 'src/pages/_app'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
 import { getFieldString, getFormattedFullDateFromUnixTimestamp, truncateStringFromMiddle } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { getAssetInfo } from 'src/utils/tokenUtils'

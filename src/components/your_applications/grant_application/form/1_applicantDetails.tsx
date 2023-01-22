@@ -3,7 +3,7 @@ import {
 	Box, Text,
 } from '@chakra-ui/react'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
-import { ApiClientsContext } from 'src/pages/_app'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
 import { isValidEthereumAddress } from 'src/utils/validationUtils'
 
 function ApplicantDetails({

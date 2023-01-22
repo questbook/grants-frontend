@@ -6,7 +6,9 @@ import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { validateAndUploadToIpfs } from 'src/libraries/validator'
-import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
 import { GrantProgramForm } from 'src/screens/settings/_utils/types'
 import getErrorMessage from 'src/utils/errorUtils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
@@ -22,7 +24,7 @@ export default function useUpdateGrantProgram(setCurrentStep: (step: number | un
 	const { nonce } = useQuestbookAccount()
 
 	const { subgraphClients } = useContext(ApiClientsContext)!
-	const { grant } = useContext(GrantsProgramContext)!
+	const { grant } = useContext(GrantProgramContext)!
 
 	const chainId = useMemo(() => {
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId

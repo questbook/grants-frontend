@@ -6,6 +6,7 @@ import { SupportedPayouts } from '@questbook/supported-safes'
 import router from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
 import { NetworkType } from 'src/constants/Networks'
+import { GrantProgramContext } from 'src/contexts/GrantProgramContext'
 import { Settings as SettingsIcon } from 'src/generated/icons'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
@@ -13,7 +14,6 @@ import logger from 'src/libraries/logger'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
-import { GrantsProgramContext } from 'src/pages/_app'
 import VerifySignerModal from 'src/screens/request_proposal/_components/VerifySignerModal'
 import AddMemberButton from 'src/screens/settings/_components/AddMemberButton'
 import { DropdownIcon } from 'src/screens/settings/_components/DropdownIcon'
@@ -505,7 +505,7 @@ function Settings() {
 	}
 
 	const { workspace, workspaceMembers, grantProgramData, setGrantProgramData } = useContext(SettingsFormContext)!
-	const { grant } = useContext(GrantsProgramContext)!
+	const { grant } = useContext(GrantProgramContext)!
 
 	const [imageFile, setImageFile] = useState<{file: File | null, hash?: string}>({ file: null })
 	const [searchString, setSearchString] = useState('')

@@ -10,7 +10,7 @@ import Loader from 'src/components/ui/loader'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import FilterTable from 'src/libraries/ui/FilterTable'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
-import { ApiClientsContext } from 'src/pages/_app'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
 import WorkspaceMembers from 'src/screens/manage_dao/members'
 import Settings from 'src/screens/manage_dao/settings'
 

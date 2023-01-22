@@ -6,9 +6,10 @@ import {
 	arrayify,
 	keccak256,
 } from 'ethers/lib/utils'
+import { ApiClientsContext } from 'src/contexts/ApiClientsContext'
+import { WebwalletContext } from 'src/contexts/WebwalletContext'
 import { GetApplicationDetailsQuery, useGetGrantManagersWithPublicKeyQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import MAIN_LOGGER from 'src/utils/logger'
 
