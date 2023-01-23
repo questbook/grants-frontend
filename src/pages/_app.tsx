@@ -117,11 +117,11 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	)
 }
 
-MyApp.getInitialProps = async(appContext: AppContext) => {
-	// calls page's `getInitialProps` and fills `appProps.pageProps`
-	const appProps = await App.getInitialProps(appContext)
-	return { ...appProps }
-}
+// MyApp.getInitialProps = async(appContext: AppContext) => {
+// 	// calls page's `getInitialProps` and fills `appProps.pageProps`
+// 	const appProps = await App.getInitialProps(appContext)
+// 	return { ...appProps }
+// }
 
 // export default dynamic(() => Promise.resolve(MyApp), {
 //   ssr: false,
