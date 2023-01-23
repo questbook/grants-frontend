@@ -6,6 +6,7 @@ import logger from 'src/libraries/logger'
 import { GrantsProgramContext } from 'src/pages/_app'
 import { GrantProgramForm, SettingsFormContextType, WorkspaceMembers } from 'src/screens/settings/_utils/types'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { getSafeURL } from 'src/v2/utils/gnosisUtils'
 
 const SettingsFormContext = createContext<SettingsFormContextType | undefined>(undefined)
 
@@ -18,6 +19,7 @@ const SettingsFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 					workspaceMembers: workspaceMembers!,
 					grantProgramData: grantProgramData!,
 					setGrantProgramData: setGrantProgramData!,
+					safeURL: safeURL!
 				}
 			}>
 			{children}
@@ -26,6 +28,7 @@ const SettingsFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 	const [grantProgramData, setGrantProgramData] = useState<GrantProgramForm>()
 	const [workspaceMembers, setWorkspaceMembers] = useState<WorkspaceMembers>()
+	const [safeURL, setSafeURL] = useState<string>('')
 
 	const { grant } = useContext(GrantsProgramContext)!
 
@@ -73,6 +76,8 @@ const SettingsFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		})
 		logger.info('Workspace members fetched', response)
 		setWorkspaceMembers(response[0]?.workspaceMembers)
+		const safeUrl = getSafeURL(grant?.workspace.safe?.address!, grant?.workspace.safe?.chainId!)
+		setSafeURL(safeUrl)
 		return workspaceMembers
 	}, [chainId, grant])
 

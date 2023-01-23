@@ -5,20 +5,24 @@ import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
+import logger from 'src/libraries/logger'
 import { GrantType } from 'src/screens/discover/_utils/types'
 import getAvatar from 'src/utils/avatarUtils'
 import { extractDateFromDateTime, titleCase } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
+
 type RFPCardProps = {
 	grant: GrantType
 	isVisible: boolean
 	onVisibilityUpdate?: (visibleState: boolean) => void
+	onSectionGrantsUpdate?: () => void
 	chainId: SupportedChainId | undefined
     role?: string
+	changedVisibilityState?: string
 }
 
-function RFPCard({ grant, chainId, role, onVisibilityUpdate, isVisible }: RFPCardProps) {
+function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpdate, isVisible, changedVisibilityState }: RFPCardProps) {
 	const buildComponent = () => (
 		<Box
 			w='100%'
@@ -72,32 +76,58 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, isVisible }: RFPCar
 						objectFit='cover'
 						borderRadius='4px'
 					/>
-					{
-						role && (
-							<Text
-								fontWeight='500'
-								fontSize='12px'
-								color='black.3'
-								bg='gray.2'
-								borderRadius='6px'
-								py={1.5}
-								px={3}
-							>
-								{titleCase(role)}
-							</Text>
-						)
-					}
+					<Flex gap={2}>
+						<Text
+							variant={isOpen ? 'openTag' : 'closedTag'}
+						>
+							{isOpen ? 'Open' : 'Closed'}
+						</Text>
+						{
+							role && (
+								<Text
+									fontWeight='500'
+									fontSize='12px'
+									color='black.3'
+									bg='gray.2'
+									borderRadius='6px'
+									py={1.5}
+									px={3}
+								>
+									{titleCase(role)}
+								</Text>
+							)
+						}
+					</Flex>
+
 					{
 						isQbAdmin && (
-							<Switch
-								size='md'
-								mx='10px'
-								height='20px'
-								borderRadius={0}
-								colorScheme='green'
-								isChecked={isVisible}
-								onChange={() => onVisibilityUpdate?.(!isVisible)}
-							/>
+							<>
+								<Switch
+									size='md'
+									// mx='10px'
+									height='20px'
+									borderRadius={0}
+									colorScheme='green'
+									isChecked={isVisible}
+									disabled={changedVisibilityState === 'checkbox'}
+									onChange={
+										() => {
+											onVisibilityUpdate?.(!isVisible)
+										}
+									}
+								/>
+								<Switch
+									disabled={changedVisibilityState === 'toggle' || !isVisible}
+									onChange={
+										() => {
+											logger.info('clicked')
+											onSectionGrantsUpdate?.()
+										}
+									}
+								>
+									Add to Section
+								</Switch>
+							</>
 						)
 					}
 				</Flex>
@@ -113,11 +143,11 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, isVisible }: RFPCar
 							variant='v2_title'
 							fontSize='18px'
 							fontWeight='500'
-							noOfLines={3}
+							noOfLines={2}
 						>
 							{grant.title}
 
-							<Text
+							{/* <Text
 								color={isOpen ? 'accent.carrot' : 'gray.5'}
 								background={isOpen ? 'rgba(242, 148, 62, 0.2)' : 'gray.2'}
 								borderRadius='2px'
@@ -129,7 +159,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, isVisible }: RFPCar
 								display='inline-block'
 							>
 								{isOpen ? 'Open' : 'Closed'}
-							</Text>
+							</Text> */}
 						</Text>
 					</Flex>
 

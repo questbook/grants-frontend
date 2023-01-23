@@ -2748,6 +2748,8 @@ export type Query = {
   rubricItem?: Maybe<RubricItem>;
   rubricItems: Array<RubricItem>;
   rubrics: Array<Rubric>;
+  section?: Maybe<Section>;
+  sections: Array<Section>;
   social?: Maybe<Social>;
   socials: Array<Social>;
   token?: Maybe<Token>;
@@ -3177,6 +3179,24 @@ export type QueryRubricsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<Rubric_Filter>;
+};
+
+
+export type QuerySectionArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QuerySectionsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Section_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Section_Filter>;
 };
 
 
@@ -3629,6 +3649,93 @@ export enum Rubric_OrderBy {
   UpdatedAtS = 'updatedAtS'
 }
 
+export type Section = {
+  __typename?: 'Section';
+  /** grants under this section */
+  grants: Array<Grant>;
+  id: Scalars['ID'];
+  /** IPFS hash of the section logo */
+  sectionLogoIpfsHash: Scalars['String'];
+  /** Name of the section */
+  sectionName: Scalars['String'];
+};
+
+
+export type SectionGrantsArgs = {
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Grant_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<Grant_Filter>;
+};
+
+export type Section_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  grants?: InputMaybe<Array<Scalars['String']>>;
+  grants_?: InputMaybe<Grant_Filter>;
+  grants_contains?: InputMaybe<Array<Scalars['String']>>;
+  grants_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  grants_not?: InputMaybe<Array<Scalars['String']>>;
+  grants_not_contains?: InputMaybe<Array<Scalars['String']>>;
+  grants_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  sectionLogoIpfsHash?: InputMaybe<Scalars['String']>;
+  sectionLogoIpfsHash_contains?: InputMaybe<Scalars['String']>;
+  sectionLogoIpfsHash_contains_nocase?: InputMaybe<Scalars['String']>;
+  sectionLogoIpfsHash_ends_with?: InputMaybe<Scalars['String']>;
+  sectionLogoIpfsHash_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  sectionLogoIpfsHash_gt?: InputMaybe<Scalars['String']>;
+  sectionLogoIpfsHash_gte?: InputMaybe<Scalars['String']>;
+  sectionLogoIpfsHash_in?: InputMaybe<Array<Scalars['String']>>;
+  sectionLogoIpfsHash_lt?: InputMaybe<Scalars['String']>;
+  sectionLogoIpfsHash_lte?: InputMaybe<Scalars['String']>;
+  sectionLogoIpfsHash_not?: InputMaybe<Scalars['String']>;
+  sectionLogoIpfsHash_not_contains?: InputMaybe<Scalars['String']>;
+  sectionLogoIpfsHash_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  sectionLogoIpfsHash_not_ends_with?: InputMaybe<Scalars['String']>;
+  sectionLogoIpfsHash_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  sectionLogoIpfsHash_not_in?: InputMaybe<Array<Scalars['String']>>;
+  sectionLogoIpfsHash_not_starts_with?: InputMaybe<Scalars['String']>;
+  sectionLogoIpfsHash_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  sectionLogoIpfsHash_starts_with?: InputMaybe<Scalars['String']>;
+  sectionLogoIpfsHash_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  sectionName?: InputMaybe<Scalars['String']>;
+  sectionName_contains?: InputMaybe<Scalars['String']>;
+  sectionName_contains_nocase?: InputMaybe<Scalars['String']>;
+  sectionName_ends_with?: InputMaybe<Scalars['String']>;
+  sectionName_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  sectionName_gt?: InputMaybe<Scalars['String']>;
+  sectionName_gte?: InputMaybe<Scalars['String']>;
+  sectionName_in?: InputMaybe<Array<Scalars['String']>>;
+  sectionName_lt?: InputMaybe<Scalars['String']>;
+  sectionName_lte?: InputMaybe<Scalars['String']>;
+  sectionName_not?: InputMaybe<Scalars['String']>;
+  sectionName_not_contains?: InputMaybe<Scalars['String']>;
+  sectionName_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  sectionName_not_ends_with?: InputMaybe<Scalars['String']>;
+  sectionName_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  sectionName_not_in?: InputMaybe<Array<Scalars['String']>>;
+  sectionName_not_starts_with?: InputMaybe<Scalars['String']>;
+  sectionName_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  sectionName_starts_with?: InputMaybe<Scalars['String']>;
+  sectionName_starts_with_nocase?: InputMaybe<Scalars['String']>;
+};
+
+export enum Section_OrderBy {
+  Grants = 'grants',
+  Id = 'id',
+  SectionLogoIpfsHash = 'sectionLogoIpfsHash',
+  SectionName = 'sectionName'
+}
+
 export type Social = {
   __typename?: 'Social';
   id: Scalars['ID'];
@@ -3747,6 +3854,8 @@ export type Subscription = {
   rubricItem?: Maybe<RubricItem>;
   rubricItems: Array<RubricItem>;
   rubrics: Array<Rubric>;
+  section?: Maybe<Section>;
+  sections: Array<Section>;
   social?: Maybe<Social>;
   socials: Array<Social>;
   token?: Maybe<Token>;
@@ -4176,6 +4285,24 @@ export type SubscriptionRubricsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<Rubric_Filter>;
+};
+
+
+export type SubscriptionSectionArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionSectionsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Section_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Section_Filter>;
 };
 
 
@@ -5598,6 +5725,11 @@ export type GetGrantProgramDetailsQueryVariables = Exact<{
 
 
 export type GetGrantProgramDetailsQuery = { __typename?: 'Query', grantProgram: Array<{ __typename?: 'Grant', id: string, title: string, workspace: { __typename?: 'Workspace', id: string, title: string } }> };
+
+export type GetSectionGrantsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetSectionGrantsQuery = { __typename?: 'Query', sections: Array<{ __typename?: 'Section', sectionName: string, sectionLogoIpfsHash: string, id: string, grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, deadlineS: number, deadline?: string | null, numberOfApplications: number, createdAtS: number, updatedAtS?: number | null, applications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, tokenUSDValue?: string | null, asset: string, tokenName?: string | null }>, workspace: { __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, totalGrantFundingDisbursedUSD: number, supportedNetworks: Array<SupportedNetwork> }, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } }> }> };
 
 export type GetWorkspacesAndBuilderGrantsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -9338,6 +9470,86 @@ export type GetGrantProgramDetailsLazyQueryHookResult = ReturnType<typeof useGet
 export type GetGrantProgramDetailsQueryResult = Apollo.QueryResult<GetGrantProgramDetailsQuery, GetGrantProgramDetailsQueryVariables>;
 export function refetchGetGrantProgramDetailsQuery(variables: GetGrantProgramDetailsQueryVariables) {
       return { query: GetGrantProgramDetailsDocument, variables: variables }
+    }
+export const GetSectionGrantsDocument = gql`
+    query getSectionGrants {
+  sections {
+    grants {
+      id
+      title
+      applications {
+        id
+        applicantId
+        state
+      }
+      acceptingApplications
+      fundTransfers {
+        amount
+        type
+        tokenUSDValue
+        asset
+        tokenName
+      }
+      workspace {
+        id
+        title
+        isVisible
+        logoIpfsHash
+        totalGrantFundingDisbursedUSD
+        supportedNetworks
+      }
+      reward {
+        committed
+        id
+        asset
+        token {
+          address
+          label
+          decimal
+          iconHash
+        }
+      }
+      deadlineS
+      deadline
+      numberOfApplications
+      createdAtS
+      updatedAtS
+    }
+    sectionName
+    sectionLogoIpfsHash
+    id
+  }
+}
+    `;
+
+/**
+ * __useGetSectionGrantsQuery__
+ *
+ * To run a query within a React component, call `useGetSectionGrantsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSectionGrantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSectionGrantsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetSectionGrantsQuery(baseOptions?: Apollo.QueryHookOptions<GetSectionGrantsQuery, GetSectionGrantsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetSectionGrantsQuery, GetSectionGrantsQueryVariables>(GetSectionGrantsDocument, options);
+      }
+export function useGetSectionGrantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSectionGrantsQuery, GetSectionGrantsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetSectionGrantsQuery, GetSectionGrantsQueryVariables>(GetSectionGrantsDocument, options);
+        }
+export type GetSectionGrantsQueryHookResult = ReturnType<typeof useGetSectionGrantsQuery>;
+export type GetSectionGrantsLazyQueryHookResult = ReturnType<typeof useGetSectionGrantsLazyQuery>;
+export type GetSectionGrantsQueryResult = Apollo.QueryResult<GetSectionGrantsQuery, GetSectionGrantsQueryVariables>;
+export function refetchGetSectionGrantsQuery(variables?: GetSectionGrantsQueryVariables) {
+      return { query: GetSectionGrantsDocument, variables: variables }
     }
 export const GetWorkspacesAndBuilderGrantsDocument = gql`
     query getWorkspacesAndBuilderGrants($first: Int, $skip: Int, $actorId: Bytes!) {

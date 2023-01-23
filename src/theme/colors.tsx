@@ -18,6 +18,9 @@ const colors = {
 		2: '#2B2929',
 		3: '#53514F'
 	},
+	green:{
+		1: '#5AB711'
+	},
 	accent: {
 		azure: '#0A84FF',
 		jeans: '#56C7EC',
