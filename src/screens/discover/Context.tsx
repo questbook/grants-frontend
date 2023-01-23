@@ -206,26 +206,6 @@ const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			}
 		}
 
-		// const output = []
-
-		// allSectionGrants.forEach((item) => {
-		// 	const existing = output.filter((v, i) => {
-		// 		return v.name === item.name
-		// 	})
-		// 	if(existing.length) {
-		// 		var existingIndex = output.indexOf(existing[0])
-		// 		output[existingIndex].value = output[existingIndex].value.concat(item.value)
-		// 	} else {
-		// 		if(typeof item.value === 'string') {
-		// 			item.value = [item.value]
-		// 		}
-
-		// 		output.push(item)
-		// 	}
-		// })
-
-		// logger.info({ result }, 'Result (DISCOVER CONTEXT)')
-
 		logger.info({ allSectionGrants }, 'All section grants (DISCOVER CONTEXT)')
 
 		setSectionGrants(allSectionGrants)
