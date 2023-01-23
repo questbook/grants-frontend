@@ -195,6 +195,37 @@ const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			}
 		}
 
+		// move section grant with key compound to 0th position
+		for(let i = 0; i < allSectionGrants.length; i++) {
+			const key = Object.keys(allSectionGrants[i])[0]
+			if(key === 'Compound') {
+				const temp = allSectionGrants[0]
+				allSectionGrants[0] = allSectionGrants[i]
+				allSectionGrants[i] = temp
+				break
+			}
+		}
+
+		// const output = []
+
+		// allSectionGrants.forEach((item) => {
+		// 	const existing = output.filter((v, i) => {
+		// 		return v.name === item.name
+		// 	})
+		// 	if(existing.length) {
+		// 		var existingIndex = output.indexOf(existing[0])
+		// 		output[existingIndex].value = output[existingIndex].value.concat(item.value)
+		// 	} else {
+		// 		if(typeof item.value === 'string') {
+		// 			item.value = [item.value]
+		// 		}
+
+		// 		output.push(item)
+		// 	}
+		// })
+
+		// logger.info({ result }, 'Result (DISCOVER CONTEXT)')
+
 		logger.info({ allSectionGrants }, 'All section grants (DISCOVER CONTEXT)')
 
 		setSectionGrants(allSectionGrants)
