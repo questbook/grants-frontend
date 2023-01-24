@@ -437,9 +437,17 @@ function ProposalForm() {
 											...MILESTONE_INPUT_STYLE[1],
 											value: milestone?.amount > 0 ? milestone?.amount : '',
 											onChange: (e) => {
-												const copy = { ...form }
-												copy.milestones[index] = { ...copy.milestones[index], amount: parseFloat(e.target.value) }
-												setForm(copy)
+												if(e.target.value?.includes('.')) {
+													return
+												} else {
+													try {
+														const copy = { ...form }
+														copy.milestones[index] = { ...copy.milestones[index], amount: parseInt(e.target.value) }
+														setForm(copy)
+													} catch(e) {
+														logger.error(e)
+													}
+												}
 											}
 										},
 									]
