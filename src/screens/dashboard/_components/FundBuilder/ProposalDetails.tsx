@@ -79,9 +79,21 @@ function ProposalDetails({ proposal, index, tokenInfo }: Props) {
 					value={amounts?.[index]}
 					onChange={
 						(e) => {
-							const copy = [...amounts]
-							copy[index] = parseFloat(e.target.value)
-							setAmounts(copy)
+							if(e.target.value?.includes('.')) {
+								return
+							} else {
+								try {
+									const copy = [...amounts]
+									copy[index] = parseInt(e.target.value)
+									setAmounts(copy)
+									// const val = parseInt(e.target.value)
+									// logger.info({ entered: e.target.value, parsed: val }, 'FundBuilderModal: entered amount')
+									// setAmounts([val])
+								} catch(e) {
+									logger.error(e, 'FundBuilderModal: error parsing entered amount')
+								}
+							}
+
 						}
 					}
 					fontSize='16px'
