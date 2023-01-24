@@ -18,60 +18,37 @@ function Discussions() {
 		return (
 			<Flex
 				px={5}
-				py={4}
 				w='100%'
 				boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
 				bg='white'
 				direction='column'>
-				<Text fontWeight='500'>
-					Discussion
-				</Text>
-				{
-					proposalTags?.length > 0 && (
-						<Flex
-							mt={4}
-							w='100%'>
-							<Image
-								src='/v2/images/qb-discussion.svg'
-								boxSize='36px' />
-							<Flex
-								ml={4}
-								direction='column'>
-								<Text
-									variant='v2_metadata'
-									fontWeight='500'
-									color='gray.6'>
-									FEW WAYS TO START THE DISCUSSION.
-								</Text>
-								<Flex
-									mt={2}
-									gap={3}>
-									{
-										proposalTags?.map((tag, index) => {
-											return (
-												<QuickReplyButton
-													key={index}
-													tag={tag}
-													isSelected={tag.id === selectedTag}
-													onClick={
-														() => {
-															if(selectedTag) {
-																setSelectedTag(undefined)
-															} else {
-																setSelectedTag(tag.id)
-															}
-														}
-													}
-													isDisabled={(selectedTag !== undefined && selectedTag !== tag.id) || (isCommentPrivate && !tag.isPrivate)}
-													index={index} />
-											)
-										})
+				<Flex
+					justify='center'
+					gap={4}>
+					{
+						proposalTags?.map((tag, index) => {
+							return (
+								<QuickReplyButton
+									key={index}
+									tag={tag}
+									isSelected={tag.id === selectedTag}
+									onClick={
+										() => {
+											if(selectedTag) {
+												setSelectedTag(undefined)
+											} else {
+												setSelectedTag(tag.id)
+											}
+										}
 									}
-								</Flex>
-							</Flex>
-						</Flex>
-					)
-				}
+									isDisabled={(selectedTag !== undefined && selectedTag !== tag.id) || (isCommentPrivate && !tag.isPrivate)}
+									index={index} />
+							)
+						})
+					}
+				</Flex>
+
+
 				<Flex
 					mt={4}
 					w='100%'>
@@ -91,7 +68,7 @@ function Discussions() {
 									setText(e.target.value)
 								}
 							}
-							placeholder='Add a comment here' />
+							placeholder={placeholder} />
 						<Flex
 							mt={4}
 							align='center'>
@@ -199,10 +176,9 @@ function Discussions() {
 	const [step, setStep] = useState<number>()
 	const [, setTransactionHash] = useState('')
 	const [isCommentPrivate, setIsCommentPrivate] = useState<boolean>(false)
-
 	const [ selectedTag, setSelectedTag ] = useState<string>()
-
 	const [ text, setText ] = useState<string>('')
+
 	const { addComment, isBiconomyInitialised } = useAddComment({ setStep, setTransactionHash })
 
 	const proposal = useMemo(() => {
@@ -228,6 +204,21 @@ function Discussions() {
 
 		return text === ''
 	}, [text, step])
+
+	const placeholder = useMemo(() => {
+		switch (selectedTag) {
+		case 'accept':
+			return 'Share your thoughts on why you are accepting this proposal'
+		case 'reject':
+			return 'Let the builder know why you are rejecting this proposal here'
+		case 'resubmit':
+			return 'Suggest changes to the proposal here'
+		case 'interview':
+			return 'Paste an interview link here'
+		default:
+			return 'Add a general comment'
+		}
+	}, [selectedTag])
 
 	const getCommentDisplayName = (comment: CommentType) => {
 		if(comment.role === 'admin' || comment.role === 'reviewer') {
