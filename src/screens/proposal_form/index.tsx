@@ -185,13 +185,7 @@ function ProposalForm() {
 								{grant?.title}
 							</Text>
 							<Text
-								color={isOpen ? 'accent.carrot' : 'gray.5'}
-								background={isOpen ? 'rgba(242, 148, 62, 0.2)' : 'gray.2'}
-								borderRadius='2px'
-								px={2}
-								py={1}
-								fontSize='12px'
-								fontWeight='500'
+								variant={isOpen ? 'openTag' : 'closedTag'}
 							>
 								{isOpen}
 							</Text>

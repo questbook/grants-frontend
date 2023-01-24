@@ -186,7 +186,7 @@ export enum ReviewType {
   'Rubrics'
 }
 
-export type Roles = 'admin' | 'reviewer' | 'builder' | 'community'
+export type Roles = 'admin' | 'reviewer' | 'builder' | 'community' | 'owner'
 
 export type GrantType = GetGrantQuery['grant']
 
