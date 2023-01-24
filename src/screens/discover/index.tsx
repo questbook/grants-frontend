@@ -146,7 +146,7 @@ function Discover() {
 
 	// const discoverRef = useRef<HTMLDivElement>(null)
 
-	const { grantsForYou, grantsForAll, grantProgram, sectionGrants } = useContext(DiscoverContext)!
+	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, isLoading } = useContext(DiscoverContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString, setSearchString } = useContext(DAOSearchContext)!
 
@@ -281,7 +281,7 @@ function Discover() {
 										</Text>
 									</Box>
 									{
-										grantsForYou.length ?
+										!isLoading ?
 											(
 												<>
 

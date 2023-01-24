@@ -348,7 +348,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 		logger.info({ grant, scwAddress, role, proposals }, 'Loading state set to false')
 		setIsLoading(false)
-	}, [proposals])
+	}, [proposals, scwAddress, grant, role])
 
 	return (
 		<DashboardContext.Provider

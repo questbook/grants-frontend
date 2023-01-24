@@ -20,4 +20,5 @@ export type DiscoverContextType = {
     sectionGrants: SectionGrants | undefined
     search: string
     setSearch: (search: string) => void
+    isLoading: boolean
 }
