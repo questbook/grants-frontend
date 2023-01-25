@@ -137,14 +137,7 @@ function NavBar({ bg = 'gray.1' }: Props) {
 							</Flex>
 
 							<Text
-								px={2}
-								py={1}
-								ml={2}
-								alignSelf='center'
-								variant='v2_metadata'
-								fontWeight='500'
-								bg={grant?.acceptingApplications ? 'rgba(242, 148, 62, 0.2)' : 'accent.columbia'}
-								color={grant?.acceptingApplications ? 'accent.carrot' : 'accent.azure'}>
+								variant={grant?.acceptingApplications ? 'openTag' : 'closedTag'}>
 								{grant?.acceptingApplications ? 'Open' : 'Closed'}
 							</Text>
 						</Flex>
