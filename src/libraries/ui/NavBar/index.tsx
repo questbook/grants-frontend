@@ -155,7 +155,7 @@ function NavBar({ bg = 'gray.1' }: Props) {
 				<Box ml={4} />
 
 				{
-					(shouldShowTitle && role === 'admin' && grant?.acceptingApplications && grant?.applications?.length === 0) && (
+					(shouldShowTitle && role === 'admin' && grant?.acceptingApplications) && (
 						<Pencil
 							cursor='pointer'
 							boxSize='20px'
