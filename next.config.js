@@ -37,6 +37,4 @@ const nextConfig = {
 	},
 }
 
-module.exports = withSentryConfig(nextConfig)
-
-module.exports = withYaml(nextConfig)
+module.exports = withSentryConfig(withYaml(nextConfig))
