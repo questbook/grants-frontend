@@ -303,7 +303,7 @@ function FundBuilderModal() {
 			const temp = [{
 				from: safeObj?.safeAddress?.toString(),
 				to: tos?.[0],
-				applicationId: proposal?.id,
+				applicationId: proposal?.id ? parseInt(proposal.id, 16) : 0,
 				selectedMilestone: milestoneIndices?.[0],
 				selectedToken: { tokenName: selectedTokenInfo?.tokenName, info: selectedTokenInfo?.info },
 				amount: amounts?.[0],

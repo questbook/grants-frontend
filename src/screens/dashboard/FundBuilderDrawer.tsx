@@ -235,7 +235,7 @@ function FundBuilderDrawer() {
 				return {
 					from: safeObj?.safeAddress?.toString(),
 					to: to,
-					applicationId: proposals[i]?.id,
+					applicationId: proposals[i]?.id ? parseInt(proposals[i].id, 16) : 0,
 					selectedMilestone: milestoneIndices?.[i],
 					selectedToken: { tokenName: selectedTokenInfo?.tokenName, info: selectedTokenInfo?.info },
 					amount: amounts?.[i],
