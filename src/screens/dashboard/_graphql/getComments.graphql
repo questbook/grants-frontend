@@ -25,6 +25,7 @@ query getComments($grantId: String!, $first: Int, $skip: Int) {
     application {
       id
       applicantPublicKey
+      applicantId
     }
   }
 }
