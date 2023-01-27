@@ -269,10 +269,9 @@ function Discover() {
 								</Center>
 							) : (
 								<>
-									{/* <Box
-										display={grantsForYou?.length ? '' : 'none'}
-									> */}
-									<Box my={4}>
+									<Box
+										my={4}
+										display={grantsForYou?.length ? '' : 'none'}>
 										<Text
 											fontWeight='500'
 											fontSize='24px'
@@ -298,6 +297,7 @@ function Discover() {
 														width='100%'
 														borderColor='gray.3'
 														mt={8}
+														display={grantsForYou?.length ? '' : 'none'}
 										 />
 												</>
 											) : (
