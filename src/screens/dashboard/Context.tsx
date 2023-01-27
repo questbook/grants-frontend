@@ -127,21 +127,24 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		for(const comment of allComments) {
 			logger.info({ comment }, 'comment before decrypt (COMMENT DECRYPT)')
 			if(comment.isPrivate) {
-				if(comment.id.indexOf(scwAddress.toLowerCase()) === -1) {
-					logger.info({ comment }, 'public key not found (COMMENT DECRYPT)')
-					continue
-				}
+				logger.info({ comment }, 'PRIVATE COMMENT')
+
+				// if(comment.commentsEncryptedData?. .indexOf(scwAddress.toLowerCase()) === -1) {
+				// 	logger.info({ comment }, 'public key not found (COMMENT DECRYPT)')
+				// 	continue
+				// }
 
 				const sender = comment.id.split('.')[1]
 				let channel: {
-				encrypt(plaintext: string): Promise<string>
-				decrypt(ciphertext: string): Promise<string>
-			}
+					encrypt(plaintext: string): Promise<string>
+					decrypt(ciphertext: string): Promise<string>
+				}
+				logger.info({ sender, scwAddress: scwAddress.toLowerCase() }, 'SENDER (COMMENT DECRYPT)')
 				if(sender === scwAddress.toLowerCase()) {
 					channel = await getSecureChannelFromPublicKey(webwallet, webwallet.publicKey, getKeyForApplication(comment.application.id))
 					logger.info({ privateKey: webwallet.privateKey, publicKey: webwallet.publicKey, role }, 'CHANNEL CONFIG (COMMENT DECRYPT)')
 				} else {
-					const publicKey = comment.application.applicantPublicKey
+					const publicKey = comment.application.applicantId === sender ? comment.application.applicantPublicKey : comment.workspace.members.find(m => m.actorId === sender)?.publicKey
 					if(!publicKey) {
 						continue
 					}
@@ -152,6 +155,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 				}
 
 				for(const encrypted of comment.commentsEncryptedData?.filter(c => c.id.indexOf(scwAddress.toLowerCase()) !== -1) ?? []) {
+					logger.info({ encrypted }, 'DECRYPTING NOW (COMMENT DECRYPT)')
 					try {
 						const decryptedData = JSON.parse(await channel.decrypt(encrypted.data))
 						logger.info({ decryptedData }, 'comment decrypted (COMMENT DECRYPT)')
@@ -288,6 +292,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 						application: {
 							id: proposal.id,
 							applicantPublicKey: proposal.applicantPublicKey,
+							applicantId: proposal.applicantId
 						},
 						workspace: proposal.grant.workspace,
 						tag: action.state,
