@@ -33,7 +33,7 @@ function SingleSelect() {
 							px={5}
 							py={4}>
 							<Button
-								disabled={role === 'builder' ? (proposal?.applicantId !== scwAddress?.toLowerCase() || proposal?.state !== 'submitted') : proposal?.state === 'submitted'}
+								disabled={role === 'builder' ? (proposal?.applicantId !== scwAddress?.toLowerCase() || (proposal?.state !== 'submitted' && proposal?.state !== 'resubmit')) : proposal?.state === 'submitted'}
 								w='100%'
 								variant='primaryMedium'
 								onClick={
