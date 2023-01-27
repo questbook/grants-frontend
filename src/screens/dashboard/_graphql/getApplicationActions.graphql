@@ -1,6 +1,7 @@
 query getApplicationActions($grantId: String!) {
   grantApplications(where: { grant: $grantId }) {
     id
+    applicantId
     applicantPublicKey
     actions {
       id

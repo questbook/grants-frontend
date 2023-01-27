@@ -1,7 +1,7 @@
 import { RefObject, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Box, Button, Checkbox, Divider, Flex, Image, InputGroup, InputRightElement, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text } from '@chakra-ui/react'
 import { defaultChainId } from 'src/constants/chains'
-import { CheckDouble, Dropdown, Pencil } from 'src/generated/icons'
+import { CheckDouble, Close, Dropdown, Pencil } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import DashboardInput from 'src/screens/dashboard/_components/DashboardInput'
@@ -403,9 +403,8 @@ function Reviews() {
 				<Text variant='v2_body'>
 					{item.title}
 				</Text>
-				<Image
+				<Close
 					ml='auto'
-					src='/v2/icons/delete.svg'
 					boxSize='16px'
 					cursor='pointer'
 					onClick={
@@ -501,8 +500,8 @@ function Reviews() {
 
 												/>
 												<InputRightElement>
-													<Image
-														src='/v2/icons/delete.svg'
+													<Close
+
 														cursor='pointer'
 														onClick={
 															() => {
