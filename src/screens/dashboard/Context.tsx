@@ -65,12 +65,12 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const [showSubmitReviewPanel, setShowSubmitReviewPanel] = useState<boolean>(false)
 
 	const getGrant = useCallback(async() => {
-		if(!grantId || chainId === -1 || typeof grantId !== 'string' || !scwAddress) {
+		if(!grantId || chainId === -1 || typeof grantId !== 'string') {
 			return 'params-missing'
 		}
 
 		logger.info({ grantId, scwAddress }, 'Getting grant (GET GRANT)')
-		const details = await fetchGrantDetails({ grantId, actorId: scwAddress.toLowerCase() }, true)
+		const details = await fetchGrantDetails({ grantId, actorId: scwAddress ? scwAddress.toLowerCase() : '0x0000000000000000000000000000000000000000' }, true)
 		logger.info({ details }, 'Grant details (GET GRANT)')
 		if(!details?.[0]?.grant) {
 			return 'no-grant-in-query'
@@ -93,7 +93,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		}
 
 		for(const member of _grant?.workspace?.members ?? []) {
-			if(member.actorId === scwAddress.toLowerCase()) {
+			if(member.actorId === (scwAddress ? scwAddress.toLowerCase() : '0x0000000000000000000000000000000000000000')) {
 				logger.info({ member }, 'Member (ROLE)')
 				possibleRoles.push(member.accessLevel === 'reviewer' ? 'reviewer' : 'admin')
 				break
@@ -119,7 +119,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	}, [grantId, chainId, scwAddress])
 
 	const handleComments = async(allComments: CommentType[]) => {
-		if(!webwallet || !scwAddress) {
+		if(!webwallet) {
 			return {}
 		}
 
@@ -139,8 +139,8 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 					encrypt(plaintext: string): Promise<string>
 					decrypt(ciphertext: string): Promise<string>
 				}
-				logger.info({ sender, scwAddress: scwAddress.toLowerCase() }, 'SENDER (COMMENT DECRYPT)')
-				if(sender === scwAddress.toLowerCase()) {
+				logger.info({ sender, scwAddress: (scwAddress ? scwAddress.toLowerCase() : '0x0000000000000000000000000000000000000000') }, 'SENDER (COMMENT DECRYPT)')
+				if(sender === (scwAddress ? scwAddress.toLowerCase() : '0x0000000000000000000000000000000000000000')) {
 					channel = await getSecureChannelFromPublicKey(webwallet, webwallet.publicKey, getKeyForApplication(comment.application.id))
 					logger.info({ privateKey: webwallet.privateKey, publicKey: webwallet.publicKey, role }, 'CHANNEL CONFIG (COMMENT DECRYPT)')
 				} else {
@@ -154,7 +154,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 					logger.info({ privateKey: webwallet.privateKey, publicKey, role }, 'CHANNEL CONFIG (COMMENT DECRYPT)')
 				}
 
-				for(const encrypted of comment.commentsEncryptedData?.filter(c => c.id.indexOf(scwAddress.toLowerCase()) !== -1) ?? []) {
+				for(const encrypted of comment.commentsEncryptedData?.filter(c => c.id.indexOf((scwAddress ? scwAddress.toLowerCase() : '0x0000000000000000000000000000000000000000')) !== -1) ?? []) {
 					logger.info({ encrypted }, 'DECRYPTING NOW (COMMENT DECRYPT)')
 					try {
 						const decryptedData = JSON.parse(await channel.decrypt(encrypted.data))
@@ -215,8 +215,6 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		logger.info({ role, grantId, scwAddress }, 'Fetching proposals (GET PROPOSALS)')
 		if(!webwallet) {
 			return 'no-webwallet'
-		} else if(!scwAddress) {
-			return 'no-scw-address'
 		} else if(!grantId || typeof grantId !== 'string') {
 			return 'no-grant-id'
 		}
@@ -248,8 +246,6 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		logger.info({ role, grantId, scwAddress }, 'Fetching comments (GET COMMENTS)')
 		if(!webwallet) {
 			return 'no-webwallet'
-		} else if(!scwAddress) {
-			return 'no-scw-address'
 		} else if(!grantId || typeof grantId !== 'string') {
 			return 'no-grant-id'
 		}
@@ -330,16 +326,17 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	}, [grantId, chainId, scwAddress, webwallet])
 
 	useEffect(() => {
-		if(!grant || !scwAddress || !role) {
+		if(!grant || !role) {
 			setIsLoading(true)
-			return
+		} else {
+			setIsLoading(false)
 		}
-	}, [grant, chainId, scwAddress])
+	}, [grant, chainId])
 
 	useEffect(() => {
 		if(proposals.length === 0) {
 			setSelectedProposals(new Set<string>())
-			if(scwAddress && grant) {
+			if(grant) {
 				setIsLoading(false)
 			}
 
