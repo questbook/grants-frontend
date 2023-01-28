@@ -268,6 +268,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		// and the most recently requested one finishes later
 		if(mostRecentInitChainId.current === chainId) {
 			setScwAddress(scwAddress)
+			localStorage.setItem('scwAddress', scwAddress)
 			_logger.info('switched chain after init')
 			const chain = parseInt(chainId)
 			switchNetwork(chain)
