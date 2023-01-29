@@ -65,12 +65,12 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const [showSubmitReviewPanel, setShowSubmitReviewPanel] = useState<boolean>(false)
 
 	const getGrant = useCallback(async() => {
-		if(!grantId || chainId === -1 || typeof grantId !== 'string' || !scwAddress) {
+		if(!grantId || chainId === -1 || typeof grantId !== 'string') {
 			return 'params-missing'
 		}
 
 		logger.info({ grantId, scwAddress }, 'Getting grant (GET GRANT)')
-		const details = await fetchGrantDetails({ grantId, actorId: scwAddress.toLowerCase() }, true)
+		const details = await fetchGrantDetails({ grantId, actorId: scwAddress ? scwAddress.toLowerCase() : '0x0000000000000000000000000000000000000000' }, true)
 		logger.info({ details }, 'Grant details (GET GRANT)')
 		if(!details?.[0]?.grant) {
 			return 'no-grant-in-query'
@@ -93,7 +93,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		}
 
 		for(const member of _grant?.workspace?.members ?? []) {
-			if(member.actorId === scwAddress.toLowerCase()) {
+			if(member.actorId === (scwAddress ? scwAddress.toLowerCase() : '0x0000000000000000000000000000000000000000')) {
 				logger.info({ member }, 'Member (ROLE)')
 				possibleRoles.push(member.accessLevel === 'reviewer' ? 'reviewer' : 'admin')
 				break
@@ -119,7 +119,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	}, [grantId, chainId, scwAddress])
 
 	const handleComments = async(allComments: CommentType[]) => {
-		if(!webwallet || !scwAddress) {
+		if(!webwallet) {
 			return {}
 		}
 
@@ -127,21 +127,24 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		for(const comment of allComments) {
 			logger.info({ comment }, 'comment before decrypt (COMMENT DECRYPT)')
 			if(comment.isPrivate) {
-				if(comment.id.indexOf(scwAddress.toLowerCase()) === -1) {
-					logger.info({ comment }, 'public key not found (COMMENT DECRYPT)')
-					continue
-				}
+				logger.info({ comment }, 'PRIVATE COMMENT')
+
+				// if(comment.commentsEncryptedData?. .indexOf(scwAddress.toLowerCase()) === -1) {
+				// 	logger.info({ comment }, 'public key not found (COMMENT DECRYPT)')
+				// 	continue
+				// }
 
 				const sender = comment.id.split('.')[1]
 				let channel: {
-				encrypt(plaintext: string): Promise<string>
-				decrypt(ciphertext: string): Promise<string>
-			}
-				if(sender === scwAddress.toLowerCase()) {
+					encrypt(plaintext: string): Promise<string>
+					decrypt(ciphertext: string): Promise<string>
+				}
+				logger.info({ sender, scwAddress: (scwAddress ? scwAddress.toLowerCase() : '0x0000000000000000000000000000000000000000') }, 'SENDER (COMMENT DECRYPT)')
+				if(sender === (scwAddress ? scwAddress.toLowerCase() : '0x0000000000000000000000000000000000000000')) {
 					channel = await getSecureChannelFromPublicKey(webwallet, webwallet.publicKey, getKeyForApplication(comment.application.id))
 					logger.info({ privateKey: webwallet.privateKey, publicKey: webwallet.publicKey, role }, 'CHANNEL CONFIG (COMMENT DECRYPT)')
 				} else {
-					const publicKey = comment.application.applicantPublicKey
+					const publicKey = comment.application.applicantId === sender ? comment.application.applicantPublicKey : comment.workspace.members.find(m => m.actorId === sender)?.publicKey
 					if(!publicKey) {
 						continue
 					}
@@ -151,7 +154,8 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 					logger.info({ privateKey: webwallet.privateKey, publicKey, role }, 'CHANNEL CONFIG (COMMENT DECRYPT)')
 				}
 
-				for(const encrypted of comment.commentsEncryptedData?.filter(c => c.id.indexOf(scwAddress.toLowerCase()) !== -1) ?? []) {
+				for(const encrypted of comment.commentsEncryptedData?.filter(c => c.id.indexOf((scwAddress ? scwAddress.toLowerCase() : '0x0000000000000000000000000000000000000000')) !== -1) ?? []) {
+					logger.info({ encrypted }, 'DECRYPTING NOW (COMMENT DECRYPT)')
 					try {
 						const decryptedData = JSON.parse(await channel.decrypt(encrypted.data))
 						logger.info({ decryptedData }, 'comment decrypted (COMMENT DECRYPT)')
@@ -211,8 +215,6 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		logger.info({ role, grantId, scwAddress }, 'Fetching proposals (GET PROPOSALS)')
 		if(!webwallet) {
 			return 'no-webwallet'
-		} else if(!scwAddress) {
-			return 'no-scw-address'
 		} else if(!grantId || typeof grantId !== 'string') {
 			return 'no-grant-id'
 		}
@@ -244,8 +246,6 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		logger.info({ role, grantId, scwAddress }, 'Fetching comments (GET COMMENTS)')
 		if(!webwallet) {
 			return 'no-webwallet'
-		} else if(!scwAddress) {
-			return 'no-scw-address'
 		} else if(!grantId || typeof grantId !== 'string') {
 			return 'no-grant-id'
 		}
@@ -288,6 +288,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 						application: {
 							id: proposal.id,
 							applicantPublicKey: proposal.applicantPublicKey,
+							applicantId: proposal.applicantId
 						},
 						workspace: proposal.grant.workspace,
 						tag: action.state,
@@ -325,16 +326,17 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	}, [grantId, chainId, scwAddress, webwallet])
 
 	useEffect(() => {
-		if(!grant || !scwAddress || !role) {
+		if(!grant || !role) {
 			setIsLoading(true)
-			return
+		} else {
+			setIsLoading(false)
 		}
-	}, [grant, chainId, scwAddress])
+	}, [grant, chainId])
 
 	useEffect(() => {
 		if(proposals.length === 0) {
 			setSelectedProposals(new Set<string>())
-			if(scwAddress && grant) {
+			if(grant) {
 				setIsLoading(false)
 			}
 
@@ -348,7 +350,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 		logger.info({ grant, scwAddress, role, proposals }, 'Loading state set to false')
 		setIsLoading(false)
-	}, [proposals])
+	}, [proposals, scwAddress, grant, role])
 
 	return (
 		<DashboardContext.Provider

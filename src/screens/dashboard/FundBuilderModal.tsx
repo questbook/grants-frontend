@@ -72,9 +72,17 @@ function FundBuilderModal() {
 											value={amounts?.[0] || ''}
 											onChange={
 												(e) => {
-													const val = parseInt(e.target.value)
-													logger.info({ entered: e.target.value, parsed: val }, 'FundBuilderModal: entered amount')
-													setAmounts([val])
+													if(e.target.value?.includes('.')) {
+														return
+													} else {
+														try {
+															const val = parseInt(e.target.value)
+															logger.info({ entered: e.target.value, parsed: val }, 'FundBuilderModal: entered amount')
+															setAmounts([val])
+														} catch(e) {
+															logger.error(e, 'FundBuilderModal: error parsing entered amount')
+														}
+													}
 												}
 											}
 											placeholder='0' />
@@ -148,7 +156,7 @@ function FundBuilderModal() {
 						}
 
 						{
-							['initiate_verification', 'verifying', 'failed' ].includes(signerVerifiedState) && (
+							['initiate_verification', 'verifying', 'failed'].includes(signerVerifiedState) && (
 								<Verify
 									signerVerifiedState={signerVerifiedState}
 									setSignerVerifiedState={setSignerVerifiedState} />
@@ -198,7 +206,7 @@ function FundBuilderModal() {
 
 	const customToast = useCustomToast()
 	const toast = useToast()
-  	const payoutsInProcessToastRef = useRef<any>()
+	const payoutsInProcessToastRef = useRef<any>()
 
 	const Safe = {
 		logo: safeObj?.safeLogo,
@@ -295,7 +303,7 @@ function FundBuilderModal() {
 			const temp = [{
 				from: safeObj?.safeAddress?.toString(),
 				to: tos?.[0],
-				applicationId: proposal?.id,
+				applicationId: proposal?.id ? parseInt(proposal.id, 16) : 0,
 				selectedMilestone: milestoneIndices?.[0],
 				selectedToken: { tokenName: selectedTokenInfo?.tokenName, info: selectedTokenInfo?.info },
 				amount: amounts?.[0],
@@ -336,7 +344,7 @@ function FundBuilderModal() {
 
 			disburseRewardFromSafe(proposaladdress?.toString()!)
 				.then(() => {
-				// console.log('Sent transaction to contract - EVM', proposaladdress)
+					// console.log('Sent transaction to contract - EVM', proposaladdress)
 				})
 				.catch((err) => {
 					logger.error('sending transction error:', err)

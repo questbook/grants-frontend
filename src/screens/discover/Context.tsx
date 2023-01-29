@@ -15,7 +15,7 @@ const PAGE_SIZE = 40
 const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const provider = () => {
 		return (
-			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram, search, setSearch, sectionGrants }}>
+			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram, search, setSearch, sectionGrants, isLoading }}>
 				{children}
 			</DiscoverContext.Provider>
 		)
@@ -28,6 +28,7 @@ const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const [grantsForAll, setGrantsForAll] = useState<GrantType[]>([])
 	const [grantProgram, setGrantProgram] = useState<GrantProgramType>()
 	const [sectionGrants, setSectionGrants] = useState<SectionGrants>()
+	const [isLoading, setIsLoading] = useState<boolean>(true)
 	const [search, setSearch] = useState<string>('')
 
 	const { fetchMore: fetchMoreWorkspaces } = useMultiChainQuery({
@@ -74,9 +75,10 @@ const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		let shouldContinue = true
 		while(shouldContinue) {
 			const results = await fetchMoreWorkspaces({ actorId: scwAddress, first, skip }, true)
-
 			if(results?.length === 0 || results?.every((r) => !r?.workspaceMembers?.length && !r?.grants?.length)) {
 				shouldContinue = false
+				logger.info('No more results')
+				setIsLoading(false)
 				break
 			}
 
@@ -94,6 +96,7 @@ const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 				if(result?.grants?.length) {
 					builderGrants.push(...result?.grants?.map(g => ({ ...g, role: 'builder' as Roles })))
+					setIsLoading(false)
 				}
 			}
 

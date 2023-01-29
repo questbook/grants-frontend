@@ -146,7 +146,7 @@ function Discover() {
 
 	// const discoverRef = useRef<HTMLDivElement>(null)
 
-	const { grantsForYou, grantsForAll, grantProgram, sectionGrants } = useContext(DiscoverContext)!
+	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, isLoading } = useContext(DiscoverContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString, setSearchString } = useContext(DAOSearchContext)!
 
@@ -269,10 +269,9 @@ function Discover() {
 								</Center>
 							) : (
 								<>
-									{/* <Box
-										display={grantsForYou?.length ? '' : 'none'}
-									> */}
-									<Box my={4}>
+									<Box
+										my={4}
+										display={grantsForYou?.length ? '' : 'none'}>
 										<Text
 											fontWeight='500'
 											fontSize='24px'
@@ -281,7 +280,7 @@ function Discover() {
 										</Text>
 									</Box>
 									{
-										grantsForYou.length ?
+										!isLoading ?
 											(
 												<>
 
@@ -298,6 +297,7 @@ function Discover() {
 														width='100%'
 														borderColor='gray.3'
 														mt={8}
+														display={grantsForYou?.length ? '' : 'none'}
 										 />
 												</>
 											) : (
