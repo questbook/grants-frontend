@@ -57,8 +57,10 @@ function Discussions() {
 														() => {
 															if(selectedTag) {
 																setSelectedTag(undefined)
+																setText('')
 															} else {
 																setSelectedTag(tag.id)
+																setText(tag.commentString)
 															}
 														}
 													}

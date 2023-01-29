@@ -20,11 +20,12 @@ function QuickReplyButton({ tag, isSelected, index, ...props }: Props) {
 				leftIcon={tag.icon}
 				bg={ isSelected ? 'gray.3' : 'white'}
 				border='1px solid #E7E4DD'
+				_hover={{ bg: 'gray.2' }}
 				{...props}
 			>
 				<Text
 					variant='v2_body'
-					fontWeight={isSelected ? 'bold' : 'normal'}
+					fontWeight='500'
 				>
 					{tag.title}
 				</Text>
