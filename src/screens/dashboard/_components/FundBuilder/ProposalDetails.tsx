@@ -18,8 +18,6 @@ interface Props {
 }
 
 function ProposalDetails({ proposal, index, tokenInfo }: Props) {
-
-
 	const buildComponent = () => {
 		return (
 			<Flex
@@ -84,7 +82,8 @@ function ProposalDetails({ proposal, index, tokenInfo }: Props) {
 							} else {
 								try {
 									const copy = [...amounts]
-									copy[index] = parseInt(e.target.value)
+									logger.info({ entered: e.target.value, parsed: parseInt(e.target.value) }, 'FundBuilderModal: entered amount')
+									copy[index] = e.target.value !== '' ? parseInt(e.target.value) : 0
 									setAmounts(copy)
 									// const val = parseInt(e.target.value)
 									// logger.info({ entered: e.target.value, parsed: val }, 'FundBuilderModal: entered amount')
@@ -101,6 +100,7 @@ function ProposalDetails({ proposal, index, tokenInfo }: Props) {
 					lineHeight='20px'
 					borderBottom='2px solid'
 					w='100%'
+					type='number'
 					textAlign='left'
 					flexProps={
 						{
@@ -115,7 +115,7 @@ function ProposalDetails({ proposal, index, tokenInfo }: Props) {
 							mt='8px'>
 							≈
 							{' '}
-							{(amounts?.[0] / parseFloat(tokenInfo?.fiatConversion!.toString())).toFixed(2)}
+							{(amounts?.[index] / parseFloat(tokenInfo?.fiatConversion!.toString())).toFixed(2)}
 							{' '}
 							{tokenInfo?.tokenName}
 						</Text>

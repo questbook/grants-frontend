@@ -1,5 +1,5 @@
 import { useContext, useMemo, useState } from 'react'
-import { Button, Checkbox, Divider, Flex, Image, Text, Textarea } from '@chakra-ui/react'
+import { Box, Button, Checkbox, Divider, Flex, Image, Text, Textarea } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
@@ -47,7 +47,6 @@ function Discussions() {
 						})
 					}
 				</Flex>
-
 
 				<Flex
 					mt={4}
@@ -122,6 +121,13 @@ function Discussions() {
 				}
 
 				{comments.map(renderComment)}
+
+				{
+					comments.length > 0 && (
+						<Box
+							my={4} />
+					)
+				}
 			</Flex>
 		)
 	}
