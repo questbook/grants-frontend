@@ -1,15 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text, useToast } from '@chakra-ui/react'
+import { Box, Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text, useToast } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { defaultChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
-import useQBContract from 'src/hooks/contracts/useQBContract'
-import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
+import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
-import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext } from 'src/pages/_app'
 import MilestoneChoose from 'src/screens/dashboard/_components/FundBuilder/MilestoneChoose'
 import PaidByWallet from 'src/screens/dashboard/_components/FundBuilder/PaidByWallet'
 import PayFromChoose from 'src/screens/dashboard/_components/FundBuilder/PayFromChoose'
@@ -20,7 +19,7 @@ import Verify from 'src/screens/dashboard/_components/FundBuilder/Verify'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
 import { getFieldString } from 'src/utils/formattingUtils'
-import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { getGnosisTansactionLink } from 'src/v2/utils/gnosisUtils'
 import { getProposalUrl } from 'src/v2/utils/phantomUtils'
@@ -123,11 +122,24 @@ function FundBuilderModal() {
 									}
 
 									{
+										(proposal?.state === 'submitted') && (
+											<Text
+												mt={8}
+												variant='v2_body'
+												color='gray.5'>
+												This proposal would be auto-accepted once payout is initiated for it.
+											</Text>
+										)
+									}
+
+									<Box mt={proposal?.state === 'submitted' ? 2 : 8} />
+
+									{
 										signerVerifiedState === 'verified' ? (
 											<Button
 												isDisabled={isDisabled}
-												mt={8}
 												w='100%'
+												isLoading={payoutInProcess}
 												variant='primaryLarge'
 												onClick={onInitiateTransaction}>
 												<Text
@@ -139,8 +151,8 @@ function FundBuilderModal() {
 										) : (
 											<Button
 												isDisabled={isDisabled}
-												mt={8}
 												w='100%'
+												isLoading={payoutInProcess}
 												variant='primaryLarge'
 												onClick={onContinue}>
 												<Text
@@ -298,8 +310,27 @@ function FundBuilderModal() {
 
 
 	const onInitiateTransaction = async() => {
-		if(signerVerifiedState === 'verified') {
+		if(signerVerifiedState === 'verified' && proposal) {
 			setPayoutInProcess(true)
+
+			if(proposal.state === 'submitted') {
+				// Approve proposal if it is not approved
+				logger.info('Approving proposal', { proposal })
+				const ipfsHash = await uploadToIPFS(JSON.stringify({
+					feedback: '  ',
+				}))
+
+				const acceptProposalMethodArgs = [
+					proposal.id,
+					proposal.grant.workspace.id,
+					2, // Approved state
+					ipfsHash,
+				]
+
+				await acceptProposal({ method: 'updateApplicationState', args: acceptProposalMethodArgs })
+			}
+
+
 			const temp = [{
 				from: safeObj?.safeAddress?.toString(),
 				to: tos?.[0],
@@ -312,7 +343,6 @@ function FundBuilderModal() {
 			let proposaladdress: any = ''
 			if(safeObj.getIsEvm()) {
 				proposaladdress = await safeObj?.proposeTransactions('', temp, '')
-				setPayoutInProcess(false)
 				if(proposaladdress?.error) {
 					customToast({
 						title: 'An error occurred while creating transaction on Gnosis Safe',
@@ -324,10 +354,8 @@ function FundBuilderModal() {
 
 				setSafeProposalAddress(proposaladdress as string)
 				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress, safeObj?.chainId, proposaladdress as string))
-				setSignerVerifiedState('transaction_initiated')
 			} else {
 				proposaladdress = await safeObj?.proposeTransactions(grant?.title, temp, phantomWallet)
-				setPayoutInProcess(false)
 				if(proposaladdress?.error) {
 					customToast({
 						title: 'An error occurred while creating transaction on Multi-sig',
@@ -339,46 +367,7 @@ function FundBuilderModal() {
 
 				setSafeProposalAddress(proposaladdress as string)
 				setSafeProposalLink(getProposalUrl(safeObj.safeAddress, proposaladdress as string))
-				setSignerVerifiedState('transaction_initiated')
 			}
-
-			disburseRewardFromSafe(proposaladdress?.toString()!)
-				.then(() => {
-					// console.log('Sent transaction to contract - EVM', proposaladdress)
-				})
-				.catch((err) => {
-					logger.error('sending transction error:', err)
-				})
-		}
-	}
-
-	const workspacechainId = getSupportedChainIdFromWorkspace(grant?.workspace) || defaultChainId
-
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
-		chainId: workspacechainId ? workspacechainId.toString() : defaultChainId.toString(),
-	})
-	const [isBiconomyInitialisedDisburse, setIsBiconomyInitialisedDisburse] = useState(false)
-
-	useEffect(() => {
-
-		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && workspacechainId &&
-			biconomy.networkId && biconomy.networkId?.toString() === workspacechainId.toString()) {
-			setIsBiconomyInitialisedDisburse(true)
-		}
-	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialisedDisburse, workspacechainId])
-
-	const { nonce } = useQuestbookAccount()
-	const workspaceRegistryContract = useQBContract('workspace', workspacechainId)
-	const { webwallet } = useContext(WebwalletContext)!
-
-	const disburseRewardFromSafe = async(proposaladdress: string) => {
-		try {
-			logger.info({}, 'HERE 1')
-			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
-				return
-			}
-
-			logger.info({}, 'HERE 2')
 
 			const methodArgs = [
 				[parseInt(proposal?.id!, 16)],
@@ -391,41 +380,17 @@ function FundBuilderModal() {
 				proposaladdress
 			]
 
-
-			logger.info({}, 'HERE 3')
-
-			logger.info({ methodArgs }, 'methodArgs')
-
-			const transactionHash = await sendGaslessTransaction(
-				biconomy,
-				workspaceRegistryContract,
-				'disburseRewardFromSafe',
-				methodArgs,
-				workspaceRegistryContract.address,
-				biconomyWalletClient,
-				scwAddress,
-				webwallet,
-				`${workspacechainId}`,
-				bicoDapps[workspacechainId.toString()].webHookId,
-				nonce
-			)
-
-			logger.info({}, 'HERE 4')
-
-
-			if(!transactionHash) {
-				throw new Error('No transaction hash found!')
-			}
-
-			const { txFee } = await getTransactionDetails(transactionHash, workspacechainId.toString())
-
-			await chargeGas(Number(grant?.workspace?.id), Number(txFee), workspacechainId)
-
-		} catch(e) {
-			logger.error('disburse error', e)
+			await call({ method: 'disburseRewardFromSafe', args: methodArgs })
+			setSignerVerifiedState('transaction_initiated')
+			setSignerVerifiedState('transaction_initiated')
+			setPayoutInProcess(false)
 		}
 	}
 
+	const workspacechainId = getSupportedChainIdFromWorkspace(grant?.workspace) || defaultChainId
+
+	const { call } = useFunctionCall({ chainId: workspacechainId, contractName: 'workspace' })
+	const { call: acceptProposal } = useFunctionCall({ chainId: workspacechainId, contractName: 'applications' })
 
 	return buildComponent()
 }

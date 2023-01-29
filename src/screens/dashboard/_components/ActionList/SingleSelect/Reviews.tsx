@@ -624,7 +624,6 @@ function Reviews() {
 	}
 
 	const reviewerItem = (reviewer: ProposalType['applicationReviewers'][number]['member'], review: IReviewFeedback | undefined, index: number) => {
-		logger.info({ reviewer, review, done: proposal?.doneReviewerAddresses }, 'Reviewer Item')
 		return (
 			<Flex
 				mt={index === 0 ? 5 : 3}

@@ -103,16 +103,18 @@ function Proposal() {
 										<Button
 											variant='link'
 											rightIcon={
-												<Flex
-													w='20px'
-													h='20px'
-													bg='gray.3'
-													borderRadius='3xl'
-													justify='center'>
-													<Mail
-														alignSelf='center'
-														boxSize='12px' />
-												</Flex>
+												getFieldString(decryptedProposal, 'applicantEmail') && (
+													<Flex
+														w='20px'
+														h='20px'
+														bg='gray.3'
+														borderRadius='3xl'
+														justify='center'>
+														<Mail
+															alignSelf='center'
+															boxSize='12px' />
+													</Flex>
+												)
 											}>
 											<Text
 												fontWeight='400'
@@ -123,7 +125,7 @@ function Proposal() {
 										</Button>
 
 										{
-											getFieldString(proposal, 'applicantAddress') && (
+											getFieldString(proposal, 'applicantEmail') && (
 												<Image
 													src='/v2/icons/dot.svg'
 													boxSize='4px'
@@ -280,49 +282,6 @@ function Proposal() {
 						)
 					})
 				}
-
-				{/* <Flex
-					w='100%'
-					mt={4}
-					direction='column'>
-					<Text color='gray.5'>
-						Milestones
-					</Text>
-					{
-						proposal.milestones.map((milestone, index) => {
-
-							return (
-								<Flex
-									align='center'
-									w='100%'
-									key={index}
-									mt={index === 0 ? 4 : 2}
-								>
-									<Text
-										color='gray.4'
-										variant='v2_heading_3'
-										fontWeight='500'>
-										{index < 9 ? `0${index + 1}` : (index + 1)}
-									</Text>
-									<Text
-										ml={3}
-										variant='v2_body'>
-										{milestone?.title}
-									</Text>
-									{
-										chainInfo && (
-											<Text ml='auto'>
-												{chainInfo?.address === USD_ASSET ? milestone.amount : ethers.utils.formatUnits(milestone.amount, chainInfo.decimals)}
-												{' '}
-												{chainInfo?.label}
-											</Text>
-										)
-									}
-								</Flex>
-							)
-						})
-					}
-				</Flex> */}
 			</Flex>
 		)
 	}
