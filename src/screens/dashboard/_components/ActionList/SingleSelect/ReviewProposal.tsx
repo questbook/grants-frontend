@@ -95,10 +95,10 @@ function ReviewProposal() {
 		)
 	}
 
-	const rubricItem = (item: ReviewData, index: number) => {
+	const rubricItem = (item: ReviewData, rubricIndex: number) => {
 		return (
 			<Flex
-				key={index}
+				key={rubricIndex}
 				px={5}
 				py={4}
 				borderBottom='1px solid #E7E4DD'
@@ -143,8 +143,8 @@ function ReviewProposal() {
 										isReviewPending ? () => {
 											if(isReviewPending) {
 												const temp = { ...review }
-												if(temp?.items && index <= temp?.items?.length) {
-													temp.items[index].rating = index + 1
+												if(temp?.items) {
+													temp.items[rubricIndex].rating = index + 1
 													if(!temp.total) {
 														temp.total = 0
 													}
@@ -181,8 +181,8 @@ function ReviewProposal() {
 							onChange={
 								(e) => {
 									const temp = { ...review }
-									if(temp?.items && index <= temp?.items?.length) {
-										temp.items[index].comment = e.target.value
+									if(temp?.items && rubricIndex <= temp?.items?.length) {
+										temp.items[rubricIndex].comment = e.target.value
 										setReview(temp)
 									}
 								}

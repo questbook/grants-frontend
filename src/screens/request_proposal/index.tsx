@@ -74,7 +74,7 @@ function RequestProposal() {
 							router.push({
 								pathname: '/dashboard',
 								query: {
-									grantId: rfpFormType === 'edit' ? updateGrantId : grantId,
+									grantId: rfpFormType === 'edit' ? updateGrantId : grantId.toLowerCase(),
 									chainId: chainId,
 								}
 							})
@@ -544,7 +544,7 @@ function RequestProposal() {
 					const grantEvent = await getEventData(createGrantTxReceipt, 'GrantCreated', GrantFactoryAbi)
 					logger.info('grantEvent', grantEvent)
 					if(grantEvent) {
-						const grantId = grantEvent.args[0].toString()
+						const grantId = grantEvent.args[0].toString().toLowerCase()
 						localStorage.setItem(`${GRANT_CACHE_KEY}-${chainId}-${event.args[0].toBigInt()}`, grantId)
 						logger.info('grantId', grantId, chainId)
 						setGrantId(grantId)
