@@ -416,8 +416,6 @@ function Settings() {
 	const [openConfirmationModal, setOpenConfirmationModal] = useState(false)
 	const [isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen] = useState(false)
 
-	const [multiSigAddress, setMultiSigAddress] = useState('')
-
 	const [imageChanged, setImageChanged] = useState(false)
 
 	const { workspace, workspaceMembers, grantProgramData, setGrantProgramData, safeURL } = useContext(SettingsFormContext)!
