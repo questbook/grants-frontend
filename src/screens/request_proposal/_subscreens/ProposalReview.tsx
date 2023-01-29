@@ -55,7 +55,8 @@ function ProposalReview(
 					height='100%'
 					gap={10}
 					alignSelf='flex-start'
-					marginRight={24}>
+					// marginRight={24}
+>
 					{/* TODO: Add Steps complete indicator */}
 					<StepIndicator
 						step={step}

@@ -1,11 +1,11 @@
 import { ChangeEvent, useContext, useEffect, useMemo, useState } from 'react'
-import { Box, Container, Flex, Image, Spacer, Text } from '@chakra-ui/react'
+import { Box, Button, Container, Flex, Image, Spacer, Text, useMediaQuery } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import { ethers } from 'ethers'
 import saveAs from 'file-saver'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
-import { Pencil, Settings } from 'src/generated/icons'
+import { ArrowLeft, Pencil, Settings } from 'src/generated/icons'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
@@ -22,204 +22,244 @@ import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 type Props = {
 	bg?: string
+	requestProposal?: boolean
 }
 
-function NavBar({ bg = 'gray.1' }: Props) {
+function NavBar({ bg = 'gray.1', requestProposal }: Props) {
 	const buildComponent = () => (
 		<>
-			<Container
-				position='sticky'
-				top={0}
-				left={0}
-				right={0}
-				zIndex={1}
-				// variant='header-container'
-				maxH='64px'
-				display='flex'
-				alignItems='center'
-				maxW='100vw'
-				bg={bg}
-				ps={24}
-				pe={24}
-				py='16px'
-				minWidth={{ base: '-webkit-fill-available' }}
-			>
-				<Image
-					onClick={
-						() => {
-							router.push({
-								pathname: '/'
-							})
-						}
-					}
-					display={{ base: 'none', lg: 'inherit' }}
-					mr='auto'
-					src='/ui_icons/qb.svg'
-					alt='Questbook'
-					cursor='pointer'
-				/>
-				<Image
-					onClick={
-						() => {
-							router.push({
-								pathname: '/',
-							})
-						}
-					}
-					display={{ base: 'inherit', lg: 'none' }}
-					mr='auto'
-					src='/ui_icons/qb.svg'
-					alt='Questbook'
-					cursor='pointer'
-				/>
-				{
-					isQbAdmin && (
-						<>
-							<Image
-								display={{ base: 'none', lg: 'inherit' }}
-								ml='10px'
-								src='/ui_icons/builders.svg'
-								alt='Questbook Builders'
-							/>
-						</>
-					)
-				}
-				<Spacer />
-
-				{
-					shouldShowTitle && (
-						<Flex
-							align='center'
-							gap={2}
-							direction='row'
+			{
+				!isMobile[0] && (
+					<>
+						<Container
+							position='sticky'
+							top={0}
+							left={0}
+							right={0}
+							zIndex={1}
+							// variant='header-container'
+							maxH='64px'
+							display='flex'
 							alignItems='center'
+							maxW='100vw'
+							bg={bg}
+							ps={24}
+							pe={24}
+							py='16px'
+							minWidth={{ base: '-webkit-fill-available' }}
 						>
-
 							<Image
-								boxSize={8}
-								borderRadius='4px'
-								src={grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)}
-							/>
-							<Flex
-								gap={0}
-								direction='column'
-							>
-								<Text
-									fontWeight='500'
-									variant='v2_subheading'>
-									{grant?.title}
-								</Text>
-								{
-									(grant?.link !== undefined && grant?.link !== null) && (
-										<Text
-											variant='v2_metadata'
-											display={grant?.link ? '' : 'none'}>
-											Program details
+								onClick={
+									() => {
+										router.push({
+											pathname: '/'
+										})
+									}
+								}
+								display={{ base: 'none', lg: 'inherit' }}
+								mr='auto'
+								src='/ui_icons/qb.svg'
+								alt='Questbook'
+								cursor='pointer' />
+							<Image
+								onClick={
+									() => {
+										router.push({
+											pathname: '/',
+										})
+									}
+								}
+								display={{ base: 'inherit', lg: 'none' }}
+								mr='auto'
+								src='/ui_icons/qb.svg'
+								alt='Questbook'
+								cursor='pointer' />
+							{
+								isQbAdmin && (
+									<>
+										<Image
+											display={{ base: 'none', lg: 'inherit' }}
+											ml='10px'
+											src='/ui_icons/builders.svg'
+											alt='Questbook Builders' />
+									</>
+								)
+							}
+							<Spacer />
+
+							{
+								shouldShowTitle && (
+									<Flex
+										align='center'
+										gap={2}
+										direction='row'
+										alignItems='center'
+									>
+
+										<Image
+											boxSize={8}
+											borderRadius='4px'
+											src={grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)} />
+										<Flex
+											gap={0}
+											direction='column'
+										>
 											<Text
-												variant='v2_metadata'
-												display='inline-block'
-												fontWeight={500}
-												marginLeft={1}
-												cursor='pointer'
-												onClick={
-													() => {
-														if(grant.link !== null) {
-															window.open(grant.link, '_blank')
-														}
-													}
-												}
-											>
-												here
+												fontWeight='500'
+												variant='v2_subheading'>
+												{grant?.title}
 											</Text>
+											{
+												(grant?.link !== undefined && grant?.link !== null) && (
+													<Text
+														variant='v2_metadata'
+														display={grant?.link ? '' : 'none'}>
+														Program details
+														<Text
+															variant='v2_metadata'
+															display='inline-block'
+															fontWeight={500}
+															marginLeft={1}
+															cursor='pointer'
+															onClick={
+																() => {
+																	if(grant.link !== null) {
+																		window.open(grant.link, '_blank')
+																	}
+																}
+															}
+														>
+															here
+														</Text>
+													</Text>
+												)
+											}
+										</Flex>
+
+										<Text
+											variant={grant?.acceptingApplications ? 'openTag' : 'closedTag'}>
+											{grant?.acceptingApplications ? 'Open' : 'Closed'}
 										</Text>
-									)
+									</Flex>
+
+								)
+							}
+
+							<Box ml={4} />
+
+							{
+								(shouldShowTitle && role === 'admin' && grant?.acceptingApplications) && (
+									<Pencil
+										cursor='pointer'
+										boxSize='20px'
+										onClick={
+											() => {
+												router.push(
+													{
+														pathname: '/request_proposal/',
+														query: {
+															grantId: grant?.id,
+															workspaceId: grant?.workspace?.id
+														},
+													})
+
+											}
+										} />
+								)
+							}
+
+							{
+								(shouldShowTitle && role === 'admin') && (
+									<Settings
+										boxSize='20px'
+										ml={3}
+										cursor='pointer'
+										onClick={
+											() => {
+												router.push(
+													{
+														pathname: '/settings'
+													})
+
+											}
+										} />
+								)
+							}
+
+							{(role === 'admin' && !isLoading) && (<Box ml={3} />)}
+							{(!isLoading && router.pathname === '/dashboard') && <SharePopover />}
+
+							<Spacer />
+
+							<AccountDetails
+								openModal={
+									(type) => {
+										setType(type)
+										setIsRecoveryModalOpen(true)
+									}
 								}
-							</Flex>
+								setIsUpdateProfileModalOpen={setIsUpdateProfileModalOpen} />
 
-							<Text
-								variant={grant?.acceptingApplications ? 'openTag' : 'closedTag'}>
-								{grant?.acceptingApplications ? 'Open' : 'Closed'}
-							</Text>
-						</Flex>
+						</Container>
+						<RecoveryModal
+							isOpen={isRecoveryModalOpen}
+							onClose={() => setIsRecoveryModalOpen(false)}
+							type={type}
+							privateKey={privateKey}
+							privateKeyError={privateKeyError}
+							onChange={onChange}
+							onImportClick={onImportClick}
+							onSaveAsTextClick={onSaveAsTextClick}
+							onCopyAndSaveManuallyClick={onCopyAndSaveManuallyClick} />
+						<ImportConfirmationModal
+							isOpen={isImportConfirmationModalOpen}
+							onClose={() => setImportConfirmationModalOpen(false)}
+							saveWallet={saveWallet} />
+						<UpdateProfileModal
+							isOpen={isUpdateProfileModalOpen}
+							onClose={() => setIsUpdateProfileModalOpen(false)} />
 
-					)
-				}
-
-				<Box ml={4} />
-
-				{
-					(shouldShowTitle && role === 'admin' && grant?.acceptingApplications) && (
-						<Pencil
-							cursor='pointer'
-							boxSize='20px'
+					</>
+				)
+			}
+			{
+				isMobile[0] && requestProposal && (
+					<Container
+						position='sticky'
+						top={0}
+						left={0}
+						right={0}
+						zIndex={1}
+						// variant='header-container'
+						maxH='64px'
+						display='flex'
+						// alignItems='flext-start'
+						alignItems='center'
+						maxW='100vw'
+						bg={bg}
+						ps={22}
+						pe={10}
+						py='16px'
+						minWidth={{ base: '-webkit-fill-available' }}
+					>
+						<Button
+							variant='linkV2'
+							fontWeight='500'
+							leftIcon={<ArrowLeft />}
 							onClick={
 								() => {
-									router.push(
-										{
-											pathname: '/request_proposal/',
-											query: {
-												grantId: grant?.id,
-												workspaceId: grant?.workspace?.id
-											},
-										})
-
+									router.back()
 								}
 							} />
-					)
-				}
-
-				{
-					(shouldShowTitle && role === 'admin') && (
-						<Settings
-							boxSize='20px'
-							ml={3}
-							cursor='pointer'
-							onClick={
-								() => {
-									router.push(
-										{
-											pathname: '/settings'
-										})
-
-								}
-							} />
-					)
-				}
-
-				{(role === 'admin' && !isLoading) && (<Box ml={3} />)}
-				{(!isLoading && router.pathname === '/dashboard') && <SharePopover />}
-
-				<Spacer />
-
-				<AccountDetails
-					openModal={
-						(type) => {
-							setType(type)
-							setIsRecoveryModalOpen(true)
-						}
-					}
-					setIsUpdateProfileModalOpen={setIsUpdateProfileModalOpen} />
-			</Container>
-			<RecoveryModal
-				isOpen={isRecoveryModalOpen}
-				onClose={() => setIsRecoveryModalOpen(false)}
-				type={type}
-				privateKey={privateKey}
-				privateKeyError={privateKeyError}
-				onChange={onChange}
-				onImportClick={onImportClick}
-				onSaveAsTextClick={onSaveAsTextClick}
-				onCopyAndSaveManuallyClick={onCopyAndSaveManuallyClick} />
-
-			<ImportConfirmationModal
-				isOpen={isImportConfirmationModalOpen}
-				onClose={() => setImportConfirmationModalOpen(false)}
-				saveWallet={saveWallet} />
-
-			<UpdateProfileModal
-				isOpen={isUpdateProfileModalOpen}
-				onClose={() => setIsUpdateProfileModalOpen(false)} />
-
+						<Text
+							fontWeight='500'
+							variant='v2_subheading'
+						>
+							Invite Proposals
+						</Text>
+					</Container>
+				)
+			}
 		</>
 	)
 
@@ -242,11 +282,15 @@ function NavBar({ bg = 'gray.1' }: Props) {
 		return (router.pathname === '/dashboard' && !isLoading && grant)
 	}, [grant, isLoading, router.pathname])
 
+	const isMobile = useMediaQuery('(max-width:500px)')
+
 	useEffect(() => {
 		logger.info({ type, privateKey }, 'RecoveryModal')
 		if(type === 'export') {
 			setPrivateKey(webwallet?.privateKey ?? '')
 		}
+
+		console.log(isMobile, 'isMobile')
 	}, [type, webwallet])
 
 	const onChange = (e: ChangeEvent<HTMLInputElement>) => {

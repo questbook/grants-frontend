@@ -69,7 +69,7 @@ function Payouts(
 					height='100%'
 					gap={10}
 					alignSelf='flex-start'
-					marginRight={24}
+					// marginRight={24}
 				>
 					<StepIndicator
 						step={step}

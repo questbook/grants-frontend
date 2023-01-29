@@ -21,12 +21,12 @@ type Props = {
 	//Navbar configs
 	renderNavbar?: boolean
 	navbarConfig?: NavbarConfig
-
+	requestProposal?: boolean
 	//Sidebar configs
 	renderSidebar?: boolean
 }
 
-function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar }: Props) {
+function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar, requestProposal }: Props) {
 	const [renderCount, setRenderCount] = useState(0)
 
 	useEffect(() => {
@@ -42,7 +42,10 @@ function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar }: P
 			overscrollBehavior='none'>
 			{
 				renderNavbar && (
-					<NavBar {...navbarConfig} />
+					<NavBar
+						{...navbarConfig}
+						requestProposal={requestProposal}
+					/>
 				)
 			}
 			<Flex
