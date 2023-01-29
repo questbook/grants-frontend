@@ -22,32 +22,57 @@ function Discussions() {
 				boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
 				bg='white'
 				direction='column'>
-				<Flex
-					justify='center'
-					gap={4}>
-					{
-						proposalTags?.map((tag, index) => {
-							return (
-								<QuickReplyButton
-									key={index}
-									tag={tag}
-									isSelected={tag.id === selectedTag}
-									onClick={
-										() => {
-											if(selectedTag) {
-												setSelectedTag(undefined)
-											} else {
-												setSelectedTag(tag.id)
-											}
-										}
+				<Text fontWeight='500'>
+					Discussion
+				</Text>
+				{
+					proposalTags?.length > 0 && (
+						<Flex
+							mt={4}
+							w='100%'>
+							<Image
+								src='/v2/images/qb-discussion.svg'
+								boxSize='36px' />
+							<Flex
+								ml={4}
+								direction='column'>
+								<Text
+									variant='v2_metadata'
+									fontWeight='500'
+									color='gray.6'>
+									FEW WAYS TO START THE DISCUSSION.
+								</Text>
+								<Flex
+									mt={2}
+									gap={3}>
+									{
+										proposalTags?.map((tag, index) => {
+											return (
+												<QuickReplyButton
+													key={index}
+													tag={tag}
+													isSelected={tag.id === selectedTag}
+													onClick={
+														() => {
+															if(selectedTag) {
+																setSelectedTag(undefined)
+																setText('')
+															} else {
+																setSelectedTag(tag.id)
+																setText(tag.commentString)
+															}
+														}
+													}
+													isDisabled={(selectedTag !== undefined && selectedTag !== tag.id) || (isCommentPrivate && !tag.isPrivate)}
+													index={index} />
+											)
+										})
 									}
-									isDisabled={(selectedTag !== undefined && selectedTag !== tag.id) || (isCommentPrivate && !tag.isPrivate)}
-									index={index} />
-							)
-						})
-					}
-				</Flex>
-
+								</Flex>
+							</Flex>
+						</Flex>
+					)
+				}
 				<Flex
 					mt={4}
 					w='100%'>
