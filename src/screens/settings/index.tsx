@@ -5,7 +5,7 @@ import copy from 'copy-to-clipboard'
 import router from 'next/router'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { defaultChainId } from 'src/constants/chains'
-import { ImageAdd } from 'src/generated/icons'
+import { Copy, ImageAdd, ShareBox } from 'src/generated/icons'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
@@ -102,37 +102,9 @@ function Settings() {
 												>
 													Your multisig is linked to your grant program
 												</Text>
-												<Button
-													variant='link'
-													rightIcon={
-														<>
-															<Flex
-																gap={1}
-															>
-																<Tooltip label={tooltipLabel}>
-																	<Image
-																		src='/v2/icons/copy.svg'
-																		onClick={
-																			() => {
-																				copy(workspace?.safe?.address!)
-																				setTooltipLabel(copiedTooltip)
-																			}
-																		}
-																	/>
-																</Tooltip>
-
-																<Image
-																	src='/v2/icons/share.svg'
-																	onClick={
-																		() => {
-																			window.open(safeURL, '_blank')
-																		}
-																	}
-																/>
-															</Flex>
-
-														</>
-													}>
+												<Flex
+													gap={1}
+													align='center'>
 													<Text
 														fontWeight='400'
 														variant='v2_subtitle'
@@ -140,7 +112,42 @@ function Settings() {
 													>
 														{formatAddress(workspace.safe.address)}
 													</Text>
-												</Button>
+													<Tooltip label={tooltipLabel}>
+														<Copy
+															cursor='pointer'
+															onClick={
+																() => {
+																	copy(workspace?.safe?.address!)
+																	setTooltipLabel(copiedTooltip)
+																}
+															}
+														/>
+													</Tooltip>
+
+													<ShareBox
+														cursor='pointer'
+														onClick={
+															() => {
+																window.open(safeURL, '_blank')
+															}
+														}
+													/>
+
+													<Image
+														src='/v2/icons/dot.svg'
+														boxSize='4px'
+														mx={1} />
+
+													<Button
+														variant='link'
+														onClick={() => setIsLinkYourMultisigModalOpen(true)}>
+														<Text
+															variant='v2_body'
+															fontWeight='500'>
+															Change multisig
+														</Text>
+													</Button>
+												</Flex>
 											</Flex>
 										</Flex>
 									</Box>

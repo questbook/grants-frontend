@@ -103,16 +103,18 @@ function Proposal() {
 										<Button
 											variant='link'
 											rightIcon={
-												<Flex
-													w='20px'
-													h='20px'
-													bg='gray.3'
-													borderRadius='3xl'
-													justify='center'>
-													<Mail
-														alignSelf='center'
-														boxSize='12px' />
-												</Flex>
+												getFieldString(decryptedProposal, 'applicantEmail') && (
+													<Flex
+														w='20px'
+														h='20px'
+														bg='gray.3'
+														borderRadius='3xl'
+														justify='center'>
+														<Mail
+															alignSelf='center'
+															boxSize='12px' />
+													</Flex>
+												)
 											}>
 											<Text
 												fontWeight='400'
@@ -123,7 +125,7 @@ function Proposal() {
 										</Button>
 
 										{
-											getFieldString(proposal, 'applicantAddress') && (
+											getFieldString(proposal, 'applicantEmail') && (
 												<Image
 													src='/v2/icons/dot.svg'
 													boxSize='4px'
