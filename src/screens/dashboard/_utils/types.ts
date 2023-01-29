@@ -102,4 +102,5 @@ export type TagType = {
   title: string
   icon: ReactElement
   isPrivate: boolean
+  commentString: string
 }
