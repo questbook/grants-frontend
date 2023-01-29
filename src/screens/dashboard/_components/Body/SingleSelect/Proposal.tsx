@@ -14,7 +14,7 @@ import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import getAvatar from 'src/utils/avatarUtils'
-import { formatAddress, getFieldString, getRewardAmountMilestones } from 'src/utils/formattingUtils'
+import { formatAddress, getFieldString, getFieldStrings, getRewardAmountMilestones } from 'src/utils/formattingUtils'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
@@ -227,6 +227,31 @@ function Proposal() {
 					{/* {projectDetails} */}
 					{projectDetails ? <TextViewer text={projectDetails} /> : null}
 				</Flex>
+
+				{
+					getFieldString(decryptedProposal, 'memberDetails') && (
+						<Flex
+							w='100%'
+							mt={4}
+							direction='column'>
+							<Text color='gray.5'>
+								Member Details
+							</Text>
+							{
+								getFieldStrings(decryptedProposal, 'memberDetails').map((member: string, index: number) => (
+									<Text
+										key={index}
+										mt={2}>
+										{index + 1}
+										.
+										{' '}
+										{member}
+									</Text>
+								))
+							}
+						</Flex>
+					)
+				}
 
 				{
 					grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1).startsWith('customField')).map((field, index) => {
