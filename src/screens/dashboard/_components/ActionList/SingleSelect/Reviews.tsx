@@ -747,34 +747,46 @@ function Reviews() {
 						review?.items?.map((item, index) => {
 							return (
 								<Flex
+									direction='column'
 									key={index}
 									mt={index === 0 ? 0 : 3}
 									align='start'>
-									<Flex direction='column'>
+									<Flex
+										w='100%'
+										justify='space-between'>
+										<Flex direction='column'>
+											<Text
+												variant='v2_body'>
+												{item?.rubric?.title}
+											</Text>
+											<Text
+												variant='v2_metadata'
+												color='gray.6'>
+												{item?.rubric?.details}
+											</Text>
+										</Flex>
+
 										<Text
+											textAlign='right'
 											variant='v2_body'>
-											{item?.rubric?.title}
-										</Text>
-										<Text
-											variant='v2_metadata'
-											color='gray.6'>
-											{item?.rubric?.details}
+											{item?.rating}
+											<Text
+												ml={1}
+												color='black.3'
+												display='inline-block'>
+												{' / '}
+												{item?.rubric?.maximumPoints}
+											</Text>
 										</Text>
 									</Flex>
 
 									<Text
-										ml='auto'
-										textAlign='right'
-										variant='v2_body'>
-										{item?.rating}
-										<Text
-											ml={1}
-											color='black.3'
-											display='inline-block'>
-											{' / '}
-											{item?.rubric?.maximumPoints}
-										</Text>
+										textAlign='justify'
+										variant='v2_metadata'
+										color='gray.6'>
+										{item?.comment}
 									</Text>
+
 								</Flex>
 							)
 						})
