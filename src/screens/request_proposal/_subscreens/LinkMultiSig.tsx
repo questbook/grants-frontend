@@ -44,7 +44,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 					gap={10}
 					alignSelf='flex-start'
 					// alignItems='center'
-					marginRight={24}
+					// marginRight={24}
 				>
 					<StepIndicator
 						step={step}

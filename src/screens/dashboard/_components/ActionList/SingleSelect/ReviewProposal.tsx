@@ -32,7 +32,7 @@ function ReviewProposal() {
 							justifyContent='flex-start'
 							onClick={
 								() => {
-									setShowSubmitReviewPanel(false)
+									router.back()
 								}
 							} />
 					)
