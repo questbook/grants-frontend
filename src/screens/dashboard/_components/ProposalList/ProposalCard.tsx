@@ -1,5 +1,6 @@
 import { useContext, useEffect } from 'react'
 import { Checkbox, Flex, FlexProps, forwardRef, Image, Text, Tooltip } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
 import { CheckDouble, Close, Resubmit } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
@@ -121,6 +122,7 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 		</Flex>
 	)
 
+	const router = useRouter()
 	const { proposal } = props
 
 	const { selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
@@ -139,6 +141,10 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 		if(selectedProposals.size === 1 && isText) {
 			// Only 1 proposal was selected and the user clicked on its name
 			setSelectedProposals(new Set<string>([proposal.id]))
+			router.push({
+				pathname: '/dashboard',
+				query: { ...router.query, proposalId: proposal.id }
+			}, undefined, { shallow: true })
 		} else {
 			// Either more proposals are selected or the user clicked on the checkbox
 			// In both cases, we want to add / remove the proposal to / from the set respectively

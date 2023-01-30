@@ -20,7 +20,7 @@ const ModalContext = createContext<ModalContextType | undefined>(undefined)
 const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const router = useRouter()
 	const { setSafeObj } = useSafeContext()
-	const { grantId, chainId: _chainId, role: _role } = router.query
+	const { grantId, chainId: _chainId, role: _role, proposalId } = router.query
 	const { setWorkspace } = useContext(ApiClientsContext)!
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 	const { grant, setGrant, role, setRole, setIsLoading } = useContext(GrantsProgramContext)!
@@ -63,6 +63,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const [selectedProposals, setSelectedProposals] = useState<Set<string>>(new Set<string>())
 	const [review, setReview] = useState<ReviewInfo>()
 	const [showSubmitReviewPanel, setShowSubmitReviewPanel] = useState<boolean>(false)
+	const [areCommentsLoading, setAreCommentsLoading] = useState<boolean>(false)
 
 	const getGrant = useCallback(async() => {
 		if(!grantId || chainId === -1 || typeof grantId !== 'string') {
@@ -256,6 +257,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		} while(shouldContinue)
 
 		setProposals(proposals)
+		setAreCommentsLoading(true)
 		await getComments()
 
 		return 'proposals-fetched'
@@ -335,6 +337,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		}
 
 		setCommentMap(commentMap)
+		setAreCommentsLoading(false)
 	}, [role, grantId, scwAddress, webwallet])
 
 	useEffect(() => {
@@ -363,10 +366,26 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			return
 		}
 
-		const initialSelectionSet = new Set<string>()
-		initialSelectionSet.add(proposals[0].id)
-		logger.info({ initialSelectionSet }, 'selectedProposals')
-		setSelectedProposals(initialSelectionSet)
+		if(proposalId && typeof proposalId === 'string') {
+			// Scroll to the proposal
+			const proposalIndex = proposals.findIndex((_) => _.id === proposalId)
+			if(proposalIndex !== -1) {
+				setSelectedProposals(new Set<string>([proposalId]))
+				router.push({
+					pathname: '/dashboard',
+					query: { ...router.query, proposalId }
+				}, undefined, { shallow: true })
+			}
+		} else {
+			const initialSelectionSet = new Set<string>()
+			initialSelectionSet.add(proposals[0].id)
+			router.push({
+				pathname: '/dashboard',
+				query: { ...router.query, proposalId: proposals[0].id }
+			}, undefined, { shallow: true })
+			logger.info({ initialSelectionSet }, 'selectedProposals')
+			setSelectedProposals(initialSelectionSet)
+		}
 
 		logger.info({ grant, scwAddress, role, proposals }, 'Loading state set to false')
 		setIsLoading(false)
@@ -383,6 +402,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 					setReview,
 					showSubmitReviewPanel,
 					setShowSubmitReviewPanel,
+					areCommentsLoading,
 					commentMap,
 					setCommentMap,
 					refreshComments: (refresh: boolean) => {
