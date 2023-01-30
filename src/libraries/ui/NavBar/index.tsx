@@ -1,5 +1,6 @@
 import { ChangeEvent, useContext, useEffect, useMemo, useState } from 'react'
 import { Box, Container, Flex, Image, Spacer, Text } from '@chakra-ui/react'
+import { SupportedPayouts } from '@questbook/supported-safes'
 import copy from 'copy-to-clipboard'
 import { ethers } from 'ethers'
 import saveAs from 'file-saver'
@@ -109,31 +110,54 @@ function NavBar({ bg = 'gray.1' }: Props) {
 									variant='v2_subheading'>
 									{grant?.title}
 								</Text>
-								{
-									(grant?.link !== undefined && grant?.link !== null) && (
-										<Text
-											variant='v2_metadata'
-											display={grant?.link ? '' : 'none'}>
-											Program details
+								<Flex
+									align='center'
+									gap={2}>
+									{
+										(grant?.link !== undefined && grant?.link !== null) && (
 											<Text
 												variant='v2_metadata'
-												display='inline-block'
-												fontWeight={500}
-												marginLeft={1}
-												cursor='pointer'
-												onClick={
-													() => {
-														if(grant.link !== null) {
-															window.open(grant.link, '_blank')
+												display={grant?.link ? '' : 'none'}>
+												Program details
+												<Text
+													variant='v2_metadata'
+													display='inline-block'
+													fontWeight={500}
+													marginLeft={1}
+													cursor='pointer'
+													onClick={
+														() => {
+															if(grant.link !== null) {
+																window.open(grant.link, '_blank')
+															}
 														}
 													}
-												}
-											>
-												here
+												>
+													here
+												</Text>
 											</Text>
-										</Text>
-									)
-								}
+										)
+									}
+									{
+										(safeUSDAmount) && (
+											<Text
+												variant='v2_metadata'
+												display={grant?.link ? '' : 'none'}>
+												Program multisig
+												<Text
+													variant='v2_metadata'
+													display='inline-block'
+													fontWeight={500}
+													marginLeft={1}
+												>
+													{safeUSDAmount}
+													{' '}
+													USD
+												</Text>
+											</Text>
+										)
+									}
+								</Flex>
 							</Flex>
 
 							<Text
@@ -231,6 +255,7 @@ function NavBar({ bg = 'gray.1' }: Props) {
 	const toast = useCustomToast()
 	const [privateKey, setPrivateKey] = useState<string>('')
 	const [privateKeyError, setPrivateKeyError] = useState<string>('')
+	const [safeUSDAmount, setSafeUSDAmount] = useState<number>()
 
 	const [isRecoveryModalOpen, setIsRecoveryModalOpen] = useState<boolean>(false)
 	const [isImportConfirmationModalOpen, setImportConfirmationModalOpen] = useState<boolean>(false)
@@ -248,6 +273,22 @@ function NavBar({ bg = 'gray.1' }: Props) {
 			setPrivateKey(webwallet?.privateKey ?? '')
 		}
 	}, [type, webwallet])
+
+	useEffect(() => {
+		if(!grant?.workspace?.safe?.address || !grant?.workspace?.safe?.chainId) {
+			return
+		}
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		new SupportedPayouts().getSafe(parseInt(grant.workspace?.safe?.chainId), grant.workspace.safe.address).getTokenAndbalance().then((result: any) => {
+			logger.info({ result }, 'safe balance')
+			if(result) {
+				const total = result?.reduce((acc: number, cur: {usdValueAmount: number}) => acc + cur.usdValueAmount, 0)
+				logger.info({ total }, 'balance total')
+				setSafeUSDAmount(total)
+			}
+		})
+	}, [grant?.workspace?.safe])
 
 	const onChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setPrivateKey(e.target.value)

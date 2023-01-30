@@ -1,16 +1,14 @@
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 import { Checkbox, Flex, FlexProps, forwardRef, Image, Text, Tooltip } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
 import { CheckDouble, Close, Resubmit } from 'src/generated/icons'
-import logger from 'src/libraries/logger'
 import { GrantsProgramContext } from 'src/pages/_app'
-import useProposalTags from 'src/screens/dashboard/_hooks/useProposalTags'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import getAvatar from 'src/utils/avatarUtils'
-import { getFieldString } from 'src/utils/formattingUtils'
+import { getFieldString, titleCase } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 type Props = {
@@ -94,28 +92,27 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 							label={proposal?.state === 'approved' ? 'Accepted Proposal' : proposal?.state === 'rejected' ? 'Rejected Proposal' : 'Awaiting resubmission'}>
 							<Flex
 								ml='auto'
+								align='center'
+								justify='center'
+								transition='all .5s ease'
 								p={2}
-								borderRadius='4px'
+								w={selectedProposals.has(proposal.id) ? '96px' : '32px'}
+								borderRadius={selectedProposals.has(proposal.id) ? '12px' : '4px'}
 								bg={proposal?.state === 'approved' ? 'accent.columbia' : proposal?.state === 'rejected' ? 'accent.melon' : 'accent.vodka'}>
 								{proposal?.state === 'approved' ? <CheckDouble /> : proposal?.state === 'rejected' ? <Close /> : <Resubmit />}
+								{
+									selectedProposals.has(proposal.id) && (
+										<Text
+											variant='v2_metadata'
+											fontWeight='500'
+											ml={1}>
+											{titleCase(proposal.state)}
+										</Text>
+									)
+								}
 							</Flex>
 						</Tooltip>
 					)
-				}
-			</Flex>
-			<Flex gap={2}>
-				{
-					tags?.map((tag, index) => tag?.title !== '' && (
-						<Text
-							key={index}
-							mt={2}
-							bg={tag?.color}
-							variant='v2_metadata'
-							borderRadius='2px'
-							px={1}>
-							{tag?.title}
-						</Text>
-					))
 				}
 			</Flex>
 
@@ -127,11 +124,7 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 
 	const { selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
 	const { role } = useContext(GrantsProgramContext)!
-	const { tags } = useProposalTags({ proposal })
-
-	useEffect(() => {
-		logger.info('useProposalTags ', tags)
-	}, [tags])
+	// const { tags } = useProposalTags({ proposal })
 
 	const onClick = (isText: boolean = false) => {
 		if(selectedProposals.size === 1 && selectedProposals.has(proposal.id)) {
