@@ -1,5 +1,5 @@
 import { useContext, useMemo, useState } from 'react'
-import { Button, Checkbox, Divider, Flex, Image, Text, Textarea } from '@chakra-ui/react'
+import { Box, Button, Checkbox, Divider, Flex, Image, Text, Textarea } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
@@ -18,7 +18,6 @@ function Discussions() {
 		return (
 			<Flex
 				px={5}
-				py={4}
 				w='100%'
 				boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
 				bg='white'
@@ -57,8 +56,10 @@ function Discussions() {
 														() => {
 															if(selectedTag) {
 																setSelectedTag(undefined)
+																setText('')
 															} else {
 																setSelectedTag(tag.id)
+																setText(tag.commentString)
 															}
 														}
 													}
@@ -91,7 +92,7 @@ function Discussions() {
 									setText(e.target.value)
 								}
 							}
-							placeholder='Add a comment here' />
+							placeholder={placeholder} />
 						<Flex
 							mt={4}
 							align='center'>
@@ -145,6 +146,13 @@ function Discussions() {
 				}
 
 				{comments.map(renderComment)}
+
+				{
+					comments.length > 0 && (
+						<Box
+							my={4} />
+					)
+				}
 			</Flex>
 		)
 	}
@@ -199,10 +207,9 @@ function Discussions() {
 	const [step, setStep] = useState<number>()
 	const [, setTransactionHash] = useState('')
 	const [isCommentPrivate, setIsCommentPrivate] = useState<boolean>(false)
-
 	const [ selectedTag, setSelectedTag ] = useState<string>()
-
 	const [ text, setText ] = useState<string>('')
+
 	const { addComment, isBiconomyInitialised } = useAddComment({ setStep, setTransactionHash })
 
 	const proposal = useMemo(() => {
@@ -228,6 +235,21 @@ function Discussions() {
 
 		return text === ''
 	}, [text, step])
+
+	const placeholder = useMemo(() => {
+		switch (selectedTag) {
+		case 'accept':
+			return 'Share your thoughts on why you are accepting this proposal'
+		case 'reject':
+			return 'Let the builder know why you are rejecting this proposal here'
+		case 'resubmit':
+			return 'Suggest changes to the proposal here'
+		case 'interview':
+			return 'Paste an interview link here'
+		default:
+			return 'Add a general comment'
+		}
+	}, [selectedTag])
 
 	const getCommentDisplayName = (comment: CommentType) => {
 		if(comment.role === 'admin' || comment.role === 'reviewer') {
