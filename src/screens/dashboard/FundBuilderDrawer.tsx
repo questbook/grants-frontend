@@ -205,7 +205,7 @@ function FundBuilderDrawer() {
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 	const selectedProposalsData = useMemo(() => {
 		if(!proposals || !selectedProposals) {
-			return []
+			return [] as ProposalType[]
 		}
 
 		const p: ProposalType[] = []
@@ -277,6 +277,7 @@ function FundBuilderDrawer() {
 						status: 'error',
 						duration: 3000,
 					})
+					setPayoutInProcess(false)
 					return
 				}
 
@@ -290,6 +291,7 @@ function FundBuilderDrawer() {
 						status: 'error',
 						duration: 3000,
 					})
+					setPayoutInProcess(false)
 					return
 				}
 

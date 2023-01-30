@@ -349,6 +349,7 @@ function FundBuilderModal() {
 						status: 'error',
 						duration: 3000,
 					})
+					setPayoutInProcess(false)
 					return
 				}
 
@@ -362,6 +363,7 @@ function FundBuilderModal() {
 						status: 'error',
 						duration: 3000,
 					})
+					setPayoutInProcess(false)
 					return
 				}
 
