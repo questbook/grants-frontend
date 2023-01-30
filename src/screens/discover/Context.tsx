@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createContext, PropsWithChildren, ReactNode, useContext, useEffect, useState } from 'react'
+import { SupportedPayouts } from '@questbook/supported-safes'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetAllGrantsForMemberQuery, useGetAllGrantsQuery, useGetGrantProgramDetailsQuery, useGetSectionGrantsQuery, useGetWorkspacesAndBuilderGrantsQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
@@ -15,7 +17,7 @@ const PAGE_SIZE = 40
 const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const provider = () => {
 		return (
-			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram, search, setSearch, sectionGrants, isLoading }}>
+			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram, search, setSearch, sectionGrants, isLoading, safeBalances }}>
 				{children}
 			</DiscoverContext.Provider>
 		)
@@ -30,6 +32,7 @@ const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const [sectionGrants, setSectionGrants] = useState<SectionGrants>()
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 	const [search, setSearch] = useState<string>('')
+	const [safeBalances, setSafeBalances] = useState<{[key: string]: number}>({})
 
 	const { fetchMore: fetchMoreWorkspaces } = useMultiChainQuery({
 		useQuery: useGetWorkspacesAndBuilderGrantsQuery,
@@ -60,6 +63,63 @@ const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		useQuery: useGetSectionGrantsQuery,
 		options: {}
 	})
+
+	const fetchSafeBalances = async(grants: GrantType[]) => {
+		const safes: GrantType['workspace']['safe'][] = []
+		const safeSet = new Set<string>()
+		for(const safe of grants.map((g) => g.workspace.safe)) {
+			if(!safe?.address || !safe?.chainId) {
+				continue
+			}
+
+			const safeId = `${safe.chainId}-${safe.address}`
+			if(safeSet.has(safeId)) {
+				continue
+			}
+
+			safeSet.add(safeId)
+			safes.push(safe)
+		}
+
+		logger.info({ safes }, 'Safes (DISCOVER CONTEXT)')
+
+		const balances = await Promise.all(safes.map(async(safeObj) => {
+			if(!safeObj?.address || !safeObj?.chainId) {
+				logger.info({ safeObj }, 'No safe address or chainId (DISCOVER CONTEXT)')
+				return 0
+			}
+
+			const safe = new SupportedPayouts().getSafe(parseInt(safeObj.chainId), safeObj.address)
+			try {
+				logger.info({ safe }, 'Safe (DISCOVER CONTEXT)')
+				const balances = await safe.getTokenAndbalance()
+				logger.info({ balances }, 'Balances (DISCOVER CONTEXT)')
+
+				const total = balances.reduce((acc: number, cur: {usdValueAmount: number}) => acc + cur.usdValueAmount, 0)
+				logger.info({ balances, safe }, 'Total (DISCOVER CONTEXT)')
+				return total
+			} catch(e) {
+				logger.info({ balances, safe }, 'Error (DISCOVER CONTEXT)')
+				return 0
+			}
+		}))
+		logger.info({ balances }, 'Balances (DISCOVER CONTEXT)')
+
+		const safeBalances: {[key: string]: number} = {}
+		for(let i = 0 ; i < safes.length ; i++) {
+			const safeObj = safes[i]
+			if(!safeObj?.address || !safeObj?.chainId) {
+				continue
+			}
+
+			const safeId = `${safeObj.chainId}-${safeObj.address}`
+			safeBalances[safeId] = balances[i]
+		}
+
+		logger.info({ safeBalances }, 'Safe balances (DISCOVER CONTEXT)')
+
+		setSafeBalances(safeBalances)
+	}
 
 	const getGrantsForYou = async() => {
 		if(!scwAddress) {
@@ -231,6 +291,22 @@ const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			fetchDetails()
 		}
 	}, [inviteInfo])
+
+	useEffect(() => {
+		if(!grantsForAll?.length || !grantsForYou?.length || !sectionGrants?.length) {
+			return
+		}
+
+		const sGrants: GrantType[] = []
+		for(const section of sectionGrants) {
+			for(const key in section) {
+				sGrants.push(...section[key].grants.map(g => ({ ...g, role: 'community' as Roles })))
+			}
+		}
+
+		const allGrants = [...grantsForAll, ...grantsForYou, ...sGrants]
+		fetchSafeBalances(allGrants)
+	}, [grantsForAll, grantsForYou, sectionGrants])
 
 	return provider()
 }

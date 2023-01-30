@@ -47,10 +47,14 @@ query getWorkspacesAndBuilderGrants($first: Int, $skip: Int, $actorId: Bytes!) {
       logoIpfsHash
       totalGrantFundingDisbursedUSD
       supportedNetworks
-      members (first: 1) {
+      members(first: 1) {
         id
         actorId
         accessLevel
+      }
+      safe {
+        chainId
+        address
       }
     }
     reward {

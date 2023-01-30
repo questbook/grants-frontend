@@ -21,4 +21,5 @@ export type DiscoverContextType = {
     search: string
     setSearch: (search: string) => void
     isLoading: boolean
+    safeBalances: {[key: string]: number}
 }

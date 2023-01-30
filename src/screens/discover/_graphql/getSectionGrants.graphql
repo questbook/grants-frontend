@@ -23,6 +23,10 @@ query getSectionGrants {
         logoIpfsHash
         totalGrantFundingDisbursedUSD
         supportedNetworks
+        safe {
+          chainId
+          address
+        }
       }
       reward {
         committed
