@@ -9,6 +9,7 @@ query getComments($grantId: String!, $first: Int, $skip: Int) {
     id
     isPrivate
     commentsPublicHash
+    createdAt
     commentsEncryptedData {
       id
       data
@@ -19,6 +20,7 @@ query getComments($grantId: String!, $first: Int, $skip: Int) {
         fullName
         profilePictureIpfsHash
         publicKey
+        accessLevel
       }
       supportedNetworks
     }
