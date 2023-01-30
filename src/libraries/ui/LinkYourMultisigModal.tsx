@@ -97,9 +97,9 @@ function LinkYourMultisigModal({ isOpen, onClose, multisigAddress: _multisigAddr
 						isLoading={step !== undefined}
 						onClick={
 							async() => {
-								if(isOwner) {
+								if(isOwner && selectedSafeNetwork) {
 									// link the safe
-									await link(multiSigAddress)
+									await link(multiSigAddress, selectedSafeNetwork.networkId)
 									onClose()
 								} else {
 									setIsVerifySignerModalOpen(true)

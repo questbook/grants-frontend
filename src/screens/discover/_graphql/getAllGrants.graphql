@@ -33,6 +33,10 @@ query GetAllGrants($first: Int, $skip: Int, $searchString: String!) {
         actorId
         accessLevel
       }
+      safe {
+        chainId
+        address
+      }
     }
     reward {
       committed

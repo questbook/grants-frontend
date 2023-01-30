@@ -23,7 +23,7 @@ function useLinkYourMultisig() {
 		setTransactionStep: setStep,
 	})
 
-	const link = async(multisigAddress: string) => {
+	const link = async(multisigAddress: string, networkId: string) => {
 		if(!grant?.workspace?.id) {
 			return
 		}
@@ -33,7 +33,7 @@ function useLinkYourMultisig() {
 			safeAddressInBytes = ethers.utils.hexZeroPad(ethers.utils.hexlify(ethers.utils.getAddress(multisigAddress)), 32)
 		}
 
-		const methodArgs = [Number(grant?.workspace?.id), safeAddressInBytes, multisigAddress, chainId]
+		const methodArgs = [Number(grant?.workspace?.id), safeAddressInBytes, multisigAddress, networkId]
 		await call({ method: 'updateWorkspaceSafe', args: methodArgs })
 	}
 

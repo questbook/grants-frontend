@@ -7,6 +7,7 @@ import SupportedChainId from 'src/generated/SupportedChainId'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
 import logger from 'src/libraries/logger'
 import { GrantType } from 'src/screens/discover/_utils/types'
+import { DiscoverContext } from 'src/screens/discover/Context'
 import getAvatar from 'src/utils/avatarUtils'
 import { extractDateFromDateTime, titleCase } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
@@ -146,20 +147,6 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 							noOfLines={2}
 						>
 							{grant.title}
-
-							{/* <Text
-								color={isOpen ? 'accent.carrot' : 'gray.5'}
-								background={isOpen ? 'rgba(242, 148, 62, 0.2)' : 'gray.2'}
-								borderRadius='2px'
-								px={2}
-								py={1}
-								fontSize='12px'
-								fontWeight='500'
-								ml={2}
-								display='inline-block'
-							>
-								{isOpen ? 'Open' : 'Closed'}
-							</Text> */}
 						</Text>
 					</Flex>
 
@@ -185,18 +172,47 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 					justifyContent='space-between'
 					mt={2}>
 					<Flex alignItems='center'>
-						<Text
-							fontSize='18px'
-							fontWeight='500'>
-							$
-							{grant.workspace.totalGrantFundingDisbursedUSD ? grant.workspace.totalGrantFundingDisbursedUSD.toLocaleString() : 0}
-						</Text>
-						<Text
-							ml='5px'
-							fontSize='14px'
-							color='black.3'>
-							{t('/.cards.in_grants')}
-						</Text>
+						{
+							usdAmount > 0 && (
+								<Text
+									fontSize='18px'
+									fontWeight='500'>
+									$
+									{usdAmount.toFixed(2)}
+								</Text>
+							)
+						}
+						{
+							usdAmount > 0 && (
+								<Text
+									ml='5px'
+									fontSize='14px'
+									color='black.3'>
+									to be paid out
+								</Text>
+							)
+						}
+						{
+							(usdAmount === 0 || !grant.workspace?.safe) && (
+								<Text
+									fontSize='18px'
+									fontWeight='500'>
+									$
+									{' '}
+									{grant.workspace.totalGrantFundingDisbursedUSD ? grant.workspace.totalGrantFundingDisbursedUSD.toLocaleString() : 0}
+								</Text>
+							)
+						}
+						{
+							(usdAmount === 0 || !grant.workspace?.safe) && (
+								<Text
+									ml='5px'
+									fontSize='14px'
+									color='black.3'>
+									{t('/.cards.in_grants')}
+								</Text>
+							)
+						}
 					</Flex>
 					<Flex alignItems='center'>
 						<Text
@@ -216,11 +232,17 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 		</Box>
 	)
 
+	const { safeBalances } = useContext(DiscoverContext)!
+
 	const router = useRouter()
 	const { t } = useTranslation()
 	const formattedDeadline = extractDateFromDateTime(grant.deadline!)
 
 	const { isQbAdmin } = useContext(QBAdminsContext)!
+
+	const usdAmount = useMemo(() => {
+		return safeBalances[`${grant.workspace.safe?.chainId}-${grant.workspace.safe?.address}`]
+	}, [grant, safeBalances])
 
 	const isOpen = useMemo(() => {
 		return grant.acceptingApplications === true && grant.deadline ? grant.deadline > new Date().toISOString() : false

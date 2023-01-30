@@ -42,6 +42,10 @@ query getAllGrantsForMember(
         actorId
         accessLevel
       }
+      safe {
+        chainId
+        address
+      }
     }
     reward {
       committed
