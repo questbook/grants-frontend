@@ -9,7 +9,7 @@ import { PIIForCommentType } from 'src/libraries/utils/types'
 
 export type CommentMap = {[key: string]: CommentType[]}
 
-type BaseDashboardContextType = {
+export type DashboardContextType = {
   proposals: Proposals
   selectedProposals: Set<string>
   setSelectedProposals: (set: Set<string>) => void
@@ -17,12 +17,12 @@ type BaseDashboardContextType = {
   setReview: (reviews: ReviewInfo) => void
   showSubmitReviewPanel: boolean
   setShowSubmitReviewPanel: (show: boolean) => void
+  areCommentsLoading: boolean
   commentMap: CommentMap
   setCommentMap: (coments: CommentMap) => void
   refreshComments: (refresh: boolean) => void
 };
 
-export type DashboardContextType = BaseDashboardContextType
 export interface TokenInfo {
   tokenIcon: string
   tokenName: string

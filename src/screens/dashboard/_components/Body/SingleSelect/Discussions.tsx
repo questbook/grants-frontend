@@ -137,6 +137,17 @@ function Discussions() {
 				</Flex>
 
 				{
+					areCommentsLoading && (
+						<Button
+							my={4}
+							isLoading={areCommentsLoading}
+							loadingText='Loading comments, please wait.'
+							variant='link'
+							cursor='default' />
+					)
+				}
+
+				{
 					comments.length > 0 && (
 						<Divider
 							my={4}
@@ -202,7 +213,7 @@ function Discussions() {
 
 	const { scwAddress } = useContext(WebwalletContext)!
 	const { grant, role } = useContext(GrantsProgramContext)!
-	const { proposals, selectedProposals, commentMap, refreshComments } = useContext(DashboardContext)!
+	const { proposals, selectedProposals, commentMap, refreshComments, areCommentsLoading } = useContext(DashboardContext)!
 
 	const [step, setStep] = useState<number>()
 	const [, setTransactionHash] = useState('')

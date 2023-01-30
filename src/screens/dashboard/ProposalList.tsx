@@ -164,15 +164,19 @@ function ProposalList() {
 	}, [proposals])
 
 	useEffect(() => {
+		logger.info({ proposalId }, '(Proposal List) useEffect {proposalId}')
+		if(!proposals) {
+			return
+		}
+
 		if(proposalId && typeof proposalId === 'string') {
 			// Scroll to the proposal
 			const proposalIndex = proposals.findIndex((_) => _.id === proposalId)
 			if(proposalIndex !== -1) {
-				setSelectedProposals(new Set<string>([proposalId]))
 				cardRefs[proposalIndex].current?.scrollIntoView({ behavior: 'smooth' })
 			}
 		}
-	}, [proposalId])
+	}, [proposals, proposalId])
 
 	return buildComponent()
 }
