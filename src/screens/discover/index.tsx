@@ -1,4 +1,5 @@
 import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
+import { useMediaQuery } from 'react-responsive'
 import { Box, Button, Center, Container, Divider, Flex, Image, Input, Skeleton, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import Loader from 'src/components/ui/loader'
@@ -165,6 +166,8 @@ function Discover() {
 	const [sectionName, setSectionName] = useState('')
 	const [filterGrantName, setFilterGrantName] = useState('')
 
+	const isMobile = useMediaQuery({ query:'(max-width:600px)' })
+
 	const [imageFile, setImageFile] = useState<{file: File | null, hash?: string}>({ file: null })
 
 	const onDaoVisibilityUpdate = (daoId: string, chainId: SupportedChainId, visibleState: boolean) => {
@@ -234,12 +237,13 @@ function Discover() {
 					w='100%'
 				>
 					<HeroBanner />
+
 					<StatsBanner />
 
 					<Container
 						className='domainGrid'
 						minWidth='100%'
-						p={12}
+						p={4}
 						w='100%'>
 						<SearchField
 							bg='white'

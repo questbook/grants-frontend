@@ -1,3 +1,4 @@
+import { useMediaQuery } from 'react-responsive'
 import { Button, Flex, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ArrowRight } from 'src/generated/icons'
@@ -12,7 +13,7 @@ function HeroBanner() {
 			h='460px'>
 			<Flex
 				bgColor='black.1'
-				padding={24}
+				padding={[10, 24]}
 				flexDirection='column'
 				textColor='white'
 				width='600px'>
@@ -60,17 +61,21 @@ function HeroBanner() {
 				</Flex>
 
 			</Flex>
-			<Flex
-				bgColor='brand.green'
-				flexGrow={1}
-				justifyContent='center'>
-				<Image
-					mt={10}
-					src='/illustrations/Browsers.svg' />
-			</Flex>
+			{
+				!isMobile && (
+					<Flex
+						bgColor='brand.green'
+						flexGrow={1}
+						justifyContent='center'>
+						<Image
+							mt={10}
+							src='/illustrations/Browsers.svg' />
+					</Flex>
+				)
+			}
 		</Flex>
 	)
-
+	const isMobile = useMediaQuery({ query:'(max-width:600px)' })
 	const router = useRouter()
 
 	return buildComponent()

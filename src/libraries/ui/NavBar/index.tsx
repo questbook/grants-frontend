@@ -27,243 +27,238 @@ type Props = {
 }
 
 function NavBar({ bg = 'gray.1', requestProposal }: Props) {
-	const buildComponent = () => (
+	const BigScreensNavBar = () => (
 		<>
-			{
-				!isMobile[0] && (
-					<>
-						<Container
-							position='sticky'
-							top={0}
-							left={0}
-							right={0}
-							zIndex={1}
-							// variant='header-container'
-							maxH='64px'
-							display='flex'
-							alignItems='center'
-							maxW='100vw'
-							bg={bg}
-							ps={24}
-							pe={24}
-							py='16px'
-							minWidth={{ base: '-webkit-fill-available' }}
-						>
+			<Container
+				position='sticky'
+				top={0}
+				left={0}
+				right={0}
+				zIndex={1}
+				// variant='header-container'
+				maxH='64px'
+				display='flex'
+				alignItems='center'
+				maxW='100vw'
+				bg={bg}
+				ps={[6, 24]}
+				pe={24}
+				backgroundColor={['black.1', 'gray.1']}
+				py='16px'
+				minWidth={{ base: '-webkit-fill-available' }}
+			>
+				<Image
+					alignSelf='flex-start'
+					onClick={
+						() => {
+							router.push({
+								pathname: '/'
+							})
+						}
+					}
+					display={{ base: 'none', lg: 'inherit' }}
+					mr='auto'
+					src='/ui_icons/qb.svg'
+					alt='Questbook'
+					cursor='pointer' />
+				<Image
+					onClick={
+						() => {
+							router.push({
+								pathname: '/',
+							})
+						}
+					}
+					display={{ base: 'inherit', lg: 'none' }}
+					mr='auto'
+					src='/ui_icons/qb.svg'
+					alt='Questbook'
+					cursor='pointer' />
+				{
+					isQbAdmin && (
+						<>
 							<Image
-								onClick={
-									() => {
-										router.push({
-											pathname: '/'
-										})
-									}
-								}
 								display={{ base: 'none', lg: 'inherit' }}
-								mr='auto'
-								src='/ui_icons/qb.svg'
-								alt='Questbook'
-								cursor='pointer' />
+								ml='10px'
+								src='/ui_icons/builders.svg'
+								alt='Questbook Builders' />
+						</>
+					)
+				}
+				<Spacer />
+
+				{
+					shouldShowTitle && (
+						<Flex
+							align='center'
+							gap={2}
+							direction='row'
+							alignItems='center'
+						>
+
 							<Image
-								onClick={
-									() => {
-										router.push({
-											pathname: '/',
-										})
-									}
-								}
-								display={{ base: 'inherit', lg: 'none' }}
-								mr='auto'
-								src='/ui_icons/qb.svg'
-								alt='Questbook'
-								cursor='pointer' />
-							{
-								isQbAdmin && (
-									<>
-										<Image
-											display={{ base: 'none', lg: 'inherit' }}
-											ml='10px'
-											src='/ui_icons/builders.svg'
-											alt='Questbook Builders' />
-									</>
-								)
-							}
-							<Spacer />
-
-							{
-								shouldShowTitle && (
-									<Flex
-										align='center'
-										gap={2}
-										direction='row'
-										alignItems='center'
-									>
-
-										<Image
-											boxSize={8}
-											borderRadius='4px'
-											src={grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)} />
-										<Flex
-											gap={0}
-											direction='column'
-										>
-											<Text
-												fontWeight='500'
-												variant='v2_subheading'>
-												{grant?.title}
-											</Text>
-											{
-												(grant?.link !== undefined && grant?.link !== null) && (
-													<Text
-														variant='v2_metadata'
-														display={grant?.link ? '' : 'none'}>
-														Program details
-														<Text
-															variant='v2_metadata'
-															display='inline-block'
-															fontWeight={500}
-															marginLeft={1}
-															cursor='pointer'
-															onClick={
-																() => {
-																	if(grant.link !== null) {
-																		window.open(grant.link, '_blank')
-																	}
-																}
-															}
-														>
-															here
-														</Text>
-													</Text>
-												)
-											}
-										</Flex>
-
+								boxSize={8}
+								borderRadius='4px'
+								src={grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)} />
+							<Flex
+								gap={0}
+								direction='column'
+							>
+								<Text
+									fontWeight='500'
+									variant='v2_subheading'>
+									{grant?.title}
+								</Text>
+								{
+									(grant?.link !== undefined && grant?.link !== null) && (
 										<Text
-											variant={grant?.acceptingApplications ? 'openTag' : 'closedTag'}>
-											{grant?.acceptingApplications ? 'Open' : 'Closed'}
+											variant='v2_metadata'
+											display={grant?.link ? '' : 'none'}>
+											Program details
+											<Text
+												variant='v2_metadata'
+												display='inline-block'
+												fontWeight={500}
+												marginLeft={1}
+												cursor='pointer'
+												onClick={
+													() => {
+														if(grant.link !== null) {
+															window.open(grant.link, '_blank')
+														}
+													}
+												}
+											>
+												here
+											</Text>
 										</Text>
-									</Flex>
-
-								)
-							}
-
-							<Box ml={4} />
-
-							{
-								(shouldShowTitle && role === 'admin' && grant?.acceptingApplications) && (
-									<Pencil
-										cursor='pointer'
-										boxSize='20px'
-										onClick={
-											() => {
-												router.push(
-													{
-														pathname: '/request_proposal/',
-														query: {
-															grantId: grant?.id,
-															workspaceId: grant?.workspace?.id
-														},
-													})
-
-											}
-										} />
-								)
-							}
-
-							{
-								(shouldShowTitle && role === 'admin') && (
-									<Settings
-										boxSize='20px'
-										ml={3}
-										cursor='pointer'
-										onClick={
-											() => {
-												router.push(
-													{
-														pathname: '/settings'
-													})
-
-											}
-										} />
-								)
-							}
-
-							{(role === 'admin' && !isLoading) && (<Box ml={3} />)}
-							{(!isLoading && router.pathname === '/dashboard') && <SharePopover />}
-
-							<Spacer />
-
-							<AccountDetails
-								openModal={
-									(type) => {
-										setType(type)
-										setIsRecoveryModalOpen(true)
-									}
+									)
 								}
-								setIsUpdateProfileModalOpen={setIsUpdateProfileModalOpen} />
+							</Flex>
 
-						</Container>
-						<RecoveryModal
-							isOpen={isRecoveryModalOpen}
-							onClose={() => setIsRecoveryModalOpen(false)}
-							type={type}
-							privateKey={privateKey}
-							privateKeyError={privateKeyError}
-							onChange={onChange}
-							onImportClick={onImportClick}
-							onSaveAsTextClick={onSaveAsTextClick}
-							onCopyAndSaveManuallyClick={onCopyAndSaveManuallyClick} />
-						<ImportConfirmationModal
-							isOpen={isImportConfirmationModalOpen}
-							onClose={() => setImportConfirmationModalOpen(false)}
-							saveWallet={saveWallet} />
-						<UpdateProfileModal
-							isOpen={isUpdateProfileModalOpen}
-							onClose={() => setIsUpdateProfileModalOpen(false)} />
+							<Text
+								variant={grant?.acceptingApplications ? 'openTag' : 'closedTag'}>
+								{grant?.acceptingApplications ? 'Open' : 'Closed'}
+							</Text>
+						</Flex>
 
-					</>
-				)
-			}
-			{
-				isMobile[0] && requestProposal && (
-					<Container
-						position='sticky'
-						top={0}
-						left={0}
-						right={0}
-						zIndex={1}
-						// variant='header-container'
-						maxH='64px'
-						display='flex'
-						// alignItems='flext-start'
-						alignItems='center'
-						maxW='100vw'
-						bg={bg}
-						ps={22}
-						pe={10}
-						py='16px'
-						minWidth={{ base: '-webkit-fill-available' }}
-					>
-						<Button
-							variant='linkV2'
-							fontWeight='500'
-							leftIcon={<ArrowLeft />}
+					)
+				}
+
+				<Box ml={4} />
+
+				{
+					(shouldShowTitle && role === 'admin' && grant?.acceptingApplications) && (
+						<Pencil
+							cursor='pointer'
+							boxSize='20px'
 							onClick={
 								() => {
-									router.back()
+									router.push(
+										{
+											pathname: '/request_proposal/',
+											query: {
+												grantId: grant?.id,
+												workspaceId: grant?.workspace?.id
+											},
+										})
+
 								}
 							} />
-						<Text
-							fontWeight='500'
-							variant='v2_subheading'
-						>
-							Invite Proposals
-						</Text>
-					</Container>
-				)
-			}
+					)
+				}
+
+				{
+					(shouldShowTitle && role === 'admin') && (
+						<Settings
+							boxSize='20px'
+							ml={3}
+							cursor='pointer'
+							onClick={
+								() => {
+									router.push(
+										{
+											pathname: '/settings'
+										})
+
+								}
+							} />
+					)
+				}
+
+				{(role === 'admin' && !isLoading) && (<Box ml={3} />)}
+				{(!isLoading && router.pathname === '/dashboard') && <SharePopover />}
+
+				<Spacer />
+
+				<AccountDetails
+					openModal={
+						(type) => {
+							setType(type)
+							setIsRecoveryModalOpen(true)
+						}
+					}
+					setIsUpdateProfileModalOpen={setIsUpdateProfileModalOpen} />
+
+			</Container>
+			<RecoveryModal
+				isOpen={isRecoveryModalOpen}
+				onClose={() => setIsRecoveryModalOpen(false)}
+				type={type}
+				privateKey={privateKey}
+				privateKeyError={privateKeyError}
+				onChange={onChange}
+				onImportClick={onImportClick}
+				onSaveAsTextClick={onSaveAsTextClick}
+				onCopyAndSaveManuallyClick={onCopyAndSaveManuallyClick} />
+			<ImportConfirmationModal
+				isOpen={isImportConfirmationModalOpen}
+				onClose={() => setImportConfirmationModalOpen(false)}
+				saveWallet={saveWallet} />
+			<UpdateProfileModal
+				isOpen={isUpdateProfileModalOpen}
+				onClose={() => setIsUpdateProfileModalOpen(false)} />
+
 		</>
 	)
-
+	const SmallScreensRequestProposalNavBar = () => (
+		<>
+			<Container
+				position='sticky'
+				top={0}
+				left={0}
+				right={0}
+				zIndex={1}
+				// variant='header-container'
+				maxH='64px'
+				display='flex'
+				// alignItems='flext-start'
+				alignItems='center'
+				maxW='100vw'
+				bg={bg}
+				ps={22}
+				pe={10}
+				py='16px'
+				minWidth={{ base: '-webkit-fill-available' }}
+			>
+				<Button
+					variant='linkV2'
+					fontWeight='500'
+					leftIcon={<ArrowLeft />}
+					onClick={
+						() => {
+							router.back()
+						}
+					} />
+				<Text
+					fontWeight='500'
+					variant='v2_subheading'
+				>
+					Invite Proposals
+				</Text>
+			</Container>
+		</>
+	)
 	const { grant, role, isLoading } = useContext(GrantsProgramContext)!
 	const { webwallet } = useContext(WebwalletContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
@@ -284,7 +279,7 @@ function NavBar({ bg = 'gray.1', requestProposal }: Props) {
 		return (router.pathname === '/dashboard' && !isLoading && grant)
 	}, [grant, isLoading, router.pathname])
 
-	const isMobile = useMediaQuery('(max-width:500px)')
+	const isMobile = useMediaQuery(['(max-width:600px)'])
 
 	useEffect(() => {
 		logger.info({ type, privateKey }, 'RecoveryModal')
@@ -373,7 +368,13 @@ function NavBar({ bg = 'gray.1', requestProposal }: Props) {
 
 	}
 
-	return buildComponent()
+	if(!isMobile[0]) {
+		return <BigScreensNavBar />
+	} else if(requestProposal === true) {
+		return <SmallScreensRequestProposalNavBar />
+	} else {
+		return <BigScreensNavBar />
+	}
 }
 
 NavBar.defaultProps = {

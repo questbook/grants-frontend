@@ -76,6 +76,7 @@
     "react-image-picker-editor": "^1.2.0",
     "react-linkify": "^1.0.0-alpha",
     "ts-node": "^10.9.1",
+    "react-responsive": "^9.0.2",
     "urql": "^2.2.1",
     "wagmi": "^0.6.5"
   },
