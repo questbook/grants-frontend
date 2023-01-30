@@ -427,7 +427,6 @@ function ProposalSubmission(
 
 	const [showExtraFieldDropdown, setShowExtraFieldDropdown] = useState(false)
 
-	const isMobile = useMediaQuery('(max-width:500px)')
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const handleFile = async(e: any) => {
 		setDoc(e.target.files)
