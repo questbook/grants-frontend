@@ -211,7 +211,6 @@ function FundBuilderModal() {
 		setSignerVerifiedState,
 	} = useContext(FundBuilderContext)!
 	const { phantomWallet } = usePhantomWallet()
-	const [safeProposalAddress, setSafeProposalAddress] = useState<string | undefined>(undefined)
 	const [safeProposalLink, setSafeProposalLink] = useState<string | undefined>(undefined)
 	const [selectedMode, setSelectedMode] = useState<any>()
 	const [payoutInProcess, setPayoutInProcess] = useState(false)
@@ -260,7 +259,7 @@ function FundBuilderModal() {
 
 	useEffect(() => {
 		if(payoutInProcess) {
-			payoutsInProcessToastRef.current = customToast({ title: 'Payouts is in process', duration: null, status: 'info' })
+			payoutsInProcessToastRef.current = customToast({ title: 'Payout is in process', duration: null, status: 'info' })
 		} else if(!payoutInProcess && payoutsInProcessToastRef.current) {
 			toast.close(payoutsInProcessToastRef.current)
 		}
@@ -288,7 +287,7 @@ function FundBuilderModal() {
 						status: 'success',
 						duration: 5000,
 					})
-					setSafeProposalAddress(response?.transactionHash)
+					// setSafeProposalAddress(response?.transactionHash)
 					setIsModalOpen(false)
 					// disburseRewardFromSafe(response?.transactionHash, false)
 					// 	.then(() => {
@@ -353,7 +352,7 @@ function FundBuilderModal() {
 					return
 				}
 
-				setSafeProposalAddress(proposaladdress as string)
+				// setSafeProposalAddress(proposaladdress as string)
 				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress, safeObj?.chainId, proposaladdress as string))
 			} else {
 				proposaladdress = await safeObj?.proposeTransactions(grant?.title, temp, phantomWallet)
@@ -367,7 +366,7 @@ function FundBuilderModal() {
 					return
 				}
 
-				setSafeProposalAddress(proposaladdress as string)
+				// setSafeProposalAddress(proposaladdress as string)
 				setSafeProposalLink(getProposalUrl(safeObj.safeAddress, proposaladdress as string))
 			}
 
@@ -382,8 +381,7 @@ function FundBuilderModal() {
 				proposaladdress
 			]
 
-			await call({ method: 'disburseRewardFromSafe', args: methodArgs })
-			setSignerVerifiedState('transaction_initiated')
+			await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
 			setSignerVerifiedState('transaction_initiated')
 			setPayoutInProcess(false)
 		}

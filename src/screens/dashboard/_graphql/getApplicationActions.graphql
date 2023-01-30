@@ -18,6 +18,7 @@ query getApplicationActions($grantId: String!) {
           fullName
           profilePictureIpfsHash
           publicKey
+          accessLevel
         }
         supportedNetworks
       }

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { Box, Button, Drawer, DrawerCloseButton, DrawerContent, DrawerOverlay, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text, useToast } from '@chakra-ui/react'
+import { useContext, useEffect, useMemo, useState } from 'react'
+import { Box, Button, Drawer, DrawerCloseButton, DrawerContent, DrawerOverlay, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { defaultChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
@@ -178,7 +178,6 @@ function FundBuilderDrawer() {
 		setSignerVerifiedState
 	} = useContext(FundBuilderContext)!
 	const { phantomWallet } = usePhantomWallet()
-	const [safeProposalAddress, setSafeProposalAddress] = useState<string | undefined>(undefined)
 	const [safeProposalLink, setSafeProposalLink] = useState<string | undefined>(undefined)
 	const [selectedMode, setSelectedMode] = useState<any>()
 	const [payoutInProcess, setPayoutInProcess] = useState(false)
@@ -281,7 +280,6 @@ function FundBuilderDrawer() {
 					return
 				}
 
-				setSafeProposalAddress(proposaladdress)
 				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress, safeObj?.chainId, proposaladdress))
 			} else {
 				proposaladdress = await safeObj?.proposeTransactions(grant?.title, transactionData, phantomWallet)
@@ -295,7 +293,6 @@ function FundBuilderDrawer() {
 					return
 				}
 
-				setSafeProposalAddress(proposaladdress)
 				setSafeProposalLink(getProposalUrl(safeObj.safeAddress, proposaladdress))
 			}
 
@@ -310,7 +307,7 @@ function FundBuilderDrawer() {
 				proposaladdress
 			]
 
-			await call({ method: 'disburseRewardFromSafe', args: methodArgs })
+			await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
 			setSignerVerifiedState('transaction_initiated')
 			setIsDrawerOpen(false)
 			setIsModalOpen(true)
@@ -325,7 +322,7 @@ function FundBuilderDrawer() {
 
 	// useEffect(() => {
 	// 	if(payoutInProcess) {
-	// 		payoutsInProcessToastRef.current = customToast({ title: 'Payouts is in process', duration: null, status: 'info' })
+	// 		payoutsInProcessToastRef.current = customToast({ title: 'Payouts are in process', duration: null, status: 'info' })
 	// 	} else if(!payoutInProcess && payoutsInProcessToastRef.current) {
 	// 		toast.close(payoutsInProcessToastRef.current)
 	// 	}

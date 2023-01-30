@@ -79,7 +79,7 @@ function Proposal() {
 				</Flex>
 
 				{
-					role === 'admin' && (
+					role !== 'community' && (
 						<Flex
 							mt={4}
 							direction='column'>
