@@ -4,11 +4,11 @@ import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
 import { useGetApplicationActionsQuery, useGetCommentsQuery, useGetGrantQuery, useGetProposalsQuery } from 'src/generated/graphql'
+import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { CommentMap, CommentType, DashboardContextType, FundBuilderContextType, ModalContextType, Proposals, ReviewInfo, SignerVerifiedState, TokenInfo } from 'src/screens/dashboard/_utils/types'
-import { useMultiChainQuery } from 'src/screens/proposal/_hooks/useMultiChainQuery'
 import { Roles } from 'src/types'
 import { getFromIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -119,15 +119,14 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	}, [grantId, chainId, scwAddress])
 
 	const handleComments = async(allComments: CommentType[]) => {
-		if(!webwallet) {
+		if(!webwallet || !scwAddress) {
 			return {}
 		}
 
 		const commentMap: CommentMap = {}
 		for(const comment of allComments) {
-			logger.info({ comment }, 'comment before decrypt (COMMENT DECRYPT)')
 			if(comment.isPrivate) {
-				logger.info({ comment }, 'PRIVATE COMMENT')
+				logger.info({ comment }, 'PRIVATE COMMENT before decrypt (COMMENT DECRYPT)')
 
 				// if(comment.commentsEncryptedData?. .indexOf(scwAddress.toLowerCase()) === -1) {
 				// 	logger.info({ comment }, 'public key not found (COMMENT DECRYPT)')
@@ -139,13 +138,14 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 					encrypt(plaintext: string): Promise<string>
 					decrypt(ciphertext: string): Promise<string>
 				}
-				logger.info({ sender, scwAddress: (scwAddress ? scwAddress.toLowerCase() : '0x0000000000000000000000000000000000000000') }, 'SENDER (COMMENT DECRYPT)')
-				if(sender === (scwAddress ? scwAddress.toLowerCase() : '0x0000000000000000000000000000000000000000')) {
+				logger.info({ sender, scwAddress: scwAddress.toLowerCase() }, 'SENDER (COMMENT DECRYPT)')
+				if(sender === scwAddress.toLowerCase()) {
 					channel = await getSecureChannelFromPublicKey(webwallet, webwallet.publicKey, getKeyForApplication(comment.application.id))
 					logger.info({ privateKey: webwallet.privateKey, publicKey: webwallet.publicKey, role }, 'CHANNEL CONFIG (COMMENT DECRYPT)')
 				} else {
 					const publicKey = comment.application.applicantId === sender ? comment.application.applicantPublicKey : comment.workspace.members.find(m => m.actorId === sender)?.publicKey
 					if(!publicKey) {
+						logger.info({ comment }, 'public key not found (COMMENT DECRYPT)')
 						continue
 					}
 
@@ -154,24 +154,35 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 					logger.info({ privateKey: webwallet.privateKey, publicKey, role }, 'CHANNEL CONFIG (COMMENT DECRYPT)')
 				}
 
-				for(const encrypted of comment.commentsEncryptedData?.filter(c => c.id.indexOf((scwAddress ? scwAddress.toLowerCase() : '0x0000000000000000000000000000000000000000')) !== -1) ?? []) {
-					logger.info({ encrypted }, 'DECRYPTING NOW (COMMENT DECRYPT)')
-					try {
-						const decryptedData = JSON.parse(await channel.decrypt(encrypted.data))
-						logger.info({ decryptedData }, 'comment decrypted (COMMENT DECRYPT)')
+				const encryptedComments = comment.commentsEncryptedData?.filter(c => c.id.indexOf(scwAddress.toLowerCase()) !== -1) ?? []
+				const key = `${comment.application.id}.${getSupportedChainIdFromWorkspace(comment.workspace) ?? defaultChainId}`
+				logger.info({ encryptedComments }, 'ENCRYPTED COMMENTS (COMMENT DECRYPT)')
+				if(encryptedComments.length === 0) {
+					const workspaceMember = comment.workspace.members.find(m => m.actorId === sender)?.accessLevel
+					const role = comment.application.applicantId === sender ? 'builder' : workspaceMember === 'owner' ? 'admin' : workspaceMember
+					commentMap[key].push({ ...comment, sender, role: role ?? 'community', message: 'This is an encrypted comment', timestamp: comment.createdAt })
+					continue
+				}
 
-						if(decryptedData?.message) {
-							const message = await getFromIPFS(decryptedData.message)
-							const key = `${comment.application.id}.${getSupportedChainIdFromWorkspace(comment.workspace) ?? defaultChainId}`
-							if(!commentMap[key]) {
-								commentMap[key] = []
-							}
+				const encrypted = encryptedComments[0]
+				logger.info({ encrypted }, 'DECRYPTING NOW (COMMENT DECRYPT)')
+				try {
+					const decryptedData = JSON.parse(await channel.decrypt(encrypted.data))
+					logger.info({ decryptedData }, 'comment decrypted (COMMENT DECRYPT)')
 
-							commentMap[key].push({ ...comment, ...decryptedData, message })
+					if(decryptedData?.message) {
+						const message = await getFromIPFS(decryptedData.message)
+
+						if(!commentMap[key]) {
+							commentMap[key] = []
 						}
-					} catch(e) {
-						logger.error({ comment, e }, 'Error decrypting comment (COMMENT DECRYPT)')
+
+						commentMap[key].push({ ...comment, ...decryptedData, message })
+					} else {
+						logger.info({ comment }, 'NO MESSAGE (COMMENT DECRYPT)')
 					}
+				} catch(e) {
+					logger.error({ comment, e }, 'Error decrypting comment (COMMENT DECRYPT)')
 				}
 			} else {
 				logger.info({ comment }, 'PUBLIC COMMENT (ELSE)')
@@ -199,7 +210,15 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 					let message = comment?.message
 					if(message?.trim() === '') {
-						message = comment.role === 'builder' && comment.tag === 'submitted' ? 'This proposal was resubmitted' : `This proposal was ${comment.tag === 'approved' ? 'approved' : comment.tag === 'rejected' ? 'rejected' : 'asked to be resubmitted'}`
+						if(comment.role === 'builder' && comment.tag === 'submitted') {
+							message = 'This proposal was resubmitted'
+						} else if(comment.tag === 'approved') {
+							message = 'Your proposal is accepted'
+						} else if(comment.tag === 'rejected') {
+							message = 'Sorry! we won\'t be able to proceed with your proposal'
+						} else if(comment.tag === 'resubmit') {
+							message = 'Please resubmit your proposal'
+						}
 					}
 
 					commentMap[key].push({ ...comment, message })
@@ -294,6 +313,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 						tag: action.state,
 						timestamp: action.updatedAtS,
 						sender: action.updatedBy,
+						createdAt: action.updatedAtS,
 						role: proposal.grant.workspace.members.map(m => m.actorId).includes(action.updatedBy.toLowerCase()) ? 'admin' : 'builder',
 						message: action.feedback?.trim()?.startsWith('Qm') ? undefined : action.feedback === null ? '' : action.feedback,
 					}

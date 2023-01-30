@@ -19,7 +19,7 @@ interface Props {
 	title?: string
 }
 
-interface CallProps { method: string, args: unknown[], isDummy?: boolean }
+interface CallProps { method: string, args: unknown[], isDummy?: boolean, shouldWaitForBlock?: boolean }
 
 function useFunctionCall({ chainId, contractName, setTransactionStep, setTransactionHash, title }: Props) {
 	const { subgraphClients } = useContext(ApiClientsContext)!
@@ -48,7 +48,7 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 
 	const toast = useCustomToast()
 
-	const call = async({ method, args, isDummy = false }: CallProps) => {
+	const call = async({ method, args, isDummy = false, shouldWaitForBlock = true }: CallProps) => {
 		const logger = MAIN_LOGGER.child({ chainId, contractName, method })
 		try {
 			if(!contract) {
@@ -89,12 +89,15 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 				logger.info('Transaction executed. Waiting for block.', { receipt })
 				setTransactionHash?.(receipt?.transactionHash)
 				setTransactionStep?.(2)
-				await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
-				logger.info('Transaction indexed')
+				if(shouldWaitForBlock) {
+					await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
+					logger.info('Transaction indexed')
+				}
+
 				setTransactionStep?.(3)
 
 				toast({
-					title: title ?? 'Transaction executed and indexed',
+					title: title ?? `Transaction executed${shouldWaitForBlock ? ' and indexed' : ''}`,
 					status: 'success',
 					duration: 3000,
 					onCloseComplete: () => {

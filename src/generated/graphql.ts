@@ -5670,7 +5670,7 @@ export type GetApplicationActionsQueryVariables = Exact<{
 }>;
 
 
-export type GetApplicationActionsQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, applicantPublicKey?: string | null, actions?: Array<{ __typename?: 'ApplicationAction', id: string, updatedBy: string, updatedAtS: number, state: ApplicationState, feedback?: string | null }> | null, grant: { __typename?: 'Grant', id: string, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, publicKey?: string | null }> } } }> };
+export type GetApplicationActionsQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, applicantPublicKey?: string | null, actions?: Array<{ __typename?: 'ApplicationAction', id: string, updatedBy: string, updatedAtS: number, state: ApplicationState, feedback?: string | null }> | null, grant: { __typename?: 'Grant', id: string, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, publicKey?: string | null, accessLevel: WorkspaceMemberAccessLevel }> } } }> };
 
 export type GetCommentsQueryVariables = Exact<{
   grantId: Scalars['String'];
@@ -5679,7 +5679,7 @@ export type GetCommentsQueryVariables = Exact<{
 }>;
 
 
-export type GetCommentsQuery = { __typename?: 'Query', comments: Array<{ __typename?: 'Comment', id: string, isPrivate: boolean, commentsPublicHash?: string | null, commentsEncryptedData?: Array<{ __typename?: 'PIIData', id: string, data: string }> | null, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, publicKey?: string | null }> }, application: { __typename?: 'GrantApplication', id: string, applicantPublicKey?: string | null, applicantId: string } }> };
+export type GetCommentsQuery = { __typename?: 'Query', comments: Array<{ __typename?: 'Comment', id: string, isPrivate: boolean, commentsPublicHash?: string | null, createdAt: number, commentsEncryptedData?: Array<{ __typename?: 'PIIData', id: string, data: string }> | null, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, publicKey?: string | null, accessLevel: WorkspaceMemberAccessLevel }> }, application: { __typename?: 'GrantApplication', id: string, applicantPublicKey?: string | null, applicantId: string } }> };
 
 export type GetPayoutsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -8911,6 +8911,7 @@ export const GetApplicationActionsDocument = gql`
           fullName
           profilePictureIpfsHash
           publicKey
+          accessLevel
         }
         supportedNetworks
       }
@@ -8961,6 +8962,7 @@ export const GetCommentsDocument = gql`
     id
     isPrivate
     commentsPublicHash
+    createdAt
     commentsEncryptedData {
       id
       data
@@ -8971,6 +8973,7 @@ export const GetCommentsDocument = gql`
         fullName
         profilePictureIpfsHash
         publicKey
+        accessLevel
       }
       supportedNetworks
     }
