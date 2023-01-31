@@ -190,7 +190,7 @@ function LinkYourMultisigModal({ isOpen, onClose, multisigAddress: _multisigAddr
 
 				</Flex>
 				{
-					safeNetworks.length ? (
+					(safeNetworks.length > 0) ? (
 						<SafeSelect
 							safesOptions={safeNetworks}
 							label=''
@@ -271,7 +271,7 @@ function LinkYourMultisigModal({ isOpen, onClose, multisigAddress: _multisigAddr
 			setSafeState(1)
 		}
 
-		if(safeNetworks.length === 1) {
+		if(safeNetworks.length > 0) {
 			setSelectedSafeNetwork(safeNetworks[0])
 		}
 	}, [safeNetworks])
