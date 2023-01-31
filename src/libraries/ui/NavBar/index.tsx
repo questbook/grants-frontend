@@ -56,7 +56,7 @@ function NavBar({ bg = 'gray.1', requestProposal }: Props) {
 							})
 						}
 					}
-					display={{ base: 'none', lg: 'inherit' }}
+					display={['none', 'inherit' ]}
 					mr='auto'
 					src='/ui_icons/qb.svg'
 					alt='Questbook'
@@ -69,9 +69,9 @@ function NavBar({ bg = 'gray.1', requestProposal }: Props) {
 							})
 						}
 					}
-					display={{ base: 'inherit', lg: 'none' }}
+					display={['inherit', 'none' ]}
 					mr='auto'
-					src='/ui_icons/qb.svg'
+					src='/ui_icons/Group 11070.png'
 					alt='Questbook'
 					cursor='pointer' />
 				{
