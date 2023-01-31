@@ -23,7 +23,5 @@ query getDAOsForExplore(
     createdAtS,
     mostRecentGrantPostedAtS,
     numberOfApplications,
-    numberOfApplicationsSelected,
-    totalGrantFundingDisbursedUSD
   }
 }

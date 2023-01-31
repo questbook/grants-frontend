@@ -21,7 +21,6 @@ query getSectionGrants {
         title
         isVisible
         logoIpfsHash
-        totalGrantFundingDisbursedUSD
         supportedNetworks
         safe {
           chainId
@@ -44,6 +43,7 @@ query getSectionGrants {
       numberOfApplications
       createdAtS
       updatedAtS
+      totalGrantFundingDisbursedUSD
     }
     sectionName
     sectionLogoIpfsHash

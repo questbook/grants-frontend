@@ -1,64 +1,69 @@
-# The values of workspaceID and daoID are the same. The use of two variables is due to the fact that 
+# The values of workspaceID and daoID are the same. The use of two variables is due to the fact that
 # the workspaceID is used to identify the workspace in the database. It needs to be an ID
 # The daoID is used to filter out the grants for a workspace. It needs to be a string
 
 query getDAODetails($workspaceID: ID!, $daoID: String!) {
-     workspace(id: $workspaceID, subgraphError: allow) {
-        id
-        bio
-        title
-        about
-        logoIpfsHash
-        coverImageIpfsHash
-        supportedNetworks
-        partners {
-            name
-            industry
-            website
-            partnerImageHash
-        }
-        socials {
-          name
-          value
-        }
-        tokens {
-            address
-            label
-            decimal
-            iconHash
-        }
-        totalGrantFundingCommittedUSD
-        totalGrantFundingDisbursedUSD
-        numberOfApplications
-        numberOfApplicationsSelected
+  workspace(id: $workspaceID, subgraphError: allow) {
+    id
+    bio
+    title
+    about
+    logoIpfsHash
+    coverImageIpfsHash
+    supportedNetworks
+    partners {
+      name
+      industry
+      website
+      partnerImageHash
     }
-    
-    grants(
-        subgraphError: allow, 
-        where: { workspace: $daoID, acceptingApplications: true }
-        orderBy: createdAtS, 
-        orderDirection: desc
-    ) {
-    id, 
-    creatorId, 
-    title, 
-    createdAtS,
-    summary, 
-    details, 
+    socials {
+      name
+      value
+    }
+    tokens {
+      address
+      label
+      decimal
+      iconHash
+    }
+    numberOfApplications
+    numberOfApplicationsSelected
+  }
+
+  grants(
+    subgraphError: allow
+    where: { workspace: $daoID, acceptingApplications: true }
+    orderBy: createdAtS
+    orderDirection: desc
+  ) {
+    id
+    creatorId
+    title
+    createdAtS
+    summary
+    details
     reward {
-        committed,
-        id,
-        asset,
-        token {
+      committed
+      id
+      asset
+      token {
         address
         label
         decimal
         iconHash
-        }
-    }, 
-    workspace {id, title, logoIpfsHash, supportedNetworks}, 
-    deadline,
-    funding,
-    numberOfApplications,
+      }
     }
+    workspace {
+      id
+      title
+      logoIpfsHash
+      supportedNetworks
+    }
+    deadline
+    funding
+    numberOfApplications
+    totalGrantFundingCommittedUSD
+    totalGrantFundingDisbursedUSD
+  }
 }
