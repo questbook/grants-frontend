@@ -115,15 +115,16 @@ function NavBar({ bg = 'gray.1' }: Props) {
 									gap={2}>
 									{
 										(grant?.link !== undefined && grant?.link !== null) && (
-											<Text
-												variant='v2_metadata'
-												display={grant?.link ? '' : 'none'}>
-												Program details
+											<Flex gap={1}>
 												<Text
+													as='span'
+													variant='v2_metadata'>
+													Program details
+												</Text>
+												<Text
+													as='span'
 													variant='v2_metadata'
-													display='inline-block'
 													fontWeight={500}
-													marginLeft={1}
 													cursor='pointer'
 													onClick={
 														() => {
@@ -135,26 +136,29 @@ function NavBar({ bg = 'gray.1' }: Props) {
 												>
 													here
 												</Text>
-											</Text>
+											</Flex>
+
 										)
 									}
 									{
-										(safeUSDAmount) && (
-											<Text
-												variant='v2_metadata'
-												display={grant?.link ? '' : 'none'}>
-												Program multisig
+										safeUSDAmount !== undefined && (
+											<Flex gap={1}>
 												<Text
+													as='span'
+													variant='v2_metadata'>
+													Program multisig:
+												</Text>
+												<Text
+													as='span'
 													variant='v2_metadata'
-													display='inline-block'
 													fontWeight={500}
-													marginLeft={1}
 												>
 													{safeUSDAmount}
 													{' '}
 													USD
 												</Text>
-											</Text>
+											</Flex>
+
 										)
 									}
 								</Flex>
