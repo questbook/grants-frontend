@@ -313,7 +313,7 @@ function Discover() {
 												/>
 											)
 									}
-									{/* </Box> */}
+
 									<Box
 										display={sectionGrants?.length ? '' : 'none'}
 									>
@@ -376,39 +376,6 @@ function Discover() {
 											}) : null
 										}
 									</Box>
-
-									{/* <Flex
-										ref={discoverRef}
-										my={12}
-										mb={4}>
-										<Text
-											fontWeight='500'
-											fontSize='24px'
-											lineHeight='32px'>
-											Discover
-										</Text>
-										<SearchField
-											bg='white'
-											w='30%'
-											inputGroupProps={{ ml: 4 }}
-											placeholder='Enter Grant Program Name to search'
-											value={searchString}
-											onKeyDown={
-												(e) => {
-													if(e.key === 'Enter' && searchString !== undefined) {
-														setSearch(searchString)
-													}
-												}
-											}
-											onChange={
-												(e) => {
-													setSearchString(e.target.value.trim())
-												}
-											}
-										/>
-
-									</Flex> */}
-
 								</>
 							)
 						}
@@ -501,21 +468,6 @@ function Discover() {
 
 				</Flex>
 				{buildNetworkModal()}
-				{/* <Tooltip label='Scroll to discover section'>
-					<ArrowDownCircle
-						position='absolute'
-						left={4}
-						bottom={4}
-						boxSize='5%'
-						cursor='pointer'
-						onClick={
-							() => {
-								discoverRef?.current?.scrollIntoView({ behavior: 'smooth' })
-							}
-						}>
-						Scroll to Discover
-					</ArrowDownCircle>
-				</Tooltip> */}
 			</>
 		)
 	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName])

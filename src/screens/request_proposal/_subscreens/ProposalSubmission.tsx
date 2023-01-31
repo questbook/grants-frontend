@@ -404,19 +404,6 @@ function ProposalSubmission(
 		)
 	}
 
-	// const extraDetailsFieldsList = applicantDetailsList.filter(detail => detail.isRequired === false).map(({
-	// 	title, id, inputType, isRequired, pii
-	// }) => {
-	// 	return {
-	// 		title,
-	// 		required: isRequired || false,
-	// 		id,
-	// 		inputType,
-	// 		pii
-	// 	}
-	// })
-	// 	.filter((obj) => obj !== null)
-
 	const router = useRouter()
 
 	const [detailsCounter, setDetailsCounter] = useState(0)
