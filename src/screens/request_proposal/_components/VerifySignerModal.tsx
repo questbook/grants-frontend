@@ -10,7 +10,7 @@ import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWa
 import ConnectWalletButton from 'src/v2/components/ConnectWalletModal/ConnectWalletButton'
 import VerifySignerErrorState from 'src/v2/components/VerifySignerModal/VeirfySignerErrorState'
 import usePhantomWallet from 'src/v2/hooks/usePhantomWallet'
-import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import { useAccount, useConnect, useDisconnect, useNetwork } from 'wagmi'
 
 const VerifySignerModal = ({
 	owners,
@@ -29,6 +29,133 @@ const VerifySignerModal = ({
     networkType: NetworkType
     // setOwnerAddress: (ownerAddress: string) => void
 }) => {
+	const buildComponent = () => (
+		<Modal
+			isOpen={isOpen}
+			onClose={onClose}
+			isCentered
+			scrollBehavior='outside'
+			size={isError ? 'md' : '2xl'}
+		>
+			<AlertDialogOverlay
+				background='rgba(240, 240, 247, 0.7)'
+				backdropFilter='blur(10px)'
+			/>
+
+			<ModalContent
+				w='36rem'
+				boxShadow='none'
+				filter='drop-shadow(2px 4px 40px rgba(31, 31, 51, 0.05))'
+				borderRadius='base'
+				fontSize='1rem'
+			>
+				<ModalBody
+					p={0}
+				>
+					{
+						isError ? (
+							<VerifySignerErrorState
+								onBack={() => setIsError(false)}
+								onClose={onClose}
+							/>
+						) : (
+							<Flex
+								direction='column'
+								alignItems='center'
+								py={1}>
+
+								<Text
+									mt={6}
+									fontWeight='500'
+								>
+									{t('/onboarding/create-domain.verify_signer_title')}
+								</Text>
+								<Text
+									variant='v2_body'>
+									{t('/onboarding/create-domain.verify_signer_desc')}
+								</Text>
+
+								<VStack
+									mt={6}
+									direction='column'
+									w='full'
+									px={4}
+									spacing={4}
+								>
+									{
+										networkType === NetworkType.EVM
+											? (availableWallets.map((wallet) => (
+												<ConnectWalletButton
+													key={wallet.id}
+													icon={wallet.icon}
+													name={wallet.name}
+													onClick={
+														async() => {
+															const connector = connectors.find((x) => x.id === wallet.id)!
+															// swallow error here so we don't fail the remaining logic
+															const isConnected = await connector.isAuthorized().catch(() => false)
+
+															setConnectClicked(true)
+															if(!isConnected) {
+																try {
+																	await connectAsync({ connector })
+																} catch(e) {
+																	logger.error('evm error', e)
+																	customToast({
+																		title: 'Some error occurred',
+																		description: 'Please try again',
+																		status: 'error',
+																		duration: 5000,
+																	})
+																}
+															} else {
+																customToast({
+																	status: 'info',
+																	title: `Wallet already connected to address ${address} on chain ${chain?.name}`,
+																	duration: 5000,
+																})
+															}
+
+															setWalletClicked(true)
+														}
+													} />
+											)))
+											: (solanaWallets.map((wallet, index) => (
+												<ConnectWalletButton
+													key={index}
+													icon={wallet.icon}
+													name={wallet.name}
+													isPopular={wallet.isPopular}
+													onClick={
+														async() => {
+															await phantomWallet?.connect()
+															setWalletClicked(true)
+															// showToast()
+														}
+													} />
+											)))
+									}
+								</VStack>
+
+								<Text
+									mt={6}
+									variant='v2_body'
+									fontWeight='500'
+									cursor='pointer'>
+									Why should I verify?
+								</Text>
+
+								<Box h={5} />
+
+							</Flex>
+						)
+					}
+				</ModalBody>
+			</ModalContent>
+
+		</Modal>
+	)
+
 	const [connectClicked, setConnectClicked] = useState(false)
 	const [walletClicked, setWalletClicked] = useState(false)
 	const [redirectInitiated, setRedirectInitiated] = useState(false)
@@ -38,15 +165,9 @@ const VerifySignerModal = ({
 	const customToast = useCustomToast()
 	const { t } = useTranslation()
 
-	const {
-		isError: isErrorConnecting,
-		connectAsync,
-		connectors,
-	} = useConnect()
-
-	const {
-		address
-	} = useAccount()
+	const { isError: isErrorConnecting, connectAsync, connectors } = useConnect()
+	const { address } = useAccount()
+	const { chain } = useNetwork()
 
 	const availableWallets = [{
 		name: 'Metamask',
@@ -147,120 +268,7 @@ const VerifySignerModal = ({
 		}
 	}, [walletClicked, address, owners, toast, phantomWallet?.publicKey, isOpen, phantomWallet?.disconnect])
 
-	return (
-		<Modal
-			isOpen={isOpen}
-			onClose={onClose}
-			isCentered
-			scrollBehavior='outside'
-			size={isError ? 'md' : '2xl'}
-		>
-			<AlertDialogOverlay
-				background='rgba(240, 240, 247, 0.7)'
-				backdropFilter='blur(10px)'
-			/>
-
-			<ModalContent
-				w='36rem'
-				boxShadow='none'
-				filter='drop-shadow(2px 4px 40px rgba(31, 31, 51, 0.05))'
-				borderRadius='base'
-				fontSize='1rem'
-			>
-				<ModalBody
-					p={0}
-				>
-					{
-						isError ? (
-							<VerifySignerErrorState
-								onBack={() => setIsError(false)}
-								onClose={onClose}
-							/>
-						) : (
-							<Flex
-								direction='column'
-								alignItems='center'
-								py={1}>
-
-								<Text
-									mt={6}
-									fontWeight='500'
-								>
-									{t('/onboarding/create-domain.verify_signer_title')}
-								</Text>
-								<Text
-									variant='v2_body'>
-									{t('/onboarding/create-domain.verify_signer_desc')}
-								</Text>
-
-								<VStack
-									mt={6}
-									direction='column'
-									w='full'
-									px={4}
-									spacing={4}
-								>
-									{
-										networkType === NetworkType.EVM
-											? (availableWallets.map((wallet) => (
-												<ConnectWalletButton
-													key={wallet.id}
-													icon={wallet.icon}
-													name={wallet.name}
-													onClick={
-														async() => {
-															const connector = connectors.find((x) => x.id === wallet.id)!
-															// swallow error here so we don't fail the remaining logic
-															const isConnected = await connector.isAuthorized().catch(() => false)
-
-															setConnectClicked(true)
-															if(!isConnected) {
-																try {
-																	await connectAsync({ connector })
-																} catch(e) {
-																	// console.log('evm error', e)
-																}
-															}
-
-															setWalletClicked(true)
-														}
-													} />
-											)))
-											: (solanaWallets.map((wallet, index) => (
-												<ConnectWalletButton
-													key={index}
-													icon={wallet.icon}
-													name={wallet.name}
-													isPopular={wallet.isPopular}
-													onClick={
-														async() => {
-															await phantomWallet?.connect()
-															setWalletClicked(true)
-															// showToast()
-														}
-													} />
-											)))
-									}
-								</VStack>
-
-								<Text
-									mt={6}
-									variant='v2_body'
-									fontWeight='500'
-									cursor='pointer'>
-									Why should I verify?
-								</Text>
-
-								<Box h={5} />
-
-							</Flex>
-						)
-					}
-				</ModalBody>
-			</ModalContent>
-
-		</Modal>
-	)
+	return buildComponent()
 }
 
 export default VerifySignerModal
