@@ -25,6 +25,28 @@ function Discussions() {
 				<Text fontWeight='500'>
 					Discussion
 				</Text>
+
+				{
+					areCommentsLoading && (
+						<Button
+							my={4}
+							isLoading={areCommentsLoading}
+							loadingText='Loading comments, please wait.'
+							variant='link'
+							cursor='default' />
+					)
+				}
+
+				{
+					comments.length > 0 && (
+						<Divider
+							my={4}
+							color='gray.3'
+							height={1} />
+					)
+				}
+
+				{comments.map(renderComment)}
 				{
 					proposalTags?.length > 0 && (
 						<Flex
@@ -135,29 +157,6 @@ function Discussions() {
 
 					</Flex>
 				</Flex>
-
-				{
-					areCommentsLoading && (
-						<Button
-							my={4}
-							isLoading={areCommentsLoading}
-							loadingText='Loading comments, please wait.'
-							variant='link'
-							cursor='default' />
-					)
-				}
-
-				{
-					comments.length > 0 && (
-						<Divider
-							my={4}
-							color='gray.3'
-							height={1} />
-					)
-				}
-
-				{comments.map(renderComment)}
-
 				{
 					comments.length > 0 && (
 						<Box
