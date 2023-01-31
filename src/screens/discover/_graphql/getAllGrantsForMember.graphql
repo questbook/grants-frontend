@@ -35,7 +35,6 @@ query getAllGrantsForMember(
       title
       isVisible
       logoIpfsHash
-      totalGrantFundingDisbursedUSD
       supportedNetworks
       members(where: { actorId: $actorId }) {
         id
@@ -63,5 +62,6 @@ query getAllGrantsForMember(
     numberOfApplications
     createdAtS
     updatedAtS
+    totalGrantFundingDisbursedUSD
   }
 }

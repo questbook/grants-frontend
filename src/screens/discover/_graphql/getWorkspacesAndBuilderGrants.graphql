@@ -45,7 +45,6 @@ query getWorkspacesAndBuilderGrants($first: Int, $skip: Int, $actorId: Bytes!) {
       title
       isVisible
       logoIpfsHash
-      totalGrantFundingDisbursedUSD
       supportedNetworks
       members(first: 1) {
         id
@@ -73,5 +72,6 @@ query getWorkspacesAndBuilderGrants($first: Int, $skip: Int, $actorId: Bytes!) {
     numberOfApplications
     createdAtS
     updatedAtS
+    totalGrantFundingDisbursedUSD
   }
 }

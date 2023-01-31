@@ -1,49 +1,48 @@
 query getWorkspaceDetails($workspaceID: ID!) {
-    workspace(id: $workspaceID, subgraphError: allow) {
+  workspace(id: $workspaceID, subgraphError: allow) {
+    id
+    title
+    bio
+    about
+    logoIpfsHash
+    coverImageIpfsHash
+    supportedNetworks
+    numberOfApplications
+    numberOfApplicationsSelected
+    safe {
+      address
+      chainId
+    }
+    partners {
+      name
+      industry
+      website
+      partnerImageHash
+    }
+    socials {
+      name
+      value
+    }
+    tokens {
+      address
+      label
+      decimal
+      iconHash
+    }
+    members(where: { enabled: true }) {
+      id
+      actorId
+      publicKey
+      email
+      accessLevel
+      updatedAt
+      outstandingReviewIds
+      lastReviewSubmittedAt
+      enabled
+      addedBy {
         id
-        title
-        bio
-        about
-        logoIpfsHash
-        coverImageIpfsHash
-        supportedNetworks
-        totalGrantFundingDisbursedUSD
-      numberOfApplications
-      numberOfApplicationsSelected
-        safe {
-          address
-          chainId
-        }
-        partners {
-          name
-          industry
-          website
-          partnerImageHash
-        }
-        socials {
-          name
-          value
-        }
-        tokens {
-    address,
-    label,
-    decimal,
-    iconHash
+        actorId
+      }
     }
-        members (where: {enabled: true}) {
-          id
-          actorId
-          publicKey
-          email
-          accessLevel
-          updatedAt
-          outstandingReviewIds
-          lastReviewSubmittedAt
-          enabled
-          addedBy {
-            id
-            actorId
-          }
-        }
-    }
+  }
 }
