@@ -199,7 +199,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 									fontWeight='500'>
 									$
 									{' '}
-									{grant.workspace.totalGrantFundingDisbursedUSD ? grant.workspace.totalGrantFundingDisbursedUSD.toLocaleString() : 0}
+									{grant.totalGrantFundingDisbursedUSD ? grant.totalGrantFundingDisbursedUSD.toLocaleString() : 0}
 								</Text>
 							)
 						}

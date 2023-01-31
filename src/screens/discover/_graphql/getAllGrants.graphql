@@ -4,7 +4,7 @@ query GetAllGrants($first: Int, $skip: Int, $searchString: String!) {
     skip: $skip
     orderBy: createdAtS
     orderDirection: desc
-    where: {workspace_: {isVisible: true}, title_contains: $searchString}
+    where: { workspace_: { isVisible: true }, title_contains: $searchString }
   ) {
     id
     title
@@ -26,7 +26,6 @@ query GetAllGrants($first: Int, $skip: Int, $searchString: String!) {
       title
       isVisible
       logoIpfsHash
-      totalGrantFundingDisbursedUSD
       supportedNetworks
       members(first: 1) {
         id
@@ -54,5 +53,6 @@ query GetAllGrants($first: Int, $skip: Int, $searchString: String!) {
     numberOfApplications
     createdAtS
     updatedAtS
+    totalGrantFundingDisbursedUSD
   }
 }
