@@ -161,6 +161,10 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 				if(encryptedComments.length === 0) {
 					const workspaceMember = comment.workspace.members.find(m => m.actorId === sender)?.accessLevel
 					const role = comment.application.applicantId === sender ? 'builder' : workspaceMember === 'owner' ? 'admin' : workspaceMember
+					if(!commentMap[key]) {
+						commentMap[key] = []
+					}
+
 					commentMap[key].push({ ...comment, sender, role: role ?? 'community', message: 'This is an encrypted comment', timestamp: comment.createdAt })
 					continue
 				}
