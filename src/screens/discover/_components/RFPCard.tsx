@@ -1,6 +1,7 @@
 import { useContext, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Box, Divider, Flex, Image, Switch, Text } from '@chakra-ui/react'
+import { WarningIcon } from '@chakra-ui/icons'
+import { Box, Divider, Flex, Image, Switch, Text, Tooltip } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
 import SupportedChainId from 'src/generated/SupportedChainId'
@@ -175,10 +176,13 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						{
 							usdAmount > 0 && (
 								<Text
-									fontSize='18px'
 									fontWeight='500'>
 									$
-									{usdAmount.toFixed(2)}
+									{grant.totalGrantFundingDisbursedUSD?.toFixed(0)}
+									{' '}
+									of
+									{' '}
+									{usdAmount.toFixed(0)}
 								</Text>
 							)
 						}
@@ -186,31 +190,36 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 							usdAmount > 0 && (
 								<Text
 									ml='5px'
-									fontSize='14px'
-									color='black.3'>
-									to be paid out
-								</Text>
-							)
-						}
-						{
-							(usdAmount === 0 || !grant.workspace?.safe) && (
-								<Text
-									fontSize='18px'
-									fontWeight='500'>
-									$
-									{' '}
-									{grant.totalGrantFundingDisbursedUSD ? grant.totalGrantFundingDisbursedUSD.toLocaleString() : 0}
-								</Text>
-							)
-						}
-						{
-							(usdAmount === 0 || !grant.workspace?.safe) && (
-								<Text
-									ml='5px'
-									fontSize='14px'
+									variant='v2_body'
 									color='black.3'>
 									{t('/.cards.in_grants')}
 								</Text>
+							)
+						}
+						{
+							(usdAmount === 0) && (
+								<Tooltip label='Check with the grant program manager before applying'>
+									<Text
+										fontWeight='500'>
+										No $$ in the SAFE
+									</Text>
+								</Tooltip>
+							)
+						}
+						{
+							grant?.workspace?.safe === null && (
+								<Tooltip label='The source of funds for this grant program is unknown. Please contact the grant manager'>
+									<Flex align='center'>
+										<WarningIcon color='accent.royal' />
+										<Text
+											as='span'
+											ml='0.5rem'
+											variant='v2_body'>
+											SAFE unlinked
+										</Text>
+									</Flex>
+								</Tooltip>
+
 							)
 						}
 					</Flex>
