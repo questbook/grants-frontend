@@ -1,16 +1,16 @@
 import { useContext, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { WarningIcon } from '@chakra-ui/icons'
 import { Box, Divider, Flex, Image, Switch, Text, Tooltip } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
+import { Alert } from 'src/generated/icons'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
 import logger from 'src/libraries/logger'
 import { GrantType } from 'src/screens/discover/_utils/types'
 import { DiscoverContext } from 'src/screens/discover/Context'
 import getAvatar from 'src/utils/avatarUtils'
-import { extractDateFromDateTime, titleCase } from 'src/utils/formattingUtils'
+import { extractDateFromDateTime, nFormatter, titleCase } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 
@@ -30,6 +30,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 			w='100%'
 			background='white'
 			p={5}
+			h='16rem'
 			position='relative'
 			// boxShadow='0px 10px 18px rgba(31, 31, 51, 0.05), 0px 0px 1px rgba(31, 31, 51, 0.31);'
 			borderRadius='2px'
@@ -65,6 +66,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 			}>
 			<Flex
 				flexDirection='column'
+				h='100%'
 				gap={4}>
 				<Flex
 					justifyContent='space-between'
@@ -167,8 +169,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 
 				</Flex>
 
-
-				<Divider />
+				<Divider mt='auto' />
 				<Flex
 					justifyContent='space-between'
 					mt={2}>
@@ -180,9 +181,8 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 									$
 									{grant.totalGrantFundingDisbursedUSD?.toFixed(0)}
 									{' '}
-									of
-									{' '}
-									{usdAmount.toFixed(0)}
+									{grant.totalGrantFundingDisbursedUSD <= 100 ? 'of $' : ''}
+									{grant.totalGrantFundingDisbursedUSD <= 100 ? nFormatter(usdAmount.toFixed(0)) : ''}
 								</Text>
 							)
 						}
@@ -200,8 +200,10 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 							(usdAmount === 0) && (
 								<Tooltip label='Check with the grant program manager before applying'>
 									<Text
-										fontWeight='500'>
-										No $$ in the SAFE
+										variant='v2_body'
+										fontSize='14px'
+										color='black.3'>
+										No $$ in multisig
 									</Text>
 								</Tooltip>
 							)
@@ -210,12 +212,13 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 							grant?.workspace?.safe === null && (
 								<Tooltip label='The source of funds for this grant program is unknown. Please contact the grant manager'>
 									<Flex align='center'>
-										<WarningIcon color='accent.royal' />
+										<Alert color='accent.royal' />
 										<Text
 											as='span'
-											ml='0.5rem'
-											variant='v2_body'>
-											SAFE unlinked
+											ml='0.25rem'
+											variant='v2_metadata'
+											color='black.3'>
+											Multisig not linked
 										</Text>
 									</Flex>
 								</Tooltip>
