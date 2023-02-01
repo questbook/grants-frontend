@@ -1,4 +1,5 @@
-import { ReactElement, useContext, useEffect } from 'react'
+import { ReactElement, useContext, useEffect, useState } from 'react'
+import { useMediaQuery } from 'react-responsive'
 import { Flex } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
 import LinkYourMultisigModal from 'src/libraries/ui/LinkYourMultisigModal'
@@ -10,6 +11,7 @@ import Body from 'src/screens/dashboard/Body'
 import { DashboardProvider, FundBuilderProvider, ModalContext, ModalProvider } from 'src/screens/dashboard/Context'
 import FundBuilderDrawer from 'src/screens/dashboard/FundBuilderDrawer'
 import FundBuilderModal from 'src/screens/dashboard/FundBuilderModal'
+import { MobileDashboard } from 'src/screens/dashboard/MobileDashboard'
 import ProposalList from 'src/screens/dashboard/ProposalList'
 import SendAnUpdateModal from 'src/screens/dashboard/SendAnUpdateModal'
 
@@ -21,7 +23,18 @@ function Dashboard() {
 			h='calc(100vh - 64px)'>
 			{/* {!isLoading && (role === 'admin' || role === 'reviewer') && <TopBar />} */}
 			{
-				!isLoading && (
+				!isLoading && isMobile && (
+					<Flex
+						h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
+						overflowY='clip'>
+						{(step === 0) && (<ProposalList />)}
+						{(step === 1) && (<Body />)}
+						{(step === 2) && (<ActionList />)}
+					</Flex>
+				)
+			}
+			{
+				!isLoading && (isMobile === false) && (
 					<Flex
 						h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
 						overflowY='clip'>
@@ -58,10 +71,16 @@ function Dashboard() {
 
 	const { isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen } = useContext(ModalContext)!
 	const { role, isLoading } = useContext(GrantsProgramContext)!
+	const isMobile = useMediaQuery({ query:'(max-width:600px)' })
+	const [step, setStep] = useState(0)
 
 	useEffect(() => {
 		logger.info({ isLoading }, 'Loading state changed')
 	}, [isLoading])
+
+	// if(isMobile) {
+	// 	return MobileDashboard()
+	// }
 
 	return buildComponent()
 }

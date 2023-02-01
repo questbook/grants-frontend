@@ -367,7 +367,7 @@ function NavBar({ bg = 'gray.1', requestProposal }: Props) {
 		}
 
 	}
-
+	return SmallScreensRequestProposalNavBar()
 	if(!isMobile[0]) {
 		return <BigScreensNavBar />
 	} else if(requestProposal === true) {

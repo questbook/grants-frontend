@@ -15,7 +15,7 @@ import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUti
 function ProposalList() {
 	const buildComponent = () => (
 		<Flex
-			w='25%'
+			w={['100%', '100%', '25%']}
 			h='100%'
 			bg='white'
 			direction='column'
