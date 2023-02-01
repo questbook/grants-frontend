@@ -1,6 +1,6 @@
 query getSectionGrants {
   sections {
-    grants {
+    grants (orderBy: numberOfApplications, orderDirection: desc) {
       id
       title
       applications {

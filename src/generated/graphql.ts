@@ -2296,7 +2296,7 @@ export type Notification = {
   /** rich content of the notification */
   content: Scalars['String'];
   /** Descending order of cursor */
-  cursor: Scalars['String'];
+  cursor: Scalars['Int'];
   /** The IDs of the entity being affected */
   entityIds: Array<Scalars['String']>;
   id: Scalars['ID'];
@@ -2354,26 +2354,14 @@ export type Notification_Filter = {
   content_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
   content_starts_with?: InputMaybe<Scalars['String']>;
   content_starts_with_nocase?: InputMaybe<Scalars['String']>;
-  cursor?: InputMaybe<Scalars['String']>;
-  cursor_contains?: InputMaybe<Scalars['String']>;
-  cursor_contains_nocase?: InputMaybe<Scalars['String']>;
-  cursor_ends_with?: InputMaybe<Scalars['String']>;
-  cursor_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  cursor_gt?: InputMaybe<Scalars['String']>;
-  cursor_gte?: InputMaybe<Scalars['String']>;
-  cursor_in?: InputMaybe<Array<Scalars['String']>>;
-  cursor_lt?: InputMaybe<Scalars['String']>;
-  cursor_lte?: InputMaybe<Scalars['String']>;
-  cursor_not?: InputMaybe<Scalars['String']>;
-  cursor_not_contains?: InputMaybe<Scalars['String']>;
-  cursor_not_contains_nocase?: InputMaybe<Scalars['String']>;
-  cursor_not_ends_with?: InputMaybe<Scalars['String']>;
-  cursor_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  cursor_not_in?: InputMaybe<Array<Scalars['String']>>;
-  cursor_not_starts_with?: InputMaybe<Scalars['String']>;
-  cursor_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
-  cursor_starts_with?: InputMaybe<Scalars['String']>;
-  cursor_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  cursor?: InputMaybe<Scalars['Int']>;
+  cursor_gt?: InputMaybe<Scalars['Int']>;
+  cursor_gte?: InputMaybe<Scalars['Int']>;
+  cursor_in?: InputMaybe<Array<Scalars['Int']>>;
+  cursor_lt?: InputMaybe<Scalars['Int']>;
+  cursor_lte?: InputMaybe<Scalars['Int']>;
+  cursor_not?: InputMaybe<Scalars['Int']>;
+  cursor_not_in?: InputMaybe<Array<Scalars['Int']>>;
   entityIds?: InputMaybe<Array<Scalars['String']>>;
   entityIds_contains?: InputMaybe<Array<Scalars['String']>>;
   entityIds_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
@@ -5727,20 +5715,6 @@ export type GetWorkspacesAndBuilderGrantsQueryVariables = Exact<{
 
 
 export type GetWorkspacesAndBuilderGrantsQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, accessLevel: WorkspaceMemberAccessLevel, enabled: boolean, workspace: { __typename?: 'Workspace', id: string, title: string, supportedNetworks: Array<SupportedNetwork>, grants: Array<string> } }>, grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, deadlineS: number, deadline?: string | null, numberOfApplications: number, createdAtS: number, updatedAtS?: number | null, totalGrantFundingDisbursedUSD: number, applications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, tokenUSDValue?: string | null, asset: string, tokenName?: string | null }>, workspace: { __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, accessLevel: WorkspaceMemberAccessLevel }>, safe?: { __typename?: 'WorkspaceSafe', chainId: string, address: string } | null }, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } }> };
-
-export type GetAllProposalsForAGrantProgramQueryVariables = Exact<{
-  workspaceId: Scalars['String'];
-}>;
-
-
-export type GetAllProposalsForAGrantProgramQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', applicantId: string, updatedAtS: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }> }> };
-
-export type GetWorkspaceGrantsProgramDetailsQueryVariables = Exact<{
-  workspaceId: Scalars['String'];
-}>;
-
-
-export type GetWorkspaceGrantsProgramDetailsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, startDate?: string | null, startDateS?: number | null, deadline?: string | null, link?: string | null, docIpfsHash?: string | null, metadataHash: string, totalGrantFundingDisbursedUSD: number, applications: Array<{ __typename?: 'GrantApplication', id: string, updatedAtS: number, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', id: string, value: string }> }> }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, status: FundsTransferStatusType }>, workspace: { __typename?: 'Workspace', title: string, metadataHash: string, coverImageIpfsHash?: string | null, about: string, bio: string, logoIpfsHash: string, numberOfApplications: number, numberOfApplicationsSelected: number, socials: Array<{ __typename?: 'Social', id: string, name: string, value: string }>, safe?: { __typename?: 'WorkspaceSafe', id: string, address: string, chainId: string } | null } }> };
 
 export type GrantDetailsQueryVariables = Exact<{
   grantId: Scalars['ID'];
@@ -9472,7 +9446,7 @@ export function refetchGetGrantProgramDetailsQuery(variables: GetGrantProgramDet
 export const GetSectionGrantsDocument = gql`
     query getSectionGrants {
   sections {
-    grants {
+    grants(orderBy: numberOfApplications, orderDirection: desc) {
       id
       title
       applications {
@@ -9663,141 +9637,6 @@ export type GetWorkspacesAndBuilderGrantsLazyQueryHookResult = ReturnType<typeof
 export type GetWorkspacesAndBuilderGrantsQueryResult = Apollo.QueryResult<GetWorkspacesAndBuilderGrantsQuery, GetWorkspacesAndBuilderGrantsQueryVariables>;
 export function refetchGetWorkspacesAndBuilderGrantsQuery(variables: GetWorkspacesAndBuilderGrantsQueryVariables) {
       return { query: GetWorkspacesAndBuilderGrantsDocument, variables: variables }
-    }
-export const GetAllProposalsForAGrantProgramDocument = gql`
-    query getAllProposalsForAGrantProgram($workspaceId: String!) {
-  grantApplications(
-    where: {grant_: {workspace: $workspaceId}}
-    orderBy: updatedAtS
-    orderDirection: desc
-  ) {
-    applicantId
-    updatedAtS
-    fields {
-      id
-      values {
-        value
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useGetAllProposalsForAGrantProgramQuery__
- *
- * To run a query within a React component, call `useGetAllProposalsForAGrantProgramQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllProposalsForAGrantProgramQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllProposalsForAGrantProgramQuery({
- *   variables: {
- *      workspaceId: // value for 'workspaceId'
- *   },
- * });
- */
-export function useGetAllProposalsForAGrantProgramQuery(baseOptions: Apollo.QueryHookOptions<GetAllProposalsForAGrantProgramQuery, GetAllProposalsForAGrantProgramQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAllProposalsForAGrantProgramQuery, GetAllProposalsForAGrantProgramQueryVariables>(GetAllProposalsForAGrantProgramDocument, options);
-      }
-export function useGetAllProposalsForAGrantProgramLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllProposalsForAGrantProgramQuery, GetAllProposalsForAGrantProgramQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAllProposalsForAGrantProgramQuery, GetAllProposalsForAGrantProgramQueryVariables>(GetAllProposalsForAGrantProgramDocument, options);
-        }
-export type GetAllProposalsForAGrantProgramQueryHookResult = ReturnType<typeof useGetAllProposalsForAGrantProgramQuery>;
-export type GetAllProposalsForAGrantProgramLazyQueryHookResult = ReturnType<typeof useGetAllProposalsForAGrantProgramLazyQuery>;
-export type GetAllProposalsForAGrantProgramQueryResult = Apollo.QueryResult<GetAllProposalsForAGrantProgramQuery, GetAllProposalsForAGrantProgramQueryVariables>;
-export function refetchGetAllProposalsForAGrantProgramQuery(variables: GetAllProposalsForAGrantProgramQueryVariables) {
-      return { query: GetAllProposalsForAGrantProgramDocument, variables: variables }
-    }
-export const GetWorkspaceGrantsProgramDetailsDocument = gql`
-    query getWorkspaceGrantsProgramDetails($workspaceId: String!) {
-  grants(
-    orderBy: createdAtS
-    orderDirection: desc
-    where: {workspace: $workspaceId}
-  ) {
-    id
-    applications {
-      id
-      updatedAtS
-      fields {
-        id
-        values {
-          id
-          value
-        }
-      }
-    }
-    fundTransfers {
-      amount
-      status
-    }
-    title
-    acceptingApplications
-    startDate
-    startDateS
-    deadline
-    link
-    docIpfsHash
-    metadataHash
-    totalGrantFundingDisbursedUSD
-    workspace {
-      title
-      metadataHash
-      coverImageIpfsHash
-      about
-      bio
-      logoIpfsHash
-      numberOfApplications
-      numberOfApplicationsSelected
-      socials {
-        id
-        name
-        value
-      }
-      safe {
-        id
-        address
-        chainId
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useGetWorkspaceGrantsProgramDetailsQuery__
- *
- * To run a query within a React component, call `useGetWorkspaceGrantsProgramDetailsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetWorkspaceGrantsProgramDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetWorkspaceGrantsProgramDetailsQuery({
- *   variables: {
- *      workspaceId: // value for 'workspaceId'
- *   },
- * });
- */
-export function useGetWorkspaceGrantsProgramDetailsQuery(baseOptions: Apollo.QueryHookOptions<GetWorkspaceGrantsProgramDetailsQuery, GetWorkspaceGrantsProgramDetailsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetWorkspaceGrantsProgramDetailsQuery, GetWorkspaceGrantsProgramDetailsQueryVariables>(GetWorkspaceGrantsProgramDetailsDocument, options);
-      }
-export function useGetWorkspaceGrantsProgramDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetWorkspaceGrantsProgramDetailsQuery, GetWorkspaceGrantsProgramDetailsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetWorkspaceGrantsProgramDetailsQuery, GetWorkspaceGrantsProgramDetailsQueryVariables>(GetWorkspaceGrantsProgramDetailsDocument, options);
-        }
-export type GetWorkspaceGrantsProgramDetailsQueryHookResult = ReturnType<typeof useGetWorkspaceGrantsProgramDetailsQuery>;
-export type GetWorkspaceGrantsProgramDetailsLazyQueryHookResult = ReturnType<typeof useGetWorkspaceGrantsProgramDetailsLazyQuery>;
-export type GetWorkspaceGrantsProgramDetailsQueryResult = Apollo.QueryResult<GetWorkspaceGrantsProgramDetailsQuery, GetWorkspaceGrantsProgramDetailsQueryVariables>;
-export function refetchGetWorkspaceGrantsProgramDetailsQuery(variables: GetWorkspaceGrantsProgramDetailsQueryVariables) {
-      return { query: GetWorkspaceGrantsProgramDetailsDocument, variables: variables }
     }
 export const GrantDetailsDocument = gql`
     query grantDetails($grantId: ID!) {
