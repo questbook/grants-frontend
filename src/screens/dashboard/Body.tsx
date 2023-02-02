@@ -8,13 +8,15 @@ import SingleSelect from 'src/screens/dashboard/_components/Body/SingleSelect'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 
 function Body() {
-	const buildComponent = () => (
-		<Flex
-			mx='auto'
-			w='48%'>
-			{selectedProposals.size > 1 ? <MultiSelect /> : selectedProposals.size === 1 ? <SingleSelect /> : <Empty />}
-		</Flex>
-	)
+	const buildComponent = () => {
+		return (
+			<Flex
+				mx='auto'
+				w={['100%', '100%', '70%', '48%']}>
+				{selectedProposals.size > 1 ? <MultiSelect /> : selectedProposals.size === 1 ? <SingleSelect /> : <Empty />}
+			</Flex>
+		)
+	}
 
 	const { selectedProposals } = useContext(DashboardContext)!
 

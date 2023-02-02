@@ -1,20 +1,24 @@
-import { Flex } from '@chakra-ui/react'
+import { Flex, useMediaQuery } from '@chakra-ui/react'
 import Discussions from 'src/screens/dashboard/_components/Body/SingleSelect/Discussions'
 import Proposal from 'src/screens/dashboard/_components/Body/SingleSelect/Proposal'
+import ActionList from 'src/screens/dashboard/ActionList'
 
 function SingleSelect() {
-	const buildComponent = () => {
-		return (
-			<Flex
-				direction='column'
-				overflowY='auto'
-				w='100%'
-				h='100%'>
-				<Proposal />
-				<Discussions />
-			</Flex>
-		)
-	}
+	const buildComponent = () => (
+		<Flex
+			direction='column'
+			overflowY='auto'
+			w='100%'
+			h='100%'>
+			<Proposal />
+			{
+				isMobile[0] && (
+					<ActionList />)
+			}
+			<Discussions />
+		</Flex>
+	)
+	const isMobile = useMediaQuery(['(max-width:600px)'])
 
 	return buildComponent()
 }

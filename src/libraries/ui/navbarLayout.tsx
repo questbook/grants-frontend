@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Flex } from '@chakra-ui/react'
 import NavBar from 'src/libraries/ui/NavBar'
+import Button from 'src/theme/components/button'
 import logger from 'src/utils/logger'
 import Sidebar from 'src/v2/components/Sidebar'
 
@@ -24,16 +25,16 @@ type Props = {
 	requestProposal?: boolean
 	//Sidebar configs
 	renderSidebar?: boolean
+	dashboard?: boolean
 }
 
-function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar, requestProposal }: Props) {
+function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar, requestProposal, dashboard }: Props) {
 	const [renderCount, setRenderCount] = useState(0)
 
 	useEffect(() => {
 		logger.info({ renderNavbar, renderSidebar }, 'Render Navbar Layout')
 		setRenderCount(renderCount + 1)
 	}, [])
-
 	return (
 		<Flex
 			direction='column'
@@ -45,6 +46,7 @@ function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar, req
 					<NavBar
 						{...navbarConfig}
 						requestProposal={requestProposal}
+						dashboard={dashboard}
 					/>
 				)
 			}

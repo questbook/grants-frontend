@@ -9,13 +9,14 @@ import { GrantsProgramContext } from 'src/pages/_app'
 import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
 import { DashboardContext } from 'src/screens/dashboard/Context'
+import ProposalSubmission from 'src/screens/request_proposal/_subscreens/ProposalSubmission'
 import { getFieldString } from 'src/utils/formattingUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 
-function ProposalList() {
+function ProposalList({ step, setStep }: {step?: boolean, setStep?: (value: boolean) => void}) {
 	const buildComponent = () => (
 		<Flex
-			w={['100%', '100%', '25%']}
+			w={['100%', '100%', '25%', '25%']}
 			h='100%'
 			bg='white'
 			direction='column'
@@ -30,7 +31,8 @@ function ProposalList() {
 				<Text
 					pl={5}
 					fontWeight='700'
-					color='black.1'>
+					color='black.1'
+					fontSize={['14px', '14px', '16px', '16px']}>
 					Proposals
 					<Text
 						ml={1}
@@ -46,7 +48,7 @@ function ProposalList() {
 							// w='103px'
 							// h='32px'
 							mr={4}
-							fontSize='14px'
+							fontSize={['10px', '10px', '12px', '12px']}
 							onClick={
 								() => {
 									const href = window.location.href.split('/')
@@ -123,7 +125,8 @@ function ProposalList() {
 								ref={cardRefs[index]}
 								key={proposal.id}
 								proposal={proposal}
-							/>
+								step={step}
+								setStep={setStep} />
 						)
 					})
 				}

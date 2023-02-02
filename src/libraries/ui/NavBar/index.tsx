@@ -1,6 +1,7 @@
 import { ChangeEvent, useContext, useEffect, useMemo, useState } from 'react'
-import { SupportedPayouts } from '@questbook/supported-safes'
+import React from 'react'
 import { Box, Button, Container, Flex, Image, Spacer, Text, useMediaQuery } from '@chakra-ui/react'
+import { SupportedPayouts } from '@questbook/supported-safes'
 import copy from 'copy-to-clipboard'
 import { ethers } from 'ethers'
 import saveAs from 'file-saver'
@@ -24,9 +25,10 @@ import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 type Props = {
 	bg?: string
 	requestProposal?: boolean
+	dashboard?: boolean
 }
 
-function NavBar({ bg = 'gray.1', requestProposal }: Props) {
+function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 	const BigScreensNavBar = () => (
 		<>
 			<Container
@@ -259,7 +261,50 @@ function NavBar({ bg = 'gray.1', requestProposal }: Props) {
 			</Container>
 		</>
 	)
+	const SmallScreensDashboard = () => (
+		<>
+			<Container
+				position='sticky'
+				top={0}
+				left={0}
+				right={0}
+				zIndex={1}
+				// variant='header-container'
+				maxH='64px'
+				display='flex'
+				// alignItems='flext-start'
+				alignItems='center'
+				maxW='100vw'
+				bg={bg}
+				ps={22}
+				pe={10}
+				py='16px'
+				minWidth={{ base: '-webkit-fill-available' }}
+			>
+				<Button
+					variant='linkV2'
+					fontWeight='500'
+					leftIcon={<ArrowLeft />}
+					onClick={
+						() => {
+							if(dashboardStep) {
+								setDashboardStep(false)
+							} else {
+								router.back()
+							}
+						}
+					} />
+				<Text
+					fontWeight='500'
+					variant='v2_subheading'
+				>
+					Proposals Dashboard
+				</Text>
+			</Container>
+		</>
+	)
 	const { grant, role, isLoading } = useContext(GrantsProgramContext)!
+	const { dashboardStep, setDashboardStep } = useContext(WebwalletContext)!
 	const { webwallet } = useContext(WebwalletContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	// const { searchString, setSearchString } = useContext(DAOSearchContext)!
@@ -367,13 +412,13 @@ function NavBar({ bg = 'gray.1', requestProposal }: Props) {
 		}
 
 	}
-	return SmallScreensRequestProposalNavBar()
+
 	if(!isMobile[0]) {
 		return <BigScreensNavBar />
 	} else if(requestProposal === true) {
 		return <SmallScreensRequestProposalNavBar />
 	} else {
-		return <BigScreensNavBar />
+		return <SmallScreensDashboard />
 	}
 }
 

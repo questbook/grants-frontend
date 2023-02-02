@@ -9,10 +9,10 @@ import { DashboardContext } from 'src/screens/dashboard/Context'
 function ActionList() {
 	const buildComponent = () => (
 		<Flex
-			w='25%'
+			w={['100%', '100%', '25%', '25%']}
 			bg='white'
 			boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
-			direction='column'>
+			direction={['column', 'column', 'row', 'row']}>
 			{selectedProposals.size > 1 ? <MultiSelect /> : <SingleSelect /> }
 		</Flex>
 	)

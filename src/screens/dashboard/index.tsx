@@ -5,13 +5,12 @@ import logger from 'src/libraries/logger'
 import LinkYourMultisigModal from 'src/libraries/ui/LinkYourMultisigModal'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import ThreeColumnSkeleton from 'src/libraries/ui/ThreeColumnSkeleton'
-import { GrantsProgramContext } from 'src/pages/_app'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import ActionList from 'src/screens/dashboard/ActionList'
 import Body from 'src/screens/dashboard/Body'
 import { DashboardProvider, FundBuilderProvider, ModalContext, ModalProvider } from 'src/screens/dashboard/Context'
 import FundBuilderDrawer from 'src/screens/dashboard/FundBuilderDrawer'
 import FundBuilderModal from 'src/screens/dashboard/FundBuilderModal'
-import { MobileDashboard } from 'src/screens/dashboard/MobileDashboard'
 import ProposalList from 'src/screens/dashboard/ProposalList'
 import SendAnUpdateModal from 'src/screens/dashboard/SendAnUpdateModal'
 
@@ -27,9 +26,20 @@ function Dashboard() {
 					<Flex
 						h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
 						overflowY='clip'>
-						{(step === 0) && (<ProposalList />)}
-						{(step === 1) && (<Body />)}
-						{(step === 2) && (<ActionList />)}
+						{
+							(dashboardStep === false) && (
+								<ProposalList
+									step={step}
+									setStep={setStep} />
+							)
+						}
+						{
+							(dashboardStep === true) && (
+								<>
+									<Body />
+								</>
+							)
+						}
 					</Flex>
 				)
 			}
@@ -72,7 +82,8 @@ function Dashboard() {
 	const { isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen } = useContext(ModalContext)!
 	const { role, isLoading } = useContext(GrantsProgramContext)!
 	const isMobile = useMediaQuery({ query:'(max-width:600px)' })
-	const [step, setStep] = useState(0)
+	const [step, setStep] = useState(false)
+	const { dashboardStep, setDashboardStep } = useContext(WebwalletContext)!
 
 	useEffect(() => {
 		logger.info({ isLoading }, 'Loading state changed')
@@ -90,6 +101,7 @@ Dashboard.getLayout = function(page: ReactElement) {
 		<NavbarLayout
 			renderSidebar={false}
 			renderNavbar
+			dahsboard={true}
 			navbarConfig={
 				{
 					bg: 'gray.1',
