@@ -89,7 +89,7 @@ function RequestProposal() {
 	}
 
 	const renderBody = () => {
-		switch (step) {
+		switch (createingProposalStep) {
 		case 1:
 			return (
 				<ProposalSubmission
@@ -174,7 +174,7 @@ function RequestProposal() {
 	}
 
 	const { chainId } = useContext(ApiClientsContext)!
-
+	const { createingProposalStep, setCreatingProposalStep } = useContext(WebwalletContext)!
 	// State for proposal creation
 	// const todayDate = today()
 	const [proposalName, setProposalName] = useState('')

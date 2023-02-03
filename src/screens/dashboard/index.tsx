@@ -88,6 +88,9 @@ function Dashboard() {
 	useEffect(() => {
 		logger.info({ isLoading }, 'Loading state changed')
 	}, [isLoading])
+	useEffect(() => {
+		setDashboardStep(false)
+	}, [])
 
 	// if(isMobile) {
 	// 	return MobileDashboard()
@@ -101,7 +104,7 @@ Dashboard.getLayout = function(page: ReactElement) {
 		<NavbarLayout
 			renderSidebar={false}
 			renderNavbar
-			dahsboard={true}
+			dashboard={true}
 			navbarConfig={
 				{
 					bg: 'gray.1',

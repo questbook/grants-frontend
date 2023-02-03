@@ -29,7 +29,7 @@ type Props = {
 }
 
 function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
-	const BigScreensNavBar = () => (
+	const MainNavBar = () => (
 		<>
 			<Container
 				position='sticky'
@@ -45,7 +45,7 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 				bg={bg}
 				ps={[6, 24]}
 				pe={24}
-				backgroundColor={['black.1', 'gray.1']}
+				backgroundColor={['black.1' ,'gray.1']}
 				py='16px'
 				minWidth={{ base: '-webkit-fill-available' }}
 			>
@@ -223,6 +223,184 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 
 		</>
 	)
+	const SmallScreensDashboardNavBar = () => (
+		<>
+			<Container
+				position='sticky'
+				top={0}
+				left={0}
+				right={0}
+				zIndex={1}
+				// variant='header-container'
+				maxH='60px'
+				display='flex'
+				alignItems='center'
+				minW='100%'
+				sx={
+					{
+						paddingInlineEnd: '0',
+						paddingInlineStart: '0'
+					}
+				}
+				bg={bg}
+				ps={[6, 24]}
+				pe={24}
+				backgroundColor='gray.1'
+				py='16px'
+				minWidth={{ base: '-webkit-fill-available' }}
+			>
+				<Button
+					variant='linkV2'
+					fontWeight='500'
+					leftIcon={<ArrowLeft />}
+					onClick={
+						() => {
+							if(dashboardStep === false) {
+								router.push('/')
+							} else {
+								setDashboardStep(false)
+							}
+						}
+					} />
+				{
+					isQbAdmin && (
+						<>
+							<Image
+								display={{ base: 'none', lg: 'inherit' }}
+								ml='10px'
+								src='/ui_icons/builders.svg'
+								alt='Questbook Builders' />
+						</>
+					)
+				}
+				<Spacer />
+
+				{
+					shouldShowTitle && (
+						<Flex
+							align='center'
+							gap={2}
+							direction='row'
+							alignItems='center'
+							width='100%'
+						>
+
+							<Image
+								boxSize={8}
+								borderRadius='4px'
+								src={grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)} />
+							<Flex
+								gap={0}
+								direction='column'
+							>
+								<Text
+									fontWeight='500'
+									variant='v2_subheading'
+									fontSize='12px'
+									width='100%'
+								>
+									{grant?.title}
+								</Text>
+								{
+									(grant?.link !== undefined && grant?.link !== null) && (
+										<Text
+											variant='v2_metadata'
+											display={grant?.link ? '' : 'none'}>
+											Program details
+											<Text
+												variant='v2_metadata'
+												display='inline-block'
+												fontWeight={500}
+												marginLeft={1}
+												cursor='pointer'
+												onClick={
+													() => {
+														if(grant.link !== null) {
+															window.open(grant.link, '_blank')
+														}
+													}
+												}
+											>
+												here
+											</Text>
+										</Text>
+									)
+								}
+							</Flex>
+							{/* <Text
+								variant={grant?.acceptingApplications ? 'openTag' : 'closedTag'}>
+								{grant?.acceptingApplications ? 'Open' : 'Closed'}
+							</Text> */}
+						</Flex>
+
+					)
+				}
+
+				<Box ml={4} />
+
+				{
+					(shouldShowTitle && role === 'admin' && grant?.acceptingApplications) && (
+						<Pencil
+							cursor='pointer'
+							boxSize='20px'
+							onClick={
+								() => {
+									router.push(
+										{
+											pathname: '/request_proposal/',
+											query: {
+												grantId: grant?.id,
+												workspaceId: grant?.workspace?.id
+											},
+										})
+
+								}
+							} />
+					)
+				}
+
+				{
+					(shouldShowTitle && role === 'admin') && (
+						<Settings
+							boxSize='20px'
+							ml={3}
+							cursor='pointer'
+							onClick={
+								() => {
+									router.push(
+										{
+											pathname: '/settings'
+										})
+
+								}
+							} />
+					)
+				}
+
+				{(role === 'admin' && !isLoading) && (<Box ml={3} />)}
+				<Spacer />
+
+			</Container>
+			<RecoveryModal
+				isOpen={isRecoveryModalOpen}
+				onClose={() => setIsRecoveryModalOpen(false)}
+				type={type}
+				privateKey={privateKey}
+				privateKeyError={privateKeyError}
+				onChange={onChange}
+				onImportClick={onImportClick}
+				onSaveAsTextClick={onSaveAsTextClick}
+				onCopyAndSaveManuallyClick={onCopyAndSaveManuallyClick} />
+			<ImportConfirmationModal
+				isOpen={isImportConfirmationModalOpen}
+				onClose={() => setImportConfirmationModalOpen(false)}
+				saveWallet={saveWallet} />
+			<UpdateProfileModal
+				isOpen={isUpdateProfileModalOpen}
+				onClose={() => setIsUpdateProfileModalOpen(false)} />
+
+		</>
+	)
 	const SmallScreensRequestProposalNavBar = () => (
 		<>
 			<Container
@@ -249,7 +427,11 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 					leftIcon={<ArrowLeft />}
 					onClick={
 						() => {
-							router.back()
+							if(createingProposalStep === 1) {
+								router.push('/')
+							} else {
+								setCreatingProposalStep((prev: number) => prev - 1)
+							}
 						}
 					} />
 				<Text
@@ -261,50 +443,8 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 			</Container>
 		</>
 	)
-	const SmallScreensDashboard = () => (
-		<>
-			<Container
-				position='sticky'
-				top={0}
-				left={0}
-				right={0}
-				zIndex={1}
-				// variant='header-container'
-				maxH='64px'
-				display='flex'
-				// alignItems='flext-start'
-				alignItems='center'
-				maxW='100vw'
-				bg={bg}
-				ps={22}
-				pe={10}
-				py='16px'
-				minWidth={{ base: '-webkit-fill-available' }}
-			>
-				<Button
-					variant='linkV2'
-					fontWeight='500'
-					leftIcon={<ArrowLeft />}
-					onClick={
-						() => {
-							if(dashboardStep) {
-								setDashboardStep(false)
-							} else {
-								router.back()
-							}
-						}
-					} />
-				<Text
-					fontWeight='500'
-					variant='v2_subheading'
-				>
-					Proposals Dashboard
-				</Text>
-			</Container>
-		</>
-	)
 	const { grant, role, isLoading } = useContext(GrantsProgramContext)!
-	const { dashboardStep, setDashboardStep } = useContext(WebwalletContext)!
+	const { dashboardStep, setDashboardStep, createingProposalStep, setCreatingProposalStep } = useContext(WebwalletContext)!
 	const { webwallet } = useContext(WebwalletContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	// const { searchString, setSearchString } = useContext(DAOSearchContext)!
@@ -414,11 +554,13 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 	}
 
 	if(!isMobile[0]) {
-		return <BigScreensNavBar />
+		return <MainNavBar />
 	} else if(requestProposal === true) {
 		return <SmallScreensRequestProposalNavBar />
+	} else if(dashboard === true) {
+		return <SmallScreensDashboardNavBar />
 	} else {
-		return <SmallScreensDashboard />
+		return <MainNavBar />
 	}
 }
 

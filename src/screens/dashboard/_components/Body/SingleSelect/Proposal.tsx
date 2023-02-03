@@ -48,11 +48,13 @@ function Proposal() {
 					<Flex align='center'>
 						<Text
 							variant='v2_heading_3'
-							fontWeight='500'>
+							fontWeight='500'
+							fontSize='22px'>
 							{getFieldString(proposal, 'projectName')}
 						</Text>
 						<ShareForward
 							ml={4}
+							mr={4}
 							boxSize='20px'
 							cursor='pointer'
 							onClick={

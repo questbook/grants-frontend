@@ -9,7 +9,6 @@ import { GrantsProgramContext } from 'src/pages/_app'
 import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import ProposalSubmission from 'src/screens/request_proposal/_subscreens/ProposalSubmission'
 import { getFieldString } from 'src/utils/formattingUtils'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 

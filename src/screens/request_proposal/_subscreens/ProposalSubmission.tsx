@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-curly-brace-presence */
-import { useRef, useState } from 'react'
+import { useContext, useRef, useState } from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { BsArrowLeft } from 'react-icons/bs'
 import { IoMdClose } from 'react-icons/io'
@@ -10,6 +10,7 @@ import { useRouter } from 'next/router'
 import { CustomSelect } from 'src/libraries/ui/CustomSelect'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
+import { WebwalletContext } from 'src/pages/_app'
 import { RFPForm, RFPFormType } from 'src/screens/request_proposal/_utils/types'
 import { ApplicantDetailsFieldType } from 'src/types'
 
@@ -62,7 +63,7 @@ function ProposalSubmission(
 	const uploaDocInputref = useRef(null)
 	const startdateRef = useRef<HTMLInputElement>(null)
 	const endDateRef = useRef<HTMLInputElement>(null)
-	const bigScreen = useMediaQuery('(min-width:501px)')
+	const bigScreen = useMediaQuery('(min-width:601px)')
 
 	const openInput = () => {
 		if(uploaDocInputref.current) {
@@ -331,7 +332,7 @@ function ProposalSubmission(
 
 					{/* More details */}
 					<Text variant='v2_subheading'>
-						Builders can also refer to addtional information here
+						Builders can also refer to additional information here
 					</Text>
 					<Flex
 						gap={4}
@@ -423,6 +424,8 @@ function ProposalSubmission(
 
 	const [showCrossIcon, setShowCrossIcon] = useState(false)
 
+	const { createingProposalStep, setCreatingProposalStep } = useContext(WebwalletContext)!
+
 	// const [extraDetailsFields, setExtraDetailsFields] = useState<ApplicantDetailsFieldType[]>(extraDetailsFieldsList)
 
 	const [showExtraFieldDropdown, setShowExtraFieldDropdown] = useState(false)
@@ -456,8 +459,8 @@ function ProposalSubmission(
 
 	const handleOnClickContinue = () => {
 		logger.info('step 2')
-		setStep(2)
-
+		// setStep(2)
+		setCreatingProposalStep(2)
 		//filter true values from extra details fields and add custom field ids
 		const filteredExtraDetails = extraDetailsFields.filter((field) => field.required === true).map((item, index) => {
 			let inputType: string = item.inputType
