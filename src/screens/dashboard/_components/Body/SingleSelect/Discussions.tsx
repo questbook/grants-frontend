@@ -1,7 +1,8 @@
 import { useContext, useMemo, useState } from 'react'
-import { Box, Button, Checkbox, Divider, Flex, Image, Text, Textarea } from '@chakra-ui/react'
+import ReactLinkify from 'react-linkify'
+import { LockIcon } from '@chakra-ui/icons'
+import { Box, Button, Checkbox, Divider, Flex, Image, Text, Textarea, Tooltip } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
-import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import QuickReplyButton from 'src/screens/dashboard/_components/QuickReplyButton'
 import useAddComment from 'src/screens/dashboard/_hooks/useAddComment'
@@ -171,6 +172,17 @@ function Discussions() {
 	const renderComment = (comment: CommentType, index: number) => {
 		const member = comment.workspace.members.find((member) => member.actorId.toLowerCase() === comment.sender?.toLowerCase())
 
+		logger.info({ message: comment.message }, 'Comment message')
+
+		let hasAccess = !comment.isPrivate
+		for(const member of comment.workspace.members) {
+			if(member.actorId === scwAddress?.toLowerCase()) {
+				hasAccess = true
+			}
+		}
+
+		hasAccess = hasAccess || comment.sender?.toLowerCase() === scwAddress?.toLowerCase()
+
 		return (
 			<Flex
 				align='start'
@@ -204,8 +216,57 @@ function Discussions() {
 								</Text>
 							)
 						}
+						{
+							comment.isPrivate && (
+								<Tooltip label={hasAccess ? 'Lucky one to have access to this!' : 'You are not supposed to see this! \ud83d\ude33'}>
+									<LockIcon
+										ml={2}
+										color='gray.5' />
+								</Tooltip>
+
+							)
+						}
 					</Flex>
-					<TextViewer text={comment?.message ?? ''} />
+
+					<ReactLinkify
+						componentDecorator={
+							(
+								decoratedHref: string,
+								decoratedText: string,
+								key: number,
+							) => (
+								<Text
+									display='inline-block'
+									wordBreak='break-all'
+									color='accent.azure'
+									variant='v2_body'
+									cursor='pointer'
+									_hover={
+										{
+											textDecoration: 'underline',
+										}
+									}
+									key={key}
+									onClick={
+										() => {
+											window.open(decoratedHref, '_blank')
+										}
+									}>
+									{decoratedText}
+								</Text>
+							)
+						}
+					>
+
+						<Text
+							wordBreak='break-word'
+							mt={1}
+							fontStyle={hasAccess ? 'normal' : 'italic'}
+							variant='v2_body'
+							whiteSpace='pre-line'>
+							{comment.message}
+						</Text>
+					</ReactLinkify>
 				</Flex>
 			</Flex>
 		)
