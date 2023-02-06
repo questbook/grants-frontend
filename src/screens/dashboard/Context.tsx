@@ -165,7 +165,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 						commentMap[key] = []
 					}
 
-					commentMap[key].push({ ...comment, sender, role: role ?? 'community', message: 'This is an encrypted comment', timestamp: comment.createdAt })
+					commentMap[key].push({ ...comment, sender, role: role ?? 'community', message: '*** This is an encrypted comment ***', timestamp: comment.createdAt })
 					continue
 				}
 

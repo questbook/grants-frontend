@@ -148,7 +148,7 @@ function Discover() {
 
 	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, isLoading } = useContext(DiscoverContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
-	const { searchString, setSearchString } = useContext(DAOSearchContext)!
+	const { searchString } = useContext(DAOSearchContext)!
 
 	const toast = useCustomToast()
 	const { isBiconomyInitialised, updateDaoVisibility, updateSection } = useUpdateDaoVisibility()
