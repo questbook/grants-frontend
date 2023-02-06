@@ -37,4 +37,4 @@ const nextConfig = {
 	},
 }
 
-module.exports = process.env.NODE_ENV === 'production' ? withSentryConfig(withYaml(nextConfig)) : withYaml(nextConfig)
+module.exports = withSentryConfig(withYaml(nextConfig))

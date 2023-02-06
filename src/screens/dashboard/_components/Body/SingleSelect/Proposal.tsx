@@ -45,12 +45,11 @@ function Proposal() {
 					w='100%'
 					align='center'
 					justify='space-between'>
-					<Flex align='center'>
-						<Text
-							variant='v2_heading_3'
-							fontWeight='500'>
-							{getFieldString(proposal, 'projectName')}
-						</Text>
+					<Text
+						as='span'
+						variant='v2_heading_3'
+						fontWeight='500'>
+						{getFieldString(proposal, 'projectName')}
 						<ShareForward
 							ml={4}
 							boxSize='20px'
@@ -70,7 +69,7 @@ function Proposal() {
 									})
 								}
 							} />
-					</Flex>
+					</Text>
 					<Text
 						variant='v2_body'
 						color='gray.5'>
