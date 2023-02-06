@@ -18,6 +18,7 @@ import UpdateProfileModal from 'src/libraries/ui/NavBar/_components/UpdateProfil
 import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import getAvatar from 'src/utils/avatarUtils'
+import { nFormatter } from 'src/utils/formattingUtils'
 import { getNonce } from 'src/utils/gaslessUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
@@ -153,7 +154,7 @@ function NavBar({ bg = 'gray.1' }: Props) {
 													variant='v2_metadata'
 													fontWeight={500}
 												>
-													{safeUSDAmount}
+													{nFormatter(safeUSDAmount.toFixed(0), 0)}
 													{' '}
 													USD
 												</Text>
