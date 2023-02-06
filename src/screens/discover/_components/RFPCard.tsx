@@ -1,5 +1,4 @@
 import { useContext, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { Box, Divider, Flex, Image, Switch, Text, Tooltip } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
@@ -29,7 +28,8 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 		<Box
 			w='100%'
 			background='white'
-			p={5}
+			px={5}
+			pt={5}
 			h='16rem'
 			position='relative'
 			// boxShadow='0px 10px 18px rgba(31, 31, 51, 0.05), 0px 0px 1px rgba(31, 31, 51, 0.31);'
@@ -169,31 +169,42 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 
 				</Flex>
 
-				<Divider mt='auto' />
 				<Flex
-					justifyContent='space-between'
-					mt={2}>
-					<Flex alignItems='center'>
+					direction='column'
+					mt='auto'>
+					<Divider />
+					<Flex
+						pt={3}
+						pb={5}
+						justifyContent='space-between'
+						align='end'
+					>
 						{
 							usdAmount > 0 && (
-								<Text
-									fontWeight='500'>
-									$
-									{grant.totalGrantFundingDisbursedUSD?.toFixed(0)}
-									{' '}
-									{grant.totalGrantFundingDisbursedUSD <= 100 ? 'of $' : ''}
-									{grant.totalGrantFundingDisbursedUSD <= 100 ? nFormatter(usdAmount.toFixed(0)) : ''}
-								</Text>
-							)
-						}
-						{
-							usdAmount > 0 && (
-								<Text
-									ml='5px'
-									variant='v2_body'
-									color='black.3'>
-									{t('/.cards.in_grants')}
-								</Text>
+								<Flex
+									direction='column'
+									gap={1} >
+									<Text
+										variant='v2_body'
+										color='gray.5'>
+										{parseInt(paidOutPercentage) >= 10 ? paidOutPercentage : '< 10'}
+										% paid out
+									</Text>
+									<Flex gap={1}>
+										<Text
+											as='span'
+											variant='v2_body'
+											fontWeight='500'>
+											{nFormatter(usdAmount.toFixed(0), 0)}
+										</Text>
+										<Text
+											as='span'
+											variant='v2_body'>
+											USD avaialble
+										</Text>
+									</Flex>
+
+								</Flex>
 							)
 						}
 						{
@@ -225,21 +236,21 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 
 							)
 						}
-					</Flex>
-					<Flex alignItems='center'>
-						<Text
-							fontSize='18px'
-							fontWeight='500'>
-							{grant.numberOfApplications}
-						</Text>
-						<Text
-							ml='5px'
-							fontSize='14px'
-							color='black.3'>
-							Proposals
-						</Text>
+						<Flex alignItems='center'>
+							<Text
+								fontWeight='500'>
+								{grant.numberOfApplications}
+							</Text>
+							<Text
+								ml='5px'
+								variant='v2_body'
+								color='black.3'>
+								Proposals
+							</Text>
+						</Flex>
 					</Flex>
 				</Flex>
+
 			</Flex>
 		</Box>
 	)
@@ -247,7 +258,6 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 	const { safeBalances } = useContext(DiscoverContext)!
 
 	const router = useRouter()
-	const { t } = useTranslation()
 	const formattedDeadline = extractDateFromDateTime(grant.deadline!)
 
 	const { isQbAdmin } = useContext(QBAdminsContext)!
@@ -255,6 +265,10 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 	const usdAmount = useMemo(() => {
 		return safeBalances[`${grant.workspace.safe?.chainId}-${grant.workspace.safe?.address}`]
 	}, [grant, safeBalances])
+
+	const paidOutPercentage = useMemo(() => {
+		return (grant.totalGrantFundingDisbursedUSD / (usdAmount + grant.totalGrantFundingDisbursedUSD) * 100).toFixed(0)
+	}, [usdAmount, grant.totalGrantFundingDisbursedUSD])
 
 	const isOpen = useMemo(() => {
 		return grant.acceptingApplications === true && grant.deadline ? grant.deadline > new Date().toISOString() : false
