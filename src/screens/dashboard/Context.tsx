@@ -375,6 +375,10 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			const proposalIndex = proposals.findIndex((_) => _.id === proposalId)
 			if(proposalIndex !== -1) {
 				setSelectedProposals(new Set<string>([proposalId]))
+				if(role === 'builder' || role === 'community') {
+					setRole(proposals[proposalIndex].applicantId === scwAddress?.toLowerCase() ? 'builder' : 'community')
+				}
+
 				router.push({
 					pathname: '/dashboard',
 					query: { ...router.query, proposalId }
@@ -383,6 +387,10 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		} else {
 			const initialSelectionSet = new Set<string>()
 			initialSelectionSet.add(proposals[0].id)
+			if(role === 'builder' || role === 'community') {
+				setRole(proposals[0].applicantId === scwAddress?.toLowerCase() ? 'builder' : 'community')
+			}
+
 			router.push({
 				pathname: '/dashboard',
 				query: { ...router.query, proposalId: proposals[0].id }
@@ -391,9 +399,9 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			setSelectedProposals(initialSelectionSet)
 		}
 
-		logger.info({ grant, scwAddress, role, proposals }, 'Loading state set to false')
+		logger.info({ grant, scwAddress, proposals }, 'Loading state set to false')
 		setIsLoading(false)
-	}, [proposals, scwAddress, grant, role])
+	}, [proposals, scwAddress, grant])
 
 	return (
 		<DashboardContext.Provider
