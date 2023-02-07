@@ -201,9 +201,9 @@ function Discussions() {
 							ml={3}
 							variant='v2_metadata'
 							borderRadius='3px'
-							bg={comment?.role === 'admin' ? 'gray.3' : comment?.role === 'reviewer' ? 'accent.crayola' : comment?.role === 'builder' ? 'accent.vodka' : 'accent.melon'}
+							bg={comment?.role === 'admin' ? 'gray.3' : comment?.role === 'reviewer' ? 'accent.crayola' : comment?.role === 'builder' && proposal?.applicantId === scwAddress?.toLowerCase() ? 'accent.vodka' : 'accent.melon'}
 							px={1}>
-							{comment?.role === 'admin' ? 'Admin' : comment?.role === 'reviewer' ? 'Reviewer' : comment?.role === 'builder' ? 'Builder' : 'Community'}
+							{comment?.role === 'admin' ? 'Admin' : comment?.role === 'reviewer' ? 'Reviewer' : comment?.role === 'builder' && proposal?.applicantId === scwAddress?.toLowerCase() ? 'Builder' : 'Community'}
 						</Text>
 						{
 							comment?.timestamp && (
