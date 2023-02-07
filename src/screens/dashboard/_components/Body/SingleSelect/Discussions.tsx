@@ -201,9 +201,9 @@ function Discussions() {
 							ml={3}
 							variant='v2_metadata'
 							borderRadius='3px'
-							bg={comment?.role === 'admin' ? 'gray.3' : comment?.role === 'reviewer' ? 'accent.crayola' : comment?.role === 'builder' && proposal?.applicantId === scwAddress?.toLowerCase() ? 'accent.vodka' : 'accent.melon'}
+							bg={comment?.role === 'admin' ? 'gray.3' : comment?.role === 'reviewer' ? 'accent.crayola' : comment?.role === 'builder' && proposal?.applicantId === comment?.sender?.toLowerCase() ? 'accent.vodka' : 'accent.melon'}
 							px={1}>
-							{comment?.role === 'admin' ? 'Admin' : comment?.role === 'reviewer' ? 'Reviewer' : comment?.role === 'builder' && proposal?.applicantId === scwAddress?.toLowerCase() ? 'Builder' : 'Community'}
+							{comment?.role === 'admin' ? 'Admin' : comment?.role === 'reviewer' ? 'Reviewer' : comment?.role === 'builder' && proposal?.applicantId === comment?.sender?.toLowerCase() ? 'Builder' : 'Community'}
 						</Text>
 						{
 							comment?.timestamp && (
@@ -333,7 +333,8 @@ function Discussions() {
 				return 'No name found'
 			}
 		} else {
-			if(comment.role === 'builder' && comment.sender === proposal?.applicantId) {
+			logger.info({ comment: comment?.sender, proposalId: proposal?.applicantId }, 'COMMENT 1')
+			if(comment.role === 'builder' && comment.sender?.toLowerCase() === proposal?.applicantId) {
 				return getFieldString(proposal, 'applicantName')
 			} else {
 				return formatAddress(comment.sender ?? '')
