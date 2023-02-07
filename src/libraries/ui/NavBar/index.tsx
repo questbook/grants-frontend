@@ -430,7 +430,7 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 							if(createingProposalStep === 1) {
 								router.push('/')
 							} else {
-								setCreatingProposalStep((prev: number) => prev - 1)
+								setCreatingProposalStep(createingProposalStep - 1)
 							}
 						}
 					} />
