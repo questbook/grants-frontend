@@ -201,7 +201,7 @@ function Discussions() {
 							ml={3}
 							variant='v2_metadata'
 							borderRadius='3px'
-							bg={comment?.role === 'admin' ? 'gray.3' : comment?.role === 'reviewer' ? 'accent.crayola' : comment?.role === 'accent.vodka' ? 'Builder' : 'accent.melon'}
+							bg={comment?.role === 'admin' ? 'gray.3' : comment?.role === 'reviewer' ? 'accent.crayola' : comment?.role === 'builder' ? 'accent.vodka' : 'accent.melon'}
 							px={1}>
 							{comment?.role === 'admin' ? 'Admin' : comment?.role === 'reviewer' ? 'Reviewer' : comment?.role === 'builder' ? 'Builder' : 'Community'}
 						</Text>
@@ -333,9 +333,9 @@ function Discussions() {
 				return 'No name found'
 			}
 		} else {
-			if(comment.role === 'builder') {
+			if(comment.role === 'builder' && comment.sender === proposal?.applicantId) {
 				return getFieldString(proposal, 'applicantName')
-			} else if(comment.role === 'community') {
+			} else {
 				return formatAddress(comment.sender ?? '')
 			}
 		}
