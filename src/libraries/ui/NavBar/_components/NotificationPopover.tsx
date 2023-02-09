@@ -132,7 +132,7 @@ function NotificationPopover(props: Props) {
 	const getPayload = () => {
 		if(grant?.workspace) {
 			const key = `${props.type === 'grant' ? 'gp' : 'app'}-${props.type === 'grant' ? props.grantId : props.proposalId }-${getSupportedChainIdFromWorkspace(grant.workspace)}`
-			const payload = Buffer.from(key).toString('base64')
+			const payload = (Buffer.from(key).toString('base64')).replaceAll('=', '')
 			logger.info({ key, payload }, 'Telegram config')
 			return payload
 		}

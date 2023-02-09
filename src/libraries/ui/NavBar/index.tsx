@@ -229,7 +229,7 @@ function NavBar({ bg = 'gray.1' }: Props) {
 				{
 					(!isLoading && router.pathname === '/dashboard') && (
 						<ShareForward
-							ml={2}
+							ml={4}
 							onClick={
 								() => {
 									if(grant?.id) {
