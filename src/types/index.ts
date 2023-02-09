@@ -198,3 +198,8 @@ export type GrantProgramContextType = {
   isLoading: boolean
   setIsLoading: (isLoading: boolean) => void
 }
+
+export type NotificationContextType = {
+  qrCodeText: string | undefined
+  setQrCodeText: (qrCodeText: string | undefined) => void
+}

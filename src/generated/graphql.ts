@@ -503,6 +503,7 @@ export type FundsTransfer = {
 };
 
 export enum FundsTransferStatusType {
+  Cancelled = 'cancelled',
   Executed = 'executed',
   Queued = 'queued'
 }
@@ -801,9 +802,9 @@ export type Grant = {
   summary: Scalars['String'];
   title: Scalars['String'];
   /** total grant funding committed in USD */
-  totalGrantFundingCommittedUSD: Scalars['Int'];
+  totalGrantFundingCommittedUSD: Scalars['BigInt'];
   /** total grant funding committed in USD */
-  totalGrantFundingDisbursedUSD: Scalars['Int'];
+  totalGrantFundingDisbursedUSD: Scalars['BigInt'];
   /** in seconds since epoch */
   updatedAtS?: Maybe<Scalars['Int']>;
   /** Workspace which created the grant */
@@ -2045,22 +2046,22 @@ export type Grant_Filter = {
   title_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
   title_starts_with?: InputMaybe<Scalars['String']>;
   title_starts_with_nocase?: InputMaybe<Scalars['String']>;
-  totalGrantFundingCommittedUSD?: InputMaybe<Scalars['Int']>;
-  totalGrantFundingCommittedUSD_gt?: InputMaybe<Scalars['Int']>;
-  totalGrantFundingCommittedUSD_gte?: InputMaybe<Scalars['Int']>;
-  totalGrantFundingCommittedUSD_in?: InputMaybe<Array<Scalars['Int']>>;
-  totalGrantFundingCommittedUSD_lt?: InputMaybe<Scalars['Int']>;
-  totalGrantFundingCommittedUSD_lte?: InputMaybe<Scalars['Int']>;
-  totalGrantFundingCommittedUSD_not?: InputMaybe<Scalars['Int']>;
-  totalGrantFundingCommittedUSD_not_in?: InputMaybe<Array<Scalars['Int']>>;
-  totalGrantFundingDisbursedUSD?: InputMaybe<Scalars['Int']>;
-  totalGrantFundingDisbursedUSD_gt?: InputMaybe<Scalars['Int']>;
-  totalGrantFundingDisbursedUSD_gte?: InputMaybe<Scalars['Int']>;
-  totalGrantFundingDisbursedUSD_in?: InputMaybe<Array<Scalars['Int']>>;
-  totalGrantFundingDisbursedUSD_lt?: InputMaybe<Scalars['Int']>;
-  totalGrantFundingDisbursedUSD_lte?: InputMaybe<Scalars['Int']>;
-  totalGrantFundingDisbursedUSD_not?: InputMaybe<Scalars['Int']>;
-  totalGrantFundingDisbursedUSD_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  totalGrantFundingCommittedUSD?: InputMaybe<Scalars['BigInt']>;
+  totalGrantFundingCommittedUSD_gt?: InputMaybe<Scalars['BigInt']>;
+  totalGrantFundingCommittedUSD_gte?: InputMaybe<Scalars['BigInt']>;
+  totalGrantFundingCommittedUSD_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  totalGrantFundingCommittedUSD_lt?: InputMaybe<Scalars['BigInt']>;
+  totalGrantFundingCommittedUSD_lte?: InputMaybe<Scalars['BigInt']>;
+  totalGrantFundingCommittedUSD_not?: InputMaybe<Scalars['BigInt']>;
+  totalGrantFundingCommittedUSD_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  totalGrantFundingDisbursedUSD?: InputMaybe<Scalars['BigInt']>;
+  totalGrantFundingDisbursedUSD_gt?: InputMaybe<Scalars['BigInt']>;
+  totalGrantFundingDisbursedUSD_gte?: InputMaybe<Scalars['BigInt']>;
+  totalGrantFundingDisbursedUSD_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  totalGrantFundingDisbursedUSD_lt?: InputMaybe<Scalars['BigInt']>;
+  totalGrantFundingDisbursedUSD_lte?: InputMaybe<Scalars['BigInt']>;
+  totalGrantFundingDisbursedUSD_not?: InputMaybe<Scalars['BigInt']>;
+  totalGrantFundingDisbursedUSD_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   updatedAtS?: InputMaybe<Scalars['Int']>;
   updatedAtS_gt?: InputMaybe<Scalars['Int']>;
   updatedAtS_gte?: InputMaybe<Scalars['Int']>;
@@ -5374,7 +5375,7 @@ export type GetDaoDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetDaoDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, bio: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, numberOfApplications: number, numberOfApplicationsSelected: number, partners: Array<{ __typename?: 'Partner', name: string, industry: string, website?: string | null, partnerImageHash?: string | null }>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }> } | null, grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, totalGrantFundingCommittedUSD: number, totalGrantFundingDisbursedUSD: number, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
+export type GetDaoDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, bio: string, title: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, numberOfApplications: number, numberOfApplicationsSelected: number, partners: Array<{ __typename?: 'Partner', name: string, industry: string, website?: string | null, partnerImageHash?: string | null }>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }> } | null, grants: Array<{ __typename?: 'Grant', id: string, creatorId: string, title: string, createdAtS: number, summary: string, details: string, deadline?: string | null, funding: string, numberOfApplications: number, totalGrantFundingCommittedUSD: string, totalGrantFundingDisbursedUSD: string, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork> } }> };
 
 export type GetDaoNameQueryVariables = Exact<{
   workspaceID: Scalars['ID'];
@@ -5682,7 +5683,7 @@ export type GetAllGrantsQueryVariables = Exact<{
 }>;
 
 
-export type GetAllGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, deadlineS: number, deadline?: string | null, numberOfApplications: number, createdAtS: number, updatedAtS?: number | null, totalGrantFundingDisbursedUSD: number, applications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, tokenUSDValue?: string | null, asset: string, tokenName?: string | null }>, workspace: { __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, accessLevel: WorkspaceMemberAccessLevel }>, safe?: { __typename?: 'WorkspaceSafe', chainId: string, address: string } | null }, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } }> };
+export type GetAllGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, deadlineS: number, deadline?: string | null, numberOfApplications: number, createdAtS: number, updatedAtS?: number | null, totalGrantFundingDisbursedUSD: string, applications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, tokenUSDValue?: string | null, asset: string, tokenName?: string | null }>, workspace: { __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, accessLevel: WorkspaceMemberAccessLevel }>, safe?: { __typename?: 'WorkspaceSafe', chainId: string, address: string } | null }, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } }> };
 
 export type GetAllGrantsForMemberQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -5693,7 +5694,7 @@ export type GetAllGrantsForMemberQueryVariables = Exact<{
 }>;
 
 
-export type GetAllGrantsForMemberQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, deadlineS: number, deadline?: string | null, numberOfApplications: number, createdAtS: number, updatedAtS?: number | null, totalGrantFundingDisbursedUSD: number, applications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, tokenUSDValue?: string | null, asset: string, tokenName?: string | null }>, workspace: { __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, accessLevel: WorkspaceMemberAccessLevel }>, safe?: { __typename?: 'WorkspaceSafe', chainId: string, address: string } | null }, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } }> };
+export type GetAllGrantsForMemberQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, deadlineS: number, deadline?: string | null, numberOfApplications: number, createdAtS: number, updatedAtS?: number | null, totalGrantFundingDisbursedUSD: string, applications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, tokenUSDValue?: string | null, asset: string, tokenName?: string | null }>, workspace: { __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, accessLevel: WorkspaceMemberAccessLevel }>, safe?: { __typename?: 'WorkspaceSafe', chainId: string, address: string } | null }, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } }> };
 
 export type GetGrantProgramDetailsQueryVariables = Exact<{
   workspaceID: Scalars['String'];
@@ -5705,7 +5706,7 @@ export type GetGrantProgramDetailsQuery = { __typename?: 'Query', grantProgram: 
 export type GetSectionGrantsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSectionGrantsQuery = { __typename?: 'Query', sections: Array<{ __typename?: 'Section', sectionName: string, sectionLogoIpfsHash: string, id: string, grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, deadlineS: number, deadline?: string | null, numberOfApplications: number, createdAtS: number, updatedAtS?: number | null, totalGrantFundingDisbursedUSD: number, applications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, tokenUSDValue?: string | null, asset: string, tokenName?: string | null }>, workspace: { __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, safe?: { __typename?: 'WorkspaceSafe', chainId: string, address: string } | null }, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } }> }> };
+export type GetSectionGrantsQuery = { __typename?: 'Query', sections: Array<{ __typename?: 'Section', sectionName: string, sectionLogoIpfsHash: string, id: string, grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, deadlineS: number, deadline?: string | null, numberOfApplications: number, createdAtS: number, updatedAtS?: number | null, totalGrantFundingDisbursedUSD: string, applications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, tokenUSDValue?: string | null, asset: string, tokenName?: string | null }>, workspace: { __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, safe?: { __typename?: 'WorkspaceSafe', chainId: string, address: string } | null }, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } }> }> };
 
 export type GetWorkspacesAndBuilderGrantsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -5714,7 +5715,7 @@ export type GetWorkspacesAndBuilderGrantsQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspacesAndBuilderGrantsQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, accessLevel: WorkspaceMemberAccessLevel, enabled: boolean, workspace: { __typename?: 'Workspace', id: string, title: string, supportedNetworks: Array<SupportedNetwork>, grants: Array<string> } }>, grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, deadlineS: number, deadline?: string | null, numberOfApplications: number, createdAtS: number, updatedAtS?: number | null, totalGrantFundingDisbursedUSD: number, applications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, tokenUSDValue?: string | null, asset: string, tokenName?: string | null }>, workspace: { __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, accessLevel: WorkspaceMemberAccessLevel }>, safe?: { __typename?: 'WorkspaceSafe', chainId: string, address: string } | null }, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } }> };
+export type GetWorkspacesAndBuilderGrantsQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, accessLevel: WorkspaceMemberAccessLevel, enabled: boolean, workspace: { __typename?: 'Workspace', id: string, title: string, supportedNetworks: Array<SupportedNetwork>, grants: Array<string> } }>, grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, deadlineS: number, deadline?: string | null, numberOfApplications: number, createdAtS: number, updatedAtS?: number | null, totalGrantFundingDisbursedUSD: string, applications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, tokenUSDValue?: string | null, asset: string, tokenName?: string | null }>, workspace: { __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, accessLevel: WorkspaceMemberAccessLevel }>, safe?: { __typename?: 'WorkspaceSafe', chainId: string, address: string } | null }, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } }> };
 
 export type GrantDetailsQueryVariables = Exact<{
   grantId: Scalars['ID'];

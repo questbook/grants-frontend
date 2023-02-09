@@ -6,16 +6,17 @@ import { ethers } from 'ethers'
 import saveAs from 'file-saver'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
-import { Pencil, Settings } from 'src/generated/icons'
+import { Pencil, Settings, ShareForward } from 'src/generated/icons'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import AccountDetails from 'src/libraries/ui/NavBar/_components/AccountDetails'
 import ImportConfirmationModal from 'src/libraries/ui/NavBar/_components/ImportConfirmationModal'
+import NotificationPopover from 'src/libraries/ui/NavBar/_components/NotificationPopover'
 import RecoveryModal from 'src/libraries/ui/NavBar/_components/RecoveryModal'
-import SharePopover from 'src/libraries/ui/NavBar/_components/SharePopover'
 import UpdateProfileModal from 'src/libraries/ui/NavBar/_components/UpdateProfileModal'
 import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
+import { copyShareGrantLink } from 'src/libraries/utils/copy'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import getAvatar from 'src/utils/avatarUtils'
 import { nFormatter } from 'src/utils/formattingUtils'
@@ -216,7 +217,36 @@ function NavBar({ bg = 'gray.1' }: Props) {
 				}
 
 				{(role === 'admin' && !isLoading) && (<Box ml={3} />)}
-				{(!isLoading && router.pathname === '/dashboard') && <SharePopover />}
+
+				{
+					(!isLoading && router.pathname === '/dashboard') && (
+						<NotificationPopover
+							type='grant'
+							grantId={grant?.id ?? ''} />
+					)
+				}
+
+				{
+					(!isLoading && router.pathname === '/dashboard') && (
+						<ShareForward
+							ml={2}
+							onClick={
+								() => {
+									if(grant?.id) {
+										const ret = copyShareGrantLink()
+										logger.info('copyGrantLink', ret)
+										toast({
+											title: ret ? 'Share link copied!' : 'Failed to copy',
+											status: ret ? 'success' : 'error',
+											duration: 3000,
+										})
+									}
+								}
+							}
+							cursor='pointer'
+							boxSize='20px' />
+					)
+				}
 
 				<Spacer />
 
