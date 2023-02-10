@@ -57,6 +57,7 @@ function ProposalForm() {
 							src={grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)}
 							boxSize='30%' />
 						<Text
+							mt={6}
 							variant='v2_heading_2'
 							fontWeight='500'>
 							Fantastic — we have received
