@@ -34,9 +34,7 @@ function QRCodeModal() {
 							style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
 							value={qrCodeText!} />
 					</Flex>
-
 				</ModalContent>
-
 			</Modal>
 		)
 	}

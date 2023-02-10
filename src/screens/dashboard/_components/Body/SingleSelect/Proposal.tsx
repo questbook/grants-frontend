@@ -81,14 +81,16 @@ function Proposal() {
 				</Flex>
 
 				{
-					role !== 'community' && (
+					shouldShowPII && (
 						<Flex
 							mt={4}
 							direction='column'>
 							<Text color='gray.5'>
 								By
 							</Text>
-							<Flex align='center'>
+							<Flex
+								align='center'
+								mt={4}>
 								<Image
 									borderRadius='3xl'
 									boxSize='36px'
@@ -307,6 +309,10 @@ function Proposal() {
 
 		return getChainInfo(proposal?.grant, chainId)
 	}, [proposal?.grant, chainId])
+
+	const shouldShowPII = useMemo(() => {
+		return role !== 'community'
+	}, [])
 
 	const [decryptedProposal, setDecryptedProposal] = useState<ProposalType | undefined>(proposal)
 	const [projectDetails, setProjectDetails] = useState<string>()
