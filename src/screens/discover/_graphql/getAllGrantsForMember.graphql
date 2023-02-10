@@ -45,6 +45,8 @@ query getAllGrantsForMember(
         chainId
         address
       }
+      numberOfApplicationsSelected
+      numberOfApplications
     }
     reward {
       committed

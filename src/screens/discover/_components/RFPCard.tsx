@@ -1,5 +1,5 @@
 import { useContext, useMemo } from 'react'
-import { Box, Divider, Flex, Image, Switch, Text, Tooltip } from '@chakra-ui/react'
+import { Box, Divider, Flex, Grid, GridItem, Image, Switch, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
 import { Alert } from 'src/generated/icons'
@@ -173,82 +173,84 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 					direction='column'
 					mt='auto'>
 					<Divider />
-					<Flex
+					<Grid
+						mt={1}
+						templateColumns='repeat(4, 1fr)'
 						pt={3}
 						pb={5}
 						justifyContent='space-between'
-						align='end'
-					>
-						{
-							usdAmount > 0 && (
-								<Flex
-									direction='column'
-									gap={1} >
-									<Text
-										variant='v2_body'
-										color='gray.5'>
-										{parseInt(paidOutPercentage) >= 10 ? paidOutPercentage : '< 10'}
-										% paid out
-									</Text>
-									<Flex gap={1}>
-										<Text
-											as='span'
-											variant='v2_body'
-											fontWeight='500'>
-											{nFormatter(usdAmount.toFixed(0), 0)}
-										</Text>
-										<Text
-											as='span'
-											variant='v2_body'>
-											USD avaialble
-										</Text>
-									</Flex>
-
-								</Flex>
-							)
-						}
-						{
-							(usdAmount === 0) && (
-								<Tooltip label='Check with the grant program manager before applying'>
-									<Text
-										variant='v2_body'
-										fontSize='14px'
-										color='black.3'>
-										No $$ in multisig
-									</Text>
-								</Tooltip>
-							)
-						}
-						{
-							grant?.workspace?.safe === null && (
-								<Tooltip label='The source of funds for this grant program is unknown. Please contact the grant manager'>
-									<Flex align='center'>
-										<Alert color='accent.royal' />
-										<Text
-											as='span'
-											ml='0.25rem'
-											variant='v2_metadata'
-											color='black.3'>
-											Multisig not linked
-										</Text>
-									</Flex>
-								</Tooltip>
-
-							)
-						}
-						<Flex alignItems='center'>
-							<Text
-								fontWeight='500'>
-								{grant.numberOfApplications}
-							</Text>
-							<Text
-								ml='5px'
-								variant='v2_body'
-								color='black.3'>
-								Proposals
-							</Text>
-						</Flex>
-					</Flex>
+					 >
+						<GridItem>
+							<Flex direction='column'>
+								{
+									grant?.workspace?.safe === null ? (
+										<Alert
+											mt={1}
+											color='accent.royal' />
+									) : (
+										<Flex
+											gap={2}
+											align='center'>
+											{usdAmount === 0 && <Alert color='accent.royal' />}
+											{
+												usdAmount !== undefined && (
+													<Text fontWeight='500'>
+														$
+														{nFormatter(usdAmount?.toFixed(0), 0)}
+													</Text>
+												)
+											}
+										</Flex>
+									)
+								}
+								<Text
+									mt={1}
+									variant='v2_body'
+									color='gray.6'>
+									{grant?.workspace?.safe === null ? 'No multisig' : usdAmount === undefined ? '' : usdAmount === 0 ? 'in multisig' : 'available'}
+								</Text>
+							</Flex>
+						</GridItem>
+						<GridItem>
+							<Flex direction='column'>
+								<Text fontWeight='500'>
+									{grant?.totalGrantFundingDisbursedUSD === '0' ? '-' : `$${nFormatter(grant?.totalGrantFundingDisbursedUSD, 0)}`}
+								</Text>
+								<Text
+									mt={1}
+									variant='v2_body'
+									color='gray.6'>
+									paid out
+								</Text>
+							</Flex>
+						</GridItem>
+						<GridItem>
+							<Flex direction='column'>
+								<Text fontWeight='500'>
+									{grant?.workspace?.numberOfApplicationsSelected}
+								</Text>
+								<Text
+									mt={1}
+									variant='v2_body'
+									color='gray.6'>
+									accepted
+								</Text>
+							</Flex>
+						</GridItem>
+						<GridItem>
+							<Flex direction='column'>
+								<Text fontWeight='500'>
+									{grant?.numberOfApplications}
+								</Text>
+								<Text
+									mt={1}
+									variant='v2_body'
+									color='gray.6'>
+									proposals
+								</Text>
+							</Flex>
+						</GridItem>
+					</Grid>
 				</Flex>
 
 			</Flex>
@@ -265,10 +267,6 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 	const usdAmount = useMemo(() => {
 		return safeBalances[`${grant.workspace.safe?.chainId}-${grant.workspace.safe?.address}`]
 	}, [grant, safeBalances])
-
-	const paidOutPercentage = useMemo(() => {
-		return (grant.totalGrantFundingDisbursedUSD / (usdAmount + grant.totalGrantFundingDisbursedUSD) * 100).toFixed(0)
-	}, [usdAmount, grant.totalGrantFundingDisbursedUSD])
 
 	const isOpen = useMemo(() => {
 		return grant.acceptingApplications === true && grant.deadline ? grant.deadline > new Date().toISOString() : false
