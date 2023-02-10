@@ -66,8 +66,7 @@ function Proposal() {
 									const href = window.location.href.split('/')
 									const protocol = href[0]
 									const domain = href[2]
-
-									const link = `${protocol}//${domain}/dashboard/?grantId=${proposal.grant.id}&chainId=${chainId}&proposalId=${proposal.id}`
+									const link =`${protocol}//${domain}/dashboard/?grantId=${proposal.grant.id}&chainId=${chainId}&proposalId=${proposal.id}&isRenderingProposalBody=${true}`
 									copy(link)
 									toast({
 										title: 'Copied!',
