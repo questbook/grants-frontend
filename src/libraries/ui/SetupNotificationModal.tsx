@@ -121,7 +121,7 @@ function SetupNotificationModal(props: Props) {
 				const payload = getPayload()
 				logger.info(payload)
 				if(payload) {
-					window.open(`https://t.me/qb_beta_bot?start=${payload}`, '_blank')
+					window.open(`https://t.me/${process.env.NOTIF_BOT_USERNAME}?start=${payload}`, '_blank')
 				}
 			}
 		},
@@ -133,7 +133,7 @@ function SetupNotificationModal(props: Props) {
 			onButtonClick: () => {
 				const payload = getPayload()
 				if(payload) {
-					setQrCodeText(`https://t.me/qb_beta_bot?start=${payload}`)
+					setQrCodeText(`https://t.me/${process.env.NOTIF_BOT_USERNAME}?start=${payload}`)
 				}
 			}
 		},

@@ -111,7 +111,7 @@ function NotificationPopover(props: Props) {
 			onButtonClick: () => {
 				const payload = getPayload()
 				if(payload) {
-					window.open(`https://t.me/qb_beta_bot?start=${payload}`, '_blank')
+					window.open(`https://t.me/${process.env.NOTIF_BOT_USERNAME}?start=${payload}`, '_blank')
 				}
 			}
 		},
@@ -123,7 +123,7 @@ function NotificationPopover(props: Props) {
 			onButtonClick: () => {
 				const payload = getPayload()
 				if(payload) {
-					setQrCodeText(`https://t.me/qb_beta_bot?start=${payload}`)
+					setQrCodeText(`https://t.me/${process.env.NOTIF_BOT_USERNAME}?start=${payload}`)
 				}
 			}
 		},
