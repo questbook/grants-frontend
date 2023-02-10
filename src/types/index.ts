@@ -186,7 +186,7 @@ export enum ReviewType {
   'Rubrics'
 }
 
-export type Roles = 'admin' | 'reviewer' | 'builder' | 'community' | 'owner'
+export type Roles = 'admin' | 'reviewer' | 'builder' | 'community'
 
 export type GrantType = GetGrantQuery['grant']
 
@@ -197,4 +197,9 @@ export type GrantProgramContextType = {
   setRole: (role: Roles) => void
   isLoading: boolean
   setIsLoading: (isLoading: boolean) => void
+}
+
+export type NotificationContextType = {
+  qrCodeText: string | undefined
+  setQrCodeText: (qrCodeText: string | undefined) => void
 }

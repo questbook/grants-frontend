@@ -161,7 +161,7 @@ function Payouts() {
 						<Text
 							fontWeight='400'
 							variant='v2_body'>
-							{payout.status === 'queued' ? 'Queued' : 'Success'}
+							{payout.status === 'queued' ? 'Queued' : payout.status === 'executed' ? 'Success' : 'Cancelled'}
 						</Text>
 					</Button>
 

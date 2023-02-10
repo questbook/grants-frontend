@@ -1,7 +1,8 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { Button, Flex, Text } from '@chakra-ui/react'
 import { defaultChainId } from 'src/constants/chains'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
+import SetupNotificationModal from 'src/libraries/ui/SetupNotificationModal'
 import { copyGrantLink } from 'src/libraries/utils/copy'
 import { GrantsProgramContext } from 'src/pages/_app'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -20,12 +21,12 @@ function Empty() {
 				<Text
 					variant='v2_heading_3'
 					fontWeight='500'>
-					{(role === 'admin' || role === 'owner') ? 'Your invitation for proposals is live!' : 'Be the first to submit a proposal'}
+					{role === 'admin' ? 'Your invitation for proposals is live!' : 'Be the first to submit a proposal'}
 
 				</Text>
 
 				{
-					(role === 'admin' || role === 'owner') ? (
+					role === 'admin' ? (
 						<>
 							<Text mt={1}>
 								Builders can start submitting proposals from today.
@@ -50,7 +51,6 @@ function Empty() {
 						<>
 							<Text variant='v2_body'>
 								Read more about the grant
-
 								<Text
 									variant='v2_body'
 									display='inline-block'
@@ -75,7 +75,7 @@ function Empty() {
 				}
 
 				{
-					(role === 'admin' || role === 'owner') ? (
+					role === 'admin' ? (
 						<Button
 							variant='primaryMedium'
 							mt={6}
@@ -123,11 +123,50 @@ function Empty() {
 							</Button>
 						)
 				}
+
+				{
+					role === 'admin' && (
+						<Flex
+							mt={10}
+							direction='column'
+							align='center'
+							px='10%'>
+							<Text fontWeight='500'>
+								Subscribe to notifications
+							</Text>
+							<Text
+								mt={1}
+								textAlign='center'
+								variant='v2_body'>
+								Get notified on Telegram when builders submit new proposals , reviewers submit
+								reviews, and other updates from builders and community.
+							</Text>
+							<Button
+								variant='primaryMedium'
+								bg='gray.3'
+								mt={6}
+								onClick={() => setIsSetupNotificationModalOpen(true)}>
+								<Text
+									variant='v2_body'
+									fontWeight='500'>
+									Subscribe
+								</Text>
+							</Button>
+						</Flex>
+					)
+				}
+
+				<SetupNotificationModal
+					isOpen={isSetupNotificationModalOpen}
+					onClose={() => setIsSetupNotificationModalOpen(false)}
+					type='grant'
+					grantId={grant?.id!} />
 			</Flex>
 		)
 	}
 
 	const { grant, role } = useContext(GrantsProgramContext)!
+	const [isSetupNotificationModalOpen, setIsSetupNotificationModalOpen] = useState<boolean>(false)
 
 	const toast = useCustomToast()
 

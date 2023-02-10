@@ -1,7 +1,8 @@
-import { useCallback, useContext, useMemo } from 'react'
+import { useContext, useMemo, useState } from 'react'
 import { convertToRaw } from 'draft-js'
 import { APPLICATION_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { USD_ASSET } from 'src/constants/chains'
+import ApplicationRegistryAbi from 'src/contracts/abi/ApplicationRegistryAbi.json'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
@@ -15,8 +16,9 @@ import { Form } from 'src/screens/proposal_form/_utils/types'
 import { ProposalFormContext } from 'src/screens/proposal_form/Context'
 import { GrantApplicationRequest } from 'src/types/gen'
 import { parseAmount } from 'src/utils/formattingUtils'
-import { bicoDapps, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { bicoDapps, getEventData, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
+
 
 interface Props {
 	setNetworkTransactionModalStep: (step: number | undefined) => void
@@ -48,7 +50,9 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 
 	const createMapping = useCreateMapping({ chainId })
 
-	const submitProposal = useCallback(async(form: Form) => {
+	const [proposalId, setProposalId] = useState<string>()
+
+	const submitProposal = async(form: Form) => {
 		try {
 			if(!grant || !webwallet || !biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
 				return
@@ -134,13 +138,23 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 				setNetworkTransactionModalStep(1)
 				const { receipt, txFee } = await getTransactionDetails(response, chainId.toString())
 				setTransactionHash(receipt?.transactionHash)
-				logger.info({ receipt, txFee }, 'useSubmitProposal: (Receipt)')
-				await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
 
-				setNetworkTransactionModalStep(2)
-				await createMapping({ email: findField(form, 'applicantEmail').value })
+				const eventData = await getEventData(receipt, type === 'submit' ? 'ApplicationSubmitted' : 'ApplicationUpdated', ApplicationRegistryAbi)
+				logger.info({ eventData }, 'useSubmitProposal: (Event Data)')
+				if(eventData) {
+					const proposalId = Number(eventData.args[0].toBigInt())
+					setProposalId(`0x${proposalId.toString(16)}`)
+					logger.info({ receipt, txFee }, 'useSubmitProposal: (Receipt)')
+					await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
 
-				setNetworkTransactionModalStep(3)
+					setNetworkTransactionModalStep(2)
+					await createMapping({ email: findField(form, 'applicantEmail').value })
+
+					setNetworkTransactionModalStep(3)
+				} else {
+					throw new Error('Event data not found')
+				}
+
 			} else {
 				setNetworkTransactionModalStep(undefined)
 			}
@@ -148,12 +162,10 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 			logger.error(e, 'useSubmitProposal: (Error)')
 			setNetworkTransactionModalStep(undefined)
 		}
-	}, [type, grant, proposal, chainId, webwallet, biconomy, biconomyWalletClient, scwAddress, biconomyLoading])
+	}
 
 	return {
-		submitProposal: useMemo(() => {
-			return submitProposal
-		}, [type, grant, proposal, chainId, webwallet, biconomy, biconomyWalletClient, scwAddress, biconomyLoading]), isBiconomyInitialised
+		submitProposal, proposalId, isBiconomyInitialised
 	}
 }
 

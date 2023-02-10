@@ -2,11 +2,13 @@ import { ChangeEvent, ReactElement, useContext, useMemo, useState } from 'react'
 import { Button, Container, Flex, Image, Text } from '@chakra-ui/react'
 import { convertToRaw } from 'draft-js'
 import { useRouter } from 'next/router'
+import config from 'src/constants/config.json'
 import { useSafeContext } from 'src/contexts/safeContext'
 import logger from 'src/libraries/logger'
 import BackButton from 'src/libraries/ui/BackButton'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
+import SetupNotificationModal from 'src/libraries/ui/SetupNotificationModal'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { GrantsProgramContext } from 'src/pages/_app'
 import SectionHeader from 'src/screens/proposal_form/_components/SectionHeader'
@@ -22,6 +24,7 @@ import getAvatar from 'src/utils/avatarUtils'
 import { chainNames } from 'src/utils/chainNames'
 import { extractDateFromDateTime, getExplorerUrlForTxHash, getRewardAmountMilestones } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+
 
 function ProposalForm() {
 	const buildComponent = () => {
@@ -51,9 +54,10 @@ function ProposalForm() {
 						align='start'
 						pl='10%'>
 						<Image
-							src={grant?.workspace.logoIpfsHash ? getUrlForIPFSHash(grant?.workspace?.logoIpfsHash) : getAvatar(true, grant?.workspace.title) }
+							src={grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)}
 							boxSize='30%' />
 						<Text
+							mt={6}
 							variant='v2_heading_2'
 							fontWeight='500'>
 							Fantastic — we have received
@@ -69,39 +73,55 @@ function ProposalForm() {
 						justify='center'
 						px='10%'>
 						<Text
-							mt={2}
 							fontWeight='500'
 							variant='v2_subheading'>
-							We will reach out
+							Subscribe to notifications
 						</Text>
-						<Text mt={2}>
-							We will reach out to you in 14-20 working days with our decision
-							on your proposal.
+						<Text mt={3}>
+							Get notified on Telegram when your proposal is viewed, and reviewed
+							by grant managers.
 						</Text>
-						<Button
+						<Flex
 							mt={12}
-							variant='primaryLarge'
-							onClick={
-								async() => {
-									setRole('builder')
-									const ret = await router.push({
-										pathname: '/dashboard',
-										query: {
-											grantId: grant?.id,
-											chainId: chainId
+							gap={6}>
+							<Button
+								variant='primaryLarge'
+								onClick={() => setIsSetupNotificationModalOpen(true)}>
+								<Text
+									color='white'
+									fontWeight='500'>
+									Subscribe
+								</Text>
+							</Button>
+							<Button
+								variant='link'
+								color='accent.azure'
+								onClick={
+									async() => {
+										setRole('builder')
+										const ret = await router.push({
+											pathname: '/dashboard',
+											query: {
+												grantId: grant?.id,
+												chainId: chainId,
+												role: 'builder',
+												proposalId,
+											}
+										})
+										if(ret) {
+											router.reload()
 										}
-									})
-									if(ret) {
-										router.reload()
 									}
-								}
-							}>
-							<Text
-								color='white'
-								fontWeight='500'>
-								Done
-							</Text>
-						</Button>
+								}>
+								I&apos;ll do it later
+							</Button>
+						</Flex>
+
+						<SetupNotificationModal
+							isOpen={isSetupNotificationModalOpen}
+							onClose={() => setIsSetupNotificationModalOpen(false)}
+							type='proposal'
+							proposalId={proposalId!} />
 					</Flex>
 				</Flex>
 			</Flex>
@@ -547,10 +567,12 @@ function ProposalForm() {
 
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
 	const [transactionHash, setTransactionHash] = useState<string>('')
-	const { submitProposal, isBiconomyInitialised } = useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash })
+	const { submitProposal, proposalId, isBiconomyInitialised } = useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash })
 
 	const [emailError, setEmailError] = useState<boolean>(false)
 	const [walletAddressError, setWalletAddressError] = useState<boolean>(false)
+
+	const [isSetupNotificationModalOpen, setIsSetupNotificationModalOpen] = useState<boolean>(false)
 
 	const chainInfo = useMemo(() => {
 		if(!grant || !chainId) {
