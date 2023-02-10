@@ -1,15 +1,15 @@
 import { useContext, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { Box, Divider, Flex, Image, Switch, Text } from '@chakra-ui/react'
+import { Box, Divider, Flex, Grid, GridItem, Image, Switch, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
+import { Alert } from 'src/generated/icons'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
 import logger from 'src/libraries/logger'
 import { GrantType } from 'src/screens/discover/_utils/types'
 import { DiscoverContext } from 'src/screens/discover/Context'
 import getAvatar from 'src/utils/avatarUtils'
-import { extractDateFromDateTime, titleCase } from 'src/utils/formattingUtils'
+import { extractDateFromDateTime, nFormatter, titleCase } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 
@@ -28,7 +28,9 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 		<Box
 			w='100%'
 			background='white'
-			p={5}
+			px={5}
+			pt={5}
+			h='16rem'
 			position='relative'
 			// boxShadow='0px 10px 18px rgba(31, 31, 51, 0.05), 0px 0px 1px rgba(31, 31, 51, 0.31);'
 			borderRadius='2px'
@@ -64,6 +66,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 			}>
 			<Flex
 				flexDirection='column'
+				h='100%'
 				gap={4}>
 				<Flex
 					justifyContent='space-between'
@@ -166,68 +169,90 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 
 				</Flex>
 
-
-				<Divider />
 				<Flex
-					justifyContent='space-between'
-					mt={2}>
-					<Flex alignItems='center'>
-						{
-							usdAmount > 0 && (
+					direction='column'
+					mt='auto'>
+					<Divider />
+					<Grid
+						mt={1}
+						templateColumns='repeat(4, 1fr)'
+						pt={3}
+						pb={5}
+						justifyContent='space-between'
+					 >
+						<GridItem>
+							<Flex direction='column'>
+								{
+									grant?.workspace?.safe === null ? (
+										<Alert
+											mt={1}
+											color='accent.royal' />
+									) : (
+										<Flex
+											gap={2}
+											align='center'>
+											{usdAmount === 0 && <Alert color='accent.royal' />}
+											{
+												usdAmount !== undefined && (
+													<Text fontWeight='500'>
+														$
+														{nFormatter(usdAmount?.toFixed(0), 0)}
+													</Text>
+												)
+											}
+										</Flex>
+									)
+								}
 								<Text
-									fontSize='18px'
-									fontWeight='500'>
-									$
-									{usdAmount.toFixed(2)}
+									mt={1}
+									variant='v2_body'
+									color='gray.6'>
+									{grant?.workspace?.safe === null ? 'No multisig' : usdAmount === undefined ? '' : usdAmount === 0 ? 'in multisig' : 'available'}
 								</Text>
-							)
-						}
-						{
-							usdAmount > 0 && (
+							</Flex>
+						</GridItem>
+						<GridItem>
+							<Flex direction='column'>
+								<Text fontWeight='500'>
+									{grant?.totalGrantFundingDisbursedUSD === '0' ? '-' : `$${nFormatter(grant?.totalGrantFundingDisbursedUSD, 0)}`}
+								</Text>
 								<Text
-									ml='5px'
-									fontSize='14px'
-									color='black.3'>
-									to be paid out
+									mt={1}
+									variant='v2_body'
+									color='gray.6'>
+									paid out
 								</Text>
-							)
-						}
-						{
-							(usdAmount === 0 || !grant.workspace?.safe) && (
+							</Flex>
+						</GridItem>
+						<GridItem>
+							<Flex direction='column'>
+								<Text fontWeight='500'>
+									{grant?.workspace?.numberOfApplicationsSelected}
+								</Text>
 								<Text
-									fontSize='18px'
-									fontWeight='500'>
-									$
-									{' '}
-									{grant.totalGrantFundingDisbursedUSD ? grant.totalGrantFundingDisbursedUSD.toLocaleString() : 0}
+									mt={1}
+									variant='v2_body'
+									color='gray.6'>
+									accepted
 								</Text>
-							)
-						}
-						{
-							(usdAmount === 0 || !grant.workspace?.safe) && (
+							</Flex>
+						</GridItem>
+						<GridItem>
+							<Flex direction='column'>
+								<Text fontWeight='500'>
+									{grant?.numberOfApplications}
+								</Text>
 								<Text
-									ml='5px'
-									fontSize='14px'
-									color='black.3'>
-									{t('/.cards.in_grants')}
+									mt={1}
+									variant='v2_body'
+									color='gray.6'>
+									proposals
 								</Text>
-							)
-						}
-					</Flex>
-					<Flex alignItems='center'>
-						<Text
-							fontSize='18px'
-							fontWeight='500'>
-							{grant.numberOfApplications}
-						</Text>
-						<Text
-							ml='5px'
-							fontSize='14px'
-							color='black.3'>
-							Proposals
-						</Text>
-					</Flex>
+							</Flex>
+						</GridItem>
+					</Grid>
 				</Flex>
+
 			</Flex>
 		</Box>
 	)
@@ -235,7 +260,6 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 	const { safeBalances } = useContext(DiscoverContext)!
 
 	const router = useRouter()
-	const { t } = useTranslation()
 	const formattedDeadline = extractDateFromDateTime(grant.deadline!)
 
 	const { isQbAdmin } = useContext(QBAdminsContext)!

@@ -1,7 +1,6 @@
 import { useContext } from 'react'
 import { Checkbox, Flex, FlexProps, forwardRef, Image, Text, Tooltip } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import config from 'src/constants/config.json'
 import { CheckDouble, Close, Resubmit } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
@@ -11,7 +10,6 @@ import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import getAvatar from 'src/utils/avatarUtils'
 import { getFieldString, titleCase } from 'src/utils/formattingUtils'
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 type Props = {
 	proposal: ProposalType
@@ -82,12 +80,12 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 					borderWidth='1px'
 					borderColor='black.1'
 					borderRadius='3xl'
-					src={role === 'builder' ? (proposal?.grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, proposal?.grant?.workspace?.title) : getUrlForIPFSHash(proposal?.grant?.workspace?.logoIpfsHash!)) : getAvatar(false, proposal.applicantId)}
+					src={getAvatar(false, proposal.applicantId)}
 					boxSize='16px' />
 				<Text
 					ml={2}
 					variant='v2_metadata'>
-					{role === 'builder' ? proposal?.grant?.workspace?.title : getFieldString(proposal, 'applicantName')}
+					{getFieldString(proposal, 'applicantName')}
 				</Text>
 				{
 					(proposal?.state !== 'submitted') && (

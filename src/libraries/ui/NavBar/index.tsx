@@ -7,18 +7,20 @@ import { ethers } from 'ethers'
 import saveAs from 'file-saver'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
-import { ArrowLeft, Pencil, Settings } from 'src/generated/icons'
+import { ArrowLeft, Pencil, Settings, ShareForward } from 'src/generated/icons'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import AccountDetails from 'src/libraries/ui/NavBar/_components/AccountDetails'
 import ImportConfirmationModal from 'src/libraries/ui/NavBar/_components/ImportConfirmationModal'
+import NotificationPopover from 'src/libraries/ui/NavBar/_components/NotificationPopover'
 import RecoveryModal from 'src/libraries/ui/NavBar/_components/RecoveryModal'
-import SharePopover from 'src/libraries/ui/NavBar/_components/SharePopover'
 import UpdateProfileModal from 'src/libraries/ui/NavBar/_components/UpdateProfileModal'
 import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
+import { copyShareGrantLink } from 'src/libraries/utils/copy'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import getAvatar from 'src/utils/avatarUtils'
+import { nFormatter } from 'src/utils/formattingUtils'
 import { getNonce } from 'src/utils/gaslessUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
@@ -101,7 +103,8 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 							<Image
 								boxSize={8}
 								borderRadius='4px'
-								src={grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)} />
+								src={grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)}
+							/>
 							<Flex
 								gap={0}
 								direction='column'
@@ -111,31 +114,58 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 									variant='v2_subheading'>
 									{grant?.title}
 								</Text>
-								{
-									(grant?.link !== undefined && grant?.link !== null) && (
-										<Text
-											variant='v2_metadata'
-											display={grant?.link ? '' : 'none'}>
-											Program details
-											<Text
-												variant='v2_metadata'
-												display='inline-block'
-												fontWeight={500}
-												marginLeft={1}
-												cursor='pointer'
-												onClick={
-													() => {
-														if(grant.link !== null) {
-															window.open(grant.link, '_blank')
+								<Flex
+									align='center'
+									gap={2}>
+									{
+										(grant?.link !== undefined && grant?.link !== null) && (
+											<Flex gap={1}>
+												<Text
+													as='span'
+													variant='v2_metadata'>
+													Program details
+												</Text>
+												<Text
+													as='span'
+													variant='v2_metadata'
+													fontWeight={500}
+													cursor='pointer'
+													onClick={
+														() => {
+															if(grant.link !== null) {
+																window.open(grant.link, '_blank')
+															}
 														}
 													}
-												}
-											>
-												here
-											</Text>
-										</Text>
-									)
-								}
+												>
+													here
+												</Text>
+											</Flex>
+
+										)
+									}
+									{
+										safeUSDAmount !== undefined && (
+											<Flex gap={1}>
+												<Text
+													as='span'
+													variant='v2_metadata'>
+													Program multisig:
+												</Text>
+												<Text
+													as='span'
+													variant='v2_metadata'
+													fontWeight={500}
+												>
+													{nFormatter(safeUSDAmount.toFixed(0), 0)}
+													{' '}
+													USD
+												</Text>
+											</Flex>
+
+										)
+									}
+								</Flex>
 							</Flex>
 
 							<Text
@@ -189,7 +219,36 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 				}
 
 				{(role === 'admin' && !isLoading) && (<Box ml={3} />)}
-				{(!isLoading && router.pathname === '/dashboard') && <SharePopover />}
+
+				{
+					(!isLoading && router.pathname === '/dashboard') && (
+						<NotificationPopover
+							type='grant'
+							grantId={grant?.id ?? ''} />
+					)
+				}
+
+				{
+					(!isLoading && router.pathname === '/dashboard') && (
+						<ShareForward
+							ml={4}
+							onClick={
+								() => {
+									if(grant?.id) {
+										const ret = copyShareGrantLink()
+										logger.info('copyGrantLink', ret)
+										toast({
+											title: ret ? 'Share link copied!' : 'Failed to copy',
+											status: ret ? 'success' : 'error',
+											duration: 3000,
+										})
+									}
+								}
+							}
+							cursor='pointer'
+							boxSize='20px' />
+					)
+				}
 
 				<Spacer />
 

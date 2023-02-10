@@ -147,7 +147,7 @@ function Payouts() {
 									if(grant?.workspace?.safe?.chainId === '900001') {
 										window.open(getProposalUrl(grant?.workspace?.safe?.address, payout.transactionHash), '_blank')
 									} else {
-										window.open(getGnosisTansactionLink(grant?.workspace?.safe?.address, chainId.toString(), payout?.transactionHash), '_blank')
+										window.open(getGnosisTansactionLink(grant?.workspace?.safe?.address, grant?.workspace?.safe?.chainId.toString(), payout?.transactionHash), '_blank')
 									}
 								} else {
 									toast({
@@ -161,7 +161,7 @@ function Payouts() {
 						<Text
 							fontWeight='400'
 							variant='v2_body'>
-							{payout.status === 'queued' ? 'Queued' : 'Success'}
+							{payout.status === 'queued' ? 'Queued' : payout.status === 'executed' ? 'Success' : 'Cancelled'}
 						</Text>
 					</Button>
 

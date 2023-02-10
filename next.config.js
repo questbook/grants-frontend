@@ -21,7 +21,8 @@ const nextConfig = {
 		BICO_AUTH_TOKEN: process.env.BICO_AUTH_TOKEN,
 		SOLANA_RPC: process.env.SOLANA_RPC,
 		UD_KEY: process.env.UD_KEY,
-		API_ENDPOINT: process.env.API_ENDPOINT
+		API_ENDPOINT: process.env.API_ENDPOINT,
+		NOTIF_BOT_USERNAME: process.env.NOTIF_BOT_USERNAME,
 	},
 	sentry: {
 		disableServerWebpackPlugin: true,
@@ -37,4 +38,4 @@ const nextConfig = {
 	},
 }
 
-module.exports = process.env.NODE_ENV === 'production' ? withSentryConfig(withYaml(nextConfig)) : withYaml(nextConfig)
+module.exports = withSentryConfig(withYaml(nextConfig))

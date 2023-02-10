@@ -1,7 +1,8 @@
 import { useContext, useMemo, useState } from 'react'
-import { Box, Button, Checkbox, Divider, Flex, Image, Text, Textarea } from '@chakra-ui/react'
+import ReactLinkify from 'react-linkify'
+import { LockIcon } from '@chakra-ui/icons'
+import { Box, Button, Checkbox, Divider, Flex, Image, Text, Textarea, Tooltip } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
-import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import QuickReplyButton from 'src/screens/dashboard/_components/QuickReplyButton'
 import useAddComment from 'src/screens/dashboard/_hooks/useAddComment'
@@ -25,6 +26,28 @@ function Discussions() {
 				<Text fontWeight='500'>
 					Discussion
 				</Text>
+
+				{
+					areCommentsLoading && (
+						<Button
+							my={4}
+							isLoading={areCommentsLoading}
+							loadingText='Loading comments, please wait.'
+							variant='link'
+							cursor='default' />
+					)
+				}
+
+				{
+					comments.length > 0 && (
+						<Divider
+							my={4}
+							color='gray.3'
+							height={1} />
+					)
+				}
+
+				{comments.map(renderComment)}
 				{
 					proposalTags?.length > 0 && (
 						<Flex
@@ -135,29 +158,6 @@ function Discussions() {
 
 					</Flex>
 				</Flex>
-
-				{
-					areCommentsLoading && (
-						<Button
-							my={4}
-							isLoading={areCommentsLoading}
-							loadingText='Loading comments, please wait.'
-							variant='link'
-							cursor='default' />
-					)
-				}
-
-				{
-					comments.length > 0 && (
-						<Divider
-							my={4}
-							color='gray.3'
-							height={1} />
-					)
-				}
-
-				{comments.map(renderComment)}
-
 				{
 					comments.length > 0 && (
 						<Box
@@ -170,6 +170,17 @@ function Discussions() {
 
 	const renderComment = (comment: CommentType, index: number) => {
 		const member = comment.workspace.members.find((member) => member.actorId.toLowerCase() === comment.sender?.toLowerCase())
+
+		logger.info({ message: comment.message }, 'Comment message')
+
+		let hasAccess = !comment.isPrivate
+		for(const member of comment.workspace.members) {
+			if(member.actorId === scwAddress?.toLowerCase()) {
+				hasAccess = true
+			}
+		}
+
+		hasAccess = hasAccess || comment.sender?.toLowerCase() === scwAddress?.toLowerCase()
 
 		return (
 			<Flex
@@ -190,9 +201,9 @@ function Discussions() {
 							ml={3}
 							variant='v2_metadata'
 							borderRadius='3px'
-							bg={comment?.role === 'admin' ? 'gray.3' : comment?.role === 'reviewer' ? 'accent.crayola' : comment?.role === 'accent.vodka' ? 'Builder' : 'accent.melon'}
+							bg={comment?.role === 'admin' ? 'gray.3' : comment?.role === 'reviewer' ? 'accent.crayola' : comment?.role === 'builder' && proposal?.applicantId === comment?.sender?.toLowerCase() ? 'accent.vodka' : 'accent.melon'}
 							px={1}>
-							{comment?.role === 'admin' ? 'Admin' : comment?.role === 'reviewer' ? 'Reviewer' : comment?.role === 'builder' ? 'Builder' : 'Community'}
+							{comment?.role === 'admin' ? 'Admin' : comment?.role === 'reviewer' ? 'Reviewer' : comment?.role === 'builder' && proposal?.applicantId === comment?.sender?.toLowerCase() ? 'Builder' : 'Community'}
 						</Text>
 						{
 							comment?.timestamp && (
@@ -204,8 +215,57 @@ function Discussions() {
 								</Text>
 							)
 						}
+						{
+							comment.isPrivate && (
+								<Tooltip label={hasAccess ? 'Lucky one to have access to this!' : 'You are not supposed to see this! \ud83d\ude33'}>
+									<LockIcon
+										ml={2}
+										color='gray.5' />
+								</Tooltip>
+
+							)
+						}
 					</Flex>
-					<TextViewer text={comment?.message ?? ''} />
+
+					<ReactLinkify
+						componentDecorator={
+							(
+								decoratedHref: string,
+								decoratedText: string,
+								key: number,
+							) => (
+								<Text
+									display='inline-block'
+									wordBreak='break-all'
+									color='accent.azure'
+									variant='v2_body'
+									cursor='pointer'
+									_hover={
+										{
+											textDecoration: 'underline',
+										}
+									}
+									key={key}
+									onClick={
+										() => {
+											window.open(decoratedHref, '_blank')
+										}
+									}>
+									{decoratedText}
+								</Text>
+							)
+						}
+					>
+
+						<Text
+							wordBreak='break-word'
+							mt={1}
+							fontStyle={hasAccess ? 'normal' : 'italic'}
+							variant='v2_body'
+							whiteSpace='pre-line'>
+							{comment.message}
+						</Text>
+					</ReactLinkify>
 				</Flex>
 			</Flex>
 		)
@@ -273,9 +333,10 @@ function Discussions() {
 				return 'No name found'
 			}
 		} else {
-			if(comment.role === 'builder') {
+			logger.info({ comment: comment?.sender, proposalId: proposal?.applicantId }, 'COMMENT 1')
+			if(comment.role === 'builder' && comment.sender?.toLowerCase() === proposal?.applicantId) {
 				return getFieldString(proposal, 'applicantName')
-			} else if(comment.role === 'community') {
+			} else {
 				return formatAddress(comment.sender ?? '')
 			}
 		}

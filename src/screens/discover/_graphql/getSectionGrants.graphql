@@ -26,6 +26,8 @@ query getSectionGrants {
           chainId
           address
         }
+        numberOfApplicationsSelected
+        numberOfApplications
       }
       reward {
         committed

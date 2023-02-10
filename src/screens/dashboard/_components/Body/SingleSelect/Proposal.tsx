@@ -6,11 +6,11 @@ import { Mail, ShareForward } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import CopyIcon from 'src/libraries/ui/CopyIcon'
+import NotificationPopover from 'src/libraries/ui/NavBar/_components/NotificationPopover'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { GrantsProgramContext } from 'src/pages/_app'
-import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import getAvatar from 'src/utils/avatarUtils'
@@ -45,16 +45,20 @@ function Proposal() {
 					w='100%'
 					align='center'
 					justify='space-between'>
-					<Flex align='center'>
-						<Text
-							variant='v2_heading_3'
-							fontWeight='500'
-							fontSize='22px'>
-							{getFieldString(proposal, 'projectName')}
-						</Text>
+					<Text
+						maxW='90%'
+						as='span'
+						variant='v2_heading_3'
+						fontWeight='500'>
+						{getFieldString(proposal, 'projectName')}
+					</Text>
+					<Flex
+						ml={4}
+						gap={4}>
+						<NotificationPopover
+							type='proposal'
+							proposalId={proposal?.id} />
 						<ShareForward
-							ml={4}
-							mr={4}
 							boxSize='20px'
 							cursor='pointer'
 							onClick={
@@ -73,22 +77,20 @@ function Proposal() {
 								}
 							} />
 					</Flex>
-					<Text
-						variant='v2_body'
-						color='gray.5'>
-						{formatTime(proposal.updatedAtS)}
-					</Text>
+
 				</Flex>
 
 				{
-					role !== 'community' && (
+					shouldShowPII && (
 						<Flex
 							mt={4}
 							direction='column'>
 							<Text color='gray.5'>
 								By
 							</Text>
-							<Flex align='center'>
+							<Flex
+								align='center'
+								mt={4}>
 								<Image
 									borderRadius='3xl'
 									boxSize='36px'
@@ -307,6 +309,10 @@ function Proposal() {
 
 		return getChainInfo(proposal?.grant, chainId)
 	}, [proposal?.grant, chainId])
+
+	const shouldShowPII = useMemo(() => {
+		return role !== 'community'
+	}, [])
 
 	const [decryptedProposal, setDecryptedProposal] = useState<ProposalType | undefined>(proposal)
 	const [projectDetails, setProjectDetails] = useState<string>()

@@ -36,6 +36,8 @@ query GetAllGrants($first: Int, $skip: Int, $searchString: String!) {
         chainId
         address
       }
+      numberOfApplicationsSelected
+      numberOfApplications
     }
     reward {
       committed

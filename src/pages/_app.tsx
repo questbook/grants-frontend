@@ -26,10 +26,11 @@ import { DAOSearchContextMaker } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContextMaker } from 'src/hooks/QBAdminsContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import MigrateToGasless from 'src/libraries/ui/MigrateToGaslessModal'
-import { DOMAIN_CACHE_KEY, ROLE_CACHE } from 'src/libraries/ui/NavBar/_utils/constants'
+import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
+import QRCodeModal from 'src/libraries/ui/QRCodeModal'
 import { extractInviteInfo, InviteInfo } from 'src/libraries/utils/invite'
 import theme from 'src/theme'
-import { GrantProgramContextType, GrantType, MinimalWorkspace, Roles } from 'src/types'
+import { GrantProgramContextType, GrantType, MinimalWorkspace, NotificationContextType, Roles } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import { addAuthorizedUser, bicoDapps, deploySCW, getNonce, jsonRpcProviders, networksMapping } from 'src/utils/gaslessUtils'
 import { delay } from 'src/utils/generics'
@@ -130,6 +131,9 @@ export const ApiClientsContext = createContext<{
 		} | null>(null)
 
 export const GrantsProgramContext = createContext<GrantProgramContextType | null>(null)
+
+export const NotificationContext = createContext<NotificationContextType | null>(null)
+
 export const WebwalletContext = createContext<{
 	webwallet?: Wallet
 	setWebwallet: (webwallet?: Wallet) => void
@@ -178,6 +182,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [nonce, setNonce] = useState<string>()
 	const [loadingNonce, setLoadingNonce] = useState<boolean>(false)
 	const [isNewUser, setIsNewUser] = useState<boolean>(true)
+
+	const [qrCodeText, setQrCodeText] = useState<string>()
 	const [dashboardStep, setDashboardStep] = useState<boolean>(false)
 	const [createingProposalStep, setCreatingProposalStep] = useState<number>(1)
 	const [biconomyLoading, setBiconomyLoading] = useState<{ [chainId: string]: boolean }>({})
@@ -666,6 +672,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		}
 	}, [grant, setGrant, role, setRole, isLoading, setIsLoading])
 
+	const notificationContext = useMemo(() => {
+		return {
+			qrCodeText,
+			setQrCodeText,
+		}
+	}, [qrCodeText, setQrCodeText])
+
 	const getLayout = Component.getLayout || ((page) => page)
 	return (
 		<>
@@ -709,26 +722,29 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			</Head>
 			<WagmiConfig client={client}>
 				<ApiClientsContext.Provider value={apiClients}>
-					<WebwalletContext.Provider value={webwalletContextValue}>
-						<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
-							<SafeProvider>
-								<DAOSearchContextMaker>
-									<GrantsProgramContext.Provider value={grantProgram}>
-										<QBAdminsContextMaker>
-											<ChakraProvider theme={theme}>
-												{getLayout(<Component {...pageProps} />)}
-												{
-													typeof window !== 'undefined' && (
-														<MigrateToGasless />
-													)
-												}
-											</ChakraProvider>
-										</QBAdminsContextMaker>
-									</GrantsProgramContext.Provider>
-								</DAOSearchContextMaker>
-							</SafeProvider>
-						</BiconomyContext.Provider>
-					</WebwalletContext.Provider>
+					<NotificationContext.Provider value={notificationContext}>
+						<WebwalletContext.Provider value={webwalletContextValue}>
+							<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
+								<SafeProvider>
+									<DAOSearchContextMaker>
+										<GrantsProgramContext.Provider value={grantProgram}>
+											<QBAdminsContextMaker>
+												<ChakraProvider theme={theme}>
+													{getLayout(<Component {...pageProps} />)}
+													{
+														typeof window !== 'undefined' && (
+															<MigrateToGasless />
+														)
+													}
+													<QRCodeModal />
+												</ChakraProvider>
+											</QBAdminsContextMaker>
+										</GrantsProgramContext.Provider>
+									</DAOSearchContextMaker>
+								</SafeProvider>
+							</BiconomyContext.Provider>
+						</WebwalletContext.Provider>
+					</NotificationContext.Provider>
 				</ApiClientsContext.Provider>
 			</WagmiConfig>
 			<ChatWidget
