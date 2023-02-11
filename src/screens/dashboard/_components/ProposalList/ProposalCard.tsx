@@ -132,6 +132,10 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 		if(selectedProposals.size === 1 && selectedProposals.has(proposal.id)) {
 			// Only 1 proposal was selected and the user clicked on it again
 			setDashboardStep(true)
+			router.push({
+				pathname: '/dashboard',
+				query: { ...router.query, proposalId: proposal.id, isRenderingProposalBody: true }
+			}, undefined, { shallow: true })
 			return
 		}
 
@@ -140,7 +144,7 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 			setSelectedProposals(new Set<string>([proposal.id]))
 			router.push({
 				pathname: '/dashboard',
-				query: { ...router.query, proposalId: proposal.id }
+				query: { ...router.query, proposalId: proposal.id, isRenderingProposalBody: true }
 			}, undefined, { shallow: true })
 			setDashboardStep(true)
 		} else {

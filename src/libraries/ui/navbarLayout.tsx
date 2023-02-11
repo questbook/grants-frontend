@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Flex } from '@chakra-ui/react'
 import NavBar from 'src/libraries/ui/NavBar'
-import Button from 'src/theme/components/button'
 import logger from 'src/utils/logger'
 import Sidebar from 'src/v2/components/Sidebar'
 

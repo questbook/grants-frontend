@@ -50,6 +50,7 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 				backgroundColor={['black.1' ,'gray.1']}
 				py='16px'
 				minWidth={{ base: '-webkit-fill-available' }}
+				paddingInlineEnd={['35px','120px']}
 			>
 				<Image
 					alignSelf='flex-start'
@@ -317,6 +318,7 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 							if(dashboardStep === false) {
 								router.push('/')
 							} else {
+								router.back()
 								setDashboardStep(false)
 							}
 						}
