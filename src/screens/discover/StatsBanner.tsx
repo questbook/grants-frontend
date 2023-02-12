@@ -5,7 +5,7 @@ function StatsBanner() {
 		return (
 			<Flex
 				bgColor='gray.2'
-				padding={8}
+				padding={[3, 8]}
 				gap={4}
 				justifyContent='space-evenly'>
 				<Flex
@@ -13,7 +13,7 @@ function StatsBanner() {
 					alignItems='center'>
 					<Text
 						fontWeight='500'
-						fontSize='40px'
+						fontSize={['25px', '40px']}
 						lineHeight='48px'>
 						20000+
 					</Text>
@@ -30,7 +30,7 @@ function StatsBanner() {
 					alignItems='center'>
 					<Text
 						fontWeight='500'
-						fontSize='40px'
+						fontSize={['25px', '40px']}
 						lineHeight='48px'>
 						$2m+
 					</Text>
@@ -47,7 +47,7 @@ function StatsBanner() {
 					alignItems='center'>
 					<Text
 						fontWeight='500'
-						fontSize='40px'
+						fontSize={['25px', '40px']}
 						lineHeight='48px'>
 						1000+
 					</Text>

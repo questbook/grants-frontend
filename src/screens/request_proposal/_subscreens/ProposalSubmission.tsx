@@ -1,16 +1,18 @@
-import { useRef, useState } from 'react'
+/* eslint-disable react/jsx-curly-brace-presence */
+import { useContext, useRef, useState } from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { BsArrowLeft } from 'react-icons/bs'
 import { IoMdClose } from 'react-icons/io'
 import { Button, Flex, Icon, Input, Text } from '@chakra-ui/react'
+import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { logger } from 'ethers'
 import { useRouter } from 'next/router'
 import { CustomSelect } from 'src/libraries/ui/CustomSelect'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
+import { WebwalletContext } from 'src/pages/_app'
 import { RFPForm, RFPFormType } from 'src/screens/request_proposal/_utils/types'
 import { ApplicantDetailsFieldType } from 'src/types'
-
 
 interface Props {
     proposalName: string
@@ -61,6 +63,7 @@ function ProposalSubmission(
 	const uploaDocInputref = useRef(null)
 	const startdateRef = useRef<HTMLInputElement>(null)
 	const endDateRef = useRef<HTMLInputElement>(null)
+	const bigScreen = useMediaQuery('(min-width:601px)')
 
 	const openInput = () => {
 		if(uploaDocInputref.current) {
@@ -72,46 +75,52 @@ function ProposalSubmission(
 		return (
 			<>
 				{/* Start Proposal Submission Component */}
-				<Flex
-					className='proposalSubmission'
-					alignSelf='flex-start'>
-					<Button
-						className='backBtn'
-						variant='linkV2'
-						leftIcon={<BsArrowLeft />}
-						onClick={() => router.back()}>
-						Back
-					</Button>
-				</Flex>
+				{
+					bigScreen && (
+						<Flex
+							className='proposalSubmission'
+							alignSelf='flex-start'>
+							<Button
+								className='backBtn'
+								variant='linkV2'
+								leftIcon={<BsArrowLeft />}
+								onClick={() => router.back()}>
+								Back
+							</Button>
+						</Flex>
+					)
+				}
 				<Flex
 					className='rightScreenCard'
 					flexDirection='column'
 					width='100%'
 					height='100%'
-					gap={10}
+					gap={[6, 10]}
 					alignSelf='flex-start'
-					marginRight={24}
 				>
 					{/* TODO: Add Steps complete indicator */}
 					<StepIndicator
 						step={step}
 						formType={rfpFormSubmissionType} />
 					<Text
-						alignSelf='center'
+						alignSelf={['flex-start', 'center']}
 						fontWeight='500'
 						fontSize='24px'
 						lineHeight='32px'
-						marginBottom={8}>
+						marginBottom={[2, 8]}>
 						What makes a good proposal?
 					</Text>
 
 					{/* Proposal title */}
 					<Flex
 						gap={4}
-						alignItems='baseline'>
+						alignItems='baseline'
+						flexDirection={['column', 'row', 'row', 'row']}>
+
 						<Text variant='v2_subheading'>
-							Receive proposals from builders who are building
+							Receive proposals for
 						</Text>
+
 						<FlushedInput
 							placeholder='describe in 4-5 words'
 							value={proposalName}
@@ -127,12 +136,16 @@ function ProposalSubmission(
 					{/* Proposal dates */}
 					<Flex
 						gap={4}
-						alignItems='baseline'>
+						alignItems='baseline'
+						flexDirection={['column', 'column', 'row']}>
+
 						<Text
 							variant='v2_subheading'
 							minW='max-content'>
-							Builders can submit proposals between
+							Receive proposal submissions from
+
 						</Text>
+
 						<Input
 							type={rfpFormSubmissionType === 'submit' ? 'string' : 'date'}
 							variant='flushed'
@@ -188,7 +201,7 @@ function ProposalSubmission(
 
 								}
 							}
-							// textPadding={8}
+
 							onChange={
 								(e) => {
 									if(e.target.value === '' && endDateRef.current) {
@@ -319,12 +332,13 @@ function ProposalSubmission(
 
 					{/* More details */}
 					<Text variant='v2_subheading'>
-						Builders can also refer to addtional information here
+						Builders can also refer to additional information here
 					</Text>
 					<Flex
 						gap={4}
 						alignItems='center'
 						wrap='wrap'
+						flexDirection={['column', 'column', 'row', 'row']}
 					>
 
 						<FlushedInput
@@ -342,7 +356,8 @@ function ProposalSubmission(
 						/>
 						<Text
 							display={rfpFormSubmissionType === 'edit' ? 'none' : ''}
-							variant='v2_subheading'>
+							variant='v2_subheading'
+							marginBottom={[-6, 0, 0, 0]}>
 							Or
 						</Text>
 
@@ -355,11 +370,8 @@ function ProposalSubmission(
 							onClick={openInput}
 							value={doc ? doc[0].name : ''}
 							onChange={(e) => handleFile(e)}
-							width='90%'
-							// flexProps={{ grow: 1, shrink: 1 }}
+							width='100%'
 						/>
-
-
 						<Input
 							id='upload-doc-id'
 							ref={uploaDocInputref}
@@ -372,11 +384,11 @@ function ProposalSubmission(
 					<Button
 						className='continueBtn'
 						variant='primaryMedium'
-						alignSelf='flex-end'
+						alignSelf={['center', 'flex-end']}
 						isDisabled={!proposalName || !startdate || !endDate}
-						w='166px'
-						h='48px'
-						position='absolute'
+						w={['100%', '20%']}
+						h='40px'
+						marginTop='20px'
 						bottom='50px'
 						onClick={
 							() => {
@@ -412,6 +424,8 @@ function ProposalSubmission(
 
 	const [showCrossIcon, setShowCrossIcon] = useState(false)
 
+	const { createingProposalStep, setCreatingProposalStep } = useContext(WebwalletContext)!
+
 	// const [extraDetailsFields, setExtraDetailsFields] = useState<ApplicantDetailsFieldType[]>(extraDetailsFieldsList)
 
 	const [showExtraFieldDropdown, setShowExtraFieldDropdown] = useState(false)
@@ -445,8 +459,8 @@ function ProposalSubmission(
 
 	const handleOnClickContinue = () => {
 		logger.info('step 2')
-		setStep(2)
-
+		// setStep(2)
+		setCreatingProposalStep(2)
 		//filter true values from extra details fields and add custom field ids
 		const filteredExtraDetails = extraDetailsFields.filter((field) => field.required === true).map((item, index) => {
 			let inputType: string = item.inputType

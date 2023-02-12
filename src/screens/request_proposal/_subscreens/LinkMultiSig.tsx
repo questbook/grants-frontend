@@ -9,6 +9,7 @@ import StepIndicator from 'src/libraries/ui/StepIndicator'
 // import useSafeUSDBalances from "src/hooks/useSafeUSDBalances";
 import VerifySignerModal from 'src/screens/request_proposal/_components/VerifySignerModal'
 import SafeSelect, { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
+import { WebwalletContext } from 'src/pages/_app'
 // import useSafeOwners from "src/hooks/useSafeOwners";
 
 
@@ -31,7 +32,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 						className='backBtn'
 						variant='linkV2'
 						leftIcon={<BsArrowLeft />}
-						onClick={() => setStep(3)}>
+						onClick={() => setCreatingProposalStep(3)}>
 						Back
 					</Button>
 				</Flex>
@@ -44,7 +45,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 					gap={10}
 					alignSelf='flex-start'
 					// alignItems='center'
-					marginRight={24}
+					// marginRight={24}
 				>
 					<StepIndicator
 						step={step}
@@ -294,6 +295,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 		)
 	}
 
+	const { createingProposalStep, setCreatingProposalStep } = useContext(WebwalletContext)!
 	const [safeNetworks, setSafeNetworks] = useState<SafeSelectOption[]>([])
 	const [IsVerifySignerModalOpen, setIsVerifySignerModalOpen] = useState(false)
 	const [isOwner, setIsOwner] = useState(false)
@@ -365,3 +367,7 @@ function LinkMultiSig({ multiSigAddress, setMultiSigAddress, step, setStep, sele
 }
 
 export default LinkMultiSig
+function useContext(WebwalletContext: any): { createingProposalStep: any; setCreatingProposalStep: any } {
+	throw new Error('Function not implemented.')
+}
+

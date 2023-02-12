@@ -20,9 +20,9 @@ const ModalContext = createContext<ModalContextType | undefined>(undefined)
 const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const router = useRouter()
 	const { setSafeObj } = useSafeContext()
-	const { grantId, chainId: _chainId, role: _role, proposalId } = router.query
+	const { grantId, chainId: _chainId, role: _role, proposalId, isRenderingProposalBody } = router.query
 	const { setWorkspace } = useContext(ApiClientsContext)!
-	const { scwAddress, webwallet } = useContext(WebwalletContext)!
+	const { scwAddress, webwallet,setDashboardStep } = useContext(WebwalletContext)!
 	const { grant, setGrant, role, setRole, setIsLoading } = useContext(GrantsProgramContext)!
 
 	const chainId = useMemo(() => {
@@ -333,7 +333,6 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		logger.info({ allComments }, 'Fetched comments after actions')
 		const commentMap = await handleComments(allComments)
 		logger.info(commentMap, 'Comment map')
-
 		for(const key in commentMap) {
 			const comments = commentMap[key]
 			const sortedComments = comments.sort((a, b) => (a.timestamp ?? 0) - (b.timestamp ?? 0))
@@ -347,7 +346,6 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	useEffect(() => {
 		getGrant().then((r) => logger.info({ r }, 'Get grant result'))
 	}, [grantId, chainId, scwAddress])
-
 	useEffect(() => {
 		getProposals().then((r) => logger.info({ r }, 'Get proposals result'))
 	}, [grantId, chainId, scwAddress, webwallet])
@@ -369,6 +367,10 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 			return
 		}
+		
+		if(isRenderingProposalBody==='true') {
+			setDashboardStep(true)
+		}
 
 		if(proposalId && typeof proposalId === 'string') {
 			// Scroll to the proposal
@@ -381,7 +383,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 				router.push({
 					pathname: '/dashboard',
-					query: { ...router.query, proposalId }
+					query: { ...router.query, proposalId, isRenderingProposalBody}
 				}, undefined, { shallow: true })
 			}
 		} else {
@@ -393,7 +395,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 			router.push({
 				pathname: '/dashboard',
-				query: { ...router.query, proposalId: proposals[0].id }
+				query: { ...router.query, proposalId: proposals[0].id, isRenderingProposalBody }
 			}, undefined, { shallow: true })
 			logger.info({ initialSelectionSet }, 'selectedProposals')
 			setSelectedProposals(initialSelectionSet)

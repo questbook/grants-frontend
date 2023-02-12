@@ -18,20 +18,21 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 				w='100%'>
 				<Flex
 					w='100%'
-					align='end'>
+					direction={['column', 'row']}
+					align={['stretch', 'end']}>
 					<Text
 						mr={8}
 						pb={2}
 						variant='v2_subheading'
-						w='calc(30% - 32px)'
+						w={['100%', 'calc(30% - 32px)']}
 						fontWeight='500'
-						textAlign='right'>
+						textAlign={['left', 'right']}>
 						{label}
 					</Text>
 
 					<Input
 						{...props}
-						w='70%'
+						w={['100%', '70%']}
 						variant='flushed'
 						textAlign='left'
 						borderColor='gray.3'

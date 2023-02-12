@@ -1,10 +1,12 @@
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useContext, useState } from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { BsArrowLeft } from 'react-icons/bs'
 import { Button, Flex, Text } from '@chakra-ui/react'
+import useMediaQuery from '@material-ui/core/useMediaQuery'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
+import { WebwalletContext } from 'src/pages/_app'
 import SelectDropdown from 'src/screens/request_proposal/_components/SelectDropdown'
 import { DropdownOption, RFPFormType } from 'src/screens/request_proposal/_utils/types'
 
@@ -40,13 +42,17 @@ function ProposalReview(
 		return (
 			<>
 				<Flex alignSelf='flex-start'>
-					<Button
-						className='backBtn'
-						variant='linkV2'
-						leftIcon={<BsArrowLeft />}
-						onClick={() => setStep(1)}>
-						Back
-					</Button>
+					{
+						bigScreen && (
+							<Button
+								className='backBtn'
+								variant='linkV2'
+								leftIcon={<BsArrowLeft />}
+								onClick={() => setCreatingProposalStep(1)}>
+								Back
+							</Button>
+						)
+					}
 				</Flex>
 				<Flex
 					className='rightScreenCard'
@@ -55,7 +61,8 @@ function ProposalReview(
 					height='100%'
 					gap={10}
 					alignSelf='flex-start'
-					marginRight={24}>
+					// marginRight={24}
+				>
 					{/* TODO: Add Steps complete indicator */}
 					<StepIndicator
 						step={step}
@@ -63,7 +70,7 @@ function ProposalReview(
 					<Text
 						alignSelf='center'
 						fontWeight='500'
-						fontSize='24px'
+						fontSize={['20px', '24px']}
 						lineHeight='32px' >
 						How will proposals be reviewed?
 					</Text>
@@ -94,8 +101,12 @@ function ProposalReview(
 
 					<Flex
 						gap={4}
-						alignItems='baseline'>
-						<Text variant='v2_subheading'>
+						alignItems='baseline'
+					>
+						<Text
+							variant='v2_subheading'
+							fontSize={['16px', '20px']}
+						>
 							Review will be based on
 						</Text>
 						{/* <FlushedInput
@@ -149,7 +160,10 @@ function ProposalReview(
 									gap={4}
 									alignItems='baseline'
 									wrap='wrap'>
-									<Text variant='v2_subheading'>
+									<Text
+										variant='v2_subheading'
+										fontSize={['16px', '20px']}
+									>
 										Evaluation rubrics will include
 									</Text>
 
@@ -225,9 +239,9 @@ function ProposalReview(
 
 	// const [rubricInputValues, setRubricInputValues] = useState<DynamicInputValues>({ 0: 'Team competence', 1: 'Idea Quality', 2: 'Relevance to our ecosystem' })
 	const [rubricsCounter, setRubricsCounter] = useState(rubricInputValues.length)
-
+	const { createingProposalStep, setCreatingProposalStep } = useContext(WebwalletContext)!
 	const reviewMechanismOptions = [{ label: 'Voting', value: 'voting' }, { label: 'Rubric', value: 'rubrics' }, { label: 'Community voting', value: 'Community voting', isDisabled: true }]
-
+	const bigScreen = useMediaQuery('(min-width:601px)')
 	const handleClick = () => {
 		setRubricsCounter(rubricsCounter + 1)
 	}
@@ -246,11 +260,13 @@ function ProposalReview(
 			label: '',
 			value: ''
 		})
-		setStep(3)
+		// setStep(3)
+		setCreatingProposalStep(3)
 	}
 
 	const handleOnClickContinue = () => {
-		setStep(3)
+		// setStep(3)
+		setCreatingProposalStep(3)
 		const rubrics: { [key: number]: { title: string, details: string, maximumPoints: number } } = {}
 		if(reviewMechanism.label === 'Voting') {
 			rubrics[0] = {

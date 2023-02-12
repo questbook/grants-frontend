@@ -74,6 +74,11 @@ export default {
 				lineHeight: '24px',
 				color: 'black.1'
 			},
+			v2_subheading_mobile: {
+				fontSize: '15px',
+				lineHeight: '24px',
+				color: 'black.1'
+			},
 			v2_heading_3: {
 				fontSize: '24px',
 				lineHeight: '32px',

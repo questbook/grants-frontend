@@ -1,9 +1,10 @@
-import { ReactElement, useContext, useEffect } from 'react'
+import { ReactElement, useContext, useEffect, useState } from 'react'
+import { useMediaQuery } from 'react-responsive'
 import { Flex } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
 import LinkYourMultisigModal from 'src/libraries/ui/LinkYourMultisigModal'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
-import { GrantsProgramContext } from 'src/pages/_app'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import ThreeColumnSkeleton from 'src/screens/dashboard/_components/ThreeColumnSkeleton'
 import ActionList from 'src/screens/dashboard/ActionList'
 import Body from 'src/screens/dashboard/Body'
@@ -21,7 +22,29 @@ function Dashboard() {
 			h='calc(100vh - 64px)'>
 			{/* {!isLoading && (role === 'admin' || role === 'reviewer') && <TopBar />} */}
 			{
-				!isLoading && (
+				!isLoading && isMobile && (
+					<Flex
+						h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
+						overflowY='clip'>
+						{
+							(dashboardStep === false) && (
+								<ProposalList
+									step={step}
+									setStep={setStep} />
+							)
+						}
+						{
+							(dashboardStep === true) && (
+								<>
+									<Body />
+								</>
+							)
+						}
+					</Flex>
+				)
+			}
+			{
+				!isLoading && (isMobile === false) && (
 					<Flex
 						h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
 						overflowY='clip'>
@@ -33,7 +56,7 @@ function Dashboard() {
 			}
 
 			{
-				isLoading && (
+				isLoading && (isMobile===false) && (
 					<Flex h='100vh'>
 						<ThreeColumnSkeleton />
 					</Flex>
@@ -58,10 +81,20 @@ function Dashboard() {
 
 	const { isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen } = useContext(ModalContext)!
 	const { role, isLoading } = useContext(GrantsProgramContext)!
+	const isMobile = useMediaQuery({ query:'(max-width:600px)' })
+	const [step, setStep] = useState(false)
+	const { dashboardStep, setDashboardStep } = useContext(WebwalletContext)!
 
 	useEffect(() => {
 		logger.info({ isLoading }, 'Loading state changed')
 	}, [isLoading])
+	useEffect(() => {
+		setDashboardStep(false)
+	}, [])
+
+	// if(isMobile) {
+	// 	return MobileDashboard()
+	// }
 
 	return buildComponent()
 }
@@ -71,6 +104,7 @@ Dashboard.getLayout = function(page: ReactElement) {
 		<NavbarLayout
 			renderSidebar={false}
 			renderNavbar
+			dashboard={true}
 			navbarConfig={
 				{
 					bg: 'gray.1',

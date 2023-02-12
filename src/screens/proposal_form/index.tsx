@@ -196,6 +196,7 @@ function ProposalForm() {
 						<Flex
 							gap={2}
 							alignItems='center'
+							direction={['column', 'row']}
 							pt={4}
 						>
 							<Text
@@ -220,13 +221,13 @@ function ProposalForm() {
 							width='max-content'
 						>
 							<Flex
+								direction={['column', 'row']}
 								justifyContent='space-between'
 								width='max-content'
 								gap={8}
 							>
 								<Flex
 									alignItems='center'
-
 								>
 									<Flex gap={4}>
 										<Image src='/v2/icons/calendar-color.svg' />
@@ -521,7 +522,7 @@ function ProposalForm() {
 
 						<Button
 							mt={10}
-							w='30%'
+
 							ml='auto'
 							variant='primaryLarge'
 							isDisabled={isDisabled}

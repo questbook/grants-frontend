@@ -2,7 +2,9 @@ import { useContext } from 'react'
 import { Checkbox, Flex, FlexProps, forwardRef, Image, Text, Tooltip } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { CheckDouble, Close, Resubmit } from 'src/generated/icons'
-import { GrantsProgramContext } from 'src/pages/_app'
+import logger from 'src/libraries/logger'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import useProposalTags from 'src/screens/dashboard/_hooks/useProposalTags'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -11,6 +13,8 @@ import { getFieldString, titleCase } from 'src/utils/formattingUtils'
 
 type Props = {
 	proposal: ProposalType
+	step?: boolean
+	setStep?: (value: boolean) => void
 } & FlexProps
 
 const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
@@ -119,13 +123,19 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 
 	const router = useRouter()
 	const { proposal } = props
-
+	const { dashboardStep, setDashboardStep } = useContext(WebwalletContext)!
 	const { selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
 	const { role } = useContext(GrantsProgramContext)!
 	// const { tags } = useProposalTags({ proposal })
 
 	const onClick = (isText: boolean = false) => {
 		if(selectedProposals.size === 1 && selectedProposals.has(proposal.id)) {
+			// Only 1 proposal was selected and the user clicked on it again
+			setDashboardStep(true)
+			router.push({
+				pathname: '/dashboard',
+				query: { ...router.query, proposalId: proposal.id, isRenderingProposalBody: true }
+			}, undefined, { shallow: true })
 			return
 		}
 
@@ -134,8 +144,9 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 			setSelectedProposals(new Set<string>([proposal.id]))
 			router.push({
 				pathname: '/dashboard',
-				query: { ...router.query, proposalId: proposal.id }
+				query: { ...router.query, proposalId: proposal.id, isRenderingProposalBody: true }
 			}, undefined, { shallow: true })
+			setDashboardStep(true)
 		} else {
 			// Either more proposals are selected or the user clicked on the checkbox
 			// In both cases, we want to add / remove the proposal to / from the set respectively
