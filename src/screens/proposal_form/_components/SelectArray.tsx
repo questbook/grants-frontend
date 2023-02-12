@@ -20,24 +20,26 @@ function SelectArray({ label, allowMultiple, flexProps, config, onAdd, onRemove 
 				{...flexProps}>
 				<Flex
 					w='100%'
+					direction={['column', 'row']}
 					align='start'>
 					<Text
 						mr={8}
 						pb={2}
 						variant='v2_subheading'
-						w='calc(30% - 32px)'
+						w={['100%', 'calc(30% - 32px)']}
 						fontWeight='500'
-						textAlign='right'>
+						textAlign={['left', 'right']}>
 						{label}
 					</Text>
 					<Flex
-						w='70%'
+						w={['100%', '70%']}
 						direction='column'>
 						{
 							config.map((_, index) => {
 								return (
 									<Flex
 										mt={index === 0 ? 0 : 6}
+										direction={['column', 'row']}
 										w='100%'
 										key={index}>
 										<Text
@@ -49,7 +51,7 @@ function SelectArray({ label, allowMultiple, flexProps, config, onAdd, onRemove 
 										</Text>
 
 										<Flex
-											ml={5}
+											ml={[0, 5]}
 											direction='column'
 											w='100%'>
 											{
