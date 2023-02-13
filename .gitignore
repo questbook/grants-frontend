@@ -48,3 +48,7 @@ test/
 lib
 # Sentry
 .sentryclirc
+
+#service worker
+sw.js
+workbox-588899ac.js
