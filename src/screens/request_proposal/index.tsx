@@ -53,13 +53,11 @@ function RequestProposal() {
 				width='1276px'
 				justifyContent='center'
 				alignItems='center'
-				marginTop={8}
-				// marginRight={16}
-				// marginLeft={16}
+				marginTop={[0, 8, 8]}
+				margin={[3, 0, 0]}
 				marginBottom={4}
 				alignSelf='center'
 				overflow='scroll'
-				// position='relative'
 			>
 				{/* <Button onClick={() => createGrant()}>create grant</Button> */}
 				{renderBody()}
@@ -91,7 +89,7 @@ function RequestProposal() {
 	}
 
 	const renderBody = () => {
-		switch (step) {
+		switch (createingProposalStep) {
 		case 1:
 			return (
 				<ProposalSubmission
@@ -176,7 +174,7 @@ function RequestProposal() {
 	}
 
 	const { chainId } = useContext(ApiClientsContext)!
-
+	const { createingProposalStep, setCreatingProposalStep } = useContext(WebwalletContext)!
 	// State for proposal creation
 	// const todayDate = today()
 	const [proposalName, setProposalName] = useState('')
@@ -591,6 +589,7 @@ RequestProposal.getLayout = function(page: ReactElement) {
 	return (
 		<NavbarLayout
 			renderSidebar={false}
+			requestProposal={true}
 			// navbarConfig={{ showDomains: true }}
 		>
 			<RFPFormProvider>

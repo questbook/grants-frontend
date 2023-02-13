@@ -147,6 +147,10 @@ export const WebwalletContext = createContext<{
 
 	nonce?: string
 	setNonce: (nonce?: string) => void
+	dashboardStep: boolean
+	setDashboardStep: (dashboardStep: boolean) => void
+	createingProposalStep: number
+	setCreatingProposalStep: (createingProposalStep: number) => void
 	loadingNonce: boolean
 	setLoadingNonce: (loadingNonce: boolean) => void
 	importWebwallet: (privateKey: string) => void
@@ -180,7 +184,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [isNewUser, setIsNewUser] = useState<boolean>(true)
 
 	const [qrCodeText, setQrCodeText] = useState<string>()
-
+	const [dashboardStep, setDashboardStep] = useState<boolean>(false)
+	const [createingProposalStep, setCreatingProposalStep] = useState<number>(1)
 	const [biconomyLoading, setBiconomyLoading] = useState<{ [chainId: string]: boolean }>({})
 
 	// store the chainId that was most recently asked to be init
@@ -477,12 +482,16 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 				setNonce(newNonce)
 			},
+			dashboardStep,
+			setDashboardStep,
+			createingProposalStep,
+			setCreatingProposalStep,
 			loadingNonce,
 			setLoadingNonce,
 			importWebwallet,
 			exportWebwallet
 		}),
-		[webwallet, setWebwallet, network, switchNetwork, scwAddress, setScwAddress, nonce, setNonce, loadingNonce, setLoadingNonce]
+		[dashboardStep, createingProposalStep, setCreatingProposalStep, setDashboardStep, webwallet, setWebwallet, network, switchNetwork, scwAddress, setScwAddress, nonce, setNonce, loadingNonce, setLoadingNonce]
 	)
 
 	const biconomyDaoObjContextValue = useMemo(

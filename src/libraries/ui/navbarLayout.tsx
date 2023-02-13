@@ -21,19 +21,19 @@ type Props = {
 	//Navbar configs
 	renderNavbar?: boolean
 	navbarConfig?: NavbarConfig
-
+	requestProposal?: boolean
 	//Sidebar configs
 	renderSidebar?: boolean
+	dashboard?: boolean
 }
 
-function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar }: Props) {
+function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar, requestProposal, dashboard }: Props) {
 	const [renderCount, setRenderCount] = useState(0)
 
 	useEffect(() => {
 		logger.info({ renderNavbar, renderSidebar }, 'Render Navbar Layout')
 		setRenderCount(renderCount + 1)
 	}, [])
-
 	return (
 		<Flex
 			direction='column'
@@ -42,7 +42,11 @@ function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar }: P
 			overscrollBehavior='none'>
 			{
 				renderNavbar && (
-					<NavBar {...navbarConfig} />
+					<NavBar
+						{...navbarConfig}
+						requestProposal={requestProposal}
+						dashboard={dashboard}
+					/>
 				)
 			}
 			<Flex

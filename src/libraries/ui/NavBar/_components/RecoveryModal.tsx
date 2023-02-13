@@ -24,7 +24,9 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 				isOpen={isOpen}
 				onClose={onClose}>
 				<ModalOverlay />
-				<ModalContent>
+				<ModalContent
+				maxW={['94%', '70%', '50%', '45%']}
+				>
 					<ModalCloseButton />
 					<ModalBody>
 						<Flex

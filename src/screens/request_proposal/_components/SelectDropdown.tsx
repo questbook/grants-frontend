@@ -20,14 +20,14 @@ function SelectDropdown<T>({ options, placeholder, value, onChange }: Props<T>) 
 				{
 					container: (provided) => ({
 						...provided,
-						width: '30%',
+						width: '40%',
 						fontSize: '96px',
 						fontWeight: '400',
 						color: 'black.1'
 					}),
 					valueContainer: (provided) => ({
 						...provided,
-						fontSize: '20px',
+						// fontSize: '16px',
 					}),
 					menu: (provided) => ({
 						...provided,

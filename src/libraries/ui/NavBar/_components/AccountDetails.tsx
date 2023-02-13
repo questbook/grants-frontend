@@ -45,7 +45,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 						<PopoverTrigger>
 							<Button
 								variant='ghost'
-								bg='gray.1'
+								bg={['black.1', 'gray.1']}
 								disabled={isConnecting}
 								as={Button}
 								rightIcon={<ChevronDownIcon />}
