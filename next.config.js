@@ -8,6 +8,7 @@ const nextConfig = {
 	// temporarily disable ESLint checks during builds
 	// so we can transition to the new lint rules without breaking
 	eslint: { ignoreDuringBuilds: true },
+	future: { webpack5: true },
 	webpack: function(config, options) {
 		if(!options.isServer) {
 			config.resolve.fallback.fs = false

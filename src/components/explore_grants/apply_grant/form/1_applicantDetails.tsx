@@ -4,10 +4,9 @@ import { useTranslation } from 'react-i18next'
 import {
 	Box, Text,
 } from '@chakra-ui/react'
-import { logger } from 'ethers'
 import SingleLineInput from 'src/components/ui/forms/singleLineInput'
-import { defaultChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
+import logger from 'src/libraries/logger'
 import { resolveApplicantAddress } from 'src/utils/applicantAddressUtils'
 import { chainNames } from 'src/utils/chainNames'
 import { isValidEthereumAddress, isValidSolanaAddress } from 'src/utils/validationUtils'
