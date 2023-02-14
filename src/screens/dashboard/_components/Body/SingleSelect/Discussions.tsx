@@ -139,6 +139,9 @@ function Discussions() {
 							}
 							<Button
 								ml='auto'
+								// mr={['50px','50px','0']}
+								// paddingBottom='30px'
+								marginBottom={['50px','50px','0']}
 								variant='primaryMedium'
 								isDisabled={isDisabled}
 								isLoading={step !== undefined}
