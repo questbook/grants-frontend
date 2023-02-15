@@ -888,6 +888,8 @@ export type GrantApplication = {
   updatedAtS: Scalars['Int'];
   /** Version of the application, incremented on resubmission */
   version: Scalars['Int'];
+  /** Wallet Address of the applicant */
+  walletAddress: Scalars['Bytes'];
 };
 
 
@@ -1365,6 +1367,12 @@ export type GrantApplication_Filter = {
   version_lte?: InputMaybe<Scalars['Int']>;
   version_not?: InputMaybe<Scalars['Int']>;
   version_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  walletAddress?: InputMaybe<Scalars['Bytes']>;
+  walletAddress_contains?: InputMaybe<Scalars['Bytes']>;
+  walletAddress_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  walletAddress_not?: InputMaybe<Scalars['Bytes']>;
+  walletAddress_not_contains?: InputMaybe<Scalars['Bytes']>;
+  walletAddress_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
 };
 
 export enum GrantApplication_OrderBy {
@@ -1387,7 +1395,8 @@ export enum GrantApplication_OrderBy {
   Reviews = 'reviews',
   State = 'state',
   UpdatedAtS = 'updatedAtS',
-  Version = 'version'
+  Version = 'version',
+  WalletAddress = 'walletAddress'
 }
 
 export type GrantField = {

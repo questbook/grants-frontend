@@ -269,7 +269,7 @@ function FundBuilderDrawer() {
 			})
 			let proposaladdress: any = ''
 			if(safeObj.getIsEvm()) {
-				proposaladdress = await safeObj?.proposeTransactions(grant?.workspace?.id, transactionData, '')
+				proposaladdress = await safeObj?.proposeTransactions(JSON.stringify({ workspaceId: grant?.workspace?.id, grantAddress: grant?.id }), transactionData, '')
 				if(proposaladdress?.error) {
 					customToast({
 						title: 'An error occurred while creating transaction on Gnosis Safe',
@@ -282,7 +282,7 @@ function FundBuilderDrawer() {
 
 				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress, safeObj?.chainId, proposaladdress))
 			} else {
-				proposaladdress = await safeObj?.proposeTransactions(grant?.workspace?.id, transactionData, phantomWallet)
+				proposaladdress = await safeObj?.proposeTransactions(JSON.stringify({ workspaceId: grant?.workspace?.id, grantAddress: grant?.id }), transactionData, phantomWallet)
 				if(proposaladdress?.error) {
 					customToast({
 						title: 'An error occurred while creating transaction on Multi-sig',

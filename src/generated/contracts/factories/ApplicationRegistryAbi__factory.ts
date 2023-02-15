@@ -109,55 +109,6 @@ const _abi = [
       {
         indexed: false,
         internalType: "address",
-        name: "grant",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "string",
-        name: "metadataHash",
-        type: "string",
-      },
-      {
-        indexed: false,
-        internalType: "uint48",
-        name: "milestoneCount",
-        type: "uint48",
-      },
-      {
-        indexed: false,
-        internalType: "bytes32",
-        name: "walletAddress",
-        type: "bytes32",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "time",
-        type: "uint256",
-      },
-    ],
-    name: "ApplicationSubmitted",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "uint96",
-        name: "applicationId",
-        type: "uint96",
-      },
-      {
-        indexed: false,
-        internalType: "address",
         name: "owner",
         type: "address",
       },
@@ -589,25 +540,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint96",
-        name: "_applicationId",
-        type: "uint96",
-      },
-    ],
-    name: "isSubmittedApplication",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "address",
         name: "fromWallet",
         type: "address",
@@ -767,6 +699,11 @@ const _abi = [
         internalType: "uint48",
         name: "_milestoneCount",
         type: "uint48",
+      },
+      {
+        internalType: "bytes32",
+        name: "_applicantAddress",
+        type: "bytes32",
       },
     ],
     name: "updateApplicationMetadata",

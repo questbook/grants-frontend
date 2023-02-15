@@ -122,7 +122,7 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 			// Step - 6: Call the contract function to submit the proposal
 			const methodArgs = type === 'submit' ?
 				[grant.id, grant.workspace.id, proposalDataHash, data.milestones.length, builderAddressInBytes] :
-				[proposal?.id, proposalDataHash, data.milestones.length]
+				[proposal?.id, proposalDataHash, data.milestones.length, builderAddressInBytes]
 			logger.info({ methodArgs }, 'useSubmitProposal: (Method args)')
 
 			const response = await sendGaslessTransaction(

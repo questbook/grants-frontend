@@ -42,7 +42,6 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     "getApplicationOwner(uint96)": FunctionFragment;
     "getApplicationWorkspace(uint96)": FunctionFragment;
     "initialize()": FunctionFragment;
-    "isSubmittedApplication(uint96)": FunctionFragment;
     "migrateWallet(address,address)": FunctionFragment;
     "owner()": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
@@ -52,7 +51,7 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     "setWorkspaceReg(address)": FunctionFragment;
     "submitApplication(address,uint96,string,uint48,bytes32)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "updateApplicationMetadata(uint96,string,uint48)": FunctionFragment;
+    "updateApplicationMetadata(uint96,string,uint48,bytes32)": FunctionFragment;
     "updateApplicationState(uint96,uint96,uint8,string)": FunctionFragment;
     "updateWalletAddress(uint96,bytes32)": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
@@ -75,7 +74,6 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
       | "getApplicationOwner"
       | "getApplicationWorkspace"
       | "initialize"
-      | "isSubmittedApplication"
       | "migrateWallet"
       | "owner"
       | "proxiableUUID"
@@ -157,10 +155,6 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "isSubmittedApplication",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "migrateWallet",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
@@ -208,7 +202,8 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>
     ]
   ): string;
   encodeFunctionData(
@@ -284,10 +279,6 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "isSubmittedApplication",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "migrateWallet",
     data: BytesLike
   ): Result;
@@ -350,7 +341,6 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     "AdminChanged(address,address)": EventFragment;
     "ApplicationMigrate(uint96,address,uint256)": EventFragment;
     "ApplicationSubmitted(uint96,address,address,string,uint48,uint256)": EventFragment;
-    "ApplicationSubmitted(uint96,address,address,string,uint48,bytes32,uint256)": EventFragment;
     "ApplicationUpdated(uint96,address,string,uint8,uint48,uint256)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
     "Initialized(uint8)": EventFragment;
@@ -362,12 +352,7 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApplicationMigrate"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "ApplicationSubmitted(uint96,address,address,string,uint48,uint256)"
-  ): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "ApplicationSubmitted(uint96,address,address,string,uint48,bytes32,uint256)"
-  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ApplicationSubmitted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApplicationUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
@@ -401,7 +386,7 @@ export type ApplicationMigrateEvent = TypedEvent<
 export type ApplicationMigrateEventFilter =
   TypedEventFilter<ApplicationMigrateEvent>;
 
-export interface ApplicationSubmitted_uint96_address_address_string_uint48_uint256_EventObject {
+export interface ApplicationSubmittedEventObject {
   applicationId: BigNumber;
   grant: string;
   owner: string;
@@ -409,32 +394,13 @@ export interface ApplicationSubmitted_uint96_address_address_string_uint48_uint2
   milestoneCount: number;
   time: BigNumber;
 }
-export type ApplicationSubmitted_uint96_address_address_string_uint48_uint256_Event =
-  TypedEvent<
-    [BigNumber, string, string, string, number, BigNumber],
-    ApplicationSubmitted_uint96_address_address_string_uint48_uint256_EventObject
-  >;
+export type ApplicationSubmittedEvent = TypedEvent<
+  [BigNumber, string, string, string, number, BigNumber],
+  ApplicationSubmittedEventObject
+>;
 
-export type ApplicationSubmitted_uint96_address_address_string_uint48_uint256_EventFilter =
-  TypedEventFilter<ApplicationSubmitted_uint96_address_address_string_uint48_uint256_Event>;
-
-export interface ApplicationSubmitted_uint96_address_address_string_uint48_bytes32_uint256_EventObject {
-  applicationId: BigNumber;
-  grant: string;
-  owner: string;
-  metadataHash: string;
-  milestoneCount: number;
-  walletAddress: string;
-  time: BigNumber;
-}
-export type ApplicationSubmitted_uint96_address_address_string_uint48_bytes32_uint256_Event =
-  TypedEvent<
-    [BigNumber, string, string, string, number, string, BigNumber],
-    ApplicationSubmitted_uint96_address_address_string_uint48_bytes32_uint256_EventObject
-  >;
-
-export type ApplicationSubmitted_uint96_address_address_string_uint48_bytes32_uint256_EventFilter =
-  TypedEventFilter<ApplicationSubmitted_uint96_address_address_string_uint48_bytes32_uint256_Event>;
+export type ApplicationSubmittedEventFilter =
+  TypedEventFilter<ApplicationSubmittedEvent>;
 
 export interface ApplicationUpdatedEventObject {
   applicationId: BigNumber;
@@ -618,11 +584,6 @@ export interface ApplicationRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    isSubmittedApplication(
-      _applicationId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
     migrateWallet(
       fromWallet: PromiseOrValue<string>,
       toWallet: PromiseOrValue<string>,
@@ -672,6 +633,7 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _applicationId: PromiseOrValue<BigNumberish>,
       _metadataHash: PromiseOrValue<string>,
       _milestoneCount: PromiseOrValue<BigNumberish>,
+      _applicantAddress: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -782,11 +744,6 @@ export interface ApplicationRegistryAbi extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  isSubmittedApplication(
-    _applicationId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
   migrateWallet(
     fromWallet: PromiseOrValue<string>,
     toWallet: PromiseOrValue<string>,
@@ -836,6 +793,7 @@ export interface ApplicationRegistryAbi extends BaseContract {
     _applicationId: PromiseOrValue<BigNumberish>,
     _metadataHash: PromiseOrValue<string>,
     _milestoneCount: PromiseOrValue<BigNumberish>,
+    _applicantAddress: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -944,11 +902,6 @@ export interface ApplicationRegistryAbi extends BaseContract {
 
     initialize(overrides?: CallOverrides): Promise<void>;
 
-    isSubmittedApplication(
-      _applicationId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
     migrateWallet(
       fromWallet: PromiseOrValue<string>,
       toWallet: PromiseOrValue<string>,
@@ -996,6 +949,7 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _applicationId: PromiseOrValue<BigNumberish>,
       _metadataHash: PromiseOrValue<string>,
       _milestoneCount: PromiseOrValue<BigNumberish>,
+      _applicantAddress: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1060,16 +1014,15 @@ export interface ApplicationRegistryAbi extends BaseContract {
       metadataHash?: null,
       milestoneCount?: null,
       time?: null
-    ): ApplicationSubmitted_uint96_address_address_string_uint48_uint256_EventFilter;
-    "ApplicationSubmitted(uint96,address,address,string,uint48,bytes32,uint256)"(
+    ): ApplicationSubmittedEventFilter;
+    ApplicationSubmitted(
       applicationId?: PromiseOrValue<BigNumberish> | null,
       grant?: null,
       owner?: null,
       metadataHash?: null,
       milestoneCount?: null,
-      walletAddress?: null,
       time?: null
-    ): ApplicationSubmitted_uint96_address_address_string_uint48_bytes32_uint256_EventFilter;
+    ): ApplicationSubmittedEventFilter;
 
     "ApplicationUpdated(uint96,address,string,uint8,uint48,uint256)"(
       applicationId?: PromiseOrValue<BigNumberish> | null,
@@ -1207,11 +1160,6 @@ export interface ApplicationRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    isSubmittedApplication(
-      _applicationId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     migrateWallet(
       fromWallet: PromiseOrValue<string>,
       toWallet: PromiseOrValue<string>,
@@ -1261,6 +1209,7 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _applicationId: PromiseOrValue<BigNumberish>,
       _metadataHash: PromiseOrValue<string>,
       _milestoneCount: PromiseOrValue<BigNumberish>,
+      _applicantAddress: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1363,11 +1312,6 @@ export interface ApplicationRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    isSubmittedApplication(
-      _applicationId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     migrateWallet(
       fromWallet: PromiseOrValue<string>,
       toWallet: PromiseOrValue<string>,
@@ -1417,6 +1361,7 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _applicationId: PromiseOrValue<BigNumberish>,
       _metadataHash: PromiseOrValue<string>,
       _milestoneCount: PromiseOrValue<BigNumberish>,
+      _applicantAddress: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
