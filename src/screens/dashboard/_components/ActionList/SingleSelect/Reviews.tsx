@@ -1,7 +1,12 @@
 import { RefObject, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { Box, Button, Checkbox, Divider, Flex, Image, InputGroup, InputRightElement, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text } from '@chakra-ui/react'
-import { defaultChainId } from 'src/constants/chains'
+import { Box, Button, ButtonProps, Checkbox, Divider, Flex, Image, InputGroup, InputRightElement, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text, Tooltip } from '@chakra-ui/react'
+import Safe from '@safe-global/safe-core-sdk'
+import EthersAdapter from '@safe-global/safe-ethers-lib'
+import { ethers } from 'ethers'
+import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
+import guardAbi from 'src/contracts/abi/ReviewerGuard.json'
 import { CheckDouble, Close, Dropdown, Pencil } from 'src/generated/icons'
+import { CONTRACT_INTERFACE_MAP } from 'src/hooks/contracts/useQBContract'
 import logger from 'src/libraries/logger'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import DashboardInput from 'src/screens/dashboard/_components/DashboardInput'
@@ -9,10 +14,13 @@ import useAssignReviewers from 'src/screens/dashboard/_hooks/useAssignReviewers'
 import useSetRubrics from 'src/screens/dashboard/_hooks/useSetRubrics'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { IReviewFeedback, ReviewType } from 'src/types'
+import SafeGuardModal from 'src/screens/dashboard/SafeGuardModal'
+import SetupProfileModal from 'src/screens/dashboard/SetupProfileModal'
+import { GrantType, IReviewFeedback, ReviewType } from 'src/types'
 import { RubricItem } from 'src/types/gen'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAddress } from 'src/utils/formattingUtils'
+import { jsonRpcProviders } from 'src/utils/gaslessUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import { useLoadReview } from 'src/utils/reviews'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
@@ -70,11 +78,78 @@ function Reviews() {
 					{(grant?.reviewType === 'voting' && (proposal?.applicationReviewers?.length || 0) > 0) && voteGraph()}
 
 					{
-						proposal?.applicationReviewers?.map((reviewer, index) => {
+						proposal?.applicationReviewers?.filter((reviewer) => !guardContractReviewers.find(gcr => gcr.member?.actorId === reviewer?.member?.actorId)).map((reviewer, index) => {
 							return reviewerItem(reviewer?.member, reviews.find(r => r.reviewer === reviewer?.member.actorId), index)
 						})
 					}
+
+					{
+						guardContractReviewers.map((reviewer, index) => {
+							if(reviewer?.member) {
+								return reviewerItem(reviewer?.member, reviews.find(r => r.reviewer === reviewer?.member?.actorId), index)
+							} else {
+								return (
+									<Flex
+										mt={index === 0 ? 5 : 3}
+										key={index}
+										w='100%'
+										align='center'
+									>
+										<Flex
+											maxW='70%'
+											align='center'
+										>
+											<Image
+												borderRadius='3xl'
+												boxSize='28px'
+												src={getAvatar(false, reviewer?.walletAddress)}
+											/>
+											<Tooltip label={reviewer.walletAddress}>
+												<Text
+													as='span'
+													variant='v2_body'
+													fontWeight='500'
+													ml={3}
+													noOfLines={3}>
+													{formatAddress(reviewer.walletAddress)}
+												</Text>
+											</Tooltip>
+										</Flex>
+
+										<Box ml='auto' />
+
+										<Button
+											variant='link'
+										>
+											<Text
+												color='accent.azure'
+												variant='v2_body'
+												fontWeight='500'
+												onClick={
+													() => {
+														setWalletAddress(reviewer.walletAddress)
+													}
+												}>
+												Join as a reviewer
+											</Text>
+										</Button>
+									</Flex>
+								)
+							}
+						})
+					}
+
 				</Flex>
+
+				<SafeGuardModal
+					isOpen={isSafeGuardModalOpen}
+					onClose={() => setIsSafeGuardModalOpen(false)} />
+
+				<SetupProfileModal
+					walletAddress={walletAddress ?? ''}
+					isOpen={walletAddress !== undefined}
+					onClose={() => setWalletAddress(undefined)} />
+
 			</Flex>
 		)
 	}
@@ -129,11 +204,12 @@ function Reviews() {
 		)
 	}
 
-	const setupButton = () => {
+	const setupButton = (props?: ButtonProps) => {
 		return (
 			<Button
 				variant='link'
-				isDisabled={role !== 'admin' || proposal?.state !== 'submitted'} >
+				isDisabled={role !== 'admin' || proposal?.state !== 'submitted'}
+				{...props} >
 				<Text
 					variant='v2_body'
 					fontWeight='500'
@@ -360,15 +436,16 @@ function Reviews() {
 					Reviewer
 				</Text>
 				{
-					(proposal?.applicationReviewers?.length || 0) > 0 && (
+					totalNumberOfReviewers > 0 && (
 						<Text
 							variant='v2_body'>
-							{proposal?.applicationReviewers?.length}
+							{totalNumberOfReviewers}
 						</Text>
 					)
 				}
 				{(proposal?.applicationReviewers?.length || 0) > 0 && <Box ml='auto' />}
-				{assignReviewerPopup(assignReviewerPopoverRef, (proposal?.applicationReviewers?.length || 0) > 0 ? 'edit' : 'setup')}
+				{(grant?.workspace?.safe?.chainId !== '10' && grant?.workspace?.safe?.chainId !== '5') && assignReviewerPopup(assignReviewerPopoverRef, (proposal?.applicationReviewers?.length || 0) > 0 ? 'edit' : 'setup')}
+				{((grant?.workspace?.safe?.chainId === '10' || grant?.workspace?.safe?.chainId === '5') && guardContractReviewers?.length === 0) && setupButton({ onClick: () => setIsSafeGuardModalOpen(true) })}
 			</Flex>
 		)
 	}
@@ -649,6 +726,7 @@ function Reviews() {
 							src={getAvatar(false, reviewer?.actorId)}
 						/>
 						<Text
+							as='span'
 							variant='v2_body'
 							fontWeight='500'
 							ml={3}
@@ -811,9 +889,13 @@ function Reviews() {
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
 	const [, setTransactionHash] = useState<string>('')
 
+	const [isSafeGuardModalOpen, setIsSafeGuardModalOpen] = useState<boolean>(false)
+	const [walletAddress, setWalletAddress] = useState<string>()
+
 	const assignReviewerPopoverRef = useRef<HTMLButtonElement>(null)
 	const [searchMemberName, setSearchMemberName] = useState<string>('')
 	const [members, setMembers] = useState<{ [id: string]: boolean }>({})
+	const [guardContractReviewers, setGuardContractReviewers] = useState<{walletAddress: string, member: Exclude<GrantType, null | undefined>['workspace']['members'][number] | undefined}[]>([])
 	const { assignReviewers, isBiconomyInitialised } = useAssignReviewers({ setNetworkTransactionModalStep, setTransactionHash })
 
 	const setReviewTypePopoverRef = useRef<HTMLButtonElement>(null)
@@ -822,6 +904,84 @@ function Reviews() {
 	const [rubricItems, setRubricItems] = useState<RubricItem[]>([])
 	const [anotherRubricTitle, setAnotherRubricTitle] = useState<string>()
 	const { setRubrics } = useSetRubrics({ setNetworkTransactionModalStep, setTransactionHash })
+
+	const proposal = useMemo(() => {
+		return proposals.find(p => selectedProposals.has(p.id))
+	}, [proposals, selectedProposals])
+
+	const totalNumberOfReviewers = useMemo(() => {
+		return (proposal?.pendingReviewerAddresses?.length || 0) + (guardContractReviewers?.length || 0)
+	}, [proposal, guardContractReviewers])
+
+	const getReviewersFromGuardContract = async() => {
+		const safe = grant?.workspace?.safe
+		if(!safe || (safe?.chainId !== '10' && safe?.chainId !== '5')) {
+			setGuardContractReviewers([])
+			return
+		}
+
+		const provider = jsonRpcProviders[safe.chainId]
+
+		try {
+			logger.info('Getting reviewers from guard contract (REVIEWER GUARD)', provider)
+			const ethAdapter = new EthersAdapter({
+				ethers,
+				signerOrProvider: provider,
+			})
+			logger.info('Ethers adapter created (REVIEWER GUARD)', ethAdapter)
+			const safeSdk = await Safe.create({ ethAdapter, safeAddress: safe.address })
+			logger.info('Safe SDK created (REVIEWER GUARD)', safeSdk)
+
+			const guard = await safeSdk.getGuard()
+			logger.info('Guard contract address (REVIEWER GUARD)', guard)
+			if(guard === ethers.constants.AddressZero) {
+				setGuardContractReviewers([])
+				return
+			}
+
+			const guardContract = new ethers.Contract(guard, guardAbi, provider)
+			const workspaceRegistryContract = new ethers.Contract(CHAIN_INFO[getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId]?.qbContracts?.workspace, CONTRACT_INTERFACE_MAP['workspace'], provider)
+			const reviewers: {walletAddress: string, member: Exclude<GrantType, null | undefined>['workspace']['members'][number] | undefined}[] = []
+
+			const eoaReviewers = await guardContract.getReviewers()
+			logger.info('Reviewers from guard contract (REVIEWER GUARD)', eoaReviewers)
+			for(const eoaReviewer of eoaReviewers) {
+				try {
+					logger.info('Reviewer wallet address (REVIEWER GUARD)', eoaReviewer)
+					logger.info(workspaceRegistryContract, 'Contract (REVIEWER GUARD)')
+					const reviewer = await workspaceRegistryContract.eoaToScw(eoaReviewer, grant?.workspace?.id)
+					logger.info('Reviewer scw address (REVIEWER GUARD)', reviewer)
+					reviewers.push({ walletAddress: eoaReviewer, member: grant?.workspace?.members?.find(member => member.actorId === reviewer.toLowerCase()) })
+				} catch(e) {
+					logger.info(e, 'Fetching reviewers from contract (REVIEWER GUARD)')
+					break
+				}
+			}
+
+			reviewers.sort((a, b) => {
+				if(a.member && !b.member) {
+					return -1
+				} else if(!a.member && b.member) {
+					return 1
+				} else {
+					return 0
+				}
+			})
+			setGuardContractReviewers(reviewers)
+		} catch(e) {
+			logger.error(e)
+			setGuardContractReviewers([])
+		}
+	}
+
+	useEffect(() => {
+		logger.info('Calling get reviewers from guard contract (REVIEWER GUARD)', grant)
+		getReviewersFromGuardContract()
+	}, [])
+
+	useEffect(() => {
+		logger.info(guardContractReviewers, 'Guard contract reviewers')
+	}, [guardContractReviewers])
 
 	useEffect(() => {
 		setReviewType(grant?.reviewType === 'voting' ? ReviewType.Voting : ReviewType.Rubrics)
@@ -840,10 +1000,6 @@ function Reviews() {
 			setExpanded(true)
 		}
 	}, [proposals])
-
-	const proposal = useMemo(() => {
-		return proposals.find(p => selectedProposals.has(p.id))
-	}, [proposals, selectedProposals])
 
 	useEffect(() => {
 		setReviewersExpanded(Array(proposal?.applicationReviewers?.length).fill(false))
@@ -878,10 +1034,6 @@ function Reviews() {
 			setReviews(reviews)
 		})
 	}, [proposal])
-
-	// const isDisabled = useMemo(() => {
-	// 	if (grant?.numberOfReviewersPerApplication === numberOfReviewersPerApplication && Object.keys(members).length === grant?)
-	// }, [numberOfReviewersPerApplication, members])
 
 	return buildComponent()
 }

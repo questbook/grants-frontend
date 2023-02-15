@@ -18,7 +18,7 @@ interface Props {
 	workspaceId: string | undefined
 	memberId: string | undefined
 	chainId: SupportedChainId
-	type: 'join' | 'update'
+	type: 'join-using-link' | 'join-reviewer-guard' | 'update'
 }
 
 function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep, setTransactionHash, chainId, type }: Props) {
@@ -38,7 +38,7 @@ function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep
 	const { encrypt } = usePiiForWorkspaceMember(workspaceId, memberId, webwallet?.publicKey, chainId)
 	const createMapping = useCreateMapping({ chainId })
 
-	const setupProfile = async({ name, email, imageFile, role, signature }: {
+	const setupProfile = async({ name, email, imageFile, role, signature, signedMessage, walletAddress }: {
 		name: string
 		email: string
 		imageFile: File | null
@@ -48,6 +48,8 @@ function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep
 			r: number[]
 			s: number[]
 		}
+		signedMessage?: string
+		walletAddress?: string
 	}) => {
 		logger.info({ name, email, scwAddress, webwallet }, 'useSetupProfile')
 
@@ -68,8 +70,16 @@ function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep
 				throw new Error('Unable to find workspace id')
 			}
 
-			if(type === 'join' && !signature) {
+			if(type === 'join-using-link' && !signature) {
 				throw new Error('Signature not found')
+			}
+
+			if(type === 'join-reviewer-guard' && !signedMessage) {
+				throw new Error('Signed message not found')
+			}
+
+			if(type === 'join-reviewer-guard' && !walletAddress) {
+				throw new Error('Wallet address not found')
 			}
 
 			// TODO: Step - 0: Validate Workspace Member Update
@@ -105,20 +115,26 @@ function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep
 				[role],
 				[true],
 				[hash]
-			] : [
+			] : type === 'join-using-link' ? [
 				workspaceId,
 				hash,
 				role,
 				signature?.v,
 				signature?.r,
 				signature?.s
+			] : [
+				workspaceId,
+				hash,
+				walletAddress,
+				role,
+				signedMessage
 			]
-			logger.info({ chainId, methodArgs, workspaceRegistryContract }, 'Method args')
+			logger.info({ type, chainId, methodArgs, workspaceRegistryContract }, 'Method args')
 
 			const response = await sendGaslessTransaction(
 				biconomy,
 				workspaceRegistryContract,
-				type === 'join' ? 'joinViaInviteLink' : 'updateWorkspaceMembers',
+				type === 'join-using-link' ? 'joinViaInviteLink' : type === 'join-reviewer-guard' ? 'proveMembership' : 'updateWorkspaceMembers',
 				methodArgs,
 				workspaceRegistryContract.address,
 				biconomyWalletClient,
@@ -145,7 +161,7 @@ function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep
 			await createMapping({ email })
 			await chargeGas(Number(workspaceId), Number(txFee), chainId)
 			setNetworkTransactionModalStep(3)
-
+			return true
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			setNetworkTransactionModalStep(undefined)
@@ -155,6 +171,7 @@ function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep
 				title: message,
 				status: 'error'
 			})
+			return false
 		}
 	}
 

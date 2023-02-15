@@ -236,6 +236,37 @@ const _abi = [
     type: "event",
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint96",
+        name: "applicationId",
+        type: "uint96",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "grant",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "walletAddress",
+        type: "bytes32",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "time",
+        type: "uint256",
+      },
+    ],
+    name: "WalletAddressUpdated",
+    type: "event",
+  },
+  {
     inputs: [],
     name: "applicationCount",
     outputs: [
@@ -421,6 +452,30 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "eoaToScw",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint96",
         name: "_applicationId",
         type: "uint96",
@@ -480,25 +535,6 @@ const _abi = [
     name: "initialize",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint96",
-        name: "_applicationId",
-        type: "uint96",
-      },
-    ],
-    name: "isSubmittedApplication",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {
@@ -623,6 +659,11 @@ const _abi = [
         name: "_milestoneCount",
         type: "uint48",
       },
+      {
+        internalType: "bytes32",
+        name: "_applicantAddress",
+        type: "bytes32",
+      },
     ],
     name: "submitApplication",
     outputs: [],
@@ -658,6 +699,11 @@ const _abi = [
         internalType: "uint48",
         name: "_milestoneCount",
         type: "uint48",
+      },
+      {
+        internalType: "bytes32",
+        name: "_applicantAddress",
+        type: "bytes32",
       },
     ],
     name: "updateApplicationMetadata",
@@ -696,6 +742,24 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint96",
+        name: "_applicationId",
+        type: "uint96",
+      },
+      {
+        internalType: "bytes32",
+        name: "_applicantAddress",
+        type: "bytes32",
+      },
+    ],
+    name: "updateWalletAddress",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "newImplementation",
         type: "address",
@@ -722,6 +786,25 @@ const _abi = [
     name: "upgradeToAndCall",
     outputs: [],
     stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    name: "walletAddressMapping",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {

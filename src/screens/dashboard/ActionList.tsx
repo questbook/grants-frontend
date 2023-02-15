@@ -14,7 +14,7 @@ function ActionList() {
 			paddingBottom={['10px', '0px', '0px', '0px']}
 			boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
 			direction={['column', 'column', 'row', 'row']}
-			>
+		>
 			{selectedProposals.size > 1 ? <MultiSelect /> : <SingleSelect /> }
 		</Flex>
 	)

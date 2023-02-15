@@ -1,7 +1,6 @@
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Flex, Text, VStack } from '@chakra-ui/react'
-import { debounce } from 'lodash'
 import { useSafeContext } from 'src/contexts/safeContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
@@ -11,7 +10,7 @@ import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/
 import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/PhantomLogo'
 import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
 import ConnectWalletButton from 'src/v2/components/ConnectWalletModal/ConnectWalletButton'
-import { useAccount, useConnect, useDisconnect, useNetwork, useSigner, useSwitchNetwork } from 'wagmi'
+import { useAccount, useConnect, useDisconnect, useNetwork, useSwitchNetwork } from 'wagmi'
 
 const availableWallets = [{
 	name: 'Metamask',
@@ -41,10 +40,11 @@ const solanaWallets = [{
 interface Props {
     signerVerifiedState: SignerVerifiedState
 	setSignerVerifiedState: (signerVerified: SignerVerifiedState) => void
+	shouldVerify?: boolean
 }
 
 
-const Verify = ({ setSignerVerifiedState }: Props) => {
+const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 	const buildComponent = () => (
 		<Flex direction='column'>
 			<Text
@@ -74,7 +74,6 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 								isPopular={wallet.isPopular}
 								onClick={
 									() => {
-										setVerifyingModal(true)
 										if(!isConnected) {
 											const connector = connectors.find((x) => x.id === wallet.id)
 											logger.info({ connector }, 'connector')
@@ -106,11 +105,9 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 		</Flex>
 	)
 
-	const [verifyingModal, setVerifyingModal] = useState(false)
 	const { connect, connectors } = useConnect()
 	const { disconnect } = useDisconnect()
-	const { error, switchNetworkAsync } = useSwitchNetwork()
-	const { data: signer } = useSigner()
+	const { switchNetworkAsync } = useSwitchNetwork()
 	const { chain } = useNetwork()
 	const { safeObj } = useSafeContext()
 	const { phantomWallet, phantomWalletConnected } = usePhantomWallet()
@@ -133,7 +130,6 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 		const isVerified = await safeObj?.isOwner(address)
 		if(isVerified) {
 			setSignerVerifiedState('verified')
-			setVerifyingModal(false)
 			toast({
 				title: `Verified owner of multisig ${safeObj.safeAddress}.`,
 				status: 'success',
@@ -141,7 +137,6 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 			})
 		} else {
 			setSignerVerifiedState('failed')
-			setVerifyingModal(false)
 			toast({
 				title: 'This wallet is not a multisig owner. Try with another address.',
 				status: 'error',
@@ -169,10 +164,12 @@ const Verify = ({ setSignerVerifiedState }: Props) => {
 			setSignerVerifiedState('verifying')
 		}
 
-		if(safeObj.getIsEvm() && isConnected && chain?.id === safeObj?.chainId) {
-			verifyOwner(address!)
-		} else if(phantomWalletConnected) {
-			verifyOwner(phantomWallet?.publicKey?.toString()!)
+		if(shouldVerify) {
+			if(safeObj.getIsEvm() && isConnected && chain?.id === safeObj?.chainId) {
+				verifyOwner(address!)
+			} else if(phantomWalletConnected) {
+				verifyOwner(phantomWallet?.publicKey?.toString()!)
+			}
 		}
 	}, [chain, isConnected, phantomWalletConnected])
 

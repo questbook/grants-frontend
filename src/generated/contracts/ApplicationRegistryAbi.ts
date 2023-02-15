@@ -37,11 +37,11 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     "approveMilestone(uint96,uint48,uint96,string)": FunctionFragment;
     "batchUpdateApplicationState(uint96[],uint8[],uint96,string[])": FunctionFragment;
     "completeApplication(uint96,uint96,string)": FunctionFragment;
+    "eoaToScw(bytes32,address)": FunctionFragment;
     "getApplicationGrant(uint96)": FunctionFragment;
     "getApplicationOwner(uint96)": FunctionFragment;
     "getApplicationWorkspace(uint96)": FunctionFragment;
     "initialize()": FunctionFragment;
-    "isSubmittedApplication(uint96)": FunctionFragment;
     "migrateWallet(address,address)": FunctionFragment;
     "owner()": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
@@ -49,12 +49,14 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     "requestMilestoneApproval(uint96,uint48,string)": FunctionFragment;
     "setApplicationReviewReg(address)": FunctionFragment;
     "setWorkspaceReg(address)": FunctionFragment;
-    "submitApplication(address,uint96,string,uint48)": FunctionFragment;
+    "submitApplication(address,uint96,string,uint48,bytes32)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "updateApplicationMetadata(uint96,string,uint48)": FunctionFragment;
+    "updateApplicationMetadata(uint96,string,uint48,bytes32)": FunctionFragment;
     "updateApplicationState(uint96,uint96,uint8,string)": FunctionFragment;
+    "updateWalletAddress(uint96,bytes32)": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
+    "walletAddressMapping(bytes32)": FunctionFragment;
     "workspaceReg()": FunctionFragment;
   };
 
@@ -67,11 +69,11 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
       | "approveMilestone"
       | "batchUpdateApplicationState"
       | "completeApplication"
+      | "eoaToScw"
       | "getApplicationGrant"
       | "getApplicationOwner"
       | "getApplicationWorkspace"
       | "initialize"
-      | "isSubmittedApplication"
       | "migrateWallet"
       | "owner"
       | "proxiableUUID"
@@ -83,8 +85,10 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
       | "transferOwnership"
       | "updateApplicationMetadata"
       | "updateApplicationState"
+      | "updateWalletAddress"
       | "upgradeTo"
       | "upgradeToAndCall"
+      | "walletAddressMapping"
       | "workspaceReg"
   ): FunctionFragment;
 
@@ -131,6 +135,10 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "eoaToScw",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getApplicationGrant",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -145,10 +153,6 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "initialize",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isSubmittedApplication",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "migrateWallet",
@@ -185,7 +189,8 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>
     ]
   ): string;
   encodeFunctionData(
@@ -197,7 +202,8 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>
     ]
   ): string;
   encodeFunctionData(
@@ -210,12 +216,20 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "updateWalletAddress",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "upgradeTo",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "upgradeToAndCall",
     values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "walletAddressMapping",
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "workspaceReg",
@@ -250,6 +264,7 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     functionFragment: "completeApplication",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "eoaToScw", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getApplicationGrant",
     data: BytesLike
@@ -263,10 +278,6 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "isSubmittedApplication",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "migrateWallet",
     data: BytesLike
@@ -308,9 +319,17 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     functionFragment: "updateApplicationState",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateWalletAddress",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "upgradeToAndCall",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "walletAddressMapping",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -328,6 +347,7 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     "MilestoneUpdated(uint96,uint96,uint8,string,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Upgraded(address)": EventFragment;
+    "WalletAddressUpdated(uint96,address,bytes32,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
@@ -339,6 +359,7 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "MilestoneUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "WalletAddressUpdated"): EventFragment;
 }
 
 export interface AdminChangedEventObject {
@@ -448,6 +469,20 @@ export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
 
 export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 
+export interface WalletAddressUpdatedEventObject {
+  applicationId: BigNumber;
+  grant: string;
+  walletAddress: string;
+  time: BigNumber;
+}
+export type WalletAddressUpdatedEvent = TypedEvent<
+  [BigNumber, string, string, BigNumber],
+  WalletAddressUpdatedEventObject
+>;
+
+export type WalletAddressUpdatedEventFilter =
+  TypedEventFilter<WalletAddressUpdatedEvent>;
+
 export interface ApplicationRegistryAbi extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -524,6 +559,12 @@ export interface ApplicationRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    eoaToScw(
+      arg0: PromiseOrValue<BytesLike>,
+      arg1: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     getApplicationGrant(
       _applicationId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -542,11 +583,6 @@ export interface ApplicationRegistryAbi extends BaseContract {
     initialize(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    isSubmittedApplication(
-      _applicationId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
 
     migrateWallet(
       fromWallet: PromiseOrValue<string>,
@@ -584,6 +620,7 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _workspaceId: PromiseOrValue<BigNumberish>,
       _metadataHash: PromiseOrValue<string>,
       _milestoneCount: PromiseOrValue<BigNumberish>,
+      _applicantAddress: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -596,6 +633,7 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _applicationId: PromiseOrValue<BigNumberish>,
       _metadataHash: PromiseOrValue<string>,
       _milestoneCount: PromiseOrValue<BigNumberish>,
+      _applicantAddress: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -604,6 +642,12 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _workspaceId: PromiseOrValue<BigNumberish>,
       _state: PromiseOrValue<BigNumberish>,
       _reasonMetadataHash: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    updateWalletAddress(
+      _applicationId: PromiseOrValue<BigNumberish>,
+      _applicantAddress: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -617,6 +661,11 @@ export interface ApplicationRegistryAbi extends BaseContract {
       data: PromiseOrValue<BytesLike>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    walletAddressMapping(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     workspaceReg(overrides?: CallOverrides): Promise<[string]>;
   };
@@ -670,6 +719,12 @@ export interface ApplicationRegistryAbi extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  eoaToScw(
+    arg0: PromiseOrValue<BytesLike>,
+    arg1: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   getApplicationGrant(
     _applicationId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -688,11 +743,6 @@ export interface ApplicationRegistryAbi extends BaseContract {
   initialize(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  isSubmittedApplication(
-    _applicationId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
 
   migrateWallet(
     fromWallet: PromiseOrValue<string>,
@@ -730,6 +780,7 @@ export interface ApplicationRegistryAbi extends BaseContract {
     _workspaceId: PromiseOrValue<BigNumberish>,
     _metadataHash: PromiseOrValue<string>,
     _milestoneCount: PromiseOrValue<BigNumberish>,
+    _applicantAddress: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -742,6 +793,7 @@ export interface ApplicationRegistryAbi extends BaseContract {
     _applicationId: PromiseOrValue<BigNumberish>,
     _metadataHash: PromiseOrValue<string>,
     _milestoneCount: PromiseOrValue<BigNumberish>,
+    _applicantAddress: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -750,6 +802,12 @@ export interface ApplicationRegistryAbi extends BaseContract {
     _workspaceId: PromiseOrValue<BigNumberish>,
     _state: PromiseOrValue<BigNumberish>,
     _reasonMetadataHash: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  updateWalletAddress(
+    _applicationId: PromiseOrValue<BigNumberish>,
+    _applicantAddress: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -763,6 +821,11 @@ export interface ApplicationRegistryAbi extends BaseContract {
     data: PromiseOrValue<BytesLike>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  walletAddressMapping(
+    arg0: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   workspaceReg(overrides?: CallOverrides): Promise<string>;
 
@@ -816,6 +879,12 @@ export interface ApplicationRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    eoaToScw(
+      arg0: PromiseOrValue<BytesLike>,
+      arg1: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     getApplicationGrant(
       _applicationId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -832,11 +901,6 @@ export interface ApplicationRegistryAbi extends BaseContract {
     ): Promise<BigNumber>;
 
     initialize(overrides?: CallOverrides): Promise<void>;
-
-    isSubmittedApplication(
-      _applicationId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
 
     migrateWallet(
       fromWallet: PromiseOrValue<string>,
@@ -872,6 +936,7 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _workspaceId: PromiseOrValue<BigNumberish>,
       _metadataHash: PromiseOrValue<string>,
       _milestoneCount: PromiseOrValue<BigNumberish>,
+      _applicantAddress: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -884,6 +949,7 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _applicationId: PromiseOrValue<BigNumberish>,
       _metadataHash: PromiseOrValue<string>,
       _milestoneCount: PromiseOrValue<BigNumberish>,
+      _applicantAddress: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -892,6 +958,12 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _workspaceId: PromiseOrValue<BigNumberish>,
       _state: PromiseOrValue<BigNumberish>,
       _reasonMetadataHash: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateWalletAddress(
+      _applicationId: PromiseOrValue<BigNumberish>,
+      _applicantAddress: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -905,6 +977,11 @@ export interface ApplicationRegistryAbi extends BaseContract {
       data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    walletAddressMapping(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     workspaceReg(overrides?: CallOverrides): Promise<string>;
   };
@@ -1004,6 +1081,19 @@ export interface ApplicationRegistryAbi extends BaseContract {
     Upgraded(
       implementation?: PromiseOrValue<string> | null
     ): UpgradedEventFilter;
+
+    "WalletAddressUpdated(uint96,address,bytes32,uint256)"(
+      applicationId?: PromiseOrValue<BigNumberish> | null,
+      grant?: null,
+      walletAddress?: null,
+      time?: null
+    ): WalletAddressUpdatedEventFilter;
+    WalletAddressUpdated(
+      applicationId?: PromiseOrValue<BigNumberish> | null,
+      grant?: null,
+      walletAddress?: null,
+      time?: null
+    ): WalletAddressUpdatedEventFilter;
   };
 
   estimateGas: {
@@ -1045,6 +1135,12 @@ export interface ApplicationRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    eoaToScw(
+      arg0: PromiseOrValue<BytesLike>,
+      arg1: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getApplicationGrant(
       _applicationId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1062,11 +1158,6 @@ export interface ApplicationRegistryAbi extends BaseContract {
 
     initialize(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    isSubmittedApplication(
-      _applicationId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     migrateWallet(
@@ -1105,6 +1196,7 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _workspaceId: PromiseOrValue<BigNumberish>,
       _metadataHash: PromiseOrValue<string>,
       _milestoneCount: PromiseOrValue<BigNumberish>,
+      _applicantAddress: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1117,6 +1209,7 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _applicationId: PromiseOrValue<BigNumberish>,
       _metadataHash: PromiseOrValue<string>,
       _milestoneCount: PromiseOrValue<BigNumberish>,
+      _applicantAddress: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1125,6 +1218,12 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _workspaceId: PromiseOrValue<BigNumberish>,
       _state: PromiseOrValue<BigNumberish>,
       _reasonMetadataHash: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    updateWalletAddress(
+      _applicationId: PromiseOrValue<BigNumberish>,
+      _applicantAddress: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1137,6 +1236,11 @@ export interface ApplicationRegistryAbi extends BaseContract {
       newImplementation: PromiseOrValue<string>,
       data: PromiseOrValue<BytesLike>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    walletAddressMapping(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     workspaceReg(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1183,6 +1287,12 @@ export interface ApplicationRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    eoaToScw(
+      arg0: PromiseOrValue<BytesLike>,
+      arg1: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getApplicationGrant(
       _applicationId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1200,11 +1310,6 @@ export interface ApplicationRegistryAbi extends BaseContract {
 
     initialize(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    isSubmittedApplication(
-      _applicationId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     migrateWallet(
@@ -1243,6 +1348,7 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _workspaceId: PromiseOrValue<BigNumberish>,
       _metadataHash: PromiseOrValue<string>,
       _milestoneCount: PromiseOrValue<BigNumberish>,
+      _applicantAddress: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1255,6 +1361,7 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _applicationId: PromiseOrValue<BigNumberish>,
       _metadataHash: PromiseOrValue<string>,
       _milestoneCount: PromiseOrValue<BigNumberish>,
+      _applicantAddress: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1263,6 +1370,12 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _workspaceId: PromiseOrValue<BigNumberish>,
       _state: PromiseOrValue<BigNumberish>,
       _reasonMetadataHash: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateWalletAddress(
+      _applicationId: PromiseOrValue<BigNumberish>,
+      _applicantAddress: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1275,6 +1388,11 @@ export interface ApplicationRegistryAbi extends BaseContract {
       newImplementation: PromiseOrValue<string>,
       data: PromiseOrValue<BytesLike>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    walletAddressMapping(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     workspaceReg(overrides?: CallOverrides): Promise<PopulatedTransaction>;

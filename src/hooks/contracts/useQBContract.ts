@@ -28,7 +28,7 @@ export default function useQBContract<C extends QBContract>(name: C, chainId?: S
 	return contract
 }
 
-const CONTRACT_INTERFACE_MAP = {
+export const CONTRACT_INTERFACE_MAP = {
 	workspace: WorkspaceRegistryAbi,
 	grantFactory: GrantFactoryAbi,
 	grant: GrantAbi,

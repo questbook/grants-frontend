@@ -888,6 +888,8 @@ export type GrantApplication = {
   updatedAtS: Scalars['Int'];
   /** Version of the application, incremented on resubmission */
   version: Scalars['Int'];
+  /** Wallet Address of the applicant */
+  walletAddress: Scalars['Bytes'];
 };
 
 
@@ -1365,6 +1367,12 @@ export type GrantApplication_Filter = {
   version_lte?: InputMaybe<Scalars['Int']>;
   version_not?: InputMaybe<Scalars['Int']>;
   version_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  walletAddress?: InputMaybe<Scalars['Bytes']>;
+  walletAddress_contains?: InputMaybe<Scalars['Bytes']>;
+  walletAddress_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  walletAddress_not?: InputMaybe<Scalars['Bytes']>;
+  walletAddress_not_contains?: InputMaybe<Scalars['Bytes']>;
+  walletAddress_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
 };
 
 export enum GrantApplication_OrderBy {
@@ -1387,7 +1395,8 @@ export enum GrantApplication_OrderBy {
   Reviews = 'reviews',
   State = 'state',
   UpdatedAtS = 'updatedAtS',
-  Version = 'version'
+  Version = 'version',
+  WalletAddress = 'walletAddress'
 }
 
 export type GrantField = {
@@ -5632,7 +5641,7 @@ export type GetGrantQueryVariables = Exact<{
 }>;
 
 
-export type GetGrantQuery = { __typename?: 'Query', grant?: { __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, link?: string | null, reviewType?: ReviewType | null, payoutType?: PayoutType | null, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, possibleValues?: Array<string> | null, isPii: boolean }>, applications: Array<{ __typename?: 'GrantApplication', id: string }>, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, rubric?: { __typename?: 'Rubric', id: string, isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null, myApplications: Array<{ __typename?: 'GrantApplication', id: string }>, workspace: { __typename?: 'Workspace', id: string, ownerId: string, logoIpfsHash: string, title: string, supportedNetworks: Array<SupportedNetwork>, safe?: { __typename?: 'WorkspaceSafe', id: string, chainId: string, address: string } | null, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, fullName?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number, profilePictureIpfsHash?: string | null, pii: Array<{ __typename?: 'PIIData', id: string, data: string }> }> } } | null };
+export type GetGrantQuery = { __typename?: 'Query', grant?: { __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, link?: string | null, reviewType?: ReviewType | null, payoutType?: PayoutType | null, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, possibleValues?: Array<string> | null, isPii: boolean }>, applications: Array<{ __typename?: 'GrantApplication', id: string }>, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, rubric?: { __typename?: 'Rubric', id: string, isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null, myApplications: Array<{ __typename?: 'GrantApplication', id: string }>, workspace: { __typename?: 'Workspace', id: string, ownerId: string, logoIpfsHash: string, title: string, supportedNetworks: Array<SupportedNetwork>, safe?: { __typename?: 'WorkspaceSafe', id: string, chainId: string, address: string } | null, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, fullName?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number, profilePictureIpfsHash?: string | null, enabled: boolean, addedAt: number, updatedAt: number, pii: Array<{ __typename?: 'PIIData', id: string, data: string }> }> } } | null };
 
 export type GetMemberPublicKeysQueryVariables = Exact<{
   workspaceId: Scalars['ID'];
@@ -8760,6 +8769,9 @@ export const GetGrantDocument = gql`
           id
           data
         }
+        enabled
+        addedAt
+        updatedAt
       }
     }
   }

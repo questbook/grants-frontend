@@ -42,6 +42,7 @@ export declare namespace WorkspaceRegistry {
 
 export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   functions: {
+    "GUARD_OFFSET()": FunctionFragment;
     "addQBAdmins(address[])": FunctionFragment;
     "anonAuthoriserAddress()": FunctionFragment;
     "apiFlagForWorkspaceId(uint96,uint8)": FunctionFragment;
@@ -51,6 +52,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     "disburseRewardFromSafe(uint96[],uint96[],address,string,string,uint256[],uint96,string)": FunctionFragment;
     "disburseRewardFromWallet(uint96[],uint96[],address,string,string,uint256[],uint96,string)": FunctionFragment;
     "disburseRewardP2P(uint96,address,uint96,address,uint256,uint96)": FunctionFragment;
+    "eoaToScw(address,uint96)": FunctionFragment;
     "getQBAdmins()": FunctionFragment;
     "initialize()": FunctionFragment;
     "isWorkspaceAdmin(uint96,address)": FunctionFragment;
@@ -62,11 +64,14 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     "owner()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
+    "proveMembership(uint96,string,address,uint8,bytes)": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
     "qbAdmins(uint256)": FunctionFragment;
     "removeQBAdmins(address[])": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setApplicationReg(address)": FunctionFragment;
+    "setGuardOffset(uint256)": FunctionFragment;
+    "splitSignature(bytes)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unpause()": FunctionFragment;
     "updateAnonAuthoriserAddress(address)": FunctionFragment;
@@ -78,12 +83,14 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     "updateWorkspacesVisible(uint96[],bool[])": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
+    "walletAddressToScwAddress(address)": FunctionFragment;
     "workspaceCount()": FunctionFragment;
     "workspaces(uint96)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "GUARD_OFFSET"
       | "addQBAdmins"
       | "anonAuthoriserAddress"
       | "apiFlagForWorkspaceId"
@@ -93,6 +100,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
       | "disburseRewardFromSafe"
       | "disburseRewardFromWallet"
       | "disburseRewardP2P"
+      | "eoaToScw"
       | "getQBAdmins"
       | "initialize"
       | "isWorkspaceAdmin"
@@ -104,11 +112,14 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
       | "owner"
       | "pause"
       | "paused"
+      | "proveMembership"
       | "proxiableUUID"
       | "qbAdmins"
       | "removeQBAdmins"
       | "renounceOwnership"
       | "setApplicationReg"
+      | "setGuardOffset"
+      | "splitSignature"
       | "transferOwnership"
       | "unpause"
       | "updateAnonAuthoriserAddress"
@@ -120,10 +131,15 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
       | "updateWorkspacesVisible"
       | "upgradeTo"
       | "upgradeToAndCall"
+      | "walletAddressToScwAddress"
       | "workspaceCount"
       | "workspaces"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "GUARD_OFFSET",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "addQBAdmins",
     values: [PromiseOrValue<string>[]]
@@ -195,6 +211,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "eoaToScw",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getQBAdmins",
     values?: undefined
   ): string;
@@ -237,6 +257,16 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "proveMembership",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>
+    ]
+  ): string;
+  encodeFunctionData(
     functionFragment: "proxiableUUID",
     values?: undefined
   ): string;
@@ -255,6 +285,14 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "setApplicationReg",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setGuardOffset",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "splitSignature",
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -319,6 +357,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
+    functionFragment: "walletAddressToScwAddress",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "workspaceCount",
     values?: undefined
   ): string;
@@ -327,6 +369,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "GUARD_OFFSET",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "addQBAdmins",
     data: BytesLike
@@ -363,6 +409,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     functionFragment: "disburseRewardP2P",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "eoaToScw", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getQBAdmins",
     data: BytesLike
@@ -396,6 +443,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "proveMembership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "proxiableUUID",
     data: BytesLike
   ): Result;
@@ -410,6 +461,14 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setApplicationReg",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setGuardOffset",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "splitSignature",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -448,6 +507,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "upgradeToAndCall",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "walletAddressToScwAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -845,6 +908,8 @@ export interface WorkspaceRegistryAbi extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    GUARD_OFFSET(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     addQBAdmins(
       _addresses: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -909,6 +974,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    eoaToScw(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     getQBAdmins(overrides?: CallOverrides): Promise<[string[]]>;
 
     initialize(
@@ -963,6 +1034,15 @@ export interface WorkspaceRegistryAbi extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<[boolean]>;
 
+    proveMembership(
+      _id: PromiseOrValue<BigNumberish>,
+      _metadataHash: PromiseOrValue<string>,
+      _walletAddress: PromiseOrValue<string>,
+      _role: PromiseOrValue<BigNumberish>,
+      _signature: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
 
     qbAdmins(
@@ -983,6 +1063,16 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       _applicationReg: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    setGuardOffset(
+      _guardOffset: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    splitSignature(
+      sig: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string, string, number] & { r: string; s: string; v: number }>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -1054,6 +1144,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    walletAddressToScwAddress(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     workspaceCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     workspaces(
@@ -1068,6 +1163,8 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       }
     >;
   };
+
+  GUARD_OFFSET(overrides?: CallOverrides): Promise<BigNumber>;
 
   addQBAdmins(
     _addresses: PromiseOrValue<string>[],
@@ -1133,6 +1230,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  eoaToScw(
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   getQBAdmins(overrides?: CallOverrides): Promise<string[]>;
 
   initialize(
@@ -1187,6 +1290,15 @@ export interface WorkspaceRegistryAbi extends BaseContract {
 
   paused(overrides?: CallOverrides): Promise<boolean>;
 
+  proveMembership(
+    _id: PromiseOrValue<BigNumberish>,
+    _metadataHash: PromiseOrValue<string>,
+    _walletAddress: PromiseOrValue<string>,
+    _role: PromiseOrValue<BigNumberish>,
+    _signature: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
   qbAdmins(
@@ -1207,6 +1319,16 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     _applicationReg: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  setGuardOffset(
+    _guardOffset: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  splitSignature(
+    sig: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<[string, string, number] & { r: string; s: string; v: number }>;
 
   transferOwnership(
     newOwner: PromiseOrValue<string>,
@@ -1278,6 +1400,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  walletAddressToScwAddress(
+    arg0: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   workspaceCount(overrides?: CallOverrides): Promise<BigNumber>;
 
   workspaces(
@@ -1293,6 +1420,8 @@ export interface WorkspaceRegistryAbi extends BaseContract {
   >;
 
   callStatic: {
+    GUARD_OFFSET(overrides?: CallOverrides): Promise<BigNumber>;
+
     addQBAdmins(
       _addresses: PromiseOrValue<string>[],
       overrides?: CallOverrides
@@ -1357,6 +1486,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    eoaToScw(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     getQBAdmins(overrides?: CallOverrides): Promise<string[]>;
 
     initialize(overrides?: CallOverrides): Promise<void>;
@@ -1407,6 +1542,15 @@ export interface WorkspaceRegistryAbi extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<boolean>;
 
+    proveMembership(
+      _id: PromiseOrValue<BigNumberish>,
+      _metadataHash: PromiseOrValue<string>,
+      _walletAddress: PromiseOrValue<string>,
+      _role: PromiseOrValue<BigNumberish>,
+      _signature: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
     qbAdmins(
@@ -1425,6 +1569,16 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       _applicationReg: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    setGuardOffset(
+      _guardOffset: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    splitSignature(
+      sig: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string, string, number] & { r: string; s: string; v: number }>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -1493,6 +1647,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    walletAddressToScwAddress(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     workspaceCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1755,6 +1914,8 @@ export interface WorkspaceRegistryAbi extends BaseContract {
   };
 
   estimateGas: {
+    GUARD_OFFSET(overrides?: CallOverrides): Promise<BigNumber>;
+
     addQBAdmins(
       _addresses: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1819,6 +1980,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    eoaToScw(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getQBAdmins(overrides?: CallOverrides): Promise<BigNumber>;
 
     initialize(
@@ -1873,6 +2040,15 @@ export interface WorkspaceRegistryAbi extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
 
+    proveMembership(
+      _id: PromiseOrValue<BigNumberish>,
+      _metadataHash: PromiseOrValue<string>,
+      _walletAddress: PromiseOrValue<string>,
+      _role: PromiseOrValue<BigNumberish>,
+      _signature: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
 
     qbAdmins(
@@ -1892,6 +2068,16 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     setApplicationReg(
       _applicationReg: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setGuardOffset(
+      _guardOffset: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    splitSignature(
+      sig: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     transferOwnership(
@@ -1964,6 +2150,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    walletAddressToScwAddress(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     workspaceCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     workspaces(
@@ -1973,6 +2164,8 @@ export interface WorkspaceRegistryAbi extends BaseContract {
   };
 
   populateTransaction: {
+    GUARD_OFFSET(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     addQBAdmins(
       _addresses: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2039,6 +2232,12 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    eoaToScw(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getQBAdmins(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     initialize(
@@ -2093,6 +2292,15 @@ export interface WorkspaceRegistryAbi extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    proveMembership(
+      _id: PromiseOrValue<BigNumberish>,
+      _metadataHash: PromiseOrValue<string>,
+      _walletAddress: PromiseOrValue<string>,
+      _role: PromiseOrValue<BigNumberish>,
+      _signature: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     qbAdmins(
@@ -2112,6 +2320,16 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     setApplicationReg(
       _applicationReg: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setGuardOffset(
+      _guardOffset: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    splitSignature(
+      sig: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(
@@ -2182,6 +2400,11 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       newImplementation: PromiseOrValue<string>,
       data: PromiseOrValue<BytesLike>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    walletAddressToScwAddress(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     workspaceCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;

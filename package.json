@@ -35,6 +35,8 @@
     "@questbook/anon-authoriser": "git+https://github.com/questbook/anon-authoriser",
     "@questbook/service-validator-client": "git+https://github.com/questbook/service-validator-typescript-client",
     "@questbook/supported-safes": "git+https://github.com/questbook/supported-safes",
+    "@safe-global/safe-core-sdk": "^3.3.1",
+    "@safe-global/safe-ethers-lib": "^1.9.1",
     "@sentry/nextjs": "^7.13.0",
     "@solana/web3.js": "^1.52.0",
     "@unstoppabledomains/resolution": "^8.3.3",

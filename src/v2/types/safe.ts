@@ -77,7 +77,7 @@ export interface Safe {
      *   5. Update the transaction on the Questbook smart contract
      *   6. Close the modal using the Callback
      */
-    proposeTransactions(grantName: string, transactions: TransactionType[], wallet: any): Promise<string>
+    proposeTransactions(workspaceId: string, grantAddress: string, transactions: TransactionType[], wallet: any): Promise<string>
 
     createMultiTransaction(transactions: MetaTransaction[], safeAddress: string): void
     /**
