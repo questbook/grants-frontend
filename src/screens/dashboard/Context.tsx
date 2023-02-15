@@ -22,7 +22,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const { setSafeObj } = useSafeContext()
 	const { grantId, chainId: _chainId, role: _role, proposalId, isRenderingProposalBody } = router.query
 	const { setWorkspace } = useContext(ApiClientsContext)!
-	const { scwAddress, webwallet,setDashboardStep } = useContext(WebwalletContext)!
+	const { scwAddress, webwallet, setDashboardStep } = useContext(WebwalletContext)!
 	const { grant, setGrant, role, setRole, setIsLoading } = useContext(GrantsProgramContext)!
 
 	const chainId = useMemo(() => {
@@ -367,8 +367,8 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 			return
 		}
-		
-		if(isRenderingProposalBody==='true') {
+
+		if(isRenderingProposalBody === 'true') {
 			setDashboardStep(true)
 		}
 
@@ -383,7 +383,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 				router.push({
 					pathname: '/dashboard',
-					query: { ...router.query, proposalId, isRenderingProposalBody}
+					query: { ...router.query, proposalId, isRenderingProposalBody }
 				}, undefined, { shallow: true })
 			}
 		} else {

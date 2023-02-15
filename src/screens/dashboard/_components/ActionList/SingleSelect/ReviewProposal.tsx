@@ -1,4 +1,5 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
+import { useMediaQuery } from 'react-responsive'
 import { Button, Flex, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
@@ -32,7 +33,11 @@ function ReviewProposal() {
 							justifyContent='flex-start'
 							onClick={
 								() => {
-									router.back()
+									if(isMobile) {
+										router.back()
+									} else {
+										setShowSubmitReviewPanel(false)
+									}
 								}
 							} />
 					)
@@ -300,7 +305,7 @@ function ReviewProposal() {
 	}, [proposals, selectedProposals])
 
 	const isReviewPending = useMemo(() => {
-		return proposal?.pendingReviewerAddresses?.indexOf(scwAddress?.toLowerCase() ?? '') !== -1 && proposal?.state === 'submitted'
+		return ((proposal?.applicationReviewers?.find(reviewer => reviewer.member?.actorId === scwAddress?.toLowerCase()) !== undefined && proposal?.pendingReviewerAddresses?.indexOf(scwAddress?.toLowerCase() ?? '') !== -1) || proposal?.applicationReviewers?.find(reviewer => reviewer.member?.actorId === scwAddress?.toLowerCase()) === undefined) && proposal?.state === 'submitted'
 	}, [proposal, scwAddress])
 
 	const chainId = useMemo(() => {
@@ -308,6 +313,8 @@ function ReviewProposal() {
 	}, [grant])
 
 	const { loadReview } = useLoadReview(grant?.id, chainId)
+
+	const isMobile = useMediaQuery({ query:'(max-width:600px)' })
 
 	useEffect(() => {
 		if(grant?.reviewType === 'voting') {

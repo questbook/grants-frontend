@@ -254,7 +254,7 @@ function FundBuilderDrawer() {
 					submittedProposals.map(() => ipfsHash),
 				]
 
-				return await acceptProposals({ method: 'batchUpdateApplicationState', args: methodArgs })
+				await acceptProposals({ method: 'batchUpdateApplicationState', args: methodArgs })
 			}
 
 			const transactionData = tos.map((to, i) => {
@@ -269,7 +269,7 @@ function FundBuilderDrawer() {
 			})
 			let proposaladdress: any = ''
 			if(safeObj.getIsEvm()) {
-				proposaladdress = await safeObj?.proposeTransactions('', transactionData, '')
+				proposaladdress = await safeObj?.proposeTransactions(grant?.workspace?.id, transactionData, '')
 				if(proposaladdress?.error) {
 					customToast({
 						title: 'An error occurred while creating transaction on Gnosis Safe',
@@ -282,7 +282,7 @@ function FundBuilderDrawer() {
 
 				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress, safeObj?.chainId, proposaladdress))
 			} else {
-				proposaladdress = await safeObj?.proposeTransactions(grant?.title, transactionData, phantomWallet)
+				proposaladdress = await safeObj?.proposeTransactions(grant?.workspace?.id, transactionData, phantomWallet)
 				if(proposaladdress?.error) {
 					customToast({
 						title: 'An error occurred while creating transaction on Multi-sig',

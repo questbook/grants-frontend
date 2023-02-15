@@ -172,7 +172,7 @@ function SetupProfile() {
 			workspaceId,
 			memberId: `${workspaceId}.${scwAddress}`,
 			chainId: inviteInfo?.chainId ?? defaultChainId,
-			type: 'join',
+			type: 'join-using-link',
 			setNetworkTransactionModalStep,
 			setTransactionHash,
 		})

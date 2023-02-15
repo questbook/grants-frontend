@@ -1,5 +1,6 @@
 import { useContext, useMemo, useState } from 'react'
 import { convertToRaw } from 'draft-js'
+import { ethers } from 'ethers'
 import { APPLICATION_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { USD_ASSET } from 'src/constants/chains'
 import ApplicationRegistryAbi from 'src/contracts/abi/ApplicationRegistryAbi.json'
@@ -10,6 +11,7 @@ import useCreateMapping from 'src/libraries/hooks/useCreateMapping'
 import logger from 'src/libraries/logger'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
 import { getChainInfo } from 'src/libraries/utils/token'
+import { isValidEthereumAddress } from 'src/libraries/utils/validations'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { findField } from 'src/screens/proposal_form/_utils'
 import { Form } from 'src/screens/proposal_form/_utils/types'
@@ -112,9 +114,14 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 			const proposalDataHash = (await uploadToIPFS(JSON.stringify(data))).hash
 			logger.info({ proposalDataHash }, 'useSubmitProposal: (proposalDataHash)')
 
+			let builderAddressInBytes: Uint8Array | string = new Uint8Array(32)
+			if(isValidEthereumAddress(fields['applicantAddress'][0]?.value)) {
+				builderAddressInBytes = ethers.utils.hexZeroPad(ethers.utils.hexlify(ethers.utils.getAddress(fields['applicantAddress'][0]?.value)), 32)
+			}
+
 			// Step - 6: Call the contract function to submit the proposal
 			const methodArgs = type === 'submit' ?
-				[grant.id, grant.workspace.id, proposalDataHash, data.milestones.length] :
+				[grant.id, grant.workspace.id, proposalDataHash, data.milestones.length, builderAddressInBytes] :
 				[proposal?.id, proposalDataHash, data.milestones.length]
 			logger.info({ methodArgs }, 'useSubmitProposal: (Method args)')
 

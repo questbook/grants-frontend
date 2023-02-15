@@ -32,6 +32,7 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
   functions: {
     "applicationReg()": FunctionFragment;
     "applicationsToGrant(address,uint256)": FunctionFragment;
+    "assignAndReview(uint96,uint96,address,address,bool,string)": FunctionFragment;
     "assignReviewers(uint96,uint96,address,address[],bool[])": FunctionFragment;
     "assignReviewersBatch(uint96,address,uint96[],address[],bool[])": FunctionFragment;
     "fulfillPayment(uint96,uint96[],address,uint96[],address,uint256)": FunctionFragment;
@@ -46,7 +47,6 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
     "owner()": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "resetAllRubrics(uint96,address)": FunctionFragment;
     "reviewCount()": FunctionFragment;
     "reviewPaymentsStatus(uint96)": FunctionFragment;
     "reviewerAssignmentCounts(address,address)": FunctionFragment;
@@ -56,7 +56,7 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
     "setGrantFactory(address)": FunctionFragment;
     "setRubrics(uint96,address,string)": FunctionFragment;
     "setWorkspaceReg(address)": FunctionFragment;
-    "submitReview(address,uint96,uint96,address,string)": FunctionFragment;
+    "submitReview(uint96,uint96,address,string)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
@@ -67,6 +67,7 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "applicationReg"
       | "applicationsToGrant"
+      | "assignAndReview"
       | "assignReviewers"
       | "assignReviewersBatch"
       | "fulfillPayment"
@@ -81,7 +82,6 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
       | "owner"
       | "proxiableUUID"
       | "renounceOwnership"
-      | "resetAllRubrics"
       | "reviewCount"
       | "reviewPaymentsStatus"
       | "reviewerAssignmentCounts"
@@ -105,6 +105,17 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "applicationsToGrant",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "assignAndReview",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<boolean>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "assignReviewers",
@@ -191,10 +202,6 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "resetAllRubrics",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "reviewCount",
     values?: undefined
   ): string;
@@ -237,7 +244,6 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "submitReview",
     values: [
-      PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
@@ -267,6 +273,10 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "applicationsToGrant",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "assignAndReview",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -317,10 +327,6 @@ export interface ApplicationReviewRegistryAbiInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "resetAllRubrics",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -569,6 +575,16 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    assignAndReview(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _applicationId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _reviewer: PromiseOrValue<string>,
+      _active: PromiseOrValue<boolean>,
+      _reviewMetadataHash: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     assignReviewers(
       _workspaceId: PromiseOrValue<BigNumberish>,
       _applicationId: PromiseOrValue<BigNumberish>,
@@ -657,12 +673,6 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    resetAllRubrics(
-      _workspaceId: PromiseOrValue<BigNumberish>,
-      _grantAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     reviewCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     reviewPaymentsStatus(
@@ -721,7 +731,6 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     ): Promise<ContractTransaction>;
 
     submitReview(
-      _reviewerAddress: PromiseOrValue<string>,
       _workspaceId: PromiseOrValue<BigNumberish>,
       _applicationId: PromiseOrValue<BigNumberish>,
       _grantAddress: PromiseOrValue<string>,
@@ -755,6 +764,16 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     arg1: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  assignAndReview(
+    _workspaceId: PromiseOrValue<BigNumberish>,
+    _applicationId: PromiseOrValue<BigNumberish>,
+    _grantAddress: PromiseOrValue<string>,
+    _reviewer: PromiseOrValue<string>,
+    _active: PromiseOrValue<boolean>,
+    _reviewMetadataHash: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   assignReviewers(
     _workspaceId: PromiseOrValue<BigNumberish>,
@@ -844,12 +863,6 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  resetAllRubrics(
-    _workspaceId: PromiseOrValue<BigNumberish>,
-    _grantAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   reviewCount(overrides?: CallOverrides): Promise<BigNumber>;
 
   reviewPaymentsStatus(
@@ -908,7 +921,6 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
   ): Promise<ContractTransaction>;
 
   submitReview(
-    _reviewerAddress: PromiseOrValue<string>,
     _workspaceId: PromiseOrValue<BigNumberish>,
     _applicationId: PromiseOrValue<BigNumberish>,
     _grantAddress: PromiseOrValue<string>,
@@ -942,6 +954,16 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    assignAndReview(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _applicationId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _reviewer: PromiseOrValue<string>,
+      _active: PromiseOrValue<boolean>,
+      _reviewMetadataHash: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     assignReviewers(
       _workspaceId: PromiseOrValue<BigNumberish>,
@@ -1027,12 +1049,6 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
-    resetAllRubrics(
-      _workspaceId: PromiseOrValue<BigNumberish>,
-      _grantAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     reviewCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     reviewPaymentsStatus(
@@ -1091,7 +1107,6 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     ): Promise<void>;
 
     submitReview(
-      _reviewerAddress: PromiseOrValue<string>,
       _workspaceId: PromiseOrValue<BigNumberish>,
       _applicationId: PromiseOrValue<BigNumberish>,
       _grantAddress: PromiseOrValue<string>,
@@ -1264,6 +1279,16 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    assignAndReview(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _applicationId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _reviewer: PromiseOrValue<string>,
+      _active: PromiseOrValue<boolean>,
+      _reviewMetadataHash: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     assignReviewers(
       _workspaceId: PromiseOrValue<BigNumberish>,
       _applicationId: PromiseOrValue<BigNumberish>,
@@ -1344,12 +1369,6 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    resetAllRubrics(
-      _workspaceId: PromiseOrValue<BigNumberish>,
-      _grantAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     reviewCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     reviewPaymentsStatus(
@@ -1398,7 +1417,6 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     ): Promise<BigNumber>;
 
     submitReview(
-      _reviewerAddress: PromiseOrValue<string>,
       _workspaceId: PromiseOrValue<BigNumberish>,
       _applicationId: PromiseOrValue<BigNumberish>,
       _grantAddress: PromiseOrValue<string>,
@@ -1432,6 +1450,16 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    assignAndReview(
+      _workspaceId: PromiseOrValue<BigNumberish>,
+      _applicationId: PromiseOrValue<BigNumberish>,
+      _grantAddress: PromiseOrValue<string>,
+      _reviewer: PromiseOrValue<string>,
+      _active: PromiseOrValue<boolean>,
+      _reviewMetadataHash: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     assignReviewers(
@@ -1514,12 +1542,6 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    resetAllRubrics(
-      _workspaceId: PromiseOrValue<BigNumberish>,
-      _grantAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     reviewCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     reviewPaymentsStatus(
@@ -1568,7 +1590,6 @@ export interface ApplicationReviewRegistryAbi extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     submitReview(
-      _reviewerAddress: PromiseOrValue<string>,
       _workspaceId: PromiseOrValue<BigNumberish>,
       _applicationId: PromiseOrValue<BigNumberish>,
       _grantAddress: PromiseOrValue<string>,
