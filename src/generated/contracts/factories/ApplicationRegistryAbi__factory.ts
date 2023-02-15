@@ -109,6 +109,55 @@ const _abi = [
       {
         indexed: false,
         internalType: "address",
+        name: "grant",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "metadataHash",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "uint48",
+        name: "milestoneCount",
+        type: "uint48",
+      },
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "walletAddress",
+        type: "bytes32",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "time",
+        type: "uint256",
+      },
+    ],
+    name: "ApplicationSubmitted",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint96",
+        name: "applicationId",
+        type: "uint96",
+      },
+      {
+        indexed: false,
+        internalType: "address",
         name: "owner",
         type: "address",
       },
@@ -233,6 +282,37 @@ const _abi = [
       },
     ],
     name: "Upgraded",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint96",
+        name: "applicationId",
+        type: "uint96",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "grant",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "walletAddress",
+        type: "bytes32",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "time",
+        type: "uint256",
+      },
+    ],
+    name: "WalletAddressUpdated",
     type: "event",
   },
   {
@@ -416,6 +496,30 @@ const _abi = [
     name: "completeApplication",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "eoaToScw",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {

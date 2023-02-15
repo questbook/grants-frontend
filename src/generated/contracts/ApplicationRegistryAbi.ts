@@ -37,6 +37,7 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     "approveMilestone(uint96,uint48,uint96,string)": FunctionFragment;
     "batchUpdateApplicationState(uint96[],uint8[],uint96,string[])": FunctionFragment;
     "completeApplication(uint96,uint96,string)": FunctionFragment;
+    "eoaToScw(bytes32,address)": FunctionFragment;
     "getApplicationGrant(uint96)": FunctionFragment;
     "getApplicationOwner(uint96)": FunctionFragment;
     "getApplicationWorkspace(uint96)": FunctionFragment;
@@ -69,6 +70,7 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
       | "approveMilestone"
       | "batchUpdateApplicationState"
       | "completeApplication"
+      | "eoaToScw"
       | "getApplicationGrant"
       | "getApplicationOwner"
       | "getApplicationWorkspace"
@@ -133,6 +135,10 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "eoaToScw",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getApplicationGrant",
@@ -263,6 +269,7 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     functionFragment: "completeApplication",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "eoaToScw", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getApplicationGrant",
     data: BytesLike
@@ -343,23 +350,31 @@ export interface ApplicationRegistryAbiInterface extends utils.Interface {
     "AdminChanged(address,address)": EventFragment;
     "ApplicationMigrate(uint96,address,uint256)": EventFragment;
     "ApplicationSubmitted(uint96,address,address,string,uint48,uint256)": EventFragment;
+    "ApplicationSubmitted(uint96,address,address,string,uint48,bytes32,uint256)": EventFragment;
     "ApplicationUpdated(uint96,address,string,uint8,uint48,uint256)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "MilestoneUpdated(uint96,uint96,uint8,string,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Upgraded(address)": EventFragment;
+    "WalletAddressUpdated(uint96,address,bytes32,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApplicationMigrate"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ApplicationSubmitted"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "ApplicationSubmitted(uint96,address,address,string,uint48,uint256)"
+  ): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "ApplicationSubmitted(uint96,address,address,string,uint48,bytes32,uint256)"
+  ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApplicationUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MilestoneUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "WalletAddressUpdated"): EventFragment;
 }
 
 export interface AdminChangedEventObject {
@@ -386,7 +401,7 @@ export type ApplicationMigrateEvent = TypedEvent<
 export type ApplicationMigrateEventFilter =
   TypedEventFilter<ApplicationMigrateEvent>;
 
-export interface ApplicationSubmittedEventObject {
+export interface ApplicationSubmitted_uint96_address_address_string_uint48_uint256_EventObject {
   applicationId: BigNumber;
   grant: string;
   owner: string;
@@ -394,13 +409,32 @@ export interface ApplicationSubmittedEventObject {
   milestoneCount: number;
   time: BigNumber;
 }
-export type ApplicationSubmittedEvent = TypedEvent<
-  [BigNumber, string, string, string, number, BigNumber],
-  ApplicationSubmittedEventObject
->;
+export type ApplicationSubmitted_uint96_address_address_string_uint48_uint256_Event =
+  TypedEvent<
+    [BigNumber, string, string, string, number, BigNumber],
+    ApplicationSubmitted_uint96_address_address_string_uint48_uint256_EventObject
+  >;
 
-export type ApplicationSubmittedEventFilter =
-  TypedEventFilter<ApplicationSubmittedEvent>;
+export type ApplicationSubmitted_uint96_address_address_string_uint48_uint256_EventFilter =
+  TypedEventFilter<ApplicationSubmitted_uint96_address_address_string_uint48_uint256_Event>;
+
+export interface ApplicationSubmitted_uint96_address_address_string_uint48_bytes32_uint256_EventObject {
+  applicationId: BigNumber;
+  grant: string;
+  owner: string;
+  metadataHash: string;
+  milestoneCount: number;
+  walletAddress: string;
+  time: BigNumber;
+}
+export type ApplicationSubmitted_uint96_address_address_string_uint48_bytes32_uint256_Event =
+  TypedEvent<
+    [BigNumber, string, string, string, number, string, BigNumber],
+    ApplicationSubmitted_uint96_address_address_string_uint48_bytes32_uint256_EventObject
+  >;
+
+export type ApplicationSubmitted_uint96_address_address_string_uint48_bytes32_uint256_EventFilter =
+  TypedEventFilter<ApplicationSubmitted_uint96_address_address_string_uint48_bytes32_uint256_Event>;
 
 export interface ApplicationUpdatedEventObject {
   applicationId: BigNumber;
@@ -468,6 +502,20 @@ export interface UpgradedEventObject {
 export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
 
 export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
+
+export interface WalletAddressUpdatedEventObject {
+  applicationId: BigNumber;
+  grant: string;
+  walletAddress: string;
+  time: BigNumber;
+}
+export type WalletAddressUpdatedEvent = TypedEvent<
+  [BigNumber, string, string, BigNumber],
+  WalletAddressUpdatedEventObject
+>;
+
+export type WalletAddressUpdatedEventFilter =
+  TypedEventFilter<WalletAddressUpdatedEvent>;
 
 export interface ApplicationRegistryAbi extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -544,6 +592,12 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _reasonMetadataHash: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    eoaToScw(
+      arg0: PromiseOrValue<BytesLike>,
+      arg1: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     getApplicationGrant(
       _applicationId: PromiseOrValue<BigNumberish>,
@@ -703,6 +757,12 @@ export interface ApplicationRegistryAbi extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  eoaToScw(
+    arg0: PromiseOrValue<BytesLike>,
+    arg1: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   getApplicationGrant(
     _applicationId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -861,6 +921,12 @@ export interface ApplicationRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    eoaToScw(
+      arg0: PromiseOrValue<BytesLike>,
+      arg1: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     getApplicationGrant(
       _applicationId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -994,15 +1060,16 @@ export interface ApplicationRegistryAbi extends BaseContract {
       metadataHash?: null,
       milestoneCount?: null,
       time?: null
-    ): ApplicationSubmittedEventFilter;
-    ApplicationSubmitted(
+    ): ApplicationSubmitted_uint96_address_address_string_uint48_uint256_EventFilter;
+    "ApplicationSubmitted(uint96,address,address,string,uint48,bytes32,uint256)"(
       applicationId?: PromiseOrValue<BigNumberish> | null,
       grant?: null,
       owner?: null,
       metadataHash?: null,
       milestoneCount?: null,
+      walletAddress?: null,
       time?: null
-    ): ApplicationSubmittedEventFilter;
+    ): ApplicationSubmitted_uint96_address_address_string_uint48_bytes32_uint256_EventFilter;
 
     "ApplicationUpdated(uint96,address,string,uint8,uint48,uint256)"(
       applicationId?: PromiseOrValue<BigNumberish> | null,
@@ -1061,6 +1128,19 @@ export interface ApplicationRegistryAbi extends BaseContract {
     Upgraded(
       implementation?: PromiseOrValue<string> | null
     ): UpgradedEventFilter;
+
+    "WalletAddressUpdated(uint96,address,bytes32,uint256)"(
+      applicationId?: PromiseOrValue<BigNumberish> | null,
+      grant?: null,
+      walletAddress?: null,
+      time?: null
+    ): WalletAddressUpdatedEventFilter;
+    WalletAddressUpdated(
+      applicationId?: PromiseOrValue<BigNumberish> | null,
+      grant?: null,
+      walletAddress?: null,
+      time?: null
+    ): WalletAddressUpdatedEventFilter;
   };
 
   estimateGas: {
@@ -1100,6 +1180,12 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _workspaceId: PromiseOrValue<BigNumberish>,
       _reasonMetadataHash: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    eoaToScw(
+      arg0: PromiseOrValue<BytesLike>,
+      arg1: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getApplicationGrant(
@@ -1250,6 +1336,12 @@ export interface ApplicationRegistryAbi extends BaseContract {
       _workspaceId: PromiseOrValue<BigNumberish>,
       _reasonMetadataHash: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    eoaToScw(
+      arg0: PromiseOrValue<BytesLike>,
+      arg1: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getApplicationGrant(
