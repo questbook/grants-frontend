@@ -1,4 +1,4 @@
-import { useCallback, useContext, useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { APPLICATION_REVIEW_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { defaultChainId } from 'src/constants/chains'
 import useQBContract from 'src/hooks/contracts/useQBContract'
@@ -48,12 +48,13 @@ function useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash }:
 		chainId,
 	})
 
-	const submitReview = useCallback(async() => {
+	const submitReview = async() => {
 		try {
 			if(!webwallet || !biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress || !grant?.workspace?.id || !grant || !proposal?.id || !review) {
 				return
 			}
 
+			const shouldAssignAndReview = proposal.applicationReviewers.find(reviewer => reviewer.member.actorId === scwAddress.toLowerCase()) === undefined
 			logger.info({ review }, 'Review to be submitted')
 
 			setNetworkTransactionModalStep(0)
@@ -61,13 +62,13 @@ function useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash }:
 
 			const { ipfsHash } = await generateReviewData({ items: review?.items! })
 
-			const methodArgs = [scwAddress, grant?.workspace.id, proposal.id, grant.id, ipfsHash]
+			const methodArgs = shouldAssignAndReview ? [grant?.workspace.id, proposal.id, grant.id, scwAddress, true, ipfsHash] : [grant?.workspace.id, proposal.id, grant.id, ipfsHash]
 			logger.info({ methodArgs }, 'useSubmitProposal: (Method args)')
 
 			const response = await sendGaslessTransaction(
 				biconomy,
 				applicationReviewRegistryContract,
-				'submitReview',
+				shouldAssignAndReview ? 'assignAndReview' : 'submitReview',
 				methodArgs,
 				APPLICATION_REVIEW_REGISTRY_ADDRESS[chainId],
 				biconomyWalletClient,
@@ -96,12 +97,10 @@ function useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash }:
 			logger.error(e, 'useSubmitReview: (Error)')
 			setNetworkTransactionModalStep(undefined)
 		}
-	}, [chainId, webwallet, biconomy, biconomyWalletClient, scwAddress, biconomyLoading, grant, proposal, review])
+	}
 
 	return {
-		submitReview: useMemo(() => {
-			return submitReview
-		}, [chainId, webwallet, biconomy, biconomyWalletClient, scwAddress, biconomyLoading, grant, proposal, review]), isBiconomyInitialised
+		submitReview, isBiconomyInitialised
 	}
 }
 

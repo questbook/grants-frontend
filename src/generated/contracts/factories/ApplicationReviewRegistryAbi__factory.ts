@@ -394,6 +394,44 @@ const _abi = [
         type: "address",
       },
       {
+        internalType: "address",
+        name: "_reviewer",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "_active",
+        type: "bool",
+      },
+      {
+        internalType: "string",
+        name: "_reviewMetadataHash",
+        type: "string",
+      },
+    ],
+    name: "assignAndReview",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint96",
+        name: "_workspaceId",
+        type: "uint96",
+      },
+      {
+        internalType: "uint96",
+        name: "_applicationId",
+        type: "uint96",
+      },
+      {
+        internalType: "address",
+        name: "_grantAddress",
+        type: "address",
+      },
+      {
         internalType: "address[]",
         name: "_reviewers",
         type: "address[]",
@@ -696,24 +734,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint96",
-        name: "_workspaceId",
-        type: "uint96",
-      },
-      {
-        internalType: "address",
-        name: "_grantAddress",
-        type: "address",
-      },
-    ],
-    name: "resetAllRubrics",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "reviewCount",
     outputs: [
@@ -911,11 +931,6 @@ const _abi = [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "_reviewerAddress",
-        type: "address",
-      },
       {
         internalType: "uint96",
         name: "_workspaceId",

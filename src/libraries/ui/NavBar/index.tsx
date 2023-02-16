@@ -47,10 +47,10 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 				bg={bg}
 				ps={[6, 24]}
 				pe={24}
-				backgroundColor={['black.1' ,'gray.1']}
+				backgroundColor={['black.1', 'gray.1']}
 				py='16px'
 				minWidth={{ base: '-webkit-fill-available' }}
-				paddingInlineEnd={['35px','120px']}
+				paddingInlineEnd={['35px', '120px']}
 			>
 				<Image
 					alignSelf='flex-start'
@@ -292,7 +292,7 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 				right={0}
 				zIndex={1}
 				// variant='header-container'
-				maxH='60px'
+				maxH='80px'
 				display='flex'
 				alignItems='center'
 				minW='100%'

@@ -680,6 +680,19 @@ const _abi = [
     type: "event",
   },
   {
+    inputs: [],
+    name: "GUARD_OFFSET",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "address[]",
@@ -928,6 +941,30 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "uint96",
+        name: "",
+        type: "uint96",
+      },
+    ],
+    name: "eoaToScw",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "getQBAdmins",
     outputs: [
@@ -1127,6 +1164,39 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "uint96",
+        name: "_id",
+        type: "uint96",
+      },
+      {
+        internalType: "string",
+        name: "_metadataHash",
+        type: "string",
+      },
+      {
+        internalType: "address",
+        name: "_walletAddress",
+        type: "address",
+      },
+      {
+        internalType: "uint8",
+        name: "_role",
+        type: "uint8",
+      },
+      {
+        internalType: "bytes",
+        name: "_signature",
+        type: "bytes",
+      },
+    ],
+    name: "proveMembership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "proxiableUUID",
     outputs: [
@@ -1189,6 +1259,48 @@ const _abi = [
     name: "setApplicationReg",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_guardOffset",
+        type: "uint256",
+      },
+    ],
+    name: "setGuardOffset",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes",
+        name: "sig",
+        type: "bytes",
+      },
+    ],
+    name: "splitSignature",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "r",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes32",
+        name: "s",
+        type: "bytes32",
+      },
+      {
+        internalType: "uint8",
+        name: "v",
+        type: "uint8",
+      },
+    ],
+    stateMutability: "pure",
     type: "function",
   },
   {
@@ -1406,6 +1518,25 @@ const _abi = [
     name: "upgradeToAndCall",
     outputs: [],
     stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "walletAddressToScwAddress",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {

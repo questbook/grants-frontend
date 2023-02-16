@@ -78,6 +78,9 @@ query getGrant($grantId: ID!, $actorId: Bytes!) {
           id
           data
         }
+        enabled
+        addedAt
+        updatedAt
       }
     }
   }

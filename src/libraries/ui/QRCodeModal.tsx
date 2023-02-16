@@ -32,7 +32,7 @@ function QRCodeModal() {
 						<QRCode
 							fgColor='#4D9CD4'
 							style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
-							value={qrCodeText!} />
+							value={qrCodeText ?? ''} />
 					</Flex>
 				</ModalContent>
 			</Modal>

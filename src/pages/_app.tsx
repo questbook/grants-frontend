@@ -79,8 +79,8 @@ const { chains, provider } = configureChains(allChains, [
 			return { http: rpcUrl }
 		},
 	}),
+	infuraProvider({ apiKey: infuraId! }),
 	publicProvider(),
-	infuraProvider({ apiKey: infuraId! })
 ])
 
 type InitiateBiconomyReturnType = {

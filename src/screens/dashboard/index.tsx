@@ -56,7 +56,7 @@ function Dashboard() {
 			}
 
 			{
-				isLoading && (isMobile===false) && (
+				isLoading && (isMobile === false) && (
 					<Flex h='100vh'>
 						<ThreeColumnSkeleton />
 					</Flex>
