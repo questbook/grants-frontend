@@ -365,7 +365,7 @@ function Settings() {
 				<ConfimationModal
 					isOpen={openConfirmationModal !== undefined}
 					onClose={() => setOpenConfirmationModal(undefined)}
-					title={`Revoke access for ${name}?`}
+					title='Revoke access for member?'
 					subTitle='Are you sure you want to remove the access for the member? This cannot be undone.'
 					actionText='Revoke Access'
 					action={
@@ -386,7 +386,7 @@ function Settings() {
 				<NetworkTransactionFlowStepperModal
 					isOpen={isNetworkTransactionModalOpen}
 					currentStepIndex={currentStepIndex!}
-					viewTxnLink={getExplorerUrlForTxHash(network, txHash ?? '')}
+					viewTxnLink={getExplorerUrlForTxHash(network, txHash ?? revokeTxHash)}
 					onClose={
 						async() => {
 							setCurrentStepIndex(undefined)
@@ -427,6 +427,7 @@ function Settings() {
 	const [currentStepIndex, setCurrentStepIndex] = useState<number| undefined>()
 	const [openConfirmationModal, setOpenConfirmationModal] = useState<WorkspaceMembers[number]>()
 	const [isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen] = useState(false)
+	const [revokeTxHash, setRevokeTxHash] = useState<string>('')
 
 	const [imageChanged, setImageChanged] = useState(false)
 
@@ -469,7 +470,7 @@ function Settings() {
 		}
 	}
 
-	const { call } = useFunctionCall({ chainId, contractName: 'workspace' })
+	const { call } = useFunctionCall({ chainId, contractName: 'workspace', setTransactionStep: setCurrentStepIndex, setTransactionHash: setRevokeTxHash })
 
 	const revokeAccess = async(address: string, role: number, enable: boolean) => {
 		const methodArgs = [Number(grant?.workspace?.id), [address], [role], [enable], ['']]
