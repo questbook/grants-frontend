@@ -711,7 +711,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 						}
 					}
 				/>
-				<script
+				{/* <script
 					dangerouslySetInnerHTML={
 						{
 							__html: `(function(h,o,t,j,a,r){
@@ -724,7 +724,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 							})(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');`
 						}
 					}
-				/>
+				/> */}
 			</Head>
 			<WagmiConfig client={client}>
 				<ApiClientsContext.Provider value={apiClients}>
