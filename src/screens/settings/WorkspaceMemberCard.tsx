@@ -1,25 +1,18 @@
-import { Box, Flex, Image, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Image, Text } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
-import ConfimationModal from 'src/libraries/ui/ConfirmationModal'
+import { WorkspaceMembers } from 'src/screens/settings/_utils/types'
 import getAvatar from 'src/utils/avatarUtils'
 import { truncateStringFromMiddle } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 interface WorkspaceMemberCardProps {
-    role: string
-    email: string
-    address: string
-    name: string
-    pfp: string
-	openConfirmationModal: boolean
-	setOpenConfirmationModal: (openConfirmationModal: boolean) => void
-	revokeAccess: (memberAddress: string, role: number, enable: boolean) => void
+    member: WorkspaceMembers[number]
+	setOpenConfirmationModal: (openConfirmationModal: WorkspaceMembers[number]) => void
     // isOwner: boolean
 }
 
-function WorkspaceMemberCard({ role, email, address, name, pfp, openConfirmationModal, setOpenConfirmationModal, revokeAccess }: WorkspaceMemberCardProps) {
-
-	return (
+function WorkspaceMemberCard({ member, setOpenConfirmationModal }: WorkspaceMemberCardProps) {
+	const buildComponent = () => (
 		<Box
 			border='1px solid #E7E4DD;'
 			p={4}
@@ -29,8 +22,8 @@ function WorkspaceMemberCard({ role, email, address, name, pfp, openConfirmation
 				<Image
 					borderRadius='full'
 					boxSize={9}
-					src={getUrlForIPFSHash(pfp)}
-					fallbackSrc={getAvatar(false, address)} />
+					src={getUrlForIPFSHash(member.profilePictureIpfsHash!)}
+					fallbackSrc={getAvatar(false, member?.actorId)} />
 				<Flex
 					direction='column'
 					gap={1}
@@ -41,7 +34,7 @@ function WorkspaceMemberCard({ role, email, address, name, pfp, openConfirmation
 						<Text
 							variant='v2_title'
 							fontWeight='500'>
-							{name}
+							{member?.fullName}
 						</Text>
 						<Text
 							bg='gray.3'
@@ -50,25 +43,25 @@ function WorkspaceMemberCard({ role, email, address, name, pfp, openConfirmation
 							px={2}
 							borderRadius='4px'
 						>
-							{role}
+							{member?.accessLevel}
 						</Text>
 					</Flex>
 					<Flex gap={2}>
 						{
-							email && (
+							member?.email && (
 								<Text
 									variant='v2_body'
 									color='gray.5'>
-									{email}
+									{member?.email}
 								</Text>
 							)
 						}
-						{email && <Image src='/v2/icons/dot.svg' />}
+						{member?.email && <Image src='/v2/icons/dot.svg' />}
 						<Text
 							variant='v2_body'
 							color='gray.5'
 						>
-							{truncateStringFromMiddle(address)}
+							{truncateStringFromMiddle(member?.actorId)}
 						</Text>
 					</Flex>
 					<Flex gap={2}>
@@ -76,43 +69,25 @@ function WorkspaceMemberCard({ role, email, address, name, pfp, openConfirmation
 							Edit
 						</Text>
 						<Image src='/v2/icons/dot.svg' /> */}
-						<Text
-							variant='textButton'
+						<Button
+							variant='link'
 							onClick={
 								() => {
-									setOpenConfirmationModal(true)
-									logger.info('revoke clicked', address)
+									setOpenConfirmationModal(member)
+									logger.info('revoke clicked', member)
 									// revokeAccess(address, 2, false)
 								}
 							}
 						>
 							Revoke Access
-						</Text>
+						</Button>
 					</Flex>
 				</Flex>
 			</Flex>
-			{
-				openConfirmationModal && (
-					<ConfimationModal
-						isOpen={openConfirmationModal}
-						onClose={() => setOpenConfirmationModal(false)}
-						title='Revoke access for the member?'
-						subTitle='Are you sure you want to remove the access for the member? This cannot be undone.'
-						actionText='Revoke Access'
-						action={
-							() => {
-								revokeAccess(address, 2, false)
-								setOpenConfirmationModal(false)
-							}
-						}
-						onCancel={() => setOpenConfirmationModal(false)}
-						// modalBodyProps
-					/>
-				)
-			}
 		</Box>
-
 	)
+
+	return buildComponent()
 }
 
 export default WorkspaceMemberCard
