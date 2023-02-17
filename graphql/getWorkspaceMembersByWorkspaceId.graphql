@@ -1,24 +1,22 @@
 query getWorkspaceMembersByWorkspaceId(
-    $workspaceId: String!
-    $first: Int
-    $skip: Int
+  $workspaceId: String!
+  $first: Int
+  $skip: Int
 ) {
-    workspaceMembers(
-        where: {
-            workspace: $workspaceId
-            enabled: true
-        }
-        first: $first
-        skip: $skip
-        subgraphError: allow
-    ) {
-        id
-        actorId
-        fullName
-        profilePictureIpfsHash
-        accessLevel
-        addedAt
-        publicKey
-        email
-    }
+  workspaceMembers(
+    where: { workspace: $workspaceId, enabled: true }
+    first: $first
+    skip: $skip
+    subgraphError: allow
+  ) {
+    id
+    actorId
+    fullName
+    profilePictureIpfsHash
+    accessLevel
+    addedAt
+    publicKey
+    email
+    enabled
+  }
 }

@@ -365,9 +365,9 @@ function Settings() {
 				<ConfimationModal
 					isOpen={openConfirmationModal !== undefined}
 					onClose={() => setOpenConfirmationModal(undefined)}
-					title='Revoke access for member?'
-					subTitle='Are you sure you want to remove the access for the member? This cannot be undone.'
-					actionText='Revoke Access'
+					title={`${openConfirmationModal?.enabled ? 'Revoke' : 'Restore'} access for member?`}
+					subTitle='Are you sure you want to modify the access level for the member? This cannot be undone.'
+					actionText={`${openConfirmationModal?.enabled ? 'Revoke' : 'Restore'} Access`}
 					action={
 						() => {
 							logger.info('revoke confirmed', openConfirmationModal)
@@ -376,12 +376,12 @@ function Settings() {
 								return
 							}
 
-							revokeAccess(address, 2, false)
+							setIsNetworkTransactionModalOpen(true)
+							revokeOrRestoreAccess(address, openConfirmationModal?.accessLevel === 'reviewer' ? 1 : 0, !openConfirmationModal?.enabled)
 							setOpenConfirmationModal(undefined)
 						}
 					}
 					onCancel={() => setOpenConfirmationModal(undefined)}
-				// modalBodyProps
 				/>
 				<NetworkTransactionFlowStepperModal
 					isOpen={isNetworkTransactionModalOpen}
@@ -472,7 +472,7 @@ function Settings() {
 
 	const { call } = useFunctionCall({ chainId, contractName: 'workspace', setTransactionStep: setCurrentStepIndex, setTransactionHash: setRevokeTxHash })
 
-	const revokeAccess = async(address: string, role: number, enable: boolean) => {
+	const revokeOrRestoreAccess = async(address: string, role: number, enable: boolean) => {
 		const methodArgs = [Number(grant?.workspace?.id), [address], [role], [enable], ['']]
 		logger.info('methodArgs', methodArgs)
 		await call({ method: 'updateWorkspaceMembers', args: methodArgs })

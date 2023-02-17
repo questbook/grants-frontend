@@ -14,9 +14,10 @@ interface WorkspaceMemberCardProps {
 function WorkspaceMemberCard({ member, setOpenConfirmationModal }: WorkspaceMemberCardProps) {
 	const buildComponent = () => (
 		<Box
-			border='1px solid #E7E4DD;'
+			border='1px solid #E7E4DD'
+			borderRadius='4px'
+			bg={member?.enabled ? 'white' : 'gray.1'}
 			p={4}
-			// width='max-content'
 		>
 			<Flex gap={2}>
 				<Image
@@ -71,6 +72,7 @@ function WorkspaceMemberCard({ member, setOpenConfirmationModal }: WorkspaceMemb
 						<Image src='/v2/icons/dot.svg' /> */}
 						<Button
 							variant='link'
+							bg={member?.enabled ? 'white' : 'gray.1'}
 							onClick={
 								() => {
 									setOpenConfirmationModal(member)
@@ -79,7 +81,9 @@ function WorkspaceMemberCard({ member, setOpenConfirmationModal }: WorkspaceMemb
 								}
 							}
 						>
-							Revoke Access
+							{member?.enabled ? 'Revoke' : 'Restore'}
+							{' '}
+							Access
 						</Button>
 					</Flex>
 				</Flex>
