@@ -205,7 +205,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}, [webwallet])
 
 	useEffect(() => {
-		hotjar.initialize(3370915, 6)
+		hotjar.initialize(3167823, 6)
 	  }, [])
 
 	const initiateBiconomyUnsafe = useCallback(async(chainId: string) => {
