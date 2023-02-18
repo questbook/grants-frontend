@@ -1,29 +1,27 @@
-import { ReactElement, useContext, useEffect, useRef, useState } from 'react'
+import { ReactElement, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Search2Icon, SettingsIcon } from '@chakra-ui/icons'
 import { Box, Button, Divider, Flex, Grid, Image, Input, InputGroup, InputLeftElement, Spacer, Text, Tooltip } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import router from 'next/router'
-import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { defaultChainId } from 'src/constants/chains'
 import { Copy, ImageAdd, ShareBox } from 'src/generated/icons'
-import useQBContract from 'src/hooks/contracts/useQBContract'
-import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
+import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
 import BackButton from 'src/libraries/ui/BackButton'
+import ConfimationModal from 'src/libraries/ui/ConfirmationModal'
 import LinkYourMultisigModal from 'src/libraries/ui/LinkYourMultisigModal'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
-import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext } from 'src/pages/_app'
 import AddMemberButton from 'src/screens/settings/_components/AddMemberButton'
 import { DropdownIcon } from 'src/screens/settings/_components/DropdownIcon'
 import useUpdateGrantProgram from 'src/screens/settings/_hooks/useUpdateGrantProgram'
+import { WorkspaceMembers } from 'src/screens/settings/_utils/types'
 import { SettingsFormContext, SettingsFormProvider } from 'src/screens/settings/Context'
 import WorkspaceMemberCard from 'src/screens/settings/WorkspaceMemberCard'
 import { formatAddress, getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { bicoDapps, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
@@ -339,7 +337,7 @@ function Settings() {
 
 						{/* Members grid */}
 						<Grid
-							templateColumns='repeat(4, 1fr)'
+							templateColumns='repeat(3, 1fr)'
 							gap={6}
 						>
 							{
@@ -355,13 +353,7 @@ function Settings() {
 								}).map((member, index) => (
 									<WorkspaceMemberCard
 										key={index}
-										role={member.accessLevel}
-										address={member.actorId}
-										email={member.email!}
-										name={member.fullName!}
-										pfp={member.profilePictureIpfsHash!}
-										revokeAccess={revokeAccess}
-										openConfirmationModal={openConfirmationModal}
+										member={member}
 										setOpenConfirmationModal={setOpenConfirmationModal}
 									/>
 								))
@@ -370,6 +362,27 @@ function Settings() {
 						</Grid>
 					</Flex>
 				</Flex>
+				<ConfimationModal
+					isOpen={openConfirmationModal !== undefined}
+					onClose={() => setOpenConfirmationModal(undefined)}
+					title={`${openConfirmationModal?.enabled ? 'Revoke' : 'Restore'} access for member?`}
+					subTitle='Are you sure you want to modify the access level for the member? This cannot be undone.'
+					actionText={`${openConfirmationModal?.enabled ? 'Revoke' : 'Restore'} Access`}
+					action={
+						() => {
+							logger.info('revoke confirmed', openConfirmationModal)
+							const address = openConfirmationModal?.actorId
+							if(!address) {
+								return
+							}
+
+							setIsNetworkTransactionModalOpen(true)
+							revokeOrRestoreAccess(address, openConfirmationModal?.accessLevel === 'reviewer' ? 1 : 0, !openConfirmationModal?.enabled)
+							setOpenConfirmationModal(undefined)
+						}
+					}
+					onCancel={() => setOpenConfirmationModal(undefined)}
+				/>
 				<NetworkTransactionFlowStepperModal
 					isOpen={isNetworkTransactionModalOpen}
 					currentStepIndex={currentStepIndex!}
@@ -407,28 +420,22 @@ function Settings() {
 
 	const [imageFile, setImageFile] = useState<{file: File | null, hash?: string}>({ file: null })
 	const [searchString, setSearchString] = useState<string>('')
-	const [revokeTxHash, setRevokeTxHash] = useState('')
 
 	const { network } = useNetwork()
 
 	const [isNetworkTransactionModalOpen, setIsNetworkTransactionModalOpen] = useState(false)
 	const [currentStepIndex, setCurrentStepIndex] = useState<number| undefined>()
-	const [openConfirmationModal, setOpenConfirmationModal] = useState(false)
+	const [openConfirmationModal, setOpenConfirmationModal] = useState<WorkspaceMembers[number]>()
 	const [isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen] = useState(false)
+	const [revokeTxHash, setRevokeTxHash] = useState<string>('')
 
 	const [imageChanged, setImageChanged] = useState(false)
 
 	const { workspace, workspaceMembers, grantProgramData, setGrantProgramData, safeURL } = useContext(SettingsFormContext)!
 	const { grant } = useContext(GrantsProgramContext)!
-	const { webwallet } = useContext(WebwalletContext)!
-	const { subgraphClients, chainId } = useContext(ApiClientsContext)!
-	const { nonce } = useQuestbookAccount()
-
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
-		chainId: chainId?.toString(),
-	})
-
-	const workspaceContract = useQBContract('workspace', getSupportedChainIdFromWorkspace(workspace!))
+	const chainId = useMemo(() => {
+		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
+	}, [grant])
 
 	const { updateGrantProgram, txHash } = useUpdateGrantProgram(setCurrentStepIndex, setIsNetworkTransactionModalOpen)
 
@@ -463,39 +470,13 @@ function Settings() {
 		}
 	}
 
-	const revokeAccess = async(memberAddress: string, role: number, enable: boolean) => {
-		setIsNetworkTransactionModalOpen(true)
-		setCurrentStepIndex(0)
+	const { call } = useFunctionCall({ chainId, contractName: 'workspace', setTransactionStep: setCurrentStepIndex, setTransactionHash: setRevokeTxHash })
 
-		const methodArgs = [Number(workspace?.id), [memberAddress], [role], [enable], ['']]
+	const revokeOrRestoreAccess = async(address: string, role: number, enable: boolean) => {
+		// Note: This IPFS Hash in the next line is a dummy one, that is used to update the workspace members' acces level only and not modify the member metadata
+		const methodArgs = [Number(grant?.workspace?.id), [address], [role], [enable], ['QmbJWAESqCsf4RFCqEY7jecCashj8usXiyDNfKtZCwwzGb']]
 		logger.info('methodArgs', methodArgs)
-		// return
-		const transactionHash = await sendGaslessTransaction(
-			biconomy,
-			workspaceContract,
-			'updateWorkspaceMembers',
-			[Number(workspace?.id), [memberAddress], [role], [enable], ['']],
-			WORKSPACE_REGISTRY_ADDRESS[chainId],
-			biconomyWalletClient!,
-			scwAddress!,
-			webwallet,
-			`${chainId}`,
-			bicoDapps[chainId].webHookId,
-			nonce
-		)
-
-		if(!transactionHash) {
-			throw new Error('Transaction hash not received')
-		}
-
-		setCurrentStepIndex(1)
-
-		const { receipt } = await getTransactionDetails(transactionHash, chainId.toString())
-		setCurrentStepIndex(2)
-		setRevokeTxHash(receipt?.transactionHash)
-
-		await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
-		setCurrentStepIndex(3)
+		await call({ method: 'updateWorkspaceMembers', args: methodArgs })
 	}
 
 	useEffect(() => {
