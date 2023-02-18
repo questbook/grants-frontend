@@ -337,7 +337,7 @@ function Settings() {
 
 						{/* Members grid */}
 						<Grid
-							templateColumns='repeat(4, 1fr)'
+							templateColumns='repeat(3, 1fr)'
 							gap={6}
 						>
 							{
@@ -473,7 +473,8 @@ function Settings() {
 	const { call } = useFunctionCall({ chainId, contractName: 'workspace', setTransactionStep: setCurrentStepIndex, setTransactionHash: setRevokeTxHash })
 
 	const revokeOrRestoreAccess = async(address: string, role: number, enable: boolean) => {
-		const methodArgs = [Number(grant?.workspace?.id), [address], [role], [enable], ['']]
+		// Note: This IPFS Hash in the next line is a dummy one, that is used to update the workspace members' acces level only and not modify the member metadata
+		const methodArgs = [Number(grant?.workspace?.id), [address], [role], [enable], ['QmbJWAESqCsf4RFCqEY7jecCashj8usXiyDNfKtZCwwzGb']]
 		logger.info('methodArgs', methodArgs)
 		await call({ method: 'updateWorkspaceMembers', args: methodArgs })
 	}

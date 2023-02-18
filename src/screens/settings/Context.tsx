@@ -3,7 +3,8 @@ import { defaultChainId } from 'src/constants/chains'
 import { useGetWorkspaceDetailsQuery, useGetWorkspaceMembersByWorkspaceIdQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
-import { GrantsProgramContext } from 'src/pages/_app'
+import { getKeyForMemberPii, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { GrantProgramForm, SettingsFormContextType, WorkspaceMembers } from 'src/screens/settings/_utils/types'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { getSafeURL } from 'src/v2/utils/gnosisUtils'
@@ -31,6 +32,7 @@ const SettingsFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const [safeURL, setSafeURL] = useState<string>('')
 
 	const { grant } = useContext(GrantsProgramContext)!
+	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 
 	const chainId = useMemo(() => {
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
@@ -75,11 +77,40 @@ const SettingsFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			workspaceId: grant?.workspace?.id
 		})
 		logger.info('Workspace members fetched', response)
-		setWorkspaceMembers(response[0]?.workspaceMembers)
+
+		const workspaceMembers: WorkspaceMembers = []
+		for(const member of response[0]?.workspaceMembers!) {
+			if(!scwAddress || !webwallet || !member.publicKey) {
+				continue
+			}
+
+			const pii = member.pii?.find(pii => pii?.id?.includes(scwAddress?.toLowerCase()))
+			if(!pii) {
+				workspaceMembers.push(member)
+				continue
+			}
+
+			const value = pii?.data
+			const channel = await getSecureChannelFromPublicKey(webwallet, member.publicKey, getKeyForMemberPii(`${grant?.workspace?.id}.${scwAddress.toLowerCase()}`))
+			try {
+				const data = await channel.decrypt(value)
+				const json = JSON.parse(data)
+				if(json.email) {
+					workspaceMembers.push({ ...member, email: json.email })
+				} else {
+					workspaceMembers.push(member)
+				}
+			} catch(error) {
+				logger.error(error, 'Error decrypting email')
+				workspaceMembers.push(member)
+			}
+		}
+
+		setWorkspaceMembers(workspaceMembers)
 		const safeUrl = getSafeURL(grant?.workspace.safe?.address!, grant?.workspace.safe?.chainId!)
 		setSafeURL(safeUrl)
 		return workspaceMembers
-	}, [chainId, grant])
+	}, [chainId, grant, scwAddress])
 
 	useEffect(() => {
 		fetchGrantProgramDetails().then((message) => {

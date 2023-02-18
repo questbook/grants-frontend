@@ -4,7 +4,7 @@ query getWorkspaceMembersByWorkspaceId(
   $skip: Int
 ) {
   workspaceMembers(
-    where: { workspace: $workspaceId, enabled: true }
+    where: { workspace: $workspaceId }
     first: $first
     skip: $skip
     subgraphError: allow
@@ -18,5 +18,9 @@ query getWorkspaceMembersByWorkspaceId(
     publicKey
     email
     enabled
+    pii {
+        id
+        data
+    }
   }
 }

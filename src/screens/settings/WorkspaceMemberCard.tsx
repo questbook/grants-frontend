@@ -66,10 +66,6 @@ function WorkspaceMemberCard({ member, setOpenConfirmationModal }: WorkspaceMemb
 						</Text>
 					</Flex>
 					<Flex gap={2}>
-						{/* <Text variant='textButton'>
-							Edit
-						</Text>
-						<Image src='/v2/icons/dot.svg' /> */}
 						<Button
 							variant='link'
 							bg={member?.enabled ? 'white' : 'gray.1'}
