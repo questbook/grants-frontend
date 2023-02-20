@@ -305,7 +305,7 @@ function ReviewProposal() {
 	}, [proposals, selectedProposals])
 
 	const isReviewPending = useMemo(() => {
-		return ((proposal?.applicationReviewers?.find(reviewer => reviewer.member?.actorId === scwAddress?.toLowerCase()) !== undefined && proposal?.pendingReviewerAddresses?.indexOf(scwAddress?.toLowerCase() ?? '') !== -1) || proposal?.applicationReviewers?.find(reviewer => reviewer.member?.actorId === scwAddress?.toLowerCase()) === undefined) && proposal?.state === 'submitted'
+		return ((proposal?.applicationReviewers?.find(reviewer => reviewer.member?.actorId === scwAddress?.toLowerCase()) !== undefined && proposal?.pendingReviewerAddresses?.indexOf(scwAddress?.toLowerCase() ?? '') !== -1) || proposal?.applicationReviewers?.find(reviewer => reviewer.member?.actorId === scwAddress?.toLowerCase()) === undefined)
 	}, [proposal, scwAddress])
 
 	const chainId = useMemo(() => {
