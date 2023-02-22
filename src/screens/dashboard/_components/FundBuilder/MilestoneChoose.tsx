@@ -1,7 +1,7 @@
 import { useContext, useMemo } from 'react'
 import { Flex, FlexProps, Text } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
-import Dropdown from 'src/screens/dashboard/_components/FundBuilder/Dropdown'
+import DropdownSelect from 'src/libraries/ui/LinkYourMultisigModal/DropdownSelect'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { FundBuilderContext } from 'src/screens/dashboard/Context'
 
@@ -27,7 +27,7 @@ function MilestoneChoose({ proposal, index, ...props }: Props) {
 				</Text>
 				<Flex
 					direction='column'>
-					<Dropdown
+					<DropdownSelect
 						options={
 							milestones.map((milestone, index) => {
 								return { ...milestone, index }

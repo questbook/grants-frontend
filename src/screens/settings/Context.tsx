@@ -6,8 +6,8 @@ import logger from 'src/libraries/logger'
 import { getKeyForMemberPii, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { GrantProgramForm, SettingsFormContextType, WorkspaceMembers } from 'src/screens/settings/_utils/types'
+import { getSafeURL } from 'src/utils/multisigUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { getSafeURL } from 'src/v2/utils/gnosisUtils'
 
 const SettingsFormContext = createContext<SettingsFormContextType | undefined>(undefined)
 

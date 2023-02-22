@@ -1,8 +1,6 @@
 import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
-import { useMediaQuery } from 'react-responsive'
 import { Box, Button, Center, Container, Divider, Flex, Image, Input, Skeleton, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import Loader from 'src/components/ui/loader'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { DAOSearchContext } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
@@ -13,6 +11,7 @@ import ConfirmationModal from 'src/libraries/ui/ConfirmationModal'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
+import Loader from 'src/libraries/ui/RichTextEditor/loader'
 import SearchField from 'src/libraries/ui/SearchField'
 import { ApiClientsContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import RFPGrid from 'src/screens/discover/_components/rfpGrid'
@@ -23,7 +22,6 @@ import { Roles } from 'src/types'
 import { chainNames } from 'src/utils/chainNames'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
-import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
 function Discover() {
 	const router = useRouter()
@@ -127,21 +125,20 @@ function Discover() {
 			txSteps.push(`Changes updated on ${chainName}`)
 		}
 
-		const chainsLength = chainsList.length
-		const daosLength = Object.values(unsavedDomainState)
-			.map(e => Object.keys(e).length).reduce((a, b) => a + b, 0)
-		const description = `Updating ${daosLength} dao${daosLength === 1 ? '\'' : ''}s${daosLength === 1 ? '' : '\''} visibility state across ${chainsLength} chain${chainsLength === 1 ? '' : 's'}!`
+		// const chainsLength = chainsList.length
+		// const daosLength = Object.values(unsavedDomainState)
+		// 	.map(e => Object.keys(e).length).reduce((a, b) => a + b, 0)
+		// const description = `Updating ${daosLength} dao${daosLength === 1 ? '\'' : ''}s${daosLength === 1 ? '' : '\''} visibility state across ${chainsLength} chain${chainsLength === 1 ? '' : 's'}!`
 
 		return (
-			<NetworkTransactionModal
+			<NetworkTransactionFlowStepperModal
 				isOpen={networkTransactionModalStep !== undefined}
-				subtitle='Submitting dao visibility changes'
-				viewLink='.'
+				viewTxnLink='.'
 				showViewTransactionButton={false}
-				description={description}
 				currentStepIndex={networkTransactionModalStep || 0}
-				steps={txSteps}
-				onClose={router.reload} />
+				customSteps={txSteps}
+				onClose={router.reload}
+				 />
 		)
 	}
 
@@ -165,8 +162,6 @@ function Discover() {
 	const [currentStepIndex, setCurrentStepIndex] = useState(-1)
 	const [sectionName, setSectionName] = useState('')
 	const [filterGrantName, setFilterGrantName] = useState('')
-
-	const isMobile = useMediaQuery({ query:'(max-width:600px)' })
 
 	const [imageFile, setImageFile] = useState<{file: File | null, hash?: string}>({ file: null })
 

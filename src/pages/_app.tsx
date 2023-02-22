@@ -26,7 +26,6 @@ import SubgraphClient from 'src/graphql/subgraph'
 import { DAOSearchContextMaker } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContextMaker } from 'src/hooks/QBAdminsContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
-import MigrateToGasless from 'src/libraries/ui/MigrateToGaslessModal'
 import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import QRCodeModal from 'src/libraries/ui/QRCodeModal'
 import { extractInviteInfo, InviteInfo } from 'src/libraries/utils/invite'
@@ -736,11 +735,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 											<QBAdminsContextMaker>
 												<ChakraProvider theme={theme}>
 													{getLayout(<Component {...pageProps} />)}
-													{
-														typeof window !== 'undefined' && (
-															<MigrateToGasless />
-														)
-													}
 													<QRCodeModal />
 												</ChakraProvider>
 											</QBAdminsContextMaker>

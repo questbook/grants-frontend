@@ -1,11 +1,10 @@
-import { ReactElement, useContext, useEffect, useRef, useState } from 'react'
-import { Flex, ToastId, useToast } from '@chakra-ui/react'
+import { ReactElement, useContext, useEffect, useState } from 'react'
+import { Flex } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import ErrorToast from 'src/components/ui/toasts/errorToast'
-import { DEFAULT_NETWORK } from 'src/constants'
 import { APPLICATION_REGISTRY_ADDRESS, WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
-import { USD_ASSET, USD_DECIMALS, USD_ICON } from 'src/constants/chains'
+import { defaultChainId, USD_ASSET, USD_DECIMALS, USD_ICON } from 'src/constants/chains'
+import config from 'src/constants/config.json'
 import GrantFactoryAbi from 'src/contracts/abi/GrantFactoryAbi.json'
 import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
 import SupportedChainId from 'src/generated/SupportedChainId'
@@ -13,6 +12,7 @@ import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
@@ -21,8 +21,6 @@ import { validateAndUploadToIpfs } from 'src/libraries/validator'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { GRANT_CACHE_KEY } from 'src/screens/dashboard/_utils/constants'
 import useUpdateRFP from 'src/screens/request_proposal/_hooks/useUpdateRFP'
-import BuilderDiscovery from 'src/screens/request_proposal/_subscreens/BuilderDiscovery'
-import LinkMultiSig from 'src/screens/request_proposal/_subscreens/LinkMultiSig'
 import Payouts from 'src/screens/request_proposal/_subscreens/Payouts'
 import ProposalReview from 'src/screens/request_proposal/_subscreens/ProposalReview'
 import ProposalSubmission from 'src/screens/request_proposal/_subscreens/ProposalSubmission'
@@ -33,10 +31,9 @@ import { RFPFormContext, RFPFormProvider } from 'src/screens/request_proposal/Co
 import { ApplicantDetailsFieldType } from 'src/types'
 import getErrorMessage from 'src/utils/errorUtils'
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { addAuthorizedOwner, addAuthorizedUser, bicoDapps, chargeGas, getEventData, getTransactionDetails, networksMapping, sendGaslessTransaction } from 'src/utils/gaslessUtils'
+import { addAuthorizedOwner, addAuthorizedUser, bicoDapps, chargeGas, getEventData, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
 import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
-import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 
 function RequestProposal() {
 	const customStepsHeader = ['Creating your grant program on chain']
@@ -148,33 +145,11 @@ function RequestProposal() {
 					/>
 				</>
 			)
-		case 4: return (
-			<LinkMultiSig
-				multiSigAddress={multiSigAddress}
-				setMultiSigAddress={setMultiSigAddress}
-				step={step}
-				setStep={setStep}
-				selectedSafeNetwork={selectedSafeNetwork!}
-				setSelectedSafeNetwork={setSelectedSafeNetwork} />
-		)
-		case 5: return (
-			<>
-				<BuilderDiscovery
-					domainName={domainName}
-					setDomainName={setDomainName}
-					domainImage={domainImage!}
-					setDomainImage={setDomainImage}
-					step={step}
-					setStep={setStep}
-					createWorkspace={createWorkspaceAndGrant}
-				/>
-			</>
-		)
 		}
 	}
 
 	const { chainId } = useContext(ApiClientsContext)!
-	const { createingProposalStep, setCreatingProposalStep } = useContext(WebwalletContext)!
+	const { createingProposalStep } = useContext(WebwalletContext)!
 	// State for proposal creation
 	// const todayDate = today()
 	const [proposalName, setProposalName] = useState('')
@@ -236,14 +211,6 @@ function RequestProposal() {
 	const [amount, setAmount] = useState(0)
 	const [milestones, setMilestones] = useState<string[]>([])
 
-	// State for Linking MultiSig
-	const [multiSigAddress, setMultiSigAddress] = useState('')
-	const [selectedSafeNetwork, setSelectedSafeNetwork] = useState<SafeSelectOption>()
-
-	// State for Builder Discovery
-	const [domainName, setDomainName] = useState('')
-	const [domainImage, setDomainImage] = useState<File | null>(null)
-
 	// State for Network Transaction Flow
 	const [currentStepIndex, setCurrentStepIndex] = useState<number>()
 
@@ -263,14 +230,12 @@ function RequestProposal() {
 	const { network } = useNetwork()
 	const targetContractObject = useQBContract('workspace', network as unknown as SupportedChainId)
 
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
-		chainId: process.env.NEXT_PUBLIC_IS_TEST === 'true' ? '5' : selectedSafeNetwork?.networkId ? networksMapping[selectedSafeNetwork?.networkId?.toString()] : DEFAULT_NETWORK,
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
+		chainId: defaultChainId.toString(),
 		shouldRefreshNonce: shouldRefreshNonce
 	})
-	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
 
-	const toastRef = useRef<ToastId>()
-	const toast = useToast()
+	const toast = useCustomToast()
 
 	const router = useRouter()
 
@@ -296,18 +261,6 @@ function RequestProposal() {
 			// .catch((err) => console.log("Couldn't add authorized user", err))
 		}
 	}, [webwallet, nonce])
-
-	useEffect(() => {
-
-		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && biconomy.networkId) {
-			if(!selectedSafeNetwork?.networkId) {
-				setIsBiconomyInitialised(true)
-			// eslint-disable-next-line sonarjs/no-duplicated-branches
-			} else if(selectedSafeNetwork?.networkId && biconomy.networkId.toString() === networksMapping[selectedSafeNetwork?.networkId?.toString()]) {
-				setIsBiconomyInitialised(true)
-			}
-		}
-	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, selectedSafeNetwork?.networkId])
 
 	useEffect(() => {
 		if(rfpData) {
@@ -367,7 +320,7 @@ function RequestProposal() {
 	const createWorkspaceAndGrant = async() => {
 		try {
 			setCurrentStepIndex(0)
-			const uploadedImageHash = (await uploadToIPFS(domainImage)).hash
+			const uploadedImageHash = config.defaultDAOImageHash
 			const { hash: workspaceCreateIpfsHash } = await validateAndUploadToIpfs('WorkspaceCreateRequest', {
 				title: proposalName!,
 				about: '',
@@ -397,7 +350,7 @@ function RequestProposal() {
 			}
 
 			// setCurrentStepIndex(1)
-			const methodArgs = [workspaceCreateIpfsHash, new Uint8Array(32), multiSigAddress, selectedSafeNetwork ? parseInt(selectedSafeNetwork.networkId) : '0']
+			const methodArgs = [workspaceCreateIpfsHash, new Uint8Array(32), '', '0']
 			logger.info({ methodArgs }, 'Workspace create method args')
 			const transactionHash = await sendGaslessTransaction(
 				biconomy,
@@ -563,16 +516,10 @@ function RequestProposal() {
 			setCurrentStepIndex(-1) // 3 is the final step
 			const message = getErrorMessage(e)
 			logger.info('error', message)
-			toastRef.current = toast({
+			toast({
 				position: 'top',
-				render: () => ErrorToast({
-					content: message,
-					close: () => {
-						if(toastRef.current) {
-							toast.close(toastRef.current)
-						}
-					},
-				}),
+				title: message,
+				status: 'error',
 			})
 		}
 	}

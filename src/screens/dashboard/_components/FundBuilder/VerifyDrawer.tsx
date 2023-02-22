@@ -2,26 +2,24 @@
 import { useEffect, useMemo } from 'react'
 import { Flex, Text, VStack } from '@chakra-ui/react'
 import { useSafeContext } from 'src/contexts/safeContext'
+import { Metamask, Phantom, WalletConnect } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
+import ConnectWalletButton from 'src/screens/dashboard/_components/FundBuilder/ConnectWalletButton'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
-import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
-import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/PhantomLogo'
-import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
-import ConnectWalletButton from 'src/v2/components/ConnectWalletModal/ConnectWalletButton'
 import { useAccount, useConnect } from 'wagmi'
 
 const availableWallets = [{
 	name: 'Metamask',
-	icon: <MetamaskFox
+	icon: <Metamask
 		h={8}
 		w='33px' />,
 	isPopular: true,
 	id: 'injected',
 }, {
 	name: 'WalletConnect',
-	icon: <WalletConnectLogo
+	icon: <WalletConnect
 		h={8}
 		w='33px' />,
 	isPopular: false,
@@ -30,7 +28,7 @@ const availableWallets = [{
 
 const solanaWallets = [{
 	name: 'Phantom',
-	icon: <PhantomLogo
+	icon: <Phantom
 		h={8}
 		w='33px' />,
 	isPopular: false,
@@ -78,7 +76,6 @@ const VerifyDrawer = ({ setSignerVerifiedState }: Props) => {
 								key={index}
 								icon={wallet.icon}
 								name={wallet.name}
-								isPopular={wallet.isPopular}
 								onClick={
 									() => {
 										if(!isConnected) {
@@ -99,7 +96,6 @@ const VerifyDrawer = ({ setSignerVerifiedState }: Props) => {
 								key={index}
 								icon={wallet.icon}
 								name={wallet.name}
-								isPopular={wallet.isPopular}
 								onClick={
 									() => {
 										phantomWallet?.connect()

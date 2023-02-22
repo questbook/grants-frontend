@@ -25,15 +25,12 @@ interface Props {
 
 function ProposalReview(
 	{
-		// numberOfReviewers,
-		// setNumberOfReviewers,
 		reviewMechanism,
 		setReviewMechanism,
 		rubricInputValues,
 		setRubricInputValues,
 		setRubrics,
 		step,
-		setStep,
 		rfpFormSubmissionType,
 		handleOnEdit
 	}: Props) {
@@ -239,7 +236,7 @@ function ProposalReview(
 
 	// const [rubricInputValues, setRubricInputValues] = useState<DynamicInputValues>({ 0: 'Team competence', 1: 'Idea Quality', 2: 'Relevance to our ecosystem' })
 	const [rubricsCounter, setRubricsCounter] = useState(rubricInputValues.length)
-	const { createingProposalStep, setCreatingProposalStep } = useContext(WebwalletContext)!
+	const { setCreatingProposalStep } = useContext(WebwalletContext)!
 	const reviewMechanismOptions = [{ label: 'Voting', value: 'voting' }, { label: 'Rubric', value: 'rubrics' }, { label: 'Community voting', value: 'Community voting', isDisabled: true }]
 	const bigScreen = useMediaQuery('(min-width:601px)')
 	const handleClick = () => {

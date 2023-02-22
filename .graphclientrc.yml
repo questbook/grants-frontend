@@ -1,0 +1,44 @@
+# .graphclientrc.yml
+sources:
+  - name: qb-subgraph-goerli-testnet
+    handler:
+      graphql:
+        endpoint: https://the-graph.questbook.app/subgraphs/name/qb-subgraph-goerli-testnet
+  - name: qb-subgraph-optimism-mainnet
+    handler:
+      graphql:
+        endpoint: https://the-graph.questbook.app/subgraphs/name/qb-subgraph-optimism-mainnet
+  - name: qb-subgraph-polygon-mainnet
+    handler:
+      graphql:
+        endpoint: https://the-graph.questbook.app/subgraphs/name/qb-subgraph-polygon-mainnet
+  - name: qb-subgraph-celo-mainnet
+    handler:
+      graphql:
+        endpoint: https://the-graph.questbook.app/subgraphs/name/qb-subgraph-celo-mainnet
+
+documents:
+  - ../graphql/*.graphql
+  - libraries/graphql/*.graphql
+  - screens/dashboard/_graphql/*.graphql
+  - screens/discover/_graphql/*.graphql
+  - screens/proposal_form/_graphql/*.graphql
+  - screens/profile/_graphql/*.graphql
+  - screens/request_proposal/_graphql/*.graphql
+
+plugins:
+  - pollingLive:
+      defaultInterval: 5000
+
+# sources:
+#   - name: Sushi
+#     handler:
+#       graphql:
+#         endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/exchange
+
+# plugins:
+#   - pollingLive:
+#       defaultInterval: 1000
+
+# documents:
+#   - ./src/example-query.graphql

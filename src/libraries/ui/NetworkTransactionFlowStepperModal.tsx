@@ -1,6 +1,5 @@
 import { AlertDialogOverlay, Box, Button, Flex, HStack, Modal, ModalBody, ModalContent, ModalHeader, Text, VStack } from '@chakra-ui/react'
-import { CheckCircle } from 'src/v2/assets/custom chakra icons/CheckCircle'
-import { ExternalLink } from 'src/v2/assets/custom chakra icons/ExternalLink'
+import { CheckboxCircle, Link } from 'src/generated/icons'
 
 interface Props {
     isOpen: boolean
@@ -97,7 +96,7 @@ function NetworkTransactionFlowStepperModal({ isOpen, currentStepIndex, viewTxnL
 											(showViewTransactionButton ?? true) && (
 												<Button
 													variant='link'
-													rightIcon={<ExternalLink />}
+													rightIcon={<Link />}
 													onClick={
 														() => {
 															window.open(viewTxnLink, '_blank')
@@ -138,7 +137,7 @@ function NetworkTransactionFlowStepperModal({ isOpen, currentStepIndex, viewTxnL
 				<HStack>
 					{
 						state === 'done' ? (
-							<CheckCircle
+							<CheckboxCircle
 								color='brand.green'
 								boxSize={5} />
 						) : (

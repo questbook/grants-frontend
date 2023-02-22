@@ -3,8 +3,8 @@ import {
 	Box,
 	Flex, Text, } from '@chakra-ui/react'
 import { EditorState } from 'draft-js'
-import TextEditor from 'src/components/ui/forms/richTextEditor/textEditor'
-import Tooltip from 'src/components/ui/tooltip'
+import TextEditor from 'src/libraries/ui/RichTextEditor/textEditor'
+import Tooltip from 'src/libraries/ui/RichTextEditor/tooltip'
 
 interface RichTextEditorProps {
   label?: string

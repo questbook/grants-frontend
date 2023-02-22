@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react'
 import { Button, Flex, Image, Text } from '@chakra-ui/react'
 import { useSafeContext } from 'src/contexts/safeContext'
 import logger from 'src/libraries/logger'
-import Dropdown from 'src/screens/dashboard/_components/FundBuilder/Dropdown'
+import DropdownSelect from 'src/libraries/ui/LinkYourMultisigModal/DropdownSelect'
 import { TokenInfo } from 'src/screens/dashboard/_utils/types'
 import { FundBuilderContext } from 'src/screens/dashboard/Context'
 
@@ -42,7 +42,7 @@ function PayWithChoose({ selectedMode }: { selectedMode: any}) {
 						</>
 					) : (
 						<>
-							<Dropdown
+							<DropdownSelect
 									options={
 										(tokenList ?? []).map((token: TokenInfo, index: number) => {
 											const ret = {

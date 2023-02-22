@@ -1,5 +1,5 @@
 import { NetworkType } from 'src/constants/Networks'
-import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
+import { SafeSelectOption } from 'src/types'
 
 export const ROLES = {
 	admin: 0x0,
@@ -7,8 +7,6 @@ export const ROLES = {
 }
 
 export const USD_THRESHOLD = 0
-
-export const DEFAULT_NETWORK = process.env.NEXT_PUBLIC_IS_TEST === 'true' ? '5' : '10'
 
 export const DEFAULT_NOTE = <SafeSelectOption>{
 	safeAddress: '',

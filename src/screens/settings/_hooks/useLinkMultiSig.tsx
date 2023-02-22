@@ -7,10 +7,10 @@ import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { SafeSelectOption } from 'src/types'
 import getErrorMessage from 'src/utils/errorUtils'
 import { bicoDapps, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { SafeSelectOption } from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 
 interface Props {
     multisigAddress: string

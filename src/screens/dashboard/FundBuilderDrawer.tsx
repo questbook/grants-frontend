@@ -18,9 +18,8 @@ import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
 import { getFieldString } from 'src/utils/formattingUtils'
 import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import { getGnosisTansactionLink, getProposalUrl } from 'src/utils/multisigUtils'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { getGnosisTansactionLink } from 'src/v2/utils/gnosisUtils'
-import { getProposalUrl } from 'src/v2/utils/phantomUtils'
 
 function FundBuilderDrawer() {
 	const buildComponent = () => {
