@@ -95,9 +95,13 @@ const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 				const balances = await safe.getTokenAndbalance()
 				logger.info({ balances }, 'Balances (DISCOVER CONTEXT)')
 
-				const total = balances.reduce((acc: number, cur: {usdValueAmount: number}) => acc + cur.usdValueAmount, 0)
-				logger.info({ balances, safe }, 'Total (DISCOVER CONTEXT)')
-				return total
+				if(balances?.value) {
+					const total = balances?.value?.reduce((acc: number, cur: {usdValueAmount: number}) => acc + cur.usdValueAmount, 0)
+					logger.info({ balances, safe }, 'Total (DISCOVER CONTEXT)')
+					return total
+				} else {
+					return 0
+				}
 			} catch(e) {
 				logger.info({ balances, safe }, 'Error (DISCOVER CONTEXT)')
 				return 0

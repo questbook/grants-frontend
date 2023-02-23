@@ -88,7 +88,9 @@ export default function SendFunds({
 
 		const getToken = async() => {
 			const response = await safeObj?.getTokenAndbalance()
-			setSafeTokenList(response)
+			if(response?.value) {
+				setSafeTokenList(response?.value)
+			}
 		}
 
 		if(sendFundsTo?.length > 0) {
