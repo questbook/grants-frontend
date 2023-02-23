@@ -1,4 +1,5 @@
 import { Box, Button, Flex, Image, Text } from '@chakra-ui/react'
+import { Dot } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import { WorkspaceMembers } from 'src/screens/settings/_utils/types'
 import getAvatar from 'src/utils/avatarUtils'
@@ -57,7 +58,7 @@ function WorkspaceMemberCard({ member, setOpenConfirmationModal }: WorkspaceMemb
 								</Text>
 							)
 						}
-						{member?.email && <Image src='/v2/icons/dot.svg' />}
+						{member?.email && <Dot />}
 						<Text
 							variant='v2_body'
 							color='gray.5'

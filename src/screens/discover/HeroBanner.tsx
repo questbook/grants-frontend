@@ -69,7 +69,7 @@ function HeroBanner() {
 						justifyContent='center'>
 						<Image
 							mt={10}
-							src='/illustrations/Browsers.svg' />
+							src='/Browser Mock.svg' />
 					</Flex>
 				)
 			}

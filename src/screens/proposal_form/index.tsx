@@ -1,9 +1,11 @@
 import { ChangeEvent, ReactElement, useContext, useMemo, useState } from 'react'
+import { CalendarIcon } from '@chakra-ui/icons'
 import { Button, Container, Flex, Image, Text } from '@chakra-ui/react'
 import { convertToRaw } from 'draft-js'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
 import { useSafeContext } from 'src/contexts/safeContext'
+import { Doc } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import BackButton from 'src/libraries/ui/BackButton'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
@@ -230,7 +232,7 @@ function ProposalForm() {
 									alignItems='center'
 								>
 									<Flex gap={4}>
-										<Image src='/v2/icons/calendar-color.svg' />
+										<CalendarIcon />
 										<Flex direction='column'>
 											<Text
 												variant='v2_title'
@@ -257,7 +259,7 @@ function ProposalForm() {
 									grant?.link && (
 										<Flex alignItems='center'>
 											<Flex gap={4}>
-												<Image src='/v2/icons/doc.svg' />
+												<Doc />
 												<Flex direction='column'>
 													<Text
 														variant='v2_title'

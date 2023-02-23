@@ -2,7 +2,7 @@ import { useContext, useEffect, useMemo, useState } from 'react'
 import { Box, Button, CircularProgress, Flex, Image, Text } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import { defaultChainId } from 'src/constants/chains'
-import { Mail, ShareForward } from 'src/generated/icons'
+import { Dot, Mail, ShareForward } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import CopyIcon from 'src/libraries/ui/CopyIcon'
@@ -129,8 +129,7 @@ function Proposal() {
 
 										{
 											getFieldString(proposal, 'applicantEmail') && (
-												<Image
-													src='/v2/icons/dot.svg'
+												<Dot
 													boxSize='4px'
 													mx={2} />
 											)

@@ -4,7 +4,7 @@ import { Box, Button, Divider, Flex, Grid, Image, Input, InputGroup, InputLeftEl
 import copy from 'copy-to-clipboard'
 import router from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
-import { Copy, ImageAdd, ShareBox } from 'src/generated/icons'
+import { Celo, Copy, Dot, ImageAdd, Realms, Safe, ShareBox } from 'src/generated/icons'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
@@ -82,9 +82,8 @@ function Settings() {
 										<Flex gap={2}>
 											<Flex
 											>
-												<Image
+												<Safe
 													boxSize={8}
-													src='/v2/icons/safe.svg'
 												/>
 											</Flex>
 
@@ -131,8 +130,7 @@ function Settings() {
 														}
 													/>
 
-													<Image
-														src='/v2/icons/dot.svg'
+													<Dot
 														boxSize='4px'
 														mx={1} />
 
@@ -161,19 +159,17 @@ function Settings() {
 									>
 										<Flex
 										>
-											<Image
+											<Realms
 												boxSize={8}
-												src='/v2/icons/realms.svg'
+
 											/>
-											<Image
+											<Safe
 												boxSize={8}
 												ml='-18px'
-												src='/v2/icons/safe.svg'
 											/>
-											<Image
+											<Celo
 												boxSize={8}
 												ml='-18px'
-												src='/v2/icons/celo.svg'
 											/>
 										</Flex>
 
