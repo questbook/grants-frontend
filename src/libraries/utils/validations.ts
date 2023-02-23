@@ -1,5 +1,6 @@
 import { PublicKey } from '@solana/web3.js'
 import { ethers } from 'ethers'
+import logger from 'src/libraries/logger'
 
 export const isValidEthereumAddress = (address: string) => {
 	return ethers.utils.isAddress(address)
@@ -7,8 +8,8 @@ export const isValidEthereumAddress = (address: string) => {
 
 export const isValidSolanaAddress = (address: string) => {
 	try {
-		//@todo: isOnCurve is not the right check here, it returns false even with right address
-		return PublicKey.isOnCurve(address)
+		new PublicKey(address)
+		return true
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch(e: any) {
 		return false
@@ -16,5 +17,6 @@ export const isValidSolanaAddress = (address: string) => {
 }
 
 export const isValidSafeAddress = (address: string) => {
+	logger.info({ eth: isValidEthereumAddress(address), sol: isValidSolanaAddress(address) }, 'isValidSafeAddress')
 	return isValidEthereumAddress(address) || isValidSolanaAddress(address)
 }
