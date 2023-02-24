@@ -753,7 +753,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 					</NotificationContext.Provider>
 				</ApiClientsContext.Provider>
 			</WagmiConfig>
-			{/* <ChatWidget
+			<ChatWidget
 				token='5b3b08cf-8b27-4d4b-9c4e-2290f53e04f0'
 				inbox='cb5e60c6-dfe5-481d-9dde-3f13e83344cd'
 				title='Welcome to Questbook Support'
@@ -766,7 +766,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				requireEmailUpfront={false}
 				iconVariant='filled'
 				baseUrl='https://app.papercups.io'
-			/> */}
+			/>
 
 		</>
 	)
