@@ -4,6 +4,8 @@ import { Bell, Desktop, QrScan } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import { GrantsProgramContext, NotificationContext } from 'src/pages/_app'
 import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { useMediaQuery } from 'react-responsive'
+
 
 type Props =
 | {
@@ -16,6 +18,8 @@ type Props =
 }
 
 function NotificationPopover(props: Props) {
+
+	const isMobile = useMediaQuery({ query:'(max-width:600px)' })
 	const buildComponent = () => (
 		<Popover
 			isLazy
@@ -31,6 +35,7 @@ function NotificationPopover(props: Props) {
 						<PopoverContent>
 							<PopoverArrow />
 							<PopoverBody
+								// bgSize={'sm'}
 								px={4}
 								py={3}>
 								<Text
@@ -55,7 +60,7 @@ function NotificationPopover(props: Props) {
 								</Text>
 								{
 									popoverBodyItem.map((item, index) => {
-										return (
+										return isMobile&&index==1 ? null : (
 											<Flex
 												mt={4}
 												key={index}
@@ -103,11 +108,11 @@ function NotificationPopover(props: Props) {
 
 	const popoverBodyItem = [
 		{
-			title: 'For MAC App',
-			buttonIcon: <Desktop
+			title: isMobile ? 'For mobile App' : 'For MAC App' ,
+			buttonIcon: isMobile ? <></> : <Desktop
 				color='black.1'
 				boxSize='20px' />,
-			buttonText: 'Open my desktop app',
+			buttonText: isMobile ? 'Open my mobile app' : 'Open my desktop app',
 			onButtonClick: () => {
 				const payload = getPayload()
 				if(payload) {
