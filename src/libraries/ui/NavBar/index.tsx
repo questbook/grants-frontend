@@ -298,7 +298,7 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 				minW='100%'
 				sx={
 					{
-						paddingInlineEnd: '0',
+						paddingInlineEnd: '4',
 						paddingInlineStart: '0'
 					}
 				}
@@ -438,9 +438,15 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 					)
 				}
 
-				{(role === 'admin' && !isLoading) && (<Box ml={3} />)}
-				<Spacer />
-
+				{/* {(role === 'admin' && !isLoading) && (<Box ml={3} />)} */}
+				{/* <Spacer /> */}
+				{
+					(!isLoading && router.pathname === '/dashboard') && (
+						<NotificationPopover
+							type='grant'
+							grantId={grant?.id ?? ''} />
+					)
+				}
 			</Container>
 			<RecoveryModal
 				isOpen={isRecoveryModalOpen}
