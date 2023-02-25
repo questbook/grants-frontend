@@ -1,7 +1,17 @@
 import { useEffect, useState } from 'react'
-import { Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
+import {
+	Button,
+	Flex,
+	Image,
+	Modal,
+	ModalCloseButton,
+	ModalContent,
+	ModalOverlay,
+	Text,
+} from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { NetworkType } from 'src/constants/Networks'
+import { Celo, CeloSafe, Realms, RealmsLogo, Safe, SafeLogo } from 'src/generated/icons'
 import useLinkYourMultisig from 'src/libraries/hooks/useLinkYourMultisig'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
@@ -11,12 +21,16 @@ import { isValidSafeAddress } from 'src/libraries/utils/validations'
 import { SafeSelectOption } from 'src/types'
 
 interface Props {
-	multisigAddress?: string
-	isOpen: boolean
-	onClose: () => void
+  multisigAddress?: string
+  isOpen: boolean
+  onClose: () => void
 }
 
-function LinkYourMultisigModal({ isOpen, onClose, multisigAddress: _multisigAddress }: Props) {
+function LinkYourMultisigModal({
+	isOpen,
+	onClose,
+	multisigAddress: _multisigAddress,
+}: Props) {
 	const buildComponent = () => {
 		return (
 			<Modal
@@ -30,7 +44,8 @@ function LinkYourMultisigModal({ isOpen, onClose, multisigAddress: _multisigAddr
 					w='100%'
 					gap={1}
 					alignItems='center'
-					p={8}>
+					p={8}
+				>
 					<ModalCloseButton />
 
 					<Text fontWeight='500'>
@@ -45,15 +60,7 @@ function LinkYourMultisigModal({ isOpen, onClose, multisigAddress: _multisigAddr
 						We currently support
 					</Text>
 					<Flex gap={2}>
-						{
-							supportedSafeList.map((safe) => (
-								<Image
-									key={safe.icon}
-									h='2rem'
-									w='5rem'
-									src={safe.icon} />
-							))
-						}
+						{supportedSafeList.map((safe) => safe.icon)}
 					</Flex>
 
 					<FlushedInput
@@ -71,7 +78,8 @@ function LinkYourMultisigModal({ isOpen, onClose, multisigAddress: _multisigAddr
 									setMultiSigAddress(e.target.value)
 								}
 							}
-						} />
+						}
+					/>
 
 					{
 						multiSigAddressError && (
@@ -80,14 +88,15 @@ function LinkYourMultisigModal({ isOpen, onClose, multisigAddress: _multisigAddr
 								w='100%'
 								textAlign='left'
 								variant='v2_body'
-								color='red'>
+								color='red'
+							>
 								Not a valid address!
 							</Text>
 						)
 					}
 
 					{loadingSafeData && renderSearchingSafe()}
-					{safeState > 0 && (renderSafeDropdown())}
+					{safeState > 0 && renderSafeDropdown()}
 
 					<Button
 						mt={8}
@@ -98,14 +107,15 @@ function LinkYourMultisigModal({ isOpen, onClose, multisigAddress: _multisigAddr
 						onClick={
 							async() => {
 								if(isOwner && selectedSafeNetwork) {
-									// link the safe
+								// link the safe
 									await link(multiSigAddress, selectedSafeNetwork.networkId)
 									onClose()
 								} else {
 									setIsVerifySignerModalOpen(true)
 								}
 							}
-						}>
+						}
+					>
 						{isOwner ? 'Link Multisig' : 'Verify you are a signer'}
 					</Button>
 
@@ -114,7 +124,6 @@ function LinkYourMultisigModal({ isOpen, onClose, multisigAddress: _multisigAddr
 						mt={6}>
 						Why do I need a multisig?
 					</Button>
-
 				</ModalContent>
 
 				<VerifySignerModal
@@ -128,7 +137,8 @@ function LinkYourMultisigModal({ isOpen, onClose, multisigAddress: _multisigAddr
 					}
 					networkType={selectedSafeNetwork?.networkType ?? NetworkType.EVM}
 					isOpen={IsVerifySignerModalOpen}
-					onClose={() => setIsVerifySignerModalOpen(false)} />
+					onClose={() => setIsVerifySignerModalOpen(false)}
+				/>
 			</Modal>
 		)
 	}
@@ -138,12 +148,11 @@ function LinkYourMultisigModal({ isOpen, onClose, multisigAddress: _multisigAddr
 			<Flex
 				justify='start'
 				w='100%'
-				gap={2} >
+				gap={2}>
 				<Image
 					className='loader'
 					src='/ui_icons/loader.svg'
-					color='black.1'
-				/>
+					color='black.1' />
 				<Text
 					variant='v2_body'
 					color='black.3'>
@@ -166,31 +175,38 @@ function LinkYourMultisigModal({ isOpen, onClose, multisigAddress: _multisigAddr
 								<Image
 									src='/ui_icons/Done_all_alt_round.svg'
 									color='#273B4A' />
-								<Text
-									variant='v2_body'>
-									{`Looks like this address is on ${safeNetworks.length} network${safeNetworks.length > 1 ? 's' : ''}`}
+								<Text variant='v2_body'>
+									{
+										`Looks like this address is on ${safeNetworks.length} network${
+											safeNetworks.length > 1 ? 's' : ''
+										}`
+									}
 								</Text>
-
 							</>
 						) : (
 							<Button
-								display={(!multiSigAddressError && !loadingSafeData && multiSigAddress !== '') ? 'block' : 'none'}
+								display={
+									!multiSigAddressError &&
+                !loadingSafeData &&
+                multiSigAddress !== ''
+										? 'block'
+										: 'none'
+								}
 								variant='link'
 								style={{ cursor: 'pointer' }}
 							>
 								<Text
 									variant='v2_body'
 									color='red'>
-									But this address doesn’t exist on any of the 20 supported chains.
+									But this address doesn’t exist on any of the 20 supported
+									chains.
 								</Text>
 							</Button>
 						)
 					}
-
-
 				</Flex>
 				{
-					(safeNetworks.length > 0) ? (
+					safeNetworks.length > 0 ? (
 						<SafeSelect
 							safesOptions={safeNetworks}
 							label=''
@@ -205,21 +221,38 @@ function LinkYourMultisigModal({ isOpen, onClose, multisigAddress: _multisigAddr
 							}
 							flexProps={
 								{
-									w: '100%'
+									w: '100%',
 								}
 							}
 						/>
-					) : <></>
+					) : (
+						<></>
+					)
 				}
 			</>
 		)
 	}
 
-	const supportedSafeList = [{ icon: '/safes_icons/safe_logo.svg' }, { icon: '/safes_icons/realms_logo.svg' }, { icon: '/safes_icons/celo_safe.svg' }]
+	const supportedSafeList = [
+		{ icon: <SafeLogo
+			h='2rem'
+			w='5rem' />
+		},
+		{ icon: <RealmsLogo
+			h='2rem'
+			w='5rem' />
+		},
+		{ icon: <CeloSafe
+			h='2rem'
+			w='5rem' />
+		},
+	]
 
 	const [multiSigAddress, setMultiSigAddress] = useState<string>('')
-	const [multiSigAddressError, setMultiSigAddressError] = useState<boolean>(false)
-	const [selectedSafeNetwork, setSelectedSafeNetwork] = useState<SafeSelectOption>()
+	const [multiSigAddressError, setMultiSigAddressError] =
+    useState<boolean>(false)
+	const [selectedSafeNetwork, setSelectedSafeNetwork] =
+    useState<SafeSelectOption>()
 	const [safeNetworks, setSafeNetworks] = useState<SafeSelectOption[]>([])
 	const [IsVerifySignerModalOpen, setIsVerifySignerModalOpen] = useState(false)
 	const [isOwner, setIsOwner] = useState(false)
@@ -255,7 +288,6 @@ function LinkYourMultisigModal({ isOpen, onClose, multisigAddress: _multisigAddr
 		} else {
 			setSafeState(-1)
 		}
-
 	}, [multiSigAddress])
 
 	useEffect(() => {
@@ -263,7 +295,10 @@ function LinkYourMultisigModal({ isOpen, onClose, multisigAddress: _multisigAddr
 		if(multiSigAddress && loadingSafeData && safeNetworks.length < 1) {
 			//search for safe in supported safes
 			setSafeState(0)
-		} else if(multiSigAddress && (safeNetworks.length > 1 || safeNetworks.length === 0)) {
+		} else if(
+			multiSigAddress &&
+      (safeNetworks.length > 1 || safeNetworks.length === 0)
+		) {
 			// show dropdown
 			setSafeState(2)
 		} else if(multiSigAddress && safeNetworks.length === 1) {

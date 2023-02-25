@@ -542,8 +542,8 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		new SupportedPayouts().getSafe(parseInt(grant.workspace?.safe?.chainId), grant.workspace.safe.address).getTokenAndbalance().then((result: any) => {
 			logger.info({ result }, 'safe balance')
-			if(result) {
-				const total = result?.reduce((acc: number, cur: {usdValueAmount: number}) => acc + cur.usdValueAmount, 0)
+			if(result?.value) {
+				const total = result.value.reduce((acc: number, cur: {usdValueAmount: number}) => acc + cur.usdValueAmount, 0)
 				logger.info({ total }, 'balance total')
 				setSafeUSDAmount(total)
 			}

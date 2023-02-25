@@ -141,13 +141,15 @@ function PayWithChoose({ selectedMode }: { selectedMode: any}) {
 			return
 		}
 
-		safeObj?.getTokenAndbalance().then((list: TokenInfo[]) => {
+		safeObj?.getTokenAndbalance().then((list: {value: TokenInfo[], error: string}) => {
+			if(list?.value) {
 			console.log('list', list)
-			setTokenList(list)
-			if(list.length && !selectedTokenInfo) {
-				setSelectedTokenInfo(list[0])
+			setTokenList(list?.value)
+			if(list?.value?.length && !selectedTokenInfo) {
+				setSelectedTokenInfo(list?.value[0])
 				setSelectedTokenIndex(0)
 			}
+		}
 		})
 	}, [safeObj])
 
