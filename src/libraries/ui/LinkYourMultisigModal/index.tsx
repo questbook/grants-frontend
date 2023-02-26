@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { NetworkType } from 'src/constants/Networks'
-import { Celo, CeloSafe, Realms, RealmsLogo, Safe, SafeLogo } from 'src/generated/icons'
+import { CeloSafe, RealmsLogo, SafeLogo } from 'src/generated/icons'
 import useLinkYourMultisig from 'src/libraries/hooks/useLinkYourMultisig'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
