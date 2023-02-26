@@ -111,10 +111,12 @@ const ConnectWalletModal = ({
 									{
 										availableWallets.map((wallet, index) => (
 											<ConnectWalletButton
+												id={wallet.id}
 												key={index}
 												icon={wallet.icon}
 												name={wallet.name}
-												isPopular={wallet.isPopular}
+												verifying={undefined}
+												isDisabled={true}
 												onClick={
 													async() => {
 														const connector = connectors.find((x) => x.id === wallet.id)
