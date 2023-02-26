@@ -9,8 +9,8 @@ import { logger } from 'ethers'
 import { useRouter } from 'next/router'
 import { CustomSelect } from 'src/libraries/ui/CustomSelect'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
-import StepIndicator from 'src/libraries/ui/StepIndicator'
 import { WebwalletContext } from 'src/pages/_app'
+import StepIndicator from 'src/screens/request_proposal/_components/StepIndicator'
 import { RFPForm, RFPFormType } from 'src/screens/request_proposal/_utils/types'
 import { ApplicantDetailsFieldType } from 'src/types'
 
@@ -28,7 +28,6 @@ interface Props {
     setLink: (value: string) => void
     doc: FileList | null
     setDoc: (value: FileList) => void
-    step: number
     allApplicantDetails: {[key: string]: ApplicantDetailsFieldType}
     setAllApplicantDetails: (value: {[key: string]: ApplicantDetailsFieldType}) => void
 	rfpFormSubmissionType: RFPFormType
@@ -52,7 +51,6 @@ function ProposalSubmission(
 		setLink,
 		doc,
 		setDoc,
-		step,
 		setAllApplicantDetails,
 		handleOnEditProposalSubmission,
 		rfpFormSubmissionType
@@ -97,9 +95,7 @@ function ProposalSubmission(
 					alignSelf='flex-start'
 				>
 					{/* TODO: Add Steps complete indicator */}
-					<StepIndicator
-						step={step}
-						formType={rfpFormSubmissionType} />
+					<StepIndicator />
 					<Text
 						alignSelf={['flex-start', 'center']}
 						fontWeight='500'

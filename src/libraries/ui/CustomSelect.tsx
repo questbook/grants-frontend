@@ -37,7 +37,7 @@ type Props = {
 }
 
 
-export function CustomSelect({ options, setExtraDetailsFields, setShowExtraFieldDropdown, width, placeholder }: Props) {
+export function CustomSelect({ options, setExtraDetailsFields, setShowExtraFieldDropdown, placeholder }: Props) {
 
 	const [value, setValue] = useState<ApplicantDetailsFieldType | null>()
 	const createOption = (label: string): any => {

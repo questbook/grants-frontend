@@ -5,9 +5,9 @@ import { IoMdClose } from 'react-icons/io'
 import { Button, Flex, Icon, Text, useMediaQuery } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
-import StepIndicator from 'src/libraries/ui/StepIndicator'
 import { WebwalletContext } from 'src/pages/_app'
 import SelectDropdown from 'src/screens/request_proposal/_components/SelectDropdown'
+import StepIndicator from 'src/screens/request_proposal/_components/StepIndicator'
 import { DropdownOption, RFPFormType } from 'src/screens/request_proposal/_utils/types'
 
 interface Props {
@@ -15,7 +15,6 @@ interface Props {
 	setPayoutMode: (value: DropdownOption) => void
 	amount: number
 	setAmount: (value: number) => void
-	step: number
 	milestones: Array<string>
 	setMilestones: (value: Array<string>) => void
 	createRFP: () => void
@@ -31,7 +30,6 @@ function Payouts(
 		setPayoutMode,
 		amount,
 		setAmount,
-		step,
 		milestones,
 		setMilestones,
 		createRFP,
@@ -70,9 +68,7 @@ function Payouts(
 					alignSelf='flex-start'
 					// marginRight={24}
 				>
-					<StepIndicator
-						step={step}
-						formType={rfpFormSubmissionType} />
+					<StepIndicator />
 					<Text
 						alignSelf='center'
 						fontWeight='500'
@@ -254,9 +250,7 @@ function Payouts(
 					alignSelf='flex-start'
 					marginRight={24}
 				>
-					<StepIndicator
-						step={step}
-						formType={rfpFormSubmissionType} />
+					<StepIndicator />
 					<Text
 						alignSelf='center'
 						fontWeight='500'

@@ -101,7 +101,6 @@ function RequestProposal() {
 					setLink={setLink}
 					doc={doc!}
 					setDoc={setDoc}
-					step={step}
 					allApplicantDetails={allApplicantDetails}
 					setAllApplicantDetails={setAllApplicantDetails}
 					extraDetailsFields={extraDetailsFields}
@@ -115,8 +114,6 @@ function RequestProposal() {
 				<ProposalReview
 					reviewMechanism={reviewMechanism!}
 					setReviewMechanism={setReviewMechanism}
-					step={step}
-					setStep={setStep}
 					rubricInputValues={rubricInputValues}
 					setRubricInputValues={setRubricInputValues}
 					rubrics={rubrics}
@@ -133,7 +130,6 @@ function RequestProposal() {
 						setPayoutMode={setPayoutMode}
 						amount={amount}
 						setAmount={setAmount}
-						step={step}
 						milestones={milestones}
 						setMilestones={setMilestones}
 						createRFP={createWorkspaceAndGrant}
@@ -189,8 +185,6 @@ function RequestProposal() {
 	const [allApplicantDetails, setAllApplicantDetails] = useState<{ [key: string]: ApplicantDetailsFieldType }>({})
 	const [link, setLink] = useState('')
 	const [doc, setDoc] = useState<FileList>()
-
-	const [step, setStep] = useState(1)
 
 	// State for Proposal Review
 	const [reviewMechanism, setReviewMechanism] = useState<DropdownOption>({

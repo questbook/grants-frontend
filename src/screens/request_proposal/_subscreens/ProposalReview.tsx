@@ -5,9 +5,9 @@ import { Button, Flex, Text } from '@chakra-ui/react'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
-import StepIndicator from 'src/libraries/ui/StepIndicator'
 import { WebwalletContext } from 'src/pages/_app'
 import SelectDropdown from 'src/screens/request_proposal/_components/SelectDropdown'
+import StepIndicator from 'src/screens/request_proposal/_components/StepIndicator'
 import { DropdownOption, RFPFormType } from 'src/screens/request_proposal/_utils/types'
 
 interface Props {
@@ -17,8 +17,6 @@ interface Props {
 	setRubrics: (value: {}) => void
 	rubricInputValues: string[]
 	setRubricInputValues: (value: string[]) => void
-	step: number
-	setStep: (value: number) => void
 	rfpFormSubmissionType: RFPFormType
 	handleOnEdit: (fieldName: string, value: string | string []) => void
 }
@@ -30,7 +28,6 @@ function ProposalReview(
 		rubricInputValues,
 		setRubricInputValues,
 		setRubrics,
-		step,
 		rfpFormSubmissionType,
 		handleOnEdit
 	}: Props) {
@@ -61,9 +58,7 @@ function ProposalReview(
 					// marginRight={24}
 				>
 					{/* TODO: Add Steps complete indicator */}
-					<StepIndicator
-						step={step}
-						formType={rfpFormSubmissionType} />
+					<StepIndicator />
 					<Text
 						alignSelf='center'
 						fontWeight='500'
@@ -127,25 +122,6 @@ function ProposalReview(
 							}
 						/>
 					</Flex>
-
-					{/* <Flex
-						gap={4}
-						alignItems='baseline'>
-						<Button
-							variant='outline'
-							leftIcon={<AiOutlinePlus />}
-							borderColor='black'
-							onClick={() => setReviewMechanism('Voting')}>
-							Community Voting
-						</Button>
-						<Button
-							variant='outline'
-							leftIcon={<AiOutlinePlus />}
-							borderColor='black'
-							onClick={() => setReviewMechanism('Rubric')}>
-							Rubric
-						</Button>
-					</Flex> */}
 
 					{/* Rubric Selected */}
 					{
