@@ -1,11 +1,12 @@
 
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Flex, Text, VStack } from '@chakra-ui/react'
 import { useSafeContext } from 'src/contexts/safeContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
+import getErrorMessage from 'src/utils/errorUtils'
 import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
 import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/PhantomLogo'
 import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
@@ -65,43 +66,59 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 			>
 				{
 					isEvmChain ?
-						availableWallets.map((wallet, index) => (
+						availableWallets.map(wallet => (
 							<ConnectWalletButton
+								id={wallet.id}
 								maxW='100%'
-								key={index}
+								key={wallet.id}
 								icon={wallet.icon}
 								name={wallet.name}
-								isPopular={wallet.isPopular}
+								verifying={verifying}
+								isDisabled={verifying !== undefined && verifying !== wallet.id}
 								onClick={
 									() => {
-										if(!isConnected) {
+										setVerifying(wallet.id)
+										logger.info('Connect wallet initiated')
+										try {
+											logger.info('Inside try block')
 											const connector = connectors.find((x) => x.id === wallet.id)
 											logger.info({ connector }, 'connector')
 											// setConnectClicked(true)
 											if(connector) {
 												connect({ connector })
 											}
+										// eslint-disable-next-line @typescript-eslint/no-explicit-any
+										} catch(e: any) {
+											setVerifying(undefined)
+											const message = getErrorMessage(e)
+											toast({
+												title: message,
+												status: 'error',
+												duration: 5000
+											})
 										}
-										// setVerified(true)
-										// onVerified()
+
+										logger.info(10)
 									}
 								} />
-						)) : solanaWallets.map((wallet, index) => (
+						)) : solanaWallets.map(wallet => (
 							<ConnectWalletButton
+								id={wallet.id}
 								maxW='100%'
-								key={index}
+								key={wallet.id}
 								icon={wallet.icon}
 								name={wallet.name}
-								isPopular={wallet.isPopular}
+								verifying={verifying}
+								isDisabled={verifying !== undefined && verifying !== wallet.id}
 								onClick={
 									() => {
+										setVerifying(wallet.id)
 										phantomWallet?.connect()
 									}
 								} />
 						))
 				}
 			</VStack>
-
 		</Flex>
 	)
 
@@ -114,6 +131,8 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 
 	const { isConnected, address, connector } = useAccount()
 	const toast = useCustomToast()
+
+	const [verifying, setVerifying] = useState<string>()
 
 	useEffect(() => {
 		if(isConnected) {
@@ -143,6 +162,8 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 				duration: 3000,
 			})
 		}
+
+		setVerifying(undefined)
 	}
 
 	const switchNetworkIfNeed = async() => {

@@ -96,8 +96,6 @@ const VerifySignerModal = ({
 		}
 	}, [address])
 
-	console.log(owners, phantomWallet?.publicKey)
-
 	useEffect(() => {
 		if(isOpen && walletClicked) {
 			if(networkType === NetworkType.EVM && address && owners.includes(address)) {
@@ -218,10 +216,11 @@ const VerifySignerModal = ({
 										networkType === NetworkType.EVM
 											? (availableWallets.map((wallet) => (
 												<ConnectWalletButton
+													id={wallet.id}
 													key={wallet.id}
 													icon={wallet.icon}
 													name={wallet.name}
-													isPopular={wallet.isPopular}
+													verifying={undefined}
 													onClick={
 														async() => {
 															const connector = connectors.find((x) => x.id === wallet.id)!
@@ -243,10 +242,11 @@ const VerifySignerModal = ({
 											)))
 											: (solanaWallets.map((wallet, index) => (
 												<ConnectWalletButton
+													id={wallet.id}
 													key={index}
 													icon={wallet.icon}
 													name={wallet.name}
-													isPopular={wallet.isPopular}
+													verifying={undefined}
 													onClick={
 														async() => {
 															await phantomWallet?.connect()

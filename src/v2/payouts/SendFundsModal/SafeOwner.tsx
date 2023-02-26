@@ -74,11 +74,12 @@ const SafeOwner = ({ isEvmChain, phantomWallet, signerVerified, gnosisSafeAddres
 						isEvmChain ?
 							availableWallets.map((wallet, index) => (
 								<ConnectWalletButton
+									id={wallet.id}
 									maxW='100%'
 									key={index}
 									icon={wallet.icon}
 									name={wallet.name}
-									isPopular={wallet.isPopular}
+									verifying={undefined}
 									onClick={
 										async() => {
 											if(!isConnected) {
@@ -95,11 +96,12 @@ const SafeOwner = ({ isEvmChain, phantomWallet, signerVerified, gnosisSafeAddres
 									} />
 							)) : solanaWallets.map((wallet, index) => (
 								<ConnectWalletButton
+									id={wallet.id}
 									maxW='100%'
 									key={index}
 									icon={wallet.icon}
 									name={wallet.name}
-									isPopular={wallet.isPopular}
+									verifying={undefined}
 									onClick={
 										() => {
 											phantomWallet?.connect()
