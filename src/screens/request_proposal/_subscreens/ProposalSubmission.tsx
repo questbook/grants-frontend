@@ -29,7 +29,6 @@ interface Props {
     doc: FileList | null
     setDoc: (value: FileList) => void
     step: number
-    setStep: (value: number) => void
     allApplicantDetails: {[key: string]: ApplicantDetailsFieldType}
     setAllApplicantDetails: (value: {[key: string]: ApplicantDetailsFieldType}) => void
 	rfpFormSubmissionType: RFPFormType
@@ -54,7 +53,6 @@ function ProposalSubmission(
 		doc,
 		setDoc,
 		step,
-		setStep,
 		setAllApplicantDetails,
 		handleOnEditProposalSubmission,
 		rfpFormSubmissionType
@@ -117,7 +115,7 @@ function ProposalSubmission(
 						alignItems='baseline'
 						flexDirection={['column', 'row', 'row', 'row']}>
 
-						<Text variant='v2_subheading'>
+						<Text variant='subheading'>
 							Receive proposals for
 						</Text>
 
@@ -140,7 +138,7 @@ function ProposalSubmission(
 						flexDirection={['column', 'column', 'row']}>
 
 						<Text
-							variant='v2_subheading'
+							variant='subheading'
 							minW='max-content'>
 							Receive proposal submissions from
 
@@ -181,7 +179,7 @@ function ProposalSubmission(
 							fontWeight='400'
 							fontSize='20px'
 						/>
-						<Text variant='v2_subheading'>
+						<Text variant='subheading'>
 							till
 						</Text>
 						<Input
@@ -226,7 +224,7 @@ function ProposalSubmission(
 						gap={4}
 						alignItems='baseline'
 						wrap='wrap'>
-						<Text variant='v2_subheading'>
+						<Text variant='subheading'>
 							Proposals must include
 						</Text>
 
@@ -244,7 +242,7 @@ function ProposalSubmission(
 											flexProps={{ w: 'fit-content' }} />
 										{
 											(index < requiredDetails.length - 1 || extraDetailsFields?.filter(detail => detail.required).length > 0) && (
-												<Text variant='v2_subheading'>
+												<Text variant='subheading'>
 													,
 												</Text>
 											)
@@ -284,7 +282,7 @@ function ProposalSubmission(
 										{
 											(index < extraDetailsFields?.filter(detail => detail.required).length - 1) && (
 												<Text
-													variant='v2_subheading'
+													variant='subheading'
 												>
 													,
 												</Text>
@@ -302,7 +300,7 @@ function ProposalSubmission(
 											placeholder='Write more details'
 											value={detailInputValues[index]}
 											onChange={(e) => handleOnChange(e, index)} />
-										<Text variant='v2_subheading'>
+										<Text variant='subheading'>
 											,
 										</Text>
 									</>
@@ -331,7 +329,7 @@ function ProposalSubmission(
 					</Flex>
 
 					{/* More details */}
-					<Text variant='v2_subheading'>
+					<Text variant='subheading'>
 						Builders can also refer to additional information here
 					</Text>
 					<Flex
@@ -356,7 +354,7 @@ function ProposalSubmission(
 						/>
 						<Text
 							display={rfpFormSubmissionType === 'edit' ? 'none' : ''}
-							variant='v2_subheading'
+							variant='subheading'
 							marginBottom={[-6, 0, 0, 0]}>
 							Or
 						</Text>
@@ -424,7 +422,7 @@ function ProposalSubmission(
 
 	const [showCrossIcon, setShowCrossIcon] = useState(false)
 
-	const { createingProposalStep, setCreatingProposalStep } = useContext(WebwalletContext)!
+	const { setCreatingProposalStep } = useContext(WebwalletContext)!
 
 	// const [extraDetailsFields, setExtraDetailsFields] = useState<ApplicantDetailsFieldType[]>(extraDetailsFieldsList)
 

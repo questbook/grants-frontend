@@ -5,12 +5,12 @@ import { Box, Button, Checkbox, Flex, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import logger from 'src/libraries/logger'
 import SearchField from 'src/libraries/ui/SearchField'
+import { getFieldString } from 'src/libraries/utils/formatting'
+import { getSupportedChainIdFromSupportedNetwork } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
 import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { getFieldString } from 'src/libraries/utils/formatting'
-import { getSupportedChainIdFromSupportedNetwork } from 'src/libraries/utils/validations'
 
 function ProposalList({ step, setStep }: {step?: boolean, setStep?: (value: boolean) => void}) {
 	const buildComponent = () => (
@@ -103,7 +103,7 @@ function ProposalList({ step, setStep }: {step?: boolean, setStep?: (value: bool
 								}
 							}>
 							<Text
-								variant='v2_body'
+								variant='body'
 								fontWeight='400'>
 								Select All
 							</Text>

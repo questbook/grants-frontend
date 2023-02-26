@@ -7,13 +7,13 @@ import { Dropdown, NewTab } from 'src/generated/icons'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
+import { getGnosisTansactionLink, getProposalUrl } from 'src/libraries/utils/multisig'
 import { getChainInfo } from 'src/libraries/utils/token'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { Payout, PayoutsType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { getGnosisTansactionLink, getProposalUrl } from 'src/libraries/utils/multisig'
-import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 
 function Payouts() {
 	const buildComponent = () => {
@@ -82,14 +82,14 @@ function Payouts() {
 				<Flex mt={2}>
 					<Text
 						w='50%'
-						variant='v2_body'
+						variant='body'
 						color='gray.6'>
 						Milestone
 					</Text>
 					<Text
 						w='50%'
 						fontWeight='500'
-						variant='v2_body'>
+						variant='body'>
 						{formatMilestoneId(payout?.milestone?.id)}
 					</Text>
 				</Flex>
@@ -99,13 +99,13 @@ function Payouts() {
 						<Flex mt={2}>
 							<Text
 								w='50%'
-								variant='v2_body'
+								variant='body'
 								color='gray.6'>
 								Amount
 							</Text>
 							<Text
 								w='50%'
-								variant='v2_body'>
+								variant='body'>
 								{chainInfo?.address === USD_ASSET ? payout.amount : ethers.utils.formatUnits(payout.amount, chainInfo.decimals)}
 								{' '}
 								{chainInfo?.label}
@@ -117,13 +117,13 @@ function Payouts() {
 				<Flex mt={2}>
 					<Text
 						w='50%'
-						variant='v2_body'
+						variant='body'
 						color='gray.6'>
 						Paid On
 					</Text>
 					<Text
 						w='50%'
-						variant='v2_body'>
+						variant='body'>
 						{formatTime(payout.executionTimestamp ?? payout.createdAtS, true)}
 					</Text>
 				</Flex>
@@ -131,7 +131,7 @@ function Payouts() {
 				<Flex mt={2}>
 					<Text
 						w='50%'
-						variant='v2_body'
+						variant='body'
 						color='gray.6'>
 						Status
 					</Text>
@@ -159,7 +159,7 @@ function Payouts() {
 						}>
 						<Text
 							fontWeight='400'
-							variant='v2_body'>
+							variant='body'>
 							{payout.status === 'queued' ? 'Queued' : payout.status === 'executed' ? 'Success' : 'Cancelled'}
 						</Text>
 					</Button>

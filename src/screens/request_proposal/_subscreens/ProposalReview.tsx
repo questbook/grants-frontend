@@ -75,7 +75,7 @@ function ProposalReview(
 					{/* <Flex
 						gap={4}
 						alignItems='baseline'>
-						<Text variant='v2_subheading'>
+						<Text variant='subheading'>
 							Assign
 						</Text>
 						<FlushedInput
@@ -88,7 +88,7 @@ function ProposalReview(
 									handleOnEdit('numberOfReviewers', e.target.value)
 								}
 							} />
-						<Text variant='v2_subheading'>
+						<Text variant='subheading'>
 							reviewer
 							{numberOfReviewers > 1 ? 's' : ''}
 							{' '}
@@ -101,7 +101,7 @@ function ProposalReview(
 						alignItems='baseline'
 					>
 						<Text
-							variant='v2_subheading'
+							variant='subheading'
 							fontSize={['16px', '20px']}
 						>
 							Review will be based on
@@ -158,7 +158,7 @@ function ProposalReview(
 									alignItems='baseline'
 									wrap='wrap'>
 									<Text
-										variant='v2_subheading'
+										variant='subheading'
 										fontSize={['16px', '20px']}
 									>
 										Evaluation rubrics will include
@@ -172,7 +172,7 @@ function ProposalReview(
 														placeholder='Add your own'
 														value={rubricInputValues[index]}
 														onChange={(e) => handleOnChange(e, index)} />
-													<Text variant='v2_subheading'>
+													<Text variant='subheading'>
 														,
 													</Text>
 												</>

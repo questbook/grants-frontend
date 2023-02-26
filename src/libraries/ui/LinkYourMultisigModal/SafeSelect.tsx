@@ -58,14 +58,14 @@ const Option = ({ innerProps, data }: OptionProps<SafeSelectOption, boolean, Gro
 					mx={4}
 					mt={3}>
 					<Text
-						variant='v2_metadata'
+						variant='metadata'
 						fontWeight='500'
 						color={data?.noteDetails?.color}>
 						Note:
 					</Text>
 					<Text
 						mt={1}
-						variant='v2_metadata'
+						variant='metadata'
 						color={data?.noteDetails?.color}>
 						{data?.noteDetails?.text}
 						{' '}
@@ -105,7 +105,7 @@ const Option = ({ innerProps, data }: OptionProps<SafeSelectOption, boolean, Gro
 									src={data.safeIcon}
 									boxSize='12px' />
 								<Text
-									variant='v2_metadata'
+									variant='metadata'
 									color='black.3'
 									ml={1}>
 									{data.safeType}
@@ -172,7 +172,7 @@ function SafeSelect({ label, optionalText, helperText, helperLinkText, helperLin
 					optionalText && (
 						<Text
 							ml={1}
-							variant='v2_metadata'
+							variant='metadata'
 							color='black.3'>
 							{optionalText}
 						</Text>
@@ -182,7 +182,7 @@ function SafeSelect({ label, optionalText, helperText, helperLinkText, helperLin
 			{
 				helperText && (
 					<Text
-						variant='v2_metadata'
+						variant='metadata'
 						color='black.3'>
 						{helperText}
 						{' '}

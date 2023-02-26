@@ -17,7 +17,7 @@ const detailsItem = ({ innerProps, data }: any) => {
 			>
 				<Text
 					mt={1}
-					variant='v2_body'>
+					variant='body'>
 					{data?.title}
 				</Text>
 				<Divider />

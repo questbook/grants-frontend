@@ -69,7 +69,7 @@ const VerifySignerModal = ({
 									{t('/onboarding/create-domain.verify_signer_title')}
 								</Text>
 								<Text
-									variant='v2_body'>
+									variant='body'>
 									{t('/onboarding/create-domain.verify_signer_desc')}
 								</Text>
 
@@ -158,7 +158,7 @@ const VerifySignerModal = ({
 
 								<Text
 									mt={6}
-									variant='v2_body'
+									variant='body'
 									fontWeight='500'
 									cursor='pointer'>
 									Why should I verify?

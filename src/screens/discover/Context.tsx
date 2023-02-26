@@ -5,10 +5,10 @@ import { defaultChainId } from 'src/constants/chains'
 import { useGetAllGrantsForMemberQuery, useGetAllGrantsQuery, useGetGrantProgramDetailsQuery, useGetSectionGrantsQuery, useGetWorkspacesAndBuilderGrantsQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { DiscoverContextType, GrantProgramType, GrantType, SectionGrants, WorkspaceMemberType } from 'src/screens/discover/_utils/types'
 import { Roles } from 'src/types'
-import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 
 const DiscoverContext = createContext<DiscoverContextType | null>(null)
 

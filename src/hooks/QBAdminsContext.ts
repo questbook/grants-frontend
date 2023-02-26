@@ -1,8 +1,8 @@
 import { useContext, useMemo } from 'react'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetQbAdminsQuery } from 'src/generated/graphql'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { ContextGenerator } from 'src/libraries/utils/contextGenerator'
+import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 
 const useGetQBAdmins = () => {
 	const { subgraphClients } = useContext(ApiClientsContext)!

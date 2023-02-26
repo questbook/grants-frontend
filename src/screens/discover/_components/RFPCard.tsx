@@ -6,11 +6,11 @@ import { Alert } from 'src/generated/icons'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
 import logger from 'src/libraries/logger'
-import { GrantType } from 'src/screens/discover/_utils/types'
-import { DiscoverContext } from 'src/screens/discover/Context'
 import { getAvatar } from 'src/libraries/utils'
 import { extractDateFromDateTime, nFormatter, titleCase } from 'src/libraries/utils/formatting'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
+import { GrantType } from 'src/screens/discover/_utils/types'
+import { DiscoverContext } from 'src/screens/discover/Context'
 
 
 type RFPCardProps = {
@@ -144,7 +144,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						alignItems='center'
 					>
 						<Text
-							variant='v2_title'
+							variant='title'
 							fontSize='18px'
 							fontWeight='500'
 							noOfLines={2}
@@ -154,12 +154,12 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 					</Flex>
 
 					<Flex gap={1}>
-						<Text variant='v2_subtitle'>
+						<Text variant='subtitle'>
 							{isOpen ? 'Deadline on' : 'Ended on'}
 							{' '}
 						</Text>
 						<Text
-							variant='v2_subtitle'
+							variant='subtitle'
 							fontWeight='500'
 							color='black.1'
 						>
@@ -205,7 +205,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 								}
 								<Text
 									mt={1}
-									variant='v2_body'
+									variant='body'
 									color='gray.6'>
 									{grant?.workspace?.safe === null ? 'No multisig' : usdAmount === undefined ? '' : usdAmount === 0 ? 'in multisig' : 'available'}
 								</Text>
@@ -218,7 +218,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 								</Text>
 								<Text
 									mt={1}
-									variant='v2_body'
+									variant='body'
 									color='gray.6'>
 									paid out
 								</Text>
@@ -231,7 +231,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 								</Text>
 								<Text
 									mt={1}
-									variant='v2_body'
+									variant='body'
 									color='gray.6'>
 									accepted
 								</Text>
@@ -244,7 +244,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 								</Text>
 								<Text
 									mt={1}
-									variant='v2_body'
+									variant='body'
 									color='gray.6'>
 									proposals
 								</Text>

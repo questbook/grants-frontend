@@ -17,6 +17,11 @@ import logger from 'src/libraries/logger'
 import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
+import getErrorMessage from 'src/libraries/utils/error'
+import { getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
+import { addAuthorizedOwner, addAuthorizedUser, bicoDapps, chargeGas, getEventData, getTransactionDetails, sendGaslessTransaction } from 'src/libraries/utils/gasless'
+import { uploadToIPFS } from 'src/libraries/utils/ipfs'
+import { getSupportedValidatorNetworkFromChainId } from 'src/libraries/utils/validations'
 import { validateAndUploadToIpfs } from 'src/libraries/validator'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { GRANT_CACHE_KEY } from 'src/screens/dashboard/_utils/constants'
@@ -29,11 +34,6 @@ import { DropdownOption, GrantFields } from 'src/screens/request_proposal/_utils
 // import { today } from 'src/screens/request_proposal/_utils/utils'
 import { RFPFormContext, RFPFormProvider } from 'src/screens/request_proposal/Context'
 import { ApplicantDetailsFieldType } from 'src/types'
-import getErrorMessage from 'src/libraries/utils/error'
-import { getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
-import { addAuthorizedOwner, addAuthorizedUser, bicoDapps, chargeGas, getEventData, getTransactionDetails, sendGaslessTransaction } from 'src/libraries/utils/gasless'
-import { uploadToIPFS } from 'src/libraries/utils/ipfs'
-import { getSupportedValidatorNetworkFromChainId } from 'src/libraries/utils/validations'
 
 function RequestProposal() {
 	const customStepsHeader = ['Creating your grant program on chain']
@@ -102,7 +102,6 @@ function RequestProposal() {
 					doc={doc!}
 					setDoc={setDoc}
 					step={step}
-					setStep={setStep}
 					allApplicantDetails={allApplicantDetails}
 					setAllApplicantDetails={setAllApplicantDetails}
 					extraDetailsFields={extraDetailsFields}
@@ -135,7 +134,6 @@ function RequestProposal() {
 						amount={amount}
 						setAmount={setAmount}
 						step={step}
-						setStep={setStep}
 						milestones={milestones}
 						setMilestones={setMilestones}
 						createRFP={createWorkspaceAndGrant}

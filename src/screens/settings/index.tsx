@@ -14,6 +14,9 @@ import ConfimationModal from 'src/libraries/ui/ConfirmationModal'
 import LinkYourMultisigModal from 'src/libraries/ui/LinkYourMultisigModal'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
+import { formatAddress, getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
+import { getUrlForIPFSHash, uploadToIPFS } from 'src/libraries/utils/ipfs'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
 import AddMemberButton from 'src/screens/settings/_components/AddMemberButton'
 import { DropdownIcon } from 'src/screens/settings/_components/DropdownIcon'
@@ -21,9 +24,6 @@ import useUpdateGrantProgram from 'src/screens/settings/_hooks/useUpdateGrantPro
 import { WorkspaceMembers } from 'src/screens/settings/_utils/types'
 import { SettingsFormContext, SettingsFormProvider } from 'src/screens/settings/Context'
 import WorkspaceMemberCard from 'src/screens/settings/WorkspaceMemberCard'
-import { formatAddress, getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
-import { getUrlForIPFSHash, uploadToIPFS } from 'src/libraries/utils/ipfs'
-import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 
 
 function Settings() {
@@ -53,7 +53,7 @@ function Settings() {
 						<SettingsIcon
 							boxSize={6} />
 						<Text
-							variant='v2_subheading'
+							variant='subheading'
 							fontWeight='500'>
 							Settings
 						</Text>
@@ -93,7 +93,7 @@ function Settings() {
 												alignItems='flex-start'
 											>
 												<Text
-													variant='v2_title'
+													variant='title'
 													fontWeight='500'
 													cursor='pointer'
 												>
@@ -104,7 +104,7 @@ function Settings() {
 													align='center'>
 													<Text
 														fontWeight='400'
-														variant='v2_subtitle'
+														variant='subtitle'
 														color='black.1'
 													>
 														{formatAddress(workspace.safe.address)}
@@ -138,7 +138,7 @@ function Settings() {
 														variant='link'
 														onClick={() => setIsLinkYourMultisigModalOpen(true)}>
 														<Text
-															variant='v2_body'
+															variant='body'
 															fontWeight='500'>
 															Change multisig
 														</Text>
@@ -180,14 +180,14 @@ function Settings() {
 											cursor='pointer'
 										>
 											<Text
-												variant='v2_title'
+												variant='title'
 												fontWeight='500'
 												cursor='pointer'
 											>
 												Link your multisig
 											</Text>
 											<Text
-												variant='v2_subtitle'
+												variant='subtitle'
 											>
 												Link your multisig to fund builders on Questbook
 											</Text>
@@ -247,7 +247,7 @@ function Settings() {
 									gap={2}
 								>
 									<Text
-										variant='v2_title'
+										variant='title'
 										fontWeight='500'
 										cursor='pointer'
 									>
@@ -290,7 +290,7 @@ function Settings() {
 							alignItems='center'
 						>
 							<Text
-								variant='v2_body'
+								variant='body'
 								fontWeight='500'
 							>
 								Members
@@ -324,7 +324,7 @@ function Settings() {
 							gap={2}
 							alignItems='center'>
 							<Text
-								variant='v2_body'
+								variant='body'
 							>
 								All
 							</Text>

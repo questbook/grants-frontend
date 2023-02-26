@@ -24,7 +24,7 @@ function ImportConfirmationModal({ isOpen, onClose, saveWallet }: Props) {
 							direction='column'
 							p={6}>
 							<Text
-								variant='v2_subheading'
+								variant='subheading'
 								fontWeight='500'
 								textAlign='center'>
 								{t('account_details.confirmation.warning')}
@@ -34,7 +34,7 @@ function ImportConfirmationModal({ isOpen, onClose, saveWallet }: Props) {
 									onClick={saveWallet}
 									variant='primaryV2'>
 									<Text
-										variant='v2_body'
+										variant='body'
 										color='white'>
 										{t('account_details.confirmation.yes')}
 									</Text>
@@ -43,7 +43,7 @@ function ImportConfirmationModal({ isOpen, onClose, saveWallet }: Props) {
 									onClick={onClose}
 									ml={4}
 									variant='link'>
-									<Text variant='v2_body'>
+									<Text variant='body'>
 										{t('account_details.confirmation.no')}
 									</Text>
 								</Button>

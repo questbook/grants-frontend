@@ -10,8 +10,8 @@ import FlushedInput from 'src/libraries/ui/FlushedInput'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
-import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
+import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 
 function SetupProfile() {
 	const buildComponent = () => {
@@ -49,7 +49,7 @@ function SetupProfile() {
 					align='center'
 					overflowY='auto'>
 					<Text
-						variant='v2_heading_3'
+						variant='heading3'
 						fontWeight='500'>
 						Setup your profile
 					</Text>

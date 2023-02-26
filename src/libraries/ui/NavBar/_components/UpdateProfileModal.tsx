@@ -6,10 +6,10 @@ import useSetupProfile from 'src/libraries/hooks/useSetupProfile'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
-import { usePiiForWorkspaceMember } from 'src/libraries/utils/pii'
-import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
+import { usePiiForWorkspaceMember } from 'src/libraries/utils/pii'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 
 interface Props {
 	isOpen: boolean

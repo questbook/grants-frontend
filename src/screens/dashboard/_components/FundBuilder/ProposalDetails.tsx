@@ -4,13 +4,13 @@ import { defaultChainId } from 'src/constants/chains'
 import { Dot } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
+import { getFieldString } from 'src/libraries/utils/formatting'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
 import MilestoneChoose from 'src/screens/dashboard/_components/FundBuilder/MilestoneChoose'
 import { ProposalType, TokenInfo } from 'src/screens/dashboard/_utils/types'
 import { FundBuilderContext } from 'src/screens/dashboard/Context'
-import { getFieldString } from 'src/libraries/utils/formatting'
-import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 
 interface Props {
 	proposal: ProposalType

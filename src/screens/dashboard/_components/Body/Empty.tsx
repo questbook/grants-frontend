@@ -4,8 +4,8 @@ import { defaultChainId } from 'src/constants/chains'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import SetupNotificationModal from 'src/libraries/ui/SetupNotificationModal'
 import { copyGrantLink } from 'src/libraries/utils/copy'
-import { GrantsProgramContext } from 'src/pages/_app'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
+import { GrantsProgramContext } from 'src/pages/_app'
 
 function Empty() {
 	const buildComponent = () => {
@@ -19,7 +19,7 @@ function Empty() {
 				align='center'
 				justify='center'>
 				<Text
-					variant='v2_heading_3'
+					variant='heading3'
 					fontWeight='500'>
 					{role === 'admin' ? 'Your invitation for proposals is live!' : 'Be the first to submit a proposal'}
 
@@ -39,7 +39,7 @@ function Empty() {
 							</Text>
 							<Text
 								mt={1}
-								variant='v2_body'>
+								variant='body'>
 								Attract builders to
 								{' '}
 								{grant?.workspace?.title}
@@ -49,10 +49,10 @@ function Empty() {
 						</>
 					) : grant?.link ? (
 						<>
-							<Text variant='v2_body'>
+							<Text variant='body'>
 								Read more about the grant
 								<Text
-									variant='v2_body'
+									variant='body'
 									display='inline-block'
 									fontWeight={500}
 									marginLeft={1}
@@ -92,7 +92,7 @@ function Empty() {
 								}
 							}>
 							<Text
-								variant='v2_body'
+								variant='body'
 								color='white'>
 								Copy Link
 							</Text>
@@ -115,7 +115,7 @@ function Empty() {
 									}
 								}>
 								<Text
-									variant='v2_body'
+									variant='body'
 									fontWeight='500'
 									color='white'>
 									Submit proposal
@@ -137,7 +137,7 @@ function Empty() {
 							<Text
 								mt={1}
 								textAlign='center'
-								variant='v2_body'>
+								variant='body'>
 								Get notified on Telegram when builders submit new proposals , reviewers submit
 								reviews, and other updates from builders and community.
 							</Text>
@@ -147,7 +147,7 @@ function Empty() {
 								mt={6}
 								onClick={() => setIsSetupNotificationModalOpen(true)}>
 								<Text
-									variant='v2_body'
+									variant='body'
 									fontWeight='500'>
 									Subscribe
 								</Text>

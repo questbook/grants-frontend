@@ -1,7 +1,7 @@
 import { CHAIN_INFO, SupportedChainId } from 'src/constants/chains'
 import { Grant } from 'src/generated/graphql'
-import { ChainInfo } from 'src/types'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
+import { ChainInfo } from 'src/types'
 
 export function getChainInfo(
 	grant: {

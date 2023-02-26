@@ -67,7 +67,7 @@ function Reviews() {
 						(proposal?.applicationReviewers?.length || 0) > 0 && (
 							<Text
 								mt={4}
-								variant='v2_metadata'
+								variant='metadata'
 								color='gray.5'
 								fontWeight='500'>
 								REVIEWER EVALUATION
@@ -107,7 +107,7 @@ function Reviews() {
 											<Tooltip label={reviewer.walletAddress}>
 												<Text
 													as='span'
-													variant='v2_body'
+													variant='body'
 													fontWeight='500'
 													ml={3}
 													noOfLines={3}>
@@ -123,7 +123,7 @@ function Reviews() {
 										>
 											<Text
 												color='accent.azure'
-												variant='v2_body'
+												variant='body'
 												fontWeight='500'
 												onClick={
 													() => {
@@ -173,13 +173,13 @@ function Reviews() {
 									align={index === 0 ? 'start' : 'end'}
 									key={index}>
 									<Text
-										variant='v2_subheading'
+										variant='subheading'
 										fontWeight='500'>
 										{vote}
 									</Text>
 									<Text
 										mt={1}
-										variant='v2_body' >
+										variant='body' >
 										{index === 0 ? 'For' : 'Against'}
 									</Text>
 								</Flex>
@@ -211,7 +211,7 @@ function Reviews() {
 				isDisabled={role !== 'admin' || proposal?.state !== 'submitted'}
 				{...props} >
 				<Text
-					variant='v2_body'
+					variant='body'
 					fontWeight='500'
 					color='black.1'>
 					Setup
@@ -228,7 +228,7 @@ function Reviews() {
 				variant='link'
 				leftIcon={<Pencil boxSize='16px' />}>
 				<Text
-					variant='v2_body'
+					variant='body'
 					fontWeight='500'>
 					Edit
 				</Text>
@@ -257,18 +257,18 @@ function Reviews() {
 									px={4}
 									py={3} >
 									<Text
-										variant='v2_body'
+										variant='body'
 										fontWeight='500'>
 										Assign Reviewers
 									</Text>
 									<Text
 										mt={2}
 										color='black.3'
-										variant='v2_body' >
+										variant='body' >
 										This will be applicable
 										{' '}
 										<Text
-											variant='v2_body'
+											variant='body'
 											color='black.3'
 											display='inline-block'
 											fontWeight='500'>
@@ -305,7 +305,7 @@ function Reviews() {
 												}
 											}>
 											<Text
-												variant='v2_body'
+												variant='body'
 												fontWeight='400'
 												color='gray.6'>
 												Select All
@@ -313,7 +313,7 @@ function Reviews() {
 										</Checkbox>
 										<Text
 											ml='auto'
-											variant='v2_body'>
+											variant='body'>
 											{grant?.workspace?.members?.filter(m => members[m.id]).length}
 											{' '}
 											/
@@ -357,7 +357,7 @@ function Reviews() {
 															boxSize='20px' />
 														<Text
 															ml={4}
-															variant='v2_body'>
+															variant='body'>
 															{m.fullName ? m.fullName : formatAddress(m?.actorId)}
 														</Text>
 													</Flex>
@@ -397,7 +397,7 @@ function Reviews() {
 												}
 											}>
 											<Text
-												variant='v2_body'
+												variant='body'
 												color='white'
 												fontWeight='500'>
 												Save
@@ -410,7 +410,7 @@ function Reviews() {
 											border='1px solid #E7E4DD'
 											borderRadius='2px'
 											onClick={onClose}>
-											<Text variant='v2_body'>
+											<Text variant='body'>
 												Cancel
 											</Text>
 										</Button>
@@ -431,14 +431,14 @@ function Reviews() {
 				w='100%'>
 				<Text
 					w='50%'
-					variant='v2_body'
+					variant='body'
 					color='gray.6'>
 					Reviewer
 				</Text>
 				{
 					totalNumberOfReviewers > 0 && (
 						<Text
-							variant='v2_body'>
+							variant='body'>
 							{totalNumberOfReviewers}
 						</Text>
 					)
@@ -463,7 +463,7 @@ function Reviews() {
 				}
 				mt={3}>
 				<Text
-					variant='v2_body'
+					variant='body'
 					fontWeight='500'>
 					{label}
 				</Text>
@@ -477,7 +477,7 @@ function Reviews() {
 				key={index}
 				py={3}
 				borderBottom='1px solid #E7E4DD'>
-				<Text variant='v2_body'>
+				<Text variant='body'>
 					{item.title}
 				</Text>
 				<Close
@@ -516,18 +516,18 @@ function Reviews() {
 									px={4}
 									py={3} >
 									<Text
-										variant='v2_body'
+										variant='body'
 										fontWeight='500'>
 										Review By
 									</Text>
 									<Text
 										mt={2}
 										color='black.3'
-										variant='v2_body' >
+										variant='body' >
 										This will be applicable for
 										{' '}
 										<Text
-											variant='v2_body'
+											variant='body'
 											color='black.3'
 											display='inline-block'
 											fontWeight='500'>
@@ -550,7 +550,7 @@ function Reviews() {
 										reviewType === ReviewType.Rubrics && (rubricItems.length > 0 || anotherRubricTitle !== undefined) && (
 											<Text
 												mt={6}
-												variant='v2_body'
+												variant='body'
 												fontWeight='500'>
 												Rubric Includes
 											</Text>
@@ -611,7 +611,7 @@ function Reviews() {
 												variant='link'
 												onClick={() => setAnotherRubricTitle('')}>
 												<Text
-													variant='v2_body'
+													variant='body'
 													fontWeight='500'>
 													{rubricItems.length === 0 ? 'Start adding Rubric' : 'Add Another'}
 												</Text>
@@ -630,7 +630,7 @@ function Reviews() {
 											}
 										}>
 										<Text
-											variant='v2_body'
+											variant='body'
 											fontWeight='500'>
 											Keep reviews private
 										</Text>
@@ -648,7 +648,7 @@ function Reviews() {
 												}
 											}>
 											<Text
-												variant='v2_body'
+												variant='body'
 												color='white'
 												fontWeight='500'>
 												Save
@@ -661,7 +661,7 @@ function Reviews() {
 											border='1px solid #E7E4DD'
 											borderRadius='2px'
 											onClick={onClose}>
-											<Text variant='v2_body'>
+											<Text variant='body'>
 												Cancel
 											</Text>
 										</Button>
@@ -682,14 +682,14 @@ function Reviews() {
 				w='100%'>
 				<Text
 					w='50%'
-					variant='v2_body'
+					variant='body'
 					color='gray.6'>
 					Review With
 				</Text>
 				{
 					(grant?.reviewType || (grant?.rubric && grant?.rubric?.items?.length > 0)) && (
 						<Text
-							variant='v2_body'>
+							variant='body'>
 							{grant.reviewType === 'voting' ? 'Voting' : 'Rubrics'}
 						</Text>
 					)
@@ -727,7 +727,7 @@ function Reviews() {
 						/>
 						<Text
 							as='span'
-							variant='v2_body'
+							variant='body'
 							fontWeight='500'
 							ml={3}
 							noOfLines={3}>
@@ -738,7 +738,7 @@ function Reviews() {
 									<Text
 										ml={1}
 										display='inline-block'
-										variant='v2_body'
+										variant='body'
 										fontWeight='600'
 										color={review.items?.[0]?.rating === 0 ? 'accent.royal' : 'accent.june'}>
 										{review.items?.[0]?.rating === 0 ? ' against' : ' for'}
@@ -762,7 +762,7 @@ function Reviews() {
 									cursor='pointer'
 								/>
 								<Text
-									variant='v2_body'
+									variant='body'
 									textAlign='right'
 									fontWeight='500'>
 									{review?.total}
@@ -786,7 +786,7 @@ function Reviews() {
 								px={2}
 								borderRadius='8px'
 								color='black.3'
-								variant='v2_metadata'
+								variant='metadata'
 								fontWeight='500'>
 								Pending
 							</Text>
@@ -799,7 +799,7 @@ function Reviews() {
 								variant='link'>
 								<Text
 									color='accent.azure'
-									variant='v2_body'
+									variant='body'
 									fontWeight='500'
 									onClick={
 										() => {
@@ -832,11 +832,11 @@ function Reviews() {
 										justify='space-between'>
 										<Flex direction='column'>
 											<Text
-												variant='v2_body'>
+												variant='body'>
 												{item?.rubric?.title}
 											</Text>
 											<Text
-												variant='v2_metadata'
+												variant='metadata'
 												color='gray.6'>
 												{item?.rubric?.details}
 											</Text>
@@ -844,7 +844,7 @@ function Reviews() {
 
 										<Text
 											textAlign='right'
-											variant='v2_body'>
+											variant='body'>
 											{item?.rating}
 											<Text
 												ml={1}
@@ -858,7 +858,7 @@ function Reviews() {
 
 									<Text
 										textAlign='justify'
-										variant='v2_metadata'
+										variant='metadata'
 										color='gray.6'>
 										{item?.comment}
 									</Text>

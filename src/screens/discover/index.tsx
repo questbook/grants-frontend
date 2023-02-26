@@ -43,13 +43,13 @@ function Discover() {
 				<Text
 					mt='auto'
 					color='white'
-					variant='v2_heading_1'>
+					variant='heading1'>
 					👋 gm, Welcome to Questbook!
 				</Text>
 				<Text
 					mt={3}
 					color='white'
-					variant='v2_title'>
+					variant='title'>
 					You’re invited to
 					{' '}
 					{grantProgram?.title}
@@ -64,7 +64,7 @@ function Discover() {
 						<Text
 							mt={8}
 							color='white'
-							variant='v2_title'>
+							variant='title'>
 							As a reviewer you can review grant proposals assigned to you, and communicate with builders to schedule interviews, and clarify your questions.
 						</Text>
 					)
@@ -313,7 +313,7 @@ function Discover() {
 										display={sectionGrants?.length ? '' : 'none'}
 									>
 										<Text
-											variant='v2_heading_3'
+											variant='heading3'
 											fontWeight='500'
 											mt={4}
 										>
@@ -342,7 +342,7 @@ function Discover() {
 																boxSize={6} />
 															<Text
 																fontWeight='500'
-																variant='v2_subheading'
+																variant='subheading'
 															>
 																{sectionName}
 															</Text>

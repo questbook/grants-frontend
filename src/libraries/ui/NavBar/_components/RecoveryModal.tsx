@@ -35,13 +35,13 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 							align='center'>
 							{type === 'import' ? <Import boxSize='48px' /> : <Export boxSize='48px' />}
 							<Text
-								variant='v2_subheading'
+								variant='subheading'
 								fontWeight='500'
 								mt={5}>
 								{type === 'import' ? `${t('account_details.import.heading')}` : `${t('account_details.export.heading')}`}
 							</Text>
 							<Text
-								variant='v2_body'
+								variant='body'
 								mt={1}
 								color='black.3'>
 								{type === 'import' ? `${t('account_details.import.subheading')}` : `${t('account_details.export.subheading')}` }
@@ -50,7 +50,7 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 								type === 'export' && (
 									<Text
 										mt={6}
-										variant='v2_body'
+										variant='body'
 									>
 										{t('account_details.export.warning-line-1')}
 									</Text>
@@ -60,7 +60,7 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 								type === 'export' && (
 									<Text
 										mt={1}
-										variant='v2_body'
+										variant='body'
 									>
 										{t('account_details.export.warning-line-2')}
 									</Text>
@@ -97,7 +97,7 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 											onClick={onSaveAsTextClick}>
 											<Text
 												color='#572EF5'
-												variant='v2_body'
+												variant='body'
 												fontWeight='500'>
 												{t('account_details.export.download')}
 											</Text>
@@ -113,7 +113,7 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 											onClick={onCopyAndSaveManuallyClick}>
 											<Text
 												color='#572EF5'
-												variant='v2_body'
+												variant='body'
 												fontWeight='500'>
 												{t('account_details.export.copy_and_save_manually')}
 											</Text>

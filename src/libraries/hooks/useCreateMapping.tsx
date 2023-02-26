@@ -7,8 +7,8 @@ import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import logger from 'src/libraries/logger'
-import { WebwalletContext } from 'src/pages/_app'
 import { bicoDapps, getTransactionDetails, sendGaslessTransaction } from 'src/libraries/utils/gasless'
+import { WebwalletContext } from 'src/pages/_app'
 
 type FunctionProps = {
     email: string

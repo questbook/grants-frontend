@@ -6,6 +6,9 @@ import { defaultChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
+import { getFieldString } from 'src/libraries/utils/formatting'
+import { uploadToIPFS } from 'src/libraries/utils/ipfs'
+import { getGnosisTansactionLink, getProposalUrl } from 'src/libraries/utils/multisig'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
 import PayFromChoose from 'src/screens/dashboard/_components/FundBuilder/PayFromChoose'
@@ -17,9 +20,6 @@ import Verify from 'src/screens/dashboard/_components/FundBuilder/Verify'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
-import { getFieldString } from 'src/libraries/utils/formatting'
-import { uploadToIPFS } from 'src/libraries/utils/ipfs'
-import { getGnosisTansactionLink, getProposalUrl } from 'src/libraries/utils/multisig'
 
 function FundBuilderDrawer() {
 	const buildComponent = () => {
@@ -78,7 +78,7 @@ function FundBuilderDrawer() {
 										selectedProposalsData?.some(p => p.state === 'submitted') && (
 											<Text
 												mt={8}
-												variant='v2_body'
+												variant='body'
 												color='gray.5'>
 												Some proposals would be auto-accepted once payout is initiated for them.
 											</Text>

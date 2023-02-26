@@ -60,7 +60,7 @@ function ProposalForm() {
 							boxSize='30%' />
 						<Text
 							mt={6}
-							variant='v2_heading_2'
+							variant='heading2'
 							fontWeight='500'>
 							Fantastic — we have received
 							your proposal.
@@ -76,7 +76,7 @@ function ProposalForm() {
 						px='10%'>
 						<Text
 							fontWeight='500'
-							variant='v2_subheading'>
+							variant='subheading'>
 							Subscribe to notifications
 						</Text>
 						<Text mt={3}>
@@ -146,7 +146,7 @@ function ProposalForm() {
 					my={5}>
 					<Text
 						fontWeight='500'
-						variant='v2_subheading'>
+						variant='subheading'>
 						{error}
 					</Text>
 				</Flex>
@@ -188,7 +188,7 @@ function ProposalForm() {
 						<Text
 							w='100%'
 							textAlign='center'
-							variant='v2_heading_3'
+							variant='heading3'
 							fontWeight='500'
 							borderBottom='1px solid #E7E4DD'
 							pb={4}>
@@ -202,7 +202,7 @@ function ProposalForm() {
 							pt={4}
 						>
 							<Text
-								variant='v2_heading_3'
+								variant='heading3'
 								fontWeight='500'
 							>
 								{grant?.title}
@@ -235,7 +235,7 @@ function ProposalForm() {
 										<CalendarIcon />
 										<Flex direction='column'>
 											<Text
-												variant='v2_title'
+												variant='title'
 												fontWeight='400'
 												color='black.1'
 											>
@@ -243,7 +243,7 @@ function ProposalForm() {
 												{' '}
 											</Text>
 											<Text
-												variant='v2_title'
+												variant='title'
 												fontWeight='500'
 												color='black.1'
 											>
@@ -262,14 +262,14 @@ function ProposalForm() {
 												<Doc />
 												<Flex direction='column'>
 													<Text
-														variant='v2_title'
+														variant='title'
 														fontWeight='400'
 													>
 														Grant program details
 														{' '}
 													</Text>
 													<Text
-														variant='v2_title'
+														variant='title'
 														fontWeight='500'
 														color='black.1'
 														cursor='pointer'

@@ -86,7 +86,7 @@ function LinkYourMultisigModal({
 								mt={2}
 								w='100%'
 								textAlign='left'
-								variant='v2_body'
+								variant='body'
 								color='red'
 							>
 								Not a valid address!
@@ -152,7 +152,7 @@ function LinkYourMultisigModal({
 					className='loader'
 					color='black.1' />
 				<Text
-					variant='v2_body'
+					variant='body'
 					color='black.3'>
 					Searching for this address on different networks..
 				</Text>
@@ -172,7 +172,7 @@ function LinkYourMultisigModal({
 							<>
 								<CheckDouble
 									color='#273B4A' />
-								<Text variant='v2_body'>
+								<Text variant='body'>
 									{
 										`Looks like this address is on ${safeNetworks.length} network${
 											safeNetworks.length > 1 ? 's' : ''
@@ -193,7 +193,7 @@ function LinkYourMultisigModal({
 								style={{ cursor: 'pointer' }}
 							>
 								<Text
-									variant='v2_body'
+									variant='body'
 									color='red'>
 									But this address doesn’t exist on any of the 20 supported
 									chains.

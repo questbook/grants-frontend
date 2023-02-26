@@ -97,7 +97,7 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 							>
 								<Text
 									fontWeight='500'
-									variant='v2_subheading'>
+									variant='subheading'>
 									{grant?.title}
 								</Text>
 								<Flex
@@ -108,12 +108,12 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 											<Flex gap={1}>
 												<Text
 													as='span'
-													variant='v2_metadata'>
+													variant='metadata'>
 													Program details
 												</Text>
 												<Text
 													as='span'
-													variant='v2_metadata'
+													variant='metadata'
 													fontWeight={500}
 													cursor='pointer'
 													onClick={
@@ -135,12 +135,12 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 											<Flex gap={1}>
 												<Text
 													as='span'
-													variant='v2_metadata'>
+													variant='metadata'>
 													Program multisig:
 												</Text>
 												<Text
 													as='span'
-													variant='v2_metadata'
+													variant='metadata'
 													fontWeight={500}
 												>
 													{nFormatter(safeUSDAmount.toFixed(0), 0)}
@@ -341,7 +341,7 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 							>
 								<Text
 									fontWeight='500'
-									variant='v2_subheading'
+									variant='subheading'
 									fontSize='12px'
 									width='100%'
 								>
@@ -350,11 +350,11 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 								{
 									(grant?.link !== undefined && grant?.link !== null) && (
 										<Text
-											variant='v2_metadata'
+											variant='metadata'
 											display={grant?.link ? '' : 'none'}>
 											Program details
 											<Text
-												variant='v2_metadata'
+												variant='metadata'
 												display='inline-block'
 												fontWeight={500}
 												marginLeft={1}
@@ -488,7 +488,7 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 					} />
 				<Text
 					fontWeight='500'
-					variant='v2_subheading'
+					variant='subheading'
 				>
 					Invite Proposals
 				</Text>

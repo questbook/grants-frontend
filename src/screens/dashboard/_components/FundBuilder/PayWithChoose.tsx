@@ -104,7 +104,7 @@ function PayWithChoose({ selectedMode }: { selectedMode: any}) {
 			}>
 			<Text
 				ml={2}
-				variant='v2_body'
+				variant='body'
 			>
 				{data.tokenName}
 			</Text>
@@ -125,7 +125,7 @@ function PayWithChoose({ selectedMode }: { selectedMode: any}) {
 				boxSize='16px' />
 			<Text
 				ml={2}
-				variant='v2_body'
+				variant='body'
 			>
 				{data.tokenName}
 			</Text>
@@ -143,7 +143,6 @@ function PayWithChoose({ selectedMode }: { selectedMode: any}) {
 
 		safeObj?.getTokenAndbalance().then((list: {value: TokenInfo[], error: string}) => {
 			if(list?.value) {
-			console.log('list', list)
 			setTokenList(list?.value)
 			if(list?.value?.length && !selectedTokenInfo) {
 				setSelectedTokenInfo(list?.value[0])

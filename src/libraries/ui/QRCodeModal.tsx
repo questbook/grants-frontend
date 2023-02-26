@@ -24,7 +24,7 @@ function QRCodeModal() {
 						align='center'
 						p={8}>
 						<Text
-							variant='v2_body'
+							variant='body'
 							fontWeight='500'>
 							Scan QR code with your phone camera
 						</Text>

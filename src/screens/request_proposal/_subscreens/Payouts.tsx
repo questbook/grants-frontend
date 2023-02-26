@@ -16,7 +16,6 @@ interface Props {
 	amount: number
 	setAmount: (value: number) => void
 	step: number
-	setStep: (value: number) => void
 	milestones: Array<string>
 	setMilestones: (value: Array<string>) => void
 	createRFP: () => void
@@ -33,7 +32,6 @@ function Payouts(
 		amount,
 		setAmount,
 		step,
-		setStep,
 		milestones,
 		setMilestones,
 		createRFP,
@@ -90,7 +88,7 @@ function Payouts(
 						flexDirection='column'
 					>
 						<Text
-							variant='v2_subheading'
+							variant='subheading'
 						>
 							Accepted Proposals are paid out
 						</Text>
@@ -125,7 +123,7 @@ function Payouts(
 													gap={4}
 													alignItems='baseline'>
 													<Text
-														variant='v2_heading_3'
+														variant='heading3'
 														color='gray.4'>
 														{index < 9 ? `0${index + 1}` : (index + 1)}
 													</Text>
@@ -171,7 +169,7 @@ function Payouts(
 						flexDirection='column'
 						alignItems='center'
 					>
-						<Text variant='v2_subheading'>
+						<Text variant='subheading'>
 							Per proposal payout is capped at
 						</Text>
 						<Flex
@@ -188,7 +186,7 @@ function Payouts(
 										handleOnEdit('amount', e.target.value)
 									}
 								} />
-							<Text variant='v2_subheading'>
+							<Text variant='subheading'>
 								USD.
 							</Text>
 						</Flex>
@@ -271,7 +269,7 @@ function Payouts(
 					<Flex
 						gap={4}
 						alignItems='baseline'>
-						<Text variant='v2_subheading'>
+						<Text variant='subheading'>
 							Accepted Proposals are paid out
 						</Text>
 						{/* <FlushedInput
@@ -305,7 +303,7 @@ function Payouts(
 													gap={4}
 													alignItems='baseline'>
 													<Text
-														variant='v2_heading_3'
+														variant='heading3'
 														color='gray.4'>
 														{index < 9 ? `0${index + 1}` : (index + 1)}
 													</Text>
@@ -351,7 +349,7 @@ function Payouts(
 					<Flex
 						gap={4}
 						alignItems='baseline'>
-						<Text variant='v2_subheading'>
+						<Text variant='subheading'>
 							Per proposal payout is capped at
 						</Text>
 						<FlushedInput
@@ -364,7 +362,7 @@ function Payouts(
 									handleOnEdit('amount', e.target.value)
 								}
 							} />
-						<Text variant='v2_subheading'>
+						<Text variant='subheading'>
 							USD.
 						</Text>
 					</Flex>
@@ -399,7 +397,7 @@ function Payouts(
 		)
 	}
 
-	const { createingProposalStep, setCreatingProposalStep } = useContext(WebwalletContext)!
+	const { setCreatingProposalStep } = useContext(WebwalletContext)!
 	const [milestoneCounter, setMilestoneCounter] = useState(!milestones ? 0 : milestones.length)
 
 	const payoutTypeOptions = [{ value: 'in_one_go', label: 'in one go' }, { value: 'milestones', label: 'based on milestone' }]

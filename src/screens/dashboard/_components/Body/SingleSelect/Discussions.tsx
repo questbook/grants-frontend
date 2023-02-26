@@ -3,6 +3,9 @@ import ReactLinkify from 'react-linkify'
 import { LockIcon } from '@chakra-ui/icons'
 import { Box, Button, Checkbox, Divider, Flex, Image, Text, Textarea, Tooltip } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
+import { getAvatar } from 'src/libraries/utils'
+import { formatAddress, getFieldString } from 'src/libraries/utils/formatting'
+import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import QuickReplyButton from 'src/screens/dashboard/_components/QuickReplyButton'
 import useAddComment from 'src/screens/dashboard/_hooks/useAddComment'
@@ -10,9 +13,6 @@ import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { CommentType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { getAvatar } from 'src/libraries/utils'
-import { formatAddress, getFieldString } from 'src/libraries/utils/formatting'
-import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 
 function Discussions() {
 	const buildComponents = () => {
@@ -60,7 +60,7 @@ function Discussions() {
 								ml={4}
 								direction='column'>
 								<Text
-									variant='v2_metadata'
+									variant='metadata'
 									fontWeight='500'
 									color='gray.6'>
 									FEW WAYS TO START THE DISCUSSION.
@@ -130,7 +130,7 @@ function Discussions() {
 											}
 										}>
 										<Text
-											variant='v2_body'
+											variant='body'
 											color='gray.5'>
 											Show only to reviewers and builder
 										</Text>
@@ -202,7 +202,7 @@ function Discussions() {
 						</Text>
 						<Text
 							ml={3}
-							variant='v2_metadata'
+							variant='metadata'
 							borderRadius='3px'
 							bg={comment?.role === 'admin' ? 'gray.3' : comment?.role === 'reviewer' ? 'accent.crayola' : comment?.role === 'builder' && proposal?.applicantId === comment?.sender?.toLowerCase() ? 'accent.vodka' : 'accent.melon'}
 							px={1}>
@@ -212,7 +212,7 @@ function Discussions() {
 							comment?.timestamp && (
 								<Text
 									ml={2}
-									variant='v2_body'
+									variant='body'
 									color='gray.5'>
 									{formatTime(comment?.timestamp)}
 								</Text>
@@ -241,7 +241,7 @@ function Discussions() {
 									display='inline-block'
 									wordBreak='break-all'
 									color='accent.azure'
-									variant='v2_body'
+									variant='body'
 									cursor='pointer'
 									_hover={
 										{
@@ -264,7 +264,7 @@ function Discussions() {
 							wordBreak='break-word'
 							mt={1}
 							fontStyle={hasAccess ? 'normal' : 'italic'}
-							variant='v2_body'
+							variant='body'
 							whiteSpace='pre-line'>
 							{comment.message}
 						</Text>

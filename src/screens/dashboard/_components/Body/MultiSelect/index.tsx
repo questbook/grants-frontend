@@ -1,9 +1,9 @@
 import { useContext, useMemo } from 'react'
 import { Flex, Image, Text } from '@chakra-ui/react'
-import { ProposalType } from 'src/screens/dashboard/_utils/types'
-import { DashboardContext } from 'src/screens/dashboard/Context'
 import { getAvatar } from 'src/libraries/utils'
 import { getFieldString } from 'src/libraries/utils/formatting'
+import { ProposalType } from 'src/screens/dashboard/_utils/types'
+import { DashboardContext } from 'src/screens/dashboard/Context'
 
 
 function MultiSelect() {
@@ -17,7 +17,7 @@ function MultiSelect() {
 				h='100%'
 				direction='column'>
 				<Text
-					variant='v2_heading_3'
+					variant='heading3'
 					fontWeight='500'>
 					Proposals Selected
 					<Text
@@ -44,7 +44,7 @@ function MultiSelect() {
 				borderRadius='2px'
 				direction='column'>
 				<Text
-					variant='v2_body'
+					variant='body'
 					fontWeight='500'
 					cursor='pointer'
 					_hover={{ textDecoration: 'underline' }}
@@ -62,7 +62,7 @@ function MultiSelect() {
 						boxSize='16px' />
 					<Text
 						ml={2}
-						variant='v2_metadata'>
+						variant='metadata'>
 						{getFieldString(proposal, 'applicantName')}
 					</Text>
 				</Flex>

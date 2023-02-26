@@ -5,10 +5,10 @@ import { useSafeContext } from 'src/contexts/safeContext'
 import { Metamask, Phantom, WalletConnect } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
+import getErrorMessage from 'src/libraries/utils/error'
 import ConnectWalletButton from 'src/screens/dashboard/_components/FundBuilder/ConnectWalletButton'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
-import getErrorMessage from 'src/libraries/utils/error'
 import { Connector, useAccount, useConnect, useNetwork, useSwitchNetwork } from 'wagmi'
 
 const availableWallets = [{

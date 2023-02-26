@@ -27,7 +27,7 @@ function MultiSelect() {
 						}
 					}>
 					<Text
-						variant='v2_body'
+						variant='body'
 						fontWeight='500'>
 						Send an update to selected builders
 					</Text>
@@ -38,7 +38,7 @@ function MultiSelect() {
 					<Divider />
 					<Text
 						mx={3}
-						variant='v2_body'
+						variant='body'
 						fontWeight='500'
 						color='gray.5'>
 						OR
@@ -63,7 +63,7 @@ function MultiSelect() {
 						}
 					}>
 					<Text
-						variant='v2_body'
+						variant='body'
 						fontWeight='500'
 						color='white'>
 						Payout selected builders

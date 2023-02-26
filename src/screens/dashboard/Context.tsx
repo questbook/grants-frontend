@@ -6,12 +6,12 @@ import { useSafeContext } from 'src/contexts/safeContext'
 import { useGetApplicationActionsQuery, useGetCommentsQuery, useGetGrantQuery, useGetProposalsQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
+import { getFromIPFS } from 'src/libraries/utils/ipfs'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { CommentMap, CommentType, DashboardContextType, FundBuilderContextType, ModalContextType, Proposals, ReviewInfo, SignerVerifiedState, TokenInfo } from 'src/screens/dashboard/_utils/types'
 import { Roles } from 'src/types'
-import { getFromIPFS } from 'src/libraries/utils/ipfs'
-import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined)
 const FundBuilderContext = createContext<FundBuilderContextType | undefined>(undefined)

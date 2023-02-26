@@ -4,13 +4,13 @@ import { useGetMemberPublicKeysQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
+import { uploadToIPFS } from 'src/libraries/utils/ipfs'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { PIIForCommentType } from 'src/libraries/utils/types'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { uploadToIPFS } from 'src/libraries/utils/ipfs'
-import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 
 interface Props {
   setStep: (step: number | undefined) => void

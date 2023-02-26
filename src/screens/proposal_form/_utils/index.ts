@@ -1,8 +1,8 @@
 import { PublicKey } from '@solana/web3.js'
 import { ContentState, convertFromRaw, EditorState } from 'draft-js'
 import { ethers } from 'ethers'
-import { Form, Grant } from 'src/screens/proposal_form/_utils/types'
 import { getFromIPFS, isIpfsHash } from 'src/libraries/utils/ipfs'
+import { Form, Grant } from 'src/screens/proposal_form/_utils/types'
 
 function containsField(grant: Grant, field: string) {
 	return grant?.fields?.some((f) => f.id.endsWith(field))
@@ -42,7 +42,7 @@ const validateEmail = (email: string, callback: (isValid: boolean) => void) => {
 	}
 }
 
-const validateWalletAddress = (address: string, safeObj: any, callback: (isValid: boolean) => void) => {
+const validateWalletAddress = (address: string, safeObj: {chainId: number, getIsEvm: () => boolean}, callback: (isValid: boolean) => void) => {
 	if(address) {
 		if(safeObj?.getIsEvm()) {
 			callback(ethers.utils.isAddress(address))

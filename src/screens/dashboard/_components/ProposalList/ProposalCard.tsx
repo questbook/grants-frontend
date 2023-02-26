@@ -2,11 +2,9 @@ import { useContext } from 'react'
 import { Checkbox, Flex, FlexProps, forwardRef, Image, Text, Tooltip } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { CheckDouble, Close, Resubmit } from 'src/generated/icons'
-import logger from 'src/libraries/logger'
 import { getAvatar } from 'src/libraries/utils'
 import { getFieldString, titleCase } from 'src/libraries/utils/formatting'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
-import useProposalTags from 'src/screens/dashboard/_hooks/useProposalTags'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -44,7 +42,7 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 				}
 				<Text
 					ml={role === 'admin' ? 2 : 0}
-					variant='v2_body'
+					variant='body'
 					fontWeight='500'
 					cursor='pointer'
 					onClick={
@@ -60,7 +58,7 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 					process.env.NODE_ENV === 'development' && (
 						<Text
 							ml={2}
-							variant='v2_metadata'
+							variant='metadata'
 							color='black.3'>
 							{`(${proposal.id}) - ${proposal.state}`}
 						</Text>
@@ -69,7 +67,7 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 				<Text
 					ml='auto'
 					color='gray.5'
-					variant='v2_metadata'>
+					variant='metadata'>
 					{formatTime(proposal.updatedAtS)}
 				</Text>
 			</Flex>
@@ -84,7 +82,7 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 					boxSize='16px' />
 				<Text
 					ml={2}
-					variant='v2_metadata'>
+					variant='metadata'>
 					{getFieldString(proposal, 'applicantName')}
 				</Text>
 				{
@@ -105,7 +103,7 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 								{
 									selectedProposals.has(proposal.id) && (
 										<Text
-											variant='v2_metadata'
+											variant='metadata'
 											fontWeight='500'
 											ml={1}>
 											{titleCase(proposal.state)}
@@ -123,7 +121,7 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 
 	const router = useRouter()
 	const { proposal } = props
-	const { dashboardStep, setDashboardStep } = useContext(WebwalletContext)!
+	const { setDashboardStep } = useContext(WebwalletContext)!
 	const { selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
 	const { role } = useContext(GrantsProgramContext)!
 	// const { tags } = useProposalTags({ proposal })

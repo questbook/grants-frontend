@@ -58,13 +58,13 @@ function Milestones() {
 				<Flex direction='column'>
 					<Text
 						color='gray.4'
-						variant='v2_heading_3'
+						variant='heading3'
 						fontWeight='500'>
 						{index < 9 ? `0${index + 1}` : (index + 1)}
 					</Text>
 					<Text
 						mt={1}
-						variant='v2_body'>
+						variant='body'>
 						{milestone?.title}
 					</Text>
 				</Flex>

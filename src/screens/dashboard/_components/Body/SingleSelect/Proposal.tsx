@@ -8,15 +8,15 @@ import logger from 'src/libraries/logger'
 import CopyIcon from 'src/libraries/ui/CopyIcon'
 import NotificationPopover from 'src/libraries/ui/NavBar/_components/NotificationPopover'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
+import { getAvatar } from 'src/libraries/utils'
+import { formatAddress, getFieldString, getFieldStrings, getRewardAmountMilestones } from 'src/libraries/utils/formatting'
+import { getFromIPFS } from 'src/libraries/utils/ipfs'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { getAvatar } from 'src/libraries/utils'
-import { formatAddress, getFieldString, getFieldStrings, getRewardAmountMilestones } from 'src/libraries/utils/formatting'
-import { getFromIPFS } from 'src/libraries/utils/ipfs'
 
 function Proposal() {
 	const buildComponent = () => {
@@ -48,7 +48,7 @@ function Proposal() {
 					<Text
 						maxW='90%'
 						as='span'
-						variant='v2_heading_3'
+						variant='heading3'
 						fontWeight='500'>
 						{getFieldString(proposal, 'projectName')}
 					</Text>
@@ -121,7 +121,7 @@ function Proposal() {
 											}>
 											<Text
 												fontWeight='400'
-												variant='v2_body'
+												variant='body'
 												color='gray.5'>
 												{getFieldString(decryptedProposal, 'applicantEmail')}
 											</Text>
@@ -153,7 +153,7 @@ function Proposal() {
 													}>
 													<Text
 														fontWeight='400'
-														variant='v2_body'
+														variant='body'
 														color='gray.5'>
 														{formatAddress(getFieldString(proposal, 'applicantAddress') ?? '')}
 													</Text>
