@@ -1,9 +1,8 @@
 import { createContext, ReactElement, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { hotjar } from 'react-hotjar'
 import { Biconomy } from '@biconomy/mexa'
 import { ChakraProvider } from '@chakra-ui/react'
 import { ChatWidget } from '@papercups-io/chat-widget'
-import {hotjar} from 'react-hotjar'
-
 // import dynamic from 'next/dynamic';
 import {
 	Configuration,
@@ -99,12 +98,14 @@ const client = createClient({
 			options: {
 				name: 'Injected',
 				shimDisconnect: true,
+				shimChainChangedDisconnect: true
 			},
 		}),
 		new MetaMaskConnector({
 			chains,
 			options: {
 				shimDisconnect: true,
+				shimChainChangedDisconnect: true
 			},
 		}),
 		new WalletConnectConnector({
