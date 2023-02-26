@@ -8,7 +8,7 @@ import logger from 'src/libraries/logger'
 import ConnectWalletButton from 'src/screens/dashboard/_components/FundBuilder/ConnectWalletButton'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
-import getErrorMessage from 'src/utils/errorUtils'
+import getErrorMessage from 'src/libraries/utils/error'
 import { Connector, useAccount, useConnect, useNetwork, useSwitchNetwork } from 'wagmi'
 
 const availableWallets = [{

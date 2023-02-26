@@ -20,10 +20,10 @@ import { useRouter } from 'next/router'
 import { AddUser, ArrowRight, Key, Pencil } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
+import { getAvatar } from 'src/libraries/utils'
+import { formatAddress } from 'src/libraries/utils/formatting'
+import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
-import getAvatar from 'src/utils/avatarUtils'
-import { formatAddress } from 'src/utils/formattingUtils'
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 const IN_APP_WALLET_LEARN_MORE_URL =
 	'https://blog.questbook.xyz/posts/aug-2022-release/#:~:text=App%20Specific%20Wallet%20%2D%20Zero%20Wallet'

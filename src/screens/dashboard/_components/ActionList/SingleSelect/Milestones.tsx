@@ -4,9 +4,9 @@ import { ethers } from 'ethers'
 import { defaultChainId, USD_ASSET } from 'src/constants/chains'
 import { Dropdown } from 'src/generated/icons'
 import { getChainInfo } from 'src/libraries/utils/token'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function Milestones() {
 	const buildComponent = () => {

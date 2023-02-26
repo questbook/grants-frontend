@@ -6,7 +6,7 @@ import { validateAndUploadToIpfs } from 'src/libraries/validator'
 import { GrantsProgramContext } from 'src/pages/_app'
 import { ReviewType } from 'src/types'
 import { RubricItem } from 'src/types/gen'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 
 interface Props {
 	setNetworkTransactionModalStep: (step: number | undefined) => void

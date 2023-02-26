@@ -17,9 +17,9 @@ import { findField } from 'src/screens/proposal_form/_utils'
 import { Form } from 'src/screens/proposal_form/_utils/types'
 import { ProposalFormContext } from 'src/screens/proposal_form/Context'
 import { GrantApplicationRequest } from 'src/types/gen'
-import { parseAmount } from 'src/utils/formattingUtils'
-import { bicoDapps, getEventData, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
-import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import { parseAmount } from 'src/libraries/utils/formatting'
+import { bicoDapps, getEventData, getTransactionDetails, sendGaslessTransaction } from 'src/libraries/utils/gasless'
+import { uploadToIPFS } from 'src/libraries/utils/ipfs'
 
 
 interface Props {

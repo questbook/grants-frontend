@@ -11,6 +11,10 @@ import BackButton from 'src/libraries/ui/BackButton'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import SetupNotificationModal from 'src/libraries/ui/SetupNotificationModal'
+import { getAvatar } from 'src/libraries/utils'
+import { chainNames } from 'src/libraries/utils/constants'
+import { extractDateFromDateTime, getExplorerUrlForTxHash, getRewardAmountMilestones } from 'src/libraries/utils/formatting'
+import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { GrantsProgramContext } from 'src/pages/_app'
 import SectionHeader from 'src/screens/proposal_form/_components/SectionHeader'
@@ -22,10 +26,6 @@ import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposa
 import { containsField, findField, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
 import { customSteps, customStepsHeader, DEFAULT_MILESTONE, MILESTONE_INPUT_STYLE } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
-import getAvatar from 'src/utils/avatarUtils'
-import { chainNames } from 'src/utils/chainNames'
-import { extractDateFromDateTime, getExplorerUrlForTxHash, getRewardAmountMilestones } from 'src/utils/formattingUtils'
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 
 function ProposalForm() {

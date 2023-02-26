@@ -28,15 +28,15 @@ import { QBAdminsContextMaker } from 'src/hooks/QBAdminsContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import QRCodeModal from 'src/libraries/ui/QRCodeModal'
+import { delay } from 'src/libraries/utils'
+import { addAuthorizedUser, bicoDapps, deploySCW, getNonce, jsonRpcProviders, networksMapping } from 'src/libraries/utils/gasless'
 import { extractInviteInfo, InviteInfo } from 'src/libraries/utils/invite'
+import logger from 'src/libraries/utils/logger'
+import getSeo from 'src/libraries/utils/seo'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import theme from 'src/theme'
 import { GrantProgramContextType, GrantType, MinimalWorkspace, NotificationContextType, Roles } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
-import { addAuthorizedUser, bicoDapps, deploySCW, getNonce, jsonRpcProviders, networksMapping } from 'src/utils/gaslessUtils'
-import { delay } from 'src/utils/generics'
-import logger from 'src/utils/logger'
-import getSeo from 'src/utils/seo'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import {
 	allChains,
 	Chain,
@@ -53,7 +53,7 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { publicProvider } from 'wagmi/providers/public'
 import 'styles/globals.css'
 import 'draft-js/dist/Draft.css'
-import 'src/utils/appCopy'
+import 'src/libraries/utils/appCopy'
 
 type NextPageWithLayout = NextPage & {
 	getLayout?: (page: ReactElement) => ReactNode

@@ -9,11 +9,11 @@ import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useChainId from 'src/hooks/utils/useChainId'
+import { delay } from 'src/libraries/utils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/libraries/utils/gasless'
+import logger from 'src/libraries/utils/logger'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
-import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
-import { delay } from 'src/utils/generics'
-import logger from 'src/utils/logger'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 export type InviteInfo = {
 	workspaceId: number

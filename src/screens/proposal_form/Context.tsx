@@ -15,7 +15,7 @@ import { WebwalletContext } from 'src/pages/_app'
 import { containsField, getProjectDetails } from 'src/screens/proposal_form/_utils'
 import { DEFAULT_FORM, DEFAULT_MILESTONE } from 'src/screens/proposal_form/_utils/constants'
 import { Form, FormType, Grant, Proposal, ProposalFormContextType } from 'src/screens/proposal_form/_utils/types'
-import { getFieldString, getFieldStrings } from 'src/utils/formattingUtils'
+import { getFieldString, getFieldStrings } from 'src/libraries/utils/formatting'
 
 const ProposalFormContext = createContext<ProposalFormContextType | undefined>(undefined)
 

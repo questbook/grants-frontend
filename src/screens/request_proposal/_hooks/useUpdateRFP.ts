@@ -10,10 +10,10 @@ import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/p
 import { GrantFields } from 'src/screens/request_proposal/_utils/types'
 import { RFPFormContext } from 'src/screens/request_proposal/Context'
 import { ApplicantDetailsFieldType } from 'src/types'
-import getErrorMessage from 'src/utils/errorUtils'
-import { addAuthorizedUser, bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
-import logger from 'src/utils/logger'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import getErrorMessage from 'src/libraries/utils/error'
+import { addAuthorizedUser, bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/libraries/utils/gasless'
+import logger from 'src/libraries/utils/logger'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 
 export default function useUpdateRFP(setCurrentStep: (step: number | undefined) => void) {
 	const [error, setError] = React.useState<string>()

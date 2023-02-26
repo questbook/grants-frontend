@@ -8,7 +8,7 @@ import logger from 'src/libraries/logger'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { DiscoverContextType, GrantProgramType, GrantType, SectionGrants, WorkspaceMemberType } from 'src/screens/discover/_utils/types'
 import { Roles } from 'src/types'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 
 const DiscoverContext = createContext<DiscoverContextType | null>(null)
 

@@ -10,8 +10,8 @@ import FlushedInput from 'src/libraries/ui/FlushedInput'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import Verify from 'src/screens/dashboard/_components/FundBuilder/Verify'
-import { formatAddress, getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { formatAddress, getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { useAccount, useSignMessage } from 'wagmi'
 
 interface Props {

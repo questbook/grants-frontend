@@ -6,8 +6,8 @@ import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import logger from 'src/libraries/logger'
 import { ApiClientsContext, BiconomyContext, WebwalletContext } from 'src/pages/_app'
-import { bicoDapps, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
-import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import { bicoDapps, getTransactionDetails, sendGaslessTransaction } from 'src/libraries/utils/gasless'
+import { uploadToIPFS } from 'src/libraries/utils/ipfs'
 
 export default function useUpdateDaoVisibility() {
 	const { nonce } = useQuestbookAccount()

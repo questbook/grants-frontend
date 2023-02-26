@@ -8,8 +8,8 @@ import logger from 'src/libraries/logger'
 import { useGenerateReviewData } from 'src/libraries/utils/reviews'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { bicoDapps, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { bicoDapps, getTransactionDetails, sendGaslessTransaction } from 'src/libraries/utils/gasless'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 
 interface Props {
 	setNetworkTransactionModalStep: (step: number | undefined) => void

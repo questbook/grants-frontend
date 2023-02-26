@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Flex } from '@chakra-ui/react'
 import NavBar from 'src/libraries/ui/NavBar'
-import logger from 'src/utils/logger'
+import logger from 'src/libraries/utils/logger'
 
 type NavbarConfig = {
 	bg?: string

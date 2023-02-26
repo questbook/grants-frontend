@@ -17,12 +17,12 @@ import NotificationPopover from 'src/libraries/ui/NavBar/_components/Notificatio
 import RecoveryModal from 'src/libraries/ui/NavBar/_components/RecoveryModal'
 import UpdateProfileModal from 'src/libraries/ui/NavBar/_components/UpdateProfileModal'
 import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
+import { getAvatar } from 'src/libraries/utils'
 import { copyShareGrantLink } from 'src/libraries/utils/copy'
+import { nFormatter } from 'src/libraries/utils/formatting'
+import { getNonce } from 'src/libraries/utils/gasless'
+import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
-import getAvatar from 'src/utils/avatarUtils'
-import { nFormatter } from 'src/utils/formattingUtils'
-import { getNonce } from 'src/utils/gaslessUtils'
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 type Props = {
 	bg?: string

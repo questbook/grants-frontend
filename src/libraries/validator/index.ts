@@ -2,7 +2,7 @@ import Ajv from 'ajv'
 import addFormats from 'ajv-formats'
 import logger from 'src/libraries/logger'
 import schema from 'src/libraries/validator/schema.yaml'
-import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import { uploadToIPFS } from 'src/libraries/utils/ipfs'
 
 const schemaJson = JSON.parse(JSON.stringify(schema))
 

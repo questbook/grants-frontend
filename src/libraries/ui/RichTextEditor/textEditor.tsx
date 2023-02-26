@@ -14,7 +14,7 @@ import {
 	RichUtils,
 } from 'draft-js'
 import Loader from 'src/libraries/ui/RichTextEditor/loader'
-import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
+import { getUrlForIPFSHash, uploadToIPFS } from 'src/libraries/utils/ipfs'
 import 'draft-js/dist/Draft.css'
 import '@draft-js-plugins/image/lib/plugin.css'
 

@@ -8,7 +8,7 @@ import Payouts from 'src/screens/dashboard/_components/ActionList/SingleSelect/P
 import ReviewProposal from 'src/screens/dashboard/_components/ActionList/SingleSelect/ReviewProposal'
 import Reviews from 'src/screens/dashboard/_components/ActionList/SingleSelect/Reviews'
 import { DashboardContext, FundBuilderContext, ModalContext } from 'src/screens/dashboard/Context'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 
 function SingleSelect() {
 	const buildComponent = () => {

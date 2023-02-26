@@ -8,12 +8,12 @@ import BackButton from 'src/libraries/ui/BackButton'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import { useLoadReview } from 'src/libraries/utils/reviews'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import useSubmitReview from 'src/screens/dashboard/_hooks/useSubmitReview'
 import { ReviewData } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
 
 function ReviewProposal() {
 	const buildComponent = () => {

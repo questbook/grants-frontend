@@ -2,9 +2,9 @@ import { Box, Button, Flex, Image, Text } from '@chakra-ui/react'
 import { Dot } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import { WorkspaceMembers } from 'src/screens/settings/_utils/types'
-import getAvatar from 'src/utils/avatarUtils'
-import { truncateStringFromMiddle } from 'src/utils/formattingUtils'
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getAvatar } from 'src/libraries/utils'
+import { truncateStringFromMiddle } from 'src/libraries/utils/formatting'
+import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 
 interface WorkspaceMemberCardProps {
     member: WorkspaceMembers[number]

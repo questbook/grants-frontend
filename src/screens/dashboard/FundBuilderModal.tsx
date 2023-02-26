@@ -18,10 +18,10 @@ import TransactionInitiated from 'src/screens/dashboard/_components/FundBuilder/
 import Verify from 'src/screens/dashboard/_components/FundBuilder/Verify'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
-import { getFieldString } from 'src/utils/formattingUtils'
-import { uploadToIPFS } from 'src/utils/ipfsUtils'
-import { getGnosisTansactionLink, getProposalUrl } from 'src/utils/multisigUtils'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { getFieldString } from 'src/libraries/utils/formatting'
+import { uploadToIPFS } from 'src/libraries/utils/ipfs'
+import { getGnosisTansactionLink, getProposalUrl } from 'src/libraries/utils/multisig'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 
 function FundBuilderModal() {
 	const buildComponent = () => {

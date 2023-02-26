@@ -3,7 +3,7 @@ import { Button, Flex, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text
 import { Desktop, QrScan } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import { GrantsProgramContext, NotificationContext } from 'src/pages/_app'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 
 type BaseProps = {
     isOpen: boolean

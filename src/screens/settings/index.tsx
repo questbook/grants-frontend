@@ -21,9 +21,9 @@ import useUpdateGrantProgram from 'src/screens/settings/_hooks/useUpdateGrantPro
 import { WorkspaceMembers } from 'src/screens/settings/_utils/types'
 import { SettingsFormContext, SettingsFormProvider } from 'src/screens/settings/Context'
 import WorkspaceMemberCard from 'src/screens/settings/WorkspaceMemberCard'
-import { formatAddress, getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { formatAddress, getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
+import { getUrlForIPFSHash, uploadToIPFS } from 'src/libraries/utils/ipfs'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 
 
 function Settings() {

@@ -8,9 +8,9 @@ import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import { usePiiForWorkspaceMember } from 'src/libraries/utils/pii'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
-import getErrorMessage from 'src/utils/errorUtils'
-import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
-import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import getErrorMessage from 'src/libraries/utils/error'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/libraries/utils/gasless'
+import { uploadToIPFS } from 'src/libraries/utils/ipfs'
 
 interface Props {
 	setNetworkTransactionModalStep: (step: number | undefined) => void

@@ -3,7 +3,7 @@ import { Button, Flex, Popover, PopoverArrow, PopoverBody, PopoverContent, Popov
 import { Bell, Desktop, QrScan } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import { GrantsProgramContext, NotificationContext } from 'src/pages/_app'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { useMediaQuery } from 'react-responsive'
 
 

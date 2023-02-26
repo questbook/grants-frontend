@@ -5,7 +5,7 @@ import {
 import { CHAIN_INFO } from 'src/constants/chains'
 import { SupportedChainId } from 'src/constants/chains'
 import { GetLatestBlockDocument } from 'src/generated/graphql'
-import { delay } from 'src/utils/generics'
+import { delay } from 'src/libraries/utils'
 
 class SubgraphClient {
 	client: ApolloClient<{ }>

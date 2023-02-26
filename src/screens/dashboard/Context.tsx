@@ -10,8 +10,8 @@ import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/librari
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { CommentMap, CommentType, DashboardContextType, FundBuilderContextType, ModalContextType, Proposals, ReviewInfo, SignerVerifiedState, TokenInfo } from 'src/screens/dashboard/_utils/types'
 import { Roles } from 'src/types'
-import { getFromIPFS } from 'src/utils/ipfsUtils'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { getFromIPFS } from 'src/libraries/utils/ipfs'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined)
 const FundBuilderContext = createContext<FundBuilderContextType | undefined>(undefined)

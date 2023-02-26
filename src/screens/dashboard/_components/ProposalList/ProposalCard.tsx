@@ -3,13 +3,13 @@ import { Checkbox, Flex, FlexProps, forwardRef, Image, Text, Tooltip } from '@ch
 import { useRouter } from 'next/router'
 import { CheckDouble, Close, Resubmit } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
+import { getAvatar } from 'src/libraries/utils'
+import { getFieldString, titleCase } from 'src/libraries/utils/formatting'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import useProposalTags from 'src/screens/dashboard/_hooks/useProposalTags'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import getAvatar from 'src/utils/avatarUtils'
-import { getFieldString, titleCase } from 'src/utils/formattingUtils'
 
 type Props = {
 	proposal: ProposalType

@@ -13,15 +13,15 @@ import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import Loader from 'src/libraries/ui/RichTextEditor/loader'
 import SearchField from 'src/libraries/ui/SearchField'
+import { chainNames } from 'src/libraries/utils/constants'
+import getErrorMessage from 'src/libraries/utils/error'
+import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { ApiClientsContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import RFPGrid from 'src/screens/discover/_components/rfpGrid'
 import { DiscoverContext, DiscoverProvider } from 'src/screens/discover/Context'
 import HeroBanner from 'src/screens/discover/HeroBanner'
 import StatsBanner from 'src/screens/discover/StatsBanner'
 import { Roles } from 'src/types'
-import { chainNames } from 'src/utils/chainNames'
-import getErrorMessage from 'src/utils/errorUtils'
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 function Discover() {
 	const router = useRouter()

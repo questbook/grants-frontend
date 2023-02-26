@@ -9,8 +9,8 @@ import { GrantsProgramContext } from 'src/pages/_app'
 import MilestoneChoose from 'src/screens/dashboard/_components/FundBuilder/MilestoneChoose'
 import { ProposalType, TokenInfo } from 'src/screens/dashboard/_utils/types'
 import { FundBuilderContext } from 'src/screens/dashboard/Context'
-import { getFieldString } from 'src/utils/formattingUtils'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { getFieldString } from 'src/libraries/utils/formatting'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 
 interface Props {
 	proposal: ProposalType

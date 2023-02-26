@@ -4,7 +4,7 @@ import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
 import { GrantsProgramContext } from 'src/pages/_app'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 
 interface Props {
 	setNetworkTransactionModalStep: (step: number | undefined) => void

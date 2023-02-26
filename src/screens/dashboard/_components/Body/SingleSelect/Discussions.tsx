@@ -10,9 +10,9 @@ import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { CommentType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import getAvatar from 'src/utils/avatarUtils'
-import { formatAddress, getFieldString } from 'src/utils/formattingUtils'
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getAvatar } from 'src/libraries/utils'
+import { formatAddress, getFieldString } from 'src/libraries/utils/formatting'
+import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 
 function Discussions() {
 	const buildComponents = () => {

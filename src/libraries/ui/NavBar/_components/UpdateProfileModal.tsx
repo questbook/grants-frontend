@@ -8,8 +8,8 @@ import FlushedInput from 'src/libraries/ui/FlushedInput'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
 import { usePiiForWorkspaceMember } from 'src/libraries/utils/pii'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
-import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 
 interface Props {
 	isOpen: boolean

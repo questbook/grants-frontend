@@ -2,7 +2,7 @@ import { PublicKey } from '@solana/web3.js'
 import { ContentState, convertFromRaw, EditorState } from 'draft-js'
 import { ethers } from 'ethers'
 import { Form, Grant } from 'src/screens/proposal_form/_utils/types'
-import { getFromIPFS, isIpfsHash } from 'src/utils/ipfsUtils'
+import { getFromIPFS, isIpfsHash } from 'src/libraries/utils/ipfs'
 
 function containsField(grant: Grant, field: string) {
 	return grant?.fields?.some((f) => f.id.endsWith(field))

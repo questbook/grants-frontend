@@ -12,8 +12,8 @@ import { GrantsProgramContext } from 'src/pages/_app'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { Payout, PayoutsType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { getGnosisTansactionLink, getProposalUrl } from 'src/utils/multisigUtils'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { getGnosisTansactionLink, getProposalUrl } from 'src/libraries/utils/multisig'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 
 function Payouts() {
 	const buildComponent = () => {

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import SAFES_ENDPOINTS_MAINNETS from 'src/constants/safesEndpoints.json'
 import SAFES_ENDPOINTS_TESTNETS from 'src/constants/safesEndpointsTest.json'
-import logger from 'src/utils/logger'
+import logger from 'src/libraries/utils/logger'
 
 const SAFES_ENDPOINTS = { ...SAFES_ENDPOINTS_MAINNETS, ...SAFES_ENDPOINTS_TESTNETS }
 type ValidChainID = keyof typeof SAFES_ENDPOINTS;

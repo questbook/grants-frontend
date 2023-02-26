@@ -3,7 +3,7 @@ import SupportedChainId from 'src/generated/SupportedChainId'
 import logger from 'src/libraries/logger'
 import RFPCard from 'src/screens/discover/_components/RFPCard'
 import { GrantType } from 'src/screens/discover/_utils/types'
-import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
+import { getSupportedChainIdFromSupportedNetwork } from 'src/libraries/utils/validations'
 
 
 type RFPGridProps = {

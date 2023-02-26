@@ -2,8 +2,8 @@ import { useContext, useMemo } from 'react'
 import { Flex, Image, Text } from '@chakra-ui/react'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import getAvatar from 'src/utils/avatarUtils'
-import { getFieldString } from 'src/utils/formattingUtils'
+import { getAvatar } from 'src/libraries/utils'
+import { getFieldString } from 'src/libraries/utils/formatting'
 
 
 function MultiSelect() {

@@ -8,9 +8,9 @@ import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
 import logger from 'src/libraries/logger'
 import { GrantType } from 'src/screens/discover/_utils/types'
 import { DiscoverContext } from 'src/screens/discover/Context'
-import getAvatar from 'src/utils/avatarUtils'
-import { extractDateFromDateTime, nFormatter, titleCase } from 'src/utils/formattingUtils'
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getAvatar } from 'src/libraries/utils'
+import { extractDateFromDateTime, nFormatter, titleCase } from 'src/libraries/utils/formatting'
+import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 
 
 type RFPCardProps = {

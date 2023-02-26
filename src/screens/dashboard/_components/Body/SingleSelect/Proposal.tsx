@@ -10,13 +10,13 @@ import NotificationPopover from 'src/libraries/ui/NavBar/_components/Notificatio
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
 import { getChainInfo } from 'src/libraries/utils/token'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import getAvatar from 'src/utils/avatarUtils'
-import { formatAddress, getFieldString, getFieldStrings, getRewardAmountMilestones } from 'src/utils/formattingUtils'
-import { getFromIPFS } from 'src/utils/ipfsUtils'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { getAvatar } from 'src/libraries/utils'
+import { formatAddress, getFieldString, getFieldStrings, getRewardAmountMilestones } from 'src/libraries/utils/formatting'
+import { getFromIPFS } from 'src/libraries/utils/ipfs'
 
 function Proposal() {
 	const buildComponent = () => {

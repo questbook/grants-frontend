@@ -9,8 +9,8 @@ import { GrantsProgramContext } from 'src/pages/_app'
 import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { getFieldString } from 'src/utils/formattingUtils'
-import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
+import { getFieldString } from 'src/libraries/utils/formatting'
+import { getSupportedChainIdFromSupportedNetwork } from 'src/libraries/utils/validations'
 
 function ProposalList({ step, setStep }: {step?: boolean, setStep?: (value: boolean) => void}) {
 	const buildComponent = () => (

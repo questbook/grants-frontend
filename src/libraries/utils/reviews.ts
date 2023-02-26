@@ -2,11 +2,11 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetWorkspaceMembersPublicKeysQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
+import logger from 'src/libraries/utils/logger'
+import { getKeyForApplication, getSecureChannelFromPublicKey, useGetPublicKeysOfGrantManagers } from 'src/libraries/utils/pii'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { IApplicantData, IReview, IReviewFeedback } from 'src/types'
-import { getFromIPFS, uploadToIPFS } from 'src/utils/ipfsUtils'
-import logger from 'src/utils/logger'
-import { getKeyForApplication, getSecureChannelFromPublicKey, useGetPublicKeysOfGrantManagers } from 'src/utils/pii'
+import { getFromIPFS, uploadToIPFS } from 'src/libraries/utils/ipfs'
 
 type PrivateReviewData = {
 	walletAddress: string

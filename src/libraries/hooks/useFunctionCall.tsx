@@ -7,9 +7,9 @@ import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { QBContract } from 'src/types'
-import getErrorMessage from 'src/utils/errorUtils'
-import { bicoDapps, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
-import MAIN_LOGGER from 'src/utils/logger'
+import getErrorMessage from 'src/libraries/utils/error'
+import { bicoDapps, getTransactionDetails, sendGaslessTransaction } from 'src/libraries/utils/gasless'
+import MAIN_LOGGER from 'src/libraries/utils/logger'
 
 interface Props {
 	chainId: SupportedChainId

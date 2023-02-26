@@ -5,7 +5,7 @@ import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import SetupNotificationModal from 'src/libraries/ui/SetupNotificationModal'
 import { copyGrantLink } from 'src/libraries/utils/copy'
 import { GrantsProgramContext } from 'src/pages/_app'
-import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 
 function Empty() {
 	const buildComponent = () => {

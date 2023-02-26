@@ -29,11 +29,11 @@ import { DropdownOption, GrantFields } from 'src/screens/request_proposal/_utils
 // import { today } from 'src/screens/request_proposal/_utils/utils'
 import { RFPFormContext, RFPFormProvider } from 'src/screens/request_proposal/Context'
 import { ApplicantDetailsFieldType } from 'src/types'
-import getErrorMessage from 'src/utils/errorUtils'
-import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { addAuthorizedOwner, addAuthorizedUser, bicoDapps, chargeGas, getEventData, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
-import { uploadToIPFS } from 'src/utils/ipfsUtils'
-import { getSupportedValidatorNetworkFromChainId } from 'src/utils/validationUtils'
+import getErrorMessage from 'src/libraries/utils/error'
+import { getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
+import { addAuthorizedOwner, addAuthorizedUser, bicoDapps, chargeGas, getEventData, getTransactionDetails, sendGaslessTransaction } from 'src/libraries/utils/gasless'
+import { uploadToIPFS } from 'src/libraries/utils/ipfs'
+import { getSupportedValidatorNetworkFromChainId } from 'src/libraries/utils/validations'
 
 function RequestProposal() {
 	const customStepsHeader = ['Creating your grant program on chain']

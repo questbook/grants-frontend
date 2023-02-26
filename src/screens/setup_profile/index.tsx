@@ -11,7 +11,7 @@ import ImageUpload from 'src/libraries/ui/ImageUpload'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
-import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
+import { getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
 
 function SetupProfile() {
 	const buildComponent = () => {

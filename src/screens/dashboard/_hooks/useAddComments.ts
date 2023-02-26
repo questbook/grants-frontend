@@ -9,8 +9,8 @@ import { PIIForCommentType } from 'src/libraries/utils/types'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { uploadToIPFS } from 'src/utils/ipfsUtils'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+import { uploadToIPFS } from 'src/libraries/utils/ipfs'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 
 interface Props {
   setStep: (step: number | undefined) => void
