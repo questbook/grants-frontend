@@ -97,12 +97,14 @@ const client = createClient({
 			options: {
 				name: 'Injected',
 				shimDisconnect: true,
+				shimChainChangedDisconnect: true
 			},
 		}),
 		new MetaMaskConnector({
 			chains,
 			options: {
 				shimDisconnect: true,
+				shimChainChangedDisconnect: true
 			},
 		}),
 		new WalletConnectConnector({

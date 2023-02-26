@@ -9,7 +9,7 @@ import ConnectWalletButton from 'src/screens/dashboard/_components/FundBuilder/C
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
 import getErrorMessage from 'src/utils/errorUtils'
-import { useAccount, useConnect, useDisconnect, useNetwork, useSwitchNetwork } from 'wagmi'
+import { Connector, useAccount, useConnect, useNetwork, useSwitchNetwork } from 'wagmi'
 
 const availableWallets = [{
 	name: 'Metamask',
@@ -74,16 +74,33 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 								verifying={verifying}
 								isDisabled={verifying !== undefined && verifying !== wallet.id}
 								onClick={
-									() => {
+									async() => {
 										setVerifying(wallet.id)
 										logger.info('Connect wallet initiated')
 										try {
 											logger.info('Inside try block')
 											const connector = connectors.find((x) => x.id === wallet.id)
 											logger.info({ connector }, 'connector')
+											setSelectedConnector(connector)
 											// setConnectClicked(true)
 											if(connector) {
-												connect({ connector })
+												// swallow error here so we don't fail the remaining logic
+												const isConnected = await connector.isAuthorized().catch(() => false)
+												if(!isConnected) {
+													connect({ connector })
+													toast({
+														title: 'Connecting to wallet',
+														status: 'info',
+														duration: 3000
+													})
+												}
+											} else {
+												toast({
+													title: 'Connector not found!',
+													status: 'error',
+													duration: 3000
+												})
+												setVerifying(undefined)
 											}
 										// eslint-disable-next-line @typescript-eslint/no-explicit-any
 										} catch(e: any) {
@@ -121,22 +138,16 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 	)
 
 	const { connect, connectors } = useConnect()
-	const { disconnect } = useDisconnect()
-	const { switchNetworkAsync } = useSwitchNetwork()
 	const { chain } = useNetwork()
 	const { safeObj } = useSafeContext()
+	const { switchNetwork } = useSwitchNetwork()
 	const { phantomWallet, phantomWalletConnected } = usePhantomWallet()
 
-	const { isConnected, address, connector } = useAccount()
+	const { address } = useAccount()
 	const toast = useCustomToast()
 
 	const [verifying, setVerifying] = useState<string>()
-
-	useEffect(() => {
-		if(isConnected) {
-			disconnect()
-		}
-	}, [])
+	const [selectedConnector, setSelectedConnector] = useState<Connector>()
 
 	const isEvmChain = useMemo(() => {
 		return safeObj.getIsEvm()
@@ -164,21 +175,13 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 		setVerifying(undefined)
 	}
 
-	const switchNetworkIfNeed = async() => {
-		if(isConnected && chain?.id !== safeObj?.chainId) {
-			try {
-				await switchNetworkAsync?.(safeObj?.chainId!)
-			} catch(e) {
-				logger.error(e)
-			}
+	const initiateOwnerVerification = async() => {
+		const didSwitch = await switchNetworkIfNeeded()
+		if(didSwitch) {
+			return
 		}
-	}
 
-	useEffect(() => {
-		switchNetworkIfNeed()
-	}, [ connector ])
-
-	useEffect(() => {
+		const isConnected = selectedConnector ? await selectedConnector.isAuthorized().catch(() => false) : false
 		if(isConnected || phantomWalletConnected) {
 			setSignerVerifiedState('verifying')
 		}
@@ -190,7 +193,43 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 				verifyOwner(phantomWallet?.publicKey?.toString()!)
 			}
 		}
-	}, [chain, isConnected, phantomWalletConnected])
+	}
+
+	const switchNetworkIfNeeded = async() => {
+		const isConnected = selectedConnector ? await selectedConnector.isAuthorized().catch(() => false) : false
+		if(isConnected && chain?.id !== safeObj?.chainId) {
+			try {
+				const toChainId = parseInt(safeObj?.chainId)
+				logger.info({ toChainId }, 'Switching network to')
+				switchNetwork?.(toChainId)
+				return true
+			} catch(e) {
+				logger.error(e)
+				toast({
+					title: 'Error switching network',
+					status: 'error',
+					duration: 3000
+				})
+				return false
+			}
+		} else {
+			return false
+		}
+	}
+
+	useEffect(() => {
+		if(address && verifying !== undefined) {
+			initiateOwnerVerification()
+		}
+	}, [address, chain, selectedConnector, phantomWalletConnected, verifying])
+
+	useEffect(() => {
+		logger.info({ chain }, 'Current chain')
+	}, [chain])
+
+	useEffect(() => {
+		logger.info({ selectedConnector }, 'Selected connector')
+	}, [selectedConnector])
 
 
 	return buildComponent()
