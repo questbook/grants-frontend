@@ -102,7 +102,21 @@ const VerifySignerModal = ({
 															setConnectClicked(true)
 															if(!isConnected) {
 																try {
-																	await connectAsync({ connector })
+																	if(connector) {
+																		connect({ connector })
+																		toast({
+																			title: 'Connecting to wallet',
+																			status: 'info',
+																			duration: 3000
+																		})
+																	} else {
+																		toast({
+																			title: 'Connector not found!',
+																			status: 'error',
+																			duration: 3000
+																		})
+																		setVerifying(undefined)
+																	}
 																} catch(e) {
 																	logger.error('evm error', e)
 																	customToast({
@@ -173,7 +187,7 @@ const VerifySignerModal = ({
 	const customToast = useCustomToast()
 	const { t } = useTranslation()
 
-	const { isError: isErrorConnecting, connectAsync, connectors } = useConnect()
+	const { isError: isErrorConnecting, connect, connectors } = useConnect()
 	const { address } = useAccount()
 	const { chain } = useNetwork()
 
