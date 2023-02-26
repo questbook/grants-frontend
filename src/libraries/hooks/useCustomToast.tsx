@@ -1,6 +1,6 @@
 import { useRef } from 'react'
-import { Button, Flex, Image, Text, ToastId, useToast, UseToastOptions } from '@chakra-ui/react'
-import { CheckDouble, ErrorWarning } from 'src/generated/icons'
+import { Button, Flex, Text, ToastId, useToast, UseToastOptions } from '@chakra-ui/react'
+import { CheckDouble, ErrorWarning, Loader } from 'src/generated/icons'
 
 type Props = {
 	action?: () => void
@@ -24,9 +24,8 @@ function useCustomToast() {
 						<Flex>
 							{
 								props.title === 'Linking your multisig' ? (
-									<Image
+									<Loader
 										className='loader'
-										src='/ui_icons/loader.svg'
 										color='black.1'
 									/>
 								) : (

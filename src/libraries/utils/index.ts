@@ -19,7 +19,7 @@ export const isPlausibleSolanaAddress = (str: string | undefined) => (
 export function getAvatar(initials: boolean, address: string | null | undefined) {
 	let url = ''
 	if(!address) {
-		url = '/ui_icons/default_profile_picture.png'
+		url = '/v2/images/default_profile_picture.png'
 	} else if(initials) {
 		address = address.toLowerCase()
 		// violet 2, teal 2, orange 2, crimson 2, pink 2

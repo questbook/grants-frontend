@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import {
 	Button,
 	Flex,
-	Image,
 	Modal,
 	ModalCloseButton,
 	ModalContent,
@@ -11,7 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { NetworkType } from 'src/constants/Networks'
-import { CeloSafe, RealmsLogo, SafeLogo } from 'src/generated/icons'
+import { CeloSafe, CheckDouble, Loader, RealmsLogo, SafeLogo } from 'src/generated/icons'
 import useLinkYourMultisig from 'src/libraries/hooks/useLinkYourMultisig'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
@@ -149,9 +148,8 @@ function LinkYourMultisigModal({
 				justify='start'
 				w='100%'
 				gap={2}>
-				<Image
+				<Loader
 					className='loader'
-					src='/ui_icons/loader.svg'
 					color='black.1' />
 				<Text
 					variant='v2_body'
@@ -172,8 +170,7 @@ function LinkYourMultisigModal({
 					{
 						safeNetworks.length > 0 ? (
 							<>
-								<Image
-									src='/ui_icons/Done_all_alt_round.svg'
+								<CheckDouble
 									color='#273B4A' />
 								<Text variant='v2_body'>
 									{

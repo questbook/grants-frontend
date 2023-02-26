@@ -1,6 +1,6 @@
-import React, { useRef } from 'react'
+import React, { ReactElement, useRef } from 'react'
 import {
-	Flex, IconButton, Image, Link, Text,
+	Flex, IconButton, Link, Text,
 } from '@chakra-ui/react'
 import Editor, { composeDecorators } from '@draft-js-plugins/editor'
 import createFocusPlugin from '@draft-js-plugins/focus'
@@ -13,6 +13,7 @@ import {
 	getDefaultKeyBinding,
 	RichUtils,
 } from 'draft-js'
+import { BoldButton, ImageAdd, ItalicsButton, OlButton, UlButton, UnderlineButton } from 'src/generated/icons'
 import Loader from 'src/libraries/ui/RichTextEditor/loader'
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/libraries/utils/ipfs'
 import 'draft-js/dist/Draft.css'
@@ -44,7 +45,7 @@ function StyleButton({
 }: {
   onToggle: (style: string) => void
   active: boolean
-  icon: string | undefined
+  icon: ReactElement
   style: string
   // eslint-disable-next-line react/require-default-props
   label?: string | undefined
@@ -56,7 +57,7 @@ function StyleButton({
 			_hover={{ bg: active ? '#A0A7A7' : 'none' }}
 			_active={{ bg: active ? '#A0A7A7' : 'none' }}
 			icon={
-				icon ? <Image src={icon} /> : (
+				icon ? icon : (
 					<Text>
 						{label}
 					</Text>
@@ -73,9 +74,9 @@ function StyleButton({
 }
 
 const INLINE_STYLES = [
-	{ label: '/ui_icons/bold_button.svg', style: 'BOLD' },
-	{ label: '/ui_icons/italics_button.svg', style: 'ITALIC' },
-	{ label: '/ui_icons/underline_button.svg', style: 'UNDERLINE' },
+	{ label: <BoldButton />, style: 'BOLD' },
+	{ label: <ItalicsButton />, style: 'ITALIC' },
+	{ label: <UnderlineButton />, style: 'UNDERLINE' },
 ]
 
 function InlineStyleControls({
@@ -91,7 +92,7 @@ function InlineStyleControls({
 			{
 				INLINE_STYLES.map((type) => (
 					<StyleButton
-						key={type.label}
+						key={type.style}
 						active={currentStyle.has(type.style)}
 						icon={type.label}
 						onToggle={onToggle}
@@ -107,8 +108,8 @@ const BLOCK_TYPES = [
 	{ style: 'header-one', label: 'h1' },
 	{ style: 'header-two', label: 'h2' },
 	{ style: 'header-three', label: 'h3' },
-	{ icon: '/ui_icons/ul_button.svg', style: 'unordered-list-item' },
-	{ icon: '/ui_icons/ol_button.svg', style: 'ordered-list-item' },
+	{ icon: <UlButton />, style: 'unordered-list-item' },
+	{ icon: <OlButton />, style: 'ordered-list-item' },
 ]
 
 function BlockStyleControls({
@@ -129,9 +130,9 @@ function BlockStyleControls({
 			{
 				BLOCK_TYPES.map((type) => (
 					<StyleButton
-						key={type.label || type.icon}
+						key={type.label}
 						active={type.style === blockType}
-						icon={type.icon}
+						icon={type.icon ?? <Flex />}
 						onToggle={onToggle}
 						style={type.style}
 						label={type.label}
@@ -312,7 +313,7 @@ function TextEditor({
 					style={{ transition: 'none' }}
 					icon={
 						!uploadingImage ? (
-							<Image src='/ui_icons/add_image.svg' />
+							<ImageAdd />
 						) : (
 							<Loader />
 						)

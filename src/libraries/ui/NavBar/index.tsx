@@ -7,7 +7,7 @@ import { ethers } from 'ethers'
 import saveAs from 'file-saver'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
-import { ArrowLeft, Pencil, Settings, ShareForward } from 'src/generated/icons'
+import { ArrowLeft, Pencil, Qb, Settings, ShareForward } from 'src/generated/icons'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
@@ -52,8 +52,8 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 				minWidth={{ base: '-webkit-fill-available' }}
 				paddingInlineEnd={['35px', '120px']}
 			>
-				<Image
-					alignSelf='flex-start'
+				<Qb
+					boxSize='10rem'
 					onClick={
 						() => {
 							router.push({
@@ -61,23 +61,8 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 							})
 						}
 					}
-					display={['none', 'inherit' ]}
+					display='inherit'
 					mr='auto'
-					src='/ui_icons/qb.svg'
-					alt='Questbook'
-					cursor='pointer' />
-				<Image
-					onClick={
-						() => {
-							router.push({
-								pathname: '/',
-							})
-						}
-					}
-					display={['inherit', 'none' ]}
-					mr='auto'
-					src='/ui_icons/Group 11070.png'
-					alt='Questbook'
 					cursor='pointer' />
 				{
 					isQbAdmin && (
@@ -85,7 +70,7 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 							<Image
 								display={{ base: 'none', lg: 'inherit' }}
 								ml='10px'
-								src='/ui_icons/builders.svg'
+								src='/v2/icons/images/builders.svg'
 								alt='Questbook Builders' />
 						</>
 					)
@@ -329,7 +314,7 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 							<Image
 								display={{ base: 'none', lg: 'inherit' }}
 								ml='10px'
-								src='/ui_icons/builders.svg'
+								src='/v2/icons/images/builders.svg'
 								alt='Questbook Builders' />
 						</>
 					)

@@ -1,6 +1,7 @@
 import { ChangeEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Button, Flex, Image, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
+import { Button, Flex, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
+import { Copy, Export, ExportDownload, Import } from 'src/generated/icons'
 
 interface Props {
     isOpen: boolean
@@ -32,9 +33,7 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 							p={6}
 							direction='column'
 							align='center'>
-							<Image
-								src={`/ui_icons/recovery/${type}.svg`}
-								boxSize='48px' />
+							{type === 'import' ? <Import boxSize='48px' /> : <Export boxSize='48px' />}
 							<Text
 								variant='v2_subheading'
 								fontWeight='500'
@@ -92,8 +91,7 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 										<Button
 											variant='link'
 											leftIcon={
-												<Image
-													src='/ui_icons/export-download.svg'
+												<ExportDownload
 													boxSize='24px' />
 											}
 											onClick={onSaveAsTextClick}>
@@ -108,8 +106,8 @@ function RecoveryModal({ isOpen, onClose, type, privateKey, privateKeyError, onC
 											ml={8}
 											variant='link'
 											leftIcon={
-												<Image
-													src='/ui_icons/export-copy.svg'
+												<Copy
+													color='#572EF5'
 													boxSize='24px' />
 											}
 											onClick={onCopyAndSaveManuallyClick}>
