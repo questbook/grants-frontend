@@ -1,9 +1,0 @@
-query getSafeForAWorkspace($workspaceID: String!) {
-    workspaceSafes(where: {workspace: $workspaceID}){
-      address
-      chainId
-      workspace {
-        id
-      }
-    }
-  }

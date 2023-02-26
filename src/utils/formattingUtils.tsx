@@ -2,9 +2,9 @@ import { BigNumber, ethers } from 'ethers'
 import moment from 'moment'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
 import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO, SupportedChainId } from 'src/constants/chains'
-import { GrantApplication } from 'src/generated/graphql'
+import { ApplicationMilestone, GrantApplication } from 'src/generated/graphql'
 import { MONTH_MAP } from 'src/libraries/utils/constants'
-import { ChainInfo, CustomField, FundTransfer } from 'src/types'
+import { ChainInfo, CustomField } from 'src/types'
 
 export function timeToString(
 	timestamp: number,
@@ -180,7 +180,7 @@ export function truncateStringFromMiddle(str: string) {
 }
 
 // extract milstone index from ID and generate title like "Milestone (index+1)"
-export function getMilestoneMetadata(milestone: FundTransfer['milestone']) {
+export function getMilestoneMetadata(milestone: Pick<ApplicationMilestone, 'id'>) {
 	if(milestone) {
 		const [applicationId, idx] = milestone.id.split('.')
 		return {
@@ -193,7 +193,7 @@ export function getMilestoneMetadata(milestone: FundTransfer['milestone']) {
 }
 
 // extract milstone index from ID and generate title like "Milestone (index+1)"
-export function getMilestoneTitle(milestone: FundTransfer['milestone']) {
+export function getMilestoneTitle(milestone: Pick<ApplicationMilestone, 'id'>) {
 	const item = getMilestoneMetadata(milestone)
 	if(typeof item !== 'undefined') {
 		return `Milestone ${item.milestoneIndex + 1}`
@@ -219,12 +219,15 @@ export const getExplorerUrlForTxHash = (chainId: SupportedChainId | undefined, t
 
 export const formatAddress = (address: string) => `${address.substring(0, 4)}....${address.substring(address.length - 4)}`
 
-export const getFieldString = (applicationData: any, name: string) => applicationData?.fields?.find((field: any) => field?.id?.includes(`.${name}`))?.values[0]?.value
-export const getFieldStrings = (applicationData: any, name: string) => applicationData?.fields?.find((field: any) => field?.id?.includes(`.${name}`))?.values?.map((v: any) => v.value)
+export const getFieldString = (applicationData: {fields: (Pick<GrantApplication['fields'][number], 'id'> & {values: Pick<GrantApplication['fields'][number]['values'][number], 'id' | 'value'>[]})[]} | undefined | null, name: string): string | undefined => {
+	return applicationData?.fields?.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value
+}
 
-export const getCustomFields = (applicationData: any): CustomField[] => applicationData?.fields
-	?.filter((field: any) => (field.id.split('.')[1].startsWith('customField')))
-	?.map((field: any) => {
+export const getFieldStrings = (applicationData: {fields: (Pick<GrantApplication['fields'][number], 'id'> & {values: Pick<GrantApplication['fields'][number]['values'][number], 'id' | 'value'>[]})[]} | undefined | null, name: string) => applicationData?.fields?.find((field) => field?.id?.includes(`.${name}`))?.values?.map((v) => v.value)
+
+export const getCustomFields = (applicationData: Pick<GrantApplication, 'fields'>): CustomField[] => applicationData?.fields
+	?.filter((field) => (field.id.split('.')[1].startsWith('customField')))
+	?.map((field) => {
 		const i = field.id.indexOf('-')
 		return ({
 			title: field.id.substring(i + 1).split('\\s').join(' '),
@@ -252,11 +255,11 @@ export const getRewardAmount = (decimals: number | undefined, application: {
 	}
 }
 
-export const getRewardAmountMilestones = (decimals: number, application: any) => {
+export const getRewardAmountMilestones = (decimals: number, application: {milestones: Pick<ApplicationMilestone, 'amount'>[]}) => {
 	let sum = BigNumber.from(0)
 
 	application?.milestones?.forEach(
-		(milestone: any) => sum = sum.add(milestone.amount))
+		(milestone) => sum = sum.add(milestone.amount))
 	return parseInt(ethers.utils.formatUnits(sum.toString(), decimals)).toLocaleString()?.split('.')[0]
 }
 

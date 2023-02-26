@@ -1,17 +1,23 @@
-import {
-	CHAIN_INFO,
-	SupportedChainId,
-} from 'src/constants/chains'
-import { ChainInfo, Grant } from 'src/types'
+import { CHAIN_INFO, SupportedChainId } from 'src/constants/chains'
+import { Grant } from 'src/generated/graphql'
+import { ChainInfo } from 'src/types'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
-export function getChainInfo(grant: { reward: Grant['reward'] }, chainId: SupportedChainId): ChainInfo['supportedCurrencies'][string] {
+export function getChainInfo(
+	grant: {
+    reward: Pick<Grant['reward'], 'asset'> & {
+      token?: Pick<
+        Exclude<Grant['reward']['token'], undefined | null>,
+        'iconHash' | 'label' | 'decimal' | 'address'
+      > | undefined | null
+    }
+  },
+	chainId: SupportedChainId,
+): ChainInfo['supportedCurrencies'][string] {
 	// let chainInfo: ChainInfo['supportedCurrencies'][string]
 	let tokenIcon: string
 	let chainInfo =
-		CHAIN_INFO[chainId]?.supportedCurrencies[
-			grant.reward.asset.toLowerCase()
-		]
+    CHAIN_INFO[chainId]?.supportedCurrencies[grant.reward.asset.toLowerCase()]
 
 	if(!chainInfo && grant.reward.token) {
 		tokenIcon = getUrlForIPFSHash(grant.reward.token.iconHash)

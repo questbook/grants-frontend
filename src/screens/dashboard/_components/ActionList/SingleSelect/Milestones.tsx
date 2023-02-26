@@ -94,7 +94,7 @@ function Milestones() {
 	}, [proposal])
 
 	const chainInfo = useMemo(() => {
-		if(!proposal?.grant?.id) {
+		if(!proposal?.grant?.id || !proposal?.grant?.reward?.token) {
 			return
 		}
 

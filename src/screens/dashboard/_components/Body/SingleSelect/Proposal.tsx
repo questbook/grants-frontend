@@ -106,7 +106,7 @@ function Proposal() {
 										<Button
 											variant='link'
 											rightIcon={
-												getFieldString(decryptedProposal, 'applicantEmail') && (
+												getFieldString(decryptedProposal, 'applicantEmail') !== undefined ? (
 													<Flex
 														w='20px'
 														h='20px'
@@ -117,7 +117,7 @@ function Proposal() {
 															alignSelf='center'
 															boxSize='12px' />
 													</Flex>
-												)
+												) : <Flex />
 											}>
 											<Text
 												fontWeight='400'
@@ -136,7 +136,7 @@ function Proposal() {
 										}
 
 										{
-											getFieldString(proposal, 'applicantAddress') && (
+											getFieldString(proposal, 'applicantAddress') !== undefined && (
 												<Button
 													variant='link'
 													rightIcon={
@@ -148,14 +148,14 @@ function Proposal() {
 															justify='center'>
 															<CopyIcon
 																// boxSize='12px'
-																text={getFieldString(proposal, 'applicantAddress')} />
+																text={getFieldString(proposal, 'applicantAddress') ?? ''} />
 														</Flex>
 													}>
 													<Text
 														fontWeight='400'
 														variant='v2_body'
 														color='gray.5'>
-														{formatAddress(getFieldString(proposal, 'applicantAddress'))}
+														{formatAddress(getFieldString(proposal, 'applicantAddress') ?? '')}
 													</Text>
 												</Button>
 											)
@@ -242,7 +242,7 @@ function Proposal() {
 								Member Details
 							</Text>
 							{
-								getFieldStrings(decryptedProposal, 'memberDetails').map((member: string, index: number) => (
+								getFieldStrings(decryptedProposal, 'memberDetails')?.map((member: string, index: number) => (
 									<Text
 										key={index}
 										mt={2}>
@@ -326,7 +326,12 @@ function Proposal() {
 			return
 		}
 
- 		Promise.all([decrypt(proposal), getFromIPFS(getFieldString(proposal, 'projectDetails'))]).then(([decryptedProposal, details]) => {
+		const detailHash = getFieldString(proposal, 'projectDetails')
+		if(detailHash === undefined) {
+			return
+		}
+
+ 		Promise.all([decrypt(proposal), getFromIPFS(detailHash)]).then(([decryptedProposal, details]) => {
 			logger.info({ decryptedProposal, details }, '(Proposal) decrypted proposal')
 			setDecryptedProposal({ ...proposal, ...decryptedProposal })
 			setProjectDetails(details)

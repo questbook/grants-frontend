@@ -1,4 +1,0 @@
-query getNumberOfGrants($first: Int, $skip: Int, $workspaceId: String!) {
-  grants(where: { workspace: $workspaceId }, subgraphError: allow){
-    id,
-  }}

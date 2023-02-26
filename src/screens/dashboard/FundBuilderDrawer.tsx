@@ -222,7 +222,7 @@ function FundBuilderDrawer() {
 		}
 
 		setAmounts(selectedProposalsData.map((p) => p?.milestones?.[0]?.amount ? parseInt(p?.milestones?.[0]?.amount) : 0))
-		setTos(selectedProposalsData.map((p) => getFieldString(p, 'applicantAddress')))
+		setTos(selectedProposalsData.map((p) => getFieldString(p, 'applicantAddress') ?? ''))
 		setMilestoneIndices(selectedProposalsData.map(() => 0))
 	}, [selectedProposalsData])
 

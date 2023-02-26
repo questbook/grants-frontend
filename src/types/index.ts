@@ -10,32 +10,16 @@ import {
 	WorkspaceRegistryAbi,
 } from 'src/generated/contracts'
 import {
-	GetAllGrantsForADaoQuery, GetApplicantsForAGrantQuery,
-	GetApplicationMilestonesQuery,
-	GetDaoDetailsQuery,
-	GetFundSentForApplicationQuery,
 	GetGrantQuery,
-	GetReviewersForAWorkspaceQuery,
-	GetWorkspaceDetailsQuery,
 	GetWorkspaceMembersQuery,
+	GrantApplication,
 	RubricItem,
 	SupportedNetwork,
 } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 
-export type Grant = GetAllGrantsForADaoQuery['grants'][number];
-export type ApplicationMilestone =
-  GetApplicationMilestonesQuery['grantApplications'][number]['milestones'][number];
-export type FundTransfer =
-  GetFundSentForApplicationQuery['fundsTransfers'][number];
 export type MinimalWorkspace =
   GetWorkspaceMembersQuery['workspaceMembers'][number]['workspace'];
-export type Workspace = Exclude<
-  GetWorkspaceDetailsQuery['workspace'],
-  null | undefined
->;
-export type DAOWorkspace = GetDaoDetailsQuery['workspace'];
-export type DAOGrant = GetDaoDetailsQuery['grants'];
 
 export type IApplicantData = {
   grantTitle?: string
@@ -56,12 +40,12 @@ export type IApplicantData = {
   }
   status: number
   amountPaid: string
-  reviews: GetApplicantsForAGrantQuery['grantApplications'][number]['reviews']
-  milestones: GetApplicantsForAGrantQuery['grantApplications'][number]['milestones']
-  reviewers: GetApplicantsForAGrantQuery['grantApplications'][number]['applicationReviewers']
+  reviews: GrantApplication['reviews']
+  milestones: GrantApplication['milestones']
+  reviewers: GrantApplication['applicationReviewers']
 }
 
-export type IReview = IApplicantData['reviews'][0]
+export type IReview = IApplicantData['reviews'][number]
 
 export type IReviewer = { id: string, fullName?: string | null }
 
@@ -153,12 +137,6 @@ export interface SidebarRubrics {
   index: number
   criteria: string
   description: string
-}
-
-export interface SidebarReviewer {
-  data: Exclude<GetReviewersForAWorkspaceQuery['workspace'], null | undefined>['members'][number]
-  isSelected: boolean
-  index: number
 }
 
 

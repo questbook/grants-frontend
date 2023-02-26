@@ -35,7 +35,7 @@ export function useLoadReview(
 		client
 	})
 
-	const loadPrivateReviewDataForReviewer = async(review: IReview) => {
+	const loadPrivateReviewDataForReviewer = async(review: {data: Pick<IReview['data'][number], 'id' | 'data' >[], reviewer: Pick<IReview['reviewer'], 'id'>}) => {
 		const meAddress = scwAddress?.toLocaleLowerCase()
 		const meData = review.data.find(d => {
 			const walletAddress = d.id.split('.').pop()
@@ -67,7 +67,7 @@ export function useLoadReview(
 		}
 	}
 
-	const loadPrivateReviewDataForSelf = async(review: IReview) => {
+	const loadPrivateReviewDataForSelf = async(review: Pick<IReview, 'data'>) => {
 		// load the grant manager tx map
 		const grantManagerMap = await fetchPubKeys()
 		// find some review that we have a shared key with
@@ -92,7 +92,7 @@ export function useLoadReview(
 	}
 
 	const loadReview = useCallback(
-		async(review: IReview, applicationId: string) => {
+		async(review: Pick<IReview, 'id' | 'createdAtS' | 'publicReviewDataHash'> & {reviewer: Pick<IReview['reviewer'], 'id'>, data: Pick<IReview['data'][number], 'id' | 'data'>[]}, applicationId: string) => {
 			const isPrivate = isReviewPrivate(review)
 			let data: IReviewFeedback
 
@@ -262,7 +262,7 @@ export const useGenerateReviewData = ({
 	}
 }
 
-function isReviewPrivate(review: IReview) {
+function isReviewPrivate(review: Pick<IReview, 'publicReviewDataHash'>) {
 	return !review.publicReviewDataHash
 }
 
