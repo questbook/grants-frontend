@@ -86,6 +86,18 @@ const VerifyDrawer = ({ setSignerVerifiedState, shouldVerify = true }: Props) =>
 											// setConnectClicked(true)
 											if(connector) {
 												connect({ connector })
+												toast({
+													title: 'Connecting to wallet',
+													status: 'info',
+													duration: 3000
+												})
+											} else {
+												toast({
+													title: 'Connector not found!',
+													status: 'error',
+													duration: 3000
+												})
+												setVerifying(undefined)
 											}
 										// eslint-disable-next-line @typescript-eslint/no-explicit-any
 										} catch(e: any) {
