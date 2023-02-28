@@ -213,8 +213,7 @@ function RequestProposal() {
 	// const [workspaceId, setWorkspaceId] = useState('')
 
 	// Webwallet
-	const [shouldRefreshNonce, setShouldRefreshNonce] = useState<boolean>()
-	const { data: accountDataWebwallet, nonce } = useQuestbookAccount(shouldRefreshNonce)
+	const { data: accountDataWebwallet, nonce } = useQuestbookAccount()
 	const { webwallet } = useContext(WebwalletContext)!
 
 	const { subgraphClients } = useContext(ApiClientsContext)!
@@ -224,7 +223,6 @@ function RequestProposal() {
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		chainId: defaultChainId.toString(),
-		shouldRefreshNonce: shouldRefreshNonce
 	})
 
 	const toast = useCustomToast()
@@ -246,11 +244,6 @@ function RequestProposal() {
 
 		if(webwallet) {
 			addAuthorizedUser(webwallet?.address)
-				.then(() => {
-					setShouldRefreshNonce(true)
-					// console.log('Added authorized user', webwallet.address)
-				})
-			// .catch((err) => console.log("Couldn't add authorized user", err))
 		}
 	}, [webwallet, nonce])
 

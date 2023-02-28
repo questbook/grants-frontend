@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo } from 'react'
 import { GRANT_FACTORY_ADDRESS, WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { defaultChainId, USD_ASSET, USD_DECIMALS, USD_ICON } from 'src/constants/chains'
 import useQBContract from 'src/hooks/contracts/useQBContract'
@@ -35,13 +35,12 @@ export default function useUpdateRFP(setCurrentStep: (step: number | undefined) 
 
 	const { webwallet } = useContext(WebwalletContext)!
 
-	const [shouldRefreshNonce, setShouldRefreshNonce] = useState<boolean>()
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 		chainId: chainId?.toString()
 	})
 
 	const [isBiconomyInitialised, setIsBiconomyInitialised] = React.useState(false)
-	const { data: accountDataWebwallet, nonce } = useQuestbookAccount(shouldRefreshNonce)
+	const { data: accountDataWebwallet, nonce } = useQuestbookAccount()
 
 	const customToast = useCustomToast()
 
@@ -68,11 +67,6 @@ export default function useUpdateRFP(setCurrentStep: (step: number | undefined) 
 
 		if(webwallet) {
 			addAuthorizedUser(webwallet?.address)
-				.then(() => {
-					setShouldRefreshNonce(true)
-					// console.log('Added authorized user', webwallet.address)
-				})
-			// .catch((err) => console.log("Couldn't add authorized user", err))
 		}
 	}, [webwallet, nonce])
 

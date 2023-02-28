@@ -9,6 +9,7 @@ import {
 	ValidationApi,
 } from '@questbook/service-validator-client'
 import { ethers, Wallet } from 'ethers'
+import { AnimatePresence } from 'framer-motion'
 import { NextPage } from 'next'
 import type { AppContext, AppProps } from 'next/app'
 import App from 'next/app'

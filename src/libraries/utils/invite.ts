@@ -189,7 +189,7 @@ export const useMakeInvite = () => {
 
 type JoinInviteStep = 'ipfs-uploaded' | 'tx-signed' | 'tx-confirmed'
 
-export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemberUpdate, shouldRefreshNonce: boolean) => {
+export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemberUpdate) => {
 
 	const connectedChainId = useChainId()
 	const { network, switchNetwork } = useNetwork()
@@ -197,8 +197,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 	const { webwallet } = useContext(WebwalletContext)!
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
-		chainId: inviteInfo?.chainId.toString(),
-		shouldRefreshNonce: shouldRefreshNonce
+		chainId: inviteInfo?.chainId.toString()
 	})
 	const targetContractObject = useQBContract('workspace', network)
 

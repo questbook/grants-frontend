@@ -1,38 +1,59 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Decentralised Grant Orchestration Tool Frontend
 
-## Getting Started
+This repository contains all the code for the Questbook grant orchestration tool.
+The grants tool is a decentralised application that helps protocols manage their grant programs on-chain, without having to pay any gas fees.
 
-First, run the development server:
+Website: <https://questbook.app>
 
-```bash
-npm run dev
-# or
-yarn dev
+Some of our top partners include:
+
+1. [Compound Finance](https://compound.finance)
+2. [Climate Collective](https://medium.com/@ClimateCollective/introducing-the-climate-collectives-new-grants-program-2ec76b97318c)
+3. [Prezenti](https://prezenti.xyz/about-us)
+
+## Installation and Setup
+
+1. Clone the repo
+2. Install the dependencies using `npm i --legacy-peer-deps`
+3. Create a `.env` file in the root directory and add the following variables:
+
+```
+NEXT_PUBLIC_IS_TEST=true | false
+NEXT_PUBLIC_INFURA_ID=my-infura-id
+BICO_AUTH_TOKEN=my-biconomy-auth-token
+SOLANA_RPC=my-solana-rpc-url
+SENTRY_LOG_LEVEL=debug
+SENTRY_AUTH_TOKEN=sentry-auth-token
+API_ENDPOINT=https://api.questbook.app
+NOTIF_BOT_USERNAME=qb_notif_bot
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Run the app using `npm run dev`
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Usage
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+The main flows of the app are described below.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+### Landing page
 
-## Learn More
+### Creating a grant program
 
-To learn more about Next.js, take a look at the following resources:
+### Editing the details of a grant program
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Adding reviewers to a grant program
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### Submitting reviews as a reviewer
 
-## Deploy on Vercel
+### Adding a multisig to fund the program
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Initiating payout to a builder
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Submitting a proposal to a grant program
 
-nothing
+### Resubmitting a proposal
 
-nothing new
+## How does it work?
+
+## Project Structure
+
+## Contributing
