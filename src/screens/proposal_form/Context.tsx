@@ -1,6 +1,6 @@
 import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { SupportedPayouts } from '@questbook/supported-safes'
-import { EditorState } from 'draft-js'
+import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
@@ -123,7 +123,20 @@ const ProposalFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			details: EditorState.createEmpty()
 		}
 		logger.info('grants', result[0])
-		setForm(initForm)
+		try {
+			const cache = localStorage.getItem(`form-${grantId}`)
+			if(cache) {
+				const formFromCache = JSON.parse(cache)
+				logger.info({ formFromCache }, 'ProposalForm: fetchGrant (formFromCache)')
+				setForm({ ...formFromCache, details: EditorState.createWithContent(convertFromRaw(formFromCache.details)) })
+			} else {
+				setForm(initForm)
+			}
+		} catch(e) {
+			logger.error(e, 'ProposalForm: error load form from cache (formFromCache)')
+			setForm(initForm)
+		}
+
 		setGrant(result[0].grant)
 		const currentSafe = new SupportedPayouts().getSafe(parseInt(result[0].grant?.workspace?.safe?.chainId!), result[0].grant?.workspace?.safe?.address!)
 		setSafeObj(currentSafe)
@@ -204,7 +217,6 @@ const ProposalFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	}, [proposalId, chainId])
 
 	useEffect(() => {
-		logger.info({}, 'HERE 1')
 		if(!grant?.id || !proposal?.applicantPublicKey || !chainId || !proposal?.pii?.length) {
 			logger.info({ grantId: grant?.id, proposalKey: proposal?.applicantPublicKey, chainId, length: proposal?.pii }, 'Could not decrypt proposal 2')
 			return
@@ -214,6 +226,15 @@ const ProposalFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			logger.info({ message }, 'Decrypt proposal message')
 		})
 	}, [grant?.id, proposal?.applicantPublicKey, chainId, scwAddress])
+
+	useEffect(() => {
+		if(!grant) {
+			return
+		}
+
+		logger.info({ form }, 'ProposalForm: form changed')
+		localStorage.setItem(`form-${grant?.id}`, JSON.stringify({ ...form, details: convertToRaw(form.details.getCurrentContent()) }))
+	}, [form])
 
 	return providerComponent()
 }

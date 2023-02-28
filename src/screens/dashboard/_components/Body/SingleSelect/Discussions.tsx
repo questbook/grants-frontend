@@ -1,4 +1,4 @@
-import { useContext, useMemo, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import ReactLinkify from 'react-linkify'
 import { LockIcon } from '@chakra-ui/icons'
 import { Box, Button, Checkbox, Divider, Flex, Image, Text, Textarea, Tooltip } from '@chakra-ui/react'
@@ -113,6 +113,7 @@ function Discussions() {
 							onChange={
 								(e) => {
 									setText(e.target.value)
+									localStorage.setItem(`comment-${grant?.id}-${proposal?.id}`, e.target.value)
 								}
 							}
 							placeholder={placeholder} />
@@ -289,6 +290,11 @@ function Discussions() {
 	const proposal = useMemo(() => {
 		return proposals.find(p => selectedProposals.has(p.id))
 	}, [proposals, selectedProposals])
+
+	useEffect(() => {
+		const comment = localStorage.getItem(`comment-${grant?.id}-${proposal?.id}`)
+		setText(comment ?? '')
+	}, [grant, proposal])
 
 	const { proposalTags } = useProposalTags({ proposals: proposal ? [proposal] : [] })
 
