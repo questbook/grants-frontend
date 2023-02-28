@@ -585,7 +585,6 @@ function ProposalForm() {
 
 	const fundingAsk = useMemo(() => {
 		const val = getRewardAmountMilestones(chainInfo?.decimals ?? 0, { milestones: form.milestones.map((m) => ({ ...m, amount: m.amount ? m.amount.toString() : '0' })) })
-		logger.info({ form }, 'Form')
 		return val
 	}, [form])
 
