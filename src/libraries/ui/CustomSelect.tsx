@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Divider, Flex, Text } from '@chakra-ui/react'
 import { CreatableSelect } from 'chakra-react-select'
+import logger from 'src/libraries/logger'
 import { ApplicantDetailsFieldType } from 'src/types'
 
 
@@ -52,6 +53,7 @@ export function CustomSelect({ options, setExtraDetailsFields, setShowExtraField
 
 	const handleCreate = (inputValue: string) => {
 		const newOption = createOption(inputValue)
+		logger.info('Setting extra details 3')
 		setExtraDetailsFields([...options, newOption])
 		setValue(newOption)
 		setShowExtraFieldDropdown(false)
@@ -60,7 +62,10 @@ export function CustomSelect({ options, setExtraDetailsFields, setShowExtraField
 
 	const handleOnChange = (item: ApplicantDetailsFieldType) => {
 		const changedItem = { ...item, required: true }
+		logger.info(changedItem, 'Changed item')
 		const newOptionsList = options.filter((option) => option.id !== item.id)
+		logger.info(newOptionsList, 'New Options list')
+		logger.info('Setting extra details 4')
 		setExtraDetailsFields([...newOptionsList, changedItem])
 		setShowExtraFieldDropdown(false)
 	}

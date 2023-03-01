@@ -330,7 +330,7 @@ function ProposalForm() {
 									onChange={
 										(e) => {
 											onChange(e, 'applicantAddress')
-											validateWalletAddress(e.target.value, safeObj, (isValid) => {
+											validateWalletAddress(e.target.value, (isValid) => {
 												setWalletAddressError(!isValid)
 											})
 										}

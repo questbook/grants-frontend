@@ -20,7 +20,7 @@ const isValidSolanaAddress = (address: string) => {
 	}
 }
 
-const isValidSafeAddress = (address: string) => {
+const isSupportedAddress = (address: string) => {
 	logger.info({ eth: isValidEthereumAddress(address), sol: isValidSolanaAddress(address) }, 'isValidSafeAddress')
 	return isValidEthereumAddress(address) || isValidSolanaAddress(address)
 }
@@ -67,7 +67,7 @@ const getSupportedChainIdFromWorkspace = (workspace?: Pick<MinimalWorkspace, 'su
 export {
 	isValidEthereumAddress,
 	isValidSolanaAddress,
-	isValidSafeAddress,
+	isSupportedAddress,
 	isValidEmail,
 	getSupportedChainIdFromWorkspace,
 	getSupportedValidatorNetworkFromChainId,

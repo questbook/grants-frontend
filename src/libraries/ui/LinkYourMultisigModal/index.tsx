@@ -16,7 +16,7 @@ import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import SafeSelect from 'src/libraries/ui/LinkYourMultisigModal/SafeSelect'
 import VerifySignerModal from 'src/libraries/ui/LinkYourMultisigModal/VerifySignerModal'
-import { isValidSafeAddress } from 'src/libraries/utils/validations'
+import { isSupportedAddress } from 'src/libraries/utils/validations'
 import { SafeSelectOption } from 'src/types'
 
 interface Props {
@@ -276,7 +276,7 @@ function LinkYourMultisigModal({
 
 	useEffect(() => {
 		setMultiSigAddressError(false)
-		const isValid = isValidSafeAddress(multiSigAddress)
+		const isValid = isSupportedAddress(multiSigAddress)
 		logger.info('Safe address entered', { multiSigAddress, isValid })
 		if(multiSigAddress !== '' && isValid) {
 			fetchSafeData(multiSigAddress)
