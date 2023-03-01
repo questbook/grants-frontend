@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-curly-brace-presence */
-import { useContext, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { BsArrowLeft } from 'react-icons/bs'
 import { IoMdClose } from 'react-icons/io'
@@ -7,6 +7,7 @@ import { Button, Flex, Icon, Input, Text } from '@chakra-ui/react'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { logger } from 'ethers'
 import { useRouter } from 'next/router'
+import applicantDetailsList from 'src/constants/applicantDetailsList'
 import { CustomSelect } from 'src/libraries/ui/CustomSelect'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
@@ -405,19 +406,6 @@ function ProposalSubmission(
 		)
 	}
 
-	// const extraDetailsFieldsList = applicantDetailsList.filter(detail => detail.isRequired === false).map(({
-	// 	title, id, inputType, isRequired, pii
-	// }) => {
-	// 	return {
-	// 		title,
-	// 		required: isRequired || false,
-	// 		id,
-	// 		inputType,
-	// 		pii
-	// 	}
-	// })
-	// 	.filter((obj) => obj !== null)
-
 	const router = useRouter()
 
 	const [detailsCounter, setDetailsCounter] = useState(0)
@@ -426,9 +414,11 @@ function ProposalSubmission(
 
 	const { createingProposalStep, setCreatingProposalStep } = useContext(WebwalletContext)!
 
-	// const [extraDetailsFields, setExtraDetailsFields] = useState<ApplicantDetailsFieldType[]>(extraDetailsFieldsList)
-
 	const [showExtraFieldDropdown, setShowExtraFieldDropdown] = useState(false)
+
+	useEffect(() => {
+		logger.info({ extraDetailsFields }, 'Extra details field')
+	}, [extraDetailsFields])
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const handleFile = async(e: any) => {
@@ -454,6 +444,7 @@ function ProposalSubmission(
 				return field
 			}
 		})
+		logger.info('Setting extra details 2')
 		setExtraDetailsFields(newExtraFieldList)
 	}
 
@@ -470,14 +461,16 @@ function ProposalSubmission(
 				inputType = 'short-form'
 			}
 
+			logger.info(item, 'Filtered extra details')
 			return {
-				id: `customField${index}-${item.title}`,
+				id: applicantDetailsList.map(d => d.id).includes(item.id) ? item.id : `customField${index}-${item.title}`,
 				inputType: inputType,
 				required: item.required,
 				title: item.title,
 				pii: item.pii
 			}
 		})
+		logger.info(filteredExtraDetails, 'Filtered extra details')
 
 		// merge required and extra details
 		const allFieldsArray = [...requiredDetails, ...filteredExtraDetails]

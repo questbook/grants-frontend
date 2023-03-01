@@ -200,6 +200,7 @@ function RequestProposal() {
 	const extraDetailsFieldsList = applicantDetailsList.filter(detail => detail.isRequired === false).map(({
 		title, id, inputType, isRequired, pii
 	}) => {
+		logger.info(id, 'Populating extra details')
 		return {
 			title,
 			required: isRequired || false,
@@ -311,6 +312,7 @@ function RequestProposal() {
 	useEffect(() => {
 		if(rfpData) {
 			// setRequiredDetails(rfpData.allApplicantDetails)
+			logger.info('Setting extra details 1')
 			setExtraDetailsFields(rfpData.allApplicantDetails!)
 			setRubrics(rfpData.rubrics)
 			// setPayoutMode(rfpData.payoutMode)
