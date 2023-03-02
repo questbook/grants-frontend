@@ -1,26 +1,23 @@
-import React, { useEffect, useRef } from 'react'
-import { Link } from '@chakra-ui/react'
+import React from 'react'
+import { Button } from '@chakra-ui/react'
 import Editor, { composeDecorators } from '@draft-js-plugins/editor'
 import createImagePlugin from '@draft-js-plugins/image'
 import createLinkifyPlugin from '@draft-js-plugins/linkify'
 import createResizeablePlugin from '@draft-js-plugins/resizeable'
-import {
-	ContentState,
-	convertFromRaw,
-	EditorState,
-} from 'draft-js'
+import { ContentBlock, EditorState } from 'draft-js'
 import 'draft-js/dist/Draft.css'
 import '@draft-js-plugins/image/lib/plugin.css'
 
 const linkifyPlugin = createLinkifyPlugin({
 	component(props) {
-		// return <a {...props} onClick={() => alert('Clicked on Link!')} />;
 		return (
-			<Link
+			<Button
 				{...props}
-				whiteSpace='break-spaces'
+				variant='link'
+				color='accent.azure'
+				fontWeight='400'
 				onClick={() => window.open(props.href, '_blank')}
-				isExternal />
+			/>
 		)
 	},
 })
@@ -30,54 +27,20 @@ const imagePlugin = createImagePlugin({ decorator })
 const plugins = [resizeablePlugin, imagePlugin, linkifyPlugin]
 
 function TextViewer({
-	// value: editorState,
-	// onChange: setEditorState,
-	text,
+	value: editorState,
+	onChange: setEditorState,
 }: {
-  // value: EditorState;
-  // onChange: (editorState: EditorState) => void;
-  text: string
+	value: EditorState
+	onChange: (editorState: EditorState) => void
 }) {
-	const ref = useRef(null)
-	const [editorState, setEditorState] = React.useState(() => {
-		try {
-			const o = JSON.parse(text)
-			return EditorState.createWithContent(convertFromRaw(o))
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} catch(e: any) {
-			if(text) {
-				return EditorState.createWithContent(ContentState.createFromText(text))
-			}
 
-			return EditorState.createEmpty()
-		}
-	})
-
-	useEffect(() => {
-		try {
-			const o = JSON.parse(text)
-			const newState = EditorState.createWithContent(convertFromRaw(o))
-			setEditorState(newState)
-			// EditorState.push(newState, ContentState.createFromText(text), 'change-block-data')
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} catch(e: any) {
-			if(text) {
-				const newState = EditorState.createWithContent(ContentState.createFromText(text))
-				setEditorState(newState)
-				// EditorState.push(newState, ContentState.createFromText(text), 'change-block-data')
-			} else {
-				const newState = EditorState.createEmpty()
-				setEditorState(newState)
-				// EditorState.push(newState, ContentState.createFromText(text), 'change-block-data')
-			}
-		}
-	}, [text])
-
+	// Let this onChange function be there.
+	// It is required for the linkify plugin to work.
 	const onChange = (state: EditorState) => {
 		setEditorState(state)
 	}
 
-	function getBlockStyle(block: any) {
+	function getBlockStyle(block: ContentBlock) {
 		switch (block.getType()) {
 		case 'header-one':
 			return 'RichEditor-h1'
@@ -91,18 +54,15 @@ function TextViewer({
 	}
 
 	return (
-		<div>
-			<Editor
-				blockStyleFn={getBlockStyle}
-				ref={ref}
-				editorState={editorState}
-				editorKey='foo'
-				spellCheck={false}
-				plugins={plugins}
-				onChange={onChange}
-				readOnly
-			/>
-		</div>
+		<Editor
+			blockStyleFn={getBlockStyle}
+			editorState={editorState}
+			onChange={onChange}
+			editorKey='foobar'
+			spellCheck={false}
+			plugins={plugins}
+			readOnly
+		/>
 	)
 }
 

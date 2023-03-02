@@ -33,7 +33,9 @@ function SectionRichTextEditor({ label, editorState, setEditorState, flexProps }
 					<TextEditor
 						value={editorState}
 						onChange={setEditorState}
-						placeholder='What are you building? What’s on your roadmap? When do you expect to complete it by' />
+						placeholder='What are you building? What’s on your roadmap? When do you expect to complete it by?
+						Media: Show and tell what you’re building with any media;
+						Links: share relevant links to the team and project' />
 				</Flex>
 			</Flex>
 		)

@@ -1,5 +1,5 @@
 import React, { KeyboardEvent, ReactElement, useRef } from 'react'
-import { Box, Flex, IconButton, Link, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, IconButton, Text } from '@chakra-ui/react'
 import Editor, { composeDecorators } from '@draft-js-plugins/editor'
 import createFocusPlugin from '@draft-js-plugins/focus'
 import createImagePlugin from '@draft-js-plugins/image'
@@ -11,8 +11,7 @@ import {
 	EditorCommand,
 	EditorState,
 	getDefaultKeyBinding,
-	RichUtils,
-} from 'draft-js'
+	RichUtils } from 'draft-js'
 import Loader from 'src/components/ui/loader'
 import {
 	Bold,
@@ -31,10 +30,12 @@ import '@draft-js-plugins/image/lib/plugin.css'
 const linkifyPlugin = createLinkifyPlugin({
 	component(props) {
 		return (
-			<Link
+			<Button
 				{...props}
+				variant='link'
+				color='accent.azure'
+				fontWeight='400'
 				onClick={() => window.open(props.href, '_blank')}
-				isExternal
 			/>
 		)
 	},
@@ -52,12 +53,12 @@ function StyleButton({
 	style,
 	label,
 }: {
-  onToggle: (style: string) => void
-  active: boolean
-  icon: ReactElement | undefined
-  style: string
-  // eslint-disable-next-line react/require-default-props
-  label?: string | undefined
+	onToggle: (style: string) => void
+	active: boolean
+	icon: ReactElement | undefined
+	style: string
+	// eslint-disable-next-line react/require-default-props
+	label?: string | undefined
 }) {
 	return (
 		<IconButton
@@ -123,8 +124,8 @@ function InlineStyleControls({
 	editorState,
 	onToggle,
 }: {
-  editorState: EditorState
-  onToggle: (style: string) => void
+	editorState: EditorState
+	onToggle: (style: string) => void
 }) {
 	const currentStyle = editorState.getCurrentInlineStyle()
 	return (
@@ -154,8 +155,8 @@ function HeaderStyleControls({
 	editorState,
 	onToggle,
 }: {
-  editorState: EditorState
-  onToggle: (style: string) => void
+	editorState: EditorState
+	onToggle: (style: string) => void
 }) {
 	const selection = editorState.getSelection()
 	const blockType = editorState
@@ -206,8 +207,8 @@ function BlockStyleControls({
 	editorState,
 	onToggle,
 }: {
-  editorState: EditorState
-  onToggle: (style: string) => void
+	editorState: EditorState
+	onToggle: (style: string) => void
 }) {
 	const selection = editorState.getSelection()
 	const blockType = editorState
@@ -238,10 +239,10 @@ function TextEditor({
 	onChange: setEditorState,
 	readOnly,
 }: {
-  placeholder: string | undefined
-  value: EditorState
-  onChange: (editorState: EditorState) => void
-  readOnly?: boolean
+	placeholder: string | undefined
+	value: EditorState
+	onChange: (editorState: EditorState) => void
+	readOnly?: boolean
 }) {
 	const ref = useRef(null)
 	const imageUploadRef = useRef(null)
@@ -360,9 +361,10 @@ function TextEditor({
 	return (
 		<Flex
 			direction='column'
-			border='1px solid #C1BDB7'
+			border={readOnly ? 'none' : '1px solid #C1BDB7'}
 			w='100%'>
 			<Flex
+				display={readOnly ? 'none' : 'flex'}
 				justify='start'
 				border='1px solid #C1BDB7'
 				m={2}
@@ -412,7 +414,7 @@ function TextEditor({
 							cursor='pointer'
 							onClick={openInput}
 							color='gray.5'
-						 	_hover={{ color: 'black.1' }} />
+							_hover={{ color: 'black.1' }} />
 					) : <Loader />
 				}
 			</Flex>
