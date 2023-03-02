@@ -260,7 +260,6 @@ function Discussions() {
 							)
 						}
 					>
-
 						<Text
 							wordBreak='break-word'
 							mt={1}
