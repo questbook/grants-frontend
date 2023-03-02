@@ -11,7 +11,7 @@ function Loader({ size, mt }: Props) {
 		<Center>
 			<CircularProgress
 				isIndeterminate
-				color='brand.500'
+				color='accent.azure'
 				size={size}
 				mt={mt} />
 		</Center>

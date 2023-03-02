@@ -1,7 +1,5 @@
-import React, { ReactElement, useRef } from 'react'
-import {
-	Flex, IconButton, Link, Text,
-} from '@chakra-ui/react'
+import React, { KeyboardEvent, ReactElement, useRef } from 'react'
+import { Box, Button, Flex, IconButton, Text } from '@chakra-ui/react'
 import Editor, { composeDecorators } from '@draft-js-plugins/editor'
 import createFocusPlugin from '@draft-js-plugins/focus'
 import createImagePlugin from '@draft-js-plugins/image'
@@ -9,11 +7,21 @@ import createLinkifyPlugin from '@draft-js-plugins/linkify'
 import createResizeablePlugin from '@draft-js-plugins/resizeable'
 import {
 	AtomicBlockUtils,
+	ContentBlock,
+	EditorCommand,
 	EditorState,
 	getDefaultKeyBinding,
-	RichUtils,
-} from 'draft-js'
-import { BoldButton, ImageAdd, ItalicsButton, OlButton, UlButton, UnderlineButton } from 'src/generated/icons'
+	RichUtils } from 'draft-js'
+import {
+	BoldButton,
+	ImageAdd,
+	ItalicsButton,
+	OlButton,
+	UlButton,
+	UnderlineButton,
+} from 'src/generated/icons'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
+import logger from 'src/libraries/logger'
 import Loader from 'src/libraries/ui/RichTextEditor/loader'
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/libraries/utils/ipfs'
 import 'draft-js/dist/Draft.css'
@@ -21,12 +29,14 @@ import '@draft-js-plugins/image/lib/plugin.css'
 
 const linkifyPlugin = createLinkifyPlugin({
 	component(props) {
-		// return <a {...props} onClick={() => alert('Clicked on Link!')} />;
 		return (
-			<Link
+			<Button
 				{...props}
+				variant='link'
+				color='accent.azure'
+				fontWeight='400'
 				onClick={() => window.open(props.href, '_blank')}
-				isExternal />
+			/>
 		)
 	},
 })
@@ -43,22 +53,29 @@ function StyleButton({
 	style,
 	label,
 }: {
-  onToggle: (style: string) => void
-  active: boolean
-  icon: ReactElement
-  style: string
-  // eslint-disable-next-line react/require-default-props
-  label?: string | undefined
+	onToggle: (style: string) => void
+	active: boolean
+	icon: ReactElement | undefined
+	style: string
+	// eslint-disable-next-line react/require-default-props
+	label?: string | undefined
 }) {
 	return (
 		<IconButton
 			aria-label='save-image'
-			bg={active ? '#A0A7A7' : 'none'}
-			_hover={{ bg: active ? '#A0A7A7' : 'none' }}
-			_active={{ bg: active ? '#A0A7A7' : 'none' }}
+			bg='white'
+			variant='link'
+			_hover={{}}
+			_active={{}}
+			// _active={{ bg: active ? '#A0A7A7' : 'none' }}
 			icon={
-				icon ? icon : (
-					<Text>
+				icon ? (
+					icon
+				) : (
+					<Text
+						color={active ? 'black.1' : 'gray.5'}
+						_hover={{ color: active ? 'none' : 'black.1' }}
+					>
 						{label}
 					</Text>
 				)
@@ -74,50 +91,72 @@ function StyleButton({
 }
 
 const INLINE_STYLES = [
-	{ label: <BoldButton />, style: 'BOLD' },
-	{ label: <ItalicsButton />, style: 'ITALIC' },
-	{ label: <UnderlineButton />, style: 'UNDERLINE' },
+	{
+		icon: (active: boolean) => (
+			<BoldButton
+				color={active ? 'black.1' : 'gray.5'}
+				_hover={{ color: active ? 'none' : 'black.1' }}
+			/>
+		),
+		style: 'BOLD',
+	},
+	{
+		icon: (active: boolean) => (
+			<ItalicsButton
+				color={active ? 'black.1' : 'gray.5'}
+				_hover={{ color: active ? 'none' : 'black.1' }}
+			/>
+		),
+		style: 'ITALIC',
+	},
+	{
+		icon: (active: boolean) => (
+			<UnderlineButton
+				color={active ? 'black.1' : 'gray.5'}
+				_hover={{ color: active ? 'none' : 'black.1' }}
+			/>
+		),
+		style: 'UNDERLINE',
+	},
 ]
 
 function InlineStyleControls({
 	editorState,
 	onToggle,
 }: {
-  editorState: EditorState
-  onToggle: (style: string) => void
+	editorState: EditorState
+	onToggle: (style: string) => void
 }) {
 	const currentStyle = editorState.getCurrentInlineStyle()
 	return (
-		<div className='RichEditor-controls'>
+		<Flex>
 			{
 				INLINE_STYLES.map((type) => (
 					<StyleButton
 						key={type.style}
 						active={currentStyle.has(type.style)}
-						icon={type.label}
+						icon={type.icon(currentStyle.has(type.style))}
 						onToggle={onToggle}
 						style={type.style}
 					/>
 				))
 			}
-		</div>
+		</Flex>
 	)
 }
 
-const BLOCK_TYPES = [
-	{ style: 'header-one', label: 'h1' },
-	{ style: 'header-two', label: 'h2' },
-	{ style: 'header-three', label: 'h3' },
-	{ icon: <UlButton />, style: 'unordered-list-item' },
-	{ icon: <OlButton />, style: 'ordered-list-item' },
+const HEADER_TYPES = [
+	{ style: 'header-one', label: 'H1' },
+	{ style: 'header-two', label: 'H2' },
+	{ style: 'header-three', label: 'H3' },
 ]
 
-function BlockStyleControls({
+function HeaderStyleControls({
 	editorState,
 	onToggle,
 }: {
-  editorState: EditorState
-  onToggle: (style: string) => void
+	editorState: EditorState
+	onToggle: (style: string) => void
 }) {
 	const selection = editorState.getSelection()
 	const blockType = editorState
@@ -126,20 +165,71 @@ function BlockStyleControls({
 		.getType()
 
 	return (
-		<div className='RichEditor-controls'>
+		<Flex>
 			{
-				BLOCK_TYPES.map((type) => (
+				HEADER_TYPES.map((type) => (
 					<StyleButton
 						key={type.label}
 						active={type.style === blockType}
-						icon={type.icon ?? <Flex />}
 						onToggle={onToggle}
+						icon={undefined}
 						style={type.style}
 						label={type.label}
 					/>
 				))
 			}
-		</div>
+		</Flex>
+	)
+}
+
+const BLOCK_TYPES = [
+	{
+		icon: (active: boolean) => (
+			<UlButton
+				color={active ? 'black.1' : 'gray.5'}
+				_hover={{ color: active ? 'none' : 'black.1' }}
+			/>
+		),
+		style: 'unordered-list-item',
+	},
+	{
+		icon: (active: boolean) => (
+			<OlButton
+				color={active ? 'black.1' : 'gray.5'}
+				_hover={{ color: active ? 'none' : 'black.1' }}
+			/>
+		),
+		style: 'ordered-list-item',
+	},
+]
+
+function BlockStyleControls({
+	editorState,
+	onToggle,
+}: {
+	editorState: EditorState
+	onToggle: (style: string) => void
+}) {
+	const selection = editorState.getSelection()
+	const blockType = editorState
+		.getCurrentContent()
+		.getBlockForKey(selection.getStartKey())
+		.getType()
+
+	return (
+		<Flex>
+			{
+				BLOCK_TYPES.map((type) => (
+					<StyleButton
+						key={type.style}
+						active={type.style === blockType}
+						icon={type.icon(type.style === blockType)}
+						onToggle={onToggle}
+						style={type.style}
+					/>
+				))
+			}
+		</Flex>
 	)
 }
 
@@ -149,29 +239,25 @@ function TextEditor({
 	onChange: setEditorState,
 	readOnly,
 }: {
-  placeholder: string | undefined
-  value: EditorState
-  onChange: (editorState: EditorState) => void
-  readOnly?: boolean
+	placeholder: string | undefined
+	value: EditorState
+	onChange: (editorState: EditorState) => void
+	readOnly?: boolean
 }) {
 	const ref = useRef(null)
 	const imageUploadRef = useRef(null)
 	const [uploadingImage, setUploadingImage] = React.useState(false)
 
 	const [focused, setFocused] = React.useState(false)
-	// const [editorState, setEditorState] = React.useState(() => EditorState.createWithContent(
-	//   convertFromRaw(
-	//     JSON.parse(
-	//       '{"blocks":[{"key":"9ka6i","text":"yolojonknjkn',
-	//     ),
-	//   ),
-	// ));
 
 	const onChange = (state: EditorState) => {
 		setEditorState(state)
 	}
 
-	const handleKeyCommand = (command: any, currentEditorState: any) => {
+	const handleKeyCommand = (
+		command: EditorCommand,
+		currentEditorState: EditorState,
+	) => {
 		const newState = RichUtils.handleKeyCommand(currentEditorState, command)
 		if(newState) {
 			setEditorState(newState)
@@ -181,15 +267,13 @@ function TextEditor({
 		return 'not-handled'
 	}
 
-	const mapKeyToEditorCommand = (e: any) => {
-		// eslint-disable-next-line default-case
+	const mapKeyToEditorCommand = (e: KeyboardEvent) => {
 		switch (e.keyCode) {
 		case 9: // TAB
-			// eslint-disable-next-line no-case-declarations
 			const newEditorState = RichUtils.onTab(
 				e,
 				editorState,
-				4, /* maxDepth */
+				4 /* maxDepth */,
 			)
 			if(newEditorState !== editorState) {
 				setEditorState(newEditorState)
@@ -207,14 +291,28 @@ function TextEditor({
 		}
 	}
 
+	const toast = useCustomToast()
+
 	const handleImageUpload = async(
 		event: React.ChangeEvent<HTMLInputElement>,
 	) => {
 		if(event?.target?.files?.[0]) {
 			setUploadingImage(true)
 			const img = event.target.files[0]
+			logger.info({ img }, 'Selected image (Text Editor)')
 			const imageHash = (await uploadToIPFS(img)).hash
+			logger.info({ imageHash }, 'Uploaded image hash (Text Editor)')
+			if(!imageHash) {
+				toast({
+					title: 'Could not upload image to IPFS',
+					status: 'error',
+					duration: 3000
+				})
+				return
+			}
+
 			const url = getUrlForIPFSHash(imageHash)
+			logger.info({ url }, 'Uploaded image URL (Text Editor)')
 			const contentState = editorState.getCurrentContent()
 			const contentStateWithEntity = contentState.createEntity(
 				'image',
@@ -236,7 +334,7 @@ function TextEditor({
 		}
 	}
 
-	function getBlockStyle(block: any) {
+	function getBlockStyle(block: ContentBlock) {
 		switch (block.getType()) {
 		case 'header-one':
 			return 'RichEditor-h1'
@@ -261,27 +359,30 @@ function TextEditor({
 	}
 
 	return (
-		<div>
-			{/* <button
-        type="button"
-        onClick={() => {
-          const richText = JSON.stringify(
-            convertToRaw(editorState.getCurrentContent()),
-          );
-          // console.log(richText);
-        }}
-      >
-        save
-      </button> */}
-
+		<Flex
+			direction='column'
+			border={readOnly ? 'none' : '1px solid #C1BDB7'}
+			w='100%'>
 			<Flex
-				bg='#E8E9E9'
-				h='56px'
-				borderRadius='8px 8px 0 0'
-				border='1px solid #D0D3D3'
-				borderBottom='none'
+				display={readOnly ? 'none' : 'flex'}
+				justify='start'
+				border='1px solid #C1BDB7'
+				m={2}
+				p={2}
 				alignItems='center'
 			>
+				<HeaderStyleControls
+					editorState={editorState}
+					onToggle={
+						(blockType) => {
+							const newState = RichUtils.toggleBlockType(editorState, blockType)
+							setEditorState(newState)
+						}
+					}
+				/>
+
+				<Box ml='auto' />
+
 				<BlockStyleControls
 					editorState={editorState}
 					onToggle={
@@ -305,31 +406,18 @@ function TextEditor({
 					}
 				/>
 
-				<IconButton
-					aria-label='save-image'
-					bg='none'
-					_active={{ bg: 'none' }}
-					_hover={{ bg: 'none' }}
-					style={{ transition: 'none' }}
-					icon={
-						!uploadingImage ? (
-							<ImageAdd />
-						) : (
-							<Loader />
-						)
-					}
-					onClick={openInput}
-				/>
-			</Flex>
+				<Box ml={2} />
 
-			<input
-				style={{ display: 'none' }}
-				ref={imageUploadRef}
-				type='file'
-				name='myImage'
-				onChange={handleImageUpload}
-				accept='image/jpg, image/jpeg, image/png'
-			/>
+				{
+					!uploadingImage ? (
+						<ImageAdd
+							cursor='pointer'
+							onClick={openInput}
+							color='gray.5'
+							_hover={{ color: 'black.1' }} />
+					) : <Loader />
+				}
+			</Flex>
 			<div
 				className={focused ? 'richTextContainer focus' : 'richTextContainer'}
 				onClick={
@@ -343,7 +431,6 @@ function TextEditor({
 				}
 			>
 				<Editor
-					// eslint-disable-next-line react/jsx-no-bind
 					blockStyleFn={getBlockStyle}
 					ref={ref}
 					editorState={editorState}
@@ -359,7 +446,16 @@ function TextEditor({
 					readOnly={readOnly}
 				/>
 			</div>
-		</div>
+
+			<input
+				style={{ display: 'none' }}
+				ref={imageUploadRef}
+				type='file'
+				name='myImage'
+				onChange={handleImageUpload}
+				accept='image/jpg, image/jpeg, image/png'
+			/>
+		</Flex>
 	)
 }
 
