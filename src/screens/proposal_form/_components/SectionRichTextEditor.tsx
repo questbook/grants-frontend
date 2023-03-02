@@ -1,5 +1,7 @@
+import { useEffect } from 'react'
 import { Flex, FlexProps, Text } from '@chakra-ui/react'
-import { EditorState } from 'draft-js'
+import { convertToRaw, EditorState } from 'draft-js'
+import logger from 'src/libraries/logger'
 import TextEditor from 'src/libraries/ui/RichTextEditor/textEditor'
 
 interface Props {
@@ -36,6 +38,10 @@ function SectionRichTextEditor({ label, editorState, setEditorState, flexProps }
 			</Flex>
 		)
 	}
+
+	useEffect(() => {
+		logger.info({ editorState: convertToRaw(editorState.getCurrentContent()) })
+	}, [editorState])
 
 	return buildComponent()
 }
