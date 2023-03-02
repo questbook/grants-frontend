@@ -1,7 +1,5 @@
-import React, { KeyboardEvent, useRef } from 'react'
-import {
-	Flex, IconButton, Image, Link
-} from '@chakra-ui/react'
+import React, { KeyboardEvent, ReactElement, useRef } from 'react'
+import { Box, Flex, IconButton, Link, Text } from '@chakra-ui/react'
 import Editor, { composeDecorators } from '@draft-js-plugins/editor'
 import createFocusPlugin from '@draft-js-plugins/focus'
 import createImagePlugin from '@draft-js-plugins/image'
@@ -16,6 +14,16 @@ import {
 	RichUtils,
 } from 'draft-js'
 import Loader from 'src/components/ui/loader'
+import {
+	Bold,
+	ImageAdd,
+	Italics,
+	Ol,
+	Ul,
+	Underline,
+} from 'src/generated/icons'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
+import logger from 'src/libraries/logger'
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
 import 'draft-js/dist/Draft.css'
 import '@draft-js-plugins/image/lib/plugin.css'
@@ -26,7 +34,8 @@ const linkifyPlugin = createLinkifyPlugin({
 			<Link
 				{...props}
 				onClick={() => window.open(props.href, '_blank')}
-				isExternal />
+				isExternal
+			/>
 		)
 	},
 })
@@ -45,17 +54,31 @@ function StyleButton({
 }: {
   onToggle: (style: string) => void
   active: boolean
-  icon: string
+  icon: ReactElement | undefined
   style: string
+  // eslint-disable-next-line react/require-default-props
   label?: string | undefined
 }) {
 	return (
 		<IconButton
-			aria-label={label ?? 'default-label'}
-			bg={active ? '#A0A7A7' : 'none'}
-			_hover={{ bg: active ? '#A0A7A7' : 'none' }}
-			_active={{ bg: active ? '#A0A7A7' : 'none' }}
-			icon={<Image src={icon} />}
+			aria-label='save-image'
+			bg='white'
+			variant='link'
+			_hover={{}}
+			_active={{}}
+			// _active={{ bg: active ? '#A0A7A7' : 'none' }}
+			icon={
+				icon ? (
+					icon
+				) : (
+					<Text
+						color={active ? 'black.1' : 'gray.5'}
+						_hover={{ color: active ? 'none' : 'black.1' }}
+					>
+						{label}
+					</Text>
+				)
+			}
 			onMouseDown={
 				(e) => {
 					e.preventDefault()
@@ -66,9 +89,117 @@ function StyleButton({
 	)
 }
 
+const INLINE_STYLES = [
+	{
+		icon: (active: boolean) => (
+			<Bold
+				color={active ? 'black.1' : 'gray.5'}
+				_hover={{ color: active ? 'none' : 'black.1' }}
+			/>
+		),
+		style: 'BOLD',
+	},
+	{
+		icon: (active: boolean) => (
+			<Italics
+				color={active ? 'black.1' : 'gray.5'}
+				_hover={{ color: active ? 'none' : 'black.1' }}
+			/>
+		),
+		style: 'ITALIC',
+	},
+	{
+		icon: (active: boolean) => (
+			<Underline
+				color={active ? 'black.1' : 'gray.5'}
+				_hover={{ color: active ? 'none' : 'black.1' }}
+			/>
+		),
+		style: 'UNDERLINE',
+	},
+]
+
+function InlineStyleControls({
+	editorState,
+	onToggle,
+}: {
+  editorState: EditorState
+  onToggle: (style: string) => void
+}) {
+	const currentStyle = editorState.getCurrentInlineStyle()
+	return (
+		<Flex>
+			{
+				INLINE_STYLES.map((type) => (
+					<StyleButton
+						key={type.style}
+						active={currentStyle.has(type.style)}
+						icon={type.icon(currentStyle.has(type.style))}
+						onToggle={onToggle}
+						style={type.style}
+					/>
+				))
+			}
+		</Flex>
+	)
+}
+
+const HEADER_TYPES = [
+	{ style: 'header-one', label: 'H1' },
+	{ style: 'header-two', label: 'H2' },
+	{ style: 'header-three', label: 'H3' },
+]
+
+function HeaderStyleControls({
+	editorState,
+	onToggle,
+}: {
+  editorState: EditorState
+  onToggle: (style: string) => void
+}) {
+	const selection = editorState.getSelection()
+	const blockType = editorState
+		.getCurrentContent()
+		.getBlockForKey(selection.getStartKey())
+		.getType()
+
+	return (
+		<Flex>
+			{
+				HEADER_TYPES.map((type) => (
+					<StyleButton
+						key={type.label}
+						active={type.style === blockType}
+						onToggle={onToggle}
+						icon={undefined}
+						style={type.style}
+						label={type.label}
+					/>
+				))
+			}
+		</Flex>
+	)
+}
+
 const BLOCK_TYPES = [
-	{ icon: '/ui_icons/ul_button.svg', style: 'unordered-list-item' },
-	{ icon: '/ui_icons/ol_button.svg', style: 'ordered-list-item' },
+	{
+		icon: (active: boolean) => (
+			<Ul
+				color={active ? 'black.1' : 'gray.5'}
+				_hover={{ color: active ? 'none' : 'black.1' }}
+			/>
+		),
+		style: 'unordered-list-item',
+	},
+	{
+		icon: (active: boolean) => (
+			<Ol
+				color={active ? 'black.1' : 'gray.5'}
+				_hover={{ color: active ? 'none' : 'black.1' }}
+			/>
+		),
+		style: 'ordered-list-item',
+	},
 ]
 
 function BlockStyleControls({
@@ -85,15 +216,13 @@ function BlockStyleControls({
 		.getType()
 
 	return (
-		<Flex
-			direction='column'
-			justify='start'>
+		<Flex>
 			{
 				BLOCK_TYPES.map((type) => (
 					<StyleButton
-						key={type.icon}
+						key={type.style}
 						active={type.style === blockType}
-						icon={type.icon}
+						icon={type.icon(type.style === blockType)}
 						onToggle={onToggle}
 						style={type.style}
 					/>
@@ -101,7 +230,6 @@ function BlockStyleControls({
 			}
 		</Flex>
 	)
-
 }
 
 function TextEditor({
@@ -125,7 +253,10 @@ function TextEditor({
 		setEditorState(state)
 	}
 
-	const handleKeyCommand = (command: EditorCommand, currentEditorState: EditorState) => {
+	const handleKeyCommand = (
+		command: EditorCommand,
+		currentEditorState: EditorState,
+	) => {
 		const newState = RichUtils.handleKeyCommand(currentEditorState, command)
 		if(newState) {
 			setEditorState(newState)
@@ -141,7 +272,7 @@ function TextEditor({
 			const newEditorState = RichUtils.onTab(
 				e,
 				editorState,
-				4, /* maxDepth */
+				4 /* maxDepth */,
 			)
 			if(newEditorState !== editorState) {
 				setEditorState(newEditorState)
@@ -159,14 +290,28 @@ function TextEditor({
 		}
 	}
 
+	const toast = useCustomToast()
+
 	const handleImageUpload = async(
 		event: React.ChangeEvent<HTMLInputElement>,
 	) => {
 		if(event?.target?.files?.[0]) {
 			setUploadingImage(true)
 			const img = event.target.files[0]
+			logger.info({ img }, 'Selected image (Text Editor)')
 			const imageHash = (await uploadToIPFS(img)).hash
+			logger.info({ imageHash }, 'Uploaded image hash (Text Editor)')
+			if(!imageHash) {
+				toast({
+					title: 'Could not upload image to IPFS',
+					status: 'error',
+					duration: 3000
+				})
+				return
+			}
+
 			const url = getUrlForIPFSHash(imageHash)
+			logger.info({ url }, 'Uploaded image URL (Text Editor)')
 			const contentState = editorState.getCurrentContent()
 			const contentStateWithEntity = contentState.createEntity(
 				'image',
@@ -214,7 +359,63 @@ function TextEditor({
 
 	return (
 		<Flex
+			direction='column'
+			border='1px solid #C1BDB7'
 			w='100%'>
+			<Flex
+				justify='start'
+				border='1px solid #C1BDB7'
+				m={2}
+				p={2}
+				alignItems='center'
+			>
+				<HeaderStyleControls
+					editorState={editorState}
+					onToggle={
+						(blockType) => {
+							const newState = RichUtils.toggleBlockType(editorState, blockType)
+							setEditorState(newState)
+						}
+					}
+				/>
+
+				<Box ml='auto' />
+
+				<BlockStyleControls
+					editorState={editorState}
+					onToggle={
+						(blockType) => {
+							const newState = RichUtils.toggleBlockType(editorState, blockType)
+							setEditorState(newState)
+						}
+					}
+				/>
+
+				<InlineStyleControls
+					editorState={editorState}
+					onToggle={
+						(inlineStyle) => {
+							const newState = RichUtils.toggleInlineStyle(
+								editorState,
+								inlineStyle,
+							)
+							setEditorState(newState)
+						}
+					}
+				/>
+
+				<Box ml={2} />
+
+				{
+					!uploadingImage ? (
+						<ImageAdd
+							cursor='pointer'
+							onClick={openInput}
+							color='gray.5'
+						 	_hover={{ color: 'black.1' }} />
+					) : <Loader />
+				}
+			</Flex>
 			<div
 				className={focused ? 'richTextContainer focus' : 'richTextContainer'}
 				onClick={
@@ -243,40 +444,6 @@ function TextEditor({
 					readOnly={readOnly}
 				/>
 			</div>
-
-			<Flex
-				direction='column'
-				justify='start'
-				borderRadius='0 8px 8px 0'
-				border='1px solid #D0D3D3'
-				alignItems='center'
-			>
-				<BlockStyleControls
-					editorState={editorState}
-					onToggle={
-						(blockType) => {
-							const newState = RichUtils.toggleBlockType(editorState, blockType)
-							setEditorState(newState)
-						}
-					}
-				/>
-
-				<IconButton
-					aria-label='save-image'
-					bg='none'
-					_active={{ bg: 'none' }}
-					_hover={{ bg: 'none' }}
-					style={{ transition: 'none' }}
-					icon={
-						!uploadingImage ? (
-							<Image src='/ui_icons/add_image.svg' />
-						) : (
-							<Loader />
-						)
-					}
-					onClick={openInput}
-				/>
-			</Flex>
 
 			<input
 				style={{ display: 'none' }}
