@@ -1,7 +1,7 @@
 import config from 'src/constants/config.json'
 
-const IPFS_UPLOAD_ENDPOINT = 'https://ipfs.infura.io:5001/api/v0/add?pin=true'
-const IPFS_DOWNLOAD_ENDPOINT = 'https://ipfs.infura.io:5001/api/v0/cat'
+const IPFS_UPLOAD_ENDPOINT = 'https://api.thegraph.com/ipfs/api/v0/add?pin=true'
+const IPFS_DOWNLOAD_ENDPOINT = 'https://api.thegraph.com/ipfs/api/v0/cat'
 
 export const uploadToIPFS = async(data: string | Blob | null): Promise<{ hash: string }> => {
 	if(data === null) {
@@ -14,9 +14,6 @@ export const uploadToIPFS = async(data: string | Blob | null): Promise<{ hash: s
 	// refer to https://infura.io/docs/ipfs#section/Getting-Started/Add-a-file
 	const fetchResult = await fetch(IPFS_UPLOAD_ENDPOINT, {
 		method: 'POST',
-		headers: {
-			'Authorization': `Basic ${Buffer.from(`${process.env.INFURA_IPFS_PROJECT_ID}:${process.env.INFURA_IPFS_API_KEY}`).toString('base64')}`
-		},
 		body: form,
 	})
 	const responseBody = await fetchResult.json()
@@ -59,7 +56,11 @@ export const getUrlForIPFSHash = (hash: string) => {
 	// 	return `https://ipfs.io/ipfs/${hash}`
 	// }
 
-	return `https://ipfs.io/ipfs/${hash}`
+	if(hash === config.defaultDAOImageHash) {
+		return `https://ipfs.io/ipfs/${hash}`
+	}
+
+	return `${IPFS_DOWNLOAD_ENDPOINT}?arg=${hash}`
 
 	// return `${IPFS_DOWNLOAD_ENDPOINT}?arg=${hash}`
 	// const v1 = CID.parse(hash).toV1();
