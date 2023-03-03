@@ -30,10 +30,10 @@ function SignIn({ isOpen, onClose, setSignIn }: Props) {
                 onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent
-                    maxW={['94%', '70%', '50%', '40%']}
+                    maxW={['94%', '70%', '50%', '50%']}
                 >
-                    
-                   
+
+
                     <ModalCloseButton />
                     {/* {signInMethod!='choosing'&& 
                     } */}
@@ -42,6 +42,14 @@ function SignIn({ isOpen, onClose, setSignIn }: Props) {
                             p={6}
                             direction='column'
                             align='center'>
+                            <Image
+                                alignSelf='center'
+                                // display={['none', 'inherit']}
+                                // mr='auto'
+                                src='/ui_icons/qb.svg'
+                                alt='Questbook'
+                                marginBottom={1}
+                                cursor='pointer' />
                             <Text
                                 variant='v2_subheading'
                                 fontWeight='500'
@@ -51,12 +59,16 @@ function SignIn({ isOpen, onClose, setSignIn }: Props) {
                             <Text
                                 variant='v2_body'
                                 mt={1}
+                                mb={5}
                                 color='black.3'>
                                 Use your existing Questbook wallet or create new one
                             </Text>
                             <Button
                                 variant='primaryMedium'
                                 marginTop={4}
+                               borderRadius={'20'}
+                               width='60%'
+                               height={10}
                                 onClick={() => setSignInMethod('newWallet')}
                             >
                                 <Text
@@ -71,11 +83,15 @@ function SignIn({ isOpen, onClose, setSignIn }: Props) {
                             <Button
                                 variant='primaryMedium'
                                 marginTop={2}
+                                width='60%'
+                                bg='gray.3'
+                                height={10}
+                                borderRadius={'20'}
                                 onClick={() => setSignInMethod('existingWallet')}
                             >
                                 <Text
                                     variant='v2_body'
-                                    color='white'
+                                    color='black'
                                     fontWeight='500'
                                 >
                                     I have a Questbook wallet
@@ -94,7 +110,7 @@ function SignIn({ isOpen, onClose, setSignIn }: Props) {
                         />)}
                     {signInMethod == 'newWallet' && (
                         <CreateNewWallet
-                        importWebwallet={importWebwallet}
+                            importWebwallet={importWebwallet}
                             inited={inited}
                             loading={loading}
                             exportWalletToGD={exportWalletToGD}

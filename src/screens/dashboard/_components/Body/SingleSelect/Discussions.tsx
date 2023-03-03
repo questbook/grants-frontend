@@ -154,8 +154,9 @@ function Discussions() {
 											toast({
 												title: "Sign in to post a comment",
 												status: 'error',
-												duration: 3000,
+												duration: 1000,
 												isClosable: true,
+												position:'bottom'
 											})
 											return 
 										}
@@ -324,7 +325,7 @@ function Discussions() {
 		}
 
 		return text === ''
-	}, [text, step])
+	}, [text, step, isBiconomyInitialised])
 
 	const placeholder = useMemo(() => {
 		switch (selectedTag) {

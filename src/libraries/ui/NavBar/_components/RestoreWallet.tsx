@@ -1,5 +1,5 @@
 import { ChangeEvent, useEffect, useState } from 'react'
-import { Button, Flex, Image, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text, useToast } from '@chakra-ui/react'
+import { Button, Flex, Icon, Image, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text, useToast } from '@chakra-ui/react'
 import TextField from 'src/v2/components/InputFields/TextField'
 import { ethers, utils, Wallet } from 'ethers';
 import { BsArrowLeft } from 'react-icons/bs';
@@ -56,13 +56,19 @@ function RestoreWallet({setSignInMethod, setSignIn, inited, loading, importWalle
                     <Text
                         variant='v2_body'
                         mt={1}
+                        mb={4}
                         color='black.3'>
                         Restore your existing wallet with the private key.
                     </Text>
                     {!isEnteringPrivateKey && (  <Button
-                        variant='primaryMedium'
+                        
                         marginTop={4}
+                        w='80%'
+                        bg='gray.3'
+                        h='10'
+                        borderRadius={0}
                         isDisabled={loading || !inited}
+                        leftIcon={<Icon as={Image} src='Google_Drive_icon_(2020).svg'/>}
                         onClick={async () => {
                             try {
                                 importWebwallet((await importWalletFromGD()).privateKey)
@@ -81,7 +87,7 @@ function RestoreWallet({setSignInMethod, setSignIn, inited, loading, importWalle
                     >
                         <Text
                             variant='v2_body'
-                            color='white'
+                            color='black'
                             fontWeight='500'
                         >
                             Export from Google Drive
@@ -91,11 +97,16 @@ function RestoreWallet({setSignInMethod, setSignIn, inited, loading, importWalle
                     {!isEnteringPrivateKey && (<Button
                         variant='primaryMedium'
                         marginTop={2}
+                        w='80%'
+                        bg='gray.3'
+                        h='10'
+                        borderRadius={0}
                     onClick={()=>setIsEnteringPrivateKey(true)}
                     >
                         <Text
+                            alignSelf='flex-start'
                             variant='v2_body'
-                            color='white'
+                            color='black'
                             fontWeight='500'
                         >
                             Enter your private key
