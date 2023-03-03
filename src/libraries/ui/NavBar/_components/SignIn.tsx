@@ -7,19 +7,22 @@ import useGoogleDriveWalletRecoveryReact from './googleRecovery'
 import { ArrowLeft } from 'src/generated/icons'
 import { BsArrowLeft } from 'react-icons/bs'
 import CreateNewWallet from './CreateNewWallet'
+import { Wallet } from 'ethers'
 interface Props {
     isOpen: boolean
     setSignIn: (signIn: boolean) => void
     onClose: () => void
+    inited: boolean
+    loading: boolean
+    exportWalletToGD: (wallet: Wallet) => Promise<void>
+    importWalletFromGD: () => Promise<Wallet>
     // onChange: (e: ChangeEvent<HTMLInputElement>) => void
 }
 
-function SignIn({ isOpen, onClose, setSignIn }: Props) {
+function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen, onClose, setSignIn }: Props) {
     const [signInMethod, setSignInMethod] = useState<'newWallet' | 'existingWallet' | 'choosing'>('choosing')
 
     const { importWebwallet } = useContext(WebwalletContext)!
-
-    const { inited, loading, importWalletFromGD, exportWalletToGD } = useGoogleDriveWalletRecoveryReact({ googleClientID: '986000900135-tscgujbu2tjq4qk9duljom0oimnb79la.apps.googleusercontent.com' })
 
     const buildComponent = () => {
         return (
@@ -66,9 +69,9 @@ function SignIn({ isOpen, onClose, setSignIn }: Props) {
                             <Button
                                 variant='primaryMedium'
                                 marginTop={4}
-                               borderRadius={'20'}
-                               width='60%'
-                               height={10}
+                                borderRadius={'20'}
+                                width={['70%','60%']}
+                                height={10}
                                 onClick={() => setSignInMethod('newWallet')}
                             >
                                 <Text
@@ -83,7 +86,7 @@ function SignIn({ isOpen, onClose, setSignIn }: Props) {
                             <Button
                                 variant='primaryMedium'
                                 marginTop={2}
-                                width='60%'
+                                width={['70%','60%']}
                                 bg='gray.3'
                                 height={10}
                                 borderRadius={'20'}
@@ -105,7 +108,7 @@ function SignIn({ isOpen, onClose, setSignIn }: Props) {
                             inited={inited}
                             loading={loading}
                             importWalletFromGD={importWalletFromGD}
-                            setSignIn={setSignIn}
+                            closeModal={()=>setSignIn(false)}
                             setSignInMethod={setSignInMethod}
                         />)}
                     {signInMethod == 'newWallet' && (

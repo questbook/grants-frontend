@@ -6,18 +6,24 @@ import { BsArrowLeft } from 'react-icons/bs';
 import copy from 'copy-to-clipboard'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 interface Props {
-    privateKey : string
+    privateKey: string
     inited: boolean
     loading: boolean
     exportWalletToGD: (wallet: Wallet) => Promise<void>
+    isNewUser: boolean
 }
-export default function BackupWallet({exportWalletToGD, loading,inited,privateKey }: Props) {
+export default function BackupWallet({ isNewUser, exportWalletToGD, loading, inited, privateKey }: Props) {
     const toast = useCustomToast()
+    const title = isNewUser ? 'New Questbook wallet' : 'Backup your Questbook wallet'
+    useEffect(() => {
+        console.log('hihi', loading, inited)
+    }, [loading, inited])
     return (<><Text
         variant='v2_subheading'
         fontWeight='500'
-        mt={5}>
-        New Questbook wallet
+        mt={5}
+    >
+        {title}
     </Text>
         <Text
             variant='v2_body'
@@ -47,8 +53,22 @@ export default function BackupWallet({exportWalletToGD, loading,inited,privateKe
                 marginTop={4}
                 isDisabled={loading || !inited}
                 onClick={async () => {
-
-                    await exportWalletToGD(new ethers.Wallet(privateKey))
+                    try {
+                        await exportWalletToGD(new ethers.Wallet(privateKey))
+                        toast({
+                            title: "Imported to Google Drive",
+                            status: 'success',
+                            duration: 3000,
+                            isClosable: true,
+                        })
+                    } catch {
+                        toast({
+                            title: "Error, try again with another account.",
+                            status: 'success',
+                            duration: 3000,
+                            isClosable: true,
+                        })
+                    }
                 }
                 }
 

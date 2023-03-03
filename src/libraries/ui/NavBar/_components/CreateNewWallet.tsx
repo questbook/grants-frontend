@@ -37,12 +37,16 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
                     >
                         Back
                     </Button>
+                   
                     <BackupWallet
                     loading={loading}
                     inited={inited}
                     exportWalletToGD={exportWalletToGD}
                     privateKey={newWallet.privateKey}
+                    isNewUser={true}
                     />
+
+
                     <Checkbox
                         marginTop={4}
                         alignSelf={'flex-start'}

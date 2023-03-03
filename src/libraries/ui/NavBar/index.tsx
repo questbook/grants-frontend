@@ -1,6 +1,6 @@
 import { ChangeEvent, useContext, useEffect, useMemo, useState } from 'react'
 import React from 'react'
-import { Box, Button, Container, Flex, Image, Spacer, Text, useMediaQuery } from '@chakra-ui/react'
+import { Box, Button, Container, Flex, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Spacer, Text, useMediaQuery } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import copy from 'copy-to-clipboard'
 import { ethers } from 'ethers'
@@ -24,6 +24,9 @@ import { nFormatter } from 'src/utils/formattingUtils'
 import { getNonce } from 'src/utils/gaslessUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 import SignIn from './_components/SignIn'
+import BackupWallet from './_components/BackupWallet'
+import useGoogleDriveWalletRecoveryReact from './_components/googleRecovery'
+import RestoreWallet from './_components/RestoreWallet'
 
 type Props = {
 	bg?: string
@@ -34,6 +37,7 @@ type Props = {
 
 function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props) {
 	const { webwallet } = useContext(WebwalletContext)!
+    const { importWebwallet } = useContext(WebwalletContext)!
 
 	const MainNavBar = () => (
 		<>
@@ -278,7 +282,45 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 				onImportClick={onImportClick}
 				onSaveAsTextClick={onSaveAsTextClick}
 				onCopyAndSaveManuallyClick={onCopyAndSaveManuallyClick} /> */}
-				
+			<Modal
+				isCentered={true}
+				size='2xl'
+				isOpen={isRecoveryModalOpen}
+				onClose={() => setIsRecoveryModalOpen(false)}>
+				<ModalOverlay />
+				<ModalContent
+					maxW={['94%', '70%', '50%', '50%']}>
+					<ModalCloseButton />
+					<ModalBody>
+						<Flex
+							pb={6}
+							direction='column'
+							align='center'>
+							{type=='export' && (
+								<BackupWallet
+									exportWalletToGD={exportWalletToGD}
+									loading={loading}
+									inited={inited}
+									privateKey={privateKey}
+									isNewUser={false}
+								/>
+							)}
+							
+						</Flex>
+						{type=='import' && (
+								<RestoreWallet
+									loading={loading}
+									inited={inited}
+									importWebwallet={importWebwallet}
+									importWalletFromGD={importWalletFromGD}
+									closeModal = {()=>setIsRecoveryModalOpen(false)}
+									// isNewUser={false}
+								/>
+							)}
+					</ModalBody>
+				</ModalContent>
+			</Modal>
+
 			<ImportConfirmationModal
 				isOpen={isImportConfirmationModalOpen}
 				onClose={() => setImportConfirmationModalOpen(false)}
@@ -287,10 +329,13 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 				isOpen={isUpdateProfileModalOpen}
 				onClose={() => setIsUpdateProfileModalOpen(false)} />
 			<SignIn
-				isOpen={signIn}
+				isOpen={signIn && !!!webwallet}
 				setSignIn={setSignIn}
 				onClose={() => setSignIn(false)}
-
+				exportWalletToGD={exportWalletToGD}
+				importWalletFromGD={importWalletFromGD}
+				loading={loading}
+				inited={inited}
 			/>
 
 		</>
@@ -460,7 +505,7 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 					)
 				}
 			</Container>
-			<RecoveryModal
+			{/* <RecoveryModal
 				isOpen={isRecoveryModalOpen}
 				onClose={() => setIsRecoveryModalOpen(false)}
 				type={type}
@@ -469,7 +514,17 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 				onChange={onChange}
 				onImportClick={onImportClick}
 				onSaveAsTextClick={onSaveAsTextClick}
-				onCopyAndSaveManuallyClick={onCopyAndSaveManuallyClick} />
+				onCopyAndSaveManuallyClick={onCopyAndSaveManuallyClick} /> */}
+				<SignIn
+				isOpen={signIn && !!!webwallet}
+				setSignIn={setSignIn}
+				onClose={() => setSignIn(false)}
+				exportWalletToGD={exportWalletToGD}
+				importWalletFromGD={importWalletFromGD}
+				loading={loading}
+				inited={inited}
+			/>
+
 			<ImportConfirmationModal
 				isOpen={isImportConfirmationModalOpen}
 				onClose={() => setImportConfirmationModalOpen(false)}
@@ -522,6 +577,8 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 			</Container>
 		</>
 	)
+	const { inited, loading, importWalletFromGD, exportWalletToGD } = useGoogleDriveWalletRecoveryReact({ googleClientID: '986000900135-tscgujbu2tjq4qk9duljom0oimnb79la.apps.googleusercontent.com' })
+
 	const { grant, role, isLoading } = useContext(GrantsProgramContext)!
 	const { dashboardStep, setDashboardStep, createingProposalStep, setCreatingProposalStep } = useContext(WebwalletContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
@@ -544,12 +601,16 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 	}, [grant, isLoading, router.pathname])
 
 	const isMobile = useMediaQuery(['(max-width:600px)'])
-	
+
 	useEffect(() => {
-		if(webwallet===undefined)return
+		if (webwallet === undefined) return
+		if(isMobile[0]&& !!dashboard){
+			setSignIn(true)
+			return
+		}
 		setSignIn(!!openSignIn && !!!webwallet);
-	}, [webwallet])
-	
+	}, [webwallet, openSignIn, dashboard])
+
 	useEffect(() => {
 		logger.info({ type, privateKey }, 'RecoveryModal')
 		if (type === 'export') {

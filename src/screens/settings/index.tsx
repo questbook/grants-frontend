@@ -492,6 +492,7 @@ Settings.getLayout = function(page: ReactElement) {
 	return (
 		<NavbarLayout
 			renderSidebar={false}
+			openSignIn = {true}
 			navbarConfig={{ showDomains: true, showLogo: false, showOpenDashboard: true, showAddMembers: true, bg: 'gray.1' }}
 		>
 			<SettingsFormProvider>
