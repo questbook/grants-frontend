@@ -138,8 +138,8 @@ export const GrantsProgramContext = createContext<GrantProgramContextType | null
 export const NotificationContext = createContext<NotificationContextType | null>(null)
 
 export const WebwalletContext = createContext<{
-	webwallet?: Wallet
-	setWebwallet: (webwallet?: Wallet) => void
+	webwallet?: Wallet | null
+	setWebwallet: (webwallet?: Wallet | null) => void
 
 	network?: SupportedChainId
 	switchNetwork: (newNetwork?: SupportedChainId) => void
@@ -171,7 +171,7 @@ export const BiconomyContext = createContext<{
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [network, switchNetwork] = useState<SupportedChainId>(defaultChainId)
-	const [webwallet, setWebwallet] = useState<Wallet>()
+	const [webwallet, setWebwallet] = useState<Wallet | null>()
 	const [workspace, setWorkspace] = useState<MinimalWorkspace>()
 	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
 
@@ -435,7 +435,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const webwalletContextValue = useMemo(
 		() => ({
 			webwallet: webwallet,
-			setWebwallet: (newWebwallet?: Wallet) => {
+			setWebwallet: (newWebwallet?: Wallet|null) => {
 				if(newWebwallet) {
 					localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
 				} else {

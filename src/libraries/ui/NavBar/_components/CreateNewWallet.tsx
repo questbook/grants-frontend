@@ -5,6 +5,7 @@ import { ethers, Wallet } from 'ethers';
 import { BsArrowLeft } from 'react-icons/bs';
 import copy from 'copy-to-clipboard'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
+import BackupWallet from './BackupWallet'
 interface Props {
     importWebwallet: (privateKey: string) => void
     inited: boolean
@@ -36,74 +37,12 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
                     >
                         Back
                     </Button>
-                    <Text
-                        variant='v2_subheading'
-                        fontWeight='500'
-                        mt={5}>
-                        New Questbook wallet
-                    </Text>
-                    <Text
-                        variant='v2_body'
-                        mt={1}
-                        color='black.3'>
-                        You will need the private key to sign into Questbook again. Save it in a
-                        secure place.
-                    </Text>
-                    <Textarea
-                        readOnly
-                        w='100%'
-                        mt={4}
-                        value={newWallet.privateKey}
+                    <BackupWallet
+                    loading={loading}
+                    inited={inited}
+                    exportWalletToGD={exportWalletToGD}
+                    privateKey={newWallet.privateKey}
                     />
-                    <Flex
-                        flexDirection='row'
-                        gap={3}
-                        marginTop={2}
-                    >
-                        <Button
-                            variant='primaryMedium'
-                            marginTop={4}
-                            isDisabled={loading || !inited}
-                            onClick={async () => {
-
-                                await exportWalletToGD(newWallet)
-                            }
-                            }
-
-                        >
-                            <Text
-                                variant='v2_body'
-                                color='white'
-                                fontWeight='500'
-                            >
-                                Import to Google Drive
-                            </Text>
-                        </Button>
-
-                        <Button
-                            variant='primaryMedium'
-                            marginTop={4}
-                            onClick={() => {
-                                const copied = copy(newWallet.privateKey)
-                                if (copied) {
-                                    toast({
-                                        title: "Copied to clipboard",
-                                        status: 'success',
-                                        duration: 6000,
-                                        isClosable: true,
-                                    })
-                                }
-                            }}
-                        >
-                            <Text
-                                variant='v2_body'
-                                color='white'
-                                fontWeight='500'
-                            >
-                                Back up manually
-                            </Text>
-                        </Button>
-                    </Flex>
                     <Checkbox
                         marginTop={4}
                         alignSelf={'flex-start'}
@@ -119,7 +58,12 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
                     </Checkbox>
                     <Button
                         marginTop={3}
+                        //  variant='primaryMedium'
+                        _hover={{bg:'gray.500'}}
                         isDisabled={!isPrivateKeySaved}
+                        width='50%'
+                        bg='black.1'
+                        textColor='gray.100'
                         onClick={() => {
                             try {
                                 importWebwallet(newWallet.privateKey)

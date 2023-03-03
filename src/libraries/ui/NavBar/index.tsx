@@ -268,7 +268,7 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 					setSignIn={setSignIn} />
 
 			</Container>
-			<RecoveryModal
+			{/* <RecoveryModal
 				isOpen={isRecoveryModalOpen}
 				onClose={() => setIsRecoveryModalOpen(false)}
 				type={type}
@@ -277,7 +277,8 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 				onChange={onChange}
 				onImportClick={onImportClick}
 				onSaveAsTextClick={onSaveAsTextClick}
-				onCopyAndSaveManuallyClick={onCopyAndSaveManuallyClick} />
+				onCopyAndSaveManuallyClick={onCopyAndSaveManuallyClick} /> */}
+				
 			<ImportConfirmationModal
 				isOpen={isImportConfirmationModalOpen}
 				onClose={() => setImportConfirmationModalOpen(false)}

@@ -33,7 +33,7 @@ function RestoreWallet({setSignInMethod, setSignIn, inited, loading, importWalle
                     direction='column'
                     align='center'>
                     <Button
-                        colorScheme='white'
+                        colorScheme='gray.1'
                         textColor='black'
                         // variant='linkV2'
                         ml={-5}
@@ -95,7 +95,7 @@ function RestoreWallet({setSignInMethod, setSignIn, inited, loading, importWalle
                     </Button>)}
 
                     {!isEnteringPrivateKey && (<Button
-                        variant='primaryMedium'
+                    
                         marginTop={2}
                         w='80%'
                         bg='gray.3'
@@ -104,7 +104,7 @@ function RestoreWallet({setSignInMethod, setSignIn, inited, loading, importWalle
                     onClick={()=>setIsEnteringPrivateKey(true)}
                     >
                         <Text
-                            alignSelf='flex-start'
+                            // alignSelf='flex-start'
                             variant='v2_body'
                             color='black'
                             fontWeight='500'

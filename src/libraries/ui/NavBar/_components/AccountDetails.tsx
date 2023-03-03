@@ -223,6 +223,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen,setSignIn }: Pr
 		onClick={()=> setSignIn(true)}
 		bg='black.1'
 		textColor='gray.1'
+		_hover={{bg:'gray.500'}}
 		>
 			Sign in
 		</Button>

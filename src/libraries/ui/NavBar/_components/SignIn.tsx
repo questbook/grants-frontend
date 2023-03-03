@@ -73,7 +73,7 @@ function SignIn({ isOpen, onClose, setSignIn }: Props) {
                             >
                                 <Text
                                     variant='v2_body'
-                                    color='white'
+                                    color='gray.100'
                                     fontWeight='500'
                                 >
                                     create new wallet
