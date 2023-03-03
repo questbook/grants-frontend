@@ -304,14 +304,16 @@ function Discover() {
 														display={grantsForYou?.length ? '' : 'none'}
 										 />
 												</>
-											) : (
-												<Skeleton
-													width='100%'
-													h='5%'
-													startColor='gray.3'
-													endColor='gray.4'
-												/>
-											)
+											) :
+											<></>
+											//  (
+											// 	<Skeleton
+											// 		width='100%'
+											// 		h='5%'
+											// 		startColor='gray.3'
+											// 		endColor='gray.4'
+											// 	/>
+											// )
 									}
 									{/* </Box> */}
 									<Box

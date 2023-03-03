@@ -419,9 +419,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		let newWebwallet = Wallet.createRandom()
 
 		if(!privateKey) {
-			setIsNewUser(true)
-			localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
-			return newWebwallet
+			return null
 		}
 
 		try {
@@ -429,9 +427,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			setIsNewUser(false)
 			return newWebwallet
 		} catch{
-			localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
-			setIsNewUser(true)
-			return newWebwallet
+			return undefined
 		}
 	}
 

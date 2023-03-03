@@ -31,9 +31,10 @@ const IN_APP_WALLET_LEARN_MORE_URL =
 interface Props {
 	openModal?: (type: 'import' | 'export') => void
 	setIsUpdateProfileModalOpen: (isOpen: boolean) => void
+	setSignIn : (signIn : boolean) => void
 }
 
-function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
+function AccountDetails({ openModal, setIsUpdateProfileModalOpen,setSignIn }: Props) {
 	const buildComponent = () => (
 		<Popover
 			placement='bottom-end'
@@ -171,7 +172,6 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 	const { t } = useTranslation()
 	const { grant, role } = useContext(GrantsProgramContext)!
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
-
 	const router = useRouter()
 	useEffect(() => {
 		logger.info({ pathname: router.pathname }, 'Could set up profile')
@@ -216,9 +216,16 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 			duration: 2500,
 		})
 	}
-
-	if(!isConnected && !isConnecting) {
-		return <Box />
+	if (!isConnected && ! isConnecting)
+	{
+		if(!openModal)return <Box></Box>
+		return <Button
+		onClick={()=> setSignIn(true)}
+		bg='black.1'
+		textColor='gray.1'
+		>
+			Sign in
+		</Button>
 	}
 
 	return buildComponent()

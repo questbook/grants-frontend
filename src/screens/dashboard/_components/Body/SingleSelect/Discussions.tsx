@@ -13,8 +13,11 @@ import { DashboardContext } from 'src/screens/dashboard/Context'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAddress, getFieldString } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import useCustomToast from 'src/libraries/hooks/useCustomToast';
+
 
 function Discussions() {
+	const toast = useCustomToast()
 	const buildComponents = () => {
 		return (
 			<Flex
@@ -143,10 +146,18 @@ function Discussions() {
 								// paddingBottom='30px'
 								marginBottom={['50px','50px','0']}
 								variant='primaryMedium'
-								isDisabled={isDisabled}
 								isLoading={step !== undefined}
 								onClick={
 									async() => {
+										if(isDisabled){
+											toast({
+												title: "Sign in to post a comment",
+												status: 'error',
+												duration: 3000,
+												isClosable: true,
+											})
+											return 
+										}
 										const ret = await addComment(text, isCommentPrivate, selectedTag)
 										if(ret) {
 											setText('')

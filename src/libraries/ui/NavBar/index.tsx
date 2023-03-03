@@ -23,14 +23,18 @@ import getAvatar from 'src/utils/avatarUtils'
 import { nFormatter } from 'src/utils/formattingUtils'
 import { getNonce } from 'src/utils/gaslessUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import SignIn from './_components/SignIn'
 
 type Props = {
 	bg?: string
 	requestProposal?: boolean
 	dashboard?: boolean
+	openSignIn?: boolean
 }
 
-function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
+function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props) {
+	const { webwallet } = useContext(WebwalletContext)!
+
 	const MainNavBar = () => (
 		<>
 			<Container
@@ -61,7 +65,7 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 							})
 						}
 					}
-					display={['none', 'inherit' ]}
+					display={['none', 'inherit']}
 					mr='auto'
 					src='/ui_icons/qb.svg'
 					alt='Questbook'
@@ -74,7 +78,7 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 							})
 						}
 					}
-					display={['inherit', 'none' ]}
+					display={['inherit', 'none']}
 					mr='auto'
 					src='/ui_icons/Group 11070.png'
 					alt='Questbook'
@@ -133,7 +137,7 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 													cursor='pointer'
 													onClick={
 														() => {
-															if(grant.link !== null) {
+															if (grant.link !== null) {
 																window.open(grant.link, '_blank')
 															}
 														}
@@ -235,7 +239,7 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 							ml={4}
 							onClick={
 								() => {
-									if(grant?.id) {
+									if (grant?.id) {
 										const ret = copyShareGrantLink()
 										logger.info('copyGrantLink', ret)
 										toast({
@@ -260,7 +264,8 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 							setIsRecoveryModalOpen(true)
 						}
 					}
-					setIsUpdateProfileModalOpen={setIsUpdateProfileModalOpen} />
+					setIsUpdateProfileModalOpen={setIsUpdateProfileModalOpen}
+					setSignIn={setSignIn} />
 
 			</Container>
 			<RecoveryModal
@@ -280,6 +285,12 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 			<UpdateProfileModal
 				isOpen={isUpdateProfileModalOpen}
 				onClose={() => setIsUpdateProfileModalOpen(false)} />
+			<SignIn
+				isOpen={signIn}
+				setSignIn={setSignIn}
+				onClose={() => setSignIn(false)}
+
+			/>
 
 		</>
 	)
@@ -315,7 +326,7 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 					leftIcon={<ArrowLeft />}
 					onClick={
 						() => {
-							if(dashboardStep === false) {
+							if (dashboardStep === false) {
 								router.push('/')
 							} else {
 								router.back()
@@ -376,7 +387,7 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 												cursor='pointer'
 												onClick={
 													() => {
-														if(grant.link !== null) {
+														if (grant.link !== null) {
 															window.open(grant.link, '_blank')
 														}
 													}
@@ -494,7 +505,7 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 					leftIcon={<ArrowLeft />}
 					onClick={
 						() => {
-							if(createingProposalStep === 1) {
+							if (createingProposalStep === 1) {
 								router.push('/')
 							} else {
 								setCreatingProposalStep(createingProposalStep - 1)
@@ -512,7 +523,6 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 	)
 	const { grant, role, isLoading } = useContext(GrantsProgramContext)!
 	const { dashboardStep, setDashboardStep, createingProposalStep, setCreatingProposalStep } = useContext(WebwalletContext)!
-	const { webwallet } = useContext(WebwalletContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	// const { searchString, setSearchString } = useContext(DAOSearchContext)!
 	const router = useRouter()
@@ -526,30 +536,35 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 	const [type, setType] = useState<'import' | 'export'>('export')
 
 	const [isUpdateProfileModalOpen, setIsUpdateProfileModalOpen] = useState<boolean>(false)
+	const [signIn, setSignIn] = useState<boolean>(false)
 
 	const shouldShowTitle = useMemo(() => {
 		return (router.pathname === '/dashboard' && !isLoading && grant)
 	}, [grant, isLoading, router.pathname])
 
 	const isMobile = useMediaQuery(['(max-width:600px)'])
-
+	
+	useEffect(() => {
+		if(webwallet===undefined)return
+		setSignIn(!!openSignIn && !!!webwallet);
+	}, [webwallet])
+	
 	useEffect(() => {
 		logger.info({ type, privateKey }, 'RecoveryModal')
-		if(type === 'export') {
+		if (type === 'export') {
 			setPrivateKey(webwallet?.privateKey ?? '')
 		}
 	}, [type, webwallet])
-
 	useEffect(() => {
-		if(!grant?.workspace?.safe?.address || !grant?.workspace?.safe?.chainId) {
+		if (!grant?.workspace?.safe?.address || !grant?.workspace?.safe?.chainId) {
 			return
 		}
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		new SupportedPayouts().getSafe(parseInt(grant.workspace?.safe?.chainId), grant.workspace.safe.address).getTokenAndbalance().then((result: any) => {
 			logger.info({ result }, 'safe balance')
-			if(result?.value) {
-				const total = result.value.reduce((acc: number, cur: {usdValueAmount: number}) => acc + cur.usdValueAmount, 0)
+			if (result?.value) {
+				const total = result.value.reduce((acc: number, cur: { usdValueAmount: number }) => acc + cur.usdValueAmount, 0)
 				logger.info({ total }, 'balance total')
 				setSafeUSDAmount(total)
 			}
@@ -561,8 +576,8 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 		try {
 			new ethers.Wallet(e.target.value)
 			setPrivateKeyError('')
-		} catch(error) {
-			if(e.target.value !== '') {
+		} catch (error) {
+			if (e.target.value !== '') {
 				setPrivateKeyError('Invalid private key')
 			} else {
 				setPrivateKeyError('')
@@ -581,7 +596,7 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 
 	const onCopyAndSaveManuallyClick = () => {
 		const copied = copy(privateKey)
-		if(copied) {
+		if (copied) {
 			toast({
 				status: 'success',
 				title: 'Copied to clipboard',
@@ -591,10 +606,10 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 		}
 	}
 
-	const saveWallet = async() => {
+	const saveWallet = async () => {
 		const Wallet = new ethers.Wallet(privateKey)
 		const nonce = await getNonce(Wallet)
-		if(nonce) {
+		if (nonce) {
 			localStorage.setItem('webwalletPrivateKey', privateKey)
 			localStorage.setItem('nonce', nonce)
 			localStorage.removeItem('scwAddress')
@@ -620,11 +635,11 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 
 	}
 
-	if(!isMobile[0]) {
+	if (!isMobile[0]) {
 		return <MainNavBar />
-	} else if(requestProposal === true) {
+	} else if (requestProposal === true) {
 		return <SmallScreensRequestProposalNavBar />
-	} else if(dashboard === true) {
+	} else if (dashboard === true) {
 		return <SmallScreensDashboardNavBar />
 	} else {
 		return <MainNavBar />

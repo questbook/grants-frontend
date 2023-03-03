@@ -25,9 +25,10 @@ type Props = {
 	//Sidebar configs
 	renderSidebar?: boolean
 	dashboard?: boolean
+	openSignIn? : boolean
 }
 
-function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar, requestProposal, dashboard }: Props) {
+function NavbarLayout({ openSignIn, children, renderNavbar, navbarConfig, renderSidebar, requestProposal, dashboard }: Props) {
 	const [renderCount, setRenderCount] = useState(0)
 
 	useEffect(() => {
@@ -46,6 +47,7 @@ function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar, req
 						{...navbarConfig}
 						requestProposal={requestProposal}
 						dashboard={dashboard}
+						openSignIn = {openSignIn}
 					/>
 				)
 			}
