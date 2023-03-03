@@ -12,7 +12,7 @@ import PayWithChoose from 'src/screens/dashboard/_components/FundBuilder/PayWith
 import ProposalDetails from 'src/screens/dashboard/_components/FundBuilder/ProposalDetails'
 import ToChoose from 'src/screens/dashboard/_components/FundBuilder/ToChoose'
 import TransactionInitiated from 'src/screens/dashboard/_components/FundBuilder/TransactionInitiated'
-import VerifyDrawer from 'src/screens/dashboard/_components/FundBuilder/VerifyDrawer'
+import Verify from 'src/screens/dashboard/_components/FundBuilder/Verify'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
@@ -123,7 +123,7 @@ function FundBuilderDrawer() {
 
 						{
 							['initiate_verification', 'verifying', 'failed' ].includes(signerVerifiedState) && (
-								<VerifyDrawer
+								<Verify
 									signerVerifiedState={signerVerifiedState}
 									setSignerVerifiedState={setSignerVerifiedState} />
 							)

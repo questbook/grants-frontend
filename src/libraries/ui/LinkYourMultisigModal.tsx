@@ -5,7 +5,7 @@ import { NetworkType } from 'src/constants/Networks'
 import useLinkYourMultisig from 'src/libraries/hooks/useLinkYourMultisig'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
-import { isValidSafeAddress } from 'src/libraries/utils/validations'
+import { isSupportedAddress } from 'src/libraries/utils/validations'
 import VerifySignerModal from 'src/screens/request_proposal/_components/VerifySignerModal'
 import SafeSelect from 'src/v2/components/Onboarding/CreateDomain/SafeSelect'
 import { SafeSelectOption } from 'src/v2/components/Safe/SafeSelect'
@@ -246,7 +246,7 @@ function LinkYourMultisigModal({ isOpen, onClose, multisigAddress: _multisigAddr
 
 	useEffect(() => {
 		setMultiSigAddressError(false)
-		const isValid = isValidSafeAddress(multiSigAddress)
+		const isValid = isSupportedAddress(multiSigAddress)
 		logger.info('Safe address entered', { multiSigAddress, isValid })
 		if(multiSigAddress !== '' && isValid) {
 			fetchSafeData(multiSigAddress)

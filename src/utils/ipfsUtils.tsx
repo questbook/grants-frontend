@@ -52,11 +52,17 @@ export const getUrlForIPFSHash = (hash: string) => {
 
 	// api.thegraph is having problem returning svg files, will fix later
 	// this shoudln't affect in the near future as uploading svg files is not supported
+	// if(hash === config.defaultDAOImageHash) {
+	// 	return `https://ipfs.io/ipfs/${hash}`
+	// }
+
 	if(hash === config.defaultDAOImageHash) {
 		return `https://ipfs.io/ipfs/${hash}`
 	}
 
 	return `${IPFS_DOWNLOAD_ENDPOINT}?arg=${hash}`
+
+	// return `${IPFS_DOWNLOAD_ENDPOINT}?arg=${hash}`
 	// const v1 = CID.parse(hash).toV1();
 	// return `https://${v1}.ipfs.dweb.link/#x-ipfs-companion-no-redirect`;
 	// return `https://ipfs.infura.io:5001/api/v0/cat?arg=${v1}`;

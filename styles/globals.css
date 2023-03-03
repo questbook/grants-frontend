@@ -91,7 +91,7 @@ a {
 }
 
 .RichEditor-h1 {
-  font-size: 48px; 
+  font-size: 20px; 
   font-weight: 600;
   line-height: 1.2;
   margin-bottom: 16px;
@@ -99,7 +99,7 @@ a {
 }
 
 .RichEditor-h2 {
-  font-size: 36px; 
+  font-size: 18px; 
   font-weight: 600;
   line-height: 1.2;
   margin-bottom: 14px;
@@ -107,7 +107,7 @@ a {
 }
 
 .RichEditor-h3 {
-  font-size: 24px; 
+  font-size: 16px; 
   font-weight: 600;
   line-height: 1.2;
   margin-bottom: 12px;
@@ -126,9 +126,9 @@ a {
   appearance: none;
   transition-property: var(--chakra-transition-property-common);
   transition-duration: var(--chakra-transition-duration-normal);
-  padding-top: 8px;
-  padding-bottom: 8px;
-  min-height: 120px;
+  /* padding-top: 8px;
+  padding-bottom: 8px; */
+  min-height: 30vh;
   line-height: var(--chakra-lineHeights-short);
   vertical-align: top;
   font-size: var(--chakra-fontSizes-md);
@@ -136,13 +136,14 @@ a {
   padding-inline-start: var(--chakra-space-4);
   -webkit-padding-end: var(--chakra-space-4);
   padding-inline-end: var(--chakra-space-4);
-  height: var(--chakra-sizes-10);
-  border-radius: 0 0 var(--chakra-radii-md) var(--chakra-radii-md);
-  border: 1px solid;
-  border-color: #D0D3D3;
+  /* height: var(--chakra-sizes-10); */
+  /* border-radius: 0 0 var(--chakra-radii-md) var(--chakra-radii-md); */
+  height: 30vh;
+  /* border: 1px solid #C1BDB7; */
+  border-top: none;
   background: #FFFFFF;
   color: #122224;
-  overflow: scroll;
+  overflow-y: auto;
   resize: vertical;
 }
 

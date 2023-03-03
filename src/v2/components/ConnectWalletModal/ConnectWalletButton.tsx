@@ -1,21 +1,23 @@
 import { ReactNode, useState } from 'react'
 import { BsArrowRight } from 'react-icons/bs'
-import { Box, Button, Spacer, Text } from '@chakra-ui/react'
-import { ArrowRightFilled } from 'src/v2/assets/custom chakra icons/Arrows/ArrowRightFilled'
+import {
+	Button,
+	ButtonProps,
+	CircularProgress,
+	Fade,
+	Spacer,
+	Text,
+} from '@chakra-ui/react'
 
-const ConnectWalletButton = ({
-	onClick,
-	icon,
-	name,
-	isPopular,
-	maxW
-}: {
-	onClick: () => void
-	icon: ReactNode
-	name: string
-	isPopular?: boolean
-	maxW?: string
-}) => {
+type ConnectWalletButtonType = {
+	id: string
+  icon: ReactNode
+  name: string
+  verifying: string | undefined
+} & ButtonProps;
+
+const ConnectWalletButton = (props: ConnectWalletButtonType) => {
+	const { id, icon, name, maxW, verifying } = props
 	const [isHovering, setIsHovering] = useState(false)
 	return (
 		<Button
@@ -23,30 +25,34 @@ const ConnectWalletButton = ({
 			px={6}
 			py={4}
 			h='auto'
-			maxW={maxW ?? '27rem'}
+			maxW={maxW ?? '29rem'}
 			backgroundColor='gray.2'
-			onClick={onClick}
 			borderRadius='sm'
 			onMouseEnter={() => setIsHovering(true)}
 			onMouseLeave={() => setIsHovering(false)}
 			rightIcon={
-				<BsArrowRight
-					color='#0A84FF'
-					strokeWidth='2px' />
+				(verifying === undefined || verifying !== id) ? (
+					<Fade in={isHovering || verifying !== id}>
+						<BsArrowRight
+							color='#0A84FF'
+							strokeWidth='2px' />
+					</Fade>
+				) : (
+					<CircularProgress
+						isIndeterminate />
+				)
 			}
+			{...props}
 		>
-
 			{icon}
 			<Text
 				ml='10px'
 				fontWeight='500'
-				color='black'
-			>
+				color='black'>
 				{name}
 			</Text>
 
 			<Spacer />
-
 		</Button>
 	)
 }

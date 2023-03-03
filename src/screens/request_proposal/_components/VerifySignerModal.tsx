@@ -86,11 +86,15 @@ const VerifySignerModal = ({
 										networkType === NetworkType.EVM
 											? (availableWallets.map((wallet) => (
 												<ConnectWalletButton
+													id={wallet.id}
 													key={wallet.id}
 													icon={wallet.icon}
 													name={wallet.name}
+													verifying={verifying}
+													isDisabled={verifying !== undefined && verifying !== wallet.id}
 													onClick={
 														async() => {
+															setVerifying(wallet.id)
 															const connector = connectors.find((x) => x.id === wallet.id)!
 															// swallow error here so we don't fail the remaining logic
 															const isConnected = await connector.isAuthorized().catch(() => false)
@@ -98,7 +102,21 @@ const VerifySignerModal = ({
 															setConnectClicked(true)
 															if(!isConnected) {
 																try {
-																	await connectAsync({ connector })
+																	if(connector) {
+																		connect({ connector })
+																		toast({
+																			title: 'Connecting to wallet',
+																			status: 'info',
+																			duration: 3000
+																		})
+																	} else {
+																		toast({
+																			title: 'Connector not found!',
+																			status: 'error',
+																			duration: 3000
+																		})
+																		setVerifying(undefined)
+																	}
 																} catch(e) {
 																	logger.error('evm error', e)
 																	customToast({
@@ -122,12 +140,15 @@ const VerifySignerModal = ({
 											)))
 											: (solanaWallets.map((wallet, index) => (
 												<ConnectWalletButton
+													id={wallet.id}
 													key={index}
 													icon={wallet.icon}
 													name={wallet.name}
-													isPopular={wallet.isPopular}
+													verifying={verifying}
+													isDisabled={verifying !== undefined && verifying !== wallet.id}
 													onClick={
 														async() => {
+															setVerifying(wallet.id)
 															await phantomWallet?.connect()
 															setWalletClicked(true)
 															// showToast()
@@ -159,13 +180,14 @@ const VerifySignerModal = ({
 	const [connectClicked, setConnectClicked] = useState(false)
 	const [walletClicked, setWalletClicked] = useState(false)
 	const [redirectInitiated, setRedirectInitiated] = useState(false)
+	const [verifying, setVerifying] = useState<string>()
 	const { phantomWallet } = usePhantomWallet()
 	const { disconnectAsync } = useDisconnect()
 	const toast = useToast()
 	const customToast = useCustomToast()
 	const { t } = useTranslation()
 
-	const { isError: isErrorConnecting, connectAsync, connectors } = useConnect()
+	const { isError: isErrorConnecting, connect, connectors } = useConnect()
 	const { address } = useAccount()
 	const { chain } = useNetwork()
 
@@ -266,6 +288,8 @@ const VerifySignerModal = ({
 
 			setWalletClicked(false)
 		}
+
+		setVerifying(undefined)
 	}, [walletClicked, address, owners, toast, phantomWallet?.publicKey, isOpen, phantomWallet?.disconnect])
 
 	return buildComponent()

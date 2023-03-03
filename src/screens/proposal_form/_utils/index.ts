@@ -1,6 +1,7 @@
 import { PublicKey } from '@solana/web3.js'
 import { ContentState, convertFromRaw, EditorState } from 'draft-js'
 import { ethers } from 'ethers'
+import { isSupportedAddress, isValidEthereumAddress } from 'src/libraries/utils/validations'
 import { Form, Grant } from 'src/screens/proposal_form/_utils/types'
 import { getFromIPFS, isIpfsHash } from 'src/utils/ipfsUtils'
 
@@ -42,18 +43,14 @@ const validateEmail = (email: string, callback: (isValid: boolean) => void) => {
 	}
 }
 
-const validateWalletAddress = (address: string, safeObj: any, callback: (isValid: boolean) => void) => {
+const validateWalletAddress = (address: string, callback: (isValid: boolean) => void) => {
 	if(address) {
-		if(safeObj?.getIsEvm()) {
-			callback(ethers.utils.isAddress(address))
-		} else if(safeObj?.chainId === 900001) {
-			try {
-				callback(PublicKey.isOnCurve(address))
-			} catch(e) {
-				callback(false)
-			}
-		} else {
+		if(address === '') {
+			callback(false)
+		} else if(isSupportedAddress(address)) {
 			callback(true)
+		} else {
+			callback(false)
 		}
 	} else {
 		callback(true)

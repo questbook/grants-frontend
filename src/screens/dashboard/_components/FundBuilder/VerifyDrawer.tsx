@@ -1,16 +1,17 @@
 
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Flex, Text, VStack } from '@chakra-ui/react'
 import { useSafeContext } from 'src/contexts/safeContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
+import getErrorMessage from 'src/utils/errorUtils'
 import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
 import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/PhantomLogo'
 import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
 import ConnectWalletButton from 'src/v2/components/ConnectWalletModal/ConnectWalletButton'
-import { useAccount, useConnect } from 'wagmi'
+import { Connector, useAccount, useConnect, useNetwork } from 'wagmi'
 
 const availableWallets = [{
 	name: 'Metamask',
@@ -40,27 +41,20 @@ const solanaWallets = [{
 interface Props {
     signerVerifiedState: SignerVerifiedState
 	setSignerVerifiedState: (signerVerified: SignerVerifiedState) => void
+	shouldVerify?: boolean
 }
 
 
-const VerifyDrawer = ({ setSignerVerifiedState }: Props) => {
+const VerifyDrawer = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 	const buildComponent = () => (
-		<Flex
-			direction='column'
-			p={4}
-			alignItems='center'>
+		<Flex direction='column'>
 			<Text
 				mt='24px'
-				fontSize='16px'
+				fontSize='14px'
 				lineHeight='20px'
 				fontWeight='500'
 			>
-				Connect your wallet
-			</Text>
-			<Text
-				fontSize='14px'
-				fontWeight='400'>
-				Connect your wallet which is a multisig owner.
+				Connect your wallet which is a safe owner.
 			</Text>
 
 			<VStack
@@ -72,52 +66,89 @@ const VerifyDrawer = ({ setSignerVerifiedState }: Props) => {
 			>
 				{
 					isEvmChain ?
-						availableWallets.map((wallet, index) => (
+						availableWallets.map(wallet => (
 							<ConnectWalletButton
+								id={wallet.id}
 								maxW='100%'
-								key={index}
+								key={wallet.id}
 								icon={wallet.icon}
 								name={wallet.name}
-								isPopular={wallet.isPopular}
+								verifying={verifying}
+								isDisabled={verifying !== undefined && verifying !== wallet.id}
 								onClick={
-									() => {
-										if(!isConnected) {
+									async() => {
+										setVerifying(wallet.id)
+										logger.info('Connect wallet initiated')
+										try {
+											logger.info('Inside try block')
 											const connector = connectors.find((x) => x.id === wallet.id)
+											logger.info({ connector }, 'connector')
+											setSelectedConnector(connector)
 											// setConnectClicked(true)
 											if(connector) {
-												connect({ connector })
+												// swallow error here so we don't fail the remaining logic
+												const isConnected = await connector.isAuthorized().catch(() => false)
+												if(!isConnected) {
+													connect({ connector })
+													toast({
+														title: 'Connecting to wallet',
+														status: 'info',
+														duration: 3000
+													})
+												}
+											} else {
+												toast({
+													title: 'Connector not found!',
+													status: 'error',
+													duration: 3000
+												})
+												setVerifying(undefined)
 											}
+										// eslint-disable-next-line @typescript-eslint/no-explicit-any
+										} catch(e: any) {
+											setVerifying(undefined)
+											const message = getErrorMessage(e)
+											toast({
+												title: message,
+												status: 'error',
+												duration: 5000
+											})
 										}
 
-										// setVerified(true)
-										// onVerified()
+										logger.info(10)
 									}
 								} />
-						)) : solanaWallets.map((wallet, index) => (
+						)) : solanaWallets.map(wallet => (
 							<ConnectWalletButton
+								id={wallet.id}
 								maxW='100%'
-								key={index}
+								key={wallet.id}
 								icon={wallet.icon}
 								name={wallet.name}
-								isPopular={wallet.isPopular}
+								verifying={verifying}
+								isDisabled={verifying !== undefined && verifying !== wallet.id}
 								onClick={
 									() => {
+										setVerifying(wallet.id)
 										phantomWallet?.connect()
 									}
 								} />
 						))
 				}
 			</VStack>
-
 		</Flex>
 	)
 
 	const { connect, connectors } = useConnect()
+	const { chain } = useNetwork()
 	const { safeObj } = useSafeContext()
 	const { phantomWallet, phantomWalletConnected } = usePhantomWallet()
+
+	const { address } = useAccount()
 	const toast = useCustomToast()
 
-	const { isConnected, address } = useAccount()
+	const [verifying, setVerifying] = useState<string>()
+	const [selectedConnector, setSelectedConnector] = useState<Connector>()
 
 	const isEvmChain = useMemo(() => {
 		return safeObj.getIsEvm()
@@ -141,19 +172,46 @@ const VerifyDrawer = ({ setSignerVerifiedState }: Props) => {
 				duration: 3000,
 			})
 		}
+
+		setVerifying(undefined)
 	}
 
-	useEffect(() => {
+	const initiateOwnerVerification = async() => {
+		const isConnected = selectedConnector ? await selectedConnector.isAuthorized().catch(() => false) : false
 		if(isConnected || phantomWalletConnected) {
 			setSignerVerifiedState('verifying')
 		}
 
-		if(safeObj.getIsEvm() && isConnected) {
-			verifyOwner(address!)
-		} else if(phantomWalletConnected) {
-			verifyOwner(phantomWallet?.publicKey?.toString()!)
+		if(shouldVerify) {
+			if(safeObj.getIsEvm() && isConnected && chain?.id === safeObj?.chainId) {
+				verifyOwner(address!)
+			} else if(phantomWalletConnected) {
+				verifyOwner(phantomWallet?.publicKey?.toString()!)
+			}
 		}
-	}, [isConnected, phantomWalletConnected])
+	}
+
+	const switchNetworkIfNeed = async() => {
+		const isConnected = selectedConnector ? await selectedConnector.isAuthorized().catch(() => false) : false
+		if(isConnected && chain?.id !== safeObj?.chainId) {
+			try {
+				await selectedConnector?.switchChain?.(parseInt(safeObj?.chainId))
+			} catch(e) {
+				logger.error(e)
+			}
+		}
+	}
+
+	useEffect(() => {
+		if(selectedConnector) {
+			switchNetworkIfNeed()
+		}
+	}, [ selectedConnector ])
+
+	useEffect(() => {
+		initiateOwnerVerification()
+	}, [chain, selectedConnector, phantomWalletConnected])
+
 
 	return buildComponent()
 }

@@ -16,7 +16,7 @@ export const isValidSolanaAddress = (address: string) => {
 	}
 }
 
-export const isValidSafeAddress = (address: string) => {
+export const isSupportedAddress = (address: string) => {
 	logger.info({ eth: isValidEthereumAddress(address), sol: isValidSolanaAddress(address) }, 'isValidSafeAddress')
 	return isValidEthereumAddress(address) || isValidSolanaAddress(address)
 }
