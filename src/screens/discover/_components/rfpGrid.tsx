@@ -1,10 +1,10 @@
 import { Grid, GridItem } from '@chakra-ui/react'
+import { motion } from 'framer-motion'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import logger from 'src/libraries/logger'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/libraries/utils/validations'
 import RFPCard from 'src/screens/discover/_components/RFPCard'
 import { GrantType } from 'src/screens/discover/_utils/types'
-
 
 type RFPGridProps = {
 	type: 'all' | 'personal'
@@ -39,15 +39,19 @@ function RFPGrid({
 					logger.info('role', role, grant)
 					return (
 						<GridItem key={index}>
-							<RFPCard
-								isVisible={unsavedDomainVisibleState?.[workspaceChainId!]?.[grant.workspace.id] ?? grant.workspace.isVisible}
-								onVisibilityUpdate={(visibleState) => onDaoVisibilityUpdate?.(grant.workspace.id, workspaceChainId!, visibleState)}
-								onSectionGrantsUpdate={() => onSectionGrantsUpdate?.(workspaceChainId!, grant.id)}
-								chainId={workspaceChainId}
-								grant={grant}
-								role={role}
-								changedVisibilityState={changedVisibilityState}
-							/>
+							<motion.div
+								whileHover={{ scale: 1.02 }}>
+								<RFPCard
+									isVisible={unsavedDomainVisibleState?.[workspaceChainId!]?.[grant.workspace.id] ?? grant.workspace.isVisible}
+									onVisibilityUpdate={(visibleState) => onDaoVisibilityUpdate?.(grant.workspace.id, workspaceChainId!, visibleState)}
+									onSectionGrantsUpdate={() => onSectionGrantsUpdate?.(workspaceChainId!, grant.id)}
+									chainId={workspaceChainId}
+									grant={grant}
+									role={role}
+									changedVisibilityState={changedVisibilityState}
+								/>
+							</motion.div>
+
 						</GridItem>
 					)
 				})
