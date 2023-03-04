@@ -76,13 +76,20 @@ function RestoreWallet({ setSignInMethod, closeModal, inited, loading, importWal
                         onClick={async () => {
                             try {
                                 importWebwallet((await importWalletFromGD()).privateKey)
+                                toast({
+                                    title: 'Exported from Google Drive.',
+                                    status: 'success',
+                                    duration: 3000,
+                                    isClosable: true,
+                                    position:'top-left'
+                                })
                                 closeModal()
                             } catch {
                                 toast({
                                     title: 'No key found.',
                                     description: "We could not find your private key in this Google drive. Try again with another account.",
-                                    status: 'warning',
-                                    duration: 6000,
+                                    status: 'error',
+                                    duration: 3000,
                                     isClosable: true,
                                 })
                             }

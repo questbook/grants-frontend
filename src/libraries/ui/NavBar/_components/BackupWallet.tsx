@@ -16,7 +16,6 @@ export default function BackupWallet({ isNewUser, exportWalletToGD, loading, ini
     const toast = useCustomToast()
     const title = isNewUser ? 'New Questbook wallet' : 'Backup your Questbook wallet'
     useEffect(() => {
-        console.log('hihi', loading, inited)
     }, [loading, inited])
     return (<><Text
         variant='v2_subheading'
@@ -55,6 +54,8 @@ export default function BackupWallet({ isNewUser, exportWalletToGD, loading, ini
                 onClick={async () => {
                     try {
                         await exportWalletToGD(new ethers.Wallet(privateKey))
+                        
+                        console.log('doneee')
                         toast({
                             title: "Imported to Google Drive",
                             status: 'success',
@@ -95,7 +96,7 @@ export default function BackupWallet({ isNewUser, exportWalletToGD, loading, ini
                         toast({
                             title: "Copied to clipboard",
                             status: 'success',
-                            duration: 6000,
+                            duration: 2000,
                             isClosable: true,
                         })
                     }

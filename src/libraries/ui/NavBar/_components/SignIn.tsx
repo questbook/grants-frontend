@@ -2,7 +2,7 @@ import { ChangeEvent, useState, useContext } from 'react'
 import { Button, Flex, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
 import TextField from 'src/v2/components/InputFields/TextField'
 import RestoreWallet from './RestoreWallet'
-import { WebwalletContext } from 'src/pages/_app'
+import { SignInMethodContext, WebwalletContext } from 'src/pages/_app'
 import useGoogleDriveWalletRecoveryReact from './googleRecovery'
 import { ArrowLeft } from 'src/generated/icons'
 import { BsArrowLeft } from 'react-icons/bs'
@@ -20,8 +20,8 @@ interface Props {
 }
 
 function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen, onClose, setSignIn }: Props) {
-    const [signInMethod, setSignInMethod] = useState<'newWallet' | 'existingWallet' | 'choosing'>('choosing')
-
+    // const [signInMethod, setSignInMethod] = useState<'newWallet' | 'existingWallet' | 'choosing'>('choosing')
+    const {signInMethod, setSignInMethod}= useContext(SignInMethodContext)!
     const { importWebwallet } = useContext(WebwalletContext)!
 
     const buildComponent = () => {
