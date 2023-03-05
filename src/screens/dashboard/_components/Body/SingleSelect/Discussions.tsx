@@ -3,7 +3,7 @@ import ReactLinkify from 'react-linkify'
 import { LockIcon } from '@chakra-ui/icons'
 import { Box, Button, Checkbox, Divider, Flex, Image, Text, Textarea, Tooltip } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
-import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext, SignInContext, WebwalletContext } from 'src/pages/_app'
 import QuickReplyButton from 'src/screens/dashboard/_components/QuickReplyButton'
 import useAddComment from 'src/screens/dashboard/_hooks/useAddComment'
 import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
@@ -18,6 +18,7 @@ import useCustomToast from 'src/libraries/hooks/useCustomToast';
 
 function Discussions() {
 	const toast = useCustomToast()
+	const {setSignIn} = useContext(SignInContext)!
 	const buildComponents = () => {
 		return (
 			<Flex
@@ -145,7 +146,7 @@ function Discussions() {
 								ml='auto'
 								// mr={['50px','50px','0']}
 								// paddingBottom='30px'
-								marginBottom={['50px', '50px', '0']}
+								marginBottom={['90px', '50px', '0']}
 								variant='primaryMedium'
 								isLoading={step !== undefined}
 								onClick={
@@ -154,10 +155,11 @@ function Discussions() {
 											toast({
 												title: "Sign in to post a comment",
 												status: 'error',
-												duration: 1000,
+												duration: 3000,
 												isClosable: true,
 												position:'bottom'
 											})
+											setSignIn(true)
 											return 
 										}
 										const ret = await addComment(text, isCommentPrivate, selectedTag)

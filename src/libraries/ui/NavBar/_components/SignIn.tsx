@@ -70,7 +70,7 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
                                 variant='primaryMedium'
                                 marginTop={4}
                                 borderRadius={'20'}
-                                width={['70%','60%']}
+                                width={['90%','60%']}
                                 height={10}
                                 onClick={() => setSignInMethod('newWallet')}
                             >
@@ -79,14 +79,14 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
                                     color='gray.100'
                                     fontWeight='500'
                                 >
-                                    create new wallet
+                                    Create new wallet
                                 </Text>
                             </Button>
 
                             <Button
                                 variant='primaryMedium'
                                 marginTop={2}
-                                width={['70%','60%']}
+                                width={['90%','60%']}
                                 bg='gray.3'
                                 height={10}
                                 borderRadius={'20'}

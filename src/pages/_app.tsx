@@ -142,6 +142,10 @@ export const SignInMethodContext = createContext<{
 	setSignInMethod: (signInMethod: 'newWallet' | 'existingWallet' | 'choosing') => void
 
 } | null>(null)
+export const SignInContext = createContext<{
+	signIn: boolean
+	setSignIn: (signIn: boolean) => void
+} | null>(null)
 
 export const WebwalletContext = createContext<{
 	webwallet?: Wallet | null
@@ -197,6 +201,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [createingProposalStep, setCreatingProposalStep] = useState<number>(1)
 	const [biconomyLoading, setBiconomyLoading] = useState<{ [chainId: string]: boolean }>({})
 	const [signInMethod, setSignInMethod] = useState<'newWallet' | 'existingWallet' | 'choosing'>('choosing')
+	const [signIn, setSignIn] = useState<boolean>(false)
 	// store the chainId that was most recently asked to be init
 	const mostRecentInitChainId = useRef<string>()
 	// ref to store all the chains that are loading biconomy
@@ -441,6 +446,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		signInMethod,
 		setSignInMethod
 	}), [signInMethod, setSignInMethod])
+	const SignInContextValue = useMemo(() => ({
+		signIn,
+		setSignIn
+	}), [signIn, setSignIn])
 
 	const webwalletContextValue = useMemo(
 		() => ({
@@ -718,47 +727,35 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 						}
 					}
 				/>
-				{/* <script
-					dangerouslySetInnerHTML={
-						{
-							__html: `(function(h,o,t,j,a,r){
-								h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-								h._hjSettings={hjid:3220839,hjsv:6};
-								a=o.getElementsByTagName('head')[0];
-								r=o.createElement('script');r.async=1;
-								r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-								a.appendChild(r);
-							})(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');`
-						}
-					}
-				/> */}
 			</Head>
 			<WagmiConfig client={client}>
 				<ApiClientsContext.Provider value={apiClients}>
 					<NotificationContext.Provider value={notificationContext}>
-						<SignInMethodContext.Provider value={SignInMethodContextValue}>
-							<WebwalletContext.Provider value={webwalletContextValue}>
-								<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
-									<SafeProvider>
-										<DAOSearchContextMaker>
-											<GrantsProgramContext.Provider value={grantProgram}>
-												<QBAdminsContextMaker>
-													<ChakraProvider theme={theme}>
-														{getLayout(<Component {...pageProps} />)}
-														{
-															typeof window !== 'undefined' && (
-																<MigrateToGasless />
-															)
-														}
-														<QRCodeModal />
-													</ChakraProvider>
-												</QBAdminsContextMaker>
-											</GrantsProgramContext.Provider>
-										</DAOSearchContextMaker>
-									</SafeProvider>
-								</BiconomyContext.Provider>
-							</WebwalletContext.Provider>
-						</SignInMethodContext.Provider>
+						<SignInContext.Provider value={SignInContextValue}>
+							<SignInMethodContext.Provider value={SignInMethodContextValue}>
+								<WebwalletContext.Provider value={webwalletContextValue}>
+									<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
+										<SafeProvider>
+											<DAOSearchContextMaker>
+												<GrantsProgramContext.Provider value={grantProgram}>
+													<QBAdminsContextMaker>
+														<ChakraProvider theme={theme}>
+															{getLayout(<Component {...pageProps} />)}
+															{
+																typeof window !== 'undefined' && (
+																	<MigrateToGasless />
+																)
+															}
+															<QRCodeModal />
+														</ChakraProvider>
+													</QBAdminsContextMaker>
+												</GrantsProgramContext.Provider>
+											</DAOSearchContextMaker>
+										</SafeProvider>
+									</BiconomyContext.Provider>
+								</WebwalletContext.Provider>
+							</SignInMethodContext.Provider>
+						</SignInContext.Provider>
 					</NotificationContext.Provider>
 				</ApiClientsContext.Provider>
 			</WagmiConfig>

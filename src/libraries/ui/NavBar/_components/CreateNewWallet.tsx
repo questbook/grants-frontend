@@ -55,7 +55,7 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
                     >
                         <Text variant='v2_subheading'
                             fontWeight='500'
-                            fontSize='14'
+                            fontSize={['11','14']}
                         >
                             I have saved my Questbook wallet private key.
                         </Text>

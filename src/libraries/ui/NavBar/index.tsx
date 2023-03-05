@@ -18,7 +18,7 @@ import RecoveryModal from 'src/libraries/ui/NavBar/_components/RecoveryModal'
 import UpdateProfileModal from 'src/libraries/ui/NavBar/_components/UpdateProfileModal'
 import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import { copyShareGrantLink } from 'src/libraries/utils/copy'
-import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext, SignInContext, WebwalletContext } from 'src/pages/_app'
 import getAvatar from 'src/utils/avatarUtils'
 import { nFormatter } from 'src/utils/formattingUtils'
 import { getNonce } from 'src/utils/gaslessUtils'
@@ -37,7 +37,7 @@ type Props = {
 
 function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props) {
 	const { webwallet } = useContext(WebwalletContext)!
-    const { importWebwallet } = useContext(WebwalletContext)!
+	const { importWebwallet } = useContext(WebwalletContext)!
 
 	const MainNavBar = () => (
 		<>
@@ -296,7 +296,7 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 							pb={6}
 							direction='column'
 							align='center'>
-							{type=='export' && (
+							{type == 'export' && (
 								<BackupWallet
 									exportWalletToGD={exportWalletToGD}
 									loading={loading}
@@ -305,18 +305,18 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 									isNewUser={false}
 								/>
 							)}
-							
+
 						</Flex>
-						{type=='import' && (
-								<RestoreWallet
-									loading={loading}
-									inited={inited}
-									importWebwallet={importWebwallet}
-									importWalletFromGD={importWalletFromGD}
-									closeModal = {()=>setIsRecoveryModalOpen(false)}
-									// isNewUser={false}
-								/>
-							)}
+						{type == 'import' && (
+							<RestoreWallet
+								loading={loading}
+								inited={inited}
+								importWebwallet={importWebwallet}
+								importWalletFromGD={importWalletFromGD}
+								closeModal={() => setIsRecoveryModalOpen(false)}
+							// isNewUser={false}
+							/>
+						)}
 					</ModalBody>
 				</ModalContent>
 			</Modal>
@@ -515,7 +515,7 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 				onImportClick={onImportClick}
 				onSaveAsTextClick={onSaveAsTextClick}
 				onCopyAndSaveManuallyClick={onCopyAndSaveManuallyClick} /> */}
-				<SignIn
+			<SignIn
 				isOpen={signIn && !!!webwallet}
 				setSignIn={setSignIn}
 				onClose={() => setSignIn(false)}
@@ -582,6 +582,7 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 	const { grant, role, isLoading } = useContext(GrantsProgramContext)!
 	const { dashboardStep, setDashboardStep, createingProposalStep, setCreatingProposalStep } = useContext(WebwalletContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
+	const {signIn, setSignIn} = useContext(SignInContext)!
 	// const { searchString, setSearchString } = useContext(DAOSearchContext)!
 	const router = useRouter()
 	const toast = useCustomToast()
@@ -594,7 +595,6 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 	const [type, setType] = useState<'import' | 'export'>('export')
 
 	const [isUpdateProfileModalOpen, setIsUpdateProfileModalOpen] = useState<boolean>(false)
-	const [signIn, setSignIn] = useState<boolean>(false)
 
 	const shouldShowTitle = useMemo(() => {
 		return (router.pathname === '/dashboard' && !isLoading && grant)
@@ -604,11 +604,14 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 
 	useEffect(() => {
 		if (webwallet === undefined) return
-		if(isMobile[0]&& !!dashboard){
-			setSignIn(true)
-			return
-		}
-		setSignIn(!!openSignIn && !!!webwallet);
+		setTimeout(() => {
+			if (isMobile[0] && !!dashboard) {
+				setSignIn(true)
+				return
+			}
+			setSignIn(!!openSignIn && !!!webwallet);
+		}, 2000);
+
 	}, [webwallet, openSignIn, dashboard])
 
 	useEffect(() => {
