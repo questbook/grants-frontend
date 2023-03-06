@@ -14,7 +14,7 @@ import ImageUpload from 'src/libraries/ui/ImageUpload'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import SearchField from 'src/libraries/ui/SearchField'
-import { ApiClientsContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
+import { ApiClientsContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import RFPGrid from 'src/screens/discover/_components/rfpGrid'
 import { DiscoverContext, DiscoverProvider } from 'src/screens/discover/Context'
 import HeroBanner from 'src/screens/discover/HeroBanner'
@@ -28,7 +28,8 @@ import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 function Discover() {
 	const router = useRouter()
 	const { inviteInfo } = useContext(ApiClientsContext)!
-
+	const { webwallet, scwAddress } = useContext(WebwalletContext)!
+	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const buildComponent = () => {
 		return inviteInfo ? inviteView() : normalView
 	}
@@ -150,6 +151,7 @@ function Discover() {
 	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, isLoading } = useContext(DiscoverContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString } = useContext(DAOSearchContext)!
+	const { setSignIn } = useContext(SignInContext)!
 
 	const toast = useCustomToast()
 	const { isBiconomyInitialised, updateDaoVisibility, updateSection } = useUpdateDaoVisibility()
@@ -166,9 +168,9 @@ function Discover() {
 	const [sectionName, setSectionName] = useState('')
 	const [filterGrantName, setFilterGrantName] = useState('')
 
-	const isMobile = useMediaQuery({ query:'(max-width:600px)' })
+	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
 
-	const [imageFile, setImageFile] = useState<{file: File | null, hash?: string}>({ file: null })
+	const [imageFile, setImageFile] = useState<{ file: File | null, hash?: string }>({ file: null })
 
 	const onDaoVisibilityUpdate = (daoId: string, chainId: SupportedChainId, visibleState: boolean) => {
 		// check if any changes have been made for the chain id passed
@@ -302,16 +304,18 @@ function Discover() {
 														borderColor='gray.3'
 														mt={8}
 														display={grantsForYou?.length ? '' : 'none'}
-										 />
+													/>
 												</>
-											) : (
-												<Skeleton
-													width='100%'
-													h='5%'
-													startColor='gray.3'
-													endColor='gray.4'
-												/>
-											)
+											) :
+											<></>
+										//  (
+										// 	<Skeleton
+										// 		width='100%'
+										// 		h='5%'
+										// 		startColor='gray.3'
+										// 		endColor='gray.4'
+										// 	/>
+										// )
 									}
 									{/* </Box> */}
 									<Box
@@ -431,7 +435,7 @@ function Discover() {
 									grants={searchString === undefined || searchString === '' ? grantsForAll : grantsForAll?.filter(g => g.title.includes(searchString))}
 									changedVisibilityState={changedVisibility}
 									filter={filterGrantName}
-						    	/>
+								/>
 							</>
 
 						)
@@ -520,12 +524,29 @@ function Discover() {
 		)
 	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName])
 
+	useEffect(() => {
+		if(!inviteInfo) {
+			setSignInTitle('default')
+			return
+		}
 
+		setTimeout(() => {
+			setSignInTitle(inviteInfo?.role == 0 ? 'admin' : 'reviewer')
+			setSignIn(true)
+		}, 2000)
+
+	}, [inviteInfo])
 	useEffect(() => {
 		logger.info('section update', unsavedSectionGrants)
 	}, [unsavedSectionGrants])
 
 	const onGetStartedClick = () => {
+		if(!webwallet) {
+			setSignInTitle(inviteInfo?.role == 0 ? 'admin' : 'reviewer')
+			setSignIn(true)
+			return
+		}
+
 		if(!grantProgram?.id) {
 			return
 		}
@@ -577,7 +598,7 @@ function Discover() {
 	)
 }
 
-Discover.getLayout = function(page: ReactElement) {
+Discover.getLayout = function(page: ReactElement, props: any) {
 	return (
 		<NavbarLayout
 			renderSidebar={false}

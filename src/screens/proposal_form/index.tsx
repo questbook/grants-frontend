@@ -1,4 +1,4 @@
-import { ChangeEvent, ReactElement, useContext, useMemo, useState } from 'react'
+import { ChangeEvent, ReactElement, useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Container, Flex, Image, Text } from '@chakra-ui/react'
 import { convertToRaw } from 'draft-js'
 import { useRouter } from 'next/router'
@@ -10,7 +10,7 @@ import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import SetupNotificationModal from 'src/libraries/ui/SetupNotificationModal'
 import { getChainInfo } from 'src/libraries/utils/token'
-import { GrantsProgramContext } from 'src/pages/_app'
+import { GrantsProgramContext, SignInContext, SignInTitleContext } from 'src/pages/_app'
 import SectionHeader from 'src/screens/proposal_form/_components/SectionHeader'
 import SectionInput from 'src/screens/proposal_form/_components/SectionInput'
 import SectionRichTextEditor from 'src/screens/proposal_form/_components/SectionRichTextEditor'
@@ -569,12 +569,15 @@ function ProposalForm() {
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
 	const [transactionHash, setTransactionHash] = useState<string>('')
 	const { submitProposal, proposalId, isBiconomyInitialised } = useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash })
-
+	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const [emailError, setEmailError] = useState<boolean>(false)
 	const [walletAddressError, setWalletAddressError] = useState<boolean>(false)
 
 	const [isSetupNotificationModalOpen, setIsSetupNotificationModalOpen] = useState<boolean>(false)
 
+	useEffect(() => {
+		setSignInTitle('submitProposal')
+	}, [])
 	const chainInfo = useMemo(() => {
 		if(!grant || !chainId) {
 			return
@@ -640,7 +643,9 @@ function ProposalForm() {
 
 ProposalForm.getLayout = (page: ReactElement) => {
 	return (
-		<NavbarLayout renderSidebar={false}>
+		<NavbarLayout
+			renderSidebar={false}
+			openSignIn={true}>
 			<ProposalFormProvider>
 				{page}
 			</ProposalFormProvider>

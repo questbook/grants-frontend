@@ -80,7 +80,7 @@ export const signNonce = async(webwallet: Wallet, nonce: string) => {
 	return { v: nonceSig.v, r: nonceSig.r, s: nonceSig.s, transactionHash: nonceHash }
 }
 
-export const getNonce = async(webwallet: Wallet | undefined) => {
+export const getNonce = async(webwallet: Wallet | undefined | null) => {
 	if(!webwallet) {
 		return
 	}
@@ -168,7 +168,7 @@ export const deploySCW = async(webwallet: Wallet, biconomyWalletClient: Biconomy
 export const sendGaslessTransaction = async(biconomy: typeof BiconomyContext, targetContractObject: Contract, targetContractMethod: string,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	targetContractArgs: any, targetContractAddress: string, biconomyWalletClient: BiconomyWalletClient,
-	scwAddress: string, webwallet: Wallet | undefined, chainId: string, webHookId: string, nonce: string | undefined) => {
+	scwAddress: string, webwallet: Wallet | undefined | null, chainId: string, webHookId: string, nonce: string | undefined) => {
 
 	if(!biconomy) {
 		alert('Biconomy is not ready! Please wait.')

@@ -237,9 +237,10 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 	const getProposals = useCallback(async() => {
 		logger.info({ role, grantId, scwAddress }, 'Fetching proposals (GET PROPOSALS)')
-		if(!webwallet) {
-			return 'no-webwallet'
-		} else if(!grantId || typeof grantId !== 'string') {
+		// if(!webwallet) {
+		// 	return 'no-webwallet'
+		// }
+		 if(!grantId || typeof grantId !== 'string') {
 			return 'no-grant-id'
 		}
 
@@ -269,9 +270,10 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 	const getComments = useCallback(async() => {
 		logger.info({ role, grantId, scwAddress }, 'Fetching comments (GET COMMENTS)')
-		if(!webwallet) {
-			return 'no-webwallet'
-		} else if(!grantId || typeof grantId !== 'string') {
+		// if(!webwallet) {
+		// 	return 'no-webwallet'
+		// }
+		 if(!grantId || typeof grantId !== 'string') {
 			return 'no-grant-id'
 		}
 

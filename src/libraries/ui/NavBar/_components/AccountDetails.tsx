@@ -20,7 +20,7 @@ import { useRouter } from 'next/router'
 import { AddUser, ArrowRight, Key, Pencil } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
-import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAddress } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
@@ -31,9 +31,10 @@ const IN_APP_WALLET_LEARN_MORE_URL =
 interface Props {
 	openModal?: (type: 'import' | 'export') => void
 	setIsUpdateProfileModalOpen: (isOpen: boolean) => void
+	setSignIn: (signIn: boolean) => void
 }
 
-function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
+function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: Props) {
 	const buildComponent = () => (
 		<Popover
 			placement='bottom-end'
@@ -131,30 +132,30 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 
 									{
 										openModal &&
-						menuItems.map((item, index) => {
-							return (
-								<Flex
-									key={index}
-									ml={3}
-									mt={4}>
-									{item.icon}
-									<Text
-										ml={2}
-										_hover={{ textDecoration: 'underline', cursor: 'pointer' }}
-										onClick={
-											() => {
-												onClose()
-												item.onClick()
-											}
-										}
-										variant='v2_body'
-									>
-										{item.title}
-									</Text>
-								</Flex>
+										menuItems.map((item, index) => {
+											return (
+												<Flex
+													key={index}
+													ml={3}
+													mt={4}>
+													{item.icon}
+													<Text
+														ml={2}
+														_hover={{ textDecoration: 'underline', cursor: 'pointer' }}
+														onClick={
+															() => {
+																onClose()
+																item.onClick()
+															}
+														}
+														variant='v2_body'
+													>
+														{item.title}
+													</Text>
+												</Flex>
 
-							)
-						})
+											)
+										})
 									}
 
 									<Box mb={2} />
@@ -171,7 +172,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 	const { t } = useTranslation()
 	const { grant, role } = useContext(GrantsProgramContext)!
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
-
+	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const router = useRouter()
 	useEffect(() => {
 		logger.info({ pathname: router.pathname }, 'Could set up profile')
@@ -218,7 +219,25 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 	}
 
 	if(!isConnected && !isConnecting) {
-		return <Box />
+		if(!openModal) {
+			return <Box />
+		}
+
+		return (
+			<Button
+				onClick={
+					() => {
+						setSignIn(true)
+						setSignInTitle('default')
+					}
+				}
+				bg='black.1'
+				textColor='gray.1'
+				_hover={{ bg: 'gray.500' }}
+			>
+				Sign in
+			</Button>
+		)
 	}
 
 	return buildComponent()
