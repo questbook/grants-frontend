@@ -2,7 +2,7 @@ import { ChangeEvent, useState, useContext } from 'react'
 import { Button, Flex, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
 import TextField from 'src/v2/components/InputFields/TextField'
 import RestoreWallet from './RestoreWallet'
-import { SignInMethodContext, WebwalletContext } from 'src/pages/_app'
+import { SignInMethodContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
 import useGoogleDriveWalletRecoveryReact from './googleRecovery'
 import { ArrowLeft } from 'src/generated/icons'
 import { BsArrowLeft } from 'react-icons/bs'
@@ -23,7 +23,15 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
     // const [signInMethod, setSignInMethod] = useState<'newWallet' | 'existingWallet' | 'choosing'>('choosing')
     const {signInMethod, setSignInMethod}= useContext(SignInMethodContext)!
     const { importWebwallet } = useContext(WebwalletContext)!
-
+    const { signInTitle } = useContext(SignInTitleContext)!
+    function Title (){
+        if(signInTitle == 'admin')return 'To join as an admin, sign in with wallet'
+        if(signInTitle == 'postComment') return 'To post a comment, sign in with wallet'
+        if(signInTitle == 'reviewer') return 'To submit a review, sign in with wallet'
+        if(signInTitle == 'submitProposal') return 'To submit a proposal, sign in with wallet'
+         return 'To run a grant program, sign in with wallet'
+    }
+    console.log(signInTitle,'tabtab')
     const buildComponent = () => {
         return (
             <Modal
@@ -57,7 +65,7 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
                                 variant='v2_subheading'
                                 fontWeight='500'
                                 mt={5}>
-                                Sign in with wallet
+                                {Title()}
                             </Text>
                             <Text
                                 variant='v2_body'

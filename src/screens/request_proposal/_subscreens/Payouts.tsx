@@ -6,7 +6,7 @@ import { Button, Flex, Icon, Text, useMediaQuery } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import StepIndicator from 'src/libraries/ui/StepIndicator'
-import { SignInContext, WebwalletContext } from 'src/pages/_app'
+import { SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
 import SelectDropdown from 'src/screens/request_proposal/_components/SelectDropdown'
 import { DropdownOption, RFPFormType } from 'src/screens/request_proposal/_utils/types'
 import useCustomToast from 'src/libraries/hooks/useCustomToast';
@@ -407,6 +407,7 @@ function Payouts(
 
 	const {scwAddress, webwallet, createingProposalStep, setCreatingProposalStep } = useContext(WebwalletContext)!
 	const {setSignIn} = useContext(SignInContext)!
+	const {setSignInTitle} = useContext(SignInTitleContext)!
 	const [milestoneCounter, setMilestoneCounter] = useState(!milestones ? 0 : milestones.length)
 	const [createGrantProgram,setCreateGrantProgram] = useState<boolean>(false)
 	const payoutTypeOptions = [{ value: 'in_one_go', label: 'in one go' }, { value: 'milestones', label: 'based on milestone' }]
@@ -465,6 +466,7 @@ function Payouts(
 				isClosable: true,
 				position: 'top'
 			})
+			setSignInTitle('default')
 			setSignIn(true)
 			return
 

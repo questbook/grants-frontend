@@ -14,7 +14,7 @@ import ImageUpload from 'src/libraries/ui/ImageUpload'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import SearchField from 'src/libraries/ui/SearchField'
-import { ApiClientsContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
+import { ApiClientsContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import RFPGrid from 'src/screens/discover/_components/rfpGrid'
 import { DiscoverContext, DiscoverProvider } from 'src/screens/discover/Context'
 import HeroBanner from 'src/screens/discover/HeroBanner'
@@ -28,7 +28,8 @@ import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 function Discover() {
 	const router = useRouter()
 	const { inviteInfo } = useContext(ApiClientsContext)!
-
+	const { webwallet, scwAddress } = useContext(WebwalletContext)!
+	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const buildComponent = () => {
 		return inviteInfo ? inviteView() : normalView
 	}
@@ -117,7 +118,7 @@ function Discover() {
 		const chainsList = Object.keys(unsavedDomainState)
 
 		const txSteps: string[] = []
-		for(const chain of chainsList) {
+		for (const chain of chainsList) {
 			const chainName = chainNames.get(chain)!
 
 			txSteps.push(`Initializing biconomy client for ${chainName}`)
@@ -150,6 +151,7 @@ function Discover() {
 	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, isLoading } = useContext(DiscoverContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString } = useContext(DAOSearchContext)!
+	const { setSignIn } = useContext(SignInContext)!
 
 	const toast = useCustomToast()
 	const { isBiconomyInitialised, updateDaoVisibility, updateSection } = useUpdateDaoVisibility()
@@ -166,21 +168,21 @@ function Discover() {
 	const [sectionName, setSectionName] = useState('')
 	const [filterGrantName, setFilterGrantName] = useState('')
 
-	const isMobile = useMediaQuery({ query:'(max-width:600px)' })
+	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
 
-	const [imageFile, setImageFile] = useState<{file: File | null, hash?: string}>({ file: null })
+	const [imageFile, setImageFile] = useState<{ file: File | null, hash?: string }>({ file: null })
 
 	const onDaoVisibilityUpdate = (daoId: string, chainId: SupportedChainId, visibleState: boolean) => {
 		// check if any changes have been made for the chain id passed
-		if(unsavedDomainState[chainId]) {
+		if (unsavedDomainState[chainId]) {
 			// if yes, check if the dao id passed is present in the chain id
-			if(unsavedDomainState[chainId][daoId] !== undefined) {
+			if (unsavedDomainState[chainId][daoId] !== undefined) {
 				// if yes, remove that dao id from the chain id because it must have gotten here
 				// because of a change in visibility state to true
 				delete unsavedDomainState[chainId][daoId]
 
 				// if the chain id has no more dao ids, remove the chain id from the unsaved state
-				if(!Object.keys(unsavedDomainState[chainId]).length) {
+				if (!Object.keys(unsavedDomainState[chainId]).length) {
 					delete unsavedDomainState[chainId]
 				}
 			} else { // if no, add the dao id to the chain id
@@ -191,7 +193,7 @@ function Discover() {
 			unsavedDomainState[chainId][daoId] = visibleState
 		}
 
-		if(!Object.keys(unsavedDomainState).length) {
+		if (!Object.keys(unsavedDomainState).length) {
 			setChangedVisibility('none')
 		} else {
 			setChangedVisibility('toggle')
@@ -202,8 +204,8 @@ function Discover() {
 
 	const onGrantsSectionUpdate = (chainId: SupportedChainId, grantId: string) => {
 		logger.info('onGrantsSectionUpdate', unsavedSectionGrants, chainId, grantId)
-		if(unsavedSectionGrants[chainId]) {
-			if(unsavedSectionGrants[chainId].includes(grantId)) {
+		if (unsavedSectionGrants[chainId]) {
+			if (unsavedSectionGrants[chainId].includes(grantId)) {
 				unsavedSectionGrants[chainId] = unsavedSectionGrants[chainId].filter(e => e !== grantId)
 			} else {
 				unsavedSectionGrants[chainId].push(grantId)
@@ -212,7 +214,7 @@ function Discover() {
 			unsavedSectionGrants[chainId] = [grantId]
 		}
 
-		if(!Object.keys(unsavedSectionGrants).length) {
+		if (!Object.keys(unsavedSectionGrants).length) {
 			setChangedVisibility('none')
 		}
 
@@ -254,7 +256,7 @@ function Discover() {
 							value={filterGrantName}
 							onKeyDown={
 								(e) => {
-									if(e.key === 'Enter' && filterGrantName !== undefined) {
+									if (e.key === 'Enter' && filterGrantName !== undefined) {
 										setFilterGrantName(filterGrantName)
 									}
 								}
@@ -302,18 +304,18 @@ function Discover() {
 														borderColor='gray.3'
 														mt={8}
 														display={grantsForYou?.length ? '' : 'none'}
-										 />
+													/>
 												</>
 											) :
 											<></>
-											//  (
-											// 	<Skeleton
-											// 		width='100%'
-											// 		h='5%'
-											// 		startColor='gray.3'
-											// 		endColor='gray.4'
-											// 	/>
-											// )
+										//  (
+										// 	<Skeleton
+										// 		width='100%'
+										// 		h='5%'
+										// 		startColor='gray.3'
+										// 		endColor='gray.4'
+										// 	/>
+										// )
 									}
 									{/* </Box> */}
 									<Box
@@ -433,7 +435,7 @@ function Discover() {
 									grants={searchString === undefined || searchString === '' ? grantsForAll : grantsForAll?.filter(g => g.title.includes(searchString))}
 									changedVisibilityState={changedVisibility}
 									filter={filterGrantName}
-						    	/>
+								/>
 							</>
 
 						)
@@ -453,14 +455,14 @@ function Discover() {
 										You have made changes to your Discover page on Questbook.
 										<Button
 											onClick={
-												async() => {
-													if(changedVisibility === 'toggle') {
+												async () => {
+													if (changedVisibility === 'toggle') {
 														try {
 															await updateDaoVisibility(
 																unsavedDomainState,
 																setNetworkTransactionModalStep,
 															)
-														} catch(e) {
+														} catch (e) {
 															setUnsavedDaosState({})
 															setNetworkTransactionModalStep(undefined)
 															const message = getErrorMessage(e as Error)
@@ -470,7 +472,7 @@ function Discover() {
 																status: 'error',
 															})
 														}
-													} else if(changedVisibility === 'checkbox') {
+													} else if (changedVisibility === 'checkbox') {
 														logger.info('Updating grants section')
 														setAddSectionModalOpen(true)
 													}
@@ -522,13 +524,27 @@ function Discover() {
 		)
 	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName])
 
+	useEffect(() => {
+		console.log('yoyoyo', inviteInfo)
 
+		if (!inviteInfo) {
+			setSignInTitle('default')
+			return
+		}
+		setSignInTitle(inviteInfo?.role==0 ? 'admin' : 'reviewer')
+
+	}, [inviteInfo])
 	useEffect(() => {
 		logger.info('section update', unsavedSectionGrants)
 	}, [unsavedSectionGrants])
 
 	const onGetStartedClick = () => {
-		if(!grantProgram?.id) {
+		if (!webwallet) {
+			setSignInTitle(inviteInfo?.role==0 ? 'admin' : 'reviewer')
+			setSignIn(true)
+			return
+		}
+		if (!grantProgram?.id) {
 			return
 		}
 
@@ -544,11 +560,11 @@ function Discover() {
 				subTitle=''
 				actionText='Add Section'
 				action={
-					async() => {
+					async () => {
 						setNetworkTransactionModalOpen(true)
 						try {
 							updateSection(unsavedSectionGrants, sectionName, imageFile, setCurrentStepIndex)
-						} catch(e) {
+						} catch (e) {
 							setNetworkTransactionModalOpen(false)
 							setCurrentStepIndex(-1)
 							logger.info('Error in updating section', e)
@@ -579,10 +595,11 @@ function Discover() {
 	)
 }
 
-Discover.getLayout = function(page: ReactElement) {
+Discover.getLayout = function (page: ReactElement) {
 	return (
 		<NavbarLayout
 			renderSidebar={false}
+			openSignIn={true}
 		>
 			<DiscoverProvider>
 				{page}

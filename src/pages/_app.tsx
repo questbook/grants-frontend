@@ -147,6 +147,11 @@ export const SignInContext = createContext<{
 	setSignIn: (signIn: boolean) => void
 } | null>(null)
 
+export const SignInTitleContext = createContext<{
+	signInTitle: 'admin' | 'reviewer' | 'default' | 'postComment' | 'submitProposal'
+	setSignInTitle: (signInTitle: 'admin' | 'reviewer' | 'default' | 'postComment' | 'submitProposal') => void
+} | null>(null)
+
 export const WebwalletContext = createContext<{
 	webwallet?: Wallet | null
 	setWebwallet: (webwallet?: Wallet | null) => void
@@ -201,6 +206,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [createingProposalStep, setCreatingProposalStep] = useState<number>(1)
 	const [biconomyLoading, setBiconomyLoading] = useState<{ [chainId: string]: boolean }>({})
 	const [signInMethod, setSignInMethod] = useState<'newWallet' | 'existingWallet' | 'choosing'>('choosing')
+	const [signInTitle, setSignInTitle] = useState<'admin' | 'reviewer' | 'default' | 'postComment' | 'submitProposal'>('default')
 	const [signIn, setSignIn] = useState<boolean>(false)
 	// store the chainId that was most recently asked to be init
 	const mostRecentInitChainId = useRef<string>()
@@ -450,7 +456,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		signIn,
 		setSignIn
 	}), [signIn, setSignIn])
-
+	const SignInTitleContextValue = useMemo(() => ({
+		signInTitle,
+		setSignInTitle
+	}), [signInTitle, setSignInTitle])
 	const webwalletContextValue = useMemo(
 		() => ({
 			webwallet: webwallet,
@@ -732,29 +741,31 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				<ApiClientsContext.Provider value={apiClients}>
 					<NotificationContext.Provider value={notificationContext}>
 						<SignInContext.Provider value={SignInContextValue}>
-							<SignInMethodContext.Provider value={SignInMethodContextValue}>
-								<WebwalletContext.Provider value={webwalletContextValue}>
-									<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
-										<SafeProvider>
-											<DAOSearchContextMaker>
-												<GrantsProgramContext.Provider value={grantProgram}>
-													<QBAdminsContextMaker>
-														<ChakraProvider theme={theme}>
-															{getLayout(<Component {...pageProps} />)}
-															{
-																typeof window !== 'undefined' && (
-																	<MigrateToGasless />
-																)
-															}
-															<QRCodeModal />
-														</ChakraProvider>
-													</QBAdminsContextMaker>
-												</GrantsProgramContext.Provider>
-											</DAOSearchContextMaker>
-										</SafeProvider>
-									</BiconomyContext.Provider>
-								</WebwalletContext.Provider>
-							</SignInMethodContext.Provider>
+							<SignInTitleContext.Provider value={SignInTitleContextValue}>
+								<SignInMethodContext.Provider value={SignInMethodContextValue}>
+									<WebwalletContext.Provider value={webwalletContextValue}>
+										<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
+											<SafeProvider>
+												<DAOSearchContextMaker>
+													<GrantsProgramContext.Provider value={grantProgram}>
+														<QBAdminsContextMaker>
+															<ChakraProvider theme={theme}>
+																{getLayout(<Component {...pageProps} />)}
+																{
+																	typeof window !== 'undefined' && (
+																		<MigrateToGasless />
+																	)
+																}
+																<QRCodeModal />
+															</ChakraProvider>
+														</QBAdminsContextMaker>
+													</GrantsProgramContext.Provider>
+												</DAOSearchContextMaker>
+											</SafeProvider>
+										</BiconomyContext.Provider>
+									</WebwalletContext.Provider>
+								</SignInMethodContext.Provider>
+							</SignInTitleContext.Provider>
 						</SignInContext.Provider>
 					</NotificationContext.Provider>
 				</ApiClientsContext.Provider>

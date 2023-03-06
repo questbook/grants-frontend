@@ -3,7 +3,7 @@ import ReactLinkify from 'react-linkify'
 import { LockIcon } from '@chakra-ui/icons'
 import { Box, Button, Checkbox, Divider, Flex, Image, Text, Textarea, Tooltip } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
-import { GrantsProgramContext, SignInContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext, SignInContext, WebwalletContext, SignInTitleContext,} from 'src/pages/_app'
 import QuickReplyButton from 'src/screens/dashboard/_components/QuickReplyButton'
 import useAddComment from 'src/screens/dashboard/_hooks/useAddComment'
 import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
@@ -19,6 +19,7 @@ import useCustomToast from 'src/libraries/hooks/useCustomToast';
 function Discussions() {
 	const toast = useCustomToast()
 	const {setSignIn} = useContext(SignInContext)!
+	const {setSignInTitle} = useContext(SignInTitleContext)!
 	const buildComponents = () => {
 		return (
 			<Flex
@@ -159,6 +160,7 @@ function Discussions() {
 												isClosable: true,
 												position:'bottom'
 											})
+											setSignInTitle('postComment')
 											setSignIn(true)
 											return 
 										}
