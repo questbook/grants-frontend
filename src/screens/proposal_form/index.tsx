@@ -569,15 +569,15 @@ function ProposalForm() {
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
 	const [transactionHash, setTransactionHash] = useState<string>('')
 	const { submitProposal, proposalId, isBiconomyInitialised } = useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash })
-	const {setSignInTitle} = useContext(SignInTitleContext)!
+	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const [emailError, setEmailError] = useState<boolean>(false)
 	const [walletAddressError, setWalletAddressError] = useState<boolean>(false)
 
 	const [isSetupNotificationModalOpen, setIsSetupNotificationModalOpen] = useState<boolean>(false)
 
-	useEffect(()=>{
+	useEffect(() => {
 		setSignInTitle('submitProposal')
-	},[])
+	}, [])
 	const chainInfo = useMemo(() => {
 		if(!grant || !chainId) {
 			return
@@ -643,7 +643,9 @@ function ProposalForm() {
 
 ProposalForm.getLayout = (page: ReactElement) => {
 	return (
-		<NavbarLayout renderSidebar={false} openSignIn={true}>
+		<NavbarLayout
+			renderSidebar={false}
+			openSignIn={true}>
 			<ProposalFormProvider>
 				{page}
 			</ProposalFormProvider>

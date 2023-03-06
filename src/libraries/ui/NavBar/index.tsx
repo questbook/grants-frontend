@@ -12,9 +12,13 @@ import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import AccountDetails from 'src/libraries/ui/NavBar/_components/AccountDetails'
+import BackupWallet from 'src/libraries/ui/NavBar/_components/BackupWallet'
+import useGoogleDriveWalletRecoveryReact from 'src/libraries/ui/NavBar/_components/googleRecovery'
 import ImportConfirmationModal from 'src/libraries/ui/NavBar/_components/ImportConfirmationModal'
 import NotificationPopover from 'src/libraries/ui/NavBar/_components/NotificationPopover'
 import RecoveryModal from 'src/libraries/ui/NavBar/_components/RecoveryModal'
+import RestoreWallet from 'src/libraries/ui/NavBar/_components/RestoreWallet'
+import SignIn from 'src/libraries/ui/NavBar/_components/SignIn'
 import UpdateProfileModal from 'src/libraries/ui/NavBar/_components/UpdateProfileModal'
 import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import { copyShareGrantLink } from 'src/libraries/utils/copy'
@@ -23,10 +27,6 @@ import getAvatar from 'src/utils/avatarUtils'
 import { nFormatter } from 'src/utils/formattingUtils'
 import { getNonce } from 'src/utils/gaslessUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
-import SignIn from './_components/SignIn'
-import BackupWallet from './_components/BackupWallet'
-import useGoogleDriveWalletRecoveryReact from './_components/googleRecovery'
-import RestoreWallet from './_components/RestoreWallet'
 
 type Props = {
 	bg?: string
@@ -141,7 +141,7 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 													cursor='pointer'
 													onClick={
 														() => {
-															if (grant.link !== null) {
+															if(grant.link !== null) {
 																window.open(grant.link, '_blank')
 															}
 														}
@@ -243,7 +243,7 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 							ml={4}
 							onClick={
 								() => {
-									if (grant?.id) {
+									if(grant?.id) {
 										const ret = copyShareGrantLink()
 										logger.info('copyGrantLink', ret)
 										toast({
@@ -296,27 +296,31 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 							pb={6}
 							direction='column'
 							align='center'>
-							{type == 'export' && (
-								<BackupWallet
-									exportWalletToGD={exportWalletToGD}
-									loading={loading}
-									inited={inited}
-									privateKey={privateKey}
-									isNewUser={false}
-								/>
-							)}
+							{
+								type == 'export' && (
+									<BackupWallet
+										exportWalletToGD={exportWalletToGD}
+										loading={loading}
+										inited={inited}
+										privateKey={privateKey}
+										isNewUser={false}
+									/>
+								)
+							}
 
 						</Flex>
-						{type == 'import' && (
-							<RestoreWallet
-								loading={loading}
-								inited={inited}
-								importWebwallet={importWebwallet}
-								importWalletFromGD={importWalletFromGD}
-								closeModal={() => setIsRecoveryModalOpen(false)}
-							// isNewUser={false}
-							/>
-						)}
+						{
+							type == 'import' && (
+								<RestoreWallet
+									loading={loading}
+									inited={inited}
+									importWebwallet={importWebwallet}
+									importWalletFromGD={importWalletFromGD}
+									closeModal={() => setIsRecoveryModalOpen(false)}
+									// isNewUser={false}
+								/>
+							)
+						}
 					</ModalBody>
 				</ModalContent>
 			</Modal>
@@ -372,7 +376,7 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 					leftIcon={<ArrowLeft />}
 					onClick={
 						() => {
-							if (dashboardStep === false) {
+							if(dashboardStep === false) {
 								router.push('/')
 							} else {
 								router.back()
@@ -433,7 +437,7 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 												cursor='pointer'
 												onClick={
 													() => {
-														if (grant.link !== null) {
+														if(grant.link !== null) {
 															window.open(grant.link, '_blank')
 														}
 													}
@@ -561,7 +565,7 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 					leftIcon={<ArrowLeft />}
 					onClick={
 						() => {
-							if (createingProposalStep === 1) {
+							if(createingProposalStep === 1) {
 								router.push('/')
 							} else {
 								setCreatingProposalStep(createingProposalStep - 1)
@@ -582,7 +586,7 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 	const { grant, role, isLoading } = useContext(GrantsProgramContext)!
 	const { dashboardStep, setDashboardStep, createingProposalStep, setCreatingProposalStep } = useContext(WebwalletContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
-	const {signIn, setSignIn} = useContext(SignInContext)!
+	const { signIn, setSignIn } = useContext(SignInContext)!
 	// const { searchString, setSearchString } = useContext(DAOSearchContext)!
 	const router = useRouter()
 	const toast = useCustomToast()
@@ -603,32 +607,36 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 	const isMobile = useMediaQuery(['(max-width:600px)'])
 
 	useEffect(() => {
-		if (webwallet === undefined) return
+		if(webwallet === undefined) {
+			return
+		}
+
 		setTimeout(() => {
-			if (isMobile[0] && !!dashboard) {
+			if(isMobile[0] && !!dashboard) {
 				setSignIn(true)
 				return
 			}
-			setSignIn(!!openSignIn && !!!webwallet);
-		}, 2000);
+
+			setSignIn(!!openSignIn && !!!webwallet)
+		}, 2000)
 
 	}, [webwallet, openSignIn, dashboard])
 
 	useEffect(() => {
 		logger.info({ type, privateKey }, 'RecoveryModal')
-		if (type === 'export') {
+		if(type === 'export') {
 			setPrivateKey(webwallet?.privateKey ?? '')
 		}
 	}, [type, webwallet])
 	useEffect(() => {
-		if (!grant?.workspace?.safe?.address || !grant?.workspace?.safe?.chainId) {
+		if(!grant?.workspace?.safe?.address || !grant?.workspace?.safe?.chainId) {
 			return
 		}
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		new SupportedPayouts().getSafe(parseInt(grant.workspace?.safe?.chainId), grant.workspace.safe.address).getTokenAndbalance().then((result: any) => {
 			logger.info({ result }, 'safe balance')
-			if (result?.value) {
+			if(result?.value) {
 				const total = result.value.reduce((acc: number, cur: { usdValueAmount: number }) => acc + cur.usdValueAmount, 0)
 				logger.info({ total }, 'balance total')
 				setSafeUSDAmount(total)
@@ -641,8 +649,8 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 		try {
 			new ethers.Wallet(e.target.value)
 			setPrivateKeyError('')
-		} catch (error) {
-			if (e.target.value !== '') {
+		} catch(error) {
+			if(e.target.value !== '') {
 				setPrivateKeyError('Invalid private key')
 			} else {
 				setPrivateKeyError('')
@@ -661,7 +669,7 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 
 	const onCopyAndSaveManuallyClick = () => {
 		const copied = copy(privateKey)
-		if (copied) {
+		if(copied) {
 			toast({
 				status: 'success',
 				title: 'Copied to clipboard',
@@ -671,10 +679,10 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 		}
 	}
 
-	const saveWallet = async () => {
+	const saveWallet = async() => {
 		const Wallet = new ethers.Wallet(privateKey)
 		const nonce = await getNonce(Wallet)
-		if (nonce) {
+		if(nonce) {
 			localStorage.setItem('webwalletPrivateKey', privateKey)
 			localStorage.setItem('nonce', nonce)
 			localStorage.removeItem('scwAddress')
@@ -700,11 +708,11 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 
 	}
 
-	if (!isMobile[0]) {
+	if(!isMobile[0]) {
 		return <MainNavBar />
-	} else if (requestProposal === true) {
+	} else if(requestProposal === true) {
 		return <SmallScreensRequestProposalNavBar />
-	} else if (dashboard === true) {
+	} else if(dashboard === true) {
 		return <SmallScreensDashboardNavBar />
 	} else {
 		return <MainNavBar />

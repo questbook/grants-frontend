@@ -2,8 +2,9 @@ import { useContext, useEffect, useMemo, useState } from 'react'
 import ReactLinkify from 'react-linkify'
 import { LockIcon } from '@chakra-ui/icons'
 import { Box, Button, Checkbox, Divider, Flex, Image, Text, Textarea, Tooltip } from '@chakra-ui/react'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
-import { GrantsProgramContext, SignInContext, WebwalletContext, SignInTitleContext,} from 'src/pages/_app'
+import { GrantsProgramContext, SignInContext, SignInTitleContext, WebwalletContext, } from 'src/pages/_app'
 import QuickReplyButton from 'src/screens/dashboard/_components/QuickReplyButton'
 import useAddComment from 'src/screens/dashboard/_hooks/useAddComment'
 import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
@@ -13,13 +14,12 @@ import { DashboardContext } from 'src/screens/dashboard/Context'
 import getAvatar from 'src/utils/avatarUtils'
 import { formatAddress, getFieldString } from 'src/utils/formattingUtils'
 import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
-import useCustomToast from 'src/libraries/hooks/useCustomToast';
 
 
 function Discussions() {
 	const toast = useCustomToast()
-	const {setSignIn} = useContext(SignInContext)!
-	const {setSignInTitle} = useContext(SignInTitleContext)!
+	const { setSignIn } = useContext(SignInContext)!
+	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const buildComponents = () => {
 		return (
 			<Flex
@@ -152,18 +152,12 @@ function Discussions() {
 								isLoading={step !== undefined}
 								onClick={
 									async() => {
-										if(isDisabled){
-											toast({
-												title: "Sign in to post a comment",
-												status: 'error',
-												duration: 3000,
-												isClosable: true,
-												position:'bottom'
-											})
+										if(isDisabled) {
 											setSignInTitle('postComment')
 											setSignIn(true)
-											return 
+											return
 										}
+
 										const ret = await addComment(text, isCommentPrivate, selectedTag)
 										if(ret) {
 											setText('')

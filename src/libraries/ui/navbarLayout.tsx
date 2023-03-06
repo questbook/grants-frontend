@@ -25,7 +25,7 @@ type Props = {
 	//Sidebar configs
 	renderSidebar?: boolean
 	dashboard?: boolean
-	openSignIn? : boolean
+	openSignIn?: boolean
 }
 
 function NavbarLayout({ openSignIn, children, renderNavbar, navbarConfig, renderSidebar, requestProposal, dashboard }: Props) {
@@ -47,7 +47,7 @@ function NavbarLayout({ openSignIn, children, renderNavbar, navbarConfig, render
 						{...navbarConfig}
 						requestProposal={requestProposal}
 						dashboard={dashboard}
-						openSignIn = {openSignIn}
+						openSignIn={openSignIn}
 					/>
 				)
 			}

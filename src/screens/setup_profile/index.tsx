@@ -14,7 +14,7 @@ import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/p
 import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 
 function SetupProfile() {
-	
+
 	const buildComponent = () => {
 		return inviteInfo ? view() : errorView()
 	}
@@ -109,7 +109,7 @@ function SetupProfile() {
 						mt={8}
 						variant='primaryLarge'
 						isLoading={!scwAddress}
-						loadingText={'Loading your wallet'}
+						loadingText='Loading your wallet'
 						isDisabled={isDisabled}
 						onClick={onCreateClick}>
 						<Text color='white'>
