@@ -2,39 +2,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Flex, Text, VStack } from '@chakra-ui/react'
 import { useSafeContext } from 'src/contexts/safeContext'
-import { Metamask, Phantom, WalletConnect } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
+import { availableWallets, solanaWallets } from 'src/libraries/utils/constants'
 import getErrorMessage from 'src/libraries/utils/error'
 import ConnectWalletButton from 'src/screens/dashboard/_components/FundBuilder/ConnectWalletButton'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
 import { Connector, useAccount, useConnect, useNetwork, useSwitchNetwork } from 'wagmi'
-
-const availableWallets = [{
-	name: 'Metamask',
-	icon: <Metamask
-		h={8}
-		w='33px' />,
-	isPopular: true,
-	id: 'injected',
-}, {
-	name: 'WalletConnect',
-	icon: <WalletConnect
-		h={8}
-		w='33px' />,
-	isPopular: false,
-	id: 'walletConnect'
-}]
-
-const solanaWallets = [{
-	name: 'Phantom',
-	icon: <Phantom
-		h={8}
-		w='33px' />,
-	isPopular: false,
-	id: 'phantom',
-}]
 
 interface Props {
     signerVerifiedState: SignerVerifiedState

@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AlertDialogOverlay, Box, Flex, Modal, ModalBody, ModalContent, Text, useToast, VStack } from '@chakra-ui/react'
 import { NetworkType } from 'src/constants/Networks'
-import { Metamask, Phantom, WalletConnect } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import VerifySignerErrorState from 'src/libraries/ui/LinkYourMultisigModal/VerifySignerErrorState'
+import { availableWallets, solanaWallets } from 'src/libraries/utils/constants'
 import ConnectWalletButton from 'src/screens/dashboard/_components/FundBuilder/ConnectWalletButton'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { useAccount, useConnect, useDisconnect, useNetwork } from 'wagmi'
@@ -188,31 +188,6 @@ const VerifySignerModal = ({
 	const { isError: isErrorConnecting, connect, connectors } = useConnect()
 	const { address } = useAccount()
 	const { chain } = useNetwork()
-
-	const availableWallets = [{
-		name: 'Metamask',
-		icon: <Metamask
-			h={8}
-			w='33px' />,
-		isPopular: true,
-		id: 'injected',
-	}, {
-		name: 'WalletConnect',
-		icon: <WalletConnect
-			h={8}
-			w='33px' />,
-		isPopular: false,
-		id: 'walletConnect'
-	}]
-
-	const solanaWallets = [{
-		name: 'Phantom',
-		icon: <Phantom
-			h={8}
-			w='33px' />,
-		isPopular: false,
-		id: 'phantom',
-	}]
 
 	const [isError, setIsError] = React.useState(false)
 

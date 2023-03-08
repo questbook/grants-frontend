@@ -1,3 +1,5 @@
+import { Metamask, Phantom, WalletConnect } from 'src/generated/icons'
+
 export const TXN_STEPS = ['Initiate transaction', 'Complete indexing', 'Complete transaction']
 
 export const MONTH_MAP: {[key: string]: string} = {
@@ -26,3 +28,28 @@ export const chainNames = new Map<string, string>([
 	['90001', 'Solana'],
 	['900001', 'Solana'],
 ])
+
+export const availableWallets = [{
+	name: 'Metamask',
+	icon: <Metamask
+		h={8}
+		w='33px' />,
+	isPopular: true,
+	id: 'injected',
+}, {
+	name: 'WalletConnect',
+	icon: <WalletConnect
+		h={8}
+		w='33px' />,
+	isPopular: false,
+	id: 'walletConnect'
+}]
+
+export const solanaWallets = [{
+	name: 'Phantom',
+	icon: <Phantom
+		h={8}
+		w='33px' />,
+	isPopular: false,
+	id: 'phantom',
+}]
