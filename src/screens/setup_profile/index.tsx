@@ -201,7 +201,7 @@ function SetupProfile() {
 
 SetupProfile.getLayout = function(page: ReactElement) {
 	return (
-		<NavbarLayout renderSidebar={false}>
+		<NavbarLayout>
 			{page}
 		</NavbarLayout>
 	)

@@ -1,49 +1,23 @@
-import { ChangeEvent, useContext, useEffect, useState } from 'react'
+import { ChangeEvent, useContext } from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { BsArrowLeft } from 'react-icons/bs'
 import { IoMdClose } from 'react-icons/io'
 import { Button, Flex, Icon, Text, useMediaQuery } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
-// import StepIndicator from 'src/libraries/ui/StepIndicator'
-import { SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
+import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
+import { getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
+import { GrantsProgramContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
 import SelectDropdown from 'src/screens/request_proposal/_components/SelectDropdown'
 import StepIndicator from 'src/screens/request_proposal/_components/StepIndicator'
-import { DropdownOption, RFPFormType } from 'src/screens/request_proposal/_utils/types'
+import useCreateRFP from 'src/screens/request_proposal/_hooks/useCreateRFP'
+import useUpdateRFP from 'src/screens/request_proposal/_hooks/useUpdateRFP'
+import { RFPFormContext } from 'src/screens/request_proposal/Context'
+import { ApplicantDetailsFieldType } from 'src/types'
 
-interface Props {
-	payoutMode: DropdownOption
-	setPayoutMode: (value: DropdownOption) => void
-	amount: number
-	setAmount: (value: number) => void
-	milestones: Array<string>
-	setMilestones: (value: Array<string>) => void
-	createRFP: () => void
-	rfpFormSubmissionType: RFPFormType
-	handleOnEdit: (fieldName: string, value: string | string []) => void
-	updateRFP: () => void
-}
-
-
-function Payouts(
-	{
-		payoutMode,
-		setPayoutMode,
-		amount,
-		setAmount,
-		milestones,
-		setMilestones,
-		createRFP,
-		rfpFormSubmissionType,
-		handleOnEdit,
-		updateRFP
-	}: Props) {
-	const buildComponentForSmallScreen = () => {
-		// eslint-disable-next-line no-restricted-syntax
-		enum PayoutMode {
-			IN_ONE_GO = 'in one go',
-			BASED_ON_MILESTONE = 'based on milestone'
-		}
+function Payouts() {
+	const buildComponent = () => {
 		return (
 			<>
 				{/* Start Proposal Submission Component */}
@@ -54,7 +28,11 @@ function Payouts(
 								className='backBtn'
 								variant='linkV2'
 								leftIcon={<BsArrowLeft />}
-								onClick={() => setCreatingProposalStep(2)}>
+								onClick={
+									() => {
+										setCreatingProposalStep(2)
+									}
+								}>
 								Back
 							</Button>
 						)
@@ -67,7 +45,7 @@ function Payouts(
 					height='100%'
 					gap={10}
 					alignSelf='flex-start'
-					// marginRight={24}
+					marginRight={bigScreen[0] ? 24 : 0}
 				>
 					<StepIndicator />
 					<Text
@@ -81,39 +59,29 @@ function Payouts(
 
 					<Flex
 						gap={4}
-						alignItems='center'
-						flexDirection='column'
-					>
-						<Text
-							variant='subheading'
-						>
+						alignItems={bigScreen[0] ? 'baseline' : 'center'}
+						direction={bigScreen[0] ? 'row' : 'column'}>
+						<Text variant='subheading'>
 							Accepted Proposals are paid out
 						</Text>
-						{/* <FlushedInput
-							placeholder='select one'
-							isDisabled={true}
-							value={payoutMode}
-							onChange={(e) => setPayoutMode(e.target.value)} /> */}
 
 						<SelectDropdown
 							options={payoutTypeOptions}
-							value={payoutMode}
+							value={{ label: payoutTypeOptions.find(opt => opt.value === rfpData?.payoutMode)?.label ?? '', value: rfpData?.payoutMode }}
 							onChange={
 								(item) => {
-									handleOnChangePayoutTypeOption(item)
 									handleOnEdit('payoutMode', item?.value!)
 								}
 							}
-
 						/>
 					</Flex>
 
 					{
-						(payoutMode.label === PayoutMode.BASED_ON_MILESTONE) && (
+						(rfpData?.payoutMode === 'milestones') && (
 							<>
 
 								{
-									Array.from(Array(milestoneCounter)).map((c, index) => {
+									rfpData?.milestones?.map((c, index) => {
 										return (
 											<>
 												<Flex
@@ -124,21 +92,21 @@ function Payouts(
 														color='gray.4'>
 														{index < 9 ? `0${index + 1}` : (index + 1)}
 													</Text>
-													{/* <FlushedInput
-														placeholder='Add milestone'
-														value={milestones[index]}
-														onChange={(e) => handleOnChange(e, index)} /> */}
+													{
+														bigScreen[0] && (
+															<FlushedInput
+																placeholder='Add milestone'
+																value={rfpData?.milestones[index]}
+																onChange={(e) => handleOnChange(e, index)} />
+														)
+													}
 													<Icon
 														as={IoMdClose}
 														cursor='pointer'
 														onClick={
 															() => {
-																if(milestoneCounter > 0) {
-																	setMilestoneCounter(milestoneCounter - 1)
-																}
-
-																setMilestones(milestones.filter((_, i) => i !== index))
-
+																const milestonesCopy = [...rfpData?.milestones].filter((m, i) => i !== index)
+																handleOnEdit('milestones', milestonesCopy)
 															}
 														}
 														// onMouseOver={() => setShowCrossIcon(true)}
@@ -150,192 +118,24 @@ function Payouts(
 								}
 								<Flex
 									gap={4}
-									alignItems='center'>
+									alignItems={bigScreen[0] ? 'baseline' : 'center'}>
 									<Button
 										variant='outline'
 										leftIcon={<AiOutlinePlus />}
 										borderColor='black'
-										onClick={() => handleClick()}>
-										Add another milestone
-									</Button>
-								</Flex>
-							</>
-						)
-					}
-					<Flex
-						flexDirection='column'
-						alignItems='center'
-					>
-						<Text variant='subheading'>
-							Per proposal payout is capped at
-						</Text>
-						<Flex
-							gap={4}
-							alignItems='baseline'>
+										isDisabled={rfpData?.payoutMode !== 'milestones' || rfpData?.milestones?.some(m => m === '')}
+										onClick={
+											() => {
+												if(!rfpData?.milestones) {
+													handleOnEdit('milestones', [''])
+													return
+												}
 
-							<FlushedInput
-								placeholder='enter your grant’s sweetspot'
-								type='number'
-								value={amount.toString()}
-								onChange={
-									(e) => {
-										setAmount(parseInt(e.target.value))
-										handleOnEdit('amount', e.target.value)
-									}
-								} />
-							<Text variant='subheading'>
-								USD.
-							</Text>
-						</Flex>
-					</Flex>
-					<Text
-						as='i'
-						color='black.3'
-						alignSelf='center'
-					>
-						Note: You can payout in any token.
-					</Text>
-					{/* CTA */}
-					<Flex
-						gap={8}
-						width='100%'
-						justifyContent='center'
-						// position='absolute'
-						// bottom='50px'
-					>
-						<Button
-							className='continueBtn'
-							variant='primaryMedium'
-							w='261px'
-							h='48px'
-							onClick={handleOnClickContinue}
-							isLoading={createGrantProgram}
-							loadingText='Creating grant program'
-							isDisabled={!payoutMode || !amount}
-						>
-							{/* {shouldCreateRFP ? 'Create RFP' : 'Continue'} */}
-							{ rfpFormSubmissionType === 'edit' ? 'Save All' : 'Create grant program'}
-						</Button>
-					</Flex>
-				</Flex>
-			</>
-		)
-	}
-
-	const buildComponentForBigScreen = () => {
-		// eslint-disable-next-line no-restricted-syntax
-		enum PayoutMode {
-			IN_ONE_GO = 'in one go',
-			BASED_ON_MILESTONE = 'based on milestone'
-		}
-		return (
-			<>
-				{/* Start Proposal Submission Component */}
-				<Flex alignSelf='flex-start'>
-					<Button
-						className='backBtn'
-						variant='linkV2'
-						leftIcon={<BsArrowLeft />}
-						onClick={
-							() => {
-								setCreatingProposalStep(2)
-							}
-						}>
-						Back
-					</Button>
-				</Flex>
-				<Flex
-					className='rightScreenCard'
-					flexDirection='column'
-					width='100%'
-					height='100%'
-					gap={10}
-					alignSelf='flex-start'
-					marginRight={24}
-				>
-					<StepIndicator />
-					<Text
-						alignSelf='center'
-						fontWeight='500'
-						fontSize='24px'
-						lineHeight='32px'
-					>
-						How will builders be paid?
-					</Text>
-
-					<Flex
-						gap={4}
-						alignItems='baseline'>
-						<Text variant='subheading'>
-							Accepted Proposals are paid out
-						</Text>
-						{/* <FlushedInput
-							placeholder='select one'
-							isDisabled={true}
-							value={payoutMode}
-							onChange={(e) => setPayoutMode(e.target.value)} /> */}
-
-						<SelectDropdown
-							options={payoutTypeOptions}
-							value={payoutMode}
-							onChange={
-								(item) => {
-									handleOnChangePayoutTypeOption(item)
-									handleOnEdit('payoutMode', item?.value!)
-								}
-							}
-
-						/>
-					</Flex>
-
-					{
-						(payoutMode.label === PayoutMode.BASED_ON_MILESTONE) && (
-							<>
-
-								{
-									Array.from(Array(milestoneCounter)).map((c, index) => {
-										return (
-											<>
-												<Flex
-													gap={4}
-													alignItems='baseline'>
-													<Text
-														variant='heading3'
-														color='gray.4'>
-														{index < 9 ? `0${index + 1}` : (index + 1)}
-													</Text>
-													<FlushedInput
-														placeholder='Add milestone'
-														value={milestones[index]}
-														onChange={(e) => handleOnChange(e, index)} />
-													<Icon
-														as={IoMdClose}
-														cursor='pointer'
-														onClick={
-															() => {
-																if(milestoneCounter > 0) {
-																	setMilestoneCounter(milestoneCounter - 1)
-																}
-
-																setMilestones(milestones.filter((_, i) => i !== index))
-
-															}
-														}
-														// onMouseOver={() => setShowCrossIcon(true)}
-													/>
-												</Flex>
-											</>
-										)
-									})
-								}
-								<Flex
-									gap={4}
-									alignItems='baseline'>
-									<Button
-										variant='outline'
-										leftIcon={<AiOutlinePlus />}
-										borderColor='black'
-										onClick={() => handleClick()}>
+												const milestones = [...rfpData?.milestones, '']
+												logger.info({ milestones }, 'Current milestones')
+												handleOnEdit('milestones', milestones)
+											}
+										}>
 										Add another milestone
 									</Button>
 								</Flex>
@@ -344,18 +144,18 @@ function Payouts(
 					}
 
 					<Flex
-						gap={4}
-						alignItems='baseline'>
+						gap={bigScreen[0] ? 4 : 0}
+						direction={bigScreen[0] ? 'row' : 'column'}
+						alignItems={bigScreen[0] ? 'baseline' : 'center'}>
 						<Text variant='subheading'>
 							Per proposal payout is capped at
 						</Text>
 						<FlushedInput
 							placeholder='enter your grant’s sweetspot'
 							type='number'
-							value={amount.toString()}
+							value={rfpData?.amount}
 							onChange={
 								(e) => {
-									setAmount(parseInt(e.target.value))
 									handleOnEdit('amount', e.target.value)
 								}
 							} />
@@ -383,96 +183,88 @@ function Payouts(
 							w='261px'
 							h='48px'
 							onClick={handleOnClickContinue}
-							isLoading={createGrantProgram}
+							isLoading={(rfpFormType === 'edit' ? updateStep : createStep) !== undefined}
 							loadingText='Creating grant program'
-							isDisabled={!payoutMode || !amount}
+							isDisabled={!rfpData?.payoutMode || !rfpData?.amount}
 						>
 							{/* {shouldCreateRFP ? 'Create RFP' : 'Continue'} */}
-							{ rfpFormSubmissionType === 'edit' ? 'Save All' : 'Create grant program'}
+							{ rfpFormType === 'edit' ? 'Save All' : 'Create grant program'}
 						</Button>
 					</Flex>
 				</Flex>
+				<NetworkTransactionFlowStepperModal
+					isOpen={(rfpFormType === 'edit' ? updateStep : createStep) !== undefined}
+					currentStepIndex={(rfpFormType === 'edit' ? updateStep : createStep) || 0}
+					viewTxnLink={getExplorerUrlForTxHash(chainId, (rfpFormType === 'edit' ? updateTxHash : createTxHash))}
+					onClose={
+						async() => {
+							setRole('admin')
+							router.push({
+								pathname: '/dashboard',
+								query: {
+									grantId: grantId.toLowerCase(),
+									chainId,
+								}
+							})
+						}
+					}
+					customStepsHeader={rfpFormType === 'edit' ? updateRFPStepsHeader : customStepsHeader}
+					customSteps={customSteps}
+				/>
 			</>
 		)
 	}
 
-	const { scwAddress, webwallet, setCreatingProposalStep } = useContext(WebwalletContext)!
+	const customStepsHeader = ['Creating your grant program on chain']
+	const updateRFPStepsHeader = ['Updating your grant program on chain']
+	const customSteps = ['Submitting transaction on chain', 'Uploading data to decentralized storage', 'Indexing the data to a subgraph']
+
+	const { setRole } = useContext(GrantsProgramContext)!
+	const { grantId, rfpData, setRFPData, rfpFormType, chainId } = useContext(RFPFormContext)!
+	const { webwallet, setCreatingProposalStep } = useContext(WebwalletContext)!
 	const { setSignIn } = useContext(SignInContext)!
 	const { setSignInTitle } = useContext(SignInTitleContext)!
-	const [milestoneCounter, setMilestoneCounter] = useState(!milestones ? 0 : milestones.length)
-	const [createGrantProgram, setCreateGrantProgram] = useState<boolean>(false)
-	const payoutTypeOptions = [{ value: 'in_one_go', label: 'in one go' }, { value: 'milestones', label: 'based on milestone' }]
+	// const [milestoneCounter, setMilestoneCounter] = useState(!rfpData?.milestones ? 0 : rfpData?.milestones.length)
+	const payoutTypeOptions = [{ value: 'in_one_go', label: 'In One Go' }, { value: 'milestones', label: 'Based on Milestones' }]
 
+	const { createRFP, currentStep: createStep, txHash: createTxHash } = useCreateRFP()
+	const { updateRFP, currentStep: updateStep, txHash: updateTxHash } = useUpdateRFP()
+
+	const router = useRouter()
 	const bigScreen = useMediaQuery('(min-width:601px)')
 
-	useEffect(() => {
-		if(!createGrantProgram) {
-			return
-		}
-
-		if(!scwAddress) {
-			return
-		}
-
-		if(!payoutMode) {
-			return
-		}
-
-		if(rfpFormSubmissionType === 'edit') {
-			updateRFP()
-		} else {
-			createRFP()
-		}
-
-		setCreateGrantProgram(false)
-	}, [scwAddress, createGrantProgram])
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const handleOnChangePayoutTypeOption = (item: any) => {
-		// console.log('payout changes to', item)
-		setPayoutMode({
-			label: item.label,
-			value: item.value,
-		})
-		handleOnEdit('payoutMode', item.value)
-	}
-
-	const handleClick = () => {
-		setMilestoneCounter(milestoneCounter + 1)
-	}
-
 	const handleOnChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-		const _milestones: string[] = [...milestones]
+		const _milestones: string[] = [...rfpData?.milestones]
 		if(index < _milestones.length) {
 			_milestones[index] = e.target.value
-			setMilestones(_milestones)
 			handleOnEdit('milestones', [..._milestones])
 		} else {
 			_milestones.push(e.target.value)
-			setMilestones(_milestones)
 			handleOnEdit('milestones', [..._milestones])
 		}
-
-
 	}
 
 	const handleOnClickContinue = () => {
-		logger.info({ rfpFormSubmissionType }, 'rfpFormSubmissionType')
+		logger.info({ rfpFormType, rfpData }, 'rfpFormType')
 		if(!webwallet) {
 			setSignInTitle('default')
 			setSignIn(true)
 			return
-
 		}
 
-		setCreateGrantProgram(true)
-
+		if(rfpFormType === 'edit') {
+			updateRFP()
+		} else {
+			createRFP()
+		}
 	}
 
-	if(bigScreen[0]) {
-		return buildComponentForBigScreen()
+	const handleOnEdit = (field: string, value: string | ApplicantDetailsFieldType[] | string []) => {
+		logger.info('rfp edited', { ...rfpData, [field]: value })
+		setRFPData({ ...rfpData, [field]: value })
 	}
 
-	return buildComponentForSmallScreen()
+	return buildComponent()
 
 }
 

@@ -4,6 +4,7 @@ import { Box, Button, Container, Flex, Image, Modal, ModalBody, ModalCloseButton
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
+import { defaultChainId } from 'src/constants/chains'
 import config from 'src/constants/config.json'
 import { ArrowLeft, Pencil, Qb, Settings, ShareForward } from 'src/generated/icons'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
@@ -23,6 +24,7 @@ import { copyShareGrantLink } from 'src/libraries/utils/copy'
 import { nFormatter } from 'src/libraries/utils/formatting'
 import { getNonce } from 'src/libraries/utils/gasless'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, SignInContext, WebwalletContext } from 'src/pages/_app'
 
 type Props = {
@@ -454,7 +456,8 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 											pathname: '/request_proposal/',
 											query: {
 												grantId: grant?.id,
-												workspaceId: grant?.workspace?.id
+												workspaceId: grant?.workspace?.id,
+												chainId: getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
 											},
 										})
 

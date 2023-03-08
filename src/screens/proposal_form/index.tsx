@@ -646,7 +646,6 @@ function ProposalForm() {
 ProposalForm.getLayout = (page: ReactElement) => {
 	return (
 		<NavbarLayout
-			renderSidebar={false}
 			openSignIn={true}>
 			<ProposalFormProvider>
 				{page}

@@ -301,14 +301,14 @@ function Discover() {
 														display={grantsForYou?.length ? '' : 'none'}
 													/>
 												</>
-											) : (
+											) : webwallet ? (
 												<Skeleton
 													width='100%'
 													h='5%'
 													startColor='gray.3'
 													endColor='gray.4'
 												/>
-											)
+											) : <Flex />
 									}
 									{/* </Box> */}
 									<Box
@@ -594,7 +594,6 @@ function Discover() {
 Discover.getLayout = function(page: ReactElement) {
 	return (
 		<NavbarLayout
-			renderSidebar={false}
 		>
 			<DiscoverProvider>
 				{page}

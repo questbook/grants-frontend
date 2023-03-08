@@ -1,4 +1,5 @@
 import { useContext, useEffect, useMemo } from 'react'
+import { ethers } from 'ethers'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
@@ -48,7 +49,7 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 
 	const toast = useCustomToast()
 
-	const call = async({ method, args, isDummy = false, shouldWaitForBlock = true }: CallProps) => {
+	const call = async({ method, args, isDummy = false, shouldWaitForBlock = true }: CallProps): Promise<ethers.providers.TransactionReceipt | undefined> => {
 		const logger = MAIN_LOGGER.child({ chainId, contractName, method })
 		try {
 			if(!contract) {
@@ -63,7 +64,7 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 			logger.info('Calling function', { args })
 
 			if(isDummy) {
-				return
+				return undefined
 			}
 
 			setTransactionStep?.(0)
@@ -104,7 +105,7 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 						setTransactionStep?.(undefined)
 					}
 				})
-				return true
+				return receipt
 			} else {
 				throw new Error('Transaction not sent')
 			}
@@ -117,7 +118,7 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 				title: message,
 				status: 'error'
 			})
-			return false
+			return undefined
 		}
 	}
 
