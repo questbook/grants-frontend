@@ -6,7 +6,6 @@ import logger from 'src/libraries/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, NotificationContext } from 'src/pages/_app'
 
-
 type Props =
 | {
     type: 'grant'

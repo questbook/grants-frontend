@@ -72,7 +72,7 @@ function UpdateProfileModal({ isOpen, onClose }: Props) {
 										flexProps={
 											{
 												w: '100%',
-											}
+											 }
 										} />
 								</Flex>
 								<Flex

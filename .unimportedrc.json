@@ -43,7 +43,6 @@
     "src/generated/contracts/ERC20Proxy.ts",
     "src/generated/contracts/factories/ERC20Proxy__factory.ts",
     "src/generated/contracts/factories/ERC20__factory.ts",
-    "src/libraries/validator/utils/generateTypes.ts",
-    "src/screens/dashboard/_components/FundBuilder/VerifyDrawer.tsx"
+    "src/libraries/validator/utils/generateTypes.ts"
   ]
 }

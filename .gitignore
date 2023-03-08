@@ -5,7 +5,6 @@ node_modules
 /.pnp
 .pnp.js
 src/.graphclientrc.yml
-src/.graphclient/
 
 # testing
 /coverage

@@ -6,7 +6,7 @@ import logger from 'src/libraries/logger'
 import { getAvatar } from 'src/libraries/utils'
 import { formatAddress, getFieldString } from 'src/libraries/utils/formatting'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
-import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
 import QuickReplyButton from 'src/screens/dashboard/_components/QuickReplyButton'
 import useAddComment from 'src/screens/dashboard/_hooks/useAddComment'
 import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
@@ -14,7 +14,10 @@ import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { CommentType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 
+
 function Discussions() {
+	const { setSignIn } = useContext(SignInContext)!
+	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const buildComponents = () => {
 		return (
 			<Flex
@@ -142,12 +145,17 @@ function Discussions() {
 								ml='auto'
 								// mr={['50px','50px','0']}
 								// paddingBottom='30px'
-								marginBottom={['50px', '50px', '0']}
+								marginBottom={['90px', '50px', '0']}
 								variant='primaryMedium'
-								isDisabled={isDisabled}
 								isLoading={step !== undefined}
 								onClick={
 									async() => {
+										if(isDisabled) {
+											setSignInTitle('postComment')
+											setSignIn(true)
+											return
+										}
+
 										const ret = await addComment(text, isCommentPrivate, selectedTag)
 										if(ret) {
 											setText('')
@@ -313,7 +321,7 @@ function Discussions() {
 		}
 
 		return text === ''
-	}, [text, step])
+	}, [text, step, isBiconomyInitialised])
 
 	const placeholder = useMemo(() => {
 		switch (selectedTag) {

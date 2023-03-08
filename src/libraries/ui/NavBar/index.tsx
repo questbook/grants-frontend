@@ -1,10 +1,8 @@
-import { ChangeEvent, useContext, useEffect, useMemo, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import React from 'react'
-import { Box, Button, Container, Flex, Image, Spacer, Text, useMediaQuery } from '@chakra-ui/react'
+import { Box, Button, Container, Flex, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Spacer, Text, useMediaQuery } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
-import copy from 'copy-to-clipboard'
 import { ethers } from 'ethers'
-import saveAs from 'file-saver'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
 import { ArrowLeft, Pencil, Qb, Settings, ShareForward } from 'src/generated/icons'
@@ -12,9 +10,12 @@ import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import AccountDetails from 'src/libraries/ui/NavBar/_components/AccountDetails'
+import BackupWallet from 'src/libraries/ui/NavBar/_components/BackupWallet'
+import useGoogleDriveWalletRecoveryReact from 'src/libraries/ui/NavBar/_components/googleRecovery'
 import ImportConfirmationModal from 'src/libraries/ui/NavBar/_components/ImportConfirmationModal'
 import NotificationPopover from 'src/libraries/ui/NavBar/_components/NotificationPopover'
-import RecoveryModal from 'src/libraries/ui/NavBar/_components/RecoveryModal'
+import RestoreWallet from 'src/libraries/ui/NavBar/_components/RestoreWallet'
+import SignIn from 'src/libraries/ui/NavBar/_components/SignIn'
 import UpdateProfileModal from 'src/libraries/ui/NavBar/_components/UpdateProfileModal'
 import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import { getAvatar } from 'src/libraries/utils'
@@ -22,15 +23,19 @@ import { copyShareGrantLink } from 'src/libraries/utils/copy'
 import { nFormatter } from 'src/libraries/utils/formatting'
 import { getNonce } from 'src/libraries/utils/gasless'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
-import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext, SignInContext, WebwalletContext } from 'src/pages/_app'
 
 type Props = {
 	bg?: string
 	requestProposal?: boolean
 	dashboard?: boolean
+	openSignIn?: boolean
 }
 
-function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
+function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props) {
+	const { webwallet } = useContext(WebwalletContext)!
+	const { importWebwallet } = useContext(WebwalletContext)!
+
 	const MainNavBar = () => (
 		<>
 			<Container
@@ -245,10 +250,11 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 							setIsRecoveryModalOpen(true)
 						}
 					}
-					setIsUpdateProfileModalOpen={setIsUpdateProfileModalOpen} />
+					setIsUpdateProfileModalOpen={setIsUpdateProfileModalOpen}
+					setSignIn={setSignIn} />
 
 			</Container>
-			<RecoveryModal
+			{/* <RecoveryModal
 				isOpen={isRecoveryModalOpen}
 				onClose={() => setIsRecoveryModalOpen(false)}
 				type={type}
@@ -257,7 +263,50 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 				onChange={onChange}
 				onImportClick={onImportClick}
 				onSaveAsTextClick={onSaveAsTextClick}
-				onCopyAndSaveManuallyClick={onCopyAndSaveManuallyClick} />
+				onCopyAndSaveManuallyClick={onCopyAndSaveManuallyClick} /> */}
+			<Modal
+				isCentered={true}
+				size='2xl'
+				isOpen={isRecoveryModalOpen}
+				onClose={() => setIsRecoveryModalOpen(false)}>
+				<ModalOverlay />
+				<ModalContent
+					maxW={['94%', '70%', '50%', '50%']}>
+					<ModalCloseButton />
+					<ModalBody>
+						<Flex
+							pb={6}
+							direction='column'
+							align='center'>
+							{
+								type === 'export' && (
+									<BackupWallet
+										exportWalletToGD={exportWalletToGD}
+										loading={loading}
+										inited={inited}
+										privateKey={privateKey}
+										isNewUser={false}
+									/>
+								)
+							}
+
+						</Flex>
+						{
+							type === 'import' && (
+								<RestoreWallet
+									loading={loading}
+									inited={inited}
+									importWebwallet={importWebwallet}
+									importWalletFromGD={importWalletFromGD}
+									closeModal={() => setIsRecoveryModalOpen(false)}
+									// isNewUser={false}
+								/>
+							)
+						}
+					</ModalBody>
+				</ModalContent>
+			</Modal>
+
 			<ImportConfirmationModal
 				isOpen={isImportConfirmationModalOpen}
 				onClose={() => setImportConfirmationModalOpen(false)}
@@ -265,6 +314,15 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 			<UpdateProfileModal
 				isOpen={isUpdateProfileModalOpen}
 				onClose={() => setIsUpdateProfileModalOpen(false)} />
+			<SignIn
+				isOpen={signIn && !!!webwallet}
+				setSignIn={setSignIn}
+				onClose={() => setSignIn(false)}
+				exportWalletToGD={exportWalletToGD}
+				importWalletFromGD={importWalletFromGD}
+				loading={loading}
+				inited={inited}
+			/>
 
 		</>
 	)
@@ -433,7 +491,7 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 					)
 				}
 			</Container>
-			<RecoveryModal
+			{/* <RecoveryModal
 				isOpen={isRecoveryModalOpen}
 				onClose={() => setIsRecoveryModalOpen(false)}
 				type={type}
@@ -442,7 +500,17 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 				onChange={onChange}
 				onImportClick={onImportClick}
 				onSaveAsTextClick={onSaveAsTextClick}
-				onCopyAndSaveManuallyClick={onCopyAndSaveManuallyClick} />
+				onCopyAndSaveManuallyClick={onCopyAndSaveManuallyClick} /> */}
+			<SignIn
+				isOpen={signIn && !!!webwallet}
+				setSignIn={setSignIn}
+				onClose={() => setSignIn(false)}
+				exportWalletToGD={exportWalletToGD}
+				importWalletFromGD={importWalletFromGD}
+				loading={loading}
+				inited={inited}
+			/>
+
 			<ImportConfirmationModal
 				isOpen={isImportConfirmationModalOpen}
 				onClose={() => setImportConfirmationModalOpen(false)}
@@ -495,15 +563,16 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 			</Container>
 		</>
 	)
+	const { inited, loading, importWalletFromGD, exportWalletToGD } = useGoogleDriveWalletRecoveryReact({ googleClientID: '986000900135-tscgujbu2tjq4qk9duljom0oimnb79la.apps.googleusercontent.com' })
+
 	const { grant, role, isLoading } = useContext(GrantsProgramContext)!
 	const { dashboardStep, setDashboardStep, createingProposalStep, setCreatingProposalStep } = useContext(WebwalletContext)!
-	const { webwallet } = useContext(WebwalletContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
+	const { signIn, setSignIn } = useContext(SignInContext)!
 	// const { searchString, setSearchString } = useContext(DAOSearchContext)!
 	const router = useRouter()
 	const toast = useCustomToast()
 	const [privateKey, setPrivateKey] = useState<string>('')
-	const [privateKeyError, setPrivateKeyError] = useState<string>('')
 	const [safeUSDAmount, setSafeUSDAmount] = useState<number>()
 
 	const [isRecoveryModalOpen, setIsRecoveryModalOpen] = useState<boolean>(false)
@@ -519,12 +588,27 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 	const isMobile = useMediaQuery(['(max-width:600px)'])
 
 	useEffect(() => {
+		if(webwallet === undefined) {
+			return
+		}
+
+		setTimeout(() => {
+			if(isMobile[0] && !!dashboard) {
+				setSignIn(true)
+				return
+			}
+
+			setSignIn(!!openSignIn && !!!webwallet)
+		}, 2000)
+
+	}, [webwallet, openSignIn, dashboard])
+
+	useEffect(() => {
 		logger.info({ type, privateKey }, 'RecoveryModal')
 		if(type === 'export') {
 			setPrivateKey(webwallet?.privateKey ?? '')
 		}
 	}, [type, webwallet])
-
 	useEffect(() => {
 		if(!grant?.workspace?.safe?.address || !grant?.workspace?.safe?.chainId) {
 			return
@@ -534,47 +618,12 @@ function NavBar({ bg = 'gray.1', requestProposal, dashboard }: Props) {
 		new SupportedPayouts().getSafe(parseInt(grant.workspace?.safe?.chainId), grant.workspace.safe.address).getTokenAndbalance().then((result: any) => {
 			logger.info({ result }, 'safe balance')
 			if(result?.value) {
-				const total = result.value.reduce((acc: number, cur: {usdValueAmount: number}) => acc + cur.usdValueAmount, 0)
+				const total = result.value.reduce((acc: number, cur: { usdValueAmount: number }) => acc + cur.usdValueAmount, 0)
 				logger.info({ total }, 'balance total')
 				setSafeUSDAmount(total)
 			}
 		})
 	}, [grant?.workspace?.safe])
-
-	const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setPrivateKey(e.target.value)
-		try {
-			new ethers.Wallet(e.target.value)
-			setPrivateKeyError('')
-		} catch(error) {
-			if(e.target.value !== '') {
-				setPrivateKeyError('Invalid private key')
-			} else {
-				setPrivateKeyError('')
-			}
-		}
-	}
-
-	const onImportClick = () => {
-		setImportConfirmationModalOpen(true)
-	}
-
-	const onSaveAsTextClick = () => {
-		var blob = new Blob([privateKey], { type: 'text/plain;charset=utf-8' })
-		saveAs(blob, 'key.txt', { autoBom: true })
-	}
-
-	const onCopyAndSaveManuallyClick = () => {
-		const copied = copy(privateKey)
-		if(copied) {
-			toast({
-				status: 'success',
-				title: 'Copied to clipboard',
-				duration: 3000,
-				isClosable: true,
-			})
-		}
-	}
 
 	const saveWallet = async() => {
 		const Wallet = new ethers.Wallet(privateKey)

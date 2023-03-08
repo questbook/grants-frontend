@@ -16,7 +16,7 @@ import SearchField from 'src/libraries/ui/SearchField'
 import { chainNames } from 'src/libraries/utils/constants'
 import getErrorMessage from 'src/libraries/utils/error'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
-import { ApiClientsContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
+import { ApiClientsContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import RFPGrid from 'src/screens/discover/_components/rfpGrid'
 import { DiscoverContext, DiscoverProvider } from 'src/screens/discover/Context'
 import HeroBanner from 'src/screens/discover/HeroBanner'
@@ -26,7 +26,8 @@ import { Roles } from 'src/types'
 function Discover() {
 	const router = useRouter()
 	const { inviteInfo } = useContext(ApiClientsContext)!
-
+	const { webwallet } = useContext(WebwalletContext)!
+	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const buildComponent = () => {
 		return inviteInfo ? inviteView() : normalView
 	}
@@ -147,6 +148,7 @@ function Discover() {
 	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, isLoading } = useContext(DiscoverContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString } = useContext(DAOSearchContext)!
+	const { setSignIn } = useContext(SignInContext)!
 
 	const toast = useCustomToast()
 	const { isBiconomyInitialised, updateDaoVisibility, updateSection } = useUpdateDaoVisibility()
@@ -163,7 +165,7 @@ function Discover() {
 	const [sectionName, setSectionName] = useState('')
 	const [filterGrantName, setFilterGrantName] = useState('')
 
-	const [imageFile, setImageFile] = useState<{file: File | null, hash?: string}>({ file: null })
+	const [imageFile, setImageFile] = useState<{ file: File | null, hash?: string }>({ file: null })
 
 	const onDaoVisibilityUpdate = (daoId: string, chainId: SupportedChainId, visibleState: boolean) => {
 		// check if any changes have been made for the chain id passed
@@ -297,7 +299,7 @@ function Discover() {
 														borderColor='gray.3'
 														mt={8}
 														display={grantsForYou?.length ? '' : 'none'}
-										 />
+													/>
 												</>
 											) : (
 												<Skeleton
@@ -426,7 +428,7 @@ function Discover() {
 									grants={searchString === undefined || searchString === '' ? grantsForAll : grantsForAll?.filter(g => g.title.includes(searchString))}
 									changedVisibilityState={changedVisibility}
 									filter={filterGrantName}
-						    	/>
+								/>
 							</>
 
 						)
@@ -515,12 +517,29 @@ function Discover() {
 		)
 	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName])
 
+	useEffect(() => {
+		if(!inviteInfo) {
+			setSignInTitle('default')
+			return
+		}
 
+		setTimeout(() => {
+			setSignInTitle(inviteInfo?.role === 0 ? 'admin' : 'reviewer')
+			setSignIn(true)
+		}, 2000)
+
+	}, [inviteInfo])
 	useEffect(() => {
 		logger.info('section update', unsavedSectionGrants)
 	}, [unsavedSectionGrants])
 
 	const onGetStartedClick = () => {
+		if(!webwallet) {
+			setSignInTitle(inviteInfo?.role === 0 ? 'admin' : 'reviewer')
+			setSignIn(true)
+			return
+		}
+
 		if(!grantProgram?.id) {
 			return
 		}

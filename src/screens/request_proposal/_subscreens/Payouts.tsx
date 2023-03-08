@@ -1,11 +1,12 @@
-import { ChangeEvent, useContext, useState } from 'react'
+import { ChangeEvent, useContext, useEffect, useState } from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { BsArrowLeft } from 'react-icons/bs'
 import { IoMdClose } from 'react-icons/io'
 import { Button, Flex, Icon, Text, useMediaQuery } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
-import { WebwalletContext } from 'src/pages/_app'
+// import StepIndicator from 'src/libraries/ui/StepIndicator'
+import { SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
 import SelectDropdown from 'src/screens/request_proposal/_components/SelectDropdown'
 import StepIndicator from 'src/screens/request_proposal/_components/StepIndicator'
 import { DropdownOption, RFPFormType } from 'src/screens/request_proposal/_utils/types'
@@ -208,6 +209,8 @@ function Payouts(
 							w='261px'
 							h='48px'
 							onClick={handleOnClickContinue}
+							isLoading={createGrantProgram}
+							loadingText='Creating grant program'
 							isDisabled={!payoutMode || !amount}
 						>
 							{/* {shouldCreateRFP ? 'Create RFP' : 'Continue'} */}
@@ -380,6 +383,8 @@ function Payouts(
 							w='261px'
 							h='48px'
 							onClick={handleOnClickContinue}
+							isLoading={createGrantProgram}
+							loadingText='Creating grant program'
 							isDisabled={!payoutMode || !amount}
 						>
 							{/* {shouldCreateRFP ? 'Create RFP' : 'Continue'} */}
@@ -391,13 +396,36 @@ function Payouts(
 		)
 	}
 
-	const { setCreatingProposalStep } = useContext(WebwalletContext)!
+	const { scwAddress, webwallet, setCreatingProposalStep } = useContext(WebwalletContext)!
+	const { setSignIn } = useContext(SignInContext)!
+	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const [milestoneCounter, setMilestoneCounter] = useState(!milestones ? 0 : milestones.length)
-
+	const [createGrantProgram, setCreateGrantProgram] = useState<boolean>(false)
 	const payoutTypeOptions = [{ value: 'in_one_go', label: 'in one go' }, { value: 'milestones', label: 'based on milestone' }]
 
 	const bigScreen = useMediaQuery('(min-width:601px)')
 
+	useEffect(() => {
+		if(!createGrantProgram) {
+			return
+		}
+
+		if(!scwAddress) {
+			return
+		}
+
+		if(!payoutMode) {
+			return
+		}
+
+		if(rfpFormSubmissionType === 'edit') {
+			updateRFP()
+		} else {
+			createRFP()
+		}
+
+		setCreateGrantProgram(false)
+	}, [scwAddress, createGrantProgram])
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const handleOnChangePayoutTypeOption = (item: any) => {
 		// console.log('payout changes to', item)
@@ -429,11 +457,15 @@ function Payouts(
 
 	const handleOnClickContinue = () => {
 		logger.info({ rfpFormSubmissionType }, 'rfpFormSubmissionType')
-		if(rfpFormSubmissionType === 'edit') {
-			updateRFP()
-		} else {
-			createRFP()
+		if(!webwallet) {
+			setSignInTitle('default')
+			setSignIn(true)
+			return
+
 		}
+
+		setCreateGrantProgram(true)
+
 	}
 
 	if(bigScreen[0]) {

@@ -9,7 +9,6 @@ import {
 	ValidationApi,
 } from '@questbook/service-validator-client'
 import { ethers, Wallet } from 'ethers'
-import { AnimatePresence } from 'framer-motion'
 import { NextPage } from 'next'
 import type { AppContext, AppProps } from 'next/app'
 import App from 'next/app'
@@ -137,9 +136,24 @@ export const GrantsProgramContext = createContext<GrantProgramContextType | null
 
 export const NotificationContext = createContext<NotificationContextType | null>(null)
 
+export const SignInMethodContext = createContext<{
+	signInMethod: 'newWallet' | 'existingWallet' | 'choosing'
+	setSignInMethod: (signInMethod: 'newWallet' | 'existingWallet' | 'choosing') => void
+
+		} | null>(null)
+export const SignInContext = createContext<{
+	signIn: boolean
+	setSignIn: (signIn: boolean) => void
+		} | null>(null)
+
+export const SignInTitleContext = createContext<{
+	signInTitle: 'admin' | 'reviewer' | 'default' | 'postComment' | 'submitProposal'
+	setSignInTitle: (signInTitle: 'admin' | 'reviewer' | 'default' | 'postComment' | 'submitProposal') => void
+		} | null>(null)
+
 export const WebwalletContext = createContext<{
-	webwallet?: Wallet
-	setWebwallet: (webwallet?: Wallet) => void
+	webwallet?: Wallet | null
+	setWebwallet: (webwallet?: Wallet | null) => void
 
 	network?: SupportedChainId
 	switchNetwork: (newNetwork?: SupportedChainId) => void
@@ -165,13 +179,13 @@ export const BiconomyContext = createContext<{
 	setBiconomyDaoObjs: (biconomyDaoObjs: any) => void
 	initiateBiconomy: (chainId: string) => Promise<InitiateBiconomyReturnType | undefined>
 	loadingBiconomyMap: { [_: string]: boolean }
-	biconomyWalletClients?: {[key: string]: BiconomyWalletClient}
-	setBiconomyWalletClients: (biconomyWalletClients?: {[key: string]: BiconomyWalletClient}) => void
+	biconomyWalletClients?: { [key: string]: BiconomyWalletClient }
+	setBiconomyWalletClients: (biconomyWalletClients?: { [key: string]: BiconomyWalletClient }) => void
 		} | null>(null)
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [network, switchNetwork] = useState<SupportedChainId>(defaultChainId)
-	const [webwallet, setWebwallet] = useState<Wallet>()
+	const [webwallet, setWebwallet] = useState<Wallet | null>()
 	const [workspace, setWorkspace] = useState<MinimalWorkspace>()
 	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
 
@@ -180,8 +194,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 
 	const [scwAddress, setScwAddress] = useState<string>()
-	const [biconomyDaoObjs, setBiconomyDaoObjs] = useState<{[key: string]: typeof BiconomyContext}>()
-	const [biconomyWalletClients, setBiconomyWalletClients] = useState<{[key: string]: BiconomyWalletClient}>()
+	const [biconomyDaoObjs, setBiconomyDaoObjs] = useState<{ [key: string]: typeof BiconomyContext }>()
+	const [biconomyWalletClients, setBiconomyWalletClients] = useState<{ [key: string]: BiconomyWalletClient }>()
 	const [nonce, setNonce] = useState<string>()
 	const [loadingNonce, setLoadingNonce] = useState<boolean>(false)
 	const [isNewUser, setIsNewUser] = useState<boolean>(true)
@@ -190,7 +204,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [dashboardStep, setDashboardStep] = useState<boolean>(false)
 	const [createingProposalStep, setCreatingProposalStep] = useState<number>(1)
 	const [biconomyLoading, setBiconomyLoading] = useState<{ [chainId: string]: boolean }>({})
-
+	const [signInMethod, setSignInMethod] = useState<'newWallet' | 'existingWallet' | 'choosing'>('choosing')
+	const [signInTitle, setSignInTitle] = useState<'admin' | 'reviewer' | 'default' | 'postComment' | 'submitProposal'>('default')
+	const [signIn, setSignIn] = useState<boolean>(false)
 	// store the chainId that was most recently asked to be init
 	const mostRecentInitChainId = useRef<string>()
 	// ref to store all the chains that are loading biconomy
@@ -207,7 +223,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 	useEffect(() => {
 		hotjar.initialize(3167823, 6)
-	  }, [])
+	}, [])
 
 	const initiateBiconomyUnsafe = useCallback(async(chainId: string) => {
 		if(!webwallet) {
@@ -360,16 +376,16 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		}
 
 		(async() => {
-		  try {
+			try {
 				await addAuthorizedUser(webwallet?.address!)
 				const newNonce = await getUseNonce()
 				setNonce(newNonce)
-		  } catch(err) {
+			} catch(err) {
 				logger.error({ err }, 'error in adding authorized user')
-		  }
+			}
 		})()
 
-	  }, [webwallet, nonce])
+	}, [webwallet, nonce])
 
 	useEffect(() => {
 		setWebwallet(createWebWallet())
@@ -420,9 +436,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		let newWebwallet = Wallet.createRandom()
 
 		if(!privateKey) {
-			setIsNewUser(true)
-			localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
-			return newWebwallet
+			return null
 		}
 
 		try {
@@ -430,16 +444,26 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			setIsNewUser(false)
 			return newWebwallet
 		} catch{
-			localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
-			setIsNewUser(true)
-			return newWebwallet
+			return undefined
 		}
 	}
 
+	const SignInMethodContextValue = useMemo(() => ({
+		signInMethod,
+		setSignInMethod
+	}), [signInMethod, setSignInMethod])
+	const SignInContextValue = useMemo(() => ({
+		signIn,
+		setSignIn
+	}), [signIn, setSignIn])
+	const SignInTitleContextValue = useMemo(() => ({
+		signInTitle,
+		setSignInTitle
+	}), [signInTitle, setSignInTitle])
 	const webwalletContextValue = useMemo(
 		() => ({
 			webwallet: webwallet,
-			setWebwallet: (newWebwallet?: Wallet) => {
+			setWebwallet: (newWebwallet?: Wallet | null) => {
 				if(newWebwallet) {
 					localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
 				} else {
@@ -626,22 +650,28 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			<WagmiConfig client={client}>
 				<ApiClientsContext.Provider value={apiClients}>
 					<NotificationContext.Provider value={notificationContext}>
-						<WebwalletContext.Provider value={webwalletContextValue}>
-							<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
-								<SafeProvider>
-									<DAOSearchContextMaker>
-										<GrantsProgramContext.Provider value={grantProgram}>
-											<QBAdminsContextMaker>
-												<ChakraProvider theme={theme}>
-													{getLayout(<Component {...pageProps} />)}
-													<QRCodeModal />
-												</ChakraProvider>
-											</QBAdminsContextMaker>
-										</GrantsProgramContext.Provider>
-									</DAOSearchContextMaker>
-								</SafeProvider>
-							</BiconomyContext.Provider>
-						</WebwalletContext.Provider>
+						<SignInContext.Provider value={SignInContextValue}>
+							<SignInTitleContext.Provider value={SignInTitleContextValue}>
+								<SignInMethodContext.Provider value={SignInMethodContextValue}>
+									<WebwalletContext.Provider value={webwalletContextValue}>
+										<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
+											<SafeProvider>
+												<DAOSearchContextMaker>
+													<GrantsProgramContext.Provider value={grantProgram}>
+														<QBAdminsContextMaker>
+															<ChakraProvider theme={theme}>
+																{getLayout(<Component {...pageProps} />)}
+																<QRCodeModal />
+															</ChakraProvider>
+														</QBAdminsContextMaker>
+													</GrantsProgramContext.Provider>
+												</DAOSearchContextMaker>
+											</SafeProvider>
+										</BiconomyContext.Provider>
+									</WebwalletContext.Provider>
+								</SignInMethodContext.Provider>
+							</SignInTitleContext.Provider>
+						</SignInContext.Provider>
 					</NotificationContext.Provider>
 				</ApiClientsContext.Provider>
 			</WagmiConfig>

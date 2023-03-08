@@ -14,6 +14,7 @@ import { getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 
 function SetupProfile() {
+
 	const buildComponent = () => {
 		return inviteInfo ? view() : errorView()
 	}
@@ -107,6 +108,8 @@ function SetupProfile() {
 					<Button
 						mt={8}
 						variant='primaryLarge'
+						isLoading={!scwAddress}
+						loadingText='Loading your wallet'
 						isDisabled={isDisabled}
 						onClick={onCreateClick}>
 						<Text color='white'>
