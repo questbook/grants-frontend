@@ -101,9 +101,6 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 					title: title ?? `Transaction executed${shouldWaitForBlock ? ' and indexed' : ''}`,
 					status: 'success',
 					duration: 3000,
-					onCloseComplete: () => {
-						setTransactionStep?.(undefined)
-					}
 				})
 				return receipt
 			} else {

@@ -14,7 +14,7 @@ import { ApplicantDetailsFieldType } from 'src/types'
 export default function useUpdateRFP() {
 	const [error, setError] = React.useState<string>()
 	const [loading, setLoading] = React.useState(false)
-	const [currentStep, setCurrentStep] = React.useState<number | undefined>()
+	const [currentStep, setCurrentStep] = React.useState<number>()
 	const [transactionHash, setTransactionHash] = React.useState<string>()
 	const { role } = useContext(GrantsProgramContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
@@ -37,13 +37,11 @@ export default function useUpdateRFP() {
 		setLoading(true)
 
 		const { proposalName, startDate, endDate, rubrics, allApplicantDetails, link, reviewMechanism, payoutMode, amount, milestones } = rfpData
-		const allFieldsObject: {[key: string]: ApplicantDetailsFieldType} = {}
 
-		if(allApplicantDetails) {
-			for(let i = 0; i < allApplicantDetails.length; i++) {
-				allFieldsObject[allApplicantDetails[i].id] = allApplicantDetails[i]
-			}
-		}
+		const fieldMap: {[key: string]: ApplicantDetailsFieldType} = {}
+		allApplicantDetails?.forEach((field) => {
+			fieldMap[field.id] = field
+		})
 
 		const processedRubrics: { [key: number]: { title: string, details: string, maximumPoints: number } } = {}
 		if(rubrics) {
@@ -51,7 +49,7 @@ export default function useUpdateRFP() {
 				processedRubrics[index] = {
 					title: rubrics[index],
 					details: '',
-					maximumPoints: 5
+					maximumPoints: rfpData?.reviewMechanism === 'voting' ? 1 : 5
 				}
 			})
 		}
@@ -60,7 +58,7 @@ export default function useUpdateRFP() {
 			title: proposalName,
 			startDate: startDate,
 			endDate: endDate,
-			fields: allFieldsObject,
+			fields: fieldMap,
 			link: link,
 			docIpfsHash: '',
 			payoutType: payoutMode,
@@ -101,7 +99,7 @@ export default function useUpdateRFP() {
 			logger.info({ rfpUpdateIpfsHash }, 'UpdateWorkspace IPFS')
 
 			let rubricHash = ''
-			if(reviewMechanism === 'rubrics') {
+			if(reviewMechanism !== '') {
 				logger.info('rubrics', processedRubrics)
 				const { hash: auxRubricHash } = await validateAndUploadToIpfs('RubricSetRequest', {
 					rubric: {
@@ -120,8 +118,6 @@ export default function useUpdateRFP() {
 			const methodArgs = [grantId, Number(workspaceId), rfpUpdateIpfsHash, rubricHash, WORKSPACE_REGISTRY_ADDRESS[chainId] ]
 			logger.info({ methodArgs }, 'Update RFP Method args')
 			await call({ method: 'updateGrant', args: methodArgs })
-
-			setLoading(false)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			setCurrentStep(undefined)

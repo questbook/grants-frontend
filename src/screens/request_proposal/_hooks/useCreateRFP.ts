@@ -156,9 +156,9 @@ export default function useCreateRFP() {
 					grantManagers: [scwAddress!],
 				}
 
-				// if(rfpData?.reviewMechanism) {
-				// 	data['reviewType'] = review
-				// }
+				if(rfpData?.reviewMechanism) {
+					data['reviewType'] = rfpData?.reviewMechanism
+				}
 
 				// validate grant data
 				const { hash: grantCreateIpfsHash } = await validateAndUploadToIpfs(
@@ -167,7 +167,7 @@ export default function useCreateRFP() {
 				)
 
 				let rubricHash = ''
-				if(rfpData?.reviewMechanism === 'rubrics') {
+				if(rfpData?.reviewMechanism !== '') {
 					const { hash: auxRubricHash } = await validateAndUploadToIpfs(
 						'RubricSetRequest',
 						{

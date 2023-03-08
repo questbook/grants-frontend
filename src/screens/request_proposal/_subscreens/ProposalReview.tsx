@@ -190,7 +190,7 @@ function ProposalReview() {
 		}
 
 		logger.info('Setting rubrics: ', rubrics)
-		handleOnEdit('rubrics', rubricInputValues)
+		handleOnEdit('rubrics', rfpData?.reviewMechanism === 'voting' ? ['Vote for'] : rubricInputValues)
 	}
 
 	const handleOnChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
@@ -200,7 +200,7 @@ function ProposalReview() {
 	}
 
 	const handleOnEdit = (field: string, value: string | ApplicantDetailsFieldType[] | string []) => {
-		logger.info('rfp edited', { ...rfpData, [field]: value })
+		logger.info('rfp edited', { field: value }, { ...rfpData, [field]: value })
 		setRFPData({ ...rfpData, [field]: value })
 	}
 
