@@ -21,14 +21,21 @@ export const uploadToIPFS = async(data: string | Blob | null): Promise<{ hash: s
 }
 
 export const getFromIPFS = async(hash: string): Promise<string> => {
-	if(hash === '') {
+	if(hash === '' || typeof window === 'undefined') {
 		return ''
+	}
+
+	const cached = localStorage.getItem(hash)
+	if(cached !== null) {
+		return cached
 	}
 
 	try {
 		// console.log(hash)
 		const fetchResult = await fetch(`${IPFS_DOWNLOAD_ENDPOINT}?arg=${hash}`)
-		return await fetchResult.text()
+		const text = await fetchResult.text()
+		localStorage.setItem(hash, text)
+		return text
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch(e: any) {
 		// console.log(e)
@@ -38,7 +45,9 @@ export const getFromIPFS = async(hash: string): Promise<string> => {
 	try {
 		// console.log(hash)
 		const fetchResult = await fetch(`https://ipfs.io/ipfs/${hash}`)
-		return await fetchResult.text()
+		const text = await fetchResult.text()
+		localStorage.setItem(hash, text)
+		return text
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch(e: any) {
 		// console.log(e)

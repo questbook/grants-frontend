@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { BsArrowLeft } from 'react-icons/bs'
-import { Button, Flex, Icon, Image, Input, ModalBody, Text } from '@chakra-ui/react'
+import { Button, Flex, Input, ModalBody, Text } from '@chakra-ui/react'
 import { utils, Wallet } from 'ethers'
 import { Gdrive } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
