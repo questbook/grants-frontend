@@ -1,5 +1,0 @@
-query getAllApplicationsOnANetwork {
-  grantApplications {
-    id
-  }
-}

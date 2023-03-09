@@ -5,39 +5,13 @@ import { Button, Flex, Text } from '@chakra-ui/react'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
-import StepIndicator from 'src/libraries/ui/StepIndicator'
 import { WebwalletContext } from 'src/pages/_app'
 import SelectDropdown from 'src/screens/request_proposal/_components/SelectDropdown'
-import { DropdownOption, RFPFormType } from 'src/screens/request_proposal/_utils/types'
+import StepIndicator from 'src/screens/request_proposal/_components/StepIndicator'
+import { RFPFormContext } from 'src/screens/request_proposal/Context'
+import { ApplicantDetailsFieldType } from 'src/types'
 
-interface Props {
-	reviewMechanism: DropdownOption
-	setReviewMechanism: (value: DropdownOption) => void
-	rubrics: {}
-	setRubrics: (value: {}) => void
-	rubricInputValues: string[]
-	setRubricInputValues: (value: string[]) => void
-	step: number
-	setStep: (value: number) => void
-	rfpFormSubmissionType: RFPFormType
-	handleOnEdit: (fieldName: string, value: string | string []) => void
-}
-
-function ProposalReview(
-	{
-		// numberOfReviewers,
-		// setNumberOfReviewers,
-		reviewMechanism,
-		setReviewMechanism,
-		rubricInputValues,
-		setRubricInputValues,
-		setRubrics,
-		step,
-		setStep,
-		rfpFormSubmissionType,
-		handleOnEdit
-	}: Props) {
-
+function ProposalReview() {
 	const buildComponent = () => {
 		return (
 			<>
@@ -64,9 +38,7 @@ function ProposalReview(
 					// marginRight={24}
 				>
 					{/* TODO: Add Steps complete indicator */}
-					<StepIndicator
-						step={step}
-						formType={rfpFormSubmissionType} />
+					<StepIndicator />
 					<Text
 						alignSelf='center'
 						fontWeight='500'
@@ -75,84 +47,31 @@ function ProposalReview(
 						How will proposals be reviewed?
 					</Text>
 
-					{/* <Flex
-						gap={4}
-						alignItems='baseline'>
-						<Text variant='v2_subheading'>
-							Assign
-						</Text>
-						<FlushedInput
-							placeholder='1'
-							value={numberOfReviewers.toString()}
-							type='number'
-							onChange={
-								(e) => {
-									setNumberOfReviewers(parseInt(e.target.value))
-									handleOnEdit('numberOfReviewers', e.target.value)
-								}
-							} />
-						<Text variant='v2_subheading'>
-							reviewer
-							{numberOfReviewers > 1 ? 's' : ''}
-							{' '}
-							for an incoming proposal automatically.
-						</Text>
-					</Flex> */}
-
 					<Flex
 						gap={4}
 						alignItems='baseline'
 					>
 						<Text
-							variant='v2_subheading'
+							variant='subheading'
 							fontSize={['16px', '20px']}
 						>
 							Review will be based on
 						</Text>
-						{/* <FlushedInput
-							placeholder='Select one'
-							value={reviewMechanism}
-							isDisabled={true}
-							onChange={
-								(e) => {
-									setReviewMechanism(e.target.value)
-								}
-							} /> */}
 						<SelectDropdown
 							options={reviewMechanismOptions}
 							placeholder='Select One'
-							value={reviewMechanism}
+							value={{ label: reviewMechanismOptions.find(opt => opt.value === rfpData?.reviewMechanism)?.label ?? '', value: rfpData?.reviewMechanism }}
 							onChange={
 								(item) => {
-									handleOnChangeReviewMechanismOption(item)
 									handleOnEdit('reviewMechanism', item?.value!)
 								}
 							}
 						/>
 					</Flex>
 
-					{/* <Flex
-						gap={4}
-						alignItems='baseline'>
-						<Button
-							variant='outline'
-							leftIcon={<AiOutlinePlus />}
-							borderColor='black'
-							onClick={() => setReviewMechanism('Voting')}>
-							Community Voting
-						</Button>
-						<Button
-							variant='outline'
-							leftIcon={<AiOutlinePlus />}
-							borderColor='black'
-							onClick={() => setReviewMechanism('Rubric')}>
-							Rubric
-						</Button>
-					</Flex> */}
-
 					{/* Rubric Selected */}
 					{
-						reviewMechanism.label === 'Rubric'
+						rfpData?.reviewMechanism === 'rubrics'
 						&&
 						(
 							<>
@@ -161,7 +80,7 @@ function ProposalReview(
 									alignItems='baseline'
 									wrap='wrap'>
 									<Text
-										variant='v2_subheading'
+										variant='subheading'
 										fontSize={['16px', '20px']}
 									>
 										Evaluation rubrics will include
@@ -175,7 +94,7 @@ function ProposalReview(
 														placeholder='Add your own'
 														value={rubricInputValues[index]}
 														onChange={(e) => handleOnChange(e, index)} />
-													<Text variant='v2_subheading'>
+													<Text variant='subheading'>
 														,
 													</Text>
 												</>
@@ -206,13 +125,16 @@ function ProposalReview(
 						gap={8}
 						width='100%'
 						justifyContent='flex-end'
-						// position='absolute'
-						// bottom='50px'
 					>
 						<Button
-							display={rfpFormSubmissionType === 'edit' ? 'none' : 'block'}
+							display={rfpFormType === 'edit' ? 'none' : 'block'}
 							variant='link'
-							onClick={handleSkip}>
+							onClick={
+								() => {
+									handleOnEdit('reviewMechanism', '')
+									setCreatingProposalStep(3)
+								}
+							}>
 							Skip for now
 						</Button>
 						<Button
@@ -225,9 +147,8 @@ function ProposalReview(
 									handleOnClickContinue()
 								}
 							}
-							isDisabled={!reviewMechanism} >
-							{ rfpFormSubmissionType === 'edit' ? 'Save & Continue' : 'Continue'}
-
+							isDisabled={!rfpData?.reviewMechanism} >
+							{ rfpFormType === 'edit' ? 'Save & Continue' : 'Continue'}
 						</Button>
 					</Flex>
 
@@ -237,44 +158,28 @@ function ProposalReview(
 		)
 	}
 
-	// const [rubricInputValues, setRubricInputValues] = useState<DynamicInputValues>({ 0: 'Team competence', 1: 'Idea Quality', 2: 'Relevance to our ecosystem' })
+	const { rfpData, setRFPData, rfpFormType } = useContext(RFPFormContext)!
+
+	const [rubricInputValues, setRubricInputValues] = useState<string[]>(['Team competence', 'Idea Quality', 'Relevance to our ecosystem'])
 	const [rubricsCounter, setRubricsCounter] = useState(rubricInputValues.length)
-	const { createingProposalStep, setCreatingProposalStep } = useContext(WebwalletContext)!
+	const { setCreatingProposalStep } = useContext(WebwalletContext)!
 	const reviewMechanismOptions = [{ label: 'Voting', value: 'voting' }, { label: 'Rubric', value: 'rubrics' }, { label: 'Community voting', value: 'Community voting', isDisabled: true }]
 	const bigScreen = useMediaQuery('(min-width:601px)')
 	const handleClick = () => {
 		setRubricsCounter(rubricsCounter + 1)
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const handleOnChangeReviewMechanismOption = (item: any) => {
-		// console.log('review changes to', item)
-		setReviewMechanism({
-			label: item.label,
-			value: item.value
-		})
-	}
-
-	const handleSkip = () => {
-		setReviewMechanism({
-			label: '',
-			value: ''
-		})
-		// setStep(3)
-		setCreatingProposalStep(3)
-	}
-
 	const handleOnClickContinue = () => {
 		// setStep(3)
 		setCreatingProposalStep(3)
 		const rubrics: { [key: number]: { title: string, details: string, maximumPoints: number } } = {}
-		if(reviewMechanism.label === 'Voting') {
+		if(rfpData?.reviewMechanism === 'voting') {
 			rubrics[0] = {
 				title: 'Vote for',
 				details: '',
 				maximumPoints: 1
 			}
-		} else if(reviewMechanism.label === 'Rubric') {
+		} else if(rfpData?.reviewMechanism === 'rubrics') {
 			Object.keys(rubricInputValues).forEach((key, index) => {
 				rubrics[index] = {
 					title: rubricInputValues[index],
@@ -285,8 +190,7 @@ function ProposalReview(
 		}
 
 		logger.info('Setting rubrics: ', rubrics)
-		setRubrics(rubrics)
-		handleOnEdit('rubrics', rubricInputValues)
+		handleOnEdit('rubrics', rfpData?.reviewMechanism === 'voting' ? ['Vote for'] : rubricInputValues)
 	}
 
 	const handleOnChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
@@ -295,10 +199,12 @@ function ProposalReview(
 		setRubricInputValues(inputValues)
 	}
 
+	const handleOnEdit = (field: string, value: string | ApplicantDetailsFieldType[] | string []) => {
+		logger.info('rfp edited', { field: value }, { ...rfpData, [field]: value })
+		setRFPData({ ...rfpData, [field]: value })
+	}
 
 	return buildComponent()
-
 }
-
 
 export default ProposalReview

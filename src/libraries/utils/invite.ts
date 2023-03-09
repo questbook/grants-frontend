@@ -9,11 +9,11 @@ import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useChainId from 'src/hooks/utils/useChainId'
+import { delay } from 'src/libraries/utils'
+import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/libraries/utils/gasless'
+import logger from 'src/libraries/utils/logger'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
-import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
-import { delay } from 'src/utils/generics'
-import logger from 'src/utils/logger'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 export type InviteInfo = {
 	workspaceId: number
@@ -189,7 +189,7 @@ export const useMakeInvite = () => {
 
 type JoinInviteStep = 'ipfs-uploaded' | 'tx-signed' | 'tx-confirmed'
 
-export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemberUpdate, shouldRefreshNonce: boolean) => {
+export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemberUpdate) => {
 
 	const connectedChainId = useChainId()
 	const { network, switchNetwork } = useNetwork()
@@ -197,8 +197,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 	const { webwallet } = useContext(WebwalletContext)!
 
 	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
-		chainId: inviteInfo?.chainId.toString(),
-		shouldRefreshNonce: shouldRefreshNonce
+		chainId: inviteInfo?.chainId.toString()
 	})
 	const targetContractObject = useQBContract('workspace', network)
 

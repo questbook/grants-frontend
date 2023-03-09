@@ -2,13 +2,13 @@ import { useContext, useMemo } from 'react'
 import { Box, Button, Divider, Flex } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import Milestones from 'src/screens/dashboard/_components/ActionList/SingleSelect/Milestones'
 import Payouts from 'src/screens/dashboard/_components/ActionList/SingleSelect/Payouts'
 import ReviewProposal from 'src/screens/dashboard/_components/ActionList/SingleSelect/ReviewProposal'
 import Reviews from 'src/screens/dashboard/_components/ActionList/SingleSelect/Reviews'
 import { DashboardContext, FundBuilderContext, ModalContext } from 'src/screens/dashboard/Context'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function SingleSelect() {
 	const buildComponent = () => {

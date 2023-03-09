@@ -1,15 +1,16 @@
 import { useContext, useEffect, useMemo } from 'react'
+import { ethers } from 'ethers'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import useQBContract from 'src/hooks/contracts/useQBContract'
 import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
+import getErrorMessage from 'src/libraries/utils/error'
+import { bicoDapps, getTransactionDetails, sendGaslessTransaction } from 'src/libraries/utils/gasless'
+import MAIN_LOGGER from 'src/libraries/utils/logger'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { QBContract } from 'src/types'
-import getErrorMessage from 'src/utils/errorUtils'
-import { bicoDapps, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
-import MAIN_LOGGER from 'src/utils/logger'
 
 interface Props {
 	chainId: SupportedChainId
@@ -48,7 +49,7 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 
 	const toast = useCustomToast()
 
-	const call = async({ method, args, isDummy = false, shouldWaitForBlock = true }: CallProps) => {
+	const call = async({ method, args, isDummy = false, shouldWaitForBlock = true }: CallProps): Promise<ethers.providers.TransactionReceipt | undefined> => {
 		const logger = MAIN_LOGGER.child({ chainId, contractName, method })
 		try {
 			if(!contract) {
@@ -63,7 +64,7 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 			logger.info('Calling function', { args })
 
 			if(isDummy) {
-				return
+				return undefined
 			}
 
 			setTransactionStep?.(0)
@@ -100,11 +101,8 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 					title: title ?? `Transaction executed${shouldWaitForBlock ? ' and indexed' : ''}`,
 					status: 'success',
 					duration: 3000,
-					onCloseComplete: () => {
-						setTransactionStep?.(undefined)
-					}
 				})
-				return true
+				return receipt
 			} else {
 				throw new Error('Transaction not sent')
 			}
@@ -117,7 +115,7 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 				title: message,
 				status: 'error'
 			})
-			return false
+			return undefined
 		}
 	}
 

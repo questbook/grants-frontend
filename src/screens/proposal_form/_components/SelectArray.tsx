@@ -25,7 +25,7 @@ function SelectArray({ label, allowMultiple, flexProps, config, onAdd, onRemove 
 					<Text
 						mr={8}
 						pb={2}
-						variant='v2_subheading'
+						variant='subheading'
 						w={['100%', 'calc(30% - 32px)']}
 						fontWeight='500'
 						textAlign={['left', 'right']}>
@@ -45,7 +45,7 @@ function SelectArray({ label, allowMultiple, flexProps, config, onAdd, onRemove 
 										<Text
 											mt={1}
 											color='gray.4'
-											variant='v2_heading_3'
+											variant='heading3'
 											fontWeight='500'>
 											{index < 9 ? `0${index + 1}` : (index + 1)}
 										</Text>
@@ -82,7 +82,7 @@ function SelectArray({ label, allowMultiple, flexProps, config, onAdd, onRemove 
 																	<Text
 																		mt={1}
 																		ml='auto'
-																		variant='v2_metadata'
+																		variant='metadata'
 																		color='gray.5'>
 																		{config[index][i]?.value?.toString()?.length}
 																		{' '}
@@ -124,7 +124,7 @@ function SelectArray({ label, allowMultiple, flexProps, config, onAdd, onRemove 
 										leftIcon={<Add boxSize='28px' />}
 										onClick={onAdd}>
 										<Text
-											variant='v2_subheading'
+											variant='subheading'
 											fontWeight='500'>
 											Add another
 										</Text>

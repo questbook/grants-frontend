@@ -8,10 +8,10 @@ import useSetupProfile from 'src/libraries/hooks/useSetupProfile'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
+import { formatAddress, getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import Verify from 'src/screens/dashboard/_components/FundBuilder/Verify'
-import { formatAddress, getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import { useAccount, useSignMessage } from 'wagmi'
 
 interface Props {
@@ -163,7 +163,6 @@ function SetupProfileModal({ walletAddress, isOpen, onClose }: Props) {
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
 	}, [grant])
 
-
 	const [name, setName] = useState<string>('')
 	const [email, setEmail] = useState<{data: string, state: 'loading' | 'loaded'}>({ data: '', state: 'loaded' })
 	useEffect(() => {
@@ -228,6 +227,8 @@ function SetupProfileModal({ walletAddress, isOpen, onClose }: Props) {
 			signedMessage: signature,
 			walletAddress,
 		})
+
+		logger.info({ res }, 'SetupProfileModal: setupProfile received')
 
 		if(res) {
 			onClose()

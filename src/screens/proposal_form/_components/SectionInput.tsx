@@ -23,7 +23,7 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 					<Text
 						mr={8}
 						pb={2}
-						variant='v2_subheading'
+						variant='subheading'
 						w={['100%', 'calc(30% - 32px)']}
 						fontWeight='500'
 						textAlign={['left', 'right']}>
@@ -58,7 +58,7 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 						<Text
 							mt={1}
 							ml='auto'
-							variant='v2_metadata'
+							variant='metadata'
 							color='gray.5'>
 							{value?.length}
 							/
@@ -70,7 +70,7 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 					helperText && (
 						<Text
 							mt={1}
-							variant='v2_metadata'
+							variant='metadata'
 							color='gray.5'>
 							{helperText}
 						</Text>
@@ -81,7 +81,7 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 						<Text
 							mt={1}
 							ml='30%'
-							variant='v2_metadata'
+							variant='metadata'
 							color='gray.5'>
 							{errorText}
 						</Text>

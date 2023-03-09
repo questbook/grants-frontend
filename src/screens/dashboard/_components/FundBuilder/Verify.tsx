@@ -4,39 +4,12 @@ import { Flex, Text, VStack } from '@chakra-ui/react'
 import { useSafeContext } from 'src/contexts/safeContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
+import { availableWallets, solanaWallets } from 'src/libraries/utils/constants'
+import getErrorMessage from 'src/libraries/utils/error'
+import ConnectWalletButton from 'src/screens/dashboard/_components/FundBuilder/ConnectWalletButton'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
-import getErrorMessage from 'src/utils/errorUtils'
-import { MetamaskFox } from 'src/v2/assets/custom chakra icons/SupportedWallets/MetamaskFox'
-import { PhantomLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/PhantomLogo'
-import { WalletConnectLogo } from 'src/v2/assets/custom chakra icons/SupportedWallets/WalletConnectLogo'
-import ConnectWalletButton from 'src/v2/components/ConnectWalletModal/ConnectWalletButton'
 import { Connector, useAccount, useConnect, useNetwork, useSwitchNetwork } from 'wagmi'
-
-const availableWallets = [{
-	name: 'Metamask',
-	icon: <MetamaskFox
-		h={8}
-		w='33px' />,
-	isPopular: true,
-	id: 'injected',
-}, {
-	name: 'WalletConnect',
-	icon: <WalletConnectLogo
-		h={8}
-		w='33px' />,
-	isPopular: false,
-	id: 'walletConnect'
-}]
-
-const solanaWallets = [{
-	name: 'Phantom',
-	icon: <PhantomLogo
-		h={8}
-		w='33px' />,
-	isPopular: false,
-	id: 'phantom',
-}]
 
 interface Props {
     signerVerifiedState: SignerVerifiedState

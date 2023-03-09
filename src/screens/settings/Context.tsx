@@ -3,11 +3,11 @@ import { defaultChainId } from 'src/constants/chains'
 import { useGetWorkspaceDetailsQuery, useGetWorkspaceMembersByWorkspaceIdQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
+import { getSafeURL } from 'src/libraries/utils/multisig'
 import { getKeyForMemberPii, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { GrantProgramForm, SettingsFormContextType, WorkspaceMembers } from 'src/screens/settings/_utils/types'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { getSafeURL } from 'src/v2/utils/gnosisUtils'
 
 const SettingsFormContext = createContext<SettingsFormContextType | undefined>(undefined)
 

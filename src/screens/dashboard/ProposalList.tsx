@@ -2,15 +2,16 @@
 
 import { createRef, useContext, useEffect, useMemo, useState } from 'react'
 import { Box, Button, Checkbox, Flex, Text } from '@chakra-ui/react'
+import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
 import logger from 'src/libraries/logger'
 import SearchField from 'src/libraries/ui/SearchField'
+import { getFieldString } from 'src/libraries/utils/formatting'
+import { getSupportedChainIdFromSupportedNetwork } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
 import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { getFieldString } from 'src/utils/formattingUtils'
-import { getSupportedChainIdFromSupportedNetwork } from 'src/utils/validationUtils'
 
 function ProposalList({ step, setStep }: {step?: boolean, setStep?: (value: boolean) => void}) {
 	const buildComponent = () => (
@@ -103,7 +104,7 @@ function ProposalList({ step, setStep }: {step?: boolean, setStep?: (value: bool
 								}
 							}>
 							<Text
-								variant='v2_body'
+								variant='body'
 								fontWeight='400'>
 								Select All
 							</Text>
@@ -120,12 +121,17 @@ function ProposalList({ step, setStep }: {step?: boolean, setStep?: (value: bool
 				{
 					proposalCount > 0 && filteredProposals?.map((proposal, index) => {
 						return (
-							<ProposalCard
-								ref={cardRefs[index]}
+							<motion.div
 								key={proposal.id}
-								proposal={proposal}
-								step={step}
-								setStep={setStep} />
+								initial={{ opacity: 0, x: index < 10 ? -50 * Math.exp(index) : 0 }}
+								animate={{ opacity: 1, x: 0 }}
+								transition={{ delay: index * 0.2, ease: 'easeInOut' }}>
+								<ProposalCard
+									ref={cardRefs[index]}
+									proposal={proposal}
+									step={step}
+									setStep={setStep} />
+							</motion.div>
 						)
 					})
 				}

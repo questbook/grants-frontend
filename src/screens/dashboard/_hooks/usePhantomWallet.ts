@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
-import { PhantomProvider, WindowWithSolana } from 'src/v2/types/phantom'
+import { PhantomProvider, WindowWithSolana } from 'src/types'
 
 export default function usePhantomWallet() {
-
 	const [ phantomWalletAvailable, setPhantomWalletAvailable ] = useState(false)
 	const [phantomWallet, setPhantomWallet] = useState<PhantomProvider>()
 	const [phantomWalletConnected, setPhantomWalletConnected] = useState(false)

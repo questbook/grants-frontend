@@ -17,6 +17,8 @@ function ActionList() {
 		>
 			{selectedProposals.size > 1 ? <MultiSelect /> : <SingleSelect /> }
 		</Flex>
+
+
 	)
 
 	const { selectedProposals } = useContext(DashboardContext)!

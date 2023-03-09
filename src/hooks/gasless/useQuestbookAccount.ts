@@ -1,10 +1,8 @@
 import { useContext, useMemo } from 'react'
-import { useNonce } from 'src/hooks/gasless/useNonce'
 import { WebwalletContext } from 'src/pages/_app'
 
-export const useQuestbookAccount = (shouldRefreshNonce?: boolean) => {
-	const { webwallet, scwAddress, setNonce } = useContext(WebwalletContext)!
-	const nonce = useNonce(shouldRefreshNonce)
+export const useQuestbookAccount = () => {
+	const { webwallet, scwAddress, setNonce, nonce } = useContext(WebwalletContext)!
 
 	// const [gaslessData, setGaslessData] = useState<any>()
 	const gaslessData2 = useMemo(() => {
@@ -19,35 +17,6 @@ export const useQuestbookAccount = (shouldRefreshNonce?: boolean) => {
 
 		return undefined
 	}, [webwallet, scwAddress, nonce])
-	// const gaslessData3 = {
-	// 	address: "0x9C910261B77bEeaa84289D098EbD309Ec748E9EF",
-	// 	connector: {
-	// 		name: 'gasless-webwallet'
-	// 	}
-	// }
-
-	// const { data: accountData } = useAccount()
-	// const { data: connectData, isConnecting, isConnected, isReconnecting, isError, connect, connectors } = useConnect()
-
-	// useEffect(() => {
-	// 	// console.log('Changed nonce: ', nonce)
-	// }, [nonce])
-
-	// useEffect(() => {
-	// 	// console.log("fdfdfdfd", gaslessData)
-	// 	// // console.log('HYY', nonce, webwallet, scwAddress)
-	// 	if(nonce && webwallet && scwAddress && !gaslessData) {
-	// 		setGaslessData({
-	// 			address: scwAddress,
-	// 			connector: {
-	// 				name: 'gasless-webwallet'
-	// 			}
-	// 		})
-	// 	}
-	// 	// else if((!isConnecting || !isReconnecting) && connectData && isConnected){
-	// 	//     setGaslessData(accountData);
-	// 	// }
-	// }, [nonce, webwallet, scwAddress])
 
 	return { data: gaslessData2, nonce, setNonce }
 }

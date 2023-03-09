@@ -1,10 +1,8 @@
-import { ChangeEvent, useEffect, useState } from 'react'
-import { BsArrowLeft } from 'react-icons/bs'
-import { Button, Checkbox, Flex, Image, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text, Textarea } from '@chakra-ui/react'
+import { useEffect } from 'react'
+import { Button, Flex, Text, Textarea } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import { ethers, Wallet } from 'ethers'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
-import TextField from 'src/v2/components/InputFields/TextField'
 interface Props {
     privateKey: string
     inited: boolean

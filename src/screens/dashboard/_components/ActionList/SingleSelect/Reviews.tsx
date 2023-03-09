@@ -3,11 +3,18 @@ import { Box, Button, ButtonProps, Checkbox, Divider, Flex, Image, InputGroup, I
 import Safe from '@safe-global/safe-core-sdk'
 import EthersAdapter from '@safe-global/safe-ethers-lib'
 import { ethers } from 'ethers'
+import { motion } from 'framer-motion'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import guardAbi from 'src/contracts/abi/ReviewerGuard.json'
 import { CheckDouble, Close, Dropdown, Pencil } from 'src/generated/icons'
 import { CONTRACT_INTERFACE_MAP } from 'src/hooks/contracts/useQBContract'
 import logger from 'src/libraries/logger'
+import { getAvatar } from 'src/libraries/utils'
+import { formatAddress } from 'src/libraries/utils/formatting'
+import { jsonRpcProviders } from 'src/libraries/utils/gasless'
+import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
+import { useLoadReview } from 'src/libraries/utils/reviews'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import DashboardInput from 'src/screens/dashboard/_components/DashboardInput'
 import useAssignReviewers from 'src/screens/dashboard/_hooks/useAssignReviewers'
@@ -18,12 +25,6 @@ import SafeGuardModal from 'src/screens/dashboard/SafeGuardModal'
 import SetupProfileModal from 'src/screens/dashboard/SetupProfileModal'
 import { GrantType, IReviewFeedback, ReviewType } from 'src/types'
 import { RubricItem } from 'src/types/gen'
-import getAvatar from 'src/utils/avatarUtils'
-import { formatAddress } from 'src/utils/formattingUtils'
-import { jsonRpcProviders } from 'src/utils/gaslessUtils'
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
-import { useLoadReview } from 'src/utils/reviews'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function Reviews() {
 	const buildComponent = () => {
@@ -34,112 +35,118 @@ function Reviews() {
 				direction='column'
 				align='stretch'
 				overflowY='auto'
+				overflowX='clip'
 				w='100%'>
-				<Flex
-					justify='space-between'
-					onClick={
-						() => {
-							if(proposals?.length > 0) {
-								setExpanded(!expanded)
+				<motion.div
+					initial={{ opacity: 0, x: 50 }}
+					animate={{ opacity: 1, x: 0 }}
+					transition={{ duration: 1, delay: 2.2 }}>
+					<Flex
+						justify='space-between'
+						onClick={
+							() => {
+								if(proposals?.length > 0) {
+									setExpanded(!expanded)
+								}
 							}
+						}>
+						<Text fontWeight='500'>
+							Reviews
+						</Text>
+						{
+							proposals?.length > 0 && (
+								<Dropdown
+									mr={2}
+									transform={expanded ? 'rotate(180deg)' : 'rotate(0deg)'}
+									cursor='pointer'
+								/>
+							)
 						}
-					}>
-					<Text fontWeight='500'>
-						Reviews
-					</Text>
-					{
-						proposals?.length > 0 && (
-							<Dropdown
-								mr={2}
-								transform={expanded ? 'rotate(180deg)' : 'rotate(0deg)'}
-								cursor='pointer'
-							/>
-						)
-					}
-				</Flex>
+					</Flex>
 
-				<Flex
-					display={expanded ? 'block' : 'none'}
-					direction='column'>
-					{reviewer()}
-					{reviewWith()}
-					{
-						(proposal?.applicationReviewers?.length || 0) > 0 && (
-							<Text
-								mt={4}
-								variant='v2_metadata'
-								color='gray.5'
-								fontWeight='500'>
-								REVIEWER EVALUATION
-							</Text>
-						)
-					}
+					<Flex
+						display={expanded ? 'block' : 'none'}
+						direction='column'>
+						{reviewer()}
+						{reviewWith()}
+						{
+							(proposal?.applicationReviewers?.length || 0) > 0 && (
+								<Text
+									mt={4}
+									variant='metadata'
+									color='gray.5'
+									fontWeight='500'>
+									REVIEWER EVALUATION
+								</Text>
+							)
+						}
 
-					{(grant?.reviewType === 'voting' && (proposal?.applicationReviewers?.length || 0) > 0) && voteGraph()}
+						{(grant?.reviewType === 'voting' && (proposal?.applicationReviewers?.length || 0) > 0) && voteGraph()}
 
-					{
-						proposal?.applicationReviewers?.filter((reviewer) => !guardContractReviewers.find(gcr => gcr.member?.actorId === reviewer?.member?.actorId)).map((reviewer, index) => {
-							return reviewerItem(reviewer?.member, reviews.find(r => r.reviewer === reviewer?.member.actorId), index)
-						})
-					}
+						{
+							proposal?.applicationReviewers?.filter((reviewer) => !guardContractReviewers.find(gcr => gcr.member?.actorId === reviewer?.member?.actorId)).map((reviewer, index) => {
+								return reviewerItem(reviewer?.member, reviews.find(r => r.reviewer === reviewer?.member.actorId), index)
+							})
+						}
 
-					{
-						guardContractReviewers.map((reviewer, index) => {
-							if(reviewer?.member) {
-								return reviewerItem(reviewer?.member, reviews.find(r => r.reviewer === reviewer?.member?.actorId), index)
-							} else {
-								return (
-									<Flex
-										mt={index === 0 ? 5 : 3}
-										key={index}
-										w='100%'
-										align='center'
-									>
+						{
+							guardContractReviewers.map((reviewer, index) => {
+								if(reviewer?.member) {
+									return reviewerItem(reviewer?.member, reviews.find(r => r.reviewer === reviewer?.member?.actorId), index)
+								} else {
+									return (
 										<Flex
-											maxW='70%'
+											mt={index === 0 ? 5 : 3}
+											key={index}
+											w='100%'
 											align='center'
 										>
-											<Image
-												borderRadius='3xl'
-												boxSize='28px'
-												src={getAvatar(false, reviewer?.walletAddress)}
-											/>
-											<Tooltip label={reviewer.walletAddress}>
+											<Flex
+												maxW='70%'
+												align='center'
+											>
+												<Image
+													borderRadius='3xl'
+													boxSize='28px'
+													src={getAvatar(false, reviewer?.walletAddress)}
+												/>
+												<Tooltip label={reviewer.walletAddress}>
+													<Text
+														as='span'
+														variant='body'
+														fontWeight='500'
+														ml={3}
+														noOfLines={3}>
+														{formatAddress(reviewer.walletAddress)}
+													</Text>
+												</Tooltip>
+											</Flex>
+
+											<Box ml='auto' />
+
+											<Button
+												variant='link'
+											>
 												<Text
-													as='span'
-													variant='v2_body'
+													color='accent.azure'
+													variant='body'
 													fontWeight='500'
-													ml={3}
-													noOfLines={3}>
-													{formatAddress(reviewer.walletAddress)}
+													onClick={
+														() => {
+															setWalletAddress(reviewer.walletAddress)
+														}
+													}>
+													Join as a reviewer
 												</Text>
-											</Tooltip>
+											</Button>
 										</Flex>
+									)
+								}
+							})
+						}
 
-										<Box ml='auto' />
-
-										<Button
-											variant='link'
-										>
-											<Text
-												color='accent.azure'
-												variant='v2_body'
-												fontWeight='500'
-												onClick={
-													() => {
-														setWalletAddress(reviewer.walletAddress)
-													}
-												}>
-												Join as a reviewer
-											</Text>
-										</Button>
-									</Flex>
-								)
-							}
-						})
-					}
-
-				</Flex>
+					</Flex>
+				</motion.div>
 
 				<SafeGuardModal
 					isOpen={isSafeGuardModalOpen}
@@ -173,13 +180,13 @@ function Reviews() {
 									align={index === 0 ? 'start' : 'end'}
 									key={index}>
 									<Text
-										variant='v2_subheading'
+										variant='subheading'
 										fontWeight='500'>
 										{vote}
 									</Text>
 									<Text
 										mt={1}
-										variant='v2_body' >
+										variant='body' >
 										{index === 0 ? 'For' : 'Against'}
 									</Text>
 								</Flex>
@@ -211,7 +218,7 @@ function Reviews() {
 				isDisabled={role !== 'admin' || proposal?.state !== 'submitted'}
 				{...props} >
 				<Text
-					variant='v2_body'
+					variant='body'
 					fontWeight='500'
 					color='black.1'>
 					Setup
@@ -228,7 +235,7 @@ function Reviews() {
 				variant='link'
 				leftIcon={<Pencil boxSize='16px' />}>
 				<Text
-					variant='v2_body'
+					variant='body'
 					fontWeight='500'>
 					Edit
 				</Text>
@@ -257,18 +264,18 @@ function Reviews() {
 									px={4}
 									py={3} >
 									<Text
-										variant='v2_body'
+										variant='body'
 										fontWeight='500'>
 										Assign Reviewers
 									</Text>
 									<Text
 										mt={2}
 										color='black.3'
-										variant='v2_body' >
+										variant='body' >
 										This will be applicable
 										{' '}
 										<Text
-											variant='v2_body'
+											variant='body'
 											color='black.3'
 											display='inline-block'
 											fontWeight='500'>
@@ -305,7 +312,7 @@ function Reviews() {
 												}
 											}>
 											<Text
-												variant='v2_body'
+												variant='body'
 												fontWeight='400'
 												color='gray.6'>
 												Select All
@@ -313,7 +320,7 @@ function Reviews() {
 										</Checkbox>
 										<Text
 											ml='auto'
-											variant='v2_body'>
+											variant='body'>
 											{grant?.workspace?.members?.filter(m => members[m.id]).length}
 											{' '}
 											/
@@ -357,7 +364,7 @@ function Reviews() {
 															boxSize='20px' />
 														<Text
 															ml={4}
-															variant='v2_body'>
+															variant='body'>
 															{m.fullName ? m.fullName : formatAddress(m?.actorId)}
 														</Text>
 													</Flex>
@@ -397,7 +404,7 @@ function Reviews() {
 												}
 											}>
 											<Text
-												variant='v2_body'
+												variant='body'
 												color='white'
 												fontWeight='500'>
 												Save
@@ -410,7 +417,7 @@ function Reviews() {
 											border='1px solid #E7E4DD'
 											borderRadius='2px'
 											onClick={onClose}>
-											<Text variant='v2_body'>
+											<Text variant='body'>
 												Cancel
 											</Text>
 										</Button>
@@ -431,14 +438,14 @@ function Reviews() {
 				w='100%'>
 				<Text
 					w='50%'
-					variant='v2_body'
+					variant='body'
 					color='gray.6'>
 					Reviewer
 				</Text>
 				{
 					totalNumberOfReviewers > 0 && (
 						<Text
-							variant='v2_body'>
+							variant='body'>
 							{totalNumberOfReviewers}
 						</Text>
 					)
@@ -463,7 +470,7 @@ function Reviews() {
 				}
 				mt={3}>
 				<Text
-					variant='v2_body'
+					variant='body'
 					fontWeight='500'>
 					{label}
 				</Text>
@@ -477,7 +484,7 @@ function Reviews() {
 				key={index}
 				py={3}
 				borderBottom='1px solid #E7E4DD'>
-				<Text variant='v2_body'>
+				<Text variant='body'>
 					{item.title}
 				</Text>
 				<Close
@@ -516,18 +523,18 @@ function Reviews() {
 									px={4}
 									py={3} >
 									<Text
-										variant='v2_body'
+										variant='body'
 										fontWeight='500'>
 										Review By
 									</Text>
 									<Text
 										mt={2}
 										color='black.3'
-										variant='v2_body' >
+										variant='body' >
 										This will be applicable for
 										{' '}
 										<Text
-											variant='v2_body'
+											variant='body'
 											color='black.3'
 											display='inline-block'
 											fontWeight='500'>
@@ -550,7 +557,7 @@ function Reviews() {
 										reviewType === ReviewType.Rubrics && (rubricItems.length > 0 || anotherRubricTitle !== undefined) && (
 											<Text
 												mt={6}
-												variant='v2_body'
+												variant='body'
 												fontWeight='500'>
 												Rubric Includes
 											</Text>
@@ -611,7 +618,7 @@ function Reviews() {
 												variant='link'
 												onClick={() => setAnotherRubricTitle('')}>
 												<Text
-													variant='v2_body'
+													variant='body'
 													fontWeight='500'>
 													{rubricItems.length === 0 ? 'Start adding Rubric' : 'Add Another'}
 												</Text>
@@ -630,7 +637,7 @@ function Reviews() {
 											}
 										}>
 										<Text
-											variant='v2_body'
+											variant='body'
 											fontWeight='500'>
 											Keep reviews private
 										</Text>
@@ -648,7 +655,7 @@ function Reviews() {
 												}
 											}>
 											<Text
-												variant='v2_body'
+												variant='body'
 												color='white'
 												fontWeight='500'>
 												Save
@@ -661,7 +668,7 @@ function Reviews() {
 											border='1px solid #E7E4DD'
 											borderRadius='2px'
 											onClick={onClose}>
-											<Text variant='v2_body'>
+											<Text variant='body'>
 												Cancel
 											</Text>
 										</Button>
@@ -682,14 +689,14 @@ function Reviews() {
 				w='100%'>
 				<Text
 					w='50%'
-					variant='v2_body'
+					variant='body'
 					color='gray.6'>
 					Review With
 				</Text>
 				{
 					(grant?.reviewType || (grant?.rubric && grant?.rubric?.items?.length > 0)) && (
 						<Text
-							variant='v2_body'>
+							variant='body'>
 							{grant.reviewType === 'voting' ? 'Voting' : 'Rubrics'}
 						</Text>
 					)
@@ -723,11 +730,11 @@ function Reviews() {
 						<Image
 							borderRadius='3xl'
 							boxSize='28px'
-							src={getAvatar(false, reviewer?.actorId)}
+							src={reviewer?.profilePictureIpfsHash ? getUrlForIPFSHash(reviewer.profilePictureIpfsHash) : getAvatar(false, reviewer?.actorId ?? 'generic')}
 						/>
 						<Text
 							as='span'
-							variant='v2_body'
+							variant='body'
 							fontWeight='500'
 							ml={3}
 							noOfLines={3}>
@@ -738,7 +745,7 @@ function Reviews() {
 									<Text
 										ml={1}
 										display='inline-block'
-										variant='v2_body'
+										variant='body'
 										fontWeight='600'
 										color={review.items?.[0]?.rating === 0 ? 'accent.royal' : 'accent.june'}>
 										{review.items?.[0]?.rating === 0 ? ' against' : ' for'}
@@ -762,7 +769,7 @@ function Reviews() {
 									cursor='pointer'
 								/>
 								<Text
-									variant='v2_body'
+									variant='body'
 									textAlign='right'
 									fontWeight='500'>
 									{review?.total}
@@ -786,7 +793,7 @@ function Reviews() {
 								px={2}
 								borderRadius='8px'
 								color='black.3'
-								variant='v2_metadata'
+								variant='metadata'
 								fontWeight='500'>
 								Pending
 							</Text>
@@ -799,7 +806,7 @@ function Reviews() {
 								variant='link'>
 								<Text
 									color='accent.azure'
-									variant='v2_body'
+									variant='body'
 									fontWeight='500'
 									onClick={
 										() => {
@@ -832,11 +839,11 @@ function Reviews() {
 										justify='space-between'>
 										<Flex direction='column'>
 											<Text
-												variant='v2_body'>
+												variant='body'>
 												{item?.rubric?.title}
 											</Text>
 											<Text
-												variant='v2_metadata'
+												variant='metadata'
 												color='gray.6'>
 												{item?.rubric?.details}
 											</Text>
@@ -844,7 +851,7 @@ function Reviews() {
 
 										<Text
 											textAlign='right'
-											variant='v2_body'>
+											variant='body'>
 											{item?.rating}
 											<Text
 												ml={1}
@@ -858,7 +865,7 @@ function Reviews() {
 
 									<Text
 										textAlign='justify'
-										variant='v2_metadata'
+										variant='metadata'
 										color='gray.6'>
 										{item?.comment}
 									</Text>
@@ -909,7 +916,7 @@ function Reviews() {
 	}, [proposals, selectedProposals])
 
 	const totalNumberOfReviewers = useMemo(() => {
-		return (proposal?.pendingReviewerAddresses?.length || 0) + (guardContractReviewers?.length || 0)
+		return (proposal?.applicationReviewers?.length || 0) + (guardContractReviewers?.length || 0)
 	}, [proposal, guardContractReviewers])
 
 	const getReviewersFromGuardContract = async() => {

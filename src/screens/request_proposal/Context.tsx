@@ -1,9 +1,9 @@
-import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
+import { createContext, PropsWithChildren, ReactNode, useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import { defaultChainId } from 'src/constants/chains'
 import { useGetGrantDetailsByIdQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
-import { ApiClientsContext } from 'src/pages/_app'
 import { RFPForm, RFPFormContextType, RFPFormType } from 'src/screens/request_proposal/_utils/types'
 
 const RFPFormContext = createContext<RFPFormContextType | undefined>(undefined)
@@ -14,12 +14,12 @@ const RFPFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			value={
 				{
 					rfpData: RFPData!,
-					setRFPData: setRFPData!,
+					setRFPData,
 					rfpFormType: type,
-					grantId: grantId,
-					workspaceId: workspaceId,
-					RFPEditFormData: RFPEditFormData!,
-					setRFPEditFormData: setRFPEditFormData!,
+					grantId,
+					setGrantId,
+					workspaceId,
+					chainId
 				}
 			}>
 			{children}
@@ -27,18 +27,22 @@ const RFPFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	)
 
 	const [RFPData, setRFPData] = useState<RFPForm>()
-	const [RFPEditFormData, setRFPEditFormData] = useState<RFPForm>()
 	const [type, setType] = useState<RFPFormType>('submit')
-	// const [workspaceMembers, setWorkspaceMembers] = useState<WorkspaceMembers>()
-
-	const { chainId } = useContext(ApiClientsContext)!
-
+	const [grantId, setGrantId] = useState<string>('')
 
 	const router = useRouter()
-	const { grantId: _grantId, workspaceId: _workspaceId } = router.query
+	const { grantId: _grantId, workspaceId: _workspaceId, chainId: _chainId } = router.query
 
-	const grantId = typeof(_grantId) === 'string' ? _grantId : ''
+	useEffect(() => {
+		if(typeof _grantId === 'string') {
+			setGrantId(_grantId)
+		} else {
+			setGrantId('')
+		}
+	}, [_grantId])
+
 	const workspaceId = typeof(_workspaceId) === 'string' ? _workspaceId : ''
+	const chainId = typeof(_chainId) === 'string' ? parseInt(_chainId) : defaultChainId
 
 	useEffect(() => {
 		logger.info({ workspaceId, grantId, chainId }, 'RFP form edit')
@@ -49,17 +53,6 @@ const RFPFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 		options: {},
 		chains: [chainId]
 	})
-
-	// const handleOnEdit = (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
-	// 	const { value } = e.target
-	// 	setRFPData({ ...RFPData, [field]: value })
-	// }
-
-	// const { fetchMore: fetchWorkspaceMembers } = useMultiChainQuery({
-	// 	useQuery: useGetWorkspaceMembersByWorkspaceIdQuery,
-	// 	options: {},
-	// 	chains: [chainId ]
-	// })
 
 	useEffect(() => {
 		logger.info({ grantId, chainId }, 'RFP form edit')
@@ -106,10 +99,8 @@ const RFPFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			rubrics: rubricData!
 		 }
 		setRFPData(data)
-		setRFPEditFormData(data)
 		return response
 	}, [chainId, grantId])
-
 
 	useEffect(() => {
 		if(!grantId) {

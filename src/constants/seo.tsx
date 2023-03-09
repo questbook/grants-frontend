@@ -19,8 +19,8 @@ const seoConfig = {
 		title: 'Questbook',
 		description:
         'Discover Opportunities in Web 3.0 and Earn in Crypto',
-		site_name:
-        'Questbook',
+		// eslint-disable-next-line camelcase
+		site_name: 'Questbook',
 		images: [
 			{
 				url: 'https://ipfs.io/ipfs/QmQtJhGjUQyYe2j2tmka4VZ8NzJD3J9jiFSjhjgGkugwYs',

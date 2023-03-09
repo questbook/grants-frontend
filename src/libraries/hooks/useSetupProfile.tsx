@@ -1,16 +1,13 @@
-import { useContext, useMemo } from 'react'
+import { useContext } from 'react'
 import SupportedChainId from 'src/generated/SupportedChainId'
-import useQBContract from 'src/hooks/contracts/useQBContract'
-import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
 import useCreateMapping from 'src/libraries/hooks/useCreateMapping'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
+import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
+import getErrorMessage from 'src/libraries/utils/error'
+import { uploadToIPFS } from 'src/libraries/utils/ipfs'
 import { usePiiForWorkspaceMember } from 'src/libraries/utils/pii'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
-import getErrorMessage from 'src/utils/errorUtils'
-import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/utils/gaslessUtils'
-import { uploadToIPFS } from 'src/utils/ipfsUtils'
+import { WebwalletContext } from 'src/pages/_app'
 
 interface Props {
 	setNetworkTransactionModalStep: (step: number | undefined) => void
@@ -22,21 +19,14 @@ interface Props {
 }
 
 function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep, setTransactionHash, chainId, type }: Props) {
-	const { subgraphClients } = useContext(ApiClientsContext)!
-	const { webwallet } = useContext(WebwalletContext)!
-
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({ chainId: chainId?.toString()! })
-	const { nonce } = useQuestbookAccount()
-	const workspaceRegistryContract = useQBContract('workspace', chainId)
-
-	const isBiconomyInitialised = useMemo(() => {
-		return biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId && biconomy.networkId.toString() === chainId.toString()
-	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, chainId])
+	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 
 	const toast = useCustomToast()
 
 	const { encrypt } = usePiiForWorkspaceMember(workspaceId, memberId, webwallet?.publicKey, chainId)
 	const createMapping = useCreateMapping({ chainId })
+
+	const { call, isBiconomyInitialised } = useFunctionCall({ chainId, contractName: 'workspace', setTransactionHash, setTransactionStep: setNetworkTransactionModalStep })
 
 	const setupProfile = async({ name, email, imageFile, role, signature, signedMessage, walletAddress }: {
 		name: string
@@ -62,7 +52,7 @@ function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep
 				throw new Error('Chain ID not found')
 			}
 
-			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
+			if(!isBiconomyInitialised) {
 				throw new Error('Biconomy Wallet not initialised properly')
 			}
 
@@ -83,8 +73,6 @@ function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep
 			}
 
 			// TODO: Step - 0: Validate Workspace Member Update
-
-			setNetworkTransactionModalStep(0)
 
 			// Step - 1: Encrypt the data
 			const dataToEncrypt = { email }
@@ -129,38 +117,15 @@ function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep
 				role,
 				signedMessage
 			]
-			logger.info({ type, chainId, methodArgs, workspaceRegistryContract }, 'Method args')
+			logger.info({ type, chainId, methodArgs }, 'Method args')
 
-			const response = await sendGaslessTransaction(
-				biconomy,
-				workspaceRegistryContract,
-				type === 'join-using-link' ? 'joinViaInviteLink' : type === 'join-reviewer-guard' ? 'proveMembership' : 'updateWorkspaceMembers',
-				methodArgs,
-				workspaceRegistryContract.address,
-				biconomyWalletClient,
-				scwAddress,
-				webwallet,
-				`${chainId}`,
-				bicoDapps[chainId].webHookId,
-				nonce
-			)
+			const receipt = await call({ method: type === 'join-using-link' ? 'joinViaInviteLink' : type === 'join-reviewer-guard' ? 'proveMembership' : 'updateWorkspaceMembers', args: methodArgs })
 
-			if(!response) {
+			if(!receipt) {
 				throw new Error('Some error occured on Biconomy side')
 			}
 
-			setNetworkTransactionModalStep(1)
-
-			// Step - 5: If call successful, create the mapping from email address to scw address
-			const { txFee, receipt } = await getTransactionDetails(response, chainId.toString())
-			setTransactionHash(receipt.transactionHash)
-			await subgraphClients[chainId].waitForBlock(receipt?.blockNumber)
-
-			setNetworkTransactionModalStep(2)
-
 			await createMapping({ email })
-			await chargeGas(Number(workspaceId), Number(txFee), chainId)
-			setNetworkTransactionModalStep(3)
 			return true
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {

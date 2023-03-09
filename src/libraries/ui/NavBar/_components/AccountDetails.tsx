@@ -20,10 +20,10 @@ import { useRouter } from 'next/router'
 import { AddUser, ArrowRight, Key, Pencil } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
+import { getAvatar } from 'src/libraries/utils'
+import { formatAddress } from 'src/libraries/utils/formatting'
+import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { GrantsProgramContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
-import getAvatar from 'src/utils/avatarUtils'
-import { formatAddress } from 'src/utils/formattingUtils'
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 const IN_APP_WALLET_LEARN_MORE_URL =
 	'https://blog.questbook.xyz/posts/aug-2022-release/#:~:text=App%20Specific%20Wallet%20%2D%20Zero%20Wallet'
@@ -78,7 +78,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 													boxSize='24px' />
 												<Text
 													ml={3}
-													variant='v2_body'
+													variant='body'
 													fontWeight='500'>
 													{!member?.fullName ? 'Setup' : 'Update'}
 													{' '}
@@ -101,7 +101,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 										mt={4}
 									>
 										<Text
-											variant='v2_body'
+											variant='body'
 											color='gray.5'>
 											Your zero wallet
 										</Text>
@@ -111,7 +111,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 											target='_blank'
 											href={IN_APP_WALLET_LEARN_MORE_URL}>
 											<Text
-												variant='v2_body'>
+												variant='body'>
 												Learn More
 											</Text>
 										</Link>
@@ -122,7 +122,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 										px={3}
 										pt={1}>
 										<Link onClick={copyScwAddress}>
-											<Text variant='v2_body'>
+											<Text variant='body'>
 												{formatAddress(scwAddress ?? '')}
 											</Text>
 										</Link>
@@ -132,30 +132,30 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 
 									{
 										openModal &&
-										menuItems.map((item, index) => {
-											return (
-												<Flex
-													key={index}
-													ml={3}
-													mt={4}>
-													{item.icon}
-													<Text
-														ml={2}
-														_hover={{ textDecoration: 'underline', cursor: 'pointer' }}
-														onClick={
-															() => {
-																onClose()
-																item.onClick()
-															}
-														}
-														variant='v2_body'
-													>
-														{item.title}
-													</Text>
-												</Flex>
+						menuItems.map((item, index) => {
+							return (
+								<Flex
+									key={index}
+									ml={3}
+									mt={4}>
+									{item.icon}
+									<Text
+										ml={2}
+										_hover={{ textDecoration: 'underline', cursor: 'pointer' }}
+										onClick={
+											() => {
+												onClose()
+												item.onClick()
+											}
+										}
+										variant='v2_body'
+									>
+										{item.title}
+									</Text>
+								</Flex>
 
-											)
-										})
+							)
+						})
 									}
 
 									<Box mb={2} />

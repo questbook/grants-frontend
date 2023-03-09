@@ -1,7 +1,7 @@
 import { useContext, useMemo } from 'react'
 import { Flex, FlexProps, Text } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
-import Dropdown from 'src/screens/dashboard/_components/FundBuilder/Dropdown'
+import DropdownSelect from 'src/libraries/ui/LinkYourMultisigModal/DropdownSelect'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { FundBuilderContext } from 'src/screens/dashboard/Context'
 
@@ -27,7 +27,7 @@ function MilestoneChoose({ proposal, index, ...props }: Props) {
 				</Text>
 				<Flex
 					direction='column'>
-					<Dropdown
+					<DropdownSelect
 						options={
 							milestones.map((milestone, index) => {
 								return { ...milestone, index }
@@ -56,7 +56,7 @@ function MilestoneChoose({ proposal, index, ...props }: Props) {
 					{/*  */}
 					<Text
 						mt={1}
-						variant='v2_body'>
+						variant='body'>
 						{milestones?.[milestoneIndices?.[0]]?.title}
 					</Text>
 				</Flex>
@@ -74,13 +74,13 @@ function MilestoneChoose({ proposal, index, ...props }: Props) {
 		>
 			<Text
 				color='gray.4'
-				variant='v2_heading_3'
+				variant='heading3'
 				fontWeight='500'>
 				{data.index < 9 ? `0${data.index + 1}` : (data.index + 1)}
 			</Text>
 			<Text
 				mt={1}
-				variant='v2_body'
+				variant='body'
 			>
 				{data?.title}
 			</Text>
@@ -91,7 +91,7 @@ function MilestoneChoose({ proposal, index, ...props }: Props) {
 		<Text
 			{...innerProps}
 			color='gray.4'
-			variant='v2_heading_3'
+			variant='heading3'
 			fontWeight='500'>
 			{data.index < 9 ? `0${data.index + 1}` : (data.index + 1)}
 		</Text>

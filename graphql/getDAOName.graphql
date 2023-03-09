@@ -1,9 +1,0 @@
-query getDAOName($workspaceID: ID!) {
-     workspace(id: $workspaceID) {
-        id
-        title
-        about
-        logoIpfsHash
-        coverImageIpfsHash
-    }
-}

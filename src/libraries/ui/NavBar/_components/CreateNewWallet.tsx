@@ -1,11 +1,9 @@
-import { ChangeEvent, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { BsArrowLeft } from 'react-icons/bs'
-import { Button, Checkbox, Flex, Image, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text, Textarea } from '@chakra-ui/react'
-import copy from 'copy-to-clipboard'
+import { Button, Checkbox, Flex, ModalBody, Text } from '@chakra-ui/react'
 import { ethers, Wallet } from 'ethers'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import BackupWallet from 'src/libraries/ui/NavBar/_components/BackupWallet'
-import TextField from 'src/v2/components/InputFields/TextField'
 interface Props {
     importWebwallet: (privateKey: string) => void
     inited: boolean
@@ -86,7 +84,7 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
 							}
 						}
 					>
-						continue
+						Continue
 					</Button>
 				</Flex>
 			</ModalBody>

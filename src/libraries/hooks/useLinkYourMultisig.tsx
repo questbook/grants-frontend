@@ -3,8 +3,8 @@ import { ethers } from 'ethers'
 import { defaultChainId } from 'src/constants/chains'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import { isValidEthereumAddress } from 'src/libraries/utils/validations'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function useLinkYourMultisig() {
 	const { grant } = useContext(GrantsProgramContext)!

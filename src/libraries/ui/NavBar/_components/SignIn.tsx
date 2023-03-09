@@ -1,13 +1,10 @@
-import { ChangeEvent, useContext, useState } from 'react'
-import { BsArrowLeft } from 'react-icons/bs'
+import { useContext } from 'react'
 import { Button, Flex, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
 import { Wallet } from 'ethers'
-import { ArrowLeft } from 'src/generated/icons'
+import { Qb } from 'src/generated/icons'
 import CreateNewWallet from 'src/libraries/ui/NavBar/_components/CreateNewWallet'
-import useGoogleDriveWalletRecoveryReact from 'src/libraries/ui/NavBar/_components/googleRecovery'
 import RestoreWallet from 'src/libraries/ui/NavBar/_components/RestoreWallet'
 import { SignInMethodContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
-import TextField from 'src/v2/components/InputFields/TextField'
 interface Props {
     isOpen: boolean
     setSignIn: (signIn: boolean) => void
@@ -25,31 +22,31 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 	const { importWebwallet } = useContext(WebwalletContext)!
 	const { signInTitle } = useContext(SignInTitleContext)!
 	function Title() {
-		if(signInTitle == 'admin') {
+		if(signInTitle === 'admin') {
 			return 'To join as an admin, sign in with wallet'
 		}
 
-		if(signInTitle == 'postComment') {
+		if(signInTitle === 'postComment') {
 			return 'To post a comment, sign in with wallet'
 		}
 
-		if(signInTitle == 'reviewer') {
+		if(signInTitle === 'reviewer') {
 			return 'To submit a review, sign in with wallet'
 		}
 
-		if(signInTitle == 'submitProposal') {
+		if(signInTitle === 'submitProposal') {
 			return 'To submit a proposal, sign in with wallet'
 		}
 
 		return 'To run a grant program, sign in with wallet'
 	}
 
-	console.log(signInTitle, 'tabtab')
+	// console.log(signInTitle, 'tabtab')
 	const buildComponent = () => {
 		return (
 			<Modal
 				isCentered={true}
-				size='2xl'
+				size='xxl'
 				isOpen={isOpen}
 				onClose={onClose}>
 				<ModalOverlay />
@@ -62,24 +59,20 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 					{/* {signInMethod!='choosing'&&
                     } */}
 					{
-						signInMethod == 'choosing' && (
+						signInMethod === 'choosing' && (
 							<ModalBody>
 								<Flex
 									p={6}
 									direction='column'
 									align='center'>
-									<Image
-										alignSelf='center'
-										// display={['none', 'inherit']}
-										// mr='auto'
-										src='/ui_icons/qb.svg'
-										alt='Questbook'
-										marginBottom={1}
-										cursor='pointer' />
+									<Qb
+										maxH='64px'
+										boxSize='10rem' />
 									<Text
 										variant='v2_subheading'
 										fontWeight='500'
-										mt={5}>
+										mt={5}
+									>
 										{Title()}
 									</Text>
 									<Text
@@ -128,7 +121,7 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 						)
 					}
 					{
-						signInMethod == 'existingWallet' && (
+						signInMethod === 'existingWallet' && (
 							<RestoreWallet
 								importWebwallet={importWebwallet}
 								inited={inited}
@@ -140,7 +133,7 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 						)
 					}
 					{
-						signInMethod == 'newWallet' && (
+						signInMethod === 'newWallet' && (
 							<CreateNewWallet
 								importWebwallet={importWebwallet}
 								inited={inited}

@@ -18,7 +18,7 @@ const detailsItem = ({ innerProps, data }: any) => {
 			>
 				<Text
 					mt={1}
-					variant='v2_body'>
+					variant='body'>
 					{data?.title}
 				</Text>
 				<Divider />
@@ -38,7 +38,7 @@ type Props = {
 }
 
 
-export function CustomSelect({ options, setExtraDetailsFields, setShowExtraFieldDropdown, width, placeholder }: Props) {
+export function CustomSelect({ options, setExtraDetailsFields, setShowExtraFieldDropdown, placeholder }: Props) {
 
 	const [value, setValue] = useState<ApplicantDetailsFieldType | null>()
 	const createOption = (label: string): any => {

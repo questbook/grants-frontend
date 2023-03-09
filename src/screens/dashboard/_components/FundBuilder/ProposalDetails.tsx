@@ -1,15 +1,16 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
-import { Flex, Image, Text } from '@chakra-ui/react'
+import { Flex, Text } from '@chakra-ui/react'
 import { defaultChainId } from 'src/constants/chains'
+import { Dot } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
+import { getFieldString } from 'src/libraries/utils/formatting'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
 import MilestoneChoose from 'src/screens/dashboard/_components/FundBuilder/MilestoneChoose'
 import { ProposalType, TokenInfo } from 'src/screens/dashboard/_utils/types'
 import { FundBuilderContext } from 'src/screens/dashboard/Context'
-import { getFieldString } from 'src/utils/formattingUtils'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 interface Props {
 	proposal: ProposalType
@@ -31,8 +32,7 @@ function ProposalDetails({ proposal, index, tokenInfo }: Props) {
 						{getFieldString(decryptedProposal, 'applicantName')}
 					</Text>
 
-					<Image
-						src='/v2/icons/dot.svg'
+					<Dot
 						boxSize='4px'
 						mx={2} />
 

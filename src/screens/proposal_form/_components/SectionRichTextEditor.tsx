@@ -23,7 +23,7 @@ function SectionRichTextEditor({ label, editorState, setEditorState, flexProps }
 				<Text
 					mr={8}
 					pb={2}
-					variant='v2_subheading'
+					variant='subheading'
 					w={['100%', 'calc(30% - 32px)']}
 					fontWeight='500'
 					textAlign={['left', 'right']}>

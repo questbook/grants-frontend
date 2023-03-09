@@ -1,9 +1,9 @@
-import { ChangeEvent, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { BsArrowLeft } from 'react-icons/bs'
-import { Button, Flex, Icon, Image, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text, useToast } from '@chakra-ui/react'
-import { ethers, utils, Wallet } from 'ethers'
+import { Button, Flex, Input, ModalBody, Text } from '@chakra-ui/react'
+import { utils, Wallet } from 'ethers'
+import { Gdrive } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
-import TextField from 'src/v2/components/InputFields/TextField'
 interface Props {
     importWebwallet: (privateKey: string) => void
     inited: boolean
@@ -83,11 +83,7 @@ function RestoreWallet({ setSignInMethod, closeModal, inited, loading, importWal
 								h='10'
 								borderRadius={0}
 								isDisabled={loading || !inited}
-								leftIcon={
-									<Icon
-										as={Image}
-										src='Google_Drive_icon_(2020).svg' />
-								}
+								leftIcon={<Gdrive />}
 								onClick={
 									async() => {
 										try {

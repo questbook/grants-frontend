@@ -1,16 +1,22 @@
 import { ChangeEvent, ReactElement, useContext, useEffect, useMemo, useState } from 'react'
+import { CalendarIcon } from '@chakra-ui/icons'
 import { Button, Container, Flex, Image, Text } from '@chakra-ui/react'
 import { convertToRaw } from 'draft-js'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
 import { useSafeContext } from 'src/contexts/safeContext'
+import { Doc } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import BackButton from 'src/libraries/ui/BackButton'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import SetupNotificationModal from 'src/libraries/ui/SetupNotificationModal'
+import { getAvatar } from 'src/libraries/utils'
+import { chainNames } from 'src/libraries/utils/constants'
+import { extractDateFromDateTime, getExplorerUrlForTxHash, getRewardAmountMilestones } from 'src/libraries/utils/formatting'
+import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { getChainInfo } from 'src/libraries/utils/token'
-import { GrantsProgramContext, SignInContext, SignInTitleContext } from 'src/pages/_app'
+import { GrantsProgramContext, SignInTitleContext } from 'src/pages/_app'
 import SectionHeader from 'src/screens/proposal_form/_components/SectionHeader'
 import SectionInput from 'src/screens/proposal_form/_components/SectionInput'
 import SectionRichTextEditor from 'src/screens/proposal_form/_components/SectionRichTextEditor'
@@ -20,10 +26,6 @@ import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposa
 import { containsField, findField, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
 import { customSteps, customStepsHeader, DEFAULT_MILESTONE, MILESTONE_INPUT_STYLE } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
-import getAvatar from 'src/utils/avatarUtils'
-import { chainNames } from 'src/utils/chainNames'
-import { extractDateFromDateTime, getExplorerUrlForTxHash, getRewardAmountMilestones } from 'src/utils/formattingUtils'
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 
 function ProposalForm() {
@@ -58,7 +60,7 @@ function ProposalForm() {
 							boxSize='30%' />
 						<Text
 							mt={6}
-							variant='v2_heading_2'
+							variant='heading2'
 							fontWeight='500'>
 							Fantastic — we have received
 							your proposal.
@@ -74,7 +76,7 @@ function ProposalForm() {
 						px='10%'>
 						<Text
 							fontWeight='500'
-							variant='v2_subheading'>
+							variant='subheading'>
 							Subscribe to notifications
 						</Text>
 						<Text mt={3}>
@@ -144,7 +146,7 @@ function ProposalForm() {
 					my={5}>
 					<Text
 						fontWeight='500'
-						variant='v2_subheading'>
+						variant='subheading'>
 						{error}
 					</Text>
 				</Flex>
@@ -186,7 +188,7 @@ function ProposalForm() {
 						<Text
 							w='100%'
 							textAlign='center'
-							variant='v2_heading_3'
+							variant='heading3'
 							fontWeight='500'
 							borderBottom='1px solid #E7E4DD'
 							pb={4}>
@@ -200,7 +202,7 @@ function ProposalForm() {
 							pt={4}
 						>
 							<Text
-								variant='v2_heading_3'
+								variant='heading3'
 								fontWeight='500'
 							>
 								{grant?.title}
@@ -230,10 +232,10 @@ function ProposalForm() {
 									alignItems='center'
 								>
 									<Flex gap={4}>
-										<Image src='/v2/icons/calendar-color.svg' />
+										<CalendarIcon />
 										<Flex direction='column'>
 											<Text
-												variant='v2_title'
+												variant='title'
 												fontWeight='400'
 												color='black.1'
 											>
@@ -241,7 +243,7 @@ function ProposalForm() {
 												{' '}
 											</Text>
 											<Text
-												variant='v2_title'
+												variant='title'
 												fontWeight='500'
 												color='black.1'
 											>
@@ -257,17 +259,17 @@ function ProposalForm() {
 									grant?.link && (
 										<Flex alignItems='center'>
 											<Flex gap={4}>
-												<Image src='/v2/icons/doc.svg' />
+												<Doc />
 												<Flex direction='column'>
 													<Text
-														variant='v2_title'
+														variant='title'
 														fontWeight='400'
 													>
 														Grant program details
 														{' '}
 													</Text>
 													<Text
-														variant='v2_title'
+														variant='title'
 														fontWeight='500'
 														color='black.1'
 														cursor='pointer'
@@ -644,7 +646,6 @@ function ProposalForm() {
 ProposalForm.getLayout = (page: ReactElement) => {
 	return (
 		<NavbarLayout
-			renderSidebar={false}
 			openSignIn={true}>
 			<ProposalFormProvider>
 				{page}

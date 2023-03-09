@@ -1,5 +1,7 @@
+import { PublicKey } from '@solana/web3.js'
+import { OptionBase } from 'chakra-react-select'
 import { EditorState } from 'draft-js'
-import { FeedbackType } from 'src/components/your_grants/feedbackDrawer'
+import { NetworkType } from 'src/constants/Networks'
 import {
 	ApplicationRegistryAbi,
 	ApplicationReviewRegistryAbi,
@@ -8,31 +10,16 @@ import {
 	WorkspaceRegistryAbi,
 } from 'src/generated/contracts'
 import {
-	GetAllGrantsForADaoQuery, GetApplicantsForAGrantQuery,
-	GetApplicationMilestonesQuery,
-	GetDaoDetailsQuery,
-	GetFundSentForApplicationQuery,
 	GetGrantQuery,
-	GetReviewersForAWorkspaceQuery,
-	GetWorkspaceDetailsQuery,
 	GetWorkspaceMembersQuery,
+	GrantApplication,
+	RubricItem,
 	SupportedNetwork,
 } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 
-export type Grant = GetAllGrantsForADaoQuery['grants'][number];
-export type ApplicationMilestone =
-  GetApplicationMilestonesQuery['grantApplications'][number]['milestones'][number];
-export type FundTransfer =
-  GetFundSentForApplicationQuery['fundsTransfers'][number];
 export type MinimalWorkspace =
   GetWorkspaceMembersQuery['workspaceMembers'][number]['workspace'];
-export type Workspace = Exclude<
-  GetWorkspaceDetailsQuery['workspace'],
-  null | undefined
->;
-export type DAOWorkspace = GetDaoDetailsQuery['workspace'];
-export type DAOGrant = GetDaoDetailsQuery['grants'];
 
 export type IApplicantData = {
   grantTitle?: string
@@ -53,14 +40,20 @@ export type IApplicantData = {
   }
   status: number
   amountPaid: string
-  reviews: GetApplicantsForAGrantQuery['grantApplications'][number]['reviews']
-  milestones: GetApplicantsForAGrantQuery['grantApplications'][number]['milestones']
-  reviewers: GetApplicantsForAGrantQuery['grantApplications'][number]['applicationReviewers']
+  reviews: GrantApplication['reviews']
+  milestones: GrantApplication['milestones']
+  reviewers: GrantApplication['applicationReviewers']
 }
 
-export type IReview = IApplicantData['reviews'][0]
+export type IReview = IApplicantData['reviews'][number]
 
 export type IReviewer = { id: string, fullName?: string | null }
+
+export interface FeedbackType {
+	rubric: RubricItem
+	rating: number
+	comment: string
+}
 
 export type IReviewFeedback = {
   isApproved?: boolean
@@ -146,12 +139,6 @@ export interface SidebarRubrics {
   description: string
 }
 
-export interface SidebarReviewer {
-  data: Exclude<GetReviewersForAWorkspaceQuery['workspace'], null | undefined>['members'][number]
-  isSelected: boolean
-  index: number
-}
-
 
 export type SafeToken = {
   tokenAddress: string
@@ -202,4 +189,47 @@ export type GrantProgramContextType = {
 export type NotificationContextType = {
   qrCodeText: string | undefined
   setQrCodeText: (qrCodeText: string | undefined) => void
+}
+
+export type NoteDetails = {
+	bgColor: string
+	color: string
+	text: string
+	link?: string
+	linkText?: string
+	linkTextColor?: string
+}
+
+export type SafeSelectOption = {
+	safeAddress: string
+	networkType: NetworkType
+	networkId: string
+	networkName: string // Polygon
+	networkIcon: string
+	safeType: string // Gnosis
+	safeIcon: string
+	amount: number // 1000
+	currency?: string // USD
+	isNote?: boolean
+	noteDetails?: NoteDetails
+	owners: string[]
+} & OptionBase
+
+export type PhantomEvent = 'disconnect' | 'connect' | 'accountChanged';
+
+export interface ConnectOpts {
+    onlyIfTrusted: boolean
+}
+
+export interface PhantomProvider {
+    connect: (opts?: Partial<ConnectOpts>) => Promise<{ publicKey: PublicKey }>
+    disconnect: () => Promise<void>
+    on: (event: PhantomEvent, callback: (args: any) => void) => void
+    isPhantom: boolean
+	publicKey: PublicKey
+	isConnected: boolean
+}
+
+export type WindowWithSolana = Window & {
+    solana?: PhantomProvider
 }
