@@ -1,13 +1,9 @@
-import { useContext, useMemo } from 'react'
+import { useContext } from 'react'
 import axios from 'axios'
 import sha256 from 'crypto-js/sha256'
-import { COMMUNICATION_ADDRESS } from 'src/constants/addresses'
 import SupportedChainId from 'src/generated/SupportedChainId'
-import useQBContract from 'src/hooks/contracts/useQBContract'
-import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
+import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
-import { bicoDapps, getTransactionDetails, sendGaslessTransaction } from 'src/libraries/utils/gasless'
 import { WebwalletContext } from 'src/pages/_app'
 
 type FunctionProps = {
@@ -19,14 +15,12 @@ type HookProps = {
 }
 
 function useCreateMapping({ chainId }: HookProps) {
-	const { webwallet } = useContext(WebwalletContext)!
+	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({ chainId: chainId?.toString()! })
-	const { nonce } = useQuestbookAccount()
-	const communicationContract = useQBContract('communication', chainId)
+	const { call, isBiconomyInitialised } = useFunctionCall({ chainId, contractName: 'communication' })
 
 	const createMapping = async({ email }: FunctionProps) => {
-		if(!biconomyWalletClient || typeof biconomyWalletClient === 'string' || !scwAddress) {
+		if(!isBiconomyInitialised) {
 			throw new Error('Zero wallet is not ready')
 		}
 
@@ -46,29 +40,11 @@ function useCreateMapping({ chainId }: HookProps) {
 			const commMethodArgs = [chainId, encryptedEmail, signedMessage]
 			logger.info({ commMethodArgs }, 'useCreateMapping: Communication method args')
 
-			const commTx = await sendGaslessTransaction(
-				biconomy,
-				communicationContract,
-				'createLink',
-				commMethodArgs,
-				COMMUNICATION_ADDRESS[chainId],
-				biconomyWalletClient,
-				scwAddress,
-				webwallet,
-				`${chainId}`,
-				bicoDapps[chainId].webHookId,
-				nonce
-			)
+			const receipt = await call({ method: 'createLink', args: commMethodArgs, shouldWaitForBlock: false })
 
-			logger.info({ commTx }, 'useCreateMapping: commTx')
-
-			if(commTx) {
-				const { receipt: commReceipt } = await getTransactionDetails(commTx, chainId.toString())
-				logger.info({ commReceipt }, 'useCreateMapping: commReceipt')
-				const txHash = commReceipt.transactionHash
-
+			if(receipt) {
+				const txHash = receipt.transactionHash
 				logger.info({ txHash }, 'useCreateMapping: Communication tx hash')
-
 				const ret = await axios.post(`${process.env.API_ENDPOINT}/mapping/create`, {
 					id: scwAddress,
 					chainId,
@@ -83,9 +59,7 @@ function useCreateMapping({ chainId }: HookProps) {
 		}
 	}
 
-	return useMemo(() => {
-		return createMapping
-	}, [biconomy, biconomyWalletClient, scwAddress, webwallet, chainId, nonce])
+	return createMapping
 }
 
 export default useCreateMapping

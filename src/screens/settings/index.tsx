@@ -372,7 +372,6 @@ function Settings() {
 								return
 							}
 
-							setIsNetworkTransactionModalOpen(true)
 							revokeOrRestoreAccess(address, openConfirmationModal?.accessLevel === 'reviewer' ? 1 : 0, !openConfirmationModal?.enabled)
 							setOpenConfirmationModal(undefined)
 						}
@@ -380,8 +379,8 @@ function Settings() {
 					onCancel={() => setOpenConfirmationModal(undefined)}
 				/>
 				<NetworkTransactionFlowStepperModal
-					isOpen={isNetworkTransactionModalOpen}
-					currentStepIndex={currentStepIndex!}
+					isOpen={currentStepIndex !== undefined}
+					currentStepIndex={currentStepIndex || 0}
 					viewTxnLink={getExplorerUrlForTxHash(network, txHash ?? revokeTxHash)}
 					onClose={
 						async() => {
@@ -419,7 +418,6 @@ function Settings() {
 
 	const { network } = useNetwork()
 
-	const [isNetworkTransactionModalOpen, setIsNetworkTransactionModalOpen] = useState(false)
 	const [currentStepIndex, setCurrentStepIndex] = useState<number| undefined>()
 	const [openConfirmationModal, setOpenConfirmationModal] = useState<WorkspaceMembers[number]>()
 	const [isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen] = useState(false)
@@ -433,7 +431,7 @@ function Settings() {
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
 	}, [grant])
 
-	const { updateGrantProgram, txHash } = useUpdateGrantProgram(setCurrentStepIndex, setIsNetworkTransactionModalOpen)
+	const { updateGrantProgram, txHash } = useUpdateGrantProgram(setCurrentStepIndex)
 
 	const handleOnClickSave = async() => {
 		const logoIpfsHash = imageFile !== null ? (await uploadToIPFS(imageFile.file)).hash : ''
