@@ -730,7 +730,7 @@ function Reviews() {
 						<Image
 							borderRadius='3xl'
 							boxSize='28px'
-							src={getAvatar(false, reviewer?.actorId)}
+							src={reviewer?.profilePictureIpfsHash ? getUrlForIPFSHash(reviewer.profilePictureIpfsHash) : getAvatar(false, reviewer?.actorId ?? 'generic')}
 						/>
 						<Text
 							as='span'

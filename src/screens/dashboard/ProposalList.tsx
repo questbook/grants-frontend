@@ -132,7 +132,6 @@ function ProposalList({ step, setStep }: {step?: boolean, setStep?: (value: bool
 									step={step}
 									setStep={setStep} />
 							</motion.div>
-
 						)
 					})
 				}

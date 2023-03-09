@@ -23,7 +23,7 @@ function Milestones() {
 				<motion.div
 					initial={{ opacity: 0, x: 50 }}
 					animate={{ opacity: 1, x: 0 }}
-					transition={{ duration: 1, delay: 1 }}>
+					transition={{ duration: 1, delay: 2 }}>
 					<Flex
 						justify='space-between'
 						onClick={
