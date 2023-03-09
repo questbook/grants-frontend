@@ -2,6 +2,7 @@ import { useContext, useEffect, useMemo, useState } from 'react'
 import ReactLinkify from 'react-linkify'
 import { LockIcon } from '@chakra-ui/icons'
 import { Box, Button, Checkbox, Divider, Flex, Image, Text, Textarea, Tooltip } from '@chakra-ui/react'
+import { motion } from 'framer-motion'
 import logger from 'src/libraries/logger'
 import { getAvatar } from 'src/libraries/utils'
 import { formatAddress, getFieldString } from 'src/libraries/utils/formatting'
@@ -26,156 +27,161 @@ function Discussions() {
 				boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
 				bg='white'
 				direction='column'>
-				<Text fontWeight='500'>
-					Discussion
-				</Text>
+				<motion.div
+					initial={{ opacity: 0, y: 50 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 1 }}>
+					<Text fontWeight='500'>
+						Discussion
+					</Text>
 
-				{
-					areCommentsLoading && (
-						<Button
-							my={4}
-							isLoading={areCommentsLoading}
-							loadingText='Loading comments, please wait.'
-							variant='link'
-							cursor='default' />
-					)
-				}
+					{
+						areCommentsLoading && (
+							<Button
+								my={4}
+								isLoading={areCommentsLoading}
+								loadingText='Loading comments, please wait.'
+								variant='link'
+								cursor='default' />
+						)
+					}
 
-				{
-					comments.length > 0 && (
-						<Divider
-							my={4}
-							color='gray.3'
-							height={1} />
-					)
-				}
+					{
+						comments.length > 0 && (
+							<Divider
+								my={4}
+								color='gray.3'
+								height={1} />
+						)
+					}
 
-				{comments.map(renderComment)}
-				{
-					proposalTags?.length > 0 && (
-						<Flex
-							mt={4}
-							w='100%'>
-							<Image
-								src='/v2/images/qb-discussion.svg'
-								boxSize='36px' />
+					{comments.map(renderComment)}
+					{
+						proposalTags?.length > 0 && (
 							<Flex
-								ml={4}
-								direction='column'>
-								<Text
-									variant='metadata'
-									fontWeight='500'
-									color='gray.6'>
-									FEW WAYS TO START THE DISCUSSION.
-								</Text>
+								mt={4}
+								w='100%'>
+								<Image
+									src='/v2/images/qb-discussion.svg'
+									boxSize='36px' />
 								<Flex
-									mt={2}
-									gap={3}>
-									{
-										proposalTags?.map((tag, index) => {
-											return (
-												<QuickReplyButton
-													key={index}
-													tag={tag}
-													isSelected={tag.id === selectedTag}
-													onClick={
-														() => {
-															if(selectedTag) {
-																setSelectedTag(undefined)
-																setText('')
-															} else {
-																setSelectedTag(tag.id)
-																setText(tag.commentString)
+									ml={4}
+									direction='column'>
+									<Text
+										variant='metadata'
+										fontWeight='500'
+										color='gray.6'>
+										FEW WAYS TO START THE DISCUSSION.
+									</Text>
+									<Flex
+										mt={2}
+										gap={3}>
+										{
+											proposalTags?.map((tag, index) => {
+												return (
+													<QuickReplyButton
+														key={index}
+														tag={tag}
+														isSelected={tag.id === selectedTag}
+														onClick={
+															() => {
+																if(selectedTag) {
+																	setSelectedTag(undefined)
+																	setText('')
+																} else {
+																	setSelectedTag(tag.id)
+																	setText(tag.commentString)
+																}
 															}
 														}
-													}
-													isDisabled={(selectedTag !== undefined && selectedTag !== tag.id) || (isCommentPrivate && !tag.isPrivate)}
-													index={index} />
-											)
-										})
-									}
+														isDisabled={(selectedTag !== undefined && selectedTag !== tag.id) || (isCommentPrivate && !tag.isPrivate)}
+														index={index} />
+												)
+											})
+										}
+									</Flex>
 								</Flex>
 							</Flex>
-						</Flex>
-					)
-				}
-				<Flex
-					mt={4}
-					w='100%'>
-					<Image
-						borderRadius='3xl'
-						boxSize='36px'
-						src={(role === 'builder' || role === 'community') ? getAvatar(false, scwAddress?.toLowerCase()) : grant?.workspace?.members?.find(member => member.actorId.toLowerCase() === scwAddress?.toLowerCase())?.profilePictureIpfsHash ? getUrlForIPFSHash(grant?.workspace?.members?.find(member => member.actorId.toLowerCase() === scwAddress?.toLowerCase())?.profilePictureIpfsHash ?? '') : getAvatar(false, scwAddress?.toLowerCase())}
-					/>
+						)
+					}
 					<Flex
-						ml={4}
-						direction='column'
+						mt={4}
 						w='100%'>
-						<Textarea
-							value={text}
-							onChange={
-								(e) => {
-									setText(e.target.value)
-									localStorage.setItem(`comment-${grant?.id}-${proposal?.id}`, e.target.value)
-								}
-							}
-							placeholder={placeholder} />
+						<Image
+							borderRadius='3xl'
+							boxSize='36px'
+							src={(role === 'builder' || role === 'community') ? getAvatar(false, scwAddress?.toLowerCase()) : grant?.workspace?.members?.find(member => member.actorId.toLowerCase() === scwAddress?.toLowerCase())?.profilePictureIpfsHash ? getUrlForIPFSHash(grant?.workspace?.members?.find(member => member.actorId.toLowerCase() === scwAddress?.toLowerCase())?.profilePictureIpfsHash ?? '') : getAvatar(false, scwAddress?.toLowerCase())}
+						/>
 						<Flex
-							mt={4}
-							align='center'>
-							{
-								role === 'admin' && (
-									<Checkbox
-										isChecked={isCommentPrivate}
-										onChange={
-											(e) => {
-												setSelectedTag(undefined)
-												setIsCommentPrivate(e.target.checked)
-											}
-										}>
-										<Text
-											variant='body'
-											color='gray.5'>
-											Show only to reviewers and builder
-										</Text>
-									</Checkbox>
-								)
-							}
-							<Button
-								ml='auto'
-								// mr={['50px','50px','0']}
-								// paddingBottom='30px'
-								marginBottom={['90px', '50px', '0']}
-								variant='primaryMedium'
-								isLoading={step !== undefined}
-								onClick={
-									async() => {
-										if(isDisabled) {
-											setSignInTitle('postComment')
-											setSignIn(true)
-											return
-										}
-
-										const ret = await addComment(text, isCommentPrivate, selectedTag)
-										if(ret) {
-											setText('')
-											setSelectedTag(undefined)
-											refreshComments(true)
-										}
+							ml={4}
+							direction='column'
+							w='100%'>
+							<Textarea
+								value={text}
+								onChange={
+									(e) => {
+										setText(e.target.value)
+										localStorage.setItem(`comment-${grant?.id}-${proposal?.id}`, e.target.value)
 									}
-								}>
-								Post
-							</Button>
-						</Flex>
+								}
+								placeholder={placeholder} />
+							<Flex
+								mt={4}
+								align='center'>
+								{
+									role === 'admin' && (
+										<Checkbox
+											isChecked={isCommentPrivate}
+											onChange={
+												(e) => {
+													setSelectedTag(undefined)
+													setIsCommentPrivate(e.target.checked)
+												}
+											}>
+											<Text
+												variant='body'
+												color='gray.5'>
+												Show only to reviewers and builder
+											</Text>
+										</Checkbox>
+									)
+								}
+								<Button
+									ml='auto'
+									// mr={['50px','50px','0']}
+									// paddingBottom='30px'
+									marginBottom={['90px', '50px', '0']}
+									variant='primaryMedium'
+									isLoading={step !== undefined}
+									onClick={
+										async() => {
+											if(isDisabled) {
+												setSignInTitle('postComment')
+												setSignIn(true)
+												return
+											}
 
+											const ret = await addComment(text, isCommentPrivate, selectedTag)
+											if(ret) {
+												setText('')
+												setSelectedTag(undefined)
+												refreshComments(true)
+											}
+										}
+									}>
+									Post
+								</Button>
+							</Flex>
+
+						</Flex>
 					</Flex>
-				</Flex>
-				{
-					comments.length > 0 && (
-						<Box
-							my={4} />
-					)
-				}
+					{
+						comments.length > 0 && (
+							<Box
+								my={4} />
+						)
+					}
+				</motion.div>
 			</Flex>
 		)
 	}

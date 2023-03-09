@@ -1,6 +1,7 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Flex, Text } from '@chakra-ui/react'
 import { ethers } from 'ethers'
+import { motion } from 'framer-motion'
 import { defaultChainId, USD_ASSET } from 'src/constants/chains'
 import { useGetPayoutsQuery } from 'src/generated/graphql'
 import { Dropdown, NewTab } from 'src/generated/icons'
@@ -24,51 +25,57 @@ function Payouts() {
 				py={4}
 				direction='column'
 				overflowY='auto'
+				overflowX='clip'
 				align='stretch'
 				w='100%'>
-				<Flex
-					justify='space-between'
-					onClick={
-						() => {
-							setExpanded(!expanded)
+				<motion.div
+					initial={{ opacity: 0, x: 50 }}
+					animate={{ opacity: 1, x: 0 }}
+					transition={{ duration: 1, delay: 0.6 }}>
+					<Flex
+						justify='space-between'
+						onClick={
+							() => {
+								setExpanded(!expanded)
+							}
+						}>
+						<Text
+							fontWeight='500'
+							color={proposals?.length ? 'black.1' : 'gray.6'}>
+							Payouts
+						</Text>
+						{
+							proposals?.length > 0 && (
+								<Dropdown
+									mr={2}
+									transform={expanded ? 'rotate(180deg)' : 'rotate(0deg)'}
+									cursor='pointer'
+								/>
+							)
 						}
-					}>
-					<Text
-						fontWeight='500'
-						color={proposals?.length ? 'black.1' : 'gray.6'}>
-						Payouts
-					</Text>
+					</Flex>
+
 					{
-						proposals?.length > 0 && (
-							<Dropdown
-								mr={2}
-								transform={expanded ? 'rotate(180deg)' : 'rotate(0deg)'}
-								cursor='pointer'
-							/>
+						payouts.length > 0 && (
+							<Flex
+								display={expanded ? 'block' : 'none'}
+								direction='column'>
+								{payouts.map(payoutItem)}
+							</Flex>
 						)
 					}
-				</Flex>
 
-				{
-					payouts.length > 0 && (
-						<Flex
-							display={expanded ? 'block' : 'none'}
-							direction='column'>
-							{payouts.map(payoutItem)}
-						</Flex>
-					)
-				}
-
-				{
-					payouts.length === 0 && (
-						<Text
-							display={expanded ? 'block' : 'none'}
-							mt={2}
-							color='gray.6'>
-							No payouts yet
-						</Text>
-					)
-				}
+					{
+						payouts.length === 0 && (
+							<Text
+								display={expanded ? 'block' : 'none'}
+								mt={2}
+								color='gray.6'>
+								No payouts yet
+							</Text>
+						)
+					}
+				</motion.div>
 			</Flex>
 		)
 	}

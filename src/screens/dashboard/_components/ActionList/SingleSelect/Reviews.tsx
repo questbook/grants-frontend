@@ -3,6 +3,7 @@ import { Box, Button, ButtonProps, Checkbox, Divider, Flex, Image, InputGroup, I
 import Safe from '@safe-global/safe-core-sdk'
 import EthersAdapter from '@safe-global/safe-ethers-lib'
 import { ethers } from 'ethers'
+import { motion } from 'framer-motion'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import guardAbi from 'src/contracts/abi/ReviewerGuard.json'
 import { CheckDouble, Close, Dropdown, Pencil } from 'src/generated/icons'
@@ -34,112 +35,118 @@ function Reviews() {
 				direction='column'
 				align='stretch'
 				overflowY='auto'
+				overflowX='clip'
 				w='100%'>
-				<Flex
-					justify='space-between'
-					onClick={
-						() => {
-							if(proposals?.length > 0) {
-								setExpanded(!expanded)
+				<motion.div
+					initial={{ opacity: 0, x: 50 }}
+					animate={{ opacity: 1, x: 0 }}
+					transition={{ duration: 1, delay: 0.2 }}>
+					<Flex
+						justify='space-between'
+						onClick={
+							() => {
+								if(proposals?.length > 0) {
+									setExpanded(!expanded)
+								}
 							}
+						}>
+						<Text fontWeight='500'>
+							Reviews
+						</Text>
+						{
+							proposals?.length > 0 && (
+								<Dropdown
+									mr={2}
+									transform={expanded ? 'rotate(180deg)' : 'rotate(0deg)'}
+									cursor='pointer'
+								/>
+							)
 						}
-					}>
-					<Text fontWeight='500'>
-						Reviews
-					</Text>
-					{
-						proposals?.length > 0 && (
-							<Dropdown
-								mr={2}
-								transform={expanded ? 'rotate(180deg)' : 'rotate(0deg)'}
-								cursor='pointer'
-							/>
-						)
-					}
-				</Flex>
+					</Flex>
 
-				<Flex
-					display={expanded ? 'block' : 'none'}
-					direction='column'>
-					{reviewer()}
-					{reviewWith()}
-					{
-						(proposal?.applicationReviewers?.length || 0) > 0 && (
-							<Text
-								mt={4}
-								variant='metadata'
-								color='gray.5'
-								fontWeight='500'>
-								REVIEWER EVALUATION
-							</Text>
-						)
-					}
+					<Flex
+						display={expanded ? 'block' : 'none'}
+						direction='column'>
+						{reviewer()}
+						{reviewWith()}
+						{
+							(proposal?.applicationReviewers?.length || 0) > 0 && (
+								<Text
+									mt={4}
+									variant='metadata'
+									color='gray.5'
+									fontWeight='500'>
+									REVIEWER EVALUATION
+								</Text>
+							)
+						}
 
-					{(grant?.reviewType === 'voting' && (proposal?.applicationReviewers?.length || 0) > 0) && voteGraph()}
+						{(grant?.reviewType === 'voting' && (proposal?.applicationReviewers?.length || 0) > 0) && voteGraph()}
 
-					{
-						proposal?.applicationReviewers?.filter((reviewer) => !guardContractReviewers.find(gcr => gcr.member?.actorId === reviewer?.member?.actorId)).map((reviewer, index) => {
-							return reviewerItem(reviewer?.member, reviews.find(r => r.reviewer === reviewer?.member.actorId), index)
-						})
-					}
+						{
+							proposal?.applicationReviewers?.filter((reviewer) => !guardContractReviewers.find(gcr => gcr.member?.actorId === reviewer?.member?.actorId)).map((reviewer, index) => {
+								return reviewerItem(reviewer?.member, reviews.find(r => r.reviewer === reviewer?.member.actorId), index)
+							})
+						}
 
-					{
-						guardContractReviewers.map((reviewer, index) => {
-							if(reviewer?.member) {
-								return reviewerItem(reviewer?.member, reviews.find(r => r.reviewer === reviewer?.member?.actorId), index)
-							} else {
-								return (
-									<Flex
-										mt={index === 0 ? 5 : 3}
-										key={index}
-										w='100%'
-										align='center'
-									>
+						{
+							guardContractReviewers.map((reviewer, index) => {
+								if(reviewer?.member) {
+									return reviewerItem(reviewer?.member, reviews.find(r => r.reviewer === reviewer?.member?.actorId), index)
+								} else {
+									return (
 										<Flex
-											maxW='70%'
+											mt={index === 0 ? 5 : 3}
+											key={index}
+											w='100%'
 											align='center'
 										>
-											<Image
-												borderRadius='3xl'
-												boxSize='28px'
-												src={getAvatar(false, reviewer?.walletAddress)}
-											/>
-											<Tooltip label={reviewer.walletAddress}>
+											<Flex
+												maxW='70%'
+												align='center'
+											>
+												<Image
+													borderRadius='3xl'
+													boxSize='28px'
+													src={getAvatar(false, reviewer?.walletAddress)}
+												/>
+												<Tooltip label={reviewer.walletAddress}>
+													<Text
+														as='span'
+														variant='body'
+														fontWeight='500'
+														ml={3}
+														noOfLines={3}>
+														{formatAddress(reviewer.walletAddress)}
+													</Text>
+												</Tooltip>
+											</Flex>
+
+											<Box ml='auto' />
+
+											<Button
+												variant='link'
+											>
 												<Text
-													as='span'
+													color='accent.azure'
 													variant='body'
 													fontWeight='500'
-													ml={3}
-													noOfLines={3}>
-													{formatAddress(reviewer.walletAddress)}
+													onClick={
+														() => {
+															setWalletAddress(reviewer.walletAddress)
+														}
+													}>
+													Join as a reviewer
 												</Text>
-											</Tooltip>
+											</Button>
 										</Flex>
+									)
+								}
+							})
+						}
 
-										<Box ml='auto' />
-
-										<Button
-											variant='link'
-										>
-											<Text
-												color='accent.azure'
-												variant='body'
-												fontWeight='500'
-												onClick={
-													() => {
-														setWalletAddress(reviewer.walletAddress)
-													}
-												}>
-												Join as a reviewer
-											</Text>
-										</Button>
-									</Flex>
-								)
-							}
-						})
-					}
-
-				</Flex>
+					</Flex>
+				</motion.div>
 
 				<SafeGuardModal
 					isOpen={isSafeGuardModalOpen}

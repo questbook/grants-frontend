@@ -2,6 +2,7 @@
 
 import { createRef, useContext, useEffect, useMemo, useState } from 'react'
 import { Box, Button, Checkbox, Flex, Text } from '@chakra-ui/react'
+import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
 import logger from 'src/libraries/logger'
 import SearchField from 'src/libraries/ui/SearchField'
@@ -120,12 +121,18 @@ function ProposalList({ step, setStep }: {step?: boolean, setStep?: (value: bool
 				{
 					proposalCount > 0 && filteredProposals?.map((proposal, index) => {
 						return (
-							<ProposalCard
-								ref={cardRefs[index]}
+							<motion.div
 								key={proposal.id}
-								proposal={proposal}
-								step={step}
-								setStep={setStep} />
+								initial={{ opacity: 0, x: -50 }}
+								animate={{ opacity: 1, x: 0 }}
+								transition={{ delay: index * 0.2, ease: 'easeInOut' }}>
+								<ProposalCard
+									ref={cardRefs[index]}
+									proposal={proposal}
+									step={step}
+									setStep={setStep} />
+							</motion.div>
+
 						)
 					})
 				}
