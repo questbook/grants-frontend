@@ -916,7 +916,7 @@ function Reviews() {
 	}, [proposals, selectedProposals])
 
 	const totalNumberOfReviewers = useMemo(() => {
-		return (proposal?.pendingReviewerAddresses?.length || 0) + (guardContractReviewers?.length || 0)
+		return (proposal?.applicationReviewers?.length || 0) + (guardContractReviewers?.length || 0)
 	}, [proposal, guardContractReviewers])
 
 	const getReviewersFromGuardContract = async() => {

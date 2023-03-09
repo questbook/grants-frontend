@@ -163,7 +163,6 @@ function SetupProfileModal({ walletAddress, isOpen, onClose }: Props) {
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
 	}, [grant])
 
-
 	const [name, setName] = useState<string>('')
 	const [email, setEmail] = useState<{data: string, state: 'loading' | 'loaded'}>({ data: '', state: 'loaded' })
 	useEffect(() => {
@@ -228,6 +227,8 @@ function SetupProfileModal({ walletAddress, isOpen, onClose }: Props) {
 			signedMessage: signature,
 			walletAddress,
 		})
+
+		logger.info({ res }, 'SetupProfileModal: setupProfile received')
 
 		if(res) {
 			onClose()

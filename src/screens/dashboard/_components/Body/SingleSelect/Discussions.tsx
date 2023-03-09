@@ -166,6 +166,7 @@ function Discussions() {
 												setText('')
 												setSelectedTag(undefined)
 												refreshComments(true)
+												localStorage.removeItem(`comment-${grant?.id}-${proposal?.id}`)
 											}
 										}
 									}>

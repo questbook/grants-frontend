@@ -279,14 +279,45 @@ function Proposal() {
 								{
 									getFieldStrings(decryptedProposal, 'memberDetails')?.map(
 										(member: string, index: number) => (
-											<Text
+											<ReactLinkify
 												key={index}
-												mt={2}>
-												{index + 1}
-												.
-												{' '}
-												{member}
-											</Text>
+												componentDecorator={
+													(
+														decoratedHref: string,
+														decoratedText: string,
+														key: number,
+													) => (
+														<Text
+															display='inline-block'
+															wordBreak='break-all'
+															color='accent.azure'
+															cursor='pointer'
+															_hover={
+																{
+																	textDecoration: 'underline',
+																}
+															}
+															key={key}
+															onClick={
+																() => {
+																	window.open(decoratedHref, '_blank')
+																}
+															}
+														>
+															{decoratedText}
+														</Text>
+													)
+												}
+											>
+												<Text
+													mt={2}>
+													{index + 1}
+													.
+													{' '}
+													{member}
+												</Text>
+											</ReactLinkify>
+
 										),
 									)
 								}

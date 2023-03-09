@@ -25,7 +25,7 @@ function useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash }:
 		return proposals.find(p => selectedProposals.has(p.id))
 	}, [proposals, selectedProposals])
 
-	const { call, isBiconomyInitialised } = useFunctionCall({ chainId, contractName: 'workspace', setTransactionStep: setNetworkTransactionModalStep, setTransactionHash })
+	const { call, isBiconomyInitialised } = useFunctionCall({ chainId, contractName: 'reviews', setTransactionStep: setNetworkTransactionModalStep, setTransactionHash })
 
 	const { generateReviewData } = useGenerateReviewData({
 		grantId: grant?.id!,

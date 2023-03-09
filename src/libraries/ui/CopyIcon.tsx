@@ -16,7 +16,8 @@ function CopyIcon({ text }: Props) {
 	return (
 		<Tooltip label={tooltipLabel}>
 			<Copy
-				boxSize='12px'
+				// boxSize='12px'
+				bg='white'
 				alignSelf='center'
 				cursor='pointer'
 				onClick={

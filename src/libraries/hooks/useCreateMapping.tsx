@@ -30,10 +30,9 @@ function useCreateMapping({ chainId }: HookProps) {
 			to: email
 		})
 
-		if(check.status === 200) {
+		if(check.status === 200 && check.data.value) {
 			logger.info({ check }, 'useCreateMapping: Mapping Exists')
-		} else {
-
+		} else if(check.status === 200 && !check.data.value) {
 			const encryptedEmail = sha256(email).toString()
 			const signedMessage = (await webwallet?.signMessage(email))?.toString()
 
