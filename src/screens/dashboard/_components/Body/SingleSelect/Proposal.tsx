@@ -60,7 +60,7 @@ function Proposal() {
 				<motion.div
 					initial={{ opacity: 0, y: -50 }}
 					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 1 }}>
+					transition={{ duration: 1, ease: 'easeInOut', delay: 0.8 }}>
 					<Flex
 						w='100%'
 						align='center'

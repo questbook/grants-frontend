@@ -123,7 +123,7 @@ function ProposalList({ step, setStep }: {step?: boolean, setStep?: (value: bool
 						return (
 							<motion.div
 								key={proposal.id}
-								initial={{ opacity: 0, x: -50 }}
+								initial={{ opacity: 0, x: index < 10 ? -50 * Math.exp(index) : 0 }}
 								animate={{ opacity: 1, x: 0 }}
 								transition={{ delay: index * 0.2, ease: 'easeInOut' }}>
 								<ProposalCard
