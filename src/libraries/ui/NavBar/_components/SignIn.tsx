@@ -51,7 +51,7 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 				onClose={onClose}>
 				<ModalOverlay />
 				<ModalContent
-					maxW={['94%', '70%', '50%', '50%']}
+					maxW={['94%', '70%', '50%', '35%']}
 				>
 
 
@@ -71,7 +71,7 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 									<Text
 										variant='v2_subheading'
 										fontWeight='500'
-										mt={5}
+										mt={[5,0]}
 									>
 										{Title()}
 									</Text>
@@ -84,9 +84,9 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 									</Text>
 									<Button
 										variant='primaryMedium'
-										marginTop={4}
+										marginTop={[4,9]}
 										borderRadius='20'
-										width={['90%', '60%']}
+										width={['90%', '80%']}
 										height={10}
 										onClick={() => setSignInMethod('newWallet')}
 									>
@@ -102,7 +102,7 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 									<Button
 										variant='primaryMedium'
 										marginTop={2}
-										width={['90%', '60%']}
+										width={['90%', '80%']}
 										bg='gray.3'
 										height={10}
 										borderRadius='20'
