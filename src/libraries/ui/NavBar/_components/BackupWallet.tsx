@@ -17,15 +17,23 @@ export default function BackupWallet({ isNewUser, exportWalletToGD, loading, ini
 	}, [loading, inited])
 	return (
 		<>
+		<Flex
+		flexDirection='column'
+		paddingRight='19px'
+		paddingLeft='19px'
+		>
 			<Text
 				variant='v2_subheading'
 				fontWeight='500'
-				mt={5}
-			>
+				alignSelf='center'
+				fontSize={14}>
 				{title}
 			</Text>
 			<Text
 				variant='v2_body'
+				align='center'
+
+				fontSize={13}
 				color='black.3'>
 				You will need the private key to sign into Questbook again. Save it in a
 				secure place.
@@ -34,7 +42,7 @@ export default function BackupWallet({ isNewUser, exportWalletToGD, loading, ini
 				readOnly
 				fontSize={[13, 15]}
 				w='100%'
-				mt={4}
+				mt={12}
 				value={privateKey}
 			/>
 			<Flex
@@ -42,6 +50,7 @@ export default function BackupWallet({ isNewUser, exportWalletToGD, loading, ini
 				gap={3}
 				width='100%'
 				marginTop={2}
+				marginBottom={5}
 			>
 				<Button
 					width='50%'
@@ -115,6 +124,7 @@ export default function BackupWallet({ isNewUser, exportWalletToGD, loading, ini
 						Back up manually
 					</Text>
 				</Button>
+			</Flex>
 			</Flex>
 		</>
 	)

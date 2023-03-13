@@ -49,23 +49,25 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
 						marginTop={4}
 						alignSelf='flex-start'
 						checked={isPrivateKeySaved}
+						paddingLeft={5}
 						onChange={() => setIsPrivateKeySaved(!isPrivateKeySaved)}
 					>
 						<Text
 							variant='v2_subheading'
 							fontWeight='500'
-							fontSize={['11', '14']}
-						>
+							fontSize={['11', '14']}>
+							
 							I have saved my Questbook wallet private key.
 						</Text>
 					</Checkbox>
 					<Button
-						marginTop={3}
+						marginTop={6}
 						//  variant='primaryMedium'
 						_hover={{ bg:'gray.500' }}
 						isDisabled={!isPrivateKeySaved}
-						width='50%'
+						width='30%'
 						bg='black.1'
+						_disabled={{bg: "gray.3", color: "black.100", textColor:'gray.5' }}
 						textColor='gray.100'
 						onClick={
 							() => {
