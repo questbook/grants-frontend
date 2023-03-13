@@ -37,7 +37,7 @@ const FlushedInput = forwardRef<Props, 'input'>((props, ref) => {
 							helperText && (
 								<Text
 									// className='helperText'
-									variant='v2_body'
+									variant='body'
 									color='gray.5'>
 									{helperText}
 								</Text>
@@ -47,7 +47,7 @@ const FlushedInput = forwardRef<Props, 'input'>((props, ref) => {
 							props?.maxLength && (
 								<Text
 									ml='auto'
-									variant='v2_metadata'
+									variant='metadata'
 									color='gray.5'>
 									{value?.toString().length}
 									/

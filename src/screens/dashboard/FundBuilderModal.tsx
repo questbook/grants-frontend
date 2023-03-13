@@ -8,6 +8,10 @@ import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
+import { getFieldString } from 'src/libraries/utils/formatting'
+import { uploadToIPFS } from 'src/libraries/utils/ipfs'
+import { getGnosisTansactionLink, getProposalUrl } from 'src/libraries/utils/multisig'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
 import MilestoneChoose from 'src/screens/dashboard/_components/FundBuilder/MilestoneChoose'
 import PaidByWallet from 'src/screens/dashboard/_components/FundBuilder/PaidByWallet'
@@ -18,11 +22,6 @@ import TransactionInitiated from 'src/screens/dashboard/_components/FundBuilder/
 import Verify from 'src/screens/dashboard/_components/FundBuilder/Verify'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
-import { getFieldString } from 'src/utils/formattingUtils'
-import { uploadToIPFS } from 'src/utils/ipfsUtils'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { getGnosisTansactionLink } from 'src/v2/utils/gnosisUtils'
-import { getProposalUrl } from 'src/v2/utils/phantomUtils'
 
 function FundBuilderModal() {
 	const buildComponent = () => {
@@ -125,7 +124,7 @@ function FundBuilderModal() {
 										(proposal?.state === 'submitted') && (
 											<Text
 												mt={8}
-												variant='v2_body'
+												variant='body'
 												color='gray.5'>
 												This proposal would be auto-accepted once payout is initiated for it.
 											</Text>

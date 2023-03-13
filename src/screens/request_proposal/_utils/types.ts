@@ -1,13 +1,14 @@
+import SupportedChainId from 'src/generated/SupportedChainId'
 import { ApplicantDetailsFieldType } from 'src/types'
 
 export type RFPFormContextType = {
+    rfpFormType: RFPFormType
     rfpData: RFPForm
     setRFPData: (data: RFPForm) => void
-    rfpFormType: RFPFormType
     grantId: string
+    setGrantId: (id: string) => void
     workspaceId: string
-    RFPEditFormData: RFPForm
-    setRFPEditFormData: (data: RFPForm) => void
+    chainId: SupportedChainId
 }
 
 export type RFPForm = {
@@ -28,7 +29,7 @@ export type GrantFields = {
     title: string
     startDate: string
     endDate: string
-    fields: any
+    fields: { [key: string]: ApplicantDetailsFieldType }
     link: string
     docIpfsHash: string
     payoutType: string

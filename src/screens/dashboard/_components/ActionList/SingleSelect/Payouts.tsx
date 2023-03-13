@@ -1,20 +1,20 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Flex, Text } from '@chakra-ui/react'
 import { ethers } from 'ethers'
+import { motion } from 'framer-motion'
 import { defaultChainId, USD_ASSET } from 'src/constants/chains'
 import { useGetPayoutsQuery } from 'src/generated/graphql'
 import { Dropdown, NewTab } from 'src/generated/icons'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
+import { getGnosisTansactionLink, getProposalUrl } from 'src/libraries/utils/multisig'
 import { getChainInfo } from 'src/libraries/utils/token'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { Payout, PayoutsType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { getGnosisTansactionLink } from 'src/v2/utils/gnosisUtils'
-import { getProposalUrl } from 'src/v2/utils/phantomUtils'
 
 function Payouts() {
 	const buildComponent = () => {
@@ -25,51 +25,57 @@ function Payouts() {
 				py={4}
 				direction='column'
 				overflowY='auto'
+				overflowX='clip'
 				align='stretch'
 				w='100%'>
-				<Flex
-					justify='space-between'
-					onClick={
-						() => {
-							setExpanded(!expanded)
+				<motion.div
+					initial={{ opacity: 0, x: 50 }}
+					animate={{ opacity: 1, x: 0 }}
+					transition={{ duration: 1, delay: 2.6 }}>
+					<Flex
+						justify='space-between'
+						onClick={
+							() => {
+								setExpanded(!expanded)
+							}
+						}>
+						<Text
+							fontWeight='500'
+							color={proposals?.length ? 'black.1' : 'gray.6'}>
+							Payouts
+						</Text>
+						{
+							proposals?.length > 0 && (
+								<Dropdown
+									mr={2}
+									transform={expanded ? 'rotate(180deg)' : 'rotate(0deg)'}
+									cursor='pointer'
+								/>
+							)
 						}
-					}>
-					<Text
-						fontWeight='500'
-						color={proposals?.length ? 'black.1' : 'gray.6'}>
-						Payouts
-					</Text>
+					</Flex>
+
 					{
-						proposals?.length > 0 && (
-							<Dropdown
-								mr={2}
-								transform={expanded ? 'rotate(180deg)' : 'rotate(0deg)'}
-								cursor='pointer'
-							/>
+						payouts.length > 0 && (
+							<Flex
+								display={expanded ? 'block' : 'none'}
+								direction='column'>
+								{payouts.map(payoutItem)}
+							</Flex>
 						)
 					}
-				</Flex>
 
-				{
-					payouts.length > 0 && (
-						<Flex
-							display={expanded ? 'block' : 'none'}
-							direction='column'>
-							{payouts.map(payoutItem)}
-						</Flex>
-					)
-				}
-
-				{
-					payouts.length === 0 && (
-						<Text
-							display={expanded ? 'block' : 'none'}
-							mt={2}
-							color='gray.6'>
-							No payouts yet
-						</Text>
-					)
-				}
+					{
+						payouts.length === 0 && (
+							<Text
+								display={expanded ? 'block' : 'none'}
+								mt={2}
+								color='gray.6'>
+								No payouts yet
+							</Text>
+						)
+					}
+				</motion.div>
 			</Flex>
 		)
 	}
@@ -83,14 +89,14 @@ function Payouts() {
 				<Flex mt={2}>
 					<Text
 						w='50%'
-						variant='v2_body'
+						variant='body'
 						color='gray.6'>
 						Milestone
 					</Text>
 					<Text
 						w='50%'
 						fontWeight='500'
-						variant='v2_body'>
+						variant='body'>
 						{formatMilestoneId(payout?.milestone?.id)}
 					</Text>
 				</Flex>
@@ -100,13 +106,13 @@ function Payouts() {
 						<Flex mt={2}>
 							<Text
 								w='50%'
-								variant='v2_body'
+								variant='body'
 								color='gray.6'>
 								Amount
 							</Text>
 							<Text
 								w='50%'
-								variant='v2_body'>
+								variant='body'>
 								{chainInfo?.address === USD_ASSET ? payout.amount : ethers.utils.formatUnits(payout.amount, chainInfo.decimals)}
 								{' '}
 								{chainInfo?.label}
@@ -118,13 +124,13 @@ function Payouts() {
 				<Flex mt={2}>
 					<Text
 						w='50%'
-						variant='v2_body'
+						variant='body'
 						color='gray.6'>
 						Paid On
 					</Text>
 					<Text
 						w='50%'
-						variant='v2_body'>
+						variant='body'>
 						{formatTime(payout.executionTimestamp ?? payout.createdAtS, true)}
 					</Text>
 				</Flex>
@@ -132,7 +138,7 @@ function Payouts() {
 				<Flex mt={2}>
 					<Text
 						w='50%'
-						variant='v2_body'
+						variant='body'
 						color='gray.6'>
 						Status
 					</Text>
@@ -160,7 +166,7 @@ function Payouts() {
 						}>
 						<Text
 							fontWeight='400'
-							variant='v2_body'>
+							variant='body'>
 							{payout.status === 'queued' ? 'Queued' : payout.status === 'executed' ? 'Success' : 'Cancelled'}
 						</Text>
 					</Button>

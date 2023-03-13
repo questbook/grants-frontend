@@ -10,57 +10,12 @@ import { useRouter } from 'next/router'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
 import { CustomSelect } from 'src/libraries/ui/CustomSelect'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
-import StepIndicator from 'src/libraries/ui/StepIndicator'
 import { WebwalletContext } from 'src/pages/_app'
-import { RFPForm, RFPFormType } from 'src/screens/request_proposal/_utils/types'
+import StepIndicator from 'src/screens/request_proposal/_components/StepIndicator'
+import { RFPFormContext } from 'src/screens/request_proposal/Context'
 import { ApplicantDetailsFieldType } from 'src/types'
 
-interface Props {
-    proposalName: string
-    setProposalName: (value: string) => void
-    startdate: string
-    setStartdate: (value: string) => void
-    endDate: string
-    setEndDate: (value: string) => void
-    requiredDetails: ApplicantDetailsFieldType[]
-	extraDetailsFields: ApplicantDetailsFieldType[]
-	setExtraDetailsFields: (value: ApplicantDetailsFieldType[]) => void
-    link: string
-    setLink: (value: string) => void
-    doc: FileList | null
-    setDoc: (value: FileList) => void
-    step: number
-    setStep: (value: number) => void
-    allApplicantDetails: {[key: string]: ApplicantDetailsFieldType}
-    setAllApplicantDetails: (value: {[key: string]: ApplicantDetailsFieldType}) => void
-	rfpFormSubmissionType: RFPFormType
-	rfpData?: RFPForm
-	setRFPData?: (value: RFPForm) => void
-	handleOnEditProposalSubmission: (fieldName: string, value: string | ApplicantDetailsFieldType[]) => void
-}
-
-function ProposalSubmission(
-	{
-		proposalName,
-		setProposalName,
-		startdate,
-		setStartdate,
-		endDate,
-		setEndDate,
-		requiredDetails,
-		extraDetailsFields,
-		setExtraDetailsFields,
-		link,
-		setLink,
-		doc,
-		setDoc,
-		step,
-		setStep,
-		setAllApplicantDetails,
-		handleOnEditProposalSubmission,
-		rfpFormSubmissionType
-	}: Props) {
-
+function ProposalSubmission() {
 	const uploaDocInputref = useRef(null)
 	const startdateRef = useRef<HTMLInputElement>(null)
 	const endDateRef = useRef<HTMLInputElement>(null)
@@ -85,7 +40,8 @@ function ProposalSubmission(
 								className='backBtn'
 								variant='linkV2'
 								leftIcon={<BsArrowLeft />}
-								onClick={() => router.back()}>
+								onClick={() => router.back()}
+							>
 								Back
 							</Button>
 						</Flex>
@@ -100,15 +56,14 @@ function ProposalSubmission(
 					alignSelf='flex-start'
 				>
 					{/* TODO: Add Steps complete indicator */}
-					<StepIndicator
-						step={step}
-						formType={rfpFormSubmissionType} />
+					<StepIndicator />
 					<Text
 						alignSelf={['flex-start', 'center']}
 						fontWeight='500'
 						fontSize='24px'
 						lineHeight='32px'
-						marginBottom={[2, 8]}>
+						marginBottom={[2, 8]}
+					>
 						What makes a good proposal?
 					</Text>
 
@@ -116,19 +71,18 @@ function ProposalSubmission(
 					<Flex
 						gap={4}
 						alignItems='baseline'
-						flexDirection={['column', 'row', 'row', 'row']}>
-
-						<Text variant='v2_subheading'>
+						flexDirection={['column', 'row', 'row', 'row']}
+					>
+						<Text variant='subheading'>
 							Receive proposals for
 						</Text>
 
 						<FlushedInput
 							placeholder='describe in 4-5 words'
-							value={proposalName}
+							value={rfpData?.proposalName}
 							onChange={
 								(e) => {
-									setProposalName(e.target.value)
-									handleOnEditProposalSubmission('proposalName', e.target.value)
+									handleOnEdit('proposalName', e.target.value)
 								}
 							}
 						/>
@@ -138,60 +92,62 @@ function ProposalSubmission(
 					<Flex
 						gap={4}
 						alignItems='baseline'
-						flexDirection={['column', 'column', 'row']}>
-
+						flexDirection={['column', 'column', 'row']}
+					>
 						<Text
-							variant='v2_subheading'
+							variant='subheading'
 							minW='max-content'>
 							Receive proposal submissions from
-
 						</Text>
 
 						<Input
-							type={rfpFormSubmissionType === 'submit' ? 'string' : 'date'}
+							type={rfpFormType === 'submit' ? 'string' : 'date'}
 							variant='flushed'
 							placeholder='enter start date'
 							_placeholder={{ color: 'gray.5' }}
-							// isDisabled={rfpFormSubmissionType === 'edit'}
+							// isDisabled={rfpFormType === 'edit'}
 							ref={startdateRef}
 							onFocus={
 								() => {
-									if(startdateRef.current && rfpFormSubmissionType !== 'edit') {
+									if(startdateRef.current && rfpFormType !== 'edit') {
 										startdateRef.current.type = 'date'
 									}
-
 								}
 							}
-							value={startdate ? startdate.split('T')[0] : ''}
+							value={rfpData?.startDate ? rfpData?.startDate?.split('T')[0] : ''}
 							step='1'
 							// textPadding={8}
 							min={new Date().toISOString().split('T')[0]}
-
 							onChange={
 								(e) => {
 									if(e.target.value === '' && startdateRef.current) {
 										startdateRef.current.type = 'string'
 									}
 
-									logger.info('e.target.value', new Date(e.target.value!).toISOString())
-									handleOnEditProposalSubmission('startDate', new Date(e.target.value!).toISOString())
-									setStartdate(new Date(e.target.value!).toISOString())
+									logger.info(
+										'e.target.value',
+										new Date(e.target.value!).toISOString(),
+									)
+									handleOnEdit(
+										'startDate',
+										new Date(e.target.value!).toISOString(),
+									)
 								}
 							}
 							// borderColor={endDateRef?.current.value ? 'black' : 'gray.300'}
 							fontWeight='400'
 							fontSize='20px'
 						/>
-						<Text variant='v2_subheading'>
+						<Text variant='subheading'>
 							till
 						</Text>
 						<Input
-							type={rfpFormSubmissionType === 'submit' ? 'string' : 'date'}
+							type={rfpFormType === 'submit' ? 'string' : 'date'}
 							variant='flushed'
 							placeholder='enter end date'
 							_placeholder={{ color: 'gray.5' }}
-							min={startdate}
-							value={endDate ? endDate.split('T')[0] : ''}
+							min={rfpData?.startDate}
+							value={rfpData?.endDate ? rfpData?.endDate.split('T')[0] : ''}
 							step='1'
 							ref={endDateRef}
 							onFocus={
@@ -199,10 +155,8 @@ function ProposalSubmission(
 									if(endDateRef.current) {
 										endDateRef.current.type = 'date'
 									}
-
 								}
 							}
-
 							onChange={
 								(e) => {
 									if(e.target.value === '' && endDateRef.current) {
@@ -212,8 +166,7 @@ function ProposalSubmission(
 									const eod = new Date(e.target.value!)
 									eod.setUTCHours(23, 59, 59, 999)
 
-									handleOnEditProposalSubmission('endDate', eod.toISOString())
-									setEndDate(eod.toISOString())
+									handleOnEdit('endDate', eod.toISOString())
 								}
 							}
 							fontWeight='400'
@@ -221,31 +174,29 @@ function ProposalSubmission(
 						/>
 					</Flex>
 
-
 					{/* Required details */}
 					<Flex
 						gap={4}
 						alignItems='baseline'
 						wrap='wrap'>
-						<Text variant='v2_subheading'>
+						<Text variant='subheading'>
 							Proposals must include
 						</Text>
 
 						{
-							requiredDetails.map((detail, index) => {
-								const {
-									title
-								} = detail as ApplicantDetailsFieldType
+							applicantDetails.map((detail, index) => {
+								const { title } = detail as ApplicantDetailsFieldType
 								return (
 									<>
 										<FlushedInput
 											placeholder={title}
 											value={title}
 											isDisabled={true}
-											flexProps={{ w: 'fit-content' }} />
+											flexProps={{ w: 'fit-content' }}
+										/>
 										{
-											(index < requiredDetails.length - 1 || extraDetailsFields?.filter(detail => detail.required).length > 0) && (
-												<Text variant='v2_subheading'>
+											(index < applicantDetails.length - 1 || extraDetailsFieldsList?.filter((detail) => detail.required).length > 0) && (
+												<Text variant='subheading'>
 													,
 												</Text>
 											)
@@ -255,66 +206,50 @@ function ProposalSubmission(
 							})
 						}
 						{
-							extraDetailsFields?.filter(detail => detail.required).map((detail, index) => {
-								const {
-									title
-								} = detail as ApplicantDetailsFieldType
-								return (
-									<>
-										<FlushedInput
-											placeholder={title}
-											value={title}
-											isDisabled={true}
-											onMouseOver={() => setShowCrossIcon(true)}
+							extraDetailsFieldsList
+								?.filter((detail) => detail.required)
+								.map((detail, index) => {
+									const { title } = detail as ApplicantDetailsFieldType
+									return (
+										<>
+											<FlushedInput
+												placeholder={title}
+												value={title}
+												isDisabled={true}
+												onMouseOver={() => setShowCrossIcon(true)}
 											// onMouseOut={() => setShowCrossIcon(false)}
-										/>
-										{
-											showCrossIcon && (
-												<Icon
-													as={IoMdClose}
-													cursor='pointer'
-													// onMouseOver={() => setShowCrossIcon(true)}
-													onClick={
-														() => {
-															handleToggleExtraFields(title)
-															setShowCrossIcon(false)
+											/>
+											{
+												showCrossIcon && (
+													<Icon
+														as={IoMdClose}
+														cursor='pointer'
+														// onMouseOver={() => setShowCrossIcon(true)}
+														onClick={
+															() => {
+																handleToggleExtraFields(title)
+																setShowCrossIcon(false)
+															}
 														}
-													} />
-											)
-										}
-										{
-											(index < extraDetailsFields?.filter(detail => detail.required).length - 1) && (
-												<Text
-													variant='v2_subheading'
-												>
-													,
-												</Text>
-											)
-										}
-									</>
-								)
-							})
+													/>
+												)
+											}
+											{
+												index < extraDetailsFieldsList?.filter((detail) => detail.required).length - 1 && (
+													<Text variant='subheading'>
+														&sbquo;
+													</Text>
+												)
+											}
+										</>
+									)
+								})
 						}
-						{/* {
-							Array.from(Array(detailsCounter)).map((_, index) => {
-								return (
-									<>
-										<FlushedInput
-											placeholder='Write more details'
-											value={detailInputValues[index]}
-											onChange={(e) => handleOnChange(e, index)} />
-										<Text variant='v2_subheading'>
-											,
-										</Text>
-									</>
-								)
-							})
-						} */}
 
 						{
 							showExtraFieldDropdown && (
 								<CustomSelect
-									options={extraDetailsFields}
+									options={extraDetailsFieldsList}
 									setExtraDetailsFields={setExtraDetailsFields}
 									setShowExtraFieldDropdown={setShowExtraFieldDropdown}
 									width='20%'
@@ -326,13 +261,14 @@ function ProposalSubmission(
 							variant='outline'
 							leftIcon={<AiOutlinePlus />}
 							borderColor='black'
-							onClick={() => handleClickAddAnother()}>
+							onClick={() => handleClickAddAnother()}
+						>
 							Add another
 						</Button>
 					</Flex>
 
 					{/* More details */}
-					<Text variant='v2_subheading'>
+					<Text variant='subheading'>
 						Builders can also refer to additional information here
 					</Text>
 					<Flex
@@ -341,35 +277,33 @@ function ProposalSubmission(
 						wrap='wrap'
 						flexDirection={['column', 'column', 'row', 'row']}
 					>
-
 						<FlushedInput
 							placeholder='Add a link'
-							value={link}
+							value={rfpData?.link}
 							type='url'
 							onChange={
 								(e) => {
-									setLink(e.target.value)
-									handleOnEditProposalSubmission('link', e.target.value)
+									handleOnEdit('link', e.target.value)
 								}
 							}
 							width='100%'
 							// flexProps={{ grow: 1, shrink: 1 }}
 						/>
 						<Text
-							display={rfpFormSubmissionType === 'edit' ? 'none' : ''}
-							variant='v2_subheading'
-							marginBottom={[-6, 0, 0, 0]}>
+							display={rfpFormType === 'edit' ? 'none' : ''}
+							variant='subheading'
+							marginBottom={[-6, 0, 0, 0]}
+						>
 							Or
 						</Text>
-
 
 						<label htmlFor='upload-doc-id' />
 						<FlushedInput
 							id='upload-doc-id'
 							placeholder='Upload a doc'
-							display={rfpFormSubmissionType === 'edit' ? 'none' : ''}
+							display={rfpFormType === 'edit' ? 'none' : ''}
 							onClick={openInput}
-							value={doc ? doc[0].name : ''}
+							value={rfpData?.doc ? rfpData?.doc[0] : ''}
 							onChange={(e) => handleFile(e)}
 							width='100%'
 						/>
@@ -379,14 +313,15 @@ function ProposalSubmission(
 							type='file'
 							placeholder='Upload a file'
 							onChange={(e) => handleFile(e)}
-							style={{ height: '0.1px', width: '0.1px', opacity: 0 }} />
+							style={{ height: '0.1px', width: '0.1px', opacity: 0 }}
+						/>
 					</Flex>
 					{/* CTA */}
 					<Button
 						className='continueBtn'
 						variant='primaryMedium'
 						alignSelf={['center', 'flex-end']}
-						isDisabled={!proposalName || !startdate || !endDate}
+						isDisabled={!rfpData?.proposalName || !rfpData?.startDate || !rfpData?.endDate}
 						w={['100%', '20%']}
 						h='40px'
 						marginTop='20px'
@@ -395,10 +330,10 @@ function ProposalSubmission(
 							() => {
 								handleOnClickContinue()
 							}
-						}>
-						{ rfpFormSubmissionType === 'edit' ? 'Save & Continue' : 'Continue'}
+						}
+					>
+						{rfpFormType === 'edit' ? 'Save & Continue' : 'Continue'}
 					</Button>
-
 				</Flex>
 
 				{/* End Proposal Submission Component */}
@@ -406,25 +341,50 @@ function ProposalSubmission(
 		)
 	}
 
+	const { rfpData, setRFPData, rfpFormType } = useContext(RFPFormContext)!
 	const router = useRouter()
-
 	const [detailsCounter, setDetailsCounter] = useState(0)
-
 	const [showCrossIcon, setShowCrossIcon] = useState(false)
-
-	const { createingProposalStep, setCreatingProposalStep } = useContext(WebwalletContext)!
-
+	const { setCreatingProposalStep } = useContext(WebwalletContext)!
 	const [showExtraFieldDropdown, setShowExtraFieldDropdown] = useState(false)
 
+	const [extraDetailsFieldsList, setExtraDetailsFields] = useState<ApplicantDetailsFieldType[]>(
+  	applicantDetailsList
+  		.filter((detail) => detail.isRequired === false)
+  		.map(({ title, id, inputType, isRequired, pii }) => {
+  			logger.info(id, 'Populating extra details')
+  			return {
+  				title,
+  				required: isRequired || false,
+  				id,
+  				inputType,
+  				pii,
+  			}
+  		})
+  		.filter((obj) => obj !== null),
+	)
+
+	const applicantDetails: ApplicantDetailsFieldType[] = applicantDetailsList
+		.filter((detail) => detail.isRequired)
+		.map(({ title, id, inputType, isRequired, pii }) => {
+			return {
+				title,
+				required: isRequired || false,
+				id,
+				inputType,
+				pii,
+			}
+		})
+		.filter((obj) => obj !== null)
+
 	useEffect(() => {
-		logger.info({ extraDetailsFields }, 'Extra details field')
-	}, [extraDetailsFields])
+		logger.info({ extraDetailsFieldsList }, 'Extra details field')
+	}, [extraDetailsFieldsList])
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const handleFile = async(e: any) => {
-		setDoc(e.target.files)
-		if(rfpFormSubmissionType === 'edit') {
-			handleOnEditProposalSubmission('doc', e.target.files)
+		if(rfpFormType === 'edit') {
+			handleOnEdit('doc', e.target.files)
 		}
 	}
 
@@ -434,11 +394,11 @@ function ProposalSubmission(
 	}
 
 	const handleToggleExtraFields = (title: string) => {
-		const newExtraFieldList = extraDetailsFields.map((field) => {
+		const newExtraFieldList = extraDetailsFieldsList.map((field) => {
 			if(field.title === title) {
 				return {
 					...field,
-					required: false
+					required: false,
 				}
 			} else {
 				return field
@@ -453,40 +413,48 @@ function ProposalSubmission(
 		// setStep(2)
 		setCreatingProposalStep(2)
 		//filter true values from extra details fields and add custom field ids
-		const filteredExtraDetails = extraDetailsFields.filter((field) => field.required === true).map((item, index) => {
-			let inputType: string = item.inputType
-			if(item.inputType === 'long_form') {
-				inputType = 'long-form'
-			} else if(item.inputType === 'short_form') {
-				inputType = 'short-form'
-			}
+		const filteredExtraDetails = extraDetailsFieldsList
+			.filter((field) => field.required === true)
+			.map((item, index) => {
+				let inputType: string = item.inputType
+				if(item.inputType === 'long_form') {
+					inputType = 'long-form'
+				} else if(item.inputType === 'short_form') {
+					inputType = 'short-form'
+				}
 
-			logger.info(item, 'Filtered extra details')
-			return {
-				id: applicantDetailsList.map(d => d.id).includes(item.id) ? item.id : `customField${index}-${item.title}`,
-				inputType: inputType,
-				required: item.required,
-				title: item.title,
-				pii: item.pii
-			}
-		})
+				logger.info(item, 'Filtered extra details')
+				return {
+					id: applicantDetailsList.map((d) => d.id).includes(item.id)
+						? item.id
+						: `customField${index}-${item.title}`,
+					inputType: inputType,
+					required: item.required,
+					title: item.title,
+					pii: item.pii,
+				}
+			})
 		logger.info(filteredExtraDetails, 'Filtered extra details')
 
 		// merge required and extra details
-		const allFieldsArray = [...requiredDetails, ...filteredExtraDetails]
-		const allFieldsObject: {[key: string]: ApplicantDetailsFieldType} = {}
+		const allFieldsArray = [...applicantDetails, ...filteredExtraDetails]
+		const allFieldsObject: { [key: string]: ApplicantDetailsFieldType } = {}
 		for(let i = 0; i < allFieldsArray.length; i++) {
 			allFieldsObject[allFieldsArray[i].id] = allFieldsArray[i]
 		}
 
 		// const allFieldsObject = [...requiredDetails, ...extraDetailsFields]
-		logger.info('all applicant details', [...requiredDetails, ...filteredExtraDetails])
-		setAllApplicantDetails(allFieldsObject)
+		logger.info('all applicant details', [
+			...applicantDetails,
+			...filteredExtraDetails,
+		])
 
-		if(rfpFormSubmissionType === 'edit') {
-			handleOnEditProposalSubmission('allApplicantDetails', allFieldsArray)
-			// setStep(3)
-		}
+		handleOnEdit('allApplicantDetails', allFieldsArray)
+	}
+
+	const handleOnEdit = (field: string, value: string | ApplicantDetailsFieldType[] | string []) => {
+		logger.info('rfp edited', { ...rfpData, [field]: value })
+		setRFPData({ ...rfpData, [field]: value })
 	}
 
 	return buildComponent()

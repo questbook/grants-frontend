@@ -20,10 +20,10 @@ import { useRouter } from 'next/router'
 import { AddUser, ArrowRight, Key, Pencil } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
-import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
-import getAvatar from 'src/utils/avatarUtils'
-import { formatAddress } from 'src/utils/formattingUtils'
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getAvatar } from 'src/libraries/utils'
+import { formatAddress } from 'src/libraries/utils/formatting'
+import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
+import { GrantsProgramContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
 
 const IN_APP_WALLET_LEARN_MORE_URL =
 	'https://blog.questbook.xyz/posts/aug-2022-release/#:~:text=App%20Specific%20Wallet%20%2D%20Zero%20Wallet'
@@ -31,9 +31,10 @@ const IN_APP_WALLET_LEARN_MORE_URL =
 interface Props {
 	openModal?: (type: 'import' | 'export') => void
 	setIsUpdateProfileModalOpen: (isOpen: boolean) => void
+	setSignIn: (signIn: boolean) => void
 }
 
-function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
+function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: Props) {
 	const buildComponent = () => (
 		<Popover
 			placement='bottom-end'
@@ -77,7 +78,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 													boxSize='24px' />
 												<Text
 													ml={3}
-													variant='v2_body'
+													variant='body'
 													fontWeight='500'>
 													{!member?.fullName ? 'Setup' : 'Update'}
 													{' '}
@@ -100,7 +101,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 										mt={4}
 									>
 										<Text
-											variant='v2_body'
+											variant='body'
 											color='gray.5'>
 											Your zero wallet
 										</Text>
@@ -110,7 +111,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 											target='_blank'
 											href={IN_APP_WALLET_LEARN_MORE_URL}>
 											<Text
-												variant='v2_body'>
+												variant='body'>
 												Learn More
 											</Text>
 										</Link>
@@ -121,7 +122,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 										px={3}
 										pt={1}>
 										<Link onClick={copyScwAddress}>
-											<Text variant='v2_body'>
+											<Text variant='body'>
 												{formatAddress(scwAddress ?? '')}
 											</Text>
 										</Link>
@@ -171,7 +172,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 	const { t } = useTranslation()
 	const { grant, role } = useContext(GrantsProgramContext)!
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
-
+	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const router = useRouter()
 	useEffect(() => {
 		logger.info({ pathname: router.pathname }, 'Could set up profile')
@@ -218,7 +219,25 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen }: Props) {
 	}
 
 	if(!isConnected && !isConnecting) {
-		return <Box />
+		if(!openModal) {
+			return <Box />
+		}
+
+		return (
+			<Button
+				onClick={
+					() => {
+						setSignIn(true)
+						setSignInTitle('default')
+					}
+				}
+				bg='black.1'
+				textColor='gray.1'
+				_hover={{ bg: 'gray.500' }}
+			>
+				Sign in
+			</Button>
+		)
 	}
 
 	return buildComponent()

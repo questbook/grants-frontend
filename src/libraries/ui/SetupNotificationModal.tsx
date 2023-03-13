@@ -2,8 +2,8 @@ import { useContext } from 'react'
 import { Button, Flex, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
 import { Desktop, QrScan } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, NotificationContext } from 'src/pages/_app'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 type BaseProps = {
     isOpen: boolean
@@ -39,19 +39,19 @@ function SetupNotificationModal(props: Props) {
 						align='center'
 						p={6}>
 						<Text
-							variant='v2_body'
+							variant='body'
 							fontWeight='500'>
 							Subscribe to notifications
 						</Text>
 						<Text
 							mt={1}
 							as='span'
-							variant='v2_body'>
+							variant='body'>
 							Get real time notifications for the grant program on our
 							{' '}
 							<Text
 								as='span'
-								variant='v2_body'
+								variant='body'
 								fontWeight='500'>
 								Telegram
 							</Text>
@@ -61,7 +61,7 @@ function SetupNotificationModal(props: Props) {
 						{buttonItems.map(buttonItem)}
 						<Text
 							mt={4}
-							variant='v2_body'
+							variant='body'
 							color='gray.5'>
 							Learn more about notifications
 						</Text>
@@ -99,7 +99,7 @@ function SetupNotificationModal(props: Props) {
 						}
 					}>
 					<Text
-						variant='v2_body'
+						variant='body'
 						fontWeight='500'>
 						{item.buttonText}
 					</Text>

@@ -15,7 +15,7 @@ function BackButton(props: ButtonProps) {
 					}
 				}
 				{...props}>
-				<Text variant='v2_body'>
+				<Text variant='body'>
 					Back
 				</Text>
 			</Button>

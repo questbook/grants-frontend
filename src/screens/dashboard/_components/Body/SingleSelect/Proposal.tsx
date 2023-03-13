@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import { ContentState, convertFromRaw, EditorState } from 'draft-js'
+import { motion } from 'framer-motion'
 import { defaultChainId } from 'src/constants/chains'
 import { Mail, ShareForward } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
@@ -17,20 +18,20 @@ import logger from 'src/libraries/logger'
 import CopyIcon from 'src/libraries/ui/CopyIcon'
 import NotificationPopover from 'src/libraries/ui/NavBar/_components/NotificationPopover'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
-import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
-import { getChainInfo } from 'src/libraries/utils/token'
-import { GrantsProgramContext } from 'src/pages/_app'
-import { ProposalType } from 'src/screens/dashboard/_utils/types'
-import { DashboardContext } from 'src/screens/dashboard/Context'
-import getAvatar from 'src/utils/avatarUtils'
+import { getAvatar } from 'src/libraries/utils'
 import {
 	formatAddress,
 	getFieldString,
 	getFieldStrings,
 	getRewardAmountMilestones,
-} from 'src/utils/formattingUtils'
-import { getFromIPFS } from 'src/utils/ipfsUtils'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
+} from 'src/libraries/utils/formatting'
+import { getFromIPFS } from 'src/libraries/utils/ipfs'
+import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
+import { getChainInfo } from 'src/libraries/utils/token'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
+import { GrantsProgramContext } from 'src/pages/_app'
+import { ProposalType } from 'src/screens/dashboard/_utils/types'
+import { DashboardContext } from 'src/screens/dashboard/Context'
 
 function Proposal() {
 	const buildComponent = () => {
@@ -56,111 +57,79 @@ function Proposal() {
 				boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
 				bg='white'
 			>
-				<Flex
-					w='100%'
-					align='center'
-					justify='space-between'>
-					<Text
-						maxW='90%'
-						as='span'
-						variant='v2_heading_3'
-						fontWeight='500'>
-						{getFieldString(proposal, 'projectName')}
-					</Text>
+				<motion.div
+					initial={{ opacity: 0, y: -50 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 1, ease: 'easeInOut', delay: 0.8 }}>
 					<Flex
-						ml={4}
-						gap={4}>
-						<NotificationPopover
-							type='proposal'
-							proposalId={proposal?.id} />
-						<ShareForward
-							boxSize='20px'
-							cursor='pointer'
-							onClick={
-								() => {
-									const href = window.location.href.split('/')
-									const protocol = href[0]
-									const domain = href[2]
-									const link = `${protocol}//${domain}/dashboard/?grantId=${
-										proposal.grant.id
-									}&chainId=${chainId}&proposalId=${
-										proposal.id
-									}&isRenderingProposalBody=${true}`
-									copy(link)
-									toast({
-										title: 'Copied!',
-										status: 'success',
-										duration: 3000,
-									})
-								}
-							}
-						/>
-					</Flex>
-				</Flex>
-
-				{
-					shouldShowPII && (
+						w='100%'
+						align='center'
+						justify='space-between'>
+						<Text
+							maxW='90%'
+							as='span'
+							variant='heading3'
+							fontWeight='500'>
+							{getFieldString(proposal, 'projectName')}
+						</Text>
 						<Flex
-							mt={4}
-							direction='column'>
-							<Text color='gray.5'>
-								By
-							</Text>
+							ml={4}
+							gap={4}>
+							<NotificationPopover
+								type='proposal'
+								proposalId={proposal?.id} />
+							<ShareForward
+								boxSize='20px'
+								cursor='pointer'
+								onClick={
+									() => {
+										const href = window.location.href.split('/')
+										const protocol = href[0]
+										const domain = href[2]
+										const link = `${protocol}//${domain}/dashboard/?grantId=${
+											proposal.grant.id
+										}&chainId=${chainId}&proposalId=${
+											proposal.id
+										}&isRenderingProposalBody=${true}`
+										copy(link)
+										toast({
+											title: 'Copied!',
+											status: 'success',
+											duration: 3000,
+										})
+									}
+								}
+							/>
+						</Flex>
+					</Flex>
+
+					{
+						shouldShowPII && (
 							<Flex
-								align='center'
-								mt={4}>
-								<Image
-									borderRadius='3xl'
-									boxSize='36px'
-									src={getAvatar(false, proposal.applicantId)}
-								/>
+								mt={4}
+								direction='column'>
+								<Text color='gray.5'>
+									By
+								</Text>
 								<Flex
-									ml={2}
-									direction='column'>
-									<Text fontWeight='500'>
-										{getFieldString(decryptedProposal, 'applicantName')}
-									</Text>
-									<Flex align='center'>
-										<Button
-											variant='link'
-											rightIcon={
-												getFieldString(decryptedProposal, 'applicantEmail') && (
-													<Flex
-														w='20px'
-														h='20px'
-														bg='gray.3'
-														borderRadius='3xl'
-														justify='center'
-													>
-														<Mail
-															alignSelf='center'
-															boxSize='12px' />
-													</Flex>
-												)
-											}
-										>
-											<Text
-												fontWeight='400'
-												variant='v2_body'
-												color='gray.5'>
-												{getFieldString(decryptedProposal, 'applicantEmail')}
-											</Text>
-										</Button>
-
-										{
-											getFieldString(proposal, 'applicantEmail') && (
-												<Image
-													src='/v2/icons/dot.svg'
-													boxSize='4px'
-													mx={2} />
-											)
-										}
-
-										{
-											getFieldString(proposal, 'applicantAddress') && (
-												<Button
-													variant='link'
-													rightIcon={
+									align='center'
+									mt={4}>
+									<Image
+										borderRadius='3xl'
+										boxSize='36px'
+										src={getAvatar(false, proposal.applicantId)}
+									/>
+									<Flex
+										ml={2}
+										direction='column'>
+										<Text fontWeight='500'>
+											{getFieldString(decryptedProposal, 'applicantName')}
+										</Text>
+										<Flex align='center'>
+											<Button
+												variant='link'
+												rightIcon={
+													getFieldString(decryptedProposal, 'applicantEmail') ? (
 														<Flex
 															w='20px'
 															h='20px'
@@ -168,187 +137,258 @@ function Proposal() {
 															borderRadius='3xl'
 															justify='center'
 														>
-															<CopyIcon
-																// boxSize='12px'
-																text={getFieldString(proposal, 'applicantAddress')}
-															/>
+															<Mail
+																alignSelf='center'
+																boxSize='12px' />
 														</Flex>
-													}
-												>
-													<Text
-														fontWeight='400'
-														variant='v2_body'
-														color='gray.5'>
-														{
-															formatAddress(
-																getFieldString(proposal, 'applicantAddress'),
-															)
+													) : (
+														<Flex />
+													)
+												}
+											>
+												<Text
+													fontWeight='400'
+													variant='v2_body'
+													color='gray.5'>
+													{getFieldString(decryptedProposal, 'applicantEmail')}
+												</Text>
+											</Button>
+
+											{
+												getFieldString(proposal, 'applicantEmail') && (
+													<Image
+														src='/v2/icons/dot.svg'
+														boxSize='4px'
+														mx={2} />
+												)
+											}
+
+											{
+												getFieldString(proposal, 'applicantAddress') && (
+													<Button
+														variant='link'
+														rightIcon={
+															<Flex
+																w='20px'
+																h='20px'
+																bg='gray.3'
+																borderRadius='3xl'
+																justify='center'
+															>
+																<CopyIcon
+																// boxSize='12px'
+																	text={getFieldString(proposal, 'applicantAddress') ?? ''}
+																/>
+															</Flex>
 														}
-													</Text>
-												</Button>
-											)
-										}
+													>
+														<Text
+															fontWeight='400'
+															variant='v2_body'
+															color='gray.5'>
+															{
+																formatAddress(
+																	getFieldString(proposal, 'applicantAddress') ?? '',
+																)
+															}
+														</Text>
+													</Button>
+												)
+											}
+										</Flex>
 									</Flex>
 								</Flex>
 							</Flex>
-						</Flex>
-					)
-				}
+						)
+					}
 
-				<Flex
-					mt={4}
-					w='100%'>
+					<Flex
+						mt={4}
+						w='100%'>
+						{
+							chainInfo && (
+								<Flex
+									direction='column'
+									w='50%'>
+									<Text color='gray.5'>
+										Funding Ask
+									</Text>
+									<Text
+										mt={1}
+										fontWeight='500'>
+										{getRewardAmountMilestones(chainInfo.decimals, proposal)}
+										{' '}
+										{chainInfo.label}
+									</Text>
+								</Flex>
+							)
+						}
+						<Flex
+							direction='column'
+							w='50%'>
+							<Text color='gray.5'>
+								Milestones
+							</Text>
+							<Text
+								mt={1}
+								fontWeight='500'>
+								{proposal.milestones.length}
+							</Text>
+						</Flex>
+					</Flex>
+
 					{
-						chainInfo && (
+						getFieldString(proposal, 'tldr') && (
 							<Flex
-								direction='column'
-								w='50%'>
+								w='100%'
+								mt={4}
+								direction='column'>
 								<Text color='gray.5'>
-									Funding Ask
+									tl;dr
 								</Text>
-								<Text
-									mt={1}
-									fontWeight='500'>
-									{getRewardAmountMilestones(chainInfo.decimals, proposal)}
-									{' '}
-									{chainInfo.label}
+								<Text mt={1}>
+									{getFieldString(proposal, 'tldr')}
 								</Text>
 							</Flex>
 						)
 					}
+
 					<Flex
-						direction='column'
-						w='50%'>
+						w='100%'
+						mt={4}
+						direction='column'>
 						<Text color='gray.5'>
-							Milestones
+							Details
 						</Text>
-						<Text
-							mt={1}
-							fontWeight='500'>
-							{proposal.milestones.length}
-						</Text>
+						<Box mt={1} />
+						{/* {projectDetails} */}
+						<TextViewer
+							value={editorState}
+							onChange={setEditorState} />
 					</Flex>
-				</Flex>
 
-				{
-					getFieldString(proposal, 'tldr') && (
-						<Flex
-							w='100%'
-							mt={4}
-							direction='column'>
-							<Text color='gray.5'>
-								tl;dr
-							</Text>
-							<Text mt={1}>
-								{getFieldString(proposal, 'tldr')}
-							</Text>
-						</Flex>
-					)
-				}
-
-				<Flex
-					w='100%'
-					mt={4}
-					direction='column'>
-					<Text color='gray.5'>
-						Details
-					</Text>
-					<Box mt={1} />
-					{/* {projectDetails} */}
-					<TextViewer
-						value={editorState}
-						onChange={setEditorState} />
-				</Flex>
-
-				{
-					getFieldString(decryptedProposal, 'memberDetails') && (
-						<Flex
-							w='100%'
-							mt={4}
-							direction='column'>
-							<Text color='gray.5'>
-								Member Details
-							</Text>
-							{
-								getFieldStrings(decryptedProposal, 'memberDetails').map(
-									(member: string, index: number) => (
-										<Text
-											key={index}
-											mt={2}>
-											{index + 1}
-											.
-											{' '}
-											{member}
-										</Text>
-									),
-								)
-							}
-						</Flex>
-					)
-				}
-
-				{
-					grant?.fields
-						?.filter((field) => field.id
-							.substring(field.id.indexOf('.') + 1)
-							.startsWith('customField'),
-						)
-						.map((field, index) => {
-							const id = field.id.substring(field.id.indexOf('.') + 1)
-							const title = field.title
-								.substring(field.title.indexOf('-') + 1)
-								.split('\\s')
-								.join(' ')
-							const value = getFieldString(proposal, id)
-							if(value === undefined) {
-								return <Flex key={index} />
-							}
-
-							return (
-								<Flex
-									key={index}
-									w='100%'
-									mt={4}
-									direction='column'>
-									<Text color='gray.5'>
-										{title}
-									</Text>
-									<ReactLinkify
-										componentDecorator={
-											(
-												decoratedHref: string,
-												decoratedText: string,
-												key: number,
-											) => (
+					{
+						getFieldString(decryptedProposal, 'memberDetails') && (
+							<Flex
+								w='100%'
+								mt={4}
+								direction='column'>
+								<Text color='gray.5'>
+									Member Details
+								</Text>
+								{
+									getFieldStrings(decryptedProposal, 'memberDetails')?.map(
+										(member: string, index: number) => (
+											<ReactLinkify
+												key={index}
+												componentDecorator={
+													(
+														decoratedHref: string,
+														decoratedText: string,
+														key: number,
+													) => (
+														<Text
+															display='inline-block'
+															wordBreak='break-all'
+															color='accent.azure'
+															cursor='pointer'
+															_hover={
+																{
+																	textDecoration: 'underline',
+																}
+															}
+															key={key}
+															onClick={
+																() => {
+																	window.open(decoratedHref, '_blank')
+																}
+															}
+														>
+															{decoratedText}
+														</Text>
+													)
+												}
+											>
 												<Text
-													display='inline-block'
-													wordBreak='break-all'
-													color='accent.azure'
-													cursor='pointer'
-													_hover={
-														{
-															textDecoration: 'underline',
-														}
-													}
-													key={key}
-													onClick={
-														() => {
-															window.open(decoratedHref, '_blank')
-														}
-													}>
-													{decoratedText}
+													mt={2}>
+													{index + 1}
+													.
+													{' '}
+													{member}
 												</Text>
-											)
-										}
-									>
-										<Text mt={1}>
-											{value}
-										</Text>
-									</ReactLinkify>
-								</Flex>
+											</ReactLinkify>
+
+										),
+									)
+								}
+							</Flex>
+						)
+					}
+
+					{
+						grant?.fields
+							?.filter((field) => field.id
+								.substring(field.id.indexOf('.') + 1)
+								.startsWith('customField'),
 							)
-						})
-				}
+							.map((field, index) => {
+								const id = field.id.substring(field.id.indexOf('.') + 1)
+								const title = field.title
+									.substring(field.title.indexOf('-') + 1)
+									.split('\\s')
+									.join(' ')
+								const value = getFieldString(proposal, id)
+								if(value === undefined) {
+									return <Flex key={index} />
+								}
+
+								return (
+									<Flex
+										key={index}
+										w='100%'
+										mt={4}
+										direction='column'>
+										<Text color='gray.5'>
+											{title}
+										</Text>
+										<ReactLinkify
+											componentDecorator={
+												(
+													decoratedHref: string,
+													decoratedText: string,
+													key: number,
+												) => (
+													<Text
+														display='inline-block'
+														wordBreak='break-all'
+														color='accent.azure'
+														cursor='pointer'
+														_hover={
+															{
+																textDecoration: 'underline',
+															}
+														}
+														key={key}
+														onClick={
+															() => {
+																window.open(decoratedHref, '_blank')
+															}
+														}
+													>
+														{decoratedText}
+													</Text>
+												)
+											}
+										>
+											<Text mt={1}>
+												{value}
+											</Text>
+										</ReactLinkify>
+									</Flex>
+								)
+							})
+					}
+				</motion.div>
 			</Flex>
 		)
 	}
@@ -380,8 +420,12 @@ function Proposal() {
 		return role !== 'community'
 	}, [])
 
-	const [decryptedProposal, setDecryptedProposal] = useState<ProposalType | undefined>(proposal)
-	const [editorState, setEditorState] = useState<EditorState>(EditorState.createEmpty())
+	const [decryptedProposal, setDecryptedProposal] = useState<
+    ProposalType | undefined
+  >(proposal)
+	const [editorState, setEditorState] = useState<EditorState>(
+		EditorState.createEmpty(),
+	)
 
 	const { decrypt } = useEncryptPiiForApplication(
 		proposal?.grant?.id,
@@ -396,7 +440,7 @@ function Proposal() {
 
 		Promise.all([
 			decrypt(proposal),
-			getFromIPFS(getFieldString(proposal, 'projectDetails')),
+			getFromIPFS(getFieldString(proposal, 'projectDetails') ?? ''),
 		]).then(([decryptedProposal, details]) => {
 			logger.info(
 				{ decryptedProposal, details },

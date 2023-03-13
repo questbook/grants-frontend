@@ -4,15 +4,15 @@ import { useGetMemberPublicKeysQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
+import { uploadToIPFS } from 'src/libraries/utils/ipfs'
 import {
 	getKeyForApplication,
 	getSecureChannelFromPublicKey,
 } from 'src/libraries/utils/pii'
 import { PIIForCommentType } from 'src/libraries/utils/types'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { uploadToIPFS } from 'src/utils/ipfsUtils'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 interface Props {
   setStep: (step: number | undefined) => void

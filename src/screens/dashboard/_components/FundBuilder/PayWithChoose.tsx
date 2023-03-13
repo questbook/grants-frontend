@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react'
 import { Button, Flex, Image, Text } from '@chakra-ui/react'
 import { useSafeContext } from 'src/contexts/safeContext'
 import logger from 'src/libraries/logger'
-import Dropdown from 'src/screens/dashboard/_components/FundBuilder/Dropdown'
+import DropdownSelect from 'src/libraries/ui/LinkYourMultisigModal/DropdownSelect'
 import { TokenInfo } from 'src/screens/dashboard/_utils/types'
 import { FundBuilderContext } from 'src/screens/dashboard/Context'
 
@@ -42,7 +42,7 @@ function PayWithChoose({ selectedMode }: { selectedMode: any}) {
 						</>
 					) : (
 						<>
-							<Dropdown
+							<DropdownSelect
 									options={
 										(tokenList ?? []).map((token: TokenInfo, index: number) => {
 											const ret = {
@@ -104,7 +104,7 @@ function PayWithChoose({ selectedMode }: { selectedMode: any}) {
 			}>
 			<Text
 				ml={2}
-				variant='v2_body'
+				variant='body'
 			>
 				{data.tokenName}
 			</Text>
@@ -125,7 +125,7 @@ function PayWithChoose({ selectedMode }: { selectedMode: any}) {
 				boxSize='16px' />
 			<Text
 				ml={2}
-				variant='v2_body'
+				variant='body'
 			>
 				{data.tokenName}
 			</Text>
@@ -143,7 +143,6 @@ function PayWithChoose({ selectedMode }: { selectedMode: any}) {
 
 		safeObj?.getTokenAndbalance().then((list: {value: TokenInfo[], error: string}) => {
 			if(list?.value) {
-			console.log('list', list)
 			setTokenList(list?.value)
 			if(list?.value?.length && !selectedTokenInfo) {
 				setSelectedTokenInfo(list?.value[0])

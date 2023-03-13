@@ -26,7 +26,7 @@ function AddMemberButton() {
 							<Flex align='center'>
 								<Link boxSize='18px' />
 								<Text
-									variant='v2_body'
+									variant='body'
 									ml={3}>
 									Invite
 								</Text>
@@ -42,7 +42,7 @@ function AddMemberButton() {
 											size='18px' />
 										<Text
 											ml={3}
-											variant='v2_body'>
+											variant='body'>
 											Generating link on-chain...
 										</Text>
 									</Flex>
@@ -54,7 +54,7 @@ function AddMemberButton() {
 										mt={2}
 									>
 										<Text
-											variant='v2_body'
+											variant='body'
 											noOfLines={4}
 											wordBreak='break-all'
 											mr={2}>
@@ -90,7 +90,7 @@ function AddMemberButton() {
 					}
 				}>
 				<Text
-					variant='v2_body'
+					variant='body'
 					fontWeight='400'>
 					{id === 0 ? 'Admin' : 'Reviewer'}
 				</Text>

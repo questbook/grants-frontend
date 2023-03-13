@@ -1,9 +1,10 @@
 import { Box, Button, Flex, Image, Text } from '@chakra-ui/react'
+import { Dot } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
+import { getAvatar } from 'src/libraries/utils'
+import { truncateStringFromMiddle } from 'src/libraries/utils/formatting'
+import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { WorkspaceMembers } from 'src/screens/settings/_utils/types'
-import getAvatar from 'src/utils/avatarUtils'
-import { truncateStringFromMiddle } from 'src/utils/formattingUtils'
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
 
 interface WorkspaceMemberCardProps {
     member: WorkspaceMembers[number]
@@ -33,7 +34,7 @@ function WorkspaceMemberCard({ member, setOpenConfirmationModal }: WorkspaceMemb
 						gap={2}
 						alignItems='center'>
 						<Text
-							variant='v2_title'
+							variant='title'
 							fontWeight='500'>
 							{member?.fullName}
 						</Text>
@@ -51,15 +52,15 @@ function WorkspaceMemberCard({ member, setOpenConfirmationModal }: WorkspaceMemb
 						{
 							member?.email && (
 								<Text
-									variant='v2_body'
+									variant='body'
 									color='gray.5'>
 									{member?.email}
 								</Text>
 							)
 						}
-						{member?.email && <Image src='/v2/icons/dot.svg' />}
+						{member?.email && <Dot />}
 						<Text
-							variant='v2_body'
+							variant='body'
 							color='gray.5'
 						>
 							{truncateStringFromMiddle(member?.actorId)}

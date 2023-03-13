@@ -16,7 +16,7 @@ function SectionSelect({ label, flexProps, ...props }: Props) {
 				<Text
 					mr={8}
 					pb={2}
-					variant='v2_subheading'
+					variant='subheading'
 					w='calc(30% - 32px)'
 					fontWeight='500'
 					textAlign='right'>

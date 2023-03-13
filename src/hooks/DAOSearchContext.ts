@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ContextGenerator } from 'src/utils/contextGenerator'
+import { ContextGenerator } from 'src/libraries/utils/contextGenerator'
 
 const useDaoSearch = () => {
 	const [searchString, setSearchString] = useState<string>()

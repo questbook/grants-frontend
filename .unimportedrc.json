@@ -1,6 +1,48 @@
 {
-	"aliases": {
-		"src/*": ["./src", "./src/*"],
-		"entry": ["src/pages/**/*.{js,ts,tsx}", "next.config.js"]
-	}
+  "aliases": {
+    "src/*": [
+      "./src",
+      "./src/*"
+    ],
+    "entry": [
+      "src/pages/**/*.{js,ts,tsx}",
+      "next.config.js"
+    ]
+  },
+  "ignoreUnresolved": [
+    ".graphclient",
+    "encoding",
+    "public/favicon.ico",
+    "src/types/gen",
+    "styles/globals.css"
+  ],
+  "ignoreUnused": [
+    "@apidevtools/json-schema-ref-parser",
+    "@metamask/eth-sig-util",
+    "@unstoppabledomains/resolution",
+    "create-chakra-icons",
+    "idriss-crypto",
+    "js-yaml-loader",
+    "json-schema-to-typescript",
+    "linkifyjs",
+    "lottie-react",
+    "next",
+    "next-plugin-yaml",
+    "next-pwa",
+    "next-transpile-modules",
+    "openapi-typescript",
+    "react",
+    "react-apexcharts",
+    "react-datepicker",
+    "react-dom",
+    "react-image-picker-editor",
+    "ts-node"
+  ],
+  "ignoreUnimported": [
+    "src/generated/contracts/ERC20.ts",
+    "src/generated/contracts/ERC20Proxy.ts",
+    "src/generated/contracts/factories/ERC20Proxy__factory.ts",
+    "src/generated/contracts/factories/ERC20__factory.ts",
+    "src/libraries/validator/utils/generateTypes.ts"
+  ]
 }

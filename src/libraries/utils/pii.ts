@@ -17,9 +17,9 @@ import {
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
+import { uploadToIPFS } from 'src/libraries/utils/ipfs'
+import MAIN_LOGGER from 'src/libraries/utils/logger'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
-import { uploadToIPFS } from 'src/utils/ipfsUtils'
-import MAIN_LOGGER from 'src/utils/logger'
 
 const ec = new EC('secp256k1')
 

@@ -34,7 +34,7 @@ function SendAnUpdateModal() {
 							proposalTags?.length > 0 && (
 								<Text
 									mt={6}
-									variant='v2_metadata'
+									variant='metadata'
 									fontWeight='500'
 									color='gray.6'>
 									FEW WAYS TO START THE DISCUSSION.
@@ -86,7 +86,7 @@ function SendAnUpdateModal() {
 								}
 							}>
 							<Text
-								variant='v2_body'
+								variant='body'
 								color='gray.5'>
 								Show only to reviewers and builder
 							</Text>

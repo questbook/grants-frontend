@@ -1,8 +1,6 @@
 import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
-import { useMediaQuery } from 'react-responsive'
 import { Box, Button, Center, Container, Divider, Flex, Image, Input, Skeleton, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import Loader from 'src/components/ui/loader'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { DAOSearchContext } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
@@ -13,22 +11,23 @@ import ConfirmationModal from 'src/libraries/ui/ConfirmationModal'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
+import Loader from 'src/libraries/ui/RichTextEditor/loader'
 import SearchField from 'src/libraries/ui/SearchField'
-import { ApiClientsContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
+import { chainNames } from 'src/libraries/utils/constants'
+import getErrorMessage from 'src/libraries/utils/error'
+import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
+import { ApiClientsContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import RFPGrid from 'src/screens/discover/_components/rfpGrid'
 import { DiscoverContext, DiscoverProvider } from 'src/screens/discover/Context'
 import HeroBanner from 'src/screens/discover/HeroBanner'
 import StatsBanner from 'src/screens/discover/StatsBanner'
 import { Roles } from 'src/types'
-import { chainNames } from 'src/utils/chainNames'
-import getErrorMessage from 'src/utils/errorUtils'
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
-import NetworkTransactionModal from 'src/v2/components/NetworkTransactionModal'
 
 function Discover() {
 	const router = useRouter()
 	const { inviteInfo } = useContext(ApiClientsContext)!
-
+	const { webwallet } = useContext(WebwalletContext)!
+	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const buildComponent = () => {
 		return inviteInfo ? inviteView() : normalView
 	}
@@ -45,13 +44,13 @@ function Discover() {
 				<Text
 					mt='auto'
 					color='white'
-					variant='v2_heading_1'>
+					variant='heading1'>
 					👋 gm, Welcome to Questbook!
 				</Text>
 				<Text
 					mt={3}
 					color='white'
-					variant='v2_title'>
+					variant='title'>
 					You’re invited to
 					{' '}
 					{grantProgram?.title}
@@ -66,7 +65,7 @@ function Discover() {
 						<Text
 							mt={8}
 							color='white'
-							variant='v2_title'>
+							variant='title'>
 							As a reviewer you can review grant proposals assigned to you, and communicate with builders to schedule interviews, and clarify your questions.
 						</Text>
 					)
@@ -82,7 +81,7 @@ function Discover() {
 				</Button>
 				<Image
 					mt='auto'
-					src='/illustrations/Browsers.svg' />
+					src='/Browser Mock.svg' />
 			</Flex>
 		)
 	}
@@ -127,21 +126,20 @@ function Discover() {
 			txSteps.push(`Changes updated on ${chainName}`)
 		}
 
-		const chainsLength = chainsList.length
-		const daosLength = Object.values(unsavedDomainState)
-			.map(e => Object.keys(e).length).reduce((a, b) => a + b, 0)
-		const description = `Updating ${daosLength} dao${daosLength === 1 ? '\'' : ''}s${daosLength === 1 ? '' : '\''} visibility state across ${chainsLength} chain${chainsLength === 1 ? '' : 's'}!`
+		// const chainsLength = chainsList.length
+		// const daosLength = Object.values(unsavedDomainState)
+		// 	.map(e => Object.keys(e).length).reduce((a, b) => a + b, 0)
+		// const description = `Updating ${daosLength} dao${daosLength === 1 ? '\'' : ''}s${daosLength === 1 ? '' : '\''} visibility state across ${chainsLength} chain${chainsLength === 1 ? '' : 's'}!`
 
 		return (
-			<NetworkTransactionModal
+			<NetworkTransactionFlowStepperModal
 				isOpen={networkTransactionModalStep !== undefined}
-				subtitle='Submitting dao visibility changes'
-				viewLink='.'
+				viewTxnLink='.'
 				showViewTransactionButton={false}
-				description={description}
 				currentStepIndex={networkTransactionModalStep || 0}
-				steps={txSteps}
-				onClose={router.reload} />
+				customSteps={txSteps}
+				onClose={router.reload}
+				 />
 		)
 	}
 
@@ -150,6 +148,7 @@ function Discover() {
 	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, isLoading } = useContext(DiscoverContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString } = useContext(DAOSearchContext)!
+	const { setSignIn } = useContext(SignInContext)!
 
 	const toast = useCustomToast()
 	const { isBiconomyInitialised, updateDaoVisibility, updateSection } = useUpdateDaoVisibility()
@@ -166,9 +165,7 @@ function Discover() {
 	const [sectionName, setSectionName] = useState('')
 	const [filterGrantName, setFilterGrantName] = useState('')
 
-	const isMobile = useMediaQuery({ query:'(max-width:600px)' })
-
-	const [imageFile, setImageFile] = useState<{file: File | null, hash?: string}>({ file: null })
+	const [imageFile, setImageFile] = useState<{ file: File | null, hash?: string }>({ file: null })
 
 	const onDaoVisibilityUpdate = (daoId: string, chainId: SupportedChainId, visibleState: boolean) => {
 		// check if any changes have been made for the chain id passed
@@ -302,23 +299,23 @@ function Discover() {
 														borderColor='gray.3'
 														mt={8}
 														display={grantsForYou?.length ? '' : 'none'}
-										 />
+													/>
 												</>
-											) : (
+											) : webwallet ? (
 												<Skeleton
 													width='100%'
 													h='5%'
 													startColor='gray.3'
 													endColor='gray.4'
 												/>
-											)
+											) : <Flex />
 									}
 									{/* </Box> */}
 									<Box
 										display={sectionGrants?.length ? '' : 'none'}
 									>
 										<Text
-											variant='v2_heading_3'
+											variant='heading3'
 											fontWeight='500'
 											mt={4}
 										>
@@ -347,7 +344,7 @@ function Discover() {
 																boxSize={6} />
 															<Text
 																fontWeight='500'
-																variant='v2_subheading'
+																variant='subheading'
 															>
 																{sectionName}
 															</Text>
@@ -431,7 +428,7 @@ function Discover() {
 									grants={searchString === undefined || searchString === '' ? grantsForAll : grantsForAll?.filter(g => g.title.includes(searchString))}
 									changedVisibilityState={changedVisibility}
 									filter={filterGrantName}
-						    	/>
+								/>
 							</>
 
 						)
@@ -520,12 +517,29 @@ function Discover() {
 		)
 	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName])
 
+	useEffect(() => {
+		if(!inviteInfo) {
+			setSignInTitle('default')
+			return
+		}
 
+		setTimeout(() => {
+			setSignInTitle(inviteInfo?.role === 0 ? 'admin' : 'reviewer')
+			setSignIn(true)
+		}, 2000)
+
+	}, [inviteInfo])
 	useEffect(() => {
 		logger.info('section update', unsavedSectionGrants)
 	}, [unsavedSectionGrants])
 
 	const onGetStartedClick = () => {
+		if(!webwallet) {
+			setSignInTitle(inviteInfo?.role === 0 ? 'admin' : 'reviewer')
+			setSignIn(true)
+			return
+		}
+
 		if(!grantProgram?.id) {
 			return
 		}
@@ -580,7 +594,6 @@ function Discover() {
 Discover.getLayout = function(page: ReactElement) {
 	return (
 		<NavbarLayout
-			renderSidebar={false}
 		>
 			<DiscoverProvider>
 				{page}

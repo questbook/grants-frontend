@@ -4,7 +4,7 @@ import { Box, Button, Divider, Flex, Grid, Image, Input, InputGroup, InputLeftEl
 import copy from 'copy-to-clipboard'
 import router from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
-import { Copy, ImageAdd, ShareBox } from 'src/generated/icons'
+import { Celo, Copy, Dot, ImageAdd, Realms, Safe, ShareBox } from 'src/generated/icons'
 import { useNetwork } from 'src/hooks/gasless/useNetwork'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
@@ -14,6 +14,9 @@ import ConfimationModal from 'src/libraries/ui/ConfirmationModal'
 import LinkYourMultisigModal from 'src/libraries/ui/LinkYourMultisigModal'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
+import { formatAddress, getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
+import { getUrlForIPFSHash, uploadToIPFS } from 'src/libraries/utils/ipfs'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
 import AddMemberButton from 'src/screens/settings/_components/AddMemberButton'
 import { DropdownIcon } from 'src/screens/settings/_components/DropdownIcon'
@@ -21,9 +24,6 @@ import useUpdateGrantProgram from 'src/screens/settings/_hooks/useUpdateGrantPro
 import { WorkspaceMembers } from 'src/screens/settings/_utils/types'
 import { SettingsFormContext, SettingsFormProvider } from 'src/screens/settings/Context'
 import WorkspaceMemberCard from 'src/screens/settings/WorkspaceMemberCard'
-import { formatAddress, getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 
 function Settings() {
@@ -53,7 +53,7 @@ function Settings() {
 						<SettingsIcon
 							boxSize={6} />
 						<Text
-							variant='v2_subheading'
+							variant='subheading'
 							fontWeight='500'>
 							Settings
 						</Text>
@@ -82,9 +82,8 @@ function Settings() {
 										<Flex gap={2}>
 											<Flex
 											>
-												<Image
+												<Safe
 													boxSize={8}
-													src='/v2/icons/safe.svg'
 												/>
 											</Flex>
 
@@ -94,7 +93,7 @@ function Settings() {
 												alignItems='flex-start'
 											>
 												<Text
-													variant='v2_title'
+													variant='title'
 													fontWeight='500'
 													cursor='pointer'
 												>
@@ -105,7 +104,7 @@ function Settings() {
 													align='center'>
 													<Text
 														fontWeight='400'
-														variant='v2_subtitle'
+														variant='subtitle'
 														color='black.1'
 													>
 														{formatAddress(workspace.safe.address)}
@@ -131,8 +130,7 @@ function Settings() {
 														}
 													/>
 
-													<Image
-														src='/v2/icons/dot.svg'
+													<Dot
 														boxSize='4px'
 														mx={1} />
 
@@ -140,7 +138,7 @@ function Settings() {
 														variant='link'
 														onClick={() => setIsLinkYourMultisigModalOpen(true)}>
 														<Text
-															variant='v2_body'
+															variant='body'
 															fontWeight='500'>
 															Change multisig
 														</Text>
@@ -161,19 +159,17 @@ function Settings() {
 									>
 										<Flex
 										>
-											<Image
+											<Realms
 												boxSize={8}
-												src='/v2/icons/realms.svg'
+
 											/>
-											<Image
+											<Safe
 												boxSize={8}
 												ml='-18px'
-												src='/v2/icons/safe.svg'
 											/>
-											<Image
+											<Celo
 												boxSize={8}
 												ml='-18px'
-												src='/v2/icons/celo.svg'
 											/>
 										</Flex>
 
@@ -184,14 +180,14 @@ function Settings() {
 											cursor='pointer'
 										>
 											<Text
-												variant='v2_title'
+												variant='title'
 												fontWeight='500'
 												cursor='pointer'
 											>
 												Link your multisig
 											</Text>
 											<Text
-												variant='v2_subtitle'
+												variant='subtitle'
 											>
 												Link your multisig to fund builders on Questbook
 											</Text>
@@ -251,7 +247,7 @@ function Settings() {
 									gap={2}
 								>
 									<Text
-										variant='v2_title'
+										variant='title'
 										fontWeight='500'
 										cursor='pointer'
 									>
@@ -294,7 +290,7 @@ function Settings() {
 							alignItems='center'
 						>
 							<Text
-								variant='v2_body'
+								variant='body'
 								fontWeight='500'
 							>
 								Members
@@ -328,7 +324,7 @@ function Settings() {
 							gap={2}
 							alignItems='center'>
 							<Text
-								variant='v2_body'
+								variant='body'
 							>
 								All
 							</Text>
@@ -376,7 +372,6 @@ function Settings() {
 								return
 							}
 
-							setIsNetworkTransactionModalOpen(true)
 							revokeOrRestoreAccess(address, openConfirmationModal?.accessLevel === 'reviewer' ? 1 : 0, !openConfirmationModal?.enabled)
 							setOpenConfirmationModal(undefined)
 						}
@@ -384,8 +379,8 @@ function Settings() {
 					onCancel={() => setOpenConfirmationModal(undefined)}
 				/>
 				<NetworkTransactionFlowStepperModal
-					isOpen={isNetworkTransactionModalOpen}
-					currentStepIndex={currentStepIndex!}
+					isOpen={currentStepIndex !== undefined}
+					currentStepIndex={currentStepIndex || 0}
 					viewTxnLink={getExplorerUrlForTxHash(network, txHash ?? revokeTxHash)}
 					onClose={
 						async() => {
@@ -423,7 +418,6 @@ function Settings() {
 
 	const { network } = useNetwork()
 
-	const [isNetworkTransactionModalOpen, setIsNetworkTransactionModalOpen] = useState(false)
 	const [currentStepIndex, setCurrentStepIndex] = useState<number| undefined>()
 	const [openConfirmationModal, setOpenConfirmationModal] = useState<WorkspaceMembers[number]>()
 	const [isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen] = useState(false)
@@ -437,7 +431,7 @@ function Settings() {
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
 	}, [grant])
 
-	const { updateGrantProgram, txHash } = useUpdateGrantProgram(setCurrentStepIndex, setIsNetworkTransactionModalOpen)
+	const { updateGrantProgram, txHash } = useUpdateGrantProgram(setCurrentStepIndex)
 
 	const handleOnClickSave = async() => {
 		const logoIpfsHash = imageFile !== null ? (await uploadToIPFS(imageFile.file)).hash : ''
@@ -491,7 +485,7 @@ function Settings() {
 Settings.getLayout = function(page: ReactElement) {
 	return (
 		<NavbarLayout
-			renderSidebar={false}
+			openSignIn={true}
 			navbarConfig={{ showDomains: true, showLogo: false, showOpenDashboard: true, showAddMembers: true, bg: 'gray.1' }}
 		>
 			<SettingsFormProvider>

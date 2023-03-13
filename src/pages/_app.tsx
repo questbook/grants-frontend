@@ -26,18 +26,17 @@ import SubgraphClient from 'src/graphql/subgraph'
 import { DAOSearchContextMaker } from 'src/hooks/DAOSearchContext'
 import { QBAdminsContextMaker } from 'src/hooks/QBAdminsContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
-import MigrateToGasless from 'src/libraries/ui/MigrateToGaslessModal'
 import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import QRCodeModal from 'src/libraries/ui/QRCodeModal'
+import { delay } from 'src/libraries/utils'
+import { addAuthorizedUser, bicoDapps, deploySCW, getNonce, jsonRpcProviders, networksMapping } from 'src/libraries/utils/gasless'
 import { extractInviteInfo, InviteInfo } from 'src/libraries/utils/invite'
+import logger from 'src/libraries/utils/logger'
+import getSeo from 'src/libraries/utils/seo'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import theme from 'src/theme'
 import { GrantProgramContextType, GrantType, MinimalWorkspace, NotificationContextType, Roles } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
-import { addAuthorizedUser, bicoDapps, deploySCW, getNonce, jsonRpcProviders, networksMapping } from 'src/utils/gaslessUtils'
-import { delay } from 'src/utils/generics'
-import logger from 'src/utils/logger'
-import getSeo from 'src/utils/seo'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 import {
 	allChains,
 	Chain,
@@ -54,7 +53,7 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { publicProvider } from 'wagmi/providers/public'
 import 'styles/globals.css'
 import 'draft-js/dist/Draft.css'
-import 'src/utils/appCopy'
+import 'src/libraries/utils/appCopy'
 
 type NextPageWithLayout = NextPage & {
 	getLayout?: (page: ReactElement) => ReactNode
@@ -137,9 +136,24 @@ export const GrantsProgramContext = createContext<GrantProgramContextType | null
 
 export const NotificationContext = createContext<NotificationContextType | null>(null)
 
+export const SignInMethodContext = createContext<{
+	signInMethod: 'newWallet' | 'existingWallet' | 'choosing'
+	setSignInMethod: (signInMethod: 'newWallet' | 'existingWallet' | 'choosing') => void
+
+		} | null>(null)
+export const SignInContext = createContext<{
+	signIn: boolean
+	setSignIn: (signIn: boolean) => void
+		} | null>(null)
+
+export const SignInTitleContext = createContext<{
+	signInTitle: 'admin' | 'reviewer' | 'default' | 'postComment' | 'submitProposal'
+	setSignInTitle: (signInTitle: 'admin' | 'reviewer' | 'default' | 'postComment' | 'submitProposal') => void
+		} | null>(null)
+
 export const WebwalletContext = createContext<{
-	webwallet?: Wallet
-	setWebwallet: (webwallet?: Wallet) => void
+	webwallet?: Wallet | null
+	setWebwallet: (webwallet?: Wallet | null) => void
 
 	network?: SupportedChainId
 	switchNetwork: (newNetwork?: SupportedChainId) => void
@@ -165,13 +179,13 @@ export const BiconomyContext = createContext<{
 	setBiconomyDaoObjs: (biconomyDaoObjs: any) => void
 	initiateBiconomy: (chainId: string) => Promise<InitiateBiconomyReturnType | undefined>
 	loadingBiconomyMap: { [_: string]: boolean }
-	biconomyWalletClients?: {[key: string]: BiconomyWalletClient}
-	setBiconomyWalletClients: (biconomyWalletClients?: {[key: string]: BiconomyWalletClient}) => void
+	biconomyWalletClients?: { [key: string]: BiconomyWalletClient }
+	setBiconomyWalletClients: (biconomyWalletClients?: { [key: string]: BiconomyWalletClient }) => void
 		} | null>(null)
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [network, switchNetwork] = useState<SupportedChainId>(defaultChainId)
-	const [webwallet, setWebwallet] = useState<Wallet>()
+	const [webwallet, setWebwallet] = useState<Wallet | null>()
 	const [workspace, setWorkspace] = useState<MinimalWorkspace>()
 	const [inviteInfo, setInviteInfo] = useState<InviteInfo>()
 
@@ -180,8 +194,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 
 	const [scwAddress, setScwAddress] = useState<string>()
-	const [biconomyDaoObjs, setBiconomyDaoObjs] = useState<{[key: string]: typeof BiconomyContext}>()
-	const [biconomyWalletClients, setBiconomyWalletClients] = useState<{[key: string]: BiconomyWalletClient}>()
+	const [biconomyDaoObjs, setBiconomyDaoObjs] = useState<{ [key: string]: typeof BiconomyContext }>()
+	const [biconomyWalletClients, setBiconomyWalletClients] = useState<{ [key: string]: BiconomyWalletClient }>()
 	const [nonce, setNonce] = useState<string>()
 	const [loadingNonce, setLoadingNonce] = useState<boolean>(false)
 	const [isNewUser, setIsNewUser] = useState<boolean>(true)
@@ -190,7 +204,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [dashboardStep, setDashboardStep] = useState<boolean>(false)
 	const [createingProposalStep, setCreatingProposalStep] = useState<number>(1)
 	const [biconomyLoading, setBiconomyLoading] = useState<{ [chainId: string]: boolean }>({})
-
+	const [signInMethod, setSignInMethod] = useState<'newWallet' | 'existingWallet' | 'choosing'>('choosing')
+	const [signInTitle, setSignInTitle] = useState<'admin' | 'reviewer' | 'default' | 'postComment' | 'submitProposal'>('default')
+	const [signIn, setSignIn] = useState<boolean>(false)
 	// store the chainId that was most recently asked to be init
 	const mostRecentInitChainId = useRef<string>()
 	// ref to store all the chains that are loading biconomy
@@ -207,7 +223,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 	useEffect(() => {
 		hotjar.initialize(3167823, 6)
-	  }, [])
+	}, [])
 
 	const initiateBiconomyUnsafe = useCallback(async(chainId: string) => {
 		if(!webwallet) {
@@ -360,16 +376,16 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		}
 
 		(async() => {
-		  try {
+			try {
 				await addAuthorizedUser(webwallet?.address!)
 				const newNonce = await getUseNonce()
 				setNonce(newNonce)
-		  } catch(err) {
+			} catch(err) {
 				logger.error({ err }, 'error in adding authorized user')
-		  }
+			}
 		})()
 
-	  }, [webwallet, nonce])
+	}, [webwallet, nonce])
 
 	useEffect(() => {
 		setWebwallet(createWebWallet())
@@ -420,9 +436,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		let newWebwallet = Wallet.createRandom()
 
 		if(!privateKey) {
-			setIsNewUser(true)
-			localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
-			return newWebwallet
+			return null
 		}
 
 		try {
@@ -430,16 +444,26 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			setIsNewUser(false)
 			return newWebwallet
 		} catch{
-			localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
-			setIsNewUser(true)
-			return newWebwallet
+			return undefined
 		}
 	}
 
+	const SignInMethodContextValue = useMemo(() => ({
+		signInMethod,
+		setSignInMethod
+	}), [signInMethod, setSignInMethod])
+	const SignInContextValue = useMemo(() => ({
+		signIn,
+		setSignIn
+	}), [signIn, setSignIn])
+	const SignInTitleContextValue = useMemo(() => ({
+		signInTitle,
+		setSignInTitle
+	}), [signInTitle, setSignInTitle])
 	const webwalletContextValue = useMemo(
 		() => ({
 			webwallet: webwallet,
-			setWebwallet: (newWebwallet?: Wallet) => {
+			setWebwallet: (newWebwallet?: Wallet | null) => {
 				if(newWebwallet) {
 					localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
 				} else {
@@ -535,86 +559,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		return chainId
 	}, [workspace])
 
-	// useEffect(() => {
-	// 	if(!scwAddress) {
-	// 		return
-	// 	}
-
-	// 	const fetch = async() => {
-	// 		const roles: Roles[] = ['community']
-	// 		for(const chainId of ALL_SUPPORTED_CHAIN_IDS) {
-	// 			const ret = await clients[chainId].client.query({
-	// 				query: DoesHaveProposalsDocument,
-	// 				variables: {
-	// 					builderId: scwAddress
-	// 				}
-	// 			})
-
-	// 			if(ret.data?.grantApplications?.length && roles.indexOf('builder') === -1) {
-	// 				roles.push('builder')
-	// 			}
-
-	// 			for(const member of ret.data?.workspaceMembers) {
-	// 				if((member.accessLevel === 'admin' || member.accessLevel === 'owner') && roles.indexOf('admin') === -1) {
-	// 					roles.push('admin')
-	// 				} else if(member.accessLevel === 'reviewer' && roles.indexOf('reviewer') === -1) {
-	// 					roles.push('reviewer')
-	// 				}
-	// 			}
-	// 		}
-
-	// 		if(roles.indexOf('builder') !== -1) {
-	// 			setIsBuilder('yes')
-	// 		} else {
-	// 			setIsBuilder('no')
-	// 		}
-
-	// 		setPossibleRoles(roles)
-	// 	}
-
-	// 	fetch()
-	// }, [scwAddress])
-
-	// useEffect(() => {
-	// 	const allRoles = ['builder', 'community', 'reviewer', 'admin']
-	// 	const storedRole = localStorage.getItem(ROLE_CACHE)
-	// 	logger.info({ storedRole }, 'Stored Role')
-
-	// 	if(storedRole && allRoles.indexOf(storedRole as Roles) !== -1) {
-	// 		logger.info({ storedRole }, 'Setting role 1')
-	// 		setRole(storedRole as Roles)
-	// 		return
-	// 	}
-
-	// 	if(!workspace && possibleRoles.indexOf('admin') === -1 && possibleRoles.indexOf('reviewer') === -1) {
-	// 		const newRole = isBuilder === 'yes' ? 'builder' : 'community'
-	// 		logger.info({ newRole }, 'Setting role 2')
-	// 		setRole(newRole)
-	// 		localStorage.setItem(ROLE_CACHE, newRole)
-	// 		return
-	// 	} else if(!workspace) {
-	// 		const newRole = possibleRoles.indexOf('admin') === -1 ? 'reviewer' : 'admin'
-	// 		logger.info({ newRole }, 'Setting role 3')
-	// 		setRole(newRole)
-	// 		localStorage.setItem(ROLE_CACHE, newRole)
-	// 		return
-	// 	}
-
-	// 	for(const member of workspace.members) {
-	// 		if(member.actorId === scwAddress?.toLowerCase()) {
-	// 			const newRole = member.accessLevel === 'reviewer' ? 'reviewer' : 'admin'
-	// 			logger.info({ newRole }, 'Setting role 4')
-	// 			setRole(newRole)
-	// 			localStorage.setItem(ROLE_CACHE, newRole)
-	// 			return
-	// 		}
-	// 	}
-
-	// 	logger.info({ newRole: 'community' }, 'Setting role 5')
-	// 	setRole('community')
-	// 	localStorage.setItem(ROLE_CACHE, 'community')
-	// }, [workspace, isBuilder, scwAddress])
-
 	const toast = useCustomToast()
 
 	useEffect(() => {
@@ -646,16 +590,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				} else {
 					localStorage.setItem(DOMAIN_CACHE_KEY, 'undefined')
 				}
-
-				// const member = newWorkspace?.members?.find((member) => member.actorId === scwAddress?.toLowerCase())
-				// if(member) {
-				// 	const newRole = member.accessLevel === 'reviewer' ? 'reviewer' : 'admin'
-				// 	logger.info({ newRole }, 'Setting role 6')
-				// 	setRole(newRole)
-				// 	localStorage.setItem(ROLE_CACHE, newRole)
-				// }
-
-				// setWorkspace(newWorkspace)
 			},
 			chainId,
 			inviteInfo,
@@ -712,45 +646,32 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 						}
 					}
 				/>
-				{/* <script
-					dangerouslySetInnerHTML={
-						{
-							__html: `(function(h,o,t,j,a,r){
-								h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-								h._hjSettings={hjid:3220839,hjsv:6};
-								a=o.getElementsByTagName('head')[0];
-								r=o.createElement('script');r.async=1;
-								r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-								a.appendChild(r);
-							})(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');`
-						}
-					}
-				/> */}
 			</Head>
 			<WagmiConfig client={client}>
 				<ApiClientsContext.Provider value={apiClients}>
 					<NotificationContext.Provider value={notificationContext}>
-						<WebwalletContext.Provider value={webwalletContextValue}>
-							<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
-								<SafeProvider>
-									<DAOSearchContextMaker>
-										<GrantsProgramContext.Provider value={grantProgram}>
-											<QBAdminsContextMaker>
-												<ChakraProvider theme={theme}>
-													{getLayout(<Component {...pageProps} />)}
-													{
-														typeof window !== 'undefined' && (
-															<MigrateToGasless />
-														)
-													}
-													<QRCodeModal />
-												</ChakraProvider>
-											</QBAdminsContextMaker>
-										</GrantsProgramContext.Provider>
-									</DAOSearchContextMaker>
-								</SafeProvider>
-							</BiconomyContext.Provider>
-						</WebwalletContext.Provider>
+						<SignInContext.Provider value={SignInContextValue}>
+							<SignInTitleContext.Provider value={SignInTitleContextValue}>
+								<SignInMethodContext.Provider value={SignInMethodContextValue}>
+									<WebwalletContext.Provider value={webwalletContextValue}>
+										<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
+											<SafeProvider>
+												<DAOSearchContextMaker>
+													<GrantsProgramContext.Provider value={grantProgram}>
+														<QBAdminsContextMaker>
+															<ChakraProvider theme={theme}>
+																{getLayout(<Component {...pageProps} />)}
+																<QRCodeModal />
+															</ChakraProvider>
+														</QBAdminsContextMaker>
+													</GrantsProgramContext.Provider>
+												</DAOSearchContextMaker>
+											</SafeProvider>
+										</BiconomyContext.Provider>
+									</WebwalletContext.Provider>
+								</SignInMethodContext.Provider>
+							</SignInTitleContext.Provider>
+						</SignInContext.Provider>
 					</NotificationContext.Provider>
 				</ApiClientsContext.Provider>
 			</WagmiConfig>

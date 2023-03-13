@@ -25,37 +25,37 @@ export default {
 					}
 				}
 			},
-			v2_metadata: {
+			metadata: {
 				fontSize: '12px',
 				lineHeight: '16px',
 				color: 'black.1'
 			},
-			v2_body: {
+			body: {
 				fontSize: '14px',
 				lineHeight: '20px',
 				color: 'black.1'
 			},
-			v2_title: {
+			title: {
 				fontSize: '16px',
 				lineHeight: '24px',
 				color: 'black.1'
 			},
-			v2_subheading: {
+			subheading: {
 				fontSize: '20px',
 				lineHeight: '24px',
 				color: 'black.1'
 			},
-			v2_heading_3: {
+			heading3: {
 				fontSize: '24px',
 				lineHeight: '32px',
 				color: 'black.1'
 			},
-			v2_heading_2: {
+			heading2: {
 				fontSize: '32px',
 				lineHeight: '40px',
 				color: 'black.1'
 			},
-			v2_heading_1: {
+			heading1: {
 				fontSize: '40px',
 				lineHeight: '48px',
 				color: 'black.1'

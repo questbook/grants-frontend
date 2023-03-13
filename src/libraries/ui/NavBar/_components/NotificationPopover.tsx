@@ -1,11 +1,10 @@
 import { useContext, useRef } from 'react'
+import { useMediaQuery } from 'react-responsive'
 import { Button, Flex, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text } from '@chakra-ui/react'
 import { Bell, Desktop, QrScan } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, NotificationContext } from 'src/pages/_app'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
-import { useMediaQuery } from 'react-responsive'
-
 
 type Props =
 | {
@@ -39,19 +38,19 @@ function NotificationPopover(props: Props) {
 								px={4}
 								py={3}>
 								<Text
-									variant='v2_body'
+									variant='body'
 									fontWeight='500'>
 									Subscribe to notifications
 								</Text>
 								<Text
 									mt={1}
 									as='span'
-									variant='v2_body'>
+									variant='body'>
 									Get real time notifications for the grant program on our
 									{' '}
 									<Text
 										as='span'
-										variant='v2_body'
+										variant='body'
 										fontWeight='500'>
 										Telegram
 									</Text>
@@ -60,14 +59,14 @@ function NotificationPopover(props: Props) {
 								</Text>
 								{
 									popoverBodyItem.map((item, index) => {
-										return isMobile&&index==1 ? null : (
+										return isMobile && index === 1 ? null : (
 											<Flex
 												mt={4}
 												key={index}
 												direction='column'
 												align='start'>
 												<Text
-													variant='v2_body'
+													variant='body'
 													color='gray.5'>
 													{item.title}
 												</Text>
@@ -83,7 +82,7 @@ function NotificationPopover(props: Props) {
 														}
 													}>
 													<Text
-														variant='v2_body'
+														variant='body'
 														fontWeight='500'>
 														{item.buttonText}
 													</Text>
@@ -94,7 +93,7 @@ function NotificationPopover(props: Props) {
 								}
 								<Text
 									mt={4}
-									variant='v2_body'
+									variant='body'
 									color='gray.5'>
 									Learn more about notifications
 								</Text>
@@ -108,10 +107,12 @@ function NotificationPopover(props: Props) {
 
 	const popoverBodyItem = [
 		{
-			title: isMobile ? 'For mobile App' : 'For MAC App' ,
-			buttonIcon: isMobile ? <></> : <Desktop
-				color='black.1'
-				boxSize='20px' />,
+			title: isMobile ? 'For mobile App' : 'For MAC App',
+			buttonIcon: isMobile ? <></> : (
+				<Desktop
+					color='black.1'
+					boxSize='20px' />
+			),
 			buttonText: isMobile ? 'Open my mobile app' : 'Open my desktop app',
 			onButtonClick: () => {
 				const payload = getPayload()

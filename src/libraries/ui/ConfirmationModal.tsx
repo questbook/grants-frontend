@@ -30,13 +30,13 @@ function ConfirmationModal({ isOpen, onClose, title, subTitle, actionText, actio
 							gap={4}
 						>
 							<Text
-								variant='v2_title'
+								variant='title'
 								fontWeight='500'
 							>
 								{title}
 							</Text>
 							<Text
-								variant='v2_body'
+								variant='body'
 								fontWeight='400'
 							>
 								{subTitle}
@@ -47,7 +47,7 @@ function ConfirmationModal({ isOpen, onClose, title, subTitle, actionText, actio
                             		onClick={action}
                             		variant='primaryV2'>
 									<Text
-                            			variant='v2_body'
+                            			variant='body'
                             			color='white'>
 										{actionText}
 									</Text>
@@ -56,7 +56,7 @@ function ConfirmationModal({ isOpen, onClose, title, subTitle, actionText, actio
                             		onClick={onClose}
                             		ml={4}
                             		variant='link'>
-									<Text variant='v2_body'>
+									<Text variant='body'>
 										Cancel
 									</Text>
 								</Button>

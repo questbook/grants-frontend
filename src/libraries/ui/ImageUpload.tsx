@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { Button, Flex, FlexProps, Image } from '@chakra-ui/react'
 import { ImageAdd } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
-import { getUrlForIPFSHash } from 'src/utils/ipfsUtils'
+import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 
 interface Props extends FlexProps {
     imageFile: {file: File | null, hash?: string}

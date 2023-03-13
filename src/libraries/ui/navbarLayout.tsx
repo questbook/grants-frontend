@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Flex } from '@chakra-ui/react'
 import NavBar from 'src/libraries/ui/NavBar'
-import logger from 'src/utils/logger'
-import Sidebar from 'src/v2/components/Sidebar'
+import logger from 'src/libraries/utils/logger'
 
 type NavbarConfig = {
 	bg?: string
@@ -23,15 +22,14 @@ type Props = {
 	navbarConfig?: NavbarConfig
 	requestProposal?: boolean
 	//Sidebar configs
-	renderSidebar?: boolean
 	dashboard?: boolean
+	openSignIn?: boolean
 }
-
-function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar, requestProposal, dashboard }: Props) {
+function NavbarLayout({ openSignIn, children, renderNavbar, navbarConfig, requestProposal, dashboard }: Props) {
 	const [renderCount, setRenderCount] = useState(0)
 
 	useEffect(() => {
-		logger.info({ renderNavbar, renderSidebar }, 'Render Navbar Layout')
+		logger.info({ renderNavbar }, 'Render Navbar Layout')
 		setRenderCount(renderCount + 1)
 	}, [])
 	return (
@@ -46,6 +44,7 @@ function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar, req
 						{...navbarConfig}
 						requestProposal={requestProposal}
 						dashboard={dashboard}
+						openSignIn={openSignIn}
 					/>
 				)
 			}
@@ -53,24 +52,10 @@ function NavbarLayout({ children, renderNavbar, navbarConfig, renderSidebar, req
 				direction='row'
 				maxH='calc(100vh - 64px)'
 				bg='gray.1'>
-				{
-					renderSidebar && (
-						<Flex
-							display={{ base: 'none', lg: 'flex' }}
-							w='20%'
-							pos='sticky'
-							top='64px'
-							left={0}
-							bottom={0}
-						>
-							<Sidebar />
-						</Flex>
-					)
-				}
 				<Flex
 					className='body'
 					zIndex={0}
-					w={renderSidebar ? '80%' : '100%'}
+					w='100%'
 					overflowY='auto'
 					overscrollBehavior='none'
 					justifyContent='center'>

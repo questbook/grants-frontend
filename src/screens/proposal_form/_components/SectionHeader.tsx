@@ -6,7 +6,7 @@ function SectionHeader(props: TextProps) {
 			<Text
 				{...props}
 				w='100%'
-				variant='v2_subheading'
+				variant='subheading'
 				fontWeight='500'
 				textAlign='left'
 				pb={4}

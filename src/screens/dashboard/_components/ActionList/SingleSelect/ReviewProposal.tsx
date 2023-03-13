@@ -7,13 +7,13 @@ import logger from 'src/libraries/logger'
 import BackButton from 'src/libraries/ui/BackButton'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
+import { getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
 import { useLoadReview } from 'src/libraries/utils/reviews'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import useSubmitReview from 'src/screens/dashboard/_hooks/useSubmitReview'
 import { ReviewData } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 function ReviewProposal() {
 	const buildComponent = () => {
@@ -109,7 +109,7 @@ function ReviewProposal() {
 				borderBottom='1px solid #E7E4DD'
 				direction='column'>
 				<Text
-					variant='v2_body'>
+					variant='body'>
 					{item.rubric.title}
 				</Text>
 				<Flex
@@ -161,7 +161,7 @@ function ReviewProposal() {
 										} : undefined
 									}>
 									<Text
-										variant='v2_body'
+										variant='body'
 										color={isSelected ? 'white' : 'black.1'}>
 										{index + 1}
 									</Text>
@@ -198,7 +198,7 @@ function ReviewProposal() {
 					!isReviewPending && (
 						<Text
 							mt={3}
-							variant='v2_body'
+							variant='body'
 							color='gray.5'>
 							{item?.comment}
 						</Text>
@@ -218,7 +218,7 @@ function ReviewProposal() {
 				borderBottom='1px solid #E7E4DD'
 				direction='column'>
 				<Text
-					variant='v2_body'>
+					variant='body'>
 					Vote for
 				</Text>
 				{
@@ -245,7 +245,7 @@ function ReviewProposal() {
 									} : undefined
 								}>
 								<Text
-									variant='v2_body'
+									variant='body'
 									fontWeight='500'>
 									{vote ? 'Yes' : 'No'}
 								</Text>
@@ -280,7 +280,7 @@ function ReviewProposal() {
 					!isReviewPending && (
 						<Text
 							mt={3}
-							variant='v2_body'
+							variant='body'
 							color='gray.5'>
 							{item?.comment}
 						</Text>

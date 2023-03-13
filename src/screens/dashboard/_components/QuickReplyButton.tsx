@@ -24,7 +24,7 @@ function QuickReplyButton({ tag, isSelected, index, ...props }: Props) {
 				{...props}
 			>
 				<Text
-					variant='v2_body'
+					variant='body'
 					fontWeight='500'
 				>
 					{tag.title}

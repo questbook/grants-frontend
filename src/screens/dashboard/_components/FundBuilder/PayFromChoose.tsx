@@ -19,7 +19,7 @@ function PayFromChoose({ selectedMode }: { selectedMode: any}) {
 						boxSize='16px' />
 					<Text
 						ml={2}
-						variant='v2_body'
+						variant='body'
 					>
 						{selectedMode?.value}
 					</Text>

@@ -10,10 +10,11 @@ import FlushedInput from 'src/libraries/ui/FlushedInput'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
+import { getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
-import { getExplorerUrlForTxHash } from 'src/utils/formattingUtils'
 
 function SetupProfile() {
+
 	const buildComponent = () => {
 		return inviteInfo ? view() : errorView()
 	}
@@ -49,7 +50,7 @@ function SetupProfile() {
 					align='center'
 					overflowY='auto'>
 					<Text
-						variant='v2_heading_3'
+						variant='heading3'
 						fontWeight='500'>
 						Setup your profile
 					</Text>
@@ -107,6 +108,8 @@ function SetupProfile() {
 					<Button
 						mt={8}
 						variant='primaryLarge'
+						isLoading={!scwAddress}
+						loadingText='Loading your wallet'
 						isDisabled={isDisabled}
 						onClick={onCreateClick}>
 						<Text color='white'>
@@ -198,7 +201,7 @@ function SetupProfile() {
 
 SetupProfile.getLayout = function(page: ReactElement) {
 	return (
-		<NavbarLayout renderSidebar={false}>
+		<NavbarLayout>
 			{page}
 		</NavbarLayout>
 	)

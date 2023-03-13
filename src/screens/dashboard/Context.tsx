@@ -6,12 +6,12 @@ import { useSafeContext } from 'src/contexts/safeContext'
 import { useGetApplicationActionsQuery, useGetCommentsQuery, useGetGrantQuery, useGetProposalsQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
+import { getFromIPFS } from 'src/libraries/utils/ipfs'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { CommentMap, CommentType, DashboardContextType, FundBuilderContextType, ModalContextType, Proposals, ReviewInfo, SignerVerifiedState, TokenInfo } from 'src/screens/dashboard/_utils/types'
 import { Roles } from 'src/types'
-import { getFromIPFS } from 'src/utils/ipfsUtils'
-import { getSupportedChainIdFromWorkspace } from 'src/utils/validationUtils'
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined)
 const FundBuilderContext = createContext<FundBuilderContextType | undefined>(undefined)
@@ -237,9 +237,10 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 	const getProposals = useCallback(async() => {
 		logger.info({ role, grantId, scwAddress }, 'Fetching proposals (GET PROPOSALS)')
-		if(!webwallet) {
-			return 'no-webwallet'
-		} else if(!grantId || typeof grantId !== 'string') {
+		// if(!webwallet) {
+		// 	return 'no-webwallet'
+		// }
+		 if(!grantId || typeof grantId !== 'string') {
 			return 'no-grant-id'
 		}
 
@@ -269,9 +270,10 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 	const getComments = useCallback(async() => {
 		logger.info({ role, grantId, scwAddress }, 'Fetching comments (GET COMMENTS)')
-		if(!webwallet) {
-			return 'no-webwallet'
-		} else if(!grantId || typeof grantId !== 'string') {
+		// if(!webwallet) {
+		// 	return 'no-webwallet'
+		// }
+		 if(!grantId || typeof grantId !== 'string') {
 			return 'no-grant-id'
 		}
 

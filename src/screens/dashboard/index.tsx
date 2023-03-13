@@ -102,7 +102,6 @@ function Dashboard() {
 Dashboard.getLayout = function(page: ReactElement) {
 	return (
 		<NavbarLayout
-			renderSidebar={false}
 			renderNavbar
 			dashboard={true}
 			navbarConfig={

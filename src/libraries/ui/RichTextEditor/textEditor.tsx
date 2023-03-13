@@ -12,18 +12,18 @@ import {
 	EditorState,
 	getDefaultKeyBinding,
 	RichUtils } from 'draft-js'
-import Loader from 'src/components/ui/loader'
 import {
-	Bold,
+	BoldButton,
 	ImageAdd,
-	Italics,
-	Ol,
-	Ul,
-	Underline,
+	ItalicsButton,
+	OlButton,
+	UlButton,
+	UnderlineButton,
 } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
-import { getUrlForIPFSHash, uploadToIPFS } from 'src/utils/ipfsUtils'
+import Loader from 'src/libraries/ui/RichTextEditor/loader'
+import { getUrlForIPFSHash, uploadToIPFS } from 'src/libraries/utils/ipfs'
 import 'draft-js/dist/Draft.css'
 import '@draft-js-plugins/image/lib/plugin.css'
 
@@ -93,7 +93,7 @@ function StyleButton({
 const INLINE_STYLES = [
 	{
 		icon: (active: boolean) => (
-			<Bold
+			<BoldButton
 				color={active ? 'black.1' : 'gray.5'}
 				_hover={{ color: active ? 'none' : 'black.1' }}
 			/>
@@ -102,7 +102,7 @@ const INLINE_STYLES = [
 	},
 	{
 		icon: (active: boolean) => (
-			<Italics
+			<ItalicsButton
 				color={active ? 'black.1' : 'gray.5'}
 				_hover={{ color: active ? 'none' : 'black.1' }}
 			/>
@@ -111,7 +111,7 @@ const INLINE_STYLES = [
 	},
 	{
 		icon: (active: boolean) => (
-			<Underline
+			<UnderlineButton
 				color={active ? 'black.1' : 'gray.5'}
 				_hover={{ color: active ? 'none' : 'black.1' }}
 			/>
@@ -185,7 +185,7 @@ function HeaderStyleControls({
 const BLOCK_TYPES = [
 	{
 		icon: (active: boolean) => (
-			<Ul
+			<UlButton
 				color={active ? 'black.1' : 'gray.5'}
 				_hover={{ color: active ? 'none' : 'black.1' }}
 			/>
@@ -194,7 +194,7 @@ const BLOCK_TYPES = [
 	},
 	{
 		icon: (active: boolean) => (
-			<Ol
+			<OlButton
 				color={active ? 'black.1' : 'gray.5'}
 				_hover={{ color: active ? 'none' : 'black.1' }}
 			/>
