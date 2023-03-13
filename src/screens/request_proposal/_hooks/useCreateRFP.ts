@@ -21,7 +21,7 @@ import {
 import { uploadToIPFS } from 'src/libraries/utils/ipfs'
 import logger from 'src/libraries/utils/logger'
 import { getSupportedValidatorNetworkFromChainId } from 'src/libraries/utils/validations'
-import { validateAndUploadToIpfs } from 'src/libraries/validator'
+import { validateAndUploadToIpfs, validateRequest } from 'src/libraries/validator'
 import { WebwalletContext } from 'src/pages/_app'
 import { GrantFields } from 'src/screens/request_proposal/_utils/types'
 import { RFPFormContext } from 'src/screens/request_proposal/Context'
@@ -48,7 +48,8 @@ export default function useCreateRFP() {
 		isBiconomyInitialised: isBiconomyInitialisedGrantCreate,
 	} = useFunctionCall({
 		chainId,
-		contractName: 'workspace',
+		contractName: 'grantFactory',
+		title: 'Grant Program created on-chain!',
 		setTransactionStep: setCurrentStep,
 		setTransactionHash: setTransactionHash,
 	})
@@ -63,165 +64,159 @@ export default function useCreateRFP() {
 
 	const toast = useCustomToast()
 
-	const createRFP = async() => {
+	const createRFP = async () => {
 		try {
+			if (!isBiconomyInitialised) {
+				throw new Error("Biconomy is not initialised")
+			}
+
+			logger.info({ rfpData }, 'rfpData')
+
 			const uploadedImageHash = config.defaultDAOImageHash
-			const { hash: workspaceCreateIpfsHash } = await validateAndUploadToIpfs(
-				'WorkspaceCreateRequest',
-				{
-					title: rfpData?.proposalName!,
-					about: '',
-					logoIpfsHash: uploadedImageHash,
-					creatorId: scwAddress!,
-					creatorPublicKey: webwallet?.publicKey,
-					socials: [],
-					supportedNetworks: [getSupportedValidatorNetworkFromChainId(chainId)],
+
+			const workspaceCreateData = {
+				title: rfpData?.proposalName!,
+				about: '',
+				logoIpfsHash: uploadedImageHash,
+				creatorId: scwAddress!,
+				creatorPublicKey: webwallet?.publicKey,
+				socials: [],
+				supportedNetworks: [getSupportedValidatorNetworkFromChainId(chainId)],
+			}
+
+			let fileIPFSHash = ''
+			if (rfpData?.doc) {
+				const fileCID = await uploadToIPFS(rfpData?.doc!)
+				logger.info('fileCID', fileCID)
+				fileIPFSHash = fileCID.hash
+			}
+
+			const fieldMap: { [key: string]: ApplicantDetailsFieldType } = {}
+			rfpData?.allApplicantDetails?.forEach((field) => {
+				fieldMap[field.id] = field
+			})
+
+			const data: GrantFields = {
+				workspaceId: '0x0', // WILL BE FILLED LATER
+				title: rfpData?.proposalName,
+				startDate: rfpData?.startDate,
+				endDate: rfpData?.endDate,
+				// details: allApplicantDetails!,
+				link: rfpData?.link!,
+				docIpfsHash: fileIPFSHash,
+				reward: {
+					asset: USD_ASSET,
+					committed: rfpData?.amount.toString(),
+					token: {
+						label: 'USD',
+						address: USD_ASSET,
+						decimal: USD_DECIMALS.toString(),
+						iconHash: USD_ICON,
+					},
 				},
-			)
-
-			if(!workspaceCreateIpfsHash) {
-				throw new Error('Error validating grant data')
+				payoutType: rfpData?.payoutMode,
+				milestones: rfpData?.milestones,
+				creatorId: scwAddress!,
+				fields: fieldMap,
+				grantManagers: [scwAddress!],
 			}
 
-			// if (!selectedSafeNetwork || !network) {
-			// 	throw new Error('No network specified')
-			// }
-
-			if(!chainId) {
-				throw new Error('No network specified')
+			if (rfpData?.reviewMechanism) {
+				data['reviewType'] = rfpData?.reviewMechanism
 			}
 
-			if(!isBiconomyInitialised) {
-				return
+			const rubricData = {
+				rubric: {
+					rubric: rfpData?.rubrics,
+					isPrivate: false,
+				},
 			}
 
-			// setCurrentStepIndex(1)
-			const methodArgs = [workspaceCreateIpfsHash, new Uint8Array(32), '', '0']
+			// 1. Validate workspace create, grant create and rubric data
+			await validateRequest('WorkspaceCreateRequest', workspaceCreateData)
+			await validateRequest('GrantCreateRequest', data)
+			if (rfpData?.reviewMechanism !== '') {
+				await validateRequest('RubricSetRequest', rubricData)
+			}
+
+			// 2. Upload the workspace data to IPFS
+			const {hash: workspaceCreateIpfsHash} = await uploadToIPFS(JSON.stringify(workspaceCreateData))
+			if (!workspaceCreateIpfsHash) {
+				throw new Error('Error uploading workspace create data')
+			}
+
+			// 3. Create the workspace
+			let methodArgs = [workspaceCreateIpfsHash, new Uint8Array(32), '', '0']
 			logger.info({ methodArgs }, 'Workspace create method args')
 
 			const workspaceCreateReceipt = await workspaceCreateCall({
 				method: 'createWorkspace',
 				args: methodArgs,
 				shouldWaitForBlock: false,
+				showToast: false,
 			})
-			if(!workspaceCreateReceipt) {
-				return
+			if (!workspaceCreateReceipt) {
+				throw new Error('Error creating workspace')
 			}
 
-			// setCurrentStepIndex(1)
+			// 4. Parse the workspace create event to get the workspace id
 			const event = await getEventData(
 				workspaceCreateReceipt,
 				'WorkspaceCreated',
 				WorkspaceRegistryAbi,
 			)
-			if(event) {
-				const workspaceId = Number(event.args[0].toBigInt())
-				logger.info('workspace_id', workspaceId)
 
-				// createGrant()
-				let fileIPFSHash = ''
-				if(rfpData?.doc) {
-					const fileCID = await uploadToIPFS(rfpData?.doc!)
-					logger.info('fileCID', fileCID)
-					fileIPFSHash = fileCID.hash
-				}
-
-				const fieldMap: {[key: string]: ApplicantDetailsFieldType} = {}
-				rfpData?.allApplicantDetails?.forEach((field) => {
-					fieldMap[field.id] = field
-				})
-
-				const data: GrantFields = {
-					title: rfpData?.proposalName,
-					startDate: rfpData?.startDate,
-					endDate: rfpData?.endDate,
-					// details: allApplicantDetails!,
-					link: rfpData?.link!,
-					docIpfsHash: fileIPFSHash,
-					reward: {
-						asset: USD_ASSET,
-						committed: rfpData?.amount.toString(),
-						token: {
-							label: 'USD',
-							address: USD_ASSET,
-							decimal: USD_DECIMALS.toString(),
-							iconHash: USD_ICON,
-						},
-					},
-					payoutType: rfpData?.payoutMode,
-					milestones: rfpData?.milestones,
-					creatorId: scwAddress!,
-					workspaceId: workspaceId.toString()!,
-					fields: fieldMap,
-					grantManagers: [scwAddress!],
-				}
-
-				if(rfpData?.reviewMechanism) {
-					data['reviewType'] = rfpData?.reviewMechanism
-				}
-
-				// validate grant data
-				const { hash: grantCreateIpfsHash } = await validateAndUploadToIpfs(
-					'GrantCreateRequest',
-					data,
-				)
-
-				let rubricHash = ''
-				if(rfpData?.reviewMechanism !== '') {
-					const { hash: auxRubricHash } = await validateAndUploadToIpfs(
-						'RubricSetRequest',
-						{
-							rubric: {
-								rubric: rfpData?.rubrics,
-								isPrivate: false,
-							},
-						},
-					)
-
-					if(auxRubricHash) {
-						rubricHash = auxRubricHash
-					}
-				}
-
-				logger.info('rubric hash', rubricHash)
-				if(workspaceId) {
-					const methodArgs = [
-						workspaceId.toString(),
-						grantCreateIpfsHash,
-						rubricHash,
-						WORKSPACE_REGISTRY_ADDRESS[chainId!],
-						APPLICATION_REGISTRY_ADDRESS[chainId!],
-					]
-					logger.info('methodArgs for grant creation', methodArgs)
-
-					const grantCreateReceipt = await grantCreateCall({
-						method: 'createGrant',
-						args: methodArgs,
-					})
-
-					if(!grantCreateReceipt) {
-						return
-					}
-
-					await addAuthorizedOwner(workspaceId, webwallet?.address!, scwAddress!, chainId.toString(), 'this is the safe addres - to be updated in the new flow')
-
-					const grantEvent = await getEventData(
-						grantCreateReceipt,
-						'GrantCreated',
-						GrantFactoryAbi,
-					)
-					logger.info('grantEvent', grantEvent)
-					if(grantEvent) {
-						const grantId = grantEvent.args[0].toString().toLowerCase()
-						setGrantId(grantId)
-					}
-				} else {
-					logger.info('workspaceId not found')
-				}
+			if (!event) {
+				throw new Error('Error getting workspace id')
 			}
 
+			// 5. Get the workspace id
+			const workspaceId = Number(event.args[0].toBigInt())
+			logger.info('workspace_id', workspaceId)
+			if (!workspaceId) {
+				throw new Error('Workspace ID not found')
+			}
+			data.workspaceId = workspaceId.toString()
+
+			// 6. Upload the grant data to IPFS
+			const{ hash: grantCreateIPFSHash} = await uploadToIPFS(JSON.stringify(data))
+
+			let rubricHash = rfpData?.reviewMechanism !== '' ? (await uploadToIPFS(JSON.stringify(rubricData))).hash : ''
+			logger.info('rubric hash', rubricHash)
+
+			// 7. Create the grant
+			methodArgs = [
+				workspaceId.toString(),
+				grantCreateIPFSHash,
+				rubricHash,
+				WORKSPACE_REGISTRY_ADDRESS[chainId!],
+				APPLICATION_REGISTRY_ADDRESS[chainId!],
+			]
+			logger.info('methodArgs for grant creation', methodArgs)
+
+			const grantCreateReceipt = await grantCreateCall({
+				method: 'createGrant',
+				args: methodArgs,
+			})
+
+			if (!grantCreateReceipt) {
+				throw new Error('Error creating grant')
+			}
+
+			await addAuthorizedOwner(workspaceId, webwallet?.address!, scwAddress!, chainId.toString(), 'this is the safe addres - to be updated in the new flow')
+
+			const grantEvent = await getEventData(
+				grantCreateReceipt,
+				'GrantCreated',
+				GrantFactoryAbi,
+			)
+			logger.info('grantEvent', grantEvent)
+			if (grantEvent) {
+				const grantId = grantEvent.args[0].toString().toLowerCase()
+				setGrantId(grantId)
+			}
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} catch(e: any) {
+		} catch (e: any) {
 			const message = getErrorMessage(e)
 			logger.info('error', message)
 			toast({
