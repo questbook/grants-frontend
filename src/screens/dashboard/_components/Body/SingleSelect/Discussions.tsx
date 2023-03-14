@@ -14,6 +14,8 @@ import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { CommentType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
+import RoleTag from '../../RoleTag'
+import { Roles } from 'src/types'
 
 
 function Discussions() {
@@ -216,14 +218,7 @@ function Discussions() {
 						<Text fontWeight='500'>
 							{getCommentDisplayName(comment)}
 						</Text>
-						<Text
-							ml={3}
-							variant='metadata'
-							borderRadius='3px'
-							bg={comment?.role === 'admin' ? 'gray.3' : comment?.role === 'reviewer' ? 'accent.crayola' : comment?.role === 'builder' && proposal?.applicantId === comment?.sender?.toLowerCase() ? 'accent.vodka' : 'accent.melon'}
-							px={1}>
-							{comment?.role === 'admin' ? 'Admin' : comment?.role === 'reviewer' ? 'Reviewer' : comment?.role === 'builder' && proposal?.applicantId === comment?.sender?.toLowerCase() ? 'Builder' : 'Community'}
-						</Text>
+						<RoleTag role={comment?.role as Roles ?? 'community'} isBuilder={proposal?.applicantId === comment?.sender?.toLowerCase()}  />
 						{
 							comment?.timestamp && (
 								<Text

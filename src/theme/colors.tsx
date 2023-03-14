@@ -31,7 +31,9 @@ const colors = {
 		columbia: '#C2E7DA',
 		vodka: '#C4B0EB',
 		melon: '#F3B2A8',
-		crayola: '#F4D364'
+		crayola: '#F4D364',
+		vivid: '#5C62F5',
+		orchid: '#DC6ACF'
 	}
 }
 
