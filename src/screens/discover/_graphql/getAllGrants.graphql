@@ -36,8 +36,6 @@ query GetAllGrants($first: Int, $skip: Int, $searchString: String!) {
         chainId
         address
       }
-      numberOfApplicationsSelected
-      numberOfApplications
     }
     reward {
       committed
@@ -53,6 +51,8 @@ query GetAllGrants($first: Int, $skip: Int, $searchString: String!) {
     deadlineS
     deadline
     numberOfApplications
+    numberOfApplicationsSelected
+    numberOfApplicationsPending
     createdAtS
     updatedAtS
     totalGrantFundingDisbursedUSD
