@@ -66,18 +66,47 @@ export default function BackupWallet({ isNewUser, exportWalletToGD, loading, ini
 							try {
 								await exportWalletToGD(new ethers.Wallet(privateKey))
 								toast({
-									title: 'Imported to Google Drive',
+									title: 'Saved in Google Drive',
 									status: 'success',
 									duration: 3000,
 									isClosable: true,
 								})
-							} catch{
-								toast({
-									title: 'Error, try again with another account.',
-									status: 'success',
-									duration: 3000,
-									isClosable: true,
-								})
+							} catch(error) {
+								// this means the error is generated from google itself
+								if(error && typeof error === 'object' && 'type' in error) {
+									if(error.type === 'popup_closed') {
+										toast({
+											title: 'Google popup closed',
+											status: 'error',
+											duration: 3000,
+											isClosable: true,
+										})
+									} else {
+										toast({
+											title: 'Failed to save.',
+											description: 'Unknown error',
+											status: 'error',
+											duration: 3000,
+											isClosable: true,
+										})
+									}
+								} else if(error && typeof error === 'string') {
+									toast({
+										title: 'Failed to save.',
+										description: error,
+										status: 'error',
+										duration: 3000,
+										isClosable: true,
+									})
+								} else {
+									toast({
+										title: 'Failed to save.',
+										description: 'Unknown error',
+										status: 'error',
+										duration: 3000,
+										isClosable: true,
+									})
+								}
 							}
 						}
 					}
