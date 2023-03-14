@@ -781,11 +781,20 @@ export type Grant = {
   link?: Maybe<Scalars['String']>;
   /** People who will manage the grant. They can see the PII submitted in an application */
   managers: Array<GrantManager>;
+  /** metadata hash that is used to fetch the grant details */
   metadataHash: Scalars['String'];
   /** milestones required */
   milestones?: Maybe<Array<Scalars['String']>>;
   /** Number of applications in the grant */
   numberOfApplications: Scalars['Int'];
+  /** total number of applications awaiting resubmission in the grant program */
+  numberOfApplicationsAwaitingResubmission: Scalars['Int'];
+  /** total number of pending applications in the grant program */
+  numberOfApplicationsPending: Scalars['Int'];
+  /** total number of rejected applications in the grant program */
+  numberOfApplicationsRejected: Scalars['Int'];
+  /** total number of approved applications in the grant program */
+  numberOfApplicationsSelected: Scalars['Int'];
   /** type of payout */
   payoutType?: Maybe<PayoutType>;
   /** Review type */
@@ -1930,6 +1939,38 @@ export type Grant_Filter = {
   milestones_not_contains?: InputMaybe<Array<Scalars['String']>>;
   milestones_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
   numberOfApplications?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsAwaitingResubmission?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsAwaitingResubmission_gt?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsAwaitingResubmission_gte?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsAwaitingResubmission_in?: InputMaybe<Array<Scalars['Int']>>;
+  numberOfApplicationsAwaitingResubmission_lt?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsAwaitingResubmission_lte?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsAwaitingResubmission_not?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsAwaitingResubmission_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  numberOfApplicationsPending?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsPending_gt?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsPending_gte?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsPending_in?: InputMaybe<Array<Scalars['Int']>>;
+  numberOfApplicationsPending_lt?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsPending_lte?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsPending_not?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsPending_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  numberOfApplicationsRejected?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsRejected_gt?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsRejected_gte?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsRejected_in?: InputMaybe<Array<Scalars['Int']>>;
+  numberOfApplicationsRejected_lt?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsRejected_lte?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsRejected_not?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsRejected_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  numberOfApplicationsSelected?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsSelected_gt?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsSelected_gte?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsSelected_in?: InputMaybe<Array<Scalars['Int']>>;
+  numberOfApplicationsSelected_lt?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsSelected_lte?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsSelected_not?: InputMaybe<Scalars['Int']>;
+  numberOfApplicationsSelected_not_in?: InputMaybe<Array<Scalars['Int']>>;
   numberOfApplications_gt?: InputMaybe<Scalars['Int']>;
   numberOfApplications_gte?: InputMaybe<Scalars['Int']>;
   numberOfApplications_in?: InputMaybe<Array<Scalars['Int']>>;
@@ -2120,6 +2161,10 @@ export enum Grant_OrderBy {
   MetadataHash = 'metadataHash',
   Milestones = 'milestones',
   NumberOfApplications = 'numberOfApplications',
+  NumberOfApplicationsAwaitingResubmission = 'numberOfApplicationsAwaitingResubmission',
+  NumberOfApplicationsPending = 'numberOfApplicationsPending',
+  NumberOfApplicationsRejected = 'numberOfApplicationsRejected',
+  NumberOfApplicationsSelected = 'numberOfApplicationsSelected',
   PayoutType = 'payoutType',
   ReviewType = 'reviewType',
   Reward = 'reward',
@@ -4551,10 +4596,6 @@ export type Workspace = {
   metadataHash: Scalars['String'];
   /** timestamp of when the latest grant was posted */
   mostRecentGrantPostedAtS: Scalars['Int'];
-  /** total number of applications the DAO has received */
-  numberOfApplications: Scalars['Int'];
-  /** total number of applications the DAO has accepted */
-  numberOfApplicationsSelected: Scalars['Int'];
   /** Address of the owner of the workspace */
   ownerId: Scalars['Bytes'];
   partners: Array<Partner>;
@@ -5125,22 +5166,6 @@ export type Workspace_Filter = {
   mostRecentGrantPostedAtS_lte?: InputMaybe<Scalars['Int']>;
   mostRecentGrantPostedAtS_not?: InputMaybe<Scalars['Int']>;
   mostRecentGrantPostedAtS_not_in?: InputMaybe<Array<Scalars['Int']>>;
-  numberOfApplications?: InputMaybe<Scalars['Int']>;
-  numberOfApplicationsSelected?: InputMaybe<Scalars['Int']>;
-  numberOfApplicationsSelected_gt?: InputMaybe<Scalars['Int']>;
-  numberOfApplicationsSelected_gte?: InputMaybe<Scalars['Int']>;
-  numberOfApplicationsSelected_in?: InputMaybe<Array<Scalars['Int']>>;
-  numberOfApplicationsSelected_lt?: InputMaybe<Scalars['Int']>;
-  numberOfApplicationsSelected_lte?: InputMaybe<Scalars['Int']>;
-  numberOfApplicationsSelected_not?: InputMaybe<Scalars['Int']>;
-  numberOfApplicationsSelected_not_in?: InputMaybe<Array<Scalars['Int']>>;
-  numberOfApplications_gt?: InputMaybe<Scalars['Int']>;
-  numberOfApplications_gte?: InputMaybe<Scalars['Int']>;
-  numberOfApplications_in?: InputMaybe<Array<Scalars['Int']>>;
-  numberOfApplications_lt?: InputMaybe<Scalars['Int']>;
-  numberOfApplications_lte?: InputMaybe<Scalars['Int']>;
-  numberOfApplications_not?: InputMaybe<Scalars['Int']>;
-  numberOfApplications_not_in?: InputMaybe<Array<Scalars['Int']>>;
   ownerId?: InputMaybe<Scalars['Bytes']>;
   ownerId_contains?: InputMaybe<Scalars['Bytes']>;
   ownerId_in?: InputMaybe<Array<Scalars['Bytes']>>;
@@ -5211,8 +5236,6 @@ export enum Workspace_OrderBy {
   Members = 'members',
   MetadataHash = 'metadataHash',
   MostRecentGrantPostedAtS = 'mostRecentGrantPostedAtS',
-  NumberOfApplications = 'numberOfApplications',
-  NumberOfApplicationsSelected = 'numberOfApplicationsSelected',
   OwnerId = 'ownerId',
   Partners = 'partners',
   Safe = 'safe',
@@ -5275,7 +5298,7 @@ export type GetGrantQueryVariables = Exact<{
 }>;
 
 
-export type GetGrantQuery = { __typename?: 'Query', grant?: { __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, link?: string | null, reviewType?: ReviewType | null, payoutType?: PayoutType | null, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, possibleValues?: Array<string> | null, isPii: boolean }>, applications: Array<{ __typename?: 'GrantApplication', id: string }>, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, rubric?: { __typename?: 'Rubric', id: string, isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null, myApplications: Array<{ __typename?: 'GrantApplication', id: string }>, workspace: { __typename?: 'Workspace', id: string, ownerId: string, logoIpfsHash: string, title: string, supportedNetworks: Array<SupportedNetwork>, safe?: { __typename?: 'WorkspaceSafe', id: string, chainId: string, address: string } | null, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, fullName?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number, profilePictureIpfsHash?: string | null, enabled: boolean, addedAt: number, updatedAt: number, pii: Array<{ __typename?: 'PIIData', id: string, data: string }> }> } } | null };
+export type GetGrantQuery = { __typename?: 'Query', grant?: { __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, numberOfApplications: number, numberOfApplicationsSelected: number, numberOfApplicationsPending: number, link?: string | null, reviewType?: ReviewType | null, payoutType?: PayoutType | null, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, possibleValues?: Array<string> | null, isPii: boolean }>, applications: Array<{ __typename?: 'GrantApplication', id: string }>, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null }, rubric?: { __typename?: 'Rubric', id: string, isPrivate: boolean, items: Array<{ __typename?: 'RubricItem', id: string, title: string, details: string, maximumPoints: number }> } | null, myApplications: Array<{ __typename?: 'GrantApplication', id: string }>, workspace: { __typename?: 'Workspace', id: string, ownerId: string, logoIpfsHash: string, title: string, supportedNetworks: Array<SupportedNetwork>, safe?: { __typename?: 'WorkspaceSafe', id: string, chainId: string, address: string } | null, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, fullName?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number, profilePictureIpfsHash?: string | null, enabled: boolean, addedAt: number, updatedAt: number, pii: Array<{ __typename?: 'PIIData', id: string, data: string }> }> } } | null };
 
 export type GetGrantManagersWithPublicKeyQueryVariables = Exact<{
   grantID: Scalars['String'];
@@ -5364,7 +5387,7 @@ export type GetAllGrantsQueryVariables = Exact<{
 }>;
 
 
-export type GetAllGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, deadlineS: number, deadline?: string | null, numberOfApplications: number, createdAtS: number, updatedAtS?: number | null, totalGrantFundingDisbursedUSD: string, applications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, tokenUSDValue?: string | null, asset: string, tokenName?: string | null }>, workspace: { __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, numberOfApplicationsSelected: number, numberOfApplications: number, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, accessLevel: WorkspaceMemberAccessLevel }>, safe?: { __typename?: 'WorkspaceSafe', chainId: string, address: string } | null }, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } }> };
+export type GetAllGrantsQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, deadlineS: number, deadline?: string | null, numberOfApplications: number, numberOfApplicationsSelected: number, numberOfApplicationsPending: number, createdAtS: number, updatedAtS?: number | null, totalGrantFundingDisbursedUSD: string, applications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, tokenUSDValue?: string | null, asset: string, tokenName?: string | null }>, workspace: { __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, accessLevel: WorkspaceMemberAccessLevel }>, safe?: { __typename?: 'WorkspaceSafe', chainId: string, address: string } | null }, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } }> };
 
 export type GetAllGrantsForMemberQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -5375,7 +5398,7 @@ export type GetAllGrantsForMemberQueryVariables = Exact<{
 }>;
 
 
-export type GetAllGrantsForMemberQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, deadlineS: number, deadline?: string | null, numberOfApplications: number, createdAtS: number, updatedAtS?: number | null, totalGrantFundingDisbursedUSD: string, applications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, tokenUSDValue?: string | null, asset: string, tokenName?: string | null }>, workspace: { __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, numberOfApplicationsSelected: number, numberOfApplications: number, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, accessLevel: WorkspaceMemberAccessLevel }>, safe?: { __typename?: 'WorkspaceSafe', chainId: string, address: string } | null }, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } }> };
+export type GetAllGrantsForMemberQuery = { __typename?: 'Query', grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, deadlineS: number, deadline?: string | null, numberOfApplications: number, numberOfApplicationsSelected: number, numberOfApplicationsPending: number, createdAtS: number, updatedAtS?: number | null, totalGrantFundingDisbursedUSD: string, applications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, tokenUSDValue?: string | null, asset: string, tokenName?: string | null }>, workspace: { __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, accessLevel: WorkspaceMemberAccessLevel }>, safe?: { __typename?: 'WorkspaceSafe', chainId: string, address: string } | null }, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } }> };
 
 export type GetGrantProgramDetailsQueryVariables = Exact<{
   workspaceID: Scalars['String'];
@@ -5387,7 +5410,7 @@ export type GetGrantProgramDetailsQuery = { __typename?: 'Query', grantProgram: 
 export type GetSectionGrantsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSectionGrantsQuery = { __typename?: 'Query', sections: Array<{ __typename?: 'Section', sectionName: string, sectionLogoIpfsHash: string, id: string, grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, deadlineS: number, deadline?: string | null, numberOfApplications: number, createdAtS: number, updatedAtS?: number | null, totalGrantFundingDisbursedUSD: string, applications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, tokenUSDValue?: string | null, asset: string, tokenName?: string | null }>, workspace: { __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, numberOfApplicationsSelected: number, numberOfApplications: number, safe?: { __typename?: 'WorkspaceSafe', chainId: string, address: string } | null }, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } }> }> };
+export type GetSectionGrantsQuery = { __typename?: 'Query', sections: Array<{ __typename?: 'Section', sectionName: string, sectionLogoIpfsHash: string, id: string, grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, deadlineS: number, deadline?: string | null, numberOfApplications: number, numberOfApplicationsSelected: number, numberOfApplicationsPending: number, createdAtS: number, updatedAtS?: number | null, totalGrantFundingDisbursedUSD: string, applications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, tokenUSDValue?: string | null, asset: string, tokenName?: string | null }>, workspace: { __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, safe?: { __typename?: 'WorkspaceSafe', chainId: string, address: string } | null }, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } }> }> };
 
 export type GetWorkspacesAndBuilderGrantsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -5396,7 +5419,7 @@ export type GetWorkspacesAndBuilderGrantsQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspacesAndBuilderGrantsQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, accessLevel: WorkspaceMemberAccessLevel, enabled: boolean, workspace: { __typename?: 'Workspace', id: string, title: string, supportedNetworks: Array<SupportedNetwork>, grants: Array<string> } }>, grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, deadlineS: number, deadline?: string | null, numberOfApplications: number, createdAtS: number, updatedAtS?: number | null, totalGrantFundingDisbursedUSD: string, applications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, tokenUSDValue?: string | null, asset: string, tokenName?: string | null }>, workspace: { __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, numberOfApplicationsSelected: number, numberOfApplications: number, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, accessLevel: WorkspaceMemberAccessLevel }>, safe?: { __typename?: 'WorkspaceSafe', chainId: string, address: string } | null }, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } }> };
+export type GetWorkspacesAndBuilderGrantsQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, accessLevel: WorkspaceMemberAccessLevel, enabled: boolean, workspace: { __typename?: 'Workspace', id: string, title: string, supportedNetworks: Array<SupportedNetwork>, grants: Array<string> } }>, grants: Array<{ __typename?: 'Grant', id: string, title: string, acceptingApplications: boolean, deadlineS: number, deadline?: string | null, numberOfApplications: number, numberOfApplicationsSelected: number, numberOfApplicationsPending: number, createdAtS: number, updatedAtS?: number | null, totalGrantFundingDisbursedUSD: string, applications: Array<{ __typename?: 'GrantApplication', id: string, applicantId: string, state: ApplicationState }>, fundTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, type: FundsTransferType, tokenUSDValue?: string | null, asset: string, tokenName?: string | null }>, workspace: { __typename?: 'Workspace', id: string, title: string, isVisible: boolean, logoIpfsHash: string, supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, accessLevel: WorkspaceMemberAccessLevel }>, safe?: { __typename?: 'WorkspaceSafe', chainId: string, address: string } | null }, reward: { __typename?: 'Reward', committed: string, id: string, asset: string, token?: { __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string } | null } }> };
 
 export type GrantDetailsQueryVariables = Exact<{
   grantId: Scalars['ID'];
@@ -5424,7 +5447,7 @@ export type GetWorkspaceDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, bio: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, numberOfApplications: number, numberOfApplicationsSelected: number, safe?: { __typename?: 'WorkspaceSafe', address: string, chainId: string } | null, partners: Array<{ __typename?: 'Partner', name: string, industry: string, website?: string | null, partnerImageHash?: string | null }>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, updatedAt: number, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number, enabled: boolean, addedBy?: { __typename?: 'WorkspaceMember', id: string, actorId: string } | null }> } | null };
+export type GetWorkspaceDetailsQuery = { __typename?: 'Query', workspace?: { __typename?: 'Workspace', id: string, title: string, bio: string, about: string, logoIpfsHash: string, coverImageIpfsHash?: string | null, supportedNetworks: Array<SupportedNetwork>, safe?: { __typename?: 'WorkspaceSafe', address: string, chainId: string } | null, partners: Array<{ __typename?: 'Partner', name: string, industry: string, website?: string | null, partnerImageHash?: string | null }>, socials: Array<{ __typename?: 'Social', name: string, value: string }>, tokens: Array<{ __typename?: 'Token', address: string, label: string, decimal: number, iconHash: string }>, members: Array<{ __typename?: 'WorkspaceMember', id: string, actorId: string, publicKey?: string | null, email?: string | null, accessLevel: WorkspaceMemberAccessLevel, updatedAt: number, outstandingReviewIds: Array<string>, lastReviewSubmittedAt: number, enabled: boolean, addedBy?: { __typename?: 'WorkspaceMember', id: string, actorId: string } | null }> } | null };
 
 export type GetWorkspaceMembersByWorkspaceIdQueryVariables = Exact<{
   workspaceId: Scalars['String'];
@@ -5645,6 +5668,9 @@ export const GetGrantDocument = gql`
     id
     title
     acceptingApplications
+    numberOfApplications
+    numberOfApplicationsSelected
+    numberOfApplicationsPending
     link
     fields {
       id
@@ -6485,8 +6511,6 @@ export const GetAllGrantsDocument = gql`
         chainId
         address
       }
-      numberOfApplicationsSelected
-      numberOfApplications
     }
     reward {
       committed
@@ -6502,6 +6526,8 @@ export const GetAllGrantsDocument = gql`
     deadlineS
     deadline
     numberOfApplications
+    numberOfApplicationsSelected
+    numberOfApplicationsPending
     createdAtS
     updatedAtS
     totalGrantFundingDisbursedUSD
@@ -6580,8 +6606,6 @@ export const GetAllGrantsForMemberDocument = gql`
         chainId
         address
       }
-      numberOfApplicationsSelected
-      numberOfApplications
     }
     reward {
       committed
@@ -6597,6 +6621,8 @@ export const GetAllGrantsForMemberDocument = gql`
     deadlineS
     deadline
     numberOfApplications
+    numberOfApplicationsSelected
+    numberOfApplicationsPending
     createdAtS
     updatedAtS
     totalGrantFundingDisbursedUSD
@@ -6714,8 +6740,6 @@ export const GetSectionGrantsDocument = gql`
           chainId
           address
         }
-        numberOfApplicationsSelected
-        numberOfApplications
       }
       reward {
         committed
@@ -6731,6 +6755,8 @@ export const GetSectionGrantsDocument = gql`
       deadlineS
       deadline
       numberOfApplications
+      numberOfApplicationsSelected
+      numberOfApplicationsPending
       createdAtS
       updatedAtS
       totalGrantFundingDisbursedUSD
@@ -6828,8 +6854,6 @@ export const GetWorkspacesAndBuilderGrantsDocument = gql`
         chainId
         address
       }
-      numberOfApplicationsSelected
-      numberOfApplications
     }
     reward {
       committed
@@ -6845,6 +6869,8 @@ export const GetWorkspacesAndBuilderGrantsDocument = gql`
     deadlineS
     deadline
     numberOfApplications
+    numberOfApplicationsSelected
+    numberOfApplicationsPending
     createdAtS
     updatedAtS
     totalGrantFundingDisbursedUSD
@@ -7161,8 +7187,6 @@ export const GetWorkspaceDetailsDocument = gql`
     logoIpfsHash
     coverImageIpfsHash
     supportedNetworks
-    numberOfApplications
-    numberOfApplicationsSelected
     safe {
       address
       chainId

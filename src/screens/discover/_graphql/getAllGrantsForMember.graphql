@@ -45,8 +45,6 @@ query getAllGrantsForMember(
         chainId
         address
       }
-      numberOfApplicationsSelected
-      numberOfApplications
     }
     reward {
       committed
@@ -62,6 +60,8 @@ query getAllGrantsForMember(
     deadlineS
     deadline
     numberOfApplications
+    numberOfApplicationsSelected
+    numberOfApplicationsPending
     createdAtS
     updatedAtS
     totalGrantFundingDisbursedUSD

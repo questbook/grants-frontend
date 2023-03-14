@@ -6,6 +6,9 @@ query getGrant($grantId: ID!, $actorId: Bytes!) {
     id
     title
     acceptingApplications
+    numberOfApplications
+    numberOfApplicationsSelected
+    numberOfApplicationsPending
     link
     fields {
       id

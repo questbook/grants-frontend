@@ -164,8 +164,8 @@ function ProposalList({ step, setStep }: {step?: boolean, setStep?: (value: bool
 	}, [proposals, searchText])
 
 	const proposalCount = useMemo(() => {
-		return filteredProposals.filter((_) => _).length
-	}, [filteredProposals])
+		return grant?.numberOfApplications || 0
+	}, [grant])
 
 	const cardRefs = useMemo(() => {
 		return proposals.map(() => createRef<HTMLDivElement>())
