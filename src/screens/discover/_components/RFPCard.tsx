@@ -227,7 +227,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						<GridItem>
 							<Flex direction='column'>
 								<Text fontWeight='500'>
-									{grant?.workspace?.numberOfApplicationsSelected}
+									{grant?.numberOfApplicationsSelected}
 								</Text>
 								<Text
 									mt={1}

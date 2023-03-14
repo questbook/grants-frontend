@@ -55,8 +55,6 @@ query getWorkspacesAndBuilderGrants($first: Int, $skip: Int, $actorId: Bytes!) {
         chainId
         address
       }
-      numberOfApplicationsSelected
-      numberOfApplications
     }
     reward {
       committed
@@ -72,6 +70,8 @@ query getWorkspacesAndBuilderGrants($first: Int, $skip: Int, $actorId: Bytes!) {
     deadlineS
     deadline
     numberOfApplications
+    numberOfApplicationsSelected
+    numberOfApplicationsPending
     createdAtS
     updatedAtS
     totalGrantFundingDisbursedUSD
