@@ -26,8 +26,6 @@ query getSectionGrants {
           chainId
           address
         }
-        numberOfApplicationsSelected
-        numberOfApplications
       }
       reward {
         committed
@@ -43,6 +41,8 @@ query getSectionGrants {
       deadlineS
       deadline
       numberOfApplications
+      numberOfApplicationsSelected
+      numberOfApplicationsPending
       createdAtS
       updatedAtS
       totalGrantFundingDisbursedUSD

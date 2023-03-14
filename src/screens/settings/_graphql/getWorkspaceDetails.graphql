@@ -7,8 +7,6 @@ query getWorkspaceDetails($workspaceID: ID!) {
     logoIpfsHash
     coverImageIpfsHash
     supportedNetworks
-    numberOfApplications
-    numberOfApplicationsSelected
     safe {
       address
       chainId
