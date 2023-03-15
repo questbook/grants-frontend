@@ -85,8 +85,8 @@ export default function BackupWallet({ isNewUser, exportWalletToGD, loading, ini
 									})
 								} catch {
 									toast({
-										title: 'Error, try again with another account.',
-										status: 'success',
+										title: 'google popup closed',
+										status: 'warning',
 										duration: 3000,
 										isClosable: true,
 									})
