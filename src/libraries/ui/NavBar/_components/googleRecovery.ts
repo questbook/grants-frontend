@@ -1,7 +1,9 @@
 import React from 'react'
 import { Wallet } from 'ethers'
+import logger from 'src/libraries/logger'
 import { Metadata } from 'src/libraries/ui/NavBar/_components/googleRecoveryTypes'
 import { loadGoogleScript, uploadTextFileToDrive } from 'src/libraries/ui/NavBar/_components/googleRecoveryUtils'
+
 
 interface Props {
   googleClientID: string
@@ -12,6 +14,7 @@ const ZERO_WALLET_FOLDER_NAME = '.zero-wallet'
 const ZERO_WALLET_FILE_NAME = 'key'
 
 export default function useGoogleDriveWalletRecoveryReact({ googleClientID }: Props) {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const [tokenClient, setTokenClient] = React.useState<any>()
 	const [gapiInited, setGapiInited] = React.useState(false)
 	const [gisInited, setGisInited] = React.useState(false)
@@ -40,32 +43,37 @@ export default function useGoogleDriveWalletRecoveryReact({ googleClientID }: Pr
 			.then(() => {
 				gapi.load('client', gapiInit)
 			})
-			.catch(console.error)
+			.catch()
 
 		loadGoogleScript(srcGsi)
 			.then(() => {
 				try {
 					const newToken = google.accounts.oauth2.initTokenClient({
+						// eslint-disable-next-line camelcase
 						client_id: googleClientID,
 						scope: SCOPES.join(' '),
 						callback: () => {}, // defined at request time
 					})
 					setTokenClient(newToken)
 					setGisInited(true)
-				} catch{}
+				} catch(e) {
+					logger.info(e)
+				}
 			})
-			.catch(console.error)
+			.catch(logger.error)
 	}, [googleClientID])
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	async function getToken(err: any) {
 		if(
 			err.result.error.code.toString() === '401' ||
-      err.result.error.code.toString() === '403'
+      		err.result.error.code.toString() === '403'
 		) {
 			// The access token is missing, invalid, or expired, prompt for user consent to obtain one.
 			await new Promise((resolve, reject) => {
 				try {
 					// Settle this promise in the response callback for requestAccessToken()
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 					tokenClient.callback = (resp: any) => {
 						if(resp.error !== undefined) {
 							reject(resp)
@@ -79,14 +87,17 @@ export default function useGoogleDriveWalletRecoveryReact({ googleClientID }: Pr
 						resolve(resp)
 					}
 
+					// eslint-disable-next-line camelcase
+					tokenClient.error_callback = (err: unknown) => {
+						reject(err)
+					}
+
 					tokenClient.requestAccessToken()
-				} catch(err) {
-					// console.log(err);
-				}
+				} catch{}
 			})
 		} else {
 			// Errors unrelated to authorization: server errors, exceeding quota, bad requests, and so on.
-			throw new Error(err)
+			throw err
 		}
 	}
 
@@ -99,8 +110,7 @@ export default function useGoogleDriveWalletRecoveryReact({ googleClientID }: Pr
 		})
 
 		if(
-			!folderQueryResponse.result.files ||
-      !folderQueryResponse.result.files.length
+			!folderQueryResponse.result.files?.length
 		) {
 			throw Error('No zero wallet folder found in GD.')
 		}
@@ -155,35 +165,29 @@ export default function useGoogleDriveWalletRecoveryReact({ googleClientID }: Pr
 
 		setImportLoading(true)
 		let newWallet
-		let error: string = 'unknown error'
+		let error
 		try {
 			newWallet = await _importWalletFromGD()
 			error = ''
-		} catch(err) {
-			if(typeof err === 'string') {
-				error = err.toUpperCase()
-			} else if(err instanceof Error) {
-				error = err.message
-			}
+		} catch(err1) {
+			error = err1
 
 			try {
-				await getToken(err)
+				await getToken(err1)
 				try {
 					newWallet = await _importWalletFromGD()
 					error = ''
 				} catch(err2) {
-					if(typeof err2 === 'string') {
-						error = err2.toUpperCase()
-					} else if(err2 instanceof Error) {
-						error = err2.message
-					}
+					error = err2
 				}
-			} catch{}
+			} catch(err3) {
+				error = err3
+			}
 		}
 
 		setImportLoading(false)
 		if(!newWallet) {
-			throw new Error(error.toString())
+			throw error
 		}
 
 		return newWallet
@@ -264,35 +268,29 @@ export default function useGoogleDriveWalletRecoveryReact({ googleClientID }: Pr
 		setExportLoading(true)
 
 		let newFileID
-		let error = 'unkown error'
+		let error
 		try {
 			newFileID = await _exportWalletToGD(wallet)
 			error = ''
-		} catch(err) {
-			if(typeof err === 'string') {
-				error = err.toUpperCase()
-			} else if(err instanceof Error) {
-				error = err.message
-			}
+		} catch(err1) {
+			error = err1
 
 			try {
-				await getToken(err)
+				await getToken(err1)
 				try {
 					newFileID = await _exportWalletToGD(wallet)
 					error = ''
 				} catch(err2) {
-					if(typeof err2 === 'string') {
-						error = err2.toUpperCase()
-					} else if(err2 instanceof Error) {
-						error = err2.message
-					}
+					error = err2
 				}
-			} catch{}
+			} catch(err3) {
+				error = err3
+			}
 		}
 
 		setExportLoading(false)
-		if(error.length > 0) {
-			throw new Error(error.toString())
+		if(error !== '') {
+			throw error
 		}
 
 		return newFileID
@@ -313,5 +311,6 @@ export default function useGoogleDriveWalletRecoveryReact({ googleClientID }: Pr
 		loading: exportLoading || importLoading,
 		importWalletFromGD,
 		exportWalletToGD,
+		revokeToken
 	}
 }

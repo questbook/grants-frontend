@@ -89,21 +89,49 @@ function RestoreWallet({ setSignInMethod, closeModal, inited, loading, importWal
 										try {
 											importWebwallet((await importWalletFromGD()).privateKey)
 											toast({
-												title: 'Exported from Google Drive.',
+												title: 'Restored from Google Drive.',
 												status: 'success',
 												duration: 3000,
 												isClosable: true,
 												position:'top-left'
 											})
 											closeModal()
-										} catch{
-											toast({
-												title: 'No key found.',
-												description: 'We could not find your private key in this Google drive. Try again with another account.',
-												status: 'error',
-												duration: 3000,
-												isClosable: true,
-											})
+										} catch(error) {
+											// this means the error is generated from google itself
+											if(error && typeof error === 'object' && 'type' in error) {
+												if(error.type === 'popup_closed') {
+													toast({
+														title: 'Google popup closed',
+														status: 'error',
+														duration: 3000,
+														isClosable: true,
+													})
+												} else {
+													toast({
+														title: 'Failed to restore.',
+														description: 'Unknown error',
+														status: 'error',
+														duration: 3000,
+														isClosable: true,
+													})
+												}
+											} else if(error && typeof error === 'string') {
+												toast({
+													title: 'Failed to restore.',
+													description: error,
+													status: 'error',
+													duration: 3000,
+													isClosable: true,
+												})
+											} else {
+												toast({
+													title: 'Failed to restore.',
+													description: 'Unknown error',
+													status: 'error',
+													duration: 3000,
+													isClosable: true,
+												})
+											}
 										}
 									}
 								}
