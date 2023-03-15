@@ -26,6 +26,9 @@ function RestoreWallet({ setSignInMethod, closeModal, inited, loading, importWal
 		}
 	}, [privateKey])
 	const buildComponent = () => {
+		type Error = {
+			type: string
+		}
 		return (
 			<ModalBody>
 				<Flex
@@ -99,10 +102,10 @@ function RestoreWallet({ setSignInMethod, closeModal, inited, loading, importWal
 										} catch(error) {
 											// this means the error is generated from google itself
 											if(error && typeof error === 'object' && 'type' in error) {
-												if(error.type === 'popup_closed') {
+												if((error as Error)?.type === 'popup_closed') {
 													toast({
 														title: 'Google popup closed',
-														status: 'error',
+														status: 'warning',
 														duration: 3000,
 														isClosable: true,
 													})
