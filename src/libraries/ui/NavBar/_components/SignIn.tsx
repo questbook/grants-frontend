@@ -86,7 +86,7 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 									</Text>
 									<Button
 										variant='primaryMedium'
-										marginTop={[4,9]}
+										marginTop={[4,6]}
 										borderRadius='20'
 										width={['90%', '75%']}
 										height='45px'
@@ -108,6 +108,7 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 										bg='gray.3'
 										height='45px'
 										borderRadius='20'
+										marginBottom={2}
 										onClick={() => setSignInMethod('existingWallet')}
 									>
 										<Text

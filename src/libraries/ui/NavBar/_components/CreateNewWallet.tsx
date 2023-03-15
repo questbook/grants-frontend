@@ -56,7 +56,7 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
 				paddingBottom='3'
 				>
 					<Checkbox
-						marginTop={4}
+						marginTop={3}
 						marginLeft={-1}
 						color='black'
 						alignSelf='flex-start'
@@ -77,6 +77,7 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
 					<Button
 						marginTop={6}
 						//  variant='primaryMedium'
+						borderRadius='0px'
 						_hover={{ bg:'gray.500' }}
 						isDisabled={!isPrivateKeySaved}
 						width='30%'
