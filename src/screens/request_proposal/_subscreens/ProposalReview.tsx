@@ -1,4 +1,4 @@
-import { ChangeEvent, useContext, useState } from 'react'
+import { ChangeEvent, useContext, useEffect, useState } from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { BsArrowLeft } from 'react-icons/bs'
 import { Button, Flex, Text } from '@chakra-ui/react'
@@ -165,6 +165,14 @@ function ProposalReview() {
 	const { setCreatingProposalStep } = useContext(WebwalletContext)!
 	const reviewMechanismOptions = [{ label: 'Voting', value: 'voting' }, { label: 'Rubric', value: 'rubrics' }, { label: 'Community voting', value: 'Community voting', isDisabled: true }]
 	const bigScreen = useMediaQuery('(min-width:601px)')
+
+	useEffect(() => {
+		if (rfpFormType === 'edit') {
+			setRubricsCounter(rfpData?.rubrics?.length)
+			setRubricInputValues(rfpData?.rubrics?.map(rubric => rubric) ?? ['Team competence', 'Idea Quality', 'Relevance to our ecosystem'])
+		}
+	}, [])
+
 	const handleClick = () => {
 		setRubricsCounter(rubricsCounter + 1)
 	}
@@ -190,7 +198,7 @@ function ProposalReview() {
 		}
 
 		logger.info('Setting rubrics: ', rubrics)
-		handleOnEdit('rubrics', rfpData?.reviewMechanism === 'voting' ? ['Vote for'] : rubricInputValues)
+		handleOnEdit('rubrics', rubrics)
 	}
 
 	const handleOnChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
@@ -199,8 +207,8 @@ function ProposalReview() {
 		setRubricInputValues(inputValues)
 	}
 
-	const handleOnEdit = (field: string, value: string | ApplicantDetailsFieldType[] | string []) => {
-		logger.info('rfp edited', { field: value }, { ...rfpData, [field]: value })
+	const handleOnEdit = (field: string, value: string | ApplicantDetailsFieldType[] | string [] | { [key: number]: { title: string, details: string, maximumPoints: number } }) => {
+		logger.info('rfp edited', { field, value }, { ...rfpData, [field]: value })
 		setRFPData({ ...rfpData, [field]: value })
 	}
 

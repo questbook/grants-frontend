@@ -81,7 +81,7 @@ function Discover() {
 				</Button>
 				<Image
 					mt='auto'
-					src='/illustrations/Browser Mock.svg' />
+					src='/Browser Mock.svg' />
 			</Flex>
 		)
 	}

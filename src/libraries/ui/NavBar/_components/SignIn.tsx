@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { Button, Flex, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
+import { Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
 import { Wallet } from 'ethers'
 import { Qb } from 'src/generated/icons'
 import CreateNewWallet from 'src/libraries/ui/NavBar/_components/CreateNewWallet'
@@ -72,7 +72,7 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 										variant='subheading'
 										fontSize='16px'
 										fontWeight='500'
-										mt={[5,0]}
+										mt={[5, 0]}
 									>
 										{Title()}
 									</Text>

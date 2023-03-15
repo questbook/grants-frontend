@@ -449,10 +449,7 @@ function ProposalSubmission() {
 			...filteredExtraDetails,
 		])
 
-		if(rfpFormType === 'edit') {
-			handleOnEdit('allApplicantDetails', allFieldsArray)
-			// setStep(3)
-		}
+		handleOnEdit('allApplicantDetails', allFieldsArray)
 	}
 
 	const handleOnEdit = (field: string, value: string | ApplicantDetailsFieldType[] | string []) => {
