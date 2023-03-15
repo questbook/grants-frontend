@@ -273,13 +273,16 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 				onClose={() => setIsRecoveryModalOpen(false)}>
 				<ModalOverlay />
 				<ModalContent
-					maxW={['94%', '70%', '50%', '50%']}>
+					maxW={['74%', '70%', '50%', '35%']}>
 					<ModalCloseButton />
 					<ModalBody>
 						<Flex
 							pb={6}
 							direction='column'
 							align='center'>
+								<Box
+								h={6}
+								></Box>
 							{
 								type === 'export' && (
 									<BackupWallet

@@ -19,7 +19,9 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
 	const [newWallet, setNewWallet] = useState<ethers.Wallet>(ethers.Wallet.createRandom())
 	const buildComponent = () => {
 		return (
-			<ModalBody>
+			<ModalBody
+			// w='100%'
+			>
 				<Flex
 					pb={6}
 					direction='column'
@@ -29,6 +31,7 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
 						textColor='black'
 						// variant='linkV2'
 						ml={-5}
+						marginBottom={-2}
 						alignSelf='flex-start'
 						leftIcon={<BsArrowLeft />}
 						onClick={() => setSignInMethod('choosing')}
@@ -44,22 +47,33 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
 						isNewUser={true}
 					/>
 
-
+				<Flex
+				alignItems='flex-start'
+				alignContent='flex-start'
+				border='1px'
+				borderColor='blackAlpha.100'
+				width='93%'
+				paddingBottom='3'
+				>
 					<Checkbox
 						marginTop={4}
+						marginLeft={-1}
+						color='black'
 						alignSelf='flex-start'
 						checked={isPrivateKeySaved}
 						paddingLeft={5}
 						onChange={() => setIsPrivateKeySaved(!isPrivateKeySaved)}
 					>
 						<Text
-							variant='v2_subheading'
+							variant='subheading'
 							fontWeight='500'
-							fontSize={['11', '14']}>
+							marginLeft={2}
+							fontSize={['11', '15']}>
 							
 							I have saved my Questbook wallet private key.
 						</Text>
 					</Checkbox>
+					</Flex>
 					<Button
 						marginTop={6}
 						//  variant='primaryMedium'

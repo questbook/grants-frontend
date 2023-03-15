@@ -69,15 +69,17 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 										maxH='64px'
 										boxSize='10rem' />
 									<Text
-										variant='v2_subheading'
+										variant='subheading'
+										fontSize='16px'
 										fontWeight='500'
 										mt={[5,0]}
 									>
 										{Title()}
 									</Text>
 									<Text
-										variant='v2_body'
+										variant='body'
 										mt={1}
+										fontSize='14px'
 										mb={5}
 										color='black.3'>
 										Use your existing Questbook wallet or create new one
@@ -86,12 +88,12 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 										variant='primaryMedium'
 										marginTop={[4,9]}
 										borderRadius='20'
-										width={['90%', '80%']}
-										height={10}
+										width={['90%', '75%']}
+										height='45px'
 										onClick={() => setSignInMethod('newWallet')}
 									>
 										<Text
-											variant='v2_body'
+											variant='body'
 											color='gray.100'
 											fontWeight='500'
 										>
@@ -101,15 +103,15 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 
 									<Button
 										variant='primaryMedium'
-										marginTop={2}
-										width={['90%', '80%']}
+										marginTop={4}
+										width={['90%', '75%']}
 										bg='gray.3'
-										height={10}
+										height='45px'
 										borderRadius='20'
 										onClick={() => setSignInMethod('existingWallet')}
 									>
 										<Text
-											variant='v2_body'
+											variant='body'
 											color='black'
 											fontWeight='500'
 										>
