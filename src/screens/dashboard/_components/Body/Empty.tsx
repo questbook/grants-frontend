@@ -143,7 +143,7 @@ function Empty() {
 							</Text>
 							<Button
 								variant='primaryMedium'
-								bg='gray.3'
+								bg='gray.300'
 								mt={6}
 								onClick={() => setIsSetupNotificationModalOpen(true)}>
 								<Text

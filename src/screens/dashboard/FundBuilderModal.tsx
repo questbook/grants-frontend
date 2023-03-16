@@ -125,7 +125,7 @@ function FundBuilderModal() {
 											<Text
 												mt={8}
 												variant='body'
-												color='gray.5'>
+												color='gray.500'>
 												This proposal would be auto-accepted once payout is initiated for it.
 											</Text>
 										)

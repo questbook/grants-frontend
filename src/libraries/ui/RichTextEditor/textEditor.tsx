@@ -33,7 +33,7 @@ const linkifyPlugin = createLinkifyPlugin({
 			<Button
 				{...props}
 				variant='link'
-				color='accent.azure'
+				color='accent.azure.400'
 				fontWeight='400'
 				onClick={() => window.open(props.href, '_blank')}
 			/>
@@ -73,8 +73,8 @@ function StyleButton({
 					icon
 				) : (
 					<Text
-						color={active ? 'black.1' : 'gray.5'}
-						_hover={{ color: active ? 'none' : 'black.1' }}
+						color={active ? 'black.100' : 'gray.500'}
+						_hover={{ color: active ? 'none' : 'black.100' }}
 					>
 						{label}
 					</Text>
@@ -94,8 +94,8 @@ const INLINE_STYLES = [
 	{
 		icon: (active: boolean) => (
 			<BoldButton
-				color={active ? 'black.1' : 'gray.5'}
-				_hover={{ color: active ? 'none' : 'black.1' }}
+				color={active ? 'black.100' : 'gray.500'}
+				_hover={{ color: active ? 'none' : 'black.100' }}
 			/>
 		),
 		style: 'BOLD',
@@ -103,8 +103,8 @@ const INLINE_STYLES = [
 	{
 		icon: (active: boolean) => (
 			<ItalicsButton
-				color={active ? 'black.1' : 'gray.5'}
-				_hover={{ color: active ? 'none' : 'black.1' }}
+				color={active ? 'black.100' : 'gray.500'}
+				_hover={{ color: active ? 'none' : 'black.100' }}
 			/>
 		),
 		style: 'ITALIC',
@@ -112,8 +112,8 @@ const INLINE_STYLES = [
 	{
 		icon: (active: boolean) => (
 			<UnderlineButton
-				color={active ? 'black.1' : 'gray.5'}
-				_hover={{ color: active ? 'none' : 'black.1' }}
+				color={active ? 'black.100' : 'gray.500'}
+				_hover={{ color: active ? 'none' : 'black.100' }}
 			/>
 		),
 		style: 'UNDERLINE',
@@ -186,8 +186,8 @@ const BLOCK_TYPES = [
 	{
 		icon: (active: boolean) => (
 			<UlButton
-				color={active ? 'black.1' : 'gray.5'}
-				_hover={{ color: active ? 'none' : 'black.1' }}
+				color={active ? 'black.100' : 'gray.500'}
+				_hover={{ color: active ? 'none' : 'black.100' }}
 			/>
 		),
 		style: 'unordered-list-item',
@@ -195,8 +195,8 @@ const BLOCK_TYPES = [
 	{
 		icon: (active: boolean) => (
 			<OlButton
-				color={active ? 'black.1' : 'gray.5'}
-				_hover={{ color: active ? 'none' : 'black.1' }}
+				color={active ? 'black.100' : 'gray.500'}
+				_hover={{ color: active ? 'none' : 'black.100' }}
 			/>
 		),
 		style: 'ordered-list-item',
@@ -413,8 +413,8 @@ function TextEditor({
 						<ImageAdd
 							cursor='pointer'
 							onClick={openInput}
-							color='gray.5'
-							_hover={{ color: 'black.1' }} />
+							color='gray.500'
+							_hover={{ color: 'black.100' }} />
 					) : <Loader />
 				}
 			</Flex>

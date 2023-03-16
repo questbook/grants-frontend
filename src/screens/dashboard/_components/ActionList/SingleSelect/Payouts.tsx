@@ -41,7 +41,7 @@ function Payouts() {
 						}>
 						<Text
 							fontWeight='500'
-							color={proposals?.length ? 'black.1' : 'gray.6'}>
+							color={proposals?.length ? 'black.100' : 'gray.600'}>
 							Payouts
 						</Text>
 						{
@@ -70,7 +70,7 @@ function Payouts() {
 							<Text
 								display={expanded ? 'block' : 'none'}
 								mt={2}
-								color='gray.6'>
+								color='gray.600'>
 								No payouts yet
 							</Text>
 						)
@@ -90,7 +90,7 @@ function Payouts() {
 					<Text
 						w='50%'
 						variant='body'
-						color='gray.6'>
+						color='gray.600'>
 						Milestone
 					</Text>
 					<Text
@@ -107,7 +107,7 @@ function Payouts() {
 							<Text
 								w='50%'
 								variant='body'
-								color='gray.6'>
+								color='gray.600'>
 								Amount
 							</Text>
 							<Text
@@ -125,7 +125,7 @@ function Payouts() {
 					<Text
 						w='50%'
 						variant='body'
-						color='gray.6'>
+						color='gray.600'>
 						Paid On
 					</Text>
 					<Text
@@ -139,7 +139,7 @@ function Payouts() {
 					<Text
 						w='50%'
 						variant='body'
-						color='gray.6'>
+						color='gray.600'>
 						Status
 					</Text>
 					<Button

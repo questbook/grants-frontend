@@ -79,7 +79,7 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 										variant='v2_body'
 										mt={1}
 										mb={5}
-										color='black.3'>
+										color='black.300'>
 										Use your existing Questbook wallet or create new one
 									</Text>
 									<Button
@@ -103,7 +103,7 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 										variant='primaryMedium'
 										marginTop={2}
 										width={['90%', '80%']}
-										bg='gray.3'
+										bg='gray.300'
 										height={10}
 										borderRadius='20'
 										onClick={() => setSignInMethod('existingWallet')}

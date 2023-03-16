@@ -8,6 +8,7 @@ import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
+import StateTag from '../StateTag'
 
 type Props = {
 	proposal: ProposalType
@@ -19,7 +20,7 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 	const buildComponent = () => (
 		<Flex
 			ref={ref}
-			bg={selectedProposals.has(proposal.id) ? 'gray.1' : 'white'}
+			bg={selectedProposals.has(proposal.id) ? 'gray.100' : 'white'}
 			direction='column'
 			// mt={2}
 			pl={5}
@@ -59,14 +60,14 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 						<Text
 							ml={2}
 							variant='metadata'
-							color='black.3'>
+							color='black.300'>
 							{`(${proposal.id}) - ${proposal.state}`}
 						</Text>
 					)
 				}
 				<Text
 					ml='auto'
-					color='gray.5'
+					color='gray.500'
 					variant='metadata'>
 					{formatTime(proposal.updatedAtS)}
 				</Text>
@@ -76,7 +77,7 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 				mt={2}>
 				<Image
 					borderWidth='1px'
-					borderColor='black.1'
+					borderColor='black.100'
 					borderRadius='3xl'
 					src={getAvatar(false, proposal.applicantId)}
 					boxSize='16px' />
@@ -87,31 +88,7 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 				</Text>
 				{
 					(proposal?.state !== 'submitted') && (
-						<Tooltip
-							hasArrow
-							label={proposal?.state === 'approved' ? 'Accepted Proposal' : proposal?.state === 'rejected' ? 'Rejected Proposal' : 'Awaiting resubmission'}>
-							<Flex
-								ml='auto'
-								align='center'
-								justify='center'
-								transition='all .5s ease'
-								p={2}
-								w={selectedProposals.has(proposal.id) ? '96px' : '32px'}
-								borderRadius={selectedProposals.has(proposal.id) ? '12px' : '4px'}
-								bg={proposal?.state === 'approved' ? 'accent.columbia' : proposal?.state === 'rejected' ? 'accent.melon' : 'accent.vodka'}>
-								{proposal?.state === 'approved' ? <CheckDouble /> : proposal?.state === 'rejected' ? <Close /> : <Resubmit />}
-								{
-									selectedProposals.has(proposal.id) && (
-										<Text
-											variant='metadata'
-											fontWeight='500'
-											ml={1}>
-											{titleCase(proposal.state)}
-										</Text>
-									)
-								}
-							</Flex>
-						</Tooltip>
+						<StateTag state={proposal?.state} isSelected={selectedProposals.has(proposal.id)} where='proposal-card' />
 					)
 				}
 			</Flex>

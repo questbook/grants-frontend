@@ -13,7 +13,7 @@ function useProposalTags({ proposals }: Props) {
 			{ id: 'accept', title: 'Accept', commentString: 'Your proposal is accepted', icon: <CheckDouble color='accent.jeans' />, isPrivate: false },
 			{ id: 'reject', title: 'Pass / Reject', commentString: 'Sorry! we won\'t be able to proceed with your proposal', icon: <Close color='accent.carrot' />, isPrivate: false },
 			{ id: 'resubmit', title: 'Resubmit', commentString: 'Please resubmit your proposal', icon: <Resubmit color='accent.royal' />, isPrivate: false },
-			{ id: 'interview', title: 'Interview', commentString: 'Let\'s set up a call', icon: <Call color='accent.azure' />, isPrivate: true }
+			{ id: 'feedback', title: 'Interview', commentString: 'Let\'s set up a call', icon: <Call color='accent.azure.400' />, isPrivate: true }
 		],
 		reviewer: [],
 		builder: [],

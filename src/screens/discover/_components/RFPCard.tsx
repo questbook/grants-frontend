@@ -91,8 +91,8 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 								<Text
 									fontWeight='500'
 									fontSize='12px'
-									color='black.3'
-									bg='gray.2'
+									color='black.300'
+									bg='gray.200'
 									borderRadius='6px'
 									py={1.5}
 									px={3}
@@ -161,7 +161,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						<Text
 							variant='subtitle'
 							fontWeight='500'
-							color='black.1'
+							color='black.100'
 						>
 							{formattedDeadline}
 						</Text>
@@ -206,7 +206,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 								<Text
 									mt={1}
 									variant='body'
-									color='gray.6'>
+									color='gray.600'>
 									{grant?.workspace?.safe === null ? 'No multisig' : usdAmount === undefined ? '' : usdAmount === 0 ? 'in multisig' : 'available'}
 								</Text>
 							</Flex>
@@ -219,7 +219,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 								<Text
 									mt={1}
 									variant='body'
-									color='gray.6'>
+									color='gray.600'>
 									paid out
 								</Text>
 							</Flex>
@@ -232,7 +232,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 								<Text
 									mt={1}
 									variant='body'
-									color='gray.6'>
+									color='gray.600'>
 									accepted
 								</Text>
 							</Flex>
@@ -245,7 +245,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 								<Text
 									mt={1}
 									variant='body'
-									color='gray.6'>
+									color='gray.600'>
 									proposals
 								</Text>
 							</Flex>

@@ -18,7 +18,7 @@ function MultiSelect() {
 				<Button
 					w='100%'
 					variant='primaryMedium'
-					bg='gray.3'
+					bg='gray.300'
 					mt={4}
 					isDisabled={role !== 'admin'}
 					onClick={
@@ -40,7 +40,7 @@ function MultiSelect() {
 						mx={3}
 						variant='body'
 						fontWeight='500'
-						color='gray.5'>
+						color='gray.500'>
 						OR
 					</Text>
 					<Divider />

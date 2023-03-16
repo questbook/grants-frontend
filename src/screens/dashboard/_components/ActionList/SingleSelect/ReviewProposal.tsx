@@ -129,7 +129,7 @@ function ReviewProposal() {
 									size='sm'
 									ml={index === 0 ? 0 : 3}
 									border='1px solid #E7E4DD'
-									bg={isSelected ? 'accent.azure' : 'white'}
+									bg={isSelected ? 'accent.azure.400' : 'white'}
 									isDisabled={!isReviewPending}
 									cursor={isReviewPending ? 'pointer' : 'not-allowed'}
 									_disabled={
@@ -141,7 +141,7 @@ function ReviewProposal() {
 									}
 									_hover={
 										{
-											bg: isSelected ? 'accent.azure' : 'gray.3'
+											bg: isSelected ? 'accent.azure.400' : 'gray.300'
 										}
 									}
 									onClick={
@@ -162,7 +162,7 @@ function ReviewProposal() {
 									}>
 									<Text
 										variant='body'
-										color={isSelected ? 'white' : 'black.1'}>
+										color={isSelected ? 'white' : 'black.100'}>
 										{index + 1}
 									</Text>
 
@@ -199,7 +199,7 @@ function ReviewProposal() {
 						<Text
 							mt={3}
 							variant='body'
-							color='gray.5'>
+							color='gray.500'>
 							{item?.comment}
 						</Text>
 					)
@@ -281,7 +281,7 @@ function ReviewProposal() {
 						<Text
 							mt={3}
 							variant='body'
-							color='gray.5'>
+							color='gray.500'>
 							{item?.comment}
 						</Text>
 					)

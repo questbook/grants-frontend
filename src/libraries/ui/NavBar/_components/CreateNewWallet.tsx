@@ -66,8 +66,8 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
 						_hover={{ bg:'gray.500' }}
 						isDisabled={!isPrivateKeySaved}
 						width='30%'
-						bg='black.1'
-						_disabled={{bg: "gray.3", color: "black.100", textColor:'gray.5' }}
+						bg='black.100'
+						_disabled={{bg: "gray.3", color: "black.100", textColor:'gray.500' }}
 						textColor='gray.100'
 						onClick={
 							() => {

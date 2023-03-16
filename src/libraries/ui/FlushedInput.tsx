@@ -17,10 +17,10 @@ const FlushedInput = forwardRef<Props, 'input'>((props, ref) => {
 				ref={ref}
 				variant='flushed'
 				// borderBottom='2px solid #0A84FF'
-				borderColor={value === undefined || !value ? 'gray.3' : 'black'}
+				borderColor={value === undefined || !value ? 'gray.300' : 'black'}
 				value={props.value}
 				placeholder={placeholder}
-				_placeholder={{ color: 'gray.5' }}
+				_placeholder={{ color: 'gray.500' }}
 				onWheel={(e) => (e.target as HTMLElement).blur()}
 				// minWidth={props?.minWidth ? props.minWidth : `${(props?.placeholder?.length || 0) + textPadding * 2}ch`}
 				width={props?.width ? props.width : (value === 'NaN' || !value) ? `${(placeholder?.length!)}ch` : `${(value?.toString()?.length!)}ch` }
@@ -38,7 +38,7 @@ const FlushedInput = forwardRef<Props, 'input'>((props, ref) => {
 								<Text
 									// className='helperText'
 									variant='body'
-									color='gray.5'>
+									color='gray.500'>
 									{helperText}
 								</Text>
 							)
@@ -48,7 +48,7 @@ const FlushedInput = forwardRef<Props, 'input'>((props, ref) => {
 								<Text
 									ml='auto'
 									variant='metadata'
-									color='gray.5'>
+									color='gray.500'>
 									{value?.toString().length}
 									/
 									{props?.maxLength}

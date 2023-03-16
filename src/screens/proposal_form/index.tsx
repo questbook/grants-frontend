@@ -97,7 +97,7 @@ function ProposalForm() {
 							</Button>
 							<Button
 								variant='link'
-								color='accent.azure'
+								color='accent.azure.400'
 								onClick={
 									async() => {
 										setRole('builder')
@@ -237,7 +237,7 @@ function ProposalForm() {
 											<Text
 												variant='title'
 												fontWeight='400'
-												color='black.1'
+												color='black.100'
 											>
 												Accepting proposals until
 												{' '}
@@ -245,7 +245,7 @@ function ProposalForm() {
 											<Text
 												variant='title'
 												fontWeight='500'
-												color='black.1'
+												color='black.100'
 											>
 												{extractDateFromDateTime(grant?.deadline!)}
 											</Text>
@@ -271,7 +271,7 @@ function ProposalForm() {
 													<Text
 														variant='title'
 														fontWeight='500'
-														color='black.1'
+														color='black.100'
 														cursor='pointer'
 														onClick={() => window.open(grant?.link!, '_blank')}
 													>

@@ -28,7 +28,7 @@ function ProposalDetails({ proposal, index, tokenInfo }: Props) {
 				borderBottom='1px solid #E7E4DD'>
 
 				<Flex align='center'>
-					<Text color='gray.6'>
+					<Text color='gray.600'>
 						{getFieldString(decryptedProposal, 'applicantName')}
 					</Text>
 
@@ -36,7 +36,7 @@ function ProposalDetails({ proposal, index, tokenInfo }: Props) {
 						boxSize='4px'
 						mx={2} />
 
-					<Text color='gray.6'>
+					<Text color='gray.600'>
 						{getFieldString(decryptedProposal, 'projectName')}
 					</Text>
 				</Flex>

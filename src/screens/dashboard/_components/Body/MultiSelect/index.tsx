@@ -23,7 +23,7 @@ function MultiSelect() {
 					<Text
 						ml={1}
 						display='inline-block'
-						color='black.3'>
+						color='black.300'>
 						{`(${selectedProposalsData?.length})`}
 					</Text>
 				</Text>
@@ -56,7 +56,7 @@ function MultiSelect() {
 					mt={1}>
 					<Image
 						borderWidth='1px'
-						borderColor='black.1'
+						borderColor='black.100'
 						borderRadius='3xl'
 						src={getAvatar(false, proposal.applicantId)}
 						boxSize='16px' />

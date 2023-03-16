@@ -17,7 +17,7 @@ function PayWithChoose({ selectedMode }: { selectedMode: any}) {
 				borderBottom='1px solid #E7E4DD'>
 				<Text
 					w='20%'
-					color='gray.6'>
+					color='gray.600'>
 					Pay With
 				</Text>
 				<Text>

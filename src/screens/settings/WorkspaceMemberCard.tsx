@@ -17,7 +17,7 @@ function WorkspaceMemberCard({ member, setOpenConfirmationModal }: WorkspaceMemb
 		<Box
 			border='1px solid #E7E4DD'
 			borderRadius='4px'
-			bg={member?.enabled ? 'white' : 'gray.1'}
+			bg={member?.enabled ? 'white' : 'gray.100'}
 			p={4}
 		>
 			<Flex gap={2}>
@@ -39,8 +39,8 @@ function WorkspaceMemberCard({ member, setOpenConfirmationModal }: WorkspaceMemb
 							{member?.fullName}
 						</Text>
 						<Text
-							bg='gray.3'
-							color='black.3'
+							bg='gray.300'
+							color='black.300'
 							fontWeight='500'
 							px={2}
 							borderRadius='4px'
@@ -53,7 +53,7 @@ function WorkspaceMemberCard({ member, setOpenConfirmationModal }: WorkspaceMemb
 							member?.email && (
 								<Text
 									variant='body'
-									color='gray.5'>
+									color='gray.500'>
 									{member?.email}
 								</Text>
 							)
@@ -61,7 +61,7 @@ function WorkspaceMemberCard({ member, setOpenConfirmationModal }: WorkspaceMemb
 						{member?.email && <Dot />}
 						<Text
 							variant='body'
-							color='gray.5'
+							color='gray.500'
 						>
 							{truncateStringFromMiddle(member?.actorId)}
 						</Text>
@@ -69,7 +69,7 @@ function WorkspaceMemberCard({ member, setOpenConfirmationModal }: WorkspaceMemb
 					<Flex gap={2}>
 						<Button
 							variant='link'
-							bg={member?.enabled ? 'white' : 'gray.1'}
+							bg={member?.enabled ? 'white' : 'gray.100'}
 							onClick={
 								() => {
 									setOpenConfirmationModal(member)

@@ -26,7 +26,7 @@ function useCustomToast() {
 								props.title === 'Linking your multisig' ? (
 									<Loader
 										className='loader'
-										color='black.1'
+										color='black.100'
 									/>
 								) : (
 									props.status === 'success' ? <CheckDouble boxSize='20px' /> : <ErrorWarning boxSize='20px' />
@@ -44,7 +44,7 @@ function useCustomToast() {
 										<Button
 											mt={2}
 											bg={BG[props.status ?? 'info']}
-											color='black.1'
+											color='black.100'
 											fontWeight='500'
 											variant='link'
 											onClick={action}>

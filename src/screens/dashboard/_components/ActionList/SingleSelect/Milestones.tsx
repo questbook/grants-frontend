@@ -33,7 +33,7 @@ function Milestones() {
 						}>
 						<Text
 							fontWeight='500'
-							color={proposals?.length ? 'black.1' : 'gray.6'}>
+							color={proposals?.length ? 'black.100' : 'gray.600'}>
 							Milestones
 						</Text>
 						{
@@ -64,7 +64,7 @@ function Milestones() {
 				mt={index === 0 ? 4 : 2}>
 				<Flex direction='column'>
 					<Text
-						color='gray.4'
+						color='gray.400'
 						variant='heading3'
 						fontWeight='500'>
 						{index < 9 ? `0${index + 1}` : (index + 1)}

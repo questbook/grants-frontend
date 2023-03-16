@@ -6,25 +6,43 @@ const colors = {
 	},
 	white: '#FFFFFF',
 	gray: {
-		1: '#F7F5F2',
-		2: '#F1EEE8',
-		3: '#E7E4DD',
-		4: '#C1BDB7',
-		5: '#8D8B87',
-		6: '#767471'
+		100: '#F7F5F2',
+		200: '#F1EEE8',
+		300: '#E7E4DD',
+		400: '#C1BDB7',
+		500: '#8D8B87',
+		600: '#767471'
 	},
 	black: {
-		1: '#1D1919',
-		2: '#2B2929',
-		3: '#53514F'
+		100: '#1D1919',
+		200: '#2B2929',
+		300: '#53514F'
 	},
 	green:{
-		1: '#5AB711'
+		100: '#5AB711'
 	},
 	accent: {
-		azure: '#0A84FF',
+		azure: {
+			300: '#0A84FF4D',
+			400: '#0A84FF',
+			500: '#0A84FF66',
+		},
+		carrot: {
+			300: '#EF64364D',
+			400: '#EF6436',
+			500: '#EF643666',
+		},
+		vivid: {
+			300: '#5C62F54D',
+			400: '#5C62F5',
+			500: '#5C62F566',
+		},
+		orchid: {
+			300: '#DC6ACF4D',
+			400: '#DC6ACF',
+			500: '#DC6ACF66',
+		},
 		jeans: '#56C7EC',
-		carrot: '#EF6436',
 		royal: '#F2943E',
 		june: '#BCDB4A',
 		steel: '#B8C7DF',
@@ -32,8 +50,6 @@ const colors = {
 		vodka: '#C4B0EB',
 		melon: '#F3B2A8',
 		crayola: '#F4D364',
-		vivid: '#5C62F5',
-		orchid: '#DC6ACF'
 	}
 }
 

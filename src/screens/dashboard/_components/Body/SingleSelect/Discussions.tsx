@@ -13,7 +13,7 @@ import {
 	Textarea,
 	Tooltip,
 } from "@chakra-ui/react";
-import { motion } from "framer-motion";
+import { motion, useAnimationControls} from "framer-motion";
 import logger from "src/libraries/logger";
 import { getAvatar } from "src/libraries/utils";
 import { formatAddress, getFieldString } from "src/libraries/utils/formatting";
@@ -77,6 +77,7 @@ function Discussions() {
 									{proposalTags?.map((tag, index) => {
 										return (
 											<QuickReplyButton
+												id={tag.id as 'accept' | 'reject' | 'resubmit' | 'feedback'}
 												key={index}
 												tag={tag}
 												isSelected={tag.id === selectedTag}
@@ -124,88 +125,93 @@ function Discussions() {
 										: getAvatar(false, scwAddress?.toLowerCase())
 							}
 						/>
+
 						<Flex ml={4} direction="column" w="100%">
-							{selectedTag !== undefined && <chakra.p>
-								<Button
-									position={"relative"}
-									float="left"
-									isDisabled
-									contentEditable={false}
-								>
-									Accept
-								</Button>
-								<chakra.span
-									sx={{
-										border: "none",
-										":focus": {
-											outline: "none",
+							<motion.div initial={{ opacity: 0, y: 50 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ ease: 'easeInOut' }}>
+								{selectedTag !== undefined && <chakra.p>
+									<Button
+										position={"relative"}
+										float="left"
+										isDisabled
+										contentEditable={false}
+									>
+										Accept
+									</Button>
+									<chakra.span
+										sx={{
 											border: "none",
-										},
-									}}
-									onInput={(e) => {
-										setText(e.currentTarget.innerText);
-										localStorage.setItem(`comment-${grant?.id}-${proposal?.id}`, e.currentTarget.innerText)
-									}}
-									contentEditable
-								>
-									{text}
-								</chakra.span>
-							</chakra.p>}
-							{selectedTag === undefined && <Textarea
-								value={text}
-								onChange={
-									(e) => {
-										setText(e.target.value)
-										localStorage.setItem(`comment-${grant?.id}-${proposal?.id}`, e.target.value)
+											":focus": {
+												outline: "none",
+												border: "none",
+											},
+										}}
+										onInput={(e) => {
+											setText(e.currentTarget.innerText);
+											localStorage.setItem(`comment-${grant?.id}-${proposal?.id}`, e.currentTarget.innerText)
+										}}
+										contentEditable
+									>
+										{text}
+									</chakra.span>
+								</chakra.p>}
+								{selectedTag === undefined && <Textarea
+									value={text}
+									onChange={
+										(e) => {
+											setText(e.target.value)
+											localStorage.setItem(`comment-${grant?.id}-${proposal?.id}`, e.target.value)
+										}
 									}
-								}
-								placeholder={placeholder} />}
-							<Flex mt={4} align="center">
-								{role === "admin" && (
-									<Checkbox
-										isChecked={isCommentPrivate}
-										onChange={(e) => {
-											setSelectedTag(undefined);
-											setIsCommentPrivate(e.target.checked);
+									placeholder={placeholder} />}
+								<Flex mt={4} align="center">
+									{role === "admin" && (
+										<Checkbox
+											isChecked={isCommentPrivate}
+											onChange={(e) => {
+												setSelectedTag(undefined);
+												setIsCommentPrivate(e.target.checked);
+											}}
+										>
+											<Text variant="body" color="gray.5">
+												Show only to reviewers and builder
+											</Text>
+										</Checkbox>
+									)}
+									<Button
+										ml="auto"
+										// mr={['50px','50px','0']}
+										// paddingBottom='30px'
+										marginBottom={["90px", "50px", "0"]}
+										variant="primaryMedium"
+										isLoading={step !== undefined}
+										onClick={async () => {
+											if (isDisabled) {
+												setSignInTitle("postComment");
+												setSignIn(true);
+												return;
+											}
+
+											const ret = await addComment(
+												text,
+												isCommentPrivate,
+												selectedTag,
+											);
+											if (ret) {
+												setText("");
+												setSelectedTag(undefined);
+												refreshComments(true);
+												localStorage.removeItem(
+													`comment-${grant?.id}-${proposal?.id}`,
+												);
+											}
 										}}
 									>
-										<Text variant="body" color="gray.5">
-											Show only to reviewers and builder
-										</Text>
-									</Checkbox>
-								)}
-								<Button
-									ml="auto"
-									// mr={['50px','50px','0']}
-									// paddingBottom='30px'
-									marginBottom={["90px", "50px", "0"]}
-									variant="primaryMedium"
-									isLoading={step !== undefined}
-									onClick={async () => {
-										if (isDisabled) {
-											setSignInTitle("postComment");
-											setSignIn(true);
-											return;
-										}
-
-										const ret = await addComment(
-											text,
-											isCommentPrivate,
-											selectedTag,
-										);
-										if (ret) {
-											setText("");
-											setSelectedTag(undefined);
-											refreshComments(true);
-											localStorage.removeItem(
-												`comment-${grant?.id}-${proposal?.id}`,
-											);
-										}
-									}}
-								>
-									Post
-								</Button>
-							</Flex>
+										Post
+									</Button>
+								</Flex>
+							</motion.div>
 						</Flex>
 					</Flex>
 					{comments.length > 0 && <Box my={4} />}
@@ -312,7 +318,7 @@ function Discussions() {
 	};
 
 	const renderTag = () => {
-		
+
 	}
 
 	const ref = useRef<HTMLTextAreaElement>(null);
@@ -332,6 +338,8 @@ function Discussions() {
 	const [isCommentPrivate, setIsCommentPrivate] = useState<boolean>(false);
 	const [selectedTag, setSelectedTag] = useState<string>();
 	const [text, setText] = useState<string>("");
+
+	// const controls = useAnimationControls()
 
 	const { addComment, isBiconomyInitialised } = useAddComment({
 		setStep,
