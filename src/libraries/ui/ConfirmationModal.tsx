@@ -1,14 +1,14 @@
 import { Button, Flex, Modal, ModalBody, ModalBodyProps, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
 
 interface Props {
-    isOpen: boolean
-    onClose: () => void
-    title: string
-    subTitle: string
-    actionText: string
-    action: () => void
-    onCancel: () => void
-    modalBodyProps?: ModalBodyProps
+	isOpen: boolean
+	onClose: () => void
+	title: string
+	subTitle: string
+	actionText: string
+	action: () => void
+	onCancel: () => void
+	modalBodyProps?: ModalBodyProps
 }
 
 function ConfirmationModal({ isOpen, onClose, title, subTitle, actionText, action, modalBodyProps }: Props) {
@@ -29,38 +29,40 @@ function ConfirmationModal({ isOpen, onClose, title, subTitle, actionText, actio
 							p={6}
 							gap={4}
 						>
-							<Text
-								variant='title'
-								fontWeight='500'
-							>
-								{title}
-							</Text>
-							<Text
-								variant='body'
-								fontWeight='400'
-							>
-								{subTitle}
-							</Text>
-							{modalBodyProps}
-							<Flex mt={4}>
-								<Button
-                            		onClick={action}
-                            		variant='primaryV2'>
-									<Text
-                            			variant='body'
-                            			color='white'>
-										{actionText}
-									</Text>
-								</Button>
-								<Button
-                            		onClick={onClose}
-                            		ml={4}
-                            		variant='link'>
-									<Text variant='body'>
-										Cancel
-									</Text>
-								</Button>
-							</Flex>
+							<>
+								<Text
+									variant='title'
+									fontWeight='500'
+								>
+									{title}
+								</Text>
+								<Text
+									variant='body'
+									fontWeight='400'
+								>
+									{subTitle}
+								</Text>
+								{modalBodyProps}
+								<Flex mt={4}>
+									<Button
+										onClick={action}
+										variant='primaryV2'>
+										<Text
+											variant='body'
+											color='white'>
+											{actionText}
+										</Text>
+									</Button>
+									<Button
+										onClick={onClose}
+										ml={4}
+										variant='link'>
+										<Text variant='body'>
+											Cancel
+										</Text>
+									</Button>
+								</Flex>
+							</>
 						</Flex>
 					</ModalBody>
 

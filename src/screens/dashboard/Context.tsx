@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
@@ -17,7 +17,7 @@ const DashboardContext = createContext<DashboardContextType | undefined>(undefin
 const FundBuilderContext = createContext<FundBuilderContextType | undefined>(undefined)
 const ModalContext = createContext<ModalContextType | undefined>(undefined)
 
-const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
+const DashboardProvider = ({ children }: {children: ReactNode}) => {
 	const router = useRouter()
 	const { setSafeObj } = useSafeContext()
 	const { grantId, chainId: _chainId, role: _role, proposalId, isRenderingProposalBody } = router.query
@@ -433,7 +433,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	)
 }
 
-const FundBuilderProvider = ({ children }: PropsWithChildren<ReactNode>) => {
+const FundBuilderProvider = ({ children }: {children: ReactNode}) => {
 	const [tokenList, setTokenList] = useState<TokenInfo[]>()
 	const [selectedTokenInfo, setSelectedTokenInfo] = useState<TokenInfo>()
 	const [amounts, setAmounts] = useState<number[]>([])
@@ -472,7 +472,7 @@ const FundBuilderProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	)
 }
 
-const ModalProvider = ({ children }: PropsWithChildren<ReactNode>) => {
+const ModalProvider = ({ children }: {children: ReactNode}) => {
 	const [isSendAnUpdateModalOpen, setIsSendAnUpdateModalOpen] = useState<boolean>(false)
 	const [isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen] = useState<boolean>(false)
 

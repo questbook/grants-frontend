@@ -11,7 +11,7 @@ import { GrantProgramForm, SettingsFormContextType, WorkspaceMembers } from 'src
 
 const SettingsFormContext = createContext<SettingsFormContextType | undefined>(undefined)
 
-const SettingsFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
+const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 	const providerComponent = () => (
 		<SettingsFormContext.Provider
 			value={

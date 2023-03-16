@@ -14,7 +14,7 @@ const DiscoverContext = createContext<DiscoverContextType | null>(null)
 
 const PAGE_SIZE = 40
 
-const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
+const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	const provider = () => {
 		return (
 			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram, search, setSearch, sectionGrants, isLoading, safeBalances }}>

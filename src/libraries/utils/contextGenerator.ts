@@ -8,7 +8,7 @@ export function ContextGenerator<T>(store: () => T) {
 	const context = createContext<T>(undefined as any)
 	return {
 		context,
-		contextMaker: ({ children }: PropsWithChildren<ReactNode>) => {
+		contextMaker: ({ children }: {children: ReactNode}) => {
 			const value = store()
 			return createElement(context.Provider, { value }, children)
 		},

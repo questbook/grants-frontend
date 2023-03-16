@@ -8,7 +8,7 @@ import { RFPForm, RFPFormContextType, RFPFormType } from 'src/screens/request_pr
 
 const RFPFormContext = createContext<RFPFormContextType | undefined>(undefined)
 
-const RFPFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
+const RFPFormProvider = ({ children }: {children: ReactNode}) => {
 	const providerComponent = () => (
 		<RFPFormContext.Provider
 			value={

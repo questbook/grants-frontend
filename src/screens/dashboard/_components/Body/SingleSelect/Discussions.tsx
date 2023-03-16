@@ -339,7 +339,7 @@ function Discussions() {
 	const [selectedTag, setSelectedTag] = useState<string>();
 	const [text, setText] = useState<string>("");
 
-	// const controls = useAnimationControls()
+	const controls = useAnimationControls()
 
 	const { addComment, isBiconomyInitialised } = useAddComment({
 		setStep,
