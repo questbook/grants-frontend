@@ -28,6 +28,7 @@ export default function useUpdateRFP() {
 		if(role !== 'admin') {
 			customToast({
 				title: 'You are not authorized to perform this action',
+				description: 'Only an admin can edit the grant program details. Try again with a different account.',
 				status: 'error'
 			})
 
@@ -43,16 +44,16 @@ export default function useUpdateRFP() {
 			fieldMap[field.id] = field
 		})
 
-		const processedRubrics: { [key: number]: { title: string, details: string, maximumPoints: number } } = {}
-		if(rubrics) {
-			Object.keys(rubrics).forEach((key, index) => {
-				processedRubrics[index] = {
-					title: rubrics[index],
-					details: '',
-					maximumPoints: rfpData?.reviewMechanism === 'voting' ? 1 : 5
-				}
-			})
-		}
+		// const processedRubrics: { [key: number]: { title: string, details: string, maximumPoints: number } } = {}
+		// if(rubrics) {
+		// 	Object.keys(rubrics).forEach((key, index) => {
+		// 		processedRubrics[index] = {
+		// 			title: rubrics[index],
+		// 			details: '',
+		// 			maximumPoints: rfpData?.reviewMechanism === 'voting' ? 1 : 5
+		// 		}
+		// 	})
+		// }
 
 		const processedData: GrantFields = {
 			title: proposalName,
@@ -100,10 +101,10 @@ export default function useUpdateRFP() {
 
 			let rubricHash = ''
 			if(reviewMechanism !== '') {
-				logger.info('rubrics', processedRubrics)
+				logger.info('rubrics', rubrics)
 				const { hash: auxRubricHash } = await validateAndUploadToIpfs('RubricSetRequest', {
 					rubric: {
-						rubric: processedRubrics,
+						rubric: rubrics,
 						isPrivate: false
 					},
 				})
