@@ -103,7 +103,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 										<Text
 											variant='body'
 											color='gray.5'>
-											Your zero wallet
+											Your Questbook wallet
 										</Text>
 
 										<Link
@@ -132,30 +132,44 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 
 									{
 										openModal &&
-						menuItems.map((item, index) => {
-							return (
-								<Flex
-									key={index}
-									ml={3}
-									mt={4}>
-									{item.icon}
-									<Text
-										ml={2}
-										_hover={{ textDecoration: 'underline', cursor: 'pointer' }}
-										onClick={
-											() => {
-												onClose()
-												item.onClick()
-											}
-										}
-										variant='v2_body'
-									>
-										{item.title}
-									</Text>
-								</Flex>
+										menuItems.map((item, index) => {
+											return (
+												<Flex
+													key={index}
+													ml={3}
+													mt={4}>
+													{item.icon}
+													<Flex
+														flexDirection='column'
+													>
+														<Text
+															ml={2}
+															_hover={{ textDecoration: 'underline', cursor: 'pointer' }}
+															onClick={
+																() => {
+																	onClose()
+																	item.onClick()
+																}
+															}
+															// variant='body'
+															fontWeight={500}
+															fontSize='14px'
+														>
+															{item.title}
+														</Text>
+														<Text
+															paddingLeft={2}
+															fontWeight={400}
+															fontSize='12px'
+															color='#8D8B87'
+														>
+															{item.description}
+														</Text>
+													</Flex>
+												</Flex>
 
-							)
-						})
+											)
+										})
 									}
 
 									<Box mb={2} />
@@ -193,13 +207,19 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 
 	const menuItems = [
 		{
-			icon: <Key boxSize='18px' />,
+			icon: <Key
+				boxSize='18px'
+				color='#0A84FF' />,
 			title: t('account_details.menu.save_wallet'),
+			description : 'Save the private key for your wallet',
 			onClick: () => openModal?.('export')
 		},
 		{
-			icon: <AddUser boxSize='18px' />,
+			icon: <AddUser
+				boxSize='18px'
+				color='#EF6436' />,
 			title: t('account_details.menu.use_another_wallet'),
+			description: 'Use your another private key to sign in',
 			onClick: () => openModal?.('import')
 		},
 		// {

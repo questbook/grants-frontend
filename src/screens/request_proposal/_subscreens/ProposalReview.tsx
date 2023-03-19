@@ -167,7 +167,7 @@ function ProposalReview() {
 	const bigScreen = useMediaQuery('(min-width:601px)')
 
 	useEffect(() => {
-		if (rfpFormType === 'edit') {
+		if(rfpFormType === 'edit') {
 			setRubricsCounter(rfpData?.rubrics?.length)
 			setRubricInputValues(rfpData?.rubrics?.map(rubric => rubric) ?? ['Team competence', 'Idea Quality', 'Relevance to our ecosystem'])
 		}

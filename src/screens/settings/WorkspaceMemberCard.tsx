@@ -2,7 +2,7 @@ import { Box, Button, Flex, Image, Text } from '@chakra-ui/react'
 import { Dot } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import { getAvatar } from 'src/libraries/utils'
-import { truncateStringFromMiddle } from 'src/libraries/utils/formatting'
+import { formatAddress } from 'src/libraries/utils/formatting'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { WorkspaceMembers } from 'src/screens/settings/_utils/types'
 
@@ -63,7 +63,7 @@ function WorkspaceMemberCard({ member, setOpenConfirmationModal }: WorkspaceMemb
 							variant='body'
 							color='gray.5'
 						>
-							{truncateStringFromMiddle(member?.actorId)}
+							{formatAddress(member?.actorId)}
 						</Text>
 					</Flex>
 					<Flex gap={2}>

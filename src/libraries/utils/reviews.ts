@@ -1,12 +1,11 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { defaultChainId } from 'src/constants/chains'
+import { useCallback, useContext } from 'react'
 import { useGetWorkspaceMembersPublicKeysQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { getFromIPFS, uploadToIPFS } from 'src/libraries/utils/ipfs'
 import logger from 'src/libraries/utils/logger'
 import { getKeyForApplication, getSecureChannelFromPublicKey, useGetPublicKeysOfGrantManagers } from 'src/libraries/utils/pii'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
-import { IApplicantData, IReview, IReviewFeedback } from 'src/types'
+import { IReview, IReviewFeedback } from 'src/types'
 
 type PrivateReviewData = {
 	walletAddress: string
@@ -140,52 +139,6 @@ export function useLoadReview(
 	)
 
 	return { loadReview }
-}
-
-type ApplicationData = Pick<IApplicantData, 'applicationId' | 'reviews' | 'grant'>
-
-export const useLoadReviews = (
-	applicationData: ApplicationData | undefined,
-	chainId: SupportedChainId | undefined
-) => {
-	const submittedReviews = applicationData?.reviews
-
-	const [reviews, setReviews] = useState<{ [_id: string]: IReviewFeedback }>({ })
-	const { loadReview } = useLoadReview(applicationData?.grant?.id, chainId || defaultChainId)
-
-	const loadingRef = useRef(false)
-
-	const loadReviews = useCallback(
-		async() => {
-			const reviewsDataMap: typeof reviews = {}
-
-			await Promise.all(
-				submittedReviews!.map(async(review) => {
-					try {
-						const reviewData = await loadReview(review, applicationData!.applicationId)
-						const [, reviewerAddress] = review.reviewer!.id.split('.')
-						reviewsDataMap[reviewerAddress] = reviewData
-					} catch(err) {
-						logger.error({ err, review }, 'error in loading review')
-					}
-				})
-			)
-
-			setReviews(reviewsDataMap)
-		}, [setReviews, loadReview, submittedReviews, applicationData]
-	)
-
-	useEffect(() => {
-		if(submittedReviews?.length && !loadingRef.current) {
-			loadingRef.current = true
-			loadReviews()
-				.finally(() => {
-					loadingRef.current = false
-				})
-		}
-	}, [submittedReviews, loadReviews])
-
-	return { reviews }
 }
 
 export const useGenerateReviewData = ({
