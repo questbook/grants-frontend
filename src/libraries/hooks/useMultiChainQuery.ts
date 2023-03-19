@@ -1,10 +1,10 @@
 import { useCallback, useContext, useMemo, useState } from 'react'
-import { QueryHookOptions, QueryResult } from '@apollo/client'
+import { OperationVariables, QueryHookOptions, QueryResult } from '@apollo/client'
 import { ALL_SUPPORTED_CHAIN_IDS } from 'src/constants/chains'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { ApiClientsContext } from 'src/pages/_app'
 
-export type UseMultiChainQueryOptions<Q, V> = {
+export type UseMultiChainQueryOptions<Q, V extends OperationVariables> = {
 	/** specify chains to query from, set undefined to query all */
 	chains?: SupportedChainId[]
 	options: Omit<QueryHookOptions<Q, V>, 'client'>
@@ -15,7 +15,7 @@ export type UseMultiChainQueryOptions<Q, V> = {
  * Queries from multiple chains simulataneously.
  * @returns
  */
-export function useMultiChainQuery<Q, V>({
+export function useMultiChainQuery<Q, V extends OperationVariables>({
 	chains,
 	options,
 	useQuery

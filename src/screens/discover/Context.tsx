@@ -3,7 +3,7 @@ import { createContext, PropsWithChildren, ReactNode, useContext, useEffect, use
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetAllGrantsForMemberQuery, useGetAllGrantsQuery, useGetGrantProgramDetailsQuery, useGetSectionGrantsQuery, useGetWorkspacesAndBuilderGrantsQuery } from 'src/generated/graphql'
-import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
+import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'

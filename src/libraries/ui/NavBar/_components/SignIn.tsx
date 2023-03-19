@@ -86,7 +86,7 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 									</Text>
 									<Button
 										variant='primaryMedium'
-										marginTop={[4,6]}
+										marginTop={[4, 6]}
 										borderRadius='20'
 										width={['90%', '75%']}
 										height='45px'

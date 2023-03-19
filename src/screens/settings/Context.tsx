@@ -1,7 +1,7 @@
 import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetWorkspaceDetailsQuery, useGetWorkspaceMembersByWorkspaceIdQuery } from 'src/generated/graphql'
-import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
+import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
 import { getSafeURL } from 'src/libraries/utils/multisig'
 import { getKeyForMemberPii, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'

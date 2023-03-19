@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
-import { Box, Button, Flex, Text, Textarea } from '@chakra-ui/react'
+import { CopyIcon } from '@chakra-ui/icons'
+import { Button, Flex, Text, Textarea } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import { ethers, Wallet } from 'ethers'
-import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { Gdrive } from 'src/generated/icons'
-import { CopyIcon } from '@chakra-ui/icons'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 interface Props {
 	privateKey: string
 	inited: boolean
@@ -43,19 +43,21 @@ export default function BackupWallet({ isNewUser, exportWalletToGD, loading, ini
 				</Text>
 
 				<Textarea
-				readOnly
-				fontSize={[13, 15]}
-				w='100%'
-				mt={12}
-				textAlign='center'
-				fontWeight={1000}
-				style={{
-					textShadow: "0px 0px 3px rgba(0,0,0,0.5)",
-					color: "transparent"
-				}}
-				value={privateKey}
-			/>
-				
+					readOnly
+					fontSize={[13, 15]}
+					w='100%'
+					mt={12}
+					textAlign='center'
+					fontWeight={1000}
+					style={
+						{
+							textShadow: '0px 0px 3px rgba(0,0,0,0.5)',
+							color: 'transparent'
+						}
+					}
+					value={privateKey}
+				/>
+
 				<Flex
 					flexDirection='row'
 					gap={3}
@@ -74,7 +76,7 @@ export default function BackupWallet({ isNewUser, exportWalletToGD, loading, ini
 						marginTop={4}
 						isDisabled={loading || !inited}
 						onClick={
-							async () => {
+							async() => {
 								try {
 									await exportWalletToGD(new ethers.Wallet(privateKey))
 									toast({
@@ -83,7 +85,7 @@ export default function BackupWallet({ isNewUser, exportWalletToGD, loading, ini
 										duration: 3000,
 										isClosable: true,
 									})
-								} catch {
+								} catch{
 									toast({
 										title: 'google popup closed',
 										status: 'warning',
@@ -112,12 +114,12 @@ export default function BackupWallet({ isNewUser, exportWalletToGD, loading, ini
 						bg='gray.3'
 						height={10}
 						borderRadius='20'
-						leftIcon={<CopyIcon/>}
+						leftIcon={<CopyIcon />}
 
 						onClick={
 							() => {
 								const copied = copy(privateKey)
-								if (copied) {
+								if(copied) {
 									toast({
 										title: 'Copied to clipboard',
 										status: 'success',

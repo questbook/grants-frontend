@@ -1,39 +1,8 @@
 import { BigNumber, ethers } from 'ethers'
-import moment from 'moment'
-import applicantDetailsList from 'src/constants/applicantDetailsList'
 import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO, SupportedChainId } from 'src/constants/chains'
 import { ApplicationMilestone, GrantApplication } from 'src/generated/graphql'
 import { MONTH_MAP } from 'src/libraries/utils/constants'
 import { ChainInfo, CustomField } from 'src/types'
-
-export function timeToString(
-	timestamp: number,
-	type?: 'day_first' | 'month_first',
-	showYear?: boolean,
-) {
-	const date = new Date(timestamp)
-	const months = [
-		'January',
-		'February',
-		'March',
-		'April',
-		'May',
-		'June',
-		'July',
-		'August',
-		'September',
-		'October',
-		'November',
-		'December',
-	]
-	return type === 'day_first'
-		? `${date.getUTCDate().toString()} ${months[date.getMonth()].substring(
-			0,
-			3,
-		)}, ${date.getFullYear()}`
-		: `${months[date.getMonth()]} ${date.getUTCDate().toString()} ${showYear ? date.getFullYear() : ''
-		}`
-}
 
 export function parseAmount(number: string, contractAddress?: string, decimal?: number) {
 	if(decimal) {
@@ -119,8 +88,6 @@ function truncateTo(number: string, digits = 3) {
 		+ (containsSymbol ? number.charAt(number.length - 1) : '')
 }
 
-export const extractDate = (date: string) => date.substring(0, 10)
-
 export function formatAmount(number: string, decimals: number | undefined = 18, isEditable = false, isBig = false, returnTruncated = true) {
 	// no need to do any calcs
 	if(decimals === 0) {
@@ -143,74 +110,6 @@ export function formatAmount(number: string, decimals: number | undefined = 18, 
 	} else {
 		return truncateTo(value)
 	}
-}
-
-export function getFormattedDate(timestamp: number) {
-	const date = new Date(timestamp)
-	return moment(date).format('DD MMM YY')
-}
-
-export function getFormattedDateFromUnixTimestamp(timestamp: number) {
-	return moment.unix(timestamp).format('DD MMM')
-}
-
-export function getFormattedDateFromUnixTimestampWithYear(
-	timestamp: number | undefined,
-) {
-	return timestamp ? moment.unix(timestamp).format('MMM DD, YYYY') : undefined
-}
-
-export function getFormattedFullDateFromUnixTimestamp(timestamp: number) {
-	return moment.unix(timestamp).format('LL')
-}
-
-export function truncateStringFromMiddle(str: string) {
-	if(!str) {
-		return ''
-	}
-
-	if(str.length > 10) {
-		return `${str.substring(0, 4)}...${str.substring(
-			str.length - 4,
-			str.length,
-		)}`
-	}
-
-	return str
-}
-
-// extract milstone index from ID and generate title like "Milestone (index+1)"
-export function getMilestoneMetadata(milestone: Pick<ApplicationMilestone, 'id'>) {
-	if(milestone) {
-		const [applicationId, idx] = milestone.id.split('.')
-		return {
-			applicationId,
-			milestoneIndex: +idx,
-		}
-	}
-
-	return undefined
-}
-
-// extract milstone index from ID and generate title like "Milestone (index+1)"
-export function getMilestoneTitle(milestone: Pick<ApplicationMilestone, 'id'>) {
-	const item = getMilestoneMetadata(milestone)
-	if(typeof item !== 'undefined') {
-		return `Milestone ${item.milestoneIndex + 1}`
-	}
-
-	return 'Unknown Milestone'
-}
-
-export const getTextWithEllipses = (txt: string, maxLength = 7) => (txt?.length > maxLength ? `${txt.slice(0, maxLength)}...` : txt)
-
-export const getChainIdFromResponse = (networkString: string): string => networkString?.split('_')[1]
-
-// eslint-disable-next-line max-len
-export const getFieldLabelFromFieldTitle = (title: string) => applicantDetailsList.find((detail) => detail.id === title)?.title
-
-export const getExplorerUrlForAddress = (chainId: SupportedChainId | undefined, address: string) => {
-	return CHAIN_INFO[chainId!]?.explorer.address.replace('{{address}}', address) || ''
 }
 
 export const getExplorerUrlForTxHash = (chainId: SupportedChainId | undefined, tx: string | undefined) => {
@@ -248,10 +147,7 @@ export const getRewardAmount = (decimals: number | undefined, application: {
 	if(fundingAskField) {
 		return formatAmount(fundingAskField, decimals)
 	} else {
-		let sum = BigNumber.from(0)
-		application?.milestones?.forEach(
-			(milestone) => sum = sum.add(milestone.amount))
-		return formatAmount(sum.toString(), decimals)
+		return getRewardAmountMilestones(decimals, application)
 	}
 }
 

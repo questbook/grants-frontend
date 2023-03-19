@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
 import config from 'src/constants/config.json'
 import { ArrowLeft, Pencil, Qb, Settings, ShareForward } from 'src/generated/icons'
-import { QBAdminsContext } from 'src/hooks/QBAdminsContext'
+import { QBAdminsContext } from 'src/libraries/hooks/QBAdminsContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import AccountDetails from 'src/libraries/ui/NavBar/_components/AccountDetails'
@@ -280,9 +280,9 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 							pb={6}
 							direction='column'
 							align='center'>
-								<Box
+							<Box
 								h={6}
-								></Box>
+							 />
 							{
 								type === 'export' && (
 									<BackupWallet
