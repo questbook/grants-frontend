@@ -2,7 +2,7 @@ import { createContext, PropsWithChildren, ReactNode, useCallback, useEffect, us
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetGrantDetailsByIdQuery } from 'src/generated/graphql'
-import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
+import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
 import { RFPForm, RFPFormContextType, RFPFormType } from 'src/screens/request_proposal/_utils/types'
 

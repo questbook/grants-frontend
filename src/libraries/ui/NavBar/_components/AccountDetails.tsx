@@ -140,7 +140,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 													mt={4}>
 													{item.icon}
 													<Flex
-													flexDirection='column'
+														flexDirection='column'
 													>
 														<Text
 															ml={2}
@@ -158,10 +158,10 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 															{item.title}
 														</Text>
 														<Text
-														paddingLeft={2}
-														fontWeight={400}
-														fontSize='12px'
-														color='#8D8B87'
+															paddingLeft={2}
+															fontWeight={400}
+															fontSize='12px'
+															color='#8D8B87'
 														>
 															{item.description}
 														</Text>
@@ -207,13 +207,17 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 
 	const menuItems = [
 		{
-			icon: <Key boxSize='18px' color='#0A84FF' />,
+			icon: <Key
+				boxSize='18px'
+				color='#0A84FF' />,
 			title: t('account_details.menu.save_wallet'),
 			description : 'Save the private key for your wallet',
 			onClick: () => openModal?.('export')
 		},
 		{
-			icon: <AddUser boxSize='18px' color='#EF6436' />,
+			icon: <AddUser
+				boxSize='18px'
+				color='#EF6436' />,
 			title: t('account_details.menu.use_another_wallet'),
 			description: 'Use your another private key to sign in',
 			onClick: () => openModal?.('import')
@@ -234,8 +238,8 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 		})
 	}
 
-	if (!isConnected && !isConnecting) {
-		if (!openModal) {
+	if(!isConnected && !isConnecting) {
+		if(!openModal) {
 			return <Box />
 		}
 

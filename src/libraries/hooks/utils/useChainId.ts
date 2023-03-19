@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useNetwork } from 'src/hooks/gasless/useNetwork'
+import { useNetwork } from 'src/libraries/hooks/gasless/useNetwork'
 
 /**
  * Return the chain ID if supported by the app, otherwise return undefined

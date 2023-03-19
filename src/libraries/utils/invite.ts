@@ -4,11 +4,11 @@ import { WorkspaceMemberUpdate } from '@questbook/service-validator-client'
 import { base58 } from 'ethers/lib/utils'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetWorkspaceMemberExistsQuery } from 'src/generated/graphql'
-import useQBContract from 'src/hooks/contracts/useQBContract'
-import { useBiconomy } from 'src/hooks/gasless/useBiconomy'
-import { useNetwork } from 'src/hooks/gasless/useNetwork'
-import { useQuestbookAccount } from 'src/hooks/gasless/useQuestbookAccount'
-import useChainId from 'src/hooks/utils/useChainId'
+import { useBiconomy } from 'src/libraries/hooks/gasless/useBiconomy'
+import { useNetwork } from 'src/libraries/hooks/gasless/useNetwork'
+import { useQuestbookAccount } from 'src/libraries/hooks/gasless/useQuestbookAccount'
+import useQBContract from 'src/libraries/hooks/useQBContract'
+import useChainId from 'src/libraries/hooks/utils/useChainId'
 import { delay } from 'src/libraries/utils'
 import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/libraries/utils/gasless'
 import logger from 'src/libraries/utils/logger'
@@ -190,7 +190,6 @@ export const useMakeInvite = () => {
 type JoinInviteStep = 'ipfs-uploaded' | 'tx-signed' | 'tx-confirmed'
 
 export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemberUpdate) => {
-
 	const connectedChainId = useChainId()
 	const { network, switchNetwork } = useNetwork()
 

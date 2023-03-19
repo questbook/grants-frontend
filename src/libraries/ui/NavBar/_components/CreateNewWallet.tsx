@@ -47,32 +47,32 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
 						isNewUser={true}
 					/>
 
-				<Flex
-				alignItems='flex-start'
-				alignContent='flex-start'
-				border='1px'
-				borderColor='blackAlpha.100'
-				width='93%'
-				paddingBottom='3'
-				>
-					<Checkbox
-						marginTop={3}
-						marginLeft={-1}
-						color='black'
-						alignSelf='flex-start'
-						checked={isPrivateKeySaved}
-						paddingLeft={5}
-						onChange={() => setIsPrivateKeySaved(!isPrivateKeySaved)}
+					<Flex
+						alignItems='flex-start'
+						alignContent='flex-start'
+						border='1px'
+						borderColor='blackAlpha.100'
+						width='93%'
+						paddingBottom='3'
 					>
-						<Text
-							variant='subheading'
-							fontWeight='500'
-							marginLeft={2}
-							fontSize={['11', '15']}>
-							
-							I have saved my Questbook wallet private key.
-						</Text>
-					</Checkbox>
+						<Checkbox
+							marginTop={3}
+							marginLeft={-1}
+							color='black'
+							alignSelf='flex-start'
+							checked={isPrivateKeySaved}
+							paddingLeft={5}
+							onChange={() => setIsPrivateKeySaved(!isPrivateKeySaved)}
+						>
+							<Text
+								variant='subheading'
+								fontWeight='500'
+								marginLeft={2}
+								fontSize={['11', '15']}>
+
+								I have saved my Questbook wallet private key.
+							</Text>
+						</Checkbox>
 					</Flex>
 					<Button
 						marginTop={6}
@@ -82,7 +82,7 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
 						isDisabled={!isPrivateKeySaved}
 						width='30%'
 						bg='black.1'
-						_disabled={{bg: "gray.3", color: "black.100", textColor:'gray.5' }}
+						_disabled={{ bg: 'gray.3', color: 'black.100', textColor:'gray.5' }}
 						textColor='gray.100'
 						onClick={
 							() => {

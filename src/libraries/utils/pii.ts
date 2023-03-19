@@ -15,7 +15,7 @@ import {
 	useGetMemberPublicKeysQuery,
 } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
-import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
+import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
 import { uploadToIPFS } from 'src/libraries/utils/ipfs'
 import MAIN_LOGGER from 'src/libraries/utils/logger'
