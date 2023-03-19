@@ -13,7 +13,7 @@ import {
 	Textarea,
 	Tooltip,
 } from "@chakra-ui/react";
-import { motion, useAnimationControls} from "framer-motion";
+import { motion, useAnimationControls } from "framer-motion";
 import logger from "src/libraries/logger";
 import { getAvatar } from "src/libraries/utils";
 import { formatAddress, getFieldString } from "src/libraries/utils/formatting";
@@ -42,6 +42,7 @@ function Discussions() {
 			<Flex
 				px={5}
 				w="100%"
+				h='100%'
 				boxShadow="0px 2px 4px rgba(29, 25, 25, 0.1)"
 				bg="white"
 				direction="column"
@@ -67,6 +68,7 @@ function Discussions() {
 
 					{comments.map(renderComment)}
 					{proposalTags?.length > 0 && (
+					<motion.div animate={controls} initial={{opacity: 1, y: 0}} exit={{ opacity: 0, y: -50 }} transition={{duration: 0.5}}>
 						<Flex mt={4} w="100%">
 							<Image src="/v2/images/qb-discussion.svg" boxSize="36px" />
 							<Flex ml={4} direction="column">
@@ -77,6 +79,7 @@ function Discussions() {
 									{proposalTags?.map((tag, index) => {
 										return (
 											<QuickReplyButton
+												zIndex={10}
 												id={tag.id as 'accept' | 'reject' | 'resubmit' | 'feedback'}
 												key={index}
 												tag={tag}
@@ -85,16 +88,18 @@ function Discussions() {
 													if (selectedTag) {
 														setSelectedTag(undefined);
 														setText("");
+														controls.set({ y: -50, opacity: 0 })
 													} else {
 														setSelectedTag(tag.id);
 														setText(tag.commentString);
+														controls.start({ y: 0, opacity: 1 })
 													}
 												}}
-												isDisabled={
-													(selectedTag !== undefined &&
-														selectedTag !== tag.id) ||
-													(isCommentPrivate && !tag.isPrivate)
-												}
+												// isDisabled={
+												// 	(selectedTag !== undefined &&
+												// 		selectedTag !== tag.id) ||
+												// 	(isCommentPrivate && !tag.isPrivate)
+												// }
 												index={index}
 											/>
 										);
@@ -102,34 +107,33 @@ function Discussions() {
 								</Flex>
 							</Flex>
 						</Flex>
+					</motion.div>
 					)}
-					<Flex mt={4} w="100%">
-						<Image
-							borderRadius="3xl"
-							boxSize="36px"
-							src={
-								role === "builder" || role === "community"
-									? getAvatar(false, scwAddress?.toLowerCase())
-									: grant?.workspace?.members?.find(
-										(member) =>
-											member.actorId.toLowerCase() ===
-											scwAddress?.toLowerCase(),
-									)?.profilePictureIpfsHash
-										? getUrlForIPFSHash(
-											grant?.workspace?.members?.find(
-												(member) =>
-													member.actorId.toLowerCase() ===
-													scwAddress?.toLowerCase(),
-											)?.profilePictureIpfsHash ?? "",
-										)
-										: getAvatar(false, scwAddress?.toLowerCase())
-							}
-						/>
+					<motion.div animate={controls} initial={{ opacity: 0, y: -50 }} exit={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+						<Flex mt={4} w="100%">
+							<Image
+								borderRadius="3xl"
+								boxSize="36px"
+								src={
+									role === "builder" || role === "community"
+										? getAvatar(false, scwAddress?.toLowerCase())
+										: grant?.workspace?.members?.find(
+											(member) =>
+												member.actorId.toLowerCase() ===
+												scwAddress?.toLowerCase(),
+										)?.profilePictureIpfsHash
+											? getUrlForIPFSHash(
+												grant?.workspace?.members?.find(
+													(member) =>
+														member.actorId.toLowerCase() ===
+														scwAddress?.toLowerCase(),
+												)?.profilePictureIpfsHash ?? "",
+											)
+											: getAvatar(false, scwAddress?.toLowerCase())
+								}
+							/>
 
-						<Flex ml={4} direction="column" w="100%">
-							<motion.div initial={{ opacity: 0, y: 50 }}
-								animate={{ opacity: 1, y: 0 }}
-								transition={{ ease: 'easeInOut' }}>
+							<Flex ml={4} direction="column" w="100%">
 								{selectedTag !== undefined && <chakra.p>
 									<Button
 										position={"relative"}
@@ -211,9 +215,9 @@ function Discussions() {
 										Post
 									</Button>
 								</Flex>
-							</motion.div>
+							</Flex>
 						</Flex>
-					</Flex>
+					</motion.div>
 					{comments.length > 0 && <Box my={4} />}
 				</motion.div>
 			</Flex>
@@ -316,10 +320,6 @@ function Discussions() {
 			</Flex>
 		);
 	};
-
-	const renderTag = () => {
-
-	}
 
 	const ref = useRef<HTMLTextAreaElement>(null);
 

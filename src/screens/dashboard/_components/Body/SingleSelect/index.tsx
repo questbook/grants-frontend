@@ -8,8 +8,7 @@ function SingleSelect() {
 		<Flex
 			direction='column'
 			overflowY='auto'
-			w='100%'
-			h='100%'>
+			w='100%'>
 			<Proposal />
 			{
 				isMobile[0] && (
