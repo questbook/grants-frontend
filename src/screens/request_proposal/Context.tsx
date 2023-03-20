@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren, ReactNode, useCallback, useEffect, useState } from 'react'
+import { createContext, ReactNode, useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetGrantDetailsByIdQuery } from 'src/generated/graphql'

@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetWorkspaceDetailsQuery, useGetWorkspaceMembersByWorkspaceIdQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'

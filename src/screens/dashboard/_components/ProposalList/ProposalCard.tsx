@@ -1,14 +1,13 @@
 import { useContext } from 'react'
-import { Checkbox, Flex, FlexProps, forwardRef, Image, Text, Tooltip } from '@chakra-ui/react'
+import { Checkbox, Flex, FlexProps, forwardRef, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { CheckDouble, Close, Resubmit } from 'src/generated/icons'
 import { getAvatar } from 'src/libraries/utils'
-import { getFieldString, titleCase } from 'src/libraries/utils/formatting'
+import { getFieldString } from 'src/libraries/utils/formatting'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import StateTag from 'src/screens/dashboard/_components/StateTag'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import StateTag from '../StateTag'
 
 type Props = {
 	proposal: ProposalType
@@ -88,7 +87,10 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 				</Text>
 				{
 					(proposal?.state !== 'submitted') && (
-						<StateTag state={proposal?.state} isSelected={selectedProposals.has(proposal.id)} where='proposal-card' />
+						<StateTag
+							state={proposal?.state}
+							isSelected={selectedProposals.has(proposal.id)}
+							where='proposal-card' />
 					)
 				}
 			</Flex>

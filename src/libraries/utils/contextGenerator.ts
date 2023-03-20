@@ -1,4 +1,4 @@
-import { createContext, createElement, PropsWithChildren, ReactNode } from 'react'
+import { createContext, createElement, ReactNode } from 'react'
 
 /**
  * Makes a context for a store and a component to provide the store
