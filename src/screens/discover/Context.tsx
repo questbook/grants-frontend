@@ -262,18 +262,22 @@ const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 			}
 		}
 
+		logger.info({ allSectionGrants }, 'All section grants (DISCOVER CONTEXT)')
+
 		// move section grant with key compound to 0th position
 		for(let i = 0; i < allSectionGrants.length; i++) {
 			const key = Object.keys(allSectionGrants[i])[0]
+			logger.info({ key, cond1: key === 'Compound', cond2: key === 'TON Foundation' }, 'Key (DISCOVER CONTEXT)')
 			if(key === 'Compound') {
 				const temp = allSectionGrants[0]
 				allSectionGrants[0] = allSectionGrants[i]
 				allSectionGrants[i] = temp
-				break
+			} else if(key === 'TON Foundation') {
+				const temp = allSectionGrants[1]
+				allSectionGrants[1] = allSectionGrants[i]
+				allSectionGrants[i] = temp
 			}
 		}
-
-		logger.info({ allSectionGrants }, 'All section grants (DISCOVER CONTEXT)')
 
 		setSectionGrants(allSectionGrants)
 	}
