@@ -1,7 +1,5 @@
 import { Metamask, Phantom, WalletConnect } from 'src/generated/icons'
 
-export const TXN_STEPS = ['Initiate transaction', 'Complete indexing', 'Complete transaction']
-
 export const MONTH_MAP: {[key: string]: string} = {
 	'01': 'Jan',
 	'02': 'Feb',

@@ -2,7 +2,7 @@ import { createContext, PropsWithChildren, ReactNode, useCallback, useEffect, us
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetGrantDetailsByIdQuery } from 'src/generated/graphql'
-import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
+import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
 import { RFPForm, RFPFormContextType, RFPFormType } from 'src/screens/request_proposal/_utils/types'
 
@@ -19,7 +19,9 @@ const RFPFormProvider = ({ children }: {children: ReactNode}) => {
 					grantId,
 					setGrantId,
 					workspaceId,
-					chainId
+					chainId,
+					executionType,
+					setExecutionType,
 				}
 			}>
 			{children}
@@ -28,6 +30,7 @@ const RFPFormProvider = ({ children }: {children: ReactNode}) => {
 
 	const [RFPData, setRFPData] = useState<RFPForm>()
 	const [type, setType] = useState<RFPFormType>('submit')
+	const [executionType, setExecutionType] = useState<RFPFormType>()
 	const [grantId, setGrantId] = useState<string>('')
 
 	const router = useRouter()
@@ -56,9 +59,13 @@ const RFPFormProvider = ({ children }: {children: ReactNode}) => {
 
 	useEffect(() => {
 		logger.info({ grantId, chainId }, 'RFP form edit')
-		if(grantId) {
+		if(executionType !== undefined) {
+			return
+		}
+
+		if(grantId && chainId) {
 			setType('edit')
-		} else if(!grantId) {
+		} else if(!grantId || !chainId) {
 			setType('submit')
 		}
 	}, [grantId, chainId])

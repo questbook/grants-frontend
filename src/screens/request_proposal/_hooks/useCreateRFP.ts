@@ -21,7 +21,7 @@ import {
 import { uploadToIPFS } from 'src/libraries/utils/ipfs'
 import logger from 'src/libraries/utils/logger'
 import { getSupportedValidatorNetworkFromChainId } from 'src/libraries/utils/validations'
-import { validateAndUploadToIpfs, validateRequest } from 'src/libraries/validator'
+import { validateRequest } from 'src/libraries/validator'
 import { WebwalletContext } from 'src/pages/_app'
 import { GrantFields } from 'src/screens/request_proposal/_utils/types'
 import { RFPFormContext } from 'src/screens/request_proposal/Context'
@@ -31,7 +31,7 @@ export default function useCreateRFP() {
 	const [currentStep, setCurrentStep] = useState<number | undefined>()
 	const [transactionHash, setTransactionHash] = useState<string>()
 
-	const { rfpData, grantId, setGrantId, chainId } = useContext(RFPFormContext)!
+	const { rfpData, grantId, setGrantId, chainId, setExecutionType } = useContext(RFPFormContext)!
 
 	const {
 		call: workspaceCreateCall,
@@ -64,10 +64,10 @@ export default function useCreateRFP() {
 
 	const toast = useCustomToast()
 
-	const createRFP = async () => {
+	const createRFP = async() => {
 		try {
-			if (!isBiconomyInitialised) {
-				throw new Error("Biconomy is not initialised")
+			if(!isBiconomyInitialised) {
+				throw new Error('Biconomy is not initialised')
 			}
 
 			logger.info({ rfpData }, 'rfpData')
@@ -85,7 +85,7 @@ export default function useCreateRFP() {
 			}
 
 			let fileIPFSHash = ''
-			if (rfpData?.doc) {
+			if(rfpData?.doc) {
 				const fileCID = await uploadToIPFS(rfpData?.doc!)
 				logger.info('fileCID', fileCID)
 				fileIPFSHash = fileCID.hash
@@ -121,7 +121,7 @@ export default function useCreateRFP() {
 				grantManagers: [scwAddress!],
 			}
 
-			if (rfpData?.reviewMechanism) {
+			if(rfpData?.reviewMechanism) {
 				data['reviewType'] = rfpData?.reviewMechanism
 			}
 
@@ -135,13 +135,13 @@ export default function useCreateRFP() {
 			// 1. Validate workspace create, grant create and rubric data
 			await validateRequest('WorkspaceCreateRequest', workspaceCreateData)
 			await validateRequest('GrantCreateRequest', data)
-			if (rfpData?.reviewMechanism !== '') {
+			if(rfpData?.reviewMechanism !== '') {
 				await validateRequest('RubricSetRequest', rubricData)
 			}
 
 			// 2. Upload the workspace data to IPFS
-			const {hash: workspaceCreateIpfsHash} = await uploadToIPFS(JSON.stringify(workspaceCreateData))
-			if (!workspaceCreateIpfsHash) {
+			const { hash: workspaceCreateIpfsHash } = await uploadToIPFS(JSON.stringify(workspaceCreateData))
+			if(!workspaceCreateIpfsHash) {
 				throw new Error('Error uploading workspace create data')
 			}
 
@@ -155,7 +155,7 @@ export default function useCreateRFP() {
 				shouldWaitForBlock: false,
 				showToast: false,
 			})
-			if (!workspaceCreateReceipt) {
+			if(!workspaceCreateReceipt) {
 				throw new Error('Error creating workspace')
 			}
 
@@ -166,22 +166,23 @@ export default function useCreateRFP() {
 				WorkspaceRegistryAbi,
 			)
 
-			if (!event) {
+			if(!event) {
 				throw new Error('Error getting workspace id')
 			}
 
 			// 5. Get the workspace id
 			const workspaceId = Number(event.args[0].toBigInt())
 			logger.info('workspace_id', workspaceId)
-			if (!workspaceId) {
+			if(!workspaceId) {
 				throw new Error('Workspace ID not found')
 			}
+
 			data.workspaceId = workspaceId.toString()
 
 			// 6. Upload the grant data to IPFS
-			const{ hash: grantCreateIPFSHash} = await uploadToIPFS(JSON.stringify(data))
+			const { hash: grantCreateIPFSHash } = await uploadToIPFS(JSON.stringify(data))
 
-			let rubricHash = rfpData?.reviewMechanism !== '' ? (await uploadToIPFS(JSON.stringify(rubricData))).hash : ''
+			const rubricHash = rfpData?.reviewMechanism !== '' ? (await uploadToIPFS(JSON.stringify(rubricData))).hash : ''
 			logger.info('rubric hash', rubricHash)
 
 			// 7. Create the grant
@@ -199,7 +200,7 @@ export default function useCreateRFP() {
 				args: methodArgs,
 			})
 
-			if (!grantCreateReceipt) {
+			if(!grantCreateReceipt) {
 				throw new Error('Error creating grant')
 			}
 
@@ -211,12 +212,13 @@ export default function useCreateRFP() {
 				GrantFactoryAbi,
 			)
 			logger.info('grantEvent', grantEvent)
-			if (grantEvent) {
+			setExecutionType('submit')
+			if(grantEvent) {
 				const grantId = grantEvent.args[0].toString().toLowerCase()
 				setGrantId(grantId)
 			}
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} catch (e: any) {
+		} catch(e: any) {
 			const message = getErrorMessage(e)
 			logger.info('error', message)
 			toast({

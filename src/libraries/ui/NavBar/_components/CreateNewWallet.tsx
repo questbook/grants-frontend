@@ -19,7 +19,9 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
 	const [newWallet, setNewWallet] = useState<ethers.Wallet>(ethers.Wallet.createRandom())
 	const buildComponent = () => {
 		return (
-			<ModalBody>
+			<ModalBody
+			// w='100%'
+			>
 				<Flex
 					pb={6}
 					direction='column'
@@ -29,6 +31,7 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
 						textColor='black'
 						// variant='linkV2'
 						ml={-5}
+						marginBottom={-2}
 						alignSelf='flex-start'
 						leftIcon={<BsArrowLeft />}
 						onClick={() => setSignInMethod('choosing')}
@@ -44,30 +47,42 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
 						isNewUser={true}
 					/>
 
-
-					<Checkbox
-						marginTop={4}
-						alignSelf='flex-start'
-						checked={isPrivateKeySaved}
-						paddingLeft={5}
-						onChange={() => setIsPrivateKeySaved(!isPrivateKeySaved)}
+					<Flex
+						alignItems='flex-start'
+						alignContent='flex-start'
+						border='1px'
+						borderColor='blackAlpha.100'
+						width='93%'
+						paddingBottom='3'
 					>
-						<Text
-							variant='v2_subheading'
-							fontWeight='500'
-							fontSize={['11', '14']}>
-							
-							I have saved my Questbook wallet private key.
-						</Text>
-					</Checkbox>
+						<Checkbox
+							marginTop={3}
+							marginLeft={-1}
+							color='black'
+							alignSelf='flex-start'
+							checked={isPrivateKeySaved}
+							paddingLeft={5}
+							onChange={() => setIsPrivateKeySaved(!isPrivateKeySaved)}
+						>
+							<Text
+								variant='subheading'
+								fontWeight='500'
+								marginLeft={2}
+								fontSize={['11', '15']}>
+
+								I have saved my Questbook wallet private key.
+							</Text>
+						</Checkbox>
+					</Flex>
 					<Button
 						marginTop={6}
 						//  variant='primaryMedium'
+						borderRadius='0px'
 						_hover={{ bg:'gray.500' }}
 						isDisabled={!isPrivateKeySaved}
 						width='30%'
-						bg='black.100'
-						_disabled={{bg: "gray.3", color: "black.100", textColor:'gray.500' }}
+						bg='black.1'
+						_disabled={{ bg: 'gray.3', color: 'black.100', textColor:'gray.5' }}
 						textColor='gray.100'
 						onClick={
 							() => {

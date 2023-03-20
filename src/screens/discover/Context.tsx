@@ -3,7 +3,7 @@ import { createContext, PropsWithChildren, ReactNode, useContext, useEffect, use
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetAllGrantsForMemberQuery, useGetAllGrantsQuery, useGetGrantProgramDetailsQuery, useGetSectionGrantsQuery, useGetWorkspacesAndBuilderGrantsQuery } from 'src/generated/graphql'
-import { useMultiChainQuery } from 'src/hooks/useMultiChainQuery'
+import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
@@ -262,18 +262,22 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 			}
 		}
 
+		logger.info({ allSectionGrants }, 'All section grants (DISCOVER CONTEXT)')
+
 		// move section grant with key compound to 0th position
 		for(let i = 0; i < allSectionGrants.length; i++) {
 			const key = Object.keys(allSectionGrants[i])[0]
+			logger.info({ key, cond1: key === 'Compound', cond2: key === 'TON Foundation' }, 'Key (DISCOVER CONTEXT)')
 			if(key === 'Compound') {
 				const temp = allSectionGrants[0]
 				allSectionGrants[0] = allSectionGrants[i]
 				allSectionGrants[i] = temp
-				break
+			} else if(key === 'TON Foundation') {
+				const temp = allSectionGrants[1]
+				allSectionGrants[1] = allSectionGrants[i]
+				allSectionGrants[i] = temp
 			}
 		}
-
-		logger.info({ allSectionGrants }, 'All section grants (DISCOVER CONTEXT)')
 
 		setSectionGrants(allSectionGrants)
 	}
