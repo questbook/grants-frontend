@@ -9,6 +9,8 @@ export type RFPFormContextType = {
     setGrantId: (id: string) => void
     workspaceId: string
     chainId: SupportedChainId
+    executionType: RFPFormType | undefined
+    setExecutionType: (type: RFPFormType | undefined) => void
 }
 
 export type RFPForm = {

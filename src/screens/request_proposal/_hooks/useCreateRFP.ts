@@ -31,7 +31,7 @@ export default function useCreateRFP() {
 	const [currentStep, setCurrentStep] = useState<number | undefined>()
 	const [transactionHash, setTransactionHash] = useState<string>()
 
-	const { rfpData, grantId, setGrantId, chainId } = useContext(RFPFormContext)!
+	const { rfpData, grantId, setGrantId, chainId, setExecutionType } = useContext(RFPFormContext)!
 
 	const {
 		call: workspaceCreateCall,
@@ -212,6 +212,7 @@ export default function useCreateRFP() {
 				GrantFactoryAbi,
 			)
 			logger.info('grantEvent', grantEvent)
+			setExecutionType('submit')
 			if(grantEvent) {
 				const grantId = grantEvent.args[0].toString().toLowerCase()
 				setGrantId(grantId)

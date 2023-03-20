@@ -19,7 +19,9 @@ const RFPFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 					grantId,
 					setGrantId,
 					workspaceId,
-					chainId
+					chainId,
+					executionType,
+					setExecutionType,
 				}
 			}>
 			{children}
@@ -28,6 +30,7 @@ const RFPFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 	const [RFPData, setRFPData] = useState<RFPForm>()
 	const [type, setType] = useState<RFPFormType>('submit')
+	const [executionType, setExecutionType] = useState<RFPFormType>()
 	const [grantId, setGrantId] = useState<string>('')
 
 	const router = useRouter()
@@ -56,9 +59,13 @@ const RFPFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 
 	useEffect(() => {
 		logger.info({ grantId, chainId }, 'RFP form edit')
-		if(grantId) {
+		if(executionType !== undefined) {
+			return
+		}
+
+		if(grantId && chainId) {
 			setType('edit')
-		} else if(!grantId) {
+		} else if(!grantId || !chainId) {
 			setType('submit')
 		}
 	}, [grantId, chainId])
