@@ -76,7 +76,7 @@ function MultiSelect() {
 	const { role } = useContext(GrantsProgramContext)!
 	const { setIsDrawerOpen } = useContext(FundBuilderContext)!
 	const { setIsSendAnUpdateModalOpen } = useContext(ModalContext)!
-	const { safeObj } = useSafeContext()
+	const { safeObj } = useSafeContext()!
 	const customToast = useCustomToast()
 
 	return buildComponent()

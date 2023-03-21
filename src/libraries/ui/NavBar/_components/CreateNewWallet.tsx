@@ -16,7 +16,7 @@ interface Props {
 function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWalletToGD, importWebwallet }: Props) {
 	const toast = useCustomToast()
 	const [isPrivateKeySaved, setIsPrivateKeySaved] = useState<boolean>(false)
-	const [newWallet, setNewWallet] = useState<ethers.Wallet>(ethers.Wallet.createRandom())
+	const [newWallet, setNewWallet] = useState<ethers.Wallet>()
 	const buildComponent = () => {
 		return (
 			<ModalBody
@@ -43,7 +43,7 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
 						loading={loading}
 						inited={inited}
 						exportWalletToGD={exportWalletToGD}
-						privateKey={newWallet.privateKey}
+						privateKey={newWallet?.privateKey}
 						isNewUser={true}
 					/>
 
@@ -87,6 +87,8 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
 						onClick={
 							() => {
 								try {
+									const newWallet = ethers.Wallet.createRandom()
+									setNewWallet(newWallet)
 									importWebwallet(newWallet.privateKey)
 									setSignIn(false)
 								} catch{

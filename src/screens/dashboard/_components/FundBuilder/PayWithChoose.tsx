@@ -1,14 +1,15 @@
 /* eslint-disable indent */
 import { useContext, useEffect, useState } from 'react'
-import { Button, Flex, Image, Text } from '@chakra-ui/react'
+import { Flex, Image, Text } from '@chakra-ui/react'
+import { TokenDetailsInterface } from '@questbook/supported-safes/lib/types/Safe'
+import { GroupBase, OptionProps, SingleValueProps } from 'chakra-react-select'
 import { useSafeContext } from 'src/contexts/safeContext'
 import logger from 'src/libraries/logger'
 import DropdownSelect from 'src/libraries/ui/LinkYourMultisigModal/DropdownSelect'
-import { TokenInfo } from 'src/screens/dashboard/_utils/types'
 import { FundBuilderContext } from 'src/screens/dashboard/Context'
 
-type DropdownItem = TokenInfo & { index: number }
-function PayWithChoose({ selectedMode }: { selectedMode: any}) {
+type DropdownItem = TokenDetailsInterface & { index: number }
+function PayWithChoose({ selectedMode }: { selectedMode: {logo: string | undefined, value: string | undefined} | undefined}) {
 	const buildComponent = () => {
 		return (
 			<Flex
@@ -22,7 +23,7 @@ function PayWithChoose({ selectedMode }: { selectedMode: any}) {
 				</Text>
 				<Text>
 					{
-						!safeObj && selectedMode.value === 'TON Wallet' ? 'TON'
+						!safeObj && selectedMode?.value === 'TON Wallet' ? 'TON'
 							: tokenList ? (tokenList.length ? dropdown() : 'No tokens in the safe') : 'Fetching...'
 					}
 				</Text>
@@ -34,7 +35,7 @@ function PayWithChoose({ selectedMode }: { selectedMode: any}) {
 		return (
 			<>
 				{
-					selectedMode.value === 'TON Wallet' ? (
+					selectedMode?.value === 'TON Wallet' ? (
 						<>
 							<Text>
 								TON
@@ -44,7 +45,7 @@ function PayWithChoose({ selectedMode }: { selectedMode: any}) {
 						<>
 							<DropdownSelect
 									options={
-										(tokenList ?? []).map((token: TokenInfo, index: number) => {
+										(tokenList ?? []).map((token: TokenDetailsInterface, index: number) => {
 											const ret = {
 												index,
 												...token
@@ -90,49 +91,59 @@ function PayWithChoose({ selectedMode }: { selectedMode: any}) {
 		)
 	}
 
-	const makeOption = ({ innerProps, data }: any) => (
-		<Button
+	function makeOption<T extends object>({ innerProps, data }: OptionProps<T, false, GroupBase<T>>) {
+		if(!('tokenName' in data) || !('tokenIcon' in data) || (typeof data.tokenName !== 'string') || (typeof data.tokenIcon !== 'string')) {
+			return <Flex />
+		}
+
+		return (
+			<Flex
 			{...innerProps}
-			variant='link'
 			w='100%'
-			leftIcon={
+			>
 				<Image
 					boxSize='16px'
 					src={data.tokenIcon}
 					fallbackSrc={data.tokenName.includes('DAI') ? '/chain_assets/dai.svg' : '/chain_assets/eth.svg'}
 				/>
-			}>
-			<Text
+				<Text
 				ml={2}
 				variant='body'
 			>
-				{data.tokenName}
-			</Text>
-		</Button>
-	)
+					{data.tokenName}
+				</Text>
+			</Flex>
+		)
+	}
 
-	const singleValue = ({ innerProps, data }: any) => (
-		<Flex
+	function singleValue<T extends object>({ innerProps, data }: SingleValueProps<T, false, GroupBase<T>>) {
+		if(!('tokenName' in data) || !('tokenIcon' in data) || (typeof data.tokenName !== 'string') || (typeof data.tokenIcon !== 'string')) {
+			return <Flex />
+		}
+
+		return (
+			<Flex
 			{...innerProps}
 			display='inline-flex'
 			alignItems='center'
 			p={0}
 			m={0}
 		>
-			<Image
+				<Image
 				src={data.tokenIcon}
 				fallbackSrc={data.tokenName.includes('DAI') ? '/chain_assets/dai.svg' : '/chain_assets/eth.svg'}
 				boxSize='16px' />
-			<Text
+				<Text
 				ml={2}
 				variant='body'
 			>
-				{data.tokenName}
-			</Text>
-		</Flex>
-	)
+					{data.tokenName}
+				</Text>
+			</Flex>
+		)
+	}
 
-	const { safeObj } = useSafeContext()
+	const { safeObj } = useSafeContext()!
 	const { tokenList, setTokenList, selectedTokenInfo, setSelectedTokenInfo } = useContext(FundBuilderContext)!
 	const [selectedTokenIndex, setSelectedTokenIndex] = useState<number>(selectedTokenInfo ? tokenList?.map((v) => v.tokenName).indexOf(selectedTokenInfo.tokenName)! : 0)
 
@@ -141,7 +152,7 @@ function PayWithChoose({ selectedMode }: { selectedMode: any}) {
 			return
 		}
 
-		safeObj?.getTokenAndbalance().then((list: {value: TokenInfo[], error: string}) => {
+		safeObj?.getTokenAndbalance().then((list: {value?: TokenDetailsInterface[] | undefined, error?: string}) => {
 			if(list?.value) {
 			setTokenList(list?.value)
 			if(list?.value?.length && !selectedTokenInfo) {

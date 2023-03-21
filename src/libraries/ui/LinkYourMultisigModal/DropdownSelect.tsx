@@ -1,18 +1,18 @@
 import { ReactNode } from 'react'
-import { Box, Text } from '@chakra-ui/react'
-import { PlaceholderProps, Select, SelectComponentsConfig } from 'chakra-react-select'
+import { Box, BoxProps, Flex, Text } from '@chakra-ui/react'
+import { ControlProps, GroupBase, PlaceholderProps, Select, SelectComponentsConfig, SingleValueProps } from 'chakra-react-select'
 import { Dropdown } from 'src/generated/icons'
 
-type DropdownSelectProps<T> = {
+type DropdownSelectProps<T extends object> = {
 	options: T[]
 	placeholder?: ReactNode
-	makeOption: SelectComponentsConfig<T, any, any>['Option']
-	singleValue?: SelectComponentsConfig<T, any, any>['SingleValue']
+	makeOption: SelectComponentsConfig<T, false, GroupBase<T>>['Option']
+	singleValue?: SelectComponentsConfig<T, false, GroupBase<T>>['SingleValue']
 	selected: T | undefined
 	setSelected: (role: T | undefined) => void
 }
 
-export default function DropdownSelect<T>({ options, placeholder, makeOption, singleValue, selected, setSelected }: DropdownSelectProps<T>) {
+export default function DropdownSelect<T extends object>({ options, placeholder, makeOption, singleValue, selected, setSelected }: DropdownSelectProps<T>) {
 	return (
 		<Select<T>
 			options={options}
@@ -66,7 +66,7 @@ export default function DropdownSelect<T>({ options, placeholder, makeOption, si
 	)
 }
 
-const DropdownIndicator = ({ innerProps }: any) => (
+const DropdownIndicator = ({ innerProps }: {innerProps: BoxProps}) => (
 	<Box
 		{...innerProps}
 		px={2}>
@@ -79,23 +79,31 @@ const DropdownIndicator = ({ innerProps }: any) => (
 	</Box>
 )
 
-const SingleValue = ({ innerProps, data }: any) => (
-	<Box
-		{...innerProps}
-		display='inline-flex'
-		alignItems='center'
-		p={0}
-		m={0}
-	>
-		{data.icon}
-		<Text
-			ml={2}>
-			{data.label}
-		</Text>
-	</Box>
-)
+function SingleValue<T extends object>({ innerProps, data }: SingleValueProps<T, false, GroupBase<T>>) {
+	if(!('icon' in data) || !('label' in data) || (typeof data.label !== 'string')) {
+		return <Flex />
+	}
 
-const Control = ({ innerProps, isFocused, ...rest }: any) => {
+	return (
+		<Box
+			{...innerProps}
+			display='inline-flex'
+			alignItems='center'
+			p={0}
+			m={0}
+		>
+			<>
+				{data.icon}
+				<Text
+					ml={2}>
+					{data.label}
+				</Text>
+			</>
+		</Box>
+	)
+}
+
+function Control<T>({ innerProps, isFocused, ...rest }: ControlProps<T, false, GroupBase<T>>) {
 	return (
 		<Box
 			{...innerProps}

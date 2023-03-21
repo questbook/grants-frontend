@@ -1,6 +1,6 @@
 import { Flex, Image, Text } from '@chakra-ui/react'
 
-function PayFromChoose({ selectedMode }: { selectedMode: any}) {
+function PayFromChoose({ selectedMode }: { selectedMode: {logo: string | undefined, value: string | undefined} | undefined}) {
 	const buildComponent = () => {
 		return (
 			<Flex

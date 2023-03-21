@@ -82,7 +82,7 @@ const TransactionInitiated = ({ safeProposalLink }: Props) => {
 		</Flex>
 	)
 
-	const { safeObj } = useSafeContext()
+	const { safeObj } = useSafeContext()!
 
 	return buildComponent()
 }

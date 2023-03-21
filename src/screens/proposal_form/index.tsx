@@ -336,7 +336,7 @@ function ProposalForm() {
 										}
 									}
 									isInvalid={walletAddressError}
-									errorText={`Invalid address on ${chainNames?.get(safeObj?.chainId.toString()) !== undefined ? chainNames.get(safeObj?.chainId.toString())!.toString() : 'EVM based chain'}`} />
+									errorText={`Invalid address on ${chainNames?.get(safeObj?.chainId?.toString() ?? '') !== undefined ? chainNames.get(safeObj?.chainId?.toString() ?? '')?.toString() : 'EVM based chain'}`} />
 							)
 						}
 
@@ -562,7 +562,7 @@ function ProposalForm() {
 	const { type, grant, chainId, form, setForm, error } = useContext(ProposalFormContext)!
 	// console.log('grant', grant)
 	// console.log('proposal', proposal)
-	const { safeObj } = useSafeContext()
+	const { safeObj } = useSafeContext()!
 	const isEvm = safeObj?.getIsEvm()
 
 	const router = useRouter()

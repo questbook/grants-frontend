@@ -108,7 +108,7 @@ function FundBuilderModal() {
 												border='1px solid #E7E4DD'>
 												<PayFromChoose
 													selectedMode={selectedMode} />
-												<PayWithChoose selectedMode={selectedMode} />
+												<PayWithChoose selectedMode={selectedMode!} />
 												<ToChoose
 													type='single'
 													proposal={proposal}
@@ -193,7 +193,7 @@ function FundBuilderModal() {
 		)
 	}
 
-	const { safeObj } = useSafeContext()
+	const { safeObj } = useSafeContext()!
 	const { grant } = useContext(GrantsProgramContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 	const {
@@ -211,7 +211,7 @@ function FundBuilderModal() {
 	} = useContext(FundBuilderContext)!
 	const { phantomWallet } = usePhantomWallet()
 	const [safeProposalLink, setSafeProposalLink] = useState<string | undefined>(undefined)
-	const [selectedMode, setSelectedMode] = useState<any>()
+	const [selectedMode, setSelectedMode] = useState<{logo: string | undefined, value: string | undefined}>()
 	const [payoutInProcess, setPayoutInProcess] = useState(false)
 
 	const customToast = useCustomToast()
@@ -231,7 +231,7 @@ function FundBuilderModal() {
 	})
 
 	useEffect(() => {
-		setSelectedMode(safeObj ? Safe : Wallets[0])
+		setSelectedMode(safeObj !== undefined ? Safe : Wallets[0])
 	}, [safeObj])
 
 	const proposal = useMemo(() => {
@@ -271,7 +271,7 @@ function FundBuilderModal() {
 
 			const tonWallet = new SupportedPayouts().getWallet('TON Wallet')
 			tonWallet.checkTonReady(window)
-			tonWallet.sendMoney(tos[0], amounts[0], (response: any) => {
+			tonWallet.sendMoney(tos[0], amounts[0], true, (response: any) => {
 				logger.info('TON response', response)
 				setPayoutInProcess(false)
 				if(response?.error) {
@@ -339,7 +339,7 @@ function FundBuilderModal() {
 			}]
 
 			let proposaladdress: any = ''
-			if(safeObj.getIsEvm()) {
+			if(safeObj?.getIsEvm()) {
 				proposaladdress = await safeObj?.proposeTransactions(JSON.stringify({ workspaceId: grant?.workspace?.id, grantAddress: grant?.id }), temp, '')
 				if(proposaladdress?.error) {
 					customToast({
@@ -352,7 +352,7 @@ function FundBuilderModal() {
 				}
 
 				// setSafeProposalAddress(proposaladdress as string)
-				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress, safeObj?.chainId, proposaladdress as string))
+				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress ?? '', safeObj?.chainId?.toString(), proposaladdress as string))
 			} else {
 				proposaladdress = await safeObj?.proposeTransactions(JSON.stringify({ workspaceId: grant?.workspace?.id, grantAddress: grant?.id }), temp, phantomWallet)
 				if(proposaladdress?.error) {
@@ -366,7 +366,7 @@ function FundBuilderModal() {
 				}
 
 				// setSafeProposalAddress(proposaladdress as string)
-				setSafeProposalLink(getProposalUrl(safeObj.safeAddress, proposaladdress as string))
+				setSafeProposalLink(getProposalUrl(safeObj?.safeAddress ?? '', proposaladdress as string))
 			}
 
 			const methodArgs = [

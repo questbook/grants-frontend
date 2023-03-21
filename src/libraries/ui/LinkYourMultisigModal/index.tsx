@@ -107,7 +107,7 @@ function LinkYourMultisigModal({
 							async() => {
 								if(isOwner && selectedSafeNetwork) {
 								// link the safe
-									await link(multiSigAddress, selectedSafeNetwork.networkId)
+									await link(multiSigAddress, selectedSafeNetwork.networkId?.toString())
 									onClose()
 								} else {
 									setIsVerifySignerModalOpen(true)

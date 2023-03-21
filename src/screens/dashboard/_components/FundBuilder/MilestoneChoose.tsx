@@ -1,5 +1,6 @@
 import { useContext, useMemo } from 'react'
 import { Flex, FlexProps, Text } from '@chakra-ui/react'
+import { GroupBase, OptionProps, SingleValueProps } from 'chakra-react-select'
 import logger from 'src/libraries/logger'
 import DropdownSelect from 'src/libraries/ui/LinkYourMultisigModal/DropdownSelect'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
@@ -64,31 +65,41 @@ function MilestoneChoose({ proposal, index, ...props }: Props) {
 		)
 	}
 
-	const milestoneItem = ({ innerProps, data }: any) => (
-		<Flex
-			{...innerProps}
-			direction='column'
-			cursor='pointer'
-			minWidth='max-content'
-			p={2}
-		>
-			<Text
-				color='gray.400'
-				variant='heading3'
-				fontWeight='500'>
-				{data.index < 9 ? `0${data.index + 1}` : (data.index + 1)}
-			</Text>
-			<Text
-				mt={1}
-				variant='body'
-			>
-				{data?.title}
-			</Text>
-		</Flex>
-	)
+	function milestoneItem<T extends object>({ innerProps, data }: OptionProps<T, false, GroupBase<T>>) {
+		if(!('index' in data) || (typeof data.index !== 'number') || !('title' in data) || (typeof data.title !== 'string')) {
+			return <Flex />
+		}
 
-	const singleValue = ({ innerProps, data }: any) => {
+		return (
+			<Flex
+				{...innerProps}
+				direction='column'
+				cursor='pointer'
+				minWidth='max-content'
+				p={2}
+			>
+				<Text
+					color='gray.400'
+					variant='heading3'
+					fontWeight='500'>
+					{data.index < 9 ? `0${data.index + 1}` : (data.index + 1)}
+				</Text>
+				<Text
+					mt={1}
+					variant='body'
+				>
+					{data?.title}
+				</Text>
+			</Flex>
+		)
+	}
+
+	function singleValue<T extends object>({ innerProps, data }: SingleValueProps<T, false, GroupBase<T>>) {
 		logger.info({ data }, 'Single Value')
+		if(!('index' in data) || (typeof data.index !== 'number')) {
+			return <Flex />
+		}
+
 		return (
 			<Text
 				{...innerProps}

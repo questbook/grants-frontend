@@ -1,9 +1,9 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { Box, Flex, FlexProps, Image, Link, Text } from '@chakra-ui/react'
-import { GroupBase, OptionBase, OptionProps, SingleValueProps } from 'chakra-react-select'
-import { NetworkType } from 'src/constants/Networks'
+import { GroupBase, OptionProps, SingleValueProps } from 'chakra-react-select'
 import DropdownSelect from 'src/libraries/ui/LinkYourMultisigModal/DropdownSelect'
+import { SafeSelectOption } from 'src/types'
 
 interface Props {
 	label: string
@@ -26,20 +26,6 @@ export interface NoteDetails {
 	linkText?: string
 	linkTextColor?: string
 }
-export interface SafeSelectOption extends OptionBase {
-	safeAddress: string
-	networkType: NetworkType
-	networkId: string
-	networkName: string // Polygon
-	networkIcon: string
-	safeType: string // Gnosis
-	safeIcon: string
-	amount: number // 1000
-	currency?: string // USD
-	isNote?: boolean
-	noteDetails?: NoteDetails
-	owners: string[]
-}
 
 const Option = ({ innerProps, data }: OptionProps<SafeSelectOption, boolean, GroupBase<SafeSelectOption>>) => (
 	<Box
@@ -48,82 +34,44 @@ const Option = ({ innerProps, data }: OptionProps<SafeSelectOption, boolean, Gro
 		p={0}
 		m={0}
 	>
-		{
-			data?.isNote && (
+		<Flex
+			cursor='pointer'
+			mx={4}
+			my={3}
+			align='center'
+			opacity={data?.isDisabled ? 0.7 : 1.0}>
+			<Flex align='center'>
+				<Image
+					src={data.networkIcon}
+					boxSize='28px' />
 				<Flex
-					bg={data?.noteDetails?.bgColor}
-					w='100%'
-					direction='column'
-					p={2}
-					mx={4}
-					mt={3}>
-					<Text
-						variant='metadata'
-						fontWeight='500'
-						color={data?.noteDetails?.color}>
-						Note:
+					ml={2}
+					direction='column'>
+					<Text variant='requestProposalBody'>
+						{data.networkName}
 					</Text>
-					<Text
-						mt={1}
-						variant='metadata'
-						color={data?.noteDetails?.color}>
-						{data?.noteDetails?.text}
-						{' '}
-						{
-							data?.noteDetails?.link && (
-								<Link
-									href={data?.noteDetails?.link}
-									color={data?.noteDetails?.linkTextColor}>
-									{data?.noteDetails?.linkText}
-								</Link>
-							)
-						}
-					</Text>
-				</Flex>
-			)
-		}
-		{
-			!data?.isNote && (
-				<Flex
-					cursor='pointer'
-					mx={4}
-					my={3}
-					align='center'
-					opacity={data?.isDisabled ? 0.7 : 1.0}>
 					<Flex align='center'>
 						<Image
-							src={data.networkIcon}
-							boxSize='28px' />
-						<Flex
-							ml={2}
-							direction='column'>
-							<Text variant='requestProposalBody'>
-								{data.networkName}
-							</Text>
-							<Flex align='center'>
-								<Image
-									src={data.safeIcon}
-									boxSize='12px' />
-								<Text
-									variant='metadata'
-									color='black.300'
-									ml={1}>
-									{data.safeType}
-								</Text>
-							</Flex>
-						</Flex>
+							src={data.safeIcon}
+							boxSize='12px' />
+						<Text
+							variant='metadata'
+							color='black.300'
+							ml={1}>
+							{data.safeType}
+						</Text>
 					</Flex>
-					<Box mx='auto' />
-					<Text
-						variant='requestProposalBody'
-						color='black.200'>
-						{data.amount}
-						{' '}
-						{data.currency || 'USD'}
-					</Text>
 				</Flex>
-			)
-		}
+			</Flex>
+			<Box mx='auto' />
+			<Text
+				variant='requestProposalBody'
+				color='black.200'>
+				{data.amount}
+				{' '}
+				USD
+			</Text>
+		</Flex>
 	</Box>
 )
 
@@ -149,7 +97,7 @@ const SingleValue = ({ innerProps, data }: SingleValueProps<SafeSelectOption, bo
 				color='black.200'>
 				{data.amount}
 				{' '}
-				{data.currency ?? 'USD'}
+				USD
 			</Text>
 		</Flex>
 	</Box>
