@@ -224,7 +224,7 @@ export interface ConnectOpts {
 export interface PhantomProvider {
     connect: (opts?: Partial<ConnectOpts>) => Promise<{ publicKey: PublicKey }>
     disconnect: () => Promise<void>
-    on: (event: PhantomEvent, callback: (args: any) => void) => void
+    on: (event: PhantomEvent, callback: () => void) => void
     isPhantom: boolean
 	publicKey: PublicKey
 	isConnected: boolean
