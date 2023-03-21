@@ -1,11 +1,8 @@
 import { ethers } from 'ethers'
 
 export type BiconomyWalletClient = {
-    engine: any
-    biconomyAttributes: any
-    isSignerWithAccounts: any
-    provider: any
-    targetProvider: any
+    provider: ethers.providers.Provider
+    targetProvider: ethers.providers.Provider
     walletFactoryAddress: string
     baseWalletAddress: string
     entryPointAddress: string
@@ -30,9 +27,18 @@ export type SendBiconomyWalletTransactionParams = {
 
 export type WebHookAttributesType = {
     webHookId: string
-    webHookData: any
+    webHookData: {
+        signedNonce: {
+            v: number
+            r: string
+            s: string
+            transactionHash: string
+        }
+		nonce: string
+		to: string
+		chain_id: string
+    }
 }
-
 
 export type CheckIfWalletExistsParams = {
     eoa: string
@@ -40,7 +46,7 @@ export type CheckIfWalletExistsParams = {
 
 export type CheckIfWalletExistsAndDeployParams = {
     eoa: string
-    webHookAttributes: any
+    webHookAttributes: WebHookAttributesType
 }
 
 export type CheckIfWalletExistsType = {

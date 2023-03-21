@@ -6,7 +6,7 @@ import { ethers, Wallet } from 'ethers'
 import { Gdrive } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 interface Props {
-	privateKey: string
+	privateKey: string | undefined
 	inited: boolean
 	loading: boolean
 	exportWalletToGD: (wallet: Wallet) => Promise<void>
@@ -77,6 +77,10 @@ export default function BackupWallet({ isNewUser, exportWalletToGD, loading, ini
 						isDisabled={loading || !inited}
 						onClick={
 							async() => {
+								if(!privateKey) {
+									return
+								}
+
 								try {
 									await exportWalletToGD(new ethers.Wallet(privateKey))
 									toast({
@@ -118,6 +122,10 @@ export default function BackupWallet({ isNewUser, exportWalletToGD, loading, ini
 
 						onClick={
 							() => {
+								if(!privateKey) {
+									return
+								}
+
 								const copied = copy(privateKey)
 								if(copied) {
 									toast({

@@ -175,8 +175,8 @@ export const WebwalletContext = createContext<{
 		} | null>(null)
 
 export const BiconomyContext = createContext<{
-	biconomyDaoObjs?: { [key: string]: any }
-	setBiconomyDaoObjs: (biconomyDaoObjs: any) => void
+	biconomyDaoObjs?: { [key: string]: typeof Biconomy }
+	setBiconomyDaoObjs: (biconomyDaoObjs: { [key: string]: typeof Biconomy }) => void
 	initiateBiconomy: (chainId: string) => Promise<InitiateBiconomyReturnType | undefined>
 	loadingBiconomyMap: { [_: string]: boolean }
 	biconomyWalletClients?: { [key: string]: BiconomyWalletClient }

@@ -1,11 +1,15 @@
 import { useState } from 'react'
 import { Divider, Flex, Text } from '@chakra-ui/react'
-import { CreatableSelect } from 'chakra-react-select'
+import { CreatableSelect, GroupBase, OptionProps } from 'chakra-react-select'
 import logger from 'src/libraries/logger'
 import { ApplicantDetailsFieldType } from 'src/types'
 
 
-const detailsItem = ({ innerProps, data }: any) => {
+function detailsItem<T extends object>({ innerProps, data }: OptionProps<T, false, GroupBase<T>>) {
+	if(!('required' in data) || !('title' in data) || (typeof data.title !== 'string')) {
+		return <Flex />
+	}
+
 	if(data.required === false) {
 		return (
 			<Flex
@@ -41,7 +45,7 @@ type Props = {
 export function CustomSelect({ options, setExtraDetailsFields, setShowExtraFieldDropdown, placeholder }: Props) {
 
 	const [value, setValue] = useState<ApplicantDetailsFieldType | null>()
-	const createOption = (label: string): any => {
+	const createOption = (label: string): ApplicantDetailsFieldType => {
 		return {
 			id: label.split(' ').join(''),
 			title: label,

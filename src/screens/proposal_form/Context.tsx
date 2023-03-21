@@ -37,7 +37,7 @@ const ProposalFormProvider = ({ children }: {children: ReactNode}) => {
 	)
 
 	const { scwAddress } = useContext(WebwalletContext)!
-	const { setSafeObj } = useSafeContext()
+	const { setSafeObj } = useSafeContext()!
 	const [type, setType] = useState<FormType>('submit')
 	const [grant, setGrant] = useState<Grant>()
 	const [proposal, setProposal] = useState<Proposal>()

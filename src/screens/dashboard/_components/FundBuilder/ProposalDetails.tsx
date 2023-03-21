@@ -1,5 +1,6 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { Flex, Text } from '@chakra-ui/react'
+import { TokenDetailsInterface } from '@questbook/supported-safes/lib/types/Safe'
 import { defaultChainId } from 'src/constants/chains'
 import { Dot } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
@@ -9,13 +10,13 @@ import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
 import MilestoneChoose from 'src/screens/dashboard/_components/FundBuilder/MilestoneChoose'
-import { ProposalType, TokenInfo } from 'src/screens/dashboard/_utils/types'
+import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { FundBuilderContext } from 'src/screens/dashboard/Context'
 
 interface Props {
 	proposal: ProposalType
 	index: number
-	tokenInfo: TokenInfo
+	tokenInfo: TokenDetailsInterface
 }
 
 function ProposalDetails({ proposal, index, tokenInfo }: Props) {

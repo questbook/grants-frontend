@@ -114,7 +114,7 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 
 	const { connect, connectors } = useConnect()
 	const { chain } = useNetwork()
-	const { safeObj } = useSafeContext()
+	const { safeObj } = useSafeContext()!
 	const { switchNetwork } = useSwitchNetwork()
 	const { phantomWallet, phantomWalletConnected } = usePhantomWallet()
 
@@ -125,16 +125,16 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 	const [selectedConnector, setSelectedConnector] = useState<Connector>()
 
 	const isEvmChain = useMemo(() => {
-		return safeObj.getIsEvm()
+		return safeObj?.getIsEvm()
 	}, [safeObj])
 
 	const verifyOwner = async(address: string) => {
-		logger.info({ address: safeObj.safeAddress }, '1')
+		logger.info({ address: safeObj?.safeAddress }, '1')
 		const isVerified = await safeObj?.isOwner(address)
 		if(isVerified) {
 			setSignerVerifiedState('verified')
 			toast({
-				title: `Verified owner of multisig ${safeObj.safeAddress}.`,
+				title: `Verified owner of multisig ${safeObj?.safeAddress}.`,
 				status: 'success',
 				duration: 3000,
 			})
@@ -162,7 +162,7 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 		}
 
 		if(shouldVerify) {
-			if(safeObj.getIsEvm() && isConnected && chain?.id === safeObj?.chainId) {
+			if(safeObj?.getIsEvm() && isConnected && chain?.id === safeObj?.chainId) {
 				verifyOwner(address!)
 			} else if(phantomWalletConnected) {
 				verifyOwner(phantomWallet?.publicKey?.toString()!)
@@ -174,7 +174,7 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 		const isConnected = selectedConnector ? await selectedConnector.isAuthorized().catch(() => false) : false
 		if(isConnected && chain?.id !== safeObj?.chainId) {
 			try {
-				const toChainId = parseInt(safeObj?.chainId)
+				const toChainId = safeObj?.chainId
 				logger.info({ toChainId }, 'Switching network to')
 				switchNetwork?.(toChainId)
 				return true

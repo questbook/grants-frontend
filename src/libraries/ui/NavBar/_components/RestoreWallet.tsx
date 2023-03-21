@@ -144,7 +144,7 @@ function RestoreWallet({ setSignInMethod, closeModal, inited, loading, importWal
 									color='black'
 									fontWeight='500'
 								>
-									Export from Google Drive
+									Import from Google Drive
 								</Text>
 							</Button>
 						)

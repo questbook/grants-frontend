@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { SupportedPayouts } from '@questbook/supported-safes'
+import { TokenDetailsInterface } from '@questbook/supported-safes/lib/types/Safe'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
@@ -10,7 +11,7 @@ import { getFromIPFS } from 'src/libraries/utils/ipfs'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
-import { CommentMap, CommentType, DashboardContextType, FundBuilderContextType, ModalContextType, Proposals, ReviewInfo, SignerVerifiedState, TokenInfo } from 'src/screens/dashboard/_utils/types'
+import { CommentMap, CommentType, DashboardContextType, FundBuilderContextType, ModalContextType, Proposals, ReviewInfo, SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
 import { Roles } from 'src/types'
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined)
@@ -19,7 +20,7 @@ const ModalContext = createContext<ModalContextType | undefined>(undefined)
 
 const DashboardProvider = ({ children }: {children: ReactNode}) => {
 	const router = useRouter()
-	const { setSafeObj } = useSafeContext()
+	const { setSafeObj } = useSafeContext()!
 	const { grantId, chainId: _chainId, role: _role, proposalId, isRenderingProposalBody } = router.query
 	const { setWorkspace } = useContext(ApiClientsContext)!
 	const { scwAddress, webwallet, setDashboardStep } = useContext(WebwalletContext)!
@@ -437,8 +438,8 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 }
 
 const FundBuilderProvider = ({ children }: {children: ReactNode}) => {
-	const [tokenList, setTokenList] = useState<TokenInfo[]>()
-	const [selectedTokenInfo, setSelectedTokenInfo] = useState<TokenInfo>()
+	const [tokenList, setTokenList] = useState<TokenDetailsInterface[]>()
+	const [selectedTokenInfo, setSelectedTokenInfo] = useState<TokenDetailsInterface>()
 	const [amounts, setAmounts] = useState<number[]>([])
 	const [tos, setTos] = useState<string[]>([])
 	const [milestoneIndices, setMilestoneIndices] = useState<number[]>([])

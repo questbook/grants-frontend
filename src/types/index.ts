@@ -1,7 +1,7 @@
+import { SafeDetailsInterface } from '@questbook/supported-safes/lib/types/Safe'
 import { PublicKey } from '@solana/web3.js'
 import { OptionBase } from 'chakra-react-select'
 import { EditorState } from 'draft-js'
-import { NetworkType } from 'src/constants/Networks'
 import {
 	ApplicationRegistryAbi,
 	ApplicationReviewRegistryAbi,
@@ -200,20 +200,7 @@ export type NoteDetails = {
 	linkTextColor?: string
 }
 
-export type SafeSelectOption = {
-	safeAddress: string
-	networkType: NetworkType
-	networkId: string
-	networkName: string // Polygon
-	networkIcon: string
-	safeType: string // Gnosis
-	safeIcon: string
-	amount: number // 1000
-	currency?: string // USD
-	isNote?: boolean
-	noteDetails?: NoteDetails
-	owners: string[]
-} & OptionBase
+export type SafeSelectOption = SafeDetailsInterface & OptionBase
 
 export type PhantomEvent = 'disconnect' | 'connect' | 'accountChanged';
 
