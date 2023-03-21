@@ -1,37 +1,37 @@
-import { Flex, FlexProps, Text } from '@chakra-ui/react'
+import { Flex, FlexProps, Text, useToken } from '@chakra-ui/react'
 import { ApplicationState } from 'src/generated/graphql'
-import { CheckDouble, Close, Resubmit } from 'src/generated/icons'
+import { Accept, Reject, Resubmit, Time } from 'src/generated/icons'
 import { titleCase } from 'src/libraries/utils/formatting'
 
 type Props = {
-    state: ApplicationState
-    isSelected?: boolean
-    where?: 'filter' | 'proposal-card' | 'discussion'
+	state: ApplicationState
+	isSelected?: boolean
 } & FlexProps
 
-function StateTag({ state, isSelected = true, where = 'discussion', ...props }: Props) {
+function StateTag({ state, isSelected = true, ...props }: Props) {
 	const buildComponent = () => {
 		return (
 			<Flex
-				ml='auto'
 				align='center'
 				justify='center'
-				cursor={where === 'filter' ? 'pointer' : 'default'}
-				onClick={where === 'filter' ? () => { } : undefined}
 				transition='all .5s ease'
-				p={2}
-				w={isSelected ? '96px' : '32px'}
-				borderRadius={isSelected ? '12px' : '4px'}
-				bg={state === 'approved' ? 'accent.columbia' : state === 'rejected' ? 'accent.melon' : 'accent.vodka'}
+				py={1}
+				px={3}
+				w={isSelected ? (titleCase(config[state as keyof typeof config]?.title).length + 2) + 'ch' : '32px'}
+				borderRadius='18px'
+				maxH='36px'
+				border='1px solid'
+				bg={isSelected ? config[state as keyof typeof config]?.bg + '4D' : config[state as keyof typeof config]?.bg + '66'}
+				borderColor={config[state as keyof typeof config]?.bg + '66'}
 				{...props}>
-				{state === 'approved' ? <CheckDouble /> : state === 'rejected' ? <Close /> : <Resubmit />}
+				{config[state as keyof typeof config].icon}
 				{
 					isSelected && (
 						<Text
 							variant='metadata'
 							fontWeight='500'
 							ml={1}>
-							{titleCase(state)}
+							{titleCase(config[state as keyof typeof config]?.title)}
 						</Text>
 					)
 				}
@@ -39,15 +39,31 @@ function StateTag({ state, isSelected = true, where = 'discussion', ...props }: 
 		)
 	}
 
-	const getTitle = () => {
-		if(state === 'approved') {
-			return where === 'discussion' ? 'Approve' : 'Approved'
-		} else if(state === 'rejected') {
-			return where === 'discussion' ? 'Reject' : 'Rejected'
-		} else if(state === 'resubmit') {
-			return where === 'discussion' ? 'Resubmit' : 'Resubmitted'
-		} else if(state === 'submitted') {
-			return where === 'discussion' ? 'Feedback / Comment' : ''
+	const [azure, carrot, orchid, jeans] = useToken(
+		'colors',
+		['accent.azure', 'accent.carrot', 'accent.orchid', 'accent.jeans']
+	)
+
+	const config = {
+		approved: {
+			icon: <Accept />,
+			title: 'Accepted',
+			bg: azure,
+		},
+		rejected: {
+			icon: <Reject />,
+			title: 'Rejected',
+			bg: carrot,
+		},
+		resubmit: {
+			icon: <Resubmit />,
+			title: 'Resubmission',
+			bg: orchid,
+		},
+		submitted: {
+			icon: <Time />,
+			title: 'Not Responded Yet',
+			bg: jeans
 		}
 	}
 

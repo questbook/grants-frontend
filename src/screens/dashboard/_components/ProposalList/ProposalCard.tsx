@@ -88,9 +88,10 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 				{
 					(proposal?.state !== 'submitted') && (
 						<StateTag
+							ml='auto'
 							state={proposal?.state}
 							isSelected={selectedProposals.has(proposal.id)}
-							where='proposal-card' />
+						/>
 					)
 				}
 			</Flex>

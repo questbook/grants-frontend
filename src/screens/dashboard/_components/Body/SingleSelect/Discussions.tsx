@@ -102,7 +102,7 @@ function Discussions() {
 								<Text
 									variant='body'
 									fontWeight='500'>
-									{currentMember?.fullName ?? formatAddress(currentMember?.actorId ?? '')}
+									{currentMember?.fullName ?? formatAddress(scwAddress ?? '')}
 								</Text>
 								<RoleTag
 									role={(role as Roles) ?? 'community'}
@@ -157,14 +157,14 @@ function Discussions() {
 									animate={controls}
 									variants={textboxVariants}>
 									{
-										selectedTag !== undefined && (
+										selectedTag?.id !== 'feedback' && (
 											<Flex
 												w='100%'>
 												<chakra.p
 													width='100%'
 													border='1px solid'
 													borderRadius='4px'
-													borderColor='accent.azure.400'
+													borderColor='accent.azure'
 													alignItems='center'
 													p={2}
 													mr={2}>
@@ -172,7 +172,7 @@ function Discussions() {
 														mr={2}
 														position='relative'
 														index={0}
-														id={selectedTag.id as 'accept' | 'reject' | 'resubmit' | 'feedback'}
+														id={selectedTag?.id as 'accept' | 'reject' | 'resubmit' | 'feedback'}
 														px={2}
 														py={0}
 														h='24px'
@@ -226,15 +226,30 @@ function Discussions() {
 										)
 									}
 									{
-										selectedTag === undefined && (
-											<Textarea
-												value={text}
-												onChange={
-													(e) => {
-														setText(e.target.value)
-														localStorage.setItem(`comment-${grant?.id}-${proposal?.id}`, e.target.value)
+										selectedTag?.id === 'feedback' && (
+											<Flex>
+												<Textarea
+													value={text}
+													onChange={
+														(e) => {
+															setText(e.target.value)
+															localStorage.setItem(`comment-${grant?.id}-${proposal?.id}`, e.target.value)
+														}
 													}
-												} />
+													fontSize='14px'
+													placeholder='Type your comment here' />
+												<IconButton
+													ml='auto'
+													variant='unstyled'
+													aria-label=''
+													icon={
+														<Close
+															color='black.200'
+															_hover={{ color: 'black.100' }} />
+													}
+													onClick={() => setSelectedTag(undefined)} />
+											</Flex>
+
 										)
 									}
 									<Flex

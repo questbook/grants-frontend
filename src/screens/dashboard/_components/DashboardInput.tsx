@@ -8,7 +8,7 @@ function DashboardInput(props: InputProps) {
 				fontSize='14px'
 				fontWeight='400'
 				_placeholder={{ color: 'gray.500' }}
-				_focus={{ borderColor: 'accent.azure.400' }}
+				_focus={{ borderColor: 'accent.azure' }}
 				border='1px solid'
 				{...props} />
 		)

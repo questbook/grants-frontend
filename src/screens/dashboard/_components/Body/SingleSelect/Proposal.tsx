@@ -50,6 +50,7 @@ function Proposal() {
 		return (
 			<Flex
 				w='100%'
+				h='100%'
 				// overflowY='auto'
 				px={5}
 				py={6}
@@ -290,7 +291,7 @@ function Proposal() {
 														<Text
 															display='inline-block'
 															wordBreak='break-all'
-															color='accent.azure.400'
+															color='accent.azure'
 															cursor='pointer'
 															_hover={
 																{
@@ -361,7 +362,7 @@ function Proposal() {
 													<Text
 														display='inline-block'
 														wordBreak='break-all'
-														color='accent.azure.400'
+														color='accent.azure'
 														cursor='pointer'
 														_hover={
 															{

@@ -24,7 +24,7 @@ function RoleTag({ role, isBuilder = false }: Props) {
 
 	const config = {
 		admin: {
-			bg: 'accent.azure.400',
+			bg: 'accent.azure',
 			text: 'Admin'
 		},
 		reviewer: {

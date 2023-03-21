@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { Call, CheckDouble, Close, Resubmit } from 'src/generated/icons'
+import { Chat, CheckDouble, Close, Resubmit } from 'src/generated/icons'
 import { GrantsProgramContext } from 'src/pages/_app'
 import { ProposalType, TagType } from 'src/screens/dashboard/_utils/types'
 
@@ -13,11 +13,17 @@ function useProposalTags({ proposals }: Props) {
 			{ id: 'accept', title: 'Accept', commentString: 'Your proposal is accepted', icon: <CheckDouble color='accent.jeans' />, isPrivate: false },
 			{ id: 'reject', title: 'Pass / Reject', commentString: 'Sorry! we won\'t be able to proceed with your proposal', icon: <Close color='accent.carrot' />, isPrivate: false },
 			{ id: 'resubmit', title: 'Resubmit', commentString: 'Please resubmit your proposal', icon: <Resubmit color='accent.royal' />, isPrivate: false },
-			{ id: 'feedback', title: 'Interview', commentString: 'Let\'s set up a call', icon: <Call color='accent.azure.400' />, isPrivate: true }
+			{ id: 'feedback', title: 'Feedback / Comment', commentString: '', icon: <Chat color='accent.vivid' />, isPrivate: false }
 		],
-		reviewer: [],
-		builder: [],
-		community: []
+		reviewer: [
+			{ id: 'feedback', title: 'Feedback / Comment', commentString: '', icon: <Chat color='accent.vivid' />, isPrivate: false }
+		],
+		builder: [
+			{ id: 'feedback', title: 'Feedback / Comment', commentString: '', icon: <Chat color='accent.vivid' />, isPrivate: false }
+		],
+		community: [
+			{ id: 'feedback', title: 'Feedback / Comment', commentString: '', icon: <Chat color='accent.vivid' />, isPrivate: false }
+		]
 	}
 
 	const { role } = useContext(GrantsProgramContext)!

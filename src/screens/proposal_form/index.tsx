@@ -97,7 +97,7 @@ function ProposalForm() {
 							</Button>
 							<Button
 								variant='link'
-								color='accent.azure.400'
+								color='accent.azure'
 								onClick={
 									async() => {
 										setRole('builder')

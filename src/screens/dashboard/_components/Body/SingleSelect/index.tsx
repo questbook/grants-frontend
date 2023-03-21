@@ -8,6 +8,7 @@ function SingleSelect() {
 		<Flex
 			direction='column'
 			overflowY='auto'
+			h='100%'
 			w='100%'>
 			<Proposal />
 			{

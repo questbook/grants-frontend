@@ -128,7 +128,7 @@ function Reviews() {
 												variant='link'
 											>
 												<Text
-													color='accent.azure.400'
+													color='accent.azure'
 													variant='body'
 													fontWeight='500'
 													onClick={
@@ -805,7 +805,7 @@ function Reviews() {
 							<Button
 								variant='link'>
 								<Text
-									color='accent.azure.400'
+									color='accent.azure'
 									variant='body'
 									fontWeight='500'
 									onClick={

@@ -139,11 +139,11 @@ function NetworkTransactionFlowStepperModal({ isOpen, currentStepIndex, viewTxnL
 						state === 'done' ? (
 							isLastStep ? (
 								<ThumbsUp
-									color='accent.azure.400'
+									color='accent.azure'
 									boxSize={5} />
 							) : (
 								<CheckboxCircle
-									color='accent.azure.400'
+									color='accent.azure'
 									boxSize={5} />
 							)
 						) : (
@@ -154,7 +154,7 @@ function NetworkTransactionFlowStepperModal({ isOpen, currentStepIndex, viewTxnL
 											minW={4}
 											minH={4}
 											p='2px'
-											bg='accent.azure.400'
+											bg='accent.azure'
 											style={
 												{
 													aspectRatio: '1',

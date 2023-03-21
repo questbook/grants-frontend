@@ -22,26 +22,10 @@ const colors = {
 		100: '#5AB711'
 	},
 	accent: {
-		azure: {
-			300: '#0A84FF4D',
-			400: '#0A84FF',
-			500: '#0A84FF66',
-		},
-		carrot: {
-			300: '#EF64364D',
-			400: '#EF6436',
-			500: '#EF643666',
-		},
-		vivid: {
-			300: '#5C62F54D',
-			400: '#5C62F5',
-			500: '#5C62F566',
-		},
-		orchid: {
-			300: '#DC6ACF4D',
-			400: '#DC6ACF',
-			500: '#DC6ACF66',
-		},
+		azure: '#0A84FF',
+		carrot: '#EF6436',
+		vivid: '#5C62F5',
+		orchid: '#DC6ACF',
 		jeans: '#56C7EC',
 		royal: '#F2943E',
 		june: '#BCDB4A',

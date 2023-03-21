@@ -196,7 +196,7 @@ export default {
 				borderRadius: '2px',
 			},
 			primaryMedium: {
-				bg: 'accent.azure.400',
+				bg: 'accent.azure',
 				color: 'white',
 				paddingY: '8px',
 				paddingX: '16px',
