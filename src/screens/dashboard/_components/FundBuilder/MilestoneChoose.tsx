@@ -34,7 +34,7 @@ function MilestoneChoose({ proposal, index, ...props }: Props) {
 							})
 						}
 						makeOption={milestoneItem}
-						selected={{ ...milestones?.[milestoneIndices?.[index]], index: milestoneIndices?.[0] }}
+						selected={{ ...milestones?.[milestoneIndices?.[index]], index: milestoneIndices?.[index] }}
 						singleValue={singleValue}
 						setSelected={
 							(value: DropdownItem | undefined) => {
@@ -42,7 +42,7 @@ function MilestoneChoose({ proposal, index, ...props }: Props) {
 									return
 								}
 
-								logger.info({ value }, 'Selected milestone')
+								logger.info({ value, index }, 'Selected milestone')
 
 								const newMilestoneIndices = [...milestoneIndices]
 								newMilestoneIndices[index] = value.index
@@ -57,7 +57,7 @@ function MilestoneChoose({ proposal, index, ...props }: Props) {
 					<Text
 						mt={1}
 						variant='body'>
-						{milestones?.[milestoneIndices?.[0]]?.title}
+						{milestones?.[milestoneIndices?.[index]]?.title}
 					</Text>
 				</Flex>
 			</Flex>
@@ -87,15 +87,18 @@ function MilestoneChoose({ proposal, index, ...props }: Props) {
 		</Flex>
 	)
 
-	const singleValue = ({ innerProps, data }: any) => (
-		<Text
-			{...innerProps}
-			color='gray.400'
-			variant='heading3'
-			fontWeight='500'>
-			{data.index < 9 ? `0${data.index + 1}` : (data.index + 1)}
-		</Text>
-	)
+	const singleValue = ({ innerProps, data }: any) => {
+		logger.info({ data }, 'Single Value')
+		return (
+			<Text
+				{...innerProps}
+				color='gray.400'
+				variant='heading3'
+				fontWeight='500'>
+				{data.index < 9 ? `0${data.index + 1}` : (data.index + 1)}
+			</Text>
+		)
+	}
 
 	const { milestoneIndices, setMilestoneIndices, amounts, setAmounts } = useContext(FundBuilderContext)!
 

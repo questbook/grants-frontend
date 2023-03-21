@@ -99,11 +99,11 @@ const Control = ({ innerProps, isFocused, ...rest }: any) => {
 	return (
 		<Box
 			{...innerProps}
+			minW='150px'
 			py={2}
 			px={0}
 			display='inline-flex'
 			flex={1}
-			w='100%'
 			transition='all 0.2s ease-in'
 			borderBottom={isFocused ? '1px solid #2B67F6' : '1px solid #D2D2E3'}
 			boxShadow={isFocused ? '0px 1px 0px 0px #2b67f6' : 'none'}
