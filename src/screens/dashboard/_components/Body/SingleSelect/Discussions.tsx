@@ -44,7 +44,6 @@ function Discussions() {
 			<Flex
 				px={5}
 				w='100%'
-				h='100%'
 				boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
 				bg='white'
 				direction='column'
