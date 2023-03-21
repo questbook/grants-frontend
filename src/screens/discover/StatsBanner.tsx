@@ -4,7 +4,7 @@ function StatsBanner() {
 	const buildComponent = () => {
 		return (
 			<Flex
-				bgColor='gray.2'
+				bgColor='gray.200'
 				padding={[3, 8]}
 				gap={4}
 				justifyContent='space-evenly'>

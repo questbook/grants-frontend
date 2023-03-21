@@ -22,7 +22,7 @@ function MilestoneChoose({ proposal, index, ...props }: Props) {
 				{...props}>
 				<Text
 					w='20%'
-					color='gray.6'>
+					color='gray.600'>
 					Milestones
 				</Text>
 				<Flex
@@ -73,7 +73,7 @@ function MilestoneChoose({ proposal, index, ...props }: Props) {
 			p={2}
 		>
 			<Text
-				color='gray.4'
+				color='gray.400'
 				variant='heading3'
 				fontWeight='500'>
 				{data.index < 9 ? `0${data.index + 1}` : (data.index + 1)}
@@ -90,7 +90,7 @@ function MilestoneChoose({ proposal, index, ...props }: Props) {
 	const singleValue = ({ innerProps, data }: any) => (
 		<Text
 			{...innerProps}
-			color='gray.4'
+			color='gray.400'
 			variant='heading3'
 			fontWeight='500'>
 			{data.index < 9 ? `0${data.index + 1}` : (data.index + 1)}

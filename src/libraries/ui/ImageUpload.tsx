@@ -39,7 +39,7 @@ function ImageUpload({ imageFile, setImageFile, ...props }: Props) {
 						<Button
 							w='100%'
 							h='100%'
-							bg='gray.3'
+							bg='gray.300'
 							borderRadius='2px'
 							alignItems='center'
 							justifyItems='center'

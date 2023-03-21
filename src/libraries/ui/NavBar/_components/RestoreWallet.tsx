@@ -38,7 +38,7 @@ function RestoreWallet({ setSignInMethod, closeModal, inited, loading, importWal
 					{
 						(!!setSignInMethod || (isEnteringPrivateKey)) && (
 							<Button
-								colorScheme='gray.1'
+								colorScheme='gray.100'
 								textColor='black'
 								// variant='linkV2'
 								ml={!!setSignInMethod ? -5 : -10}
@@ -73,7 +73,7 @@ function RestoreWallet({ setSignInMethod, closeModal, inited, loading, importWal
 						variant='v2_body'
 						mt={1}
 						mb={4}
-						color='black.3'>
+						color='black.300'>
 						Restore your existing wallet with the private key.
 					</Text>
 					{
@@ -82,7 +82,7 @@ function RestoreWallet({ setSignInMethod, closeModal, inited, loading, importWal
 
 								marginTop={4}
 								w='80%'
-								bg='gray.3'
+								bg='gray.300'
 								h='10'
 								borderRadius={0}
 								isDisabled={loading || !inited}
@@ -156,7 +156,7 @@ function RestoreWallet({ setSignInMethod, closeModal, inited, loading, importWal
 
 								marginTop={2}
 								w='80%'
-								bg='gray.3'
+								bg='gray.300'
 								h='10'
 								borderRadius={0}
 								onClick={() => setIsEnteringPrivateKey(true)}
@@ -189,9 +189,9 @@ function RestoreWallet({ setSignInMethod, closeModal, inited, loading, importWal
 							<Button
 								marginTop={3}
 								width='90%'
-								bg='black.1'
+								bg='black.100'
 								colorScheme='white'
-								textColor='gray.1'
+								textColor='gray.100'
 								disabled={!isValidKey}
 								onClick={
 									() => {

@@ -10,7 +10,7 @@ function SearchField(props: InputProps & {inputGroupProps?: InputGroupProps}) {
 				>
 					<Search
 						boxSize='20px'
-						color='gray.6' />
+						color='gray.600' />
 				</InputLeftElement>
 				<Input {...props} />
 			</InputGroup>

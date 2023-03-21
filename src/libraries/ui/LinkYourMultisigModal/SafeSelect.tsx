@@ -106,7 +106,7 @@ const Option = ({ innerProps, data }: OptionProps<SafeSelectOption, boolean, Gro
 									boxSize='12px' />
 								<Text
 									variant='metadata'
-									color='black.3'
+									color='black.300'
 									ml={1}>
 									{data.safeType}
 								</Text>
@@ -116,7 +116,7 @@ const Option = ({ innerProps, data }: OptionProps<SafeSelectOption, boolean, Gro
 					<Box mx='auto' />
 					<Text
 						variant='requestProposalBody'
-						color='black.2'>
+						color='black.200'>
 						{data.amount}
 						{' '}
 						{data.currency || 'USD'}
@@ -146,7 +146,7 @@ const SingleValue = ({ innerProps, data }: SingleValueProps<SafeSelectOption, bo
 			<Text
 				ml={1}
 				variant='requestProposalBody'
-				color='black.2'>
+				color='black.200'>
 				{data.amount}
 				{' '}
 				{data.currency ?? 'USD'}
@@ -173,7 +173,7 @@ function SafeSelect({ label, optionalText, helperText, helperLinkText, helperLin
 						<Text
 							ml={1}
 							variant='metadata'
-							color='black.3'>
+							color='black.300'>
 							{optionalText}
 						</Text>
 					)
@@ -183,7 +183,7 @@ function SafeSelect({ label, optionalText, helperText, helperLinkText, helperLin
 				helperText && (
 					<Text
 						variant='metadata'
-						color='black.3'>
+						color='black.300'>
 						{helperText}
 						{' '}
 						{
@@ -191,7 +191,7 @@ function SafeSelect({ label, optionalText, helperText, helperLinkText, helperLin
 								<Link
 									display='inline-block'
 									fontWeight='500'
-									color='black.3'
+									color='black.300'
 									isExternal
 									href={helperLinkUrl}>
 									{helperLinkText}

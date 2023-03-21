@@ -1,5 +1,6 @@
 import { ReactElement } from 'react'
 import {
+	ApplicationState,
 	GetCommentsQuery,
 	GetPayoutsQuery,
 	GetProposalsQuery,
@@ -21,6 +22,8 @@ export type DashboardContextType = {
   commentMap: CommentMap
   setCommentMap: (coments: CommentMap) => void
   refreshComments: (refresh: boolean) => void
+  filterState: ApplicationState | undefined
+  setFilterState: (state: ApplicationState | undefined) => void
 };
 
 export interface TokenInfo {

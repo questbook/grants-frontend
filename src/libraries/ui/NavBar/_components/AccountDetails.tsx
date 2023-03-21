@@ -46,7 +46,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 						<PopoverTrigger>
 							<Button
 								variant='ghost'
-								bg={['black.1', 'gray.1']}
+								bg={['black.100', 'gray.100']}
 								disabled={isConnecting}
 								as={Button}
 								rightIcon={<ChevronDownIcon />}
@@ -251,8 +251,8 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 						setSignInTitle('default')
 					}
 				}
-				bg='black.1'
-				textColor='gray.1'
+				bg='black.100'
+				textColor='gray.100'
 				_hover={{ bg: 'gray.500' }}
 			>
 				Sign in

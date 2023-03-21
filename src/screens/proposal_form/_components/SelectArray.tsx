@@ -44,7 +44,7 @@ function SelectArray({ label, allowMultiple, flexProps, config, onAdd, onRemove 
 										key={index}>
 										<Text
 											mt={1}
-											color='gray.4'
+											color='gray.400'
 											variant='heading3'
 											fontWeight='500'>
 											{index < 9 ? `0${index + 1}` : (index + 1)}
@@ -65,15 +65,15 @@ function SelectArray({ label, allowMultiple, flexProps, config, onAdd, onRemove 
 																{...inputProps}
 																variant='flushed'
 																textAlign='left'
-																borderColor='gray.3'
+																borderColor='gray.300'
 																borderBottom='1px solid'
 																fontSize='20px'
 																lineHeight='28px'
-																color='black.1'
+																color='black.100'
 																onWheel={(e) => (e.target as HTMLElement).blur()}
 																_placeholder={
 																	{
-																		color: 'gray.5'
+																		color: 'gray.500'
 																	}
 																}
 															/>
@@ -83,7 +83,7 @@ function SelectArray({ label, allowMultiple, flexProps, config, onAdd, onRemove 
 																		mt={1}
 																		ml='auto'
 																		variant='metadata'
-																		color='gray.5'>
+																		color='gray.500'>
 																		{config[index][i]?.value?.toString()?.length}
 																		{' '}
 																		/

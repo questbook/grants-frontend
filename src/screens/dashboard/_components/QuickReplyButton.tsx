@@ -1,14 +1,23 @@
-import { Button, ButtonProps, Text } from '@chakra-ui/react'
+import { Button, ButtonProps, Flex, Text, TextProps, useToken } from '@chakra-ui/react'
+import { Accept, Chat, Reject, Resubmit } from 'src/generated/icons'
+import logger from 'src/libraries/utils/logger'
 import { TagType } from 'src/screens/dashboard/_utils/types'
 
 type Props = {
-    tag: TagType
+	id: 'accept' | 'reject' | 'resubmit' | 'feedback'
+    tag: TagType | undefined
     isSelected: boolean
     index: number
+	textProps?: TextProps
 } & ButtonProps
 
-function QuickReplyButton({ tag, isSelected, index, ...props }: Props) {
+function QuickReplyButton({ tag, isSelected, index, textProps, ...props }: Props) {
 	const buildComponent = () => {
+		logger.info({ tag, isSelected, index }, 'QuickReplyButton.buildComponent')
+		if(!tag?.id) {
+			return <Flex />
+		}
+
 		return (
 			<Button
 				key={index}
@@ -16,21 +25,48 @@ function QuickReplyButton({ tag, isSelected, index, ...props }: Props) {
 				justifyContent='start'
 				py={1}
 				px={3}
-				borderRadius='12px'
-				leftIcon={tag.icon}
-				bg={ isSelected ? 'gray.3' : 'white'}
-				border='1px solid #E7E4DD'
-				_hover={{ bg: 'gray.2' }}
+				borderRadius='18px'
+				maxH='36px'
+				leftIcon={ config[tag?.id as keyof typeof config].icon }
+				bg={ config[tag?.id as keyof typeof config].bg + '4D' }
+				border='1px solid'
+				borderColor={ config[tag?.id as keyof typeof config]?.bg + '66' }
+				_hover={{ bg: config[tag?.id as keyof typeof config].bg }}
 				{...props}
 			>
-				<Text
-					variant='body'
-					fontWeight='500'
-				>
-					{tag.title}
+				<Text {...textProps}>
+					{config[tag?.id as keyof typeof config].title}
 				</Text>
 			</Button>
 		)
+	}
+
+	const [azure, carrot, orchid, vivid] = useToken(
+		'colors',
+		['accent.azure', 'accent.carrot', 'accent.orchid', 'accent.vivid']
+	)
+
+	const config = {
+		accept: {
+			icon: <Accept />,
+			title: 'Accept',
+			bg: azure,
+		},
+		reject: {
+			icon: <Reject />,
+			title: 'Reject',
+			bg: carrot,
+		},
+		resubmit: {
+			icon: <Resubmit />,
+			title: 'Resubmit',
+			bg: orchid,
+		},
+		feedback: {
+			icon: <Chat />,
+			title: 'Feedback / Comment',
+			bg: vivid
+		}
 	}
 
 	return buildComponent()

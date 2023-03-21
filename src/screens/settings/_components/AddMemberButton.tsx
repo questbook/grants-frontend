@@ -104,7 +104,7 @@ function AddMemberButton() {
 			<Button
 				variant='link'
 				fontSize='14px'
-				color='black.1'
+				color='black.100'
 				leftIcon={<AddUser />}
 			>
 				Add members

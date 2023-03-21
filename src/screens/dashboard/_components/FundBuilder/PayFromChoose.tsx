@@ -10,7 +10,7 @@ function PayFromChoose({ selectedMode }: { selectedMode: any}) {
 				alignItems='center'>
 				<Text
 					w='20%'
-					color='gray.6'>
+					color='gray.600'>
 					Pay From
 				</Text>
 				<Flex alignItems='center'>

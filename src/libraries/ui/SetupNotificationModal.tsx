@@ -62,7 +62,7 @@ function SetupNotificationModal(props: Props) {
 						<Text
 							mt={4}
 							variant='body'
-							color='gray.5'>
+							color='gray.500'>
 							Learn more about notifications
 						</Text>
 					</Flex>
@@ -80,14 +80,14 @@ function SetupNotificationModal(props: Props) {
 				mt={6}
 				py={4}
 				px={6}
-				bg='gray.2'
+				bg='gray.200'
 				justify='space-between'
 				align='center'>
 				<Text fontWeight='500'>
 					{item.title}
 				</Text>
 				<Button
-					bg='gray.2'
+					bg='gray.200'
 					justifyContent='flex-start'
 					leftIcon={item.buttonIcon}
 					mt={2}
@@ -114,7 +114,7 @@ function SetupNotificationModal(props: Props) {
 		{
 			title: 'For MAC App',
 			buttonIcon: <Desktop
-				color='black.1'
+				color='black.100'
 				boxSize='20px' />,
 			buttonText: 'Open my desktop app',
 			onButtonClick: () => {

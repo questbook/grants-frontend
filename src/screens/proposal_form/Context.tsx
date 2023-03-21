@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import { ethers } from 'ethers'
@@ -19,7 +19,7 @@ import { Form, FormType, Grant, Proposal, ProposalFormContextType } from 'src/sc
 
 const ProposalFormContext = createContext<ProposalFormContextType | undefined>(undefined)
 
-const ProposalFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
+const ProposalFormProvider = ({ children }: {children: ReactNode}) => {
 	const providerComponent = () => (
 		<ProposalFormContext.Provider
 			value={

@@ -656,16 +656,19 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 									<WebwalletContext.Provider value={webwalletContextValue}>
 										<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
 											<SafeProvider>
-												<DAOSearchContextMaker>
-													<GrantsProgramContext.Provider value={grantProgram}>
-														<QBAdminsContextMaker>
-															<ChakraProvider theme={theme}>
-																{getLayout(<Component {...pageProps} />)}
-																<QRCodeModal />
-															</ChakraProvider>
-														</QBAdminsContextMaker>
-													</GrantsProgramContext.Provider>
-												</DAOSearchContextMaker>
+												<>
+													<DAOSearchContextMaker>
+														<GrantsProgramContext.Provider value={grantProgram}>
+															<QBAdminsContextMaker>
+																<ChakraProvider theme={theme}>
+																	{getLayout(<Component {...pageProps} />)}
+																	<QRCodeModal />
+																</ChakraProvider>
+															</QBAdminsContextMaker>
+														</GrantsProgramContext.Provider>
+
+													</DAOSearchContextMaker>
+												</>
 											</SafeProvider>
 										</BiconomyContext.Provider>
 									</WebwalletContext.Provider>

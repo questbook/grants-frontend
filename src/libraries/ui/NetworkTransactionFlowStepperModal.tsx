@@ -45,7 +45,7 @@ function NetworkTransactionFlowStepperModal({ isOpen, currentStepIndex, viewTxnL
 
 							<Text
 								fontSize='sm'
-								color='gray.5'
+								color='gray.500'
 								fontWeight='bold'>
 								ACTIVITY
 							</Text>

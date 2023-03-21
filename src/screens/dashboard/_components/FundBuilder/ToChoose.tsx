@@ -23,7 +23,7 @@ function ToChoose(prop: Props) {
 				borderBottom='1px solid #E7E4DD'>
 				<Text
 					minW='20%'
-					color='gray.6'>
+					color='gray.600'>
 					To
 				</Text>
 				{

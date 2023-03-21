@@ -89,7 +89,7 @@ function Payouts() {
 													alignItems='baseline'>
 													<Text
 														variant='heading3'
-														color='gray.4'>
+														color='gray.400'>
 														{index < 9 ? `0${index + 1}` : (index + 1)}
 													</Text>
 													{
@@ -165,7 +165,7 @@ function Payouts() {
 					</Flex>
 					<Text
 						as='i'
-						color='black.3'
+						color='black.300'
 					>
 						Note: You can payout in any token.
 					</Text>

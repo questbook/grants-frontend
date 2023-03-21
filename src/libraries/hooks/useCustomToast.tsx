@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { Button, Flex, Text, ToastId, useToast, UseToastOptions } from '@chakra-ui/react'
+import { AlertStatus, Button, Flex, Text, ToastId, useToast, UseToastOptions } from '@chakra-ui/react'
 import { CheckDouble, ErrorWarning, Loader } from 'src/generated/icons'
 
 type Props = {
@@ -18,7 +18,7 @@ function useCustomToast() {
 				return (
 					<Flex
 						boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
-						bg={BG[props.status ?? 'info']}
+						bg={BG[props.status as Exclude<AlertStatus, 'loading'> ?? 'info']}
 						direction='column'
 						p={4}>
 						<Flex>
@@ -26,7 +26,7 @@ function useCustomToast() {
 								props.title === 'Linking your multisig' ? (
 									<Loader
 										className='loader'
-										color='black.1'
+										color='black.100'
 									/>
 								) : (
 									props.status === 'success' ? <CheckDouble boxSize='20px' /> : <ErrorWarning boxSize='20px' />
@@ -43,8 +43,8 @@ function useCustomToast() {
 									action && actionText && (
 										<Button
 											mt={2}
-											bg={BG[props.status ?? 'info']}
-											color='black.1'
+											bg={BG[props.status as Exclude<AlertStatus, 'loading'> ?? 'info']}
+											color='black.100'
 											fontWeight='500'
 											variant='link'
 											onClick={action}>

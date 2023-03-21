@@ -106,7 +106,7 @@ Dashboard.getLayout = function(page: ReactElement) {
 			dashboard={true}
 			navbarConfig={
 				{
-					bg: 'gray.1',
+					bg: 'gray.100',
 					showLogo: false,
 					// showSubmitANewProposal: true,
 					showInviteProposals: true,

@@ -79,7 +79,7 @@ function FundBuilderDrawer() {
 											<Text
 												mt={8}
 												variant='body'
-												color='gray.5'>
+												color='gray.500'>
 												Some proposals would be auto-accepted once payout is initiated for them.
 											</Text>
 										)

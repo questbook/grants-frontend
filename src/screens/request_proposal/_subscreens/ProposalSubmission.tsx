@@ -104,7 +104,7 @@ function ProposalSubmission() {
 							type={rfpFormType === 'submit' ? 'string' : 'date'}
 							variant='flushed'
 							placeholder='enter start date'
-							_placeholder={{ color: 'gray.5' }}
+							_placeholder={{ color: 'gray.500' }}
 							// isDisabled={rfpFormType === 'edit'}
 							ref={startdateRef}
 							onFocus={
@@ -145,7 +145,7 @@ function ProposalSubmission() {
 							type={rfpFormType === 'submit' ? 'string' : 'date'}
 							variant='flushed'
 							placeholder='enter end date'
-							_placeholder={{ color: 'gray.5' }}
+							_placeholder={{ color: 'gray.500' }}
 							min={rfpData?.startDate}
 							value={rfpData?.endDate ? rfpData?.endDate.split('T')[0] : ''}
 							step='1'

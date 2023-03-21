@@ -138,50 +138,50 @@ export default {
 				},
 			},
 			secondaryV2: {
-				bg: 'gray.3',
-				color: 'black.1',
+				bg: 'gray.300',
+				color: 'black.100',
 				lineHeight: '1.25rem',
 				borderRadius: '2px',
 				'&:hover': {
-					bg: 'gray.2',
+					bg: 'gray.200',
 				},
 				'&:active': {
-					bg: 'gray.4',
+					bg: 'gray.400',
 				},
 				'&:focus': {
-					bg: 'gray.4',
+					bg: 'gray.400',
 					border: '1px solid black.3',
 					borderRadius: '2px'
 				},
 				'&:disabled': {
-					bg: 'gray.3',
+					bg: 'gray.300',
 					opacity: 1,
-					color: 'gray.5',
+					color: 'gray.500',
 					'&:hover': {
-						bg: 'gray.3',
+						bg: 'gray.300',
 					},
 				},
 			},
 			linkV2: {
 				bg: 'none',
-				color: 'black.3',
+				color: 'black.300',
 				h: 8,
 				px: 3,
 				_hover: {
-					bg: 'gray.2',
+					bg: 'gray.200',
 				},
 				_focus: {
-					bg: 'gray.3',
+					bg: 'gray.300',
 					border: '1px solid gray.4',
 				},
 				_disabled: {
-					color: 'gray.5',
+					color: 'gray.500',
 				},
 				py: 2,
 			},
 			link: {
 				bg: 'white',
-				color: 'black.3',
+				color: 'black.300',
 				fontWeight: '500',
 				fontSize: '16px',
 				lineHeight: '24px',
@@ -213,12 +213,12 @@ export default {
 			},
 			menuButton: {
 				borderRadius: '2px',
-				color: 'black.1',
+				color: 'black.100',
 				'&:disabled': {
-					bg: 'gray.3',
+					bg: 'gray.300',
 					opacity: 1,
 					'&:hover': {
-						bg: 'gray.3',
+						bg: 'gray.300',
 					},
 				}
 			}

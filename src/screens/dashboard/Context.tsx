@@ -1,9 +1,9 @@
-import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
-import { useGetApplicationActionsQuery, useGetCommentsQuery, useGetGrantQuery, useGetProposalsQuery } from 'src/generated/graphql'
+import { ApplicationState, useGetApplicationActionsQuery, useGetCommentsQuery, useGetGrantQuery, useGetProposalsQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
 import { getFromIPFS } from 'src/libraries/utils/ipfs'
@@ -17,7 +17,7 @@ const DashboardContext = createContext<DashboardContextType | undefined>(undefin
 const FundBuilderContext = createContext<FundBuilderContextType | undefined>(undefined)
 const ModalContext = createContext<ModalContextType | undefined>(undefined)
 
-const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
+const DashboardProvider = ({ children }: {children: ReactNode}) => {
 	const router = useRouter()
 	const { setSafeObj } = useSafeContext()
 	const { grantId, chainId: _chainId, role: _role, proposalId, isRenderingProposalBody } = router.query
@@ -64,6 +64,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const [review, setReview] = useState<ReviewInfo>()
 	const [showSubmitReviewPanel, setShowSubmitReviewPanel] = useState<boolean>(false)
 	const [areCommentsLoading, setAreCommentsLoading] = useState<boolean>(false)
+	const [filterState, setFilterState] = useState<ApplicationState>()
 
 	const getGrant = useCallback(async() => {
 		if(!grantId || chainId === -1 || typeof grantId !== 'string') {
@@ -425,7 +426,9 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 						if(refresh) {
 							getComments()
 						}
-					}
+					},
+					filterState,
+					setFilterState
 				}
 			}>
 			{children}
@@ -433,7 +436,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	)
 }
 
-const FundBuilderProvider = ({ children }: PropsWithChildren<ReactNode>) => {
+const FundBuilderProvider = ({ children }: {children: ReactNode}) => {
 	const [tokenList, setTokenList] = useState<TokenInfo[]>()
 	const [selectedTokenInfo, setSelectedTokenInfo] = useState<TokenInfo>()
 	const [amounts, setAmounts] = useState<number[]>([])
@@ -472,7 +475,7 @@ const FundBuilderProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	)
 }
 
-const ModalProvider = ({ children }: PropsWithChildren<ReactNode>) => {
+const ModalProvider = ({ children }: {children: ReactNode}) => {
 	const [isSendAnUpdateModalOpen, setIsSendAnUpdateModalOpen] = useState<boolean>(false)
 	const [isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen] = useState<boolean>(false)
 

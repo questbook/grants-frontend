@@ -36,7 +36,7 @@ function SendAnUpdateModal() {
 									mt={6}
 									variant='metadata'
 									fontWeight='500'
-									color='gray.6'>
+									color='gray.600'>
 									FEW WAYS TO START THE DISCUSSION.
 								</Text>
 							)
@@ -50,6 +50,7 @@ function SendAnUpdateModal() {
 										proposalTags?.map((tag, index) => {
 											return (
 												<QuickReplyButton
+													id={tag.id as 'accept' | 'reject' | 'resubmit' | 'feedback'}
 													key={index}
 													tag={tag}
 													isSelected={selectedTag === tag.id}
@@ -87,7 +88,7 @@ function SendAnUpdateModal() {
 							}>
 							<Text
 								variant='body'
-								color='gray.5'>
+								color='gray.500'>
 								Show only to reviewers and builder
 							</Text>
 						</Checkbox>

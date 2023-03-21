@@ -35,15 +35,15 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 						w={['100%', '70%']}
 						variant='flushed'
 						textAlign='left'
-						borderColor='gray.3'
+						borderColor='gray.300'
 						borderBottom='1px solid'
 						fontSize='20px'
 						lineHeight='28px'
-						color='black.1'
+						color='black.100'
 						onWheel={(e) => (e.target as HTMLElement).blur()}
 						_placeholder={
 							{
-								color: 'gray.5'
+								color: 'gray.500'
 							}
 						}
 						onChange={
@@ -59,7 +59,7 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 							mt={1}
 							ml='auto'
 							variant='metadata'
-							color='gray.5'>
+							color='gray.500'>
 							{value?.length}
 							/
 							{props?.maxLength}
@@ -71,7 +71,7 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 						<Text
 							mt={1}
 							variant='metadata'
-							color='gray.5'>
+							color='gray.500'>
 							{helperText}
 						</Text>
 					)
@@ -82,7 +82,7 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 							mt={1}
 							ml='30%'
 							variant='metadata'
-							color='gray.5'>
+							color='gray.500'>
 							{errorText}
 						</Text>
 					)

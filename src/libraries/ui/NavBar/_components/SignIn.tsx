@@ -81,7 +81,7 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 										mt={1}
 										fontSize='14px'
 										mb={5}
-										color='black.3'>
+										color='black.300'>
 										Use your existing Questbook wallet or create new one
 									</Text>
 									<Button

@@ -51,7 +51,7 @@ function NavbarLayout({ openSignIn, children, renderNavbar, navbarConfig, reques
 			<Flex
 				direction='row'
 				maxH='calc(100vh - 64px)'
-				bg='gray.1'>
+				bg='gray.100'>
 				<Flex
 					className='body'
 					zIndex={0}

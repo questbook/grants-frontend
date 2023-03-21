@@ -13,20 +13,20 @@ function StepIndicator() {
 				width='100%'
 				className='firstStep'
 				borderRadius='1px'
-				bgColor={createingProposalStep > 0 ? 'accent.azure' : 'gray.2'}
+				bgColor={createingProposalStep > 0 ? 'accent.azure' : 'gray.200'}
 				height={1}
 				maxW='100%'
 			/>
 			<Container
 				width='100%'
 				borderRadius='1px'
-				bgColor={createingProposalStep > 1 ? 'accent.azure' : 'gray.2'}
+				bgColor={createingProposalStep > 1 ? 'accent.azure' : 'gray.200'}
 				height={1}
 			/>
 			<Container
 				width='100%'
 				borderRadius='1px'
-				bgColor={createingProposalStep > 2 ? 'accent.azure' : 'gray.2'}
+				bgColor={createingProposalStep > 2 ? 'accent.azure' : 'gray.200'}
 				height={1}
 				maxW='100%'
 			/>
