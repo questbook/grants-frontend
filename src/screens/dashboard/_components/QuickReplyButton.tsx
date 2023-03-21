@@ -1,4 +1,4 @@
-import { Button, ButtonProps, Flex, Text } from '@chakra-ui/react'
+import { Button, ButtonProps, Flex, Text, TextProps } from '@chakra-ui/react'
 import { Accept, Chat, Reject, Resubmit } from 'src/generated/icons'
 import logger from 'src/libraries/utils/logger'
 import { TagType } from 'src/screens/dashboard/_utils/types'
@@ -8,9 +8,10 @@ type Props = {
     tag: TagType
     isSelected: boolean
     index: number
+	textProps?: TextProps
 } & ButtonProps
 
-function QuickReplyButton({ tag, isSelected, index, ...props }: Props) {
+function QuickReplyButton({ tag, isSelected, index, textProps, ...props }: Props) {
 	const buildComponent = () => {
 		logger.info({ tag, isSelected, index }, 'QuickReplyButton.buildComponent')
 		if(!tag.id) {
@@ -33,7 +34,7 @@ function QuickReplyButton({ tag, isSelected, index, ...props }: Props) {
 				_hover={{ bg: config[tag.id as keyof typeof config].bg + '.400' }}
 				{...props}
 			>
-				<Text>
+				<Text {...textProps}>
 					{config[tag.id as keyof typeof config].title}
 				</Text>
 			</Button>
