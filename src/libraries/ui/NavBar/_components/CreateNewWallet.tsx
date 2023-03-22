@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { BsArrowLeft } from 'react-icons/bs'
 import { Button, Checkbox, Flex, ModalBody, Text } from '@chakra-ui/react'
 import { ethers, Wallet } from 'ethers'
@@ -79,16 +79,18 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
 						//  variant='primaryMedium'
 						borderRadius='0px'
 						_hover={{ bg:'gray.500' }}
-						isDisabled={!isPrivateKeySaved}
+						isDisabled={!isPrivateKeySaved || !newWallet?.privateKey}
 						width='30%'
-						bg='black.1'
-						_disabled={{ bg: 'gray.3', color: 'black.100', textColor:'gray.5' }}
+						bg='black.100'
+						_disabled={{ bg: 'gray.300', color: 'black.100', textColor:'gray.500' }}
 						textColor='gray.100'
 						onClick={
 							() => {
+								if(!newWallet?.privateKey) {
+									return
+								}
+
 								try {
-									const newWallet = ethers.Wallet.createRandom()
-									setNewWallet(newWallet)
 									importWebwallet(newWallet.privateKey)
 									setSignIn(false)
 								} catch{
@@ -109,6 +111,11 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
 			</ModalBody>
 		)
 	}
+
+	useEffect(() => {
+		const newWallet = ethers.Wallet.createRandom()
+		setNewWallet(newWallet)
+	}, [])
 
 	return buildComponent()
 }
