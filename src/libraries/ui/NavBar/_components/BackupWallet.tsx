@@ -37,7 +37,7 @@ export default function BackupWallet({ isNewUser, exportWalletToGD, loading, ini
 					align='center'
 
 					fontSize={13}
-					color='black.3'>
+					color='black.300'>
 					You will need the private key to sign into Questbook again. Save it in a
 					secure place.
 				</Text>
@@ -67,7 +67,7 @@ export default function BackupWallet({ isNewUser, exportWalletToGD, loading, ini
 				>
 					<Button
 						width='50%'
-						bg='gray.3'
+						bg='gray.300'
 						height={10}
 						w='90%'
 						borderRadius='20'
@@ -115,7 +115,7 @@ export default function BackupWallet({ isNewUser, exportWalletToGD, loading, ini
 						// variant='primaryMedium'
 						marginTop={4}
 						width='90%'
-						bg='gray.3'
+						bg='gray.300'
 						height={10}
 						borderRadius='20'
 						leftIcon={<CopyIcon />}

@@ -73,7 +73,7 @@ function Discussions() {
 						comments.length > 0 && (
 							<Divider
 								my={4}
-								color='gray.3'
+								color='gray.300'
 								height={1} />
 						)
 					}
@@ -267,7 +267,7 @@ function Discussions() {
 												>
 													<Text
 														variant='body'
-														color='gray.5'>
+														color='gray.500'>
 														Show comment only to reviewers and builders
 													</Text>
 												</Checkbox>
@@ -370,7 +370,7 @@ function Discussions() {
 								<Text
 									ml={2}
 									variant='body'
-									color='gray.5'>
+									color='gray.500'>
 									{formatTime(comment?.timestamp)}
 								</Text>
 							)
@@ -386,7 +386,7 @@ function Discussions() {
 								>
 									<LockIcon
 										ml={2}
-										color='gray.5' />
+										color='gray.500' />
 								</Tooltip>
 							)
 						}

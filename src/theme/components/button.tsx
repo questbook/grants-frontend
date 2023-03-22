@@ -150,7 +150,7 @@ export default {
 				},
 				'&:focus': {
 					bg: 'gray.400',
-					border: '1px solid black.3',
+					border: '1px solid black.300',
 					borderRadius: '2px'
 				},
 				'&:disabled': {
@@ -172,7 +172,7 @@ export default {
 				},
 				_focus: {
 					bg: 'gray.300',
-					border: '1px solid gray.4',
+					border: '1px solid gray.400',
 				},
 				_disabled: {
 					color: 'gray.500',

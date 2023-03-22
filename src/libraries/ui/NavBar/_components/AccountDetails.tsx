@@ -102,7 +102,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 									>
 										<Text
 											variant='body'
-											color='gray.5'>
+											color='gray.500'>
 											Your Questbook wallet
 										</Text>
 

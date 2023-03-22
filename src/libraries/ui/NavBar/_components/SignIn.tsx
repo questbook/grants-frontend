@@ -105,7 +105,7 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 										variant='primaryMedium'
 										marginTop={4}
 										width={['90%', '75%']}
-										bg='gray.3'
+										bg='gray.300'
 										height='45px'
 										borderRadius='20'
 										marginBottom={2}
