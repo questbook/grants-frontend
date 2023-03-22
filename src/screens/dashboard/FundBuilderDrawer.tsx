@@ -79,7 +79,7 @@ function FundBuilderDrawer() {
 											<Text
 												mt={8}
 												variant='body'
-												color='gray.5'>
+												color='gray.500'>
 												Some proposals would be auto-accepted once payout is initiated for them.
 											</Text>
 										)
@@ -160,7 +160,7 @@ function FundBuilderDrawer() {
 		)
 	}
 
-	const { safeObj } = useSafeContext()
+	const { safeObj } = useSafeContext()!
 	const {
 		isModalOpen,
 		setIsModalOpen,
@@ -267,7 +267,7 @@ function FundBuilderDrawer() {
 				}
 			})
 			let proposaladdress: any = ''
-			if(safeObj.getIsEvm()) {
+			if(safeObj?.getIsEvm()) {
 				proposaladdress = await safeObj?.proposeTransactions(JSON.stringify({ workspaceId: grant?.workspace?.id, grantAddress: grant?.id }), transactionData, '')
 				if(proposaladdress?.error) {
 					customToast({
@@ -279,7 +279,7 @@ function FundBuilderDrawer() {
 					return
 				}
 
-				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress, safeObj?.chainId, proposaladdress))
+				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress ?? '', safeObj?.chainId?.toString(), proposaladdress))
 			} else {
 				proposaladdress = await safeObj?.proposeTransactions(JSON.stringify({ workspaceId: grant?.workspace?.id, grantAddress: grant?.id }), transactionData, phantomWallet)
 				if(proposaladdress?.error) {
@@ -292,7 +292,7 @@ function FundBuilderDrawer() {
 					return
 				}
 
-				setSafeProposalLink(getProposalUrl(safeObj.safeAddress, proposaladdress))
+				setSafeProposalLink(getProposalUrl(safeObj?.safeAddress ?? '', proposaladdress))
 			}
 
 			const methodArgs = [

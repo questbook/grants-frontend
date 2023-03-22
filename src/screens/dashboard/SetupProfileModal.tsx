@@ -61,7 +61,7 @@ function SetupProfileModal({ walletAddress, isOpen, onClose }: Props) {
 											borderBottom='1px solid #E7E4DD'>
 											<Text
 												minW='20%'
-												color='gray.6'>
+												color='gray.600'>
 												Name
 											</Text>
 											<FlushedInput
@@ -88,7 +88,7 @@ function SetupProfileModal({ walletAddress, isOpen, onClose }: Props) {
 											borderBottom='1px solid #E7E4DD'>
 											<Text
 												minW='20%'
-												color='gray.6'>
+												color='gray.600'>
 												In-app wallet
 											</Text>
 											<Text>
@@ -101,7 +101,7 @@ function SetupProfileModal({ walletAddress, isOpen, onClose }: Props) {
 											align='center'>
 											<Text
 												minW='20%'
-												color='gray.6'>
+												color='gray.600'>
 												Email
 											</Text>
 											<FlushedInput

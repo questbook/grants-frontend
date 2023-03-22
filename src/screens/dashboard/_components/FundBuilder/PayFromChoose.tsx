@@ -1,6 +1,6 @@
 import { Flex, Image, Text } from '@chakra-ui/react'
 
-function PayFromChoose({ selectedMode }: { selectedMode: any}) {
+function PayFromChoose({ selectedMode }: { selectedMode: {logo: string | undefined, value: string | undefined} | undefined}) {
 	const buildComponent = () => {
 		return (
 			<Flex
@@ -10,7 +10,7 @@ function PayFromChoose({ selectedMode }: { selectedMode: any}) {
 				alignItems='center'>
 				<Text
 					w='20%'
-					color='gray.6'>
+					color='gray.600'>
 					Pay From
 				</Text>
 				<Flex alignItems='center'>

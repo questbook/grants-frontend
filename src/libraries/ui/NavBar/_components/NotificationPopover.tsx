@@ -67,7 +67,7 @@ function NotificationPopover(props: Props) {
 												align='start'>
 												<Text
 													variant='body'
-													color='gray.5'>
+													color='gray.500'>
 													{item.title}
 												</Text>
 												<Button
@@ -94,7 +94,7 @@ function NotificationPopover(props: Props) {
 								<Text
 									mt={4}
 									variant='body'
-									color='gray.5'>
+									color='gray.500'>
 									Learn more about notifications
 								</Text>
 							</PopoverBody>
@@ -110,7 +110,7 @@ function NotificationPopover(props: Props) {
 			title: isMobile ? 'For mobile App' : 'For MAC App',
 			buttonIcon: isMobile ? <></> : (
 				<Desktop
-					color='black.1'
+					color='black.100'
 					boxSize='20px' />
 			),
 			buttonText: isMobile ? 'Open my mobile app' : 'Open my desktop app',

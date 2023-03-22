@@ -141,7 +141,7 @@ function ReviewProposal() {
 									}
 									_hover={
 										{
-											bg: isSelected ? 'accent.azure' : 'gray.3'
+											bg: isSelected ? 'accent.azure' : 'gray.300'
 										}
 									}
 									onClick={
@@ -162,7 +162,7 @@ function ReviewProposal() {
 									}>
 									<Text
 										variant='body'
-										color={isSelected ? 'white' : 'black.1'}>
+										color={isSelected ? 'white' : 'black.100'}>
 										{index + 1}
 									</Text>
 
@@ -199,7 +199,7 @@ function ReviewProposal() {
 						<Text
 							mt={3}
 							variant='body'
-							color='gray.5'>
+							color='gray.500'>
 							{item?.comment}
 						</Text>
 					)
@@ -281,7 +281,7 @@ function ReviewProposal() {
 						<Text
 							mt={3}
 							variant='body'
-							color='gray.5'>
+							color='gray.500'>
 							{item?.comment}
 						</Text>
 					)

@@ -74,7 +74,7 @@ function Reviews() {
 								<Text
 									mt={4}
 									variant='metadata'
-									color='gray.5'
+									color='gray.500'
 									fontWeight='500'>
 									REVIEWER EVALUATION
 								</Text>
@@ -220,7 +220,7 @@ function Reviews() {
 				<Text
 					variant='body'
 					fontWeight='500'
-					color='black.1'>
+					color='black.100'>
 					Setup
 				</Text>
 			</Button>
@@ -270,13 +270,13 @@ function Reviews() {
 									</Text>
 									<Text
 										mt={2}
-										color='black.3'
+										color='black.300'
 										variant='body' >
 										This will be applicable
 										{' '}
 										<Text
 											variant='body'
-											color='black.3'
+											color='black.300'
 											display='inline-block'
 											fontWeight='500'>
 											only
@@ -314,7 +314,7 @@ function Reviews() {
 											<Text
 												variant='body'
 												fontWeight='400'
-												color='gray.6'>
+												color='gray.600'>
 												Select All
 											</Text>
 										</Checkbox>
@@ -439,7 +439,7 @@ function Reviews() {
 				<Text
 					w='50%'
 					variant='body'
-					color='gray.6'>
+					color='gray.600'>
 					Reviewer
 				</Text>
 				{
@@ -529,13 +529,13 @@ function Reviews() {
 									</Text>
 									<Text
 										mt={2}
-										color='black.3'
+										color='black.300'
 										variant='body' >
 										This will be applicable for
 										{' '}
 										<Text
 											variant='body'
-											color='black.3'
+											color='black.300'
 											display='inline-block'
 											fontWeight='500'>
 											all
@@ -690,7 +690,7 @@ function Reviews() {
 				<Text
 					w='50%'
 					variant='body'
-					color='gray.6'>
+					color='gray.600'>
 					Review With
 				</Text>
 				{
@@ -775,7 +775,7 @@ function Reviews() {
 									{review?.total}
 									<Text
 										ml={1}
-										color='black.3'
+										color='black.300'
 										display='inline-block'>
 										{' / '}
 										{review?.items?.reduce((acc, item) => acc + item?.rubric?.maximumPoints, 0)}
@@ -788,11 +788,11 @@ function Reviews() {
 					{
 						!review && reviewer.actorId.toLowerCase() !== scwAddress?.toLowerCase() && (
 							<Text
-								bg='gray.4'
+								bg='gray.400'
 								py={1}
 								px={2}
 								borderRadius='8px'
-								color='black.3'
+								color='black.300'
 								variant='metadata'
 								fontWeight='500'>
 								Pending
@@ -844,7 +844,7 @@ function Reviews() {
 											</Text>
 											<Text
 												variant='metadata'
-												color='gray.6'>
+												color='gray.600'>
 												{item?.rubric?.details}
 											</Text>
 										</Flex>
@@ -855,7 +855,7 @@ function Reviews() {
 											{item?.rating}
 											<Text
 												ml={1}
-												color='black.3'
+												color='black.300'
 												display='inline-block'>
 												{' / '}
 												{item?.rubric?.maximumPoints}
@@ -866,7 +866,7 @@ function Reviews() {
 									<Text
 										textAlign='justify'
 										variant='metadata'
-										color='gray.6'>
+										color='gray.600'>
 										{item?.comment}
 									</Text>
 

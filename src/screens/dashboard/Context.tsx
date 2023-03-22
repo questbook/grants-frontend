@@ -1,25 +1,26 @@
-import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { SupportedPayouts } from '@questbook/supported-safes'
+import { TokenDetailsInterface } from '@questbook/supported-safes/lib/types/Safe'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
-import { useGetApplicationActionsQuery, useGetCommentsQuery, useGetGrantQuery, useGetProposalsQuery } from 'src/generated/graphql'
+import { ApplicationState, useGetApplicationActionsQuery, useGetCommentsQuery, useGetGrantQuery, useGetProposalsQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
 import { getFromIPFS } from 'src/libraries/utils/ipfs'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
-import { CommentMap, CommentType, DashboardContextType, FundBuilderContextType, ModalContextType, Proposals, ReviewInfo, SignerVerifiedState, TokenInfo } from 'src/screens/dashboard/_utils/types'
+import { CommentMap, CommentType, DashboardContextType, FundBuilderContextType, ModalContextType, Proposals, ReviewInfo, SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
 import { Roles } from 'src/types'
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined)
 const FundBuilderContext = createContext<FundBuilderContextType | undefined>(undefined)
 const ModalContext = createContext<ModalContextType | undefined>(undefined)
 
-const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
+const DashboardProvider = ({ children }: {children: ReactNode}) => {
 	const router = useRouter()
-	const { setSafeObj } = useSafeContext()
+	const { setSafeObj } = useSafeContext()!
 	const { grantId, chainId: _chainId, role: _role, proposalId, isRenderingProposalBody } = router.query
 	const { setWorkspace } = useContext(ApiClientsContext)!
 	const { scwAddress, webwallet, setDashboardStep } = useContext(WebwalletContext)!
@@ -64,6 +65,7 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	const [review, setReview] = useState<ReviewInfo>()
 	const [showSubmitReviewPanel, setShowSubmitReviewPanel] = useState<boolean>(false)
 	const [areCommentsLoading, setAreCommentsLoading] = useState<boolean>(false)
+	const [filterState, setFilterState] = useState<ApplicationState>()
 
 	const getGrant = useCallback(async() => {
 		if(!grantId || chainId === -1 || typeof grantId !== 'string') {
@@ -425,7 +427,9 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 						if(refresh) {
 							getComments()
 						}
-					}
+					},
+					filterState,
+					setFilterState
 				}
 			}>
 			{children}
@@ -433,9 +437,9 @@ const DashboardProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	)
 }
 
-const FundBuilderProvider = ({ children }: PropsWithChildren<ReactNode>) => {
-	const [tokenList, setTokenList] = useState<TokenInfo[]>()
-	const [selectedTokenInfo, setSelectedTokenInfo] = useState<TokenInfo>()
+const FundBuilderProvider = ({ children }: {children: ReactNode}) => {
+	const [tokenList, setTokenList] = useState<TokenDetailsInterface[]>()
+	const [selectedTokenInfo, setSelectedTokenInfo] = useState<TokenDetailsInterface>()
 	const [amounts, setAmounts] = useState<number[]>([])
 	const [tos, setTos] = useState<string[]>([])
 	const [milestoneIndices, setMilestoneIndices] = useState<number[]>([])
@@ -472,7 +476,7 @@ const FundBuilderProvider = ({ children }: PropsWithChildren<ReactNode>) => {
 	)
 }
 
-const ModalProvider = ({ children }: PropsWithChildren<ReactNode>) => {
+const ModalProvider = ({ children }: {children: ReactNode}) => {
 	const [isSendAnUpdateModalOpen, setIsSendAnUpdateModalOpen] = useState<boolean>(false)
 	const [isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen] = useState<boolean>(false)
 

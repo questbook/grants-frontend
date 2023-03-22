@@ -1,5 +1,7 @@
 import { ReactElement } from 'react'
+import { TokenDetailsInterface } from '@questbook/supported-safes/lib/types/Safe'
 import {
+	ApplicationState,
 	GetCommentsQuery,
 	GetPayoutsQuery,
 	GetProposalsQuery,
@@ -21,28 +23,30 @@ export type DashboardContextType = {
   commentMap: CommentMap
   setCommentMap: (coments: CommentMap) => void
   refreshComments: (refresh: boolean) => void
+  filterState: ApplicationState | undefined
+  setFilterState: (state: ApplicationState | undefined) => void
 };
 
-export interface TokenInfo {
-  tokenIcon: string
-  tokenName: string
-  symbol: string
-  tokenValueAmount: number
-  usdValueAmount: number
-  mintAddress: string
-  info: {
-    decimals: number
-    tokenAddress: string
-    fiatConversion: number
-  }
-  fiatConversion: number
-}
+// export interface TokenInfo {
+//   tokenIcon: string
+//   tokenName: string
+//   symbol: string
+//   tokenValueAmount: number
+//   usdValueAmount: number
+//   mintAddress: string
+//   info: {
+//     decimals: number
+//     tokenAddress: string
+//     fiatConversion: number
+//   }
+//   fiatConversion: number
+// }
 
 export type FundBuilderContextType = {
-  tokenList?: TokenInfo[]
-  setTokenList: (tokenList: TokenInfo[]) => void
-  selectedTokenInfo?: TokenInfo
-  setSelectedTokenInfo: (tokenInfo: TokenInfo) => void
+  tokenList?: TokenDetailsInterface[]
+  setTokenList: (tokenList: TokenDetailsInterface[]) => void
+  selectedTokenInfo?: TokenDetailsInterface
+  setSelectedTokenInfo: (tokenInfo: TokenDetailsInterface) => void
   amounts: number[]
   setAmounts: (amount: number[]) => void
   tos: string[]

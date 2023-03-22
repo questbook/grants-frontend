@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createContext, PropsWithChildren, ReactNode, useContext, useEffect, useState } from 'react'
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetAllGrantsForMemberQuery, useGetAllGrantsQuery, useGetGrantProgramDetailsQuery, useGetSectionGrantsQuery, useGetWorkspacesAndBuilderGrantsQuery } from 'src/generated/graphql'
@@ -14,7 +14,7 @@ const DiscoverContext = createContext<DiscoverContextType | null>(null)
 
 const PAGE_SIZE = 40
 
-const DiscoverProvider = ({ children }: PropsWithChildren<ReactNode>) => {
+const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	const provider = () => {
 		return (
 			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram, search, setSearch, sectionGrants, isLoading, safeBalances }}>

@@ -23,7 +23,7 @@ function SelectDropdown<T>({ options, placeholder, value, onChange }: Props<T>) 
 						width: '40%',
 						fontSize: '96px',
 						fontWeight: '400',
-						color: 'black.1'
+						color: 'black.100'
 					}),
 					valueContainer: (provided) => ({
 						...provided,

@@ -40,7 +40,7 @@ function Discover() {
 				direction='column'
 				justify='center'
 				align='center'
-				bg='black.1'>
+				bg='black.100'>
 				<Text
 					mt='auto'
 					color='white'
@@ -296,7 +296,7 @@ function Discover() {
 													/>
 													<Divider
 														width='100%'
-														borderColor='gray.3'
+														borderColor='gray.300'
 														mt={8}
 														display={grantsForYou?.length ? '' : 'none'}
 													/>
@@ -305,8 +305,8 @@ function Discover() {
 												<Skeleton
 													width='100%'
 													h='5%'
-													startColor='gray.3'
-													endColor='gray.4'
+													startColor='gray.300'
+													endColor='gray.400'
 												/>
 											) : <Flex />
 									}
@@ -350,7 +350,7 @@ function Discover() {
 															</Text>
 															<Text
 																fontSize='14px'
-																color='gray.5'
+																color='gray.500'
 																fontWeight='500'
 																ml='-6px'
 															>

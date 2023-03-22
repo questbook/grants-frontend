@@ -237,7 +237,7 @@ function ProposalForm() {
 											<Text
 												variant='title'
 												fontWeight='400'
-												color='black.1'
+												color='black.100'
 											>
 												Accepting proposals until
 												{' '}
@@ -245,7 +245,7 @@ function ProposalForm() {
 											<Text
 												variant='title'
 												fontWeight='500'
-												color='black.1'
+												color='black.100'
 											>
 												{extractDateFromDateTime(grant?.deadline!)}
 											</Text>
@@ -271,7 +271,7 @@ function ProposalForm() {
 													<Text
 														variant='title'
 														fontWeight='500'
-														color='black.1'
+														color='black.100'
 														cursor='pointer'
 														onClick={() => window.open(grant?.link!, '_blank')}
 													>
@@ -336,7 +336,7 @@ function ProposalForm() {
 										}
 									}
 									isInvalid={walletAddressError}
-									errorText={`Invalid address on ${chainNames?.get(safeObj?.chainId.toString()) !== undefined ? chainNames.get(safeObj?.chainId.toString())!.toString() : 'EVM based chain'}`} />
+									errorText={`Invalid address on ${chainNames?.get(safeObj?.chainId?.toString() ?? '') !== undefined ? chainNames.get(safeObj?.chainId?.toString() ?? '')?.toString() : 'EVM based chain'}`} />
 							)
 						}
 
@@ -562,7 +562,7 @@ function ProposalForm() {
 	const { type, grant, chainId, form, setForm, error } = useContext(ProposalFormContext)!
 	// console.log('grant', grant)
 	// console.log('proposal', proposal)
-	const { safeObj } = useSafeContext()
+	const { safeObj } = useSafeContext()!
 	const isEvm = safeObj?.getIsEvm()
 
 	const router = useRouter()

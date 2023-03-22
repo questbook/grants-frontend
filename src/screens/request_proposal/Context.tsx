@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren, ReactNode, useCallback, useEffect, useState } from 'react'
+import { createContext, ReactNode, useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetGrantDetailsByIdQuery } from 'src/generated/graphql'
@@ -8,7 +8,7 @@ import { RFPForm, RFPFormContextType, RFPFormType } from 'src/screens/request_pr
 
 const RFPFormContext = createContext<RFPFormContextType | undefined>(undefined)
 
-const RFPFormProvider = ({ children }: PropsWithChildren<ReactNode>) => {
+const RFPFormProvider = ({ children }: {children: ReactNode}) => {
 	const providerComponent = () => (
 		<RFPFormContext.Provider
 			value={

@@ -105,7 +105,7 @@ function Settings() {
 													<Text
 														fontWeight='400'
 														variant='subtitle'
-														color='black.1'
+														color='black.100'
 													>
 														{formatAddress(workspace.safe.address)}
 													</Text>
@@ -232,7 +232,7 @@ function Settings() {
 											<Button
 												w='100%'
 												h='100%'
-												bg='gray.3'
+												bg='gray.300'
 												borderRadius='2px'
 												alignItems='center'
 												justifyItems='center'
@@ -301,7 +301,7 @@ function Settings() {
 								width='195px'
 							>
 								<InputLeftElement pointerEvents='none'>
-									<Search2Icon color='gray.4' />
+									<Search2Icon color='gray.400' />
 								</InputLeftElement>
 								<Input
 									type='search'
@@ -486,7 +486,7 @@ Settings.getLayout = function(page: ReactElement) {
 	return (
 		<NavbarLayout
 			openSignIn={true}
-			navbarConfig={{ showDomains: true, showLogo: false, showOpenDashboard: true, showAddMembers: true, bg: 'gray.1' }}
+			navbarConfig={{ showDomains: true, showLogo: false, showOpenDashboard: true, showAddMembers: true, bg: 'gray.100' }}
 		>
 			<SettingsFormProvider>
 				{page}

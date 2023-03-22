@@ -175,8 +175,8 @@ export const WebwalletContext = createContext<{
 		} | null>(null)
 
 export const BiconomyContext = createContext<{
-	biconomyDaoObjs?: { [key: string]: any }
-	setBiconomyDaoObjs: (biconomyDaoObjs: any) => void
+	biconomyDaoObjs?: { [key: string]: typeof Biconomy }
+	setBiconomyDaoObjs: (biconomyDaoObjs: { [key: string]: typeof Biconomy }) => void
 	initiateBiconomy: (chainId: string) => Promise<InitiateBiconomyReturnType | undefined>
 	loadingBiconomyMap: { [_: string]: boolean }
 	biconomyWalletClients?: { [key: string]: BiconomyWalletClient }
@@ -656,16 +656,19 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 									<WebwalletContext.Provider value={webwalletContextValue}>
 										<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
 											<SafeProvider>
-												<DAOSearchContextMaker>
-													<GrantsProgramContext.Provider value={grantProgram}>
-														<QBAdminsContextMaker>
-															<ChakraProvider theme={theme}>
-																{getLayout(<Component {...pageProps} />)}
-																<QRCodeModal />
-															</ChakraProvider>
-														</QBAdminsContextMaker>
-													</GrantsProgramContext.Provider>
-												</DAOSearchContextMaker>
+												<>
+													<DAOSearchContextMaker>
+														<GrantsProgramContext.Provider value={grantProgram}>
+															<QBAdminsContextMaker>
+																<ChakraProvider theme={theme}>
+																	{getLayout(<Component {...pageProps} />)}
+																	<QRCodeModal />
+																</ChakraProvider>
+															</QBAdminsContextMaker>
+														</GrantsProgramContext.Provider>
+
+													</DAOSearchContextMaker>
+												</>
 											</SafeProvider>
 										</BiconomyContext.Provider>
 									</WebwalletContext.Provider>

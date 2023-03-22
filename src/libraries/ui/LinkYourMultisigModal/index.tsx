@@ -107,7 +107,7 @@ function LinkYourMultisigModal({
 							async() => {
 								if(isOwner && selectedSafeNetwork) {
 								// link the safe
-									await link(multiSigAddress, selectedSafeNetwork.networkId)
+									await link(multiSigAddress, selectedSafeNetwork.networkId?.toString())
 									onClose()
 								} else {
 									setIsVerifySignerModalOpen(true)
@@ -150,10 +150,10 @@ function LinkYourMultisigModal({
 				gap={2}>
 				<Loader
 					className='loader'
-					color='black.1' />
+					color='black.100' />
 				<Text
 					variant='body'
-					color='black.3'>
+					color='black.300'>
 					Searching for this address on different networks..
 				</Text>
 			</Flex>

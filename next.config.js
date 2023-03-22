@@ -5,9 +5,6 @@ const withYaml = require('next-plugin-yaml')
 const nextConfig = {
 	reactStrictMode: true,
 	trailingSlash: true,
-	// temporarily disable ESLint checks during builds
-	// so we can transition to the new lint rules without breaking
-	eslint: { ignoreDuringBuilds: true },
 	webpack: function(config, options) {
 		if(!options.isServer) {
 			config.resolve.fallback.fs = false

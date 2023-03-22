@@ -27,13 +27,13 @@ function SectionSelect({ label, flexProps, ...props }: Props) {
 					variant='flushed'
 					w='70%'
 					textAlign='left'
-					borderColor='gray.3'
+					borderColor='gray.300'
 					fontSize='20px'
 					lineHeight='28px'
-					color='black.1'
+					color='black.100'
 					_placeholder={
 						{
-							color: 'gray.5'
+							color: 'gray.500'
 						}
 					}>
 					<NumberInputField />

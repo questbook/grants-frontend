@@ -50,7 +50,6 @@ function Proposal() {
 		return (
 			<Flex
 				w='100%'
-				// overflowY='auto'
 				px={5}
 				py={6}
 				direction='column'
@@ -108,7 +107,7 @@ function Proposal() {
 							<Flex
 								mt={4}
 								direction='column'>
-								<Text color='gray.5'>
+								<Text color='gray.500'>
 									By
 								</Text>
 								<Flex
@@ -133,7 +132,7 @@ function Proposal() {
 														<Flex
 															w='20px'
 															h='20px'
-															bg='gray.3'
+															bg='gray.300'
 															borderRadius='3xl'
 															justify='center'
 														>
@@ -149,7 +148,7 @@ function Proposal() {
 												<Text
 													fontWeight='400'
 													variant='v2_body'
-													color='gray.5'>
+													color='gray.500'>
 													{getFieldString(decryptedProposal, 'applicantEmail')}
 												</Text>
 											</Button>
@@ -171,7 +170,7 @@ function Proposal() {
 															<Flex
 																w='20px'
 																h='20px'
-																bg='gray.3'
+																bg='gray.300'
 																borderRadius='3xl'
 																justify='center'
 															>
@@ -185,7 +184,7 @@ function Proposal() {
 														<Text
 															fontWeight='400'
 															variant='v2_body'
-															color='gray.5'>
+															color='gray.500'>
 															{
 																formatAddress(
 																	getFieldString(proposal, 'applicantAddress') ?? '',
@@ -210,7 +209,7 @@ function Proposal() {
 								<Flex
 									direction='column'
 									w='50%'>
-									<Text color='gray.5'>
+									<Text color='gray.500'>
 										Funding Ask
 									</Text>
 									<Text
@@ -226,7 +225,7 @@ function Proposal() {
 						<Flex
 							direction='column'
 							w='50%'>
-							<Text color='gray.5'>
+							<Text color='gray.500'>
 								Milestones
 							</Text>
 							<Text
@@ -243,7 +242,7 @@ function Proposal() {
 								w='100%'
 								mt={4}
 								direction='column'>
-								<Text color='gray.5'>
+								<Text color='gray.500'>
 									tl;dr
 								</Text>
 								<Text mt={1}>
@@ -257,7 +256,7 @@ function Proposal() {
 						w='100%'
 						mt={4}
 						direction='column'>
-						<Text color='gray.5'>
+						<Text color='gray.500'>
 							Details
 						</Text>
 						<Box mt={1} />
@@ -273,7 +272,7 @@ function Proposal() {
 								w='100%'
 								mt={4}
 								direction='column'>
-								<Text color='gray.5'>
+								<Text color='gray.500'>
 									Member Details
 								</Text>
 								{
@@ -348,7 +347,7 @@ function Proposal() {
 										w='100%'
 										mt={4}
 										direction='column'>
-										<Text color='gray.5'>
+										<Text color='gray.500'>
 											{title}
 										</Text>
 										<ReactLinkify

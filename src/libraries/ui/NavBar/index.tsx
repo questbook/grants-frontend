@@ -34,7 +34,7 @@ type Props = {
 	openSignIn?: boolean
 }
 
-function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props) {
+function NavBar({ openSignIn, bg = 'gray.100', requestProposal, dashboard }: Props) {
 	const { webwallet } = useContext(WebwalletContext)!
 	const { importWebwallet } = useContext(WebwalletContext)!
 
@@ -54,7 +54,7 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 				bg={bg}
 				ps={[6, 24]}
 				pe={24}
-				backgroundColor={['black.1', 'gray.1']}
+				backgroundColor={['black.100', 'gray.100']}
 				py='16px'
 				minWidth={{ base: '-webkit-fill-available' }}
 				paddingInlineEnd={['35px', '120px']}
@@ -353,7 +353,7 @@ function NavBar({ openSignIn, bg = 'gray.1', requestProposal, dashboard }: Props
 				bg={bg}
 				ps={[6, 24]}
 				pe={24}
-				backgroundColor='gray.1'
+				backgroundColor='gray.100'
 				py='16px'
 				minWidth={{ base: '-webkit-fill-available' }}
 			>
@@ -676,7 +676,7 @@ NavBar.defaultProps = {
 }
 
 // NavBar.defaultProps = {
-// 	bg: 'gray.1',
+// 	bg: 'gray.100',
 // 	showLogo: false,
 // 	showSearchBar: false,
 // 	showInviteProposals: true,

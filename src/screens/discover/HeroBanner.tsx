@@ -12,7 +12,7 @@ function HeroBanner() {
 			alignContent='stretch'
 			h='460px'>
 			<Flex
-				bgColor='black.1'
+				bgColor='black.100'
 				padding={[10, 24]}
 				flexDirection='column'
 				textColor='white'

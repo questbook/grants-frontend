@@ -1,19 +1,22 @@
 // This renders the list of proposals that show up as the first column
 
 import { createRef, useContext, useEffect, useMemo, useState } from 'react'
-import { Box, Button, Checkbox, Flex, Text } from '@chakra-ui/react'
-import { motion } from 'framer-motion'
+import { Button, Checkbox, Flex, Grid, GridItem, Text } from '@chakra-ui/react'
+import { motion, useAnimationControls, Variants } from 'framer-motion'
 import { useRouter } from 'next/router'
+import { ApplicationState } from 'src/generated/graphql'
+import { Filter } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import SearchField from 'src/libraries/ui/SearchField'
 import { getFieldString } from 'src/libraries/utils/formatting'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
+import FilterTag from 'src/screens/dashboard/_components/FilterTag'
 import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 
-function ProposalList({ step, setStep }: {step?: boolean, setStep?: (value: boolean) => void}) {
+function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boolean) => void }) {
 	const buildComponent = () => (
 		<Flex
 			w={['100%', '100%', '25%', '25%']}
@@ -31,13 +34,13 @@ function ProposalList({ step, setStep }: {step?: boolean, setStep?: (value: bool
 				<Text
 					pl={5}
 					fontWeight='700'
-					color='black.1'
+					color='black.100'
 					fontSize={['14px', '14px', '16px', '16px']}>
 					Proposals
 					<Text
 						ml={1}
 						display='inline-block'
-						color='black.3'>
+						color='black.300'>
 						{`(${proposalCount})`}
 					</Text>
 				</Text>
@@ -68,7 +71,6 @@ function ProposalList({ step, setStep }: {step?: boolean, setStep?: (value: bool
 				}
 			</Flex>
 
-
 			<Flex
 				mx={5}
 				mt={4}>
@@ -82,42 +84,110 @@ function ProposalList({ step, setStep }: {step?: boolean, setStep?: (value: bool
 					} />
 			</Flex>
 
-			<Box mt={4} />
+			<Flex
+				my={4}
+				align='center'
+				px={5}>
+				{
+					(role === 'admin' && selectedProposals?.size > 0) && (
+						<Flex
+							mb={2}
+							pl={5}>
+							<Checkbox
+								isChecked={selectedProposals?.size !== undefined && proposals.every((_) => selectedProposals?.has(_.id))}
+								onChange={
+									(e) => {
+										logger.info({ value: e.target.checked }, '(Proposal List) Select All Checkbox')
+										if(e.target.checked) {
+											setSelectedProposals(new Set<string>(proposals.map((_) => _.id)))
+										} else {
+											setSelectedProposals(new Set<string>([proposals?.[0]?.id]))
+										}
 
-			{
-				(role === 'admin' && selectedProposals?.size > 0) && (
-					<Flex
-						mb={2}
-						pl={5}>
-						<Checkbox
-							isChecked={selectedProposals?.size !== undefined && proposals.every((_) => selectedProposals?.has(_.id))}
-							onChange={
-								(e) => {
-									logger.info({ value: e.target.checked }, '(Proposal List) Select All Checkbox')
-									if(e.target.checked) {
-										setSelectedProposals(new Set<string>(proposals.map((_) => _.id)))
-									} else {
-										setSelectedProposals(new Set<string>([proposals?.[0]?.id]))
+										logger.info({ size: selectedProposals.size, proposalsLength: proposals.length, selectedProposals }, '(Proposal List) Select All Checkbox {size, proposalsLength, selectedProposals')
 									}
+								}>
+								<Text
+									variant='body'
+									fontWeight='400'>
+									Select All
+								</Text>
+							</Checkbox>
+						</Flex>
+					)
+				}
 
-									logger.info({ size: selectedProposals.size, proposalsLength: proposals.length, selectedProposals }, '(Proposal List) Select All Checkbox {size, proposalsLength, selectedProposals')
-								}
-							}>
-							<Text
-								variant='body'
-								fontWeight='400'>
-								Select All
-							</Text>
-						</Checkbox>
-					</Flex>
-				)
-			}
+				<Button
+					ml='auto'
+					variant='link'
+					rightIcon={isFilterClicked ? <Flex /> : <Filter />}
+					onClick={
+						() => {
+							setIsFilterClicked(!isFilterClicked)
+						}
+					}>
+					<Text>
+						{isFilterClicked ? 'Done' : 'Filter'}
+					</Text>
+				</Button>
+			</Flex>
+
+			<motion.div
+				animate={controls}
+				variants={variants}>
+				<Grid
+					display={isFilterClicked ? 'grid' : 'none'}
+					minH='48px'
+					px={5}
+					overflowX='scroll'
+					sx={
+						{
+							'::-webkit-scrollbar': {
+								display: 'none'
+							}
+						}
+					}
+					templateColumns='repeat(4, 1fr)'
+					gap={2}>
+					{
+						(['approved', 'rejected', 'resubmit', 'submitted'] as ApplicationState[]).map(state => {
+							return (
+								<GridItem
+								// colSpan={index > 1 ? 2 : 1}
+									key={state}>
+									<FilterTag
+										id={state}
+										state={state}
+										isSelected={filterState === state}
+										onClick={
+											() => {
+												if(filterState === state) {
+													setFilterState(undefined)
+												} else {
+													setFilterState(state)
+												}
+											}
+										} />
+								</GridItem>
+
+							)
+						})
+					}
+				</Grid>
+			</motion.div>
 
 			<Flex
 				w='100%'
 				h='100%'
 				direction='column'
-				overflowY='auto'>
+				overflowY='auto'
+				sx={
+					{
+						'::-webkit-scrollbar': {
+							display: 'none'
+						}
+					}
+				}>
 				{
 					proposalCount > 0 && filteredProposals?.map((proposal, index) => {
 						return (
@@ -144,24 +214,31 @@ function ProposalList({ step, setStep }: {step?: boolean, setStep?: (value: bool
 	const { proposalId } = router.query
 
 	const { role, grant } = useContext(GrantsProgramContext)!
-	const { proposals, selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
+	const { proposals, selectedProposals, setSelectedProposals, filterState, setFilterState } = useContext(DashboardContext)!
+
+	const [isFilterClicked, setIsFilterClicked] = useState<boolean>(false)
 
 	const [searchText, setSearchText] = useState<string>('')
-
 	const filteredProposals = useMemo(() => {
-		if(searchText === '') {
-			return proposals
+		let allProposals = [...proposals]
+
+		if(searchText !== '') {
+			allProposals = allProposals.filter((proposal) => {
+				const projectName = getFieldString(proposal, 'projectName') as string | undefined
+				if(!projectName) {
+					return false
+				}
+
+				return (projectName?.toLowerCase().includes(searchText.toLowerCase()))
+			})
 		}
 
-		return proposals.filter((proposal) => {
-			const projectName = getFieldString(proposal, 'projectName') as string | undefined
-			if(!projectName) {
-				return false
-			}
+		if(filterState !== undefined) {
+			allProposals = allProposals.filter(proposal => proposal.state === filterState)
+		}
 
-			return (projectName?.toLowerCase().includes(searchText.toLowerCase()))
-		})
-	}, [proposals, searchText])
+		return allProposals
+	}, [proposals, searchText, filterState])
 
 	const proposalCount = useMemo(() => {
 		return grant?.numberOfApplications || 0
@@ -170,6 +247,13 @@ function ProposalList({ step, setStep }: {step?: boolean, setStep?: (value: bool
 	const cardRefs = useMemo(() => {
 		return proposals.map(() => createRef<HTMLDivElement>())
 	}, [proposals])
+
+	const controls = useAnimationControls()
+
+	const variants: Variants = {
+		show: { opacity: 1, x: 0 },
+		hide: { opacity: 0, x: 100 }
+	}
 
 	useEffect(() => {
 		logger.info({ proposalId }, '(Proposal List) useEffect {proposalId}')
@@ -185,6 +269,14 @@ function ProposalList({ step, setStep }: {step?: boolean, setStep?: (value: bool
 			}
 		}
 	}, [proposals, proposalId])
+
+	useEffect(() => {
+		if(isFilterClicked) {
+			controls.start('show')
+		} else {
+			controls.start('hide')
+		}
+	}, [isFilterClicked])
 
 	return buildComponent()
 }
