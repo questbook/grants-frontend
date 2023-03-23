@@ -130,9 +130,11 @@ function Discussions() {
 														onClick={
 															() => {
 																if(selectedTag) {
+																	logger.info('Deselecting tag')
 																	setSelectedTag(undefined)
 																	setText('')
 																} else {
+																	logger.info('Selecting tag')
 																	setSelectedTag(tag)
 																	setText(tag.commentString)
 																	controls.start('tagSelected')
@@ -282,7 +284,6 @@ function Discussions() {
 													isChecked={isCommentPrivate}
 													onChange={
 														(e) => {
-															// setSelectedTag(undefined)
 															setIsCommentPrivate(e.target.checked)
 														}
 													}
@@ -322,6 +323,7 @@ function Discussions() {
 													)
 													if(ret) {
 														setText('')
+														logger.info('Setting selected tag to undefined after posting comment')
 														setSelectedTag(undefined)
 														refreshComments(true)
 														localStorage.removeItem(
@@ -549,9 +551,13 @@ function Discussions() {
 
 	useEffect(() => {
 		if(proposalTags.length === 1) {
+			logger.info('Setting selected tag to the only tag')
 			setSelectedTag(proposalTags[0])
+		} else {
+			logger.info('Setting selected tag to undefined')
+			setSelectedTag(undefined)
 		}
-	}, [proposalTags])
+	}, [proposal])
 
 	const comments = useMemo(() => {
 		if(!proposal || !commentMap) {
@@ -612,6 +618,10 @@ function Discussions() {
 			}
 		}
 	}
+
+	useEffect(() => {
+		logger.info({ selectedTag }, 'SELECTED TAG')
+	}, [selectedTag])
 
 	return buildComponents()
 }
