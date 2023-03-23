@@ -1,6 +1,5 @@
 import { Button, ButtonProps, Flex, Text, TextProps, useToken } from '@chakra-ui/react'
 import { Accept, Chat, Reject, Resubmit } from 'src/generated/icons'
-import logger from 'src/libraries/utils/logger'
 import { TagType } from 'src/screens/dashboard/_utils/types'
 
 type Props = {
@@ -11,9 +10,8 @@ type Props = {
 	textProps?: TextProps
 } & ButtonProps
 
-function QuickReplyButton({ tag, isSelected, index, textProps, ...props }: Props) {
+function QuickReplyButton({ tag, index, textProps, ...props }: Props) {
 	const buildComponent = () => {
-		logger.info({ tag, isSelected, index }, 'QuickReplyButton.buildComponent')
 		if(!tag?.id) {
 			return <Flex />
 		}

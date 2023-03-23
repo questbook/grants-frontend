@@ -122,10 +122,6 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 	}, [grantId, chainId, scwAddress])
 
 	const handleComments = async(allComments: CommentType[]) => {
-		if(!webwallet || !scwAddress) {
-			return {}
-		}
-
 		const commentMap: CommentMap = {}
 		for(const comment of allComments) {
 			if(comment.isPrivate) {
@@ -140,12 +136,12 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 				let channel: {
 					encrypt(plaintext: string): Promise<string>
 					decrypt(ciphertext: string): Promise<string>
-				}
-				logger.info({ sender, scwAddress: scwAddress.toLowerCase() }, 'SENDER (COMMENT DECRYPT)')
-				if(sender === scwAddress.toLowerCase()) {
+				} | undefined = undefined
+				logger.info({ sender, scwAddress: scwAddress?.toLowerCase() }, 'SENDER (COMMENT DECRYPT)')
+				if(webwallet && sender === scwAddress?.toLowerCase()) {
 					channel = await getSecureChannelFromPublicKey(webwallet, webwallet.publicKey, getKeyForApplication(comment.application.id))
 					logger.info({ privateKey: webwallet.privateKey, publicKey: webwallet.publicKey, role }, 'CHANNEL CONFIG (COMMENT DECRYPT)')
-				} else {
+				} else if(webwallet) {
 					const publicKey = comment.application.applicantId === sender ? comment.application.applicantPublicKey : comment.workspace.members.find(m => m.actorId === sender)?.publicKey
 					if(!publicKey) {
 						logger.info({ comment }, 'public key not found (COMMENT DECRYPT)')
@@ -157,7 +153,7 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 					logger.info({ privateKey: webwallet.privateKey, publicKey, role }, 'CHANNEL CONFIG (COMMENT DECRYPT)')
 				}
 
-				const encryptedComments = comment.commentsEncryptedData?.filter(c => c.id.indexOf(scwAddress.toLowerCase()) !== -1) ?? []
+				const encryptedComments = scwAddress !== undefined ? (comment.commentsEncryptedData?.filter(c => c.id.indexOf(scwAddress.toLowerCase()) !== -1) ?? []) : []
 				const key = `${comment.application.id}.${getSupportedChainIdFromWorkspace(comment.workspace) ?? defaultChainId}`
 				logger.info({ encryptedComments }, 'ENCRYPTED COMMENTS (COMMENT DECRYPT)')
 				if(encryptedComments.length === 0) {
@@ -169,27 +165,27 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 
 					commentMap[key].push({ ...comment, sender, role: role ?? 'community', message: '*** This is an encrypted comment ***', timestamp: comment.createdAt })
 					continue
-				}
+				} else if(channel) {
+					const encrypted = encryptedComments[0]
+					logger.info({ encrypted }, 'DECRYPTING NOW (COMMENT DECRYPT)')
+					try {
+						const decryptedData = JSON.parse(await channel.decrypt(encrypted.data))
+						logger.info({ decryptedData }, 'comment decrypted (COMMENT DECRYPT)')
 
-				const encrypted = encryptedComments[0]
-				logger.info({ encrypted }, 'DECRYPTING NOW (COMMENT DECRYPT)')
-				try {
-					const decryptedData = JSON.parse(await channel.decrypt(encrypted.data))
-					logger.info({ decryptedData }, 'comment decrypted (COMMENT DECRYPT)')
+						if(decryptedData?.message) {
+							const message = await getFromIPFS(decryptedData.message)
 
-					if(decryptedData?.message) {
-						const message = await getFromIPFS(decryptedData.message)
+							if(!commentMap[key]) {
+								commentMap[key] = []
+							}
 
-						if(!commentMap[key]) {
-							commentMap[key] = []
+							commentMap[key].push({ ...comment, ...decryptedData, message })
+						} else {
+							logger.info({ comment }, 'NO MESSAGE (COMMENT DECRYPT)')
 						}
-
-						commentMap[key].push({ ...comment, ...decryptedData, message })
-					} else {
-						logger.info({ comment }, 'NO MESSAGE (COMMENT DECRYPT)')
+					} catch(e) {
+						logger.error({ comment, e }, 'Error decrypting comment (COMMENT DECRYPT)')
 					}
-				} catch(e) {
-					logger.error({ comment, e }, 'Error decrypting comment (COMMENT DECRYPT)')
 				}
 			} else {
 				logger.info({ comment }, 'PUBLIC COMMENT (ELSE)')

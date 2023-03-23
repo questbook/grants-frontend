@@ -107,6 +107,7 @@ function Control<T>({ innerProps, isFocused, ...rest }: ControlProps<T, false, G
 	return (
 		<Box
 			{...innerProps}
+			w='100%'
 			minW='150px'
 			py={2}
 			px={0}
