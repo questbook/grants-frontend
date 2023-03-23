@@ -224,16 +224,20 @@ function Discussions() {
 														</Text>
 													</chakra.span>
 												</chakra.p>
-												<IconButton
-													ml='auto'
-													variant='unstyled'
-													aria-label=''
-													icon={
-														<Close
-															color='black.200'
-															_hover={{ color: 'black.100' }} />
-													}
-													onClick={() => setSelectedTag(undefined)} />
+												{
+													proposalTags?.length > 1 && (
+														<IconButton
+															ml='auto'
+															variant='unstyled'
+															aria-label=''
+															icon={
+																<Close
+																	color='black.200'
+																	_hover={{ color: 'black.100' }} />
+															}
+															onClick={() => setSelectedTag(undefined)} />
+													)
+												}
 											</Flex>
 
 										)
@@ -251,16 +255,20 @@ function Discussions() {
 													}
 													fontSize='14px'
 													placeholder='Type your comment here' />
-												<IconButton
-													ml='auto'
-													variant='unstyled'
-													aria-label=''
-													icon={
-														<Close
-															color='black.200'
-															_hover={{ color: 'black.100' }} />
-													}
-													onClick={() => setSelectedTag(undefined)} />
+												{
+													proposalTags?.length > 1 && (
+														<IconButton
+															ml='auto'
+															variant='unstyled'
+															aria-label=''
+															icon={
+																<Close
+																	color='black.200'
+																	_hover={{ color: 'black.100' }} />
+															}
+															onClick={() => setSelectedTag(undefined)} />
+													)
+												}
 											</Flex>
 
 										)
@@ -531,24 +539,6 @@ function Discussions() {
 		}
 	}, [selectedTag])
 
-	// useLayoutEffect(() => {
-	// 	const spanElement = spanRef.current
-	// 	const range = document.createRange()
-	// 	const sel = window.getSelection()
-	// 	if(!spanElement || !sel || !spanElement.textContent) {
-	// 		return
-	// 	}
-
-	// 	if(spanElement.textContent.length > 0) {
-	// 		logger.info({ node: spanElement.childNodes[0], offset: spanElement.textContent.length, text: spanElement.textContent }, 'SPAN')
-	// 		range.setStart(spanElement.childNodes[0], spanElement.textContent.length)
-	// 		range.collapse(true)
-	// 		sel.removeAllRanges()
-	// 		sel.addRange(range)
-	// 		spanElement.focus()
-	// 	}
-	//   }, [text])
-
 	const currentMember = useMemo(() => {
 		return grant?.workspace?.members?.find((member) => member.actorId.toLowerCase() === scwAddress?.toLowerCase())
 	}, [grant, scwAddress])
@@ -556,6 +546,12 @@ function Discussions() {
 	const { proposalTags } = useProposalTags({
 		proposals: proposal ? [proposal] : [],
 	})
+
+	useEffect(() => {
+		if(proposalTags.length === 1) {
+			setSelectedTag(proposalTags[0])
+		}
+	}, [proposalTags])
 
 	const comments = useMemo(() => {
 		if(!proposal || !commentMap) {
