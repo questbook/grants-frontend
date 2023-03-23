@@ -80,6 +80,7 @@ function Discussions() {
 
 					{comments.map(renderComment)}
 					<Flex
+						display={scwAddress ? 'flex' : 'none'}
 						mt={4}
 						w='100%'>
 						<Image
@@ -129,9 +130,11 @@ function Discussions() {
 														onClick={
 															() => {
 																if(selectedTag) {
+																	logger.info('Deselecting tag')
 																	setSelectedTag(undefined)
 																	setText('')
 																} else {
+																	logger.info('Selecting tag')
 																	setSelectedTag(tag)
 																	setText(tag.commentString)
 																	controls.start('tagSelected')
@@ -194,32 +197,49 @@ function Discussions() {
 																},
 															}
 														}
+														ref={spanRef}
 														onInput={
 															(e) => {
-																if(e.currentTarget.textContent) {
+																const spanElement = spanRef.current
+																if(!spanElement) {
+																	return
+																}
+
+																logger.info({ type: spanElement.nodeType }, 'SPAN')
+
+																if(e.currentTarget.textContent && window) {
 																	logger.info({ text: e.currentTarget.textContent })
 																	setText(e.currentTarget.textContent)
 																	localStorage.setItem(`comment-${grant?.id}-${proposal?.id}`, e.currentTarget.textContent)
+
+																	spanElement.focus()
+																	window?.getSelection()?.selectAllChildren(spanElement)
+																	window?.getSelection()?.collapseToEnd()
 																}
 															}
 														}
 														contentEditable
+														suppressContentEditableWarning
 													>
 														<Text variant='body'>
 															{text}
 														</Text>
 													</chakra.span>
 												</chakra.p>
-												<IconButton
-													ml='auto'
-													variant='unstyled'
-													aria-label=''
-													icon={
-														<Close
-															color='black.200'
-															_hover={{ color: 'black.100' }} />
-													}
-													onClick={() => setSelectedTag(undefined)} />
+												{
+													proposalTags?.length > 1 && (
+														<IconButton
+															ml='auto'
+															variant='unstyled'
+															aria-label=''
+															icon={
+																<Close
+																	color='black.200'
+																	_hover={{ color: 'black.100' }} />
+															}
+															onClick={() => setSelectedTag(undefined)} />
+													)
+												}
 											</Flex>
 
 										)
@@ -237,16 +257,20 @@ function Discussions() {
 													}
 													fontSize='14px'
 													placeholder='Type your comment here' />
-												<IconButton
-													ml='auto'
-													variant='unstyled'
-													aria-label=''
-													icon={
-														<Close
-															color='black.200'
-															_hover={{ color: 'black.100' }} />
-													}
-													onClick={() => setSelectedTag(undefined)} />
+												{
+													proposalTags?.length > 1 && (
+														<IconButton
+															ml='auto'
+															variant='unstyled'
+															aria-label=''
+															icon={
+																<Close
+																	color='black.200'
+																	_hover={{ color: 'black.100' }} />
+															}
+															onClick={() => setSelectedTag(undefined)} />
+													)
+												}
 											</Flex>
 
 										)
@@ -260,7 +284,6 @@ function Discussions() {
 													isChecked={isCommentPrivate}
 													onChange={
 														(e) => {
-															setSelectedTag(undefined)
 															setIsCommentPrivate(e.target.checked)
 														}
 													}
@@ -300,6 +323,7 @@ function Discussions() {
 													)
 													if(ret) {
 														setText('')
+														logger.info('Setting selected tag to undefined after posting comment')
 														setSelectedTag(undefined)
 														refreshComments(true)
 														localStorage.removeItem(
@@ -316,16 +340,31 @@ function Discussions() {
 							</Flex>
 						</Flex>
 					</Flex>
-					{comments.length > 0 && <Box my={4} />}
+					{
+						!scwAddress && (
+							<Text
+								variant='body'
+								mt={4}
+								w='100%'
+								textAlign='center'
+								color='gray.600'>
+								~ Sign in to post comments! ~
+							</Text>
+						)
+					}
+					<Box my={4} />
 				</motion.div>
 			</Flex>
 		)
 	}
 
 	const renderComment = (comment: CommentType, index: number) => {
+		logger.info('Render comment (RENDER COMMENT)', comment)
 		const member = comment.workspace.members.find(
 			(member) => member.actorId.toLowerCase() === comment.sender?.toLowerCase(),
 		)
+
+		logger.info({ member }, 'Member (RENDER COMMENT)')
 
 		logger.info({ message: comment.message }, 'Comment message')
 
@@ -438,6 +477,7 @@ function Discussions() {
 	}
 
 	const ref = useRef<HTMLTextAreaElement>(null)
+	const spanRef = useRef<HTMLSpanElement>(null)
 
 	const { scwAddress } = useContext(WebwalletContext)!
 	const { grant, role } = useContext(GrantsProgramContext)!
@@ -509,6 +549,16 @@ function Discussions() {
 		proposals: proposal ? [proposal] : [],
 	})
 
+	useEffect(() => {
+		if(proposalTags.length === 1) {
+			logger.info('Setting selected tag to the only tag')
+			setSelectedTag(proposalTags[0])
+		} else {
+			logger.info('Setting selected tag to undefined')
+			setSelectedTag(undefined)
+		}
+	}, [proposal])
+
 	const comments = useMemo(() => {
 		if(!proposal || !commentMap) {
 			return []
@@ -568,6 +618,10 @@ function Discussions() {
 			}
 		}
 	}
+
+	useEffect(() => {
+		logger.info({ selectedTag }, 'SELECTED TAG')
+	}, [selectedTag])
 
 	return buildComponents()
 }
