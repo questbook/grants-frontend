@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { NetworkType } from 'src/constants/Networks'
-import { CeloSafe, CheckDouble, Loader, RealmsLogo, SafeLogo } from 'src/generated/icons'
+import { CeloSafe, CheckDouble, Iotex, Loader, RealmsLogo, SafeLogo } from 'src/generated/icons'
 import useLinkYourMultisig from 'src/libraries/hooks/useLinkYourMultisig'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
@@ -243,6 +243,11 @@ function LinkYourMultisigModal({
 			h='2rem'
 			w='5rem' />
 		},
+		{
+			icon: <Iotex
+				h='2rem'
+				w='5rem' />
+		}
 	]
 
 	const [multiSigAddress, setMultiSigAddress] = useState<string>('')
