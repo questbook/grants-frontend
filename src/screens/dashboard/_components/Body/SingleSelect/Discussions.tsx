@@ -80,6 +80,7 @@ function Discussions() {
 
 					{comments.map(renderComment)}
 					<Flex
+						display={scwAddress ? 'flex' : 'none'}
 						mt={4}
 						w='100%'>
 						<Image
@@ -194,16 +195,29 @@ function Discussions() {
 																},
 															}
 														}
+														ref={spanRef}
 														onInput={
 															(e) => {
-																if(e.currentTarget.textContent) {
+																const spanElement = spanRef.current
+																if(!spanElement) {
+																	return
+																}
+
+																logger.info({ type: spanElement.nodeType }, 'SPAN')
+
+																if(e.currentTarget.textContent && window) {
 																	logger.info({ text: e.currentTarget.textContent })
 																	setText(e.currentTarget.textContent)
 																	localStorage.setItem(`comment-${grant?.id}-${proposal?.id}`, e.currentTarget.textContent)
+
+																	spanElement.focus()
+																	window?.getSelection()?.selectAllChildren(spanElement)
+																	window?.getSelection()?.collapseToEnd()
 																}
 															}
 														}
 														contentEditable
+														suppressContentEditableWarning
 													>
 														<Text variant='body'>
 															{text}
@@ -260,7 +274,7 @@ function Discussions() {
 													isChecked={isCommentPrivate}
 													onChange={
 														(e) => {
-															setSelectedTag(undefined)
+															// setSelectedTag(undefined)
 															setIsCommentPrivate(e.target.checked)
 														}
 													}
@@ -316,16 +330,31 @@ function Discussions() {
 							</Flex>
 						</Flex>
 					</Flex>
-					{comments.length > 0 && <Box my={4} />}
+					{
+						!scwAddress && (
+							<Text
+								variant='body'
+								mt={4}
+								w='100%'
+								textAlign='center'
+								color='gray.600'>
+								~ Sign in to post comments! ~
+							</Text>
+						)
+					}
+					<Box my={4} />
 				</motion.div>
 			</Flex>
 		)
 	}
 
 	const renderComment = (comment: CommentType, index: number) => {
+		logger.info('Render comment (RENDER COMMENT)', comment)
 		const member = comment.workspace.members.find(
 			(member) => member.actorId.toLowerCase() === comment.sender?.toLowerCase(),
 		)
+
+		logger.info({ member }, 'Member (RENDER COMMENT)')
 
 		logger.info({ message: comment.message }, 'Comment message')
 
@@ -438,6 +467,7 @@ function Discussions() {
 	}
 
 	const ref = useRef<HTMLTextAreaElement>(null)
+	const spanRef = useRef<HTMLSpanElement>(null)
 
 	const { scwAddress } = useContext(WebwalletContext)!
 	const { grant, role } = useContext(GrantsProgramContext)!
@@ -500,6 +530,24 @@ function Discussions() {
 			controls.start('tagSelected')
 		}
 	}, [selectedTag])
+
+	// useLayoutEffect(() => {
+	// 	const spanElement = spanRef.current
+	// 	const range = document.createRange()
+	// 	const sel = window.getSelection()
+	// 	if(!spanElement || !sel || !spanElement.textContent) {
+	// 		return
+	// 	}
+
+	// 	if(spanElement.textContent.length > 0) {
+	// 		logger.info({ node: spanElement.childNodes[0], offset: spanElement.textContent.length, text: spanElement.textContent }, 'SPAN')
+	// 		range.setStart(spanElement.childNodes[0], spanElement.textContent.length)
+	// 		range.collapse(true)
+	// 		sel.removeAllRanges()
+	// 		sel.addRange(range)
+	// 		spanElement.focus()
+	// 	}
+	//   }, [text])
 
 	const currentMember = useMemo(() => {
 		return grant?.workspace?.members?.find((member) => member.actorId.toLowerCase() === scwAddress?.toLowerCase())

@@ -103,7 +103,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 					return 0
 				}
 			} catch(e) {
-				logger.info({ balances, safe }, 'Error (DISCOVER CONTEXT)')
+				logger.info({ safe }, 'Error (DISCOVER CONTEXT)')
 				return 0
 			}
 		}))

@@ -78,21 +78,20 @@ const Option = ({ innerProps, data }: OptionProps<SafeSelectOption, boolean, Gro
 const SingleValue = ({ innerProps, data }: SingleValueProps<SafeSelectOption, boolean, GroupBase<SafeSelectOption>>) => (
 	<Box
 		{...innerProps}
+		w='98%'
 		alignItems='center'
-		p={0}
-		m={0}
 	>
 		<Flex>
 			<Image
 				src={data.networkIcon}
 				boxSize='20px' />
 			<Text
-				ml={1}
+				ml={4}
 				variant='requestProposalBody'>
 				{data.networkName}
 			</Text>
 			<Text
-				ml={1}
+				ml='auto'
 				variant='requestProposalBody'
 				color='black.200'>
 				{data.amount}
