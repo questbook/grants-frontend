@@ -12,7 +12,9 @@ const NETWORK_PREFIX: { [key: string]: string } = {
 	'1': 'eth',
 	'10': 'opt',
 	'5': 'gor',
-	'40': 'tlos'
+	'40': 'tlos',
+	'4689': 'iotx',
+	'4690': 'iotxtest'
 }
 
 export function getSafeURL(safeAddress: string, chainId: string) {
@@ -20,6 +22,8 @@ export function getSafeURL(safeAddress: string, chainId: string) {
 		return `https://safe.celo.org/#/safes/${safeAddress}`
 	} else if(chainId === '40') {
 		return `https://safe.telos.net/${NETWORK_PREFIX[chainId]}:${safeAddress}`
+	} else if(chainId === '4689' || chainId === '4690') {
+		return `https://safe.iotex.io/${NETWORK_PREFIX[chainId]}:${safeAddress}`
 	} else {
 		return `https://app.safe.global/${NETWORK_PREFIX[chainId]}:${safeAddress}`
 	}
@@ -30,6 +34,8 @@ export function getGnosisTansactionLink(safeAddress: string, chainId: string, tx
 		return `https://safe.celo.org/#/safes/${safeAddress}/transactions/tx?id=multisig_${safeAddress}_${txnHash}`
 	} else if(chainId === '40') {
 		return `https://safe.telos.net/${NETWORK_PREFIX[chainId]}:${safeAddress}/transactions/tx?id=multisig_${safeAddress}_${txnHash}`
+	} else if(chainId === '4689' || chainId === '4690') {
+		return `https://safe.iotex.io/${NETWORK_PREFIX[chainId]}:${safeAddress}/transactions/tx?id=multisig_${safeAddress}_${txnHash}`
 	} else {
 		//https://app.safe.global/gor:0xC113838A0d214a2Bd15d038701ec5957E83C4381/transactions/tx?id=multisig_0xC113838A0d214a2Bd15d038701ec5957E83C4381_0x9bae709b06a962681f9e0ff443b80685071ef95d713aae506ab22b07e6721aeb
 		return `https://app.safe.global/${NETWORK_PREFIX[chainId]}:${safeAddress}/transactions/tx?id=multisig_${safeAddress}_${txnHash}`
