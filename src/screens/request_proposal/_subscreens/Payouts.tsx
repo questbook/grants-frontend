@@ -204,6 +204,7 @@ function Payouts() {
 								query: {
 									grantId: grantId.toLowerCase(),
 									chainId,
+									role: 'admin'
 								}
 							})
 						}
