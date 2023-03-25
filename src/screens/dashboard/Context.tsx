@@ -22,6 +22,9 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 	const router = useRouter()
 	const { setSafeObj } = useSafeContext()!
 	const { grantId, chainId: _chainId, role: _role, proposalId, isRenderingProposalBody } = router.query
+	useEffect(() => {
+		logger.info({ grantId, _chainId, _role, proposalId, isRenderingProposalBody }, 'ROUTER PARAMS DASHBOARD CONTEXT')
+	}, [grantId, _chainId, _role, proposalId, isRenderingProposalBody])
 	const { setWorkspace } = useContext(ApiClientsContext)!
 	const { scwAddress, webwallet, setDashboardStep } = useContext(WebwalletContext)!
 	const { grant, setGrant, role, setRole, setIsLoading } = useContext(GrantsProgramContext)!
@@ -381,10 +384,21 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 					setRole(proposals[proposalIndex].applicantId === scwAddress?.toLowerCase() ? 'builder' : 'community')
 				}
 
-				router.push({
-					pathname: '/dashboard',
-					query: { ...router.query, proposalId, isRenderingProposalBody }
-				}, undefined, { shallow: true })
+				let params = { ...router.query }
+				if(proposalId) {
+					params = { ...params, proposalId }
+				}
+
+				if(isRenderingProposalBody) {
+					params = { ...params, isRenderingProposalBody }
+				}
+
+				if(params.isRenderingProposal || params.proposalId) {
+					router.replace({
+						pathname: '/dashboard',
+						query: params
+					}, undefined, { shallow: true })
+				}
 			}
 		} else {
 			const initialSelectionSet = new Set<string>()
@@ -393,10 +407,22 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 				setRole(proposals[0].applicantId === scwAddress?.toLowerCase() ? 'builder' : 'community')
 			}
 
-			router.push({
-				pathname: '/dashboard',
-				query: { ...router.query, proposalId: proposals[0].id, isRenderingProposalBody }
-			}, undefined, { shallow: true })
+			let params = { ...router.query }
+			if(isRenderingProposalBody) {
+				params = { ...params, isRenderingProposalBody }
+			}
+
+			if(proposals[0].id) {
+				params = { ...params, proposalId: proposals[0].id }
+			}
+
+			if(params.isRenderingProposal || params.proposalId) {
+				router.replace({
+					pathname: '/dashboard',
+					query: params
+				}, undefined, { shallow: true })
+			}
+
 			logger.info({ initialSelectionSet }, 'selectedProposals')
 			setSelectedProposals(initialSelectionSet)
 		}

@@ -53,14 +53,22 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						return
 					}
 
+					if(!chainId) {
+						return
+					}
+
+					let params: {grantId: string, chainId: number, role: string, proposalId?: string} = {
+						grantId: grant.id,
+						chainId,
+						role: role === 'owner' ? 'admin' : (role ?? 'community'),
+					}
+					if(role === 'builder') {
+						params = { ...params, proposalId: grant.applications[0].id }
+					}
+
 					router.push({
 						pathname: '/dashboard/',
-						query: {
-							grantId: grant.id,
-							chainId,
-							role: role === 'owner' ? 'admin' : (role ?? 'community'),
-							proposalId: role === 'builder' ? grant.applications[0].id : undefined
-						},
+						query: params,
 					})
 				}
 			}>

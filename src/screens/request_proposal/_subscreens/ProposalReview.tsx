@@ -127,7 +127,6 @@ function ProposalReview() {
 						justifyContent='flex-end'
 					>
 						<Button
-							display={rfpFormType === 'edit' ? 'none' : 'block'}
 							variant='link'
 							onClick={
 								() => {
@@ -169,7 +168,8 @@ function ProposalReview() {
 	useEffect(() => {
 		if(rfpFormType === 'edit') {
 			setRubricsCounter(rfpData?.rubrics?.length)
-			setRubricInputValues(rfpData?.rubrics?.map(rubric => rubric) ?? ['Team competence', 'Idea Quality', 'Relevance to our ecosystem'])
+			const rubrics = rfpData?.rubrics?.map(rubric => rubric)
+			setRubricInputValues(rubrics.length > 0 ? rubrics : ['Team competence', 'Idea Quality', 'Relevance to our ecosystem'])
 		}
 	}, [])
 
