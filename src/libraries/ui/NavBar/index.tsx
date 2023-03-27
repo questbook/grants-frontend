@@ -184,6 +184,7 @@ function NavBar({ openSignIn, bg = 'gray.100', requestProposal, dashboard }: Pro
 											pathname: '/request_proposal/',
 											query: {
 												grantId: grant?.id,
+												chainId: getSupportedChainIdFromWorkspace(grant?.workspace),
 												workspaceId: grant?.workspace?.id
 											},
 										})

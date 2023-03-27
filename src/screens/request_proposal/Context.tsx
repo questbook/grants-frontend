@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useCallback, useEffect, useState } from 'react'
+import { createContext, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
 import { useGetGrantDetailsByIdQuery } from 'src/generated/graphql'
@@ -44,8 +44,14 @@ const RFPFormProvider = ({ children }: {children: ReactNode}) => {
 		}
 	}, [_grantId])
 
-	const workspaceId = typeof(_workspaceId) === 'string' ? _workspaceId : ''
-	const chainId = typeof(_chainId) === 'string' ? parseInt(_chainId) : defaultChainId
+	const workspaceId = useMemo(() => {
+		return typeof(_workspaceId) === 'string' ? _workspaceId : ''
+	}, [_workspaceId])
+
+	const chainId = useMemo(() => {
+		logger.info({ chainId: _chainId }, 'Chain id from query')
+		return typeof(_chainId) === 'string' ? parseInt(_chainId) : defaultChainId
+	}, [_chainId])
 
 	useEffect(() => {
 		logger.info({ workspaceId, grantId, chainId }, 'RFP form edit')
@@ -72,8 +78,10 @@ const RFPFormProvider = ({ children }: {children: ReactNode}) => {
 
 
 	const fetchRFPDetails = useCallback(async() => {
+		const grantID = typeof(grantId) === 'string' ? grantId : ''
+		logger.info('Grant program fetching', { grantID, chainId })
 		const response = await fetchRFP({
-			grantID: typeof(grantId) === 'string' ? grantId : '',
+			grantID,
 		})
 		logger.info('Grant program fetched', response)
 		let rubricData: string[] | undefined = []
