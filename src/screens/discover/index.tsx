@@ -1,5 +1,5 @@
 import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
-import { Box, Button, Center, Container, Divider, Flex, Image, Input, Skeleton, Text } from '@chakra-ui/react'
+import { Box, Button, Center, Container, Divider, Flex, Image, Input, Link, Skeleton, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { DAOSearchContext } from 'src/libraries/hooks/DAOSearchContext'
@@ -322,7 +322,6 @@ function Discover() {
 											Explore grant programs
 										</Text>
 										{
-
 											(sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
 												logger.info('section', { section, sectionGrants })
 												const sectionName = Object.keys(section)[0]
@@ -373,42 +372,22 @@ function Discover() {
 											}) : null
 										}
 									</Box>
-
-									{/* <Flex
-										ref={discoverRef}
-										my={12}
-										mb={4}>
-										<Text
-											fontWeight='500'
-											fontSize='24px'
-											lineHeight='32px'>
-											Discover
-										</Text>
-										<SearchField
-											bg='white'
-											w='30%'
-											inputGroupProps={{ ml: 4 }}
-											placeholder='Enter Grant Program Name to search'
-											value={searchString}
-											onKeyDown={
-												(e) => {
-													if(e.key === 'Enter' && searchString !== undefined) {
-														setSearch(searchString)
-													}
-												}
-											}
-											onChange={
-												(e) => {
-													setSearchString(e.target.value.trim())
-												}
-											}
-										/>
-
-									</Flex> */}
-
 								</>
 							)
 						}
+						<Flex
+							w='100%'
+							align='center'
+							justify='center'>
+							<Link
+								textAlign='center'
+								isExternal
+								variant='body'
+								color='accent.azure'
+								href='https://questbook.app/termsofservice.html'>
+								Questbook - Terms of Service
+							</Link>
+						</Flex>
 
 					</Container>
 					{
