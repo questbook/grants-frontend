@@ -2,6 +2,7 @@ import { useContext, useMemo } from 'react'
 import { Box, Button, Divider, Flex } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import Milestones from 'src/screens/dashboard/_components/ActionList/SingleSelect/Milestones'
@@ -40,6 +41,16 @@ function SingleSelect() {
 								onClick={
 									() => {
 										if(role === 'builder') {
+											if(proposal?.state !== 'submitted' && proposal?.state !== 'resubmit') {
+												toast({
+													title: 'Oops! This proposal is not in the right state to be resubmitted.',
+													description: `This proposal has already been ${proposal?.state}. It cannot be resubmitted.`,
+													status: 'error',
+													duration: 7000,
+												})
+												return
+											}
+
 											router.push({ pathname: '/proposal_form', query: {
 												proposalId: proposal?.id,
 												chainId,
@@ -73,6 +84,7 @@ function SingleSelect() {
 	}
 
 	const router = useRouter()
+	const toast = useCustomToast()
 	const { scwAddress } = useContext(WebwalletContext)!
 	const { grant, role } = useContext(GrantsProgramContext)!
 	const { setIsLinkYourMultisigModalOpen } = useContext(ModalContext)!
