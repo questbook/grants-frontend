@@ -30,7 +30,7 @@ import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_
 
 function ProposalForm() {
 	const buildComponent = () => {
-		return transactionHash !== '' ? successComponent() : (error ? errorComponent() : formComponent())
+		return isExecuting !== undefined && !isExecuting && networkTransactionModalStep === undefined ? successComponent() : (error ? errorComponent() : formComponent())
 	}
 
 	const successComponent = () => {
@@ -57,7 +57,7 @@ function ProposalForm() {
 						pl='10%'>
 						<Image
 							src={grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)}
-							boxSize='30%' />
+							boxSize={grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? '30%' : 'auto'} />
 						<Text
 							mt={6}
 							variant='heading2'
@@ -560,9 +560,9 @@ function ProposalForm() {
 
 	const { setRole } = useContext(GrantsProgramContext)!
 	const { type, grant, chainId, form, setForm, error } = useContext(ProposalFormContext)!
-	// console.log('grant', grant)
-	// console.log('proposal', proposal)
+	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const { safeObj } = useSafeContext()!
+
 	const isEvm = safeObj?.getIsEvm()
 
 	const router = useRouter()
@@ -570,8 +570,7 @@ function ProposalForm() {
 
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
 	const [transactionHash, setTransactionHash] = useState<string>('')
-	const { submitProposal, proposalId, isBiconomyInitialised } = useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash })
-	const { setSignInTitle } = useContext(SignInTitleContext)!
+	const { submitProposal, proposalId, isBiconomyInitialised, isExecuting } = useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash })
 	const [emailError, setEmailError] = useState<boolean>(false)
 	const [walletAddressError, setWalletAddressError] = useState<boolean>(false)
 
@@ -580,6 +579,7 @@ function ProposalForm() {
 	useEffect(() => {
 		setSignInTitle('submitProposal')
 	}, [])
+
 	const chainInfo = useMemo(() => {
 		if(!grant || !chainId) {
 			return

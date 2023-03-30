@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { ethers } from 'ethers'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { useBiconomy } from 'src/libraries/hooks/gasless/useBiconomy'
@@ -25,7 +25,7 @@ interface CallProps { method: string, args: unknown[], isDummy?: boolean, should
 function useFunctionCall({ chainId, contractName, setTransactionStep, setTransactionHash, title }: Props) {
 	const { subgraphClients } = useContext(ApiClientsContext)!
 	const { webwallet } = useContext(WebwalletContext)!
-
+	const [isExecuting, setIsExecuting] = useState<boolean>()
 	const { network, switchNetwork } = useNetwork()
 
 	useEffect(() => {
@@ -51,6 +51,7 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 
 	const call = async({ method, args, isDummy = false, shouldWaitForBlock = true, showToast = true }: CallProps): Promise<ethers.providers.TransactionReceipt | undefined> => {
 		const logger = MAIN_LOGGER.child({ chainId, contractName, method })
+		setIsExecuting(true)
 		try {
 			if(!contract) {
 				throw new Error('Contract not found')
@@ -64,6 +65,7 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 			logger.info('Calling function', { args })
 
 			if(isDummy) {
+				setIsExecuting(false)
 				return undefined
 			}
 
@@ -105,6 +107,7 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 					})
 				}
 
+				setIsExecuting(false)
 				return receipt
 			} else {
 				throw new Error('Transaction not sent')
@@ -118,11 +121,12 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 				title: message,
 				status: 'error'
 			})
+			setIsExecuting(false)
 			return undefined
 		}
 	}
 
-	return { call, isBiconomyInitialised }
+	return { call, isBiconomyInitialised, isExecuting }
 }
 
 export default useFunctionCall

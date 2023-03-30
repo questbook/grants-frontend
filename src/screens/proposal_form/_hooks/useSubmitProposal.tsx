@@ -37,7 +37,7 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 		return getChainInfo(grant, chainId)
 	}, [grant, chainId])
 
-	const { call, isBiconomyInitialised } = useFunctionCall({ chainId, contractName: 'applications', setTransactionStep: setNetworkTransactionModalStep, setTransactionHash })
+	const { call, isBiconomyInitialised, isExecuting } = useFunctionCall({ chainId, contractName: 'applications', setTransactionStep: setNetworkTransactionModalStep, setTransactionHash })
 	const createMapping = useCreateMapping({ chainId })
 
 	const [proposalId, setProposalId] = useState<string>()
@@ -121,6 +121,7 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 				logger.info({ eventData }, 'useSubmitProposal: (Event Data)')
 				if(eventData) {
 					const proposalId = Number(eventData.args[0].toBigInt())
+					logger.info({ proposalId }, 'proposalId (Event Data)')
 					setProposalId(`0x${proposalId.toString(16)}`)
 
 					await createMapping({ email: findField(form, 'applicantEmail').value })
@@ -137,7 +138,7 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 	}
 
 	return {
-		submitProposal, proposalId, isBiconomyInitialised
+		submitProposal, proposalId, isBiconomyInitialised, isExecuting
 	}
 }
 
