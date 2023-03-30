@@ -156,7 +156,7 @@ export const getRewardAmountMilestones = (decimals: number, application: {milest
 
 	application?.milestones?.forEach(
 		(milestone) => sum = sum.add(milestone.amount))
-	return parseInt(ethers.utils.formatUnits(sum.toString(), decimals)).toLocaleString()?.split('.')[0]
+	return parseInt(ethers.utils.formatUnits(sum.toString(), decimals)).toLocaleString('en-US')?.split('.')[0]
 }
 
 export function titleCase(str: string) {
