@@ -161,7 +161,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						</Text>
 					</Flex>
 
-					<Flex gap={1}>
+					{/* <Flex gap={1}>
 						<Text variant='subtitle'>
 							{isOpen ? 'Deadline on' : 'Ended on'}
 							{' '}
@@ -173,7 +173,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						>
 							{formattedDeadline}
 						</Text>
-					</Flex>
+					</Flex> */}
 
 				</Flex>
 
