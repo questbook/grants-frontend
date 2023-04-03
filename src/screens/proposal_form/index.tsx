@@ -207,18 +207,18 @@ function ProposalForm() {
 							>
 								{grant?.title}
 							</Text>
-							<Text
+							{/* <Text
 								variant={isOpen ? 'openTag' : 'closedTag'}
 							>
 								{isOpen}
-							</Text>
+							</Text> */}
 						</Flex>
 
 						{/* Grant Info */}
 						<Container
 							mt={4}
 							p={4}
-							border='1px solid #E7E4DD'
+							// border='1px solid #E7E4DD'
 							className='container'
 							width='max-content'
 						>
@@ -226,12 +226,12 @@ function ProposalForm() {
 								direction={['column', 'row']}
 								justifyContent='space-between'
 								width='max-content'
-								gap={8}
+								gap={2}
 							>
 								<Flex
 									alignItems='center'
 								>
-									<Flex gap={4}>
+									{/* <Flex gap={4}>
 										<CalendarIcon />
 										<Flex direction='column'>
 											<Text
@@ -250,7 +250,7 @@ function ProposalForm() {
 												{extractDateFromDateTime(grant?.deadline!)}
 											</Text>
 										</Flex>
-									</Flex>
+									</Flex> */}
 								</Flex>
 								{/* <Divider
 									orientation='vertical'
