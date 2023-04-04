@@ -1,5 +1,4 @@
 import { ChangeEvent, ReactElement, useContext, useEffect, useMemo, useState } from 'react'
-import { CalendarIcon } from '@chakra-ui/icons'
 import { Button, Container, Flex, Image, Text } from '@chakra-ui/react'
 import { convertToRaw } from 'draft-js'
 import { useRouter } from 'next/router'
@@ -13,7 +12,7 @@ import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransact
 import SetupNotificationModal from 'src/libraries/ui/SetupNotificationModal'
 import { getAvatar } from 'src/libraries/utils'
 import { chainNames } from 'src/libraries/utils/constants'
-import { extractDateFromDateTime, getExplorerUrlForTxHash, getRewardAmountMilestones } from 'src/libraries/utils/formatting'
+import { getExplorerUrlForTxHash, getRewardAmountMilestones } from 'src/libraries/utils/formatting'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { GrantsProgramContext, SignInTitleContext } from 'src/pages/_app'
@@ -155,7 +154,6 @@ function ProposalForm() {
 	}
 
 	const formComponent = () => {
-		const isOpen = grant?.deadline! > new Date().toISOString() ? 'Open' : 'Closed'
 		return (
 			<Flex
 				w='100%'
