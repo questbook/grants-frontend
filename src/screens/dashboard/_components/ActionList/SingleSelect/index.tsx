@@ -49,10 +49,10 @@ function SingleSelect() {
 													duration: 7000,
 												})
 												return
-											} else if (proposal?.applicantId !== scwAddress?.toLowerCase()) {
+											} else if(proposal?.applicantId !== scwAddress?.toLowerCase()) {
 												toast({
 													title: 'Oops! You are not the applicant of this proposal.',
-													description: `Only the applicant of this proposal can resubmit it.`,
+													description: 'Only the applicant of this proposal can resubmit it.',
 													status: 'error',
 													duration: 7000,
 												})
