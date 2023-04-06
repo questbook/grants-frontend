@@ -72,10 +72,14 @@ function useSetRubrics({ setNetworkTransactionModalStep, setTransactionHash }: P
 
 			logger.info(hash, 'RubricSetRequest hash')
 
-			await call({
+			const receipt = await call({
 				method: 'setRubrics',
 				args: [grant.workspace.id, grant.id, hash]
 			})
+
+			if(receipt) {
+				setNetworkTransactionModalStep(undefined)
+			}
 		}
 
 	return {
