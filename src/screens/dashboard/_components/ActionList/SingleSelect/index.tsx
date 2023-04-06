@@ -77,6 +77,7 @@ function SingleSelect() {
 		return (
 			<Flex
 				h='100%'
+				w='100%'
 				direction='column'>
 				<ReviewProposal />
 			</Flex>

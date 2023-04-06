@@ -215,7 +215,7 @@ function Reviews() {
 		return (
 			<Button
 				variant='link'
-				isDisabled={role !== 'admin' || proposal?.state !== 'submitted'}
+				isDisabled={role !== 'admin'}
 				{...props} >
 				<Text
 					variant='body'
@@ -628,7 +628,7 @@ function Reviews() {
 
 									{reviewType === ReviewType.Rubrics && <Divider mt={3} />}
 
-									<Checkbox
+									{/* <Checkbox
 										mt={3}
 										isChecked={isReviewPrivate}
 										onChange={
@@ -641,7 +641,7 @@ function Reviews() {
 											fontWeight='500'>
 											Keep reviews private
 										</Text>
-									</Checkbox>
+									</Checkbox> */}
 
 									<Flex mt={4}>
 										<Button
