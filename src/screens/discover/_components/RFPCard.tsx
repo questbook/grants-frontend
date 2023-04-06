@@ -7,7 +7,7 @@ import SupportedChainId from 'src/generated/SupportedChainId'
 import { QBAdminsContext } from 'src/libraries/hooks/QBAdminsContext'
 import logger from 'src/libraries/logger'
 import { getAvatar } from 'src/libraries/utils'
-import { extractDateFromDateTime, nFormatter, titleCase } from 'src/libraries/utils/formatting'
+import { nFormatter, titleCase } from 'src/libraries/utils/formatting'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { GrantType } from 'src/screens/discover/_utils/types'
 import { DiscoverContext } from 'src/screens/discover/Context'
@@ -161,7 +161,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						</Text>
 					</Flex>
 
-					<Flex gap={1}>
+					{/* <Flex gap={1}>
 						<Text variant='subtitle'>
 							{isOpen ? 'Deadline on' : 'Ended on'}
 							{' '}
@@ -173,7 +173,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						>
 							{formattedDeadline}
 						</Text>
-					</Flex>
+					</Flex> */}
 
 				</Flex>
 
@@ -268,7 +268,6 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 	const { safeBalances } = useContext(DiscoverContext)!
 
 	const router = useRouter()
-	const formattedDeadline = extractDateFromDateTime(grant.deadline!)
 
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 
