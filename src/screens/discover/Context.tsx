@@ -302,7 +302,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 	useEffect(() => {
 		// console.log('hi from',grantsForAll?.length, grantsForYou?.length, sectionGrants?.length)
-		if(!grantsForAll?.length || !grantsForYou?.length || !sectionGrants?.length) {
+		if(!grantsForAll?.length || !sectionGrants?.length) {
 			return
 		}
 
