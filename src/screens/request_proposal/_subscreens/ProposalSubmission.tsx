@@ -17,8 +17,8 @@ import { ApplicantDetailsFieldType } from 'src/types'
 
 function ProposalSubmission() {
 	const uploaDocInputref = useRef(null)
-	const startdateRef = useRef<HTMLInputElement>(null)
-	const endDateRef = useRef<HTMLInputElement>(null)
+	// const startdateRef = useRef<HTMLInputElement>(null)
+	// const endDateRef = useRef<HTMLInputElement>(null)
 	const bigScreen = useMediaQuery('(min-width:601px)')
 
 	const openInput = () => {
@@ -85,92 +85,6 @@ function ProposalSubmission() {
 									handleOnEdit('proposalName', e.target.value)
 								}
 							}
-						/>
-					</Flex>
-
-					{/* Proposal dates */}
-					<Flex
-						gap={4}
-						alignItems='baseline'
-						flexDirection={['column', 'column', 'row']}
-					>
-						<Text
-							variant='subheading'
-							minW='max-content'>
-							Receive proposal submissions from
-						</Text>
-
-						<Input
-							type={rfpFormType === 'submit' ? 'string' : 'date'}
-							variant='flushed'
-							placeholder='enter start date'
-							_placeholder={{ color: 'gray.500' }}
-							// isDisabled={rfpFormType === 'edit'}
-							ref={startdateRef}
-							onFocus={
-								() => {
-									if(startdateRef.current && rfpFormType !== 'edit') {
-										startdateRef.current.type = 'date'
-									}
-								}
-							}
-							value={rfpData?.startDate ? rfpData?.startDate?.split('T')[0] : ''}
-							step='1'
-							// textPadding={8}
-							min={new Date().toISOString().split('T')[0]}
-							onChange={
-								(e) => {
-									if(e.target.value === '' && startdateRef.current) {
-										startdateRef.current.type = 'string'
-									}
-
-									logger.info(
-										'e.target.value',
-										new Date(e.target.value!).toISOString(),
-									)
-									handleOnEdit(
-										'startDate',
-										new Date(e.target.value!).toISOString(),
-									)
-								}
-							}
-							// borderColor={endDateRef?.current.value ? 'black' : 'gray.300'}
-							fontWeight='400'
-							fontSize='20px'
-						/>
-						<Text variant='subheading'>
-							till
-						</Text>
-						<Input
-							type={rfpFormType === 'submit' ? 'string' : 'date'}
-							variant='flushed'
-							placeholder='enter end date'
-							_placeholder={{ color: 'gray.500' }}
-							min={rfpData?.startDate}
-							value={rfpData?.endDate ? rfpData?.endDate.split('T')[0] : ''}
-							step='1'
-							ref={endDateRef}
-							onFocus={
-								() => {
-									if(endDateRef.current) {
-										endDateRef.current.type = 'date'
-									}
-								}
-							}
-							onChange={
-								(e) => {
-									if(e.target.value === '' && endDateRef.current) {
-										endDateRef.current.type = 'string'
-									}
-
-									const eod = new Date(e.target.value!)
-									eod.setUTCHours(23, 59, 59, 999)
-
-									handleOnEdit('endDate', eod.toISOString())
-								}
-							}
-							fontWeight='400'
-							fontSize='20px'
 						/>
 					</Flex>
 
@@ -321,7 +235,7 @@ function ProposalSubmission() {
 						className='continueBtn'
 						variant='primaryMedium'
 						alignSelf={['center', 'flex-end']}
-						isDisabled={!rfpData?.proposalName || !rfpData?.startDate || !rfpData?.endDate}
+						isDisabled={!rfpData?.proposalName }
 						w={['100%', '20%']}
 						h='40px'
 						marginTop='20px'

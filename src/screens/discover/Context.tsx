@@ -301,6 +301,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	}, [inviteInfo])
 
 	useEffect(() => {
+		// console.log('hi from',grantsForAll?.length, grantsForYou?.length, sectionGrants?.length)
 		if(!grantsForAll?.length || !grantsForYou?.length || !sectionGrants?.length) {
 			return
 		}

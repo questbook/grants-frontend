@@ -179,7 +179,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 
 				<Flex
 					direction='column'
-					>
+				>
 					<Divider />
 					<Grid
 						mt={1}
@@ -275,9 +275,6 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 		return safeBalances[`${grant.workspace.safe?.chainId}-${grant.workspace.safe?.address}`]
 	}, [grant, safeBalances])
 
-	const isOpen = useMemo(() => {
-		return grant.acceptingApplications === true && grant.deadline ? grant.deadline > new Date().toISOString() : false
-	}, [grant])
 	return buildComponent()
 }
 

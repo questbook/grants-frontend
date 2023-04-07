@@ -99,8 +99,6 @@ export default function useCreateRFP() {
 			const data: GrantFields = {
 				workspaceId: '0x0', // WILL BE FILLED LATER
 				title: rfpData?.proposalName,
-				startDate: rfpData?.startDate,
-				endDate: rfpData?.endDate,
 				// details: allApplicantDetails!,
 				link: rfpData?.link!,
 				docIpfsHash: fileIPFSHash,
