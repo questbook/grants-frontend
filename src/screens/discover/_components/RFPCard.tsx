@@ -89,11 +89,11 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						borderRadius='4px'
 					/>
 					<Flex gap={2}>
-						<Text
+						{/* <Text
 							variant={isOpen ? 'openTag' : 'closedTag'}
 						>
 							{isOpen ? 'Open' : 'Closed'}
-						</Text>
+						</Text> */}
 						{
 							role && (
 								<Text
@@ -275,9 +275,9 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 		return safeBalances[`${grant.workspace.safe?.chainId}-${grant.workspace.safe?.address}`]
 	}, [grant, safeBalances])
 
-	const isOpen = useMemo(() => {
-		return grant.acceptingApplications === true && grant.deadline ? grant.deadline > new Date().toISOString() : false
-	}, [grant])
+	// const isOpen = useMemo(() => {
+	// 	return grant.acceptingApplications === true && grant.deadline ? grant.deadline > new Date().toISOString() : false
+	// }, [grant])
 	return buildComponent()
 }
 

@@ -7,4 +7,5 @@ export { CommunicationAbi__factory } from "./CommunicationAbi__factory";
 export { GrantAbi__factory } from "./GrantAbi__factory";
 export { GrantFactoryAbi__factory } from "./GrantFactoryAbi__factory";
 export { ReviewerGuard__factory } from "./ReviewerGuard__factory";
+export { UtilityRegistryAbi__factory } from "./UtilityRegistryAbi__factory";
 export { WorkspaceRegistryAbi__factory } from "./WorkspaceRegistryAbi__factory";

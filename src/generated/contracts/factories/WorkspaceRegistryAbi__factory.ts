@@ -1277,30 +1277,14 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "bytes",
-        name: "sig",
-        type: "bytes",
+        internalType: "contract IUtilityRegistry",
+        name: "_utilityReg",
+        type: "address",
       },
     ],
-    name: "splitSignature",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "r",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes32",
-        name: "s",
-        type: "bytes32",
-      },
-      {
-        internalType: "uint8",
-        name: "v",
-        type: "uint8",
-      },
-    ],
-    stateMutability: "pure",
+    name: "setUtilityRegistry",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -1518,6 +1502,19 @@ const _abi = [
     name: "upgradeToAndCall",
     outputs: [],
     stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "utilityReg",
+    outputs: [
+      {
+        internalType: "contract IUtilityRegistry",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
