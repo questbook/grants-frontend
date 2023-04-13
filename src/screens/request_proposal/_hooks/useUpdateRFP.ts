@@ -37,7 +37,7 @@ export default function useUpdateRFP() {
 
 		setLoading(true)
 
-		const { proposalName, startDate, endDate, rubrics, allApplicantDetails, link, reviewMechanism, payoutMode, amount, milestones } = rfpData
+		const { proposalName, rubrics, allApplicantDetails, link, reviewMechanism, payoutMode, amount, milestones } = rfpData
 
 		const fieldMap: {[key: string]: ApplicantDetailsFieldType} = {}
 		allApplicantDetails?.forEach((field) => {
@@ -46,8 +46,6 @@ export default function useUpdateRFP() {
 
 		const processedData: GrantFields = {
 			title: proposalName,
-			startDate: startDate,
-			endDate: endDate,
 			fields: fieldMap,
 			link: link,
 			docIpfsHash: '',

@@ -30,7 +30,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 			background='white'
 			px={5}
 			pt={5}
-			h='16rem'
+			// h='13'
 			position='relative'
 			// boxShadow='0px 10px 18px rgba(31, 31, 51, 0.05), 0px 0px 1px rgba(31, 31, 51, 0.31);'
 			borderRadius='2px'
@@ -179,7 +179,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 
 				<Flex
 					direction='column'
-					mt='auto'>
+				>
 					<Divider />
 					<Grid
 						mt={1}
