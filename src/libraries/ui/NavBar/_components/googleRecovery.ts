@@ -42,7 +42,11 @@ export default function useGoogleDriveWalletRecoveryReact({ googleClientID }: Pr
 		loadGoogleScript(srcGapi)
 			.then(() => {
 				setTimeout(() => {
+					try{
 					gapi.load('client', gapiInit)
+					} catch(e) {
+						logger.info(e)
+					}
 				}, 500)
 			})
 			.catch()

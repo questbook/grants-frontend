@@ -326,6 +326,7 @@ function Discussions() {
 														logger.info('Setting selected tag to undefined after posting comment')
 														setSelectedTag(undefined)
 														refreshComments(true)
+														setStep(undefined)
 														localStorage.removeItem(
 															`comment-${grant?.id}-${proposal?.id}`,
 														)
