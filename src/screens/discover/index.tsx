@@ -376,6 +376,7 @@ function Discover() {
 							)
 						}
 						<Flex
+							flexDirection='column'
 							w='100%'
 							align='center'
 							justify='center'>
@@ -386,6 +387,14 @@ function Discover() {
 								color='accent.azure'
 								href='https://questbook.app/termsofservice.html'>
 								Questbook - Terms of Service
+							</Link>
+							<Link
+								textAlign='center'
+								isExternal
+								variant='body'
+								color='accent.azure'
+								href='questbook.app/privacypolicy.html'>
+								Privacy Policy
 							</Link>
 						</Flex>
 
