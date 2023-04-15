@@ -627,6 +627,19 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "contract IUtilityRegistry",
+        name: "_utilityReg",
+        type: "address",
+      },
+    ],
+    name: "setUtilityRegistry",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "contract IWorkspaceRegistry",
         name: "_workspaceReg",
         type: "address",
@@ -786,6 +799,19 @@ const _abi = [
     name: "upgradeToAndCall",
     outputs: [],
     stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "utilityReg",
+    outputs: [
+      {
+        internalType: "contract IUtilityRegistry",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {

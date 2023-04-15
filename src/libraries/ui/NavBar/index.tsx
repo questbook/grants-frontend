@@ -161,10 +161,10 @@ function NavBar({ openSignIn, bg = 'gray.100', requestProposal, dashboard }: Pro
 								</Flex>
 							</Flex>
 
-							<Text
+							{/* <Text
 								variant={grant?.acceptingApplications ? 'openTag' : 'closedTag'}>
 								{grant?.acceptingApplications ? 'Open' : 'Closed'}
-							</Text>
+							</Text> */}
 						</Flex>
 
 					)
@@ -600,7 +600,7 @@ function NavBar({ openSignIn, bg = 'gray.100', requestProposal, dashboard }: Pro
 		}
 
 		setTimeout(() => {
-			if(isMobile[0] && !!dashboard) {
+			if(isMobile[0] && !!dashboard && !!!webwallet) {
 				setSignIn(true)
 				return
 			}

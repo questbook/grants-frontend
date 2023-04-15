@@ -71,7 +71,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     "renounceOwnership()": FunctionFragment;
     "setApplicationReg(address)": FunctionFragment;
     "setGuardOffset(uint256)": FunctionFragment;
-    "splitSignature(bytes)": FunctionFragment;
+    "setUtilityRegistry(address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unpause()": FunctionFragment;
     "updateAnonAuthoriserAddress(address)": FunctionFragment;
@@ -83,6 +83,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     "updateWorkspacesVisible(uint96[],bool[])": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
+    "utilityReg()": FunctionFragment;
     "walletAddressToScwAddress(address)": FunctionFragment;
     "workspaceCount()": FunctionFragment;
     "workspaces(uint96)": FunctionFragment;
@@ -119,7 +120,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
       | "renounceOwnership"
       | "setApplicationReg"
       | "setGuardOffset"
-      | "splitSignature"
+      | "setUtilityRegistry"
       | "transferOwnership"
       | "unpause"
       | "updateAnonAuthoriserAddress"
@@ -131,6 +132,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
       | "updateWorkspacesVisible"
       | "upgradeTo"
       | "upgradeToAndCall"
+      | "utilityReg"
       | "walletAddressToScwAddress"
       | "workspaceCount"
       | "workspaces"
@@ -291,8 +293,8 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "splitSignature",
-    values: [PromiseOrValue<BytesLike>]
+    functionFragment: "setUtilityRegistry",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -355,6 +357,10 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "upgradeToAndCall",
     values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "utilityReg",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "walletAddressToScwAddress",
@@ -468,7 +474,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "splitSignature",
+    functionFragment: "setUtilityRegistry",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -509,6 +515,7 @@ export interface WorkspaceRegistryAbiInterface extends utils.Interface {
     functionFragment: "upgradeToAndCall",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "utilityReg", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "walletAddressToScwAddress",
     data: BytesLike
@@ -1069,10 +1076,10 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    splitSignature(
-      sig: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[string, string, number] & { r: string; s: string; v: number }>;
+    setUtilityRegistry(
+      _utilityReg: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -1143,6 +1150,8 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       data: PromiseOrValue<BytesLike>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    utilityReg(overrides?: CallOverrides): Promise<[string]>;
 
     walletAddressToScwAddress(
       arg0: PromiseOrValue<string>,
@@ -1325,10 +1334,10 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  splitSignature(
-    sig: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<[string, string, number] & { r: string; s: string; v: number }>;
+  setUtilityRegistry(
+    _utilityReg: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   transferOwnership(
     newOwner: PromiseOrValue<string>,
@@ -1399,6 +1408,8 @@ export interface WorkspaceRegistryAbi extends BaseContract {
     data: PromiseOrValue<BytesLike>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  utilityReg(overrides?: CallOverrides): Promise<string>;
 
   walletAddressToScwAddress(
     arg0: PromiseOrValue<string>,
@@ -1575,10 +1586,10 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    splitSignature(
-      sig: PromiseOrValue<BytesLike>,
+    setUtilityRegistry(
+      _utilityReg: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[string, string, number] & { r: string; s: string; v: number }>;
+    ): Promise<void>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -1647,6 +1658,8 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    utilityReg(overrides?: CallOverrides): Promise<string>;
 
     walletAddressToScwAddress(
       arg0: PromiseOrValue<string>,
@@ -2075,9 +2088,9 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    splitSignature(
-      sig: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
+    setUtilityRegistry(
+      _utilityReg: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     transferOwnership(
@@ -2149,6 +2162,8 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       data: PromiseOrValue<BytesLike>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    utilityReg(overrides?: CallOverrides): Promise<BigNumber>;
 
     walletAddressToScwAddress(
       arg0: PromiseOrValue<string>,
@@ -2327,9 +2342,9 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    splitSignature(
-      sig: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
+    setUtilityRegistry(
+      _utilityReg: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(
@@ -2401,6 +2416,8 @@ export interface WorkspaceRegistryAbi extends BaseContract {
       data: PromiseOrValue<BytesLike>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    utilityReg(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     walletAddressToScwAddress(
       arg0: PromiseOrValue<string>,

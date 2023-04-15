@@ -29,8 +29,6 @@ export type RFPForm = {
 
 export type GrantFields = {
     title: string
-    startDate: string
-    endDate: string
     fields: { [key: string]: ApplicantDetailsFieldType }
     link: string
     docIpfsHash: string

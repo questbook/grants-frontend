@@ -7,6 +7,7 @@ export type { CommunicationAbi } from "./CommunicationAbi";
 export type { GrantAbi } from "./GrantAbi";
 export type { GrantFactoryAbi } from "./GrantFactoryAbi";
 export type { ReviewerGuard } from "./ReviewerGuard";
+export type { UtilityRegistryAbi } from "./UtilityRegistryAbi";
 export type { WorkspaceRegistryAbi } from "./WorkspaceRegistryAbi";
 export * as factories from "./factories";
 export { ApplicationRegistryAbi__factory } from "./factories/ApplicationRegistryAbi__factory";
@@ -15,4 +16,5 @@ export { CommunicationAbi__factory } from "./factories/CommunicationAbi__factory
 export { GrantAbi__factory } from "./factories/GrantAbi__factory";
 export { GrantFactoryAbi__factory } from "./factories/GrantFactoryAbi__factory";
 export { ReviewerGuard__factory } from "./factories/ReviewerGuard__factory";
+export { UtilityRegistryAbi__factory } from "./factories/UtilityRegistryAbi__factory";
 export { WorkspaceRegistryAbi__factory } from "./factories/WorkspaceRegistryAbi__factory";

@@ -206,16 +206,8 @@ GrantApplicationRequest:
         $ref: 'GrantProposedMilestone'
 WorkspaceMemberUpdate:
   type: object
+  additionalProperties: true
   properties:
-    fullName:
-      type: string
-      maxLength: 255
-    profilePictureIpfsHash:
-      type: string
-      maxLength: 128
-      description: IPFS hash of the profile picture
-    publicKey:
-      $ref: 'PublicKey'
     pii:
       $ref: 'PIIAnswers'
 GrantApplicationUpdate:
@@ -595,4 +587,19 @@ OwnerID:
   type: string
   minLength: 16
   maxLength: 255
+ProfileCreateRequest:
+  type: object
+  additonalProperties: false
+  properties:
+    fullName:
+      type: string
+      maxLength: 255
+    profilePictureIpfsHash:
+      type: string
+      maxLength: 128
+      description: IPFS hash of the profile picture
+    publicKey:
+      $ref: 'PublicKey'
+    
+
   # example: '0x71C7656EC7ab88b098defB751B7411C5f6d8976F'
