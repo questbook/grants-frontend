@@ -22,6 +22,8 @@ import { DiscoverContext, DiscoverProvider } from 'src/screens/discover/Context'
 import HeroBanner from 'src/screens/discover/HeroBanner'
 import StatsBanner from 'src/screens/discover/StatsBanner'
 import { Roles } from 'src/types'
+import config from 'src/constants/config.json'
+import { getAvatar } from 'src/libraries/utils'
 
 function Discover() {
 	const router = useRouter()
@@ -339,7 +341,7 @@ function Discover() {
 															mb={4}
 														>
 															<Image
-																src={getUrlForIPFSHash(sectionImage)}
+																src={sectionImage === config.defaultDAOImageHash ? getAvatar(true, sectionName) : getUrlForIPFSHash(sectionImage)}
 																boxSize={6} />
 															<Text
 																fontWeight='500'
