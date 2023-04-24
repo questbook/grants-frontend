@@ -54,9 +54,11 @@ function ProposalForm() {
 						justify='center'
 						align='start'
 						pl='10%'>
+
 						<Image
 							src={grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)}
-							boxSize={grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? '30%' : 'auto'} />
+							boxSize='20rem'
+						/>
 						<Text
 							mt={6}
 							variant='heading2'
@@ -323,7 +325,7 @@ function ProposalForm() {
 							containsField(grant, 'applicantAddress') && (
 								<SectionInput
 									label='Wallet Address'
-									placeholder={isEvm === undefined || isEvm ? '0xEbd6dB5a58c9812df3297E2Bc2fF0BDFEac2453c' : 'AdG9Gdjm6cLFTfhefR9reZRH3bx4PM1XSmu7JGchjnPp' }
+									placeholder={isEvm === undefined || isEvm ? '0xEbd6dB5a58c9812df3297E2Bc2fF0BDFEac2453c' : 'AdG9Gdjm6cLFTfhefR9reZRH3bx4PM1XSmu7JGchjnPp'}
 									value={findField(form, 'applicantAddress').value}
 									onChange={
 										(e) => {
