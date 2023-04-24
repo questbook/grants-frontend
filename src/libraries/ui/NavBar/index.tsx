@@ -34,7 +34,7 @@ type Props = {
 	openSignIn?: boolean
 }
 
-function NavBar({ openSignIn, bg = 'gray.100', requestProposal, dashboard }: Props) {
+function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 	const { webwallet } = useContext(WebwalletContext)!
 	const { importWebwallet } = useContext(WebwalletContext)!
 
@@ -568,14 +568,14 @@ function NavBar({ openSignIn, bg = 'gray.100', requestProposal, dashboard }: Pro
 					Invite Proposals
 				</Text>
 				<SignIn
-				isOpen={signIn && !!!webwallet}
-				setSignIn={setSignIn}
-				onClose={() => setSignIn(false)}
-				exportWalletToGD={exportWalletToGD}
-				importWalletFromGD={importWalletFromGD}
-				loading={loading}
-				inited={inited}
-			/>
+					isOpen={signIn && !!!webwallet}
+					setSignIn={setSignIn}
+					onClose={() => setSignIn(false)}
+					exportWalletToGD={exportWalletToGD}
+					importWalletFromGD={importWalletFromGD}
+					loading={loading}
+					inited={inited}
+				/>
 			</Container>
 		</>
 	)
@@ -612,7 +612,7 @@ function NavBar({ openSignIn, bg = 'gray.100', requestProposal, dashboard }: Pro
 	// 		if(isMobile[0] && !!dashboard && !!!webwallet) {
 	// 			setSignIn(true)
 	// 			return
-	// 		} 
+	// 		}
 
 	// 		setSignIn(!!openSignIn && !!!webwallet)
 	// 	}, 2000)
