@@ -14,6 +14,7 @@ interface Props {
 }
 export default function BackupWallet({ isNewUser, exportWalletToGD, loading, inited, privateKey }: Props) {
 	const toast = useCustomToast()
+	const googleDriveActivated = false
 	const title = isNewUser ? 'New Questbook wallet' : 'Backup your Questbook wallet'
 	useEffect(() => {
 	}, [loading, inited])
@@ -65,56 +66,61 @@ export default function BackupWallet({ isNewUser, exportWalletToGD, loading, ini
 					marginTop={2}
 					marginBottom={5}
 				>
-					<Button
-						width='50%'
-						bg='gray.300'
-						height={10}
-						w='90%'
-						borderRadius='20'
-						leftIcon={<Gdrive />}
-						// variant='primaryMedium'
-						marginTop={4}
-						isDisabled={loading || !inited}
-						onClick={
-							async() => {
-								if(!privateKey) {
-									return
+					{
+						(googleDriveActivated && (
+							<Button
+								width='50%'
+								bg='gray.300'
+								height={10}
+								w='90%'
+								borderRadius='20'
+								leftIcon={<Gdrive />}
+								// variant='primaryMedium'
+								marginTop={4}
+								isDisabled={loading || !inited}
+								onClick={
+									async() => {
+										if(!privateKey) {
+											return
+										}
+
+										try {
+											await exportWalletToGD(new ethers.Wallet(privateKey))
+											toast({
+												title: 'Imported to Google Drive',
+												status: 'success',
+												duration: 3000,
+												isClosable: true,
+											})
+										} catch{
+											toast({
+												title: 'google popup closed',
+												status: 'warning',
+												duration: 3000,
+												isClosable: true,
+											})
+										}
+									}
 								}
 
-								try {
-									await exportWalletToGD(new ethers.Wallet(privateKey))
-									toast({
-										title: 'Imported to Google Drive',
-										status: 'success',
-										duration: 3000,
-										isClosable: true,
-									})
-								} catch{
-									toast({
-										title: 'google popup closed',
-										status: 'warning',
-										duration: 3000,
-										isClosable: true,
-									})
-								}
-							}
-						}
-
-					>
-						<Text
-							variant='body'
-							color='black'
-							fontSize={['11px', '14px']}
-							fontWeight='500'
-						>
-							Save in Google Drive
-						</Text>
-					</Button>
+							>
+								<Text
+									variant='body'
+									color='black'
+									fontSize={['11px', '14px']}
+									fontWeight='500'
+								>
+									Save in Google Drive
+								</Text>
+							</Button>
+						)
+						)
+					}
 
 					<Button
 						// variant='primaryMedium'
 						marginTop={4}
-						width='90%'
+						width='100%'
 						bg='gray.300'
 						height={10}
 						borderRadius='20'

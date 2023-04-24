@@ -15,6 +15,7 @@ interface Props {
 
 function RestoreWallet({ setSignInMethod, closeModal, inited, loading, importWalletFromGD, importWebwallet }: Props) {
 	const toast = useCustomToast()
+	const googleDriveActivated = false
 	const [isEnteringPrivateKey, setIsEnteringPrivateKey] = useState<boolean>(false)
 	const [isValidKey, setIsValidKey] = useState<boolean>(false)
 	const [privateKey, setPrivateKey] = useState<string>('')
@@ -77,7 +78,7 @@ function RestoreWallet({ setSignInMethod, closeModal, inited, loading, importWal
 						Restore your existing wallet with the private key.
 					</Text>
 					{
-						!isEnteringPrivateKey && (
+						!isEnteringPrivateKey && googleDriveActivated && (
 							<Button
 
 								marginTop={4}
