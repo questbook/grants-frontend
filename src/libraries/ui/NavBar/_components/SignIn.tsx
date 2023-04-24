@@ -40,8 +40,7 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 
 		return 'To run a grant program, sign in with wallet'
 	}
-
-	// console.log(signInTitle, 'tabtab')
+	console.log('signin',isOpen)
 	const buildComponent = () => {
 		return (
 			<Modal

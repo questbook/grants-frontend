@@ -567,6 +567,15 @@ function NavBar({ openSignIn, bg = 'gray.100', requestProposal, dashboard }: Pro
 				>
 					Invite Proposals
 				</Text>
+				<SignIn
+				isOpen={signIn && !!!webwallet}
+				setSignIn={setSignIn}
+				onClose={() => setSignIn(false)}
+				exportWalletToGD={exportWalletToGD}
+				importWalletFromGD={importWalletFromGD}
+				loading={loading}
+				inited={inited}
+			/>
 			</Container>
 		</>
 	)
@@ -594,21 +603,21 @@ function NavBar({ openSignIn, bg = 'gray.100', requestProposal, dashboard }: Pro
 
 	const isMobile = useMediaQuery(['(max-width:600px)'])
 
-	useEffect(() => {
-		if(webwallet === undefined) {
-			return
-		}
+	// useEffect(() => {
+	// 	if(webwallet === undefined) {
+	// 		return
+	// 	}
 
-		setTimeout(() => {
-			if(isMobile[0] && !!dashboard && !!!webwallet) {
-				setSignIn(true)
-				return
-			}
+	// 	setTimeout(() => {
+	// 		if(isMobile[0] && !!dashboard && !!!webwallet) {
+	// 			setSignIn(true)
+	// 			return
+	// 		} 
 
-			setSignIn(!!openSignIn && !!!webwallet)
-		}, 2000)
+	// 		setSignIn(!!openSignIn && !!!webwallet)
+	// 	}, 2000)
 
-	}, [webwallet, openSignIn, dashboard])
+	// }, [webwallet, openSignIn, dashboard])
 
 	useEffect(() => {
 		logger.info({ type, privateKey }, 'RecoveryModal')
