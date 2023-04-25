@@ -27,7 +27,7 @@ function HeroBanner() {
 						fontWeight='500'
 						fontSize='40px'
 						lineHeight='48px'
-						color='#FFE900'
+						color='#B6F72B'
 						as='span'>
 						{' '}
 						high quality
@@ -64,7 +64,7 @@ function HeroBanner() {
 			{
 				!isMobile && (
 					<Flex
-						bgColor='brand.green'
+						bgColor='#B6F72B'
 						flexGrow={1}
 						justifyContent='center'>
 						<Image
