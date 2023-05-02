@@ -428,6 +428,7 @@ function Reviews() {
 	const reviewer = () => {
 		return (
 			<Flex
+				display={role === 'admin' ? 'flex': 'none'}
 				mt={5}
 				w='100%'>
 				<Text
@@ -444,8 +445,8 @@ function Reviews() {
 						</Text>
 					)
 				}
-				{(proposal?.applicationReviewers?.length || 0) > 0 && <Box ml='auto' />}
-				{(grant?.workspace?.safe?.chainId !== '10' && grant?.workspace?.safe?.chainId !== '5') && assignReviewerPopup(assignReviewerPopoverRef, (proposal?.applicationReviewers?.length || 0) > 0 ? 'edit' : 'setup')}
+				{totalNumberOfReviewers > 0 && <Box ml='auto' />}
+				{('10' && grant?.workspace?.safe?.chainId !== '5') && assignReviewerPopup(assignReviewerPopoverRef, (proposal?.applicationReviewers?.length || 0) > 0 ? 'edit' : 'setup')}
 				{((grant?.workspace?.safe?.chainId === '10' || grant?.workspace?.safe?.chainId === '5') && guardContractReviewers?.length === 0) && setupButton({ onClick: () => setIsSafeGuardModalOpen(true) })}
 			</Flex>
 		)
@@ -696,7 +697,7 @@ function Reviews() {
 					)
 				}
 				{(grant?.reviewType || (grant?.rubric && grant?.rubric?.items?.length > 0)) && <Box ml='auto' />}
-				{setReviewTypePopup(setReviewTypePopoverRef, (grant?.reviewType || (grant?.rubric && grant?.rubric?.items?.length > 0)) ? 'edit' : 'setup')}
+				{role === 'admin' && setReviewTypePopup(setReviewTypePopoverRef, (grant?.reviewType || (grant?.rubric && grant?.rubric?.items?.length > 0)) ? 'edit' : 'setup')}
 			</Flex>
 		)
 	}
