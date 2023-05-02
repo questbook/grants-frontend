@@ -3,7 +3,6 @@ import { Box, Button, ButtonProps, Checkbox, Divider, Flex, Image, InputGroup, I
 import Safe from '@safe-global/safe-core-sdk'
 import EthersAdapter from '@safe-global/safe-ethers-lib'
 import { ethers } from 'ethers'
-import { motion } from 'framer-motion'
 import { CHAIN_INFO, defaultChainId } from 'src/constants/chains'
 import guardAbi from 'src/contracts/abi/ReviewerGuard.json'
 import { CheckDouble, Close, Dropdown, Pencil } from 'src/generated/icons'
@@ -37,116 +36,111 @@ function Reviews() {
 				overflowY='auto'
 				overflowX='clip'
 				w='100%'>
-				<motion.div
-					initial={{ opacity: 0, x: 50 }}
-					animate={{ opacity: 1, x: 0 }}
-					transition={{ duration: 1, delay: 2.2 }}>
-					<Flex
-						justify='space-between'
-						onClick={
-							() => {
-								if(proposals?.length > 0) {
-									setExpanded(!expanded)
-								}
+				<Flex
+					justify='space-between'
+					onClick={
+						() => {
+							if(proposals?.length > 0) {
+								setExpanded(!expanded)
 							}
-						}>
-						<Text fontWeight='500'>
-							Reviews
-						</Text>
-						{
-							proposals?.length > 0 && (
-								<Dropdown
-									mr={2}
-									transform={expanded ? 'rotate(180deg)' : 'rotate(0deg)'}
-									cursor='pointer'
-								/>
-							)
 						}
-					</Flex>
+					}>
+					<Text fontWeight='500'>
+						Reviews
+					</Text>
+					{
+						proposals?.length > 0 && (
+							<Dropdown
+								mr={2}
+								transform={expanded ? 'rotate(180deg)' : 'rotate(0deg)'}
+								cursor='pointer'
+							/>
+						)
+					}
+				</Flex>
 
-					<Flex
-						display={expanded ? 'block' : 'none'}
-						direction='column'>
-						{reviewer()}
-						{reviewWith()}
-						{
-							(proposal?.applicationReviewers?.length || 0) > 0 && (
-								<Text
-									mt={4}
-									variant='metadata'
-									color='gray.500'
-									fontWeight='500'>
-									REVIEWER EVALUATION
-								</Text>
-							)
-						}
+				<Flex
+					display={expanded ? 'block' : 'none'}
+					direction='column'>
+					{reviewer()}
+					{reviewWith()}
+					{
+						(proposal?.applicationReviewers?.length || 0) > 0 && (
+							<Text
+								mt={4}
+								variant='metadata'
+								color='gray.500'
+								fontWeight='500'>
+								REVIEWER EVALUATION
+							</Text>
+						)
+					}
 
-						{(grant?.reviewType === 'voting' && (proposal?.applicationReviewers?.length || 0) > 0) && voteGraph()}
+					{(grant?.reviewType === 'voting' && (proposal?.applicationReviewers?.length || 0) > 0) && voteGraph()}
 
-						{
-							proposal?.applicationReviewers?.filter((reviewer) => !guardContractReviewers.find(gcr => gcr.member?.actorId === reviewer?.member?.actorId)).map((reviewer, index) => {
-								return reviewerItem(reviewer?.member, reviews.find(r => r.reviewer === reviewer?.member.actorId), index)
-							})
-						}
+					{
+						proposal?.applicationReviewers?.filter((reviewer) => !guardContractReviewers.find(gcr => gcr.member?.actorId === reviewer?.member?.actorId)).map((reviewer, index) => {
+							return reviewerItem(reviewer?.member, reviews.find(r => r.reviewer === reviewer?.member.actorId), index)
+						})
+					}
 
-						{
-							guardContractReviewers.map((reviewer, index) => {
-								if(reviewer?.member) {
-									return reviewerItem(reviewer?.member, reviews.find(r => r.reviewer === reviewer?.member?.actorId), index)
-								} else {
-									return (
+					{
+						guardContractReviewers.map((reviewer, index) => {
+							if(reviewer?.member) {
+								return reviewerItem(reviewer?.member, reviews.find(r => r.reviewer === reviewer?.member?.actorId), index)
+							} else {
+								return (
+									<Flex
+										mt={index === 0 ? 5 : 3}
+										key={index}
+										w='100%'
+										align='center'
+									>
 										<Flex
-											mt={index === 0 ? 5 : 3}
-											key={index}
-											w='100%'
+											maxW='70%'
 											align='center'
 										>
-											<Flex
-												maxW='70%'
-												align='center'
-											>
-												<Image
-													borderRadius='3xl'
-													boxSize='28px'
-													src={getAvatar(false, reviewer?.walletAddress)}
-												/>
-												<Tooltip label={reviewer.walletAddress}>
-													<Text
-														as='span'
-														variant='body'
-														fontWeight='500'
-														ml={3}
-														noOfLines={3}>
-														{formatAddress(reviewer.walletAddress)}
-													</Text>
-												</Tooltip>
-											</Flex>
-
-											<Box ml='auto' />
-
-											<Button
-												variant='link'
-											>
+											<Image
+												borderRadius='3xl'
+												boxSize='28px'
+												src={getAvatar(false, reviewer?.walletAddress)}
+											/>
+											<Tooltip label={reviewer.walletAddress}>
 												<Text
-													color='accent.azure'
+													as='span'
 													variant='body'
 													fontWeight='500'
-													onClick={
-														() => {
-															setWalletAddress(reviewer.walletAddress)
-														}
-													}>
-													Join as a reviewer
+													ml={3}
+													noOfLines={3}>
+													{formatAddress(reviewer.walletAddress)}
 												</Text>
-											</Button>
+											</Tooltip>
 										</Flex>
-									)
-								}
-							})
-						}
 
-					</Flex>
-				</motion.div>
+										<Box ml='auto' />
+
+										<Button
+											variant='link'
+										>
+											<Text
+												color='accent.azure'
+												variant='body'
+												fontWeight='500'
+												onClick={
+													() => {
+														setWalletAddress(reviewer.walletAddress)
+													}
+												}>
+												Join as a reviewer
+											</Text>
+										</Button>
+									</Flex>
+								)
+							}
+						})
+					}
+
+				</Flex>
 
 				<SafeGuardModal
 					isOpen={isSafeGuardModalOpen}
@@ -901,7 +895,7 @@ function Reviews() {
 	const assignReviewerPopoverRef = useRef<HTMLButtonElement>(null)
 	const [searchMemberName, setSearchMemberName] = useState<string>('')
 	const [members, setMembers] = useState<{ [id: string]: boolean }>({})
-	const [guardContractReviewers, setGuardContractReviewers] = useState<{walletAddress: string, member: Exclude<GrantType, null | undefined>['workspace']['members'][number] | undefined}[]>([])
+	const [guardContractReviewers, setGuardContractReviewers] = useState<{ walletAddress: string, member: Exclude<GrantType, null | undefined>['workspace']['members'][number] | undefined }[]>([])
 	const { assignReviewers, isBiconomyInitialised } = useAssignReviewers({ setNetworkTransactionModalStep, setTransactionHash })
 
 	const setReviewTypePopoverRef = useRef<HTMLButtonElement>(null)
@@ -947,7 +941,7 @@ function Reviews() {
 
 			const guardContract = new ethers.Contract(guard, guardAbi, provider)
 			const workspaceRegistryContract = new ethers.Contract(CHAIN_INFO[getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId]?.qbContracts?.workspace, CONTRACT_INTERFACE_MAP['workspace'], provider)
-			const reviewers: {walletAddress: string, member: Exclude<GrantType, null | undefined>['workspace']['members'][number] | undefined}[] = []
+			const reviewers: { walletAddress: string, member: Exclude<GrantType, null | undefined>['workspace']['members'][number] | undefined }[] = []
 
 			const eoaReviewers = await guardContract.getReviewers()
 			logger.info('Reviewers from guard contract (REVIEWER GUARD)', eoaReviewers)
@@ -1011,7 +1005,7 @@ function Reviews() {
 		setReviewersExpanded(Array(proposal?.applicationReviewers?.length).fill(false))
 
 		if(proposal?.applicationReviewers) {
-			const currMembers: {[key: string]: boolean} = {}
+			const currMembers: { [key: string]: boolean } = {}
 			logger.info('Current member state 1: ', currMembers)
 			for(const reviewer of proposal?.applicationReviewers) {
 				currMembers[reviewer.member.id] = true

@@ -10,7 +10,6 @@ import {
 } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import { ContentState, convertFromRaw, EditorState } from 'draft-js'
-import { motion } from 'framer-motion'
 import { defaultChainId } from 'src/constants/chains'
 import { Mail, ShareForward } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
@@ -56,79 +55,111 @@ function Proposal() {
 				boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
 				bg='white'
 			>
-				<motion.div
-					initial={{ opacity: 0, y: -50 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 1, ease: 'easeInOut', delay: 0.8 }}>
+				<Flex
+					w='100%'
+					align='center'
+					justify='space-between'>
+					<Text
+						maxW='90%'
+						as='span'
+						variant='heading3'
+						fontWeight='500'>
+						{getFieldString(proposal, 'projectName')}
+					</Text>
 					<Flex
-						w='100%'
-						align='center'
-						justify='space-between'>
-						<Text
-							maxW='90%'
-							as='span'
-							variant='heading3'
-							fontWeight='500'>
-							{getFieldString(proposal, 'projectName')}
-						</Text>
-						<Flex
-							ml={4}
-							gap={4}>
-							<NotificationPopover
-								type='proposal'
-								proposalId={proposal?.id} />
-							<ShareForward
-								boxSize='20px'
-								cursor='pointer'
-								onClick={
-									() => {
-										const href = window.location.href.split('/')
-										const protocol = href[0]
-										const domain = href[2]
-										const link = `${protocol}//${domain}/dashboard/?grantId=${
-											proposal.grant.id
-										}&chainId=${chainId}&proposalId=${
-											proposal.id
-										}&isRenderingProposalBody=${true}`
-										copy(link)
-										toast({
-											title: 'Copied!',
-											status: 'success',
-											duration: 3000,
-										})
-									}
+						ml={4}
+						gap={4}>
+						<NotificationPopover
+							type='proposal'
+							proposalId={proposal?.id} />
+						<ShareForward
+							boxSize='20px'
+							cursor='pointer'
+							onClick={
+								() => {
+									const href = window.location.href.split('/')
+									const protocol = href[0]
+									const domain = href[2]
+									const link = `${protocol}//${domain}/dashboard/?grantId=${proposal.grant.id
+									}&chainId=${chainId}&proposalId=${proposal.id
+									}&isRenderingProposalBody=${true}`
+									copy(link)
+									toast({
+										title: 'Copied!',
+										status: 'success',
+										duration: 3000,
+									})
 								}
-							/>
-						</Flex>
+							}
+						/>
 					</Flex>
+				</Flex>
 
-					{
-						shouldShowPII && (
+				{
+					shouldShowPII && (
+						<Flex
+							mt={4}
+							direction='column'>
+							<Text color='gray.500'>
+								By
+							</Text>
 							<Flex
-								mt={4}
-								direction='column'>
-								<Text color='gray.500'>
-									By
-								</Text>
+								align='center'
+								mt={4}>
+								<Image
+									borderRadius='3xl'
+									boxSize='36px'
+									src={getAvatar(false, proposal.applicantId)}
+								/>
 								<Flex
-									align='center'
-									mt={4}>
-									<Image
-										borderRadius='3xl'
-										boxSize='36px'
-										src={getAvatar(false, proposal.applicantId)}
-									/>
-									<Flex
-										ml={2}
-										direction='column'>
-										<Text fontWeight='500'>
-											{getFieldString(decryptedProposal, 'applicantName')}
-										</Text>
-										<Flex align='center'>
-											<Button
-												variant='link'
-												rightIcon={
-													getFieldString(decryptedProposal, 'applicantEmail') ? (
+									ml={2}
+									direction='column'>
+									<Text fontWeight='500'>
+										{getFieldString(decryptedProposal, 'applicantName')}
+									</Text>
+									<Flex align='center'>
+										<Button
+											variant='link'
+											rightIcon={
+												getFieldString(decryptedProposal, 'applicantEmail') ? (
+													<Flex
+														w='20px'
+														h='20px'
+														bg='gray.300'
+														borderRadius='3xl'
+														justify='center'
+													>
+														<Mail
+															alignSelf='center'
+															boxSize='12px' />
+													</Flex>
+												) : (
+													<Flex />
+												)
+											}
+										>
+											<Text
+												fontWeight='400'
+												variant='v2_body'
+												color='gray.500'>
+												{getFieldString(decryptedProposal, 'applicantEmail')}
+											</Text>
+										</Button>
+
+										{
+											getFieldString(proposal, 'applicantEmail') && (
+												<Image
+													src='/v2/icons/dot.svg'
+													boxSize='4px'
+													mx={2} />
+											)
+										}
+
+										{
+											getFieldString(proposal, 'applicantAddress') && (
+												<Button
+													variant='link'
+													rightIcon={
 														<Flex
 															w='20px'
 															h='20px'
@@ -136,221 +167,112 @@ function Proposal() {
 															borderRadius='3xl'
 															justify='center'
 														>
-															<Mail
-																alignSelf='center'
-																boxSize='12px' />
-														</Flex>
-													) : (
-														<Flex />
-													)
-												}
-											>
-												<Text
-													fontWeight='400'
-													variant='v2_body'
-													color='gray.500'>
-													{getFieldString(decryptedProposal, 'applicantEmail')}
-												</Text>
-											</Button>
-
-											{
-												getFieldString(proposal, 'applicantEmail') && (
-													<Image
-														src='/v2/icons/dot.svg'
-														boxSize='4px'
-														mx={2} />
-												)
-											}
-
-											{
-												getFieldString(proposal, 'applicantAddress') && (
-													<Button
-														variant='link'
-														rightIcon={
-															<Flex
-																w='20px'
-																h='20px'
-																bg='gray.300'
-																borderRadius='3xl'
-																justify='center'
-															>
-																<CopyIcon
+															<CopyIcon
 																// boxSize='12px'
-																	text={getFieldString(proposal, 'applicantAddress') ?? ''}
-																/>
-															</Flex>
+																text={getFieldString(proposal, 'applicantAddress') ?? ''}
+															/>
+														</Flex>
+													}
+												>
+													<Text
+														fontWeight='400'
+														variant='v2_body'
+														color='gray.500'>
+														{
+															formatAddress(
+																getFieldString(proposal, 'applicantAddress') ?? '',
+															)
 														}
-													>
-														<Text
-															fontWeight='400'
-															variant='v2_body'
-															color='gray.500'>
-															{
-																formatAddress(
-																	getFieldString(proposal, 'applicantAddress') ?? '',
-																)
-															}
-														</Text>
-													</Button>
-												)
-											}
-										</Flex>
+													</Text>
+												</Button>
+											)
+										}
 									</Flex>
 								</Flex>
 							</Flex>
+						</Flex>
+					)
+				}
+
+				<Flex
+					mt={4}
+					w='100%'>
+					{
+						chainInfo && (
+							<Flex
+								direction='column'
+								w='50%'>
+								<Text color='gray.500'>
+									Funding Ask
+								</Text>
+								<Text
+									mt={1}
+									fontWeight='500'>
+									{getRewardAmountMilestones(chainInfo.decimals, proposal)}
+									{' '}
+									{chainInfo.label}
+								</Text>
+							</Flex>
 						)
 					}
-
 					<Flex
-						mt={4}
-						w='100%'>
-						{
-							chainInfo && (
-								<Flex
-									direction='column'
-									w='50%'>
-									<Text color='gray.500'>
-										Funding Ask
-									</Text>
-									<Text
-										mt={1}
-										fontWeight='500'>
-										{getRewardAmountMilestones(chainInfo.decimals, proposal)}
-										{' '}
-										{chainInfo.label}
-									</Text>
-								</Flex>
-							)
-						}
+						direction='column'
+						w='50%'>
+						<Text color='gray.500'>
+							Milestones
+						</Text>
+						<Text
+							mt={1}
+							fontWeight='500'>
+							{proposal.milestones.length}
+						</Text>
+					</Flex>
+				</Flex>
+
+				{
+					getFieldString(proposal, 'tldr') && (
 						<Flex
-							direction='column'
-							w='50%'>
+							w='100%'
+							mt={4}
+							direction='column'>
 							<Text color='gray.500'>
-								Milestones
+								tl;dr
 							</Text>
-							<Text
-								mt={1}
-								fontWeight='500'>
-								{proposal.milestones.length}
+							<Text mt={1}>
+								{getFieldString(proposal, 'tldr')}
 							</Text>
 						</Flex>
-					</Flex>
+					)
+				}
 
-					{
-						getFieldString(proposal, 'tldr') && (
-							<Flex
-								w='100%'
-								mt={4}
-								direction='column'>
-								<Text color='gray.500'>
-									tl;dr
-								</Text>
-								<Text mt={1}>
-									{getFieldString(proposal, 'tldr')}
-								</Text>
-							</Flex>
-						)
-					}
+				<Flex
+					w='100%'
+					mt={4}
+					direction='column'>
+					<Text color='gray.500'>
+						Details
+					</Text>
+					<Box mt={1} />
+					{/* {projectDetails} */}
+					<TextViewer
+						value={editorState}
+						onChange={setEditorState} />
+				</Flex>
 
-					<Flex
-						w='100%'
-						mt={4}
-						direction='column'>
-						<Text color='gray.500'>
-							Details
-						</Text>
-						<Box mt={1} />
-						{/* {projectDetails} */}
-						<TextViewer
-							value={editorState}
-							onChange={setEditorState} />
-					</Flex>
-
-					{
-						getFieldString(decryptedProposal, 'memberDetails') && (
-							<Flex
-								w='100%'
-								mt={4}
-								direction='column'>
-								<Text color='gray.500'>
-									Member Details
-								</Text>
-								{
-									getFieldStrings(decryptedProposal, 'memberDetails')?.map(
-										(member: string, index: number) => (
-											<ReactLinkify
-												key={index}
-												componentDecorator={
-													(
-														decoratedHref: string,
-														decoratedText: string,
-														key: number,
-													) => (
-														<Text
-															display='inline-block'
-															wordBreak='break-all'
-															color='accent.azure'
-															cursor='pointer'
-															_hover={
-																{
-																	textDecoration: 'underline',
-																}
-															}
-															key={key}
-															onClick={
-																() => {
-																	window.open(decoratedHref, '_blank')
-																}
-															}
-														>
-															{decoratedText}
-														</Text>
-													)
-												}
-											>
-												<Text
-													mt={2}>
-													{index + 1}
-													.
-													{' '}
-													{member}
-												</Text>
-											</ReactLinkify>
-
-										),
-									)
-								}
-							</Flex>
-						)
-					}
-
-					{
-						grant?.fields
-							?.filter((field) => field.id
-								.substring(field.id.indexOf('.') + 1)
-								.startsWith('customField'),
-							)
-							.map((field, index) => {
-								const id = field.id.substring(field.id.indexOf('.') + 1)
-								const title = field.title
-									.substring(field.title.indexOf('-') + 1)
-									.split('\\s')
-									.join(' ')
-								const value = getFieldString(proposal, id)
-								if(value === undefined) {
-									return <Flex key={index} />
-								}
-
-								return (
-									<Flex
-										key={index}
-										w='100%'
-										mt={4}
-										direction='column'>
-										<Text color='gray.500'>
-											{title}
-										</Text>
+				{
+					getFieldString(decryptedProposal, 'memberDetails') && (
+						<Flex
+							w='100%'
+							mt={4}
+							direction='column'>
+							<Text color='gray.500'>
+								Member Details
+							</Text>
+							{
+								getFieldStrings(decryptedProposal, 'memberDetails')?.map(
+									(member: string, index: number) => (
 										<ReactLinkify
+											key={index}
 											componentDecorator={
 												(
 													decoratedHref: string,
@@ -379,15 +301,85 @@ function Proposal() {
 												)
 											}
 										>
-											<Text mt={1}>
-												{value}
+											<Text
+												mt={2}>
+												{index + 1}
+												.
+												{' '}
+												{member}
 											</Text>
 										</ReactLinkify>
-									</Flex>
+
+									),
 								)
-							})
-					}
-				</motion.div>
+							}
+						</Flex>
+					)
+				}
+
+				{
+					grant?.fields
+						?.filter((field) => field.id
+							.substring(field.id.indexOf('.') + 1)
+							.startsWith('customField'),
+						)
+						.map((field, index) => {
+							const id = field.id.substring(field.id.indexOf('.') + 1)
+							const title = field.title
+								.substring(field.title.indexOf('-') + 1)
+								.split('\\s')
+								.join(' ')
+							const value = getFieldString(proposal, id)
+							if(value === undefined) {
+								return <Flex key={index} />
+							}
+
+							return (
+								<Flex
+									key={index}
+									w='100%'
+									mt={4}
+									direction='column'>
+									<Text color='gray.500'>
+										{title}
+									</Text>
+									<ReactLinkify
+										componentDecorator={
+											(
+												decoratedHref: string,
+												decoratedText: string,
+												key: number,
+											) => (
+												<Text
+													display='inline-block'
+													wordBreak='break-all'
+													color='accent.azure'
+													cursor='pointer'
+													_hover={
+														{
+															textDecoration: 'underline',
+														}
+													}
+													key={key}
+													onClick={
+														() => {
+															window.open(decoratedHref, '_blank')
+														}
+													}
+												>
+													{decoratedText}
+												</Text>
+											)
+										}
+									>
+										<Text mt={1}>
+											{value}
+										</Text>
+									</ReactLinkify>
+								</Flex>
+							)
+						})
+				}
 			</Flex>
 		)
 	}
@@ -403,7 +395,7 @@ function Proposal() {
 	const chainId = useMemo(() => {
 		return (
 			getSupportedChainIdFromWorkspace(proposal?.grant?.workspace) ??
-      defaultChainId
+			defaultChainId
 		)
 	}, [proposal])
 
@@ -420,8 +412,8 @@ function Proposal() {
 	}, [])
 
 	const [decryptedProposal, setDecryptedProposal] = useState<
-    ProposalType | undefined
-  >(proposal)
+		ProposalType | undefined
+	>(proposal)
 	const [editorState, setEditorState] = useState<EditorState>(
 		EditorState.createEmpty(),
 	)
