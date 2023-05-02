@@ -428,7 +428,7 @@ function Reviews() {
 	const reviewer = () => {
 		return (
 			<Flex
-				display={role === 'admin' ? 'flex': 'none'}
+				display={role === 'admin' ? 'flex' : 'none'}
 				mt={5}
 				w='100%'>
 				<Text
@@ -446,7 +446,7 @@ function Reviews() {
 					)
 				}
 				{totalNumberOfReviewers > 0 && <Box ml='auto' />}
-				{('10' && grant?.workspace?.safe?.chainId !== '5') && assignReviewerPopup(assignReviewerPopoverRef, (proposal?.applicationReviewers?.length || 0) > 0 ? 'edit' : 'setup')}
+				{(grant?.workspace?.safe?.chainId !== '10' && grant?.workspace?.safe?.chainId !== '5') && assignReviewerPopup(assignReviewerPopoverRef, (proposal?.applicationReviewers?.length || 0) > 0 ? 'edit' : 'setup')}
 				{((grant?.workspace?.safe?.chainId === '10' || grant?.workspace?.safe?.chainId === '5') && guardContractReviewers?.length === 0) && setupButton({ onClick: () => setIsSafeGuardModalOpen(true) })}
 			</Flex>
 		)
