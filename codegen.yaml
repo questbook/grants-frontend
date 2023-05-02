@@ -1,5 +1,5 @@
 schema:
-  - https://the-graph.questbook.app/subgraphs/name/qb-subgraph-goerli-testnet
+  - https://the-graph.questbook.app/subgraphs/name/qb-subgraph-optimism-mainnet
 documents:
   - src/libraries/graphql/*.graphql
   - src/screens/dashboard/_graphql/*.graphql
