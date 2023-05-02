@@ -28,7 +28,7 @@ function RFPGrid({
 	const buildComponent = () => (
 		<Grid
 			w='100%'
-			templateColumns={{ md: 'repeat(1, 1fr)', lg: 'repeat(3, 1fr)' }}
+			templateColumns={{ md: 'repeat(1, 1fr)', lg: 'repeat(2, 1fr)' }}
 			gap={8}
 		>
 			{

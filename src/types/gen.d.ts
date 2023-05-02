@@ -117,15 +117,6 @@ export interface Token {
   [k: string]: unknown;
 }
 export interface WorkspaceMemberUpdate {
-  fullName?: string;
-  /**
-   * IPFS hash of the profile picture
-   */
-  profilePictureIpfsHash?: string;
-  /**
-   * The public encryption key associated with the account address
-   */
-  publicKey?: string;
   pii?: PIIAnswers;
   [k: string]: unknown;
 }

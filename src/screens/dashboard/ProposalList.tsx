@@ -2,7 +2,6 @@
 
 import { createRef, useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Checkbox, Flex, Grid, GridItem, Text } from '@chakra-ui/react'
-import { motion, useAnimationControls, Variants } from 'framer-motion'
 import { useRouter } from 'next/router'
 import { ApplicationState } from 'src/generated/graphql'
 import { Filter } from 'src/generated/icons'
@@ -128,50 +127,46 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 				</Button>
 			</Flex>
 
-			<motion.div
-				animate={controls}
-				variants={variants}>
-				<Grid
-					display={isFilterClicked ? 'grid' : 'none'}
-					minH='48px'
-					px={3}
-					m={2}
-					overflowX='scroll'
-					sx={
-						{
-							'::-webkit-scrollbar': {
-								display: 'none'
-							}
+			<Grid
+				display={isFilterClicked ? 'grid' : 'none'}
+				minH='48px'
+				px={3}
+				m={2}
+				overflowX='scroll'
+				sx={
+					{
+						'::-webkit-scrollbar': {
+							display: 'none'
 						}
 					}
-					templateColumns='repeat(2, 1fr)'
-					gap={1}>
-					{
-						(['approved', 'submitted', 'rejected', 'resubmit'] as ApplicationState[]).map(state => {
-							return (
-								<GridItem
+				}
+				templateColumns='repeat(2, 1fr)'
+				gap={1}>
+				{
+					(['approved', 'submitted', 'rejected', 'resubmit'] as ApplicationState[]).map(state => {
+						return (
+							<GridItem
 								// colSpan={index > 1 ? 2 : 1}
-									key={state}>
-									<FilterTag
-										id={state}
-										state={state}
-										isSelected={filterState === state}
-										onClick={
-											() => {
-												if(filterState === state) {
-													setFilterState(undefined)
-												} else {
-													setFilterState(state)
-												}
+								key={state}>
+								<FilterTag
+									id={state}
+									state={state}
+									isSelected={filterState === state}
+									onClick={
+										() => {
+											if(filterState === state) {
+												setFilterState(undefined)
+											} else {
+												setFilterState(state)
 											}
-										} />
-								</GridItem>
+										}
+									} />
+							</GridItem>
 
-							)
-						})
-					}
-				</Grid>
-			</motion.div>
+						)
+					})
+				}
+			</Grid>
 
 			<Flex
 				w='100%'
@@ -188,17 +183,12 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 				{
 					proposalCount > 0 && filteredProposals?.map((proposal, index) => {
 						return (
-							<motion.div
+							<ProposalCard
 								key={proposal.id}
-								initial={{ opacity: 0, x: index < 10 ? -50 * Math.exp(index) : 0 }}
-								animate={{ opacity: 1, x: 0 }}
-								transition={{ delay: index * 0.2, ease: 'easeInOut' }}>
-								<ProposalCard
-									ref={cardRefs[index]}
-									proposal={proposal}
-									step={step}
-									setStep={setStep} />
-							</motion.div>
+								ref={cardRefs[index]}
+								proposal={proposal}
+								step={step}
+								setStep={setStep} />
 						)
 					})
 				}
@@ -245,13 +235,6 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 		return proposals.map(() => createRef<HTMLDivElement>())
 	}, [proposals])
 
-	const controls = useAnimationControls()
-
-	const variants: Variants = {
-		show: { opacity: 1, x: 0 },
-		hide: { opacity: 0, x: 100 }
-	}
-
 	useEffect(() => {
 		logger.info({ proposalId }, '(Proposal List) useEffect {proposalId}')
 		if(!proposals) {
@@ -266,14 +249,6 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 			}
 		}
 	}, [proposals, proposalId])
-
-	useEffect(() => {
-		if(isFilterClicked) {
-			controls.start('show')
-		} else {
-			controls.start('hide')
-		}
-	}, [isFilterClicked])
 
 	return buildComponent()
 }

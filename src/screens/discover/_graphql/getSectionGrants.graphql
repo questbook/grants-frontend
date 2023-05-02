@@ -1,12 +1,53 @@
 query getSectionGrants {
   sections {
-    grants (orderBy: numberOfApplications, orderDirection: desc) {
+    grants(orderBy: numberOfApplications, orderDirection: desc) {
       id
       title
-      applications {
+      applications(
+        where: { state: approved }
+        orderBy: updatedAtS
+        orderDirection: desc
+      ) {
         id
         applicantId
         state
+        createdAtS
+        updatedAtS
+        milestones {
+          id
+          amount
+        }
+        name: fields(where: { field_contains: "projectName" }) {
+          values {
+            value
+          }
+        }
+        author: fields(where: { field_contains: "applicantName" }) {
+          values {
+            value
+          }
+        }
+        grant {
+          id
+          title
+          workspace {
+            logoIpfsHash
+            supportedNetworks
+          }
+          reward {
+            id
+            asset
+            committed
+            token {
+              id
+              label
+              address
+              decimal
+              chainId
+              iconHash
+            }
+          }
+        }
       }
       acceptingApplications
       fundTransfers {

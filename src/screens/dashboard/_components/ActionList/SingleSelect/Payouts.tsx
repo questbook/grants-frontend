@@ -1,7 +1,6 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Flex, Text } from '@chakra-ui/react'
 import { ethers } from 'ethers'
-import { motion } from 'framer-motion'
 import { defaultChainId, USD_ASSET } from 'src/constants/chains'
 import { useGetPayoutsQuery } from 'src/generated/graphql'
 import { Dropdown, NewTab } from 'src/generated/icons'
@@ -28,54 +27,49 @@ function Payouts() {
 				overflowX='clip'
 				align='stretch'
 				w='100%'>
-				<motion.div
-					initial={{ opacity: 0, x: 50 }}
-					animate={{ opacity: 1, x: 0 }}
-					transition={{ duration: 1, delay: 2.6 }}>
-					<Flex
-						justify='space-between'
-						onClick={
-							() => {
-								setExpanded(!expanded)
-							}
-						}>
-						<Text
-							fontWeight='500'
-							color={proposals?.length ? 'black.100' : 'gray.600'}>
-							Payouts
-						</Text>
-						{
-							proposals?.length > 0 && (
-								<Dropdown
-									mr={2}
-									transform={expanded ? 'rotate(180deg)' : 'rotate(0deg)'}
-									cursor='pointer'
-								/>
-							)
+				<Flex
+					justify='space-between'
+					onClick={
+						() => {
+							setExpanded(!expanded)
 						}
-					</Flex>
-
+					}>
+					<Text
+						fontWeight='500'
+						color={proposals?.length ? 'black.100' : 'gray.600'}>
+						Payouts
+					</Text>
 					{
-						payouts.length > 0 && (
-							<Flex
-								display={expanded ? 'block' : 'none'}
-								direction='column'>
-								{payouts.map(payoutItem)}
-							</Flex>
+						proposals?.length > 0 && (
+							<Dropdown
+								mr={2}
+								transform={expanded ? 'rotate(180deg)' : 'rotate(0deg)'}
+								cursor='pointer'
+							/>
 						)
 					}
+				</Flex>
 
-					{
-						payouts.length === 0 && (
-							<Text
-								display={expanded ? 'block' : 'none'}
-								mt={2}
-								color='gray.600'>
-								No payouts yet
-							</Text>
-						)
-					}
-				</motion.div>
+				{
+					payouts.length > 0 && (
+						<Flex
+							display={expanded ? 'block' : 'none'}
+							direction='column'>
+							{payouts.map(payoutItem)}
+						</Flex>
+					)
+				}
+
+				{
+					payouts.length === 0 && (
+						<Text
+							display={expanded ? 'block' : 'none'}
+							mt={2}
+							color='gray.600'>
+							No payouts yet
+						</Text>
+					)
+				}
 			</Flex>
 		)
 	}
