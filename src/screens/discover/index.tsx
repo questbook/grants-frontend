@@ -1,4 +1,5 @@
 import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
+import { useMediaQuery } from 'react-responsive'
 import { Box, Button, Container, Divider, Flex, Image, Input, Link, Skeleton, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
@@ -220,6 +221,8 @@ function Discover() {
 		setChangedVisibility('checkbox')
 	}
 
+	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
+
 	const normalView = useMemo(() => {
 		return (
 			<>
@@ -263,7 +266,7 @@ function Discover() {
 							justify='space-between'>
 							<Flex
 								direction='column'
-								w='70%'>
+								w={isMobile ? '100%' : { sm: '50%', md: '60%', lg: '70%' }}>
 								<Box
 									mb={4}
 									display={grantsForYou?.length ? '' : 'none'}>
@@ -367,27 +370,31 @@ function Discover() {
 									}
 								</Box>
 							</Flex>
-							<Flex
-								direction='column'
-								w='28%'
-								gap={5}
-								overflowY='auto'
-								maxH='-webkit-max-content'>
-								<Text
-									fontWeight='500'
-									variant='subheading'>
-									Recently funded
-								</Text>
-								{
-									recentProposals?.map((proposal, index) => {
-										return (
-											<ProposalCard
-												key={index}
-												proposal={proposal} />
-										)
-									})
-								}
-							</Flex>
+							{
+								!isMobile && (
+									<Flex
+										direction='column'
+										w={{ sm: '48%', md: '38%', lg: '28%' }}
+										gap={5}
+										overflowY='auto'
+										maxH='-webkit-max-content'>
+										<Text
+											fontWeight='500'
+											variant='subheading'>
+											Recently funded
+										</Text>
+										{
+											recentProposals?.map((proposal, index) => {
+												return (
+													<ProposalCard
+														key={index}
+														proposal={proposal} />
+												)
+											})
+										}
+									</Flex>
+								)
+							}
 						</Flex>
 						<Flex
 							flexDirection='column'
@@ -517,7 +524,7 @@ function Discover() {
 				</Tooltip> */}
 			</>
 		)
-	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName])
+	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName, isMobile])
 
 	useEffect(() => {
 		if(!inviteInfo) {
