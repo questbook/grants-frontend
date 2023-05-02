@@ -15,7 +15,6 @@ import {
 	Tooltip,
 } from '@chakra-ui/react'
 import autosize from 'autosize'
-import { motion, useAnimationControls, Variants } from 'framer-motion'
 import { Close } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import { getAvatar } from 'src/libraries/utils'
@@ -48,313 +47,298 @@ function Discussions() {
 				bg='white'
 				direction='column'
 			>
-				<motion.div
-					initial={{ opacity: 0, y: 50 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 1 }}
-				>
-					<Text fontWeight='500'>
-						Discussion
-					</Text>
+				<Text fontWeight='500'>
+					Discussion
+				</Text>
 
-					{
-						areCommentsLoading && (
-							<Button
-								my={4}
-								isLoading={areCommentsLoading}
-								loadingText='Loading comments, please wait.'
-								variant='link'
-								cursor='default'
-							/>
-						)
-					}
-
-					{
-						comments.length > 0 && (
-							<Divider
-								my={4}
-								color='gray.300'
-								height={1} />
-						)
-					}
-
-					{comments.map(renderComment)}
-					<Flex
-						display={scwAddress ? 'flex' : 'none'}
-						mt={4}
-						w='100%'>
-						<Image
-							borderRadius='3xl'
-							boxSize='36px'
-							src={
-								role === 'builder' || role === 'community'
-									? getAvatar(false, scwAddress?.toLowerCase())
-									: currentMember?.profilePictureIpfsHash
-										? getUrlForIPFSHash(currentMember?.profilePictureIpfsHash ?? '')
-										: getAvatar(false, scwAddress?.toLowerCase())
-							}
+				{
+					areCommentsLoading && (
+						<Button
+							my={4}
+							isLoading={areCommentsLoading}
+							loadingText='Loading comments, please wait.'
+							variant='link'
+							cursor='default'
 						/>
-						<Flex
-							w='100%'
-							ml={4}
-							direction='column'>
-							<Flex align='center'>
-								<Text
-									variant='body'
-									fontWeight='500'>
-									{currentMember?.fullName ?? formatAddress(scwAddress ?? '')}
-								</Text>
-								<RoleTag
-									role={(role as Roles) ?? 'community'}
-									isBuilder={proposal?.applicantId === scwAddress?.toLowerCase()}
-								/>
-							</Flex>
+					)
+				}
 
-							<Flex
-								display={selectedTag === undefined ? 'flex' : 'none'}
-								w='100%'
-								mt={2}>
-								<motion.div
-									animate={controls}
-									variants={buttonPanelVariants}>
-									<Flex gap={3}>
-										{
-											proposalTags?.map((tag, index) => {
-												return (
-													<QuickReplyButton
-														zIndex={10}
-														id={tag.id as 'accept' | 'reject' | 'resubmit' | 'feedback'}
-														key={index}
-														tag={tag}
-														isSelected={tag.id === selectedTag?.id}
-														onClick={
-															() => {
-																if(selectedTag) {
-																	logger.info('Deselecting tag')
-																	setSelectedTag(undefined)
-																	setText('')
-																} else {
-																	logger.info('Selecting tag')
-																	setSelectedTag(tag)
-																	setText(tag.commentString)
-																	controls.start('tagSelected')
-																}
-															}
+				{
+					comments.length > 0 && (
+						<Divider
+							my={4}
+							color='gray.300'
+							height={1} />
+					)
+				}
+
+				{comments.map(renderComment)}
+				<Flex
+					display={scwAddress ? 'flex' : 'none'}
+					mt={4}
+					w='100%'>
+					<Image
+						borderRadius='3xl'
+						boxSize='36px'
+						src={
+							role === 'builder' || role === 'community'
+								? getAvatar(false, scwAddress?.toLowerCase())
+								: currentMember?.profilePictureIpfsHash
+									? getUrlForIPFSHash(currentMember?.profilePictureIpfsHash ?? '')
+									: getAvatar(false, scwAddress?.toLowerCase())
+						}
+					/>
+					<Flex
+						w='100%'
+						ml={4}
+						direction='column'>
+						<Flex align='center'>
+							<Text
+								variant='body'
+								fontWeight='500'>
+								{currentMember?.fullName ?? formatAddress(scwAddress ?? '')}
+							</Text>
+							<RoleTag
+								role={(role as Roles) ?? 'community'}
+								isBuilder={proposal?.applicantId === scwAddress?.toLowerCase()}
+							/>
+						</Flex>
+
+						<Flex
+							display={selectedTag === undefined ? 'flex' : 'none'}
+							w='100%'
+							mt={2}>
+							<Flex gap={3}>
+								{
+									proposalTags?.map((tag, index) => {
+										return (
+											<QuickReplyButton
+												zIndex={10}
+												id={tag.id as 'accept' | 'reject' | 'resubmit' | 'feedback'}
+												key={index}
+												tag={tag}
+												isSelected={tag.id === selectedTag?.id}
+												onClick={
+													() => {
+														if(selectedTag) {
+															logger.info('Deselecting tag')
+															setSelectedTag(undefined)
+															setText('')
+														} else {
+															logger.info('Selecting tag')
+															setSelectedTag(tag)
+															setText(tag.commentString)
 														}
-														index={index}
-													/>
-												)
-											})
+													}
+												}
+												index={index}
+											/>
+										)
+									})
+								}
+							</Flex>
+						</Flex>
+
+						<Flex
+							display={selectedTag === undefined ? 'none' : 'flex'}
+							mt={4}
+							direction='column'
+							w='100%'>
+							{
+								selectedTag?.id !== 'feedback' && (
+									<Flex
+										w='100%'>
+										<chakra.p
+											width='100%'
+											border='1px solid'
+											borderRadius='4px'
+											borderColor='accent.azure'
+											alignItems='center'
+											p={2}
+											mr={2}>
+											<QuickReplyButton
+												mr={2}
+												position='relative'
+												index={0}
+												id={selectedTag?.id as 'accept' | 'reject' | 'resubmit' | 'feedback'}
+												px={2}
+												py={0}
+												h='24px'
+												isSelected
+												float='left'
+												cursor='default'
+												onClick={() => { }}
+												contentEditable={false}
+												tag={selectedTag}
+												textProps={{ variant: 'body' }}
+											/>
+											<chakra.span
+												sx={
+													{
+														overflowWrap: 'break-word',
+														border: 'none',
+														':focus': {
+															outline: 'none',
+															border: 'none',
+														},
+													}
+												}
+												ref={spanRef}
+												onInput={
+													(e) => {
+														const spanElement = spanRef.current
+														if(!spanElement) {
+															return
+														}
+
+														logger.info({ type: spanElement.nodeType }, 'SPAN')
+
+														if(e.currentTarget.textContent && window) {
+															logger.info({ text: e.currentTarget.textContent })
+															setText(e.currentTarget.textContent)
+															localStorage.setItem(`comment-${grant?.id}-${proposal?.id}`, e.currentTarget.textContent)
+
+															spanElement.focus()
+															window?.getSelection()?.selectAllChildren(spanElement)
+															window?.getSelection()?.collapseToEnd()
+														}
+													}
+												}
+												contentEditable
+												suppressContentEditableWarning
+											>
+												<Text variant='body'>
+													{text}
+												</Text>
+											</chakra.span>
+										</chakra.p>
+										{
+											proposalTags?.length > 1 && (
+												<IconButton
+													ml='auto'
+													variant='unstyled'
+													aria-label=''
+													icon={
+														<Close
+															color='black.200'
+															_hover={{ color: 'black.100' }} />
+													}
+													onClick={() => setSelectedTag(undefined)} />
+											)
 										}
 									</Flex>
-								</motion.div>
-							</Flex>
 
+								)
+							}
+							{
+								selectedTag?.id === 'feedback' && (
+									<Flex>
+										<Textarea
+											value={text}
+											onChange={
+												(e) => {
+													setText(e.target.value)
+													localStorage.setItem(`comment-${grant?.id}-${proposal?.id}`, e.target.value)
+												}
+											}
+											fontSize='14px'
+											placeholder='Type your comment here' />
+										{
+											proposalTags?.length > 1 && (
+												<IconButton
+													ml='auto'
+													variant='unstyled'
+													aria-label=''
+													icon={
+														<Close
+															color='black.200'
+															_hover={{ color: 'black.100' }} />
+													}
+													onClick={() => setSelectedTag(undefined)} />
+											)
+										}
+									</Flex>
+
+								)
+							}
 							<Flex
-								display={selectedTag === undefined ? 'none' : 'flex'}
 								mt={4}
-								direction='column'
-								w='100%'>
-								<motion.div
-									animate={controls}
-									variants={textboxVariants}>
-									{
-										selectedTag?.id !== 'feedback' && (
-											<Flex
-												w='100%'>
-												<chakra.p
-													width='100%'
-													border='1px solid'
-													borderRadius='4px'
-													borderColor='accent.azure'
-													alignItems='center'
-													p={2}
-													mr={2}>
-													<QuickReplyButton
-														mr={2}
-														position='relative'
-														index={0}
-														id={selectedTag?.id as 'accept' | 'reject' | 'resubmit' | 'feedback'}
-														px={2}
-														py={0}
-														h='24px'
-														isSelected
-														float='left'
-														cursor='default'
-														onClick={() => {}}
-														contentEditable={false}
-														tag={selectedTag}
-														textProps={{ variant: 'body' }}
-													/>
-													<chakra.span
-														sx={
-															{
-																overflowWrap: 'break-word',
-																border: 'none',
-																':focus': {
-																	outline: 'none',
-																	border: 'none',
-																},
-															}
-														}
-														ref={spanRef}
-														onInput={
-															(e) => {
-																const spanElement = spanRef.current
-																if(!spanElement) {
-																	return
-																}
-
-																logger.info({ type: spanElement.nodeType }, 'SPAN')
-
-																if(e.currentTarget.textContent && window) {
-																	logger.info({ text: e.currentTarget.textContent })
-																	setText(e.currentTarget.textContent)
-																	localStorage.setItem(`comment-${grant?.id}-${proposal?.id}`, e.currentTarget.textContent)
-
-																	spanElement.focus()
-																	window?.getSelection()?.selectAllChildren(spanElement)
-																	window?.getSelection()?.collapseToEnd()
-																}
-															}
-														}
-														contentEditable
-														suppressContentEditableWarning
-													>
-														<Text variant='body'>
-															{text}
-														</Text>
-													</chakra.span>
-												</chakra.p>
-												{
-													proposalTags?.length > 1 && (
-														<IconButton
-															ml='auto'
-															variant='unstyled'
-															aria-label=''
-															icon={
-																<Close
-																	color='black.200'
-																	_hover={{ color: 'black.100' }} />
-															}
-															onClick={() => setSelectedTag(undefined)} />
-													)
-												}
-											</Flex>
-
-										)
-									}
-									{
-										selectedTag?.id === 'feedback' && (
-											<Flex>
-												<Textarea
-													value={text}
-													onChange={
-														(e) => {
-															setText(e.target.value)
-															localStorage.setItem(`comment-${grant?.id}-${proposal?.id}`, e.target.value)
-														}
-													}
-													fontSize='14px'
-													placeholder='Type your comment here' />
-												{
-													proposalTags?.length > 1 && (
-														<IconButton
-															ml='auto'
-															variant='unstyled'
-															aria-label=''
-															icon={
-																<Close
-																	color='black.200'
-																	_hover={{ color: 'black.100' }} />
-															}
-															onClick={() => setSelectedTag(undefined)} />
-													)
-												}
-											</Flex>
-
-										)
-									}
-									<Flex
-										mt={4}
-										align='center'>
-										{
-											(role === 'admin' && selectedTag?.id === 'feedback') && (
-												<Checkbox
-													isChecked={isCommentPrivate}
-													onChange={
-														(e) => {
-															setIsCommentPrivate(e.target.checked)
-														}
-													}
-												>
-													<Text
-														variant='body'
-														color='gray.500'>
-														Show comment only to reviewers and builders
-													</Text>
-												</Checkbox>
-											)
-										}
-										{
-											(role === 'admin' && selectedTag?.id !== 'feedback') && (
-												<Text variant='body'>
-													{helperText}
-												</Text>
-											)
-										}
-										<Button
-											ml='auto'
-											marginBottom={['90px', '50px', '0']}
-											variant='primaryMedium'
-											isLoading={step !== undefined}
-											onClick={
-												async() => {
-													if(isDisabled) {
-														setSignInTitle('postComment')
-														setSignIn(true)
-														return
-													}
-
-													const ret = await addComment(
-														text,
-														isCommentPrivate,
-														selectedTag?.id,
-													)
-													if(ret) {
-														setText('')
-														logger.info('Setting selected tag to undefined after posting comment')
-														setSelectedTag(undefined)
-														refreshComments(true)
-														setStep(undefined)
-														localStorage.removeItem(
-															`comment-${grant?.id}-${proposal?.id}`,
-														)
-													}
+								align='center'>
+								{
+									(role === 'admin' && selectedTag?.id === 'feedback') && (
+										<Checkbox
+											isChecked={isCommentPrivate}
+											onChange={
+												(e) => {
+													setIsCommentPrivate(e.target.checked)
 												}
 											}
 										>
-											Post
-										</Button>
-									</Flex>
-								</motion.div>
+											<Text
+												variant='body'
+												color='gray.500'>
+												Show comment only to reviewers and builders
+											</Text>
+										</Checkbox>
+									)
+								}
+								{
+									(role === 'admin' && selectedTag?.id !== 'feedback') && (
+										<Text variant='body'>
+											{helperText}
+										</Text>
+									)
+								}
+								<Button
+									ml='auto'
+									marginBottom={['90px', '50px', '0']}
+									variant='primaryMedium'
+									isLoading={step !== undefined}
+									onClick={
+										async() => {
+											if(isDisabled) {
+												setSignInTitle('postComment')
+												setSignIn(true)
+												return
+											}
+
+											const ret = await addComment(
+												text,
+												isCommentPrivate,
+												selectedTag?.id,
+											)
+											if(ret) {
+												setText('')
+												logger.info('Setting selected tag to undefined after posting comment')
+												setSelectedTag(undefined)
+												refreshComments(true)
+												setStep(undefined)
+												localStorage.removeItem(
+													`comment-${grant?.id}-${proposal?.id}`,
+												)
+											}
+										}
+									}
+								>
+									Post
+								</Button>
 							</Flex>
 						</Flex>
 					</Flex>
-					{
-						!scwAddress && (
-							<Text
-								variant='body'
-								mt={4}
-								w='100%'
-								textAlign='center'
-								color='gray.600'>
-								~ Sign in to post comments! ~
-							</Text>
-						)
-					}
-					<Box my={4} />
-				</motion.div>
+				</Flex>
+				{
+					!scwAddress && (
+						<Text
+							variant='body'
+							mt={4}
+							w='100%'
+							textAlign='center'
+							color='gray.600'>
+							~ Sign in to post comments! ~
+						</Text>
+					)
+				}
+				<Box my={4} />
 			</Flex>
 		)
 	}
@@ -496,16 +480,6 @@ function Discussions() {
 	const [selectedTag, setSelectedTag] = useState<TagType>()
 	const [text, setText] = useState<string>('')
 
-	const textboxVariants: Variants = {
-		tagSelected: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-		tagUnselected: { opacity: 0, y: -50 }
-	}
-	const buttonPanelVariants: Variants = {
-		tagSelected: { scale: 0, opacity: 0, transition: { duration: 0.5 } },
-		tagUnselected: { scale: 1, opacity: 1 }
-	}
-	const controls = useAnimationControls()
-
 	const { addComment, isBiconomyInitialised } = useAddComment({
 		setStep,
 		setTransactionHash,
@@ -533,14 +507,6 @@ function Discussions() {
 			}
 		}
 	}, [])
-
-	useEffect(() => {
-		if(selectedTag === undefined) {
-			controls.start('tagUnselected')
-		} else {
-			controls.start('tagSelected')
-		}
-	}, [selectedTag])
 
 	const currentMember = useMemo(() => {
 		return grant?.workspace?.members?.find((member) => member.actorId.toLowerCase() === scwAddress?.toLowerCase())

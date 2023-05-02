@@ -1,5 +1,5 @@
 import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
-import { Box, Button, Center, Container, Divider, Flex, Image, Input, Link, Skeleton, Text } from '@chakra-ui/react'
+import { Box, Button, Container, Divider, Flex, Image, Input, Link, Skeleton, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
 import SupportedChainId from 'src/generated/SupportedChainId'
@@ -12,13 +12,13 @@ import ConfirmationModal from 'src/libraries/ui/ConfirmationModal'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
-import Loader from 'src/libraries/ui/RichTextEditor/loader'
 import SearchField from 'src/libraries/ui/SearchField'
 import { getAvatar } from 'src/libraries/utils'
 import { chainNames } from 'src/libraries/utils/constants'
 import getErrorMessage from 'src/libraries/utils/error'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { ApiClientsContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
+import ProposalCard from 'src/screens/discover/_components/ProposalCard'
 import RFPGrid from 'src/screens/discover/_components/rfpGrid'
 import { DiscoverContext, DiscoverProvider } from 'src/screens/discover/Context'
 import HeroBanner from 'src/screens/discover/HeroBanner'
@@ -141,13 +141,13 @@ function Discover() {
 				currentStepIndex={networkTransactionModalStep || 0}
 				customSteps={txSteps}
 				onClose={router.reload}
-				 />
+			/>
 		)
 	}
 
 	// const discoverRef = useRef<HTMLDivElement>(null)
 
-	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, isLoading } = useContext(DiscoverContext)!
+	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, recentProposals, isLoading } = useContext(DiscoverContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString } = useContext(DAOSearchContext)!
 	const { setSignIn } = useContext(SignInContext)!
@@ -220,14 +220,6 @@ function Discover() {
 		setChangedVisibility('checkbox')
 	}
 
-	// const loadingState = () => {
-	// 	return (
-	// 		<Skeleton>
-	// 			<
-	// 		</Skeleton>
-	// 	)
-	// }
-
 	const normalView = useMemo(() => {
 		return (
 			<>
@@ -265,118 +257,138 @@ function Discover() {
 							}
 						/>
 
-						{
-							isQbAdmin === undefined ? (
-								<Center>
-									<Loader />
-								</Center>
-							) : (
-								<>
-									<Box
-										my={4}
-										display={grantsForYou?.length ? '' : 'none'}>
-										<Text
-											fontWeight='500'
-											fontSize='24px'
-											lineHeight='32px'>
-											For You
-										</Text>
-									</Box>
+						<Flex
+							w='100%'
+							my={4}
+							justify='space-between'>
+							<Flex
+								direction='column'
+								w='70%'>
+								<Box
+									mb={4}
+									display={grantsForYou?.length ? '' : 'none'}>
+									<Text
+										fontWeight='500'
+										fontSize='24px'
+										lineHeight='32px'>
+										For You
+									</Text>
+								</Box>
+								{
+									!isLoading ?
+										(
+											<>
+
+												<RFPGrid
+													type='personal'
+													grants={grantsForYou}
+													unsavedDomainVisibleState={unsavedDomainState}
+													onDaoVisibilityUpdate={onDaoVisibilityUpdate}
+													onSectionGrantsUpdate={onGrantsSectionUpdate}
+													changedVisibilityState={changedVisibility}
+													filter={filterGrantName}
+												/>
+												<Divider
+													width='100%'
+													borderColor='gray.300'
+													mt={8}
+													display={grantsForYou?.length ? '' : 'none'}
+												/>
+											</>
+										) : webwallet ? (
+											<Skeleton
+												width='100%'
+												h='5%'
+												startColor='gray.300'
+												endColor='gray.400'
+											/>
+										) : <Flex />
+								}
+								{/* </Box> */}
+								<Box
+									display={sectionGrants?.length ? '' : 'none'}
+								>
+									<Text
+										variant='heading3'
+										fontWeight='500'
+										mt={4}
+									>
+										Explore grant programs
+									</Text>
 									{
-										!isLoading ?
-											(
-												<>
+										(sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
+											logger.info('section', { section, sectionGrants })
+											const sectionName = Object.keys(section)[0]
+											const sectionImage = section[sectionName].sectionLogoIpfsHash
+
+											const grants = section[sectionName].grants.filter((grant) => grant.title.toLowerCase().includes(filterGrantName.toLowerCase())).map(grant => ({ ...grant, role: 'community' as Roles }))
+											return (
+												<Box
+													my={6}
+													key={index}
+												>
+													<Flex
+														gap={3}
+														alignItems='center'
+														mb={4}
+													>
+														<Image
+															src={sectionImage === config.defaultDAOImageHash ? getAvatar(true, sectionName) : getUrlForIPFSHash(sectionImage)}
+															boxSize={6} />
+														<Text
+															fontWeight='500'
+															variant='subheading'
+														>
+															{sectionName}
+														</Text>
+														<Text
+															fontSize='14px'
+															color='gray.500'
+															fontWeight='500'
+															ml='-6px'
+														>
+															(
+															{grants.length}
+															)
+														</Text>
+													</Flex>
 
 													<RFPGrid
-														type='personal'
-														grants={grantsForYou}
+														type='all'
+														grants={grants}
 														unsavedDomainVisibleState={unsavedDomainState}
 														onDaoVisibilityUpdate={onDaoVisibilityUpdate}
 														onSectionGrantsUpdate={onGrantsSectionUpdate}
 														changedVisibilityState={changedVisibility}
-														filter={filterGrantName}
 													/>
-													<Divider
-														width='100%'
-														borderColor='gray.300'
-														mt={8}
-														display={grantsForYou?.length ? '' : 'none'}
-													/>
-												</>
-											) : webwallet ? (
-												<Skeleton
-													width='100%'
-													h='5%'
-													startColor='gray.300'
-													endColor='gray.400'
-												/>
-											) : <Flex />
+												</Box>
+											)
+										}) : null
 									}
-									{/* </Box> */}
-									<Box
-										display={sectionGrants?.length ? '' : 'none'}
-									>
-										<Text
-											variant='heading3'
-											fontWeight='500'
-											mt={4}
-										>
-											Explore grant programs
-										</Text>
-										{
-											(sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
-												logger.info('section', { section, sectionGrants })
-												const sectionName = Object.keys(section)[0]
-												const sectionImage = section[sectionName].sectionLogoIpfsHash
-
-												const grants = section[sectionName].grants.filter((grant) => grant.title.toLowerCase().includes(filterGrantName.toLowerCase())).map(grant => ({ ...grant, role: 'community' as Roles }))
-												return (
-													<Box
-														my={6}
-														key={index}
-													>
-														<Flex
-															gap={3}
-															alignItems='center'
-															mb={4}
-														>
-															<Image
-																src={sectionImage === config.defaultDAOImageHash ? getAvatar(true, sectionName) : getUrlForIPFSHash(sectionImage)}
-																boxSize={6} />
-															<Text
-																fontWeight='500'
-																variant='subheading'
-															>
-																{sectionName}
-															</Text>
-															<Text
-																fontSize='14px'
-																color='gray.500'
-																fontWeight='500'
-																ml='-6px'
-															>
-																(
-																{grants.length}
-																)
-															</Text>
-														</Flex>
-
-														<RFPGrid
-															type='all'
-															grants={grants}
-															unsavedDomainVisibleState={unsavedDomainState}
-															onDaoVisibilityUpdate={onDaoVisibilityUpdate}
-															onSectionGrantsUpdate={onGrantsSectionUpdate}
-															changedVisibilityState={changedVisibility}
-														/>
-													</Box>
-												)
-											}) : null
-										}
-									</Box>
-								</>
-							)
-						}
+								</Box>
+							</Flex>
+							<Flex
+								direction='column'
+								w='28%'
+								gap={5}
+								overflowY='auto'
+								maxH='-webkit-max-content'>
+								<Text
+									fontWeight='500'
+									variant='subheading'>
+									Recently funded
+								</Text>
+								{
+									recentProposals?.map((proposal, index) => {
+										return (
+											<ProposalCard
+												key={index}
+												proposal={proposal} />
+										)
+									})
+								}
+							</Flex>
+						</Flex>
 						<Flex
 							flexDirection='column'
 							w='100%'
@@ -519,6 +531,7 @@ function Discover() {
 		}, 2000)
 
 	}, [inviteInfo])
+
 	useEffect(() => {
 		logger.info('section update', unsavedSectionGrants)
 	}, [unsavedSectionGrants])

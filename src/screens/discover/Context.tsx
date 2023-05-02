@@ -7,7 +7,7 @@ import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
-import { DiscoverContextType, GrantProgramType, GrantType, SectionGrants, WorkspaceMemberType } from 'src/screens/discover/_utils/types'
+import { DiscoverContextType, GrantProgramType, GrantType, RecentProposals, SectionGrants, WorkspaceMemberType } from 'src/screens/discover/_utils/types'
 import { Roles } from 'src/types'
 
 const DiscoverContext = createContext<DiscoverContextType | null>(null)
@@ -17,7 +17,7 @@ const PAGE_SIZE = 40
 const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	const provider = () => {
 		return (
-			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram, search, setSearch, sectionGrants, isLoading, safeBalances }}>
+			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram, search, setSearch, sectionGrants, recentProposals, isLoading, safeBalances }}>
 				{children}
 			</DiscoverContext.Provider>
 		)
@@ -30,6 +30,8 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	const [grantsForAll, setGrantsForAll] = useState<GrantType[]>([])
 	const [grantProgram, setGrantProgram] = useState<GrantProgramType>()
 	const [sectionGrants, setSectionGrants] = useState<SectionGrants>()
+	const [recentProposals, setRecentProposals] = useState<RecentProposals>()
+
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 	const [search, setSearch] = useState<string>('')
 	const [safeBalances, setSafeBalances] = useState<{[key: string]: number}>({})
@@ -255,10 +257,12 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		}
 
 		const allSectionGrants: SectionGrants = []
+		let recentProposals: RecentProposals = []
 
 		for(const result of results) {
 			if(result?.sections?.length) {
 				allSectionGrants.push(...result?.sections.map(g => ({ [g.sectionName]: { ...g } })))
+				recentProposals = [...recentProposals, ...result.sections.map(s => s.grants.map(g => g.applications).flat()).flat()]
 			}
 		}
 
@@ -279,7 +283,10 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 			}
 		}
 
+		recentProposals.sort((a, b) => b.updatedAtS - a.updatedAtS)
+
 		setSectionGrants(allSectionGrants)
+		setRecentProposals(recentProposals)
 	}
 
 	useEffect(() => {

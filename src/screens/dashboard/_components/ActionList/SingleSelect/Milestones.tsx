@@ -1,7 +1,6 @@
 import { useContext, useMemo, useState } from 'react'
 import { Flex, Text } from '@chakra-ui/react'
 import { ethers } from 'ethers'
-import { motion } from 'framer-motion'
 import { defaultChainId, USD_ASSET } from 'src/constants/chains'
 import { Dropdown } from 'src/generated/icons'
 import { getChainInfo } from 'src/libraries/utils/token'
@@ -20,39 +19,34 @@ function Milestones() {
 				overflowY='auto'
 				overflowX='clip'
 				w='100%'>
-				<motion.div
-					initial={{ opacity: 0, x: 50 }}
-					animate={{ opacity: 1, x: 0 }}
-					transition={{ duration: 1, delay: 2 }}>
-					<Flex
-						justify='space-between'
-						onClick={
-							() => {
-								setExpanded(!expanded)
-							}
-						}>
-						<Text
-							fontWeight='500'
-							color={proposals?.length ? 'black.100' : 'gray.600'}>
-							Milestones
-						</Text>
-						{
-							proposals?.length > 0 && (
-								<Dropdown
-									mr={2}
-									transform={expanded ? 'rotate(180deg)' : 'rotate(0deg)'}
-									cursor='pointer'
-								/>
-							)
+				<Flex
+					justify='space-between'
+					onClick={
+						() => {
+							setExpanded(!expanded)
 						}
-					</Flex>
+					}>
+					<Text
+						fontWeight='500'
+						color={proposals?.length ? 'black.100' : 'gray.600'}>
+						Milestones
+					</Text>
+					{
+						proposals?.length > 0 && (
+							<Dropdown
+								mr={2}
+								transform={expanded ? 'rotate(180deg)' : 'rotate(0deg)'}
+								cursor='pointer'
+							/>
+						)
+					}
+				</Flex>
 
-					<Flex
-						display={expanded ? 'block' : 'none'}
-						direction='column'>
-						{milestones.map(milestoneItem)}
-					</Flex>
-				</motion.div>
+				<Flex
+					display={expanded ? 'block' : 'none'}
+					direction='column'>
+					{milestones.map(milestoneItem)}
+				</Flex>
 			</Flex>
 		)
 	}
