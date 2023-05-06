@@ -85,6 +85,10 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 						chainInfo?.decimals,
 					),
 				})),
+				claims: form.claims.map((claim) => ({
+					title : claim.title,
+					link : claim.link
+				}))
 			}
 
 			// Step - 3: Encrypt the PII Enabled fields

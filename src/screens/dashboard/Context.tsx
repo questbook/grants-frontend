@@ -262,6 +262,7 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 			skip += first
 		} while(shouldContinue)
 
+		console.log('yoyo', proposals[0])
 		setProposals(proposals)
 		setAreCommentsLoading(true)
 		await getComments()

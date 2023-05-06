@@ -486,6 +486,56 @@ function ProposalForm() {
 								}
 							} />
 
+						<SelectArray
+							label='Claims'
+							forClaims={true}
+							allowMultiple={true}
+							config={
+								form.claims.map((claim, index) => {
+									return [
+										{
+											placeholder: ' Information about the Claim ',
+											maxLength: 2000,
+											value: claim?.title,
+											onChange: (e) => {
+												const copy = { ...form }
+												copy.claims[index] = { ...copy.claims[index], title: e.target.value }
+												setForm(copy)
+											}
+										},
+										{
+											placeholder: 'Proof Link',
+											maxLength: 1000,
+											value: claim.link,
+											onChange: (e) => {
+												try {
+													const copy = { ...form }
+													copy.claims[index] = { ...copy.claims[index], link:(e.target.value) }
+													setForm(copy)
+												} catch(e) {
+													logger.error(e)
+												}
+											}
+										},
+									]
+								})
+							}
+							onAdd={
+								() => {
+									const copy = { ...form }
+									copy.claims.push({ link:'', title:'' })
+									setForm(copy)
+								}
+							}
+							onRemove={
+								(index) => {
+									const copy = { ...form }
+									logger.info({ index, copy }, 'Splicing')
+									copy.claims.splice(index, 1)
+									setForm(copy)
+								}
+							} />
+
 						<SectionInput
 							label='Funding Asked'
 							isDisabled

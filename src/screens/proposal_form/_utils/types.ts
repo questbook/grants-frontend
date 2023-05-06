@@ -27,10 +27,14 @@ export type MilestoneType = {
     title: string
     amount: number
 }
-
+export type Claim = {
+    title: string
+    link: string
+}
 export type Form = {
     fields: FormField[]
     milestones: MilestoneType[]
     members: string[]
     details: EditorState
+    claims: Claim[]
 }

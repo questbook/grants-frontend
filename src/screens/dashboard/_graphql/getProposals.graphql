@@ -123,5 +123,9 @@ query getProposals($first: Int, $skip: Int, $grantID: String!) {
         supportedNetworks
       }
     }
+    claims {
+      title
+      link
+    }
   }
 }

@@ -8,9 +8,10 @@ interface Props {
 	onAdd: () => void
 	onRemove: (index: number) => void
     flexProps?: FlexProps
+	forClaims?: boolean
 }
 
-function SelectArray({ label, allowMultiple, flexProps, config, onAdd, onRemove }: Props) {
+function SelectArray({ label, allowMultiple, flexProps, config, onAdd, onRemove, forClaims }: Props) {
 	const buildComponent = () => {
 		return (
 			<Flex
@@ -103,7 +104,7 @@ function SelectArray({ label, allowMultiple, flexProps, config, onAdd, onRemove 
 											ml={2}
 											mt={4}
 											aria-label={`remove-${index}`}
-											isDisabled={config.length === 1}
+											isDisabled={config.length === 1 && !forClaims}
 											variant='ghost'
 											onClick={
 												() => {
@@ -117,7 +118,7 @@ function SelectArray({ label, allowMultiple, flexProps, config, onAdd, onRemove 
 						}
 
 						{
-							allowMultiple && (
+							allowMultiple && !forClaims && (
 								<Flex mt={6}>
 									<Button
 										variant='link'
@@ -127,6 +128,22 @@ function SelectArray({ label, allowMultiple, flexProps, config, onAdd, onRemove 
 											variant='subheading'
 											fontWeight='500'>
 											Add another
+										</Text>
+									</Button>
+								</Flex>
+							)
+						}
+						{
+							allowMultiple && forClaims && (
+								<Flex mt={6}>
+									<Button
+										variant='link'
+										leftIcon={<Add boxSize='28px' />}
+										onClick={onAdd}>
+										<Text
+											variant='subheading'
+											fontWeight='500'>
+											Add Claim
 										</Text>
 									</Button>
 								</Flex>

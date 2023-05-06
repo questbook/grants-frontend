@@ -119,6 +119,7 @@ const ProposalFormProvider = ({ children }: {children: ReactNode}) => {
 				}
 			}),
 			milestones: result[0].grant.milestones?.length ? result[0].grant.milestones?.map((m, index) => ({ title: m, index, amount: 0 })) : [DEFAULT_MILESTONE],
+			claims : [],
 			members: containsField(result[0].grant, 'teamMembers') ? [''] : [],
 			details: EditorState.createEmpty()
 		}
@@ -163,6 +164,7 @@ const ProposalFormProvider = ({ children }: {children: ReactNode}) => {
 					value: id === 'isMultipleMilestones' ? 'true' : getFieldString(result[0]?.grantApplication, id) ?? ''
 				}
 			}),
+			claims:[],
 			milestones: result[0].grantApplication.milestones.map((milestone, index) => (
 				{ index,
 					title: milestone.title,
