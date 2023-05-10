@@ -232,8 +232,20 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 			}
 		}
 
-		logger.info(commentMap, 'commentMap (COMMENT DECRYPT)')
-		return commentMap
+		const tempCommentMap = { ...commentMap }
+		for (const application in tempCommentMap) {
+			const comments = commentMap[application]
+			for(const comment of comments) {
+				if (comment.role === 'community') {
+					const workspaceMember = comment.workspace.members.find(m => m.actorId === comment.sender?.toLowerCase())?.accessLevel
+					const role = comment.application.applicantId === comment.sender?.toLowerCase() ? 'builder' : workspaceMember === 'owner' ? 'admin' : workspaceMember
+					comment.role = role ?? 'community'
+				}
+			}
+		}
+
+		logger.info(tempCommentMap, 'commentMap (COMMENT DECRYPT)')
+		return tempCommentMap
 	}
 
 	const getProposals = useCallback(async() => {
