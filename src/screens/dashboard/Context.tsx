@@ -233,10 +233,10 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 		}
 
 		const tempCommentMap = { ...commentMap }
-		for (const application in tempCommentMap) {
+		for(const application in tempCommentMap) {
 			const comments = commentMap[application]
 			for(const comment of comments) {
-				if (comment.role === 'community') {
+				if(comment.role === 'community') {
 					const workspaceMember = comment.workspace.members.find(m => m.actorId === comment.sender?.toLowerCase())?.accessLevel
 					const role = comment.application.applicantId === comment.sender?.toLowerCase() ? 'builder' : workspaceMember === 'owner' ? 'admin' : workspaceMember
 					comment.role = role ?? 'community'
