@@ -304,6 +304,72 @@ export type Block_Height = {
   number_gte?: InputMaybe<Scalars['Int']>;
 };
 
+export type Claim = {
+  __typename?: 'Claim';
+  id: Scalars['ID'];
+  link: Scalars['String'];
+  title: Scalars['String'];
+};
+
+export type Claim_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  link?: InputMaybe<Scalars['String']>;
+  link_contains?: InputMaybe<Scalars['String']>;
+  link_contains_nocase?: InputMaybe<Scalars['String']>;
+  link_ends_with?: InputMaybe<Scalars['String']>;
+  link_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  link_gt?: InputMaybe<Scalars['String']>;
+  link_gte?: InputMaybe<Scalars['String']>;
+  link_in?: InputMaybe<Array<Scalars['String']>>;
+  link_lt?: InputMaybe<Scalars['String']>;
+  link_lte?: InputMaybe<Scalars['String']>;
+  link_not?: InputMaybe<Scalars['String']>;
+  link_not_contains?: InputMaybe<Scalars['String']>;
+  link_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  link_not_ends_with?: InputMaybe<Scalars['String']>;
+  link_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  link_not_in?: InputMaybe<Array<Scalars['String']>>;
+  link_not_starts_with?: InputMaybe<Scalars['String']>;
+  link_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  link_starts_with?: InputMaybe<Scalars['String']>;
+  link_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
+  title_contains?: InputMaybe<Scalars['String']>;
+  title_contains_nocase?: InputMaybe<Scalars['String']>;
+  title_ends_with?: InputMaybe<Scalars['String']>;
+  title_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  title_gt?: InputMaybe<Scalars['String']>;
+  title_gte?: InputMaybe<Scalars['String']>;
+  title_in?: InputMaybe<Array<Scalars['String']>>;
+  title_lt?: InputMaybe<Scalars['String']>;
+  title_lte?: InputMaybe<Scalars['String']>;
+  title_not?: InputMaybe<Scalars['String']>;
+  title_not_contains?: InputMaybe<Scalars['String']>;
+  title_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  title_not_ends_with?: InputMaybe<Scalars['String']>;
+  title_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  title_not_in?: InputMaybe<Array<Scalars['String']>>;
+  title_not_starts_with?: InputMaybe<Scalars['String']>;
+  title_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  title_starts_with?: InputMaybe<Scalars['String']>;
+  title_starts_with_nocase?: InputMaybe<Scalars['String']>;
+};
+
+export enum Claim_OrderBy {
+  Id = 'id',
+  Link = 'link',
+  Title = 'title'
+}
+
 export type Comment = {
   __typename?: 'Comment';
   /** Application where the comment was added */
@@ -866,6 +932,7 @@ export type GrantApplication = {
   applicantPublicKey?: Maybe<Scalars['String']>;
   /** People who will review this grant application */
   applicationReviewers: Array<GrantApplicationReviewer>;
+  claims?: Maybe<Array<Claim>>;
   /** IPFS hash of the comments on the application */
   comments?: Maybe<Array<Comment>>;
   /** in seconds since epoch */
@@ -917,6 +984,15 @@ export type GrantApplicationApplicationReviewersArgs = {
   orderDirection?: InputMaybe<OrderDirection>;
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<GrantApplicationReviewer_Filter>;
+};
+
+
+export type GrantApplicationClaimsArgs = {
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Claim_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<Claim_Filter>;
 };
 
 
@@ -1237,6 +1313,13 @@ export type GrantApplication_Filter = {
   applicationReviewers_not?: InputMaybe<Array<Scalars['String']>>;
   applicationReviewers_not_contains?: InputMaybe<Array<Scalars['String']>>;
   applicationReviewers_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  claims?: InputMaybe<Array<Scalars['String']>>;
+  claims_?: InputMaybe<Claim_Filter>;
+  claims_contains?: InputMaybe<Array<Scalars['String']>>;
+  claims_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  claims_not?: InputMaybe<Array<Scalars['String']>>;
+  claims_not_contains?: InputMaybe<Array<Scalars['String']>>;
+  claims_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
   comments_?: InputMaybe<Comment_Filter>;
   createdAtS?: InputMaybe<Scalars['Int']>;
   createdAtS_gt?: InputMaybe<Scalars['Int']>;
@@ -1389,6 +1472,7 @@ export enum GrantApplication_OrderBy {
   ApplicantId = 'applicantId',
   ApplicantPublicKey = 'applicantPublicKey',
   ApplicationReviewers = 'applicationReviewers',
+  Claims = 'claims',
   Comments = 'comments',
   CreatedAtS = 'createdAtS',
   DoneReviewerAddresses = 'doneReviewerAddresses',
@@ -2759,6 +2843,8 @@ export type Query = {
   applicationActions: Array<ApplicationAction>;
   applicationMilestone?: Maybe<ApplicationMilestone>;
   applicationMilestones: Array<ApplicationMilestone>;
+  claim?: Maybe<Claim>;
+  claims: Array<Claim>;
   comment?: Maybe<Comment>;
   comments: Array<Comment>;
   fundsTransfer?: Maybe<FundsTransfer>;
@@ -2854,6 +2940,24 @@ export type QueryApplicationMilestonesArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<ApplicationMilestone_Filter>;
+};
+
+
+export type QueryClaimArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryClaimsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Claim_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Claim_Filter>;
 };
 
 
@@ -3865,6 +3969,8 @@ export type Subscription = {
   applicationActions: Array<ApplicationAction>;
   applicationMilestone?: Maybe<ApplicationMilestone>;
   applicationMilestones: Array<ApplicationMilestone>;
+  claim?: Maybe<Claim>;
+  claims: Array<Claim>;
   comment?: Maybe<Comment>;
   comments: Array<Comment>;
   fundsTransfer?: Maybe<FundsTransfer>;
@@ -3960,6 +4066,24 @@ export type SubscriptionApplicationMilestonesArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<ApplicationMilestone_Filter>;
+};
+
+
+export type SubscriptionClaimArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionClaimsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Claim_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Claim_Filter>;
 };
 
 

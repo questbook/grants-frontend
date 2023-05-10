@@ -142,6 +142,10 @@ export interface GrantApplicationRequest {
    * @maxItems 100
    */
   milestones: GrantProposedMilestone[];
+  /**
+   * @maxItems 100
+   */
+  claims?: Claim[];
 }
 /**
  * Maps ID of the field to the answer by the applicant
@@ -159,6 +163,10 @@ export interface GrantProposedMilestone {
    */
   amount: string;
   [k: string]: unknown;
+}
+export interface Claim {
+  title: string;
+  link: string;
 }
 export interface GrantUpdateRequest {
   title?: string;
