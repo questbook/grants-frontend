@@ -212,7 +212,7 @@ GrantApplicationRequest:
 
 WorkspaceMemberUpdate:
   type: object
-  additionalProperties: true
+  additionalProperties: false
   properties:
     pii:
       $ref: 'PIIAnswers'
