@@ -48,7 +48,7 @@ function Discover() {
 					mt='auto'
 					color='white'
 					variant='heading1'>
-					👋 gm, Welcome to Questbook!
+					👋 gm, You’ve been invited to Questbook!
 				</Text>
 				<Text
 					mt={3}
@@ -79,7 +79,9 @@ function Discover() {
 					isDisabled={grantProgram?.id === undefined}
 					onClick={onGetStartedClick}>
 					<Text color='white'>
-						Get Started
+						Join as
+						{' '}
+						{inviteInfo?.role === 0 ? 'an admin' : 'a reviewer'}
 					</Text>
 				</Button>
 				<Image
