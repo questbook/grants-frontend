@@ -138,6 +138,13 @@ GrantProposedClaim:
   required:
     - title
     - link
+  properties:
+    title:
+      type: string
+      maxLength: 1024
+    link:
+      type: string
+      maxLength: 1024
 GrantProposedMilestone:
   type: object
   required:
