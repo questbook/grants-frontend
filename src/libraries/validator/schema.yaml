@@ -550,6 +550,10 @@ GrantCreateRequest:
       items:
         $ref: 'Address'
       minItems: 1
+    fundingMode:
+      type: string
+      description: Type of source that would fund the grant program
+      maxLength: 20
 GrantUpdateRequest:
   type: object
   additionalProperties: false
@@ -601,6 +605,10 @@ GrantUpdateRequest:
       items:
         $ref: 'Address'
       minItems: 1
+    fundingMode:
+      type: string
+      description: Type of source that would fund the grant program
+      maxLength: 20
 OwnerID:
   type: string
   minLength: 16
