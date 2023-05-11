@@ -133,6 +133,11 @@ GrantField:
         not
       type: boolean
       default: false
+GrantProposedClaim:
+  type: object
+  required:
+    - title
+    - link
 GrantProposedMilestone:
   type: object
   required:
@@ -204,6 +209,11 @@ GrantApplicationRequest:
       maxItems: 100
       items:
         $ref: 'GrantProposedMilestone'
+    claims:
+      type: array
+      maxItems: 100
+      items:
+        $ref: 'GrantProposedClaim'
 WorkspaceMemberUpdate:
   type: object
   properties:
