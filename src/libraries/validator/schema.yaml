@@ -209,8 +209,8 @@ GrantApplicationRequest:
       $ref: 'PublicKey'
     fields:
       $ref: 'GrantApplicationFieldAnswers'
-    pii:
-      $ref: 'PIIAnswers'
+    # pii:
+    #   $ref: 'PIIAnswers'
     milestones:
       type: array
       maxItems: 100
