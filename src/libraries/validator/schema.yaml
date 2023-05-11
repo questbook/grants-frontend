@@ -254,6 +254,11 @@ GrantApplicationUpdate:
       maxLength: 4096
     applicantPublicKey:
       $ref: 'PublicKey'
+    claims:
+      type: array
+      maxItems: 100
+      items:
+        $ref: 'GrantProposedClaim'
 PrivateCommentAddRequest:
   type: object
   required:
