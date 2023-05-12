@@ -10,7 +10,7 @@ const nextConfig = {
 			config.resolve.fallback.fs = false
 		}
 
-		// config.experiments = { asyncWebAssembly: true }
+		config.experiments = { asyncWebAssembly: true }
 		return config
 	},
 	env: {
