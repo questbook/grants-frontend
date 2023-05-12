@@ -1,3 +1,49 @@
 // This is the admin view of the grants dashboard.
+import { GraphQLClient } from 'graphql-request'
+import { GetServerSidePropsContext } from 'next'
+import { CHAIN_INFO } from 'src/constants/chains'
+import { GetGrantDetailsForSeoDocument, GetGrantDetailsForSeoQuery, GetProposalDetailsForSeoDocument, GetProposalDetailsForSeoQuery } from 'src/generated/graphql'
 import _ from 'src/screens/dashboard'
+import { DynamicData } from 'src/screens/dashboard/_utils/types'
 export default _
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+	const { grantId, chainId: _chainId, proposalId } = context.query
+
+	if(typeof grantId !== 'string' || typeof _chainId !== 'string' || (proposalId !== undefined && typeof proposalId !== 'string')) {
+		return {
+			parseError: true
+		}
+	}
+
+	let dynamicData: DynamicData
+
+	try {
+		const chainId = parseInt(_chainId) as keyof typeof CHAIN_INFO
+		if(chainId === undefined) {
+			throw new Error('Invalid chainId')
+		}
+
+		const chainInfo = CHAIN_INFO[chainId]
+
+		const graphQLClient = new GraphQLClient(chainInfo.subgraphClientUrl)
+
+		if(proposalId === undefined) {
+			const grantInfo: GetGrantDetailsForSeoQuery = await graphQLClient.request(GetGrantDetailsForSeoDocument, { grantId })
+			dynamicData = { title: grantInfo.grant?.title ?? '', description: 'Apply to this grant' }
+		} else {
+			const proposalInfo: GetProposalDetailsForSeoQuery = await graphQLClient.request(GetProposalDetailsForSeoDocument, { proposalId })
+			dynamicData = { title: proposalInfo.grantApplication?.title?.[0]?.values?.[0]?.value ?? '', description: `View this proposal for ${proposalInfo.grantApplication?.grant?.title}` }
+		}
+	} catch(error) {
+		return {
+			notFound: true,
+		}
+	}
+
+	return {
+		props: {
+			...dynamicData,
+		},
+	}
+}

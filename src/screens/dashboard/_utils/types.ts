@@ -108,3 +108,8 @@ export type TagType = {
   isPrivate: boolean
   commentString: string
 }
+
+export type DynamicData = {
+	title: string
+	description: string
+}

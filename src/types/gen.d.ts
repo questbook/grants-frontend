@@ -117,6 +117,15 @@ export interface Token {
   [k: string]: unknown;
 }
 export interface WorkspaceMemberUpdate {
+  fullName?: string;
+  /**
+   * IPFS hash of the profile picture
+   */
+  profilePictureIpfsHash?: string;
+  /**
+   * The public encryption key associated with the account address
+   */
+  publicKey?: string;
   pii?: PIIAnswers;
   [k: string]: unknown;
 }
@@ -142,10 +151,6 @@ export interface GrantApplicationRequest {
    * @maxItems 100
    */
   milestones: GrantProposedMilestone[];
-  /**
-   * @maxItems 100
-   */
-  claims?: Claim[];
 }
 /**
  * Maps ID of the field to the answer by the applicant
@@ -163,10 +168,6 @@ export interface GrantProposedMilestone {
    */
   amount: string;
   [k: string]: unknown;
-}
-export interface Claim {
-  title: string;
-  link: string;
 }
 export interface GrantUpdateRequest {
   title?: string;
@@ -204,6 +205,10 @@ export interface GrantUpdateRequest {
    * @minItems 1
    */
   grantManagers?: [string, ...string[]];
+  /**
+   * Type of source that would fund the grant program
+   */
+  fundingMode?: string;
 }
 /**
  * Grant reward amount in USD
@@ -290,6 +295,10 @@ export interface GrantCreateRequest {
    * @minItems 1
    */
   grantManagers?: [string, ...string[]];
+  /**
+   * Type of source that would fund the grant program
+   */
+  fundingMode?: string;
 }
 /**
  * Grant reward amount in USD

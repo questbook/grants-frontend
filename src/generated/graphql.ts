@@ -5486,6 +5486,13 @@ export type GetCommentsQueryVariables = Exact<{
 
 export type GetCommentsQuery = { __typename?: 'Query', comments: Array<{ __typename?: 'Comment', id: string, isPrivate: boolean, commentsPublicHash?: string | null, createdAt: number, commentsEncryptedData?: Array<{ __typename?: 'PIIData', id: string, data: string }> | null, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, publicKey?: string | null, accessLevel: WorkspaceMemberAccessLevel }> }, application: { __typename?: 'GrantApplication', id: string, applicantPublicKey?: string | null, applicantId: string } }> };
 
+export type GetGrantDetailsForSeoQueryVariables = Exact<{
+  grantId: Scalars['ID'];
+}>;
+
+
+export type GetGrantDetailsForSeoQuery = { __typename?: 'Query', grant?: { __typename?: 'Grant', id: string, title: string, workspace: { __typename?: 'Workspace', id: string, logoIpfsHash: string } } | null };
+
 export type GetPayoutsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
@@ -5494,6 +5501,13 @@ export type GetPayoutsQueryVariables = Exact<{
 
 
 export type GetPayoutsQuery = { __typename?: 'Query', fundsTransfers: Array<{ __typename?: 'FundsTransfer', amount: string, asset: string, type: FundsTransferType, createdAtS: number, to: string, transactionHash?: string | null, status: FundsTransferStatusType, executionTimestamp?: number | null, milestone?: { __typename?: 'ApplicationMilestone', id: string } | null, grant: { __typename?: 'Grant', reward: { __typename?: 'Reward', id: string, asset: string, committed: string, token?: { __typename?: 'Token', id: string, label: string, address: string, decimal: number, chainId?: string | null, iconHash: string } | null } } }> };
+
+export type GetProposalDetailsForSeoQueryVariables = Exact<{
+  proposalId: Scalars['ID'];
+}>;
+
+
+export type GetProposalDetailsForSeoQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, title: Array<{ __typename?: 'GrantFieldAnswer', values: Array<{ __typename?: 'GrantFieldAnswerItem', value: string }> }>, grant: { __typename?: 'Grant', id: string, title: string, workspace: { __typename?: 'Workspace', id: string, logoIpfsHash: string } } } | null };
 
 export type GetProposalsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -6365,6 +6379,49 @@ export type GetCommentsQueryResult = Apollo.QueryResult<GetCommentsQuery, GetCom
 export function refetchGetCommentsQuery(variables: GetCommentsQueryVariables) {
       return { query: GetCommentsDocument, variables: variables }
     }
+export const GetGrantDetailsForSeoDocument = gql`
+    query getGrantDetailsForSEO($grantId: ID!) {
+  grant(id: $grantId) {
+    id
+    title
+    workspace {
+      id
+      logoIpfsHash
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetGrantDetailsForSeoQuery__
+ *
+ * To run a query within a React component, call `useGetGrantDetailsForSeoQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGrantDetailsForSeoQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGrantDetailsForSeoQuery({
+ *   variables: {
+ *      grantId: // value for 'grantId'
+ *   },
+ * });
+ */
+export function useGetGrantDetailsForSeoQuery(baseOptions: Apollo.QueryHookOptions<GetGrantDetailsForSeoQuery, GetGrantDetailsForSeoQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetGrantDetailsForSeoQuery, GetGrantDetailsForSeoQueryVariables>(GetGrantDetailsForSeoDocument, options);
+      }
+export function useGetGrantDetailsForSeoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetGrantDetailsForSeoQuery, GetGrantDetailsForSeoQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetGrantDetailsForSeoQuery, GetGrantDetailsForSeoQueryVariables>(GetGrantDetailsForSeoDocument, options);
+        }
+export type GetGrantDetailsForSeoQueryHookResult = ReturnType<typeof useGetGrantDetailsForSeoQuery>;
+export type GetGrantDetailsForSeoLazyQueryHookResult = ReturnType<typeof useGetGrantDetailsForSeoLazyQuery>;
+export type GetGrantDetailsForSeoQueryResult = Apollo.QueryResult<GetGrantDetailsForSeoQuery, GetGrantDetailsForSeoQueryVariables>;
+export function refetchGetGrantDetailsForSeoQuery(variables: GetGrantDetailsForSeoQueryVariables) {
+      return { query: GetGrantDetailsForSeoDocument, variables: variables }
+    }
 export const GetPayoutsDocument = gql`
     query getPayouts($first: Int, $skip: Int, $proposalID: String!) {
   fundsTransfers(
@@ -6433,6 +6490,57 @@ export type GetPayoutsLazyQueryHookResult = ReturnType<typeof useGetPayoutsLazyQ
 export type GetPayoutsQueryResult = Apollo.QueryResult<GetPayoutsQuery, GetPayoutsQueryVariables>;
 export function refetchGetPayoutsQuery(variables: GetPayoutsQueryVariables) {
       return { query: GetPayoutsDocument, variables: variables }
+    }
+export const GetProposalDetailsForSeoDocument = gql`
+    query getProposalDetailsForSEO($proposalId: ID!) {
+  grantApplication(id: $proposalId) {
+    id
+    title: fields(where: {field_ends_with: "projectName"}) {
+      values {
+        value
+      }
+    }
+    grant {
+      id
+      title
+      workspace {
+        id
+        logoIpfsHash
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetProposalDetailsForSeoQuery__
+ *
+ * To run a query within a React component, call `useGetProposalDetailsForSeoQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProposalDetailsForSeoQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetProposalDetailsForSeoQuery({
+ *   variables: {
+ *      proposalId: // value for 'proposalId'
+ *   },
+ * });
+ */
+export function useGetProposalDetailsForSeoQuery(baseOptions: Apollo.QueryHookOptions<GetProposalDetailsForSeoQuery, GetProposalDetailsForSeoQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetProposalDetailsForSeoQuery, GetProposalDetailsForSeoQueryVariables>(GetProposalDetailsForSeoDocument, options);
+      }
+export function useGetProposalDetailsForSeoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProposalDetailsForSeoQuery, GetProposalDetailsForSeoQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetProposalDetailsForSeoQuery, GetProposalDetailsForSeoQueryVariables>(GetProposalDetailsForSeoDocument, options);
+        }
+export type GetProposalDetailsForSeoQueryHookResult = ReturnType<typeof useGetProposalDetailsForSeoQuery>;
+export type GetProposalDetailsForSeoLazyQueryHookResult = ReturnType<typeof useGetProposalDetailsForSeoLazyQuery>;
+export type GetProposalDetailsForSeoQueryResult = Apollo.QueryResult<GetProposalDetailsForSeoQuery, GetProposalDetailsForSeoQueryVariables>;
+export function refetchGetProposalDetailsForSeoQuery(variables: GetProposalDetailsForSeoQueryVariables) {
+      return { query: GetProposalDetailsForSeoDocument, variables: variables }
     }
 export const GetProposalsDocument = gql`
     query getProposals($first: Int, $skip: Int, $grantID: String!) {
