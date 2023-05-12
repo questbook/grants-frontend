@@ -1,0 +1,11 @@
+# This query is used in getServerSideProps for SEO
+query getGrantDetailsForSEO($grantId: ID!) {
+  grant(id: $grantId) {
+    id
+    title
+    workspace {
+      id
+      logoIpfsHash
+    }
+  }
+}

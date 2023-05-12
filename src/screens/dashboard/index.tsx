@@ -1,11 +1,13 @@
 import { ReactElement, useContext, useEffect, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { Flex } from '@chakra-ui/react'
+import { NextSeo } from 'next-seo'
 import logger from 'src/libraries/logger'
 import LinkYourMultisigModal from 'src/libraries/ui/LinkYourMultisigModal'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import ThreeColumnSkeleton from 'src/screens/dashboard/_components/ThreeColumnSkeleton'
+import { DynamicData } from 'src/screens/dashboard/_utils/types'
 import ActionList from 'src/screens/dashboard/ActionList'
 import Body from 'src/screens/dashboard/Body'
 import { DashboardProvider, FundBuilderProvider, ModalContext, ModalProvider } from 'src/screens/dashboard/Context'
@@ -14,13 +16,22 @@ import FundBuilderModal from 'src/screens/dashboard/FundBuilderModal'
 import ProposalList from 'src/screens/dashboard/ProposalList'
 import SendAnUpdateModal from 'src/screens/dashboard/SendAnUpdateModal'
 
-function Dashboard() {
+function Dashboard(props: DynamicData) {
+	const { title, description } = props
+
+	if(typeof window === 'undefined') {
+		logger.info(title)
+	}
+
 	const buildComponent = () => (
 		<Flex
 			direction='column'
 			w='100vw'
 			h='calc(100vh - 64px)'>
 			{/* {!isLoading && (role === 'admin' || role === 'reviewer') && <TopBar />} */}
+			<NextSeo
+				title={title}
+				description={description} />
 			{
 				!isLoading && isMobile && (
 					<Flex
@@ -81,7 +92,7 @@ function Dashboard() {
 
 	const { isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen } = useContext(ModalContext)!
 	const { role, isLoading } = useContext(GrantsProgramContext)!
-	const isMobile = useMediaQuery({ query:'(max-width:600px)' })
+	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
 	const [step, setStep] = useState(false)
 	const { dashboardStep, setDashboardStep } = useContext(WebwalletContext)!
 
