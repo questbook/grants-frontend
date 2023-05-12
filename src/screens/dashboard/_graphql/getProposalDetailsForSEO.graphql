@@ -1,0 +1,19 @@
+# This query is used in getServerSideProps for SEO
+query getProposalDetailsForSEO($proposalId: ID!) {
+  grantApplication(id: $proposalId) {
+    id
+    title: fields(where: { field_ends_with: "projectName" }) {
+      values {
+        value
+      }
+    }
+    grant {
+      id
+      title
+      workspace {
+        id
+        logoIpfsHash
+      }
+    }
+  }
+}
