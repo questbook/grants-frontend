@@ -18,7 +18,7 @@ const DashboardContext = createContext<DashboardContextType | undefined>(undefin
 const FundBuilderContext = createContext<FundBuilderContextType | undefined>(undefined)
 const ModalContext = createContext<ModalContextType | undefined>(undefined)
 
-const DashboardProvider = ({ children }: {children: ReactNode}) => {
+const DashboardProvider = ({ children }: { children: ReactNode }) => {
 	const router = useRouter()
 	const { setSafeObj } = useSafeContext()!
 	const { grantId, chainId: _chainId, role: _role, proposalId, isRenderingProposalBody } = router.query
@@ -33,7 +33,7 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 		try {
 			logger.info({ _chainId }, 'Getting chainId from router query')
 			return typeof _chainId === 'string' ? parseInt(_chainId) : -1
-		} catch(e) {
+		} catch (e) {
 			return -1
 		}
 	}, [_chainId])
@@ -70,15 +70,15 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 	const [areCommentsLoading, setAreCommentsLoading] = useState<boolean>(false)
 	const [filterState, setFilterState] = useState<ApplicationState>()
 
-	const getGrant = useCallback(async() => {
-		if(!grantId || chainId === -1 || typeof grantId !== 'string') {
+	const getGrant = useCallback(async () => {
+		if (!grantId || chainId === -1 || typeof grantId !== 'string') {
 			return 'params-missing'
 		}
 
 		logger.info({ grantId, scwAddress }, 'Getting grant (GET GRANT)')
 		const details = await fetchGrantDetails({ grantId, actorId: scwAddress ? scwAddress.toLowerCase() : '0x0000000000000000000000000000000000000000' }, true)
 		logger.info({ details }, 'Grant details (GET GRANT)')
-		if(!details?.[0]?.grant) {
+		if (!details?.[0]?.grant) {
 			return 'no-grant-in-query'
 		}
 
@@ -87,30 +87,34 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 		setGrant(_grant)
 		setWorkspace(_grant.workspace)
 
-		if(_grant?.workspace?.safe) {
+		if (_grant?.workspace?.safe) {
 			const currentSafe = new SupportedPayouts().getSafe(_grant.workspace?.safe?.chainId ? parseInt(_grant.workspace?.safe?.chainId) : defaultChainId, _grant.workspace?.safe?.address ?? '')
 			setSafeObj(currentSafe)
 		}
 
+		logger.info({ _grant, scwAddress }, 'Setting role (GET GRANT)')
+
 		const possibleRoles: Roles[] = ['community']
 
-		if(_grant?.myApplications?.length > 0) {
+		if (_grant?.myApplications?.length > 0) {
 			possibleRoles.push('builder')
 		}
 
-		for(const member of _grant?.workspace?.members ?? []) {
-			if(member.actorId === (scwAddress ? scwAddress.toLowerCase() : '0x0000000000000000000000000000000000000000')) {
-				logger.info({ member }, 'Member (ROLE)')
-				possibleRoles.push(member.accessLevel === 'reviewer' ? 'reviewer' : 'admin')
-				break
+		if (scwAddress) {
+			for (const member of _grant?.workspace?.members ?? []) {
+				if (member.actorId === scwAddress.toLowerCase()) {
+					logger.info({ member }, 'Member (ROLE)')
+					possibleRoles.push(member.accessLevel === 'reviewer' ? 'reviewer' : 'admin')
+					break
+				}
 			}
 		}
 
 		logger.info({ possibleRoles }, 'Possible roles (GET GRANT)')
-		if(_role) {
+		if (_role) {
 			logger.info({ role: _role, check: possibleRoles.includes(_role as Roles) }, 'Role from params (GET GRANT)')
 			// Check if the role the user is trying to access is valid
-			if(possibleRoles.includes(_role as Roles)) {
+			if (possibleRoles.includes(_role as Roles)) {
 				setRole(_role as Roles)
 			} else {
 				// Assign a role to the user based on the grant
@@ -124,10 +128,10 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 		return 'grant-details-fetched'
 	}, [grantId, chainId, scwAddress])
 
-	const handleComments = async(allComments: CommentType[]) => {
+	const handleComments = async (allComments: CommentType[]) => {
 		const commentMap: CommentMap = {}
-		for(const comment of allComments) {
-			if(comment.isPrivate) {
+		for (const comment of allComments) {
+			if (comment.isPrivate) {
 				logger.info({ comment }, 'PRIVATE COMMENT before decrypt (COMMENT DECRYPT)')
 
 				// if(comment.commentsEncryptedData?. .indexOf(scwAddress.toLowerCase()) === -1) {
@@ -141,12 +145,12 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 					decrypt(ciphertext: string): Promise<string>
 				} | undefined = undefined
 				logger.info({ sender, scwAddress: scwAddress?.toLowerCase() }, 'SENDER (COMMENT DECRYPT)')
-				if(webwallet && sender === scwAddress?.toLowerCase()) {
+				if (webwallet && sender === scwAddress?.toLowerCase()) {
 					channel = await getSecureChannelFromPublicKey(webwallet, webwallet.publicKey, getKeyForApplication(comment.application.id))
 					logger.info({ privateKey: webwallet.privateKey, publicKey: webwallet.publicKey, role }, 'CHANNEL CONFIG (COMMENT DECRYPT)')
-				} else if(webwallet) {
+				} else if (webwallet) {
 					const publicKey = comment.application.applicantId === sender ? comment.application.applicantPublicKey : comment.workspace.members.find(m => m.actorId === sender)?.publicKey
-					if(!publicKey) {
+					if (!publicKey) {
 						logger.info({ comment }, 'public key not found (COMMENT DECRYPT)')
 						continue
 					}
@@ -159,26 +163,26 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 				const encryptedComments = scwAddress !== undefined ? (comment.commentsEncryptedData?.filter(c => c.id.indexOf(scwAddress.toLowerCase()) !== -1) ?? []) : []
 				const key = `${comment.application.id}.${getSupportedChainIdFromWorkspace(comment.workspace) ?? defaultChainId}`
 				logger.info({ encryptedComments }, 'ENCRYPTED COMMENTS (COMMENT DECRYPT)')
-				if(encryptedComments.length === 0) {
+				if (encryptedComments.length === 0) {
 					const workspaceMember = comment.workspace.members.find(m => m.actorId === sender)?.accessLevel
 					const role = comment.application.applicantId === sender ? 'builder' : workspaceMember === 'owner' ? 'admin' : workspaceMember
-					if(!commentMap[key]) {
+					if (!commentMap[key]) {
 						commentMap[key] = []
 					}
 
 					commentMap[key].push({ ...comment, sender, role: role ?? 'community', message: '*** This is an encrypted comment ***', timestamp: comment.createdAt })
 					continue
-				} else if(channel) {
+				} else if (channel) {
 					const encrypted = encryptedComments[0]
 					logger.info({ encrypted }, 'DECRYPTING NOW (COMMENT DECRYPT)')
 					try {
 						const decryptedData = JSON.parse(await channel.decrypt(encrypted.data))
 						logger.info({ decryptedData }, 'comment decrypted (COMMENT DECRYPT)')
 
-						if(decryptedData?.message) {
+						if (decryptedData?.message) {
 							const message = await getFromIPFS(decryptedData.message)
 
-							if(!commentMap[key]) {
+							if (!commentMap[key]) {
 								commentMap[key] = []
 							}
 
@@ -186,7 +190,7 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 						} else {
 							logger.info({ comment }, 'NO MESSAGE (COMMENT DECRYPT)')
 						}
-					} catch(e) {
+					} catch (e) {
 						logger.error({ comment, e }, 'Error decrypting comment (COMMENT DECRYPT)')
 					}
 				}
@@ -197,32 +201,32 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 				// 2. It is an empty string
 				// 3. It has some comment in string format
 				const key = `${comment.application.id}.${getSupportedChainIdFromWorkspace(comment.workspace) ?? defaultChainId}`
-				if(comment?.commentsPublicHash !== undefined) {
-					if(comment?.commentsPublicHash?.startsWith('Qm')) {
+				if (comment?.commentsPublicHash !== undefined) {
+					if (comment?.commentsPublicHash?.startsWith('Qm')) {
 						const commentData = JSON.parse(await getFromIPFS(comment.commentsPublicHash))
-						if(commentData?.message) {
+						if (commentData?.message) {
 							const message = await getFromIPFS(commentData.message)
-							if(!commentMap[key]) {
+							if (!commentMap[key]) {
 								commentMap[key] = []
 							}
 
 							commentMap[key].push({ ...comment, ...commentData, message })
 						}
 					}
-				} else if(comment?.message !== undefined) {
-					if(!commentMap[key]) {
+				} else if (comment?.message !== undefined) {
+					if (!commentMap[key]) {
 						commentMap[key] = []
 					}
 
 					let message = comment?.message
-					if(message?.trim() === '') {
-						if(comment.role === 'builder' && comment.tag === 'submitted') {
+					if (message?.trim() === '') {
+						if (comment.role === 'builder' && comment.tag === 'submitted') {
 							message = 'This proposal was resubmitted'
-						} else if(comment.tag === 'approved') {
+						} else if (comment.tag === 'approved') {
 							message = 'Your proposal is accepted'
-						} else if(comment.tag === 'rejected') {
+						} else if (comment.tag === 'rejected') {
 							message = 'Sorry! we won\'t be able to proceed with your proposal'
-						} else if(comment.tag === 'resubmit') {
+						} else if (comment.tag === 'resubmit') {
 							message = 'Please resubmit your proposal'
 						}
 					}
@@ -233,10 +237,10 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 		}
 
 		const tempCommentMap = { ...commentMap }
-		for(const application in tempCommentMap) {
+		for (const application in tempCommentMap) {
 			const comments = commentMap[application]
-			for(const comment of comments) {
-				if(comment.role === 'community') {
+			for (const comment of comments) {
+				if (comment.role === 'community') {
 					const workspaceMember = comment.workspace.members.find(m => m.actorId === comment.sender?.toLowerCase())?.accessLevel
 					const role = comment.application.applicantId === comment.sender?.toLowerCase() ? 'builder' : workspaceMember === 'owner' ? 'admin' : workspaceMember
 					comment.role = role ?? 'community'
@@ -248,12 +252,12 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 		return tempCommentMap
 	}
 
-	const getProposals = useCallback(async() => {
+	const getProposals = useCallback(async () => {
 		logger.info({ role, grantId, scwAddress }, 'Fetching proposals (GET PROPOSALS)')
 		// if(!webwallet) {
 		// 	return 'no-webwallet'
 		// }
-		 if(!grantId || typeof grantId !== 'string') {
+		if (!grantId || typeof grantId !== 'string') {
 			return 'no-grant-id'
 		}
 
@@ -265,14 +269,14 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 		do {
 			const results = await fetchMoreProposals({ first, skip, grantID: grantId }, true)
 			logger.info({ results }, 'Results (Proposals)')
-			if(results?.length === 0 || !results[0] || !results[0]?.grantApplications?.length) {
+			if (results?.length === 0 || !results[0] || !results[0]?.grantApplications?.length) {
 				shouldContinue = false
 				break
 			}
 
 			proposals.push(...results[0]?.grantApplications)
 			skip += first
-		} while(shouldContinue)
+		} while (shouldContinue)
 
 		setProposals(proposals)
 		setAreCommentsLoading(true)
@@ -281,12 +285,12 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 		return 'proposals-fetched'
 	}, [role, grantId, scwAddress, webwallet])
 
-	const getComments = useCallback(async() => {
+	const getComments = useCallback(async () => {
 		logger.info({ role, grantId, scwAddress }, 'Fetching comments (GET COMMENTS)')
 		// if(!webwallet) {
 		// 	return 'no-webwallet'
 		// }
-		 if(!grantId || typeof grantId !== 'string') {
+		if (!grantId || typeof grantId !== 'string') {
 			return 'no-grant-id'
 		}
 
@@ -297,13 +301,13 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 		do {
 			const results = await fetchMoreComments({ first, skip, grantId }, true)
 			logger.info({ results }, 'Results (Comments)')
-			if(results?.length === 0 || results?.every((r) => !r?.comments?.length)) {
+			if (results?.length === 0 || results?.every((r) => !r?.comments?.length)) {
 				shouldContinue = false
 				break
 			}
 
-			for(const result of results) {
-				if(!result?.comments?.length) {
+			for (const result of results) {
+				if (!result?.comments?.length) {
 					continue
 				}
 
@@ -311,16 +315,16 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 			}
 
 			skip += first
-		} while(shouldContinue)
+		} while (shouldContinue)
 
 		logger.info({ allComments }, 'Fetched comments before actions')
 
 		const results = await fetchMoreApplicationActions({ grantId }, true)
 		logger.info({ results }, 'Results (Application Actions)')
-		if(results?.length > 0) {
+		if (results?.length > 0) {
 			const result = results[0]
-			for(const proposal of result?.grantApplications ?? []) {
-				for(const action of proposal?.actions ?? []) {
+			for (const proposal of result?.grantApplications ?? []) {
+				for (const action of proposal?.actions ?? []) {
 					const comment: CommentType = {
 						id: action.id,
 						isPrivate: false,
@@ -348,7 +352,7 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 		logger.info({ allComments }, 'Fetched comments after actions')
 		const commentMap = await handleComments(allComments)
 		logger.info(commentMap, 'Comment map')
-		for(const key in commentMap) {
+		for (const key in commentMap) {
 			const comments = commentMap[key]
 			const sortedComments = comments.sort((a, b) => (a.timestamp ?? 0) - (b.timestamp ?? 0))
 			commentMap[key] = sortedComments
@@ -366,7 +370,7 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 	}, [grantId, chainId, scwAddress, webwallet])
 
 	useEffect(() => {
-		if(!grant || !role) {
+		if (!grant || !role) {
 			setIsLoading(true)
 		} else {
 			setIsLoading(false)
@@ -374,38 +378,38 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 	}, [grant, chainId])
 
 	useEffect(() => {
-		if(proposals.length === 0) {
+		if (proposals.length === 0) {
 			setSelectedProposals(new Set<string>())
-			if(grant) {
+			if (grant) {
 				setIsLoading(false)
 			}
 
 			return
 		}
 
-		if(isRenderingProposalBody === 'true') {
+		if (isRenderingProposalBody === 'true') {
 			setDashboardStep(true)
 		}
 
-		if(proposalId && typeof proposalId === 'string') {
+		if (proposalId && typeof proposalId === 'string') {
 			// Scroll to the proposal
 			const proposalIndex = proposals.findIndex((_) => _.id === proposalId)
-			if(proposalIndex !== -1) {
+			if (proposalIndex !== -1) {
 				setSelectedProposals(new Set<string>([proposalId]))
-				if(role === 'builder' || role === 'community') {
+				if (role === 'builder' || role === 'community') {
 					setRole(proposals[proposalIndex].applicantId === scwAddress?.toLowerCase() ? 'builder' : 'community')
 				}
 
 				let params = { ...router.query }
-				if(proposalId) {
+				if (proposalId) {
 					params = { ...params, proposalId }
 				}
 
-				if(isRenderingProposalBody) {
+				if (isRenderingProposalBody) {
 					params = { ...params, isRenderingProposalBody }
 				}
 
-				if(params.isRenderingProposal || params.proposalId) {
+				if (params.isRenderingProposal || params.proposalId) {
 					router.replace({
 						pathname: '/dashboard',
 						query: params
@@ -415,20 +419,20 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 		} else {
 			const initialSelectionSet = new Set<string>()
 			initialSelectionSet.add(proposals[0].id)
-			if(role === 'builder' || role === 'community') {
+			if (role === 'builder' || role === 'community') {
 				setRole(proposals[0].applicantId === scwAddress?.toLowerCase() ? 'builder' : 'community')
 			}
 
 			let params = { ...router.query }
-			if(isRenderingProposalBody) {
+			if (isRenderingProposalBody) {
 				params = { ...params, isRenderingProposalBody }
 			}
 
-			if(proposals[0].id) {
+			if (proposals[0].id) {
 				params = { ...params, proposalId: proposals[0].id }
 			}
 
-			if(params.isRenderingProposal || params.proposalId) {
+			if (params.isRenderingProposal || params.proposalId) {
 				router.replace({
 					pathname: '/dashboard',
 					query: params
@@ -458,7 +462,7 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 					commentMap,
 					setCommentMap,
 					refreshComments: (refresh: boolean) => {
-						if(refresh) {
+						if (refresh) {
 							getComments()
 						}
 					},
@@ -471,7 +475,7 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 	)
 }
 
-const FundBuilderProvider = ({ children }: {children: ReactNode}) => {
+const FundBuilderProvider = ({ children }: { children: ReactNode }) => {
 	const [tokenList, setTokenList] = useState<TokenDetailsInterface[]>()
 	const [selectedTokenInfo, setSelectedTokenInfo] = useState<TokenDetailsInterface>()
 	const [amounts, setAmounts] = useState<number[]>([])
@@ -510,7 +514,7 @@ const FundBuilderProvider = ({ children }: {children: ReactNode}) => {
 	)
 }
 
-const ModalProvider = ({ children }: {children: ReactNode}) => {
+const ModalProvider = ({ children }: { children: ReactNode }) => {
 	const [isSendAnUpdateModalOpen, setIsSendAnUpdateModalOpen] = useState<boolean>(false)
 	const [isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen] = useState<boolean>(false)
 
