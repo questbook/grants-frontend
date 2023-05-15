@@ -4,7 +4,6 @@ import { LockIcon } from '@chakra-ui/icons'
 import {
 	Box,
 	Button,
-	chakra,
 	Checkbox,
 	Divider,
 	Flex,
@@ -104,11 +103,29 @@ function Discussions() {
 								isBuilder={proposal?.applicantId === scwAddress?.toLowerCase()}
 							/>
 							{
-								selectedTag !== undefined && selectedTag?.id !== 'feedback' && <Flex ml='auto' gap={1}>
-									<Text as='span' variant='body'>You are about to</Text>
-									<Text as='span' variant='body' fontWeight={'500'} color={config[selectedTag?.id as keyof typeof config].bg}>{config[selectedTag?.id as keyof typeof config].title}</Text>
-									<Text as='span' variant='body'>this proposal</Text>
-								</Flex>
+								selectedTag !== undefined && selectedTag?.id !== 'feedback' && (
+									<Flex
+										ml='auto'
+										gap={1}>
+										<Text
+											as='span'
+											variant='body'>
+											You are about to
+										</Text>
+										<Text
+											as='span'
+											variant='body'
+											fontWeight='500'
+											color={config[selectedTag?.id as keyof typeof config].bg}>
+											{config[selectedTag?.id as keyof typeof config].title}
+										</Text>
+										<Text
+											as='span'
+											variant='body'>
+											this proposal
+										</Text>
+									</Flex>
+								)
 							}
 						</Flex>
 
@@ -128,7 +145,7 @@ function Discussions() {
 												isSelected={tag.id === selectedTag?.id}
 												onClick={
 													() => {
-														if (selectedTag) {
+														if(selectedTag) {
 															logger.info('Deselecting tag')
 															setSelectedTag(undefined)
 															setText('')
@@ -152,34 +169,32 @@ function Discussions() {
 							mt={4}
 							direction='column'
 							w='100%'>
-							{
-								<Flex>
-									<Textarea
-										value={text}
-										onChange={
-											(e) => {
-												setText(e.target.value)
-												localStorage.setItem(`comment-${grant?.id}-${proposal?.id}`, e.target.value)
-											}
+							<Flex>
+								<Textarea
+									value={text}
+									onChange={
+										(e) => {
+											setText(e.target.value)
+											localStorage.setItem(`comment-${grant?.id}-${proposal?.id}`, e.target.value)
 										}
-										fontSize='14px'
-										placeholder='Type your comment here' />
-									{
-										proposalTags?.length > 1 && (
-											<IconButton
-												ml='auto'
-												variant='unstyled'
-												aria-label=''
-												icon={
-													<Close
-														color='black.200'
-														_hover={{ color: 'black.100' }} />
-												}
-												onClick={() => setSelectedTag(undefined)} />
-										)
 									}
-								</Flex>
-							}
+									fontSize='14px'
+									placeholder='Type your comment here' />
+								{
+									proposalTags?.length > 1 && (
+										<IconButton
+											ml='auto'
+											variant='unstyled'
+											aria-label=''
+											icon={
+												<Close
+													color='black.200'
+													_hover={{ color: 'black.100' }} />
+											}
+											onClick={() => setSelectedTag(undefined)} />
+									)
+								}
+							</Flex>
 							<Flex
 								mt={4}
 								align='center'>
@@ -214,8 +229,8 @@ function Discussions() {
 									variant='primaryMedium'
 									isLoading={step !== undefined}
 									onClick={
-										async () => {
-											if (isDisabled) {
+										async() => {
+											if(isDisabled) {
 												setSignInTitle('postComment')
 												setSignIn(true)
 												return
@@ -226,7 +241,7 @@ function Discussions() {
 												isCommentPrivate,
 												selectedTag?.id,
 											)
-											if (ret) {
+											if(ret) {
 												setText('')
 												logger.info('Setting selected tag to undefined after posting comment')
 												setSelectedTag(undefined)
@@ -273,8 +288,8 @@ function Discussions() {
 		logger.info({ message: comment.message }, 'Comment message')
 
 		let hasAccess = !comment.isPrivate
-		for (const member of comment.workspace.members) {
-			if (member.actorId === scwAddress?.toLowerCase()) {
+		for(const member of comment.workspace.members) {
+			if(member.actorId === scwAddress?.toLowerCase()) {
 				hasAccess = true
 			}
 		}
@@ -381,7 +396,6 @@ function Discussions() {
 	}
 
 	const ref = useRef<HTMLTextAreaElement>(null)
-	const spanRef = useRef<HTMLSpanElement>(null)
 
 	const { scwAddress } = useContext(WebwalletContext)!
 	const { grant, role } = useContext(GrantsProgramContext)!
@@ -416,12 +430,12 @@ function Discussions() {
 	}, [grant, proposal])
 
 	useEffect(() => {
-		if (ref.current) {
+		if(ref.current) {
 			autosize(ref.current)
 		}
 
 		return () => {
-			if (ref.current) {
+			if(ref.current) {
 				autosize.destroy(ref.current)
 			}
 		}
@@ -436,7 +450,7 @@ function Discussions() {
 	})
 
 	useEffect(() => {
-		if (proposalTags.length === 1) {
+		if(proposalTags.length === 1) {
 			logger.info('Setting selected tag to the only tag')
 			setSelectedTag(proposalTags[0])
 		} else {
@@ -446,18 +460,18 @@ function Discussions() {
 	}, [proposal])
 
 	const comments = useMemo(() => {
-		if (!proposal || !commentMap) {
+		if(!proposal || !commentMap) {
 			return []
 		}
 
 		const key = `${proposal.id}.${proposal.grant.workspace.supportedNetworks[0].split('_')[1]
-			}`
+		}`
 		logger.info({ key, commentMap }, 'PUBLIC COMMENT 6')
 		return commentMap[key] ?? []
 	}, [proposal, commentMap])
 
 	const isDisabled = useMemo(() => {
-		if (!isBiconomyInitialised) {
+		if(!isBiconomyInitialised) {
 			return true
 		}
 
@@ -466,25 +480,25 @@ function Discussions() {
 
 	const helperText = useMemo(() => {
 		switch (selectedTag?.id) {
-			case 'accept':
-				return 'On clicking “Post” the proposal will be accepted. Builder will be notified.'
-			case 'reject':
-				return 'On clicking “Post” the proposal will be rejected. Builder will be notified.'
-			case 'resubmit':
-				return 'On clicking “Post” the builder will be notified to resubmit his proposal.'
-			default:
-				return ''
+		case 'accept':
+			return 'On clicking “Post” the proposal will be accepted. Builder will be notified.'
+		case 'reject':
+			return 'On clicking “Post” the proposal will be rejected. Builder will be notified.'
+		case 'resubmit':
+			return 'On clicking “Post” the builder will be notified to resubmit his proposal.'
+		default:
+			return ''
 		}
 	}, [selectedTag])
 
 	const getCommentDisplayName = (comment: CommentType) => {
-		if (comment.role === 'admin' || comment.role === 'reviewer') {
+		if(comment.role === 'admin' || comment.role === 'reviewer') {
 			const member = comment.workspace.members.find(
 				(member) => member.actorId.toLowerCase() === comment.sender?.toLowerCase(),
 			)
-			if (member?.fullName) {
+			if(member?.fullName) {
 				return member?.fullName
-			} else if (member?.actorId) {
+			} else if(member?.actorId) {
 				return formatAddress(member?.actorId)
 			} else {
 				return 'No name found'
@@ -494,7 +508,7 @@ function Discussions() {
 				{ comment: comment?.sender, proposalId: proposal?.applicantId },
 				'COMMENT 1',
 			)
-			if (
+			if(
 				comment.role === 'builder' &&
 				comment.sender?.toLowerCase() === proposal?.applicantId
 			) {
