@@ -102,6 +102,13 @@ function Discussions() {
 								role={(role as Roles) ?? 'community'}
 								isBuilder={proposal?.applicantId === scwAddress?.toLowerCase()}
 							/>
+							{
+								selectedTag !== undefined && selectedTag?.id !== 'feedback' && <Flex ml='auto' gap={1}>
+									<Text as='span' variant='body'>You are about to</Text>
+									<Text as='span' variant='body'>{selectedTag?.title}</Text>
+									<Text as='span' variant='body'>this proposal</Text>
+								</Flex>
+							}
 						</Flex>
 
 						<Flex
@@ -144,7 +151,7 @@ function Discussions() {
 							mt={4}
 							direction='column'
 							w='100%'>
-							{
+							{/* {
 								selectedTag?.id !== 'feedback' && (
 									<Flex
 										w='100%'>
@@ -229,9 +236,9 @@ function Discussions() {
 									</Flex>
 
 								)
-							}
+							} */}
 							{
-								selectedTag?.id === 'feedback' && (
+								(
 									<Flex>
 										<Textarea
 											value={text}
