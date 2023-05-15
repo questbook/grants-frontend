@@ -325,18 +325,18 @@ function ProposalForm() {
 							containsField(grant, 'applicantAddress') && (
 								<SectionInput
 									label='Wallet Address'
-									placeholder={isEvm === undefined || isEvm ? '0xEbd6dB5a58c9812df3297E2Bc2fF0BDFEac2453c' : 'AdG9Gdjm6cLFTfhefR9reZRH3bx4PM1XSmu7JGchjnPp'}
+									placeholder='Wallet to receive funds on EVM based chain / Solana / TON Blockchain'
 									value={findField(form, 'applicantAddress').value}
 									onChange={
-										(e) => {
+										async(e) => {
 											onChange(e, 'applicantAddress')
-											validateWalletAddress(e.target.value, (isValid) => {
+											await validateWalletAddress(e.target.value, isEvm, (isValid) => {
 												setWalletAddressError(!isValid)
 											})
 										}
 									}
 									isInvalid={walletAddressError}
-									errorText={`Invalid address on ${chainNames?.get(safeObj?.chainId?.toString() ?? '') !== undefined ? chainNames.get(safeObj?.chainId?.toString() ?? '')?.toString() : 'EVM based chain'}`} />
+									errorText={`Invalid address on ${chainNames?.get(safeObj?.chainId?.toString() ?? '') !== undefined ? chainNames.get(safeObj?.chainId?.toString() ?? '')?.toString() : grant?.id !== '0xe92b011b2ecb97dbe168c802d582037e28036f9b' ? 'EVM based chain' : 'TON Blockchain'}`} />
 							)
 						}
 

@@ -20,9 +20,9 @@ import { isSupportedAddress } from 'src/libraries/utils/validations'
 import { SafeSelectOption } from 'src/types'
 
 interface Props {
-  multisigAddress?: string
-  isOpen: boolean
-  onClose: () => void
+	multisigAddress?: string
+	isOpen: boolean
+	onClose: () => void
 }
 
 function LinkYourMultisigModal({
@@ -106,7 +106,7 @@ function LinkYourMultisigModal({
 						onClick={
 							async() => {
 								if(isOwner && selectedSafeNetwork) {
-								// link the safe
+									// link the safe
 									await link(multiSigAddress, selectedSafeNetwork.networkId?.toString())
 									onClose()
 								} else {
@@ -174,8 +174,7 @@ function LinkYourMultisigModal({
 									color='#273B4A' />
 								<Text variant='body'>
 									{
-										`Looks like this address is on ${safeNetworks.length} network${
-											safeNetworks.length > 1 ? 's' : ''
+										`Looks like this address is on ${safeNetworks.length} network${safeNetworks.length > 1 ? 's' : ''
 										}`
 									}
 								</Text>
@@ -184,8 +183,8 @@ function LinkYourMultisigModal({
 							<Button
 								display={
 									!multiSigAddressError &&
-                !loadingSafeData &&
-                multiSigAddress !== ''
+										!loadingSafeData &&
+										multiSigAddress !== ''
 										? 'block'
 										: 'none'
 								}
@@ -231,17 +230,20 @@ function LinkYourMultisigModal({
 	}
 
 	const supportedSafeList = [
-		{ icon: <SafeLogo
-			h='2rem'
-			w='5rem' />
+		{
+			icon: <SafeLogo
+				h='2rem'
+				w='5rem' />
 		},
-		{ icon: <RealmsLogo
-			h='2rem'
-			w='5rem' />
+		{
+			icon: <RealmsLogo
+				h='2rem'
+				w='5rem' />
 		},
-		{ icon: <CeloSafe
-			h='2rem'
-			w='5rem' />
+		{
+			icon: <CeloSafe
+				h='2rem'
+				w='5rem' />
 		},
 		{
 			icon: <Iotex
@@ -252,9 +254,9 @@ function LinkYourMultisigModal({
 
 	const [multiSigAddress, setMultiSigAddress] = useState<string>('')
 	const [multiSigAddressError, setMultiSigAddressError] =
-    useState<boolean>(false)
+		useState<boolean>(false)
 	const [selectedSafeNetwork, setSelectedSafeNetwork] =
-    useState<SafeSelectOption>()
+		useState<SafeSelectOption>()
 	const [safeNetworks, setSafeNetworks] = useState<SafeSelectOption[]>([])
 	const [IsVerifySignerModalOpen, setIsVerifySignerModalOpen] = useState(false)
 	const [isOwner, setIsOwner] = useState(false)
@@ -281,15 +283,17 @@ function LinkYourMultisigModal({
 
 	useEffect(() => {
 		setMultiSigAddressError(false)
-		const isValid = isSupportedAddress(multiSigAddress)
-		logger.info('Safe address entered', { multiSigAddress, isValid })
-		if(multiSigAddress !== '' && isValid) {
-			fetchSafeData(multiSigAddress)
-		} else if(multiSigAddress !== '' && !isValid) {
-			setMultiSigAddressError(true)
-		} else {
-			setSafeState(-1)
-		}
+		isSupportedAddress(multiSigAddress, undefined).then((isValid) => {
+			logger.info('Safe address entered', { multiSigAddress, isValid })
+			if(multiSigAddress !== '' && isValid) {
+				fetchSafeData(multiSigAddress)
+			} else if(multiSigAddress !== '' && !isValid) {
+				setMultiSigAddressError(true)
+			} else {
+				setSafeState(-1)
+			}
+		})
+
 	}, [multiSigAddress])
 
 	useEffect(() => {
@@ -299,7 +303,7 @@ function LinkYourMultisigModal({
 			setSafeState(0)
 		} else if(
 			multiSigAddress &&
-      (safeNetworks.length > 1 || safeNetworks.length === 0)
+			(safeNetworks.length > 1 || safeNetworks.length === 0)
 		) {
 			// show dropdown
 			setSafeState(2)
