@@ -225,7 +225,7 @@ function Proposal() {
 						<Text
 							mt={1}
 							fontWeight='500'>
-							{formatTime(proposal.createdAtS)}
+							{formatTime(proposal.createdAtS, true)}
 						</Text>
 					</Flex>
 					<Flex

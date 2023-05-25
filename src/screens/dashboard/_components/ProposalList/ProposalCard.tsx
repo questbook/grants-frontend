@@ -45,6 +45,7 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 					variant='body'
 					fontWeight='500'
 					cursor='pointer'
+					maxWidth='80%'
 					onClick={
 						() => {
 							onClick(true)
@@ -65,10 +66,11 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 					)
 				}
 				<Text
+					alignSelf='flex-start'
 					ml='auto'
 					color='gray.500'
 					variant='metadata'>
-					{formatTime(proposal.updatedAtS)}
+					{formatTime(proposal.updatedAtS, true)}
 				</Text>
 			</Flex>
 			<Flex
