@@ -43,7 +43,7 @@ const isSupportedAddress = async(address: string, isEvm: boolean | undefined) =>
 
 	if(isEvm === false && isValidEthereumAddress(address)) {
 		return false
-	} else if(isEvm === true && (isValidSolanaAddress(address) )) {
+	} else if(isEvm === true && (isValidSolanaAddress(address))) {
 		return false
 	} else {
 		return isValidEthereumAddress(address) || isValidSolanaAddress(address)
