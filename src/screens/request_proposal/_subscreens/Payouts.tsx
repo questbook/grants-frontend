@@ -185,7 +185,7 @@ function Payouts() {
 							onClick={handleOnClickContinue}
 							isLoading={(rfpFormType === 'edit' ? updateStep : createStep) !== undefined}
 							loadingText='Creating grant program'
-							isDisabled={!rfpData?.payoutMode || !rfpData?.amount}
+							isDisabled={!rfpData?.payoutMode || !rfpData?.amount ||!scwAddress}
 						>
 							{/* {shouldCreateRFP ? 'Create RFP' : 'Continue'} */}
 							{ rfpFormType === 'edit' ? 'Save All' : 'Create grant program'}
@@ -222,7 +222,7 @@ function Payouts() {
 
 	const { setRole } = useContext(GrantsProgramContext)!
 	const { grantId, rfpData, setRFPData, rfpFormType, chainId } = useContext(RFPFormContext)!
-	const { webwallet, setCreatingProposalStep } = useContext(WebwalletContext)!
+	const { scwAddress,webwallet, setCreatingProposalStep } = useContext(WebwalletContext)!
 	const { setSignIn } = useContext(SignInContext)!
 	const { setSignInTitle } = useContext(SignInTitleContext)!
 	// const [milestoneCounter, setMilestoneCounter] = useState(!rfpData?.milestones ? 0 : rfpData?.milestones.length)
