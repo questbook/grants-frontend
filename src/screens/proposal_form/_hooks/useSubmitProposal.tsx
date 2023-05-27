@@ -1,7 +1,7 @@
 import { useContext, useMemo, useState } from 'react'
 import { convertToRaw } from 'draft-js'
 import { ethers } from 'ethers'
-import { USD_ASSET } from 'src/constants/chains'
+import { USD_ASSET, defaultChainId } from 'src/constants/chains'
 import ApplicationRegistryAbi from 'src/contracts/abi/ApplicationRegistryAbi.json'
 import useCreateMapping from 'src/libraries/hooks/useCreateMapping'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
@@ -17,6 +17,8 @@ import { findField } from 'src/screens/proposal_form/_utils'
 import { Form } from 'src/screens/proposal_form/_utils/types'
 import { ProposalFormContext } from 'src/screens/proposal_form/Context'
 import { GrantApplicationRequest } from 'src/types/gen'
+import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
+import { useWalletAddressCheckerQuery } from 'src/generated/graphql'
 
 
 interface Props {
@@ -42,12 +44,29 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 
 	const [proposalId, setProposalId] = useState<string>()
 
+	const { fetchMore: fetchIsWalletAddressUsed } = useMultiChainQuery({
+		useQuery: useWalletAddressCheckerQuery,
+		options: {},
+		chains: [chainId]
+	})
 	const submitProposal = async(form: Form) => {
 		try {
 			if(!grant || !webwallet || !isBiconomyInitialised || !scwAddress) {
 				return
 			}
 
+			
+			//Check if the wallet address is used before for this grant
+			console.log(findField(form, 'applicantAddress').value,'ooooooooo',grant.id)
+			let builderAddressInBytes: Uint8Array | string = new Uint8Array(32)
+			
+			if(isValidEthereumAddress(fields['applicantAddress'][0]?.value)) {
+				builderAddressInBytes = ethers.utils.hexZeroPad(ethers.utils.hexlify(ethers.utils.getAddress(fields['applicantAddress'][0]?.value)), 32)
+
+			}
+			const w = await fetchIsWalletAddressUsed({grantId:grant.id,walletAddress:findField(form, 'applicantAddress').value},true)
+			console.log('ooooooo',w[0])
+			return
 			logger.info({ form }, 'useSubmitProposal: (form)')
 
 			// Step - 1: Upload the project details data to ipfs
@@ -101,10 +120,6 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 			const proposalDataHash = (await uploadToIPFS(JSON.stringify(data))).hash
 			logger.info({ proposalDataHash }, 'useSubmitProposal: (proposalDataHash)')
 
-			let builderAddressInBytes: Uint8Array | string = new Uint8Array(32)
-			if(isValidEthereumAddress(fields['applicantAddress'][0]?.value)) {
-				builderAddressInBytes = ethers.utils.hexZeroPad(ethers.utils.hexlify(ethers.utils.getAddress(fields['applicantAddress'][0]?.value)), 32)
-			}
 
 			// Step - 6: Call the contract function to submit the proposal
 			const methodArgs = type === 'submit' ?

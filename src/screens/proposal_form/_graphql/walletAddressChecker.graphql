@@ -1,0 +1,6 @@
+query walletAddressChecker($grantId:String!, $walletAddress:Bytes!){
+ grantApplications(where:{grant: $grantId, walletAddress: $walletAddress} )  {
+  id
+  walletAddress
+	}
+}

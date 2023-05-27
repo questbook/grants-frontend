@@ -67,7 +67,7 @@ export default function useCreateRFP() {
 	const createRFP = async() => {
 		try {
 			if(!isBiconomyInitialised) {
-				throw new Error('Biconomy is not initialised')
+				throw new Error('Biconomy is not initialised yet')
 			}
 
 			logger.info({ rfpData }, 'rfpData')
