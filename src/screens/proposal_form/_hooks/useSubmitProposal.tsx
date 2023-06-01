@@ -49,6 +49,7 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 		options: {},
 		chains: [chainId]
 	})
+
 	const submitProposal = async(form: Form) => {
 		try {
 			if(!grant || !webwallet || !isBiconomyInitialised || !scwAddress) {
@@ -57,14 +58,16 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 
 			
 			//Check if the wallet address is used before for this grant
-			console.log(findField(form, 'applicantAddress').value,'ooooooooo',grant.id)
+			const walletAddress = findField(form, 'applicantAddress').value
+			// console.log(walletAddress,'ooooooooo',grant.id)
 			let builderAddressInBytes: Uint8Array | string = new Uint8Array(32)
 			
-			if(isValidEthereumAddress(fields['applicantAddress'][0]?.value)) {
-				builderAddressInBytes = ethers.utils.hexZeroPad(ethers.utils.hexlify(ethers.utils.getAddress(fields['applicantAddress'][0]?.value)), 32)
+			if(isValidEthereumAddress(walletAddress)) {
+				builderAddressInBytes = ethers.utils.hexZeroPad(ethers.utils.hexlify(ethers.utils.getAddress(walletAddress)), 32)
 
 			}
-			const w = await fetchIsWalletAddressUsed({grantId:grant.id,walletAddress:findField(form, 'applicantAddress').value},true)
+			console.log(builderAddressInBytes,'ooooooooo',grant.id)
+			const w = await fetchIsWalletAddressUsed({grantId:grant.id,walletAddress:builderAddressInBytes as string},true)
 			console.log('ooooooo',w[0])
 			return
 			logger.info({ form }, 'useSubmitProposal: (form)')
