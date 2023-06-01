@@ -299,6 +299,7 @@ function Discussions() {
 
 		return (
 			<Flex
+				key={index}
 				align='start'
 				mt={index === 0 ? 0 : 4}>
 				<Image

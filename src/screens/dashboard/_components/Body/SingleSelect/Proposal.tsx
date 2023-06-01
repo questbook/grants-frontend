@@ -29,6 +29,7 @@ import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
+import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 
@@ -219,6 +220,18 @@ function Proposal() {
 						direction='column'
 						w='50%'>
 						<Text color='gray.500'>
+							Submitted on
+						</Text>
+						<Text
+							mt={1}
+							fontWeight='500'>
+							{formatTime(proposal.createdAtS, true)}
+						</Text>
+					</Flex>
+					<Flex
+						direction='column'
+						w='50%'>
+						<Text color='gray.500'>
 							Milestones
 						</Text>
 						<Text
@@ -228,6 +241,7 @@ function Proposal() {
 						</Text>
 					</Flex>
 				</Flex>
+
 
 				{
 					getFieldString(proposal, 'tldr') && (

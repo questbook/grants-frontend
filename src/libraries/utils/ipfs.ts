@@ -1,6 +1,6 @@
 import config from 'src/constants/config.json'
 
-const IPFS_UPLOAD_ENDPOINT = 'https://api.thegraph.com/ipfs/api/v0/add?pin=true'
+const IPFS_UPLOAD_ENDPOINT = 'https://ipfs.infura.io:5001/api/v0/add?pin=true'
 const IPFS_DOWNLOAD_ENDPOINT = 'https://api.thegraph.com/ipfs/api/v0/cat'
 
 export const uploadToIPFS = async(data: string | Blob | null): Promise<{ hash: string }> => {
@@ -15,8 +15,12 @@ export const uploadToIPFS = async(data: string | Blob | null): Promise<{ hash: s
 	const fetchResult = await fetch(IPFS_UPLOAD_ENDPOINT, {
 		method: 'POST',
 		body: form,
+		headers: {
+			authorization: `Basic ${Buffer.from(`${process.env.INFURA_IPFS_PROJECT_ID}:${process.env.INFURA_IPFS_API_KEY}`).toString('base64')}`,
+		}
 	})
 	const responseBody = await fetchResult.json()
+
 	return { hash: responseBody.Hash }
 }
 
