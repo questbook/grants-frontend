@@ -19,7 +19,7 @@ import { Form, FormType, Grant, Proposal, ProposalFormContextType } from 'src/sc
 
 const ProposalFormContext = createContext<ProposalFormContextType | undefined>(undefined)
 
-const ProposalFormProvider = ({ children }: {children: ReactNode}) => {
+const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 	const providerComponent = () => (
 		<ProposalFormContext.Provider
 			value={
@@ -30,7 +30,8 @@ const ProposalFormProvider = ({ children }: {children: ReactNode}) => {
 					chainId: ALL_SUPPORTED_CHAIN_IDS.indexOf(chainId) === -1 ? defaultChainId : chainId,
 					form,
 					setForm,
-					error }
+					error
+				}
 			}>
 			{children}
 		</ProposalFormContext.Provider>
@@ -84,18 +85,16 @@ const ProposalFormProvider = ({ children }: {children: ReactNode}) => {
 		}
 	}, [grantId, proposalId, chainId])
 
-	const { fetchMore: fetchGrantDetails } = useMultiChainQuery({
-		useQuery: useGrantDetailsQuery,
-		options: {},
-		chains: [chainId === -1 ? defaultChainId : chainId]
-	})
-
 	const { fetchMore: fetchProposalDetails } = useMultiChainQuery({
 		useQuery: useProposalDetailsQuery,
 		options: {},
 		chains: [chainId === -1 ? defaultChainId : chainId]
 	})
-
+	const { fetchMore: fetchGrantDetails } = useMultiChainQuery({
+		useQuery: useGrantDetailsQuery,
+		options: {},
+		chains: [chainId === -1 ? defaultChainId : chainId]
+	})
 	const fetchGrant = useCallback(async() => {
 		if(!grantId || !chainId || typeof grantId !== 'string' || typeof chainId !== 'number') {
 			return
@@ -164,7 +163,8 @@ const ProposalFormProvider = ({ children }: {children: ReactNode}) => {
 				}
 			}),
 			milestones: result[0].grantApplication.milestones.map((milestone, index) => (
-				{ index,
+				{
+					index,
 					title: milestone.title,
 					amount: chainInfo.address === USD_ASSET ?
 						parseInt(milestone.amount) :
