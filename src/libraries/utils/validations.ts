@@ -20,9 +20,34 @@ const isValidSolanaAddress = (address: string) => {
 	}
 }
 
-const isSupportedAddress = (address: string) => {
-	logger.info({ eth: isValidEthereumAddress(address), sol: isValidSolanaAddress(address) }, 'isValidSafeAddress')
-	return isValidEthereumAddress(address) || isValidSolanaAddress(address)
+const isValidTonAddress = async(address: string) => {
+	const mainnetEndpoint = `https://toncenter.com/api/v2/getWalletInformation?address=${address}`
+	const testnetEndpoint = `https://testnet.toncenter.com/api/v2/getWalletInformation?address=${address}`
+
+	const res1 = await fetch(mainnetEndpoint)
+	const res2 = await fetch(testnetEndpoint)
+
+	const data1 = await res1.json()
+	const data2 = await res2.json()
+
+	if(!data1.ok && !data2.ok) {
+		return false
+	}
+
+	return true
+}
+
+const isSupportedAddress = async(address: string, isEvm: boolean | undefined) => {
+	const isTonAddress = await isValidTonAddress(address)
+	logger.info({ eth: isValidEthereumAddress(address), sol: isValidSolanaAddress(address), ton: isTonAddress }, 'isValidSafeAddress')
+
+	if(isEvm === false && isValidEthereumAddress(address)) {
+		return false
+	} else if(isEvm === true && (isValidSolanaAddress(address))) {
+		return false
+	} else {
+		return isValidEthereumAddress(address) || isValidSolanaAddress(address)
+	}
 }
 
 const isValidEmail = (email: string) => {

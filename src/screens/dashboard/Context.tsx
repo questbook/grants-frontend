@@ -18,7 +18,7 @@ const DashboardContext = createContext<DashboardContextType | undefined>(undefin
 const FundBuilderContext = createContext<FundBuilderContextType | undefined>(undefined)
 const ModalContext = createContext<ModalContextType | undefined>(undefined)
 
-const DashboardProvider = ({ children }: {children: ReactNode}) => {
+const DashboardProvider = ({ children }: { children: ReactNode }) => {
 	const router = useRouter()
 	const { setSafeObj } = useSafeContext()!
 	const { grantId, chainId: _chainId, role: _role, proposalId, isRenderingProposalBody } = router.query
@@ -92,17 +92,21 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 			setSafeObj(currentSafe)
 		}
 
+		logger.info({ _grant, scwAddress }, 'Setting role (GET GRANT)')
+
 		const possibleRoles: Roles[] = ['community']
 
 		if(_grant?.myApplications?.length > 0) {
 			possibleRoles.push('builder')
 		}
 
-		for(const member of _grant?.workspace?.members ?? []) {
-			if(member.actorId === (scwAddress ? scwAddress.toLowerCase() : '0x0000000000000000000000000000000000000000')) {
-				logger.info({ member }, 'Member (ROLE)')
-				possibleRoles.push(member.accessLevel === 'reviewer' ? 'reviewer' : 'admin')
-				break
+		if(scwAddress) {
+			for(const member of _grant?.workspace?.members ?? []) {
+				if(member.actorId === scwAddress.toLowerCase()) {
+					logger.info({ member }, 'Member (ROLE)')
+					possibleRoles.push(member.accessLevel === 'reviewer' ? 'reviewer' : 'admin')
+					break
+				}
 			}
 		}
 
@@ -253,7 +257,7 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 		// if(!webwallet) {
 		// 	return 'no-webwallet'
 		// }
-		 if(!grantId || typeof grantId !== 'string') {
+		if(!grantId || typeof grantId !== 'string') {
 			return 'no-grant-id'
 		}
 
@@ -286,7 +290,7 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 		// if(!webwallet) {
 		// 	return 'no-webwallet'
 		// }
-		 if(!grantId || typeof grantId !== 'string') {
+		if(!grantId || typeof grantId !== 'string') {
 			return 'no-grant-id'
 		}
 
@@ -471,7 +475,7 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 	)
 }
 
-const FundBuilderProvider = ({ children }: {children: ReactNode}) => {
+const FundBuilderProvider = ({ children }: { children: ReactNode }) => {
 	const [tokenList, setTokenList] = useState<TokenDetailsInterface[]>()
 	const [selectedTokenInfo, setSelectedTokenInfo] = useState<TokenDetailsInterface>()
 	const [amounts, setAmounts] = useState<number[]>([])
@@ -510,7 +514,7 @@ const FundBuilderProvider = ({ children }: {children: ReactNode}) => {
 	)
 }
 
-const ModalProvider = ({ children }: {children: ReactNode}) => {
+const ModalProvider = ({ children }: { children: ReactNode }) => {
 	const [isSendAnUpdateModalOpen, setIsSendAnUpdateModalOpen] = useState<boolean>(false)
 	const [isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen] = useState<boolean>(false)
 
