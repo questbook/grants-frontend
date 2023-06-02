@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
 import { ALL_SUPPORTED_CHAIN_IDS, defaultChainId, USD_ASSET } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
-import { useGrantDetailsQuery, useProposalDetailsQuery, useWalletAddressCheckerQuery } from 'src/generated/graphql'
+import { useGrantDetailsQuery, useProposalDetailsQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
 import { getFieldString, getFieldStrings } from 'src/libraries/utils/formatting'
@@ -49,21 +49,21 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 	const chainId = useMemo(() => {
 		try {
 			return typeof chainIdString === 'string' ? parseInt(chainIdString) : -1
-		} catch (e) {
+		} catch(e) {
 			return -1
 		}
 	}, [chainIdString])
 
-	const error = useMemo( () => {
-		if (!grantId && !proposalId) {
+	const error = useMemo(() => {
+		if(!grantId && !proposalId) {
 			return 'Neither grant nor proposal found'
-		} else if (grantId && proposalId) {
+		} else if(grantId && proposalId) {
 			return 'Both grant and proposal cannot be present together'
 		}
 
-		if (chainId === -1) {
+		if(chainId === -1) {
 			return 'Chain ID not found'
-		} else if (ALL_SUPPORTED_CHAIN_IDS.indexOf(chainId) === -1) {
+		} else if(ALL_SUPPORTED_CHAIN_IDS.indexOf(chainId) === -1) {
 			return 'Chain ID not supported'
 		}
 
@@ -78,9 +78,9 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 
 	useEffect(() => {
 		logger.info({ grantId, proposalId, chainId }, 'ProposalForm: useEffect')
-		if (grantId && !proposalId) {
+		if(grantId && !proposalId) {
 			setType('submit')
-		} else if (!grantId && proposalId) {
+		} else if(!grantId && proposalId) {
 			setType('resubmit')
 		}
 	}, [grantId, proposalId, chainId])
@@ -95,13 +95,13 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 		options: {},
 		chains: [chainId === -1 ? defaultChainId : chainId]
 	})
-	const fetchGrant = useCallback(async () => {
-		if (!grantId || !chainId || typeof grantId !== 'string' || typeof chainId !== 'number') {
+	const fetchGrant = useCallback(async() => {
+		if(!grantId || !chainId || typeof grantId !== 'string' || typeof chainId !== 'number') {
 			return
 		}
 
 		const result = await fetchGrantDetails({ grantId }, true)
-		if (!result?.length || !result[0]?.grant) {
+		if(!result?.length || !result[0]?.grant) {
 			return 'could-not-fetch-grant-details'
 		}
 
@@ -124,14 +124,14 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 		logger.info('grants', result[0])
 		try {
 			const cache = localStorage.getItem(`form-${grantId}`)
-			if (cache) {
+			if(cache) {
 				const formFromCache = JSON.parse(cache)
 				logger.info({ formFromCache }, 'ProposalForm: fetchGrant (formFromCache)')
 				setForm({ ...formFromCache, details: EditorState.createWithContent(convertFromRaw(formFromCache.details)) })
 			} else {
 				setForm(initForm)
 			}
-		} catch (e) {
+		} catch(e) {
 			logger.error(e, 'ProposalForm: error load form from cache (formFromCache)')
 			setForm(initForm)
 		}
@@ -142,13 +142,13 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 		return 'fetched-grant-details'
 	}, [grantId, chainId])
 
-	const fetchProposal = useCallback(async () => {
-		if (!proposalId || !chainId || typeof proposalId !== 'string' || typeof chainId !== 'number') {
+	const fetchProposal = useCallback(async() => {
+		if(!proposalId || !chainId || typeof proposalId !== 'string' || typeof chainId !== 'number') {
 			return
 		}
 
 		const result = await fetchProposalDetails({ proposalId }, true)
-		if (!result?.length || !result[0]?.grantApplication) {
+		if(!result?.length || !result[0]?.grantApplication) {
 			return 'could-not-fetch-proposal-details'
 		}
 
@@ -181,8 +181,8 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 		return 'fetched-proposal-details'
 	}, [proposalId, chainId])
 
-	const decryptProposal = useCallback(async () => {
-		if (!grant?.id || !proposal?.applicantPublicKey || !chainId || !proposal?.pii?.length) {
+	const decryptProposal = useCallback(async() => {
+		if(!grant?.id || !proposal?.applicantPublicKey || !chainId || !proposal?.pii?.length) {
 			logger.info({ grantId: grant?.id, proposalKey: proposal?.applicantPublicKey, chainId, length: proposal?.pii }, 'Could not decrypt proposal 1')
 			return 'could-not-decrypt-proposal'
 		}
@@ -191,11 +191,11 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 		const decryptedProposal = await decrypt(proposal)
 		const newProposal = { ...proposal, ...decryptedProposal, pii: decryptedProposal ? [] : proposal.pii }
 		logger.info({ decryptedProposal, newProposal }, 'Decrypted proposal')
-		for (const field of grant.fields) {
-			if (field.isPii) {
+		for(const field of grant.fields) {
+			if(field.isPii) {
 				const id = field.id.substring(field.id.indexOf('.') + 1)
 				const value = getFieldString(newProposal, id)
-				if (value) {
+				if(value) {
 					setForm((form) => ({ ...form, fields: form.fields.map((f) => f.id === id ? { ...f, value } : f) }))
 				}
 			}
@@ -217,7 +217,7 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 	}, [proposalId, chainId])
 
 	useEffect(() => {
-		if (!grant?.id || !proposal?.applicantPublicKey || !chainId || !proposal?.pii?.length) {
+		if(!grant?.id || !proposal?.applicantPublicKey || !chainId || !proposal?.pii?.length) {
 			logger.info({ grantId: grant?.id, proposalKey: proposal?.applicantPublicKey, chainId, length: proposal?.pii }, 'Could not decrypt proposal 2')
 			return
 		}
@@ -228,7 +228,7 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 	}, [grant?.id, proposal?.applicantPublicKey, chainId, scwAddress])
 
 	useEffect(() => {
-		if (!grant) {
+		if(!grant) {
 			return
 		}
 

@@ -8,7 +8,7 @@ import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import { getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
-import { BiconomyContext, GrantsProgramContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
 import SelectDropdown from 'src/screens/request_proposal/_components/SelectDropdown'
 import StepIndicator from 'src/screens/request_proposal/_components/StepIndicator'
 import useCreateRFP from 'src/screens/request_proposal/_hooks/useCreateRFP'
@@ -222,7 +222,7 @@ function Payouts() {
 
 	const { setRole } = useContext(GrantsProgramContext)!
 	const { grantId, rfpData, setRFPData, rfpFormType, chainId } = useContext(RFPFormContext)!
-	const { scwAddress,webwallet, setCreatingProposalStep } = useContext(WebwalletContext)!
+	const { scwAddress, webwallet, setCreatingProposalStep } = useContext(WebwalletContext)!
 	const { setSignIn } = useContext(SignInContext)!
 	const { setSignInTitle } = useContext(SignInTitleContext)!
 	// const [milestoneCounter, setMilestoneCounter] = useState(!rfpData?.milestones ? 0 : rfpData?.milestones.length)
