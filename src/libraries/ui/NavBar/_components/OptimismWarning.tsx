@@ -8,15 +8,19 @@ const OptimismWarning = () => {
 			justify='center'
 			bg='#C2E7DA'
 			color='white'
-			p={4}>
+			p={4}
+			paddingLeft={6}
+			paddingRight={6}>
 			<Icon
 				as={FaExclamationCircle}
 				boxSize={6}
 				color='#1D1919'
 				mr={2} />
 			<Text
-				// fontWeight='bold'
 				fontSize='14px'
+				fontWeight='500'
+				textAlign='center'
+				flexWrap='wrap'
 			>
 				Optimism mainnet is undergoing a network upgrade. As a result, you
 				will not be able to perform any on-chain transactions on Questbook
