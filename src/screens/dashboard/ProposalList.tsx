@@ -50,6 +50,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 							// w='103px'
 							// h='32px'
 							mr={4}
+							isDisabled={true}
 							fontSize={['10px', '10px', '12px', '12px']}
 							onClick={
 								() => {
