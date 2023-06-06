@@ -250,6 +250,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 				<AccountDetails
 					openModal={
 						(type) => {
+							return
 							setType(type)
 							setIsRecoveryModalOpen(true)
 						}
@@ -321,7 +322,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 			<UpdateProfileModal
 				isOpen={isUpdateProfileModalOpen}
 				onClose={() => setIsUpdateProfileModalOpen(false)} />
-			<SignIn
+			{/* <SignIn
 				isOpen={signIn && !!!webwallet}
 				setSignIn={setSignIn}
 				onClose={() => setSignIn(false)}
@@ -329,7 +330,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 				importWalletFromGD={importWalletFromGD}
 				loading={loading}
 				inited={inited}
-			/>
+			/> */}
 
 		</>
 	)
