@@ -32,9 +32,10 @@ function ProposalCard({ proposal }: Props) {
 						border: 'none',
 					}
 				}
-				cursor='pointer'
+				// cursor='pointer'
 				onClick={
 					() => {
+						return
 						router.push({
 							pathname: '/dashboard/',
 							query: {

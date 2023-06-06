@@ -40,10 +40,11 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 					border: 'none',
 				}
 			}
-			cursor='pointer'
+			// cursor='pointer'
 			// className='dao-card'
 			onClick={
 				(e) => {
+
 					// returning as onClick fired from dao visibility toggle switch for admins
 					if(isQbAdmin && [
 						'[object HTMLSpanElement]',
@@ -66,12 +67,14 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						params = { ...params, proposalId: grant.applications[0].id }
 					}
 
+					return
 					router.push({
 						pathname: '/dashboard/',
 						query: params,
 					})
 				}
-			}>
+			}
+		>
 			<Flex
 				flexDirection='column'
 				h='100%'

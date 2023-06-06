@@ -1,7 +1,7 @@
 import { useMediaQuery } from 'react-responsive'
-import { Button, Flex, Image, Text } from '@chakra-ui/react'
-import { useRouter } from 'next/router'
-import { ArrowRight } from 'src/generated/icons'
+import { Flex, Image, Text } from '@chakra-ui/react'
+// import { useRouter } from 'next/router'
+// import { ArrowRight } from 'src/generated/icons'
 
 function HeroBanner() {
 	const buildComponent = () => (
@@ -47,7 +47,7 @@ function HeroBanner() {
 				</Text>
 
 				<Flex>
-					<Button
+					{/* <Button
 						variant='primaryLarge'
 						mt={8}
 						rightIcon={<ArrowRight color='white' />}
@@ -57,7 +57,7 @@ function HeroBanner() {
 							})
 						}>
 						Start a grant program
-					</Button>
+					</Button> */}
 				</Flex>
 
 			</Flex>
@@ -76,7 +76,7 @@ function HeroBanner() {
 		</Flex>
 	)
 	const isMobile = useMediaQuery({ query:'(max-width:600px)' })
-	const router = useRouter()
+	// const router = useRouter()
 
 	return buildComponent()
 }
