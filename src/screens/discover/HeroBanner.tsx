@@ -51,6 +51,7 @@ function HeroBanner() {
 						variant='primaryLarge'
 						mt={8}
 						rightIcon={<ArrowRight color='white' />}
+						isDisabled={true}
 						onClick={
 							() => router.push({
 								pathname: '/request_proposal',
