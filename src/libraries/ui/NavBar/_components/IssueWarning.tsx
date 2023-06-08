@@ -1,7 +1,7 @@
 import { FaExclamationCircle } from 'react-icons/fa'
 import { Flex, Icon, Text } from '@chakra-ui/react'
 
-const OptimismWarning = () => {
+const IssueWarning = () => {
 	return (
 		<Flex
 			align='center'
@@ -28,4 +28,4 @@ const OptimismWarning = () => {
 	)
 }
 
-export default OptimismWarning
+export default IssueWarning
