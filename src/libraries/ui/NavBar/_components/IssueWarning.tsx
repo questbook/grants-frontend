@@ -22,7 +22,7 @@ const IssueWarning = () => {
 				textAlign='center'
 				flexWrap='wrap'
 			>
-				We are facing an issue with our subgraph node, we are actively working on it
+				Due to the ongoing issue with our subgraph node, we have temporarily disabled proposal submissions. Our team is actively working on resolving the problem. We apologize for any inconvenience.
 			</Text>
 		</Flex>
 	)
