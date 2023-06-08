@@ -40,7 +40,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 					border: 'none',
 				}
 			}
-			// cursor='pointer'
+			cursor='pointer'
 			// className='dao-card'
 			onClick={
 				(e) => {
@@ -67,7 +67,6 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						params = { ...params, proposalId: grant.applications[0].id }
 					}
 
-					return
 					router.push({
 						pathname: '/dashboard/',
 						query: params,

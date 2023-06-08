@@ -1,12 +1,12 @@
 import { FaExclamationCircle } from 'react-icons/fa'
-import { Flex, Icon, Link, Text } from '@chakra-ui/react'
+import { Flex, Icon, Text } from '@chakra-ui/react'
 
 const OptimismWarning = () => {
 	return (
 		<Flex
 			align='center'
 			justify='center'
-			bg='#C2E7DA'
+			bg='red.200'
 			color='white'
 			p={4}
 			paddingLeft={6}
@@ -22,17 +22,7 @@ const OptimismWarning = () => {
 				textAlign='center'
 				flexWrap='wrap'
 			>
-				Optimism mainnet is undergoing a network upgrade. As a result, you
-				will not be able to perform any on-chain transactions on Questbook
-				until June 6, 20:00 UTC
-				<Link
-					ml={2}
-					color='#0A84FF'
-					target='_blank'
-					rel='noopener noreferrer'
-					href='https://oplabs.notion.site/Bedrock-Mission-Control-EXTERNAL-fca344b1f799447cb1bcf3aae62157c5'>
-					Learn More
-				</Link>
+				We are facing an issue with our subgraph node, we are actively working on it
 			</Text>
 		</Flex>
 	)
