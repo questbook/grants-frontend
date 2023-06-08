@@ -44,7 +44,6 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 			// className='dao-card'
 			onClick={
 				(e) => {
-
 					// returning as onClick fired from dao visibility toggle switch for admins
 					if(isQbAdmin && [
 						'[object HTMLSpanElement]',
@@ -72,8 +71,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						query: params,
 					})
 				}
-			}
-		>
+			}>
 			<Flex
 				flexDirection='column'
 				h='100%'
