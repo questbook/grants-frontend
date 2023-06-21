@@ -14,7 +14,6 @@ import AccountDetails from 'src/libraries/ui/NavBar/_components/AccountDetails'
 import BackupWallet from 'src/libraries/ui/NavBar/_components/BackupWallet'
 import useGoogleDriveWalletRecoveryReact from 'src/libraries/ui/NavBar/_components/googleRecovery'
 import ImportConfirmationModal from 'src/libraries/ui/NavBar/_components/ImportConfirmationModal'
-import IssueWarning from 'src/libraries/ui/NavBar/_components/IssueWarning'
 import NotificationPopover from 'src/libraries/ui/NavBar/_components/NotificationPopover'
 import RestoreWallet from 'src/libraries/ui/NavBar/_components/RestoreWallet'
 import SignIn from 'src/libraries/ui/NavBar/_components/SignIn'
@@ -672,35 +671,13 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 	}
 
 	if(!isMobile[0]) {
-		return (
-			<>
-				<MainNavBar />
-				<IssueWarning />
-			</>
-		)
+		return <MainNavBar />
 	} else if(requestProposal === true) {
-		return (
-			<>
-				<SmallScreensRequestProposalNavBar />
-				<IssueWarning />
-			</>
-		)
+		return <SmallScreensRequestProposalNavBar />
 	} else if(dashboard === true) {
-		return (
-			<>
-				<SmallScreensDashboardNavBar />
-				<IssueWarning />
-			</>
-		)
-	// eslint-disable-next-line sonarjs/no-duplicated-branches
+		return <SmallScreensDashboardNavBar />
 	} else {
-		return (
-			<>
-				<MainNavBar />
-				<IssueWarning />
-			</>
-		)
-
+		return <MainNavBar />
 	}
 }
 
