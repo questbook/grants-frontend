@@ -18,7 +18,7 @@ const DashboardContext = createContext<DashboardContextType | undefined>(undefin
 const FundBuilderContext = createContext<FundBuilderContextType | undefined>(undefined)
 const ModalContext = createContext<ModalContextType | undefined>(undefined)
 
-const DashboardProvider = ({ children }: {children: ReactNode}) => {
+const DashboardProvider = ({ children }: { children: ReactNode }) => {
 	const router = useRouter()
 	const { setSafeObj } = useSafeContext()!
 	const { grantId, chainId: _chainId, role: _role, proposalId, isRenderingProposalBody } = router.query
@@ -110,7 +110,7 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 		if(_role) {
 			logger.info({ role: _role, check: possibleRoles.includes(_role as Roles) }, 'Role from params (GET GRANT)')
 			// Check if the role the user is trying to access is valid
-			if(possibleRoles.includes(_role as Roles)) {
+			if(possibleRoles.includes(_role as Roles) && !possibleRoles.includes('admin')) {
 				setRole(_role as Roles)
 			} else {
 				// Assign a role to the user based on the grant
@@ -253,7 +253,7 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 		// if(!webwallet) {
 		// 	return 'no-webwallet'
 		// }
-		 if(!grantId || typeof grantId !== 'string') {
+		if(!grantId || typeof grantId !== 'string') {
 			return 'no-grant-id'
 		}
 
@@ -286,7 +286,7 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 		// if(!webwallet) {
 		// 	return 'no-webwallet'
 		// }
-		 if(!grantId || typeof grantId !== 'string') {
+		if(!grantId || typeof grantId !== 'string') {
 			return 'no-grant-id'
 		}
 
@@ -471,7 +471,7 @@ const DashboardProvider = ({ children }: {children: ReactNode}) => {
 	)
 }
 
-const FundBuilderProvider = ({ children }: {children: ReactNode}) => {
+const FundBuilderProvider = ({ children }: { children: ReactNode }) => {
 	const [tokenList, setTokenList] = useState<TokenDetailsInterface[]>()
 	const [selectedTokenInfo, setSelectedTokenInfo] = useState<TokenDetailsInterface>()
 	const [amounts, setAmounts] = useState<number[]>([])
@@ -510,7 +510,7 @@ const FundBuilderProvider = ({ children }: {children: ReactNode}) => {
 	)
 }
 
-const ModalProvider = ({ children }: {children: ReactNode}) => {
+const ModalProvider = ({ children }: { children: ReactNode }) => {
 	const [isSendAnUpdateModalOpen, setIsSendAnUpdateModalOpen] = useState<boolean>(false)
 	const [isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen] = useState<boolean>(false)
 
