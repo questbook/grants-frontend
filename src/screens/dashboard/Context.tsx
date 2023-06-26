@@ -114,7 +114,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		if(_role) {
 			logger.info({ role: _role, check: possibleRoles.includes(_role as Roles) }, 'Role from params (GET GRANT)')
 			// Check if the role the user is trying to access is valid
-			if(possibleRoles.includes(_role as Roles)) {
+			if(possibleRoles.includes(_role as Roles) && !possibleRoles.includes('admin')) {
 				setRole(_role as Roles)
 			} else {
 				// Assign a role to the user based on the grant
