@@ -285,6 +285,7 @@ WorkspaceCreateRequest:
   required:
     - title
     - about
+    - bio
     - logoIpfsHash
     - creatorId
     - supportedNetworks
@@ -507,6 +508,8 @@ GrantCreateRequest:
     - creatorId
     - workspaceId
     - fields
+    - summary
+    - details
   properties:
     title:
       type: string
