@@ -150,6 +150,7 @@ function Settings() {
 								</>
 							) : (
 								<Box
+									zIndex={-2}
 									border='1px solid #E7E4DD'
 									p={4}
 								>
