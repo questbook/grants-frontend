@@ -5,6 +5,7 @@ import { NetworkType } from 'src/constants/Networks'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import VerifySignerErrorState from 'src/libraries/ui/LinkYourMultisigModal/VerifySignerErrorState'
+import { delay } from 'src/libraries/utils'
 import { availableWallets, solanaWallets } from 'src/libraries/utils/constants'
 import ConnectWalletButton from 'src/screens/dashboard/_components/FundBuilder/ConnectWalletButton'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
@@ -60,6 +61,7 @@ const VerifySignerModal = ({
 							<Flex
 								direction='column'
 								alignItems='center'
+								zIndex={-1}
 								py={1}>
 
 								<Text
@@ -190,6 +192,19 @@ const VerifySignerModal = ({
 	const { chain } = useNetwork()
 
 	const [isError, setIsError] = React.useState(false)
+
+	useEffect(() => {
+		if(connectClicked) {
+			delay(2000).then(() => {
+				const element = document.getElementsByTagName('wcm-modal')
+				if(element) {
+					(element[0] as HTMLElement).style.zIndex = '100000';
+					(element[0] as HTMLElement).style.position = 'absolute'
+
+				}
+			})
+		}
+	}, [connectClicked])
 
 	useEffect(() => {
 		if(isOpen) {
