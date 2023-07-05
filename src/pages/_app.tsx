@@ -44,18 +44,10 @@ import {
 	WagmiConfig,
 } from 'wagmi'
 import {
-	arbitrum,
-	aurora,
-	auroraTestnet,
-	avalanche,
-	bsc,
 	celo,
-	gnosis,
 	goerli,
-	mainnet,
 	optimism,
-	polygon,
-	telos
+	polygon
 } from 'wagmi/chains'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
@@ -78,38 +70,22 @@ type AppPropsWithLayout = AppProps & {
 const infuraId = process.env.NEXT_PUBLIC_INFURA_ID
 
 const defaultChain = polygon
-const { chains, provider } = configureChains(
-	[
-		arbitrum,
-		aurora,
-		auroraTestnet,
-		avalanche,
-		bsc,
-		celo,
-		gnosis,
-		goerli,
-		mainnet,
-		optimism,
-		polygon,
-		telos
-	],
-	[
-		jsonRpcProvider({
-			rpc: (chain: Chain) => {
-				const rpcUrl = CHAIN_INFO[chain.id as SupportedChainId]?.rpcUrls[0]
-				if(!rpcUrl) {
-					return {
-						http: CHAIN_INFO[defaultChain.id as SupportedChainId].rpcUrls[0],
-					}
+const { chains, provider } = configureChains([goerli, celo, optimism, polygon], [
+	jsonRpcProvider({
+		rpc: (chain: Chain) => {
+			const rpcUrl = CHAIN_INFO[chain.id as SupportedChainId]?.rpcUrls[0]
+			if(!rpcUrl) {
+				return {
+					http: CHAIN_INFO[defaultChain.id as SupportedChainId].rpcUrls[0],
 				}
+			}
 
-				return { http: rpcUrl }
-			},
-		}),
-		infuraProvider({ apiKey: infuraId! }),
-		publicProvider(),
-	]
-)
+			return { http: rpcUrl }
+		},
+	}),
+	infuraProvider({ apiKey: infuraId! }),
+	publicProvider(),
+])
 
 type InitiateBiconomyReturnType = {
 	biconomyDaoObj: typeof BiconomyContext
