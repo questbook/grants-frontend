@@ -6,12 +6,12 @@
     "43114": "Avalanche C-Chain",
     "1313161554": "Aurora Mainnet",
     "56": "Binance Smart Chain",
-    "246": "Energy Web Chain",
+    "246": "Energy Web Chain", // @TODO: add to wagmi networks
     "10": "Optimism",
     "137": "Polygon Mainnet",
     "42220": "Celo Mainnet",
     "4": "Rinkeby",
     "5": "Goerli",
-    "73799": "Energy Web Volta",
+    "73799": "Energy Web Volta", // @TODO: add to wagmi networks
     "1313161555": "Aurora Testnet"
 }
