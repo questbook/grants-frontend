@@ -328,15 +328,15 @@ function ProposalForm() {
 									placeholder={isEvm === undefined || isEvm ? '0xEbd6dB5a58c9812df3297E2Bc2fF0BDFEac2453c' : 'AdG9Gdjm6cLFTfhefR9reZRH3bx4PM1XSmu7JGchjnPp'}
 									value={findField(form, 'applicantAddress').value}
 									onChange={
-										(e) => {
+										async(e) => {
 											onChange(e, 'applicantAddress')
-											validateWalletAddress(e.target.value, (isValid) => {
+											await validateWalletAddress(e.target.value, (isValid) => {
 												setWalletAddressError(!isValid)
 											})
 										}
 									}
 									isInvalid={walletAddressError}
-									errorText={`Invalid address on ${chainNames?.get(safeObj?.chainId?.toString() ?? '') !== undefined ? chainNames.get(safeObj?.chainId?.toString() ?? '')?.toString() : 'EVM based chain'}`} />
+									errorText={`Invalid address on ${chainNames?.get(safeObj?.chainId?.toString() ?? '') !== undefined ? chainNames.get(safeObj?.chainId?.toString() ?? '')?.toString() : 'EVM / Solana / TON based chain'}`} />
 							)
 						}
 
