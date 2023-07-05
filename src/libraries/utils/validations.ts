@@ -1,5 +1,6 @@
 import { SupportedNetwork as SupportedValidatorNetwork } from '@questbook/service-validator-client/dist/api'
 import { PublicKey } from '@solana/web3.js'
+import axios from 'axios'
 import { ethers } from 'ethers'
 import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import { SupportedNetwork } from 'src/generated/graphql'
@@ -20,9 +21,19 @@ const isValidSolanaAddress = (address: string) => {
 	}
 }
 
-const isSupportedAddress = (address: string) => {
-	logger.info({ eth: isValidEthereumAddress(address), sol: isValidSolanaAddress(address) }, 'isValidSafeAddress')
-	return isValidEthereumAddress(address) || isValidSolanaAddress(address)
+const isValidTonAddress = async(address: string) => {
+	try {
+		const res = await axios.get<{ok: boolean, error: string}>(`https://toncenter.com/api/v2/getAddressInformation?address=${address}`)
+		return !!res.data?.ok
+	} catch{
+		return false
+	}
+}
+
+const isSupportedAddress = async(address: string) => {
+	const isValidTon = await isValidTonAddress(address)
+	logger.info({ eth: isValidEthereumAddress(address), sol: isValidSolanaAddress(address), ton: isValidTon }, 'isValidSafeAddress')
+	return isValidEthereumAddress(address) || isValidSolanaAddress(address) || isValidTon
 }
 
 const isValidEmail = (email: string) => {
