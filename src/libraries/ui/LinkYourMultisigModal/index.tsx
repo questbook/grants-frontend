@@ -281,15 +281,16 @@ function LinkYourMultisigModal({
 
 	useEffect(() => {
 		setMultiSigAddressError(false)
-		const isValid = isSupportedAddress(multiSigAddress)
-		logger.info('Safe address entered', { multiSigAddress, isValid })
-		if(multiSigAddress !== '' && isValid) {
-			fetchSafeData(multiSigAddress)
-		} else if(multiSigAddress !== '' && !isValid) {
-			setMultiSigAddressError(true)
-		} else {
-			setSafeState(-1)
-		}
+		isSupportedAddress(multiSigAddress).then((isValid: boolean) => {
+			logger.info('Safe address entered', { multiSigAddress, isValid })
+			if(multiSigAddress !== '' && isValid) {
+				fetchSafeData(multiSigAddress)
+			} else if(multiSigAddress !== '' && !isValid) {
+				setMultiSigAddressError(true)
+			} else {
+				setSafeState(-1)
+			}
+		})
 	}, [multiSigAddress])
 
 	useEffect(() => {
