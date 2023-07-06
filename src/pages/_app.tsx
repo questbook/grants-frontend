@@ -13,6 +13,7 @@ import { NextPage } from 'next'
 import type { AppContext, AppProps } from 'next/app'
 import App from 'next/app'
 import Head from 'next/head'
+import Script from 'next/script'
 import { DefaultSeo } from 'next-seo'
 import favIcon from 'public/favicon.ico'
 import {
@@ -692,7 +693,14 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				iconVariant='filled'
 				baseUrl='https://app.papercups.io'
 			/>
-
+			<Script src='https://scripts.simpleanalyticscdn.com/latest.js' />
+			<noscript>
+				<img
+					src='https://queue.simpleanalyticscdn.com/noscript.gif'
+					alt=''
+					referrerPolicy='no-referrer-when-downgrade'
+				/>
+			</noscript>
 		</>
 	)
 }
