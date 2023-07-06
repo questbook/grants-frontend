@@ -38,17 +38,13 @@ import theme from 'src/theme'
 import { GrantProgramContextType, GrantType, MinimalWorkspace, NotificationContextType, Roles } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import {
+	allChains,
 	Chain,
+	chain,
 	configureChains,
 	createClient,
 	WagmiConfig,
 } from 'wagmi'
-import {
-	celo,
-	goerli,
-	optimism,
-	polygon
-} from 'wagmi/chains'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
@@ -69,8 +65,8 @@ type AppPropsWithLayout = AppProps & {
 
 const infuraId = process.env.NEXT_PUBLIC_INFURA_ID
 
-const defaultChain = polygon
-const { chains, provider } = configureChains([goerli, celo, optimism, polygon], [
+const defaultChain = chain.polygon
+const { chains, provider } = configureChains(allChains, [
 	jsonRpcProvider({
 		rpc: (chain: Chain) => {
 			const rpcUrl = CHAIN_INFO[chain.id as SupportedChainId]?.rpcUrls[0]
@@ -101,27 +97,24 @@ const client = createClient({
 			options: {
 				name: 'Injected',
 				shimDisconnect: true,
-				// shimChainChangedDisconnect: true
+				shimChainChangedDisconnect: true
 			},
 		}),
 		new MetaMaskConnector({
 			chains,
 			options: {
 				shimDisconnect: true,
-				// eslint-disable-next-line camelcase
-				UNSTABLE_shimOnConnectSelectAccount: true
-				// shimChainChangedDisconnect: true
+				shimChainChangedDisconnect: true
 			},
 		}),
 		new WalletConnectConnector({
 			chains,
 			options: {
-				projectId: process.env.WALLETCONNECT_PROJECT_ID!,
-				showQrModal: true,
-				// rpc: {
-				// 	'137': `https://polygon-mainnet.infura.io/v3/${infuraId}`,
-				// 	'5': `https://goerli.infura.io/v3/${infuraId}`
-				// },
+				qrcode: true,
+				rpc: {
+					'137': `https://polygon-mainnet.infura.io/v3/${infuraId}`,
+					'5': `https://goerli.infura.io/v3/${infuraId}`
+				},
 			},
 		}),
 	],

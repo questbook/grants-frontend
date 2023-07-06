@@ -20,10 +20,10 @@ export default function useUpdateDaoVisibility() {
 	const workspaceContractCelo = useQBContract('workspace', SupportedChainId.CELO_MAINNET)
 
 	const contractsMap: { [C in SupportedChainId]: Contract } = {
-		[SupportedChainId.GOERLI_TESTNET]: workspaceContractGoerli!,
-		[SupportedChainId.CELO_MAINNET]: workspaceContractCelo!,
-		[SupportedChainId.OPTIMISM_MAINNET]: workspaceContractOptimism!,
-		[SupportedChainId.POLYGON_MAINNET]: workspaceContractPolygon!,
+		[SupportedChainId.GOERLI_TESTNET]: workspaceContractGoerli,
+		[SupportedChainId.CELO_MAINNET]: workspaceContractCelo,
+		[SupportedChainId.OPTIMISM_MAINNET]: workspaceContractOptimism,
+		[SupportedChainId.POLYGON_MAINNET]: workspaceContractPolygon,
 	}
 
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
