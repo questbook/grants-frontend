@@ -1,4 +1,4 @@
-import { Metamask, Phantom, WalletConnect } from 'src/generated/icons'
+import { Metamask, Openmask, Phantom, WalletConnect } from 'src/generated/icons'
 
 export const MONTH_MAP: {[key: string]: string} = {
 	'01': 'Jan',
@@ -53,9 +53,9 @@ export const solanaWallets = [{
 }]
 export const tonWallets = [{
 	name: 'OpenMask',
-	icon: <Phantom
+	icon: <Openmask
 		h={8}
 		w='33px' />,
 	ispopular:false,
-	id:'OpenMask'
+	id:'openMask'
 }]
