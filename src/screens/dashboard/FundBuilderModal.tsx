@@ -370,11 +370,21 @@ function FundBuilderModal() {
 				setSafeProposalLink(getProposalUrl(safeObj?.safeAddress ?? '', proposaladdress as string))
 			}
 			else{
-				proposaladdress = await safeObj?.proposeTransaction(temp[0].to,temp[0].amount.toString(),tonWallet)
-				console.log(proposaladdress,'yeah baby')
-				
+				try{
+					console.log('hhhhhhh',temp)
+				proposaladdress = await safeObj?.proposeTransactions('',temp,tonWallet)
+				setSafeProposalLink("https://tonkey.fdc.ai/transactions/queue?safe="+ (safeObj?.safeAddress ?? ''))
+				}catch(e){
+					customToast({
+						title: (e as { message: string}).message,
+						status: 'error',
+						duration: 3000,
+					})
+					setPayoutInProcess(false)
+					return
+				}
 			}
-			console.log('paaaaa')
+			return
 			const methodArgs = [
 				[parseInt(proposal?.id!, 16)],
 				[parseInt(milestones[milestoneIndices[0]].id?.split('.')[1])],
@@ -385,11 +395,9 @@ function FundBuilderModal() {
 				grant?.workspace?.id,
 				proposaladdress
 			]
-			console.log('qqqqqqqqq',methodArgs)
 			await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
 			setSignerVerifiedState('transaction_initiated')
 			setPayoutInProcess(false)
-			console.log('paaaaaaaaaaaw')
 		}
 	}
 
