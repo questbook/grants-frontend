@@ -589,7 +589,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 	const router = useRouter()
 	const toast = useCustomToast()
 	const [privateKey, setPrivateKey] = useState<string>('')
-	const [safeUSDAmount, setSafeUSDAmount] = useState<number>()
+	const [safeUSDAmount, setSafeUSDAmount] = useState<number>(0)
 
 	const [isRecoveryModalOpen, setIsRecoveryModalOpen] = useState<boolean>(false)
 	const [isImportConfirmationModalOpen, setImportConfirmationModalOpen] = useState<boolean>(false)
@@ -625,6 +625,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 			setPrivateKey(webwallet?.privateKey ?? '')
 		}
 	}, [type, webwallet])
+	console.log(safeUSDAmount,'llllllll')
 	useEffect(() => {
 		if(!grant?.workspace?.safe?.address || !grant?.workspace?.safe?.chainId) {
 			return
@@ -636,6 +637,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 			if(result?.value) {
 				const total = result.value.reduce((acc: number, cur: { usdValueAmount: number }) => acc + cur.usdValueAmount, 0)
 				logger.info({ total }, 'balance total')
+				console.log(typeof total, 'llllllll')
 				setSafeUSDAmount(total)
 			}
 		})

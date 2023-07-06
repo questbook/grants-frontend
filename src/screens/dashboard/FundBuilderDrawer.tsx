@@ -20,6 +20,7 @@ import Verify from 'src/screens/dashboard/_components/FundBuilder/Verify'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
+import usetonWallet from './_hooks/useTonWallet'
 
 function FundBuilderDrawer() {
 	const buildComponent = () => {
@@ -177,6 +178,7 @@ function FundBuilderDrawer() {
 		setSignerVerifiedState
 	} = useContext(FundBuilderContext)!
 	const { phantomWallet } = usePhantomWallet()
+	const {tonWallet} = usetonWallet()
 	const [safeProposalLink, setSafeProposalLink] = useState<string | undefined>(undefined)
 	const [selectedMode, setSelectedMode] = useState<any>()
 	const [payoutInProcess, setPayoutInProcess] = useState(false)
@@ -280,7 +282,7 @@ function FundBuilderDrawer() {
 				}
 
 				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress ?? '', safeObj?.chainId?.toString(), proposaladdress))
-			} else {
+			} else if(safeObj?.getIsTon()===false) {
 				proposaladdress = await safeObj?.proposeTransactions(JSON.stringify({ workspaceId: grant?.workspace?.id, grantAddress: grant?.id }), transactionData, phantomWallet)
 				if(proposaladdress?.error) {
 					customToast({
@@ -294,7 +296,12 @@ function FundBuilderDrawer() {
 
 				setSafeProposalLink(getProposalUrl(safeObj?.safeAddress ?? '', proposaladdress))
 			}
-
+			else{
+				proposaladdress = await safeObj?.proposeTransaction(transactionData[0].to,transactionData[0].amount,tonWallet)
+				console.log(proposaladdress,'yeah baby')
+				
+			}
+			return
 			const methodArgs = [
 				selectedProposalsData.map((proposal) => parseInt(proposal?.id, 16)),
 				selectedProposalsData.map((proposal, i) => parseInt(proposal.milestones[milestoneIndices[i]].id?.split('.')[1])),

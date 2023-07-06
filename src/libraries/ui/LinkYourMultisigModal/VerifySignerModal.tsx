@@ -6,10 +6,12 @@ import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import VerifySignerErrorState from 'src/libraries/ui/LinkYourMultisigModal/VerifySignerErrorState'
 import { delay } from 'src/libraries/utils'
-import { availableWallets, solanaWallets } from 'src/libraries/utils/constants'
+import { availableWallets, solanaWallets, tonWallets } from 'src/libraries/utils/constants'
 import ConnectWalletButton from 'src/screens/dashboard/_components/FundBuilder/ConnectWalletButton'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { useAccount, useConnect, useDisconnect, useNetwork } from 'wagmi'
+import { TonWallet } from '@questbook/supported-safes/lib/wallets/TON'
+import usetonWallet from 'src/screens/dashboard/_hooks/useTonWallet'
 
 const VerifySignerModal = ({
 	owners,
@@ -20,13 +22,13 @@ const VerifySignerModal = ({
 	networkType,
 	// setOwnerAddress
 }: {
-    owners: string[]
-    isOpen: boolean
-    onClose: () => void
-    redirect?: () => void
-    setIsOwner: (newState: boolean) => void
-    networkType: NetworkType
-    // setOwnerAddress: (ownerAddress: string) => void
+	owners: string[]
+	isOpen: boolean
+	onClose: () => void
+	redirect?: () => void
+	setIsOwner: (newState: boolean) => void
+	networkType: NetworkType
+	// setOwnerAddress: (ownerAddress: string) => void
 }) => {
 	const buildComponent = () => (
 		<Modal
@@ -93,16 +95,16 @@ const VerifySignerModal = ({
 													verifying={verifying}
 													isDisabled={verifying !== undefined && verifying !== wallet.id}
 													onClick={
-														async() => {
+														async () => {
 															setVerifying(wallet.id)
 															const connector = connectors.find((x) => x.id === wallet.id)!
 															// swallow error here so we don't fail the remaining logic
 															const isConnected = await connector.isAuthorized().catch(() => false)
 
 															setConnectClicked(true)
-															if(!isConnected) {
+															if (!isConnected) {
 																try {
-																	if(connector) {
+																	if (connector) {
 																		connect({ connector })
 																		toast({
 																			title: 'Connecting to wallet',
@@ -117,7 +119,7 @@ const VerifySignerModal = ({
 																		})
 																		setVerifying(undefined)
 																	}
-																} catch(e) {
+																} catch (e) {
 																	logger.error('evm error', e)
 																	customToast({
 																		title: 'Some error occurred',
@@ -138,23 +140,45 @@ const VerifySignerModal = ({
 														}
 													} />
 											)))
-											: (solanaWallets.map((wallet, index) => (
-												<ConnectWalletButton
-													id={wallet.id}
-													key={index}
-													icon={wallet.icon}
-													name={wallet.name}
-													verifying={verifying}
-													isDisabled={verifying !== undefined && verifying !== wallet.id}
-													onClick={
-														async() => {
-															setVerifying(wallet.id)
-															await phantomWallet?.connect()
-															setWalletClicked(true)
-															// showToast()
-														}
-													} />
-											)))
+											: (
+												networkType === NetworkType.Solana ? (
+													solanaWallets.map((wallet, index) => (
+														<ConnectWalletButton
+															id={wallet.id}
+															key={index}
+															icon={wallet.icon}
+															name={wallet.name}
+															verifying={verifying}
+															isDisabled={verifying !== undefined && verifying !== wallet.id}
+															onClick={
+																async () => {
+																	setVerifying(wallet.id)
+																	await phantomWallet?.connect()
+																	setWalletClicked(true)
+																	// showToast()
+																}
+															} />
+													)))
+													: tonWallets.map((wallet, index) => (
+														<ConnectWalletButton
+															id={wallet.id}
+															key={index}
+															icon={wallet.icon}
+															name={wallet.name}
+															verifying={verifying}
+															isDisabled={verifying !== undefined && verifying !== wallet.id}
+															onClick={
+																async () => {
+																	setVerifying(wallet.id)
+																	const t = await connectTonWallet()
+																	console.log(t, 'llllllllllllll')
+																	setWalletClicked(true)
+																	// showToast()
+																}
+															} />
+													))
+											)
+
 									}
 								</VStack>
 
@@ -182,11 +206,11 @@ const VerifySignerModal = ({
 	const [verifying, setVerifying] = useState<string>()
 	const [redirectInitiated, setRedirectInitiated] = useState(false)
 	const { phantomWallet } = usePhantomWallet()
+	const { tonWallet, connectTonWallet, tonWalletAddress } = usetonWallet()
 	const { disconnectAsync } = useDisconnect()
 	const toast = useToast()
 	const customToast = useCustomToast()
 	const { t } = useTranslation()
-
 	const { isError: isErrorConnecting, connect, connectors } = useConnect()
 	const { address } = useAccount()
 	const { chain } = useNetwork()
@@ -194,10 +218,10 @@ const VerifySignerModal = ({
 	const [isError, setIsError] = React.useState(false)
 
 	useEffect(() => {
-		if(connectClicked) {
+		if (connectClicked) {
 			delay(2000).then(() => {
 				const element = document.getElementsByTagName('wcm-modal')
-				if(element) {
+				if (element) {
 					(element[0] as HTMLElement).style.zIndex = '100000';
 					(element[0] as HTMLElement).style.position = 'absolute'
 
@@ -207,7 +231,7 @@ const VerifySignerModal = ({
 	}, [connectClicked])
 
 	useEffect(() => {
-		if(isOpen) {
+		if (isOpen) {
 			setIsError(false)
 		}
 	}, [isOpen])
@@ -218,8 +242,8 @@ const VerifySignerModal = ({
 
 	useEffect(() => {
 		// console.log(accountData)
-		if(address) {
-			if(!redirectInitiated && redirect && connectClicked) {
+		if (address) {
+			if (!redirectInitiated && redirect && connectClicked) {
 				setRedirectInitiated(true)
 				setConnectClicked(false)
 				redirect()
@@ -228,9 +252,10 @@ const VerifySignerModal = ({
 	}, [address])
 
 	useEffect(() => {
+		console.log(networkType, owners, tonWalletAddress, 'lllllllll')
 		logger.info('VerifySignerModal', { owners, isOpen, walletClicked, networkType, phantomWallet, address })
-		if(isOpen && walletClicked) {
-			if(networkType === NetworkType.EVM && address && owners.includes(address)) {
+		if (isOpen && walletClicked) {
+			if (networkType === NetworkType.EVM && address && owners.includes(address)) {
 				setIsOwner(true)
 				// setOwnerAddress(address)
 				// alert('Your safe ownership is proved.')
@@ -242,8 +267,8 @@ const VerifySignerModal = ({
 					title: t('/onboarding/create-domain.successful_verification'),
 					status: 'success',
 				})
-			// eslint-disable-next-line sonarjs/no-duplicated-branches
-			} else if(networkType === NetworkType.Solana && phantomWallet?.publicKey && owners.includes(phantomWallet?.publicKey.toString())) {
+				// eslint-disable-next-line sonarjs/no-duplicated-branches
+			} else if (networkType === NetworkType.Solana && phantomWallet?.publicKey && owners.includes(phantomWallet?.publicKey.toString())) {
 				setIsOwner(true)
 				// setOwnerAddress(phantomWallet?.publicKey.toString())
 				// alert('Your safe ownership is proved.')
@@ -255,9 +280,9 @@ const VerifySignerModal = ({
 					title: t('/onboarding/create-domain.successful_verification'),
 					status: 'success',
 				})
-			} else if(phantomWallet?.publicKey || address) {
+			} else if (phantomWallet?.publicKey || address) {
 				setIsOwner(false)
-				if(address) {
+				if (address) {
 					disconnectAsync()
 				}
 
@@ -273,7 +298,16 @@ const VerifySignerModal = ({
 					status: 'error',
 				})
 			}
-
+			else if (networkType === NetworkType.TON && owners.includes(tonWalletAddress)) {
+				setIsOwner(true)
+				customToast({
+					duration: 3000,
+					isClosable: true,
+					position: 'top-right',
+					title: t('/onboarding/create-domain.successful_verification'),
+					status: 'success',
+				})
+			}
 			setWalletClicked(false)
 		}
 

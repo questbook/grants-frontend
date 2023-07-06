@@ -68,6 +68,7 @@ function PayWithChoose({ selectedMode }: { selectedMode: {logo: string | undefin
 											setSelectedTokenIndex(value.index)
 										}
 									} />
+							
 							<Text
 									color='#53514F'
 									fontSize='14px'

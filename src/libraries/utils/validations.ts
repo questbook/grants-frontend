@@ -21,6 +21,7 @@ const isValidSolanaAddress = (address: string) => {
 }
 
 const isSupportedAddress = (address: string) => {
+	return true
 	logger.info({ eth: isValidEthereumAddress(address), sol: isValidSolanaAddress(address) }, 'isValidSafeAddress')
 	return isValidEthereumAddress(address) || isValidSolanaAddress(address)
 }

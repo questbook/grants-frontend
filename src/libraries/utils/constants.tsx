@@ -51,3 +51,11 @@ export const solanaWallets = [{
 	isPopular: false,
 	id: 'phantom',
 }]
+export const tonWallets = [{
+	name: 'OpenMask',
+	icon: <Phantom
+		h={8}
+		w='33px' />,
+	ispopular:false,
+	id:'OpenMask'
+}]
