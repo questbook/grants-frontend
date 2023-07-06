@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { NetworkType } from 'src/constants/Networks'
-import { CeloSafe, CheckDouble, Iotex, Loader, RealmsLogo, SafeLogo } from 'src/generated/icons'
+import { CeloSafe, CheckDouble, Iotex, Loader, RealmsLogo, SafeLogo, Tonkey } from 'src/generated/icons'
 import useLinkYourMultisig from 'src/libraries/hooks/useLinkYourMultisig'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
@@ -107,7 +107,7 @@ function LinkYourMultisigModal({
 							async() => {
 								if(isOwner && selectedSafeNetwork) {
 								// link the safe
-									await link(multiSigAddress, selectedSafeNetwork.networkId?.toString()!=='-3' ? selectedSafeNetwork.networkId?.toString() : '3')
+									await link(multiSigAddress, selectedSafeNetwork.networkId?.toString() !== '-3' ? selectedSafeNetwork.networkId?.toString() : '3')
 									onClose()
 								} else {
 									setIsVerifySignerModalOpen(true)
@@ -245,6 +245,11 @@ function LinkYourMultisigModal({
 		},
 		{
 			icon: <Iotex
+				h='2rem'
+				w='5rem' />
+		},
+		{
+			icon: <Tonkey
 				h='2rem'
 				w='5rem' />
 		}
