@@ -63,7 +63,6 @@ const VerifySignerModal = ({
 							<Flex
 								direction='column'
 								alignItems='center'
-								zIndex={-1}
 								py={1}>
 
 								<Text
