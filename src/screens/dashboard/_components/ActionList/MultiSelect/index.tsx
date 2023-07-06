@@ -32,43 +32,50 @@ function MultiSelect() {
 						Send an update to selected builders
 					</Text>
 				</Button>
-				<Flex
-					align='center'
-					my={4}>
-					<Divider />
-					<Text
-						mx={3}
-						variant='body'
-						fontWeight='500'
-						color='gray.500'>
-						OR
-					</Text>
-					<Divider />
-				</Flex>
-				<Button
-					w='100%'
-					variant='primaryMedium'
-					isDisabled={role !== 'admin'}
-					onClick={
-						() => {
-							if(safeObj) {
-								setIsDrawerOpen(true)
-							} else {
-								customToast({
-									title: 'No multi sig connected for batched payout',
-									status: 'error',
-									duration: 3000,
-								})
-							}
-						}
-					}>
-					<Text
-						variant='body'
-						fontWeight='500'
-						color='white'>
-						Payout selected builders
-					</Text>
-				</Button>
+				{
+					!(safeObj?.getIsTon()) &&
+					(
+						<>
+							<Flex
+								align='center'
+								my={4}>
+								<Divider />
+								<Text
+									mx={3}
+									variant='body'
+									fontWeight='500'
+									color='gray.500'>
+									OR
+								</Text>
+								<Divider />
+							</Flex>
+							<Button
+								w='100%'
+								variant='primaryMedium'
+								isDisabled={role !== 'admin'}
+								onClick={
+									() => {
+										if(safeObj) {
+											setIsDrawerOpen(true)
+										} else {
+											customToast({
+												title: 'No multi sig connected for batched payout',
+												status: 'error',
+												duration: 3000,
+											})
+										}
+									}
+								}>
+								<Text
+									variant='body'
+									fontWeight='500'
+									color='white'>
+									Payout selected builders
+								</Text>
+							</Button>
+						</>
+					)
+				}
 			</Flex>
 		)
 	}
