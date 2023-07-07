@@ -373,6 +373,7 @@ function FundBuilderModal() {
 				try{
 					console.log('hhhhhhh',temp)
 				proposaladdress = await safeObj?.proposeTransactions('',temp,tonWallet)
+				console.log('hhhhhhhh','stopped')
 				setSafeProposalLink("https://tonkey.fdc.ai/transactions/queue?safe="+ (safeObj?.safeAddress ?? ''))
 				}catch(e){
 					customToast({
@@ -384,7 +385,6 @@ function FundBuilderModal() {
 					return
 				}
 			}
-			return
 			const methodArgs = [
 				[parseInt(proposal?.id!, 16)],
 				[parseInt(milestones[milestoneIndices[0]].id?.split('.')[1])],
