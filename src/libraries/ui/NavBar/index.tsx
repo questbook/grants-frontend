@@ -625,7 +625,6 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 			setPrivateKey(webwallet?.privateKey ?? '')
 		}
 	}, [type, webwallet])
-	console.log(safeUSDAmount,'llllllll')
 	useEffect(() => {
 		if(!grant?.workspace?.safe?.address || !grant?.workspace?.safe?.chainId) {
 			return
@@ -637,7 +636,6 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 			if(result?.value) {
 				const total = result.value.reduce((acc: number, cur: { usdValueAmount: number }) => acc + cur.usdValueAmount, 0)
 				logger.info({ total }, 'balance total')
-				console.log(typeof total, 'llllllll')
 				setSafeUSDAmount(total)
 			}
 		})

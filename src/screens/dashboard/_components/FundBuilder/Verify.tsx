@@ -8,10 +8,9 @@ import { availableWallets, solanaWallets, tonWallets } from 'src/libraries/utils
 import getErrorMessage from 'src/libraries/utils/error'
 import ConnectWalletButton from 'src/screens/dashboard/_components/FundBuilder/ConnectWalletButton'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
+import usetonWallet from 'src/screens/dashboard/_hooks/useTonWallet'
 import { SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
 import { Connector, useAccount, useConnect, useNetwork, useSwitchNetwork } from 'wagmi'
-import { Wallet } from 'ethers'
-import usetonWallet from '../../_hooks/useTonWallet'
 
 interface Props {
 	signerVerifiedState: SignerVerifiedState
@@ -51,7 +50,7 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 								verifying={verifying}
 								isDisabled={verifying !== undefined && verifying !== wallet.id}
 								onClick={
-									async () => {
+									async() => {
 										setVerifying(wallet.id)
 										logger.info('Connect wallet initiated')
 										try {
@@ -60,10 +59,10 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 											logger.info({ connector }, 'connector')
 											setSelectedConnector(connector)
 											// setConnectClicked(true)
-											if (connector) {
+											if(connector) {
 												// swallow error here so we don't fail the remaining logic
 												const isConnected = await connector.isAuthorized().catch(() => false)
-												if (!isConnected) {
+												if(!isConnected) {
 													connect({ connector })
 													toast({
 														title: 'Connecting to wallet',
@@ -80,7 +79,7 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 												setVerifying(undefined)
 											}
 											// eslint-disable-next-line @typescript-eslint/no-explicit-any
-										} catch (e: any) {
+										} catch(e: any) {
 											setVerifying(undefined)
 											const message = getErrorMessage(e)
 											toast({
@@ -141,7 +140,7 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 	const { safeObj } = useSafeContext()!
 	const { switchNetwork } = useSwitchNetwork()
 	const { phantomWallet, phantomWalletConnected } = usePhantomWallet()
-	const { tonWallet, connectTonWallet, tonWalletAddress, tonWalletConnected } = usetonWallet()
+	const { connectTonWallet, tonWalletAddress, tonWalletConnected } = usetonWallet()
 	const { address } = useAccount()
 	const toast = useCustomToast()
 
@@ -156,10 +155,10 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 		return safeObj?.getIsTon()
 	}, [safeObj])
 
-	const verifyOwner = async (address: string) => {
+	const verifyOwner = async(address: string) => {
 		logger.info({ address: safeObj?.safeAddress }, '1')
 		const isVerified = await safeObj?.isOwner(address)
-		if (isVerified) {
+		if(isVerified) {
 			setSignerVerifiedState('verified')
 			toast({
 				title: `Verified owner of multisig ${safeObj?.safeAddress}.`,
@@ -178,38 +177,37 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 		setVerifying(undefined)
 	}
 
-	const initiateOwnerVerification = async () => {
+	const initiateOwnerVerification = async() => {
 		const didSwitch = await switchNetworkIfNeeded()
-		if (didSwitch) {
+		if(didSwitch) {
 			return
 		}
 
 		const isConnected = selectedConnector ? await selectedConnector.isAuthorized().catch(() => false) : false
-		if (isConnected || phantomWalletConnected) {
+		if(isConnected || phantomWalletConnected) {
 			setSignerVerifiedState('verifying')
 		}
 
-		if (shouldVerify) {
-			if (safeObj?.getIsEvm() && isConnected && chain?.id === safeObj?.chainId) {
+		if(shouldVerify) {
+			if(safeObj?.getIsEvm() && isConnected && chain?.id === safeObj?.chainId) {
 				verifyOwner(address!)
-			} else if (isTonChain && tonWalletConnected) {
+			} else if(isTonChain && tonWalletConnected) {
 				verifyOwner(tonWalletAddress)
-			}
-			else if (phantomWalletConnected) {
+			} else if(phantomWalletConnected) {
 				verifyOwner(phantomWallet?.publicKey?.toString()!)
 			}
 		}
 	}
 
-	const switchNetworkIfNeeded = async () => {
+	const switchNetworkIfNeeded = async() => {
 		const isConnected = selectedConnector ? await selectedConnector.isAuthorized().catch(() => false) : false
-		if (isConnected && chain?.id !== safeObj?.chainId) {
+		if(isConnected && chain?.id !== safeObj?.chainId) {
 			try {
 				const toChainId = safeObj?.chainId
 				logger.info({ toChainId }, 'Switching network to')
 				switchNetwork?.(toChainId)
 				return true
-			} catch (e) {
+			} catch(e) {
 				logger.error(e)
 				toast({
 					title: 'Error switching network',
@@ -224,10 +222,7 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 	}
 
 	useEffect(() => {
-		if (isTonChain && tonWalletConnected) {
-			initiateOwnerVerification()
-		}
-		else if (address && verifying !== undefined) {
+		if((isTonChain && tonWalletConnected) || (address && verifying !== undefined)) {
 			initiateOwnerVerification()
 		}
 	}, [address, chain, selectedConnector, phantomWalletConnected, verifying, tonWalletConnected])

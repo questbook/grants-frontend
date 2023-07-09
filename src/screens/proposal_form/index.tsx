@@ -563,8 +563,6 @@ function ProposalForm() {
 	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const { safeObj } = useSafeContext()!
 
-	const isEvm = safeObj?.getIsEvm()
-
 	const router = useRouter()
 	const { newTab } = router.query
 

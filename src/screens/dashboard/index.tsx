@@ -76,7 +76,8 @@ function Dashboard(props: DynamicData) {
 
 			{/* Modals */}
 			<FundBuilderModal />
-			<SendAnUpdateModal />npm
+			<SendAnUpdateModal />
+			npm
 			<LinkYourMultisigModal
 				isOpen={isLinkYourMultisigModalOpen}
 				onClose={
