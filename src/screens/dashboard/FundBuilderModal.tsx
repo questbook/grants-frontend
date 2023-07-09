@@ -383,6 +383,7 @@ function FundBuilderModal() {
 					return
 				}
 			}
+			console.log('TON transaction proposed')
 			const methodArgs = [
 				[parseInt(proposal?.id!, 16)],
 				[parseInt(milestones[milestoneIndices[0]].id?.split('.')[1])],
