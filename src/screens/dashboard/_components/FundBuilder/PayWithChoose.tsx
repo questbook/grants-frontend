@@ -104,7 +104,7 @@ function PayWithChoose({ selectedMode }: { selectedMode: {logo: string | undefin
 				<Image
 					boxSize='16px'
 					src={data.tokenIcon}
-					fallbackSrc={data.tokenName.includes('DAI') ? '/chain_assets/dai.svg' : '/chain_assets/eth.svg'}
+					fallbackSrc={(data.tokenName.includes('DAI') ? '/chain_assets/dai.svg' : (data.tokenName.includes('TON') ? '/chain_assets/toncoin.svg' : '/chain_assets/eth.svg'))}
 				/>
 				<Text
 				ml={2}
@@ -131,7 +131,7 @@ function PayWithChoose({ selectedMode }: { selectedMode: {logo: string | undefin
 		>
 				<Image
 				src={data.tokenIcon}
-				fallbackSrc={data.tokenName.includes('DAI') ? '/chain_assets/dai.svg' : '/chain_assets/eth.svg'}
+				fallbackSrc={(data.tokenName.includes('DAI') ? '/chain_assets/dai.svg' : (data.tokenName.includes('TON') ? '/chain_assets/toncoin.svg' : '/chain_assets/eth.svg'))}
 				boxSize='16px' />
 				<Text
 				ml={2}

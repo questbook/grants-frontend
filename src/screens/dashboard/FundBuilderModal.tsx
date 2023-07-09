@@ -22,6 +22,7 @@ import TransactionInitiated from 'src/screens/dashboard/_components/FundBuilder/
 import Verify from 'src/screens/dashboard/_components/FundBuilder/Verify'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
+import usetonWallet from './_hooks/useTonWallet'
 
 function FundBuilderModal() {
 	const buildComponent = () => {
@@ -210,10 +211,10 @@ function FundBuilderModal() {
 		setSignerVerifiedState,
 	} = useContext(FundBuilderContext)!
 	const { phantomWallet } = usePhantomWallet()
+	const {tonWallet} = usetonWallet()
 	const [safeProposalLink, setSafeProposalLink] = useState<string | undefined>(undefined)
 	const [selectedMode, setSelectedMode] = useState<{logo: string | undefined, value: string | undefined}>()
 	const [payoutInProcess, setPayoutInProcess] = useState(false)
-
 	const customToast = useCustomToast()
 	const toast = useToast()
 	const payoutsInProcessToastRef = useRef<any>()
@@ -353,7 +354,7 @@ function FundBuilderModal() {
 
 				// setSafeProposalAddress(proposaladdress as string)
 				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress ?? '', safeObj?.chainId?.toString(), proposaladdress as string))
-			} else {
+			} else if(safeObj?.getIsTon()===false){
 				proposaladdress = await safeObj?.proposeTransactions(JSON.stringify({ workspaceId: grant?.workspace?.id, grantAddress: grant?.id }), temp, phantomWallet)
 				if(proposaladdress?.error) {
 					customToast({
@@ -368,7 +369,20 @@ function FundBuilderModal() {
 				// setSafeProposalAddress(proposaladdress as string)
 				setSafeProposalLink(getProposalUrl(safeObj?.safeAddress ?? '', proposaladdress as string))
 			}
-
+			else{
+				try{
+				proposaladdress = await safeObj?.proposeTransactions('',temp,tonWallet)
+				setSafeProposalLink("https://tonkey.fdc.ai/transactions/queue?safe="+ (safeObj?.safeAddress ?? ''))
+				}catch(e){
+					customToast({
+						title: (e as { message: string}).message,
+						status: 'error',
+						duration: 3000,
+					})
+					setPayoutInProcess(false)
+					return
+				}
+			}
 			const methodArgs = [
 				[parseInt(proposal?.id!, 16)],
 				[parseInt(milestones[milestoneIndices[0]].id?.split('.')[1])],
@@ -379,7 +393,6 @@ function FundBuilderModal() {
 				grant?.workspace?.id,
 				proposaladdress
 			]
-
 			await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
 			setSignerVerifiedState('transaction_initiated')
 			setPayoutInProcess(false)

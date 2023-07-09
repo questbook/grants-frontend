@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { NetworkType } from 'src/constants/Networks'
-import { CeloSafe, CheckDouble, Iotex, Loader, RealmsLogo, SafeLogo } from 'src/generated/icons'
+import { CeloSafe, CheckDouble, Iotex, Loader, RealmsLogo, SafeLogo, Tonkey } from 'src/generated/icons'
 import useLinkYourMultisig from 'src/libraries/hooks/useLinkYourMultisig'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
@@ -106,8 +106,8 @@ function LinkYourMultisigModal({
 						onClick={
 							async() => {
 								if(isOwner && selectedSafeNetwork) {
-									// link the safe
-									await link(multiSigAddress, selectedSafeNetwork.networkId?.toString())
+								// link the safe
+									await link(multiSigAddress, selectedSafeNetwork.networkId?.toString() !== '-3' ? selectedSafeNetwork.networkId?.toString() : '512342')
 									onClose()
 								} else {
 									setIsVerifySignerModalOpen(true)
@@ -249,6 +249,11 @@ function LinkYourMultisigModal({
 			icon: <Iotex
 				h='2rem'
 				w='5rem' />
+		},
+		{
+			icon: <Tonkey
+				h='2rem'
+				w='5rem' />
 		}
 	]
 
@@ -283,7 +288,7 @@ function LinkYourMultisigModal({
 
 	useEffect(() => {
 		setMultiSigAddressError(false)
-		isSupportedAddress(multiSigAddress, undefined).then((isValid) => {
+		isSupportedAddress(multiSigAddress).then((isValid: boolean) => {
 			logger.info('Safe address entered', { multiSigAddress, isValid })
 			if(multiSigAddress !== '' && isValid) {
 				fetchSafeData(multiSigAddress)
@@ -293,7 +298,6 @@ function LinkYourMultisigModal({
 				setSafeState(-1)
 			}
 		})
-
 	}, [multiSigAddress])
 
 	useEffect(() => {

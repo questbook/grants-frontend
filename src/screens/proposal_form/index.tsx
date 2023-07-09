@@ -330,13 +330,13 @@ function ProposalForm() {
 									onChange={
 										async(e) => {
 											onChange(e, 'applicantAddress')
-											await validateWalletAddress(e.target.value, isEvm, (isValid) => {
+											await validateWalletAddress(e.target.value, (isValid) => {
 												setWalletAddressError(!isValid)
 											})
 										}
 									}
 									isInvalid={walletAddressError}
-									errorText={`Invalid address on ${chainNames?.get(safeObj?.chainId?.toString() ?? '') !== undefined ? chainNames.get(safeObj?.chainId?.toString() ?? '')?.toString() : grant?.id !== '0xe92b011b2ecb97dbe168c802d582037e28036f9b' ? 'EVM based chain' : 'TON Blockchain'}`} />
+									errorText={`Invalid address on ${chainNames?.get(safeObj?.chainId?.toString() ?? '') !== undefined ? chainNames.get(safeObj?.chainId?.toString() ?? '')?.toString() : 'EVM / Solana / TON based chain'}`} />
 							)
 						}
 

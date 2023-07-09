@@ -1,6 +1,6 @@
 import config from 'src/constants/config.json'
 
-const IPFS_UPLOAD_ENDPOINT = 'https://ipfs.questbook.app/api/v0/add'
+const IPFS_UPLOAD_ENDPOINT = 'https://ipfs.questbook.app/api/v0/add?pin=true'
 const IPFS_DOWNLOAD_ENDPOINT = 'https://ipfs.questbook.app:8080'
 
 export const uploadToIPFS = async(data: string | Blob | null): Promise<{ hash: string }> => {

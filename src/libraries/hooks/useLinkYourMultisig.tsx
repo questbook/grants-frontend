@@ -32,8 +32,9 @@ function useLinkYourMultisig() {
 		if(isValidEthereumAddress(multisigAddress)) {
 			safeAddressInBytes = ethers.utils.hexZeroPad(ethers.utils.hexlify(ethers.utils.getAddress(multisigAddress)), 32)
 		}
-
+		
 		const methodArgs = [Number(grant?.workspace?.id), safeAddressInBytes, multisigAddress, networkId]
+
 		await call({ method: 'updateWorkspaceSafe', args: methodArgs })
 	}
 

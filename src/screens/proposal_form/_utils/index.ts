@@ -41,11 +41,11 @@ const validateEmail = (email: string, callback: (isValid: boolean) => void) => {
 	}
 }
 
-const validateWalletAddress = async(address: string, isEvm: boolean | undefined, callback: (isValid: boolean) => void) => {
+const validateWalletAddress = async(address: string, callback: (isValid: boolean) => void) => {
 	if(address) {
 		if(address === '') {
 			callback(false)
-		} else if(await isSupportedAddress(address, isEvm)) {
+		} else if(await isSupportedAddress(address)) {
 			callback(true)
 		} else {
 			callback(false)
