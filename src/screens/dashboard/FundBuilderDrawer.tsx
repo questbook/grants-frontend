@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useContext, useEffect, useMemo, useState } from 'react'
-import { Box, Button, Drawer, DrawerCloseButton, DrawerContent, DrawerOverlay, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
+import { Box, Button, Drawer, DrawerCloseButton, DrawerContent, DrawerOverlay, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text, useToast } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { defaultChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
@@ -20,6 +20,8 @@ import Verify from 'src/screens/dashboard/_components/FundBuilder/Verify'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
+import usetonWallet from './_hooks/useTonWallet'
+import { SelectedTokenInterface } from '@questbook/supported-safes/lib/types/Safe'
 
 function FundBuilderDrawer() {
 	const buildComponent = () => {
@@ -177,9 +179,11 @@ function FundBuilderDrawer() {
 		setSignerVerifiedState
 	} = useContext(FundBuilderContext)!
 	const { phantomWallet } = usePhantomWallet()
+	const {tonWallet} = usetonWallet()
 	const [safeProposalLink, setSafeProposalLink] = useState<string | undefined>(undefined)
 	const [selectedMode, setSelectedMode] = useState<any>()
 	const [payoutInProcess, setPayoutInProcess] = useState(false)
+	const toast = useToast()
 
 	const customToast = useCustomToast()
 
@@ -259,10 +263,10 @@ function FundBuilderDrawer() {
 			const transactionData = tos.map((to, i) => {
 				return {
 					from: safeObj?.safeAddress?.toString(),
-					to: to,
+					to,
 					applicationId: proposals[i]?.id ? parseInt(proposals[i].id, 16) : 0,
 					selectedMilestone: milestoneIndices?.[i],
-					selectedToken: { tokenName: selectedTokenInfo?.tokenName, info: selectedTokenInfo?.info },
+					selectedToken: { tokenName: selectedTokenInfo?.tokenName as string, info: selectedTokenInfo?.info },
 					amount: amounts?.[i],
 				}
 			})
@@ -280,7 +284,7 @@ function FundBuilderDrawer() {
 				}
 
 				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress ?? '', safeObj?.chainId?.toString(), proposaladdress))
-			} else {
+			} else if(safeObj?.getIsTon()===false) {
 				proposaladdress = await safeObj?.proposeTransactions(JSON.stringify({ workspaceId: grant?.workspace?.id, grantAddress: grant?.id }), transactionData, phantomWallet)
 				if(proposaladdress?.error) {
 					customToast({
@@ -294,7 +298,22 @@ function FundBuilderDrawer() {
 
 				setSafeProposalLink(getProposalUrl(safeObj?.safeAddress ?? '', proposaladdress))
 			}
+			else{
+				try{
+					console.log(transactionData,'wwwww')
+					proposaladdress = await safeObj?.proposeTransactions('', transactionData, tonWallet)
 
+					setSafeProposalLink("https://tonkey.fdc.ai/transactions/queue?safe="+ (safeObj?.safeAddress ?? ''))
+					}catch(e){
+						customToast({
+							title: e as string,
+							status: 'error',
+							duration: 3000,
+						})
+						setPayoutInProcess(false)
+						return
+					}
+			}
 			const methodArgs = [
 				selectedProposalsData.map((proposal) => parseInt(proposal?.id, 16)),
 				selectedProposalsData.map((proposal, i) => parseInt(proposal.milestones[milestoneIndices[i]].id?.split('.')[1])),

@@ -1,7 +1,7 @@
 import config from 'src/constants/config.json'
 
-const IPFS_UPLOAD_ENDPOINT = 'https://ipfs.infura.io:5001/api/v0/add?pin=true'
-const IPFS_DOWNLOAD_ENDPOINT = 'https://api.thegraph.com/ipfs/api/v0/cat'
+const IPFS_UPLOAD_ENDPOINT = 'https://ipfs.questbook.app/api/v0/add?pin=true'
+const IPFS_DOWNLOAD_ENDPOINT = 'https://ipfs.questbook.app:8080'
 
 export const uploadToIPFS = async(data: string | Blob | null): Promise<{ hash: string }> => {
 	if(data === null) {
@@ -15,9 +15,6 @@ export const uploadToIPFS = async(data: string | Blob | null): Promise<{ hash: s
 	const fetchResult = await fetch(IPFS_UPLOAD_ENDPOINT, {
 		method: 'POST',
 		body: form,
-		headers: {
-			authorization: `Basic ${Buffer.from(`${process.env.INFURA_IPFS_PROJECT_ID}:${process.env.INFURA_IPFS_API_KEY}`).toString('base64')}`,
-		}
 	})
 	const responseBody = await fetchResult.json()
 
@@ -34,9 +31,11 @@ export const getFromIPFS = async(hash: string): Promise<string> => {
 		return cached
 	}
 
+	const url = getUrlForIPFSHash(hash)
+
 	try {
 		// console.log(hash)
-		const fetchResult = await fetch(`${IPFS_DOWNLOAD_ENDPOINT}?arg=${hash}`)
+		const fetchResult = await fetch(url)
 		const text = await fetchResult.text()
 		localStorage.setItem(hash, text)
 		return text
@@ -71,7 +70,7 @@ export const getUrlForIPFSHash = (hash: string) => {
 		return `https://ipfs.io/ipfs/${hash}`
 	}
 
-	return `${IPFS_DOWNLOAD_ENDPOINT}?arg=${hash}`
+	return `${IPFS_DOWNLOAD_ENDPOINT}/ipfs/${hash}`
 }
 
 export const isIpfsHash = (str: string | undefined | null) => !!str && str.startsWith('Qm') && str.length < 256

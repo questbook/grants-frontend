@@ -8,7 +8,7 @@ import GrantAbi from 'src/contracts/abi/GrantAbi.json'
 import GrantFactoryAbi from 'src/contracts/abi/GrantFactoryAbi.json'
 import WorkspaceRegistryAbi from 'src/contracts/abi/WorkspaceRegistryAbi.json'
 import { WebwalletContext } from 'src/pages/_app'
-import { QBContract } from 'src/types'
+import { QBContract, QBContractABIMap } from 'src/types'
 import { useContract, useSigner } from 'wagmi'
 
 export default function useQBContract<C extends QBContract>(name: C, chainId?: SupportedChainId, isZeroWallet?: boolean) {
@@ -19,9 +19,9 @@ export default function useQBContract<C extends QBContract>(name: C, chainId?: S
 		return address || '0x0000000000000000000000000000000000000000'
 	}, [name, chainId])
 
-	const contract = useContract({
-		address: addressOrName,
-		abi: CONTRACT_INTERFACE_MAP[name],
+	const contract = useContract<QBContractABIMap[C]>({
+		addressOrName,
+		contractInterface: CONTRACT_INTERFACE_MAP[name],
 		signerOrProvider: isZeroWallet === false ? signer : zeroWalletSigner,
 	})
 
