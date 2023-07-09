@@ -1,3 +1,4 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react'
 import { logger } from 'ethers'
 import TonWeb from 'tonweb'
