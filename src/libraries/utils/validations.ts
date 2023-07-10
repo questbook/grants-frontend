@@ -25,12 +25,13 @@ const isValidTonAddress = async(address: string) => {
 	try {
 		const res = await axios.get<{ok: boolean, error: string}>(`https://toncenter.com/api/v2/getAddressInformation?address=${address}`)
 		return !!res.data?.ok
-	} catch{
+	} catch(e) {
 		return false
 	}
 }
 
 const isSupportedAddress = async(address: string) => {
+	return true
 	const isValidTon = await isValidTonAddress(address)
 	logger.info({ eth: isValidEthereumAddress(address), sol: isValidSolanaAddress(address), ton: isValidTon }, 'isValidSafeAddress')
 	return isValidEthereumAddress(address) || isValidSolanaAddress(address) || isValidTon

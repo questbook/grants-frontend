@@ -589,7 +589,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 	const router = useRouter()
 	const toast = useCustomToast()
 	const [privateKey, setPrivateKey] = useState<string>('')
-	const [safeUSDAmount, setSafeUSDAmount] = useState<number>(0)
+	const [safeUSDAmount, setSafeUSDAmount] = useState<number>()
 
 	const [isRecoveryModalOpen, setIsRecoveryModalOpen] = useState<boolean>(false)
 	const [isImportConfirmationModalOpen, setImportConfirmationModalOpen] = useState<boolean>(false)

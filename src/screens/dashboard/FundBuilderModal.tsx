@@ -178,7 +178,9 @@ function FundBuilderModal() {
 						{
 							['transaction_initiated'].includes(signerVerifiedState) && safeProposalLink && (
 								<TransactionInitiated
-									safeProposalLink={safeProposalLink!} />
+									safeProposalLink={safeProposalLink!}
+									setIsModalOpen={setIsModalOpen}
+								/>
 							)
 						}
 

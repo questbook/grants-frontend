@@ -8,7 +8,7 @@ import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import { getFieldString } from 'src/libraries/utils/formatting'
 import { uploadToIPFS } from 'src/libraries/utils/ipfs'
-import { getGnosisTansactionLink, getProposalUrl } from 'src/libraries/utils/multisig'
+import { getGnosisTansactionLink, getProposalUrl, getTonkeyProposalUrl } from 'src/libraries/utils/multisig'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
 import PayFromChoose from 'src/screens/dashboard/_components/FundBuilder/PayFromChoose'
@@ -150,7 +150,9 @@ function FundBuilderDrawer() {
 								<ModalBody>
 
 									<TransactionInitiated
-										safeProposalLink={safeProposalLink!} />
+										safeProposalLink={safeProposalLink!}
+										setIsModalOpen={setIsModalOpen}
+									/>
 
 								</ModalBody>
 							</ModalContent>
@@ -299,7 +301,7 @@ function FundBuilderDrawer() {
 				try {
 					proposaladdress = await safeObj?.proposeTransactions('', transactionData, tonWallet)
 
-					setSafeProposalLink('https://tonkey.fdc.ai/transactions/queue?safe=' + (safeObj?.safeAddress ?? ''))
+					setSafeProposalLink(getTonkeyProposalUrl(safeObj?.safeAddress ?? '', 'queue'))
 				} catch(e) {
 					customToast({
 						title: e as string,
