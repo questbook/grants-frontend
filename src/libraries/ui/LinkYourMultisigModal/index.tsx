@@ -108,6 +108,8 @@ function LinkYourMultisigModal({
 								if(isOwner && selectedSafeNetwork) {
 									//mapping ton chainIds
 									let networkId = selectedSafeNetwork.networkId?.toString()
+									logger.info('lllll', networkId)
+									return
 									if(networkId === '-3') {
 										networkId = '512342'
 									} else if(networkId === '-239') {

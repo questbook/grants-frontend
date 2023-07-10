@@ -157,6 +157,7 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 
 	const verifyOwner = async(address: string) => {
 		logger.info({ address: safeObj?.safeAddress }, '1')
+		logger.info('lllllll', safeObj)
 		const isVerified = await safeObj?.isOwner(address)
 		if(isVerified) {
 			setSignerVerifiedState('verified')

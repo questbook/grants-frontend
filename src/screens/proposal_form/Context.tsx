@@ -138,6 +138,8 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 
 		setGrant(result[0].grant)
 		const currentSafe = new SupportedPayouts().getSafe(parseInt(result[0].grant?.workspace?.safe?.chainId!), result[0].grant?.workspace?.safe?.address!)
+
+		logger.info(result[0].grant?.workspace?.safe?.chainId, 'llllllw')
 		setSafeObj(currentSafe)
 		return 'fetched-grant-details'
 	}, [grantId, chainId])
