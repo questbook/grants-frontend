@@ -28,6 +28,7 @@ export default function usetonWallet() {
 		}
 
 		const account = accounts[0]
+		logger.info('tonWalletAddress', account)
 		const userRawAddress = new TonWeb.Address(account).toString(false)
 		setTonWalletAddress(userRawAddress)
 		setTonWalletConnected(true)

@@ -302,6 +302,12 @@ const VerifySignerModal = ({
 					title: t('/onboarding/create-domain.successful_verification'),
 					status: 'success',
 				})
+			} else {
+				toast({
+					title: 'The first selected wallet is not an owner!',
+					status: 'error',
+					duration: 3000
+				})
 			}
 
 			setWalletClicked(false)
