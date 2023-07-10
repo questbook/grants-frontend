@@ -34,6 +34,7 @@ function useLinkYourMultisig() {
 		}
 
 		const methodArgs = [Number(grant?.workspace?.id), safeAddressInBytes, multisigAddress, networkId]
+
 		await call({ method: 'updateWorkspaceSafe', args: methodArgs })
 	}
 

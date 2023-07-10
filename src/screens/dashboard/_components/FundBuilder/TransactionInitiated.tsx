@@ -4,9 +4,10 @@ import { Link } from 'src/generated/icons'
 
 interface Props {
     safeProposalLink: string
+	setIsModalOpen: (isOpen: boolean) => void
 }
 
-const TransactionInitiated = ({ safeProposalLink }: Props) => {
+const TransactionInitiated = ({ safeProposalLink, setIsModalOpen }: Props) => {
 	const buildComponent = () => (
 		<Flex
 			p={6}
@@ -67,7 +68,9 @@ const TransactionInitiated = ({ safeProposalLink }: Props) => {
 					rel='noreferrer'>
 					<Button
 						w='100%'
-						variant='primaryLarge'>
+						variant='primaryLarge'
+						onClick={() => setIsModalOpen(false)}
+					>
 						<Link
 							mr='1rem' />
 						<Text

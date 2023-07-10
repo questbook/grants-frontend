@@ -4,6 +4,9 @@ const withYaml = require('next-plugin-yaml')
 
 const nextConfig = {
 	reactStrictMode: true,
+	// eslint: {
+	// 	ignoreDuringBuilds: true,
+	//   },
 	trailingSlash: true,
 	webpack: function(config, options) {
 		if(!options.isServer) {

@@ -5573,6 +5573,14 @@ export type ProposalDetailsQueryVariables = Exact<{
 
 export type ProposalDetailsQuery = { __typename?: 'Query', grantApplication?: { __typename?: 'GrantApplication', id: string, applicantId: string, applicantPublicKey?: string | null, fields: Array<{ __typename?: 'GrantFieldAnswer', id: string, values: Array<{ __typename?: 'GrantFieldAnswerItem', id: string, value: string }> }>, pii: Array<{ __typename?: 'PIIAnswer', id: string, data: string }>, milestones: Array<{ __typename?: 'ApplicationMilestone', title: string, amount: string }>, grant: { __typename?: 'Grant', id: string, creatorId: string, title: string, summary: string, details: string, startDate?: string | null, deadline?: string | null, startDateS?: number | null, deadlineS: number, payoutType?: PayoutType | null, reviewType?: ReviewType | null, link?: string | null, docIpfsHash?: string | null, acceptingApplications: boolean, metadataHash: string, funding: string, reward: { __typename?: 'Reward', id: string, asset: string, committed: string, token?: { __typename?: 'Token', id: string, label: string, address: string, decimal: number, iconHash: string, chainId?: string | null } | null }, workspace: { __typename?: 'Workspace', id: string, title: string, supportedNetworks: Array<SupportedNetwork>, logoIpfsHash: string, safe?: { __typename?: 'WorkspaceSafe', address: string, chainId: string } | null }, fields: Array<{ __typename?: 'GrantField', id: string, title: string, inputType: GrantFieldInputType, possibleValues?: Array<string> | null, isPii: boolean }> } } | null };
 
+export type WalletAddressCheckerQueryVariables = Exact<{
+  grantId: Scalars['String'];
+  walletAddress: Scalars['Bytes'];
+}>;
+
+
+export type WalletAddressCheckerQuery = { __typename?: 'Query', grantApplications: Array<{ __typename?: 'GrantApplication', id: string, walletAddress: string }> };
+
 export type GetGrantDetailsByIdQueryVariables = Exact<{
   grantID: Scalars['ID'];
 }>;
@@ -7369,6 +7377,46 @@ export type ProposalDetailsLazyQueryHookResult = ReturnType<typeof useProposalDe
 export type ProposalDetailsQueryResult = Apollo.QueryResult<ProposalDetailsQuery, ProposalDetailsQueryVariables>;
 export function refetchProposalDetailsQuery(variables: ProposalDetailsQueryVariables) {
       return { query: ProposalDetailsDocument, variables: variables }
+    }
+export const WalletAddressCheckerDocument = gql`
+    query walletAddressChecker($grantId: String!, $walletAddress: Bytes!) {
+  grantApplications(where: {grant: $grantId, walletAddress: $walletAddress}) {
+    id
+    walletAddress
+  }
+}
+    `;
+
+/**
+ * __useWalletAddressCheckerQuery__
+ *
+ * To run a query within a React component, call `useWalletAddressCheckerQuery` and pass it any options that fit your needs.
+ * When your component renders, `useWalletAddressCheckerQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useWalletAddressCheckerQuery({
+ *   variables: {
+ *      grantId: // value for 'grantId'
+ *      walletAddress: // value for 'walletAddress'
+ *   },
+ * });
+ */
+export function useWalletAddressCheckerQuery(baseOptions: Apollo.QueryHookOptions<WalletAddressCheckerQuery, WalletAddressCheckerQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<WalletAddressCheckerQuery, WalletAddressCheckerQueryVariables>(WalletAddressCheckerDocument, options);
+      }
+export function useWalletAddressCheckerLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<WalletAddressCheckerQuery, WalletAddressCheckerQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<WalletAddressCheckerQuery, WalletAddressCheckerQueryVariables>(WalletAddressCheckerDocument, options);
+        }
+export type WalletAddressCheckerQueryHookResult = ReturnType<typeof useWalletAddressCheckerQuery>;
+export type WalletAddressCheckerLazyQueryHookResult = ReturnType<typeof useWalletAddressCheckerLazyQuery>;
+export type WalletAddressCheckerQueryResult = Apollo.QueryResult<WalletAddressCheckerQuery, WalletAddressCheckerQueryVariables>;
+export function refetchWalletAddressCheckerQuery(variables: WalletAddressCheckerQueryVariables) {
+      return { query: WalletAddressCheckerDocument, variables: variables }
     }
 export const GetGrantDetailsByIdDocument = gql`
     query getGrantDetailsById($grantID: ID!) {

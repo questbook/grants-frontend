@@ -84,6 +84,7 @@ const SingleValue = ({ innerProps, data }: SingleValueProps<SafeSelectOption, bo
 		<Flex>
 			<Image
 				src={data.networkIcon}
+				fallbackSrc='/v2/icons/tonkey.svg'
 				boxSize='20px' />
 			<Text
 				ml={4}

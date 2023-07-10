@@ -3,8 +3,11 @@ import { convertToRaw } from 'draft-js'
 import { ethers } from 'ethers'
 import { USD_ASSET } from 'src/constants/chains'
 import ApplicationRegistryAbi from 'src/contracts/abi/ApplicationRegistryAbi.json'
+import { useWalletAddressCheckerQuery } from 'src/generated/graphql'
 import useCreateMapping from 'src/libraries/hooks/useCreateMapping'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
+import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
 import { parseAmount } from 'src/libraries/utils/formatting'
 import { getEventData } from 'src/libraries/utils/gasless'
@@ -28,6 +31,7 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 	const { type, grant, proposal, chainId } = useContext(ProposalFormContext)!
 	const { encrypt } = useEncryptPiiForApplication(grant?.id, webwallet?.publicKey, chainId)
+	const customToast = useCustomToast()
 
 	const chainInfo = useMemo(() => {
 		if(!grant || !chainId) {
@@ -42,9 +46,37 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 
 	const [proposalId, setProposalId] = useState<string>()
 
+	const { fetchMore: fetchIsWalletAddressUsed } = useMultiChainQuery({
+		useQuery: useWalletAddressCheckerQuery,
+		options: {},
+		chains: [chainId]
+	})
+
 	const submitProposal = async(form: Form) => {
 		try {
 			if(!grant || !webwallet || !isBiconomyInitialised || !scwAddress) {
+				return
+			}
+
+
+			//Check if the wallet address is used before for this grant
+			const walletAddress = findField(form, 'applicantAddress').value
+			// console.log(walletAddress,'ooooooooo',grant.id)
+			let builderAddressInBytes: Uint8Array | string = new Uint8Array(32)
+
+			if(isValidEthereumAddress(walletAddress)) {
+				builderAddressInBytes = ethers.utils.hexZeroPad(ethers.utils.hexlify(ethers.utils.getAddress(walletAddress)), 32)
+
+			}
+
+			const result = await fetchIsWalletAddressUsed({ grantId:grant.id, walletAddress:builderAddressInBytes as string }, true)
+
+			if(result[0]?.grantApplications.length) {
+				customToast({
+					title: 'wallet address is already used for this grant in another proposal',
+					status: 'error',
+					duration: 3000,
+				})
 				return
 			}
 
@@ -101,10 +133,6 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 			const proposalDataHash = (await uploadToIPFS(JSON.stringify(data))).hash
 			logger.info({ proposalDataHash }, 'useSubmitProposal: (proposalDataHash)')
 
-			let builderAddressInBytes: Uint8Array | string = new Uint8Array(32)
-			if(isValidEthereumAddress(fields['applicantAddress'][0]?.value)) {
-				builderAddressInBytes = ethers.utils.hexZeroPad(ethers.utils.hexlify(ethers.utils.getAddress(fields['applicantAddress'][0]?.value)), 32)
-			}
 
 			// Step - 6: Call the contract function to submit the proposal
 			const methodArgs = type === 'submit' ?

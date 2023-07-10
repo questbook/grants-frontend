@@ -185,7 +185,7 @@ function Payouts() {
 							onClick={handleOnClickContinue}
 							isLoading={(rfpFormType === 'edit' ? updateStep : createStep) !== undefined}
 							loadingText='Creating grant program'
-							isDisabled={!rfpData?.payoutMode || !rfpData?.amount || !scwAddress}
+							isDisabled={!rfpData?.payoutMode || !rfpData?.amount || !scwAddress }
 						>
 							{/* {shouldCreateRFP ? 'Create RFP' : 'Continue'} */}
 							{ rfpFormType === 'edit' ? 'Save All' : 'Create grant program'}

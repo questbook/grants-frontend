@@ -7,7 +7,7 @@ import { Dropdown, NewTab } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
-import { getGnosisTansactionLink, getProposalUrl } from 'src/libraries/utils/multisig'
+import { getGnosisTansactionLink, getProposalUrl, getTonkeyProposalUrl } from 'src/libraries/utils/multisig'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
@@ -144,6 +144,10 @@ function Payouts() {
 						onClick={
 							() => {
 								if(payout?.transactionHash && grant?.workspace?.safe?.address) {
+									if(grant?.workspace?.safe?.chainId === '512342' || grant?.workspace?.safe?.chainId === '512341') {
+										window.open(getTonkeyProposalUrl(grant?.workspace?.safe?.address, payout.status === 'queued' ? 'queue' : 'history'))
+									}
+
 									if(grant?.workspace?.safe?.chainId === '900001') {
 										window.open(getProposalUrl(grant?.workspace?.safe?.address, payout.transactionHash), '_blank')
 									} else {

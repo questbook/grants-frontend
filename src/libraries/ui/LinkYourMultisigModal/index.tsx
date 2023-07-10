@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { NetworkType } from 'src/constants/Networks'
-import { CeloSafe, CheckDouble, Iotex, Loader, RealmsLogo, SafeLogo } from 'src/generated/icons'
+import { CeloSafe, CheckDouble, Iotex, Loader, RealmsLogo, SafeLogo, Tonkey } from 'src/generated/icons'
 import useLinkYourMultisig from 'src/libraries/hooks/useLinkYourMultisig'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
@@ -20,9 +20,9 @@ import { isSupportedAddress } from 'src/libraries/utils/validations'
 import { SafeSelectOption } from 'src/types'
 
 interface Props {
-  multisigAddress?: string
-  isOpen: boolean
-  onClose: () => void
+	multisigAddress?: string
+	isOpen: boolean
+	onClose: () => void
 }
 
 function LinkYourMultisigModal({
@@ -106,8 +106,17 @@ function LinkYourMultisigModal({
 						onClick={
 							async() => {
 								if(isOwner && selectedSafeNetwork) {
-								// link the safe
-									await link(multiSigAddress, selectedSafeNetwork.networkId?.toString())
+									//mapping ton chainIds
+									let networkId = selectedSafeNetwork.networkId?.toString()
+									if(networkId === '-3') {
+										networkId = '512342'
+									} else if(networkId === '-239') {
+										networkId = '512341'
+									}
+
+									// link the safe
+									await link(multiSigAddress, networkId)
+
 									onClose()
 								} else {
 									setIsVerifySignerModalOpen(true)
@@ -174,8 +183,7 @@ function LinkYourMultisigModal({
 									color='#273B4A' />
 								<Text variant='body'>
 									{
-										`Looks like this address is on ${safeNetworks.length} network${
-											safeNetworks.length > 1 ? 's' : ''
+										`Looks like this address is on ${safeNetworks.length} network${safeNetworks.length > 1 ? 's' : ''
 										}`
 									}
 								</Text>
@@ -184,8 +192,8 @@ function LinkYourMultisigModal({
 							<Button
 								display={
 									!multiSigAddressError &&
-                !loadingSafeData &&
-                multiSigAddress !== ''
+										!loadingSafeData &&
+										multiSigAddress !== ''
 										? 'block'
 										: 'none'
 								}
@@ -231,20 +239,28 @@ function LinkYourMultisigModal({
 	}
 
 	const supportedSafeList = [
-		{ icon: <SafeLogo
-			h='2rem'
-			w='5rem' />
+		{
+			icon: <SafeLogo
+				h='2rem'
+				w='5rem' />
 		},
-		{ icon: <RealmsLogo
-			h='2rem'
-			w='5rem' />
+		{
+			icon: <RealmsLogo
+				h='2rem'
+				w='5rem' />
 		},
-		{ icon: <CeloSafe
-			h='2rem'
-			w='5rem' />
+		{
+			icon: <CeloSafe
+				h='2rem'
+				w='5rem' />
 		},
 		{
 			icon: <Iotex
+				h='2rem'
+				w='5rem' />
+		},
+		{
+			icon: <Tonkey
 				h='2rem'
 				w='5rem' />
 		}
@@ -252,9 +268,9 @@ function LinkYourMultisigModal({
 
 	const [multiSigAddress, setMultiSigAddress] = useState<string>('')
 	const [multiSigAddressError, setMultiSigAddressError] =
-    useState<boolean>(false)
+		useState<boolean>(false)
 	const [selectedSafeNetwork, setSelectedSafeNetwork] =
-    useState<SafeSelectOption>()
+		useState<SafeSelectOption>()
 	const [safeNetworks, setSafeNetworks] = useState<SafeSelectOption[]>([])
 	const [IsVerifySignerModalOpen, setIsVerifySignerModalOpen] = useState(false)
 	const [isOwner, setIsOwner] = useState(false)
@@ -281,15 +297,16 @@ function LinkYourMultisigModal({
 
 	useEffect(() => {
 		setMultiSigAddressError(false)
-		const isValid = isSupportedAddress(multiSigAddress)
-		logger.info('Safe address entered', { multiSigAddress, isValid })
-		if(multiSigAddress !== '' && isValid) {
-			fetchSafeData(multiSigAddress)
-		} else if(multiSigAddress !== '' && !isValid) {
-			setMultiSigAddressError(true)
-		} else {
-			setSafeState(-1)
-		}
+		isSupportedAddress(multiSigAddress).then((isValid: boolean) => {
+			logger.info('Safe address entered', { multiSigAddress, isValid })
+			if(multiSigAddress !== '' && isValid) {
+				fetchSafeData(multiSigAddress)
+			} else if(multiSigAddress !== '' && !isValid) {
+				setMultiSigAddressError(true)
+			} else {
+				setSafeState(-1)
+			}
+		})
 	}, [multiSigAddress])
 
 	useEffect(() => {
@@ -299,7 +316,7 @@ function LinkYourMultisigModal({
 			setSafeState(0)
 		} else if(
 			multiSigAddress &&
-      (safeNetworks.length > 1 || safeNetworks.length === 0)
+			(safeNetworks.length > 1 || safeNetworks.length === 0)
 		) {
 			// show dropdown
 			setSafeState(2)

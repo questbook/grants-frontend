@@ -8,7 +8,7 @@ import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import { getFieldString } from 'src/libraries/utils/formatting'
 import { uploadToIPFS } from 'src/libraries/utils/ipfs'
-import { getGnosisTansactionLink, getProposalUrl } from 'src/libraries/utils/multisig'
+import { getGnosisTansactionLink, getProposalUrl, getTonkeyProposalUrl } from 'src/libraries/utils/multisig'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
 import PayFromChoose from 'src/screens/dashboard/_components/FundBuilder/PayFromChoose'
@@ -18,6 +18,7 @@ import ToChoose from 'src/screens/dashboard/_components/FundBuilder/ToChoose'
 import TransactionInitiated from 'src/screens/dashboard/_components/FundBuilder/TransactionInitiated'
 import Verify from 'src/screens/dashboard/_components/FundBuilder/Verify'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
+import usetonWallet from 'src/screens/dashboard/_hooks/useTonWallet'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
 
@@ -149,7 +150,9 @@ function FundBuilderDrawer() {
 								<ModalBody>
 
 									<TransactionInitiated
-										safeProposalLink={safeProposalLink!} />
+										safeProposalLink={safeProposalLink!}
+										setIsModalOpen={setIsModalOpen}
+									/>
 
 								</ModalBody>
 							</ModalContent>
@@ -177,6 +180,7 @@ function FundBuilderDrawer() {
 		setSignerVerifiedState
 	} = useContext(FundBuilderContext)!
 	const { phantomWallet } = usePhantomWallet()
+	const { tonWallet } = usetonWallet()
 	const [safeProposalLink, setSafeProposalLink] = useState<string | undefined>(undefined)
 	const [selectedMode, setSelectedMode] = useState<any>()
 	const [payoutInProcess, setPayoutInProcess] = useState(false)
@@ -259,10 +263,10 @@ function FundBuilderDrawer() {
 			const transactionData = tos.map((to, i) => {
 				return {
 					from: safeObj?.safeAddress?.toString(),
-					to: to,
+					to,
 					applicationId: proposals[i]?.id ? parseInt(proposals[i].id, 16) : 0,
 					selectedMilestone: milestoneIndices?.[i],
-					selectedToken: { tokenName: selectedTokenInfo?.tokenName, info: selectedTokenInfo?.info },
+					selectedToken: { tokenName: selectedTokenInfo?.tokenName as string, info: selectedTokenInfo?.info },
 					amount: amounts?.[i],
 				}
 			})
@@ -280,7 +284,7 @@ function FundBuilderDrawer() {
 				}
 
 				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress ?? '', safeObj?.chainId?.toString(), proposaladdress))
-			} else {
+			} else if(safeObj?.getIsTon() === false) {
 				proposaladdress = await safeObj?.proposeTransactions(JSON.stringify({ workspaceId: grant?.workspace?.id, grantAddress: grant?.id }), transactionData, phantomWallet)
 				if(proposaladdress?.error) {
 					customToast({
@@ -293,6 +297,20 @@ function FundBuilderDrawer() {
 				}
 
 				setSafeProposalLink(getProposalUrl(safeObj?.safeAddress ?? '', proposaladdress))
+			} else {
+				try {
+					proposaladdress = await safeObj?.proposeTransactions('', transactionData, tonWallet)
+
+					setSafeProposalLink(getTonkeyProposalUrl(safeObj?.safeAddress ?? '', 'queue'))
+				} catch(e) {
+					customToast({
+						title: e as string,
+						status: 'error',
+						duration: 3000,
+					})
+					setPayoutInProcess(false)
+					return
+				}
 			}
 
 			const methodArgs = [

@@ -4,7 +4,6 @@ import { LockIcon } from '@chakra-ui/icons'
 import {
 	Box,
 	Button,
-	chakra,
 	Checkbox,
 	Divider,
 	Flex,
@@ -13,6 +12,7 @@ import {
 	Text,
 	Textarea,
 	Tooltip,
+	useToken,
 } from '@chakra-ui/react'
 import autosize from 'autosize'
 import { Close } from 'src/generated/icons'
@@ -102,6 +102,31 @@ function Discussions() {
 								role={(role as Roles) ?? 'community'}
 								isBuilder={proposal?.applicantId === scwAddress?.toLowerCase()}
 							/>
+							{
+								selectedTag !== undefined && selectedTag?.id !== 'feedback' && (
+									<Flex
+										ml='auto'
+										gap={1}>
+										<Text
+											as='span'
+											variant='body'>
+											You are about to
+										</Text>
+										<Text
+											as='span'
+											variant='body'
+											fontWeight='500'
+											color={config[selectedTag?.id as keyof typeof config].bg}>
+											{config[selectedTag?.id as keyof typeof config].title}
+										</Text>
+										<Text
+											as='span'
+											variant='body'>
+											this proposal
+										</Text>
+									</Flex>
+								)
+							}
 						</Flex>
 
 						<Flex
@@ -144,123 +169,32 @@ function Discussions() {
 							mt={4}
 							direction='column'
 							w='100%'>
-							{
-								selectedTag?.id !== 'feedback' && (
-									<Flex
-										w='100%'>
-										<chakra.p
-											width='100%'
-											border='1px solid'
-											borderRadius='4px'
-											borderColor='accent.azure'
-											alignItems='center'
-											p={2}
-											mr={2}>
-											<QuickReplyButton
-												mr={2}
-												position='relative'
-												index={0}
-												id={selectedTag?.id as 'accept' | 'reject' | 'resubmit' | 'feedback'}
-												px={2}
-												py={0}
-												h='24px'
-												isSelected
-												float='left'
-												cursor='default'
-												onClick={() => { }}
-												contentEditable={false}
-												tag={selectedTag}
-												textProps={{ variant: 'body' }}
-											/>
-											<chakra.span
-												sx={
-													{
-														overflowWrap: 'break-word',
-														border: 'none',
-														':focus': {
-															outline: 'none',
-															border: 'none',
-														},
-													}
-												}
-												ref={spanRef}
-												onInput={
-													(e) => {
-														const spanElement = spanRef.current
-														if(!spanElement) {
-															return
-														}
-
-														logger.info({ type: spanElement.nodeType }, 'SPAN')
-
-														if(e.currentTarget.textContent && window) {
-															logger.info({ text: e.currentTarget.textContent })
-															setText(e.currentTarget.textContent)
-															localStorage.setItem(`comment-${grant?.id}-${proposal?.id}`, e.currentTarget.textContent)
-
-															spanElement.focus()
-															window?.getSelection()?.selectAllChildren(spanElement)
-															window?.getSelection()?.collapseToEnd()
-														}
-													}
-												}
-												contentEditable
-												suppressContentEditableWarning
-											>
-												<Text variant='body'>
-													{text}
-												</Text>
-											</chakra.span>
-										</chakra.p>
-										{
-											proposalTags?.length > 1 && (
-												<IconButton
-													ml='auto'
-													variant='unstyled'
-													aria-label=''
-													icon={
-														<Close
-															color='black.200'
-															_hover={{ color: 'black.100' }} />
-													}
-													onClick={() => setSelectedTag(undefined)} />
-											)
+							<Flex>
+								<Textarea
+									value={text}
+									onChange={
+										(e) => {
+											setText(e.target.value)
+											localStorage.setItem(`comment-${grant?.id}-${proposal?.id}`, e.target.value)
 										}
-									</Flex>
-
-								)
-							}
-							{
-								selectedTag?.id === 'feedback' && (
-									<Flex>
-										<Textarea
-											value={text}
-											onChange={
-												(e) => {
-													setText(e.target.value)
-													localStorage.setItem(`comment-${grant?.id}-${proposal?.id}`, e.target.value)
-												}
+									}
+									fontSize='14px'
+									placeholder='Type your comment here' />
+								{
+									proposalTags?.length > 1 && (
+										<IconButton
+											ml='auto'
+											variant='unstyled'
+											aria-label=''
+											icon={
+												<Close
+													color='black.200'
+													_hover={{ color: 'black.100' }} />
 											}
-											fontSize='14px'
-											placeholder='Type your comment here' />
-										{
-											proposalTags?.length > 1 && (
-												<IconButton
-													ml='auto'
-													variant='unstyled'
-													aria-label=''
-													icon={
-														<Close
-															color='black.200'
-															_hover={{ color: 'black.100' }} />
-													}
-													onClick={() => setSelectedTag(undefined)} />
-											)
-										}
-									</Flex>
-
-								)
-							}
+											onClick={() => setSelectedTag(undefined)} />
+									)
+								}
+							</Flex>
 							<Flex
 								mt={4}
 								align='center'>
@@ -463,7 +397,6 @@ function Discussions() {
 	}
 
 	const ref = useRef<HTMLTextAreaElement>(null)
-	const spanRef = useRef<HTMLSpanElement>(null)
 
 	const { scwAddress } = useContext(WebwalletContext)!
 	const { grant, role } = useContext(GrantsProgramContext)!
@@ -590,6 +523,30 @@ function Discussions() {
 	useEffect(() => {
 		logger.info({ selectedTag }, 'SELECTED TAG')
 	}, [selectedTag])
+
+	const [azure, carrot, orchid, vivid] = useToken(
+		'colors',
+		['accent.azure', 'accent.carrot', 'accent.orchid', 'accent.vivid']
+	)
+
+	const config = {
+		accept: {
+			title: 'accept',
+			bg: azure,
+		},
+		reject: {
+			title: 'reject',
+			bg: carrot,
+		},
+		resubmit: {
+			title: 'ask for resubmitting',
+			bg: orchid,
+		},
+		feedback: {
+			title: 'give feedback to',
+			bg: vivid
+		}
+	}
 
 	return buildComponents()
 }
