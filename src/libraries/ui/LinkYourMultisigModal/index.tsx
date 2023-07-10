@@ -106,8 +106,17 @@ function LinkYourMultisigModal({
 						onClick={
 							async() => {
 								if(isOwner && selectedSafeNetwork) {
-								// link the safe
-									await link(multiSigAddress, selectedSafeNetwork.networkId?.toString() !== '-3' ? selectedSafeNetwork.networkId?.toString() : '512342')
+									//mapping ton chainIds
+									let networkId = selectedSafeNetwork.networkId?.toString()
+									if(networkId === '-3') {
+										networkId = '512342'
+									} else if(networkId === '-239') {
+										networkId = '512341'
+									}
+
+									// link the safe
+									await link(multiSigAddress, networkId)
+
 									onClose()
 								} else {
 									setIsVerifySignerModalOpen(true)
