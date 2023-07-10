@@ -7,7 +7,7 @@ export const SafeContext = createContext<{safeObj: EthereumMainnet | SolanaMainn
 export const useSafeContext = () => useContext(SafeContext)
 
 export const SafeProvider = ({ children }: {children: ReactNode}) => {
-	const [safeObj, setSafeObj] = useState<EthereumMainnet | SolanaMainnet>()
+	const [safeObj, setSafeObj] = useState<EthereumMainnet | SolanaMainnet | TonKeyMainnet>()
 	return (
 		<SafeContext.Provider value={{ safeObj, setSafeObj }}>
 			    {children}
