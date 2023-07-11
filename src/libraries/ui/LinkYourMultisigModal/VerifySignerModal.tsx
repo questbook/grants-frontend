@@ -216,11 +216,15 @@ const VerifySignerModal = ({
 	useEffect(() => {
 		if(connectClicked) {
 			delay(2000).then(() => {
-				const element = document.getElementsByTagName('wcm-modal')
-				if(element) {
-					(element[0] as HTMLElement).style.zIndex = '100000';
-					(element[0] as HTMLElement).style.position = 'absolute'
+				try {
+					const element = document.getElementsByTagName('wcm-modal')
+					if(element) {
+						(element[0] as HTMLElement).style.zIndex = '100000';
+						(element[0] as HTMLElement).style.position = 'absolute'
 
+					}
+				} catch{
+					logger.info("Couldn't find wallet connect modal")
 				}
 			})
 		}
