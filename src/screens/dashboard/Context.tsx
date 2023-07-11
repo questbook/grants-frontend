@@ -84,6 +84,10 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
 		const _grant = details[0].grant
 		logger.info({ _grant }, 'Setting grant (GET GRANT)')
+
+		// set the grant in local storage to be used as a default
+		localStorage.setItem('cur-grant', JSON.stringify(_grant))
+
 		setGrant(_grant)
 		setWorkspace(_grant.workspace)
 
