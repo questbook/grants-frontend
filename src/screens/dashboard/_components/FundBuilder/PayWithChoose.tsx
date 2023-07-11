@@ -60,7 +60,7 @@ function PayWithChoose({ selectedMode }: { selectedMode: { logo: string | undefi
 								setSelected={
 									(value: DropdownItem | undefined) => {
 										logger.info({ value }, 'Clicked')
-										if (!value) {
+										if(!value) {
 											return
 										}
 
@@ -69,7 +69,7 @@ function PayWithChoose({ selectedMode }: { selectedMode: { logo: string | undefi
 									}
 								} />
 							{
-								selectedTokenInfo?.tokenName != 'TON' &&
+								selectedTokenInfo?.tokenName !== 'TON' && (
 								<Text
 									color='#53514F'
 									fontSize='14px'
@@ -86,7 +86,8 @@ function PayWithChoose({ selectedMode }: { selectedMode: { logo: string | undefi
 									{' '}
 									USD
 								</Text>
-							}
+      )
+}
 						</>
 					)
 				}
@@ -95,7 +96,7 @@ function PayWithChoose({ selectedMode }: { selectedMode: { logo: string | undefi
 	}
 
 	function makeOption<T extends object>({ innerProps, data }: OptionProps<T, false, GroupBase<T>>) {
-		if (!('tokenName' in data) || !('tokenIcon' in data) || (typeof data.tokenName !== 'string') || (typeof data.tokenIcon !== 'string')) {
+		if(!('tokenName' in data) || !('tokenIcon' in data) || (typeof data.tokenName !== 'string') || (typeof data.tokenIcon !== 'string')) {
 			return <Flex />
 		}
 
@@ -120,7 +121,7 @@ function PayWithChoose({ selectedMode }: { selectedMode: { logo: string | undefi
 	}
 
 	function singleValue<T extends object>({ innerProps, data }: SingleValueProps<T, false, GroupBase<T>>) {
-		if (!('tokenName' in data) || !('tokenIcon' in data) || (typeof data.tokenName !== 'string') || (typeof data.tokenIcon !== 'string')) {
+		if(!('tokenName' in data) || !('tokenIcon' in data) || (typeof data.tokenName !== 'string') || (typeof data.tokenIcon !== 'string')) {
 			return <Flex />
 		}
 
@@ -151,14 +152,14 @@ function PayWithChoose({ selectedMode }: { selectedMode: { logo: string | undefi
 	const [selectedTokenIndex, setSelectedTokenIndex] = useState<number>(selectedTokenInfo ? tokenList?.map((v) => v.tokenName).indexOf(selectedTokenInfo.tokenName)! : 0)
 
 	useEffect(() => {
-		if (!safeObj) {
+		if(!safeObj) {
 			return
 		}
 
 		safeObj?.getTokenAndbalance().then((list: { value?: TokenDetailsInterface[] | undefined, error?: string }) => {
-			if (list?.value) {
+			if(list?.value) {
 				setTokenList(list?.value)
-				if (list?.value?.length && !selectedTokenInfo) {
+				if(list?.value?.length && !selectedTokenInfo) {
 					setSelectedTokenInfo(list?.value[0])
 					setSelectedTokenIndex(0)
 				}
@@ -167,11 +168,11 @@ function PayWithChoose({ selectedMode }: { selectedMode: { logo: string | undefi
 	}, [safeObj])
 
 	useEffect(() => {
-		if (!tokenList) {
+		if(!tokenList) {
 			return
 		}
 
-		if (selectedTokenIndex < tokenList.length) {
+		if(selectedTokenIndex < tokenList.length) {
 			const token = tokenList[selectedTokenIndex]
 			setSelectedTokenInfo(token)
 		}
