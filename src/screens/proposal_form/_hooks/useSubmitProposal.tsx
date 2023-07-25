@@ -27,6 +27,14 @@ interface Props {
 	setTransactionHash: (hash: string) => void
 }
 
+export const saEvent = (eventName: string) => {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	if(window && (window as any).sa_event) {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		return (window as any).sa_event(eventName)
+	}
+}
+
 function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash }: Props) {
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 	const { type, grant, proposal, chainId } = useContext(ProposalFormContext)!
@@ -153,6 +161,9 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 					setProposalId(`0x${proposalId.toString(16)}`)
 
 					await createMapping({ email: findField(form, 'applicantEmail').value })
+
+					// Create an event for simple analytics
+					saEvent((type === 'submit') ? 'proposal_submitted' : 'proposal_resubmitted')
 				} else {
 					throw new Error('Event data not found')
 				}
