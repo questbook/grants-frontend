@@ -34,6 +34,14 @@ type Props = {
 	openSignIn?: boolean
 }
 
+function getAbsoluteURL(url: string) {
+	if(!url.startsWith('http://') && !url.startsWith('https://')) {
+	  return 'https://' + url
+	}
+
+	return url
+}
+
 function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 	const { webwallet } = useContext(WebwalletContext)!
 	const { importWebwallet } = useContext(WebwalletContext)!
@@ -126,7 +134,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 													onClick={
 														() => {
 															if(grant.link !== null) {
-																window.open(grant.link, '_blank')
+																window.open(getAbsoluteURL(grant.link!), '_blank')
 															}
 														}
 													}
@@ -426,7 +434,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 												onClick={
 													() => {
 														if(grant.link !== null) {
-															window.open(grant.link, '_blank')
+															window.open(getAbsoluteURL(grant.link!), '_blank')
 														}
 													}
 												}
