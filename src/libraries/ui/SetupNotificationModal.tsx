@@ -59,12 +59,6 @@ function SetupNotificationModal(props: Props) {
 							channel.
 						</Text>
 						{buttonItems.map(buttonItem)}
-						<Text
-							mt={4}
-							variant='body'
-							color='gray.500'>
-							Learn more about notifications
-						</Text>
 					</Flex>
 
 				</ModalContent>

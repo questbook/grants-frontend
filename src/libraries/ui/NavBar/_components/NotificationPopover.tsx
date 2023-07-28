@@ -91,12 +91,6 @@ function NotificationPopover(props: Props) {
 										)
 									})
 								}
-								<Text
-									mt={4}
-									variant='body'
-									color='gray.500'>
-									Learn more about notifications
-								</Text>
 							</PopoverBody>
 						</PopoverContent>
 					</>
