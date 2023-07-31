@@ -127,11 +127,6 @@ function LinkYourMultisigModal({
 						{isOwner ? 'Link Multisig' : 'Verify you are a signer'}
 					</Button>
 
-					<Button
-						variant='link'
-						mt={6}>
-						Why do I need a multisig?
-					</Button>
 				</ModalContent>
 
 				<VerifySignerModal
