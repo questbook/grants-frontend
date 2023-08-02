@@ -185,7 +185,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 	const popoverRef = useRef<HTMLButtonElement>(null)
 	const { t } = useTranslation()
 	const { grant, role } = useContext(GrantsProgramContext)!
-	const { webwallet, scwAddress } = useContext(WebwalletContext)!
+	const { webwallet, scwAddress, loadingScw } = useContext(WebwalletContext)!
 	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const router = useRouter()
 	useEffect(() => {
@@ -254,6 +254,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 				bg='black.100'
 				textColor='gray.100'
 				_hover={{ bg: 'gray.500' }}
+				isLoading={loadingScw}
 			>
 				Sign in
 			</Button>

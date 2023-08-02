@@ -173,6 +173,8 @@ export const WebwalletContext = createContext<{
 	setLoadingNonce: (loadingNonce: boolean) => void
 	importWebwallet: (privateKey: string) => void
 	exportWebwallet: () => string
+	loadingScw: boolean
+	setLoadingScw: (loadingScw: boolean) => void
 		} | null>(null)
 
 export const BiconomyContext = createContext<{
@@ -195,6 +197,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 
 	const [scwAddress, setScwAddress] = useState<string>()
+	const [loadingScw, setLoadingScw] = useState<boolean>(true)
 	const [biconomyDaoObjs, setBiconomyDaoObjs] = useState<{ [key: string]: typeof BiconomyContext }>()
 	const [biconomyWalletClients, setBiconomyWalletClients] = useState<{ [key: string]: BiconomyWalletClient }>()
 	const [nonce, setNonce] = useState<string>()
@@ -302,6 +305,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		// and the most recently requested one finishes later
 		if(mostRecentInitChainId.current === chainId) {
 			setScwAddress(scwAddress)
+			setLoadingScw(false)
 			localStorage.setItem('scwAddress', scwAddress)
 			_logger.info('switched chain after init')
 			const chain = parseInt(chainId)
@@ -349,6 +353,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		setLoadingNonce(false)
 		setNonce(undefined)
 		setScwAddress(undefined)
+		setLoadingScw(true)
 		setBiconomyWalletClients({})
 		setBiconomyDaoObjs({})
 		setBiconomyLoading({})
@@ -391,6 +396,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	useEffect(() => {
 		setWebwallet(createWebWallet())
 		setScwAddress(getScwAddress())
+		setLoadingScw(false)
 		setNonce(getLocalNonce())
 		const network = getNetwork()
 		logger.info('SWITCH NETWORK (_app.tsx 1): ', network)
@@ -500,6 +506,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				}
 
 				setScwAddress(newScwAddress)
+				setLoadingScw(false)
 			},
 			nonce: nonce,
 			setNonce: (newNonce?: string) => {
@@ -520,10 +527,12 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			setCreatingProposalStep,
 			loadingNonce,
 			setLoadingNonce,
+			loadingScw,
+			setLoadingScw,
 			importWebwallet,
 			exportWebwallet
 		}),
-		[dashboardStep, createingProposalStep, setCreatingProposalStep, setDashboardStep, webwallet, setWebwallet, network, switchNetwork, scwAddress, setScwAddress, nonce, setNonce, loadingNonce, setLoadingNonce]
+		[dashboardStep, createingProposalStep, setCreatingProposalStep, setDashboardStep, webwallet, setWebwallet, network, switchNetwork, scwAddress, setScwAddress, nonce, setNonce, loadingNonce, setLoadingNonce, loadingScw, setLoadingScw]
 	)
 
 	const biconomyDaoObjContextValue = useMemo(
