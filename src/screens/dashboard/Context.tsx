@@ -353,11 +353,16 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 				return { lastAdminUpdate: lastAdminUpdate, ...proposal }
 			}))
 
-			const sortedProposals = sortableProposals
+			let sortedProposals = sortableProposals
 				.sort((a, b) => b.lastAdminUpdate - a.lastAdminUpdate)
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				.map(({ lastAdminUpdate, ...proposal }) => proposal) // remove lastAdminUpdate so the type is Proposal
 
+			const builderProposals = sortedProposals.filter(proposal => proposal.applicantId.toLowerCase() === scwAddress?.toLowerCase())
+			const otherProposals = sortedProposals.filter(proposal => proposal.applicantId.toLowerCase() !== scwAddress?.toLowerCase())
+
+			// Move builder proposals to the beginning of the sortedProposals array
+			sortedProposals = [...builderProposals, ...otherProposals]
 			return sortedProposals
 		}
 
