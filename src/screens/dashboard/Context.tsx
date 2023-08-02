@@ -350,7 +350,6 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 				})
 
 				const lastAdminUpdate = Math.max(lastAction, lastPayout, lastMilestoneFeedback, lastReview)
-				proposal.updatedAtS = lastAdminUpdate
 				return { lastAdminUpdate: lastAdminUpdate, ...proposal }
 			}))
 
