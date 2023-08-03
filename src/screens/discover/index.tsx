@@ -300,14 +300,14 @@ function Discover() {
 													display={grantsForYou?.length ? '' : 'none'}
 												/>
 											</>
-										) : webwallet ? (
+										) : (
 											<Skeleton
 												width='100%'
-												h='5%'
+												h={webwallet ? '1%' : '700px'}
 												startColor='gray.300'
 												endColor='gray.400'
 											/>
-										) : <Flex />
+										)
 								}
 								{/* </Box> */}
 								<Box
