@@ -4,7 +4,7 @@ import { TokenDetailsInterface } from '@questbook/supported-safes/lib/types/Safe
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
-import { ApplicationState, useGetApplicationActionsQuery, useGetCommentsQuery, useGetGrantQuery, useGetPayoutsQuery, useGetProposalsQuery } from 'src/generated/graphql'
+import { ApplicationState, useGetApplicationActionsQuery, useGetCommentsQuery, useGetGrantQuery, useGetProposalsQuery } from 'src/generated/graphql'
 import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
 import { getFromIPFS } from 'src/libraries/utils/ipfs'
@@ -60,12 +60,6 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		useQuery: useGetApplicationActionsQuery,
 		options: {},
 		chains: [chainId === -1 ? defaultChainId : chainId]
-	})
-
-	const { fetchMore: fetchMorePayouts } = useMultiChainQuery({
-		useQuery: useGetPayoutsQuery,
-		options: {},
-		chains: [getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId]
 	})
 
 	const [proposals, setProposals] = useState<Proposals>([])
@@ -288,87 +282,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 			skip += first
 		} while(shouldContinue)
 
-		// In order to sort the applications depending on when an admin or a reviewer last interacted with it
-		// we sort by the application actions (ask to resubmit, approve, reject), payouts (fund transfers),
-		// milestone feedbacks, and reviews
-		const results = await fetchMoreApplicationActions({ grantId }, true)
-
-		async function sortProposals() {
-			const sortableProposals = await Promise.all(proposals.map(async(proposal) => {
-				// check the latest action
-				let lastAction = 0
-
-				if(results?.length > 0) {
-					const result = results[0]
-					const proposalAction = result?.grantApplications.find((pa) => pa.id === proposal.id)
-					if(proposalAction?.actions) {
-						lastAction = proposalAction?.actions.reduce((maxUpdatedAt, action) => {
-							if(action.state !== 'submitted') {
-								return Math.max(maxUpdatedAt, action.updatedAtS)
-							}
-
-							return maxUpdatedAt
-						}, lastAction)
-					}
-				}
-				// check the latest payout
-
-				let lastPayout = 0
-				skip = 0
-				let shouldContinue = true
-				do {
-					const results = await fetchMorePayouts({ first, skip, proposalID: proposal.id })
-					if(!results?.[0]?.fundsTransfers || results?.[0]?.fundsTransfers?.length === 0) {
-						shouldContinue = false
-						break
-					}
-
-					results?.[0]?.fundsTransfers.forEach((payout) => {
-
-						if(payout.executionTimestamp) {
-							lastPayout = Math.max(payout.executionTimestamp, lastPayout)
-						}
-
-						lastPayout = Math.max(payout.createdAtS, lastPayout)
-					})
-
-					skip += first
-				} while(shouldContinue)
-
-				// check the latest milestone feedback
-				let lastMilestoneFeedback = 0
-				proposal.milestones.forEach((milestone) => {
-					if(milestone.feedbackDaoUpdatedAtS) {
-						lastMilestoneFeedback = Math.max(lastMilestoneFeedback, milestone.feedbackDaoUpdatedAtS)
-					}
-				})
-
-				// check the latest review
-				let lastReview = 0
-				proposal.reviews.forEach((review) => {
-					lastReview = Math.max(lastReview, review.createdAtS)
-				})
-
-				const lastAdminUpdate = Math.max(lastAction, lastPayout, lastMilestoneFeedback, lastReview)
-				return { lastAdminUpdate: lastAdminUpdate, ...proposal }
-			}))
-
-			let sortedProposals = sortableProposals
-				.sort((a, b) => b.lastAdminUpdate - a.lastAdminUpdate)
-				// eslint-disable-next-line @typescript-eslint/no-unused-vars
-				.map(({ lastAdminUpdate, ...proposal }) => proposal) // remove lastAdminUpdate so the type is Proposal
-
-			const builderProposals = sortedProposals.filter(proposal => proposal.applicantId.toLowerCase() === scwAddress?.toLowerCase())
-			const otherProposals = sortedProposals.filter(proposal => proposal.applicantId.toLowerCase() !== scwAddress?.toLowerCase())
-
-			// Move builder proposals to the beginning of the sortedProposals array
-			sortedProposals = [...builderProposals, ...otherProposals]
-			return sortedProposals
-		}
-
-		const sortedProposals = await sortProposals()
-		logger.info({ sortedProposals }, 'Results (Sorted Proposals)')
-		setProposals(sortedProposals)
+		setProposals(proposals)
 		setAreCommentsLoading(true)
 		await getComments()
 
