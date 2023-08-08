@@ -29,7 +29,7 @@ import { Roles } from 'src/types'
 function Discover() {
 	const router = useRouter()
 	const { inviteInfo } = useContext(ApiClientsContext)!
-	const { webwallet } = useContext(WebwalletContext)!
+	const { webwallet, loadingScw } = useContext(WebwalletContext)!
 	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const buildComponent = () => {
 		return inviteInfo ? inviteView() : normalView
@@ -226,6 +226,22 @@ function Discover() {
 	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
 
 	const normalView = useMemo(() => {
+		const calculateLoadingHeight = () => {
+			// if scw is done loading and there's still no webwallet
+			// it means no loading section should be displayed (need to sign in)
+			if(!loadingScw && !webwallet) {
+			  return '0'
+			// if we have a webwallet and section grants (but still no "For you" grants)
+			// we show a small loading section
+			} else if(sectionGrants?.length) {
+			  return '70px'
+			// if we're loading the scw or the webwallet but no section grants
+			// we show a big loading section
+			} else {
+			  return '500px'
+			}
+		}
+
 		return (
 			<>
 				<Flex
@@ -303,7 +319,7 @@ function Discover() {
 										) : (
 											<Skeleton
 												width='100%'
-												h={webwallet ? '1%' : '700px'}
+												h={calculateLoadingHeight()}
 												startColor='gray.300'
 												endColor='gray.400'
 											/>
