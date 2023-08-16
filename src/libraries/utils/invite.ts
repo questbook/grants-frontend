@@ -131,10 +131,10 @@ export const useMakeInvite = () => {
 
 			const response = await sendGaslessTransaction(
 				biconomy,
-				targetContractObject,
+				targetContractObject!,
 				'createInviteLink',
 				[grant!.workspace!.id, role, address],
-				workspaceRegistry.address,
+				workspaceRegistry!.address,
 				biconomyWalletClient,
 				scwAddress,
 				webwallet,
@@ -172,7 +172,7 @@ export const useMakeInvite = () => {
 
 			const fakeAddress = '0x' + [...Array(40)].map(() => 1).join('')
 
-			return await workspaceRegistry
+			return await workspaceRegistry!
 				.estimateGas
 				.createInviteLink(
 					grant.workspace.id,
@@ -227,11 +227,11 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 		(account?.address && inviteInfo?.privateKey)
 			? generateInputForAuthorisation(
 				account.address!,
-				workspaceRegistry.address,
+				workspaceRegistry!.address,
 				inviteInfo.privateKey,
 			)
 			: undefined
-	), [account?.address, workspaceRegistry.address, inviteInfo?.privateKey])
+	), [account?.address, workspaceRegistry!.address, inviteInfo?.privateKey])
 
 	const joinInvite = useCallback(
 		async(didReachStep?: (step: JoinInviteStep) => void, setTransactionHash?: (hash: string) => void) => {
@@ -259,7 +259,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 
 			const response = await sendGaslessTransaction(
 				biconomy,
-				targetContractObject,
+				targetContractObject!,
 				'joinViaInviteLink',
 				[
 					inviteInfo.workspaceId,
@@ -269,7 +269,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 					signature.r,
 					signature.s
 				],
-				workspaceRegistry.address,
+				workspaceRegistry!.address,
 				biconomyWalletClient,
 				scwAddress,
 				webwallet,
@@ -316,7 +316,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 			switchNetwork(inviteInfo.chainId)
 		}
 
-		return await workspaceRegistry
+		return await workspaceRegistry!
 			.estimateGas
 			.joinViaInviteLink(
 				inviteInfo.workspaceId,
