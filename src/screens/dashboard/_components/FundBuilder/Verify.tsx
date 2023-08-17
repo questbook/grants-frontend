@@ -4,6 +4,7 @@ import { Flex, Text, VStack } from '@chakra-ui/react'
 import { useSafeContext } from 'src/contexts/safeContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
+import { delay } from 'src/libraries/utils'
 import { availableWallets, solanaWallets, tonWallets } from 'src/libraries/utils/constants'
 import getErrorMessage from 'src/libraries/utils/error'
 import ConnectWalletButton from 'src/screens/dashboard/_components/FundBuilder/ConnectWalletButton'
@@ -21,7 +22,10 @@ interface Props {
 
 const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 	const buildComponent = () => (
-		<Flex direction='column'>
+		<Flex
+			direction='column'
+			zIndex='1'
+		>
 			<Text
 				mt='24px'
 				fontSize='14px'
@@ -58,7 +62,7 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 											const connector = connectors.find((x) => x.id === wallet.id)
 											logger.info({ connector }, 'connector')
 											setSelectedConnector(connector)
-											// setConnectClicked(true)
+											setConnectClicked(true)
 											if(connector) {
 												// swallow error here so we don't fail the remaining logic
 												const isConnected = await connector.isAuthorized().catch(() => false)
@@ -143,6 +147,21 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 	const { connectTonWallet, tonWalletAddress, tonWalletConnected } = usetonWallet()
 	const { address } = useAccount()
 	const toast = useCustomToast()
+	const [connectClicked, setConnectClicked] = useState(false)
+
+	useEffect(() => {
+		delay(2000).then(() => {
+			try {
+				const element = document.getElementsByTagName('wcm-modal')
+				if(element) {
+					(element[0] as HTMLElement).style.zIndex = '100000000000';
+					(element[0] as HTMLElement).style.position = 'absolute'
+				}
+			} catch{
+				logger.info("Couldn't find wallet connect modal")
+			}
+		})
+	}, [connectClicked])
 
 	const [verifying, setVerifying] = useState<string>()
 	const [selectedConnector, setSelectedConnector] = useState<Connector>()

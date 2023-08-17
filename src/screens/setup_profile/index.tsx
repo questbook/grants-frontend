@@ -160,11 +160,11 @@ function SetupProfile() {
 		(scwAddress && inviteInfo?.privateKey)
 			? generateInputForAuthorisation(
 				scwAddress!,
-				workspaceRegistry.address,
+				workspaceRegistry!.address,
 				inviteInfo.privateKey,
 			)
 			: undefined
-	), [scwAddress, workspaceRegistry.address, inviteInfo?.privateKey])
+	), [scwAddress, workspaceRegistry!.address, inviteInfo?.privateKey])
 
 	const workspaceId = useMemo(() => {
 		return `0x${inviteInfo?.workspaceId.toString(16)}`
