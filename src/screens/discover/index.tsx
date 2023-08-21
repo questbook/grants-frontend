@@ -273,7 +273,7 @@ function Discover() {
 							}
 							onChange={
 								(e) => {
-									setFilterGrantName(e.target.value.trim())
+									setFilterGrantName(e.target.value)
 								}
 							}
 						/>
@@ -342,7 +342,7 @@ function Discover() {
 											const sectionName = Object.keys(section)[0]
 											const sectionImage = section[sectionName].sectionLogoIpfsHash
 
-											const grants = section[sectionName].grants.filter((grant) => grant.title.toLowerCase().includes(filterGrantName.toLowerCase())).map(grant => ({ ...grant, role: 'community' as Roles }))
+											const grants = section[sectionName].grants.filter((grant) => grant.title.toLowerCase().includes(filterGrantName.trim().toLowerCase())).map(grant => ({ ...grant, role: 'community' as Roles }))
 											return (
 												<Box
 													my={6}
