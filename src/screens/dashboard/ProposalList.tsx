@@ -129,7 +129,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 
 			<Grid
 				display={isFilterClicked ? 'grid' : 'none'}
-				minH='48px'
+				minH='80px'
 				px={3}
 				m={2}
 				overflowX='scroll'
