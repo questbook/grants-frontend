@@ -177,7 +177,12 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 	const verifyOwner = async(address: string) => {
 		logger.info({ address: safeObj?.safeAddress }, '1')
 		logger.info('lllllll', safeObj)
-		const isVerified = await safeObj?.isOwner(address)
+		const provider = await selectedConnector?.getProvider()
+		logger.info({ provider }, 'provider')
+		const signer = await selectedConnector?.getSigner()
+		logger.info({ signer }, 'signer')
+		const isVerified = await safeObj?.isOwner(address, signer)
+		logger.info({ isVerified }, 'isVerified')
 		if(isVerified) {
 			setSignerVerifiedState('verified')
 			toast({
@@ -254,7 +259,6 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 	useEffect(() => {
 		logger.info({ selectedConnector }, 'Selected connector')
 	}, [selectedConnector])
-
 
 	return buildComponent()
 }
