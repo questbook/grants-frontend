@@ -5,6 +5,7 @@ import { NetworkType } from 'src/constants/Networks'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import VerifySignerErrorState from 'src/libraries/ui/LinkYourMultisigModal/VerifySignerErrorState'
+import { delay } from 'src/libraries/utils'
 import { availableWallets, solanaWallets, tonWallets } from 'src/libraries/utils/constants'
 import ConnectWalletButton from 'src/screens/dashboard/_components/FundBuilder/ConnectWalletButton'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
@@ -93,13 +94,12 @@ const VerifySignerModal = ({
 													isDisabled={verifying !== undefined && verifying !== wallet.id}
 													onClick={
 														async() => {
-															setConnectClicked(true)
 															setVerifying(wallet.id)
-
 															const connector = connectors.find((x) => x.id === wallet.id)!
 															// swallow error here so we don't fail the remaining logic
 															const isConnected = await connector.isAuthorized().catch(() => false)
 
+															setConnectClicked(true)
 															if(!isConnected) {
 																try {
 																	if(connector) {
@@ -212,6 +212,23 @@ const VerifySignerModal = ({
 	const { chain } = useNetwork()
 
 	const [isError, setIsError] = React.useState(false)
+
+	useEffect(() => {
+		if(connectClicked) {
+			delay(2000).then(() => {
+				try {
+					const element = document.getElementsByTagName('wcm-modal')
+					if(element) {
+						(element[0] as HTMLElement).style.zIndex = '100000';
+						(element[0] as HTMLElement).style.position = 'absolute'
+
+					}
+				} catch{
+					logger.info("Couldn't find wallet connect modal")
+				}
+			})
+		}
+	}, [connectClicked])
 
 	useEffect(() => {
 		if(isOpen) {
