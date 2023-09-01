@@ -119,6 +119,11 @@ export const getExplorerUrlForTxHash = (chainId: SupportedChainId | undefined, t
 export const formatAddress = (address: string) => `${address.substring(0, 4)}....${address.substring(address.length - 4)}`
 
 export const getFieldString = (applicationData: {fields: (Pick<GrantApplication['fields'][number], 'id'> & {values: Pick<GrantApplication['fields'][number]['values'][number], 'id' | 'value'>[]})[]} | undefined | null, name: string): string | undefined => {
+	if(name.includes('customField')){
+		const newName = name.slice(12)
+		return applicationData?.fields?.find((field) => field?.id?.includes(`${newName}`))?.values[0]?.value
+	}
+
 	return applicationData?.fields?.find((field) => field?.id?.includes(`.${name}`))?.values[0]?.value
 }
 
