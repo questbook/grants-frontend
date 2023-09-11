@@ -71,7 +71,7 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 
 			const result = await fetchIsWalletAddressUsed({ grantId:grant.id, walletAddress:builderAddressInBytes as string }, true)
 
-			if(result[0]?.grantApplications.length) {
+			if(result[0]?.grantApplications.length && result[0]?.grantApplications[0].applicantId !== scwAddress.toLowerCase()) {
 				customToast({
 					title: 'wallet address is already used for this grant in another proposal',
 					status: 'error',
