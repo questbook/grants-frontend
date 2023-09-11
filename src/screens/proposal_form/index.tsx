@@ -22,7 +22,7 @@ import SectionRichTextEditor from 'src/screens/proposal_form/_components/Section
 import SectionSelect from 'src/screens/proposal_form/_components/SectionSelect'
 import SelectArray from 'src/screens/proposal_form/_components/SelectArray'
 import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposal'
-import { containsField, findField, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
+import { containsField, findField, findFieldBySuffix, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
 import { customSteps, customStepsHeader, DEFAULT_MILESTONE, MILESTONE_INPUT_STYLE } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
 
@@ -505,17 +505,21 @@ function ProposalForm() {
 						{
 							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1).startsWith('customField')).map((field) => {
 								const id = field.id.substring(field.id.indexOf('.') + 1)
+								const modifiedId = id.substring(id.indexOf('-') + 1)
 								const title = field.title.substring(field.title.indexOf('-') + 1)
 									.split('\\s')
 									.join(' ')
+
+								// console.log('hasan', { id, field: findFieldBySuffix(form, modifiedId, id)})
+
 								return (
 									<SectionInput
 										key={field.id}
 										label={title}
-										value={findField(form, id).value}
+										value={findFieldBySuffix(form, modifiedId, id).value}
 										onChange={
 											(e) => {
-												onChange(e, id)
+												onChange(e, findFieldBySuffix(form, modifiedId, id).id)
 											}
 										} />
 								)

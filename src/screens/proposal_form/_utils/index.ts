@@ -11,6 +11,11 @@ function findField(form: Form, id: string) {
 	return form.fields.find((f) => f.id === id) ?? { id, value: '' }
 }
 
+function findFieldBySuffix(form: Form, suffix: string, defaultId: string) {
+	// console.log('hasan', form.fields.find((f) => f.id.endsWith(suffix)))
+	return form.fields.find((f) => f.id.endsWith(suffix)) ?? { id: defaultId, value: '' }
+}
+
 const getProjectDetails = async(projectDetails: string) => {
 	try {
 		if(isIpfsHash(projectDetails)) {
@@ -55,4 +60,4 @@ const validateWalletAddress = async(address: string, callback: (isValid: boolean
 	}
 }
 
-export { containsField, findField, getProjectDetails, validateEmail, validateWalletAddress }
+export { containsField, findField, getProjectDetails, validateEmail, validateWalletAddress, findFieldBySuffix }
