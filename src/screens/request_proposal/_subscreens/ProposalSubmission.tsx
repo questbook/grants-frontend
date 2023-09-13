@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-curly-brace-presence */
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { BsArrowLeft } from 'react-icons/bs'
 import { IoMdClose } from 'react-icons/io'
@@ -8,6 +8,9 @@ import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { logger } from 'ethers'
 import { useRouter } from 'next/router'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
+import { defaultChainId } from 'src/constants/chains'
+import { useGrantDetailsQuery } from 'src/generated/graphql'
+import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
 import { CustomSelect } from 'src/libraries/ui/CustomSelect'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import { WebwalletContext } from 'src/pages/_app'
@@ -278,18 +281,88 @@ function ProposalSubmission() {
   		.filter((obj) => obj !== null),
 	)
 
-	const applicantDetails: ApplicantDetailsFieldType[] = applicantDetailsList
-		.filter((detail) => detail.isRequired)
-		.map(({ title, id, inputType, isRequired, pii }) => {
-			return {
-				title,
-				required: isRequired || false,
-				id,
-				inputType,
-				pii,
-			}
-		})
-		.filter((obj) => obj !== null)
+	const { grantId, chainId: chainIdString } = router.query
+
+	const chainId = useMemo(() => {
+		try {
+			return typeof chainIdString === 'string' ? parseInt(chainIdString) : -1
+		} catch(e) {
+			return -1
+		}
+	}, [chainIdString])
+
+	const { fetchMore: fetchGrantDetails } = useMultiChainQuery({
+		useQuery: useGrantDetailsQuery,
+		options: {},
+		chains: [chainId === -1 ? defaultChainId : chainId]
+	})
+
+	const fetchGrant = useCallback(async() => {
+		if(!grantId || !chainId || typeof grantId !== 'string' || typeof chainId !== 'number') {
+			return
+		}
+
+		const result = await fetchGrantDetails({ grantId }, true)
+		if(!result?.length || !result[0]?.grant) {
+			return 'could-not-fetch-grant-details'
+		}
+
+
+		const fieldIDs = applicantDetailsList.map(d => d.id)
+		logger.info({ fieldIDs }, 'ProposalForm: fetchGrant (fieldIDs)')
+		const fields = {
+			fields: result[0].grant.fields.filter(f => f.title.includes('customField')).map((field) => {
+				const id = field.id.substring(field.id.indexOf('.') + 1)
+				return {
+					...field,
+					title: field.title.substring(field.title.indexOf('-') + 1),
+					id,
+					value: id === 'isMultipleMilestones' ? 'true' : id === 'teamMembers' ? '1' : '',
+					required: true
+				}
+			})
+		}
+
+		return fields.fields
+	}, [grantId, chainId])
+
+	useEffect(() => {
+		fetchGrant()
+			.then((fields) => {
+				if(fields === 'could-not-fetch-grant-details') {
+					return
+				}
+
+				const newApplicantDetails = [...applicantDetailsList
+					.filter((detail) => detail.isRequired === false)
+					.map(({ title, id, inputType, isRequired, pii }) => {
+						logger.info(id, 'Populating extra details')
+						return {
+							title,
+							required: isRequired || false,
+							id,
+							inputType,
+							pii,
+						}
+					})
+					.filter((obj) => obj !== null), ...fields!]
+				setExtraDetailsFields(newApplicantDetails)
+			})
+	}, [])
+
+	const applicantDetails: ApplicantDetailsFieldType[] =
+		applicantDetailsList
+			.filter((detail) => detail.isRequired)
+			.map(({ title, id, inputType, isRequired, pii }) => {
+				return {
+					title,
+					required: isRequired || false,
+					id,
+					inputType,
+					pii,
+				}
+			})
+			.filter((obj) => obj !== null)
 
 	useEffect(() => {
 		logger.info({ extraDetailsFieldsList }, 'Extra details field')
