@@ -9,7 +9,7 @@ import Milestones from 'src/screens/dashboard/_components/ActionList/SingleSelec
 import Payouts from 'src/screens/dashboard/_components/ActionList/SingleSelect/Payouts'
 import ReviewProposal from 'src/screens/dashboard/_components/ActionList/SingleSelect/ReviewProposal'
 import Reviews from 'src/screens/dashboard/_components/ActionList/SingleSelect/Reviews'
-import { DashboardContext, ModalContext } from 'src/screens/dashboard/Context'
+import { DashboardContext, FundBuilderContext, ModalContext } from 'src/screens/dashboard/Context'
 
 function SingleSelect() {
 	const buildComponent = () => {
@@ -64,7 +64,11 @@ function SingleSelect() {
 												chainId,
 											} })
 										} else {
-											setIsFundingMethodModalOpen(true)
+											if(grant?.workspace?.safe) {
+												setIsModalOpen(true)
+											} else {
+												setIsLinkYourMultisigModalOpen(true)
+											}
 										}
 									}
 								}>
@@ -91,9 +95,9 @@ function SingleSelect() {
 	const router = useRouter()
 	const toast = useCustomToast()
 	const { scwAddress } = useContext(WebwalletContext)!
-	const { role } = useContext(GrantsProgramContext)!
-	const { setIsFundingMethodModalOpen } = useContext(ModalContext)!
-	// const { setIsModalOpen } = useContext(FundBuilderContext)!
+	const { grant, role } = useContext(GrantsProgramContext)!
+	const { setIsLinkYourMultisigModalOpen } = useContext(ModalContext)!
+	const { setIsModalOpen } = useContext(FundBuilderContext)!
 	const { proposals, selectedProposals, showSubmitReviewPanel } = useContext(DashboardContext)!
 
 	const proposal = useMemo(() => {
