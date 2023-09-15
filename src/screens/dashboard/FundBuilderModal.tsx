@@ -23,12 +23,8 @@ import Verify from 'src/screens/dashboard/_components/FundBuilder/Verify'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import usetonWallet from 'src/screens/dashboard/_hooks/useTonWallet'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
-interface Props {
-	payWithSafe: boolean
-}
-function FundBuilderModal({
-	payWithSafe
-}: Props) {
+
+function FundBuilderModal() {
 	const buildComponent = () => {
 		return (
 			<Modal
@@ -61,11 +57,13 @@ function FundBuilderModal({
 										w='100%'
 										justify='center'
 										align='start'>
-
-										<Text>
-											$
-										</Text>
-
+										{
+											selectedMode?.value !== 'TON Wallet' && (
+												<Text>
+													$
+												</Text>
+											)
+										}
 										<FlushedInput
 											borderBottom='2px solid'
 											type='number'
@@ -89,7 +87,7 @@ function FundBuilderModal({
 											placeholder='0' />
 									</Flex>
 									{
-										amounts?.[0] > 0 && selectedTokenInfo?.fiatConversion ? (
+										selectedMode?.value !== 'TON Wallet' && amounts?.[0] > 0 && selectedTokenInfo?.fiatConversion ? (
 											<Text
 												color='#53514F'
 												fontSize='14px'
@@ -211,14 +209,13 @@ function FundBuilderModal({
 		tos,
 		setTos,
 		selectedTokenInfo,
-		setSelectedTokenInfo,
 		signerVerifiedState,
 		setSignerVerifiedState,
 	} = useContext(FundBuilderContext)!
 	const { phantomWallet } = usePhantomWallet()
 	const { tonWallet } = usetonWallet()
 	const [safeProposalLink, setSafeProposalLink] = useState<string | undefined>(undefined)
-	// const [selectedMode, setSelectedMode] = useState<{logo: string | undefined, value: string | undefined}>()
+	const [selectedMode, setSelectedMode] = useState<{logo: string | undefined, value: string | undefined}>()
 	const [payoutInProcess, setPayoutInProcess] = useState(false)
 	const customToast = useCustomToast()
 	const toast = useToast()
@@ -235,7 +232,10 @@ function FundBuilderModal({
 			value: wallet.name
 		}
 	})
-	const selectedMode = (payWithSafe === true && safeObj !== undefined) ? Safe : Wallets[0]
+
+	useEffect(() => {
+		setSelectedMode(safeObj !== undefined ? Safe : Wallets[0])
+	}, [safeObj])
 
 	const proposal = useMemo(() => {
 		return proposals.find(p => selectedProposals.has(p.id))
@@ -244,15 +244,7 @@ function FundBuilderModal({
 	const milestones = useMemo(() => {
 		return proposal?.milestones || []
 	}, [proposal])
-	const tonWalletInstance = new SupportedPayouts().getAllWallets()[0]
-	useEffect(() => {
-		if(!payWithSafe && selectedTokenInfo?.tokenName !== 'TON') {
-			tonWalletInstance.getToken().then((value) => {
-				setSelectedTokenInfo(value)
-			}), (() => logger.info('Error while fetching ton details'))
-		}
-	}
-	, [[payWithSafe]])
+
 	useEffect(() => {
 		if(!proposal) {
 			return
@@ -282,11 +274,10 @@ function FundBuilderModal({
 
 			const tonWallet = new SupportedPayouts().getWallet('TON Wallet')
 			tonWallet.checkTonReady(window)
-
-			tonWallet.sendMoney(tos[0], amounts[0], true, async(response: any) => {
+			tonWallet.sendMoney(tos[0], amounts[0], true, (response: any) => {
 				logger.info('TON response', response)
+				setPayoutInProcess(false)
 				if(response?.error) {
-					setPayoutInProcess(false)
 					customToast({
 						title: 'An error occurred while creating transaction on TON Wallet',
 						status: 'error',
@@ -294,30 +285,12 @@ function FundBuilderModal({
 					})
 				} else {
 					customToast({
-						title: 'Payouts done through TON Wallet, executing transaction...',
+						title: 'Payouts done through TON Wallet',
 						status: 'success',
 						duration: 5000,
 					})
 					// setSafeProposalAddress(response?.transactionHash)
-					const currentDate = new Date()
-					const timestamp = currentDate.getTime()
-
-					logger.info('transaction hash', '99887341.' + timestamp)
-					const methodArgs = [
-						[parseInt(proposal?.id!, 16)],
-						[parseInt(milestones[milestoneIndices[0]].id?.split('.')[1])],
-						'0x0000000000000000000000000000000000000001',
-						'the-open-network',
-						'nonEvmAssetAddress-toBeChanged',
-						[amounts?.[0]],
-						grant?.workspace?.id,
-						'99887341.' + timestamp
-					]
-
-					await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
-					// setSignerVerifiedState('transaction_initiated')
 					setIsModalOpen(false)
-					setPayoutInProcess(false)
 					// disburseRewardFromSafe(response?.transactionHash, false)
 					// 	.then(() => {
 					// 		// console.log('Sent transaction to contract - EVM', proposaladdress)
@@ -403,7 +376,7 @@ function FundBuilderModal({
 					setSafeProposalLink('https://tonkey.fdc.ai/transactions/queue?safe=' + (safeObj?.safeAddress ?? ''))
 				} catch(e) {
 					customToast({
-						title: (e as { message: string }).message,
+						title: (e as { message: string}).message,
 						status: 'error',
 						duration: 3000,
 					})
@@ -412,6 +385,7 @@ function FundBuilderModal({
 				}
 			}
 
+			logger.info('TON transaction proposed')
 			const methodArgs = [
 				[parseInt(proposal?.id!, 16)],
 				[parseInt(milestones[milestoneIndices[0]].id?.split('.')[1])],
