@@ -64,6 +64,8 @@ export type FundBuilderContextType = {
 };
 
 export type ModalContextType = {
+  isFundingMethodModalOpen: boolean
+  setIsFundingMethodModalOpen: (isOpen: boolean) => void
   isSendAnUpdateModalOpen: boolean
   setIsSendAnUpdateModalOpen: (isOpen: boolean) => void
   isLinkYourMultisigModalOpen: boolean
