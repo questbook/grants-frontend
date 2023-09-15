@@ -13,6 +13,7 @@ import Body from 'src/screens/dashboard/Body'
 import { DashboardProvider, FundBuilderProvider, ModalContext, ModalProvider } from 'src/screens/dashboard/Context'
 import FundBuilderDrawer from 'src/screens/dashboard/FundBuilderDrawer'
 import FundBuilderModal from 'src/screens/dashboard/FundBuilderModal'
+import FundingMethod from 'src/screens/dashboard/FundingMethod'
 import ProposalList from 'src/screens/dashboard/ProposalList'
 import SendAnUpdateModal from 'src/screens/dashboard/SendAnUpdateModal'
 
@@ -75,7 +76,9 @@ function Dashboard(props: DynamicData) {
 			}
 
 			{/* Modals */}
-			<FundBuilderModal />
+			<FundBuilderModal
+				payWithSafe={payWithSafe}
+			/>
 			<SendAnUpdateModal />
 			<LinkYourMultisigModal
 				isOpen={isLinkYourMultisigModalOpen}
@@ -86,15 +89,26 @@ function Dashboard(props: DynamicData) {
 				} />
 
 			{/* Drawers */}
+			<FundingMethod
+				isOpen={isFundingMethodModalOpen}
+				onClose={
+					() => {
+						setIsFundingMethodModalOpen(false)
+					}
+				}
+				setPayWithSafe={setPayWithSafe}
+			/>
 			<FundBuilderDrawer />
 		</Flex>
 	)
 
-	const { isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen } = useContext(ModalContext)!
+	const { isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen, isFundingMethodModalOpen, setIsFundingMethodModalOpen } = useContext(ModalContext)!
 	const { role, isLoading } = useContext(GrantsProgramContext)!
-	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
-	const [step, setStep] = useState(false)
 	const { dashboardStep, setDashboardStep } = useContext(WebwalletContext)!
+	const [step, setStep] = useState(false)
+	const [payWithSafe, setPayWithSafe] = useState <boolean> (true)
+
+	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
 
 	useEffect(() => {
 		logger.info({ isLoading }, 'Loading state changed')
@@ -102,10 +116,6 @@ function Dashboard(props: DynamicData) {
 	useEffect(() => {
 		setDashboardStep(false)
 	}, [])
-
-	// if(isMobile) {
-	// 	return MobileDashboard()
-	// }
 
 	return buildComponent()
 }
