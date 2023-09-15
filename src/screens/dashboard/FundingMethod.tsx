@@ -38,13 +38,15 @@ function FundingMethod({
 				>
 					<ModalCloseButton />
 
-					<Text fontWeight='500'>
+					<Text fontWeight='500'
+
+                    >
 						Link your multisig
 					</Text>
 
 
 					<Button
-						mt={8}
+						mt={4}
 						w='100%'
 						variant='primaryLarge'
 						onClick={
