@@ -38,9 +38,10 @@ function FundingMethod({
 				>
 					<ModalCloseButton />
 
-					<Text fontWeight='500'
+					<Text
+						fontWeight='500'
 
-                    >
+					>
 						Link your multisig
 					</Text>
 
