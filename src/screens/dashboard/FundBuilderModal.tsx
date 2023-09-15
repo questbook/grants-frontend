@@ -22,6 +22,7 @@ import TransactionInitiated from 'src/screens/dashboard/_components/FundBuilder/
 import Verify from 'src/screens/dashboard/_components/FundBuilder/Verify'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import usetonWallet from 'src/screens/dashboard/_hooks/useTonWallet'
+import getToken from 'src/screens/dashboard/_utils/tonWalletUtils'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
 interface Props {
 	payWithSafe: boolean
@@ -244,10 +245,10 @@ function FundBuilderModal({
 	const milestones = useMemo(() => {
 		return proposal?.milestones || []
 	}, [proposal])
-	const tonWalletInstance = new SupportedPayouts().getAllWallets()[0]
+	// const tonWalletInstance = new SupportedPayouts().getAllWallets()[0]
 	useEffect(() => {
 		if(!payWithSafe && selectedTokenInfo?.tokenName !== 'TON') {
-			tonWalletInstance.getToken().then((value) => {
+			getToken().then((value) => {
 				setSelectedTokenInfo(value)
 			}), (() => logger.info('Error while fetching ton details'))
 		}

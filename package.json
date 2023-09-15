@@ -9,7 +9,7 @@
     "lint": "eslint . --ext .js,.ts,.jsx,.tsx",
     "lint:fix": "eslint . --ext .js,.ts,.jsx,.tsx --fix",
     "export": "next export",
-    "refresh": "rm -rf node_modules/ .next/ && rm package-lock.json && npm i -S --legacy-peer-deps --save-dev",
+    "refresh": "rm -rf node_modules/ .next/ && npm i -S --legacy-peer-deps --save-dev",
     "generate:types": "ts-node src/libraries/validator/utils/generateTypes.ts",
     "generate:typechain": "typechain --target ethers-v5 --out-dir src/generated/contracts src/contracts/abi/*.json",
     "generate:graphql": "graphql-codegen --config codegen.yaml",
