@@ -39,12 +39,12 @@ function FundingMethod({
 					<ModalCloseButton />
 
 					<Text fontWeight='500'>
-						Link your multisig
+						Fund Builder
 					</Text>
 
 
 					<Button
-						mt={8}
+						mt={4}
 						w='100%'
 						variant='primaryLarge'
 						onClick={
