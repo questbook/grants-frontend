@@ -280,6 +280,10 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 				const temp = allSectionGrants[1]
 				allSectionGrants[1] = allSectionGrants[i]
 				allSectionGrants[i] = temp
+			} else if(key === 'iExec') {
+				const temp = allSectionGrants[2]
+				allSectionGrants[2] = allSectionGrants[i]
+				allSectionGrants[i] = temp
 			}
 		}
 
