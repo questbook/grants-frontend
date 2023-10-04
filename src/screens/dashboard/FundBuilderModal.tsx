@@ -284,7 +284,7 @@ function FundBuilderModal({
 			const tonWallet = new SupportedPayouts().getWallet('TON Wallet')
 			tonWallet.checkTonReady(window)
 
-			tonWallet.sendMoney(tos[0], amounts[0], true, async(response: any) => {
+			tonWallet.sendMoney(tos[0], amounts[0], false, `${grant?.title}: Milestone #${milestoneIndices[0] + 1} Payout`, async(response: any) => {
 				logger.info('TON response', response)
 				if(response?.error) {
 					setPayoutInProcess(false)
