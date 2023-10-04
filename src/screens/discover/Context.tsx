@@ -268,6 +268,18 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 		logger.info({ allSectionGrants }, 'All section grants (DISCOVER CONTEXT)')
 
+		// remove grants and sections with workspace visibility false
+		for(let i = 0; i < allSectionGrants.length; i++) {
+			const key = Object.keys(allSectionGrants[i])[0]
+			const grants = allSectionGrants[i][key].grants.filter(g => g.workspace.isVisible)
+			if(grants.length === 0) {
+				allSectionGrants.splice(i, 1)
+				i--
+			} else {
+				allSectionGrants[i][key].grants = grants
+			}
+		}
+
 		// move section grant with key compound to 0th position
 		for(let i = 0; i < allSectionGrants.length; i++) {
 			const key = Object.keys(allSectionGrants[i])[0]
