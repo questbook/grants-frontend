@@ -268,17 +268,27 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 		logger.info({ allSectionGrants }, 'All section grants (DISCOVER CONTEXT)')
 
-		// move section grant with key compound to 0th position
+		// remove grants and sections with workspace visibility false
 		for(let i = 0; i < allSectionGrants.length; i++) {
 			const key = Object.keys(allSectionGrants[i])[0]
-			logger.info({ key, cond1: key === 'Compound', cond2: key === 'TON Foundation' }, 'Key (DISCOVER CONTEXT)')
-			if(key === 'Compound') {
-				const temp = allSectionGrants[0]
-				allSectionGrants[0] = allSectionGrants[i]
-				allSectionGrants[i] = temp
-			} else if(key === 'TON Foundation') {
-				const temp = allSectionGrants[1]
-				allSectionGrants[1] = allSectionGrants[i]
+			const grants = allSectionGrants[i][key].grants.filter(g => g.workspace.isVisible)
+			if(grants.length === 0) {
+				allSectionGrants.splice(i, 1)
+				i--
+			} else {
+				allSectionGrants[i][key].grants = grants
+			}
+		}
+
+		
+
+		// move selected grants to top of the list
+		for(let i = 0; i < allSectionGrants.length; i++) {
+			const key = Object.keys(allSectionGrants[i])[0]
+			const topGrants = ['Arbitrum', 'Compound', 'TON Foundation', 'iExec']
+			if(topGrants.includes(key)) {
+				const temp = allSectionGrants[topGrants.indexOf(key)]
+				allSectionGrants[topGrants.indexOf(key)] = allSectionGrants[i]
 				allSectionGrants[i] = temp
 			}
 		}
