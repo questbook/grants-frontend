@@ -17,7 +17,10 @@ jobs:
 
     - name: Install packages
       run: npm i --legacy-peer-deps
-    
+      
+    - name: Refresh packages
+      run: npm run refresh
+      
     - name: Check linting
       run: npm run lint
 
