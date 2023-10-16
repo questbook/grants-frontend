@@ -15,8 +15,6 @@ export function getAvatar(initials: boolean, address: string | null | undefined)
 		address = address.toLowerCase()
 		url = `https://api.dicebear.com/7.x/identicon/svg?seed=${address}`
 	}
-
-	console.log('wassap ya bro', address, url)
 	return url
 
 }
