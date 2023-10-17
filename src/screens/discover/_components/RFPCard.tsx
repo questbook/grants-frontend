@@ -222,7 +222,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						<GridItem>
 							<Flex direction='column'>
 								<Text fontWeight='500'>
-									{grant?.totalGrantFundingDisbursedUSD === '0' ? '-' : `$${nFormatter(grant?.totalGrantFundingDisbursedUSD, 0)}`}
+									{grant?.totalGrantFundingDisbursedUSD === '0' ? '-' : `$${nFormatter(grant?.totalGrantFundingDisbursedUSD, 0, grant.id === '0xe92b011b2ecb97dbe168c802d582037e28036f9b')}`}
 								</Text>
 								<Text
 									mt={1}

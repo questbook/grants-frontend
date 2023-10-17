@@ -34,10 +34,14 @@ export function extractDateFromDateTime(date: string) {
 	return `${day} ${MONTH_MAP[month]}, ${year}`
 }
 
-export function nFormatter(value: string, digits = 3) {
-	const num = Math.abs(Number(value))
+export function nFormatter(value: string, digits = 3, isTonGrants?: boolean) {
+	let num = Math.abs(Number(value))
 	if(num < 10000) {
 		return value
+	}
+
+	if(isTonGrants) {
+		num = num - 18000
 	}
 
 	const lookup = [
