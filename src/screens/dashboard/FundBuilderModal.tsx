@@ -418,7 +418,7 @@ function FundBuilderModal({
 				setSafeProposalLink(getProposalUrl(safeObj?.safeAddress ?? '', proposaladdress as string))
 			} else {
 				try {
-					proposaladdress = await safeObj?.proposeTransactions(`proposal: ${getFieldString(proposal, 'projectName') ?? proposal.id}: Milestone #${milestoneIndices[0] + 1} Payout`, temp, tonWallet)
+					proposaladdress = await safeObj?.proposeTransactions(`[${grant?.title ?? 'grant'}][${getFieldString(proposal, 'projectName') ?? proposal.id}]. Milestone #${milestoneIndices[0] + 1} Payout`, temp, tonWallet)
 					setSafeProposalLink('https://tonkey.app/transactions/queue?safe=' + (safeObj?.safeAddress ?? ''))
 				} catch(e) {
 					customToast({
