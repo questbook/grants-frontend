@@ -97,7 +97,7 @@ function FundBuilderModal({
 												mt='8px'>
 												≈
 												{' '}
-												{(amounts?.[0] / parseFloat(selectedTokenInfo?.fiatConversion!.toString())).toFixed(2)}
+												{(amounts?.[0] / parseFloat(selectedTokenInfo?.fiatConversion.toString())).toFixed(2)}
 												{' '}
 												{selectedTokenInfo?.tokenName}
 											</Text>
@@ -400,7 +400,7 @@ function FundBuilderModal({
 				setSafeProposalLink(getProposalUrl(safeObj?.safeAddress ?? '', proposaladdress as string))
 			} else {
 				try {
-					proposaladdress = await safeObj?.proposeTransactions('', temp, tonWallet)
+					proposaladdress = await safeObj?.proposeTransactions(`${grant?.title}: Milestone #${milestoneIndices[0] + 1} Payout`, temp, tonWallet)
 					setSafeProposalLink('https://tonkey.fdc.ai/transactions/queue?safe=' + (safeObj?.safeAddress ?? ''))
 				} catch(e) {
 					customToast({
@@ -413,6 +413,7 @@ function FundBuilderModal({
 				}
 			}
 
+			logger.info('TON queryId', proposaladdress)
 			const methodArgs = [
 				[parseInt(proposal?.id!, 16)],
 				[parseInt(milestones[milestoneIndices[0]].id?.split('.')[1])],

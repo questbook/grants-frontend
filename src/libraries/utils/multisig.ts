@@ -75,5 +75,5 @@ export function getRealmsURL(realmPk: string) {
 }
 
 export function getTonkeyProposalUrl(id: string, transactionStatus: string) {
-	return `https://tonkey.fdc.ai/transactions/${transactionStatus}?safe=${id}`
+	return `https://tonkey.app/transactions/${transactionStatus}?safe=${id}`
 }
