@@ -25,7 +25,7 @@ export function getSafeURL(safeAddress: string, chainId: string) {
 	} else if(chainId === '4689' || chainId === '4690') {
 		return `https://safe.iotex.io/${NETWORK_PREFIX[chainId]}:${safeAddress}`
 	} else if(chainId === '512341' || chainId === '512342') {
-		return `https://tonkey.fdc.ai/transactions/history?safe=${safeAddress}`
+		return `https://tonkey.app/transactions/history?safe=${safeAddress}`
 	} else {
 		return `https://app.safe.global/${NETWORK_PREFIX[chainId]}:${safeAddress}`
 	}

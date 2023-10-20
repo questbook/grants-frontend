@@ -5,6 +5,11 @@ import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import { isValidEthereumAddress } from 'src/libraries/utils/validations'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
+import TonWeb from 'tonweb'
+
+function toRawAddress(address: string): string {
+	return new TonWeb.Address(address).toString(false)
+}
 
 function useLinkYourMultisig() {
 	const { grant } = useContext(GrantsProgramContext)!
@@ -23,7 +28,7 @@ function useLinkYourMultisig() {
 		setTransactionStep: setStep,
 	})
 
-	const link = async(multisigAddress: string, networkId: string) => {
+	const link = async(multisigAddress: string, networkId: string, isTonkey: boolean) => {
 		if(!grant?.workspace?.id) {
 			return
 		}
@@ -33,7 +38,7 @@ function useLinkYourMultisig() {
 			safeAddressInBytes = ethers.utils.hexZeroPad(ethers.utils.hexlify(ethers.utils.getAddress(multisigAddress)), 32)
 		}
 
-		const methodArgs = [Number(grant?.workspace?.id), safeAddressInBytes, multisigAddress, networkId]
+		const methodArgs = [Number(grant?.workspace?.id), safeAddressInBytes, isTonkey ? toRawAddress(multisigAddress) : multisigAddress, networkId]
 
 		await call({ method: 'updateWorkspaceSafe', args: methodArgs })
 	}
