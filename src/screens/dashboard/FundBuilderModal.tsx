@@ -418,6 +418,10 @@ function FundBuilderModal({
 				setSafeProposalLink(getProposalUrl(safeObj?.safeAddress ?? '', proposaladdress as string))
 			} else {
 				try {
+					if(!tonWallet) {
+						throw new Error('TON Wallet not found')
+					}
+
 					proposaladdress = await safeObj?.proposeTransactions(`[${grant?.title ?? 'grant'}][${getFieldString(proposal, 'projectName') ?? proposal.id}]. Milestone #${milestoneIndices[0] + 1} Payout`, temp, tonWallet)
 					setSafeProposalLink('https://tonkey.app/transactions/queue?safe=' + (safeObj?.safeAddress ?? ''))
 				} catch(e) {
