@@ -1,5 +1,5 @@
 import { ChangeEvent, ReactElement, useContext, useEffect, useMemo, useState } from 'react'
-import { Button, Container, Flex, Image, Text } from '@chakra-ui/react'
+import { Button, Container, Flex, Image, Text, useMediaQuery } from '@chakra-ui/react'
 import { convertToRaw } from 'draft-js'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
@@ -33,6 +33,7 @@ function ProposalForm() {
 	}
 
 	const successComponent = () => {
+		const [isMobile] = useMediaQuery(['(max-width:600px)'])
 		return (
 			<Flex
 				w='100%'
@@ -45,23 +46,25 @@ function ProposalForm() {
 					bg='white'
 					boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
 					overflowY='auto'
+					direction={isMobile ? 'column' : 'row'}
 					my={5}>
 					<Flex
 						direction='column'
 						bg='accent.columbia'
-						w='50%'
+						w={isMobile ? '100%' : '50%'}
 						h='100%'
 						justify='center'
-						align='start'
+						align={isMobile ? 'center' : 'start'}
 						pl='10%'>
 
 						<Image
 							src={grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)}
-							boxSize='20rem'
+							boxSize={isMobile ? '10rem' : '20rem' }
 						/>
 						<Text
 							mt={6}
 							variant='heading2'
+							textAlign={isMobile ? 'center' : 'left'}
 							fontWeight='500'>
 							Fantastic — we have received
 							your proposal.
@@ -69,8 +72,9 @@ function ProposalForm() {
 					</Flex>
 					<Flex
 						bg='white'
-						w='50%'
+						w={isMobile ? '100%' : '50%'}
 						h='100%'
+						mt={isMobile ? 6 : 0}
 						direction='column'
 						align='start'
 						justify='center'

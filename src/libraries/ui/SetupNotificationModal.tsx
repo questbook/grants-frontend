@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { Button, Flex, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
+import { Button, Flex, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text, useMediaQuery } from '@chakra-ui/react'
 import { Desktop, QrScan } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
@@ -23,8 +23,7 @@ type OptionalProps =
 type Props = BaseProps & OptionalProps
 
 function SetupNotificationModal(props: Props) {
-
-
+	const [isMobile] = useMediaQuery(['(max-width:600px)'])
 	const buildComponent = () => {
 		return (
 			<Modal
@@ -61,7 +60,11 @@ function SetupNotificationModal(props: Props) {
 							{' '}
 							channel.
 						</Text>
-						{buttonItems.map(buttonItem)}
+
+						{
+							isMobile ? buttonItem(buttonItems[0], 1) :
+								buttonItems.map(buttonItem)
+						}
 					</Flex>
 
 				</ModalContent>
@@ -109,11 +112,13 @@ function SetupNotificationModal(props: Props) {
 
 	const buttonItems = [
 		{
-			title: 'For MAC App',
-			buttonIcon: <Desktop
-				color='black.100'
-				boxSize='20px' />,
-			buttonText: 'Open my desktop app',
+			title: isMobile ? 'For mobile App' : 'For MAC App',
+			buttonIcon: isMobile ? <></> : (
+				<Desktop
+					color='black.100'
+					boxSize='20px' />
+			),
+			buttonText: isMobile ? 'Open my mobile app' : 'Open my desktop app',
 			onButtonClick: () => {
 				const payload = getPayload()
 				if(payload) {
