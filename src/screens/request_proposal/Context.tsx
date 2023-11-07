@@ -96,7 +96,7 @@ const RFPFormProvider = ({ children }: {children: ReactNode}) => {
 			proposalName: response[0]?.grant?.title!,
 			startDate: response[0]?.grant?.startDate!,
 			endDate: response[0]?.grant?.deadline!,
-			allApplicantDetails: response[0]?.grant?.fields!.filter(field => field.title.includes('customField')).map(field => {
+			allApplicantDetails: response[0]?.grant?.fields.filter(field => field.title.includes('customField')).map(field => {
 				return {
 					id: field.id.split('-')[1],
 					title: field.title.split('-')[1],
