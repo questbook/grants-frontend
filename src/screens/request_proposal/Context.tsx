@@ -86,7 +86,7 @@ const RFPFormProvider = ({ children }: {children: ReactNode}) => {
 		logger.info('Grant program fetched', response)
 		let rubricData: string[] | undefined = []
 		if(response[0]?.grant?.rubric?.items.length! > 0) {
-			 rubricData = response[0]?.grant?.rubric?.items!.map((item) => {
+			 rubricData = response[0]?.grant?.rubric?.items?.map((item) => {
 				return item.title
 			})
 		}

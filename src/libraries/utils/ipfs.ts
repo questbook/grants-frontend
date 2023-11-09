@@ -1,8 +1,8 @@
 import config from 'src/constants/config.json'
 
-const IPFS_UPLOAD_ENDPOINT = 'https://ipfs.questbook.app/api/v0/add?pin=true'
-const IPFS_DOWNLOAD_ENDPOINT = 'https://ipfs.questbook.app:8080'
-
+// const IPFS_UPLOAD_ENDPOINT = 'https://ipfs.questbook.app/api/v0/add?pin=true'
+// const IPFS_DOWNLOAD_ENDPOINT = 'https://ipfs.questbook.app:8080'
+const IPFS_CENTRAL_GATEWAY = 'https://xutlg0p65i.execute-api.ap-southeast-1.amazonaws.com'
 export const uploadToIPFS = async(data: string | Blob | null): Promise<{ hash: string }> => {
 	if(data === null) {
 		return { hash: config.defaultDAOImageHash }
@@ -12,13 +12,13 @@ export const uploadToIPFS = async(data: string | Blob | null): Promise<{ hash: s
 	form.append('file', data)
 
 	// refer to https://infura.io/docs/ipfs#section/Getting-Started/Add-a-file
-	const fetchResult = await fetch(IPFS_UPLOAD_ENDPOINT, {
+	const fetchResult = await fetch(`${IPFS_CENTRAL_GATEWAY}/upload`, {
 		method: 'POST',
 		body: form,
 	})
 	const responseBody = await fetchResult.json()
 
-	return { hash: responseBody.Hash }
+	return { hash: responseBody.hash }
 }
 
 export const getFromIPFS = async(hash: string): Promise<string> => {
@@ -70,7 +70,7 @@ export const getUrlForIPFSHash = (hash: string) => {
 		return `https://ipfs.io/ipfs/${hash}`
 	}
 
-	return `${IPFS_DOWNLOAD_ENDPOINT}/ipfs/${hash}`
+	return `${IPFS_CENTRAL_GATEWAY}/${hash}`
 }
 
 export const isIpfsHash = (str: string | undefined | null) => !!str && str.startsWith('Qm') && str.length < 256

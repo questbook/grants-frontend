@@ -455,7 +455,7 @@ function Proposal() {
 
 			try {
 				const o = JSON.parse(details)
-				setEditorState(EditorState.createWithContent(convertFromRaw(o)))
+				setEditorState(EditorState.createWithContent(convertFromRaw({ blocks: o?.blocks ?? [], entityMap: o?.entityMap ?? {} })))
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {
 				if(details) {
