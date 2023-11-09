@@ -115,7 +115,7 @@ function LinkYourMultisigModal({
 									}
 
 									// link the safe
-									await link(multiSigAddress, networkId)
+									await link(multiSigAddress, networkId, selectedSafeNetwork.networkName === 'TON Mainnet')
 
 									onClose()
 								} else {
@@ -278,11 +278,14 @@ function LinkYourMultisigModal({
 		const supportedPayouts = new SupportedPayouts()
 		setLoadingSafeData(true)
 		await supportedPayouts.getSafeByAddress(address, (safe) => {
-			logger.info('Safe data fetched', { safe })
 			setLoadingSafeData(false)
 			setSafeNetworks(safe)
 		})
 	}
+
+	useEffect(() => {
+		logger.info(selectedSafeNetwork?.networkName, 'isTonkey safe')
+	}, [selectedSafeNetwork])
 
 	useEffect(() => {
 		if(_multisigAddress) {

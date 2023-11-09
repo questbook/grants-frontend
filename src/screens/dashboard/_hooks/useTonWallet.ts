@@ -14,6 +14,9 @@ export default function usetonWallet() {
 			setTonWallet(window.ton)
 			setTonWalletAvailable(true)
 			logger.info('ton wallet is available')
+		} else {
+			setTonWalletAvailable(false)
+			logger.info('ton wallet not available')
 		}
 	}, [])
 

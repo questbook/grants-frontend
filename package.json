@@ -9,7 +9,7 @@
     "lint": "eslint . --ext .js,.ts,.jsx,.tsx",
     "lint:fix": "eslint . --ext .js,.ts,.jsx,.tsx --fix",
     "export": "next export",
-    "refresh": "rm -rf node_modules/ .next/ && npm i -S --legacy-peer-deps --save-dev",
+    "refresh": "rm -rf node_modules/ .next/  && npm i -S --legacy-peer-deps --save-dev",
     "generate:types": "ts-node src/libraries/validator/utils/generateTypes.ts",
     "generate:typechain": "typechain --target ethers-v5 --out-dir src/generated/contracts src/contracts/abi/*.json",
     "generate:graphql": "graphql-codegen --config codegen.yaml",
@@ -32,7 +32,7 @@
     "@papercups-io/chat-widget": "^1.3.1",
     "@questbook/anon-authoriser": "git+https://github.com/questbook/anon-authoriser",
     "@questbook/service-validator-client": "git+https://github.com/questbook/service-validator-typescript-client",
-    "@questbook/supported-safes": "github:questbook/supported-safes#4c6aec430bd425ea40e72d504baa69b54757a912",
+    "@questbook/supported-safes": "github:questbook/supported-safes#1cae97c5895cd72dcf51021e32e6e88a984f4b8c",
     "@safe-global/safe-core-sdk": "^3.3.1",
     "@safe-global/safe-ethers-lib": "^1.9.1",
     "@sentry/nextjs": "^7.13.0",
@@ -73,7 +73,8 @@
     "react-qr-code": "^2.0.11",
     "react-responsive": "^9.0.2",
     "ts-node": "^10.9.1",
-    "wagmi": "^0.6.5"
+    "wagmi": "^0.6.5",
+    "tonweb": "^0.0.62"
   },
   "devDependencies": {
     "@creatoros/eslint-config": "git+https://github.com/CreatorOS/eslint-config",

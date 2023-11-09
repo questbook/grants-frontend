@@ -24,6 +24,7 @@ import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import usetonWallet from 'src/screens/dashboard/_hooks/useTonWallet'
 import getToken from 'src/screens/dashboard/_utils/tonWalletUtils'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
+import TonWeb from 'tonweb'
 interface Props {
 	payWithSafe: boolean
 }
@@ -97,7 +98,7 @@ function FundBuilderModal({
 												mt='8px'>
 												≈
 												{' '}
-												{(amounts?.[0] / parseFloat(selectedTokenInfo?.fiatConversion!.toString())).toFixed(2)}
+												{(amounts?.[0] / parseFloat(String(selectedTokenInfo?.fiatConversion))).toFixed(2)}
 												{' '}
 												{selectedTokenInfo?.tokenName}
 											</Text>
@@ -221,14 +222,31 @@ function FundBuilderModal({
 	const [safeProposalLink, setSafeProposalLink] = useState<string | undefined>(undefined)
 	// const [selectedMode, setSelectedMode] = useState<{logo: string | undefined, value: string | undefined}>()
 	const [payoutInProcess, setPayoutInProcess] = useState(false)
+	const [safeAddress, setSafeAddress] = useState('')
 	const customToast = useCustomToast()
 	const toast = useToast()
 	const payoutsInProcessToastRef = useRef<any>()
 
+
 	const Safe = {
 		logo: safeObj?.safeLogo,
-		value: safeObj?.safeAddress ?? ''
+		value: safeAddress ?? ''
 	}
+	useEffect(() => {
+		if(!safeObj?.safeAddress) {
+			return
+		}
+
+		if(safeObj.chainName !== 'TON Mainnet') {
+			setSafeAddress(safeObj.safeAddress)
+			return
+		}
+
+		const Address = TonWeb.utils.Address
+		const address = new Address(safeObj?.safeAddress!)
+		const userFriendlyAddress = address.toString(true, true, true)
+		setSafeAddress(userFriendlyAddress)
+	}, [safeObj])
 
 	const Wallets = new SupportedPayouts().getAllWallets().map((wallet) => {
 		return {
@@ -400,8 +418,12 @@ function FundBuilderModal({
 				setSafeProposalLink(getProposalUrl(safeObj?.safeAddress ?? '', proposaladdress as string))
 			} else {
 				try {
-					proposaladdress = await safeObj?.proposeTransactions('', temp, tonWallet)
-					setSafeProposalLink('https://tonkey.fdc.ai/transactions/queue?safe=' + (safeObj?.safeAddress ?? ''))
+					if(!tonWallet) {
+						throw new Error('TON Wallet not found')
+					}
+
+					proposaladdress = await safeObj?.proposeTransactions(`${grant?.title ?? 'grant'} / ${getFieldString(proposal, 'projectName') ?? proposal.id}: Milestone #${milestoneIndices[0] + 1} Payout`, temp, tonWallet)
+					setSafeProposalLink('https://tonkey.app/transactions/queue?safe=' + (safeObj?.safeAddress ?? ''))
 				} catch(e) {
 					customToast({
 						title: (e as { message: string }).message,
@@ -413,6 +435,7 @@ function FundBuilderModal({
 				}
 			}
 
+			logger.info('TON queryId', proposaladdress)
 			const methodArgs = [
 				[parseInt(proposal?.id!, 16)],
 				[parseInt(milestones[milestoneIndices[0]].id?.split('.')[1])],

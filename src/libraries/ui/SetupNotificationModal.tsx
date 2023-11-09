@@ -5,6 +5,7 @@ import logger from 'src/libraries/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, NotificationContext } from 'src/pages/_app'
 
+
 type BaseProps = {
     isOpen: boolean
     onClose: () => void
@@ -22,6 +23,8 @@ type OptionalProps =
 type Props = BaseProps & OptionalProps
 
 function SetupNotificationModal(props: Props) {
+
+
 	const buildComponent = () => {
 		return (
 			<Modal
@@ -113,7 +116,6 @@ function SetupNotificationModal(props: Props) {
 			buttonText: 'Open my desktop app',
 			onButtonClick: () => {
 				const payload = getPayload()
-				logger.info(payload)
 				if(payload) {
 					window.open(`https://t.me/${process.env.NOTIF_BOT_USERNAME}?start=${payload}`, '_blank')
 				}
@@ -137,17 +139,21 @@ function SetupNotificationModal(props: Props) {
 		if(grant?.workspace) {
 			const key = `${props.type === 'grant' ? 'gp' : 'app'}-${props.type === 'grant' ? props.grantId : props.proposalId}-${getSupportedChainIdFromWorkspace(grant.workspace)}`
 			const payload = (Buffer.from(key).toString('base64')).replaceAll('=', '')
-			logger.info({ key, payload }, 'Telegram config')
+			return payload
+		 } else if(typeof window !== 'undefined' && !grant) {
+			const params = new URLSearchParams(window.location.search)
+			const chainId = params.get('chainId')
+			const key = `${props.type === 'grant' ? 'gp' : 'app'}-${props.type === 'grant' ? props.grantId : props.proposalId}-${chainId}`
+			const payload = (Buffer.from(key).toString('base64')).replaceAll('=', '')
+			logger.info({ payload }, 'Telegram payload')
 			return payload
 		}
 
 		return undefined
 	}
 
-
 	const { grant } = useContext(GrantsProgramContext)!
 	const { setQrCodeText } = useContext(NotificationContext)!
-
 	return buildComponent()
 }
 
