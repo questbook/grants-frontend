@@ -116,7 +116,7 @@ function ProposalDetails({ proposal, index, tokenInfo }: Props) {
 							mt='8px'>
 							≈
 							{' '}
-							{(amounts?.[index] / parseFloat(tokenInfo?.fiatConversion!.toString())).toFixed(2)}
+							{(amounts?.[index] / parseFloat(String(tokenInfo?.fiatConversion))).toFixed(2)}
 							{' '}
 							{tokenInfo?.tokenName}
 						</Text>
