@@ -32,7 +32,7 @@
     "@papercups-io/chat-widget": "^1.3.1",
     "@questbook/anon-authoriser": "git+https://github.com/questbook/anon-authoriser",
     "@questbook/service-validator-client": "git+https://github.com/questbook/service-validator-typescript-client",
-    "@questbook/supported-safes": "github:questbook/supported-safes#1cae97c5895cd72dcf51021e32e6e88a984f4b8c",
+    "@questbook/supported-safes": "github:questbook/supported-safes#4127b981546173d9dc5c88530bf6c1c0e6716629",
     "@safe-global/safe-core-sdk": "^3.3.1",
     "@safe-global/safe-ethers-lib": "^1.9.1",
     "@sentry/nextjs": "^7.13.0",
