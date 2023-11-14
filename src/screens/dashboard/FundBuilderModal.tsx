@@ -98,7 +98,7 @@ function FundBuilderModal({
 												mt='8px'>
 												≈
 												{' '}
-												{(amounts?.[0] / parseFloat(String(selectedTokenInfo?.fiatConversion))).toFixed(2)}
+												{(amounts?.[0] / (selectedTokenInfo?.fiatConversion)).toFixed(2)}
 												{' '}
 												{selectedTokenInfo?.tokenName}
 											</Text>

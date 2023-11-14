@@ -76,13 +76,13 @@ function PayWithChoose({ selectedMode }: { selectedMode: { logo: string | undefi
 									mt='8px'>
 									Available:
 									{' '}
-									{parseFloat(selectedTokenInfo?.tokenValueAmount?.toString()!).toFixed(2)}
+									{(selectedTokenInfo?.tokenValueAmount!).toFixed(2)}
 									{' '}
 									{selectedTokenInfo?.tokenName}
 									{' '}
 									≈
 									{' '}
-									{parseFloat(selectedTokenInfo?.usdValueAmount?.toString()!).toFixed(2)}
+									{(selectedTokenInfo?.usdValueAmount!).toFixed(2)}
 									{' '}
 									USD
 								</Text>
