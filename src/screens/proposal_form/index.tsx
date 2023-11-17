@@ -617,9 +617,17 @@ function ProposalForm() {
 			}
 		}
 
-		if(convertToRaw(details.getCurrentContent()).blocks[0].text.length === 0) {
-			logger.info('Details is empty')
-			return true
+		if(details.getCurrentContent().getPlainText() === '') {
+			if(convertToRaw(details.getCurrentContent()).blocks[0].type !== 'unstyled') {
+				logger.info('Details is empty')
+				return true
+			} else {
+				const block = convertToRaw(details.getCurrentContent()).blocks[0]
+				if(block.text === '' || block.text === '\n') {
+					logger.info('Details is empty')
+					return true
+				}
+			}
 		}
 
 		for(const milestone of milestones) {
