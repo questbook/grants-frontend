@@ -10,13 +10,15 @@ export default function usetonWallet() {
 	const [tonWalletAddress, setTonWalletAddress] = useState<string>('')
 
 	useEffect(() => {
-		if('ton' in window) {
-			setTonWallet(window.ton)
-			setTonWalletAvailable(true)
-			logger.info('ton wallet is available')
-		} else {
-			setTonWalletAvailable(false)
-			logger.info('ton wallet not available')
+		if(typeof window !== 'undefined') {
+			if('ton' in window) {
+				setTonWallet(window.ton)
+				setTonWalletAvailable(true)
+				logger.info('ton wallet is available')
+			} else {
+				setTonWalletAvailable(false)
+				logger.info('ton wallet not available')
+			}
 		}
 	}, [])
 
