@@ -227,7 +227,6 @@ function FundBuilderModal({
 	const toast = useToast()
 	const payoutsInProcessToastRef = useRef<any>()
 
-
 	const Safe = {
 		logo: safeObj?.safeLogo,
 		value: safeAddress ?? ''
@@ -298,7 +297,6 @@ function FundBuilderModal({
 		if(selectedMode?.value === 'TON Wallet') {
 			setPayoutInProcess(true)
 			setSignerVerifiedState('initiate_TON_transaction')
-
 			const tonWallet = new SupportedPayouts().getWallet('TON Wallet')
 			tonWallet.checkTonReady(window)
 
@@ -418,11 +416,12 @@ function FundBuilderModal({
 				setSafeProposalLink(getProposalUrl(safeObj?.safeAddress ?? '', proposaladdress as string))
 			} else {
 				try {
-					if(!tonWallet) {
+					if(!tonWallet && typeof window !== 'undefined' && !('ton' in window)) {
+						logger.error('TON Wallet not found', { tonWallet })
 						throw new Error('TON Wallet not found')
 					}
 
-					proposaladdress = await safeObj?.proposeTransactions(`${grant?.title ?? 'grant'} / ${getFieldString(proposal, 'projectName') ?? proposal.id}: Milestone #${milestoneIndices[0] + 1} Payout`, temp, tonWallet)
+					proposaladdress = await safeObj?.proposeTransactions(`${grant?.title ?? 'grant'} / ${getFieldString(proposal, 'projectName') ?? proposal.id}: Milestone #${milestoneIndices[0] + 1} Payout`, temp, !tonWallet ? typeof window !== 'undefined' && ('ton' in window) ? window.ton : tonWallet : tonWallet)
 					setSafeProposalLink('https://tonkey.app/transactions/queue?safe=' + (safeObj?.safeAddress ?? ''))
 				} catch(e) {
 					customToast({
