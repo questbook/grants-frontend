@@ -8,6 +8,7 @@ import logger from 'src/libraries/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { DiscoverContextType, GrantProgramType, GrantType, RecentProposals, SectionGrants, WorkspaceMemberType } from 'src/screens/discover/_utils/types'
+import { getAllFundsTransfers } from 'src/screens/discover/data/fundsTransfers'
 import { Roles } from 'src/types'
 
 const DiscoverContext = createContext<DiscoverContextType | null>(null)
@@ -286,6 +287,41 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		setRecentProposals(recentProposals)
 	}
 
+	const replaceFundsTransfers = async() => {
+		const fundTransfers = await getAllFundsTransfers()
+		logger.info({ fundTransfers }, 'Funds Transfers')
+		if(grantsForAll?.length) {
+			const grants = grantsForAll.map((g) => {
+				const fundTransfer = fundTransfers.find((f) => f.grant?.id === g.id)
+				return fundTransfer ? { ...g, fundTransfer } : g
+			})
+			setGrantsForAll(grants)
+		}
+
+		if(grantsForYou?.length) {
+			const grants = grantsForYou.map((g) => {
+				const fundTransfer = fundTransfers.find((f) => f.grant?.id === g.id)
+				return fundTransfer ? { ...g, fundTransfer } : g
+			})
+			setGrantsForYou(grants)
+		}
+
+		if(sectionGrants?.length) {
+			const grants = sectionGrants.map((s) => {
+				const key = Object.keys(s)[0]
+				const section = s[key]
+				const grants = section.grants.map((g) => {
+					const fundTransfer = fundTransfers.find((f) => f.grant?.id === g.id)
+					return fundTransfer ? { ...g, fundTransfer } : g
+				})
+				return { [key]: { ...section, grants } }
+			})
+			setSectionGrants(grants)
+		}
+
+		return 'funds-transfers-replaced'
+	}
+
 	useEffect(() => {
 		getGrantsForAll().then(r => logger.info(r, 'Get Grants for all'))
 	}, [search])
@@ -304,6 +340,11 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		}
 	}, [inviteInfo])
 
+
+	useEffect(() => {
+		replaceFundsTransfers().then(r => logger.info(r, 'Replace Funds Transfers'))
+	}, [])
+
 	useEffect(() => {
 		// console.log('hi from',grantsForAll?.length, grantsForYou?.length, sectionGrants?.length)
 		if(!grantsForAll?.length || !sectionGrants?.length) {
@@ -319,6 +360,8 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 		const allGrants = [...grantsForAll, ...grantsForYou, ...sGrants]
 		fetchSafeBalances(allGrants)
+
+
 	}, [grantsForAll, grantsForYou, sectionGrants])
 
 	return provider()

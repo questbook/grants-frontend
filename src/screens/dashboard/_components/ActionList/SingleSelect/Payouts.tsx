@@ -1,16 +1,17 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Flex, Text } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import { defaultChainId, USD_ASSET } from 'src/constants/chains'
-import { useGetPayoutsQuery } from 'src/generated/graphql'
+// import { useGetPayoutsQuery } from 'src/generated/graphql'
 import { Dropdown, NewTab } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
-import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
+// import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
 import logger from 'src/libraries/logger'
 import { getGnosisTansactionLink, getProposalUrl, getTonkeyProposalUrl } from 'src/libraries/utils/multisig'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
+import { usePayouts } from 'src/screens/dashboard/_hooks/usePayout'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { Payout, PayoutsType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -196,48 +197,36 @@ function Payouts() {
 		return getChainInfo(grant, chainId)
 	}, [proposal?.grant, chainId])
 
-	const { fetchMore } = useMultiChainQuery({
-		useQuery: useGetPayoutsQuery,
-		options: {},
-		chains: [getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId]
-	})
+	// const { fetchMore } = useMultiChainQuery({
+	// 	useQuery: useGetPayoutsQuery,
+	// 	options: {},
+	// 	chains: [getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId]
+	// })
+	// const { records: fetchedRecords } = usePayouts({
+	// 	proposalID: proposal?.id as string,
+	//   })
 
-	const getPayouts = useCallback(async() => {
+	let isCompleted = false
+	  const getPayouts = async() => {
 		if(!proposal) {
-			setPayouts([])
-			return 'no-proposal'
+		  setPayouts([])
+		  return 'no-proposal'
 		}
 
-		const first = 100
-		let skip = 0
-
-		const data: PayoutsType = []
-		let shouldContinue = true
-		do {
-			logger.info({ first, skip }, 'Variables')
-			const results = await fetchMore({ first, skip, proposalID: proposal.id })
-			logger.info({ results }, 'Payouts intermediate results')
-			if(!results?.[0]?.fundsTransfers || results?.[0]?.fundsTransfers?.length === 0) {
-				shouldContinue = false
-				break
-			}
-
-			data.push(...results[0]?.fundsTransfers)
-			skip += first
-		} while(shouldContinue)
-
-		logger.info({ data }, 'Payouts data')
-		setPayouts(data)
+		const fetchedRecords = await usePayouts(proposal?.id as string)
+		logger.info(fetchedRecords, 'Payouts data')
+		setPayouts(fetchedRecords as [] || [])
+		isCompleted = true
 		return 'payouts-fetched'
-	}, [proposal])
+	  }
 
-	useEffect(() => {
+
+	  useEffect(() => {
 		logger.info({}, 'Proposal changed')
-		getPayouts().then((ret) => {
-			logger.info({ ret }, 'Payouts')
-		})
-	}, [proposal])
-
+		if(proposal && !isCompleted) {
+		  getPayouts()
+		}
+	  }, [proposal])
 	const formatMilestoneId = (id: string | undefined) => {
 		if(!id) {
 			return ''
