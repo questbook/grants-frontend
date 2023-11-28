@@ -229,6 +229,9 @@ function FundBuilderModal({
 	const customToast = useCustomToast()
 	const toast = useToast()
 	const payoutsInProcessToastRef = useRef<any>()
+	const [disburseRewardFromSafeMutation, { data: disburseRewardRes, error:disburseRewardError }] = useMutation(DisburseRewardSafeMutation, {
+		client: client,
+	})
 
 	const Safe = {
 		logo: safeObj?.safeLogo,
@@ -348,12 +351,8 @@ function FundBuilderModal({
 					}
 
 					await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
-
-					const [, { data, error }] = useMutation(DisburseRewardSafeMutation, {
-						variables: args,
-						client: client,
-					})
-					logger.info('DisburseRewardSafeMutation', { data, error })
+					await disburseRewardFromSafeMutation({ variables: args })
+					logger.info('DisburseRewardSafeMutation', { disburseRewardRes, disburseRewardError })
 
 					// setSignerVerifiedState('transaction_initiated')
 					setIsModalOpen(false)
@@ -477,17 +476,15 @@ function FundBuilderModal({
 				tokenName: selectedTokenInfo?.tokenName?.toLowerCase() ?? '',
 				nonEvmAssetAddress: 'nonEvmAssetAddress-toBeChanged',
 				amounts: [amounts?.[0]],
-				transactionHash: proposaladdress,
+				// if the tx returns an error, the transaction hash will be empty
+				transactionHash: typeof proposaladdress === 'string' ? proposaladdress : '',
 				sender: safeAddress,
 				grant: grant?.id!,
 				to: tos?.[0]
 			}
 
-			const [, { data, error }] = useMutation(DisburseRewardSafeMutation, {
-				variables: args,
-				client: client,
-			})
-			logger.info('DisburseRewardSafeMutation', { data, error })
+			await disburseRewardFromSafeMutation({ variables: args })
+			logger.info('DisburseRewardSafeMutation', { disburseRewardRes, disburseRewardError })
 			setSignerVerifiedState('transaction_initiated')
 			setPayoutInProcess(false)
 		}
