@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useMutation } from '@apollo/client'
 import { Box, Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text, useToast } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { defaultChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
+import { DisburseRewardSafeMutation } from 'src/generated/mutation'
+import client from 'src/graphql/apollo'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
@@ -98,7 +101,7 @@ function FundBuilderModal({
 												mt='8px'>
 												≈
 												{' '}
-												{(amounts?.[0] / parseFloat(String(selectedTokenInfo?.fiatConversion))).toFixed(2)}
+												{(amounts?.[0] / (selectedTokenInfo?.fiatConversion)).toFixed(2)}
 												{' '}
 												{selectedTokenInfo?.tokenName}
 											</Text>
@@ -226,7 +229,9 @@ function FundBuilderModal({
 	const customToast = useCustomToast()
 	const toast = useToast()
 	const payoutsInProcessToastRef = useRef<any>()
-
+	const [disburseRewardFromSafeMutation, { data: disburseRewardRes, error:disburseRewardError }] = useMutation(DisburseRewardSafeMutation, {
+		client: client,
+	})
 
 	const Safe = {
 		logo: safeObj?.safeLogo,
@@ -298,7 +303,6 @@ function FundBuilderModal({
 		if(selectedMode?.value === 'TON Wallet') {
 			setPayoutInProcess(true)
 			setSignerVerifiedState('initiate_TON_transaction')
-
 			const tonWallet = new SupportedPayouts().getWallet('TON Wallet')
 			tonWallet.checkTonReady(window)
 
@@ -333,7 +337,23 @@ function FundBuilderModal({
 						'99887341.' + timestamp
 					]
 
+					const args = {
+						applicationIds: [String(parseInt(proposal?.id!, 16))],
+						milestoneIds: [String(parseInt(milestones[milestoneIndices[0]].id?.split('.')[1]))],
+						asset: '0x0000000000000000000000000000000000000001',
+						tokenName: selectedTokenInfo?.tokenName!,
+						nonEvmAssetAddress: 'nonEvmAssetAddress-toBeChanged',
+						amounts: [amounts?.[0]],
+						transactionHash: '99887341.' + timestamp,
+						sender: safeAddress,
+						grant: grant?.id!,
+						to: tos?.[0]
+					}
+
 					await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
+					await disburseRewardFromSafeMutation({ variables: args })
+					logger.info('DisburseRewardSafeMutation', { disburseRewardRes, disburseRewardError })
+
 					// setSignerVerifiedState('transaction_initiated')
 					setIsModalOpen(false)
 					setPayoutInProcess(false)
@@ -418,11 +438,12 @@ function FundBuilderModal({
 				setSafeProposalLink(getProposalUrl(safeObj?.safeAddress ?? '', proposaladdress as string))
 			} else {
 				try {
-					if(!tonWallet) {
+					if(!tonWallet && typeof window !== 'undefined' && !('ton' in window)) {
+						logger.error('TON Wallet not found', { tonWallet })
 						throw new Error('TON Wallet not found')
 					}
 
-					proposaladdress = await safeObj?.proposeTransactions(`${grant?.title ?? 'grant'} / ${getFieldString(proposal, 'projectName') ?? proposal.id}: Milestone #${milestoneIndices[0] + 1} Payout`, temp, tonWallet)
+					proposaladdress = await safeObj?.proposeTransactions(`${grant?.title ?? 'grant'} / ${getFieldString(proposal, 'projectName') ?? proposal.id}: Milestone #${milestoneIndices[0] + 1} Payout`, temp, !tonWallet ? typeof window !== 'undefined' && ('ton' in window) ? window.ton : tonWallet : tonWallet)
 					setSafeProposalLink('https://tonkey.app/transactions/queue?safe=' + (safeObj?.safeAddress ?? ''))
 				} catch(e) {
 					customToast({
@@ -447,6 +468,23 @@ function FundBuilderModal({
 				proposaladdress
 			]
 			await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
+
+			const args = {
+				applicationIds: [String(proposal?.id)],
+				milestoneIds: [String(parseInt(milestones[milestoneIndices[0]].id?.split('.')[1]))],
+				asset: '0x0000000000000000000000000000000000000001',
+				tokenName: selectedTokenInfo?.tokenName?.toLowerCase() ?? '',
+				nonEvmAssetAddress: 'nonEvmAssetAddress-toBeChanged',
+				amounts: [amounts?.[0]],
+				// if the tx returns an error, the transaction hash will be empty
+				transactionHash: typeof proposaladdress === 'string' ? proposaladdress : '',
+				sender: safeAddress,
+				grant: grant?.id!,
+				to: tos?.[0]
+			}
+
+			await disburseRewardFromSafeMutation({ variables: args })
+			logger.info('DisburseRewardSafeMutation', { disburseRewardRes, disburseRewardError })
 			setSignerVerifiedState('transaction_initiated')
 			setPayoutInProcess(false)
 		}

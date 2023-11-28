@@ -1,0 +1,12 @@
+query getAllFundsTransfer($first: Int, $skip: Int) {
+  fundTransfers(limit:$first,skip:$skip) {
+    grant{
+      id:_id
+    }
+    amount
+    type
+    tokenUSDValue
+    asset
+    tokenName
+  }
+}
