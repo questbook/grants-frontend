@@ -439,7 +439,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 												onClick={
 													() => {
 														if(grant.link !== null) {
-															window.open(getAbsoluteURL(grant.link!), '_blank')
+															window.open(compoundCustomLinks[grant?.id!] ?? getAbsoluteURL(grant.link!), '_blank')
 														}
 													}
 												}
