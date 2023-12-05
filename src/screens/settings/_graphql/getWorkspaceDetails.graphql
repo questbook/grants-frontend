@@ -1,6 +1,6 @@
-query getWorkspaceDetails($workspaceID: ID!) {
-  workspace(id: $workspaceID, subgraphError: allow) {
-    id
+query getWorkspaceDetails($workspaceID: String!) {
+  workspace(_id: $workspaceID) {
+    id:_id
     title
     bio
     about
@@ -27,8 +27,10 @@ query getWorkspaceDetails($workspaceID: ID!) {
       decimal
       iconHash
     }
-    members(where: { enabled: true }) {
-      id
+    member:membersFilter(filter: {
+      enabled: true
+    }) {
+      id:_id
       actorId
       publicKey
       email
@@ -38,7 +40,7 @@ query getWorkspaceDetails($workspaceID: ID!) {
       lastReviewSubmittedAt
       enabled
       addedBy {
-        id
+        id:_id
         actorId
       }
     }

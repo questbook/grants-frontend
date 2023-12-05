@@ -152,7 +152,7 @@ export type FundTransfer = {
         address: string
         chainId: string
         iconHash: string
-        decimals: number
+        decimal: number
       }
     }
   }

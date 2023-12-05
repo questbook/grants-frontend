@@ -4,12 +4,11 @@ query getWorkspaceMembersByWorkspaceId(
   $skip: Int
 ) {
   workspaceMembers(
-    where: { workspace: $workspaceId }
-    first: $first
+    filter: { workspace: $workspaceId }
+    limit: $first
     skip: $skip
-    subgraphError: allow
   ) {
-    id
+    id:_id
     actorId
     fullName
     profilePictureIpfsHash
@@ -19,7 +18,7 @@ query getWorkspaceMembersByWorkspaceId(
     email
     enabled
     pii {
-        id
+        id:_id
         data
     }
   }

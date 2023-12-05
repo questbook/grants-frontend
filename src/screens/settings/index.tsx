@@ -474,7 +474,9 @@ function Settings() {
 	}
 
 	useEffect(() => {
+		logger.info('setting image file', grantProgramData)
 		if(grantProgramData?.logoIpfsHash !== undefined && imageFile?.file === null) {
+			logger.info('setting image file', grantProgramData.logoIpfsHash)
 			setImageFile({ file: null, hash: grantProgramData.logoIpfsHash })
 		}
 	}, [grantProgramData])

@@ -1,9 +1,9 @@
 # This query fetches all the grants for a given domain
-query getGrant($grantId: ID!, $actorId: Bytes!) {
+query getGrant($grantId: String!, $actorId: String!) {
   grant(
-    id: $grantId
+    _id: $grantId
   ) {
-    id
+    id:_id
     title
     acceptingApplications
     numberOfApplications
@@ -11,18 +11,18 @@ query getGrant($grantId: ID!, $actorId: Bytes!) {
     numberOfApplicationsPending
     link
     fields {
-      id
+      id:_id
       title
       inputType
       possibleValues
       isPii
     }
-    applications (first: 1) {
-      id
+    applications:applicationsFilter(limit:1) {
+      id:_id
     }
     reward {
       committed
-      id
+      id:_id
       asset
       token {
         address
@@ -32,10 +32,10 @@ query getGrant($grantId: ID!, $actorId: Bytes!) {
       }
     }
     rubric {
-      id
+      id:_id
       isPrivate
       items {
-        id
+        id:_id
         title
         details
         maximumPoints
@@ -43,17 +43,17 @@ query getGrant($grantId: ID!, $actorId: Bytes!) {
     }
     reviewType
     payoutType
-    myApplications: applications (where: {applicantId: $actorId}) {
-      id
+    myApplications(filter: {applicantId: $actorId}) {
+      id:_id
     }
     workspace {
-      id
+      id:_id
       ownerId
       logoIpfsHash
       title
       supportedNetworks
       safe {
-        id
+        id:_id
         chainId
         address
       }
@@ -67,8 +67,8 @@ query getGrant($grantId: ID!, $actorId: Bytes!) {
         address
         chainId
       }
-      members(where: { enabled: true }) {
-        id
+      members:membersFilter(filter: { enabled: true }) {
+        id:_id
         actorId
         publicKey
         fullName
@@ -78,7 +78,7 @@ query getGrant($grantId: ID!, $actorId: Bytes!) {
         lastReviewSubmittedAt
         profilePictureIpfsHash
         pii {
-          id
+          id:_id
           data
         }
         enabled
