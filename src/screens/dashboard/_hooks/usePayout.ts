@@ -38,7 +38,7 @@ export const QUERY_FUNDSTRANSFERS = gql`
             address
             chainId
             iconHash
-            decimals
+            decimal
           }
         }
       }

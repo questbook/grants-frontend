@@ -1,42 +1,22 @@
-query getWorkspacesAndBuilderGrants($first: Int, $skip: Int, $actorId: String!) {
-  workspaceMembers(
-    sort: ADDEDAT_DESC,
-    limit: $first
-    skip: $skip
-  ) {
-    id:_id
-    accessLevel
-    enabled
-    workspace {
-      id:_id
-      title
-      supportedNetworks
-      grants {
-        _id
-      }
-    }
-  }
-  
- grants(filter: {
-   applications_: {
-    _operators: {
-      applicantId: {
-        regex: $actorId
-      }
-    }
-  }}
+import { gql } from '@apollo/client'
+
+export const getAllGrants = gql`query GetAllGrants($first: Int, $skip: Int, $searchString: RegExpAsString!) {
+  grants(
     limit: $first
     skip: $skip
     sort: CREATEDATS_DESC
-  ){
+    filter: { 
+      _operators: {
+        title: {
+         regex: $searchString
+        }
+      }
+    }
+  ) {
     id:_id
     title
-    applications(filter: { _operators: {
-      applicantId: {
-        regex: $actorId
-      }
-    } }) {
-      id:_id
+    applications(limit: 1) {
+      id: _id
       applicantId
       state
     }
@@ -85,3 +65,4 @@ query getWorkspacesAndBuilderGrants($first: Int, $skip: Int, $actorId: String!) 
     totalGrantFundingDisbursedUSD
   }
 }
+  `

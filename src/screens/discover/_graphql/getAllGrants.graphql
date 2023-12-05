@@ -1,15 +1,20 @@
-query GetAllGrants($first: Int, $skip: Int, $searchString: String!) {
+query GetAllGrants($first: Int, $skip: Int, $searchString: RegExpAsString!) {
   grants(
-    first: $first
+    limit: $first
     skip: $skip
-    orderBy: createdAtS
-    orderDirection: desc
-    where: { workspace_: { isVisible: true }, title_contains: $searchString }
+    sort: CREATEDATS_DESC
+    filter: { 
+      _operators: {
+        title: {
+         regex: $searchString
+        }
+      }
+    }
   ) {
-    id
+    id:_id
     title
-    applications(first: 1) {
-      id
+    applications(limit: 1) {
+      id: _id
       applicantId
       state
     }
@@ -22,13 +27,13 @@ query GetAllGrants($first: Int, $skip: Int, $searchString: String!) {
       tokenName
     }
     workspace {
-      id
+      id:_id
       title
       isVisible
       logoIpfsHash
       supportedNetworks
-      members(first: 1) {
-        id
+      members(limit: 1) {
+        id:_id
         actorId
         accessLevel
       }
@@ -39,7 +44,7 @@ query GetAllGrants($first: Int, $skip: Int, $searchString: String!) {
     }
     reward {
       committed
-      id
+      id:_id
       asset
       token {
         address

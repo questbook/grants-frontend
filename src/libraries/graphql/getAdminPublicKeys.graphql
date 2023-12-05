@@ -1,7 +1,9 @@
-query getAdminPublicKeys($workspaceId: ID!) {
-    workspace(id: $workspaceId) {
-        members (where: {accessLevel_not: reviewer, enabled: true}) {
-            id
+query getAdminPublicKeys($workspaceId: String!) {
+    workspace(_id: $workspaceId) {
+        members:membersFilter(filter: {_operators: {accessLevel: {
+          ne:"reviewer"
+        }}, enabled: true}) {
+            id:_id
             actorId
             fullName
             publicKey

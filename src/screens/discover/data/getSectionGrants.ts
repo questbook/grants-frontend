@@ -1,3 +1,7 @@
+import { gql } from '@apollo/client'
+
+
+export const getSectionGrantsQuery = gql`
 query getSectionGrants {
   sections {
     grants(sort: NUMBEROFAPPLICATIONS_DESC) {
@@ -95,3 +99,4 @@ query getSectionGrants {
     id:_id
   }
 }
+`

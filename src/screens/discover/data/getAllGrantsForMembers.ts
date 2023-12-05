@@ -1,3 +1,6 @@
+import { gql } from '@apollo/client'
+
+export const getAllGrantsForMembers = gql`
 query GetAllGrantsForMember(
     $first: Int
     $skip: Int
@@ -77,3 +80,4 @@ query GetAllGrantsForMember(
       totalGrantFundingDisbursedUSD
     }
   }
+`

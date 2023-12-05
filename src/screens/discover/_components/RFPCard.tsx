@@ -270,6 +270,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 	const router = useRouter()
 
 	const { isQbAdmin } = useContext(QBAdminsContext)!
+	logger.info({ isQbAdmin }, 'isQbAdmin')
 
 	const usdAmount = useMemo(() => {
 		return safeBalances[`${grant.workspace.safe?.chainId}-${grant.workspace.safe?.address}`]

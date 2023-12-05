@@ -326,16 +326,16 @@ function FundBuilderModal({
 					const timestamp = currentDate.getTime()
 
 					logger.info('transaction hash', '99887341.' + timestamp)
-					const methodArgs = [
-						[parseInt(proposal?.id!, 16)],
-						[parseInt(milestones[milestoneIndices[0]].id?.split('.')[1])],
-						'0x0000000000000000000000000000000000000001',
-						'the-open-network',
-						'nonEvmAssetAddress-toBeChanged',
-						[amounts?.[0]],
-						grant?.workspace?.id,
-						'99887341.' + timestamp
-					]
+					// const methodArgs = [
+					// 	[parseInt(proposal?.id!, 16)],
+					// 	[parseInt(milestones[milestoneIndices[0]].id?.split('.')[1])],
+					// 	'0x0000000000000000000000000000000000000001',
+					// 	'the-open-network',
+					// 	'nonEvmAssetAddress-toBeChanged',
+					// 	[amounts?.[0]],
+					// 	grant?.workspace?.id,
+					// 	'99887341.' + timestamp
+					// ]
 
 					const args = {
 						applicationIds: [String(parseInt(proposal?.id!, 16))],
@@ -350,7 +350,7 @@ function FundBuilderModal({
 						to: tos?.[0]
 					}
 
-					await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
+					// await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
 					await disburseRewardFromSafeMutation({ variables: args })
 					logger.info('DisburseRewardSafeMutation', { disburseRewardRes, disburseRewardError })
 
@@ -457,17 +457,17 @@ function FundBuilderModal({
 			}
 
 			logger.info('TON queryId', proposaladdress)
-			const methodArgs = [
-				[parseInt(proposal?.id!, 16)],
-				[parseInt(milestones[milestoneIndices[0]].id?.split('.')[1])],
-				'0x0000000000000000000000000000000000000001',
-				selectedTokenInfo?.tokenName.toLowerCase(),
-				'nonEvmAssetAddress-toBeChanged',
-				[amounts?.[0]],
-				grant?.workspace?.id,
-				proposaladdress
-			]
-			await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
+			// const methodArgs = [
+			// 	[parseInt(proposal?.id!, 16)],
+			// 	[parseInt(milestones[milestoneIndices[0]].id?.split('.')[1])],
+			// 	'0x0000000000000000000000000000000000000001',
+			// 	selectedTokenInfo?.tokenName.toLowerCase(),
+			// 	'nonEvmAssetAddress-toBeChanged',
+			// 	[amounts?.[0]],
+			// 	grant?.workspace?.id,
+			// 	proposaladdress
+			// ]
+			// await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
 
 			const args = {
 				applicationIds: [String(proposal?.id)],
@@ -492,7 +492,7 @@ function FundBuilderModal({
 
 	const workspacechainId = getSupportedChainIdFromWorkspace(grant?.workspace) || defaultChainId
 
-	const { call } = useFunctionCall({ chainId: workspacechainId, contractName: 'workspace' })
+	// const { call } = useFunctionCall({ chainId: workspacechainId, contractName: 'workspace' })
 	const { call: acceptProposal } = useFunctionCall({ chainId: workspacechainId, contractName: 'applications' })
 
 	return buildComponent()
