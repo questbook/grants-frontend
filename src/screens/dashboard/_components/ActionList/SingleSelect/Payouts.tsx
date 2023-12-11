@@ -226,6 +226,35 @@ function Payouts() {
 			skip += first
 		} while(shouldContinue)
 
+		const amounts: {
+			[key: string]: string
+		}[]
+		= [
+			{
+				'0x33a': '4000'
+			},
+			{
+				'0x210': '3500'
+			},
+			{
+				'0x2cc': '2000'
+			}
+		]
+		// temp fix for payouts (@note: remove this after migration)
+		if(amounts.find((amount) => amount[proposal.id])) {
+			data.push({
+				...data[0],
+				createdAtS: 1701938036,
+				amount: amounts.find((amount) => amount[proposal.id])?.[proposal.id] as string,
+				transactionHash: '0xfbccfe1983618af0404b3c29056b3172cfd20f9a4c3177d95ed4b401b0f03697',
+				executionTimestamp: 1702278635,
+				milestone: {
+					id: Object.keys(amounts.find((amount) => amount[proposal.id]) as { [key: string]: string })[0] + '.2',
+					__typename: 'ApplicationMilestone'
+				}
+			})
+		}
+
 		logger.info({ data }, 'Payouts data')
 		setPayouts(data)
 		return 'payouts-fetched'
