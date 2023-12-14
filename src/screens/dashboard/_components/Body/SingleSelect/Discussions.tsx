@@ -99,7 +99,7 @@ function Discussions() {
 								{currentMember?.fullName ?? formatAddress(scwAddress ?? '')}
 							</Text>
 							<RoleTag
-								role={(role as Roles) ?? 'community'}
+								role={(role as Roles)}
 								isBuilder={proposal?.applicantId === scwAddress?.toLowerCase()}
 							/>
 							{
@@ -400,6 +400,7 @@ function Discussions() {
 
 	const { scwAddress } = useContext(WebwalletContext)!
 	const { grant, role } = useContext(GrantsProgramContext)!
+	logger.info({ grant, role }, 'GRANT AND ROLE')
 	const {
 		proposals,
 		selectedProposals,
