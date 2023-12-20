@@ -1,5 +1,5 @@
 query getQBAdmins {
-    qbadmins {
+    qbAdmins {
         walletAddress
     }
 }

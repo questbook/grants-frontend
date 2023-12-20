@@ -4,13 +4,17 @@ import { TokenDetailsInterface } from '@questbook/supported-safes/lib/types/Safe
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
-import { ApplicationState, useGetApplicationActionsQuery, useGetCommentsQuery, useGetGrantQuery, useGetProposalsQuery } from 'src/generated/graphql'
-import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
+import { ApplicationState } from 'src/generated/graphql'
+import { useQuery } from 'src/libraries/hooks/useQuery'
 import logger from 'src/libraries/logger'
 import { getFromIPFS } from 'src/libraries/utils/ipfs'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { getApplicationActionsQuery } from 'src/screens/dashboard/_data/getApplicationActionsQuery'
+import { getCommentsQuery } from 'src/screens/dashboard/_data/getCommentsQuery'
+import { getGrantsQuery } from 'src/screens/dashboard/_data/getGrantsQuery'
+import { getProposalsQuery } from 'src/screens/dashboard/_data/getProposalsQuery'
 import { CommentMap, CommentType, DashboardContextType, FundBuilderContextType, ModalContextType, Proposals, ReviewInfo, SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
 import { Roles } from 'src/types'
 
@@ -38,28 +42,20 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		}
 	}, [_chainId])
 
-	const { fetchMore: fetchGrantDetails } = useMultiChainQuery({
-		useQuery: useGetGrantQuery,
-		options: {},
-		chains: [chainId === -1 ? defaultChainId : chainId]
+	const { fetchMore: fetchGrantDetails } = useQuery({
+		query: getGrantsQuery,
 	})
 
-	const { fetchMore: fetchMoreProposals } = useMultiChainQuery({
-		useQuery: useGetProposalsQuery,
-		options: {},
-		chains: [chainId === -1 ? defaultChainId : chainId]
+	const { fetchMore: fetchMoreProposals } = useQuery({
+		query: getProposalsQuery,
 	})
 
-	const { fetchMore: fetchMoreComments } = useMultiChainQuery({
-		useQuery: useGetCommentsQuery,
-		options: {},
-		chains: [chainId === -1 ? defaultChainId : chainId]
+	const { fetchMore: fetchMoreComments } = useQuery({
+		query: getCommentsQuery,
 	})
 
-	const { fetchMore: fetchMoreApplicationActions } = useMultiChainQuery({
-		useQuery: useGetApplicationActionsQuery,
-		options: {},
-		chains: [chainId === -1 ? defaultChainId : chainId]
+	const { fetchMore: fetchMoreApplicationActions } = useQuery({
+		query: getApplicationActionsQuery,
 	})
 
 	const [proposals, setProposals] = useState<Proposals>([])
@@ -76,13 +72,14 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		}
 
 		logger.info({ grantId, scwAddress }, 'Getting grant (GET GRANT)')
-		const details = await fetchGrantDetails({ grantId, actorId: scwAddress ? scwAddress.toLowerCase() : '0x0000000000000000000000000000000000000000' }, true)
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const details: any = await fetchGrantDetails({ grantId, actorId: scwAddress ? scwAddress.toLowerCase() : '0x0000000000000000000000000000000000000000' }, true)
 		logger.info({ details }, 'Grant details (GET GRANT)')
-		if(!details?.[0]?.grant) {
+		if(!details?.grant) {
 			return 'no-grant-in-query'
 		}
 
-		const _grant = details[0].grant
+		const _grant = details.grant
 		logger.info({ _grant }, 'Setting grant (GET GRANT)')
 
 		// set the grant in local storage to be used as a default
@@ -106,7 +103,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
 		if(scwAddress) {
 			for(const member of _grant?.workspace?.members ?? []) {
-				if(member.actorId === scwAddress.toLowerCase()) {
+				if(member.actorId.toLowerCase() === scwAddress.toLowerCase()) {
 					logger.info({ member }, 'Member (ROLE)')
 					possibleRoles.push(member.accessLevel === 'reviewer' ? 'reviewer' : 'admin')
 					break
@@ -206,18 +203,23 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 				// 3. It has some comment in string format
 				const key = `${comment.application.id}.${getSupportedChainIdFromWorkspace(comment.workspace) ?? defaultChainId}`
 				if(comment?.commentsPublicHash !== undefined) {
-					if(comment?.commentsPublicHash?.startsWith('Qm')) {
-						const commentData = JSON.parse(await getFromIPFS(comment.commentsPublicHash))
-						if(commentData?.message) {
+					if(typeof comment.commentsPublicHash === 'object') {
+					  //@ts-ignore
+					  const data = comment.commentsPublicHash
+					  //@ts-ignore
+					   commentMap[key].push({ ...comment, ...data, message: data.message })
+					} else if(typeof comment.commentsPublicHash === 'string' && comment.commentsPublicHash.startsWith('Qm')) {
+					  const commentData = JSON.parse(await getFromIPFS(comment.commentsPublicHash))
+					  if(commentData?.message) {
 							const message = await getFromIPFS(commentData.message)
 							if(!commentMap[key]) {
-								commentMap[key] = []
+						  commentMap[key] = []
 							}
 
 							commentMap[key].push({ ...comment, ...commentData, message })
-						}
+					  }
 					}
-				} else if(comment?.message !== undefined) {
+				  } else if(comment?.message !== undefined) {
 					if(!commentMap[key]) {
 						commentMap[key] = []
 					}
@@ -271,14 +273,15 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		let skip = 0
 		let shouldContinue = true
 		do {
-			const results = await fetchMoreProposals({ first, skip, grantID: grantId }, true)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const results: any = await fetchMoreProposals({ first, skip, grantID: grantId }, true)
 			logger.info({ results }, 'Results (Proposals)')
-			if(results?.length === 0 || !results[0] || !results[0]?.grantApplications?.length) {
+			if(results?.grantApplications?.length === 0) {
 				shouldContinue = false
 				break
 			}
 
-			proposals.push(...results[0]?.grantApplications)
+			proposals.push(...results?.grantApplications)
 			skip += first
 		} while(shouldContinue)
 
@@ -303,19 +306,16 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		let skip = 0
 		let shouldContinue = true
 		do {
-			const results = await fetchMoreComments({ first, skip, grantId }, true)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const results: any = await fetchMoreComments({ first, skip, grantId }, true)
 			logger.info({ results }, 'Results (Comments)')
-			if(results?.length === 0 || results?.every((r) => !r?.comments?.length)) {
+			if(results?.comments?.length === 0) {
 				shouldContinue = false
 				break
 			}
 
-			for(const result of results) {
-				if(!result?.comments?.length) {
-					continue
-				}
-
-				allComments.push(...result?.comments)
+			for(const comment of results?.comments ?? []) {
+				allComments.push(comment)
 			}
 
 			skip += first
@@ -323,10 +323,12 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
 		logger.info({ allComments }, 'Fetched comments before actions')
 
-		const results = await fetchMoreApplicationActions({ grantId }, true)
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const results: any = await fetchMoreApplicationActions({ grantId }, true)
 		logger.info({ results }, 'Results (Application Actions)')
-		if(results?.length > 0) {
-			const result = results[0]
+		if(results?.grantApplications.length > 0) {
+			const result = results?.grantApplications[0]
+			logger.info({ result }, 'Result (Application Actions Test)')
 			for(const proposal of result?.grantApplications ?? []) {
 				for(const action of proposal?.actions ?? []) {
 					const comment: CommentType = {
@@ -343,7 +345,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 						timestamp: action.updatedAtS,
 						sender: action.updatedBy,
 						createdAt: action.updatedAtS,
-						role: proposal.grant.workspace.members.map(m => m.actorId).includes(action.updatedBy.toLowerCase()) ? 'admin' : 'builder',
+						role: proposal.grant.workspace.members.map((m: { actorId: String }) => m.actorId).includes(action.updatedBy.toLowerCase()) ? 'admin' : 'builder',
 						message: action.feedback?.trim()?.startsWith('Qm') ? undefined : action.feedback === null ? '' : action.feedback,
 					}
 					logger.info(comment, 'Dummy Comment')
@@ -401,7 +403,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 			if(proposalIndex !== -1) {
 				setSelectedProposals(new Set<string>([proposalId]))
 				if(role === 'builder' || role === 'community') {
-					setRole(proposals[proposalIndex].applicantId === scwAddress?.toLowerCase() ? 'builder' : 'community')
+					setRole(proposals[proposalIndex].applicantId?.toLowerCase() === scwAddress?.toLowerCase() ? 'builder' : 'community')
 				}
 
 				let params = { ...router.query }
@@ -424,7 +426,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 			const initialSelectionSet = new Set<string>()
 			initialSelectionSet.add(proposals[0].id)
 			if(role === 'builder' || role === 'community') {
-				setRole(proposals[0].applicantId === scwAddress?.toLowerCase() ? 'builder' : 'community')
+				setRole(proposals[0].applicantId?.toLowerCase() === scwAddress?.toLowerCase() ? 'builder' : 'community')
 			}
 
 			let params = { ...router.query }

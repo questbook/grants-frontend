@@ -1,9 +1,8 @@
-query getGrantDetailsById($grantID: ID!) {
+query getGrantDetailsById($grantID: String!) {
   grant(
-    subgraphError: allow
-    id: $grantID
+    _id: $grantID
   ) {
-    id
+    id:_id
     creatorId
     title
     summary
@@ -13,16 +12,16 @@ query getGrantDetailsById($grantID: ID!) {
     payoutType
     reviewType
     rubric {
-      id
+      id:_id
     }
     fields {
-      id
+      id:_id
       title
       inputType
       isPii
     }
     reward {
-      id
+      id:_id
       asset
       committed
       token {
@@ -40,7 +39,7 @@ query getGrantDetailsById($grantID: ID!) {
     rubric {
       isPrivate
       items {
-        id
+        id:_id
         title
         details
         maximumPoints

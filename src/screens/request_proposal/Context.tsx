@@ -1,9 +1,9 @@
 import { createContext, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
-import { useGetGrantDetailsByIdQuery } from 'src/generated/graphql'
-import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
+import { useQuery } from 'src/libraries/hooks/useQuery'
 import logger from 'src/libraries/logger'
+import { getGrantDetailsByIdQuery } from 'src/screens/request_proposal/_data/getGrantDetailsByIdQuery'
 import { RFPForm, RFPFormContextType, RFPFormType } from 'src/screens/request_proposal/_utils/types'
 
 const RFPFormContext = createContext<RFPFormContextType | undefined>(undefined)
@@ -57,10 +57,8 @@ const RFPFormProvider = ({ children }: {children: ReactNode}) => {
 		logger.info({ workspaceId, grantId, chainId }, 'RFP form edit')
 	}, [workspaceId, grantId, chainId])
 
-	const { fetchMore: fetchRFP } = useMultiChainQuery({
-		useQuery: useGetGrantDetailsByIdQuery,
-		options: {},
-		chains: [chainId]
+	const { fetchMore: fetchRFP } = useQuery({
+		query: getGrantDetailsByIdQuery,
 	})
 
 	useEffect(() => {
@@ -80,23 +78,25 @@ const RFPFormProvider = ({ children }: {children: ReactNode}) => {
 	const fetchRFPDetails = useCallback(async() => {
 		const grantID = typeof(grantId) === 'string' ? grantId : ''
 		logger.info('Grant program fetching', { grantID, chainId })
-		const response = await fetchRFP({
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const response: any = await fetchRFP({
 			grantID,
 		})
 		logger.info('Grant program fetched', response)
 		let rubricData: string[] | undefined = []
-		if(response[0]?.grant?.rubric?.items.length! > 0) {
-			 rubricData = response[0]?.grant?.rubric?.items!.map((item) => {
+		if(response?.grant?.rubric?.items.length! > 0) {
+			 rubricData = response[0]?.grant?.rubric?.items!.map((item: { title: string}) => {
 				return item.title
 			})
 		}
 
 		// console.log('all applicasnt details fetched', response[0]?.grant?.fields)
 		const data = {
-			proposalName: response[0]?.grant?.title!,
-			startDate: response[0]?.grant?.startDate!,
-			endDate: response[0]?.grant?.deadline!,
-			allApplicantDetails: response[0]?.grant?.fields.filter(field => field.title.includes('customField')).map(field => {
+			proposalName: response?.grant?.title!,
+			startDate: response?.grant?.startDate!,
+			endDate: response?.grant?.deadline!,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			allApplicantDetails: response?.grant?.fields.filter((field: any) => field.title.includes('customField')).map((field: any) => {
 				return {
 					id: field.id.split('-')[1],
 					title: field.title.split('-')[1],
@@ -105,12 +105,12 @@ const RFPFormProvider = ({ children }: {children: ReactNode}) => {
 					pii: false,
 				}
 			}),
-			amount: response[0]?.grant?.reward.committed!,
-			link: response[0]?.grant?.link ? response[0]?.grant?.link : '',
-			doc: response[0]?.grant?.docIpfsHash ? response[0]?.grant?.docIpfsHash : '',
-			milestones: response[0]?.grant?.milestones!,
-			payoutMode: response[0]?.grant?.payoutType!,
-			reviewMechanism: response[0]?.grant?.reviewType!,
+			amount: response?.grant?.reward.committed!,
+			link: response?.grant?.link ? response?.grant?.link : '',
+			doc: response?.grant?.docIpfsHash ? response?.grant?.docIpfsHash : '',
+			milestones: response?.grant?.milestones!,
+			payoutMode: response?.grant?.payoutType!,
+			reviewMechanism: response?.grant?.reviewType!,
 			rubrics: rubricData!
 		 }
 		setRFPData(data)

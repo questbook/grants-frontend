@@ -44,7 +44,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 					</Text>
 				</Text>
 				{
-					(role === 'community') && (
+					(role === 'community' || role === 'builder') && (
 						<Button
 							variant='secondaryV2'
 							// w='103px'

@@ -572,7 +572,7 @@ function ProposalForm() {
 
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
 	const [transactionHash, setTransactionHash] = useState<string>('')
-	const { submitProposal, proposalId, isBiconomyInitialised, isExecuting } = useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash })
+	const { submitProposal, proposalId, isExecuting } = useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash })
 	const [emailError, setEmailError] = useState<boolean>(false)
 	const [walletAddressError, setWalletAddressError] = useState<boolean>(false)
 
@@ -596,7 +596,7 @@ function ProposalForm() {
 	}, [form])
 
 	const isDisabled = useMemo(() => {
-		if(!isBiconomyInitialised || !form) {
+		if(!form) {
 			logger.info('Form is not initialised')
 			return true
 		}
@@ -634,7 +634,7 @@ function ProposalForm() {
 		}
 
 		return false
-	}, [form, isBiconomyInitialised])
+	}, [form])
 
 	const onChange = (e: ChangeEvent<HTMLInputElement>, id: string) => {
 		const copy = { ...form }

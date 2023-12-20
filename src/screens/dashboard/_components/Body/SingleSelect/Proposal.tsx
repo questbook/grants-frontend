@@ -445,7 +445,7 @@ function Proposal() {
 
 		Promise.all([
 			decrypt(proposal),
-			getFromIPFS(getFieldString(proposal, 'projectDetails') ?? ''),
+			getFieldString(proposal, 'projectDetails')?.startsWith('Qm') ? getFromIPFS(getFieldString(proposal, 'projectDetails') ?? '') : Promise.resolve(getFieldString(proposal, 'projectDetails') ?? ''),
 		]).then(([decryptedProposal, details]) => {
 			logger.info(
 				{ decryptedProposal, details },

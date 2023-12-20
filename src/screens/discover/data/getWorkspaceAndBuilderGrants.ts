@@ -185,19 +185,19 @@ export async function getWorkspacesAndBuilderGrantsQuery({
 				query: GetWorkspacesAndBuilderGrants,
 				variables: {
 					skip,
-					first: 500,
+					first: 100,
 					actorId,
 				},
 			})
 
 			if(data?.workspaceMembers && !error) {
 				workspaceMembers = workspaceMembers.concat(data.workspaceMembers)
-				skip += 500
+				skip += 100
 			}
 
 			if(data?.grants && !error) {
 			  grants = grants.concat(data.grants)
-				skip += 500
+				skip += 100
 			}
 
 			if(data?.workspaceMembers.length === 0 && data?.grants?.length === 0) {

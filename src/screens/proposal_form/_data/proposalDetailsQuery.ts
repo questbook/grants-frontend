@@ -1,4 +1,5 @@
-query proposalDetails($proposalId: String!) {
+import { gql } from '@apollo/client'
+export const proposalDetailsQuery = gql`query proposalDetails($proposalId: String!) {
     grantApplication(_id: $proposalId) {
     id:_id
     applicantId
@@ -67,4 +68,4 @@ query proposalDetails($proposalId: String!) {
       }
     }
   }
-}
+}`

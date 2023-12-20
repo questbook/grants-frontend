@@ -1,19 +1,19 @@
 query getApplicationActions($grantId: String!) {
-  grantApplications(where: { grant: $grantId }) {
-    id
+  grantApplications(filter: { grant: $grantId }) {
+    id:_id
     applicantId
     applicantPublicKey
     actions {
-      id
+      id:_id
       updatedBy
       updatedAtS
       state
       feedback
     }
     grant {
-      id
+      id:_id
       workspace {
-        members {
+        members:membersFilter {
           actorId
           fullName
           profilePictureIpfsHash

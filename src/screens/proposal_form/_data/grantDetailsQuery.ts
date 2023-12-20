@@ -1,24 +1,6 @@
-query proposalDetails($proposalId: String!) {
-    grantApplication(_id: $proposalId) {
-    id:_id
-    applicantId
-    applicantPublicKey
-    fields {
-      id:_id
-      values {
-        id:_id
-        value
-      }
-    }
-    pii {
-      id:_id
-      data
-    }
-    milestones {
-      title
-      amount
-    }
-    grant {
+import { gql } from '@apollo/client'
+export const grantDetailsQuery = gql`query grantDetails($grantId: String!) {
+    grant(_id: $grantId) {
       id:_id
       creatorId
       title
@@ -54,9 +36,9 @@ query proposalDetails($proposalId: String!) {
         supportedNetworks
         logoIpfsHash
         safe {
-                address
-                chainId
-            }
+                  address
+                  chainId
+              }
       }
       fields {
         id:_id
@@ -65,6 +47,6 @@ query proposalDetails($proposalId: String!) {
         possibleValues
         isPii
       }
+      milestones
     }
-  }
-}
+  }`

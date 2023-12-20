@@ -1,6 +1,6 @@
 query getWorkspaceMembersPublicKeys($workspaceId: String!) {
-     workspaceMembers(where: { workspace: $workspaceId, enabled: true }) {
+     workspaceMembers(filter: { workspace: $workspaceId, enabled: true }) {
          actorId
- 		publicKey
+ 		 publicKey
      }
  }
