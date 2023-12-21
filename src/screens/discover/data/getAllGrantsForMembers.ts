@@ -44,7 +44,7 @@ query GetAllGrantsForMember(
         isVisible
         logoIpfsHash
         supportedNetworks
-        members(filter: { 
+        members: membersFilter(filter: { 
         _operators: {
         actorId: {
           regex:  $actorId
