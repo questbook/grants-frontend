@@ -1,6 +1,6 @@
 query getMemberPublicKeys($workspaceId: String!, $applicationIds: [String!]!) {
   workspace(_id: $workspaceId) {
-    members(filter: { 
+    members: membersFilter(filter: { 
     _operators:{
       accessLevel: {
         ne:"reviewer"

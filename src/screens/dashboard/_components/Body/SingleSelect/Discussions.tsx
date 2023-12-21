@@ -100,7 +100,7 @@ function Discussions() {
 							</Text>
 							<RoleTag
 								role={(role as Roles) ?? 'community'}
-								isBuilder={proposal?.applicantId === scwAddress?.toLowerCase()}
+								isBuilder={proposal?.applicantId?.toLowerCase() === scwAddress?.toLowerCase()}
 							/>
 							{
 								selectedTag !== undefined && selectedTag?.id !== 'feedback' && (
@@ -322,7 +322,7 @@ function Discussions() {
 						</Text>
 						<RoleTag
 							role={(comment?.role as Roles) ?? 'community'}
-							isBuilder={proposal?.applicantId === comment?.sender?.toLowerCase()}
+							isBuilder={proposal?.applicantId?.toLowerCase() === comment?.sender?.toLowerCase()}
 						/>
 						{
 							comment?.timestamp && (
@@ -414,7 +414,7 @@ function Discussions() {
 	const [selectedTag, setSelectedTag] = useState<TagType>()
 	const [text, setText] = useState<string>('')
 
-	const { addComment, isBiconomyInitialised } = useAddComment({
+	const { addComment } = useAddComment({
 		setStep,
 		setTransactionHash,
 	})
@@ -472,12 +472,9 @@ function Discussions() {
 	}, [proposal, commentMap])
 
 	const isDisabled = useMemo(() => {
-		if(!isBiconomyInitialised) {
-			return true
-		}
 
 		return text === ''
-	}, [text, step, isBiconomyInitialised])
+	}, [text, step])
 
 	const helperText = useMemo(() => {
 		switch (selectedTag?.id) {

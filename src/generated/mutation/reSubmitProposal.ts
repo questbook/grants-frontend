@@ -3,13 +3,14 @@ export const reSubmitProposalMutation = gql `mutation updateGrantApplication(
     $id: String!,
     $grant: String!,
     $workspaceId: String!,
-    $milestoneCount: Int!,
-    $milestones: JSON!,
+    $milestoneCount: Int,
+    $milestones: JSON,
     $applicantId: String!,
-    $applicantPublicKey: String!,
-    $fields:JSON!
+    $applicantPublicKey: String,
+    $fields:JSON
     $pii: JSON
     $state: String!
+    $feedback: JSON
     ){
     updateGrantApplication(
      id: $id,
@@ -21,7 +22,8 @@ export const reSubmitProposalMutation = gql `mutation updateGrantApplication(
       applicantPublicKey: $applicantPublicKey,
       fields:$fields
       pii: $pii
-     state: $state
+      state: $state
+      feedback: $feedback
     ){
       record{
         _id

@@ -140,7 +140,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 				// 	continue
 				// }
 
-				const sender = comment.id.split('.')[1]
+				const sender = comment.id.split('.')[1]?.toLowerCase()
 				let channel: {
 					encrypt(plaintext: string): Promise<string>
 					decrypt(ciphertext: string): Promise<string>
@@ -158,13 +158,13 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
 					logger.info({ publicKey }, 'PUBLIC KEY (COMMENT DECRYPT)')
 					channel = await getSecureChannelFromPublicKey(webwallet, publicKey, getKeyForApplication(comment.application.id))
-					logger.info({ privateKey: webwallet.privateKey, publicKey, role }, 'CHANNEL CONFIG (COMMENT DECRYPT)')
+					logger.info({ privateKey: webwallet.privateKey, publicKey, role, channel }, 'CHANNEL CONFIG (COMMENT DECRYPT)')
 				}
 
 				const encryptedComments = scwAddress !== undefined ? (comment.commentsEncryptedData?.filter(c => c.id.indexOf(scwAddress.toLowerCase()) !== -1) ?? []) : []
 				const key = `${comment.application.id}.${getSupportedChainIdFromWorkspace(comment.workspace) ?? defaultChainId}`
-				logger.info({ encryptedComments }, 'ENCRYPTED COMMENTS (COMMENT DECRYPT)')
 				if(encryptedComments.length === 0) {
+					logger.info({ comment }, 'NO ENCRYPTED COMMENTS (COMMENT DECRYPT)')
 					const workspaceMember = comment.workspace.members.find(m => m.actorId === sender)?.accessLevel
 					const role = comment.application.applicantId === sender ? 'builder' : workspaceMember === 'owner' ? 'admin' : workspaceMember
 					if(!commentMap[key]) {
@@ -181,7 +181,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 						logger.info({ decryptedData }, 'comment decrypted (COMMENT DECRYPT)')
 
 						if(decryptedData?.message) {
-							const message = await getFromIPFS(decryptedData.message)
+							const message = decryptedData?.message?.startsWith('Qm') ? await getFromIPFS(decryptedData.message) : decryptedData.message
 
 							if(!commentMap[key]) {
 								commentMap[key] = []
@@ -205,9 +205,14 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 				if(comment?.commentsPublicHash !== undefined) {
 					if(typeof comment.commentsPublicHash === 'object') {
 					  //@ts-ignore
-					  const data = comment.commentsPublicHash
-					  //@ts-ignore
-					   commentMap[key].push({ ...comment, ...data, message: data.message })
+					  const data = comment?.commentsPublicHash as { message: string }
+					  if(data?.message) {
+							if(!commentMap[key]) {
+								commentMap[key] = []
+							  }
+
+						 commentMap[key].push({ ...comment, ...data, message: data.message })
+					  }
 					} else if(typeof comment.commentsPublicHash === 'string' && comment.commentsPublicHash.startsWith('Qm')) {
 					  const commentData = JSON.parse(await getFromIPFS(comment.commentsPublicHash))
 					  if(commentData?.message) {
@@ -216,6 +221,8 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 						  commentMap[key] = []
 							}
 
+							logger.info({ commentData }, 'commentData (COMMENT DECRYPT)')
+							logger.info({ message }, 'message (COMMENT DECRYPT)')
 							commentMap[key].push({ ...comment, ...commentData, message })
 					  }
 					}
