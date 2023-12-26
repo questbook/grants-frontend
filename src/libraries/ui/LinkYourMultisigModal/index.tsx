@@ -101,7 +101,7 @@ function LinkYourMultisigModal({
 						mt={8}
 						w='100%'
 						variant='primaryLarge'
-						isDisabled={!isBiconomyInitialised}
+						isDisabled={false}
 						isLoading={step !== undefined}
 						onClick={
 							async() => {
@@ -272,7 +272,7 @@ function LinkYourMultisigModal({
 	const [safeState, setSafeState] = useState(-1)
 	const [loadingSafeData, setLoadingSafeData] = useState(false)
 
-	const { link, isBiconomyInitialised, step } = useLinkYourMultisig()
+	const { link, step } = useLinkYourMultisig()
 
 	const fetchSafeData = async(address: string) => {
 		const supportedPayouts = new SupportedPayouts()

@@ -15,7 +15,7 @@ query getMemberPublicKeys($workspaceId: String!, $applicationIds: [String!]!) {
   grantApplications(filter: { 
   _operators:{
     _id: {
-      nin: $applicationIds
+      in: $applicationIds
     }
   }
   }) {

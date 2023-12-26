@@ -1,11 +1,11 @@
 import { useContext, useMemo, useState } from 'react'
 import { defaultChainId } from 'src/constants/chains'
+import { updateMetadataWorkspaceMutation } from 'src/generated/mutation/updateMetadataWorkspace'
+import { executeMutation } from 'src/graphql/apollo'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
-import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import getErrorMessage from 'src/libraries/utils/error'
 import logger from 'src/libraries/utils/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
-import { validateAndUploadToIpfs } from 'src/libraries/validator'
 import { GrantsProgramContext } from 'src/pages/_app'
 import { GrantProgramForm } from 'src/screens/settings/_utils/types'
 
@@ -18,8 +18,8 @@ export default function useUpdateGrantProgram(setCurrentStep: (step: number | un
 	const chainId = useMemo(() => {
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
 	}, [grant])
-
-	const { call, isBiconomyInitialised } = useFunctionCall({ chainId, contractName: 'workspace', setTransactionStep: setCurrentStep, setTransactionHash: setTransactionHash })
+	logger.info({ chainId }, 'Chain ID')
+	// const { isBiconomyInitialised } = useFunctionCall({ chainId, contractName: 'workspace', setTransactionStep: setCurrentStep, setTransactionHash: setTransactionHash })
 
 	const customToast = useCustomToast()
 
@@ -27,21 +27,9 @@ export default function useUpdateGrantProgram(setCurrentStep: (step: number | un
 		setLoading(true)
 		// console.log(data)
 		try {
-			if(!isBiconomyInitialised) {
-				throw new Error('Zero wallet is not ready')
-			}
-
 			logger.info({ grantProgramData }, 'UpdateWorkspace')
-			const { hash: workspaceUpdateIpfsHash } = await validateAndUploadToIpfs('WorkspaceUpdateRequest', grantProgramData)
-			if(!workspaceUpdateIpfsHash) {
-				throw new Error('Error validating grant data')
-			}
-
-			logger.info({ workspaceUpdateIpfsHash }, 'UpdateWorkspace IPFS')
-
-			const args = [grant?.workspace!.id, workspaceUpdateIpfsHash, ]
-			await call({ method: 'updateWorkspaceMetadata', args: args })
-
+			const data = await executeMutation(updateMetadataWorkspaceMutation, { id: grant?.workspace!.id, metadata: grantProgramData })
+			setTransactionHash(data?.updateWorkspaceMetadata?.recordId)
 			setLoading(false)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {

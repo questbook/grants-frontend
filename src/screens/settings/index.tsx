@@ -5,6 +5,8 @@ import copy from 'copy-to-clipboard'
 import router from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
 import { Celo, Copy, Dot, ImageAdd, Realms, Safe, ShareBox } from 'src/generated/icons'
+import { updateWorkspaceMemberMutation } from 'src/generated/mutation'
+import { executeMutation } from 'src/graphql/apollo'
 import { useNetwork } from 'src/libraries/hooks/gasless/useNetwork'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
@@ -464,13 +466,18 @@ function Settings() {
 		}
 	}
 
-	const { call } = useFunctionCall({ chainId, contractName: 'workspace', setTransactionStep: setCurrentStepIndex, setTransactionHash: setRevokeTxHash })
+	const { } = useFunctionCall({ chainId, contractName: 'workspace', setTransactionStep: setCurrentStepIndex, setTransactionHash: setRevokeTxHash })
 
 	const revokeOrRestoreAccess = async(address: string, role: number, enable: boolean) => {
-		// Note: This IPFS Hash in the next line is a dummy one, that is used to update the workspace members' acces level only and not modify the member metadata
-		const methodArgs = [Number(grant?.workspace?.id), [address], [role], [enable], ['QmbJWAESqCsf4RFCqEY7jecCashj8usXiyDNfKtZCwwzGb']]
-		logger.info('methodArgs', methodArgs)
-		await call({ method: 'updateWorkspaceMembers', args: methodArgs })
+		const update = await executeMutation(updateWorkspaceMemberMutation, {
+			id: grant?.workspace?.id,
+			members: [address],
+			roles: [role],
+			enabled: [false],
+			metadataHashes: [{}]
+		 })
+		 window.location.reload()
+		logger.info({ update, enable }, 'updateWorkspaceMemberMutation')
 	}
 
 	useEffect(() => {

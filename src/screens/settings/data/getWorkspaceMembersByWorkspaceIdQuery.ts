@@ -8,7 +8,7 @@ query getWorkspaceMembersByWorkspaceId(
     $skip: Int
   ) {
     workspaceMembers(
-      filter: { workspace: $workspaceId }
+      filter: { workspace: $workspaceId, enabled: true }
       limit: $first
       skip: $skip
     ) {

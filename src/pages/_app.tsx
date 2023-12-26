@@ -30,7 +30,8 @@ import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import QRCodeModal from 'src/libraries/ui/QRCodeModal'
 import { delay } from 'src/libraries/utils'
-import { addAuthorizedUser, bicoDapps, deploySCW, getNonce, jsonRpcProviders, networksMapping } from 'src/libraries/utils/gasless'
+import { generateToken, verifyToken } from 'src/libraries/utils/authToken'
+import { addAuthorizedUser, bicoDapps, getNonce, jsonRpcProviders, networksMapping } from 'src/libraries/utils/gasless'
 import { extractInviteInfo, InviteInfo } from 'src/libraries/utils/invite'
 import logger from 'src/libraries/utils/logger'
 import getSeo from 'src/libraries/utils/seo'
@@ -276,10 +277,26 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 					const result = await _biconomyWalletClient
 						.checkIfWalletExists({ eoa: webwallet.address })
 
+					logger.info({ result }, 'checkIfWalletExists')
 					let walletAddress = result.walletAddress
+					logger.info({ walletAddress }, 'already deployed')
 					if(!result.doesWalletExist) {
-						walletAddress = await deploySCW(webwallet, _biconomyWalletClient, chainId, nonce!)
+						// walletAddress = await deploySCW(webwallet, _biconomyWalletClient, chainId, nonce!)
+						walletAddress = webwallet.address
 						_logger.info({ walletAddress }, 'scw deployed')
+					}
+
+					const authToken = localStorage.getItem('authToken')
+					if(!authToken) {
+						const token = await generateToken(walletAddress)
+						localStorage.setItem('authToken', JSON.stringify(token))
+						if(token) {
+							const sign = await webwallet.signMessage(token?.nonce)
+							const tokenData = await verifyToken(token?.id, sign)
+							if(tokenData) {
+								localStorage.setItem('authToken', tokenData)
+							}
+						}
 					}
 
 					resolve(walletAddress)

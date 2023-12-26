@@ -79,6 +79,7 @@ export default function useCreateRFP() {
 				link: rfpData?.link!,
 				reviewType: rfpData?.reviewMechanism!,
 				fields:  fieldMap,
+				milestones: rfpData?.milestones
 			}
 			const data = await executeMutation(createWorkspaceAndGrant, variables)
 			//   const data = await executeMutation(updateFundsTransferTransactionStatus, variables);
@@ -86,7 +87,7 @@ export default function useCreateRFP() {
 			logger.info('data', data)
 			setExecutionType('submit')
 			if(data) {
-				const grantId = data.createWorkspace.record._id
+				const grantId = data.createWorkspace.recordId
 				setGrantId(grantId)
 				setTransactionHash(data.createWorkspace.recordId)
 				// onComplete redirect to grant page
@@ -94,7 +95,7 @@ export default function useCreateRFP() {
 				router.push({
 					pathname: '/dashboard',
 					query: {
-						grantId: data.createWorkspace.record._id,
+						grantId: data.createWorkspace.recordId,
 						chainId,
 						role: 'admin'
 					}

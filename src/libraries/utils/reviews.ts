@@ -1,7 +1,8 @@
 import { useCallback, useContext } from 'react'
-import { useGetWorkspaceMembersPublicKeysQuery } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
-import { getFromIPFS, uploadToIPFS } from 'src/libraries/utils/ipfs'
+import { getWorkspaceMembersPublicKeysQuery } from 'src/libraries/data/getWorkspaceMembersPublicKeysQuery'
+import { useQuery } from 'src/libraries/hooks/useQuery'
+import { getFromIPFS, } from 'src/libraries/utils/ipfs'
 import logger from 'src/libraries/utils/logger'
 import { getKeyForApplication, getSecureChannelFromPublicKey, useGetPublicKeysOfGrantManagers } from 'src/libraries/utils/pii'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
@@ -27,14 +28,19 @@ export function useLoadReview(
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 	const { subgraphClients } = useContext(ApiClientsContext)!
 	const { client } = subgraphClients[chainId]
+	logger.info({ client }, 'Config')
 
 	const { fetch: fetchPubKeys } = useGetPublicKeysOfGrantManagers(grantId, chainId)
-	const { fetchMore: fetchMembers } = useGetWorkspaceMembersPublicKeysQuery({
-		skip: true,
-		client
-	})
+	// const { fetchMore: fetchMembers } = useGetWorkspaceMembersPublicKeysQuery({
+	// 	skip: true,
+	// 	client
+	// })
 
 	const loadPrivateReviewDataForReviewer = async(review: {data: Pick<IReview['data'][number], 'id' | 'data' >[], reviewer: Pick<IReview['reviewer'], 'id'>}) => {
+		const { fetchMore: fetchMembers } = await useQuery({
+			query: getWorkspaceMembersPublicKeysQuery,
+		})
+
 		const meAddress = scwAddress?.toLocaleLowerCase()
 		const meData = review.data.find(d => {
 			const walletAddress = d.id.split('.').pop()
@@ -48,7 +54,14 @@ export function useLoadReview(
 
 		const { data: dataIpfsHash } = meData
 		const [workspaceId, reviewerAddress] = review.reviewer!.id.split('.')
-		const { data } = await fetchMembers({ variables: { workspaceId } })
+
+		interface getWorkspaceMembersPublicKeysQuery {
+			workspaceMembers: {
+				actorId: string
+				publicKey: string
+			}[]
+		}
+		const data = await fetchMembers({ variables: { workspaceId } }) as getWorkspaceMembersPublicKeysQuery
 
 		const member = data.workspaceMembers.find(w => w.actorId === reviewerAddress)
 		if(!member) {
@@ -113,7 +126,7 @@ export function useLoadReview(
 					'decrypting review using shared key'
 				)
 
-				const ipfsData = await getFromIPFS(reviewData!.dataIpfsHash)
+				const ipfsData = typeof reviewData?.dataIpfsHash !== 'string' ? JSON.parse(reviewData?.dataIpfsHash) : await getFromIPFS(reviewData!.dataIpfsHash)
 				logger.info({ ipfsData }, 'got encrypted review data from ipfs')
 				const { decrypt } = await getSecureChannelFromPublicKey(
 					webwallet!,
@@ -126,16 +139,20 @@ export function useLoadReview(
 				logger.info({ review: JSON.parse(jsonReview) }, 'decrypted review data')
 				data = JSON.parse(jsonReview)
 			} else {
-				const ipfsData = await getFromIPFS(review.publicReviewDataHash!)
-				data = JSON.parse(ipfsData || '{}')
+				const ipfsData = typeof review?.publicReviewDataHash === 'string' ? await getFromIPFS(review.publicReviewDataHash!) : review.publicReviewDataHash
+				data = typeof ipfsData === 'string' ? JSON.parse(ipfsData) : ipfsData
 			}
 
-			data.reviewer = review.reviewer.id.substring(review.reviewer.id.indexOf('.') + 1)
-			data.total = totalScore(data.items)
-			data.createdAtS = review.createdAtS
+			logger.info({ review }, 'loaded review data')
+			const newData = {
+				...data,
+				reviewer: review.reviewer.id.substring(review.reviewer.id.indexOf('.') + 1),
+				total: totalScore(data.items),
+				createdAtS: review.createdAtS,
+			}
 
-			return data
-		}, [scwAddress, webwallet, fetchPubKeys, fetchMembers]
+			return newData
+		}, [scwAddress, webwallet, fetchPubKeys]
 	)
 
 	return { loadReview }
@@ -184,7 +201,7 @@ export const useGenerateReviewData = ({
 							getKeyForApplication(applicationId!)
 						)
 						const enc = await encrypt(jsonReview)
-						encryptedReview[walletAddress] = (await uploadToIPFS(enc)).hash
+						encryptedReview[walletAddress] = (await (enc))
 					}
 				)
 			)
@@ -195,15 +212,15 @@ export const useGenerateReviewData = ({
 
 			logger.info('generated encrypted reviews')
 		} else {
-			dataHash = (await uploadToIPFS(jsonReview)).hash
+			dataHash = (await (jsonReview))
 		}
 
-		const ipfsHash = (await uploadToIPFS(JSON.stringify({
+		const ipfsHash = (await ({
 			reviewer: scwAddress!,
 			reviewerPublicKey: webwallet.publicKey,
-			publicReviewDataHash: dataHash,
+			publicReviewDataHash: JSON.parse(dataHash || '{}'),
 			encryptedReview,
-		}))).hash
+		}))
 
 		return {
 			ipfsHash

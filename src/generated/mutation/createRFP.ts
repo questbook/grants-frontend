@@ -16,9 +16,10 @@ export const createWorkspaceAndGrant = gql`
     $tokenIconHash: String!,
     $tokenDecimal: String!,
     $payoutType: String!,
-    $link: String!,
+    $link: String,
     $reviewType: String!,
     $fields: JSON!
+    $milestones: [String]
   ) {
     createWorkspace(
       ownerId: $ownerId,
@@ -38,6 +39,7 @@ export const createWorkspaceAndGrant = gql`
       link: $link,
       reviewType: $reviewType,
       fields: $fields
+      milestones: $milestones
     ) {
       recordId
       record {

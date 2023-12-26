@@ -3,7 +3,7 @@ import { logger } from 'ethers'
 
 
 export const ENDPOINT_CLIENT = 'https://vhtdi50rkl.execute-api.ap-southeast-1.amazonaws.com/graphql'
-//export const ENDPOINT_CLIENT = 'http://localhost:5000/graphql'
+// export const ENDPOINT_CLIENT = 'http://localhost:5000/graphql'
 
 export const client = new ApolloClient({
 	uri: ENDPOINT_CLIENT,
@@ -27,6 +27,12 @@ export async function executeMutation(mutation: DocumentNode, variables: any) {
 		const response = await client.mutate({
 			mutation,
 			variables,
+			context: {
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+					'Content-Type': 'application/json',
+				},
+			},
 		})
 		const { data, errors } = response
 		logger.info(data)

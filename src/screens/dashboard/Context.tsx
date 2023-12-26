@@ -334,14 +334,16 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		const results: any = await fetchMoreApplicationActions({ grantId }, true)
 		logger.info({ results }, 'Results (Application Actions)')
 		if(results?.grantApplications.length > 0) {
-			const result = results?.grantApplications[0]
+			const result = results?.grantApplications
 			logger.info({ result }, 'Result (Application Actions Test)')
-			for(const proposal of result?.grantApplications ?? []) {
+			for(const proposal of result ?? []) {
+				logger.info({ proposal }, 'Proposal (Application Actions)')
 				for(const action of proposal?.actions ?? []) {
+					logger.info({ action }, 'Dummy Comment')
 					const comment: CommentType = {
 						id: action.id,
 						isPrivate: false,
-						commentsPublicHash: action.feedback?.trim()?.startsWith('Qm') ? action.feedback : undefined,
+						commentsPublicHash: typeof action.feedback === 'string' ? action.feedback : action.feedback,
 						application: {
 							id: proposal.id,
 							applicantPublicKey: proposal.applicantPublicKey,
@@ -353,9 +355,9 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 						sender: action.updatedBy,
 						createdAt: action.updatedAtS,
 						role: proposal.grant.workspace.members.map((m: { actorId: String }) => m.actorId).includes(action.updatedBy.toLowerCase()) ? 'admin' : 'builder',
-						message: action.feedback?.trim()?.startsWith('Qm') ? undefined : action.feedback === null ? '' : action.feedback,
+						message: typeof action.feedback === 'string' ? action.feedback : (action.feedback ?? '{}').message,
 					}
-					logger.info(comment, 'Dummy Comment')
+					logger.info({ comment }, 'Dummy Comment')
 
 					allComments.push(comment)
 				}

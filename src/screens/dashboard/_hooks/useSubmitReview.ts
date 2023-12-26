@@ -1,6 +1,7 @@
 import { useContext, useMemo } from 'react'
 import { defaultChainId } from 'src/constants/chains'
-import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
+import { assignReviewersMutation, submitReviewsMutation } from 'src/generated/mutation'
+import { executeMutation } from 'src/graphql/apollo'
 import logger from 'src/libraries/logger'
 import { useGenerateReviewData } from 'src/libraries/utils/reviews'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
@@ -25,7 +26,6 @@ function useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash }:
 		return proposals.find(p => selectedProposals.has(p.id))
 	}, [proposals, selectedProposals])
 
-	const { call, isBiconomyInitialised } = useFunctionCall({ chainId, contractName: 'reviews', setTransactionStep: setNetworkTransactionModalStep, setTransactionHash })
 
 	const { generateReviewData } = useGenerateReviewData({
 		grantId: grant?.id!,
@@ -36,7 +36,7 @@ function useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash }:
 
 	const submitReview = async() => {
 		try {
-			if(!webwallet || !isBiconomyInitialised || !scwAddress || !grant?.workspace?.id || !grant || !proposal?.id || !review) {
+			if(!webwallet || !scwAddress || !grant?.workspace?.id || !grant || !proposal?.id || !review) {
 				return
 			}
 
@@ -47,12 +47,44 @@ function useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash }:
 
 			const methodArgs = shouldAssignAndReview ? [grant?.workspace.id, proposal.id, grant.id, scwAddress, true, ipfsHash] : [grant?.workspace.id, proposal.id, grant.id, ipfsHash]
 			logger.info({ methodArgs }, 'useSubmitProposal: (Method args)')
-
-			const receipt = await call({ method: shouldAssignAndReview ? 'assignAndReview' : 'submitReview', args: methodArgs })
-
-			if(!receipt) {
-				throw new Error('useSubmitReview: (No receipt)')
+			if(shouldAssignAndReview) {
+  				const AssignReviewersVariables = {
+					workspaceId: grant.workspace.id,
+					applicationId: proposal.id,
+					grantAddress: grant.id,
+					reviewers: [scwAddress],
+					active: [true]
+				}
+				const SubmitReviewVariables = {
+					workspaceId: grant.workspace.id,
+					applicationId: proposal.id,
+					grantAddress: grant.id,
+					metadata: ipfsHash,
+					reviewerAddress: scwAddress
+				}
+				const updateReview = await executeMutation(submitReviewsMutation, SubmitReviewVariables)
+				const updateAssignReviewers = await executeMutation(assignReviewersMutation, AssignReviewersVariables)
+				setTransactionHash(updateReview?.submitReview?.recordId)
+				if(!updateReview?.submitReview?.recordId || !updateAssignReviewers?.assignReviewers?.recordId) {
+					throw new Error('Failed to submit review')
+				}
+			} else {
+				const variables = {
+					workspaceId: grant.workspace.id,
+					applicationId: proposal.id,
+					grantAddress: grant.id,
+					metadata: ipfsHash,
+					reviewerAddress: scwAddress
+				}
+				const updateReview = await executeMutation(submitReviewsMutation, variables)
+				setTransactionHash(updateReview?.submitReview?.recordId)
+				if(!updateReview?.submitReview?.recordId) {
+					throw new Error('Failed to submit review')
+				}
 			}
+
+			window.location.reload()
+
 		} catch(e) {
 			logger.error(e, 'useSubmitReview: (Error)')
 			setNetworkTransactionModalStep(undefined)
@@ -60,7 +92,7 @@ function useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash }:
 	}
 
 	return {
-		submitReview, isBiconomyInitialised
+		submitReview
 	}
 }
 

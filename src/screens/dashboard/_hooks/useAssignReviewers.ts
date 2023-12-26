@@ -1,17 +1,17 @@
 import { useContext, useMemo } from 'react'
 import { defaultChainId } from 'src/constants/chains'
-import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
+import { assignReviewersMutation } from 'src/generated/mutation'
+import { executeMutation } from 'src/graphql/apollo'
 import logger from 'src/libraries/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 
 interface Props {
-	setNetworkTransactionModalStep: (step: number | undefined) => void
 	setTransactionHash: (hash: string) => void
 }
 
-function useAssignReviewers({ setNetworkTransactionModalStep, setTransactionHash }: Props) {
+function useAssignReviewers({ setTransactionHash }: Props) {
 	const { grant } = useContext(GrantsProgramContext)!
 	const { selectedProposals, proposals } = useContext(DashboardContext)!
 
@@ -22,8 +22,8 @@ function useAssignReviewers({ setNetworkTransactionModalStep, setTransactionHash
 	const chainId = useMemo(() => {
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
 	}, [grant])
-
-	const { call, isBiconomyInitialised } = useFunctionCall({ chainId, contractName: 'reviews', setTransactionStep: setNetworkTransactionModalStep, setTransactionHash })
+	logger.info({ chainId }, 'Config')
+	// const { call, isBiconomyInitialised } = useFunctionCall({ chainId, contractName: 'reviews', setTransactionStep: setNetworkTransactionModalStep, setTransactionHash })
 
 	const assignReviewers = async(reviewers: string[], active: boolean[]) => {
 		if(!grant || !proposal) {
@@ -31,12 +31,20 @@ function useAssignReviewers({ setNetworkTransactionModalStep, setTransactionHash
 		}
 
 		logger.info({ reviewers }, 'Config')
-
-		await call({ method: 'assignReviewers', args: [grant.workspace.id, proposal.id, grant.id, reviewers, active] })
-
+		const variables = {
+			workspaceId: grant.workspace.id,
+			applicationId: proposal.id,
+			grantAddress: grant.id,
+			reviewers,
+			active
+		}
+		const data = await executeMutation(assignReviewersMutation, variables)
+		// await call({ method: 'assignReviewers', args: [grant.workspace.id, proposal.id, grant.id, reviewers, active] })
+		setTransactionHash(data?.assignReviewers?.recordId)
+		window.location.reload()
 	}
 
-	return { assignReviewers, isBiconomyInitialised }
+	return { assignReviewers }
 }
 
 export default useAssignReviewers

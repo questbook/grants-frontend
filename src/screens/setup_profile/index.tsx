@@ -1,8 +1,9 @@
 import { ReactElement, useContext, useMemo, useState } from 'react'
 import { Button, Flex, Text } from '@chakra-ui/react'
 import { generateInputForAuthorisation } from '@questbook/anon-authoriser'
+import { base58 } from 'ethers/lib/utils'
 import { useRouter } from 'next/router'
-import { defaultChainId } from 'src/constants/chains'
+import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useQBContract from 'src/libraries/hooks/useQBContract'
 import useSetupProfile from 'src/libraries/hooks/useSetupProfile'
@@ -167,7 +168,7 @@ function SetupProfile() {
 	), [scwAddress, workspaceRegistry.address, inviteInfo?.privateKey])
 
 	const workspaceId = useMemo(() => {
-		return `0x${inviteInfo?.workspaceId.toString(16)}`
+		return inviteInfo?.workspaceId
 	}, [inviteInfo])
 
 	const { setupProfile, isBiconomyInitialised } = useSetupProfile(
@@ -189,8 +190,20 @@ function SetupProfile() {
 			return
 		}
 
+		const inviteinfo: {
+			role: number
+			privateKey: string
+			workspaceId: string
+			chainId: SupportedChainId
+		} = {
+			role: inviteInfo?.role,
+			privateKey: base58.encode(inviteInfo.privateKey),
+			workspaceId: inviteInfo?.workspaceId as string,
+			chainId: inviteInfo?.chainId as SupportedChainId
+		}
+
 		setupProfile({
-			name, email, imageFile, role: inviteInfo.role, signature
+			name, email, imageFile, role: inviteInfo.role, signature, inviteInfo: inviteinfo
 		})
 	}
 

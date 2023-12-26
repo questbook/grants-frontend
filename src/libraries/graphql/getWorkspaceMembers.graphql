@@ -27,7 +27,7 @@ query getWorkspaceMembers($actorId: String!) {
         address
         chainId
       }
-      members(filter: { enabled: true }) {
+      members: membersFilter(filter: { enabled: true }) {
         id:_id
         actorId
         publicKey

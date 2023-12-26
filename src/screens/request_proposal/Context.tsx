@@ -83,12 +83,13 @@ const RFPFormProvider = ({ children }: {children: ReactNode}) => {
 			grantID,
 		})
 		logger.info('Grant program fetched', response)
-		let rubricData: string[] | undefined = []
-		if(response?.grant?.rubric?.items.length! > 0) {
-			 rubricData = response[0]?.grant?.rubric?.items!.map((item: { title: string}) => {
-				return item.title
-			})
-		}
+		const rubricData = response[0]?.grant?.rubric?.items?.map((item: { title: string }) => item.title) ?? []
+		// let rubricData: string[] | undefined = []
+		// if(response?.grant?.rubric?.items.length! > 0) {
+		// 	 rubricData = response[0]?.grant?.rubric?.items!.map((item: { title: string}) => {
+		// 		return item.title
+		// 	})
+		// }
 
 		// console.log('all applicasnt details fetched', response[0]?.grant?.fields)
 		const data = {
