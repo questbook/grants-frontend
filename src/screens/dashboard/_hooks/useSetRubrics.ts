@@ -22,7 +22,7 @@ function useSetRubrics({ setNetworkTransactionModalStep, setTransactionHash }: P
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
 	}, [grant])
 
-	const { isBiconomyInitialised } = useFunctionCall({ chainId, contractName: 'reviews', setTransactionStep: setNetworkTransactionModalStep, setTransactionHash })
+	const { } = useFunctionCall({ chainId, contractName: 'reviews', setTransactionStep: setNetworkTransactionModalStep, setTransactionHash })
 
 	const setRubrics =
 		async(reviewType: ReviewType, isPrivate: boolean, items: RubricItem[]) => {
@@ -93,7 +93,7 @@ function useSetRubrics({ setNetworkTransactionModalStep, setTransactionHash }: P
 		}
 
 	return {
-		setRubrics, isBiconomyInitialised
+		setRubrics
 	}
 }
 

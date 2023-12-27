@@ -108,6 +108,7 @@ function SendAnUpdateModal() {
 										setText('')
 										setSelectedTag(undefined)
 										refreshComments(true)
+										window.location.reload()
 									}
 								}
 							}>
@@ -130,15 +131,12 @@ function SendAnUpdateModal() {
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
 	const [, setTransactionHash] = useState<string>('')
 
-	const { addComments, isBiconomyInitialised } = useAddComments({ setStep: setNetworkTransactionModalStep, setTransactionHash })
+	const { addComments } = useAddComments({ setStep: setNetworkTransactionModalStep, setTransactionHash })
 
 	const isDisabled = useMemo(() => {
-		if(!isBiconomyInitialised) {
-			return true
-		}
 
 		return text === ''
-	}, [text, networkTransactionModalStep, isBiconomyInitialised])
+	}, [text, networkTransactionModalStep])
 
 	return buildComponent()
 }

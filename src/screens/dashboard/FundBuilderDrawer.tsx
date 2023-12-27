@@ -4,10 +4,11 @@ import { Box, Button, Drawer, DrawerCloseButton, DrawerContent, DrawerOverlay, F
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { defaultChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
+import { batchGrantApplicationUpdateMutation, DisburseRewardSafeMutation } from 'src/generated/mutation'
+import { executeMutation } from 'src/graphql/apollo'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import { getFieldString } from 'src/libraries/utils/formatting'
-import { uploadToIPFS } from 'src/libraries/utils/ipfs'
 import { getGnosisTansactionLink, getProposalUrl, getTonkeyProposalUrl } from 'src/libraries/utils/multisig'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
@@ -246,18 +247,26 @@ function FundBuilderDrawer() {
 			setPayoutInProcess(true)
 			if(selectedProposalsData?.some(p => p.state === 'submitted')) {
 				const submittedProposals = selectedProposalsData.filter(p => p.state === 'submitted')
-				const ipfsHash = await uploadToIPFS(JSON.stringify({
-					feedback: '  ',
-				}))
+				const hash = { feedback: '' }
 
-				const methodArgs = [
-					submittedProposals.map((proposal) => proposal.id),
-					submittedProposals.map(() => 2),
-					grant.workspace.id,
-					submittedProposals.map(() => ipfsHash),
-				]
+				// const methodArgs = [
+				// 	submittedProposals.map((proposal) => proposal.id),
+				// 	submittedProposals.map(() => 2),
+				// 	grant.workspace.id,
+				// 	submittedProposals.map(() => ipfsHash),
+				// ]
 
-				await acceptProposals({ method: 'batchUpdateApplicationState', args: methodArgs })
+				const methodArgs = {
+					id: selectedProposalsData.map((proposal) => proposal.id),
+					grant: grant.id,
+					workspaceId: grant.workspace.id,
+					applicantId: selectedProposalsData.map((proposal) => proposal.applicantId),
+					state: selectedProposalsData.map(() => 'approved'),
+					feedback: submittedProposals.map(() => hash),
+				}
+
+
+				await executeMutation(batchGrantApplicationUpdateMutation, methodArgs)
 			}
 
 			const transactionData = tos.map((to, i) => {
@@ -313,18 +322,46 @@ function FundBuilderDrawer() {
 				}
 			}
 
-			const methodArgs = [
-				selectedProposalsData.map((proposal) => parseInt(proposal?.id, 16)),
-				selectedProposalsData.map((proposal, i) => parseInt(proposal.milestones[milestoneIndices[i]].id?.split('.')[1])),
-				'0x0000000000000000000000000000000000000001',
-				selectedTokenInfo?.tokenName.toLowerCase(),
-				'nonEvmAssetAddress-toBeChanged',
-				amounts,
-				grant?.workspace?.id,
-				proposaladdress
-			]
+			// const methodArgs = [
+			// 	selectedProposalsData.map((proposal) => parseInt(proposal?.id, 16)),
+			// 	selectedProposalsData.map((proposal, i) => parseInt(proposal.milestones[milestoneIndices[i]].id?.split('.')[1])),
+			// 	'0x0000000000000000000000000000000000000001',
+			// 	selectedTokenInfo?.tokenName.toLowerCase(),
+			// 	'nonEvmAssetAddress-toBeChanged',
+			// 	amounts,
+			// 	grant?.workspace?.id,
+			// 	proposaladdress
+			// ]
 
-			await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
+			// const args = {
+			// 	applicationIds: [String(parseInt(proposal?.id!, 16))],
+			// 	milestoneIds: [String(parseInt(milestones[milestoneIndices[0]].id?.split('.')[1]))],
+			// 	asset: '0x0000000000000000000000000000000000000001',
+			// 	tokenName: selectedTokenInfo?.tokenName!,
+			// 	nonEvmAssetAddress: 'nonEvmAssetAddress-toBeChanged',
+			// 	amounts: [amounts?.[0]],
+			// 	transactionHash: '99887341.' + timestamp,
+			// 	sender: safeAddress,
+			// 	grant: grant?.id!,
+			// 	to: tos?.[0]
+			// }
+
+			const args = {
+				applicationIds: selectedProposalsData.map((proposal) => parseInt(proposal?.id, 16)),
+				milestoneIds: selectedProposalsData.map((proposal, i) => parseInt(proposal.milestones[milestoneIndices[i]].id?.split('.')[1])),
+				asset: '0x0000000000000000000000000000000000000001',
+				tokenName: selectedTokenInfo?.tokenName!,
+				nonEvmAssetAddress: 'nonEvmAssetAddress-toBeChanged',
+				amounts: [amounts?.[0]],
+				transactionHash: proposaladdress,
+				sender: safeObj?.safeAddress,
+				grant: grant?.id!,
+				to: tos?.[0]
+			}
+
+
+			// await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
+			await executeMutation(DisburseRewardSafeMutation, args)
 			setSignerVerifiedState('transaction_initiated')
 			setIsDrawerOpen(false)
 			setIsModalOpen(true)
@@ -334,8 +371,7 @@ function FundBuilderDrawer() {
 
 	const workspacechainId = getSupportedChainIdFromWorkspace(grant?.workspace) || defaultChainId
 
-	const { call } = useFunctionCall({ chainId: workspacechainId, contractName: 'workspace', title: 'Payout initiated' })
-	const { call: acceptProposals } = useFunctionCall({ chainId: workspacechainId, contractName: 'applications' })
+	const { } = useFunctionCall({ chainId: workspacechainId, contractName: 'workspace', title: 'Payout initiated' })
 
 	// useEffect(() => {
 	// 	if(payoutInProcess) {

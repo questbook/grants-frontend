@@ -5,17 +5,16 @@ import { Box, Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, Mo
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { defaultChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
-import { DisburseRewardSafeMutation } from 'src/generated/mutation'
-import client from 'src/graphql/apollo'
+import { DisburseRewardSafeMutation, reSubmitProposalMutation } from 'src/generated/mutation'
+import client, { executeMutation } from 'src/graphql/apollo'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import { getFieldString } from 'src/libraries/utils/formatting'
-import { uploadToIPFS } from 'src/libraries/utils/ipfs'
 import { getGnosisTansactionLink, getProposalUrl } from 'src/libraries/utils/multisig'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
-import { GrantsProgramContext } from 'src/pages/_app'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import MilestoneChoose from 'src/screens/dashboard/_components/FundBuilder/MilestoneChoose'
 import PaidByWallet from 'src/screens/dashboard/_components/FundBuilder/PaidByWallet'
 import PayFromChoose from 'src/screens/dashboard/_components/FundBuilder/PayFromChoose'
@@ -383,18 +382,27 @@ function FundBuilderModal({
 			if(proposal.state === 'submitted') {
 				// Approve proposal if it is not approved
 				logger.info('Approving proposal', { proposal })
-				const ipfsHash = await uploadToIPFS(JSON.stringify({
-					feedback: '  ',
-				}))
+				// const acceptProposalMethodArgs = [
+				// 	proposal.id,
+				// 	proposal.grant.workspace.id,
+				// 	2, // Approved state
+				// 	ipfsHash,
+				// ]
 
-				const acceptProposalMethodArgs = [
-					proposal.id,
-					proposal.grant.workspace.id,
-					2, // Approved state
-					ipfsHash,
-				]
+				// await acceptProposal({ method: 'updateApplicationState', args: acceptProposalMethodArgs })
 
-				await acceptProposal({ method: 'updateApplicationState', args: acceptProposalMethodArgs })
+
+				const methodArgs = {
+					id: proposal.id,
+					grant: proposal.grant.id,
+					workspaceId: proposal.grant.workspace.id,
+					applicantId: scwAddress,
+					state: 'approved',
+					feedback: {}
+				}
+
+				logger.info({ methodArgs }, 'Method Args (Comment)')
+				await executeMutation(reSubmitProposalMutation, methodArgs)
 			}
 
 
@@ -493,8 +501,8 @@ function FundBuilderModal({
 	const workspacechainId = getSupportedChainIdFromWorkspace(grant?.workspace) || defaultChainId
 
 	// const { call } = useFunctionCall({ chainId: workspacechainId, contractName: 'workspace' })
-	const { call: acceptProposal } = useFunctionCall({ chainId: workspacechainId, contractName: 'applications' })
-
+	const { } = useFunctionCall({ chainId: workspacechainId, contractName: 'applications' })
+	const { scwAddress } = useContext(WebwalletContext)!
 	return buildComponent()
 }
 
