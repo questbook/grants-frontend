@@ -415,11 +415,11 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				const result: any = await fetchSpecificProposal({ grantID: grantId, proposalId }, true)
 				if(result?.grantApplications) {
-					proposals.push(...results?.grantApplications, ...result?.grantApplications)
+					proposals.push(...result?.grantApplications)
 				}
-			} else {
-				proposals.push(...results?.grantApplications)
 			}
+
+			proposals.push(...results?.grantApplications)
 
 			skip += first
 		} while(shouldContinue)
