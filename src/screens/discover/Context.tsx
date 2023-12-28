@@ -148,9 +148,9 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		}
 
 		logger.info({ allWorkspaceMembers }, 'All workspace members (DISCOVER CONTEXT)')
-
 		if(results[0]?.grants?.length) {
 			builderGrants.push(...results[0]?.grants?.map((g) => ({ ...g, role: 'builder' as Roles })) as any)
+			logger.info({ builderGrants }, 'Builder grants (DISCOVER CONTEXT)')
 			setIsLoading(false)
 		}
 
@@ -159,7 +159,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 				continue
 			}
 
-			first = 100, skip = 0
+			first = 50, skip = 0
 			const workspaces = allWorkspaceMembers[chainId].map(m => m.workspace)
 
 			shouldContinue = true
@@ -281,12 +281,11 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 			}
 		}
 
-		setSectionGrants(allSectionGrants)
 
 		const recentProposalIds = recentProposals.map((p: any) => p.id)
 		const fetchNameAndAuthors: any = await fetchMoreProposalAuthorsAndName({ ids: recentProposalIds }, true)
 		logger.info({ fetchNameAndAuthors }, 'Fetch name and authors')
-
+		setSectionGrants(allSectionGrants)
 		recentProposals = await recentProposals.map((p: any) => {
 		  const proposal = fetchNameAndAuthors?.grantApplications.find((g: any) => g._id === p.id)
 		  return {
@@ -298,7 +297,6 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 		recentProposals.sort((a, b) => b.updatedAtS - a.updatedAtS)
 		logger.info({ recentProposals }, 'All recent grants (DISCOVER CONTEXT)')
-
 		setRecentProposals(recentProposals)
 	}
 
@@ -312,7 +310,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 	useEffect(() => {
 		getSectionGrants().then(r => logger.info(r, 'Get Section Grants'))
-	}, [scwAddress, recentProposals])
+	}, [scwAddress])
 
 	useEffect(() => {
 		if(inviteInfo) {

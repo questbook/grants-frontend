@@ -7,6 +7,7 @@ import logger from 'src/libraries/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 // import { validateAndUploadToIpfs } from 'src/libraries/validator'
 import { GrantsProgramContext } from 'src/pages/_app'
+import { DashboardContext } from 'src/screens/dashboard/Context'
 import { ReviewType } from 'src/types'
 import { RubricItem } from 'src/types/gen'
 
@@ -17,6 +18,7 @@ interface Props {
 
 function useSetRubrics({ setNetworkTransactionModalStep, setTransactionHash }: Props) {
 	const { grant } = useContext(GrantsProgramContext)!
+	const { refreshProposals } = useContext(DashboardContext)!
 
 	const chainId = useMemo(() => {
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
@@ -89,7 +91,7 @@ function useSetRubrics({ setNetworkTransactionModalStep, setTransactionHash }: P
 				setNetworkTransactionModalStep(undefined)
 			}
 
-			window.location.reload()
+			refreshProposals(true)
 		}
 
 	return {

@@ -108,7 +108,7 @@ function SendAnUpdateModal() {
 										setText('')
 										setSelectedTag(undefined)
 										refreshComments(true)
-										window.location.reload()
+										refreshProposals(true)
 									}
 								}
 							}>
@@ -120,7 +120,7 @@ function SendAnUpdateModal() {
 		)
 	}
 
-	const { selectedProposals, proposals, refreshComments } = useContext(DashboardContext)!
+	const { selectedProposals, proposals, refreshComments, refreshProposals } = useContext(DashboardContext)!
 	const { isSendAnUpdateModalOpen, setIsSendAnUpdateModalOpen } = useContext(ModalContext)!
 	const { proposalTags } = useProposalTags({ proposals: proposals.filter(p => selectedProposals.has(p.id)) })
 	const [ text, setText ] = useState<string>('')

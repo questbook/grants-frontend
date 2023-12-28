@@ -23,6 +23,7 @@ export type DashboardContextType = {
   commentMap: CommentMap
   setCommentMap: (coments: CommentMap) => void
   refreshComments: (refresh: boolean) => void
+  refreshProposals: (refresh: boolean) => void
   filterState: ApplicationState | undefined
   setFilterState: (state: ApplicationState | undefined) => void
 };
