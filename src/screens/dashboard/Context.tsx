@@ -710,6 +710,11 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 							fetchPerProposalComments()
 						}
 					},
+					refreshProposals: (refresh: boolean) => {
+						if(refresh) {
+							getProposals()
+						}
+					},
 					filterState,
 					setFilterState
 				}
