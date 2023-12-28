@@ -17,22 +17,6 @@ query getSectionGrants {
           id: _id
           amount
         }
-        name: fieldFilterByRegex(
-          filter:{
-            field: "projectName"
-          }
-        ) {
-          values{
-            value
-          }
-        }
-        author:fieldFilterByRegex(filter: {
-          field: "applicantName"
-        } ){
-          values {
-            value
-          }
-        }
         grant {
           id: _id
           title

@@ -9,13 +9,14 @@ import { DiscoverContextType, GrantProgramType, GrantType, RecentProposals, Sect
 import { getAllGrants } from 'src/screens/discover/data/getAllGrants'
 import { getAllGrantsForMembers } from 'src/screens/discover/data/getAllGrantsForMembers'
 import { GetGrantProgramDetails } from 'src/screens/discover/data/getGrantProgramDetails'
+import { getProposalNameAndAuthorsQuery } from 'src/screens/discover/data/getProposalNameAndAuthors'
 import { getSectionGrantsQuery } from 'src/screens/discover/data/getSectionGrants'
 import { getWorkspacesAndBuilderGrantsQuery } from 'src/screens/discover/data/getWorkspaceAndBuilderGrants'
 import { Roles } from 'src/types'
 
 const DiscoverContext = createContext<DiscoverContextType | null>(null)
 
-const PAGE_SIZE = 40
+const PAGE_SIZE = 25
 
 const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	const provider = () => {
@@ -53,6 +54,10 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 	const { fetchMore: fetchMoreSectionGrants } = useQuery({
 		query: getSectionGrantsQuery,
+	})
+
+	const { fetchMore: fetchMoreProposalAuthorsAndName } = useQuery({
+		query: getProposalNameAndAuthorsQuery,
 	})
 
 	const fetchSafeBalances = async(grants: GrantType[]) => {
@@ -276,10 +281,27 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 			}
 		}
 
+		setSectionGrants(allSectionGrants)
+
+		if(recentProposals.length > 0) {
+			const fetchNameAndAuthors: any = await fetchMoreProposalAuthorsAndName({ ids: recentProposals.map((p: any) => p.id) }, true)
+			logger.info({ fetchNameAndAuthors }, 'Fetch name and authors')
+
+			recentProposals = recentProposals.map((p: any) => {
+				const proposal = fetchNameAndAuthors?.grantApplications.find((g: any) => g._id === p.id)
+				return {
+					...p,
+					name: proposal?.name,
+					author: proposal?.author,
+
+				}
+			})
+		}
+
 
 		recentProposals.sort((a, b) => b.updatedAtS - a.updatedAtS)
 		logger.info({ recentProposals }, 'All recent grants (DISCOVER CONTEXT)')
-		setSectionGrants(allSectionGrants)
+
 		setRecentProposals(recentProposals)
 	}
 

@@ -55,7 +55,10 @@ function ProposalCard({ proposal }: Props) {
 						<Text
 							noOfLines={3}
 							fontWeight='500'>
-							{proposal.name[0].values[0].value}
+							{
+								proposal.name ?
+									proposal.name[0].values[0].value : ''
+							}
 						</Text>
 						<Flex
 							align='center'
@@ -70,7 +73,10 @@ function ProposalCard({ proposal }: Props) {
 								color='black.300'
 								ml={2}
 								variant='metadata'>
-								{proposal.author[0].values[0].value}
+								{
+									proposal?.author ?
+										proposal.author[0].values[0].value : ''
+								}
 							</Text>
 						</Flex>
 					</Flex>
