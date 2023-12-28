@@ -21,7 +21,13 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 					workspaceMembers: workspaceMembers!,
 					grantProgramData: grantProgramData!,
 					setGrantProgramData: setGrantProgramData!,
-					safeURL: safeURL!
+					safeURL: safeURL!,
+					refreshWorkspace: (refresh: boolean) => {
+						if(refresh) {
+							fetchGrantProgramDetails()
+							fetchWorkspaceMembersDetails()
+						}
+					}
 				}
 			}>
 			{children}

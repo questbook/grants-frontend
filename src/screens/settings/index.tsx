@@ -427,7 +427,7 @@ function Settings() {
 
 	const [imageChanged, setImageChanged] = useState(false)
 
-	const { workspace, workspaceMembers, grantProgramData, setGrantProgramData, safeURL } = useContext(SettingsFormContext)!
+	const { workspace, workspaceMembers, grantProgramData, setGrantProgramData, safeURL, refreshWorkspace } = useContext(SettingsFormContext)!
 	const { grant } = useContext(GrantsProgramContext)!
 	const chainId = useMemo(() => {
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
@@ -441,6 +441,12 @@ function Settings() {
 		logger.info('newGrantProgramData', newGrantProgramData)
 		setGrantProgramData(newGrantProgramData)
 		updateGrantProgram(newGrantProgramData)
+		toast({
+			position: 'top',
+			title: 'Grant program updated',
+			status: 'success',
+		})
+		refreshWorkspace(true)
 	}
 
 	const maxImageSize = 2
@@ -476,7 +482,12 @@ function Settings() {
 			enabled: [false],
 			metadataHashes: [{}]
 		 })
-		 window.location.reload()
+		toast({
+			position: 'top',
+			title: 'Access updated',
+			status: 'success',
+		})
+		refreshWorkspace(true)
 		logger.info({ update, enable }, 'updateWorkspaceMemberMutation')
 	}
 

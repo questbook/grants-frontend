@@ -283,21 +283,18 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 		setSectionGrants(allSectionGrants)
 
-		if(recentProposals.length > 0) {
-			const fetchNameAndAuthors: any = await fetchMoreProposalAuthorsAndName({ ids: recentProposals.map((p: any) => p.id) }, true)
-			logger.info({ fetchNameAndAuthors }, 'Fetch name and authors')
+		const recentProposalIds = recentProposals.map((p: any) => p.id)
+		const fetchNameAndAuthors: any = await fetchMoreProposalAuthorsAndName({ ids: recentProposalIds }, true)
+		logger.info({ fetchNameAndAuthors }, 'Fetch name and authors')
 
-			recentProposals = recentProposals.map((p: any) => {
-				const proposal = fetchNameAndAuthors?.grantApplications.find((g: any) => g._id === p.id)
-				return {
-					...p,
-					name: proposal?.name,
-					author: proposal?.author,
-
-				}
-			})
-		}
-
+		recentProposals = await recentProposals.map((p: any) => {
+		  const proposal = fetchNameAndAuthors?.grantApplications.find((g: any) => g._id === p.id)
+		  return {
+				...p,
+				name: proposal?.name || p.name,
+				author: proposal?.author || p.author,
+		  }
+		})
 
 		recentProposals.sort((a, b) => b.updatedAtS - a.updatedAtS)
 		logger.info({ recentProposals }, 'All recent grants (DISCOVER CONTEXT)')
@@ -315,7 +312,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 	useEffect(() => {
 		getSectionGrants().then(r => logger.info(r, 'Get Section Grants'))
-	}, [scwAddress])
+	}, [scwAddress, recentProposals])
 
 	useEffect(() => {
 		if(inviteInfo) {
