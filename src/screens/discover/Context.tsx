@@ -151,7 +151,6 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		if(results[0]?.grants?.length) {
 			builderGrants.push(...results[0]?.grants?.map((g) => ({ ...g, role: 'builder' as Roles })) as any)
 			logger.info({ builderGrants }, 'Builder grants (DISCOVER CONTEXT)')
-			setIsLoading(false)
 		}
 
 		for(const chainId in allWorkspaceMembers) {
@@ -173,7 +172,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 				const grants = results?.grants
 				if(grants) {
-					membersGrants.push(...grants?.map((g: any) => ({ ...g, role: g.workspace.members.find((s: any) => s.actorId === scwAddress.toLowerCase())?.accessLevel as Roles })))
+					membersGrants.push(...grants?.map((g: any) => ({ ...g, role: g.workspace.members.find((s: any) => s.actorId?.toLowerCase() === scwAddress.toLowerCase())?.accessLevel as Roles })))
 				}
 
 				skip += first
@@ -190,7 +189,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		const grantsForYou = [...membersGrants, ...builderGrants]
 		logger.info({ grantsForYou }, 'All grants for you (DISCOVER CONTEXT)')
 		setGrantsForYou(grantsForYou)
-
+		setIsLoading(false)
 		return 'grants-for-you-fetched'
 	}
 
