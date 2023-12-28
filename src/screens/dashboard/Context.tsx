@@ -15,6 +15,9 @@ import { getApplicationActionsQuery } from 'src/screens/dashboard/_data/getAppli
 import { getCommentsQuery } from 'src/screens/dashboard/_data/getCommentsQuery'
 import { getGrantsQuery } from 'src/screens/dashboard/_data/getGrantsQuery'
 import { getProposalsQuery } from 'src/screens/dashboard/_data/getProposalsQuery'
+// import { getSpecificApplicationActionQuery } from 'src/screens/dashboard/_data/getSpecificApplicationActionQuery'
+// import { getSpecificProposalCommentsQuery } from 'src/screens/dashboard/_data/getSpecificProposalCommentsQuery'
+import { getSpecificProposalQuery } from 'src/screens/dashboard/_data/getSpecificProposalQuery'
 import { CommentMap, CommentType, DashboardContextType, FundBuilderContextType, ModalContextType, Proposals, ReviewInfo, SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
 import { Roles } from 'src/types'
 
@@ -57,6 +60,18 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 	const { fetchMore: fetchMoreApplicationActions } = useQuery({
 		query: getApplicationActionsQuery,
 	})
+
+	const { fetchMore: fetchSpecificProposal } = useQuery({
+		query: getSpecificProposalQuery,
+	})
+
+	// const { fetchMore: fetchSpecificProposalComments } = useQuery({
+	// 	query: getSpecificProposalCommentsQuery,
+	// })
+
+	// const { fetchMore: fetchSpecificApplicationActions } = useQuery({
+	// 	query: getSpecificApplicationActionQuery,
+	// })
 
 	const [proposals, setProposals] = useState<Proposals>([])
 	const [commentMap, setCommentMap] = useState<CommentMap>({})
@@ -265,7 +280,77 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		return tempCommentMap
 	}
 
-	const getProposals = useCallback(async() => {
+
+	// const fetchPerProposalComments = useCallback(async() => {
+	// 	if(typeof grantId !== 'string' || !proposalId || typeof proposalId !== 'string') {
+	// 		return 'no-grant-or-proposal'
+	// 	}
+
+	// 	const allComments: CommentType[] = []
+	// 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	// 	const result: any = await fetchSpecificProposalComments({ grantId, proposalId }, true)
+	// 	logger.info({ result }, 'Results (Comments)')
+	// 	if(result?.comments?.length === 0) {
+	// 		return 'no-comments'
+	// 	}
+
+
+	// 	for(const comment of result?.comments ?? []) {
+	// 		allComments.push(comment)
+	// 	}
+
+
+	// 	logger.info({ allComments }, 'Fetched comments before actions')
+
+	// 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	// 	const results: any = await fetchSpecificApplicationActions({ grantId, proposalId }, true)
+	// 	logger.info({ results }, 'Results (Application Actions)')
+	// 	if(results?.grantApplications.length > 0) {
+	// 		const result = results?.grantApplications
+	// 		logger.info({ result }, 'Result (Application Actions Test)')
+	// 		for(const proposal of result ?? []) {
+	// 			logger.info({ proposal }, 'Proposal (Application Actions)')
+	// 			for(const action of proposal?.actions ?? []) {
+	// 				logger.info({ action }, 'Dummy Comment')
+	// 				const comment: CommentType = {
+	// 					id: action.id,
+	// 					isPrivate: false,
+	// 					commentsPublicHash: typeof action.feedback === 'string' ? action.feedback : action.feedback,
+	// 					application: {
+	// 						id: proposal.id,
+	// 						applicantPublicKey: proposal.applicantPublicKey,
+	// 						applicantId: proposal.applicantId
+	// 					},
+	// 					workspace: proposal.grant.workspace,
+	// 					tag: action.state,
+	// 					timestamp: action.updatedAtS,
+	// 					sender: action.updatedBy,
+	// 					createdAt: action.updatedAtS,
+	// 					role: proposal.grant.workspace.members.map((m: { actorId: String }) => m.actorId).includes(action.updatedBy.toLowerCase()) ? 'admin' : 'builder',
+	// 					message: typeof action.feedback === 'string' ? action.feedback : (action.feedback ?? '{}').message,
+	// 				}
+	// 				logger.info({ comment }, 'Dummy Comment')
+
+	// 				allComments.push(comment)
+	// 			}
+	// 		}
+	// 	}
+
+	// 	logger.info({ allComments }, 'Fetched comments after actions')
+	// 	const commentMap = await handleComments(allComments)
+	// 	logger.info(commentMap, 'Comment map')
+	// 	for(const key in commentMap) {
+	// 		const comments = commentMap[key]
+	// 		const sortedComments = comments.sort((a, b) => (a.timestamp ?? 0) - (b.timestamp ?? 0))
+	// 		commentMap[key] = sortedComments
+	// 	}
+
+	// 	setCommentMap(commentMap)
+	// 	setAreCommentsLoading(false)
+
+	// }, [grant, grantId, proposalId])
+
+	const getFetchBackgroundProposals = useCallback(async(proposals: Proposals[]) => {
 		logger.info({ role, grantId, scwAddress }, 'Fetching proposals (GET PROPOSALS)')
 		// if(!webwallet) {
 		// 	return 'no-webwallet'
@@ -274,10 +359,11 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 			return 'no-grant-id'
 		}
 
-		const proposals: Proposals = []
+		logger.info({ proposals }, 'Proposals (GET PROPOSALS)')
+		const proposalData: Proposals = []
 
-		const first = 100
-		let skip = 0
+		const first = 50
+		let skip = 10
 		let shouldContinue = true
 		do {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -288,7 +374,53 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 				break
 			}
 
-			proposals.push(...results?.grantApplications)
+			proposalData.push(...results?.grantApplications)
+			setProposals([...proposals as [], ...proposalData])
+			skip += first
+		} while(shouldContinue)
+
+
+		// append the proposals to the existing proposals
+		//  await getFetchCommentsInBackground()
+
+		return 'proposals-fetched'
+	}, [role, grantId, scwAddress, webwallet])
+
+	const getProposals = useCallback(async() => {
+		logger.info({ role, grantId, scwAddress }, 'Fetching proposals (GET PROPOSALS)')
+		// if(!webwallet) {
+		// 	return 'no-webwallet'
+		// }
+		if(!grantId || typeof grantId !== 'string') {
+			return []
+		}
+
+		const proposals: Proposals = []
+
+		const first = 10
+		let skip = 0
+		let shouldContinue = false
+		do {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const results: any = await fetchMoreProposals({ first, skip, grantID: grantId }, true)
+
+
+			logger.info({ results }, 'Results (Proposals)')
+			if(results?.grantApplications?.length === 0) {
+				shouldContinue = false
+				break
+			}
+
+			if(!results?.grantApplications?.map((p: { id: string }) => p.id).includes(proposalId as string)) {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				const result: any = await fetchSpecificProposal({ grantID: grantId, proposalId }, true)
+				if(result?.grantApplications) {
+					proposals.push(...results?.grantApplications, ...result?.grantApplications)
+				}
+			} else {
+				proposals.push(...results?.grantApplications)
+			}
+
 			skip += first
 		} while(shouldContinue)
 
@@ -296,8 +428,86 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		setAreCommentsLoading(true)
 		await getComments()
 
-		return 'proposals-fetched'
+		return proposals
 	}, [role, grantId, scwAddress, webwallet])
+
+	// const getFetchCommentsInBackground = useCallback(async() => {
+	// 	logger.info({ role, grantId, scwAddress }, 'Fetching comments (GET COMMENTS)')
+	// 	// if(!webwallet) {
+	// 	// 	return 'no-webwallet'
+	// 	// }
+	// 	if(!grantId || typeof grantId !== 'string') {
+	// 		return 'no-grant-id'
+	// 	}
+
+	// 	const allComments: CommentType[] = []
+	// 	const first = 100
+	// 	let skip = 100
+	// 	let shouldContinue = true
+	// 	do {
+	// 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	// 		const results: any = await fetchMoreComments({ first, skip, grantId }, true)
+	// 		logger.info({ results }, 'Results (Comments)')
+	// 		if(results?.comments?.length === 0) {
+	// 			shouldContinue = false
+	// 			break
+	// 		}
+
+	// 		for(const comment of results?.comments ?? []) {
+	// 			allComments.push(comment)
+	// 		}
+
+	// 		skip += first
+	// 	} while(shouldContinue)
+
+	// 	logger.info({ allComments }, 'Fetched comments before actions')
+
+	// 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	// 	const results: any = await fetchMoreApplicationActions({ grantId }, true)
+	// 	logger.info({ results }, 'Results (Application Actions)')
+	// 	if(results?.grantApplications.length > 0) {
+	// 		const result = results?.grantApplications
+	// 		logger.info({ result }, 'Result (Application Actions Test)')
+	// 		for(const proposal of result ?? []) {
+	// 			logger.info({ proposal }, 'Proposal (Application Actions)')
+	// 			for(const action of proposal?.actions ?? []) {
+	// 				logger.info({ action }, 'Dummy Comment')
+	// 				const comment: CommentType = {
+	// 					id: action.id,
+	// 					isPrivate: false,
+	// 					commentsPublicHash: typeof action.feedback === 'string' ? action.feedback : action.feedback,
+	// 					application: {
+	// 						id: proposal.id,
+	// 						applicantPublicKey: proposal.applicantPublicKey,
+	// 						applicantId: proposal.applicantId
+	// 					},
+	// 					workspace: proposal.grant.workspace,
+	// 					tag: action.state,
+	// 					timestamp: action.updatedAtS,
+	// 					sender: action.updatedBy,
+	// 					createdAt: action.updatedAtS,
+	// 					role: proposal.grant.workspace.members.map((m: { actorId: String }) => m.actorId).includes(action.updatedBy.toLowerCase()) ? 'admin' : 'builder',
+	// 					message: typeof action.feedback === 'string' ? action.feedback : (action.feedback ?? '{}').message,
+	// 				}
+	// 				logger.info({ comment }, 'Dummy Comment')
+
+	// 				allComments.push(comment)
+	// 			}
+	// 		}
+	// 	}
+
+	// 	logger.info({ allComments }, 'Fetched comments after actions')
+	// 	const commentMap = await handleComments(allComments)
+	// 	logger.info(commentMap, 'Comment map')
+	// 	for(const key in commentMap) {
+	// 		const comments = commentMap[key]
+	// 		const sortedComments = comments.sort((a, b) => (a.timestamp ?? 0) - (b.timestamp ?? 0))
+	// 		commentMap[key] = sortedComments
+	// 	}
+
+	// 	setCommentMap(commentMap)
+	// 	setAreCommentsLoading(false)
+	// }, [role, grantId, scwAddress, webwallet])
 
 	const getComments = useCallback(async() => {
 		logger.info({ role, grantId, scwAddress }, 'Fetching comments (GET COMMENTS)')
@@ -377,12 +587,26 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		setAreCommentsLoading(false)
 	}, [role, grantId, scwAddress, webwallet])
 
+
 	useEffect(() => {
 		getGrant().then((r) => logger.info({ r }, 'Get grant result'))
 	}, [grantId, chainId, scwAddress])
 	useEffect(() => {
-		getProposals().then((r) => logger.info({ r }, 'Get proposals result'))
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		getProposals().then((proposals: any) => {
+			getFetchBackgroundProposals(proposals ?? [])
+		})
 	}, [grantId, chainId, scwAddress, webwallet])
+
+
+	// useEffect(() => {
+	// 	logger.info(proposals.length > 0, 'test')
+	// 	if(!proposals.map((p) => p.id).includes(proposalId as string)) {
+	// 		logger.info({ grantId, proposalId }, 'Fetching per proposal')
+	// 		fetchPerProposal().then((r) => logger.info({ r }, 'Fetch per proposal result'))
+	// 	}
+	// }, [grantId, chainId, scwAddress, webwallet, proposalId])
+
 
 	useEffect(() => {
 		if(!grant || !role) {

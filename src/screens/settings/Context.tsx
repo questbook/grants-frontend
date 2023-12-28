@@ -78,7 +78,7 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 			const response: any = await fetchWorkspaceMembers({
 				workspaceId: grant?.workspace?.id
 			})
-			logger.info('Workspace members fetched', grant)
+			logger.info('Workspace members fetched', response)
 
 			const workspaceMembers: WorkspaceMembers = []
 			for(const member of response?.workspaceMembers!) {
