@@ -452,13 +452,13 @@ function Discussions() {
 
 	useEffect(() => {
 		if(proposalTags.length === 1) {
-			logger.info('Setting selected tag to the only tag')
+			logger.info('Setting selected tag to the only tag', proposalTags)
 			setSelectedTag(proposalTags[0])
 		} else {
 			logger.info('Setting selected tag to undefined')
 			setSelectedTag(undefined)
 		}
-	}, [proposal])
+	}, [proposal, role])
 
 	const comments = useMemo(() => {
 		if(!proposal || !commentMap) {

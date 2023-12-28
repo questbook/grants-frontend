@@ -86,6 +86,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 				return 0
 			}
 
+
 			const safe = new SupportedPayouts().getSafe(parseInt(safeObj.chainId), safeObj.address)
 			try {
 				logger.info({ safe }, 'Safe (DISCOVER CONTEXT)')

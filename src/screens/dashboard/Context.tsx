@@ -289,10 +289,9 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const result: any = await fetchSpecificProposalComments({ grantId, proposalId }, true)
 		logger.info({ result }, 'Results (Comments)')
-		if(result?.comments?.length === 0) {
-			setAreCommentsLoading(false)
-			return 'no-comments'
-		}
+		// if(result?.comments?.length === 0) {
+		// 	setAreCommentsLoading(false)
+		// }
 
 
 		for(const comment of result?.comments ?? []) {

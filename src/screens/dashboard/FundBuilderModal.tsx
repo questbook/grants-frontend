@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { useMutation } from '@apollo/client'
 import { Box, Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text, useToast } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { defaultChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
 import { DisburseRewardSafeMutation, reSubmitProposalMutation } from 'src/generated/mutation'
-import client, { executeMutation } from 'src/graphql/apollo'
+import { executeMutation } from 'src/graphql/apollo'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
@@ -228,9 +227,6 @@ function FundBuilderModal({
 	const customToast = useCustomToast()
 	const toast = useToast()
 	const payoutsInProcessToastRef = useRef<any>()
-	const [disburseRewardFromSafeMutation, { data: disburseRewardRes, error:disburseRewardError }] = useMutation(DisburseRewardSafeMutation, {
-		client: client,
-	})
 
 	const Safe = {
 		logo: safeObj?.safeLogo,
@@ -337,7 +333,7 @@ function FundBuilderModal({
 					// ]
 
 					const args = {
-						applicationIds: [String(parseInt(proposal?.id!, 16))],
+						applicationIds: [String(proposal?.id)],
 						milestoneIds: [String(parseInt(milestones[milestoneIndices[0]].id?.split('.')[1]))],
 						asset: '0x0000000000000000000000000000000000000001',
 						tokenName: selectedTokenInfo?.tokenName!,
@@ -350,8 +346,7 @@ function FundBuilderModal({
 					}
 
 					// await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
-					await disburseRewardFromSafeMutation({ variables: args })
-					logger.info('DisburseRewardSafeMutation', { disburseRewardRes, disburseRewardError })
+					await executeMutation(DisburseRewardSafeMutation, args)
 
 					// setSignerVerifiedState('transaction_initiated')
 					setIsModalOpen(false)
@@ -376,6 +371,7 @@ function FundBuilderModal({
 
 
 	const onInitiateTransaction = async() => {
+
 		if(signerVerifiedState === 'verified' && proposal) {
 			setPayoutInProcess(true)
 
@@ -409,7 +405,7 @@ function FundBuilderModal({
 			const temp = [{
 				from: safeObj?.safeAddress?.toString(),
 				to: tos?.[0],
-				applicationId: proposal?.id ? parseInt(proposal.id, 16) : 0,
+				applicationId: proposal?.id?.startsWith('0x') ? parseInt(proposal?.id, 16) : parseInt(proposal?.id?.slice(-2) ?? '0', 16),
 				selectedMilestone: milestoneIndices?.[0],
 				selectedToken: { tokenName: selectedTokenInfo?.tokenName, info: selectedTokenInfo?.info },
 				amount: amounts?.[0],
@@ -417,8 +413,9 @@ function FundBuilderModal({
 
 			let proposaladdress: any = ''
 			if(safeObj?.getIsEvm()) {
-				proposaladdress = await safeObj?.proposeTransactions(JSON.stringify({ workspaceId: grant?.workspace?.id, grantAddress: grant?.id }), temp, '')
+				proposaladdress = await safeObj?.proposeTransactions(JSON.stringify({ workspaceId:  grant?.workspace?.id?.startsWith('0x') ? grant?.workspace?.id : `0x${grant?.workspace?.id?.slice(-2)}`, grantAddress:  grant?.id?.startsWith('0x') ? grant?.id : `0x${grant?.id?.slice(-2)}` }), temp, '')
 				if(proposaladdress?.error) {
+					logger.error('Error while creating transaction on Gnosis Safe', { proposaladdress })
 					customToast({
 						title: 'An error occurred while creating transaction on Gnosis Safe',
 						status: 'error',
@@ -427,6 +424,7 @@ function FundBuilderModal({
 					setPayoutInProcess(false)
 					return
 				}
+
 
 				// setSafeProposalAddress(proposaladdress as string)
 				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress ?? '', safeObj?.chainId?.toString(), proposaladdress as string))
@@ -491,8 +489,7 @@ function FundBuilderModal({
 				to: tos?.[0]
 			}
 
-			await disburseRewardFromSafeMutation({ variables: args })
-			logger.info('DisburseRewardSafeMutation', { disburseRewardRes, disburseRewardError })
+			await executeMutation(DisburseRewardSafeMutation, args)
 			setSignerVerifiedState('transaction_initiated')
 			setPayoutInProcess(false)
 		}
