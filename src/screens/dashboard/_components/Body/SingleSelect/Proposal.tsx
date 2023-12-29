@@ -445,7 +445,8 @@ function Proposal() {
 
 		Promise.all([
 			decrypt(proposal),
-			getFieldString(proposal, 'projectDetails')?.startsWith('Qm') ? getFromIPFS(getFieldString(proposal, 'projectDetails') ?? '') : Promise.resolve(getFieldString(proposal, 'projectDetails') ?? ''),
+			typeof getFieldString(proposal, 'projectDetails') === 'string'
+			&& getFieldString(proposal, 'projectDetails')?.startsWith('Qm') ? getFromIPFS(getFieldString(proposal, 'projectDetails') ?? '') : Promise.resolve(getFieldString(proposal, 'projectDetails') ?? ''),
 		]).then(([decryptedProposal, details]) => {
 			logger.info(
 				{ decryptedProposal, details },
@@ -454,7 +455,7 @@ function Proposal() {
 			setDecryptedProposal({ ...proposal, ...decryptedProposal })
 
 			try {
-				const o = JSON.parse(details)
+				const o = typeof details === 'string' ? JSON.parse(details) : details
 				setEditorState(EditorState.createWithContent(convertFromRaw(o)))
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch(e: any) {

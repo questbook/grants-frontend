@@ -287,17 +287,19 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 					}
 
 					const authToken = localStorage.getItem('authToken')
-					if(!authToken) {
+					const jwtRegex = new RegExp('^[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+\\.[A-Za-z0-9-_.+/=]*$')
+					if(!authToken?.match(jwtRegex)) {
 						const token = await generateToken(walletAddress)
-						localStorage.setItem('authToken', JSON.stringify(token))
 						if(token) {
 							const sign = await webwallet.signMessage(token?.nonce)
 							const tokenData = await verifyToken(token?.id, sign)
+
 							if(tokenData) {
-								localStorage.setItem('authToken', tokenData)
+								localStorage.setItem('authToken', tokenData) // Storing the verified token directly
 							}
 						}
 					}
+
 
 					resolve(walletAddress)
 				} catch(err) {

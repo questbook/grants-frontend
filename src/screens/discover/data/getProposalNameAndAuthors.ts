@@ -7,7 +7,7 @@ query fetchNamesAndAuthors($ids: [String]!){
         in: $ids
       }
     }
-  },limit: 100, sort: UPDATEDATS_DESC){
+  },limit: 1000, sort: UPDATEDATS_DESC){
      _id
      name: fieldFilterBySection(
           filter:{
