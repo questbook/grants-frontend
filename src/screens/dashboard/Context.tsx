@@ -373,7 +373,9 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 				break
 			}
 
-			proposalData.push(...results?.grantApplications)
+			//make sure the proposal is not already in the proposals array
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			proposalData.push(...results?.grantApplications?.filter((p: { id: string}) => !proposals.map((p: any) => p?.id).includes(p.id)) ?? [])
 			setProposals([...proposals as [], ...proposalData])
 			skip += first
 		} while(shouldContinue)

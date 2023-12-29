@@ -2,6 +2,7 @@ import { useContext, useMemo } from 'react'
 import { defaultChainId } from 'src/constants/chains'
 import { assignReviewersMutation, submitReviewsMutation } from 'src/generated/mutation'
 import { executeMutation } from 'src/graphql/apollo'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import { useGenerateReviewData } from 'src/libraries/utils/reviews'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
@@ -42,7 +43,7 @@ function useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash }:
 
 			const shouldAssignAndReview = proposal.applicationReviewers.find(reviewer => reviewer.member.actorId === scwAddress.toLowerCase()) === undefined
 			logger.info({ review }, 'Review to be submitted')
-
+			const customToast = useCustomToast()
 			const { ipfsHash } = await generateReviewData({ items: review?.items! })
 
 			const methodArgs = shouldAssignAndReview ? [grant?.workspace.id, proposal.id, grant.id, scwAddress, true, ipfsHash] : [grant?.workspace.id, proposal.id, grant.id, ipfsHash]
@@ -79,7 +80,11 @@ function useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash }:
 				const updateReview = await executeMutation(submitReviewsMutation, variables)
 				setTransactionHash(updateReview?.submitReview?.recordId)
 				if(!updateReview?.submitReview?.recordId) {
-					throw new Error('Failed to submit review')
+					customToast({
+						position: 'top',
+						title: 'Failed to submit review',
+						status: 'error',
+					})
 				}
 			}
 

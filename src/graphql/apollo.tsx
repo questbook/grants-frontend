@@ -35,9 +35,8 @@ export async function executeMutation(mutation: DocumentNode, variables: any) {
 			},
 		})
 		const { data, errors } = response
-		logger.info(data)
-		logger.info(errors)
 
+		logger.info({ data, errors }, 'executeMutation')
 		return data
 	} catch(e) {
 		logger.warn(e)

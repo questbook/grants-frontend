@@ -8,6 +8,7 @@ import { getWorkspaceMemberExistsQuery } from 'src/libraries/data/getWorkspaceMe
 import { useBiconomy } from 'src/libraries/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/libraries/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/libraries/hooks/gasless/useQuestbookAccount'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useQBContract from 'src/libraries/hooks/useQBContract'
 import { useQuery } from 'src/libraries/hooks/useQuery'
 import useChainId from 'src/libraries/hooks/utils/useChainId'
@@ -94,6 +95,7 @@ export const useMakeInvite = () => {
 
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 	const { nonce } = useQuestbookAccount()
+	const customToast = useCustomToast()
 	// const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
 	// 	chainId: chainId?.toString()
 	// })
@@ -128,6 +130,13 @@ export const useMakeInvite = () => {
 
 			if(response) {
 				setTransactionHash?.(response?.createInviteLink?.recordId)
+			} else {
+				customToast({
+					position: 'top',
+					title: 'Error creating invite',
+					status: 'error',
+				})
+				throw new Error('Error creating invite')
 			}
 
 			const inviteInfo: InviteInfo = {

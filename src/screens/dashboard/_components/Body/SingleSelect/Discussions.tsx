@@ -508,7 +508,7 @@ function Discussions() {
 			)
 			if(
 				comment.role === 'builder' &&
-				comment.sender?.toLowerCase() === proposal?.applicantId
+				comment.sender?.toLowerCase() === proposal?.applicantId?.toLowerCase()
 			) {
 				return getFieldString(proposal, 'applicantName')
 			} else {

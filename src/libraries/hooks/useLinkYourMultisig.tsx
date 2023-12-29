@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
 import { workspaceUpdateSafeMutation } from 'src/generated/mutation'
 import { executeMutation } from 'src/graphql/apollo'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { isValidEthereumAddress } from 'src/libraries/utils/validations'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
@@ -15,7 +16,7 @@ function toRawAddress(address: string): string {
 
 function useLinkYourMultisig() {
 	const { grant } = useContext(GrantsProgramContext)!
-
+	const customToast = useCustomToast()
 	const chainId = useMemo(() => {
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
 	}, [grant])
@@ -38,8 +39,15 @@ function useLinkYourMultisig() {
 		const receipt = await executeMutation(workspaceUpdateSafeMutation, { id: grant?.workspace?.id, longSafeAddress:
 			isTonkey ? toRawAddress(multisigAddress) : multisigAddress
 		, safeChainId: networkId })
-		if(!receipt?.workspaceSafeUpdate?.recordId) {
-			throw new Error('Unable to update multisig address')
+		if(!receipt) {
+			await customToast({
+				title: 'Error updating multisig address',
+				description: 'Unable to update multisig address',
+				status: 'error',
+			})
+			setStep(undefined)
+			setTransactionHash(undefined)
+			return { link, step, transactionHash }
 		}
 
 		setTransactionHash(receipt?.workspaceSafeUpdate?.recordId)

@@ -441,11 +441,6 @@ function Settings() {
 		logger.info('newGrantProgramData', newGrantProgramData)
 		setGrantProgramData(newGrantProgramData)
 		updateGrantProgram(newGrantProgramData)
-		toast({
-			position: 'top',
-			title: 'Grant program updated',
-			status: 'success',
-		})
 		refreshWorkspace(true)
 	}
 
@@ -482,13 +477,21 @@ function Settings() {
 			enabled: [false],
 			metadataHashes: [{}]
 		 })
-		toast({
-			position: 'top',
-			title: 'Access updated',
-			status: 'success',
-		})
-		refreshWorkspace(true)
-		logger.info({ update, enable }, 'updateWorkspaceMemberMutation')
+		if(!update) {
+			toast({
+				position: 'top',
+				title: 'Error updating access',
+				status: 'error',
+			})
+		} else {
+			toast({
+				position: 'top',
+				title: 'Access updated',
+				status: 'success',
+			})
+			refreshWorkspace(true)
+			logger.info({ update, enable }, 'updateWorkspaceMemberMutation')
+		}
 	}
 
 	useEffect(() => {

@@ -29,8 +29,25 @@ export default function useUpdateGrantProgram(setCurrentStep: (step: number | un
 		try {
 			logger.info({ grantProgramData }, 'UpdateWorkspace')
 			const data = await executeMutation(updateMetadataWorkspaceMutation, { id: grant?.workspace!.id, metadata: grantProgramData })
-			setTransactionHash(data?.updateWorkspaceMetadata?.recordId)
+			logger.info(data?.errors, 'UpdateWorkspace')
+			if(!data?.updateWorkspaceMetadata?.recordId) {
+				customToast({
+					position: 'top',
+					title: 'Error updating grant program',
+					status: 'error',
+				})
+			} else {
+
+				customToast({
+					position: 'top',
+					title: 'Updated successfully',
+					status: 'success',
+				})
+				setTransactionHash(data?.updateWorkspaceMetadata?.recordId)
+			}
+
 			setLoading(false)
+
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
 			setCurrentStep(undefined)
