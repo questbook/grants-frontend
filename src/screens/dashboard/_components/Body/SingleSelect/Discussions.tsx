@@ -246,6 +246,7 @@ function Discussions() {
 												logger.info('Setting selected tag to undefined after posting comment')
 												setSelectedTag(undefined)
 												refreshComments(true)
+												refreshProposals(true)
 												setStep(undefined)
 												localStorage.removeItem(
 													`comment-${grant?.id}-${proposal?.id}`,
@@ -405,6 +406,7 @@ function Discussions() {
 		selectedProposals,
 		commentMap,
 		refreshComments,
+		refreshProposals,
 		areCommentsLoading,
 	} = useContext(DashboardContext)!
 
