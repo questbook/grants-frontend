@@ -7,7 +7,9 @@ query getSectionGrants {
     grants(sort: NUMBEROFAPPLICATIONS_DESC) {
       id:_id
       title
-      applications:applicationsSection {
+      applications(filter: {
+        state: "approved"
+      }, limit: 2, sort: UPDATEDATS_DESC) {
         id: _id
         applicantId
         state
