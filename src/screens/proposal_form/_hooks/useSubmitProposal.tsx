@@ -4,6 +4,7 @@ import { ethers } from 'ethers'
 import { USD_ASSET } from 'src/constants/chains'
 import { reSubmitProposalMutation, submitProposalMutation } from 'src/generated/mutation'
 import { executeMutation } from 'src/graphql/apollo'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 // import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { useQuery } from 'src/libraries/hooks/useQuery'
 import logger from 'src/libraries/logger'
@@ -30,7 +31,7 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 	const { type, grant, proposal, chainId } = useContext(ProposalFormContext)!
 	const { encrypt } = useEncryptPiiForApplication(grant?.id, webwallet?.publicKey, chainId)
 	const [isExecuting, setIsExecuting] = useState(true)
-	// const customToast = useCustomToast()
+	const customToast = useCustomToast()
 
 	const chainInfo = useMemo(() => {
 		if(!grant || !chainId) {
@@ -165,6 +166,11 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 				 setIsExecuting(false)
 				 setTransactionHash(proposalId)
 			} else {
+				customToast({
+					title: 'Error submitting proposal',
+					status: 'error',
+					description: 'Error submitting proposal'
+				})
 				setNetworkTransactionModalStep(undefined)
 			}
 		} catch(e) {
