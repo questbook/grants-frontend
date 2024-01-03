@@ -174,7 +174,8 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 					logger.info({ privateKey: webwallet.privateKey, publicKey, role, channel }, 'CHANNEL CONFIG (COMMENT DECRYPT)')
 				}
 
-				const encryptedComments = scwAddress !== undefined ? (comment.commentsEncryptedData?.filter(c => c.id.indexOf(scwAddress.toLowerCase()) !== -1) ?? []) : []
+				const encryptedComments = scwAddress !== undefined ? (comment.commentsEncryptedData?.filter(c => c.id.toLowerCase().indexOf(scwAddress.toLowerCase()) !== -1) ?? []) : []
+				logger.info({ comment }, 'ENCRYPTED COMMENTS (COMMENT DECRYPT)')
 				const key = `${comment.application.id}.${getSupportedChainIdFromWorkspace(comment.workspace) ?? defaultChainId}`
 				if(encryptedComments.length === 0) {
 					logger.info({ comment }, 'NO ENCRYPTED COMMENTS (COMMENT DECRYPT)')
@@ -347,7 +348,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		setCommentMap(commentMap)
 		setAreCommentsLoading(false)
 
-	}, [grant, grantId, proposalId])
+	}, [grant, grantId, proposalId, scwAddress])
 
 	const getFetchBackgroundProposals = useCallback(async(proposals: Proposals[]) => {
 		logger.info({ role, grantId, scwAddress }, 'Fetching proposals (GET PROPOSALS)')
