@@ -74,10 +74,10 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 			// 	logger.info({ result }, 'useSubmitProposal: (result)')
 			// }
 			logger.info(result?.grantApplications?.length, 'useSubmitProposal: (result)')
-			if(result?.grantApplications?.length > 3) {
+			if(result?.grantApplications?.length > 2) {
 				logger.info({ result }, 'length')
 				customToast({
-					title: 'This wallet address has exceeded the maximum number of applications for this grant',
+					title: 'You have exceeded the maximum number of applications for this grant',
 					status: 'error',
 					description: 'This wallet address has already been used for this grant'
 				})
