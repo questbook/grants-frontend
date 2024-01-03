@@ -27,8 +27,8 @@ export function useLoadReview(
 ) {
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 	const { subgraphClients } = useContext(ApiClientsContext)!
-	const { client } = subgraphClients[chainId]
-	logger.info({ client }, 'Config')
+	// const { client } = subgraphClients[chainId]
+	logger.info({ subgraphClients }, 'Config')
 
 	const { fetch: fetchPubKeys } = useGetPublicKeysOfGrantManagers(grantId, chainId)
 	// const { fetchMore: fetchMembers } = useGetWorkspaceMembersPublicKeysQuery({

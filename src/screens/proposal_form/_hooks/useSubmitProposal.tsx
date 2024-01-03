@@ -67,11 +67,22 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 				builderAddressInBytes = ethers.utils.hexZeroPad(ethers.utils.hexlify(ethers.utils.getAddress(walletAddress)), 32)
 			}
 
+			logger.info({ builderAddressInBytes }, 'useSubmitProposal: (builderAddressInBytes)')
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			const result: any = await fetchIsWalletAddressUsed({ grantId:grant.id, walletAddress:builderAddressInBytes as string }, true)
-
-			if(result?.grantApplications.length && result?.grantApplications[0].applicantId?.toLowerCase() !== scwAddress.toLowerCase()) {
-				logger.info({ result }, 'useSubmitProposal: (result)')
+			const result: any = await fetchIsWalletAddressUsed({ grantId:grant.id, walletAddress: scwAddress as string }, true)
+			// if(result?.grantApplications.length && result?.grantApplications[0].applicantId?.toLowerCase() !== scwAddress.toLowerCase()) {
+			// 	logger.info({ result }, 'useSubmitProposal: (result)')
+			// }
+			logger.info(result?.grantApplications?.length, 'useSubmitProposal: (result)')
+			if(result?.grantApplications?.length > 3) {
+				logger.info({ result }, 'length')
+				customToast({
+					title: 'This wallet address has exceeded the maximum number of applications for this grant',
+					status: 'error',
+					description: 'This wallet address has already been used for this grant'
+				})
+				setNetworkTransactionModalStep(undefined)
+				return
 			}
 
 			logger.info({ form }, 'useSubmitProposal: (form)')
