@@ -76,7 +76,7 @@ function ReviewProposal() {
 							px={5}
 							py={4}>
 							<Button
-								disabled={review === undefined || review?.items?.some((item) => (item.rating === 0 && grant?.reviewType === 'rubrics') || (item.rating === -1 && grant?.reviewType === 'voting')) || !isBiconomyInitialised}
+								disabled={review === undefined || review?.items?.some((item) => (item.rating === 0 && grant?.reviewType === 'rubrics') || (item.rating === -1 && grant?.reviewType === 'voting'))}
 								w='100%'
 								variant='primaryMedium'
 								onClick={submitReview}>
@@ -296,7 +296,7 @@ function ReviewProposal() {
 
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
 	const [transactionHash, setTransactionHash] = useState<string>()
-	const { submitReview, isBiconomyInitialised } = useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash })
+	const { submitReview } = useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash })
 
 	const router = useRouter()
 

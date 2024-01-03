@@ -1,5 +1,5 @@
 query getGrantManagersWithPublicKey($grantID: String!) {
-     grantManagers(where: {grant: $grantID}) {
+     grantManagers(filter: {grant: $grantID}) {
  		member {
  			actorId,
  			publicKey,

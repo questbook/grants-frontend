@@ -1,13 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { defaultChainId } from 'src/constants/chains'
-import { useGetWorkspaceDetailsQuery, useGetWorkspaceMembersByWorkspaceIdQuery } from 'src/generated/graphql'
-import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
+import { useQuery } from 'src/libraries/hooks/useQuery'
 import logger from 'src/libraries/logger'
 import { getSafeURL } from 'src/libraries/utils/multisig'
 import { getKeyForMemberPii, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { GrantProgramForm, SettingsFormContextType, WorkspaceMembers } from 'src/screens/settings/_utils/types'
+import { getWorkspaceDetailsQuery, getWorkspaceMembersByWorkspaceIdQuery } from 'src/screens/settings/data'
 
 const SettingsFormContext = createContext<SettingsFormContextType | undefined>(undefined)
 
@@ -20,7 +21,13 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 					workspaceMembers: workspaceMembers!,
 					grantProgramData: grantProgramData!,
 					setGrantProgramData: setGrantProgramData!,
-					safeURL: safeURL!
+					safeURL: safeURL!,
+					refreshWorkspace: (refresh: boolean) => {
+						if(refresh) {
+							fetchGrantProgramDetails()
+							fetchWorkspaceMembersDetails()
+						}
+					}
 				}
 			}>
 			{children}
@@ -39,31 +46,26 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
 	}, [grant])
 
-	const { fetchMore: fetchGrantProgram } = useMultiChainQuery({
-		useQuery: useGetWorkspaceDetailsQuery,
-		options: {},
-		chains: [chainId]
+	const { fetchMore: fetchGrantProgram } = useQuery({
+		query: getWorkspaceDetailsQuery,
 	})
 
-	const { fetchMore: fetchWorkspaceMembers } = useMultiChainQuery({
-		useQuery: useGetWorkspaceMembersByWorkspaceIdQuery,
-		options: {},
-		chains: [chainId]
+	const { fetchMore: fetchWorkspaceMembers } = useQuery({
+		query: getWorkspaceMembersByWorkspaceIdQuery,
 	})
 
 
 	const fetchGrantProgramDetails = useCallback(async() => {
 		try {
-			const response = await fetchGrantProgram({
+			const response: any = await fetchGrantProgram({
 				workspaceID: grant?.workspace?.id
 			})
-			logger.info('Grant program fetched', response)
 			setGrantProgramData({
-				title: response[0]?.workspace?.title!,
-				about: response[0]?.workspace?.about!,
-				bio: response[0]?.workspace?.bio!,
-				logoIpfsHash: response[0]?.workspace?.logoIpfsHash!,
-				socials: response[0]?.workspace?.socials!.map(social => {
+				title: response.workspace?.title,
+				about: response?.workspace?.about,
+				bio: response?.workspace?.bio,
+				logoIpfsHash: response?.workspace?.logoIpfsHash,
+				socials: response?.workspace?.socials.map((social: any) => {
 					return {
 						name: social.name,
 						value: social.value
@@ -79,18 +81,18 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 
 	const fetchWorkspaceMembersDetails = useCallback(async() => {
 		try {
-			const response = await fetchWorkspaceMembers({
+			const response: any = await fetchWorkspaceMembers({
 				workspaceId: grant?.workspace?.id
 			})
 			logger.info('Workspace members fetched', response)
 
 			const workspaceMembers: WorkspaceMembers = []
-			for(const member of response[0]?.workspaceMembers!) {
+			for(const member of response?.workspaceMembers!) {
 				if(!scwAddress || !webwallet || !member.publicKey) {
 					continue
 				}
 
-				const pii = member.pii?.find(pii => pii?.id?.includes(scwAddress?.toLowerCase()))
+				const pii = member.pii?.find((pii: any) => pii?.id?.includes(scwAddress?.toLowerCase()))
 				if(!pii) {
 					workspaceMembers.push(member)
 					continue

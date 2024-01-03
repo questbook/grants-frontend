@@ -1,5 +1,5 @@
-query getWorkspaceMemberExists($id: ID!) {
-	workspaceMember(id: $id) {
-		id
+query getWorkspaceMemberExists($id: String!) {
+	workspaceMember(_id: $id) {
+		id:_id
 	}
 }

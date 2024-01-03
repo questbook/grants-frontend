@@ -99,8 +99,8 @@ function Discussions() {
 								{currentMember?.fullName ?? formatAddress(scwAddress ?? '')}
 							</Text>
 							<RoleTag
-								role={(role as Roles)}
-								isBuilder={proposal?.applicantId === scwAddress?.toLowerCase()}
+								role={(role as Roles) ?? 'community'}
+								isBuilder={proposal?.applicantId?.toLowerCase() === scwAddress?.toLowerCase()}
 							/>
 							{
 								selectedTag !== undefined && selectedTag?.id !== 'feedback' && (
@@ -246,6 +246,7 @@ function Discussions() {
 												logger.info('Setting selected tag to undefined after posting comment')
 												setSelectedTag(undefined)
 												refreshComments(true)
+												refreshProposals(true)
 												setStep(undefined)
 												localStorage.removeItem(
 													`comment-${grant?.id}-${proposal?.id}`,
@@ -322,7 +323,7 @@ function Discussions() {
 						</Text>
 						<RoleTag
 							role={(comment?.role as Roles) ?? 'community'}
-							isBuilder={proposal?.applicantId === comment?.sender?.toLowerCase()}
+							isBuilder={proposal?.applicantId?.toLowerCase() === comment?.sender?.toLowerCase()}
 						/>
 						{
 							comment?.timestamp && (
@@ -406,6 +407,7 @@ function Discussions() {
 		selectedProposals,
 		commentMap,
 		refreshComments,
+		refreshProposals,
 		areCommentsLoading,
 	} = useContext(DashboardContext)!
 
@@ -415,7 +417,7 @@ function Discussions() {
 	const [selectedTag, setSelectedTag] = useState<TagType>()
 	const [text, setText] = useState<string>('')
 
-	const { addComment, isBiconomyInitialised } = useAddComment({
+	const { addComment } = useAddComment({
 		setStep,
 		setTransactionHash,
 	})
@@ -453,13 +455,13 @@ function Discussions() {
 
 	useEffect(() => {
 		if(proposalTags.length === 1) {
-			logger.info('Setting selected tag to the only tag')
+			logger.info('Setting selected tag to the only tag', proposalTags)
 			setSelectedTag(proposalTags[0])
 		} else {
 			logger.info('Setting selected tag to undefined')
 			setSelectedTag(undefined)
 		}
-	}, [proposal])
+	}, [proposal, role])
 
 	const comments = useMemo(() => {
 		if(!proposal || !commentMap) {
@@ -473,12 +475,9 @@ function Discussions() {
 	}, [proposal, commentMap])
 
 	const isDisabled = useMemo(() => {
-		if(!isBiconomyInitialised) {
-			return true
-		}
 
 		return text === ''
-	}, [text, step, isBiconomyInitialised])
+	}, [text, step])
 
 	const helperText = useMemo(() => {
 		switch (selectedTag?.id) {
@@ -512,7 +511,7 @@ function Discussions() {
 			)
 			if(
 				comment.role === 'builder' &&
-				comment.sender?.toLowerCase() === proposal?.applicantId
+				comment.sender?.toLowerCase() === proposal?.applicantId?.toLowerCase()
 			) {
 				return getFieldString(proposal, 'applicantName')
 			} else {

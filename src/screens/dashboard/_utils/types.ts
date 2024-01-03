@@ -23,6 +23,7 @@ export type DashboardContextType = {
   commentMap: CommentMap
   setCommentMap: (coments: CommentMap) => void
   refreshComments: (refresh: boolean) => void
+  refreshProposals: (refresh: boolean) => void
   filterState: ApplicationState | undefined
   setFilterState: (state: ApplicationState | undefined) => void
 };
@@ -114,4 +115,46 @@ export type TagType = {
 export type DynamicData = {
 	title: string
 	description: string
+}
+
+export type DisburseRewardSafe = {
+	applicationIds: string[]
+	milestoneIds: string[]
+	asset: string
+	tokenName: string
+	nonEvmAssetAddress: string
+	amounts: number[]
+	transactionHash: string
+	sender: string
+	grant: string
+	to: string
+}
+
+export type FundTransfer = {
+  amount: number
+  asset: string
+  type: string
+  createdAtS: string
+  to: string
+  transactionHash: string
+  status: string
+  executionTimestamp: string
+  milestone: {
+    id: string
+  }
+  grant: {
+    reward: {
+      id: string
+      asset: string
+      committed: number
+      token: {
+        id: string
+        label: string
+        address: string
+        chainId: string
+        iconHash: string
+        decimal: number
+      }
+    }
+  }
 }

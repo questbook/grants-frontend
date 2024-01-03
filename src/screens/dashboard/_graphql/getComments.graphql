@@ -1,17 +1,16 @@
 query getComments($grantId: String!, $first: Int, $skip: Int) {
   comments(
-    first: $first
+    limit: $first
     skip: $skip
-    where: { grant: $grantId }
-    orderBy: createdAt
-    orderDirection: asc
+    filter: { grant: $grantId }
+    sort:CREATEDAT_ASC
   ) {
-    id
+    id:_id
     isPrivate
     commentsPublicHash
     createdAt
     commentsEncryptedData {
-      id
+      id:_id
       data
     }
     workspace {
@@ -25,7 +24,7 @@ query getComments($grantId: String!, $first: Int, $skip: Int) {
       supportedNetworks
     }
     application {
-      id
+      id:_id
       applicantPublicKey
       applicantId
     }

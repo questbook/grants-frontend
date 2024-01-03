@@ -1,34 +1,42 @@
-query getWorkspacesAndBuilderGrants($first: Int, $skip: Int, $actorId: Bytes!) {
+query getWorkspacesAndBuilderGrants($first: Int, $skip: Int, $actorId: String!) {
   workspaceMembers(
-    where: { actorId: $actorId, workspace_: { grants_not: [] } }
-    orderBy: addedAt
-    orderDirection: desc
-    first: $first
+    sort: ADDEDAT_DESC,
+    limit: $first
     skip: $skip
-    subgraphError: allow
   ) {
-    id
+    id:_id
     accessLevel
     enabled
     workspace {
-      id
+      id:_id
       title
       supportedNetworks
-      grants
+      grants {
+        _id
+      }
     }
   }
-
-  grants(
-    where: { applications_: { applicantId: $actorId } }
-    first: $first
+  
+ grants(filter: {
+   applications_: {
+    _operators: {
+      applicantId: {
+        regex: $actorId
+      }
+    }
+  }}
+    limit: $first
     skip: $skip
-    orderBy: createdAtS
-    orderDirection: desc
-  ) {
-    id
+    sort: CREATEDATS_DESC
+  ){
+    id:_id
     title
-    applications(where: { applicantId: $actorId }) {
-      id
+    applications(filter: { _operators: {
+      applicantId: {
+        regex: $actorId
+      }
+    } }) {
+      id:_id
       applicantId
       state
     }
@@ -41,13 +49,13 @@ query getWorkspacesAndBuilderGrants($first: Int, $skip: Int, $actorId: Bytes!) {
       tokenName
     }
     workspace {
-      id
+      id:_id
       title
       isVisible
       logoIpfsHash
       supportedNetworks
-      members(first: 1) {
-        id
+      members(limit: 1) {
+        id:_id
         actorId
         accessLevel
       }
@@ -58,7 +66,7 @@ query getWorkspacesAndBuilderGrants($first: Int, $skip: Int, $actorId: Bytes!) {
     }
     reward {
       committed
-      id
+      id:_id
       asset
       token {
         address

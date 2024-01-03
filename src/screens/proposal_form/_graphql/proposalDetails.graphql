@@ -1,17 +1,17 @@
-query proposalDetails($proposalId: ID!) {
-    grantApplication(id: $proposalId) {
-    id
+query proposalDetails($proposalId: String!) {
+    grantApplication(_id: $proposalId) {
+    id:_id
     applicantId
     applicantPublicKey
     fields {
-      id
+      id:_id
       values {
-        id
+        id:_id
         value
       }
     }
     pii {
-      id
+      id:_id
       data
     }
     milestones {
@@ -19,17 +19,17 @@ query proposalDetails($proposalId: ID!) {
       amount
     }
     grant {
-      id
+      id:_id
       creatorId
       title
       summary
       details
       reward {
-        id
+        id:_id
         asset
         committed
         token {
-          id
+          id:_id
           label
           address
           decimal
@@ -49,7 +49,7 @@ query proposalDetails($proposalId: ID!) {
       metadataHash
       funding
       workspace {
-        id
+        id:_id
         title
         supportedNetworks
         logoIpfsHash
@@ -59,7 +59,7 @@ query proposalDetails($proposalId: ID!) {
             }
       }
       fields {
-        id
+        id:_id
         title
         inputType
         possibleValues

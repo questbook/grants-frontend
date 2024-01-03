@@ -1,16 +1,31 @@
-query getMemberPublicKeys($workspaceId: ID!, $applicationIds: [ID!]!) {
-  workspace(id: $workspaceId) {
-    members(where: { accessLevel_not: reviewer, enabled: true }) {
+query getMemberPublicKeys($workspaceId: String!, $applicationIds: [String!]!) {
+  workspace(_id: $workspaceId) {
+    members: membersFilter(filter: { 
+    _operators:{
+      accessLevel: {
+        ne:"reviewer"
+      }
+    }
+      enabled: false
+    }) {
       actorId
       publicKey
     }
   }
-  grantApplications(where: {id_in: $applicationIds}) {
-    id
+  grantApplications(filter: { 
+  _operators:{
+    _id: {
+      in: $applicationIds
+    }
+  }
+  }) {
+    id:_id
     applicantId
     applicantPublicKey
-    applicationReviewers(where: { member_: { enabled: true } }) {
-      member {
+    applicationReviewers {
+      member(filter: {
+        enabled: true
+      }) {
         actorId
         publicKey
       }

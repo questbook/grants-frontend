@@ -1,28 +1,27 @@
 query getProposals($first: Int, $skip: Int, $grantID: String!) {
   grantApplications(
-    where: { grant: $grantID }
-    first: $first
+    filter: { grant: $grantID }
+    limit: $first
     skip: $skip
-    orderBy: updatedAtS
-    orderDirection: desc
+    sort: UPDATEDATS_DESC
   ) {
-    id
+    id:_id
     applicantId
     applicantPublicKey
     state
     fields {
-      id
+      id:_id
       values {
-        id
+        id:_id
         value
       }
     }
     pii {
-      id
+      id:_id
       manager {
-        id
+        id:_id
         member {
-          id
+          id:_id
           actorId
           fullName
           profilePictureIpfsHash
@@ -38,7 +37,7 @@ query getProposals($first: Int, $skip: Int, $grantID: String!) {
     createdAtS
     updatedAtS
     milestones {
-      id
+      id:_id
       title
       state
       amount
@@ -52,9 +51,9 @@ query getProposals($first: Int, $skip: Int, $grantID: String!) {
     feedbackDao
     feedbackDev
     reviews {
-      id
+      id:_id
       reviewer {
-        id
+        id:_id
         actorId
         fullName
         profilePictureIpfsHash
@@ -67,11 +66,11 @@ query getProposals($first: Int, $skip: Int, $grantID: String!) {
       createdAtS
       publicReviewDataHash
       data {
-        id
+        id:_id
         manager {
-          id
+          id:_id
           member {
-            id
+            id:_id
             actorId
             fullName
             profilePictureIpfsHash
@@ -88,9 +87,9 @@ query getProposals($first: Int, $skip: Int, $grantID: String!) {
     pendingReviewerAddresses
     doneReviewerAddresses
     applicationReviewers {
-      id
+      id:_id
       member {
-        id
+        id:_id
         actorId
         fullName
         profilePictureIpfsHash
@@ -104,10 +103,10 @@ query getProposals($first: Int, $skip: Int, $grantID: String!) {
     }
     version
     grant {
-      id
+      id:_id
       reward {
         committed
-        id
+        id:_id
         asset
         token {
           address
@@ -117,7 +116,7 @@ query getProposals($first: Int, $skip: Int, $grantID: String!) {
         }
       }
       workspace {
-        id
+        id:_id
         title
         logoIpfsHash
         supportedNetworks

@@ -10,16 +10,16 @@ import {
 	GetAdminPublicKeysQuery,
 	GetProposalsQuery,
 	PiiData,
-	useGetAdminPublicKeysQuery,
-	useGetGrantManagersWithPublicKeyQuery,
-	useGetMemberPublicKeysQuery,
 } from 'src/generated/graphql'
 import SupportedChainId from 'src/generated/SupportedChainId'
-import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
+import { getAdminPublicKeysQuery } from 'src/libraries/data/getAdminPublicKeysQuery'
+import { getGrantManagersWithPublicKeyQuery } from 'src/libraries/data/getGrantManagersWithPublicKeyQuery'
+import { getMemberPublicKeysQuery } from 'src/libraries/data/getMemberPublicKeysQuery'
+import { useQuery } from 'src/libraries/hooks/useQuery'
 import logger from 'src/libraries/logger'
 import { uploadToIPFS } from 'src/libraries/utils/ipfs'
 import MAIN_LOGGER from 'src/libraries/utils/logger'
-import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { WebwalletContext } from 'src/pages/_app'
 
 const ec = new EC('secp256k1')
 
@@ -127,12 +127,14 @@ export function useGetPublicKeysOfGrantManagers(
 	grantId: string | undefined,
 	chainId: SupportedChainId,
 ) {
-	const { subgraphClients } = useContext(ApiClientsContext)!
-	const { client } = subgraphClients[chainId]
-
-	const { fetchMore } = useGetGrantManagersWithPublicKeyQuery({
-		client,
-		skip: true,
+	// const { subgraphClients } = useContext(ApiClientsContext)!
+	logger.info('useGetPublicKeysOfGrantManagers', { chainId })
+	// const { client } = subgraphClients[chainId]
+	interface FetchMoreResult {
+		grantManagers?: { member?: { publicKey?: string, enabled?: boolean, actorId?: string } }[]
+	}
+	const { fetchMore } = useQuery({
+		query: getGrantManagersWithPublicKeyQuery,
 	})
 
 	const fetch = useCallback(async() => {
@@ -140,9 +142,8 @@ export function useGetPublicKeysOfGrantManagers(
 			throw new Error('Cannot fetch grant managers without grantId')
 		}
 
-		const { data } = await fetchMore({
-			variables: { grantID: grantId },
-		})
+		const data = await fetchMore({ grantID: grantId }, true) as FetchMoreResult
+
 		const result: { [address: string]: string | null } = {}
 		for(const { member } of data?.grantManagers || []) {
 			if(!member?.publicKey) {
@@ -156,7 +157,8 @@ export function useGetPublicKeysOfGrantManagers(
 				continue
 			}
 
-			if(member?.enabled) {
+
+			if(member.actorId !== undefined && member?.enabled) {
 				result[member.actorId] = member.publicKey
 			}
 		}
@@ -171,19 +173,18 @@ export function useGetPublicKeyOfAdmins(
 	workspaceId: string | undefined,
 	chainId: SupportedChainId,
 ) {
-	const { fetchMore } = useMultiChainQuery({
-		useQuery: useGetAdminPublicKeysQuery,
-		options: {},
-		chains: [chainId],
+	const { fetchMore } = useQuery({
+		query: getAdminPublicKeysQuery,
 	})
-
+	logger.info('useGetPublicKeyOfAdmins', { chainId })
 	const fetch = useCallback(async() => {
 		if(!workspaceId) {
 			throw new Error('Cannot fetch admins without workspaceId')
 		}
 
-		const result = await fetchMore({ workspaceId }, true)
-		if(!result?.length || !result[0]?.workspace) {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const result: any = await fetchMore({ workspaceId }, true)
+		if(!result?.workspace) {
 			return {}
 		}
 
@@ -193,7 +194,7 @@ export function useGetPublicKeyOfAdmins(
         null | undefined
       >['members'][number]
     } = {}
-		for(const member of result[0].workspace.members) {
+		for(const member of result.workspace.members) {
 			if(!member?.publicKey) {
 				continue
 			}
@@ -219,10 +220,9 @@ export function useGetPublicKeyOfMembers(
 	applicationIds: string[] | undefined,
 	chainId: SupportedChainId,
 ) {
-	const { fetchMore } = useMultiChainQuery({
-		useQuery: useGetMemberPublicKeysQuery,
-		options: {},
-		chains: [chainId],
+	logger.info('useGetPublicKeyOfMembers', { chainId })
+	const { fetchMore } = useQuery({
+		query: getMemberPublicKeysQuery
 	})
 
 	const fetch = useCallback(async() => {
@@ -235,18 +235,24 @@ export function useGetPublicKeyOfMembers(
 		}
 
 		logger.info('Fetching members: ', { workspaceId, applicationIds })
-		const result = await fetchMore({ workspaceId, applicationIds }, true)
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const result: any = await fetchMore({ workspaceId, applicationIds }, true)
 		logger.info('Members fetched: ', result)
-		if(!result?.length || !result[0]?.workspace || !result[0]?.grantApplications) {
+		if(!result?.workspace || !result?.grantApplications) {
 			return {}
 		}
 
 		const ret: {[appId: string]: {[address: string]: string}} = {}
-		for(const grantApplication of result[0].grantApplications) {
+		for(const grantApplication of result.grantApplications) {
 			ret[grantApplication.id] = {}
 			for(const member of [
-				...result[0].workspace.members,
-				...grantApplication.applicationReviewers.map((r) => r.member),
+				...result.workspace.members,
+				...grantApplication.applicationReviewers.map((r: {
+					member: Exclude<
+			GetProposalsQuery['grantApplications'][number]['applicationReviewers'][number]['member'],
+			null | undefined
+		  >
+				}) => r.member),
 				{ actorId: grantApplication.applicantId, publicKey: grantApplication.applicantPublicKey },
 			]) {
 				if(!member?.publicKey) {

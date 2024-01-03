@@ -1,20 +1,20 @@
-query getApplicationDetails($applicationID: ID!) {
+query getApplicationDetails($applicationID: String!) {
   grantApplication(
-    id: $applicationID,
-  subgraphError:allow) {
-    id
+    _id: $applicationID,
+  ) {
+    id:_id
     fields {
-      id
+      id:_id
       values {
         value
       }
     }
     pii {
-      id
+      id:_id
       data
     }
     milestones {
-      id
+      id:_id
       title
       amount
       amountPaid
@@ -26,22 +26,22 @@ query getApplicationDetails($applicationID: ID!) {
       state
     }
     grant {
-      id
+      id:_id
       title
       funding
       workspace {
-        id
+        id:_id
         title
         logoIpfsHash
         supportedNetworks
-        members {
-          id
+        members:membersFilter {
+          id:_id
           actorId
           publicKey
         }
       }
       reward {
-        id
+        id:_id
         asset
         committed
         token {
@@ -52,22 +52,22 @@ query getApplicationDetails($applicationID: ID!) {
         }
       }
       fields {
-        id
+        id:_id
         title
         isPii
       }
       rubric {
         isPrivate
         items {
-          id,
+          id:_id,
           title,
           details,
           maximumPoints,
         },
       },
-      fundTransfers (where: {type: funds_disbursed_from_safe}) {
+      fundTransfers: fundsTransferFilter (filter: {type: "funds_disbursed_from_safe"}) {
         milestone {
-          id
+          id:_id
           title
           amount
           amountPaid
@@ -86,7 +86,7 @@ query getApplicationDetails($applicationID: ID!) {
         status
         application{
           applicantId
-          id
+          id:_id
           state
         }
         createdAtS
@@ -97,25 +97,25 @@ query getApplicationDetails($applicationID: ID!) {
     reviews {
       reviewer {
         actorId
-        id
+        id:_id
         email
         fullName
       }
       data {
-        id
+        id:_id
         manager {
-          id
+          id:_id
         }
         data
       }
       publicReviewDataHash
-      id
+      id:_id
       createdAtS
     }
     reviewers {
       actorId
       email
-      id
+      id:_id
       fullName
     }
     applicantId

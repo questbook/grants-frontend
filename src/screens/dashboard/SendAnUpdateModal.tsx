@@ -108,6 +108,7 @@ function SendAnUpdateModal() {
 										setText('')
 										setSelectedTag(undefined)
 										refreshComments(true)
+										refreshProposals(true)
 									}
 								}
 							}>
@@ -119,7 +120,7 @@ function SendAnUpdateModal() {
 		)
 	}
 
-	const { selectedProposals, proposals, refreshComments } = useContext(DashboardContext)!
+	const { selectedProposals, proposals, refreshComments, refreshProposals } = useContext(DashboardContext)!
 	const { isSendAnUpdateModalOpen, setIsSendAnUpdateModalOpen } = useContext(ModalContext)!
 	const { proposalTags } = useProposalTags({ proposals: proposals.filter(p => selectedProposals.has(p.id)) })
 	const [ text, setText ] = useState<string>('')
@@ -130,15 +131,12 @@ function SendAnUpdateModal() {
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
 	const [, setTransactionHash] = useState<string>('')
 
-	const { addComments, isBiconomyInitialised } = useAddComments({ setStep: setNetworkTransactionModalStep, setTransactionHash })
+	const { addComments } = useAddComments({ setStep: setNetworkTransactionModalStep, setTransactionHash })
 
 	const isDisabled = useMemo(() => {
-		if(!isBiconomyInitialised) {
-			return true
-		}
 
 		return text === ''
-	}, [text, networkTransactionModalStep, isBiconomyInitialised])
+	}, [text, networkTransactionModalStep])
 
 	return buildComponent()
 }

@@ -1,16 +1,16 @@
-query grantDetails($grantId: ID!) {
-  grant(id: $grantId) {
-    id
+query grantDetails($grantId: String!) {
+  grant(_id: $grantId) {
+    id:_id
     creatorId
     title
     summary
     details
     reward {
-      id
+      id:_id
       asset
       committed
       token {
-        id
+        id:_id
         label
         address
         decimal
@@ -30,7 +30,7 @@ query grantDetails($grantId: ID!) {
     metadataHash
     funding
     workspace {
-      id
+      id:_id
       title
       supportedNetworks
       logoIpfsHash
@@ -40,7 +40,7 @@ query grantDetails($grantId: ID!) {
             }
     }
     fields {
-      id
+      id:_id
       title
       inputType
       possibleValues

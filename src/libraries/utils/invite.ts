@@ -1,22 +1,24 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useMemo } from 'react'
 import { generateInputForAuthorisation, generateKeyPairAndAddress } from '@questbook/anon-authoriser'
 import { WorkspaceMemberUpdate } from '@questbook/service-validator-client'
 import { base58 } from 'ethers/lib/utils'
-import { defaultChainId } from 'src/constants/chains'
-import { useGetWorkspaceMemberExistsQuery } from 'src/generated/graphql'
+import { createInviteLinkMutation, joinViaInviteLinkMutation } from 'src/generated/mutation'
+import { executeMutation } from 'src/graphql/apollo'
+import { getWorkspaceMemberExistsQuery } from 'src/libraries/data/getWorkspaceMemberExistsQuery'
 import { useBiconomy } from 'src/libraries/hooks/gasless/useBiconomy'
 import { useNetwork } from 'src/libraries/hooks/gasless/useNetwork'
 import { useQuestbookAccount } from 'src/libraries/hooks/gasless/useQuestbookAccount'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useQBContract from 'src/libraries/hooks/useQBContract'
+import { useQuery } from 'src/libraries/hooks/useQuery'
 import useChainId from 'src/libraries/hooks/utils/useChainId'
 import { delay } from 'src/libraries/utils'
-import { bicoDapps, chargeGas, getTransactionDetails, sendGaslessTransaction } from 'src/libraries/utils/gasless'
 import logger from 'src/libraries/utils/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 
 export type InviteInfo = {
-	workspaceId: number
+	workspaceId: number | string
 	role: number
 	privateKey: Uint8Array
 	chainId: number
@@ -45,10 +47,7 @@ export const extractInviteInfo = (url?: string): InviteInfo | undefined => {
 		&& typeof privateKeyStr === 'string'
 		&& typeof chainIdStr === 'string'
 	) {
-		const workspaceId = +workspaceIdStr
-		if(Number.isNaN(workspaceId)) {
-			throw new Error('Invalid workspace ID in invite')
-		}
+		const workspaceId = workspaceIdStr
 
 		const role = +roleStr
 		if(Number.isNaN(role)) {
@@ -61,9 +60,6 @@ export const extractInviteInfo = (url?: string): InviteInfo | undefined => {
 		}
 
 		const privateKey = base58.decode(privateKeyStr)
-		if(privateKey.length !== 32) {
-			throw new Error('Invalid private key in invite')
-		}
 
 		return {
 			workspaceId,
@@ -95,24 +91,24 @@ export const useMakeInvite = () => {
 	const { grant } = useContext(GrantsProgramContext)!
 	const chainId = getSupportedChainIdFromWorkspace(grant?.workspace)
 
-	const { network, switchNetwork } = useNetwork()
+	const { switchNetwork } = useNetwork()
 
-	const { webwallet } = useContext(WebwalletContext)!
+	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 	const { nonce } = useQuestbookAccount()
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
-		chainId: chainId?.toString()
-	})
+	const customToast = useCustomToast()
+	// const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
+	// 	chainId: chainId?.toString()
+	// })
 
-	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
+	// const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
 
-	useEffect(() => {
-		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
-			biconomy.networkId.toString() === chainId.toString()) {
-			setIsBiconomyInitialised(true)
-		}
-	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, chainId])
+	// useEffect(() => {
+	// 	if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && chainId && biconomy.networkId &&
+	// 		biconomy.networkId.toString() === chainId.toString()) {
+	// 		setIsBiconomyInitialised(true)
+	// 	}
+	// }, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, chainId])
 
-	const targetContractObject = useQBContract('workspace', network)
 	const workspaceRegistry = useQBContract('workspace', chainId)
 
 	const makeInvite = useCallback(
@@ -120,35 +116,27 @@ export const useMakeInvite = () => {
 			switchNetwork?.(chainId!)
 			const { privateKey, address } = generateKeyPairAndAddress()
 			// convert "0x" encoded hex to a number
-			const workspaceId = parseInt(grant!.workspace!.id.replace('0x', ''), 16)
+			const workspaceId = grant!.workspace!.id
 
 			logger.info({ workspaceId, role, address }, 'creating invite ')
-			// console.log("inviteee", biconomyWalletClient, scwAddress, chainId);
+			// didSign?.()
 
-			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress || !chainId) {
-				return undefined!
-			}
-
-			const response = await sendGaslessTransaction(
-				biconomy,
-				targetContractObject,
-				'createInviteLink',
-				[grant!.workspace!.id, role, address],
-				workspaceRegistry.address,
-				biconomyWalletClient,
-				scwAddress,
-				webwallet,
-				chainId.toString(),
-				bicoDapps[chainId.toString()].webHookId,
-				nonce
-			)
-
-			didSign?.()
+			const response = await executeMutation(createInviteLinkMutation, {
+				w: grant!.workspace!.id,
+				r: role?.toString(),
+				k: base58.encode(privateKey),
+				createdBy: scwAddress?.toLowerCase() ?? webwallet?.address?.toLowerCase()
+			})
 
 			if(response) {
-				const { txFee, receipt } = await getTransactionDetails(response, chainId.toString())
-				setTransactionHash?.(receipt?.transactionHash)
-				await chargeGas(workspaceId, Number(txFee), chainId)
+				setTransactionHash?.(response?.createInviteLink?.recordId)
+			} else {
+				customToast({
+					position: 'top',
+					title: 'Error creating invite',
+					status: 'error',
+				})
+				throw new Error('Error creating invite')
 			}
 
 			const inviteInfo: InviteInfo = {
@@ -161,7 +149,7 @@ export const useMakeInvite = () => {
 
 			return inviteInfo
 		},
-		[grant?.workspace?.id, workspaceRegistry, biconomyWalletClient, chainId, scwAddress, biconomy, nonce, webwallet]
+		[grant?.workspace?.id, workspaceRegistry, chainId, scwAddress, nonce, webwallet]
 	)
 
 	const getMakeInviteGasEstimate = useCallback(
@@ -184,45 +172,45 @@ export const useMakeInvite = () => {
 		[workspaceRegistry, grant?.workspace?.id]
 	)
 
-	return { makeInvite, getMakeInviteGasEstimate, isBiconomyInitialised }
+	return { makeInvite, getMakeInviteGasEstimate }
 }
 
 type JoinInviteStep = 'ipfs-uploaded' | 'tx-signed' | 'tx-confirmed'
 
 export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemberUpdate) => {
 	const connectedChainId = useChainId()
-	const { network, switchNetwork } = useNetwork()
+	const { switchNetwork } = useNetwork()
 
 	const { webwallet } = useContext(WebwalletContext)!
 
-	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress, loading: biconomyLoading } = useBiconomy({
+	const { biconomyDaoObj: biconomy, biconomyWalletClient, scwAddress } = useBiconomy({
 		chainId: inviteInfo?.chainId.toString()
 	})
-	const targetContractObject = useQBContract('workspace', network)
 
-	const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
 
-	useEffect(() => {
-		// const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
-		// console.log('rree', scwAddress, biconomyLoading, inviteInfo)
-		// console.log("invite", biconomy, biconomyWalletClient)
+	// const [isBiconomyInitialised, setIsBiconomyInitialised] = useState(false)
 
-		if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && inviteInfo?.chainId && biconomy?.networkId &&
-			biconomy.networkId.toString() === inviteInfo?.chainId?.toString()) {
-			// console.log("zonb");
-			setIsBiconomyInitialised(true)
-		}
-	}, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, inviteInfo])
+	// useEffect(() => {
+	// 	// const isBiconomyLoading = localStorage.getItem('isBiconomyLoading') === 'true'
+	// 	// console.log('rree', scwAddress, biconomyLoading, inviteInfo)
+	// 	// console.log("invite", biconomy, biconomyWalletClient)
+
+	// 	if(biconomy && biconomyWalletClient && scwAddress && !biconomyLoading && inviteInfo?.chainId && biconomy?.networkId &&
+	// 		biconomy.networkId.toString() === inviteInfo?.chainId?.toString()) {
+	// 		// console.log("zonb");
+	// 		setIsBiconomyInitialised(true)
+	// 	}
+	// }, [biconomy, biconomyWalletClient, scwAddress, biconomyLoading, isBiconomyInitialised, inviteInfo])
 
 
 	const { data: account, nonce } = useQuestbookAccount()
-	const { validatorApi, subgraphClients } = useContext(ApiClientsContext)!
+	const { validatorApi } = useContext(ApiClientsContext)!
 	const workspaceRegistry = useQBContract('workspace', inviteInfo?.chainId)
 
-	const { client } = subgraphClients[inviteInfo?.chainId] || subgraphClients[defaultChainId]
 
-	const { fetchMore: fetchMembers } = useGetWorkspaceMemberExistsQuery({ client, skip: true, fetchPolicy: 'network-only' })
-
+	const { fetchMore: fetchMembers } = useQuery({
+		query: getWorkspaceMemberExistsQuery,
+	})
 	const signature = useMemo(() => (
 		(account?.address && inviteInfo?.privateKey)
 			? generateInputForAuthorisation(
@@ -243,51 +231,33 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 				throw new Error('webwallet not connected')
 			}
 
-			const {
-				data: { ipfsHash }
-			} = await validatorApi.validateWorkspaceMemberUpdate({
+			const data = {
 				fullName: profileInfo?.fullName,
 				profilePictureIpfsHash: profileInfo?.profilePictureIpfsHash,
 				publicKey: webwallet.publicKey
-			} as WorkspaceMemberUpdate)
+			} as WorkspaceMemberUpdate
 
-			didReachStep?.('ipfs-uploaded')
 
-			if(typeof biconomyWalletClient === 'string' || !biconomyWalletClient || !scwAddress) {
-				return undefined!
+			const variables = {
+				id: `${inviteInfo.workspaceId}`,
+				members: [webwallet.address],
+				roles: [inviteInfo.role],
+				enabled: [true],
+				metadataHashes: [data],
+				w: inviteInfo.workspaceId.toString(),
+				r: inviteInfo.role.toString(),
+				k: base58.encode(inviteInfo.privateKey),
 			}
 
-			const response = await sendGaslessTransaction(
-				biconomy,
-				targetContractObject,
-				'joinViaInviteLink',
-				[
-					inviteInfo.workspaceId,
-					ipfsHash,
-					inviteInfo.role,
-					signature.v,
-					signature.r,
-					signature.s
-				],
-				workspaceRegistry.address,
-				biconomyWalletClient,
-				scwAddress,
-				webwallet,
-				inviteInfo?.chainId.toString(),
-				bicoDapps[inviteInfo?.chainId.toString()].webHookId,
-				nonce
-			)
-			didReachStep?.('tx-signed')
+			const response = await executeMutation(joinViaInviteLinkMutation, variables)
 
 			if(response) {
-				const { txFee, receipt } = await getTransactionDetails(response, inviteInfo?.chainId.toString())
-				setTransactionHash?.(receipt?.transactionHash)
-				await chargeGas(inviteInfo.workspaceId, Number(txFee), inviteInfo.chainId)
+				setTransactionHash?.(response?.joinViaInviteLink?.recordId)
 			}
 
 			didReachStep?.('tx-confirmed')
 
-			const memberId = `${numberToHex(inviteInfo.workspaceId)}.${account!.address!.toLowerCase()}`
+			const memberId = `${(inviteInfo.workspaceId)}.${account!.address!.toLowerCase()}`
 
 			let didIndex = false
 			do {
@@ -295,7 +265,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 				await delay(2000)
 				const result = await fetchMembers({
 					variables: { id: memberId },
-				})
+				}) as { data: { workspaceMember: { id: string } } }
 
 				didIndex = !!result.data?.workspaceMember
 				logger.info(`poll result: ${didIndex}`)
@@ -328,7 +298,6 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 			)
 	}, [workspaceRegistry, inviteInfo, signature])
 
-	return { joinInvite, getJoinInviteGasEstimate, isBiconomyInitialised }
+	return { joinInvite, getJoinInviteGasEstimate }
 }
 
-const numberToHex = (num: number) => `0x${num.toString(16)}`

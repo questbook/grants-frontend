@@ -2,20 +2,19 @@ import { useContext, useMemo, useState } from 'react'
 import { convertToRaw } from 'draft-js'
 import { ethers } from 'ethers'
 import { USD_ASSET } from 'src/constants/chains'
-import ApplicationRegistryAbi from 'src/contracts/abi/ApplicationRegistryAbi.json'
-import { useWalletAddressCheckerQuery } from 'src/generated/graphql'
-import useCreateMapping from 'src/libraries/hooks/useCreateMapping'
+import { reSubmitProposalMutation, submitProposalMutation } from 'src/generated/mutation'
+import { executeMutation } from 'src/graphql/apollo'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
-import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
-import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
+// import useCustomToast from 'src/libraries/hooks/useCustomToast'
+import { useQuery } from 'src/libraries/hooks/useQuery'
 import logger from 'src/libraries/logger'
 import { parseAmount } from 'src/libraries/utils/formatting'
-import { getEventData } from 'src/libraries/utils/gasless'
 import { uploadToIPFS } from 'src/libraries/utils/ipfs'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { isValidEthereumAddress } from 'src/libraries/utils/validations'
 import { WebwalletContext } from 'src/pages/_app'
+import { walletAddressCheckerQuery } from 'src/screens/proposal_form/_data/walletAddressCheckerQuery'
 import { findField } from 'src/screens/proposal_form/_utils'
 import { Form } from 'src/screens/proposal_form/_utils/types'
 import { ProposalFormContext } from 'src/screens/proposal_form/Context'
@@ -31,6 +30,7 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 	const { type, grant, proposal, chainId } = useContext(ProposalFormContext)!
 	const { encrypt } = useEncryptPiiForApplication(grant?.id, webwallet?.publicKey, chainId)
+	const [isExecuting, setIsExecuting] = useState(true)
 	const customToast = useCustomToast()
 
 	const chainInfo = useMemo(() => {
@@ -41,20 +41,19 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 		return getChainInfo(grant, chainId)
 	}, [grant, chainId])
 
-	const { call, isBiconomyInitialised, isExecuting } = useFunctionCall({ chainId, contractName: 'applications', setTransactionStep: setNetworkTransactionModalStep, setTransactionHash })
-	const createMapping = useCreateMapping({ chainId })
+	// const { isBiconomyInitialised, isExecuting } = useFunctionCall({ chainId, contractName: 'applications', setTransactionStep: setNetworkTransactionModalStep, setTransactionHash })
+
 
 	const [proposalId, setProposalId] = useState<string>()
-
-	const { fetchMore: fetchIsWalletAddressUsed } = useMultiChainQuery({
-		useQuery: useWalletAddressCheckerQuery,
-		options: {},
-		chains: [chainId]
+	logger.info({ type }, 'proposalId (Event Data)')
+	logger.info({ proposal }, 'proposalId (Event Data)')
+	const { fetchMore: fetchIsWalletAddressUsed } = useQuery({
+		query: walletAddressCheckerQuery,
 	})
 
 	const submitProposal = async(form: Form) => {
 		try {
-			if(!grant || !webwallet || !isBiconomyInitialised || !scwAddress) {
+			if(!grant || !webwallet || !scwAddress) {
 				return
 			}
 
@@ -66,28 +65,32 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 
 			if(isValidEthereumAddress(walletAddress)) {
 				builderAddressInBytes = ethers.utils.hexZeroPad(ethers.utils.hexlify(ethers.utils.getAddress(walletAddress)), 32)
-
 			}
 
-			const result = await fetchIsWalletAddressUsed({ grantId:grant.id, walletAddress:builderAddressInBytes as string }, true)
-
-			if(result[0]?.grantApplications.length && result[0]?.grantApplications[0].applicantId !== scwAddress.toLowerCase()) {
+			logger.info({ builderAddressInBytes }, 'useSubmitProposal: (builderAddressInBytes)')
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const result: any = await fetchIsWalletAddressUsed({ grantId:grant.id, walletAddress: scwAddress as string }, true)
+			// if(result?.grantApplications.length && result?.grantApplications[0].applicantId?.toLowerCase() !== scwAddress.toLowerCase()) {
+			// 	logger.info({ result }, 'useSubmitProposal: (result)')
+			// }
+			logger.info(result?.grantApplications?.length, 'useSubmitProposal: (result)')
+			if(result?.grantApplications?.length > 3) {
+				logger.info({ result }, 'length')
 				customToast({
-					title: 'wallet address is already used for this grant in another proposal',
+					title: 'This wallet address has exceeded the maximum number of applications for this grant',
 					status: 'error',
-					duration: 3000,
+					description: 'This wallet address has already been used for this grant'
 				})
+				setNetworkTransactionModalStep(undefined)
 				return
 			}
 
 			logger.info({ form }, 'useSubmitProposal: (form)')
 
 			// Step - 1: Upload the project details data to ipfs
-			const detailsHash = (
-				await uploadToIPFS(JSON.stringify(
-					convertToRaw(form.details.getCurrentContent()),
-				))
-			).hash
+			const detailsHash = (JSON.stringify(
+				convertToRaw(form.details.getCurrentContent()),
+			))
 			logger.info({ detailsHash }, 'useSubmitProposal: (detailsHash)')
 
 			// Step - 2: Format the data
@@ -128,35 +131,57 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 			// const validate = await validateRequest('GrantApplicationUpdate', { ...data, grantId: undefined })
 			// logger.info({ validate }, 'useSubmitProposal: (validate)')
 			// return
-
 			// Step - 5: Upload the application data to ipfs
 			const proposalDataHash = (await uploadToIPFS(JSON.stringify(data))).hash
 			logger.info({ proposalDataHash }, 'useSubmitProposal: (proposalDataHash)')
 
-
 			// Step - 6: Call the contract function to submit the proposal
-			const methodArgs = type === 'submit' ?
-				[grant.id, grant.workspace.id, proposalDataHash, data.milestones.length, builderAddressInBytes] :
-				[proposal?.id, proposalDataHash, data.milestones.length, builderAddressInBytes]
-			logger.info({ methodArgs }, 'useSubmitProposal: (Method args)')
+			const variables = {
+				grant: grant.id,
+				workspaceId: grant.workspace.id,
+				milestoneCount: data.milestones.length,
+				milestones: data.milestones,
+				applicantId: scwAddress,
+				applicantPublicKey: data.applicantPublicKey,
+				fields: data.fields,
+				pii: data.pii,
+				id: proposal?.id,
+				state: 'submitted',
+			}
 
-			const receipt = await call({ method: type === 'submit' ? 'submitApplication' : 'updateApplicationMetadata', args: methodArgs })
+			logger.info({ variables }, 'useSubmitProposal: (variables)')
+			const receipt = type === 'submit' ? await executeMutation(submitProposalMutation, variables) : await executeMutation(reSubmitProposalMutation, variables)
 			logger.info({ receipt }, 'useSubmitProposal: (Response)')
+			// Step - 6: Call the contract function to submit the proposal
+			// const methodArgs = type === 'submit' ?
+			// 	[grant.id, grant.workspace.id, proposalDataHash, data.milestones.length, builderAddressInBytes] :
+			// 	[proposal?.id, proposalDataHash, data.milestones.length, builderAddressInBytes]
+			// logger.info({ methodArgs }, 'useSubmitProposal: (Method args)')
+
+			// const receipt = await call({ method: type === 'submit' ? 'submitApplication' : 'updateApplicationMetadata', args: methodArgs })
+			// logger.info({ receipt }, 'useSubmitProposal: (Response)')
 
 			// Step - 7: If the proposal is submitted successfully, then create the mapping between the email and the scwAddress
 			if(receipt) {
-				const eventData = await getEventData(receipt, type === 'submit' ? 'ApplicationSubmitted' : 'ApplicationUpdated', ApplicationRegistryAbi)
-				logger.info({ eventData }, 'useSubmitProposal: (Event Data)')
-				if(eventData) {
-					const proposalId = Number(eventData.args[0].toBigInt())
-					logger.info({ proposalId }, 'proposalId (Event Data)')
-					setProposalId(`0x${proposalId.toString(16)}`)
+				// const eventData = await getEventData(receipt, type === 'submit' ? 'ApplicationSubmitted' : 'ApplicationUpdated', ApplicationRegistryAbi)
+				// logger.info({ eventData }, 'useSubmitProposal: (Event Data)')
+				// if(eventData) {
+				// 	const proposalId = Number(eventData.args[0].toBigInt())
+				// 	logger.info({ proposalId }, 'proposalId (Event Data)')
+				// 	setProposalId(`0x${proposalId.toString(16)}`)
 
-					await createMapping({ email: findField(form, 'applicantEmail').value })
-				} else {
-					throw new Error('Event data not found')
-				}
+				// 	await createMapping({ email: findField(form, 'applicantEmail').value })
+				const proposalId = receipt[type === 'submit' ? 'createNewGrantApplication' : 'updateGrantApplication'].record._id
+				 logger.info({ proposalId }, 'proposalId (Event Data)')
+				 setProposalId(proposalId)
+				 setIsExecuting(false)
+				 setTransactionHash(proposalId)
 			} else {
+				customToast({
+					title: 'Error submitting proposal',
+					status: 'error',
+					description: 'Error submitting proposal'
+				})
 				setNetworkTransactionModalStep(undefined)
 			}
 		} catch(e) {
@@ -166,7 +191,7 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 	}
 
 	return {
-		submitProposal, proposalId, isBiconomyInitialised, isExecuting
+		submitProposal, proposalId, isExecuting
 	}
 }
 

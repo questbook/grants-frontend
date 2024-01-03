@@ -30,7 +30,7 @@ const getProjectDetails = async(projectDetails: string) => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch(e: any) {
 		if(projectDetails) {
-			return EditorState.createWithContent(ContentState.createFromText(projectDetails))
+			return typeof projectDetails === 'string' ? EditorState.createWithContent(ContentState.createFromText(projectDetails)) : EditorState.createWithContent(convertFromRaw(projectDetails))
 		} else {
 			return EditorState.createEmpty()
 		}

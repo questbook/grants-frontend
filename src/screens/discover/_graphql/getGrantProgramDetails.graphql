@@ -1,9 +1,9 @@
 query getGrantProgramDetails($workspaceID: String!) {
-    grantProgram: grants(where: {workspace: $workspaceID}, orderBy: createdAtS, orderDirection: desc) {
-        id
+    grantProgram: grants(filter: {workspace: $workspaceID},sort: CREATEDATS_DESC) {
+        id: _id
         title
         workspace {
-            id
+            id: _id
             title
         }
     }

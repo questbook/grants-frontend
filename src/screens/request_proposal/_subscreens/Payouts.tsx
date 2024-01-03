@@ -3,12 +3,11 @@ import { AiOutlinePlus } from 'react-icons/ai'
 import { BsArrowLeft } from 'react-icons/bs'
 import { IoMdClose } from 'react-icons/io'
 import { Button, Flex, Icon, Text, useMediaQuery } from '@chakra-ui/react'
-import { useRouter } from 'next/router'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
-import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
-import { getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
-import { GrantsProgramContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
+// import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
+// import { getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
+import { SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
 import SelectDropdown from 'src/screens/request_proposal/_components/SelectDropdown'
 import StepIndicator from 'src/screens/request_proposal/_components/StepIndicator'
 import useCreateRFP from 'src/screens/request_proposal/_hooks/useCreateRFP'
@@ -192,7 +191,7 @@ function Payouts() {
 						</Button>
 					</Flex>
 				</Flex>
-				<NetworkTransactionFlowStepperModal
+				{/* <NetworkTransactionFlowStepperModal
 					isOpen={(rfpFormType === 'edit' ? updateStep : createStep) !== undefined}
 					currentStepIndex={(rfpFormType === 'edit' ? updateStep : createStep) || 0}
 					viewTxnLink={getExplorerUrlForTxHash(chainId, (rfpFormType === 'edit' ? updateTxHash : createTxHash))}
@@ -211,27 +210,22 @@ function Payouts() {
 					}
 					customStepsHeader={rfpFormType === 'edit' ? updateRFPStepsHeader : customStepsHeader}
 					customSteps={customSteps}
-				/>
+				/> */}
 			</>
 		)
 	}
 
-	const customStepsHeader = ['Creating your grant program on chain']
-	const updateRFPStepsHeader = ['Updating your grant program on chain']
-	const customSteps = ['Submitting transaction on chain', 'Uploading data to decentralized storage', 'Indexing the data to a subgraph']
 
-	const { setRole } = useContext(GrantsProgramContext)!
-	const { grantId, rfpData, setRFPData, rfpFormType, chainId } = useContext(RFPFormContext)!
+	const { rfpData, setRFPData, rfpFormType } = useContext(RFPFormContext)!
 	const { scwAddress, webwallet, setCreatingProposalStep } = useContext(WebwalletContext)!
 	const { setSignIn } = useContext(SignInContext)!
 	const { setSignInTitle } = useContext(SignInTitleContext)!
 	// const [milestoneCounter, setMilestoneCounter] = useState(!rfpData?.milestones ? 0 : rfpData?.milestones.length)
 	const payoutTypeOptions = [{ value: 'in_one_go', label: 'In One Go' }, { value: 'milestones', label: 'Based on Milestones' }]
 
-	const { createRFP, currentStep: createStep, txHash: createTxHash } = useCreateRFP()
-	const { updateRFP, currentStep: updateStep, txHash: updateTxHash } = useUpdateRFP()
+	const { createRFP, currentStep: createStep } = useCreateRFP()
+	const { updateRFP, currentStep: updateStep } = useUpdateRFP()
 
-	const router = useRouter()
 	const bigScreen = useMediaQuery('(min-width:601px)')
 
 	const handleOnChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {

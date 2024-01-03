@@ -7,6 +7,7 @@ export type SettingsFormContextType = {
     grantProgramData: GrantProgramForm
     setGrantProgramData: (data: GrantProgramForm) => void
     safeURL: string
+    refreshWorkspace: (refresh: boolean) => void
 }
 
 export type Workspace = GetWorkspaceDetailsQuery['workspace']

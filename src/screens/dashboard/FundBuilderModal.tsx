@@ -4,15 +4,16 @@ import { Box, Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, Mo
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { defaultChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
+import { DisburseRewardSafeMutation, reSubmitProposalMutation } from 'src/generated/mutation'
+import { executeMutation } from 'src/graphql/apollo'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import { getFieldString } from 'src/libraries/utils/formatting'
-import { uploadToIPFS } from 'src/libraries/utils/ipfs'
 import { getGnosisTansactionLink, getProposalUrl } from 'src/libraries/utils/multisig'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
-import { GrantsProgramContext } from 'src/pages/_app'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import MilestoneChoose from 'src/screens/dashboard/_components/FundBuilder/MilestoneChoose'
 import PaidByWallet from 'src/screens/dashboard/_components/FundBuilder/PaidByWallet'
 import PayFromChoose from 'src/screens/dashboard/_components/FundBuilder/PayFromChoose'
@@ -320,18 +321,33 @@ function FundBuilderModal({
 					const timestamp = currentDate.getTime()
 
 					logger.info('transaction hash', '99887341.' + timestamp)
-					const methodArgs = [
-						[parseInt(proposal?.id!, 16)],
-						[parseInt(milestones[milestoneIndices[0]].id?.split('.')[1])],
-						'0x0000000000000000000000000000000000000001',
-						'the-open-network',
-						'nonEvmAssetAddress-toBeChanged',
-						[amounts?.[0]],
-						grant?.workspace?.id,
-						'99887341.' + timestamp
-					]
+					// const methodArgs = [
+					// 	[parseInt(proposal?.id!, 16)],
+					// 	[parseInt(milestones[milestoneIndices[0]].id?.split('.')[1])],
+					// 	'0x0000000000000000000000000000000000000001',
+					// 	'the-open-network',
+					// 	'nonEvmAssetAddress-toBeChanged',
+					// 	[amounts?.[0]],
+					// 	grant?.workspace?.id,
+					// 	'99887341.' + timestamp
+					// ]
 
-					await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
+					const args = {
+						applicationIds: [String(proposal?.id)],
+						milestoneIds: [String(parseInt(milestones[milestoneIndices[0]].id?.split('.')[1]))],
+						asset: '0x0000000000000000000000000000000000000001',
+						tokenName: selectedTokenInfo?.tokenName!,
+						nonEvmAssetAddress: 'nonEvmAssetAddress-toBeChanged',
+						amounts: [amounts?.[0]],
+						transactionHash: '99887341.' + timestamp,
+						sender: safeAddress,
+						grant: grant?.id!,
+						to: tos?.[0]
+					}
+
+					// await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
+					await executeMutation(DisburseRewardSafeMutation, args)
+
 					// setSignerVerifiedState('transaction_initiated')
 					setIsModalOpen(false)
 					setPayoutInProcess(false)
@@ -355,31 +371,41 @@ function FundBuilderModal({
 
 
 	const onInitiateTransaction = async() => {
+
 		if(signerVerifiedState === 'verified' && proposal) {
 			setPayoutInProcess(true)
 
 			if(proposal.state === 'submitted') {
 				// Approve proposal if it is not approved
 				logger.info('Approving proposal', { proposal })
-				const ipfsHash = await uploadToIPFS(JSON.stringify({
-					feedback: '  ',
-				}))
+				// const acceptProposalMethodArgs = [
+				// 	proposal.id,
+				// 	proposal.grant.workspace.id,
+				// 	2, // Approved state
+				// 	ipfsHash,
+				// ]
 
-				const acceptProposalMethodArgs = [
-					proposal.id,
-					proposal.grant.workspace.id,
-					2, // Approved state
-					ipfsHash,
-				]
+				// await acceptProposal({ method: 'updateApplicationState', args: acceptProposalMethodArgs })
 
-				await acceptProposal({ method: 'updateApplicationState', args: acceptProposalMethodArgs })
+
+				const methodArgs = {
+					id: proposal.id,
+					grant: proposal.grant.id,
+					workspaceId: proposal.grant.workspace.id,
+					applicantId: scwAddress,
+					state: 'approved',
+					feedback: {}
+				}
+
+				logger.info({ methodArgs }, 'Method Args (Comment)')
+				await executeMutation(reSubmitProposalMutation, methodArgs)
 			}
 
 
 			const temp = [{
 				from: safeObj?.safeAddress?.toString(),
 				to: tos?.[0],
-				applicationId: proposal?.id ? parseInt(proposal.id, 16) : 0,
+				applicationId: proposal?.id?.startsWith('0x') ? parseInt(proposal?.id, 16) : parseInt(proposal?.id?.slice(-2) ?? '0', 16),
 				selectedMilestone: milestoneIndices?.[0],
 				selectedToken: { tokenName: selectedTokenInfo?.tokenName, info: selectedTokenInfo?.info },
 				amount: amounts?.[0],
@@ -387,8 +413,9 @@ function FundBuilderModal({
 
 			let proposaladdress: any = ''
 			if(safeObj?.getIsEvm()) {
-				proposaladdress = await safeObj?.proposeTransactions(JSON.stringify({ workspaceId: grant?.workspace?.id, grantAddress: grant?.id }), temp, '')
+				proposaladdress = await safeObj?.proposeTransactions(JSON.stringify({ workspaceId:  grant?.workspace?.id?.startsWith('0x') ? grant?.workspace?.id : `0x${grant?.workspace?.id?.slice(-2)}`, grantAddress:  grant?.id?.startsWith('0x') ? grant?.id : `0x${grant?.id?.slice(-2)}` }), temp, '')
 				if(proposaladdress?.error) {
+					logger.error('Error while creating transaction on Gnosis Safe', { proposaladdress })
 					customToast({
 						title: 'An error occurred while creating transaction on Gnosis Safe',
 						status: 'error',
@@ -397,6 +424,7 @@ function FundBuilderModal({
 					setPayoutInProcess(false)
 					return
 				}
+
 
 				// setSafeProposalAddress(proposaladdress as string)
 				setSafeProposalLink(getGnosisTansactionLink(safeObj?.safeAddress ?? '', safeObj?.chainId?.toString(), proposaladdress as string))
@@ -435,17 +463,33 @@ function FundBuilderModal({
 			}
 
 			logger.info('TON queryId', proposaladdress)
-			const methodArgs = [
-				[parseInt(proposal?.id!, 16)],
-				[parseInt(milestones[milestoneIndices[0]].id?.split('.')[1])],
-				'0x0000000000000000000000000000000000000001',
-				selectedTokenInfo?.tokenName.toLowerCase(),
-				'nonEvmAssetAddress-toBeChanged',
-				[amounts?.[0]],
-				grant?.workspace?.id,
-				proposaladdress
-			]
-			await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
+			// const methodArgs = [
+			// 	[parseInt(proposal?.id!, 16)],
+			// 	[parseInt(milestones[milestoneIndices[0]].id?.split('.')[1])],
+			// 	'0x0000000000000000000000000000000000000001',
+			// 	selectedTokenInfo?.tokenName.toLowerCase(),
+			// 	'nonEvmAssetAddress-toBeChanged',
+			// 	[amounts?.[0]],
+			// 	grant?.workspace?.id,
+			// 	proposaladdress
+			// ]
+			// await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
+
+			const args = {
+				applicationIds: [String(proposal?.id)],
+				milestoneIds: [String(parseInt(milestones[milestoneIndices[0]].id?.split('.')[1]))],
+				asset: '0x0000000000000000000000000000000000000001',
+				tokenName: selectedTokenInfo?.tokenName?.toLowerCase() ?? '',
+				nonEvmAssetAddress: 'nonEvmAssetAddress-toBeChanged',
+				amounts: [amounts?.[0]],
+				// if the tx returns an error, the transaction hash will be empty
+				transactionHash: typeof proposaladdress === 'string' ? proposaladdress : '',
+				sender: safeAddress,
+				grant: grant?.id!,
+				to: tos?.[0]
+			}
+
+			await executeMutation(DisburseRewardSafeMutation, args)
 			setSignerVerifiedState('transaction_initiated')
 			setPayoutInProcess(false)
 		}
@@ -453,9 +497,9 @@ function FundBuilderModal({
 
 	const workspacechainId = getSupportedChainIdFromWorkspace(grant?.workspace) || defaultChainId
 
-	const { call } = useFunctionCall({ chainId: workspacechainId, contractName: 'workspace' })
-	const { call: acceptProposal } = useFunctionCall({ chainId: workspacechainId, contractName: 'applications' })
-
+	// const { call } = useFunctionCall({ chainId: workspacechainId, contractName: 'workspace' })
+	const { } = useFunctionCall({ chainId: workspacechainId, contractName: 'applications' })
+	const { scwAddress } = useContext(WebwalletContext)!
 	return buildComponent()
 }
 

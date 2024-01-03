@@ -369,7 +369,7 @@ function Reviews() {
 									<Flex mt={6}>
 										<Button
 											variant='primaryMedium'
-											isDisabled={!isBiconomyInitialised}
+											isDisabled={false}
 											isLoading={networkTransactionModalStep !== undefined}
 											onClick={
 												async() => {
@@ -641,7 +641,7 @@ function Reviews() {
 									<Flex mt={4}>
 										<Button
 											variant='primaryMedium'
-											isDisabled={!isBiconomyInitialised}
+											isDisabled={false}
 											isLoading={networkTransactionModalStep !== undefined}
 											onClick={
 												() => {
@@ -897,7 +897,7 @@ function Reviews() {
 	const [searchMemberName, setSearchMemberName] = useState<string>('')
 	const [members, setMembers] = useState<{ [id: string]: boolean }>({})
 	const [guardContractReviewers, setGuardContractReviewers] = useState<{ walletAddress: string, member: Exclude<GrantType, null | undefined>['workspace']['members'][number] | undefined }[]>([])
-	const { assignReviewers, isBiconomyInitialised } = useAssignReviewers({ setNetworkTransactionModalStep, setTransactionHash })
+	const { assignReviewers } = useAssignReviewers({ setTransactionHash })
 
 	const setReviewTypePopoverRef = useRef<HTMLButtonElement>(null)
 	const [reviewType, setReviewType] = useState<ReviewType>(ReviewType.Rubrics)

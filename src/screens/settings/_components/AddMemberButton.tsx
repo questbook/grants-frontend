@@ -83,7 +83,7 @@ function AddMemberButton() {
 				px={2}
 				py={1}
 				h='28px'
-				disabled={!isBiconomyInitialised}
+				disabled={false}
 				onClick={
 					async() => {
 						await createLink(id)
@@ -113,7 +113,7 @@ function AddMemberButton() {
 	}
 
 	const popoverRef = useRef<HTMLButtonElement>(null)
-	const { makeInvite, isBiconomyInitialised } = useMakeInvite()
+	const { makeInvite } = useMakeInvite()
 	const [ createLinkStep, setCreateLinkStep ] = useState<number>()
 	const [ , setTransactionHash ] = useState<string>()
 	const [ link, setLink ] = useState<string>()

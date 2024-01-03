@@ -1,5 +1,9 @@
 query getPayouts($first: Int, $skip: Int, $proposalID: String!) {
-    fundsTransfers(first: $first, skip: $skip, where: {application: $proposalID, type_in: [funds_disbursed, funds_disbursed_from_safe]}) {
+    fundTransfers(limit: $first, skip: $skip,filter: {application: $proposalID, _operators: {
+      type: {
+        in:  ["funds_disbursed", "funds_disbursed_from_safe"]
+      }
+    } }) {
         amount
         asset
         type
@@ -9,15 +13,15 @@ query getPayouts($first: Int, $skip: Int, $proposalID: String!) {
         status
         executionTimestamp
         milestone {
-            id
+            id:_id
         }
         grant {
             reward {
-                id
+                id:_id
                 asset
                 committed
                 token {
-                id
+                id:_id
                 label
                 address
                 decimal
@@ -27,4 +31,3 @@ query getPayouts($first: Int, $skip: Int, $proposalID: String!) {
             } 
         }
     }
-}

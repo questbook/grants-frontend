@@ -1,10 +1,10 @@
 # This query is used in getServerSideProps for SEO
-query getGrantDetailsForSEO($grantId: ID!) {
-  grant(id: $grantId) {
-    id
+query getGrantDetailsForSEO($grantId: String!) {
+  grant(_id: $grantId) {
+    id:_id
     title
     workspace {
-      id
+      id:_id
       logoIpfsHash
     }
   }

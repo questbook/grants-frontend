@@ -345,7 +345,7 @@ function ProposalSubmission() {
 							pii,
 						}
 					})
-					.filter((obj) => obj !== null), ...fields!]
+					.filter((obj) => obj !== null), ...fields ? fields : []] as ApplicantDetailsFieldType[]
 				setExtraDetailsFields(newApplicantDetails)
 			})
 	}, [])

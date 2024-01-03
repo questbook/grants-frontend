@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
@@ -6,13 +7,14 @@ import { useRouter } from 'next/router'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
 import { ALL_SUPPORTED_CHAIN_IDS, defaultChainId, USD_ASSET } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
-import { useGrantDetailsQuery, useProposalDetailsQuery } from 'src/generated/graphql'
-import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
+import { useQuery } from 'src/libraries/hooks/useQuery'
 import logger from 'src/libraries/logger'
 import { getFieldString, getFieldStrings } from 'src/libraries/utils/formatting'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { WebwalletContext } from 'src/pages/_app'
+import { grantDetailsQuery } from 'src/screens/proposal_form/_data/grantDetailsQuery'
+import { proposalDetailsQuery } from 'src/screens/proposal_form/_data/proposalDetailsQuery'
 import { containsField, getProjectDetails } from 'src/screens/proposal_form/_utils'
 import { DEFAULT_FORM, DEFAULT_MILESTONE } from 'src/screens/proposal_form/_utils/constants'
 import { Form, FormType, Grant, Proposal, ProposalFormContextType } from 'src/screens/proposal_form/_utils/types'
@@ -85,23 +87,19 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 		}
 	}, [grantId, proposalId, chainId])
 
-	const { fetchMore: fetchProposalDetails } = useMultiChainQuery({
-		useQuery: useProposalDetailsQuery,
-		options: {},
-		chains: [chainId === -1 ? defaultChainId : chainId]
+	const { fetchMore: fetchProposalDetails } = useQuery({
+		query: proposalDetailsQuery,
 	})
-	const { fetchMore: fetchGrantDetails } = useMultiChainQuery({
-		useQuery: useGrantDetailsQuery,
-		options: {},
-		chains: [chainId === -1 ? defaultChainId : chainId]
+	const { fetchMore: fetchGrantDetails } = useQuery({
+		query: grantDetailsQuery,
 	})
 	const fetchGrant = useCallback(async() => {
 		if(!grantId || !chainId || typeof grantId !== 'string' || typeof chainId !== 'number') {
 			return
 		}
 
-		const result = await fetchGrantDetails({ grantId }, true)
-		if(!result?.length || !result[0]?.grant) {
+		const result: any = await fetchGrantDetails({ grantId }, true)
+		if(!result?.grant) {
 			return 'could-not-fetch-grant-details'
 		}
 
@@ -109,7 +107,10 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 		const fieldIDs = applicantDetailsList.map(d => d.id)
 		logger.info({ fieldIDs }, 'ProposalForm: fetchGrant (fieldIDs)')
 		const initForm: Form = {
-			fields: result[0].grant.fields.filter(f => fieldIDs.indexOf(f.title) !== -1 || f.title.includes('customField')).map((field) => {
+			fields: result.grant.fields.filter((f: { title: string }) => fieldIDs.indexOf(f.title) !== -1 || f.title.includes('customField')).map((field: {
+				id: string
+				value: string
+			}) => {
 				const id = field.id.substring(field.id.indexOf('.') + 1)
 				return {
 					...field,
@@ -117,11 +118,13 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 					value: id === 'isMultipleMilestones' ? 'true' : id === 'teamMembers' ? '1' : ''
 				}
 			}),
-			milestones: result[0].grant.milestones?.length ? result[0].grant.milestones?.map((m, index) => ({ title: m, index, amount: 0 })) : [DEFAULT_MILESTONE],
-			members: containsField(result[0].grant, 'teamMembers') ? [''] : [],
+			milestones: result.grant.milestones?.length ? result.grant.milestones?.map((m: {
+				title: string
+			}, index: number) => ({ title: m, index, amount: 0 })) : [DEFAULT_MILESTONE],
+			members: containsField(result.grant, 'teamMembers') ? [''] : [],
 			details: EditorState.createEmpty()
 		}
-		logger.info('grants', result[0])
+		logger.info('grants', result)
 		try {
 			const cache = localStorage.getItem(`form-${grantId}`)
 			if(cache) {
@@ -136,10 +139,10 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 			setForm(initForm)
 		}
 
-		setGrant(result[0].grant)
-		const currentSafe = new SupportedPayouts().getSafe(parseInt(result[0].grant?.workspace?.safe?.chainId!), result[0].grant?.workspace?.safe?.address!)
+		setGrant(result.grant)
+		const currentSafe = new SupportedPayouts().getSafe(parseInt(result.grant?.workspace?.safe?.chainId!), result.grant?.workspace?.safe?.address!)
 
-		logger.info(result[0].grant?.workspace?.safe?.chainId, 'llllllw')
+		logger.info(result.grant?.workspace?.safe?.chainId, 'llllllw')
 		setSafeObj(currentSafe)
 		return 'fetched-grant-details'
 	}, [grantId, chainId])
@@ -149,22 +152,23 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 			return
 		}
 
-		const result = await fetchProposalDetails({ proposalId }, true)
-		if(!result?.length || !result[0]?.grantApplication) {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const result: any = await fetchProposalDetails({ proposalId }, true)
+		if(!result?.grantApplication) {
 			return 'could-not-fetch-proposal-details'
 		}
 
-		const chainInfo = getChainInfo(result[0].grantApplication.grant, chainId)
+		const chainInfo = getChainInfo(result.grantApplication.grant, chainId)
 		const initForm: Form = {
-			fields: result[0].grantApplication.grant.fields.map((field) => {
+			fields: result.grantApplication.grant.fields.map((field: { id: string, value: string }) => {
 				const id = field.id.substring(field.id.indexOf('.') + 1)
 				return {
 					...field,
 					id,
-					value: id === 'isMultipleMilestones' ? 'true' : getFieldString(result[0]?.grantApplication, id) ?? ''
+					value: id === 'isMultipleMilestones' ? 'true' : getFieldString(result?.grantApplication, id) ?? ''
 				}
 			}),
-			milestones: result[0].grantApplication.milestones.map((milestone, index) => (
+			milestones: result.grantApplication.milestones.map((milestone: { title: string, amount: string }, index: number) => (
 				{
 					index,
 					title: milestone.title,
@@ -172,14 +176,15 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 						parseInt(milestone.amount) :
 						parseInt(ethers.utils.formatUnits(milestone.amount.toString(), chainInfo.decimals))
 				})),
-			members: containsField(result[0].grantApplication.grant, 'teamMembers') ? getFieldStrings(result[0].grantApplication, 'memberDetails') ?? [''] : [],
-			details: await getProjectDetails(getFieldString(result[0].grantApplication, 'projectDetails') ?? '')
+			members: containsField(result.grantApplication.grant, 'teamMembers') ? getFieldStrings(result.grantApplication, 'memberDetails') ?? [''] : [],
+			details: await getProjectDetails(getFieldString(result.grantApplication, 'projectDetails') ?? '')
 		}
 		setForm(initForm)
-		setProposal(result[0].grantApplication)
-		setGrant(result[0].grantApplication.grant)
-		const currentSafe = new SupportedPayouts().getSafe(parseInt(result[0].grantApplication.grant?.workspace?.safe?.chainId!), result[0].grantApplication.grant?.workspace?.safe?.address!)
+		setProposal(result.grantApplication)
+		setGrant(result.grantApplication.grant)
+		const currentSafe = new SupportedPayouts().getSafe(parseInt(result.grantApplication.grant?.workspace?.safe?.chainId!), result.grantApplication.grant?.workspace?.safe?.address!)
 		setSafeObj(currentSafe)
+		logger.info({ initForm }, 'ProposalForm: fetchProposal')
 		return 'fetched-proposal-details'
 	}, [proposalId, chainId])
 

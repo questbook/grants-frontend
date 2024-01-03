@@ -1,0 +1,71 @@
+import { gql } from '@apollo/client'
+export const proposalDetailsQuery = gql`query proposalDetails($proposalId: String!) {
+    grantApplication(_id: $proposalId) {
+    id:_id
+    applicantId
+    applicantPublicKey
+    fields {
+      id:_id
+      values {
+        id:_id
+        value
+      }
+    }
+    pii {
+      id:_id
+      data
+    }
+    milestones {
+      title
+      amount
+    }
+    grant {
+      id:_id
+      creatorId
+      title
+      summary
+      details
+      reward {
+        id:_id
+        asset
+        committed
+        token {
+          id:_id
+          label
+          address
+          decimal
+          iconHash
+          chainId
+        }
+      }
+      startDate
+      deadline
+      startDateS
+      deadlineS
+      payoutType
+      reviewType
+      link
+      docIpfsHash
+      acceptingApplications
+      metadataHash
+      funding
+      workspace {
+        id:_id
+        title
+        supportedNetworks
+        logoIpfsHash
+        safe {
+                address
+                chainId
+            }
+      }
+      fields {
+        id:_id
+        title
+        inputType
+        possibleValues
+        isPii
+      }
+    }
+  }
+}`

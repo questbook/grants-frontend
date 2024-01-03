@@ -1,69 +1,79 @@
-query getAllGrantsForMember(
-  $first: Int
-  $skip: Int
-  $workspaces: [String!]!
-  $supportedNetwork: [SupportedNetwork!]!
-  $actorId: Bytes!
-) {
-  grants(
-    where: {
-      workspace_in: $workspaces
-      workspace_: { supportedNetworks: $supportedNetwork }
-    }
-    first: $first
-    skip: $skip
-    orderBy: createdAtS
-    orderDirection: desc
+query GetAllGrantsForMember(
+    $first: Int
+    $skip: Int
+    $workspaces: [String!]!
+    $actorId: RegExpAsString!
   ) {
-    id
-    title
-    applications(where: { applicantId: $actorId }) {
-      id
-      applicantId
-      state
-    }
-    acceptingApplications
-    fundTransfers {
-      amount
-      type
-      tokenUSDValue
-      asset
-      tokenName
-    }
-    workspace {
-      id
+    grants(
+      filter: {
+        _operators:{
+        workspace: 
+        { in: $workspaces }
+        }
+      }
+      limit: $first
+      skip: $skip
+      sort: CREATEDATS_DESC
+    ) {
+      id: _id
       title
-      isVisible
-      logoIpfsHash
-      supportedNetworks
-      members(where: { actorId: $actorId }) {
-        id
-        actorId
-        accessLevel
+      applications(filter: { 
+        _operators: {
+        applicantId: {
+          regex:  $actorId
+        }
+        }}) {
+        id: _id
+        applicantId
+        state
       }
-      safe {
-        chainId
-        address
+      acceptingApplications
+      fundTransfers {
+        amount
+        type
+        tokenUSDValue
+        asset
+        tokenName
       }
+      workspace {
+        id: _id
+        title
+        isVisible
+        logoIpfsHash
+        supportedNetworks
+        members: membersFilter(filter: { 
+        _operators: {
+        actorId: {
+          regex:  $actorId
+        }
+        }}) {
+          id: _id
+          actorId
+          accessLevel
+        }
+        safe {
+          chainId
+          address
+        }
+      }
+      reward {
+        committed
+        id: _id
+        asset
+        token {
+          address
+          label
+          decimal
+          iconHash
+        }
+      }
+      deadlineS
+      deadline
+      numberOfApplications
+      numberOfApplicationsSelected
+      numberOfApplicationsPending
+      createdAtS
+      updatedAtS
+      totalGrantFundingDisbursedUSD
     }
-    reward {
-      committed
-      id
-      asset
-      token {
-        address
-        label
-        decimal
-        iconHash
-      }
-    }
-    deadlineS
-    deadline
-    numberOfApplications
-    numberOfApplicationsSelected
-    numberOfApplicationsPending
-    createdAtS
-    updatedAtS
-    totalGrantFundingDisbursedUSD
   }
-}

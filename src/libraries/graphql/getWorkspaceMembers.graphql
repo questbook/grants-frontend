@@ -1,21 +1,19 @@
-query getWorkspaceMembers($actorId: Bytes!) {
+query getWorkspaceMembers($actorId: String!) {
   workspaceMembers(
-    where: { actorId: $actorId, enabled: true }
-    subgraphError: allow
-    orderBy: addedAt
-    orderDirection: desc
+    filter: { actorId: $actorId, enabled: true }
+    sort: ADDEDAT_DESC
   ) {
-    id
+    id:_id
     actorId
     enabled
     workspace {
-      id
+      id:_id
       ownerId
       logoIpfsHash
       title
       supportedNetworks
       safe {
-        id
+        id:_id
         chainId
         address
       }
@@ -29,8 +27,8 @@ query getWorkspaceMembers($actorId: Bytes!) {
         address
         chainId
       }
-      members(where: { enabled: true }) {
-        id
+      members: membersFilter(filter: { enabled: true }) {
+        id:_id
         actorId
         publicKey
         fullName
@@ -40,7 +38,7 @@ query getWorkspaceMembers($actorId: Bytes!) {
         lastReviewSubmittedAt
         profilePictureIpfsHash
         pii {
-          id
+          id:_id
           data
         }
       }

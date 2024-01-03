@@ -1,14 +1,14 @@
 import { useContext, useMemo } from 'react'
 import { defaultChainId } from 'src/constants/chains'
-import { useGetMemberPublicKeysQuery } from 'src/generated/graphql'
-import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
-import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
+import { addBatchCommentsMutation, batchGrantApplicationUpdateMutation } from 'src/generated/mutation'
+import { executeMutation } from 'src/graphql/apollo'
+import { useQuery } from 'src/libraries/hooks/useQuery'
 import logger from 'src/libraries/logger'
-import { uploadToIPFS } from 'src/libraries/utils/ipfs'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { PIIForCommentType } from 'src/libraries/utils/types'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { getMemberPublicKeysQuery } from 'src/screens/dashboard/_data/getMemberPublicKeysQuery'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 
@@ -41,26 +41,12 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 	const chainId = useMemo(() => {
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
 	}, [grant])
+	logger.info({ chainId }, 'Chain ID (Comment)')
 
-	const { call: commentCall, isBiconomyInitialised } = useFunctionCall({
-		chainId,
-		contractName: 'communication',
-		setTransactionHash,
-		setTransactionStep: setStep,
+	const { fetchMore: fetchMorePublicKeys } = useQuery({
+		query: getMemberPublicKeysQuery
 	})
 
-	const { call: updateCall } = useFunctionCall({
-		chainId,
-		contractName: 'applications',
-		setTransactionHash,
-		setTransactionStep: setStep,
-	})
-
-	const { fetchMore: fetchMorePublicKeys } = useMultiChainQuery({
-		useQuery: useGetMemberPublicKeysQuery,
-		options: {},
-		chains: [chainId],
-	})
 
 	const fetchPublicKeys = async(proposal: ProposalType) => {
 		logger.info({ proposal }, 'Proposal (COMMENT ENCRYPT)')
@@ -68,14 +54,27 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 			return []
 		}
 
-		const results = await fetchMorePublicKeys({
-			workspaceId: proposal.grant.workspace?.id,
-			applicationIds: [proposal.id],
-		}, true)
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const results: any = await fetchMorePublicKeys({
+			workspaceId: proposal?.grant?.workspace?.id,
+			applicationIds: [proposal?.id],
+		})
 
 		logger.info({ results }, 'Results (COMMENT ENCRYPT)')
 
-		return [...(results?.[0]?.workspace?.members?.map(m => ({ actorId: m.actorId, publicKey: m.publicKey })) ?? []), { actorId: results?.[0]?.grantApplications?.[0]?.applicantId, publicKey: results?.[0]?.grantApplications?.[0]?.applicantPublicKey }].filter(k => k.publicKey)
+		return [
+			...(results?.workspace?.members?.map((m: {
+				actorId: string
+				publicKey: string
+			}) => ({
+				actorId: m.actorId,
+				publicKey: m.publicKey,
+			})) ?? []),
+			{
+				actorId: results?.grantApplications?.[0]?.applicantId,
+				publicKey: results?.grantApplications?.[0]?.applicantPublicKey,
+			},
+		].filter((k) => k.publicKey)
 	}
 
 	const addComments =
@@ -87,7 +86,7 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 				return
 			}
 
-			const messageHash = (await uploadToIPFS(message)).hash
+			const messageHash = message
 			const json: PIIForCommentType = {
 				sender: scwAddress,
 				message: messageHash,
@@ -95,8 +94,9 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 				tag,
 				role,
 			}
-
-			const commentHashes: string[] = []
+			setStep(0)
+			// eslint-disable-next-line prefer-const
+			let commentHashes: object[] = []
 
 			if(isPrivate) {
 				for(const proposal of selectedProposalsData) {
@@ -119,49 +119,49 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 					const modifiedJson = { pii: piiMap }
 					logger.info({ id: proposal.id, json: modifiedJson }, 'JSON (Comment)')
 
-					const hash = (await uploadToIPFS(JSON.stringify(modifiedJson))).hash
+					const hash = modifiedJson
 					commentHashes.push(hash)
 				}
 			} else {
-				const hash = (await uploadToIPFS(JSON.stringify(json))).hash
-				commentHashes.push(...proposals.map(() => hash))
+				const hash = json
+				commentHashes.push(hash)
 			}
 
 			logger.info({ commentHashes }, 'Comment Hashes')
 
 			if(tag === 'accept' || tag === 'reject' || tag === 'resubmit') {
-				const toState = tag === 'accept' ? 2 : tag === 'reject' ? 3 : 1
-				const applicationUpdateHash = (await uploadToIPFS(JSON.stringify({
-					feedback: commentHashes[0]
-				}))).hash
+				const toState = tag === 'accept' ? 'approved' : tag === 'reject' ? 'rejected' : 'resubmit'
+				const applicationUpdateHash = commentHashes[0]
 
-				const methodArgs = [
-					selectedProposalsData.map((proposal) => proposal.id),
-					selectedProposalsData.map(() => toState),
-					grant.workspace.id,
-					selectedProposalsData.map(() => applicationUpdateHash),
-				]
+				const methodArgs = {
+					id: selectedProposalsData.map((proposal) => proposal.id),
+					grant: grant.id,
+					workspaceId: grant.workspace.id,
+					applicantId: selectedProposalsData.map((proposal) => proposal.applicantId),
+					state: selectedProposalsData.map(() => toState),
+					feedback: selectedProposalsData.map(() => applicationUpdateHash),
+				}
 				logger.info({ methodArgs }, 'Method Args (Comment)')
-
-				return await updateCall({ method: 'batchUpdateApplicationState', args: methodArgs })
+				setTransactionHash('')
+				return await executeMutation(batchGrantApplicationUpdateMutation, methodArgs)
 			} else {
-				const methodArgs = [
-					grant.workspace.id,
-					grant.id,
-					selectedProposalsData.map((proposal) => proposal.id),
+				logger.info({ selectedProposalsData }, 'Selected Proposals Data')
+				const methodArgs = {
+					workspace: grant.workspace.id,
+					grant: grant.id,
+					application: selectedProposalsData.map((proposal) => proposal.id),
 					isPrivate,
-					commentHashes,
-				]
+					comments: selectedProposalsData.map(() => commentHashes[0]),
+				}
 				logger.info({ methodArgs }, 'Method Args (Comment)')
-
-				return await commentCall({ method: 'addComments', args: methodArgs })
+				setTransactionHash('')
+				return await executeMutation(addBatchCommentsMutation, methodArgs)
 			}
 		}
 
 
 	return {
 		addComments,
-		isBiconomyInitialised,
 	}
 }
 

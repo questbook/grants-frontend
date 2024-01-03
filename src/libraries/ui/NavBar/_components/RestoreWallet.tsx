@@ -198,6 +198,7 @@ function RestoreWallet({ setSignInMethod, closeModal, inited, loading, importWal
 									() => {
 										try {
 											importWebwallet(privateKey)
+											localStorage.removeItem('authToken')
 											closeModal()
 										} catch{
 											toast({

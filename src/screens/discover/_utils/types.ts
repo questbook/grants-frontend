@@ -25,3 +25,14 @@ export type DiscoverContextType = {
     isLoading: boolean
     safeBalances: {[key: string]: number}
 }
+
+export type FundTransfer = {
+    amount: number
+    asset: string
+    type: string
+    tokenUSDValue: number
+    tokenName: string
+    grant: {
+        id: string
+    }
+}

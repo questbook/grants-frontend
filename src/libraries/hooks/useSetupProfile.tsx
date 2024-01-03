@@ -1,6 +1,8 @@
 import { useContext } from 'react'
+import { useRouter } from 'next/router'
+import { joinViaInviteLinkMutation, updateWorkspaceMemberMutation } from 'src/generated/mutation'
 import SupportedChainId from 'src/generated/SupportedChainId'
-import useCreateMapping from 'src/libraries/hooks/useCreateMapping'
+import { executeMutation } from 'src/graphql/apollo'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
@@ -12,7 +14,7 @@ import { WebwalletContext } from 'src/pages/_app'
 interface Props {
 	setNetworkTransactionModalStep: (step: number | undefined) => void
 	setTransactionHash: (hash: string) => void
-	workspaceId: string | undefined
+	workspaceId: string | number | undefined
 	memberId: string | undefined
 	chainId: SupportedChainId
 	type: 'join-using-link' | 'join-reviewer-guard' | 'update'
@@ -20,15 +22,14 @@ interface Props {
 
 function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep, setTransactionHash, chainId, type }: Props) {
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
-
+	const router = useRouter()
 	const toast = useCustomToast()
 
-	const { encrypt } = usePiiForWorkspaceMember(workspaceId, memberId, webwallet?.publicKey, chainId)
-	const createMapping = useCreateMapping({ chainId })
+	const { encrypt } = usePiiForWorkspaceMember(workspaceId as string, memberId, webwallet?.publicKey, chainId)
 
-	const { call, isBiconomyInitialised } = useFunctionCall({ chainId, contractName: 'workspace', setTransactionHash, setTransactionStep: setNetworkTransactionModalStep })
+	const { isBiconomyInitialised } = useFunctionCall({ chainId, contractName: 'workspace', setTransactionHash, setTransactionStep: setNetworkTransactionModalStep })
 
-	const setupProfile = async({ name, email, imageFile, role, signature, signedMessage, walletAddress }: {
+	const setupProfile = async({ name, email, imageFile, role, signature, signedMessage, walletAddress, inviteInfo }: {
 		name: string
 		email: string
 		imageFile: File | null
@@ -40,6 +41,12 @@ function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep
 		}
 		signedMessage?: string
 		walletAddress?: string
+		inviteInfo?: {
+			role: number
+			privateKey: string
+			workspaceId: string
+			chainId: SupportedChainId
+		}
 	}) => {
 		logger.info({ name, email, scwAddress, webwallet }, 'useSetupProfile')
 
@@ -50,10 +57,6 @@ function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep
 
 			if(!chainId) {
 				throw new Error('Chain ID not found')
-			}
-
-			if(!isBiconomyInitialised) {
-				throw new Error('Biconomy Wallet not initialised properly')
 			}
 
 			if(!workspaceId) {
@@ -89,43 +92,65 @@ function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep
 				publicKey: webwallet.publicKey,
 				...dataToEncrypt
 			}
-			const hash = (await uploadToIPFS(JSON.stringify(data))).hash
-			if(!hash) {
-				throw new Error('Failed to upload data to IPFS')
-			}
 
-			logger.info({ profilePictureIpfsHash, hash }, 'Uploaded data to IPFS')
+			logger.info({ profilePictureIpfsHash, data }, 'Uploaded data to IPFS')
 
 			// Step - 4: Call the contract method
-			const methodArgs = type === 'update' ? [
-				workspaceId,
-				[scwAddress],
-				[role],
-				[true],
-				[hash]
-			] : type === 'join-using-link' ? [
-				workspaceId,
-				hash,
-				role,
-				signature?.v,
-				signature?.r,
-				signature?.s
-			] : [
-				workspaceId,
-				hash,
-				walletAddress,
-				role,
-				signedMessage
-			]
-			logger.info({ type, chainId, methodArgs }, 'Method args')
+			// const methodArgs = type === 'update' ? [
+			// 	workspaceId,
+			// 	[scwAddress],
+			// 	[role],
+			// 	[true],
+			// 	[hash]
+			// ] : type === 'join-using-link' ? [
+			// 	workspaceId,
+			// 	hash,
+			// 	role,
+			// 	signature?.v,
+			// 	signature?.r,
+			// 	signature?.s
+			// ] : [
+			// 	workspaceId,
+			// 	hash,
+			// 	walletAddress,
+			// 	role,
+			// 	signedMessage
+			// ]
+			logger.info({ type, chainId }, 'Method args')
 
-			const receipt = await call({ method: type === 'join-using-link' ? 'joinViaInviteLink' : type === 'join-reviewer-guard' ? 'proveMembership' : 'updateWorkspaceMembers', args: methodArgs })
-
+			const variables = type === 'update' ? {
+				id: workspaceId,
+				members: [scwAddress?.toLowerCase()],
+				roles: [role],
+				enabled: [true],
+				metadataHashes: [data]
+			} : {
+				id: workspaceId,
+				members: [scwAddress?.toLowerCase()],
+				roles: [role],
+				enabled: [true],
+				metadataHashes: [data],
+				w: inviteInfo?.workspaceId,
+				r: inviteInfo?.role?.toString(),
+				k: inviteInfo?.privateKey
+			}
+			logger.info({ inviteInfo }, 'Variables')
+			// const receipt = await call({ method: type === 'join-using-link' ? 'joinViaInviteLink' : type === 'join-reviewer-guard' ? 'proveMembership' : 'updateWorkspaceMembers', args: methodArgs })
+			const receipt = await executeMutation(type === 'update' ? updateWorkspaceMemberMutation : joinViaInviteLinkMutation, variables)
 			if(!receipt) {
 				throw new Error('Some error occured on Biconomy side')
 			}
 
-			await createMapping({ email })
+			//await createMapping({ email })
+			if(type === 'update') {
+				window.location.reload()
+			} else {
+				router.push({
+					pathname: '/dashboard',
+					query: { ...router.query, chainId: inviteInfo?.chainId }
+				})
+			}
+
 			return true
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {
