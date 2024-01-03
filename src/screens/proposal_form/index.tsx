@@ -32,12 +32,6 @@ function ProposalForm() {
 		return isExecuting !== undefined && !isExecuting && networkTransactionModalStep === undefined ? successComponent() : (error ? errorComponent() : formComponent())
 	}
 
-	const compoundCustomLinks: { [key: string]: string } = {
-		'0xeb047900b28a9f90f3c0e65768b23e7542a65163': 'https://docs.google.com/document/d/1Sre0LAkHEBQ1Rzhycbk3ALM3XBHF8NlXgl8tO5aVNWg/',
-		'0x291d6eb5de3b023ce9b760ef251b303c0c0fd11a':'https://docs.google.com/document/d/1uEGIIK_eu_c008sJ_GY2nr9Bnjqq4p8dxnFKzvLLeYw/',
-		'0x3b16764826f0baa77226327c7c0d7d53f8541913':'https://docs.google.com/document/d/1QjT3UDNoTq4o0-xqYJVh-WB4X1EKS5eoVgOGZnw7k60/',
-		'0xad96ce667e2a09311b439dbdcfcdefd2f98898df':'https://docs.google.com/document/d/1QjT3UDNoTq4o0-xqYJVh-WB4X1EKS5eoVgOGZnw7k60/'
-	}
 
 	const successComponent = () => {
 		return (
@@ -280,7 +274,7 @@ function ProposalForm() {
 														fontWeight='500'
 														color='black.100'
 														cursor='pointer'
-														onClick={() => window.open(compoundCustomLinks[grant?.id] ?? grant?.link!, '_blank')}
+														onClick={() => window.open(grant?.link!, '_blank')}
 													>
 														Read here
 													</Text>
