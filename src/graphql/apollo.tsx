@@ -2,7 +2,7 @@ import { ApolloClient, DocumentNode, InMemoryCache } from '@apollo/client'
 import { logger } from 'ethers'
 
 
-export const ENDPOINT_CLIENT = 'https://hhteei4cak.execute-api.ap-south-1.amazonaws.com/graphql'
+export const ENDPOINT_CLIENT = 'https://api-grants.questbook.app/graphql'
 
 
 export const client = new ApolloClient({
