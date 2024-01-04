@@ -248,7 +248,7 @@ function Discover() {
 				<Text
 					ml={2}
 					fontWeight='400'
-					fontSize={['12px', '16px']}
+					fontSize='14px'
 					variant='metadata'
 					lineHeight='16px'
 
