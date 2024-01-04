@@ -1,5 +1,5 @@
 import { AlertDialogOverlay, Box, Button, Flex, HStack, Modal, ModalBody, ModalContent, ModalHeader, Text, VStack } from '@chakra-ui/react'
-import { CheckboxCircle, ShareBox, ThumbsUp } from 'src/generated/icons'
+import { CheckboxCircle, ThumbsUp } from 'src/generated/icons'
 
 interface Props {
     isOpen: boolean
@@ -20,7 +20,7 @@ type ModalStepProps = {
 const stepsHeader = ['On-chain transaction', 'This shouldn’t take long..', 'Transaction successful..']
 const steps = ['Initiate transaction', 'Complete indexing', 'Complete transaction']
 
-function NetworkTransactionFlowStepperModal({ isOpen, currentStepIndex, viewTxnLink, showViewTransactionButton, onClose, customStepsHeader, customSteps }: Props) {
+function NetworkTransactionFlowStepperModal({ isOpen, currentStepIndex, viewTxnLink, onClose, customStepsHeader, customSteps }: Props) {
 	const buildComponent = () => {
 		return (
 			<Modal
@@ -92,7 +92,7 @@ function NetworkTransactionFlowStepperModal({ isOpen, currentStepIndex, viewTxnL
 									<Flex
 										mt='4'
 										pt={4}>
-										{
+										{/* {
 											(showViewTransactionButton ?? true) && (
 												<Button
 													variant='link'
@@ -105,7 +105,7 @@ function NetworkTransactionFlowStepperModal({ isOpen, currentStepIndex, viewTxnL
 													View transaction
 												</Button>
 											)
-										}
+										} */}
 										<Button
 											isDisabled={currentStepIndex < stepsHeader.length}
 											ml='auto'

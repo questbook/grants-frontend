@@ -5,5 +5,5 @@ export const DEFAULT_FORM: Form = { fields: [], milestones: [], members: [], det
 export const DEFAULT_MILESTONE = { index: 0, title: '', amount: 0 }
 export const MILESTONE_INPUT_STYLE = [{ placeholder: 'Add milestone', maxLength: 1024 }, { placeholder: 'Funding ask for this milestone' }]
 
-export const customStepsHeader = ['Creating your proposal on chain']
-export const customSteps = ['Submitting transaction on chain', 'Uploading data to decentralized storage', 'Indexing the data to a subgraph']
+export const customStepsHeader = ['Creating your proposal']
+export const customSteps = [ 'Verifying your application', 'Reviewing your proposal', 'Submitting your proposal']

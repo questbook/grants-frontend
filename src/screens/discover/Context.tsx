@@ -10,7 +10,7 @@ import { getAllGrants } from 'src/screens/discover/data/getAllGrants'
 import { getAllGrantsForMembers } from 'src/screens/discover/data/getAllGrantsForMembers'
 import { GetGrantProgramDetails } from 'src/screens/discover/data/getGrantProgramDetails'
 import { getSectionGrantsQuery } from 'src/screens/discover/data/getSectionGrants'
-import { getWorkspacesAndBuilderGrantsQuery } from 'src/screens/discover/data/getWorkspaceAndBuilderGrants'
+import { GetWorkspacesAndBuilderGrants } from 'src/screens/discover/data/getWorkspaceAndBuilderGrants'
 import { Roles } from 'src/types'
 
 const DiscoverContext = createContext<DiscoverContextType | null>(null)
@@ -42,6 +42,10 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 	const { fetchMore: fetchMoreMemberGrants } = useQuery({
 		query: getAllGrantsForMembers,
+	})
+
+	const { fetchMore: fetchMoreWorkspaces } = useQuery({
+		query: GetWorkspacesAndBuilderGrants
 	})
 
 
@@ -135,29 +139,41 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		const allWorkspaceMembers: {[key: number]: WorkspaceMemberType} = {}
 		const builderGrants: GrantType[] = []
 		const membersGrants: GrantType[] = []
-		const results = await getWorkspacesAndBuilderGrantsQuery({ actorId: `/${scwAddress}/i` })
-		logger.info({ results }, 'Results')
+
 		let first = 100
 		let skip = 0
 		let shouldContinue = true
-
-		if(results[0]?.workspaceMembers?.length) {
-			const chainId = getSupportedChainIdFromWorkspace(results[0]?.workspaceMembers[0]?.workspace as any)
-			if(chainId) {
-				if(!allWorkspaceMembers[chainId]) {
-					allWorkspaceMembers[chainId] = []
-				}
-
-				allWorkspaceMembers[chainId].push(...results[0]?.workspaceMembers as any)
+		while(shouldContinue) {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const results: any = await fetchMoreWorkspaces({ actorId: `/${scwAddress}/i`, first, skip }, true)
+			logger.info({ results }, 'Results one')
+			if(results?.length === 0 || (results?.workspaceMembers?.length === 0 && results?.grants?.length === 0)) {
+				shouldContinue = false
+				logger.info('No more results')
+				setIsLoading(false)
+				break
 			}
+
+
+			if(results?.workspaceMembers?.length) {
+				const chainId = getSupportedChainIdFromWorkspace(results?.workspaceMembers[0]?.workspace)
+				if(chainId) {
+					if(!allWorkspaceMembers[chainId]) {
+						allWorkspaceMembers[chainId] = []
+					}
+
+					allWorkspaceMembers[chainId].push(...results?.workspaceMembers)
+				}
+			}
+
+			if(results?.grants?.length) {
+				builderGrants.push(...results?.grants?.map((g: any) => ({ ...g, role: 'builder' as Roles })))
+				setIsLoading(false)
+			}
+
+			skip += first
 		}
 
-		logger.info({ allWorkspaceMembers }, 'All workspace members (DISCOVER CONTEXT)')
-
-		if(results[0]?.grants?.length) {
-			builderGrants.push(...results[0]?.grants?.map((g) => ({ ...g, role: 'builder' as Roles })) as any)
-			setIsLoading(false)
-		}
 
 		for(const chainId in allWorkspaceMembers) {
 			if(allWorkspaceMembers[chainId].length === 0) {
