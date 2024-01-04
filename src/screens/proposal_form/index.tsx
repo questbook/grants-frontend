@@ -529,13 +529,18 @@ function ProposalForm() {
 
 						<Button
 							mt={10}
-
 							ml='auto'
 							variant='primaryLarge'
-							isDisabled={isDisabled}
+							isLoading={!isExecuting}
+							isDisabled={isDisabled || !isExecuting || buttonClicked}
 							onClick={
-								() => {
+								(e) => {
+									e.preventDefault()
+									setButtonClicked(true)
 									submitProposal(form)
+									setTimeout(() => {
+										setButtonClicked(false)
+									}, 1000)
 								}
 							}>
 							<Text
@@ -574,6 +579,7 @@ function ProposalForm() {
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
 	const [transactionHash, setTransactionHash] = useState<string>('')
 	const { submitProposal, proposalId, isExecuting } = useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash })
+	const [buttonClicked, setButtonClicked] = useState(false);
 	const [emailError, setEmailError] = useState<boolean>(false)
 	const [walletAddressError, setWalletAddressError] = useState<boolean>(false)
 
