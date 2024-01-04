@@ -6,4 +6,4 @@ export const DEFAULT_MILESTONE = { index: 0, title: '', amount: 0 }
 export const MILESTONE_INPUT_STYLE = [{ placeholder: 'Add milestone', maxLength: 1024 }, { placeholder: 'Funding ask for this milestone' }]
 
 export const customStepsHeader = ['Creating your proposal']
-export const customSteps = [ 'Verifying your application', 'Reviewing your proposal', 'Submitting your proposal']
+export const customSteps = [ 'Validating form data', 'Uploading proposal data', 'Submitting your proposal']
