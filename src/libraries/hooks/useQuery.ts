@@ -37,7 +37,6 @@ export function useQuery<T>({ query }: UseQueryOptions) {
 
 			return data
 		} catch(error) {
-			logger.info(error, 'Error 503')
 			if(error && retries > 0) {
 				logger.info(`Encountered 503 error. Retrying... Attempts left: ${retries}`)
 				return await fetchMore(variables, reset, retries - 2)
