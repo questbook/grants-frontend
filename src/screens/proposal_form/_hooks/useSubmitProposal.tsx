@@ -50,7 +50,6 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 	})
 
 	const submitProposal = async(form: Form) => {
-		setIsExecuting(true)
 		try {
 			if(!grant || !webwallet || !scwAddress) {
 				return
