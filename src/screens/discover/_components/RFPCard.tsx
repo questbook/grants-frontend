@@ -1,5 +1,5 @@
 import { useContext, useMemo } from 'react'
-import { Box, Divider, Flex, Grid, GridItem, Image, Switch, Text } from '@chakra-ui/react'
+import { Box, Button, Divider, Flex, Grid, GridItem, Image, Switch, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
 import { Alert } from 'src/generated/icons'
@@ -9,6 +9,7 @@ import logger from 'src/libraries/logger'
 import { getAvatar } from 'src/libraries/utils'
 import { nFormatter, titleCase } from 'src/libraries/utils/formatting'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
+import StateButton from 'src/screens/discover/_components/stateButton'
 import { GrantType } from 'src/screens/discover/_utils/types'
 import { DiscoverContext } from 'src/screens/discover/Context'
 
@@ -89,6 +90,27 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						borderRadius='4px'
 					/>
 					<Flex gap={2}>
+						<StateButton
+							state='approved'
+							title='Open' />
+						<Button
+				 borderRadius='3xl'
+				 bgColor='#F1EEE8'
+				 size='sm'
+				 textColor='#53514F'
+				 fontSize='14px'
+				 onClick={
+								() => {
+								/* @ts-ignore */
+									window.open(grant?.link, '_blank')
+								}
+							}
+				 rightIcon={<Image src='https://ipfs.io/ipfs/bafkreifd2bg7phi6c554iktdjxbhmwsfxuouaoruydcf5qt4lh7b5ghqlm' />}
+
+				 >
+							Program Details
+						</Button>
+
 						{/* <Text
 							variant={isOpen ? 'openTag' : 'closedTag'}
 						>

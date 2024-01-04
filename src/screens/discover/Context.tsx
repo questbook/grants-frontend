@@ -9,14 +9,13 @@ import { DiscoverContextType, GrantProgramType, GrantType, RecentProposals, Sect
 import { getAllGrants } from 'src/screens/discover/data/getAllGrants'
 import { getAllGrantsForMembers } from 'src/screens/discover/data/getAllGrantsForMembers'
 import { GetGrantProgramDetails } from 'src/screens/discover/data/getGrantProgramDetails'
-import { getProposalNameAndAuthorsQuery } from 'src/screens/discover/data/getProposalNameAndAuthors'
 import { getSectionGrantsQuery } from 'src/screens/discover/data/getSectionGrants'
 import { getWorkspacesAndBuilderGrantsQuery } from 'src/screens/discover/data/getWorkspaceAndBuilderGrants'
 import { Roles } from 'src/types'
 
 const DiscoverContext = createContext<DiscoverContextType | null>(null)
 
-const PAGE_SIZE = 25
+const PAGE_SIZE = 40
 
 const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	const provider = () => {
@@ -56,10 +55,6 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		query: getSectionGrantsQuery,
 	})
 
-	const { fetchMore: fetchMoreProposalAuthorsAndName } = useQuery({
-		query: getProposalNameAndAuthorsQuery,
-	})
-
 	const fetchSafeBalances = async(grants: GrantType[]) => {
 		const safes: GrantType['workspace']['safe'][] = []
 		const safeSet = new Set<string>()
@@ -85,7 +80,6 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 				logger.info({ safeObj }, 'No safe address or chainId (DISCOVER CONTEXT)')
 				return 0
 			}
-
 
 			const safe = new SupportedPayouts().getSafe(parseInt(safeObj.chainId), safeObj.address)
 			try {
@@ -120,9 +114,19 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 		logger.info({ safeBalances }, 'Safe balances (DISCOVER CONTEXT)')
 
-		setSafeBalances(safeBalances)
+		if(Object.values(safeBalances).some((b) => b > 0)) {
+			localStorage.setItem('safeBalances', JSON.stringify(safeBalances))
+			setSafeBalances(safeBalances)
+		} else {
+			const safeBalancesFromLocalStorage = localStorage.getItem('safeBalances')
+			if(safeBalancesFromLocalStorage) {
+				setSafeBalances(JSON.parse(safeBalancesFromLocalStorage))
+			}
+		}
+
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const getGrantsForYou = async() => {
 		if(!scwAddress) {
 			return 'no-scw-address'
@@ -149,9 +153,10 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		}
 
 		logger.info({ allWorkspaceMembers }, 'All workspace members (DISCOVER CONTEXT)')
+
 		if(results[0]?.grants?.length) {
 			builderGrants.push(...results[0]?.grants?.map((g) => ({ ...g, role: 'builder' as Roles })) as any)
-			logger.info({ builderGrants }, 'Builder grants (DISCOVER CONTEXT)')
+			setIsLoading(false)
 		}
 
 		for(const chainId in allWorkspaceMembers) {
@@ -159,7 +164,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 				continue
 			}
 
-			first = 50, skip = 0
+			first = 100, skip = 0
 			const workspaces = allWorkspaceMembers[chainId].map(m => m.workspace)
 
 			shouldContinue = true
@@ -173,7 +178,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 				const grants = results?.grants
 				if(grants) {
-					membersGrants.push(...grants?.map((g: any) => ({ ...g, role: g.workspace.members.find((s: any) => s.actorId?.toLowerCase() === scwAddress.toLowerCase())?.accessLevel as Roles })))
+					membersGrants.push(...grants?.map((g: any) => ({ ...g, role: g.workspace.members.find((s: any) => s.actorId === scwAddress.toLowerCase())?.accessLevel as Roles })))
 				}
 
 				skip += first
@@ -190,10 +195,11 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		const grantsForYou = [...membersGrants, ...builderGrants]
 		logger.info({ grantsForYou }, 'All grants for you (DISCOVER CONTEXT)')
 		setGrantsForYou(grantsForYou)
-		setIsLoading(false)
+
 		return 'grants-for-you-fetched'
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const getGrantsForAll = async() => {
 
 		 const results: any = await fetchMoreExploreGrants({ first: PAGE_SIZE, skip: 0, searchString: search }, true)
@@ -232,14 +238,13 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	}
 
 	const fetchDetails = async() => {
-		logger.info({ inviteInfo }, 'Invite Info')
 		if(!inviteInfo?.workspaceId || !inviteInfo?.chainId) {
 			return
 		}
 
 		logger.info({ inviteInfo }, 'Invite Info')
 
-		const workspaceID = inviteInfo.workspaceId
+		const workspaceID = `0x${inviteInfo.workspaceId.toString(16)}`
 		logger.info({ workspaceID }, 'Workspace ID')
 		const results: any = await fetchGrantProgramData({ workspaceID }, true)
 		logger.info({ results }, 'Results grant program')
@@ -249,7 +254,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		}
 
 		logger.info({ grantProgram: results?.grantProgram[0] }, 'Results')
-		setGrantProgram(results?.grantProgram?.[0])
+		setGrantProgram(results[0]?.grantProgram?.[0])
 	}
 
 	const getSectionGrants = async() => {
@@ -282,31 +287,19 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		}
 
 
-		const recentProposalIds = recentProposals.map((p: any) => p.id)
-		const fetchNameAndAuthors: any = await fetchMoreProposalAuthorsAndName({ ids: recentProposalIds }, true)
-		logger.info({ fetchNameAndAuthors }, 'Fetch name and authors')
-		setSectionGrants(allSectionGrants)
-		recentProposals = await recentProposals.map((p: any) => {
-		  const proposal = fetchNameAndAuthors?.grantApplications.find((g: any) => g._id === p.id)
-		  return {
-				...p,
-				name: proposal?.name || p.name,
-				author: proposal?.author || p.author,
-		  }
-		})
-
 		recentProposals.sort((a, b) => b.updatedAtS - a.updatedAtS)
 		logger.info({ recentProposals }, 'All recent grants (DISCOVER CONTEXT)')
+		setSectionGrants(allSectionGrants)
 		setRecentProposals(recentProposals)
 	}
 
-	useEffect(() => {
-		getGrantsForAll().then(r => logger.info(r, 'Get Grants for all'))
-	}, [search])
+	// useEffect(() => {
+	// 	getGrantsForAll().then(r => logger.info(r, 'Get Grants for all'))
+	// }, [search])
 
-	useEffect(() => {
-		getGrantsForYou().then(r => logger.info(r, 'Get Grants for you'))
-	}, [scwAddress])
+	// useEffect(() => {
+	// 	getGrantsForYou().then(r => logger.info(r, 'Get Grants for you'))
+	// }, [scwAddress])
 
 	useEffect(() => {
 		getSectionGrants().then(r => logger.info(r, 'Get Section Grants'))
@@ -321,7 +314,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 	useEffect(() => {
 		// console.log('hi from',grantsForAll?.length, grantsForYou?.length, sectionGrants?.length)
-		if(!grantsForAll?.length || !sectionGrants?.length) {
+		if(!sectionGrants?.length) {
 			return
 		}
 

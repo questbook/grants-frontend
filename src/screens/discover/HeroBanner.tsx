@@ -1,67 +1,173 @@
 import { useMediaQuery } from 'react-responsive'
-import { Button, Flex, Image, Text } from '@chakra-ui/react'
-import { useRouter } from 'next/router'
-import { ArrowRight } from 'src/generated/icons'
+import { Flex, Image, Text } from '@chakra-ui/react'
+import { logger } from 'ethers'
+import { SectionGrants } from 'src/screens/discover/_utils/types'
+// import { useRouter } from 'next/router'
 
-function HeroBanner() {
+function HeroBanner({
+	grants,
+	safeBalances,
+}: {
+	grants: SectionGrants[]
+	safeBalances: number
+}) {
+	logger.info({ grants, safeBalances }, 'HeroBanner')
+	const totalProposals = () => {
+		let total = 0;
+		(grants && grants?.length > 0) ? grants.map((section) => {
+			const sectionName = Object.keys(section)[0]
+			// @ts-ignore
+			const grants = section[sectionName].grants.map((grant) => grant.numberOfApplications)
+			total += grants.reduce((a: number, b: number) => a + b, 0)
+		}) : 0
+
+		return total
+	}
+
+	const totalProposalsAccepted = () => {
+		let total = 0;
+		(grants && grants?.length > 0) ? grants.map((section) => {
+			const sectionName = Object.keys(section)[0]
+			// @ts-ignore
+			const grants = section[sectionName].grants.map((grant) => grant.numberOfApplicationsSelected)
+			total += grants.reduce((a: number, b: number) => a + b, 0)
+		}) : 0
+
+		return total
+	}
+
+	const formatNumber = (num: number) => {
+		return '$' + Math.round(num / 1000) + 'k'
+	}
+
+	const totalProposalsPaidOut = () => {
+		let total = 0;
+		(grants && grants?.length > 0) ? grants.map((section) => {
+			const sectionName = Object.keys(section)[0]
+			// @ts-ignore
+			const grants = section[sectionName].grants.map((grant) => grant.totalGrantFundingDisbursedUSD)
+			total += grants.reduce((a: number, b: number) => a + b, 0)
+		}) : 0
+
+		return formatNumber(total)
+	}
+
+	const TitleCards = ({ data, title }: {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		data: any
+		title: string
+	}) => (
+		<Flex
+			flexDirection='column'
+			bgColor='transparent'
+			zIndex={99}
+		>
+			<Text
+				fontWeight='500'
+				fontSize={['25px', '40px']}
+				lineHeight='48px'
+				color='white'>
+				{data}
+			</Text>
+			<Text
+				fontWeight='500'
+				fontSize='15px'
+				lineHeight='22px'
+				textTransform='uppercase'
+				color='white'
+			>
+				{title}
+			</Text>
+		</Flex>
+	)
+
 	const buildComponent = () => (
 		<Flex
 			direction='row'
 			w='100%'
 			alignItems='stretch'
 			alignContent='stretch'
+			justifyContent='flex-start'
 			h='460px'>
+			{
+				!isMobile && (
+					<Flex
+						bgColor='black.100'
+						flexGrow={1}
+						pl={10}
+						justifyContent='center'>
+						<Image
+							mt={10}
+							justifyContent='center'
+							h='max'
+							w='52'
+							src='https://cryptologos.cc/logos/arbitrum-arb-logo.png' />
+					</Flex>
+				)
+			}
+
 			<Flex
 				bgColor='black.100'
-				padding={[10, 24]}
+				padding={[10, 14]}
 				flexDirection='column'
 				textColor='white'
-				width='600px'>
+				position='relative'
+				width='full'>
+				{
+					isMobile && (
+
+						<Image
+
+							justifyContent='center'
+							h='max'
+							w='24'
+							src='https://cryptologos.cc/logos/arbitrum-arb-logo.png' />
+
+					)
+				}
 				<Text
 					fontWeight='500'
 					fontSize='40px'
 					lineHeight='48px'
 					color='white'>
-					Home for
-					<Text
-						fontWeight='500'
-						fontSize='40px'
-						lineHeight='48px'
-						color='#B6F72B'
-						as='span'>
-						{' '}
-						high quality
-						{' '}
-					</Text>
-					{' '}
-					builders
+					Arbitrum Grants
 				</Text>
 
-				<Text
-					mt={2}
-					fontSize='16px'
-					lineHeight='24px'
-					fontWeight='400'
-					color='white'>
-					Invite proposals from builders. Review and fund proposals with milestones - all on chain.
-				</Text>
+				<Flex
+					mt={10}
+					gap={8}
+					flexWrap='wrap'
+					justifyContent='flex-start'>
+					<TitleCards
+						data={formatNumber(safeBalances) || formatNumber(800000)}
+						title='in MultiSig' />
+					<TitleCards
+						data={totalProposals() || 0}
+						title='Proposals' />
+					<TitleCards
+						data={totalProposalsAccepted() || 40}
+						title='Accepted' />
+					<TitleCards
+						data={totalProposalsPaidOut() || 0}
+						title='Paid Out' />
 
-				<Flex>
-					<Button
-						variant='primaryLarge'
-						mt={8}
-						rightIcon={<ArrowRight color='white' />}
-						onClick={
-							() => router.push({
-								pathname: '/request_proposal',
-							})
-						}>
-						Start a grant program
-					</Button>
 				</Flex>
+				{
+					isMobile && (
 
+						<Image
+							bottom={0}
+							right={0}
+							opacity={0.9}
+							position='absolute'
+							h='max'
+							w='52'
+							src='https://ipfs.io/ipfs/bafkreieq36x5ktemdsy4r5tuirc62sbnxujhpcvwolwfx6bnsp4wnyei4m' />
+
+					)
+				}
 			</Flex>
-			{
+			{/* {
 				!isMobile && (
 					<Flex
 						bgColor='#B6F72B'
@@ -72,11 +178,27 @@ function HeroBanner() {
 							src='/Browser Mock.svg' />
 					</Flex>
 				)
+			} */}
+			{
+				!isMobile && (
+					<Flex
+						bgColor='black.100'
+						flexGrow={1}
+						pr={10}
+						justifyContent='center'>
+						<Image
+							mt={10}
+							justifyContent='center'
+							h='max'
+							w='52'
+							src='https://ipfs.io/ipfs/bafkreieq36x5ktemdsy4r5tuirc62sbnxujhpcvwolwfx6bnsp4wnyei4m' />
+					</Flex>
+				)
 			}
+
 		</Flex>
 	)
 	const isMobile = useMediaQuery({ query:'(max-width:600px)' })
-	const router = useRouter()
 
 	return buildComponent()
 }

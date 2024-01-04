@@ -38,7 +38,8 @@ function RFPGrid({
 					const role = type === 'all' ? undefined : grant.role
 					logger.info('role', role, grant)
 					return (
-						<GridItem key={index}>
+						<GridItem
+						 key={index}>
 							<motion.div
 								whileHover={{ scale: 1.02 }}>
 								<RFPCard

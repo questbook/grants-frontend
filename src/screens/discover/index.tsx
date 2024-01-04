@@ -1,8 +1,9 @@
+/* eslint-disable indent */
+/* eslint-disable react/jsx-indent */
 import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { Box, Button, Container, Divider, Flex, Image, Input, Link, Skeleton, Text } from '@chakra-ui/react'
+import { Box, Button, Container, Divider, Flex, Image, Input, Link, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import config from 'src/constants/config.json'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { DAOSearchContext } from 'src/libraries/hooks/DAOSearchContext'
 import { QBAdminsContext } from 'src/libraries/hooks/QBAdminsContext'
@@ -17,19 +18,16 @@ import SearchField from 'src/libraries/ui/SearchField'
 import { getAvatar } from 'src/libraries/utils'
 import { chainNames } from 'src/libraries/utils/constants'
 import getErrorMessage from 'src/libraries/utils/error'
-import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { ApiClientsContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
-import ProposalCard from 'src/screens/discover/_components/ProposalCard'
 import RFPGrid from 'src/screens/discover/_components/rfpGrid'
 import { DiscoverContext, DiscoverProvider } from 'src/screens/discover/Context'
 import HeroBanner from 'src/screens/discover/HeroBanner'
-import StatsBanner from 'src/screens/discover/StatsBanner'
 import { Roles } from 'src/types'
 
 function Discover() {
 	const router = useRouter()
 	const { inviteInfo } = useContext(ApiClientsContext)!
-	const { webwallet, loadingScw } = useContext(WebwalletContext)!
+	const { webwallet } = useContext(WebwalletContext)!
 	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const buildComponent = () => {
 		return inviteInfo ? inviteView() : normalView
@@ -102,8 +100,8 @@ function Discover() {
 					variant='flushed'
 					placeholder='Enter Section Name'
 					onChange={
-						(e) => {
-							setSectionName(e.target.value)
+						() => {
+							// setSectionName(e.target.value)
 							// debugger
 						}
 					}
@@ -150,7 +148,7 @@ function Discover() {
 
 	// const discoverRef = useRef<HTMLDivElement>(null)
 
-	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, recentProposals, isLoading } = useContext(DiscoverContext)!
+	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, safeBalances } = useContext(DiscoverContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString } = useContext(DAOSearchContext)!
 	const { setSignIn } = useContext(SignInContext)!
@@ -167,7 +165,7 @@ function Discover() {
 	const [addSectionModalOpen, setAddSectionModalOpen] = useState(false)
 	const [networkTransactionModalOpen, setNetworkTransactionModalOpen] = useState(false)
 	const [currentStepIndex, setCurrentStepIndex] = useState(-1)
-	const [sectionName, setSectionName] = useState('')
+	const [sectionName] = useState('')
 	const [filterGrantName, setFilterGrantName] = useState('')
 
 	const [imageFile, setImageFile] = useState<{ file: File | null, hash?: string }>({ file: null })
@@ -224,23 +222,69 @@ function Discover() {
 	}
 
 	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
+	const UserCard = ({ image, title, twitter, telegram }: {
+		image: string
+		title: string
+		twitter?: string
+		telegram?: string
+	}) => (
+		<Flex
+			align='center'
+			mt={2}
+			alignItems='center'
+			justifyContent='space-between'
+			p={2}
+		>
+			<Flex
+				w='80%'
+			>
+				<Image
+					borderWidth='1px'
+					borderColor='black.100'
 
+					borderRadius='3xl'
+					src={getAvatar(false, image ?? '0x0')}
+					boxSize='16px' />
+				<Text
+					ml={2}
+					fontWeight='400'
+					fontSize={['12px', '16px']}
+					variant='metadata'
+					lineHeight='16px'
+
+				>
+					{title}
+				</Text>
+			</Flex>
+			<Flex
+				gap={2}>
+				{
+					telegram && (
+						<Image
+							borderWidth='1px'
+							borderColor='black.100'
+							borderRadius='3xl'
+							src='https://ipfs.io/ipfs/bafkreiazk3mjn7d76yj5n6mooxjz7evabyj2232tuylswn2z6npsk7vqdq'
+							onClick={() => window.open(`https://t.me/${telegram}`)}
+							boxSize='16px' />
+					)
+				}
+				{
+					twitter && (
+						<Image
+							borderWidth='1px'
+							borderColor='black.100'
+							borderRadius='3xl'
+							onClick={() => window.open(`https://twitter.com/${twitter}`)}
+							src='https://ipfs.io/ipfs/bafkreiaowkyzonudivh6c2sefhyh6whzn7f565puvv74p3fmyqostvwczi'
+							boxSize='16px' />
+					)
+				}
+			</Flex>
+
+		</Flex>
+	)
 	const normalView = useMemo(() => {
-		const calculateLoadingHeight = () => {
-			// if scw is done loading and there's still no webwallet
-			// it means no loading section should be displayed (need to sign in)
-			if(!loadingScw && !webwallet) {
-			  return '0'
-			// if we have a webwallet and section grants (but still no "For you" grants)
-			// we show a small loading section
-			} else if(sectionGrants?.length) {
-			  return '70px'
-			// if we're loading the scw or the webwallet but no section grants
-			// we show a big loading section
-			} else {
-			  return '500px'
-			}
-		}
 
 		return (
 			<>
@@ -248,99 +292,73 @@ function Discover() {
 					direction='column'
 					w='100%'
 				>
-					<HeroBanner />
+					<HeroBanner
+grants={(sectionGrants && sectionGrants.length > 0 ? sectionGrants : []) as []}
 
-					<StatsBanner />
+safeBalances={Object.values(safeBalances).reduce((a, b) => a + b, 0) ?? 0}
+					/>
+
 
 					<Container
 						className='domainGrid'
 						minWidth='100%'
 						p={4}
 						w='100%'>
-						<SearchField
-							bg='white'
-							w='100%'
-							// inputGroupProps={{ ml: 4 }}
-							mb={6}
-							placeholder='Enter Grant Program Name to search'
-							value={filterGrantName}
-							onKeyDown={
-								(e) => {
-									if(e.key === 'Enter' && filterGrantName !== undefined) {
-										setFilterGrantName(filterGrantName)
-									}
-								}
-							}
-							onChange={
-								(e) => {
-									setFilterGrantName(e.target.value)
-								}
-							}
-						/>
+
 
 						<Flex
 							w='100%'
 							my={4}
-							justify='space-between'>
+							justify='space-between'
+							direction={isMobile ? 'column' : 'row'}>
+
 							<Flex
 								direction='column'
 								w={isMobile ? '100%' : { sm: '50%', md: '60%', lg: '70%' }}>
-								<Box
-									mb={4}
-									display={grantsForYou?.length ? '' : 'none'}>
-									<Text
-										fontWeight='500'
-										fontSize='24px'
-										lineHeight='32px'>
-										For You
-									</Text>
-								</Box>
-								{
-									!isLoading ?
-										(
-											<>
 
-												<RFPGrid
-													type='personal'
-													grants={grantsForYou}
-													unsavedDomainVisibleState={unsavedDomainState}
-													onDaoVisibilityUpdate={onDaoVisibilityUpdate}
-													onSectionGrantsUpdate={onGrantsSectionUpdate}
-													changedVisibilityState={changedVisibility}
-													filter={filterGrantName}
-												/>
-												<Divider
-													width='100%'
-													borderColor='gray.300'
-													mt={8}
-													display={grantsForYou?.length ? '' : 'none'}
-												/>
-											</>
-										) : (
-											<Skeleton
-												width='100%'
-												h={calculateLoadingHeight()}
-												startColor='gray.300'
-												endColor='gray.400'
-											/>
-										)
-								}
+
 								{/* </Box> */}
 								<Box
 									display={sectionGrants?.length ? '' : 'none'}
 								>
-									<Text
-										variant='heading3'
-										fontWeight='500'
-										mt={4}
-									>
-										Explore grant programs
-									</Text>
+									<Flex
+										justifyContent='space-between'
+										alignItems='center'
+										gap={2}
+										w='100%'>
+										<Text
+											variant='heading3'
+											fontWeight='500'
+											w='100%'
+										>
+											Grants
+										</Text>
+
+										<SearchField
+											bg='white'
+											w='100%'
+
+
+											placeholder='Enter Grant Program Name to search'
+											value={filterGrantName}
+											onKeyDown={
+												(e) => {
+													if(e.key === 'Enter' && filterGrantName !== undefined && filterGrantName?.trim().length > 0) {
+														setFilterGrantName(filterGrantName)
+													}
+												}
+											}
+											onChange={
+												(e) => {
+													setFilterGrantName(e.target.value)
+												}
+											}
+										/>
+									</Flex>
 									{
 										(sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
 											logger.info('section', { section, sectionGrants })
 											const sectionName = Object.keys(section)[0]
-											const sectionImage = section[sectionName].sectionLogoIpfsHash
 
 											const grants = section[sectionName].grants.filter((grant) => grant.title.toLowerCase().includes(filterGrantName.trim().toLowerCase())).map(grant => ({ ...grant, role: 'community' as Roles }))
 											return (
@@ -348,31 +366,7 @@ function Discover() {
 													my={6}
 													key={index}
 												>
-													<Flex
-														gap={3}
-														alignItems='center'
-														mb={4}
-													>
-														<Image
-															src={sectionImage === config.defaultDAOImageHash ? getAvatar(true, sectionName) : getUrlForIPFSHash(sectionImage)}
-															boxSize={6} />
-														<Text
-															fontWeight='500'
-															variant='subheading'
-														>
-															{sectionName}
-														</Text>
-														<Text
-															fontSize='14px'
-															color='gray.500'
-															fontWeight='500'
-															ml='-6px'
-														>
-															(
-															{grants.length}
-															)
-														</Text>
-													</Flex>
+
 
 													<RFPGrid
 														type='all'
@@ -389,27 +383,113 @@ function Discover() {
 								</Box>
 							</Flex>
 							{
-								!isMobile && (
+							 (
 									<Flex
 										direction='column'
 										w={{ sm: '48%', md: '38%', lg: '28%' }}
 										gap={5}
 										overflowY='auto'
 										maxH='-webkit-max-content'>
+										<Box
+		  w='100%'
+		  background='white'
+		  px={5}
+		  pt={5}
+		  pb={5}
+		  // h='13'
+		  position='relative'
+		  // boxShadow='0px 10px 18px rgba(31, 31, 51, 0.05), 0px 0px 1px rgba(31, 31, 51, 0.31);'
+		  borderRadius='2px'
+		  border='1px solid #E7E4DD'
+
+		   >
+										{' '}
 										<Text
-											fontWeight='500'
-											variant='subheading'>
-											Recently funded
-										</Text>
-										{
-											recentProposals?.map((proposal, index) => {
-												return (
-													<ProposalCard
+		  			fontWeight='500'
+		  			lineHeight='48px'
+		  			fontSize='24px'
+		  			color='black.100'
+		  			borderRadius='6px'
+
+		  			px={3}
+		  		>
+												About Arbitrum Grants
+          </Text>
+
+										<Divider my={2} />
+										<Text
+				  fontSize='14px'
+				   lineHeight={['20px']}
+		  			py={1.5}
+		  			px={3}
+		  			textAlign='match-parent'
+		  		>
+												The Arbitrum grants, administered via DDA by Questbook and 4 domain allocators, went live on the 5th of October with a grants budget of $800k spread across four domains. The Questbook Arbitrum Grants program is useful for anyone developing in domain specific projects on top of Arbitrum, ranging from education, gaming, dev tooling to innovative ideas. Through the program, you can receive milestone-based funding based on domain specific needs, outlined by the domain allocators elected by the community. These domain allocators were elected from the community and by the community. The specific information regarding the accepted proposals and the funded teams can be found here.
+          </Text>
+										<Text
+		  			fontWeight='500'
+		  			lineHeight='48px'
+		  			fontSize='24px'
+		  			color='black.100'
+		  			borderRadius='6px'
+
+		  			px={3}
+		  		>
+												Program Managers
+          </Text>
+										<Box p={1}>
+												<UserCard
+													image='0x0125215125'
+													title='Srijith'
+													twitter='Srijith_Padmesh'
+													telegram='Srijith13' />
+          </Box>
+										<Divider my={2} />
+										<Text
+		  			fontWeight='500'
+		  			lineHeight='48px'
+		  			fontSize='24px'
+		  			color='black.100'
+		  			borderRadius='6px'
+
+		  			px={3}
+		  		>
+												Domain Allocators
+          </Text>
+										<Box p={1}>
+											{
+												[
+													{
+														image: '0x012521',
+														title: 'JoJo (Gaming)',
+														twitter: 'jojo17568'
+													},
+													{
+														image: '0x012522',
+														title: 'Adam (New Protocol Ideas)',
+														twitter: 'Flook_eth'
+													},
+													{
+														image: '0x012523',
+														title: 'Juandi (Dev Tooling)',
+														twitter: 'ImJuandi'
+													},
+													{
+														image: '0x012524',
+														title: 'Cattin (Education, Community growth & Events)',
+														twitter: 'Cattin0x'
+													}
+												].map((user, index) => (
+													<UserCard
 														key={index}
-														proposal={proposal} />
-												)
-											})
-										}
+														image={user.image}
+														title={user.title}
+														twitter={user.twitter} />
+												))
+											}
+          </Box>
+          </Box>
+
 									</Flex>
 								)
 							}
@@ -542,7 +622,7 @@ function Discover() {
 				</Tooltip> */}
 			</>
 		)
-	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName, isMobile])
+	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName, isMobile, safeBalances])
 
 	useEffect(() => {
 		if(!inviteInfo) {
