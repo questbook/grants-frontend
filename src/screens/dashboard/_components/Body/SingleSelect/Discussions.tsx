@@ -99,7 +99,7 @@ function Discussions() {
 								{currentMember?.fullName ?? formatAddress(scwAddress ?? '')}
 							</Text>
 							<RoleTag
-								role={(role as Roles) ?? 'community'}
+								role={(role as Roles)}
 								isBuilder={proposal?.applicantId?.toLowerCase() === scwAddress?.toLowerCase()}
 							/>
 							{
