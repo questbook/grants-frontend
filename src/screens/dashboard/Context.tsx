@@ -315,7 +315,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 					const comment: CommentType = {
 						id: action.id,
 						isPrivate: false,
-						commentsPublicHash: typeof action.feedback === 'string' ? action.feedback : action.feedback,
+						commentsPublicHash: typeof action.feedback === 'string' ? action.feedback : action.feedback === null ? undefined : action.feedback,
 						application: {
 							id: proposal.id,
 							applicantPublicKey: proposal.applicantPublicKey,
@@ -327,7 +327,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 						sender: action.updatedBy,
 						createdAt: action.updatedAtS,
 						role: proposal.grant.workspace.members.map((m: { actorId: String }) => m.actorId).includes(action.updatedBy.toLowerCase()) ? 'admin' : 'builder',
-						message: typeof action.feedback === 'string' ? action.feedback : (action.feedback ?? '{}').message,
+						message: typeof action.feedback === 'string' ? action.feedback : action?.feedback === null ? '' : (action.feedback ?? '{}').message,
 					}
 					logger.info({ comment }, 'Dummy Comment')
 
