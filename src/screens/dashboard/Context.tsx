@@ -143,6 +143,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 	}, [grantId, chainId, scwAddress])
 
 	const handleComments = async(allComments: CommentType[]) => {
+		logger.info({ allComments }, 'ALL COMMENTS (COMMENT DECRYPT)')
 		const commentMap: CommentMap = {}
 		for(const comment of allComments) {
 			if(comment.isPrivate) {
@@ -315,7 +316,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 					const comment: CommentType = {
 						id: action.id,
 						isPrivate: false,
-						commentsPublicHash: typeof action.feedback === 'string' ? action.feedback : action.feedback === null ? undefined : action.feedback,
+						commentsPublicHash: typeof action.feedback === 'string' && action?.feedback?.length !== 0 ? action.feedback : (action.feedback === null || action?.feedback?.length === 0) ? undefined : action.feedback,
 						application: {
 							id: proposal.id,
 							applicantPublicKey: proposal.applicantPublicKey,
@@ -327,7 +328,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 						sender: action.updatedBy,
 						createdAt: action.updatedAtS,
 						role: proposal.grant.workspace.members.map((m: { actorId: String }) => m.actorId).includes(action.updatedBy.toLowerCase()) ? 'admin' : 'builder',
-						message: typeof action.feedback === 'string' ? action.feedback : action?.feedback === null ? '' : (action.feedback ?? '{}').message,
+						message: typeof action.feedback === 'string' && action?.feedback?.length !== 0 ? action.feedback : (action?.feedback === null || action?.feedback?.length === 0) ? '' : (action.feedback ?? '{}').message,
 					}
 					logger.info({ comment }, 'Dummy Comment')
 
