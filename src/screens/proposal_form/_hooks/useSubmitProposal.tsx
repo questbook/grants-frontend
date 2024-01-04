@@ -9,7 +9,6 @@ import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { useQuery } from 'src/libraries/hooks/useQuery'
 import logger from 'src/libraries/logger'
 import { parseAmount } from 'src/libraries/utils/formatting'
-import { uploadToIPFS } from 'src/libraries/utils/ipfs'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { isValidEthereumAddress } from 'src/libraries/utils/validations'
@@ -43,7 +42,6 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 
 	// const { isBiconomyInitialised, isExecuting } = useFunctionCall({ chainId, contractName: 'applications', setTransactionStep: setNetworkTransactionModalStep, setTransactionHash })
 
-
 	const [proposalId, setProposalId] = useState<string>()
 	logger.info({ type }, 'proposalId (Event Data)')
 	logger.info({ proposal }, 'proposalId (Event Data)')
@@ -52,6 +50,7 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 	})
 
 	const submitProposal = async(form: Form) => {
+		setIsExecuting(true)
 		try {
 			if(!grant || !webwallet || !scwAddress) {
 				return
@@ -75,18 +74,18 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 			// }
 			logger.info(result?.grantApplications?.length, 'useSubmitProposal: (result)')
 			if(result?.grantApplications?.length > 2) {
+				setNetworkTransactionModalStep(undefined)
 				logger.info({ result }, 'length')
 				customToast({
 					title: 'You have exceeded the maximum number of applications for this grant',
 					status: 'error',
 					description: 'This wallet address has already been used for this grant'
 				})
-				setNetworkTransactionModalStep(undefined)
 				return
 			}
 
 			logger.info({ form }, 'useSubmitProposal: (form)')
-
+			setNetworkTransactionModalStep(1)
 			// Step - 1: Upload the project details data to ipfs
 			const detailsHash = (JSON.stringify(
 				convertToRaw(form.details.getCurrentContent()),
@@ -132,8 +131,8 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 			// logger.info({ validate }, 'useSubmitProposal: (validate)')
 			// return
 			// Step - 5: Upload the application data to ipfs
-			const proposalDataHash = (await uploadToIPFS(JSON.stringify(data))).hash
-			logger.info({ proposalDataHash }, 'useSubmitProposal: (proposalDataHash)')
+			// const proposalDataHash = (JSON.stringify(data))
+			// logger.info({ proposalDataHash }, 'useSubmitProposal: (proposalDataHash)')
 
 			// Step - 6: Call the contract function to submit the proposal
 			const variables = {
@@ -148,7 +147,7 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 				id: proposal?.id,
 				state: 'submitted',
 			}
-
+			setNetworkTransactionModalStep(2)
 			logger.info({ variables }, 'useSubmitProposal: (variables)')
 			const receipt = type === 'submit' ? await executeMutation(submitProposalMutation, variables) : await executeMutation(reSubmitProposalMutation, variables)
 			logger.info({ receipt }, 'useSubmitProposal: (Response)')
@@ -169,7 +168,7 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 				// 	const proposalId = Number(eventData.args[0].toBigInt())
 				// 	logger.info({ proposalId }, 'proposalId (Event Data)')
 				// 	setProposalId(`0x${proposalId.toString(16)}`)
-
+				setNetworkTransactionModalStep(3)
 				// 	await createMapping({ email: findField(form, 'applicantEmail').value })
 				const proposalId = receipt[type === 'submit' ? 'createNewGrantApplication' : 'updateGrantApplication'].record._id
 				 logger.info({ proposalId }, 'proposalId (Event Data)')
