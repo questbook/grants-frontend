@@ -2,7 +2,6 @@ import { useContext, useMemo } from 'react'
 import { defaultChainId } from 'src/constants/chains'
 import { assignReviewersMutation, submitReviewsMutation } from 'src/generated/mutation'
 import { executeMutation } from 'src/graphql/apollo'
-import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import { useGenerateReviewData } from 'src/libraries/utils/reviews'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
@@ -43,7 +42,6 @@ function useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash }:
 
 			const shouldAssignAndReview = proposal.applicationReviewers.find(reviewer => reviewer.member.actorId === scwAddress.toLowerCase()) === undefined
 			logger.info({ review }, 'Review to be submitted')
-			const customToast = useCustomToast()
 			const { ipfsHash } = await generateReviewData({ items: review?.items! })
 
 			const methodArgs = shouldAssignAndReview ? [grant?.workspace.id, proposal.id, grant.id, scwAddress, true, ipfsHash] : [grant?.workspace.id, proposal.id, grant.id, ipfsHash]
@@ -65,8 +63,8 @@ function useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash }:
 				}
 				const updateReview = await executeMutation(submitReviewsMutation, SubmitReviewVariables)
 				const updateAssignReviewers = await executeMutation(assignReviewersMutation, AssignReviewersVariables)
-				setTransactionHash(updateReview?.submitReview?.recordId)
-				if(!updateReview?.submitReview?.recordId || !updateAssignReviewers?.assignReviewers?.recordId) {
+				setTransactionHash(updateReview?.submitReviews?.recordId)
+				if(!updateReview?.submitReviews?.recordId || !updateAssignReviewers?.assignReviewers?.recordId) {
 					throw new Error('Failed to submit review')
 				}
 			} else {
@@ -78,15 +76,13 @@ function useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash }:
 					reviewerAddress: scwAddress
 				}
 				const updateReview = await executeMutation(submitReviewsMutation, variables)
-				setTransactionHash(updateReview?.submitReview?.recordId)
-				if(!updateReview?.submitReview?.recordId) {
-					customToast({
-						position: 'top',
-						title: 'Failed to submit review',
-						status: 'error',
-					})
+				setTransactionHash(updateReview?.submitReviews?.recordId)
+				if(!updateReview?.submitReviews?.recordId) {
+					throw new Error('Failed to submit review')
 				}
 			}
+
+			window.location.reload()
 
 			refreshProposals(true)
 
