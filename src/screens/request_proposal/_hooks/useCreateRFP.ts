@@ -79,7 +79,8 @@ export default function useCreateRFP() {
 				link: rfpData?.link!,
 				reviewType: rfpData?.reviewMechanism!,
 				fields:  fieldMap,
-				milestones: rfpData?.milestones
+				milestones: rfpData?.milestones,
+				rubrics: rfpData?.rubrics,
 			}
 			const data = await executeMutation(createWorkspaceAndGrant, variables)
 			//   const data = await executeMutation(updateFundsTransferTransactionStatus, variables);

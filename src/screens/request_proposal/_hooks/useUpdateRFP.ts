@@ -73,7 +73,8 @@ export default function useUpdateRFP() {
 			reviewType: rfpData?.reviewMechanism!,
 			fields:  fieldMap,
 			milestones: rfpData?.milestones,
-			workspace: workspaceId?.toString()
+			workspace: workspaceId?.toString(),
+			rubrics: rfpData?.rubrics,
 		}
 
 		try {
