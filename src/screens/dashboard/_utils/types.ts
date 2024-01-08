@@ -26,6 +26,7 @@ export type DashboardContextType = {
   refreshProposals: (refresh: boolean) => void
   filterState: ApplicationState | undefined
   setFilterState: (state: ApplicationState | undefined) => void
+  fundsAllocated: { allocated: number, disbursed: number }
 };
 
 // export interface TokenInfo {

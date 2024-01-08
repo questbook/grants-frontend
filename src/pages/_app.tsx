@@ -156,7 +156,8 @@ export const SignInTitleContext = createContext<{
 export const WebwalletContext = createContext<{
 	webwallet?: Wallet | null
 	setWebwallet: (webwallet?: Wallet | null) => void
-
+	glyph?: Boolean
+	setGlyph: (glyph?: Boolean) => void
 	network?: SupportedChainId
 	switchNetwork: (newNetwork?: SupportedChainId) => void
 	scwAddress?: string
@@ -196,7 +197,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [grant, setGrant] = useState<GrantType>()
 	const [role, setRole] = useState<Roles>('community')
 	const [isLoading, setIsLoading] = useState<boolean>(true)
-
+	const [glyph, setGlyph] = useState<boolean>(false)
 	const [scwAddress, setScwAddress] = useState<string>()
 	const [loadingScw, setLoadingScw] = useState<boolean>(true)
 	const [biconomyDaoObjs, setBiconomyDaoObjs] = useState<{ [key: string]: typeof BiconomyContext }>()
@@ -540,6 +541,16 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 				setNonce(newNonce)
 			},
+			glyph: glyph,
+			setGlyph: (newGlyph?: Boolean) => {
+				if(newGlyph) {
+					localStorage.setItem('glyph', newGlyph.toString())
+				} else {
+					localStorage.removeItem('glyph')
+				}
+
+				setGlyph(newGlyph as boolean)
+			},
 			dashboardStep,
 			setDashboardStep,
 			createingProposalStep,
@@ -551,7 +562,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			importWebwallet,
 			exportWebwallet
 		}),
-		[dashboardStep, createingProposalStep, setCreatingProposalStep, setDashboardStep, webwallet, setWebwallet, network, switchNetwork, scwAddress, setScwAddress, nonce, setNonce, loadingNonce, setLoadingNonce, loadingScw, setLoadingScw]
+		[dashboardStep, createingProposalStep, setCreatingProposalStep, setDashboardStep, webwallet, setWebwallet, network, switchNetwork, scwAddress, setScwAddress, nonce, setNonce, loadingNonce, setLoadingNonce, loadingScw, setLoadingScw, glyph, setGlyph]
 	)
 
 	const biconomyDaoObjContextValue = useMemo(

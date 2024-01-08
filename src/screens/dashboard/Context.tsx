@@ -11,6 +11,7 @@ import { getFromIPFS } from 'src/libraries/utils/ipfs'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { getFundsAllocatedQuery } from 'src/screens/dashboard/_data/getFundsAllocatedQuery'
 import { getGrantsQuery } from 'src/screens/dashboard/_data/getGrantsQuery'
 import { getProposalsQuery } from 'src/screens/dashboard/_data/getProposalsQuery'
 import { getSpecificApplicationActionQuery } from 'src/screens/dashboard/_data/getSpecificApplicationActionQuery'
@@ -71,6 +72,10 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		query: getSpecificApplicationActionQuery,
 	})
 
+	const { fetchMore: fetchFundsAllocated } = useQuery({
+		query: getFundsAllocatedQuery
+	})
+
 	const [proposals, setProposals] = useState<Proposals>([])
 	const [commentMap, setCommentMap] = useState<CommentMap>({})
 	const [selectedProposals, setSelectedProposals] = useState<Set<string>>(new Set<string>())
@@ -78,6 +83,13 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 	const [showSubmitReviewPanel, setShowSubmitReviewPanel] = useState<boolean>(false)
 	const [areCommentsLoading, setAreCommentsLoading] = useState<boolean>(false)
 	const [filterState, setFilterState] = useState<ApplicationState>()
+	const [fundsAllocated, setFundsAllocated] = useState<{
+		allocated: number
+		disbursed: number
+	}>({
+		allocated: 0,
+		disbursed: 0,
+	})
 
 	const getGrant = useCallback(async() => {
 		if(!grantId || chainId === -1 || typeof grantId !== 'string') {
@@ -141,6 +153,31 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
 		return 'grant-details-fetched'
 	}, [grantId, chainId, scwAddress])
+
+	const getFundsAllocated = useCallback(async() => {
+		if(!grantId) {
+			return 'no-grant-id'
+		}
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const result: any = await fetchFundsAllocated({ id: grantId }, true)
+		if(result?.grantApplications) {
+
+			const totalAllocated = result?.grantApplications?.reduce((acc: number, grantApplication: { milestones: { amount: number }[] }) => {
+				return acc + grantApplication.milestones.reduce((acc: number, milestone: { amount: number }) => acc + milestone.amount, 0)
+			}, 0)
+			const totalDisbursed = result?.grantApplications?.reduce((acc: number, grantApplication: { milestones: { amountPaid: number }[] }) => {
+				return acc + grantApplication.milestones.reduce((acc: number, milestone: { amountPaid: number }) => acc + milestone.amountPaid, 0)
+			}, 0)
+			logger.info({ totalAllocated, totalDisbursed }, 'Funds allocated (GET FUNDS ALLOCATED)')
+			setFundsAllocated({
+				allocated: totalAllocated,
+				disbursed: totalDisbursed
+			})
+		}
+
+		return 'funds-allocated-fetched'
+	}, [grantId])
 
 	const handleComments = async(allComments: CommentType[]) => {
 		logger.info({ allComments }, 'ALL COMMENTS (COMMENT DECRYPT)')
@@ -625,6 +662,12 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 	}, [grant, chainId])
 
 	useEffect(() => {
+		if(grantId) {
+			getFundsAllocated().then((r) => logger.info({ r }, 'Get funds allocated result'))
+		}
+	}, [grantId])
+
+	useEffect(() => {
 		if(proposals.length === 0) {
 			setSelectedProposals(new Set<string>())
 			if(grant) {
@@ -719,7 +762,8 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 						}
 					},
 					filterState,
-					setFilterState
+					setFilterState,
+					fundsAllocated,
 				}
 			}>
 			{children}
