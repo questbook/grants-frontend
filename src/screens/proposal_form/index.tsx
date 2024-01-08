@@ -620,7 +620,7 @@ function ProposalForm() {
 			}
 		}
 
-		if(convertToRaw(details.getCurrentContent()).blocks[0].text.length === 0) {
+		if(!convertToRaw(details.getCurrentContent()).blocks[0]) {
 			logger.info('Details is empty')
 			return true
 		}
