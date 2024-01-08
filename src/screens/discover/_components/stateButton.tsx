@@ -13,7 +13,7 @@ function StateButton({ state, title }: Props) {
 				align='center'
 				justify='center'
 				transition='all .5s ease'
-				py={1}
+				py={1.5}
 				px={3}
 				w='auto'
 				borderRadius='18px'

@@ -1,5 +1,6 @@
 import { useContext, useMemo } from 'react'
 import { Box, Button, Divider, Flex, Grid, GridItem, Image, Switch, Text } from '@chakra-ui/react'
+import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
 import { Alert } from 'src/generated/icons'
@@ -12,7 +13,6 @@ import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import StateButton from 'src/screens/discover/_components/stateButton'
 import { GrantType } from 'src/screens/discover/_utils/types'
 import { DiscoverContext } from 'src/screens/discover/Context'
-
 
 type RFPCardProps = {
 	grant: GrantType
@@ -90,26 +90,33 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						borderRadius='4px'
 					/>
 					<Flex gap={2}>
-						<StateButton
-							state='approved'
-							title='Open' />
-						<Button
+						<motion.div
+						 whileHover={{ scale: 1.05 }}
+						 >
+							<StateButton
+								state='approved'
+								title='Open' />
+						</motion.div>
+						<motion.div
+							whileHover={{ scale: 1.05 }}>
+							<Button
 				 borderRadius='3xl'
 				 bgColor='#F1EEE8'
 				 size='sm'
 				 textColor='#53514F'
 				 fontSize='14px'
 				 onClick={
-								() => {
-								/* @ts-ignore */
-									window.open(grant?.link, '_blank')
+									() => {
+										/* @ts-ignore */
+										window.open(grant?.link, '_blank')
+									}
 								}
-							}
 				 rightIcon={<Image src='https://ipfs.io/ipfs/bafkreifd2bg7phi6c554iktdjxbhmwsfxuouaoruydcf5qt4lh7b5ghqlm' />}
 
 				 >
-							Program Details
-						</Button>
+								Program Details
+							</Button>
+						</motion.div>
 
 						{/* <Text
 							variant={isOpen ? 'openTag' : 'closedTag'}

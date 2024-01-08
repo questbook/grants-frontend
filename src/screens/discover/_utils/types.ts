@@ -24,6 +24,7 @@ export type DiscoverContextType = {
     setSearch: (search: string) => void
     isLoading: boolean
     safeBalances: {[key: string]: number}
+    grantsAllocated: number
 }
 
 export type FundTransfer = {

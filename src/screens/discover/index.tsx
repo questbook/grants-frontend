@@ -3,7 +3,9 @@
 import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { Box, Button, Container, Divider, Flex, Image, Input, Link, Text } from '@chakra-ui/react'
+import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
+import { Telegram, Twitter } from 'src/generated/icons'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { DAOSearchContext } from 'src/libraries/hooks/DAOSearchContext'
 import { QBAdminsContext } from 'src/libraries/hooks/QBAdminsContext'
@@ -148,7 +150,7 @@ function Discover() {
 
 	// const discoverRef = useRef<HTMLDivElement>(null)
 
-	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, safeBalances } = useContext(DiscoverContext)!
+	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, safeBalances, grantsAllocated } = useContext(DiscoverContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString } = useContext(DAOSearchContext)!
 	const { setSignIn } = useContext(SignInContext)!
@@ -260,24 +262,30 @@ function Discover() {
 				gap={2}>
 				{
 					telegram && (
-						<Image
-							borderWidth='1px'
-							borderColor='black.100'
-							borderRadius='3xl'
-							src='https://ipfs.io/ipfs/bafkreiazk3mjn7d76yj5n6mooxjz7evabyj2232tuylswn2z6npsk7vqdq'
+						<motion.div
+							whileHover={{ scale: 1.1 }}
+							whileTap={{ scale: 0.9 }}
+						>
+						<Telegram
+							cursor='pointer'
+							_hover={{ color: 'blue.500' }}
 							onClick={() => window.open(`https://t.me/${telegram}`)}
 							boxSize='16px' />
+						</motion.div>
 					)
 				}
 				{
 					twitter && (
-						<Image
-							borderWidth='1px'
-							borderColor='black.100'
-							borderRadius='3xl'
-							onClick={() => window.open(`https://twitter.com/${twitter}`)}
-							src='https://ipfs.io/ipfs/bafkreiaowkyzonudivh6c2sefhyh6whzn7f565puvv74p3fmyqostvwczi'
-							boxSize='16px' />
+						<motion.div
+							whileHover={{ scale: 1.1 }}
+							whileTap={{ scale: 0.9 }}
+						>
+							<Twitter
+								cursor='pointer'
+								_hover={{ color: 'blue.500' }}
+								onClick={() => window.open(`https://twitter.com/${twitter}`)}
+								boxSize='16px' />
+						</motion.div>
 					)
 				}
 			</Flex>
@@ -296,6 +304,7 @@ function Discover() {
 grants={(sectionGrants && sectionGrants.length > 0 ? sectionGrants : []) as []}
 
 safeBalances={Object.values(safeBalances).reduce((a, b) => a + b, 0) ?? 0}
+grantsAllocated={grantsAllocated ?? 0}
 					/>
 
 
