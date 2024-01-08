@@ -20,7 +20,7 @@ export default function useCreateRFP() {
 	const [transactionHash, setTransactionHash] = useState<string>()
 	const { setRole } = useContext(GrantsProgramContext)!
 	const { rfpData, grantId, setGrantId, chainId, setExecutionType } = useContext(RFPFormContext)!
-
+	const { setCreatingProposalStep } = useContext(WebwalletContext)!
 	const router = useRouter()
 	// const {
 	// 	call: workspaceCreateCall,
@@ -91,6 +91,7 @@ export default function useCreateRFP() {
 				const grantId = data.createWorkspace.recordId
 				setGrantId(grantId)
 				setTransactionHash(data.createWorkspace.recordId)
+				setCreatingProposalStep(1)
 				// onComplete redirect to grant page
 				setRole('admin')
 				router.push({

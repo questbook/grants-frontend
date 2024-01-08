@@ -94,8 +94,13 @@ const RFPFormProvider = ({ children }: {children: ReactNode}) => {
 			proposalName: response?.grant?.title!,
 			startDate: response?.grant?.startDate!,
 			endDate: response?.grant?.deadline!,
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			allApplicantDetails: response?.grant?.fields.filter((field: any) => field.title.includes('customField')).map((field: any) => {
+			allApplicantDetails: response?.grant?.fields.filter((field: {
+				title: string
+			}) => field.title.includes('customField')).map((field: {
+				id: string
+				title: string
+				inputType: string
+			}) => {
 				return {
 					id: field.id.split('-')[1],
 					title: field.title.split('-')[1],

@@ -8,13 +8,12 @@ import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { logger } from 'ethers'
 import { useRouter } from 'next/router'
 import applicantDetailsList from 'src/constants/applicantDetailsList'
-import { defaultChainId } from 'src/constants/chains'
-import { useGrantDetailsQuery } from 'src/generated/graphql'
-import { useMultiChainQuery } from 'src/libraries/hooks/useMultiChainQuery'
+import { useQuery } from 'src/libraries/hooks/useQuery'
 import { CustomSelect } from 'src/libraries/ui/CustomSelect'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import { WebwalletContext } from 'src/pages/_app'
 import StepIndicator from 'src/screens/request_proposal/_components/StepIndicator'
+import { getGrantDetailsQuery } from 'src/screens/request_proposal/_data/getGrantDetailsQuery'
 import { RFPFormContext } from 'src/screens/request_proposal/Context'
 import { ApplicantDetailsFieldType } from 'src/types'
 
@@ -291,10 +290,8 @@ function ProposalSubmission() {
 		}
 	}, [chainIdString])
 
-	const { fetchMore: fetchGrantDetails } = useMultiChainQuery({
-		useQuery: useGrantDetailsQuery,
-		options: {},
-		chains: [chainId === -1 ? defaultChainId : chainId]
+	const { fetchMore: fetchGrantDetails } = useQuery({
+		query: getGrantDetailsQuery,
 	})
 
 	const fetchGrant = useCallback(async() => {
@@ -302,8 +299,9 @@ function ProposalSubmission() {
 			return
 		}
 
-		const result = await fetchGrantDetails({ grantId }, true)
-		if(!result?.length || !result[0]?.grant) {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const result: any = await fetchGrantDetails({ grantId }, true)
+		if(!result?.grant) {
 			return 'could-not-fetch-grant-details'
 		}
 
@@ -311,7 +309,13 @@ function ProposalSubmission() {
 		const fieldIDs = applicantDetailsList.map(d => d.id)
 		logger.info({ fieldIDs }, 'ProposalForm: fetchGrant (fieldIDs)')
 		const fields = {
-			fields: result[0].grant.fields.filter(f => f.title.includes('customField')).map((field) => {
+			fields: result.grant.fields.filter((f: {
+				title: string
+				id: string
+			}) => f.title.includes('customField')).map((field: {
+				id: string
+				title: string
+			}) => {
 				const id = field.id.substring(field.id.indexOf('.') + 1)
 				return {
 					...field,
@@ -323,6 +327,21 @@ function ProposalSubmission() {
 			})
 		}
 
+		if(result.grant.fields.map((f: { title: string }) => f.title).includes('tldr')) {
+			fields.fields.push({
+				...applicantDetailsList.find((d) => d.id === 'tldr'),
+				required: true
+			})
+		}
+
+		if(result.grant.fields.map((f: { title: string }) => f.title).includes('teamMembers')) {
+			fields.fields.push({
+				...applicantDetailsList.find((d) => d.id === 'teamMembers'),
+				required: true
+			})
+		}
+
+		logger.info({ fields }, 'ProposalForm: fetchGrant (fields)')
 		return fields.fields
 	}, [grantId, chainId])
 
@@ -333,8 +352,10 @@ function ProposalSubmission() {
 					return
 				}
 
+				logger.info({ fields }, 'ProposalForm: fetchGrant (fields)')
+
 				const newApplicantDetails = [...applicantDetailsList
-					.filter((detail) => detail.isRequired === false)
+					.filter((detail) => detail.isRequired === false && !fields?.map((f: { id: string }) => f.id).includes(detail.id))
 					.map(({ title, id, inputType, isRequired, pii }) => {
 						logger.info(id, 'Populating extra details')
 						return {
@@ -346,6 +367,7 @@ function ProposalSubmission() {
 						}
 					})
 					.filter((obj) => obj !== null), ...fields ? fields : []] as ApplicantDetailsFieldType[]
+				logger.info({ newApplicantDetails }, 'ProposalForm: fetchGrant (newApplicantDetails)')
 				setExtraDetailsFields(newApplicantDetails)
 			})
 	}, [])
