@@ -461,12 +461,12 @@ safeBalances={Object.values(safeBalances).reduce((a, b) => a + b, 0) ?? 0}
 												[
 													{
 														image: '0x012521',
-														title: 'JoJo (Gaming)',
+														title: 'JoJo (New Protocol Ideas)',
 														twitter: 'jojo17568'
 													},
 													{
 														image: '0x012522',
-														title: 'Adam (New Protocol Ideas)',
+														title: 'Adam (Gaming)',
 														twitter: 'Flook_eth'
 													},
 													{
