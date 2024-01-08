@@ -19,7 +19,8 @@ export const createWorkspaceAndGrant = gql`
     $link: String,
     $reviewType: String!,
     $fields: JSON!
-    $milestones: [String]
+    $milestones: [String],
+    $rubrics: JSON
   ) {
     createWorkspace(
       ownerId: $ownerId,
@@ -39,7 +40,8 @@ export const createWorkspaceAndGrant = gql`
       link: $link,
       reviewType: $reviewType,
       fields: $fields
-      milestones: $milestones
+      milestones: $milestones,
+      rubrics: $rubrics
     ) {
       recordId
       record {

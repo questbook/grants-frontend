@@ -454,6 +454,7 @@ function Discussions() {
 	})
 
 	useEffect(() => {
+		logger.info({ proposalTags }, 'PROPOSAL TAGS')
 		if(proposalTags.length === 1) {
 			logger.info('Setting selected tag to the only tag', proposalTags)
 			setSelectedTag(proposalTags[0])

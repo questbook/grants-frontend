@@ -13,7 +13,8 @@ export const updateGrant = gql`
     $reviewType: String!,
     $fields: JSON!
     $milestones: [String]
-    $workspace: String!
+    $workspace: String!,
+    $rubrics: JSON
   ) {
     updateGrant(
      id: $id,
@@ -27,7 +28,8 @@ export const updateGrant = gql`
       reviewType: $reviewType,
       fields: $fields
       milestones: $milestones
-      workspace: $workspace
+      workspace: $workspace,
+      rubrics: $rubrics
     ) {
       recordId
       record {

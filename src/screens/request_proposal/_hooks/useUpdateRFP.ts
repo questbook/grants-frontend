@@ -16,6 +16,7 @@ export default function useUpdateRFP() {
 	const { role } = useContext(GrantsProgramContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
 	const { rfpData, grantId, workspaceId, chainId, setExecutionType } = useContext(RFPFormContext)!
+	const { setCreatingProposalStep } = useContext(WebwalletContext)!
 	const router = useRouter()
 	const customToast = useCustomToast()
 
@@ -73,7 +74,8 @@ export default function useUpdateRFP() {
 			reviewType: rfpData?.reviewMechanism!,
 			fields:  fieldMap,
 			milestones: rfpData?.milestones,
-			workspace: workspaceId?.toString()
+			workspace: workspaceId?.toString(),
+			rubrics: rfpData?.rubrics,
 		}
 
 		try {
@@ -82,6 +84,7 @@ export default function useUpdateRFP() {
 			setExecutionType('edit')
 			if(update) {
 				const grantId = update.updateGrant.recordId
+				setCreatingProposalStep(1)
 				router.push({
 					pathname: '/dashboard',
 					query: {

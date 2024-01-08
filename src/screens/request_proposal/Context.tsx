@@ -82,22 +82,25 @@ const RFPFormProvider = ({ children }: {children: ReactNode}) => {
 		const response: any = await fetchRFP({
 			grantID,
 		})
-		logger.info('Grant program fetched', response)
-		const rubricData = response[0]?.grant?.rubric?.items?.map((item: { title: string }) => item.title) ?? []
+		const rubricData = response?.grant?.rubric?.items?.map((item: { title: string }) => item.title) ?? []
 		// let rubricData: string[] | undefined = []
 		// if(response?.grant?.rubric?.items.length! > 0) {
 		// 	 rubricData = response[0]?.grant?.rubric?.items!.map((item: { title: string}) => {
 		// 		return item.title
 		// 	})
 		// }
-
 		// console.log('all applicasnt details fetched', response[0]?.grant?.fields)
 		const data = {
 			proposalName: response?.grant?.title!,
 			startDate: response?.grant?.startDate!,
 			endDate: response?.grant?.deadline!,
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			allApplicantDetails: response?.grant?.fields.filter((field: any) => field.title.includes('customField')).map((field: any) => {
+			allApplicantDetails: response?.grant?.fields.filter((field: {
+				title: string
+			}) => field.title.includes('customField')).map((field: {
+				id: string
+				title: string
+				inputType: string
+			}) => {
 				return {
 					id: field.id.split('-')[1],
 					title: field.title.split('-')[1],
