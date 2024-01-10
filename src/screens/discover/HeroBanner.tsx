@@ -45,6 +45,10 @@ function HeroBanner({
 	  	return '$' + Math.round(num / 1000) + 'k'
 	  }
 
+	  const formatNumberInMillions = (num: number) => {
+		return '$' + (num / 1000000).toFixed(2) + 'M'
+	  }
+
 	  const totalProposalsPaidOut = () => {
 	  	let total = 0;
 	  	(grants && grants?.length > 0) ? grants.map((section) => {
@@ -144,7 +148,7 @@ function HeroBanner({
 	  				flexWrap='wrap'
 	  				justifyContent='flex-start'>
 					<TitleCards
-	  					data={formatNumber(safeBalances) || formatNumber(800000)}
+	  					data={formatNumberInMillions(safeBalances) || formatNumber(800000)}
 	  					title='in MultiSig' />
 					<TitleCards
 	  					data={totalProposals() || 0}
