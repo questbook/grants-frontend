@@ -322,18 +322,6 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 		logger.info({ allSectionGrants, recentProposals }, 'All section grants (DISCOVER CONTEXT)')
 
-		// move selected grants to top of the list
-		for(let i = 0; i < allSectionGrants.length; i++) {
-			const key = Object.keys(allSectionGrants[i])[0]
-			const topGrants = ['Arbitrum', 'Compound', 'TON Foundation', 'iExec']
-			if(topGrants.includes(key)) {
-				const temp = allSectionGrants[topGrants.indexOf(key)]
-				allSectionGrants[topGrants.indexOf(key)] = allSectionGrants[i]
-				allSectionGrants[i] = temp
-			}
-		}
-
-
 		recentProposals.sort((a, b) => b.updatedAtS - a.updatedAtS)
 		logger.info({ recentProposals }, 'All recent grants (DISCOVER CONTEXT)')
 		setSectionGrants(allSectionGrants)

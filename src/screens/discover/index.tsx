@@ -243,10 +243,12 @@ function Discover() {
 				<Image
 					borderWidth='1px'
 					borderColor='black.100'
-
 					borderRadius='3xl'
-					src={getAvatar(false, image ?? '0x0')}
-					boxSize='16px' />
+					src={
+						image?.startsWith('0x') ?
+						getAvatar(false, image ?? '0x0') : image
+}
+					boxSize='20px' />
 				<Text
 					ml={2}
 					fontWeight='400'
@@ -422,7 +424,7 @@ grantsAllocated={grantsAllocated ?? 0}
 
 		  			px={3}
 		  		>
-												About Arbitrum Grants
+												About Compound Grants
           </Text>
 
 										<Divider my={2} />
@@ -433,7 +435,7 @@ grantsAllocated={grantsAllocated ?? 0}
 		  			px={3}
 		  			textAlign='match-parent'
 		  		>
-												The Arbitrum grants, administered via DDA by Questbook and 4 domain allocators, went live on the 5th of October with a grants budget of $800k spread across four domains. The Questbook Arbitrum Grants program is useful for anyone developing in domain specific projects on top of Arbitrum, ranging from education, gaming, dev tooling to innovative ideas. Through the program, you can receive milestone-based funding based on domain specific needs, outlined by the domain allocators elected by the community. These domain allocators were elected from the community and by the community. The specific information regarding the accepted proposals and the funded teams can be found here.
+												The Compound grants, administered via DDA by Questbook and 3 domain allocators, went live on the 30th of November with a grants budget of $1M spread across four domains. The Questbook Compound Grants program is useful for anyone developing in domain specific projects on top of Compound, ranging from  New Dapps and Ideas, Multi-chain/Cross-chain, Dev Tooling and Security Tooling. Through the program, you can receive milestone-based funding based on domain specific needs, outlined by the domain allocators elected by the community. These domain allocators were elected from the community and by the community. The specific information regarding the accepted proposals and the funded teams can be found here.
           </Text>
 										<Text
 		  			fontWeight='500'
@@ -449,9 +451,9 @@ grantsAllocated={grantsAllocated ?? 0}
 										<Box p={1}>
 												<UserCard
 													image='0x0125215125'
-													title='Srijith'
-													twitter='Srijith_Padmesh'
-													telegram='Srijith13' />
+													title='Ruchil Sharma'
+													twitter='roohchill'
+													telegram='roohchill' />
           </Box>
 										<Divider my={2} />
 										<Text
@@ -463,31 +465,29 @@ grantsAllocated={grantsAllocated ?? 0}
 
 		  			px={3}
 		  		>
-												Domain Allocators
+								Domain Allocators
           </Text>
 										<Box p={1}>
 											{
 												[
 													{
-														image: '0x012521',
-														title: 'JoJo (New Protocol Ideas)',
-														twitter: 'jojo17568'
+														image: 'https://ipfs.questbook.app:8080/ipfs/Qmapyv8FtFXgUGJNTA6axAuu4ehXNtpNJsZkkxki2WM8JD',
+														title: 'allthecolors (New Dapps and Ideas)',
+														twitter: '0xA1176ec01045',
+														telegram: 'all_the_colors'
 													},
 													{
-														image: '0x012522',
-														title: 'Adam (Gaming)',
-														twitter: 'Flook_eth'
+														image: 'https://ipfs.questbook.app:8080/ipfs/QmRp5u9wy2m23HzkD9t1GQAeicAdpLphvahqAWfmRtKMuF',
+														title: 'Doo | StableLab (Multi-chain/Cross-chain, Dev Tooling)',
+														twitter: 'DooWanNam',
+														telegram: 'doowannam'
 													},
 													{
 														image: '0x012523',
-														title: 'Juandi (Dev Tooling)',
-														twitter: 'ImJuandi'
+														title: 'Michael Lewellen (Security Tooling)',
+														twitter: 'LewellenMichael',
+														telegram: 'cyloncat'
 													},
-													{
-														image: '0x012524',
-														title: 'Cattin (Education, Community growth & Events)',
-														twitter: 'Cattin0x'
-													}
 												].map((user, index) => (
 													<UserCard
 														key={index}

@@ -26,31 +26,23 @@ function HeroBannerBox({
     safeBalances: string
 }) {
 
+
 	const socialList = [
 		{
-			title: 'JoJo',
-			twitter: 'jojo17568'
+			image: 'https://ipfs.questbook.app:8080/ipfs/Qmapyv8FtFXgUGJNTA6axAuu4ehXNtpNJsZkkxki2WM8JD',
+			title: 'allthecolors',
+			twitter: '0xA1176ec01045'
 		},
 		{
-			title: 'Flook',
-			twitter: 'Flook_eth'
+			image: 'https://ipfs.questbook.app:8080/ipfs/QmRp5u9wy2m23HzkD9t1GQAeicAdpLphvahqAWfmRtKMuF',
+			title: 'Doo_StableLab',
+			twitter: 'DooWanNam'
 		},
 		{
-			title: 'Juandi',
-			twitter: 'ImJuandi'
+			image: '0x012523',
+			title: 'Michael Lewellen',
+			twitter: 'LewellenMichael'
 		},
-		{
-			title: 'Cattin',
-			twitter: 'Cattin0x'
-		},
-		{
-			title: 'Srijith',
-			twitter: 'Srijith_Padmesh'
-		},
-		{
-			title: 'Srijith padmesh',
-			twitter: 'Srijith_Padmesh'
-		}
 	]
 	const UserCard = ({ image, title, twitter, telegram }: {
 		image: string
@@ -159,11 +151,15 @@ function HeroBannerBox({
 						pl={10}
 						justifyContent='center'>
 						<Image
+							  borderWidth='1px'
+							  borderColor='black.100'
+							  borderRadius='lg'
+							  boxSize='16px'
 							mt={10}
 							justifyContent='center'
 							h='max'
 							w='24'
-							src='https://cryptologos.cc/logos/arbitrum-arb-logo.png' />
+							src='https://ipfs.questbook.app:8080/ipfs/QmTkdKP8gFTmrM5UJYAtEahqtU7GQyDVaN9UHnNoEY6M3M' />
 					</Flex>
 				)
 			}
@@ -179,11 +175,15 @@ function HeroBannerBox({
 					isMobile && (
 
 						<Image
+							borderWidth='1px'
+							borderColor='black.100'
+							borderRadius='lg'
+							boxSize='16px'
 							justifyContent='center'
 							h='max'
 							mb={4}
-							w='8'
-							src='https://cryptologos.cc/logos/arbitrum-arb-logo.png' />
+							w='16'
+							src='https://ipfs.questbook.app:8080/ipfs/QmTkdKP8gFTmrM5UJYAtEahqtU7GQyDVaN9UHnNoEY6M3M' />
 
 					)
 				}
@@ -206,6 +206,7 @@ function HeroBannerBox({
 				 size='sm'
 				 textColor='white'
 				 fontSize='14px'
+				 _hover={{ bgColor: 'blue.600' }}
 				 w={isMobile ? '50%' : ''}
 				 onClick={() => window.open(programDetails, '_blank')}
 				 rightIcon={<Image src='https://ipfs.io/ipfs/bafkreicnpfrdixcbocuksdful4gsaoetxrwby2a5tnpiehz7w4abbd2bcm' />}
@@ -222,7 +223,7 @@ function HeroBannerBox({
 						fontSize='12px'
 						lineHeight='16px'
 						color='white'>
-						This domain is focused on all new ideas that builders have that can boost Arbitrum as an ecosystem overall
+						This domain is focused on all new ideas that builders have that can boost Compound as an ecosystem overall
 					</Text>
 
 				</Flex>

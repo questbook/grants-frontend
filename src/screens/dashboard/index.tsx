@@ -39,7 +39,7 @@ function Dashboard(props: DynamicData) {
 							programDetails={grant?.link as string}
 							//@ts-ignore
 							grantTicketSize='25000'
-							reviewers={grant?.workspace?.members?.map((member) => member?.fullName) as string[]}
+							reviewers={grant?.workspace?.members?.map((member) => member?.fullName ?? member?.actorId?.slice(0, 4) + '...' + member?.actorId?.slice(-2)) as string[]}
 							proposalCount={grant?.numberOfApplications as number}
 							proposalCountAccepted={grant?.numberOfApplicationsSelected as number}
 							paidOut={'$' + Math.round((fundsAllocated?.disbursed as number) / 1000) + 'k'}

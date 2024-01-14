@@ -106,11 +106,15 @@ function HeroBanner({
 	  					pl={10}
 	  					justifyContent='center'>
 		<Image
+							borderWidth='1px'
+							borderColor='black.100'
+							borderRadius='3xl'
+							boxSize='16px'
 	  						mt={10}
 	  						justifyContent='center'
 	  						h='max'
 	  						w='52'
-	  						src='https://cryptologos.cc/logos/arbitrum-arb-logo.png' />
+	  						src='https://ipfs.questbook.app:8080/ipfs/QmTkdKP8gFTmrM5UJYAtEahqtU7GQyDVaN9UHnNoEY6M3M' />
 	  				</Flex>
 	  			)
 	  		}
@@ -126,24 +130,28 @@ function HeroBanner({
 	  				isMobile && (
 
 	  					<Image
-
+						  borderWidth='1px'
+						  borderColor='black.100'
+						  borderRadius='3xl'
+						  boxSize='16px'
 	  						justifyContent='center'
 	  						h='max'
 	  						w='24'
-	  						src='https://cryptologos.cc/logos/arbitrum-arb-logo.png' />
+	  						src='https://ipfs.questbook.app:8080/ipfs/QmTkdKP8gFTmrM5UJYAtEahqtU7GQyDVaN9UHnNoEY6M3M' />
 
 	  				)
 	  			}
 				<Text
+					mt={isMobile ? 2 : 0}
 	  				fontWeight='500'
-	  				fontSize='40px'
+	  				fontSize={isMobile ? '38px' : '40px'}
 	  				lineHeight='48px'
 	  				color='white'>
-					Arbitrum Grants
+					Compound Grants
 				</Text>
 
 				<Flex
-	  				mt={10}
+	  				mt={isMobile ? 5 : 10}
 	  				gap={8}
 	  				flexWrap='wrap'
 	  				justifyContent='flex-start'>
