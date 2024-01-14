@@ -174,7 +174,6 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 				 setProposalId(proposalId)
 				 setIsExecuting(false)
 				 setTransactionHash(proposalId)
-				 localStorage.removeItem(`form-${grant?.id}`)
 			} else {
 				customToast({
 					title: 'Error submitting proposal',
