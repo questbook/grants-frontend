@@ -166,13 +166,10 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 			const totalAllocated = result?.grantApplications?.reduce((acc: number, grantApplication: { milestones: { amount: number }[] }) => {
 				return acc + grantApplication.milestones.reduce((acc: number, milestone: { amount: number }) => acc + milestone.amount, 0)
 			}, 0)
-			const totalDisbursed = result?.grantApplications?.reduce((acc: number, grantApplication: { milestones: { amountPaid: number }[] }) => {
-				return acc + grantApplication.milestones.reduce((acc: number, milestone: { amountPaid: number }) => acc + milestone.amountPaid, 0)
-			}, 0)
-			logger.info({ totalAllocated, totalDisbursed }, 'Funds allocated (GET FUNDS ALLOCATED)')
+			logger.info({ totalAllocated }, 'Funds allocated (GET FUNDS ALLOCATED)')
 			setFundsAllocated({
 				allocated: totalAllocated,
-				disbursed: totalDisbursed
+				disbursed: result?.grantApplications[0]?.grant?.totalGrantFundingDisbursedUSD
 			})
 		}
 
