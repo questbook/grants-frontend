@@ -172,20 +172,6 @@ function HeroBanner({
 	  					title='Funds Allocated' />
 
 				</Flex>
-				{
-	  				isMobile && (
-
-	  					<Image
-	  						bottom={0}
-	  						right={0}
-	  						opacity={0.9}
-	  						position='absolute'
-	  						h='max'
-	  						w='52'
-	  						src='https://ipfs.io/ipfs/bafkreieq36x5ktemdsy4r5tuirc62sbnxujhpcvwolwfx6bnsp4wnyei4m' />
-
-	  				)
-	  			}
 			</Flex>
 			{/* {
 				!isMobile && (
@@ -199,22 +185,6 @@ function HeroBanner({
 					</Flex>
 				)
 			} */}
-			{
-	  			!isMobile && (
-	  				<Flex
-	  					bgColor='black.100'
-	  					flexGrow={1}
-	  					pr={10}
-	  					justifyContent='center'>
-		<Image
-	  						mt={10}
-	  						justifyContent='center'
-	  						h='max'
-	  						w='52'
-	  						src='https://ipfs.io/ipfs/bafkreieq36x5ktemdsy4r5tuirc62sbnxujhpcvwolwfx6bnsp4wnyei4m' />
-	  				</Flex>
-	  			)
-	  		}
 
 		</Flex>
 	  )
