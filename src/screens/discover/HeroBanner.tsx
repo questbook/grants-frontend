@@ -97,7 +97,7 @@ function HeroBanner({
 	  		alignItems='stretch'
 	  		alignContent='stretch'
 	  		justifyContent='flex-start'
-	  		h='560px'>
+	  		>
 			{
 	  			!isMobile && (
 	  				<Flex
@@ -160,9 +160,9 @@ function HeroBanner({
 	  					title='in MultiSig' />
 					<TitleCards
 	  					data={totalProposals() || 0}
-	  					title='Proposals' />
+	  					title='Proposals Submitted' />
 					<TitleCards
-	  					data={totalProposalsAccepted() || 40}
+	  					data={totalProposalsAccepted() || 0}
 	  					title='Accepted' />
 					<TitleCards
 	  					data={totalProposalsPaidOut() || 0}

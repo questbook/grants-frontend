@@ -278,8 +278,8 @@ function HeroBannerBox({
 							data={safeBalances ?? 0}
 							title='in MultiSig' />
 						<TitleCards
-							data={proposalCount ?? 48}
-							title='Proposals' />
+							data={proposalCount ?? 0}
+							title='Proposals Submitted' />
 						<TitleCards
 							data={proposalCountAccepted ?? 11}
 							title='Accepted' />
