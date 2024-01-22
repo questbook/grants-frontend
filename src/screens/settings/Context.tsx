@@ -7,8 +7,9 @@ import { getSafeURL } from 'src/libraries/utils/multisig'
 import { getKeyForMemberPii, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
-import { GrantProgramForm, SettingsFormContextType, WorkspaceMembers } from 'src/screens/settings/_utils/types'
+import { adminTable, GrantProgramForm, SettingsFormContextType, WorkspaceMembers } from 'src/screens/settings/_utils/types'
 import { getWorkspaceDetailsQuery, getWorkspaceMembersByWorkspaceIdQuery } from 'src/screens/settings/data'
+import { getAdminTableQuery } from 'src/screens/settings/data/getAdminTableQuery'
 
 const SettingsFormContext = createContext<SettingsFormContextType | undefined>(undefined)
 
@@ -26,8 +27,12 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 						if(refresh) {
 							fetchGrantProgramDetails()
 							fetchWorkspaceMembersDetails()
+							getAdminTable()
 						}
-					}
+					},
+					adminTable: adminTable!,
+					showAdminTable: showAdminTable!,
+					setShowAdminTable: setShowAdminTable!,
 				}
 			}>
 			{children}
@@ -37,6 +42,8 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 	const [grantProgramData, setGrantProgramData] = useState<GrantProgramForm>()
 	const [workspaceMembers, setWorkspaceMembers] = useState<WorkspaceMembers>()
 	const [safeURL, setSafeURL] = useState<string>('')
+	const [adminTable, setAdminTable] = useState<adminTable>([])
+	const [showAdminTable, setShowAdminTable] = useState<boolean>(false)
 
 	const { grant, setGrant } = useContext(GrantsProgramContext)!
 
@@ -54,6 +61,9 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 		query: getWorkspaceMembersByWorkspaceIdQuery,
 	})
 
+	const { fetchMore: fetchMoreAdminTable } = useQuery({
+		query: getAdminTableQuery,
+	})
 
 	const fetchGrantProgramDetails = useCallback(async() => {
 		try {
@@ -138,6 +148,40 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 
 		return grant
 	}
+
+	const getAdminTable = useCallback(async() => {
+		if(!grant?.id) {
+			return 'no-grant-id'
+		}
+
+		const details: any = await fetchMoreAdminTable({ id: grant?.id }, true)
+		logger.info({ details }, 'Grant details (GET GRANT)')
+		let applications = []
+		if(!details?.grant) {
+			return 'no-grant-in-query'
+		}
+
+		if(details?.fundTransfers) {
+			applications = details?.grant?.applications?.map((application: any) => {
+				const fundTransfer = details?.fundTransfers?.find((fundTransfer: any) => fundTransfer?.application?.id === application?.id)
+				logger.info({ fundTransfer }, 'Fund transfer')
+				return {
+					...application,
+					fundTransfer: fundTransfer !== undefined ? [fundTransfer] : false
+				}
+			})
+		}
+
+		setAdminTable(applications)
+
+		return 'grant-details-fetched'
+	}, [grant?.id])
+
+	useEffect(() => {
+		if(grant?.id) {
+			getAdminTable()
+		}
+	}, [grant?.id])
 
 	useEffect(() => {
 		fetchGrantProgramDetails().then((message) => {
