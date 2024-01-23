@@ -112,7 +112,7 @@ function MilestoneChoose({ proposal, index, ...props }: Props) {
 	}
 
 	const { milestoneIndices, setMilestoneIndices, amounts, setAmounts } = useContext(FundBuilderContext)!
-
+	logger.info({ milestoneIndices, amounts }, 'MilestoneChoose')
 	const milestones = useMemo(() => {
 		return proposal?.milestones || []
 	}, [proposal])

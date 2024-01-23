@@ -228,7 +228,7 @@ function FundBuilderDrawer() {
 
 		setAmounts(selectedProposalsData.map((p) => p?.milestones?.[0]?.amount ? parseInt(p?.milestones?.[0]?.amount) : 0))
 		setTos(selectedProposalsData.map((p) => getFieldString(p, 'applicantAddress') ?? ''))
-		setMilestoneIndices(selectedProposalsData.map(() => 0))
+		setMilestoneIndices(selectedProposalsData.map((p) => p.milestones.findIndex((m) => parseFloat(m?.amountPaid) === 0) !== -1 ? p.milestones.findIndex((m) => parseFloat(m?.amountPaid) === 0) : 0))
 	}, [selectedProposalsData])
 
 	const isDisabled = useMemo(() => {

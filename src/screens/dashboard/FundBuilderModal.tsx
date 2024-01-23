@@ -279,7 +279,7 @@ function FundBuilderModal({
 
 		setAmounts([proposal?.milestones?.[0]?.amount ? parseInt(proposal?.milestones?.[0]?.amount) : 0])
 		setTos([getFieldString(proposal, 'applicantAddress') ?? tos?.[0]])
-		setMilestoneIndices([0])
+		setMilestoneIndices([proposal?.milestones?.findIndex((milestone) => parseFloat(milestone?.amountPaid) === 0) > -1 ? proposal?.milestones?.findIndex((milestone) => parseFloat(milestone?.amountPaid) === 0) : 0])
 	}, [proposal])
 
 	const isDisabled = useMemo(() => {
