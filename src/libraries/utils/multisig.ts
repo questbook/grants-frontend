@@ -74,6 +74,10 @@ export function getRealmsURL(realmPk: string) {
 	return `https://app.realms.today/dao/${realmPk}`
 }
 
-export function getTonkeyProposalUrl(id: string, transactionStatus: string) {
-	return `https://tonkey.app/transactions/${transactionStatus}?safe=${id}`
+export function getTonkeyProposalUrl(id: string, transactionStatus: string, txHash?: string) {
+	if(transactionStatus === 'history') {
+		return `https://tonkey.app/transactions/tx?safe=${id}&id=${txHash}`
+	} else {
+		return `https://tonkey.app/transactions/${transactionStatus}?safe=${id}`
+	}
 }

@@ -145,10 +145,8 @@ function Payouts() {
 							() => {
 								if(payout?.transactionHash && grant?.workspace?.safe?.address) {
 									if(grant?.workspace?.safe?.chainId === '512342' || grant?.workspace?.safe?.chainId === '512341') {
-										window.open(getTonkeyProposalUrl(grant?.workspace?.safe?.address, payout.status === 'queued' ? 'queue' : 'history'))
-									}
-
-									if(grant?.workspace?.safe?.chainId === '900001') {
+										window.open(getTonkeyProposalUrl(grant?.workspace?.safe?.address, payout.status === 'queued' ? 'queue' : 'history', payout?.transactionHash))
+									} else if(grant?.workspace?.safe?.chainId === '900001') {
 										window.open(getProposalUrl(grant?.workspace?.safe?.address, payout.transactionHash), '_blank')
 									} else {
 										window.open(getGnosisTansactionLink(grant?.workspace?.safe?.address, grant?.workspace?.safe?.chainId.toString(), payout?.transactionHash), '_blank')
