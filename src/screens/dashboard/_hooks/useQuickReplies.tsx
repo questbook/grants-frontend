@@ -32,7 +32,7 @@ function useProposalTags({ proposals }: Props) {
 		if(proposals.every(p => p.state === 'submitted')) {
 			return { proposalTags: allTags['admin'] }
 		} else if(proposals.every(p => p.state === 'resubmit')) {
-			return { proposalTags: allTags['admin'].slice(1, 2).concat(allTags['admin'].slice(3)) }
+			return { proposalTags: allTags['admin'].slice(0, 2).concat(allTags['admin'].slice(3)) }
 		} else {
 			return { proposalTags: allTags['admin'].slice(3) }
 		}
