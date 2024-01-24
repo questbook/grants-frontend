@@ -75,7 +75,10 @@ export function getRealmsURL(realmPk: string) {
 }
 
 export function getTonkeyProposalUrl(id: string, transactionStatus: string, txHash?: string) {
-	if(transactionStatus === 'history') {
+	const isWalletTransaction = txHash?.startsWith('99887341.') === true && txHash?.split('.')[1]?.length === 44
+	if(isWalletTransaction) {
+		return `https://testnet.tonscan.org/tx/${txHash?.replace('99887341.', '')}`
+	} else if(transactionStatus === 'history') {
 		return `https://tonkey.app/transactions/tx?safe=${id}&id=${txHash}`
 	} else {
 		return `https://tonkey.app/transactions/${transactionStatus}?safe=${id}`
