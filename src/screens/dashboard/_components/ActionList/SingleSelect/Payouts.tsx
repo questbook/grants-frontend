@@ -125,7 +125,7 @@ function Payouts() {
 					<Text
 						w='50%'
 						variant='body'>
-						{formatTime(payout.executionTimestamp ?? payout.createdAtS, true)}
+						{formatTime(payout.status === 'failed' ? payout.createdAtS : payout.executionTimestamp ?? payout.createdAtS, true)}
 					</Text>
 				</Flex>
 
