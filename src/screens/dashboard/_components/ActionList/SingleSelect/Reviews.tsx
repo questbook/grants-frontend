@@ -381,7 +381,7 @@ function Reviews() {
 														}
 
 														if(!members[reviewer.id]) {
-															selectedReviewers.push(reviewer.member.actorId)
+															selectedReviewers.push(reviewer.member.actorId?.toLowerCase())
 															active.push(false)
 														}
 													}
@@ -389,7 +389,7 @@ function Reviews() {
 													Object.keys(members).forEach(m => {
 														const member = grant?.workspace?.members?.find(m2 => m2.id === m)
 														if(member) {
-															selectedReviewers.push(member.actorId)
+															selectedReviewers.push(member.actorId?.toLowerCase())
 															active.push(true)
 														}
 													})
