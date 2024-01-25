@@ -332,21 +332,21 @@ function FundBuilderModal({
 					// 	'99887341.' + timestamp
 					// ]
 
-					// const args = {
-					// 	applicationIds: [String(proposal?.id)],
-					// 	milestoneIds: [String(parseInt(milestones[milestoneIndices[0]].id?.split('.')[1]))],
-					// 	asset: '0x0000000000000000000000000000000000000001',
-					// 	tokenName: selectedTokenInfo?.tokenName!,
-					// 	nonEvmAssetAddress: 'nonEvmAssetAddress-toBeChanged',
-					// 	amounts: [amounts?.[0]],
-					// 	transactionHash: '99887341.' + timestamp,
-					// 	sender: safeAddress,
-					// 	grant: grant?.id!,
-					// 	to: tos?.[0]
-					// }
+					const args = {
+						applicationIds: [String(proposal?.id)],
+						milestoneIds: [String(parseInt(milestones[milestoneIndices[0]].id?.split('.')[1]))],
+						asset: '0x0000000000000000000000000000000000000001',
+						tokenName: selectedTokenInfo?.tokenName!,
+						nonEvmAssetAddress: 'nonEvmAssetAddress-toBeChanged',
+						amounts: [amounts?.[0]],
+						transactionHash: '99887341.' + (response?.transactionHash ?? timestamp),
+						sender: safeAddress,
+						grant: grant?.id!,
+						to: tos?.[0]
+					}
 
 					// // await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
-					// await executeMutation(DisburseRewardSafeMutation, args)
+					await executeMutation(DisburseRewardSafeMutation, args)
 
 					// setSignerVerifiedState('transaction_initiated')
 					setIsModalOpen(false)
