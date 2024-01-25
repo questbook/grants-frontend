@@ -13,7 +13,9 @@ export const getSpecificProposalCommentsQuery = gql`query getComments($grantId: 
         data
       }
       workspace {
-        members {
+        members: membersFilter(filter: {
+          enabled: true
+        }) {
           actorId
           fullName
           profilePictureIpfsHash
