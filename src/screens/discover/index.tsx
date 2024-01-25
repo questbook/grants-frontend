@@ -16,7 +16,6 @@ import ConfirmationModal from 'src/libraries/ui/ConfirmationModal'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
-import SearchField from 'src/libraries/ui/SearchField'
 import { getAvatar } from 'src/libraries/utils'
 import { chainNames } from 'src/libraries/utils/constants'
 import getErrorMessage from 'src/libraries/utils/error'
@@ -168,7 +167,7 @@ function Discover() {
 	const [networkTransactionModalOpen, setNetworkTransactionModalOpen] = useState(false)
 	const [currentStepIndex, setCurrentStepIndex] = useState(-1)
 	const [sectionName] = useState('')
-	const [filterGrantName, setFilterGrantName] = useState('')
+	const [filterGrantName] = useState('')
 
 	const [imageFile, setImageFile] = useState<{ file: File | null, hash?: string }>({ file: null })
 
@@ -339,32 +338,12 @@ grantsAllocated={grantsAllocated ?? 0}
 										w='100%'>
 										<Text
 											variant='heading3'
-											fontWeight='500'
+											fontWeight='600'
 											w='100%'
 										>
-											Grants
+											Domains
 										</Text>
 
-										<SearchField
-											bg='white'
-											w='100%'
-
-
-											placeholder='Enter Grant Program Name to search'
-											value={filterGrantName}
-											onKeyDown={
-												(e) => {
-													if(e.key === 'Enter' && filterGrantName !== undefined && filterGrantName?.trim().length > 0) {
-														setFilterGrantName(filterGrantName)
-													}
-												}
-											}
-											onChange={
-												(e) => {
-													setFilterGrantName(e.target.value)
-												}
-											}
-										/>
 									</Flex>
 									{
 										(sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
