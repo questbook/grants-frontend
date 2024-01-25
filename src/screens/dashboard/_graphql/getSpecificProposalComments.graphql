@@ -12,7 +12,9 @@ query getComments($grantId: String!, $proposalId: String!) {
       data
     }
     workspace {
-      members {
+      members: membersFilter(filter: {
+      enabled: true
+    })  {
         actorId
         fullName
         profilePictureIpfsHash
