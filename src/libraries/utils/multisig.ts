@@ -14,7 +14,8 @@ const NETWORK_PREFIX: { [key: string]: string } = {
 	'5': 'gor',
 	'40': 'tlos',
 	'4689': 'iotx',
-	'4690': 'iotxtest'
+	'4690': 'iotxtest',
+	'42161': 'arb1'
 }
 
 export function getSafeURL(safeAddress: string, chainId: string) {
