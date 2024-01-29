@@ -43,7 +43,7 @@ function HeroBanner() {
 					lineHeight='24px'
 					fontWeight='400'
 					color='white'>
-					Invite proposals from builders. Review and fund proposals with milestones - all on chain.
+					Invite proposals from builders. Review and fund proposals with milestones - on chain.
 				</Text>
 
 				<Flex>
