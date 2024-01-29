@@ -341,7 +341,7 @@ function Discover() {
 											logger.info('section', { section, sectionGrants })
 											const sectionName = Object.keys(section)[0]
 											const sectionImage = section[sectionName].sectionLogoIpfsHash
-
+											const sectionLink = sectionName === 'Arbitrum' ? 'arbitrum' : sectionName === 'Compound' ? 'compoundgrants' : false
 											const grants = section[sectionName].grants.filter((grant) => grant.title.toLowerCase().includes(filterGrantName.trim().toLowerCase())).map(grant => ({ ...grant, role: 'community' as Roles }))
 											return (
 												<Box
@@ -359,6 +359,8 @@ function Discover() {
 														<Text
 															fontWeight='500'
 															variant='subheading'
+															onClick={() => sectionLink ? window.open(`https://${sectionLink}.questbook.app`, '_blank') : null}
+															cursor={sectionLink ? 'pointer' : 'text'}
 														>
 															{sectionName}
 														</Text>
