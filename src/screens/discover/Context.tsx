@@ -99,12 +99,17 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 				if(balances?.value) {
 					const total = balances?.value?.reduce((acc: number, cur: {usdValueAmount: number}) => acc + cur.usdValueAmount, 0)
+					localStorage.setItem(`safe-${safeObj.chainId}-${safeObj.address}`, total.toString())
 					logger.info({ balances, safe }, 'Total (DISCOVER CONTEXT)')
 					return total
 				} else {
 					return 0
 				}
 			} catch(e) {
+				if(localStorage.getItem(`safe-${safeObj.chainId}-${safeObj.address}`)) {
+					return parseInt(localStorage.getItem(`safe-${safeObj.chainId}-${safeObj.address}`) ?? '0')
+				}
+
 				logger.info({ safe }, 'Error (DISCOVER CONTEXT)')
 				return 0
 			}

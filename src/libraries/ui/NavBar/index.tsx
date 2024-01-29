@@ -643,9 +643,16 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 			logger.info({ result }, 'safe balance')
 			if(result?.value) {
 				const total = result.value.reduce((acc: number, cur: { usdValueAmount: number }) => acc + cur.usdValueAmount, 0)
+				localStorage.setItem(`safeBalance-${grant?.workspace?.safe?.address}-${grant?.workspace?.safe?.chainId}`, total.toString())
 				logger.info({ total }, 'balance total')
 				setSafeUSDAmount(total)
 			}
+		}).catch((e: Error) => {
+			if(localStorage.getItem(`safeBalance-${grant?.workspace?.safe?.address}-${grant?.workspace?.safe?.chainId}`)) {
+				setSafeUSDAmount(parseFloat(localStorage.getItem(`safeBalance-${grant?.workspace?.safe?.address}-${grant?.workspace?.safe?.chainId}`)!))
+			}
+
+			logger.error(e, 'error fetching safe balance')
 		})
 	}, [grant?.workspace?.safe])
 
