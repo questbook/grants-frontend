@@ -32,7 +32,7 @@ function StatsBanner() {
 						fontWeight='500'
 						fontSize={['25px', '40px']}
 						lineHeight='48px'>
-						$4m+
+						$3.5m+
 					</Text>
 					<Text
 						fontWeight='500'
