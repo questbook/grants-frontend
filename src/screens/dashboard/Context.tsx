@@ -130,6 +130,8 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 			// Check if the role the user is trying to access is valid
 			if(possibleRoles.includes(_role as Roles) && !possibleRoles.includes('admin')) {
 				setRole(_role as Roles)
+			} else if(possibleRoles.includes('admin')) {
+				setRole('admin')
 			} else {
 				// Assign a role to the user based on the grant
 				setRole(possibleRoles[possibleRoles.length - 1])
