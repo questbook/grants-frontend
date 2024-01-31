@@ -1,5 +1,5 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
-import ReactLinkify from 'react-linkify'
+import Markdown from 'react-markdown'
 import { LockIcon } from '@chakra-ui/icons'
 import {
 	Box,
@@ -10,13 +10,15 @@ import {
 	IconButton,
 	Image,
 	Text,
-	Textarea,
 	Tooltip,
 	useToken,
 } from '@chakra-ui/react'
 import autosize from 'autosize'
+import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
+import { draftjsToMd, mdToDraftjs } from 'draftjs-md-converter'
 import { Close } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
+import CommentsTextEditor from 'src/libraries/ui/RichTextEditor/commentTextEditor'
 import { getAvatar } from 'src/libraries/utils'
 import { formatAddress, getFieldString } from 'src/libraries/utils/formatting'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
@@ -34,6 +36,7 @@ import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { CommentType, TagType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { Roles } from 'src/types'
+
 
 function Discussions() {
 	const { setSignIn } = useContext(SignInContext)!
@@ -149,10 +152,11 @@ function Discussions() {
 															logger.info('Deselecting tag')
 															setSelectedTag(undefined)
 															setText('')
+															setEditorState(EditorState.createEmpty())
 														} else {
 															logger.info('Selecting tag')
 															setSelectedTag(tag)
-															setText(tag.commentString)
+															setEditorState(EditorState.createWithContent(convertFromRaw(mdToDraftjs(tag.commentString))))
 														}
 													}
 												}
@@ -170,16 +174,16 @@ function Discussions() {
 							direction='column'
 							w='100%'>
 							<Flex>
-								<Textarea
-									value={text}
-									onChange={
-										(e) => {
-											setText(e.target.value)
-											localStorage.setItem(`comment-${grant?.id}-${proposal?.id}`, e.target.value)
-										}
-									}
-									fontSize='14px'
-									placeholder='Type your comment here' />
+
+								<Flex
+									w={['100%', '100%']}
+								>
+									<CommentsTextEditor
+										value={editorState}
+										onChange={setEditorState}
+										placeholder='Type your comment here' />
+								</Flex>
+
 								{
 									proposalTags?.length > 1 && (
 										<IconButton
@@ -243,6 +247,7 @@ function Discussions() {
 											)
 											if(ret) {
 												setText('')
+												setEditorState(EditorState.createEmpty())
 												logger.info('Setting selected tag to undefined after posting comment')
 												setSelectedTag(undefined)
 												refreshComments(true)
@@ -352,46 +357,42 @@ function Discussions() {
 						}
 					</Flex>
 
-					<ReactLinkify
-						componentDecorator={
-							(
-								decoratedHref: string,
-								decoratedText: string,
-								key: number,
-							) => (
-								<Text
-									display='inline-block'
-									wordBreak='break-all'
-									color='accent.azure'
-									variant='body'
-									cursor='pointer'
-									_hover={
-										{
-											textDecoration: 'underline',
-										}
-									}
-									key={key}
-									onClick={
-										() => {
-											window.open(decoratedHref, '_blank')
-										}
-									}
-								>
-									{decoratedText}
-								</Text>
-							)
+					<Markdown
+						components={
+							{
+								p: ({ ...props }) => {
+									return (
+										<Text
+											{...props}
+											variant='body'
+											fontSize='14px'
+											mt={2}
+											style={
+												{
+													fontStyle: hasAccess ? 'normal' : 'italic',
+												}
+											}
+											whiteSpace='pre-line'
+											wordBreak='break-word'
+										/>
+									)
+								},
+								img: ({ ...props }) => {
+									return (
+										<Image
+											{...props}
+											w='50%'
+											mt={2}
+											src={props.src}
+											alt='comment-image'
+										/>
+									)
+								}
+							}
 						}
 					>
-						<Text
-							wordBreak='break-word'
-							mt={1}
-							fontStyle={hasAccess ? 'normal' : 'italic'}
-							variant='body'
-							whiteSpace='pre-line'
-						>
-							{comment.message}
-						</Text>
-					</ReactLinkify>
+						{comment.message}
+					</Markdown>
 				</Flex>
 			</Flex>
 		)
@@ -416,6 +417,7 @@ function Discussions() {
 	const [isCommentPrivate, setIsCommentPrivate] = useState<boolean>(false)
 	const [selectedTag, setSelectedTag] = useState<TagType>()
 	const [text, setText] = useState<string>('')
+	const [editorState, setEditorState] = useState(() => EditorState.createEmpty())
 
 	const { addComment } = useAddComment({
 		setStep,
@@ -430,7 +432,8 @@ function Discussions() {
 		const comment = localStorage.getItem(
 			`comment-${grant?.id}-${proposal?.id}`,
 		)
-		setText(comment ?? '')
+		// setText(comment ?? '')
+		setEditorState(EditorState.createWithContent(convertFromRaw(mdToDraftjs(comment ?? ''))))
 	}, [grant, proposal])
 
 	useEffect(() => {
@@ -452,6 +455,12 @@ function Discussions() {
 	const { proposalTags } = useProposalTags({
 		proposals: proposal ? [proposal] : [],
 	})
+
+	useEffect(() => {
+		const content = draftjsToMd(convertToRaw(editorState.getCurrentContent()))
+		logger.info({ content }, 'CONTENT')
+		setText(content)
+	}, [editorState])
 
 	useEffect(() => {
 		logger.info({ proposalTags }, 'PROPOSAL TAGS')
