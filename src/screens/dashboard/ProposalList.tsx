@@ -44,7 +44,9 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 					</Text>
 				</Text>
 				{
-					(role === 'community' || role === 'builder') && (
+					(role === 'community' || role === 'builder') &&
+					grant?.id !== '0x4494cf7375aa61c9a483259737c14b3dba6c04e6' &&
+					(
 						<Button
 							variant='secondaryV2'
 							// w='103px'

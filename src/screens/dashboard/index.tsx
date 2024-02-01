@@ -9,6 +9,7 @@ import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import ThreeColumnSkeleton from 'src/screens/dashboard/_components/ThreeColumnSkeleton'
 import { DynamicData } from 'src/screens/dashboard/_utils/types'
 import ActionList from 'src/screens/dashboard/ActionList'
+import Banner from 'src/screens/dashboard/Banner'
 import Body from 'src/screens/dashboard/Body'
 import { DashboardProvider, FundBuilderProvider, ModalContext, ModalProvider } from 'src/screens/dashboard/Context'
 import FundBuilderDrawer from 'src/screens/dashboard/FundBuilderDrawer'
@@ -35,35 +36,54 @@ function Dashboard(props: DynamicData) {
 				description={description} />
 			{
 				!isLoading && isMobile && (
-					<Flex
-						h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
-						overflowY='clip'>
+					<>
+
 						{
-							(dashboardStep === false) && (
-								<ProposalList
-									step={step}
-									setStep={setStep} />
+							grant?.id === '0x4494cf7375aa61c9a483259737c14b3dba6c04e6' && (
+								<Banner
+									message='The domain is closed until further notice as the funds have been fully allocated.'
+								/>
 							)
 						}
-						{
-							(dashboardStep === true) && (
-								<>
-									<Body />
-								</>
-							)
-						}
-					</Flex>
+						<Flex
+							h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
+							overflowY='clip'>
+							{
+								(dashboardStep === false) && (
+									<ProposalList
+										step={step}
+										setStep={setStep} />
+								)
+							}
+							{
+								(dashboardStep === true) && (
+									<>
+										<Body />
+									</>
+								)
+							}
+						</Flex>
+					</>
 				)
 			}
 			{
 				!isLoading && (isMobile === false) && (
-					<Flex
-						h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
-						overflowY='clip'>
-						<ProposalList />
-						<Body />
-						<ActionList />
-					</Flex>
+					<>
+						{
+							grant?.id === '0x4494cf7375aa61c9a483259737c14b3dba6c04e6' && (
+								<Banner
+									message='The domain is closed until further notice as the funds have been fully allocated.'
+								/>
+							)
+						}
+						<Flex
+							h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
+							overflowY='clip'>
+							<ProposalList />
+							<Body />
+							<ActionList />
+						</Flex>
+					</>
 				)
 			}
 
@@ -103,7 +123,7 @@ function Dashboard(props: DynamicData) {
 	)
 
 	const { isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen, isFundingMethodModalOpen, setIsFundingMethodModalOpen } = useContext(ModalContext)!
-	const { role, isLoading } = useContext(GrantsProgramContext)!
+	const { role, isLoading, grant } = useContext(GrantsProgramContext)!
 	const { dashboardStep, setDashboardStep } = useContext(WebwalletContext)!
 	const [step, setStep] = useState(false)
 	const [payWithSafe, setPayWithSafe] = useState <boolean> (true)
