@@ -604,6 +604,11 @@ function ProposalForm() {
 			return true
 		}
 
+		if(grant?.id === '0x4494cf7375aa61c9a483259737c14b3dba6c04e6') {
+			logger.info('This domain is disabled')
+			return true
+		}
+
 		const optionalFields = ['projectDetails', 'fundingAsk', 'fundingBreakdown', 'projectGoals', 'projectLink']
 		const { fields, members, details, milestones } = form
 		for(const field of fields) {

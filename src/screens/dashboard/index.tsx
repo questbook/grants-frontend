@@ -7,6 +7,7 @@ import logger from 'src/libraries/logger'
 import LinkYourMultisigModal from 'src/libraries/ui/LinkYourMultisigModal'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import Banner from 'src/screens/dashboard/_components/Banner'
 import HeroBannerBox from 'src/screens/dashboard/_components/HeroBanner'
 import ThreeColumnSkeleton from 'src/screens/dashboard/_components/ThreeColumnSkeleton'
 import { DynamicData } from 'src/screens/dashboard/_utils/types'
@@ -58,35 +59,41 @@ function Dashboard(props: DynamicData) {
 						description={description} />
 					{
 						!isLoading && isMobile && (
-							<Flex
-								h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
-								overflowY='clip'>
-								{
-									(dashboardStep === false) && (
-										<ProposalList
-											step={step}
-											setStep={setStep} />
-									)
-								}
-								{
-									(dashboardStep === true) && (
-										<>
-											<Body />
-										</>
-									)
-								}
-							</Flex>
+							<>
+								{grant?.id === '0x4494cf7375aa61c9a483259737c14b3dba6c04e6' && <Banner /> }
+								<Flex
+									h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
+									overflowY='clip'>
+									{
+										(dashboardStep === false) && (
+											<ProposalList
+												step={step}
+												setStep={setStep} />
+										)
+									}
+									{
+										(dashboardStep === true) && (
+											<>
+												<Body />
+											</>
+										)
+									}
+								</Flex>
+							</>
 						)
 					}
 					{
 						!isLoading && (isMobile === false) && (
-							<Flex
-								h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
-								overflowY='clip'>
-								<ProposalList />
-								<Body />
-								<ActionList />
-							</Flex>
+							<>
+								{grant?.id === '0x4494cf7375aa61c9a483259737c14b3dba6c04e6' && <Banner /> }
+								<Flex
+									h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
+									overflowY='clip'>
+									<ProposalList />
+									<Body />
+									<ActionList />
+								</Flex>
+							</>
 						)
 					}
 

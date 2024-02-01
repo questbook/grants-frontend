@@ -93,9 +93,17 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						<motion.div
 						 whileHover={{ scale: 1.05 }}
 						 >
-							<StateButton
-								state='approved'
-								title='Open' />
+							{
+								grant?.id === '0x4494cf7375aa61c9a483259737c14b3dba6c04e6' ? (
+									<StateButton
+										state='rejected'
+										title='Closed' />
+								) : (
+									<StateButton
+										state='approved'
+										title='Open' />
+								)
+							}
 						</motion.div>
 						<motion.div
 							whileHover={{ scale: 1.05 }}>
