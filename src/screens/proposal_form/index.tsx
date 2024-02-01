@@ -16,6 +16,7 @@ import { getExplorerUrlForTxHash, getRewardAmountMilestones } from 'src/librarie
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { GrantsProgramContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
+import Banner from 'src/screens/dashboard/Banner'
 import SectionHeader from 'src/screens/proposal_form/_components/SectionHeader'
 import SectionInput from 'src/screens/proposal_form/_components/SectionInput'
 import SectionRichTextEditor from 'src/screens/proposal_form/_components/SectionRichTextEditor'
@@ -176,6 +177,18 @@ function ProposalForm() {
 						newTab !== 'true' && (
 							<Flex justify='start'>
 								<BackButton />
+							</Flex>
+						)
+					}
+					{
+						grant?.id === '0x4494cf7375aa61c9a483259737c14b3dba6c04e6' && (
+							<Flex
+								justify='center'
+								mb={4}
+								w='100%'
+								bg='gray.200'
+							>
+								<Banner message='The domain is closed until further notice as the funds have been fully allocated.' />
 							</Flex>
 						)
 					}
