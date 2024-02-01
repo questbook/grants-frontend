@@ -47,6 +47,7 @@
     "crypto-js": "^4.1.1",
     "dotenv": "^16.0.0",
     "draft-js": "^0.11.7",
+    "draftjs-md-converter": "^1.5.2",
     "elliptic": "^6.5.4",
     "eth-rpc-errors": "^4.0.3",
     "ethers": "^5.7.1",
@@ -71,8 +72,10 @@
     "react-i18next": "^12.2.0",
     "react-icons": "^4.6.0",
     "react-linkify": "^1.0.0-alpha",
+    "react-markdown": "^9.0.1",
     "react-qr-code": "^2.0.11",
     "react-responsive": "^9.0.2",
+    "remark-gfm": "^4.0.0",
     "tonweb": "^0.0.62",
     "ts-node": "^10.9.1",
     "wagmi": "^0.6.5"
