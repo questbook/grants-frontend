@@ -14,6 +14,7 @@ import FilterTag from 'src/screens/dashboard/_components/FilterTag'
 import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
 import { DashboardContext } from 'src/screens/dashboard/Context'
+import { disabledGrants } from 'src/screens/proposal_form/_utils/constants'
 
 function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boolean) => void }) {
 	const buildComponent = () => (
@@ -45,7 +46,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 				</Text>
 				{
 					(role === 'community' || role === 'builder') &&
-					grant?.id !== '0x4494cf7375aa61c9a483259737c14b3dba6c04e6' &&
+					!disabledGrants?.includes(grant?.id as string) &&
 					(
 						<Button
 							variant='secondaryV2'
