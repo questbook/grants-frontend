@@ -79,7 +79,7 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 			// 	logger.info({ result }, 'useSubmitProposal: (result)')
 			// }
 			logger.info(result?.grantApplications?.length, 'useSubmitProposal: (result)')
-			if(result?.grantApplications?.length > 2) {
+			if(result?.grantApplications?.length > 2 && type === 'submit') {
 				setNetworkTransactionModalStep(undefined)
 				logger.info({ result }, 'length')
 				customToast({
