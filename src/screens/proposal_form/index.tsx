@@ -181,7 +181,9 @@ function ProposalForm() {
 						)
 					}
 					{
-						disabledGrants?.includes(grant?.id as string) && (
+						disabledGrants?.includes(grant?.id as string) &&
+						type === 'submit' &&
+						(
 							<Flex
 								justify='center'
 								mb={4}
@@ -633,6 +635,11 @@ function ProposalForm() {
 				logger.info({ field }, 'Field is empty')
 				return true
 			}
+		}
+
+		if(disabledGrants?.includes(grant?.id as string) && type === 'submit') {
+			logger.info('Grant is disabled')
+			return true
 		}
 
 		for(const member of members) {
