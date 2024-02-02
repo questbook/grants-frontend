@@ -21,6 +21,7 @@ import { getUrlForIPFSHash, uploadToIPFS } from 'src/libraries/utils/ipfs'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
 import AddMemberButton from 'src/screens/settings/_components/AddMemberButton'
+import AdminTable from 'src/screens/settings/_components/AdminTable'
 import { DropdownIcon } from 'src/screens/settings/_components/DropdownIcon'
 import useUpdateGrantProgram from 'src/screens/settings/_hooks/useUpdateGrantProgram'
 import { WorkspaceMembers } from 'src/screens/settings/_utils/types'
@@ -60,212 +61,231 @@ function Settings() {
 							Settings
 						</Text>
 						<Spacer />
-						<Button
-						// isLoading={isNetworkTransactionModalOpen}
-							variant='primaryMedium'
-							disabled={!imageChanged}
-							onClick={handleOnClickSave}
+						<Flex
+							gap={2}
 						>
-							Save
-						</Button>
+
+							{
+								(role === 'admin' || role === 'reviewer') && (
+									<Button
+										variant='primaryMedium'
+										onClick={() => setShowAdminTable(!showAdminTable)}
+									>
+										{showAdminTable ? 'Hide Table' : 'Show Table'}
+									</Button>
+								)
+							}
+							<Button
+								// isLoading={isNetworkTransactionModalOpen}
+								variant='primaryMedium'
+								disabled={!imageChanged}
+								onClick={handleOnClickSave}
+							>
+								Save
+							</Button>
+						</Flex>
 					</Flex>
 					<Divider />
 					{/* Actions */}
-					<Flex gap={6}>
-
-						{/* Link multi sig card */}
-						{
-							workspace?.safe?.address ? (
+					{
+						showAdminTable ?
+							<AdminTable /> : (
 								<>
-									<Box
-										border='1px solid #E7E4DD'
-										p={4}
-									>
-										<Flex gap={2}>
-											<Flex
-											>
-												<Safe
-													boxSize={8}
-												/>
-											</Flex>
+									<Flex gap={6}>
 
-											<Flex
-												direction='column'
-												gap={2}
-												alignItems='flex-start'
-											>
-												<Text
-													variant='title'
-													fontWeight='500'
-													cursor='pointer'
-												>
-													Your multisig is linked to your grant program
-												</Text>
-												<Flex
-													gap={1}
-													align='center'>
-													<Text
-														fontWeight='400'
-														variant='subtitle'
-														color='black.100'
+										{/* Link multi sig card */}
+										{
+											workspace?.safe?.address ? (
+												<>
+													<Box
+														border='1px solid #E7E4DD'
+														p={4}
 													>
-														{formatAddress(workspace.safe.address)}
-													</Text>
-													<Tooltip label={tooltipLabel}>
-														<Copy
+														<Flex gap={2}>
+															<Flex
+															>
+																<Safe
+																	boxSize={8}
+																/>
+															</Flex>
+
+															<Flex
+																direction='column'
+																gap={2}
+																alignItems='flex-start'
+															>
+																<Text
+																	variant='title'
+																	fontWeight='500'
+																	cursor='pointer'
+																>
+																	Your multisig is linked to your grant program
+																</Text>
+																<Flex
+																	gap={1}
+																	align='center'>
+																	<Text
+																		fontWeight='400'
+																		variant='subtitle'
+																		color='black.100'
+																	>
+																		{formatAddress(workspace.safe.address)}
+																	</Text>
+																	<Tooltip label={tooltipLabel}>
+																		<Copy
+																			cursor='pointer'
+																			onClick={
+																				() => {
+																					copy(workspace?.safe?.address!)
+																					setTooltipLabel(copiedTooltip)
+																				}
+																			}
+																		/>
+																	</Tooltip>
+
+																	<ShareBox
+																		cursor='pointer'
+																		onClick={
+																			() => {
+																				window.open(safeURL, '_blank')
+																			}
+																		}
+																	/>
+
+																	<Dot
+																		boxSize='4px'
+																		mx={1} />
+
+																	<Button
+																		variant='link'
+																		onClick={() => setIsLinkYourMultisigModalOpen(true)}>
+																		<Text
+																			variant='body'
+																			fontWeight='500'>
+																			Change multisig
+																		</Text>
+																	</Button>
+																</Flex>
+															</Flex>
+														</Flex>
+													</Box>
+												</>
+											) : (
+												<Box
+													border='1px solid #E7E4DD'
+													p={4}
+												>
+													<Flex
+														gap={2}
+														alignItems='center'
+													>
+														<Flex
+														>
+															<Realms
+																boxSize={8}
+
+															/>
+															<Safe
+																boxSize={8}
+																ml='-18px'
+															/>
+															<Celo
+																boxSize={8}
+																ml='-18px'
+															/>
+														</Flex>
+
+														<Flex
+															direction='column'
+															gap={2}
+															onClick={() => setIsLinkYourMultisigModalOpen(true)}
 															cursor='pointer'
-															onClick={
-																() => {
-																	copy(workspace?.safe?.address!)
-																	setTooltipLabel(copiedTooltip)
-																}
-															}
-														/>
-													</Tooltip>
+														>
+															<Text
+																variant='title'
+																fontWeight='500'
+																cursor='pointer'
+															>
+																Link your multisig
+															</Text>
+															<Text
+																variant='subtitle'
+															>
+																Link your multisig to fund builders on Questbook
+															</Text>
+														</Flex>
+													</Flex>
+												</Box>
+											)
+										}
 
-													<ShareBox
-														cursor='pointer'
-														onClick={
-															() => {
-																window.open(safeURL, '_blank')
-															}
-														}
-													/>
 
-													<Dot
-														boxSize='4px'
-														mx={1} />
-
-													<Button
-														variant='link'
-														onClick={() => setIsLinkYourMultisigModalOpen(true)}>
-														<Text
-															variant='body'
-															fontWeight='500'>
-															Change multisig
-														</Text>
-													</Button>
+										{/* Update profile image */}
+										<Box
+											border='1px solid #E7E4DD'
+											p={4}
+										>
+											<Flex
+												gap={2}
+												alignItems='center'>
+												<Flex
+													w='72px'
+													h='72px'>
+													<input
+														style={{ visibility: 'hidden', height: 0, width: 0 }}
+														ref={ref}
+														type='file'
+														name='myImage'
+														onChange={handleImageChange}
+														accept='image/jpg, image/jpeg, image/png' />
+													{
+														!(!imageFile || (imageFile?.file === null && !imageFile?.hash)) && (
+															<Image
+																src={imageFile?.file ? URL.createObjectURL(imageFile?.file) : imageFile?.hash ? getUrlForIPFSHash(imageFile?.hash) : ''}
+																onClick={() => openInput()}
+																cursor='pointer'
+																fit='fill'
+																w='100%'
+																h='100%' />
+														)
+													}
+													{
+														(!imageFile || (imageFile?.file === null && !imageFile?.hash)) && (
+															<Button
+																w='100%'
+																h='100%'
+																bg='gray.300'
+																borderRadius='2px'
+																alignItems='center'
+																justifyItems='center'
+																onClick={() => openInput()}>
+																<ImageAdd boxSize='26px' />
+															</Button>
+														)
+													}
 												</Flex>
-											</Flex>
-										</Flex>
-									</Box>
-								</>
-							) : (
-								<Box
-									border='1px solid #E7E4DD'
-									p={4}
-								>
-									<Flex
-										gap={2}
-										alignItems='center'
-									>
-										<Flex
-										>
-											<Realms
-												boxSize={8}
-
-											/>
-											<Safe
-												boxSize={8}
-												ml='-18px'
-											/>
-											<Celo
-												boxSize={8}
-												ml='-18px'
-											/>
-										</Flex>
-
-										<Flex
-											direction='column'
-											gap={2}
-											onClick={() => setIsLinkYourMultisigModalOpen(true)}
-											cursor='pointer'
-										>
-											<Text
-												variant='title'
-												fontWeight='500'
-												cursor='pointer'
-											>
-												Link your multisig
-											</Text>
-											<Text
-												variant='subtitle'
-											>
-												Link your multisig to fund builders on Questbook
-											</Text>
-										</Flex>
-									</Flex>
-								</Box>
-							)
-						}
-
-
-						{/* Update profile image */}
-						<Box
-							border='1px solid #E7E4DD'
-							p={4}
-						>
-							<Flex
-								gap={2}
-								alignItems='center'>
-								<Flex
-									w='72px'
-									h='72px'>
-									<input
-										style={{ visibility: 'hidden', height: 0, width: 0 }}
-										ref={ref}
-										type='file'
-										name='myImage'
-										onChange={handleImageChange}
-										accept='image/jpg, image/jpeg, image/png' />
-									{
-										!(!imageFile || (imageFile?.file === null && !imageFile?.hash)) && (
-											<Image
-												src={imageFile?.file ? URL.createObjectURL(imageFile?.file) : imageFile?.hash ? getUrlForIPFSHash(imageFile?.hash) : ''}
-												onClick={() => openInput()}
-												cursor='pointer'
-												fit='fill'
-												w='100%'
-												h='100%' />
-										)
-									}
-									{
-										(!imageFile || (imageFile?.file === null && !imageFile?.hash)) && (
-											<Button
-												w='100%'
-												h='100%'
-												bg='gray.300'
-												borderRadius='2px'
-												alignItems='center'
-												justifyItems='center'
-												onClick={() => openInput()}>
-												<ImageAdd boxSize='26px' />
-											</Button>
-										)
-									}
-								</Flex>
-								<Flex
-									direction='column'
-									gap={2}
-								>
-									<Text
-										variant='title'
-										fontWeight='500'
-										cursor='pointer'
-									>
-										Your grant program logo
-									</Text>
-									<Flex
-										gap={2}
-									>
-										<Text
-											variant='textButton'
-											onClick={() => openInput()}
-										>
-											Change
-										</Text>
-										{/* <Image src='/v2/icons/dot.svg' /> */}
-										{/* <Text
+												<Flex
+													direction='column'
+													gap={2}
+												>
+													<Text
+														variant='title'
+														fontWeight='500'
+														cursor='pointer'
+													>
+														Your grant program logo
+													</Text>
+													<Flex
+														gap={2}
+													>
+														<Text
+															variant='textButton'
+															onClick={() => openInput()}
+														>
+															Change
+														</Text>
+														{/* <Image src='/v2/icons/dot.svg' /> */}
+														{/* <Text
 											variant='textButton'
 											onClick={
 												() => {
@@ -275,90 +295,93 @@ function Settings() {
 										>
 											Remove
 										</Text> */}
+													</Flex>
+												</Flex>
+											</Flex>
+										</Box>
+
 									</Flex>
-								</Flex>
-							</Flex>
-						</Box>
 
-					</Flex>
+									{/* Members Section */}
+									<Flex
+										direction='column'
+										gap={4.5}
+									>
+										<Flex
+											gap={2}
+											alignItems='center'
+										>
+											<Text
+												variant='body'
+												fontWeight='500'
+											>
+												Members
+											</Text>
+											<Spacer />
+											<InputGroup
+												className='search'
+												width='195px'
+											>
+												<InputLeftElement pointerEvents='none'>
+													<Search2Icon color='gray.400' />
+												</InputLeftElement>
+												<Input
+													type='search'
+													placeholder='Search'
+													// size='md'
+													borderRadius='2px'
+													// alignSelf='flex-end'
+													// defaultValue={searchString}
+													value={searchString}
+													width='25vw'
+													onChange={(e) => setSearchString(e.target.value)}
+												/>
+											</InputGroup>
+											<AddMemberButton />
+										</Flex>
+										<Divider />
 
-					{/* Members Section */}
-					<Flex
-						direction='column'
-						gap={4.5}
-					>
-						<Flex
-							gap={2}
-							alignItems='center'
-						>
-							<Text
-								variant='body'
-								fontWeight='500'
-							>
-								Members
-							</Text>
-							<Spacer />
-							<InputGroup
-								className='search'
-								width='195px'
-							>
-								<InputLeftElement pointerEvents='none'>
-									<Search2Icon color='gray.400' />
-								</InputLeftElement>
-								<Input
-									type='search'
-									placeholder='Search'
-									// size='md'
-									borderRadius='2px'
-									// alignSelf='flex-end'
-									// defaultValue={searchString}
-									value={searchString}
-									width='25vw'
-									onChange={(e) => setSearchString(e.target.value)}
-								/>
-							</InputGroup>
-							<AddMemberButton />
-						</Flex>
-						<Divider />
+										{/* Filter */}
+										<Flex
+											gap={2}
+											alignItems='center'>
+											<Text
+												variant='body'
+											>
+												All
+											</Text>
+											<DropdownIcon />
+										</Flex>
 
-						{/* Filter */}
-						<Flex
-							gap={2}
-							alignItems='center'>
-							<Text
-								variant='body'
-							>
-								All
-							</Text>
-							<DropdownIcon />
-						</Flex>
-
-						{/* Members grid */}
-						<Grid
-							templateColumns='repeat(3, 1fr)'
-							gap={6}
-						>
-							{
-								workspaceMembers ?	workspaceMembers.filter((member) => {
-									if(searchString === '') {
-										return true
-									// eslint-disable-next-line sonarjs/no-duplicated-branches
-									} else if(member.fullName && member.fullName!.toLowerCase().includes(searchString.toLowerCase())) {
-										return true
-									} else {
-										return false
-									}
-								}).map((member, index) => (
-									<WorkspaceMemberCard
-										key={index}
-										member={member}
-										setOpenConfirmationModal={setOpenConfirmationModal}
-									/>
-								))
-									: null
-							}
-						</Grid>
-					</Flex>
+										{/* Members grid */}
+										<Grid
+											templateColumns='repeat(3, 1fr)'
+											gap={6}
+										>
+											{
+												workspaceMembers ?	workspaceMembers.filter((member) => {
+													if(searchString === '') {
+														return true
+													// eslint-disable-next-line sonarjs/no-duplicated-branches
+													} else if(member.fullName && member.fullName!.toLowerCase().includes(searchString.toLowerCase())) {
+														return true
+													} else {
+														return false
+													}
+												}).map((member, index) => (
+													<WorkspaceMemberCard
+														key={index}
+														member={member}
+														setOpenConfirmationModal={setOpenConfirmationModal}
+													/>
+												))
+													: null
+											}
+										</Grid>
+									</Flex>
+								</>
+							)
+					}
 				</Flex>
 				<ConfimationModal
 					isOpen={openConfirmationModal !== undefined}
@@ -427,8 +450,8 @@ function Settings() {
 
 	const [imageChanged, setImageChanged] = useState(false)
 
-	const { workspace, workspaceMembers, grantProgramData, setGrantProgramData, safeURL, refreshWorkspace } = useContext(SettingsFormContext)!
-	const { grant } = useContext(GrantsProgramContext)!
+	const { workspace, workspaceMembers, grantProgramData, setGrantProgramData, safeURL, refreshWorkspace, showAdminTable, setShowAdminTable } = useContext(SettingsFormContext)!
+	const { grant, role } = useContext(GrantsProgramContext)!
 	const chainId = useMemo(() => {
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
 	}, [grant])
