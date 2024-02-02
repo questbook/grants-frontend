@@ -13,6 +13,7 @@ import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import StateButton from 'src/screens/discover/_components/stateButton'
 import { GrantType } from 'src/screens/discover/_utils/types'
 import { DiscoverContext } from 'src/screens/discover/Context'
+import { disabledGrants } from 'src/screens/proposal_form/_utils/constants'
 
 type RFPCardProps = {
 	grant: GrantType
@@ -94,7 +95,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						 whileHover={{ scale: 1.05 }}
 						 >
 							{
-								grant?.id === '0x4494cf7375aa61c9a483259737c14b3dba6c04e6' ? (
+								disabledGrants?.includes(grant?.id as string) ? (
 									<StateButton
 										state='rejected'
 										title='Closed' />
