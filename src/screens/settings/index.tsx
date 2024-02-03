@@ -65,12 +65,16 @@ function Settings() {
 							gap={2}
 						>
 
-							<Button
-								variant='primaryMedium'
-								onClick={() => setShowAdminTable(!showAdminTable)}
-							>
-								{showAdminTable ? 'Hide Table' : 'Show Table'}
-							</Button>
+							{
+								(role === 'admin' || role === 'reviewer') && (
+									<Button
+										variant='primaryMedium'
+										onClick={() => setShowAdminTable(!showAdminTable)}
+									>
+										{showAdminTable ? 'Hide Table' : 'Show Table'}
+									</Button>
+								)
+							}
 							<Button
 								// isLoading={isNetworkTransactionModalOpen}
 								variant='primaryMedium'
@@ -447,7 +451,7 @@ function Settings() {
 	const [imageChanged, setImageChanged] = useState(false)
 
 	const { workspace, workspaceMembers, grantProgramData, setGrantProgramData, safeURL, refreshWorkspace, showAdminTable, setShowAdminTable } = useContext(SettingsFormContext)!
-	const { grant } = useContext(GrantsProgramContext)!
+	const { grant, role } = useContext(GrantsProgramContext)!
 	const chainId = useMemo(() => {
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
 	}, [grant])
