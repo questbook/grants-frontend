@@ -2,6 +2,7 @@
 import { useMediaQuery } from 'react-responsive'
 import { Flex, Image, Text } from '@chakra-ui/react'
 import { logger } from 'ethers'
+import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { SectionGrants } from 'src/screens/discover/_utils/types'
 // import { useRouter } from 'next/router'
 
@@ -110,7 +111,8 @@ function HeroBanner({
 	  						justifyContent='center'
 	  						h='max'
 	  						w='52'
-	  						src='https://cryptologos.cc/logos/arbitrum-arb-logo.png' />
+							style={{ mixBlendMode: 'difference' }}
+	  						src={getUrlForIPFSHash('QmUDdoBMuhP6wL9vUcbrzgfvCrnHXZEySmiS9KX8BRe5Ug')} />
 	  				</Flex>
 	  			)
 	  		}
@@ -126,11 +128,11 @@ function HeroBanner({
 	  				isMobile && (
 
 	  					<Image
-
 	  						justifyContent='center'
 	  						h='max'
 	  						w='24'
-	  						src='https://cryptologos.cc/logos/arbitrum-arb-logo.png' />
+							style={{ mixBlendMode: 'difference' }}
+	  						src={getUrlForIPFSHash('QmUDdoBMuhP6wL9vUcbrzgfvCrnHXZEySmiS9KX8BRe5Ug')} />
 
 	  				)
 	  			}
@@ -139,7 +141,7 @@ function HeroBanner({
 	  				fontSize='40px'
 	  				lineHeight='48px'
 	  				color='white'>
-					Arbitrum Grants
+					Alchemix Grants
 				</Text>
 
 				<Flex
@@ -151,7 +153,7 @@ function HeroBanner({
 	  					data={totalProposals() || 0}
 	  					title='Proposals' />
 					<TitleCards
-	  					data={totalProposalsAccepted() || 40}
+	  					data={totalProposalsAccepted() || 0}
 	  					title='Accepted' />
 					<TitleCards
 	  					data={formatNumber(grantsAllocated)}
@@ -160,7 +162,7 @@ function HeroBanner({
 	  					data={totalProposalsPaidOut() || 0}
 	  					title='Funds Paid Out' />
 					<TitleCards
-	  					data={formatNumber(safeBalances) || formatNumber(800000)}
+	  					data={formatNumber(safeBalances) || formatNumber(0)}
 	  					title='left in mutlisig' />
 
 				</Flex>
@@ -174,7 +176,7 @@ function HeroBanner({
 	  						position='absolute'
 	  						h='max'
 	  						w='52'
-	  						src='https://ipfs.io/ipfs/bafkreieq36x5ktemdsy4r5tuirc62sbnxujhpcvwolwfx6bnsp4wnyei4m' />
+	  						src={getUrlForIPFSHash('QmYQzCdPeFPTosTezRvxjLWqfZbjeWUEfPKp7riWv67C5j')} />
 
 	  				)
 	  			}
@@ -203,7 +205,7 @@ function HeroBanner({
 	  						justifyContent='center'
 	  						h='max'
 	  						w='52'
-	  						src='https://ipfs.io/ipfs/bafkreieq36x5ktemdsy4r5tuirc62sbnxujhpcvwolwfx6bnsp4wnyei4m' />
+	  						src={getUrlForIPFSHash('QmYQzCdPeFPTosTezRvxjLWqfZbjeWUEfPKp7riWv67C5j')} />
 	  				</Flex>
 	  			)
 	  		}

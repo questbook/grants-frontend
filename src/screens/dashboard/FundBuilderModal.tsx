@@ -279,7 +279,7 @@ function FundBuilderModal({
 
 		setAmounts([proposal?.milestones?.[0]?.amount ? parseInt(proposal?.milestones?.[0]?.amount) : 0])
 		setTos([getFieldString(proposal, 'applicantAddress') ?? tos?.[0]])
-		setMilestoneIndices([0])
+		setMilestoneIndices([proposal?.milestones?.findIndex((milestone) => parseFloat(milestone?.amountPaid) === 0) > -1 ? proposal?.milestones?.findIndex((milestone) => parseFloat(milestone?.amountPaid) === 0) : 0])
 	}, [proposal])
 
 	const isDisabled = useMemo(() => {
@@ -300,7 +300,7 @@ function FundBuilderModal({
 			setSignerVerifiedState('initiate_TON_transaction')
 			const tonWallet = new SupportedPayouts().getWallet('TON Wallet')
 			tonWallet.checkTonReady(window)
-
+			logger.info('TON Wallet', tonWallet)
 			tonWallet.sendMoney(tos[0], amounts[0], false, `${grant?.title}: Milestone #${milestoneIndices[0] + 1} Payout`, async(response: any) => {
 				logger.info('TON response', response)
 				if(response?.error) {
@@ -339,13 +339,13 @@ function FundBuilderModal({
 						tokenName: selectedTokenInfo?.tokenName!,
 						nonEvmAssetAddress: 'nonEvmAssetAddress-toBeChanged',
 						amounts: [amounts?.[0]],
-						transactionHash: '99887341.' + timestamp,
+						transactionHash: '99887341.' + (response?.transactionHash ?? timestamp),
 						sender: safeAddress,
 						grant: grant?.id!,
 						to: tos?.[0]
 					}
 
-					// await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
+					// // await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
 					await executeMutation(DisburseRewardSafeMutation, args)
 
 					// setSignerVerifiedState('transaction_initiated')

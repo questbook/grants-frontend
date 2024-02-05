@@ -1,7 +1,9 @@
 import { useMediaQuery } from 'react-responsive'
 import { Box, Button, Flex, Image, Text } from '@chakra-ui/react'
+import { WorkspaceMember } from 'src/generated/graphql'
 import { Telegram, Twitter } from 'src/generated/icons'
 import { getAvatar } from 'src/libraries/utils'
+import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import RoleTag from 'src/screens/dashboard/_components/RoleTag'
 // import { useRouter } from 'next/router'
 
@@ -15,48 +17,36 @@ function HeroBannerBox({
 	paidOut,
 	allocated,
 	safeBalances,
+	grantTicketSize,
 }: {
 	title: string
 	programDetails: string
-	reviewers: string[]
+	reviewers: WorkspaceMember[]
 	proposalCount: number
 	proposalCountAccepted: number
 	paidOut: string
     allocated: string
     safeBalances: string
+	grantTicketSize: string
 }) {
 
-	const socialList = [
-		{
-			title: 'JoJo',
-			twitter: 'jojo17568'
-		},
-		{
-			title: 'Flook',
-			twitter: 'Flook_eth'
-		},
-		{
-			title: 'Juandi',
-			twitter: 'ImJuandi'
-		},
-		{
-			title: 'Cattin',
-			twitter: 'Cattin0x'
-		},
-		{
-			title: 'Srijith',
-			twitter: 'Srijith_Padmesh'
-		},
-		{
-			title: 'Srijith padmesh',
-			twitter: 'Srijith_Padmesh'
-		}
-	]
-	const UserCard = ({ image, title, twitter, telegram }: {
+	// const socialList = [
+	// 	{
+	// 		title: 'Barree',
+	// 	},
+	// 	{
+	// 		title: 'aesop',
+	// 	},
+	// 	{
+	// 		title: 'Felix',
+	// 	},
+	// ]
+	const UserCard = ({ image, title, twitter, telegram, accessLevel }: {
 		image: string
 		title: string
 		twitter?: string
 		telegram?: string
+		accessLevel?: 'admin' | 'reviewer' | 'community' | 'builder'
 	}) => (
 		<Flex
 			mt={2}
@@ -67,7 +57,7 @@ function HeroBannerBox({
 				<Image
 					borderRadius='3xl'
 					bgColor='white'
-					src={getAvatar(false, image ?? '0x0')}
+					src={image ? getUrlForIPFSHash(image) : getAvatar(false, image ?? title) }
 					boxSize='16px' />
 				<Flex>
 					<Text
@@ -80,7 +70,7 @@ function HeroBannerBox({
 						{title}
 					</Text>
 					<RoleTag
-						role='admin'
+						role={accessLevel ?? 'admin'}
 						isBuilder={false}
 					/>
 				</Flex>
@@ -162,8 +152,9 @@ function HeroBannerBox({
 							mt={10}
 							justifyContent='center'
 							h='max'
-							w='24'
-							src='https://cryptologos.cc/logos/arbitrum-arb-logo.png' />
+							w='36'
+							style={{ mixBlendMode: 'difference' }}
+							src={getUrlForIPFSHash('QmUDdoBMuhP6wL9vUcbrzgfvCrnHXZEySmiS9KX8BRe5Ug')} />
 					</Flex>
 				)
 			}
@@ -183,7 +174,8 @@ function HeroBannerBox({
 							h='max'
 							mb={4}
 							w='8'
-							src='https://cryptologos.cc/logos/arbitrum-arb-logo.png' />
+							style={{ mixBlendMode: 'difference' }}
+							src={getUrlForIPFSHash('QmUDdoBMuhP6wL9vUcbrzgfvCrnHXZEySmiS9KX8BRe5Ug')} />
 
 					)
 				}
@@ -207,6 +199,7 @@ function HeroBannerBox({
 				 textColor='white'
 				 fontSize='14px'
 				 w={isMobile ? '50%' : ''}
+				 _hover={{ bgColor: 'blue.600' }}
 				 onClick={() => window.open(programDetails, '_blank')}
 				 rightIcon={<Image src='https://ipfs.io/ipfs/bafkreicnpfrdixcbocuksdful4gsaoetxrwby2a5tnpiehz7w4abbd2bcm' />}
 				 >
@@ -222,7 +215,7 @@ function HeroBannerBox({
 						fontSize='12px'
 						lineHeight='16px'
 						color='white'>
-						This domain is focused on all new ideas that builders have that can boost Arbitrum as an ecosystem overall
+						This domain is focused on grants related to the Alchemix ecosystem
 					</Text>
 
 				</Flex>
@@ -242,7 +235,7 @@ function HeroBannerBox({
 						lineHeight='20px'
 
 						color='white'>
-						25000 USD
+						{grantTicketSize}
 					</Text>
 				</Flex>
 			</Flex>
@@ -255,7 +248,10 @@ function HeroBannerBox({
 				textColor='white'
 			>
 				<Box
-					border='1px solid #53514F'
+					borderTop='1px solid #53514F'
+					borderLeft='1px solid #53514F'
+					borderBottom='1px solid #53514F'
+					borderRight={isMobile ? '1px solid #53514F' : 'none'}
 					p={5}
 					w='100%'
 				>
@@ -275,12 +271,12 @@ function HeroBannerBox({
 						justifyContent='flex-start'>
 						<TitleCards
 							data={safeBalances ?? 0}
-							title='in MultiSig' />
+							title='left in multisig' />
 						<TitleCards
-							data={proposalCount ?? 48}
+							data={proposalCount ?? 0}
 							title='Proposals' />
 						<TitleCards
-							data={proposalCountAccepted ?? 11}
+							data={proposalCountAccepted ?? 0}
 							title='Accepted' />
 						<TitleCards
 							data={paidOut ?? 0}
@@ -296,10 +292,8 @@ function HeroBannerBox({
 					w={isMobile ? '100%' : '70%'}
 				>
 					<Box
-						border='1px solid #53514F'
+						borderBottom='1px solid #53514F'
 						p={2}
-
-
 					>
 						<Text
 							fontWeight='500'
@@ -321,9 +315,9 @@ function HeroBannerBox({
 							reviewers?.map((reviewer, i) => (
 								<UserCard
 									key={i}
-									image={reviewer}
-									title={reviewer}
-									twitter={socialList?.find((social) => social.title?.trim()?.toLowerCase() === reviewer?.trim()?.toLowerCase())?.twitter ?? ''}
+									image={reviewer?.profilePictureIpfsHash as string}
+									title={reviewer?.fullName ?? reviewer?.actorId?.slice(0, 6) + '...' + reviewer?.actorId?.slice(-4)}
+									accessLevel={reviewer?.accessLevel === 'reviewer' ? 'reviewer' : 'admin'}
 								/>
 							))
 						}

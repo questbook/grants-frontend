@@ -228,7 +228,7 @@ function FundBuilderDrawer() {
 
 		setAmounts(selectedProposalsData.map((p) => p?.milestones?.[0]?.amount ? parseInt(p?.milestones?.[0]?.amount) : 0))
 		setTos(selectedProposalsData.map((p) => getFieldString(p, 'applicantAddress') ?? ''))
-		setMilestoneIndices(selectedProposalsData.map(() => 0))
+		setMilestoneIndices(selectedProposalsData.map((p) => p.milestones.findIndex((m) => parseFloat(m?.amountPaid) === 0) !== -1 ? p.milestones.findIndex((m) => parseFloat(m?.amountPaid) === 0) : 0))
 	}, [selectedProposalsData])
 
 	const isDisabled = useMemo(() => {
@@ -257,11 +257,11 @@ function FundBuilderDrawer() {
 				// ]
 
 				const methodArgs = {
-					id: selectedProposalsData.map((proposal) => proposal.id),
+					id: submittedProposals.map((proposal) => proposal.id),
 					grant: grant.id,
 					workspaceId: grant.workspace.id,
-					applicantId: selectedProposalsData.map((proposal) => proposal.applicantId),
-					state: selectedProposalsData.map(() => 'approved'),
+					applicantId: submittedProposals.map((proposal) => proposal.applicantId),
+					state: submittedProposals.map(() => 'approved'),
 					feedback: submittedProposals.map(() => hash),
 				}
 
@@ -273,15 +273,18 @@ function FundBuilderDrawer() {
 				return {
 					from: safeObj?.safeAddress?.toString(),
 					to,
-					applicationId: proposals[i]?.id ? parseInt(proposals[i].id, 16) : 0,
+					applicationId: selectedProposalsData[i]?.id?.startsWith('0x') ? parseInt(selectedProposalsData[i]?.id, 16) : parseInt(selectedProposalsData[i]?.id?.slice(-2) ?? '0', 16),
 					selectedMilestone: milestoneIndices?.[i],
 					selectedToken: { tokenName: selectedTokenInfo?.tokenName as string, info: selectedTokenInfo?.info },
 					amount: amounts?.[i],
 				}
 			})
+
 			let proposaladdress: any = ''
 			if(safeObj?.getIsEvm()) {
-				proposaladdress = await safeObj?.proposeTransactions(JSON.stringify({ workspaceId: grant?.workspace?.id, grantAddress: grant?.id }), transactionData, '')
+				// // { workspaceId:  grant?.workspace?.id?.startsWith('0x') ? grant?.workspace?.id : `0x${grant?.workspace?.id?.slice(-2)}`, grantAddress:  grant?.id?.startsWith('0x') ? grant?.id : `0x${grant?.id?.slice(-2)}` }
+				// proposaladdress = await safeObj?.proposeTransactions(JSON.stringify({ workspaceId: grant?.workspace?.id, grantAddress: grant?.id }), transactionData, '')
+				proposaladdress = await safeObj?.proposeTransactions(JSON.stringify({ workspaceId: grant?.workspace?.id?.startsWith('0x') ? grant?.workspace?.id : `0x${grant?.workspace?.id?.slice(-2)}`, grantAddress: grant?.id?.startsWith('0x') ? grant?.id : `0x${grant?.id?.slice(-2)}` }), transactionData, '')
 				if(proposaladdress?.error) {
 					customToast({
 						title: 'An error occurred while creating transaction on Gnosis Safe',
@@ -347,12 +350,12 @@ function FundBuilderDrawer() {
 			// }
 
 			const args = {
-				applicationIds: selectedProposalsData.map((proposal) => parseInt(proposal?.id, 16)),
-				milestoneIds: selectedProposalsData.map((proposal, i) => parseInt(proposal.milestones[milestoneIndices[i]].id?.split('.')[1])),
+				applicationIds: selectedProposalsData.map((proposal) => proposal?.id),
+				milestoneIds: selectedProposalsData.map((proposal, i) => (proposal.milestones[milestoneIndices[i]].id?.split('.')[1])),
 				asset: '0x0000000000000000000000000000000000000001',
 				tokenName: selectedTokenInfo?.tokenName!,
 				nonEvmAssetAddress: 'nonEvmAssetAddress-toBeChanged',
-				amounts: [amounts?.[0]],
+				amounts: amounts,
 				transactionHash: proposaladdress,
 				sender: safeObj?.safeAddress,
 				grant: grant?.id!,

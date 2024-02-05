@@ -10,6 +10,7 @@ import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import Banner from 'src/screens/dashboard/_components/Banner'
 import HeroBannerBox from 'src/screens/dashboard/_components/HeroBanner'
 import ThreeColumnSkeleton from 'src/screens/dashboard/_components/ThreeColumnSkeleton'
+import { formatAmount } from 'src/screens/dashboard/_utils/formatters'
 import { DynamicData } from 'src/screens/dashboard/_utils/types'
 import ActionList from 'src/screens/dashboard/ActionList'
 import Body from 'src/screens/dashboard/Body'
@@ -39,14 +40,14 @@ function Dashboard(props: DynamicData) {
 						<HeroBannerBox
 							title={grant?.title as string}
 							programDetails={grant?.link as string}
-							//@ts-ignore
-							grantTicketSize='25000'
-							reviewers={grant?.workspace?.members?.map((member) => member?.fullName) as string[]}
+							// grantTicketSize={`${grant?.reward?.committed}`}
+							grantTicketSize={formatAmount(parseFloat(grant?.reward?.committed ?? '0'))}
+							reviewers={grant?.workspace?.members as []}
 							proposalCount={grant?.numberOfApplications as number}
 							proposalCountAccepted={grant?.numberOfApplicationsSelected as number}
-							paidOut={'$' + Math.round((fundsAllocated?.disbursed as number) / 1000) + 'k'}
-							allocated={'$' + Math.round((fundsAllocated?.allocated as number) / 1000) + 'k'}
-							safeBalances={'$' + Math.round((safeBalances as number) / 1000) + 'k'}
+							paidOut={formatAmount(fundsAllocated?.disbursed as number ?? 0)}
+							allocated={formatAmount(fundsAllocated?.allocated as number ?? 0)}
+							safeBalances={formatAmount(safeBalances as number ?? 0)}
 						/>
 					)
 				}

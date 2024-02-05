@@ -16,10 +16,10 @@ import ConfirmationModal from 'src/libraries/ui/ConfirmationModal'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
-import SearchField from 'src/libraries/ui/SearchField'
 import { getAvatar } from 'src/libraries/utils'
 import { chainNames } from 'src/libraries/utils/constants'
 import getErrorMessage from 'src/libraries/utils/error'
+import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { ApiClientsContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import RFPGrid from 'src/screens/discover/_components/rfpGrid'
 import { DiscoverContext, DiscoverProvider } from 'src/screens/discover/Context'
@@ -168,7 +168,7 @@ function Discover() {
 	const [networkTransactionModalOpen, setNetworkTransactionModalOpen] = useState(false)
 	const [currentStepIndex, setCurrentStepIndex] = useState(-1)
 	const [sectionName] = useState('')
-	const [filterGrantName, setFilterGrantName] = useState('')
+	const [filterGrantName] = useState('')
 
 	const [imageFile, setImageFile] = useState<{ file: File | null, hash?: string }>({ file: null })
 
@@ -245,12 +245,12 @@ function Discover() {
 					borderColor='black.100'
 
 					borderRadius='3xl'
-					src={getAvatar(false, image ?? '0x0')}
-					boxSize='16px' />
+					src={ image ? getUrlForIPFSHash(image) : getAvatar(false, title) }
+					boxSize='20px' />
 				<Text
 					ml={2}
 					fontWeight='400'
-					fontSize='14px'
+					fontSize='16px'
 					variant='metadata'
 					lineHeight='16px'
 
@@ -343,7 +343,7 @@ grantsAllocated={grantsAllocated ?? 0}
 											Grants
 										</Text>
 
-										<SearchField
+										{/* <SearchField
 											bg='white'
 											w='100%'
 
@@ -362,7 +362,7 @@ grantsAllocated={grantsAllocated ?? 0}
 													setFilterGrantName(e.target.value)
 												}
 											}
-										/>
+										/> */}
 									</Flex>
 									{
 										(sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
@@ -375,8 +375,6 @@ grantsAllocated={grantsAllocated ?? 0}
 													my={6}
 													key={index}
 												>
-
-
 													<RFPGrid
 														type='all'
 														grants={grants}
@@ -422,7 +420,7 @@ grantsAllocated={grantsAllocated ?? 0}
 
 		  			px={3}
 		  		>
-												About Arbitrum Grants
+												About Alchemix Grants
           </Text>
 
 										<Divider my={2} />
@@ -433,27 +431,8 @@ grantsAllocated={grantsAllocated ?? 0}
 		  			px={3}
 		  			textAlign='match-parent'
 		  		>
-												The Arbitrum grants, administered via DDA by Questbook and 4 domain allocators, went live on the 5th of October with a grants budget of $800k spread across four domains. The Questbook Arbitrum Grants program is useful for anyone developing in domain specific projects on top of Arbitrum, ranging from education, gaming, dev tooling to innovative ideas. Through the program, you can receive milestone-based funding based on domain specific needs, outlined by the domain allocators elected by the community. These domain allocators were elected from the community and by the community. The specific information regarding the accepted proposals and the funded teams can be found here.
+												The Alchemix grants, administered via DDA by Questbook and 4 domain allocators, went live on the 5th of February with a grants budget of $100k. The Questbook Alchemix Grants program is useful for anyone developing in domain specific projects on top of Alchemix. Through the program, you can receive milestone-based funding based on domain specific needs, outlined by the domain allocators elected by the community.The specific information regarding the accepted proposals and the funded teams can be found here.
           </Text>
-										<Text
-		  			fontWeight='500'
-		  			lineHeight='48px'
-		  			fontSize='24px'
-		  			color='black.100'
-		  			borderRadius='6px'
-
-		  			px={3}
-		  		>
-												Program Managers
-          </Text>
-										<Box p={1}>
-												<UserCard
-													image='0x0125215125'
-													title='Srijith'
-													twitter='Srijith_Padmesh'
-													telegram='Srijith13' />
-          </Box>
-										<Divider my={2} />
 										<Text
 		  			fontWeight='500'
 		  			lineHeight='48px'
@@ -469,25 +448,25 @@ grantsAllocated={grantsAllocated ?? 0}
 											{
 												[
 													{
-														image: '0x012521',
-														title: 'JoJo (New Protocol Ideas)',
-														twitter: 'jojo17568'
+														image: '',
+														title: 'Ov3rKoalafied',
+														twitter: 'Ov3rKoalafied'
 													},
 													{
-														image: '0x012522',
-														title: 'Adam (Gaming)',
-														twitter: 'Flook_eth'
+														image: '',
+														title: 'Barree',
+														twitter: ''
 													},
 													{
-														image: '0x012523',
-														title: 'Juandi (Dev Tooling)',
-														twitter: 'ImJuandi'
+														image: 'QmQY4LV5zn3VMPde5r4VHrD75YiBZNx512widJsRACnBjR',
+														title: 'aesop',
+														twitter: 'aesopfloppy'
 													},
 													{
-														image: '0x012524',
-														title: 'Cattin (Education, Community growth & Events)',
-														twitter: 'Cattin0x'
-													}
+														image: 'QmRcPr3UoGmksuEnW5tWQcN6TBtRwgS255oDxzJ58MAQgF',
+														title: 'Felix',
+														twitter: ''
+													},
 												].map((user, index) => (
 													<UserCard
 														key={index}

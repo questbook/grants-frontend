@@ -13,4 +13,14 @@ const formatTime = (timestamp: number, isPayout: boolean = false) => {
 	}
 }
 
-export { formatTime }
+const formatAmount = (amount: number): string => {
+	if(amount >= 1e6) {
+		return `$${(amount / 1e6).toFixed(1)}M`
+	} else if(amount >= 1e3) {
+		return `$${(amount / 1e3).toFixed(0)}K`
+	} else {
+		return `$${amount}`
+	}
+}
+
+export { formatTime, formatAmount }
