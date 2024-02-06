@@ -137,8 +137,8 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 		const commentHash = (await (JSON.stringify(json)))
 		logger.info({ commentHash }, 'Comment Hash (Comment)')
 
-		if(tag === 'accept' || tag === 'reject' || tag === 'resubmit') {
-			const toState = tag === 'accept' ? 'approved' : tag === 'reject' ? 'rejected' : 'resubmit'
+		if(tag === 'accept' || tag === 'reject' || tag === 'resubmit' || tag === 'review') {
+			const toState = tag === 'accept' ? 'approved' : tag === 'reject' ? 'rejected' : tag === 'review' ? 'review' : 'resubmit'
 
 			const methodArgs = {
 				id: proposal.id,

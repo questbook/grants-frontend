@@ -39,9 +39,9 @@ function FilterTag({ state, isSelected = true, ...props }: Props) {
 		)
 	}
 
-	const [azure, carrot, orchid, jeans] = useToken(
+	const [azure, carrot, orchid, vivid, jeans] = useToken(
 		'colors',
-		['accent.azure', 'accent.carrot', 'accent.orchid', 'accent.jeans']
+		['accent.azure', 'accent.carrot', 'accent.orchid', 'accent.vivid', 'accent.jeans']
 	)
 
 	const config = {
@@ -63,6 +63,11 @@ function FilterTag({ state, isSelected = true, ...props }: Props) {
 		submitted: {
 			icon: (color?: string) => <Time color={color ?? 'black.100'} />,
 			title: 'Not Responded Yet',
+			bg: vivid,
+		},
+		review: {
+			icon: (color?: string) => <Time color={color ?? 'black.100'} />,
+			title: 'Review',
 			bg: jeans
 		}
 	}
