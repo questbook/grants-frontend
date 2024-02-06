@@ -97,7 +97,7 @@ function HeroBanner({
 	  		alignItems='stretch'
 	  		alignContent='stretch'
 	  		justifyContent='flex-start'
-	  		h='560px'>
+	  		>
 			{
 	  			!isMobile && (
 	  				<Flex
