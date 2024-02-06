@@ -143,7 +143,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 						}
 					}
 				}
-				templateColumns='repeat(2, 1fr)'
+				templateColumns='repeat(2, 0fr)'
 				gap={1}>
 				{
 					(['approved', 'submitted', 'rejected', 'resubmit', 'review'] as ApplicationState[]).map(state => {
