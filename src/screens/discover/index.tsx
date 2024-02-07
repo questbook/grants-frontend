@@ -429,9 +429,21 @@ grantsAllocated={grantsAllocated ?? 0}
 				   lineHeight={['20px']}
 		  			py={1.5}
 		  			px={3}
-		  			textAlign='match-parent'
+		  			textAlign='justify'
 		  		>
-												The Alchemix grants, administered via DDA by Questbook and 4 domain allocators, went live on the 5th of February with a grants budget of $100k. The Questbook Alchemix Grants program is useful for anyone developing in domain specific projects on top of Alchemix. Through the program, you can receive milestone-based funding based on domain specific needs, outlined by the domain allocators elected by the community.The specific information regarding the accepted proposals and the funded teams can be found here.
+												The Alchemix grant program, administered via Questbook with more information on Notion, seeks to find builders for projects that benefit the Alchemix protocol and DAO. The program went live in February 2024 with an initial budget of $100k, set to be increased by governance pending initial results. The process may evolve and change as the program matures. The notion page consists of numerous ideas, across various disciplines, that Alchemix contributors would like to see built - or you can submit your original idea. More information on the process and project ideas can be found
+												<Text
+												  fontSize='14px'
+												  lineHeight={['20px']}
+													 textAlign='match-parent'
+													color='accent.azure'
+													as='a'
+													href='https://alchemixdao.notion.site/Alchemix-Grant-Specs-e6f931733b294e6da70c8c23db9a23e6'
+													target='_blank'
+													rel='noreferrer'>
+													{' '}
+													here.
+												</Text>
           </Text>
 										<Text
 		  			fontWeight='500'
