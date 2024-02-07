@@ -295,7 +295,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		// move selected grants to top of the list
 		for(let i = 0; i < allSectionGrants.length; i++) {
 			const key = Object.keys(allSectionGrants[i])[0]
-			const topGrants = ['Alchemix', 'Arbitrum', 'Compound', 'TON Foundation', 'iExec']
+			const topGrants = ['Arbitrum', 'Compound', 'TON Foundation', 'Alchemix', 'iExec']
 			const hideGrants = ['Golden gate protocol', 'Aleph Zero', 'Solana Ecosystem']
 			if(topGrants.includes(key)) {
 				const temp = allSectionGrants[topGrants.indexOf(key)]
