@@ -13,7 +13,8 @@ function useProposalTags({ proposals }: Props) {
 			{ id: 'accept', title: 'Accept', commentString: 'Your proposal is accepted', icon: <CheckDouble color='accent.jeans' />, isPrivate: false },
 			{ id: 'reject', title: 'Pass / Reject', commentString: 'Sorry! we won\'t be able to proceed with your proposal', icon: <Close color='accent.carrot' />, isPrivate: false },
 			{ id: 'resubmit', title: 'Resubmit', commentString: 'Please resubmit your proposal', icon: <Resubmit color='accent.royal' />, isPrivate: false },
-			{ id: 'feedback', title: 'Feedback / Comment', commentString: '', icon: <Chat color='accent.vivid' />, isPrivate: false }
+			{ id: 'feedback', title: 'Feedback / Comment', commentString: '', icon: <Chat color='accent.vivid' />, isPrivate: false },
+			{ id: 'review', title: 'Review', commentString: 'Your proposal is under review', icon: <Chat color='accent.vivid' />, isPrivate: false }
 		],
 		reviewer: [
 			{ id: 'feedback', title: 'Feedback / Comment', commentString: '', icon: <Chat color='accent.vivid' />, isPrivate: false }
@@ -33,8 +34,10 @@ function useProposalTags({ proposals }: Props) {
 			return { proposalTags: allTags['admin'] }
 		} else if(proposals.every(p => p.state === 'resubmit')) {
 			return { proposalTags: allTags['admin'].slice(0, 2).concat(allTags['admin'].slice(3)) }
+		} else if(proposals.every(p => p.state === 'review')) {
+			return { proposalTags: allTags['admin'].slice(0, 4) }
 		} else {
-			return { proposalTags: allTags['admin'].slice(3) }
+			return { proposalTags: allTags['admin'].slice(3, 4) }
 		}
 	} else {
 		return { proposalTags: allTags[role] }
