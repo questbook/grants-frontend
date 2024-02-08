@@ -132,7 +132,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 
 			<Grid
 				display={isFilterClicked ? 'grid' : 'none'}
-				minH='80px'
+				minH='120px'
 				px={3}
 				m={2}
 				overflowX='scroll'
@@ -143,10 +143,10 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 						}
 					}
 				}
-				templateColumns='repeat(2, 1fr)'
+				templateColumns='repeat(2, 0fr)'
 				gap={1}>
 				{
-					(['approved', 'submitted', 'rejected', 'resubmit'] as ApplicationState[]).map(state => {
+					(['approved', 'submitted', 'rejected', 'resubmit', 'review'] as ApplicationState[]).map(state => {
 						return (
 							<GridItem
 								// colSpan={index > 1 ? 2 : 1}

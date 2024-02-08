@@ -135,14 +135,17 @@ function Discussions() {
 						<Flex
 							display={selectedTag === undefined ? 'flex' : 'none'}
 							w='100%'
-							mt={2}>
+							mt={2}
+							overflowX='auto'
+							style={{ scrollbarWidth: 'none' }}
+						>
 							<Flex gap={3}>
 								{
 									proposalTags?.map((tag, index) => {
 										return (
 											<QuickReplyButton
 												zIndex={10}
-												id={tag.id as 'accept' | 'reject' | 'resubmit' | 'feedback'}
+												id={tag.id as 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review'}
 												key={index}
 												tag={tag}
 												isSelected={tag.id === selectedTag?.id}
@@ -523,6 +526,8 @@ function Discussions() {
 			return 'On clicking “Post” the proposal will be rejected. Builder will be notified.'
 		case 'resubmit':
 			return 'On clicking “Post” the builder will be notified to resubmit his proposal.'
+		case 'review':
+			return 'On clicking “Post” the proposal will be under review. Builder will be notified.'
 		default:
 			return ''
 		}
@@ -560,9 +565,9 @@ function Discussions() {
 		logger.info({ selectedTag }, 'SELECTED TAG')
 	}, [selectedTag])
 
-	const [azure, carrot, orchid, vivid] = useToken(
+	const [azure, carrot, orchid, vivid, jeans] = useToken(
 		'colors',
-		['accent.azure', 'accent.carrot', 'accent.orchid', 'accent.vivid']
+		['accent.azure', 'accent.carrot', 'accent.orchid', 'accent.vivid', 'accent.jeans']
 	)
 
 	const config = {
@@ -581,6 +586,10 @@ function Discussions() {
 		feedback: {
 			title: 'give feedback to',
 			bg: vivid
+		},
+		review: {
+			title: 'review',
+			bg: jeans
 		}
 	}
 
