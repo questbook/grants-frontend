@@ -135,7 +135,10 @@ function Discussions() {
 						<Flex
 							display={selectedTag === undefined ? 'flex' : 'none'}
 							w='100%'
-							mt={2}>
+							mt={2}
+							overflowX='auto'
+							style={{ scrollbarWidth: 'none' }}
+						>
 							<Flex gap={3}>
 								{
 									proposalTags?.map((tag, index) => {

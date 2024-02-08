@@ -4,7 +4,7 @@ export const getCommentsQuery = gql`query getComments($grantId: String!, $first:
       limit: $first
       skip: $skip
       filter: { grant: $grantId }
-      sort:CREATEDAT_ASC
+      sort:CREATEDATS_ASC
     ) {
       id:_id
       isPrivate
