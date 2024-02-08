@@ -1,9 +1,9 @@
 import { Button, ButtonProps, Flex, Text, TextProps, useToken } from '@chakra-ui/react'
-import { Accept, Chat, Reject, Resubmit } from 'src/generated/icons'
+import { Accept, Chat, Reject, Resubmit, Time } from 'src/generated/icons'
 import { TagType } from 'src/screens/dashboard/_utils/types'
 
 type Props = {
-	id: 'accept' | 'reject' | 'resubmit' | 'feedback'
+	id: 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review'
     tag: TagType | undefined
     isSelected: boolean
     index: number
@@ -39,9 +39,9 @@ function QuickReplyButton({ tag, index, textProps, ...props }: Props) {
 		)
 	}
 
-	const [azure, carrot, orchid, vivid] = useToken(
+	const [azure, carrot, orchid, vivid, jeans] = useToken(
 		'colors',
-		['accent.azure', 'accent.carrot', 'accent.orchid', 'accent.vivid']
+		['accent.azure', 'accent.carrot', 'accent.orchid', 'accent.vivid', 'accent.jeans']
 	)
 
 	const config = {
@@ -64,6 +64,11 @@ function QuickReplyButton({ tag, index, textProps, ...props }: Props) {
 			icon: <Chat />,
 			title: 'Feedback / Comment',
 			bg: vivid
+		},
+		review: {
+			icon: <Time />,
+			title: 'Review',
+			bg: jeans
 		}
 	}
 
