@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Flex, FlexProps, Input, InputProps, Text } from '@chakra-ui/react'
+import { Flex, FlexProps, Input, InputProps, Select, Text } from '@chakra-ui/react'
 
 interface Props extends InputProps {
     label: string
@@ -30,28 +30,69 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 						{label}
 					</Text>
 
-					<Input
-						{...props}
-						w={['100%', '70%']}
-						variant='flushed'
-						textAlign='left'
-						borderColor='gray.300'
-						borderBottom='1px solid'
-						fontSize='20px'
-						lineHeight='28px'
-						color='black.100'
-						onWheel={(e) => (e.target as HTMLElement).blur()}
-						_placeholder={
-							{
-								color: 'gray.500'
-							}
-						}
-						onChange={
-							(e) => {
-								setValue(e.target.value)
-								props?.onChange?.(e)
-							}
-						} />
+					{
+						props?.type === 'select' ? (
+							<Select
+								variant='flushed'
+								textAlign='left'
+								width={['100%', '70%']}
+								fontSize='16px'
+								fontWeight='400'
+								defaultValue={props?.value}
+								placeholder='Select a grant category'
+								color='black.100'
+								onWheel={(e) => (e.target as HTMLElement).blur()}
+								_placeholder={
+									{
+										color: 'gray.500'
+									}
+								}
+								onChange={
+									(e) => {
+										setValue(e.target.value)
+										props?.onChange?.(e as unknown as React.ChangeEvent<HTMLInputElement>)
+									}
+								} >
+								{
+									['Telegram Mini Apps: Social Web3 Use Cases inside Telegram', 'GameFi', 'Others'].map((option, index) => {
+										return (
+											<option
+												key={index}
+												value={option}>
+												{option}
+											</option>
+										)
+									})
+								}
+
+							</Select>
+						)
+
+							: (
+								<Input
+									{...props}
+									w={['100%', '70%']}
+									variant='flushed'
+									textAlign='left'
+									borderColor='gray.300'
+									borderBottom='1px solid'
+									fontSize='20px'
+									lineHeight='28px'
+									color='black.100'
+									onWheel={(e) => (e.target as HTMLElement).blur()}
+									_placeholder={
+										{
+											color: 'gray.500'
+										}
+									}
+									onChange={
+										(e) => {
+											setValue(e.target.value)
+											props?.onChange?.(e)
+										}
+									} />
+							)
+					}
 				</Flex>
 				{
 					props?.maxLength && (

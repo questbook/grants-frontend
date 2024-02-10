@@ -26,6 +26,8 @@ export type MilestoneType = {
     index: number
     title: string
     amount: number
+    details?: string
+    deadline?: string
 }
 
 export type Form = {

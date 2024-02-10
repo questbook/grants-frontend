@@ -13,6 +13,15 @@ query getProposals($grantID: String!, $proposalId: String!) {
         value
       }
     }
+    migratedFrom {
+      id: _id
+      title
+      workspace {
+        safe {
+          address
+        }
+      }
+    }
     pii {
       id:_id
       manager {
@@ -44,6 +53,8 @@ query getProposals($grantID: String!, $proposalId: String!) {
       feedbackDaoUpdatedAtS
       feedbackDev
       feedbackDevUpdatedAtS
+      details
+      deadline
     }
     feedbackDao
     feedbackDev

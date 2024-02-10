@@ -18,6 +18,8 @@ export const proposalDetailsQuery = gql`query proposalDetails($proposalId: Strin
     milestones {
       title
       amount
+      details
+      deadline
     }
     grant {
       id:_id

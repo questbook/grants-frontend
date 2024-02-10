@@ -145,7 +145,7 @@ function Payouts() {
 							() => {
 								if(payout?.transactionHash && grant?.workspace?.safe?.address) {
 									if(grant?.workspace?.safe?.chainId === '512342' || grant?.workspace?.safe?.chainId === '512341') {
-										window.open(getTonkeyProposalUrl(grant?.workspace?.safe?.address, payout.status === 'queued' ? 'queue' : 'history', payout?.transactionHash))
+										window.open(getTonkeyProposalUrl((payout?.createdAtS < 1707549018 && proposal?.migratedFrom?.workspace?.safe?.address) ? proposal?.migratedFrom?.workspace?.safe?.address : grant?.workspace?.safe?.address, payout.status === 'queued' ? 'queue' : 'history', payout?.transactionHash))
 									} else if(grant?.workspace?.safe?.chainId === '900001') {
 										window.open(getProposalUrl(grant?.workspace?.safe?.address, payout.transactionHash), '_blank')
 									} else {

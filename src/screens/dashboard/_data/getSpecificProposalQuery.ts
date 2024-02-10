@@ -14,6 +14,15 @@ export const getSpecificProposalQuery = gql`query getProposals($grantID: String!
           value
         }
       }
+      migratedFrom {
+        id: _id
+        title
+        workspace {
+          safe {
+            address
+          }
+        }
+      }
       pii {
         id:_id
         manager {
@@ -45,6 +54,8 @@ export const getSpecificProposalQuery = gql`query getProposals($grantID: String!
         feedbackDaoUpdatedAtS
         feedbackDev
         feedbackDevUpdatedAtS
+        details
+        deadline
       }
       feedbackDao
       feedbackDev

@@ -95,7 +95,34 @@ function Proposal() {
 						/>
 					</Flex>
 				</Flex>
+				{
+					proposal?.migratedFrom?.title && (
+						<Flex
+							align='center'
+							justify='center'
+							transition='all .5s ease'
+							w='fit-content'
+							mt={1}
+							py={1}
+							px={3}
+							borderRadius='18px'
+							maxH='36px'
+							border='1px solid'
+							bg='#0A84FF66'
+							borderColor='#0A84FF66'
+						>
 
+							<Text
+								variant='metadata'
+								fontWeight='500'
+								ml={1}>
+								Migrated From:
+								{' '}
+								{proposal?.migratedFrom?.title}
+							</Text>
+						</Flex>
+					)
+				}
 				{
 					shouldShowPII && (
 						<Flex
@@ -332,15 +359,19 @@ function Proposal() {
 				}
 
 				{
-					grant?.fields
+					proposal?.fields
 						?.filter((field) => field.id
 							.substring(field.id.indexOf('.') + 1)
 							.startsWith('customField'),
-						)
-						.map((field, index) => {
+						)?.sort((a, b) => {
+							const aId = a.id.substring(a.id.indexOf('.customField') + 12)?.split('-')[0]
+							const bId = b.id.substring(b.id.indexOf('.customField') + 12)?.split('-')[0]
+							return parseInt(aId) - parseInt(bId)
+						})?.map((field, index) => {
 							const id = field.id.substring(field.id.indexOf('.') + 1)
-							const title = field.title
-								.substring(field.title.indexOf('-') + 1)
+
+							const title = field.id
+								.substring(field.id.indexOf('-') + 1)
 								.split('\\s')
 								.join(' ')
 							const value = getFieldString(proposal, id)
@@ -398,7 +429,7 @@ function Proposal() {
 		)
 	}
 
-	const { grant, role } = useContext(GrantsProgramContext)!
+	const { role } = useContext(GrantsProgramContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 	const toast = useCustomToast()
 
@@ -431,9 +462,9 @@ function Proposal() {
 	const [editorState, setEditorState] = useState<EditorState>(
 		EditorState.createEmpty(),
 	)
-
+	const migratedId = (proposal?.migratedFrom?.id ?? proposal?.grant?.id) as string
 	const { decrypt } = useEncryptPiiForApplication(
-		proposal?.grant?.id,
+		migratedId,
 		proposal?.applicantPublicKey,
 		chainId,
 	)

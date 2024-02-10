@@ -8,6 +8,7 @@ import logger from 'src/libraries/logger'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { getPayoutQuery } from 'src/screens/dashboard/_data/getPayoutQuery'
+import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { PayoutsType, ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 
@@ -56,60 +57,98 @@ function Milestones() {
 
 	const milestoneItem = (milestone: ProposalType['milestones'][number], index: number) => {
 		return (
-			<Flex
-				align='end'
-				mt={index === 0 ? 4 : 2}>
-				<Flex direction='column'>
-					<Text
-						color='gray.400'
-						variant='heading3'
-						fontWeight='500'>
-						{index < 9 ? `0${index + 1}` : (index + 1)}
-					</Text>
-					<Text
-						mt={1}
-						variant='body'>
-						{milestone?.title}
-					</Text>
-					{
-						payouts?.find(p => p.milestone?.id === milestone.id)?.status === 'executed' ? (
-							<Flex
-								align='center'
-								justify='center'
-								transition='all .5s ease'
-								w='fit-content'
-								mt={1}
-								py={1}
-								px={3}
-								borderRadius='18px'
-								maxH='36px'
-								border='1px solid'
-								bg='#0A84FF66'
-								borderColor='#0A84FF66'
-							>
-								<Accept />
-								<Text
-									variant='metadata'
-									fontWeight='500'
-									ml={1}>
-									Paid
-								</Text>
-							</Flex>
-						) : ''
-					}
+			<>
+				<Flex
+					align='end'
+					mt={index === 0 ? 4 : 2}>
+					<Flex direction='column'>
+						<Text
+							color='gray.400'
+							variant='heading3'
+							fontWeight='500'>
+							{index < 9 ? `0${index + 1}` : (index + 1)}
+						</Text>
+						<Text
+							mt={1}
+							variant='body'>
+							{milestone?.title}
+						</Text>
+						{
+							payouts?.find(p => p.milestone?.id === milestone.id)?.status === 'executed' ? (
+								<Flex
+									align='center'
+									justify='center'
+									transition='all .5s ease'
+									w='fit-content'
+									mt={1}
+									py={1}
+									px={3}
+									borderRadius='18px'
+									maxH='36px'
+									border='1px solid'
+									bg='#0A84FF66'
+									borderColor='#0A84FF66'
+								>
+									<Accept />
+									<Text
+										variant='metadata'
+										fontWeight='500'
+										ml={1}>
+										Paid
+									</Text>
+								</Flex>
+							) : ''
+						}
 
+					</Flex>
+
+					{
+						chainInfo && (
+							<Text ml='auto'>
+								{chainInfo?.address === USD_ASSET ? milestone.amount : ethers.utils.formatUnits(milestone.amount, chainInfo.decimals)}
+								{' '}
+								{chainInfo?.label}
+							</Text>
+						)
+					}
 				</Flex>
 
-				{
-					chainInfo && (
-						<Text ml='auto'>
-							{chainInfo?.address === USD_ASSET ? milestone.amount : ethers.utils.formatUnits(milestone.amount, chainInfo.decimals)}
-							{' '}
-							{chainInfo?.label}
-						</Text>
-					)
-				}
-			</Flex>
+				<Flex
+					w='100%'
+				>
+					{
+						milestone?.details && (
+							<Text
+								color='gray.500'
+								variant='metadata'
+
+								mt={1}>
+								{milestone?.details}
+							</Text>
+						)
+					}
+				</Flex>
+				<Flex
+					w='100%'
+
+				>
+
+					{
+						milestone?.deadline && (
+							<Text
+								color='black'
+								variant='metadata'
+
+								mt={1}>
+								Deadline:
+								{' '}
+								{formatTime(new Date(milestone?.deadline).valueOf() / 1000, true)}
+							</Text>
+						)
+					}
+				</Flex>
+			</>
+
 		)
 	}
 

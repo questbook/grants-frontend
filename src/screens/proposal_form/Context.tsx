@@ -168,13 +168,15 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 					value: id === 'isMultipleMilestones' ? 'true' : getFieldString(result?.grantApplication, id) ?? ''
 				}
 			}),
-			milestones: result.grantApplication.milestones.map((milestone: { title: string, amount: string }, index: number) => (
+			milestones: result.grantApplication.milestones.map((milestone: { title: string, amount: string, details?: string, deadline?: string }, index: number) => (
 				{
 					index,
 					title: milestone.title,
 					amount: chainInfo.address === USD_ASSET ?
 						parseInt(milestone.amount) :
-						parseInt(ethers.utils.formatUnits(milestone.amount.toString(), chainInfo.decimals))
+						parseInt(ethers.utils.formatUnits(milestone.amount.toString(), chainInfo.decimals)),
+					details: milestone?.details,
+					deadline: milestone?.deadline,
 				})),
 			members: containsField(result.grantApplication.grant, 'teamMembers') ? getFieldStrings(result.grantApplication, 'memberDetails') ?? [''] : [],
 			details: await getProjectDetails(getFieldString(result.grantApplication, 'projectDetails') ?? '')

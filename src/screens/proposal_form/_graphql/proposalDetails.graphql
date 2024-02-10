@@ -17,6 +17,8 @@ query proposalDetails($proposalId: String!) {
     milestones {
       title
       amount
+      details
+      deadline
     }
     grant {
       id:_id

@@ -4,7 +4,7 @@ import { convertToRaw } from 'draft-js'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
 import { useSafeContext } from 'src/contexts/safeContext'
-import { Doc } from 'src/generated/icons'
+import { Alert, Doc } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import BackButton from 'src/libraries/ui/BackButton'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
@@ -24,13 +24,13 @@ import SectionSelect from 'src/screens/proposal_form/_components/SectionSelect'
 import SelectArray from 'src/screens/proposal_form/_components/SelectArray'
 import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposal'
 import { containsField, findField, findFieldBySuffix, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
-import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, MILESTONE_INPUT_STYLE } from 'src/screens/proposal_form/_utils/constants'
+import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, MILESTONE_INPUT_STYLE, tonGrants } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
 
 
 function ProposalForm() {
 	const buildComponent = () => {
-		return isExecuting !== undefined && !isExecuting && networkTransactionModalStep === undefined ? successComponent() : (error ? errorComponent() : formComponent())
+		return isExecuting !== undefined && !isExecuting && networkTransactionModalStep === undefined ? successComponent() : (error ? errorComponent() : grant?.id === tonGrants ? customTONformComponent() : formComponent())
 	}
 
 
@@ -520,6 +520,567 @@ function ProposalForm() {
 
 						{
 							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1).startsWith('customField')).map((field) => {
+								const id = field.id.substring(field.id.indexOf('.') + 1)
+								const modifiedId = id.substring(id.indexOf('-') + 1)
+								const title = field.title.substring(field.title.indexOf('-') + 1)
+									.split('\\s')
+									.join(' ')
+
+								// console.log('hasan', { id, field: findFieldBySuffix(form, modifiedId, id)})
+
+								return (
+									<SectionInput
+										key={field.id}
+										label={title}
+										value={findFieldBySuffix(form, modifiedId, id).value}
+										onChange={
+											(e) => {
+												onChange(e, findFieldBySuffix(form, modifiedId, id).id)
+											}
+										} />
+								)
+							})
+						}
+
+
+						<Button
+							mt={10}
+							ml='auto'
+							variant='primaryLarge'
+							isLoading={webwallet ? !scwAddress : false}
+							loadingText='Loading your wallet'
+							isDisabled={isDisabled}
+							onClick={
+								(e) => {
+									e.preventDefault()
+									if(!webwallet) {
+										setSignIn(true)
+										return
+									} else {
+										setNetworkTransactionModalStep(0)
+										submitProposal(form)
+									}
+								}
+							}>
+							<Text
+								color='white'
+								fontWeight='500'>
+								{type === 'submit' ? 'Submit' : 'Resubmit'}
+								{' '}
+								Proposal
+							</Text>
+						</Button>
+					</Flex>
+				</Flex>
+				<NetworkTransactionFlowStepperModal
+					isOpen={networkTransactionModalStep !== undefined}
+					currentStepIndex={networkTransactionModalStep || 0}
+					viewTxnLink={getExplorerUrlForTxHash(chainId, transactionHash)}
+					customSteps={customSteps}
+					customStepsHeader={customStepsHeader}
+					onClose={
+						() => {
+							setNetworkTransactionModalStep(undefined)
+						}
+					} />
+			</Flex>
+		)
+	}
+
+	const customTONformComponent = () => {
+
+		return (
+			<Flex
+				w='100%'
+				h='calc(100vh - 64px)'
+				align='start'
+				justify='center'>
+
+				<Flex
+					direction='column'
+					w='90%'
+					bg='white'
+					boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
+					overflowY='auto'
+					my={5}
+					px={6}
+					py={10}>
+					{
+						newTab !== 'true' && (
+							<Flex justify='start'>
+								<BackButton />
+							</Flex>
+						)
+					}
+
+					<Flex
+						mx='auto'
+						direction='column'
+						w='84%'
+						h='100%'
+						align='center'
+					>
+
+						<Text
+							w='100%'
+							textAlign='center'
+							variant='heading3'
+							fontWeight='500'
+							borderBottom='1px solid #E7E4DD'
+							pb={4}>
+							Submit Proposal
+						</Text>
+						{/* Grant Name */}
+
+						<Flex alignItems='center'>
+							<Image
+								src='/v2/images/tonBanner.png'
+								alt='banner'
+								width='100%'
+								height='100%'
+							/>
+						</Flex>
+
+
+						{/* Grant Info */}
+						<Container
+							mt={4}
+							p={4}
+							// border='1px solid #E7E4DD'
+							className='container'
+							width='max-content'
+						>
+							<Flex
+								direction={['column', 'row']}
+								justifyContent='space-between'
+								width='max-content'
+								gap={2}
+							>
+								<Flex
+									alignItems='center'
+								 />
+								{/* <Divider
+									orientation='vertical'
+									h='100%' /> */}
+
+
+							</Flex>
+						</Container>
+
+
+						<Flex
+							mt={4}
+
+							fontWeight='800'
+							lineHeight='1.5'
+							color='black.100'
+							gap={2}
+
+						>
+							<Alert
+								mt={1}
+								w='20px'
+							/>
+
+
+							<Text
+								fontWeight='800'
+								lineHeight='1.5'
+								color='black.100'
+								gap={2}
+							>
+								Disclaimer: Before submitting your application, please kindly study
+
+								<Text
+									as='a'
+									mx={1}
+									color='accent.azure'
+									href='https://github.com/ton-society/grants-and-bounties/blob/main/grants/GRANT_PROGRAM_GUIDELINES.md'
+									target='_blank'
+									rel='noreferrer'
+									variant='heading4'
+								>
+									TON Grants Program Guidelines
+								</Text>
+
+
+								and
+								<Text
+									as='a'
+									mx={1}
+									color='accent.azure'
+									href='https://github.com/ton-society/ecosystem-map'
+									target='_blank'
+									rel='noreferrer'
+									variant='heading4'
+								>
+									TON Ecosystem Map.
+								</Text>
+								Note that applications that do not comply with the Guidelines will be automatically rejected.
+							</Text>
+						</Flex>
+
+						{/* Builder Details */}
+						{
+							(
+								grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1).includes('Grant category')).map((field) => {
+									const id = field.id.substring(field.id.indexOf('.') + 1)
+									const modifiedId = id.substring(id.indexOf('-') + 1)
+									const title = field.title.substring(field.title.indexOf('-') + 1)
+										.split('\\s')
+										.join(' ')
+
+									// console.log('hasan', { id, field: findFieldBySuffix(form, modifiedId, id)})
+
+									return (
+										<SectionInput
+											key={field.id}
+											label={title}
+											type='select'
+											value={findFieldBySuffix(form, modifiedId, id).value}
+											onChange={
+												(e) => {
+													logger.info({ e, id, modifiedId, field: findFieldBySuffix(form, modifiedId, id) }, 'Select')
+													onChange(e, findFieldBySuffix(form, modifiedId, id).id)
+												}
+											} />
+									)
+								}))
+						}
+
+						<SectionHeader mt={8}>
+							Builder details
+						</SectionHeader>
+						{
+							containsField(grant, 'applicantName') && (
+								<SectionInput
+									label='Full Name'
+									placeholder='Ryan Adams'
+									value={findField(form, 'applicantName').value}
+									onChange={
+										(e) => {
+											onChange(e, 'applicantName')
+										}
+									} />
+							)
+						}
+						{
+							containsField(grant, 'applicantEmail') && (
+								<SectionInput
+									label='Email'
+									placeholder='name@sample.com'
+									value={findField(form, 'applicantEmail').value}
+									onChange={
+										(e) => {
+											onChange(e, 'applicantEmail')
+											validateEmail(e.target.value, (isValid) => {
+												setEmailError(!isValid)
+											})
+										}
+									}
+									isInvalid={emailError}
+									errorText='Invalid email address' />
+							)
+						}
+						{
+							containsField(grant, 'applicantAddress') && (
+								<SectionInput
+									label='TON Wallet Address'
+									placeholder='Wallet to receive funds on TON'
+									value={findField(form, 'applicantAddress').value}
+									onChange={
+										async(e) => {
+											onChange(e, 'applicantAddress')
+											await validateWalletAddress(e.target.value, (isValid) => {
+												setWalletAddressError(!isValid)
+											})
+										}
+									}
+									isInvalid={walletAddressError}
+									errorText={`Invalid address on ${chainNames?.get(safeObj?.chainId?.toString() ?? '') !== undefined ? chainNames.get(safeObj?.chainId?.toString() ?? '')?.toString() : 'EVM / Solana / TON based chain'}`} />
+							)
+						}
+
+						{
+							containsField(grant, 'teamMembers') && (
+								<SectionSelect
+									label='Team Members'
+									defaultValue={1}
+									min={1}
+									max={10}
+									value={form?.members?.length}
+									onChange={
+										(e) => {
+											const copy = { ...form }
+											const newLength = parseInt(e)
+											if(newLength > copy.members.length) {
+												copy.members = copy.members.concat(Array(newLength - copy.members.length).fill(''))
+											} else if(newLength < copy.members.length) {
+												copy.members = copy.members.slice(0, newLength)
+											}
+
+											findField(copy, 'teamMembers').value = newLength.toString()
+											setForm(copy)
+										}
+									} />
+							)
+						}
+
+						{
+							containsField(grant, 'teamMembers') && form.members?.map((member, index) => {
+								return (
+									<SectionInput
+										key={index}
+										label={`Member ${index + 1}`}
+										placeholder={`Bio about member ${index + 1}`}
+										maxLength={300}
+										value={member}
+										onChange={
+											(e) => {
+												const copy = { ...form }
+												copy.members[index] = e.target.value
+												setForm(copy)
+											}
+										} />
+								)
+							})
+						}
+						{
+							(
+								grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1).includes('Personal Telegram Handle')).map((field) => {
+									const id = field.id.substring(field.id.indexOf('.') + 1)
+									const modifiedId = id.substring(id.indexOf('-') + 1)
+									const title = field.title.substring(field.title.indexOf('-') + 1)
+										.split('\\s')
+										.join(' ')
+
+									// console.log('hasan', { id, field: findFieldBySuffix(form, modifiedId, id)})
+
+									return (
+										<SectionInput
+											key={field.id}
+											label={title}
+											placeholder='@telegram_handle'
+											value={findFieldBySuffix(form, modifiedId, id).value}
+											onChange={
+												(e) => {
+													onChange(e, findFieldBySuffix(form, modifiedId, id).id)
+												}
+											} />
+									)
+								}))
+						}
+						{/* Project Details */}
+						<SectionHeader mt={8}>
+							Project Details
+						</SectionHeader>
+						{
+							(
+
+								grant?.fields?.filter((field) => ['Website', 'Pitch deck (if available)', 'Twitter', 'Telegram Channel', 'Telegram Bot (if available)', 'Github Link']?.
+									some((title) => field.title.substring(field.title.indexOf('-') + 1).includes(title))).map((field) => {
+
+									const id = field.id.substring(field.id.indexOf('.') + 1)
+									const modifiedId = id.substring(id.indexOf('-') + 1)
+									const title = field.title.substring(field.title.indexOf('-') + 1)
+										.split('\\s')
+										.join(' ')
+
+									// console.log('hasan', { id, field: findFieldBySuffix(form, modifiedId, id)})
+
+									return (
+										<SectionInput
+											key={field.id}
+											label={title}
+											value={findFieldBySuffix(form, modifiedId, id).value}
+											onChange={
+												(e) => {
+													onChange(e, findFieldBySuffix(form, modifiedId, id).id)
+												}
+											} />
+									)
+								}))
+						}
+
+						{/* Proposal Details */}
+						<SectionHeader mt={8}>
+							Proposal
+						</SectionHeader>
+						{
+							containsField(grant, 'projectName') && (
+								<SectionInput
+									label='Title'
+									placeholder='Name of your proposal'
+									maxLength={80}
+									value={findField(form, 'projectName').value}
+									onChange={
+										(e) => {
+											onChange(e, 'projectName')
+										}
+									} />
+							)
+						}
+						{
+						 (
+								grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1).includes('Your idea in 1 sentence')).map((field) => {
+									const id = field.id.substring(field.id.indexOf('.') + 1)
+									const modifiedId = id.substring(id.indexOf('-') + 1)
+									const title = field.title.substring(field.title.indexOf('-') + 1)
+										.split('\\s')
+										.join(' ')
+
+									// console.log('hasan', { id, field: findFieldBySuffix(form, modifiedId, id)})
+
+									return (
+										<SectionInput
+											key={field.id}
+											label={title}
+											value={findFieldBySuffix(form, modifiedId, id).value}
+											onChange={
+												(e) => {
+													onChange(e, findFieldBySuffix(form, modifiedId, id).id)
+												}
+											} />
+									)
+								}))
+						}
+
+						{
+							containsField(grant, 'tldr') && (
+								<SectionInput
+									label='tl;dr'
+									placeholder='Explain your proposal in one sentence'
+									maxLength={120}
+									value={findField(form, 'tldr').value}
+									onChange={
+										(e) => {
+											onChange(e, 'tldr')
+										}
+									} />
+							)
+						}
+
+						{
+							containsField(grant, 'projectDetails') && (
+								<SectionRichTextEditor
+									label='Details'
+									flexProps={{ align: 'start' }}
+									editorState={form.details}
+									placeholder='What is the Problem you are solving? What is your Solution to this problem? Please provide any relevant links that present your product (demo / presentation / website / Twitter (X) profile))'
+									setEditorState={
+										(e) => {
+											const copy = { ...form }
+											copy.details = e
+											setForm(copy)
+										}
+									} />
+							)
+						}
+						{
+							(
+								<>
+									<SelectArray
+										label='Milestones'
+										allowMultiple={grant?.payoutType === 'milestones' || (containsField(grant, 'isMultipleMilestones') ?? false)}
+										config={
+											form?.milestones?.map((milestone, index) => {
+												return [
+													{
+														...MILESTONE_INPUT_STYLE[0],
+														value: milestone?.title,
+														// isDisabled: index < (grant?.milestones?.length || 0),
+														onChange: (e) => {
+															const copy = { ...form }
+															copy.milestones[index] = { ...copy.milestones[index], title: e.target.value }
+															setForm(copy)
+														}
+													},
+													{
+														...MILESTONE_INPUT_STYLE[2],
+														value: milestone?.details,
+														type: 'textarea',
+														// isDisabled: index < (grant?.milestones?.length || 0),
+														onChange: (e) => {
+															const copy = { ...form }
+															copy.milestones[index] = { ...copy.milestones[index], details: e.target.value }
+															setForm(copy)
+														}
+													},
+													{
+														...MILESTONE_INPUT_STYLE[3],
+														value: milestone?.deadline,
+														type: 'date',
+														label: 'Deadline',
+														// isDisabled: index < (grant?.milestones?.length || 0),
+														onChange: (e) => {
+															const copy = { ...form }
+															copy.milestones[index] = { ...copy.milestones[index], deadline: e.target.value }
+															setForm(copy)
+														}
+													},
+													{
+														...MILESTONE_INPUT_STYLE[1],
+														value: milestone?.amount > 0 ? milestone?.amount : '',
+														onChange: (e) => {
+															if(e.target.value?.includes('.')) {
+																return
+															} else {
+																try {
+																	const copy = { ...form }
+																	copy.milestones[index] = { ...copy.milestones[index], amount: parseInt(e.target.value) }
+																	setForm(copy)
+																} catch(e) {
+																	logger.error(e)
+																}
+															}
+														}
+													},
+												]
+											})
+										}
+										onAdd={
+											() => {
+												const copy = { ...form }
+												copy.milestones.push(DEFAULT_MILESTONE)
+												setForm(copy)
+											}
+										}
+										onRemove={
+											(index) => {
+												const copy = { ...form }
+												logger.info({ index, copy }, 'Splicing')
+												copy.milestones.splice(index, 1)
+												setForm(copy)
+											}
+										} />
+
+									<SectionInput
+										label='Total Funding Requested'
+										isDisabled
+										placeholder='12000 USD'
+										value={`${fundingAsk} ${chainInfo?.label}`}
+									/>
+								</>
+							)
+						}
+
+						{/* Render custom Fields */}
+						{
+							containsField(grant, 'customField0') && (
+								<SectionHeader mt={8}>
+									Other information
+								</SectionHeader>
+							)
+						}
+
+						{
+							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1).startsWith('customField')
+							&& !['Personal Telegram Handle', 'Grant category', 'Your idea in 1 sentence', 'Website', 'Pitch deck (if available)', 'Twitter', 'Telegram Channel', 'Telegram Bot (if available)', 'Github Link']?.some((el) => field.id?.substring(field.id.indexOf('.') + 1).includes(el))
+							)?.sort((a, b) => {
+								const aId = a.id.substring(a.id.indexOf('.customField') + 12)?.split('-')[0]
+								const bId = b.id.substring(b.id.indexOf('.customField') + 12)?.split('-')[0]
+								return parseInt(aId) - parseInt(bId)
+							}).map((field) => {
 								const id = field.id.substring(field.id.indexOf('.') + 1)
 								const modifiedId = id.substring(id.indexOf('-') + 1)
 								const title = field.title.substring(field.title.indexOf('-') + 1)

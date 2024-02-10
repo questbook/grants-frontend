@@ -146,6 +146,8 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 						chainInfo?.address,
 						chainInfo?.decimals,
 					),
+					details: milestone?.details ?? undefined,
+					deadline: milestone?.deadline ?? undefined,
 				})),
 			}
 

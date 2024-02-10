@@ -9,9 +9,10 @@ interface Props {
     flexProps?: FlexProps
 	editorState: EditorState
 	setEditorState: (editorState: EditorState) => void
+	placeholder?: string
 }
 
-function SectionRichTextEditor({ label, editorState, setEditorState, flexProps }: Props) {
+function SectionRichTextEditor({ label, editorState, setEditorState, flexProps, placeholder }: Props) {
 	const buildComponent = () => {
 		return (
 			<Flex
@@ -33,9 +34,7 @@ function SectionRichTextEditor({ label, editorState, setEditorState, flexProps }
 					<TextEditor
 						value={editorState}
 						onChange={setEditorState}
-						placeholder='What are you building? What’s on your roadmap? When do you expect to complete it by?
-						Media: Show and tell what you’re building with any media;
-						Links: share relevant links to the team and project' />
+						placeholder={placeholder ?? 'What are you building? What’s on your roadmap? When do you expect to complete it by?\nMedia: Show and tell what you’re building with any media;\nLinks: share relevant links to the team and project'} />
 				</Flex>
 			</Flex>
 		)
