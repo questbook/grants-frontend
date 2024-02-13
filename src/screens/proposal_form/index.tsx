@@ -966,7 +966,7 @@ function ProposalForm() {
 									label='Details'
 									flexProps={{ align: 'start' }}
 									editorState={form.details}
-									placeholder='What is the Problem you are solving? What is your Solution to this problem? Please provide any relevant links that present your product (demo / presentation / website / Twitter (X) profile))'
+									placeholder='What is the Problem you are solving? What is your Solution to this problem? Please provide link to your product demo or design frames, if available'
 									setEditorState={
 										(e) => {
 											const copy = { ...form }
