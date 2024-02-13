@@ -1,5 +1,5 @@
 import { ChangeEvent, ReactElement, useContext, useEffect, useMemo, useState } from 'react'
-import { Button, Container, Flex, Image, Text } from '@chakra-ui/react'
+import { Box, Button, Container, Flex, Image, Text } from '@chakra-ui/react'
 import { convertToRaw } from 'draft-js'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
@@ -24,7 +24,7 @@ import SectionSelect from 'src/screens/proposal_form/_components/SectionSelect'
 import SelectArray from 'src/screens/proposal_form/_components/SelectArray'
 import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposal'
 import { containsField, findField, findFieldBySuffix, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
-import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, MILESTONE_INPUT_STYLE, tonGrants } from 'src/screens/proposal_form/_utils/constants'
+import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, disabledTonGrants, MILESTONE_INPUT_STYLE, tonGrants } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
 
 
@@ -178,6 +178,46 @@ function ProposalForm() {
 							<Flex justify='start'>
 								<BackButton />
 							</Flex>
+						)
+					}
+					{
+						disabledTonGrants.includes(grant?.id as string) && (
+							<>
+								<Box
+									bgColor='gray.200'
+									padding={[5, 5]}
+									justifyContent='flex-start'
+									maxWidth='100%'
+									overscroll='auto'
+									maxHeight='400px'
+									mb={6}
+								>
+
+
+									<Text
+										fontWeight='500'
+										color='black.100'
+										fontSize='14px'
+										textAlign='center'
+										mx={2}
+									>
+										All the grant information and proposals have moved to TON Grants page,
+
+										<Text
+											fontWeight='500'
+											fontSize='14px'
+											as='a'
+											href={`${window.location.origin}/dashboard/?grantId=${tonGrants}&chainId=10`}
+											target='_blank'
+											color='blue.500'
+											mx={2}>
+											please visit there for more info
+										</Text>
+									</Text>
+
+								</Box>
+
+							</>
 						)
 					}
 					{
@@ -1198,7 +1238,7 @@ function ProposalForm() {
 			}
 		}
 
-		if(disabledGrants?.includes(grant?.id as string) && type === 'submit') {
+		if((disabledGrants?.includes(grant?.id as string) || disabledTonGrants?.includes(grant?.id as string)) && type === 'submit') {
 			logger.info('Grant is disabled')
 			return true
 		}
