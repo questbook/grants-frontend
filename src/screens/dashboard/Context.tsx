@@ -17,6 +17,7 @@ import { getSpecificApplicationActionQuery } from 'src/screens/dashboard/_data/g
 import { getSpecificProposalCommentsQuery } from 'src/screens/dashboard/_data/getSpecificProposalCommentsQuery'
 import { getSpecificProposalQuery } from 'src/screens/dashboard/_data/getSpecificProposalQuery'
 import { CommentMap, CommentType, DashboardContextType, FundBuilderContextType, ModalContextType, Proposals, ReviewInfo, SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
+import { disabledTonGrants, tonGrants } from 'src/screens/proposal_form/_utils/constants'
 import { Roles } from 'src/types'
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined)
@@ -627,6 +628,20 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 	}, [grant, chainId])
 
 	useEffect(() => {
+		if(proposalId && typeof proposalId === 'string' && disabledTonGrants.includes(grantId as string)) {
+			logger.info({ grantId, tonGrants }, 'Replacing router')
+			// replace the grantid with tonGrants id
+			router.replace({
+				pathname: '/dashboard',
+				query: {
+					...router.query,
+					grantId: tonGrants
+				}
+			}, undefined, { shallow: true })
+		}
+	}, [proposalId, grantId])
+
+	useEffect(() => {
 		if(proposals.length === 0) {
 			setSelectedProposals(new Set<string>())
 			if(grant) {
@@ -639,6 +654,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		if(isRenderingProposalBody === 'true') {
 			setDashboardStep(true)
 		}
+
 
 		if(proposalId && typeof proposalId === 'string') {
 			// Scroll to the proposal
