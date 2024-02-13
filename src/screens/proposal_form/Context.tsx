@@ -16,7 +16,7 @@ import { WebwalletContext } from 'src/pages/_app'
 import { grantDetailsQuery } from 'src/screens/proposal_form/_data/grantDetailsQuery'
 import { proposalDetailsQuery } from 'src/screens/proposal_form/_data/proposalDetailsQuery'
 import { containsField, getProjectDetails } from 'src/screens/proposal_form/_utils'
-import { DEFAULT_FORM, DEFAULT_MILESTONE } from 'src/screens/proposal_form/_utils/constants'
+import { DEFAULT_FORM, DEFAULT_MILESTONE, disabledTonGrants, tonGrants } from 'src/screens/proposal_form/_utils/constants'
 import { Form, FormType, Grant, Proposal, ProposalFormContextType } from 'src/screens/proposal_form/_utils/types'
 
 const ProposalFormContext = createContext<ProposalFormContextType | undefined>(undefined)
@@ -86,6 +86,20 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 			setType('resubmit')
 		}
 	}, [grantId, proposalId, chainId])
+
+	useEffect(() => {
+		if(grantId && typeof grantId === 'string' && disabledTonGrants.includes(grantId as string)) {
+			logger.info({ grantId, tonGrants }, 'Replacing router')
+			// replace the grantid with tonGrants id
+			router.replace({
+				pathname: '/proposal_form',
+				query: {
+					...router.query,
+					grantId: tonGrants
+				}
+			}, undefined, { shallow: true })
+		}
+	}, [grantId])
 
 	const { fetchMore: fetchProposalDetails } = useQuery({
 		query: proposalDetailsQuery,
