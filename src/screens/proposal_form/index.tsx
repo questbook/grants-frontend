@@ -207,7 +207,7 @@ function ProposalForm() {
 											fontWeight='500'
 											fontSize='14px'
 											as='a'
-											href={`${window.location.origin}/dashboard/?grantId=${tonGrants}&chainId=10`}
+											href={`${window.location.origin}/proposal_form/?grantId=${tonGrants}&chainId=10&newTab=true`}
 											target='_blank'
 											color='blue.500'
 											mx={2}>
