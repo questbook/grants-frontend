@@ -32,7 +32,7 @@ function Empty() {
 						fontWeight='500'
 						variant='heading3'
 						as='a'
-						href={`${window.location.origin}/proposal_form/?grantId=${tonGrants}&chainId=10&newTab=true`}
+						href={`${window.location.origin}/dashboard/?grantId=${tonGrants}&chainId=10`}
 						target='_blank'
 						color='blue.500'
 						mx={2}>
