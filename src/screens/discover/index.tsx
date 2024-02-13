@@ -341,7 +341,7 @@ function Discover() {
 											logger.info('section', { section, sectionGrants })
 											const sectionName = Object.keys(section)[0]
 											const sectionImage = section[sectionName].sectionLogoIpfsHash
-											const sectionLink = sectionName === 'Arbitrum' ? 'arbitrum' : sectionName === 'Compound' ? 'compoundgrants' : false
+											const sectionLink = sectionName === 'Arbitrum' ? 'arbitrum' : sectionName === 'Compound' ? 'compoundgrants' : sectionName === 'Alchemix' ? 'alchemix' : false
 											const grants = section[sectionName].grants.filter((grant) => grant.title.toLowerCase().includes(filterGrantName.trim().toLowerCase())).map(grant => ({ ...grant, role: 'community' as Roles }))
 											return (
 												<Box
