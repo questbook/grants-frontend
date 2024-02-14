@@ -4,7 +4,7 @@ import { convertToRaw } from 'draft-js'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
 import { useSafeContext } from 'src/contexts/safeContext'
-import { Alert, Doc } from 'src/generated/icons'
+import { Alert, Doc, Twitter } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import BackButton from 'src/libraries/ui/BackButton'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
@@ -24,7 +24,7 @@ import SectionSelect from 'src/screens/proposal_form/_components/SectionSelect'
 import SelectArray from 'src/screens/proposal_form/_components/SelectArray'
 import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposal'
 import { containsField, findField, findFieldBySuffix, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
-import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, disabledTonGrants, MILESTONE_INPUT_STYLE, tonGrants } from 'src/screens/proposal_form/_utils/constants'
+import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, disabledTonGrants, MILESTONE_INPUT_STYLE, SocialIntent, tonGrants } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
 
 
@@ -87,7 +87,7 @@ function ProposalForm() {
 							by grant managers.
 						</Text>
 						<Flex
-							mt={12}
+							mt={6}
 							gap={6}>
 							<Button
 								variant='primaryLarge'
@@ -121,7 +121,29 @@ function ProposalForm() {
 								I&apos;ll do it later
 							</Button>
 						</Flex>
-
+						<Text
+							fontWeight='500'
+							variant='subheading'
+							fontSize='18px'
+							mt={4}
+						>
+							 Propel Your Projects Forward with Questbook
+						</Text>
+						<Flex
+							mt={6}
+							gap={6}>
+							<Button
+								variant='primaryLarge'
+								onClick={() => window.open(`https://twitter.com/intent/tweet?text=${SocialIntent[Math.floor(Math.random() * SocialIntent.length)]}&url=${window.location.origin}/dashboard/?grantId=${grant?.id}%26chainId=${chainId}%26proposalId=${proposalId}`, '_blank')}
+								leftIcon={<Twitter />}
+							>
+								<Text
+									color='white'
+									fontWeight='500'>
+									Share on Twitter
+								</Text>
+							</Button>
+						</Flex>
 						<SetupNotificationModal
 							isOpen={isSetupNotificationModalOpen}
 							onClose={() => setIsSetupNotificationModalOpen(false)}
