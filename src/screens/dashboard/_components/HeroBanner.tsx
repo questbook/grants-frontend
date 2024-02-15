@@ -157,8 +157,8 @@ function HeroBannerBox({
 							  boxSize='16px'
 							mt={10}
 							justifyContent='center'
-							h='max'
-							w='24'
+							h='24'
+							w='48'
 							src='https://ipfs.questbook.app:8080/ipfs/QmTkdKP8gFTmrM5UJYAtEahqtU7GQyDVaN9UHnNoEY6M3M' />
 					</Flex>
 				)
@@ -180,7 +180,7 @@ function HeroBannerBox({
 							borderRadius='lg'
 							boxSize='16px'
 							justifyContent='center'
-							h='max'
+							h='16'
 							mb={4}
 							w='16'
 							src='https://ipfs.questbook.app:8080/ipfs/QmTkdKP8gFTmrM5UJYAtEahqtU7GQyDVaN9UHnNoEY6M3M' />
