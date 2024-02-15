@@ -161,8 +161,8 @@ function HeroBannerBox({
 						<Image
 							mt={10}
 							justifyContent='center'
-							h='max'
-							w='24'
+							h='28'
+							w='52'
 							src='https://cryptologos.cc/logos/arbitrum-arb-logo.png' />
 					</Flex>
 				)
@@ -180,9 +180,9 @@ function HeroBannerBox({
 
 						<Image
 							justifyContent='center'
-							h='max'
+							h='12'
 							mb={4}
-							w='8'
+							w='12'
 							src='https://cryptologos.cc/logos/arbitrum-arb-logo.png' />
 
 					)
