@@ -112,7 +112,7 @@ function HeroBanner({
 							boxSize='16px'
 	  						mt={10}
 	  						justifyContent='center'
-	  						h='max'
+	  						h='48'
 	  						w='52'
 	  						src='https://ipfs.questbook.app:8080/ipfs/QmTkdKP8gFTmrM5UJYAtEahqtU7GQyDVaN9UHnNoEY6M3M' />
 	  				</Flex>
