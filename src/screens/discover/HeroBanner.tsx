@@ -108,7 +108,7 @@ function HeroBanner({
 		<Image
 	  						mt={10}
 	  						justifyContent='center'
-	  						h='max'
+							h='44'
 	  						w='52'
 	  						src='https://cryptologos.cc/logos/arbitrum-arb-logo.png' />
 	  				</Flex>
@@ -172,7 +172,7 @@ function HeroBanner({
 	  						right={0}
 	  						opacity={0.9}
 	  						position='absolute'
-	  						h='max'
+	  						h='48'
 	  						w='52'
 	  						src='https://ipfs.io/ipfs/bafkreieq36x5ktemdsy4r5tuirc62sbnxujhpcvwolwfx6bnsp4wnyei4m' />
 
