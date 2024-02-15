@@ -151,8 +151,8 @@ function HeroBannerBox({
 						<Image
 							mt={10}
 							justifyContent='center'
-							h='max'
-							w='36'
+							h='28'
+							w='52'
 							style={{ mixBlendMode: 'difference' }}
 							src={getUrlForIPFSHash('QmUDdoBMuhP6wL9vUcbrzgfvCrnHXZEySmiS9KX8BRe5Ug')} />
 					</Flex>
@@ -171,9 +171,9 @@ function HeroBannerBox({
 
 						<Image
 							justifyContent='center'
-							h='max'
+							h='12'
 							mb={4}
-							w='8'
+							w='12'
 							style={{ mixBlendMode: 'difference' }}
 							src={getUrlForIPFSHash('QmUDdoBMuhP6wL9vUcbrzgfvCrnHXZEySmiS9KX8BRe5Ug')} />
 

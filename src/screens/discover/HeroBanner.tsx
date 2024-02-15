@@ -109,8 +109,8 @@ function HeroBanner({
 		<Image
 	  						mt={10}
 	  						justifyContent='center'
-	  						h='max'
-	  						w='52'
+	  						h='44'
+	  						w='60'
 							style={{ mixBlendMode: 'difference' }}
 	  						src={getUrlForIPFSHash('QmUDdoBMuhP6wL9vUcbrzgfvCrnHXZEySmiS9KX8BRe5Ug')} />
 	  				</Flex>
@@ -129,8 +129,8 @@ function HeroBanner({
 
 	  					<Image
 	  						justifyContent='center'
-	  						h='max'
-	  						w='24'
+	  						h='20'
+	  						w='20'
 							style={{ mixBlendMode: 'difference' }}
 	  						src={getUrlForIPFSHash('QmUDdoBMuhP6wL9vUcbrzgfvCrnHXZEySmiS9KX8BRe5Ug')} />
 
@@ -174,7 +174,7 @@ function HeroBanner({
 	  						right={0}
 	  						opacity={0.9}
 	  						position='absolute'
-	  						h='max'
+	  						h='52'
 	  						w='52'
 	  						src={getUrlForIPFSHash('QmYQzCdPeFPTosTezRvxjLWqfZbjeWUEfPKp7riWv67C5j')} />
 
@@ -203,7 +203,7 @@ function HeroBanner({
 		<Image
 	  						mt={10}
 	  						justifyContent='center'
-	  						h='max'
+	  						h='48'
 	  						w='52'
 	  						src={getUrlForIPFSHash('QmYQzCdPeFPTosTezRvxjLWqfZbjeWUEfPKp7riWv67C5j')} />
 	  				</Flex>
