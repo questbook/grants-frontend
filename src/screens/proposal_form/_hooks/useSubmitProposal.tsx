@@ -51,13 +51,35 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 
 	const submitProposal = async(form: Form) => {
 		try {
-			if(!grant || !webwallet || !scwAddress) {
+			if(!webwallet) {
 				customToast({
-					title: `${!grant ? 'Grant' : !webwallet ? 'Webwallet' : !scwAddress ? 'Wallet' : 'form'} is not loaded yet Please refresh the page and try again`,
+					title: 'Please Sign in to submit proposal',
 					status: 'error',
 					description: 'Error submitting proposal'
 				})
-				logger.info({ grant, webwallet, scwAddress }, 'useSubmitProposal: (Error)')
+				logger.info({ webwallet }, 'useSubmitProposal: (Error)')
+				setNetworkTransactionModalStep(undefined)
+				return
+			}
+
+			if(!scwAddress) {
+				customToast({
+					title: 'wallet not loaded yet please wait',
+					status: 'error',
+					description: 'Error submitting proposal'
+				})
+				logger.info({ scwAddress }, 'useSubmitProposal: (Error)')
+				setNetworkTransactionModalStep(undefined)
+				return
+			}
+
+			if(!grant) {
+				customToast({
+					title: 'Grant id not found',
+					status: 'error',
+					description: 'Error submitting proposal'
+				})
+				logger.info({ grant }, 'useSubmitProposal: (Error)')
 				setNetworkTransactionModalStep(undefined)
 				return
 			}

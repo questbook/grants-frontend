@@ -15,7 +15,7 @@ import { chainNames } from 'src/libraries/utils/constants'
 import { getExplorerUrlForTxHash, getRewardAmountMilestones } from 'src/libraries/utils/formatting'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { getChainInfo } from 'src/libraries/utils/token'
-import { GrantsProgramContext, SignInTitleContext } from 'src/pages/_app'
+import { GrantsProgramContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
 import SectionHeader from 'src/screens/proposal_form/_components/SectionHeader'
 import SectionInput from 'src/screens/proposal_form/_components/SectionInput'
 import SectionRichTextEditor from 'src/screens/proposal_form/_components/SectionRichTextEditor'
@@ -532,12 +532,19 @@ function ProposalForm() {
 							mt={10}
 							ml='auto'
 							variant='primaryLarge'
+							isLoading={webwallet ? !scwAddress : false}
+							loadingText='Loading your wallet'
 							isDisabled={isDisabled}
 							onClick={
 								(e) => {
 									e.preventDefault()
-									setNetworkTransactionModalStep(0)
-									submitProposal(form)
+									if(!webwallet) {
+										setSignIn(true)
+										return
+									} else {
+										setNetworkTransactionModalStep(0)
+										submitProposal(form)
+									}
 								}
 							}>
 							<Text
@@ -569,6 +576,8 @@ function ProposalForm() {
 	const { type, grant, chainId, form, setForm, error } = useContext(ProposalFormContext)!
 	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const { safeObj } = useSafeContext()!
+	const { setSignIn } = useContext(SignInContext)!
+	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 
 	const router = useRouter()
 	const { newTab } = router.query
