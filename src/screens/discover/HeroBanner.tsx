@@ -69,8 +69,8 @@ function HeroBanner() {
 							bgColor='#0A84FF'
 							mt={8}
 							rightIcon={<ArrowRight color='white' />}
-							onClick={() => window.open('https://calendly.com/madhavanmalolan/call', '_blank')}>
-							Book a Call
+							onClick={() => window.open('https://t.me/Srijith13', '_blank')}>
+							Connect with us
 						</Button>
 					</Flex>
 
