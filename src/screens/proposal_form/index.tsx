@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
 import { useSafeContext } from 'src/contexts/safeContext'
 import { Alert, Doc, Twitter } from 'src/generated/icons'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import BackButton from 'src/libraries/ui/BackButton'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
@@ -830,7 +831,7 @@ function ProposalForm() {
 							containsField(grant, 'applicantEmail') && (
 								<SectionInput
 									label='Email'
-									placeholder='name@sample.com'
+									placeholder='name@sample.com (will not be shown publicly)'
 									value={findField(form, 'applicantEmail').value}
 									onChange={
 										(e) => {
@@ -859,7 +860,7 @@ function ProposalForm() {
 										}
 									}
 									isInvalid={walletAddressError}
-									errorText={`Invalid address on ${chainNames?.get(safeObj?.chainId?.toString() ?? '') !== undefined ? chainNames.get(safeObj?.chainId?.toString() ?? '')?.toString() : 'EVM / Solana / TON based chain'}`} />
+									errorText={`Invalid address on ${chainNames?.get(safeObj?.chainId?.toString() ?? '') !== undefined ? chainNames.get(safeObj?.chainId?.toString() ?? '')?.toString() : ' TON based chain'}`} />
 							)
 						}
 
@@ -922,7 +923,7 @@ function ProposalForm() {
 										<SectionInput
 											key={field.id}
 											label={title}
-											placeholder='@telegram_handle'
+											placeholder='@telegram_handle (will not be shown publicly)'
 											value={findFieldBySuffix(form, modifiedId, id).value}
 											onChange={
 												(e) => {
@@ -1180,8 +1181,11 @@ function ProposalForm() {
 										setSignIn(true)
 										return
 									} else {
-										setNetworkTransactionModalStep(0)
-										submitProposal(form)
+										const check = formCheck()
+										if(check) {
+											setNetworkTransactionModalStep(0)
+											submitProposal(form)
+										}
 									}
 								}
 							}>
@@ -1211,7 +1215,7 @@ function ProposalForm() {
 	}
 
 	const { setRole } = useContext(GrantsProgramContext)!
-	const { type, grant, chainId, form, setForm, error } = useContext(ProposalFormContext)!
+	const { type, grant, chainId, form, setForm, error, } = useContext(ProposalFormContext)!
 	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const { safeObj } = useSafeContext()!
 	const { setSignIn } = useContext(SignInContext)!
@@ -1225,6 +1229,7 @@ function ProposalForm() {
 	const { submitProposal, proposalId, isExecuting } = useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash })
 	const [emailError, setEmailError] = useState<boolean>(false)
 	const [walletAddressError, setWalletAddressError] = useState<boolean>(false)
+	const toast = useCustomToast()
 
 	const [isSetupNotificationModalOpen, setIsSetupNotificationModalOpen] = useState<boolean>(false)
 
@@ -1290,6 +1295,35 @@ function ProposalForm() {
 
 		return false
 	}, [form])
+
+	const formCheck = () => {
+		const { milestones } = form
+		logger.info({ milestones }, 'Milestones')
+		for(let i = 0; i < milestones.length; i++) {
+			//  || !milestone?.deadline
+			if(milestones[i]?.details === '') {
+				toast({
+					title: `Please enter details for milestone ${i + 1}`,
+					status: 'error',
+					duration: 5000,
+					isClosable: true,
+				})
+				return false
+			}
+
+			if(!milestones[i]?.deadline) {
+				toast({
+					title: `Please select a deadline for milestone ${i + 1}`,
+					status: 'error',
+					duration: 5000,
+					isClosable: true,
+				})
+				return false
+			}
+		}
+
+		return true
+	}
 
 	const onChange = (e: ChangeEvent<HTMLInputElement>, id: string) => {
 		const copy = { ...form }

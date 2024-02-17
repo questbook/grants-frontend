@@ -32,6 +32,7 @@ import { GrantsProgramContext } from 'src/pages/_app'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
+import { tonGrants } from 'src/screens/proposal_form/_utils/constants'
 
 function Proposal() {
 	const buildComponent = () => {
@@ -377,6 +378,10 @@ function Proposal() {
 							const value = getFieldString(proposal, id)
 							if(value === undefined) {
 								return <Flex key={index} />
+							}
+
+							if(proposal?.grant?.id === tonGrants && (title === 'Personal Telegram Handle' || title === 'I confirm that I have studied the Grant Program Guidelines and the Ecosystem Map with the existing solutions on TON (please write \'yes\')')) {
+								return !shouldShowPII && <Flex key={index} />
 							}
 
 							return (
