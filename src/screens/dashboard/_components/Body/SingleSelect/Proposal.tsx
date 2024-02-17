@@ -380,8 +380,8 @@ function Proposal() {
 								return <Flex key={index} />
 							}
 
-							if(proposal?.grant?.id === tonGrants && (title === 'Personal Telegram Handle' || title === 'I confirm that I have studied the Grant Program Guidelines and the Ecosystem Map with the existing solutions on TON (please write \'yes\')')) {
-								return !shouldShowPII && <Flex key={index} />
+							if(!shouldShowPII && proposal?.grant?.id === tonGrants && title === 'Personal Telegram Handle' || title === 'I confirm that I have studied the Grant Program Guidelines and the Ecosystem Map with the existing solutions on TON (please write \'yes\')') {
+								return <Flex key={index} />
 							}
 
 							return (
