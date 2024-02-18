@@ -5,7 +5,7 @@ import { SupportedPayouts } from '@questbook/supported-safes'
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
-import { ArrowLeft, Pencil, Qb, Settings, ShareForward } from 'src/generated/icons'
+import { Add, ArrowLeft, Pencil, Qb, Settings, ShareForward } from 'src/generated/icons'
 import { QBAdminsContext } from 'src/libraries/hooks/QBAdminsContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
@@ -56,12 +56,12 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 				alignItems='center'
 				maxW='100vw'
 				bg={bg}
-				ps={[6, 24]}
+				ps={[6, 6]}
 				pe={24}
-				backgroundColor={['black.100', 'gray.100']}
+				backgroundColor={['gray.100', 'gray.100']}
 				py='16px'
 				minWidth={{ base: '-webkit-fill-available' }}
-				paddingInlineEnd={['35px', '120px']}
+				paddingInlineEnd={['35px', '12px']}
 			>
 				<Qb
 					boxSize='10rem'
@@ -75,17 +75,6 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 					display='inherit'
 					mr='auto'
 					cursor='pointer' />
-				{
-					isQbAdmin && (
-						<>
-							<Image
-								display={{ base: 'none', lg: 'inherit' }}
-								ml='10px'
-								src='/v2/icons/images/builders.svg'
-								alt='Questbook Builders' />
-						</>
-					)
-				}
 				<Spacer />
 				{
 					shouldShowTitle && (
@@ -125,7 +114,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 								() => {
 									router.push(
 										{
-											pathname: '/request_proposal/',
+											pathname: grant?.subgrant ? '/create_subgrant/' : '/request_proposal/',
 											query: {
 												grantId: grant?.id,
 												chainId: getSupportedChainIdFromWorkspace(grant?.workspace),
@@ -165,7 +154,6 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 							grantId={grant?.id ?? ''} />
 					)
 				}
-
 				{
 					(!isLoading && router.pathname === '/dashboard') && (
 						<ShareForward
@@ -189,7 +177,33 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 				}
 
 				<Spacer />
+				{
+					isQbAdmin && window?.innerWidth > 600 &&
+					(router.pathname === '/') && (
 
+						<Button
+							variant='solid'
+							fontWeight='500'
+							bgColor='#77AC06'
+							color='white'
+							ml='auto'
+							borderRadius='8px'
+							_hover={
+								{
+									bgColor: '#699804',
+									boxShadow: '0px 1px 2px 0px #161616',
+								}
+							}
+							leftIcon={<Add />}
+							onClick={
+								() => {
+									router.push('/create_subgrant')
+								}
+							} >
+							Add new program
+						</Button>
+					)
+				}
 				<AccountDetails
 					openModal={
 						(type) => {
@@ -227,7 +241,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 							align='center'>
 							<Box
 								h={6}
-							 />
+							/>
 							{
 								type === 'export' && (
 									<BackupWallet
@@ -249,7 +263,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 									importWebwallet={importWebwallet}
 									importWalletFromGD={importWalletFromGD}
 									closeModal={() => setIsRecoveryModalOpen(false)}
-									// isNewUser={false}
+								// isNewUser={false}
 								/>
 							)
 						}
@@ -316,17 +330,6 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 							}
 						}
 					} />
-				{
-					isQbAdmin && (
-						<>
-							<Image
-								display={{ base: 'none', lg: 'inherit' }}
-								ml='10px'
-								src='/v2/icons/images/builders.svg'
-								alt='Questbook Builders' />
-						</>
-					)
-				}
 				<Spacer />
 
 				{

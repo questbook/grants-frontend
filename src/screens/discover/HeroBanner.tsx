@@ -1,218 +1,231 @@
 /* eslint-disable indent */
 import { useMediaQuery } from 'react-responsive'
-import { Flex, Image, Text } from '@chakra-ui/react'
+import { Box, Flex, Image, Text } from '@chakra-ui/react'
 import { logger } from 'ethers'
+import { ArrowRight } from 'src/generated/icons'
 import { SectionGrants } from 'src/screens/discover/_utils/types'
 // import { useRouter } from 'next/router'
 
 function HeroBanner({
 	grants,
 	safeBalances,
-	grantsAllocated
+	grantsAllocated,
+	reclaimRef,
+	arbitrumRef,
 }: {
 	grants: SectionGrants[]
 	safeBalances: number
 	grantsAllocated: number
+	reclaimRef: React.RefObject<HTMLDivElement>
+	arbitrumRef: React.RefObject<HTMLDivElement>
 }) {
 	logger.info({ grants, safeBalances }, 'HeroBanner')
 
 
-	  const totalProposals = () => {
-	  	let total = 0;
-	  	(grants && grants?.length > 0) ? grants.map((section) => {
-	  		const sectionName = Object.keys(section)[0]
-	  		// @ts-ignore
-	  		const grants = section[sectionName].grants.map((grant) => grant.numberOfApplications)
-	  		total += grants.reduce((a: number, b: number) => a + b, 0)
-	  	}) : 0
+	const totalProposals = () => {
+		let total = 0;
+		(grants && grants?.length > 0) ? grants.map((section) => {
+			const sectionName = Object.keys(section)[0]
+			// @ts-ignore
+			const grants = section[sectionName].grants.map((grant) => grant.numberOfApplications)
+			total += grants.reduce((a: number, b: number) => a + b, 0)
+		}) : 0
 
-	  	return total
-	  }
+		return total
+	}
 
-	  const totalProposalsAccepted = () => {
-	  	let total = 0;
-	  	(grants && grants?.length > 0) ? grants.map((section) => {
-	  		const sectionName = Object.keys(section)[0]
-	  		// @ts-ignore
-	  		const grants = section[sectionName].grants.map((grant) => grant.numberOfApplicationsSelected)
-	  		total += grants.reduce((a: number, b: number) => a + b, 0)
-	  	}) : 0
+	const totalProposalsAccepted = () => {
+		let total = 0;
+		(grants && grants?.length > 0) ? grants.map((section) => {
+			const sectionName = Object.keys(section)[0]
+			// @ts-ignore
+			const grants = section[sectionName].grants.map((grant) => grant.numberOfApplicationsSelected)
+			total += grants.reduce((a: number, b: number) => a + b, 0)
+		}) : 0
 
-	  	return total
-	  }
+		return total
+	}
 
-	  const formatNumber = (num: number) => {
-	  	return '$' + Math.round(num / 1000) + 'k'
-	  }
+	const formatNumber = (num: number) => {
+		return '$' + Math.round(num / 1000) + 'k'
+	}
 
 	//   const formatNumberInMillions = (num: number) => {
 	// 	return '$' + (num / 1000000).toFixed(2) + 'M'
 	//   }
 
-	  const totalProposalsPaidOut = () => {
-	  	let total = 0;
-	  	(grants && grants?.length > 0) ? grants.map((section) => {
-	  		const sectionName = Object.keys(section)[0]
-	  		// @ts-ignore
-	  		const grants = section[sectionName].grants.map((grant) => grant.totalGrantFundingDisbursedUSD)
-	  		total += grants.reduce((a: number, b: number) => a + b, 0)
-	  	}) : 0
+	const totalProposalsPaidOut = () => {
+		let total = 0;
+		(grants && grants?.length > 0) ? grants.map((section) => {
+			const sectionName = Object.keys(section)[0]
+			// @ts-ignore
+			const grants = section[sectionName].grants.map((grant) => grant.totalGrantFundingDisbursedUSD)
+			total += grants.reduce((a: number, b: number) => a + b, 0)
+		}) : 0
 
-	  	return formatNumber(total)
-	  }
+		return formatNumber(total)
+	}
 
-	  const TitleCards = ({ data, title }: {
+	const TitleCards = ({ data, title }: {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		data: any
 		title: string
 	}) => (
 		<Flex
-	  		flexDirection='column'
-	  		bgColor='transparent'
-	  		zIndex={99}
-	  	>
+			flexDirection='column'
+			bgColor='transparent'
+			zIndex={99}
+			gap='8px'
+		>
 			<Text
-	  			fontWeight='500'
-	  			fontSize={['25px', '40px']}
-	  			lineHeight='48px'
-	  			color='white'>
+				fontWeight='700'
+				fontSize='24px'
+				lineHeight='31.2px'
+				color='black'>
 				{data}
 			</Text>
 			<Text
-	  			fontWeight='500'
-	  			fontSize='15px'
-	  			lineHeight='22px'
-	  			textTransform='uppercase'
-	  			color='white'
-	  		>
+				fontWeight='500'
+				fontSize='16px'
+				lineHeight='20px'
+				textTransform='uppercase'
+				color='#7E7E8F'
+			>
 				{title}
 			</Text>
 		</Flex>
-	  )
+	)
 
-	  const buildComponent = () => (
+	const buildComponent = () => (
 		<Flex
-	  		direction='row'
-	  		w='100%'
-	  		alignItems='stretch'
-	  		alignContent='stretch'
-	  		justifyContent='flex-start'
-	  		>
-			{
-	  			!isMobile && (
-	  				<Flex
-	  					bgColor='black.100'
-	  					flexGrow={1}
-	  					pl={10}
-	  					justifyContent='center'>
-		<Image
-	  						mt={10}
-	  						justifyContent='center'
-							h='44'
-	  						w='52'
-	  						src='https://cryptologos.cc/logos/arbitrum-arb-logo.png' />
-	  				</Flex>
-	  			)
-	  		}
-
+			direction='column'
+			w='100%'
+			alignItems='stretch'
+			alignContent='stretch'
+			justifyContent='flex-start'
+			bgColor='#F7F5F2'
+			borderTop='1px solid #E8E6E1'
+			borderBottomRadius='48px'
+			padding={[10, 8]}
+		>
 			<Flex
-	  			bgColor='black.100'
-	  			padding={[10, 14]}
-	  			flexDirection='column'
-	  			textColor='white'
-	  			position='relative'
-	  			width='full'>
-				{
-	  				isMobile && (
-
-	  					<Image
-
-	  						justifyContent='center'
-	  						h='max'
-	  						w='24'
-	  						src='https://cryptologos.cc/logos/arbitrum-arb-logo.png' />
-
-	  				)
-	  			}
-				<Text
-	  				fontWeight='500'
-	  				fontSize='40px'
-	  				lineHeight='48px'
-	  				color='white'>
-					Arbitrum Grants
-				</Text>
-
+				width='100%'
+			>
 				<Flex
-	  				mt={10}
-	  				gap={8}
-	  				flexWrap='wrap'
-	  				justifyContent='flex-start'>
-					<TitleCards
-	  					data={totalProposals() || 0}
-	  					title='Proposals' />
-					<TitleCards
-	  					data={totalProposalsAccepted() || 40}
-	  					title='Accepted' />
-					<TitleCards
-	  					data={formatNumber(grantsAllocated)}
-	  					title='Funds Allocated' />
-					<TitleCards
-	  					data={totalProposalsPaidOut() || 0}
-	  					title='Funds Paid Out' />
-					<TitleCards
-	  					data={formatNumber(safeBalances) || formatNumber(800000)}
-	  					title='left in mutlisig' />
+					flexDirection='column'
+					width='100%'
+					flexGrow={1}
+				>
+					<Flex
+						flexDirection='row'
+						textColor='white'
+						position='relative'
+						width='full'>
+						<Image
+							justifyContent='center'
+							h={isMobile ? '40px' : '80px'}
+							w={isMobile ? '40px' : '80px'}
+							src='https://cryptologos.cc/logos/arbitrum-arb-logo.png' />
+						<Text
+							fontWeight='500'
+							fontSize={isMobile ? '32px' : '64px'}
+							lineHeight='48px'
+							mt={isMobile ? -1 : 0}
+							padding={
+								isMobile ? [0, 0] :
+									[10, 5]
+							}
+							color='black'>
+							Arbitrum Grants
+						</Text>
+					</Flex>
 
+					<Flex
+						mt={5}
+						gap={isMobile ? '24px' : 5}
+						mb={4}
+						flexWrap='wrap'
+						justifyContent='flex-start'>
+						<TitleCards
+							data={totalProposals() || 0}
+							title='Proposals' />
+						<TitleCards
+							data={totalProposalsAccepted() || 40}
+							title='Accepted' />
+						<TitleCards
+							data={formatNumber(grantsAllocated)}
+							title='Funds Allocated' />
+						<TitleCards
+							data={totalProposalsPaidOut() || 0}
+							title='Funds Paid Out' />
+						<TitleCards
+							data={formatNumber(safeBalances) || formatNumber(800000)}
+							title='left in mutlisig' />
+
+					</Flex>
 				</Flex>
 				{
-	  				isMobile && (
+					!isMobile && (
+						<Box
+							bgColor='white'
+							padding={[4, 4, 6, 4]}
+							borderRadius='8px'
+							border='1px solid #EFEEEB'
+							gap='16px'
+							// Fixed (403px)
+							width='30%'
+						>
+							<Text
+								fontWeight='600'
+								color='black.100'
+								fontSize='18px'
+								mb={4}
+							>
+								Listed grants
+							</Text>
+							{
+								['Arbitrum DAO', 'Reclaim Arbitrum Grants']?.map((grant: string, index: number) => (
+									<Flex
+										key={index}
+										gap={1}
+										mt={2}
+										cursor='pointer'
+										onClick={
+											() => {
+												if(grant === 'Reclaim Arbitrum Grants') {
+													reclaimRef.current?.scrollIntoView({ behavior: 'smooth' })
+												} else {
+													arbitrumRef.current?.scrollIntoView({ behavior: 'smooth' })
+												}
+											}
+										}
+									>
+										<Text
+											fontWeight='500'
+											color='#7E7E8F'
+											fontSize='16px'
+										>
+											{grant}
+										</Text>
+										<ArrowRight
+											color='#7E7E8F'
+											boxSize='20px'
+										/>
+									</Flex>
+								))
+							}
 
-	  					<Image
-	  						bottom={0}
-	  						right={0}
-	  						opacity={0.9}
-	  						position='absolute'
-	  						h='48'
-	  						w='52'
-	  						src='https://ipfs.io/ipfs/bafkreieq36x5ktemdsy4r5tuirc62sbnxujhpcvwolwfx6bnsp4wnyei4m' />
 
-	  				)
-	  			}
+						</Box>
+					)
+				}
 			</Flex>
-			{/* {
-				!isMobile && (
-					<Flex
-						bgColor='#B6F72B'
-						flexGrow={1}
-						justifyContent='center'>
-						<Image
-							mt={10}
-							src='/Browser Mock.svg' />
-					</Flex>
-				)
-			} */}
-			{
-	  			!isMobile && (
-	  				<Flex
-	  					bgColor='black.100'
-	  					flexGrow={1}
-	  					pr={10}
-	  					justifyContent='center'>
-		<Image
-	  						mt={10}
-	  						justifyContent='center'
-	  						h='max'
-	  						w='52'
-	  						src='https://ipfs.io/ipfs/bafkreieq36x5ktemdsy4r5tuirc62sbnxujhpcvwolwfx6bnsp4wnyei4m' />
-	  				</Flex>
-	  			)
-	  		}
-
 		</Flex>
-	  )
-	  const isMobile = useMediaQuery({ query:'(max-width:600px)' })
 
-	  return buildComponent()
+	)
+	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
+
+	return buildComponent()
 }
 
 export default HeroBanner

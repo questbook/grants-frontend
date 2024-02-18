@@ -11,6 +11,7 @@ import { getAllGrantsForMembers } from 'src/screens/discover/data/getAllGrantsFo
 import { getFundsAllocated } from 'src/screens/discover/data/getFundsAllocated'
 import { GetGrantProgramDetails } from 'src/screens/discover/data/getGrantProgramDetails'
 import { getSectionGrantsQuery } from 'src/screens/discover/data/getSectionGrants'
+import { getSectionSubGrantsQuery } from 'src/screens/discover/data/getSectionSubGrants'
 import { GetWorkspacesAndBuilderGrants } from 'src/screens/discover/data/getWorkspaceAndBuilderGrants'
 import { Roles } from 'src/types'
 
@@ -21,7 +22,7 @@ const PAGE_SIZE = 40
 const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	const provider = () => {
 		return (
-			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram, search, setSearch, sectionGrants, recentProposals, isLoading, safeBalances, grantsAllocated }}>
+			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram, search, setSearch, sectionGrants, recentProposals, isLoading, safeBalances, grantsAllocated, sectionSubGrants }}>
 				{children}
 			</DiscoverContext.Provider>
 		)
@@ -36,6 +37,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	const [sectionGrants, setSectionGrants] = useState<SectionGrants>()
 	const [recentProposals, setRecentProposals] = useState<RecentProposals>()
 	const [grantsAllocated, setGrantsAllocated] = useState<number>(0)
+	const [sectionSubGrants, setSectionSubGrants] = useState<GrantType[]>([])
 
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 	const [search, setSearch] = useState<string>('')
@@ -63,6 +65,10 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 	const { fetchMore: getFunds } = useQuery({
 		query: getFundsAllocated
+	})
+
+	const { fetchMore: getSubGrants } = useQuery({
+		query: getSectionSubGrantsQuery
 	})
 
 
@@ -306,6 +312,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 	const getSectionGrants = async() => {
 		const results: any = await fetchMoreSectionGrants()
+		const subgrantsResults: any = await getSubGrants()
 		logger.info({ results }, 'Section Grants')
 
 		if(results?.sections?.length === 0) {
@@ -318,6 +325,10 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		if(results?.sections?.length) {
 			allSectionGrants.push(...results?.sections.map((g: any) => ({ [g.sectionName]: { ...g } })))
 			recentProposals = [...recentProposals, ...results.sections.map((s: any) => s.grants.map((g: any) => g.applications).flat()).flat()]
+		}
+
+		if(subgrantsResults?.grants?.length) {
+			setSectionSubGrants(subgrantsResults?.grants)
 		}
 
 		logger.info({ allSectionGrants, recentProposals }, 'All section grants (DISCOVER CONTEXT)')
@@ -375,7 +386,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 			}
 		}
 
-		const allGrants = [...grantsForAll, ...grantsForYou, ...sGrants]
+		const allGrants = [...grantsForAll, ...grantsForYou, ...sGrants, ...sectionSubGrants]
 		fetchSafeBalances(allGrants)
 
 

@@ -3,6 +3,7 @@ export const getGrantsQuery = gql`query getGrant($grantId: String!, $actorId: St
     grant(_id: $grantId) {
       id: _id
       title
+      subgrant
       acceptingApplications
       numberOfApplications
       numberOfApplicationsSelected

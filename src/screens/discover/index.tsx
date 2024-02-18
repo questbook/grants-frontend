@@ -1,11 +1,11 @@
 /* eslint-disable indent */
 /* eslint-disable react/jsx-indent */
-import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
+import { ReactElement, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { Box, Button, Container, Divider, Flex, Image, Input, Link, Text } from '@chakra-ui/react'
+import { Box, Button, Container, Flex, Image, Input, Link, Text } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
-import { Telegram, Twitter } from 'src/generated/icons'
+import { ArrowRight, Telegram, Twitter } from 'src/generated/icons'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { DAOSearchContext } from 'src/libraries/hooks/DAOSearchContext'
 import { QBAdminsContext } from 'src/libraries/hooks/QBAdminsContext'
@@ -16,11 +16,11 @@ import ConfirmationModal from 'src/libraries/ui/ConfirmationModal'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
-import SearchField from 'src/libraries/ui/SearchField'
 import { getAvatar } from 'src/libraries/utils'
 import { chainNames } from 'src/libraries/utils/constants'
 import getErrorMessage from 'src/libraries/utils/error'
 import { ApiClientsContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
+import GrantCard from 'src/screens/discover/_components/grantCard'
 import RFPGrid from 'src/screens/discover/_components/rfpGrid'
 import { DiscoverContext, DiscoverProvider } from 'src/screens/discover/Context'
 import HeroBanner from 'src/screens/discover/HeroBanner'
@@ -149,12 +149,13 @@ function Discover() {
 	}
 
 	// const discoverRef = useRef<HTMLDivElement>(null)
-
-	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, safeBalances, grantsAllocated } = useContext(DiscoverContext)!
+	const reclaimRef = useRef<HTMLDivElement>(null)
+	const arbitrumRef = useRef<HTMLDivElement>(null)
+	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, safeBalances, grantsAllocated, sectionSubGrants } = useContext(DiscoverContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString } = useContext(DAOSearchContext)!
 	const { setSignIn } = useContext(SignInContext)!
-
+	logger.info({ searchString }, 'dao')
 	const toast = useCustomToast()
 	const { isBiconomyInitialised, updateDaoVisibility, updateSection } = useUpdateDaoVisibility()
 
@@ -168,7 +169,7 @@ function Discover() {
 	const [networkTransactionModalOpen, setNetworkTransactionModalOpen] = useState(false)
 	const [currentStepIndex, setCurrentStepIndex] = useState(-1)
 	const [sectionName] = useState('')
-	const [filterGrantName, setFilterGrantName] = useState('')
+	const [filterGrantName] = useState('')
 
 	const [imageFile, setImageFile] = useState<{ file: File | null, hash?: string }>({ file: null })
 
@@ -232,45 +233,47 @@ function Discover() {
 	}) => (
 		<Flex
 			align='center'
-			mt={2}
 			alignItems='center'
-			justifyContent='space-between'
-			p={2}
+			px={3}
+			gap={4}
+			mb='6px'
 		>
 			<Flex
-				w='80%'
 			>
 				<Image
 					borderWidth='1px'
 					borderColor='black.100'
-
+					hidden
 					borderRadius='3xl'
 					src={getAvatar(false, image ?? '0x0')}
 					boxSize='16px' />
 				<Text
-					ml={2}
-					fontWeight='400'
-					fontSize='14px'
+					fontWeight='500'
+					fontSize='16px'
 					variant='metadata'
-					lineHeight='16px'
+					lineHeight='20px'
+					color='#7E7E8F'
 
 				>
 					{title}
 				</Text>
 			</Flex>
 			<Flex
-				gap={2}>
+				gap={2}
+				mt={-1}
+			>
 				{
 					telegram && (
 						<motion.div
 							whileHover={{ scale: 1.1 }}
 							whileTap={{ scale: 0.9 }}
 						>
-						<Telegram
-							cursor='pointer'
-							_hover={{ color: 'blue.500' }}
-							onClick={() => window.open(`https://t.me/${telegram}`)}
-							boxSize='16px' />
+							<Telegram
+								cursor='pointer'
+								_hover={{ color: 'blue.500' }}
+								color='#7E7E8F'
+								onClick={() => window.open(`https://t.me/${telegram}`)}
+								boxSize='16px' />
 						</motion.div>
 					)
 				}
@@ -282,6 +285,7 @@ function Discover() {
 						>
 							<Twitter
 								cursor='pointer'
+								color='#7E7E8F'
 								_hover={{ color: 'blue.500' }}
 								onClick={() => window.open(`https://twitter.com/${twitter}`)}
 								boxSize='16px' />
@@ -299,12 +303,50 @@ function Discover() {
 				<Flex
 					direction='column'
 					w='100%'
+					bg='white'
+					h='100%'
 				>
-					<HeroBanner
-grants={(sectionGrants && sectionGrants.length > 0 ? sectionGrants : []) as []}
+					<Box
+						bgColor='#B6F72B'
+						padding={[5, 5]}
+						justifyContent='center'
+						alignItems='center'
+						maxWidth='100%'
+						overscroll='auto'
+						maxHeight='400px'
 
-safeBalances={Object.values(safeBalances).reduce((a, b) => a + b, 0) ?? 0}
-grantsAllocated={grantsAllocated ?? 0}
+					>
+						<Flex
+							justifyContent='center'
+							alignItems='center'
+							cursor='pointer'
+							onClick={
+								() => {
+									reclaimRef.current?.scrollIntoView({ behavior: 'smooth' })
+								}
+							}
+						>
+							<Text
+								fontWeight='600'
+								color='black.100'
+								fontSize={isMobile ? '14px' : '16px'}
+								mx={2}
+							>
+								Reclaim grants are now live on Arbitrum, check them now
+							</Text>
+							<ArrowRight
+								color='black.100'
+								boxSize='24px' />
+						</Flex>
+
+					</Box>
+					<HeroBanner
+						grants={(sectionGrants && sectionGrants.length > 0 ? sectionGrants : []) as []}
+
+						safeBalances={Object.values(safeBalances).reduce((a, b) => a + b, 0) ?? 0}
+						grantsAllocated={grantsAllocated ?? 0}
+						arbitrumRef={arbitrumRef}
+						reclaimRef={reclaimRef}
 					/>
 
 
@@ -312,22 +354,28 @@ grantsAllocated={grantsAllocated ?? 0}
 						className='domainGrid'
 						minWidth='100%'
 						p={4}
-						w='100%'>
+						w='100%'
+						bgColor='white'
+					>
 
 
 						<Flex
 							w='100%'
 							my={4}
+							mt={isMobile ? '' : '12'}
 							justify='space-between'
 							direction={isMobile ? 'column' : 'row'}>
 
 							<Flex
 								direction='column'
-								w={isMobile ? '100%' : { sm: '50%', md: '60%', lg: '70%' }}>
+								px={isMobile ? 0 : 4}
+								w='100%'
+							>
 
 
 								{/* </Box> */}
 								<Box
+									ref={arbitrumRef}
 									display={sectionGrants?.length ? '' : 'none'}
 								>
 									<Flex
@@ -337,172 +385,324 @@ grantsAllocated={grantsAllocated ?? 0}
 										w='100%'>
 										<Text
 											variant='heading3'
-											fontWeight='500'
+											fontWeight='700'
 											w='100%'
+											fontSize='24px'
+											lineHeight='31.2px'
 										>
-											Grants
+											Arbitrum DAO
 										</Text>
 
-										<SearchField
-											bg='white'
-											w='100%'
-
-
-											placeholder='Enter Grant Program Name to search'
-											value={filterGrantName}
-											onKeyDown={
-												(e) => {
-													if(e.key === 'Enter' && filterGrantName !== undefined && filterGrantName?.trim().length > 0) {
-														setFilterGrantName(filterGrantName)
-													}
-												}
-											}
-											onChange={
-												(e) => {
-													setFilterGrantName(e.target.value)
-												}
-											}
-										/>
 									</Flex>
 									{
 										(sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
-											logger.info('section', { section, sectionGrants })
 											const sectionName = Object.keys(section)[0]
 
 											const grants = section[sectionName].grants.filter((grant) => grant.title.toLowerCase().includes(filterGrantName.trim().toLowerCase())).map(grant => ({ ...grant, role: 'community' as Roles }))
 											return (
-												<Box
+												<Flex
 													my={6}
 													key={index}
+													w='100%'
+													gap='46px'
 												>
 
+													<Flex flexGrow={1}>
+														<RFPGrid
+															type='all'
+															grants={grants}
+															unsavedDomainVisibleState={unsavedDomainState}
+															onDaoVisibilityUpdate={onDaoVisibilityUpdate}
+															onSectionGrantsUpdate={onGrantsSectionUpdate}
+															changedVisibilityState={changedVisibility}
+														/>
+													</Flex>
+													{
+														!isMobile &&
+														(
+															<Flex
+																direction='column'
+																w='408px'
+																h='auto'
+																gap={5}
 
-													<RFPGrid
-														type='all'
-														grants={grants}
-														unsavedDomainVisibleState={unsavedDomainState}
-														onDaoVisibilityUpdate={onDaoVisibilityUpdate}
-														onSectionGrantsUpdate={onGrantsSectionUpdate}
-														changedVisibilityState={changedVisibility}
-													/>
-												</Box>
+															>
+																<Box
+																	w='100%'
+																	background='white'
+																	p='16px 16px 24px 16px'
+																	h='100%'
+																	// h='13'
+																	position='relative'
+																	borderRadius='8px'
+																	border='1px solid #EFEEEB'
+																>
+																	{' '}
+																	<Text
+																		fontWeight='600'
+																		lineHeight='23.4px'
+																		fontSize='18px'
+																		color='black.100'
+																		px={3}
+																	>
+																		About
+																	</Text>
+
+																	<Text
+																		fontSize='16px'
+																		fontWeight='500'
+																		lineHeight='20.16px'
+																		py={1.5}
+																		px={3}
+																		textAlign='match-parent'
+																		color='#7E7E8F'
+																	>
+																		The Arbitrum grants, administered via DDA by Questbook and 4 domain allocators, went live on the 5th of October with a grants budget of $800k spread across four domains. The Questbook Arbitrum Grants program is useful for anyone developing in domain specific projects on top of Arbitrum
+																	</Text>
+																	<Text
+																		fontWeight='600'
+																		lineHeight='23.4px'
+																		fontSize='18px'
+																		color='black.100'
+																		pb={2}
+																		px={3}
+																	>
+																		Program Managers
+																	</Text>
+																	<Box pb={2}>
+																		<UserCard
+																			image='0x0125215125'
+																			title='Srijith'
+																			twitter='Srijith_Padmesh'
+																			telegram='Srijith13' />
+																	</Box>
+
+																	<Text
+																		fontWeight='600'
+																		lineHeight='23.4px'
+																		fontSize='18px'
+
+																		color='black.100'
+																		pb={2}
+																		px={3}
+																	>
+																		Domain Allocators
+																	</Text>
+																	<Box
+																	>
+																		{
+																			[
+																				{
+																					image: '0x012521',
+																					title: 'JoJo (New Protocol Ideas)',
+																					twitter: 'jojo17568'
+																				},
+																				{
+																					image: '0x012522',
+																					title: 'Adam (Gaming)',
+																					twitter: 'Flook_eth'
+																				},
+																				{
+																					image: '0x012523',
+																					title: 'Juandi (Dev Tooling)',
+																					twitter: 'ImJuandi'
+																				},
+																				{
+																					image: '0x012524',
+																					title: 'Cattin (Education, Community growth & Events)',
+																					twitter: 'Cattin0x'
+																				}
+																			].map((user, index) => (
+																				<UserCard
+																					key={index}
+																					image={user.image}
+																					title={user.title}
+																					twitter={user.twitter} />
+																			))
+																		}
+																	</Box>
+																</Box>
+
+															</Flex>
+														)
+													}
+												</Flex>
 											)
 										}) : null
 									}
 								</Box>
 							</Flex>
-							{
-							 (
-									<Flex
-										direction='column'
-										w={{ sm: '48%', md: '38%', lg: '28%' }}
-										gap={5}
-										overflowY='auto'
-										maxH='-webkit-max-content'>
-										<Box
-		  w='100%'
-		  background='white'
-		  px={5}
-		  pt={5}
-		  pb={5}
-		  // h='13'
-		  position='relative'
-		  // boxShadow='0px 10px 18px rgba(31, 31, 51, 0.05), 0px 0px 1px rgba(31, 31, 51, 0.31);'
-		  borderRadius='2px'
-		  border='1px solid #E7E4DD'
 
-		   >
-										{' '}
-										<Text
-		  			fontWeight='500'
-		  			lineHeight='48px'
-		  			fontSize='24px'
-		  			color='black.100'
-		  			borderRadius='6px'
-
-		  			px={3}
-		  		>
-												About Arbitrum Grants
-          </Text>
-
-										<Divider my={2} />
-										<Text
-				  fontSize='14px'
-				   lineHeight={['20px']}
-		  			py={1.5}
-		  			px={3}
-		  			textAlign='match-parent'
-		  		>
-												The Arbitrum grants, administered via DDA by Questbook and 4 domain allocators, went live on the 5th of October with a grants budget of $800k spread across four domains. The Questbook Arbitrum Grants program is useful for anyone developing in domain specific projects on top of Arbitrum, ranging from education, gaming, dev tooling to innovative ideas. Through the program, you can receive milestone-based funding based on domain specific needs, outlined by the domain allocators elected by the community. These domain allocators were elected from the community and by the community. The specific information regarding the accepted proposals and the funded teams can be found here.
-          </Text>
-										<Text
-		  			fontWeight='500'
-		  			lineHeight='48px'
-		  			fontSize='24px'
-		  			color='black.100'
-		  			borderRadius='6px'
-
-		  			px={3}
-		  		>
-												Program Managers
-          </Text>
-										<Box p={1}>
-												<UserCard
-													image='0x0125215125'
-													title='Srijith'
-													twitter='Srijith_Padmesh'
-													telegram='Srijith13' />
-          </Box>
-										<Divider my={2} />
-										<Text
-		  			fontWeight='500'
-		  			lineHeight='48px'
-		  			fontSize='24px'
-		  			color='black.100'
-		  			borderRadius='6px'
-
-		  			px={3}
-		  		>
-												Domain Allocators
-          </Text>
-										<Box p={1}>
-											{
-												[
-													{
-														image: '0x012521',
-														title: 'JoJo (New Protocol Ideas)',
-														twitter: 'jojo17568'
-													},
-													{
-														image: '0x012522',
-														title: 'Adam (Gaming)',
-														twitter: 'Flook_eth'
-													},
-													{
-														image: '0x012523',
-														title: 'Juandi (Dev Tooling)',
-														twitter: 'ImJuandi'
-													},
-													{
-														image: '0x012524',
-														title: 'Cattin (Education, Community growth & Events)',
-														twitter: 'Cattin0x'
-													}
-												].map((user, index) => (
-													<UserCard
-														key={index}
-														image={user.image}
-														title={user.title}
-														twitter={user.twitter} />
-												))
-											}
-          </Box>
-          </Box>
-
-									</Flex>
-								)
-							}
 						</Flex>
+						{
+							<Flex
+								w='100%'
+								my={4}
+								mt={isMobile ? '' : '12'}
+								justify='space-between'
+								direction={isMobile ? 'column' : 'row'}>
+
+								<Flex
+									direction='column'
+									px={isMobile ? 0 : 4}
+									w='100%'>
+									<Box
+										ref={reclaimRef}
+										display={sectionGrants?.length ? '' : 'none'}
+									>
+
+										<Flex
+											justifyContent='space-between'
+											alignItems='center'
+											gap={2}
+											w='100%'>
+											<Text
+												variant='heading3'
+												fontWeight='600'
+												w='100%'
+												fontSize='24px'
+												lineHeight='31.2px'
+												mb={4}
+											>
+												Reclaim Arbitrum Grants
+											</Text>
+
+										</Flex>
+
+										{
+											(sectionSubGrants && sectionSubGrants?.length > 0 && sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
+												logger.info('section', { section, sectionGrants })
+
+												const grants = sectionSubGrants.map(grant => ({ ...grant, role: 'community' as Roles }))
+												return (
+													<Box
+														display='flex'
+														my={6}
+														key={index}
+														w='100%'
+														gap={isMobile ? '0' : '46px'}
+													>
+														<Flex
+															flexGrow={1}
+															height='100%'
+														>
+
+															<GrantCard
+																type='all'
+																grants={grants}
+																unsavedDomainVisibleState={unsavedDomainState}
+																onDaoVisibilityUpdate={onDaoVisibilityUpdate}
+																onSectionGrantsUpdate={onGrantsSectionUpdate}
+																changedVisibilityState={changedVisibility}
+															/>
+														</Flex>
+														<Flex>
+															{
+																!isMobile &&
+																(
+																	<Flex
+																		direction='column'
+																		w='408px'
+																		h='auto'
+																		gap={5}
+																	>
+																		<Box
+																			w='100%'
+																			background='white'
+																			p='16px 16px 24px 16px'
+																			h='100%'
+																			// h='13'
+																			position='relative'
+																			borderRadius='8px'
+																			border='1px solid #EFEEEB'
+																		>
+																			{' '}
+																			<Text
+																				fontWeight='600'
+																				lineHeight='23.4px'
+																				fontSize='18px'
+																				color='black.100'
+																				px={3}
+																			>
+																				About
+																			</Text>
+
+																			<Text
+																				fontSize='16px'
+																				fontWeight='500'
+																				lineHeight='20.16px'
+																				py={1.5}
+																				px={3}
+																				textAlign='match-parent'
+																				color='#7E7E8F'
+																			>
+																				The Reclaim Arbitrum Grant is for anyone that’s building a product for the Arbitrum ecosystem on top of Reclaim Protocol
+																			</Text>
+																			<Text
+																				fontWeight='600'
+																				lineHeight='23.4px'
+																				fontSize='18px'
+																				color='black.100'
+																				pb={2}
+																				px={3}
+																			>
+																				Program Managers
+																			</Text>
+																			<Box pb={2}>
+																				<UserCard
+																					image='0x0125215125'
+																					title='Srijith'
+																					twitter='Srijith_Padmesh'
+																					telegram='Srijith13' />
+																			</Box>
+
+																			<Text
+																				fontWeight='600'
+																				lineHeight='23.4px'
+																				fontSize='18px'
+
+																				color='black.100'
+																				pb={2}
+																				px={3}
+																			>
+																				Domain Allocators
+																			</Text>
+																			<Box
+																			>
+																				{
+																					[
+																						{
+																							image: '0x012521',
+																							title: 'Madhavan Malolan',
+																							twitter: 'madhavanmalolan'
+																						},
+																					].map((user, index) => (
+																						<UserCard
+																							key={index}
+																							image={user.image}
+																							title={user.title}
+																							twitter={user.twitter} />
+																					))
+																				}
+																			</Box>
+																		</Box>
+
+																	</Flex>
+																)
+															}
+														</Flex>
+													</Box>
+												)
+											}) : null
+										}
+
+									</Box>
+
+								</Flex>
+							</Flex>
+						}
+
+
 						<Flex
 							flexDirection='column'
 							w='100%'
@@ -527,28 +727,6 @@ grantsAllocated={grantsAllocated ?? 0}
 						</Flex>
 
 					</Container>
-					{
-						isQbAdmin && (
-							<>
-								<Text
-									fontWeight='500'
-									fontSize='24px'
-									lineHeight='32px'>
-									Discover
-								</Text>
-								<RFPGrid
-									type='all'
-									unsavedDomainVisibleState={unsavedDomainState}
-									onDaoVisibilityUpdate={onDaoVisibilityUpdate}
-									onSectionGrantsUpdate={onGrantsSectionUpdate}
-									grants={searchString === undefined || searchString === '' ? grantsForAll : grantsForAll?.filter(g => g.title.includes(searchString))}
-									changedVisibilityState={changedVisibility}
-									filter={filterGrantName}
-								/>
-							</>
-
-						)
-					}
 					{
 						isQbAdmin && (Object.keys(unsavedDomainState).length !== 0 || Object.keys(unsavedSectionGrants).length !== 0) && (
 							<>
@@ -631,7 +809,7 @@ grantsAllocated={grantsAllocated ?? 0}
 				</Tooltip> */}
 			</>
 		)
-	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName, isMobile, safeBalances])
+	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName, isMobile, safeBalances, sectionSubGrants])
 
 	useEffect(() => {
 		if(!inviteInfo) {

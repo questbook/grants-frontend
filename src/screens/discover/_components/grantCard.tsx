@@ -15,7 +15,7 @@ type RFPGridProps = {
 	filter?: string
 }
 
-function RFPGrid({
+function GrantCard({
 	type,
 	grants,
 	onDaoVisibilityUpdate,
@@ -38,7 +38,8 @@ function RFPGrid({
 					logger.info('role', role, grant)
 					return (
 						<GridItem
-						 key={index}>
+						 key={index}
+						 >
 							<RFPCard
 								isVisible={unsavedDomainVisibleState?.[workspaceChainId!]?.[grant.workspace.id] ?? grant.workspace.isVisible}
 								onVisibilityUpdate={(visibleState) => onDaoVisibilityUpdate?.(grant.workspace.id, workspaceChainId!, visibleState)}
@@ -55,8 +56,7 @@ function RFPGrid({
 			}
 		</Grid>
 	)
-
 	return buildComponent()
 }
 
-export default RFPGrid
+export default GrantCard
