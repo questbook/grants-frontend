@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { Box, Button, Flex, Image, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Grid, Image, Text } from '@chakra-ui/react'
 import config from 'src/constants/config.json'
 import { WorkspaceMember } from 'src/generated/graphql'
 import { Telegram, Twitter } from 'src/generated/icons'
@@ -131,6 +131,7 @@ function HeroBannerBox({
 	}) => (
 		<Flex
 			flexDirection='column'
+			gap={1}
 		>
 			<Text
 				fontWeight='500'
@@ -281,9 +282,10 @@ function HeroBannerBox({
 						Grant Stats
 					</Text>
 
-					<Flex
+					<Grid
 						mt={5}
 						gap='8px'
+						templateColumns={isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)'}
 						flexWrap='wrap'
 						justifyContent='flex-start'>
 						<TitleCards
@@ -302,7 +304,7 @@ function HeroBannerBox({
 							data={allocated ?? 0}
 							title='Funds Allocated' />
 
-					</Flex>
+					</Grid>
 				</Box>
 				<Box
 					border='1px solid #53514F'
