@@ -1,5 +1,6 @@
 import { useContext, useMemo } from 'react'
-import { Box, Flex, Grid, GridItem, Image, Switch, Text } from '@chakra-ui/react'
+import { ArrowForwardIcon } from '@chakra-ui/icons'
+import { Box, Button, Flex, Grid, GridItem, Image, Switch, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
 import { Alert } from 'src/generated/icons'
@@ -120,6 +121,24 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						>
 							{isOpen ? 'Open' : 'Closed'}
 						</Text> */}
+							<Button
+				 borderRadius='8px'
+				 bgColor='#F1EEE8'
+				 size='sm'
+				 _hover={{ bgColor: 'blue.600', color: 'white' }}
+				 textColor='#53514F'
+				 fontSize='14px'
+				 onClick={
+									() => {
+										/* @ts-ignore */
+										window.open(grant?.link, '_blank')
+									}
+								}
+				 rightIcon={<ArrowForwardIcon />}
+
+				 >
+								Program Details
+							</Button>
 							{
 								role && (
 									<Text
