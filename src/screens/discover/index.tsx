@@ -425,7 +425,7 @@ grantsAllocated={grantsAllocated ?? 0}
 
 		  			px={3}
 		  		>
-												Program Managers
+												Program Manager
           </Text>
 										<Box p={1}>
 												<UserCard
