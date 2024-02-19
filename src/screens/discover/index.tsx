@@ -646,7 +646,7 @@ function Discover() {
 																				pb={2}
 																				px={3}
 																			>
-																				Program Managers
+																				Program Manager
 																			</Text>
 																			<Box pb={2}>
 																				<UserCard
