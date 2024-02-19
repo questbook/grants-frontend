@@ -203,7 +203,7 @@ function HeroBanner({
 		<Image
 	  						mt={10}
 	  						justifyContent='center'
-	  						h='48'
+	  						h='40'
 	  						w='52'
 	  						src={getUrlForIPFSHash('QmYQzCdPeFPTosTezRvxjLWqfZbjeWUEfPKp7riWv67C5j')} />
 	  				</Flex>
