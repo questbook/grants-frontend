@@ -150,7 +150,7 @@ function HeroBanner({
 							data={totalProposals() || 0}
 							title='Proposals' />
 						<TitleCards
-							data={totalProposalsAccepted() || 40}
+							data={totalProposalsAccepted()}
 							title='Accepted' />
 						<TitleCards
 							data={formatNumber(grantsAllocated)}
@@ -159,7 +159,7 @@ function HeroBanner({
 							data={totalProposalsPaidOut() || 0}
 							title='Funds Paid Out' />
 						<TitleCards
-							data={formatNumber(safeBalances) || formatNumber(800000)}
+							data={formatNumber(safeBalances) || formatNumber(0)}
 							title='left in mutlisig' />
 
 					</Flex>
