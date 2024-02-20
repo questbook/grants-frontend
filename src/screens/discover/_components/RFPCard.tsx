@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react'
-import { Box, Button, Divider, Flex, Grid, GridItem, Image, Switch, Text } from '@chakra-ui/react'
-import { motion } from 'framer-motion'
+import { ArrowForwardIcon } from '@chakra-ui/icons'
+import { Box, Button, Flex, Grid, GridItem, Image, Switch, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
 import { Alert } from 'src/generated/icons'
@@ -21,7 +21,7 @@ type RFPCardProps = {
 	onVisibilityUpdate?: (visibleState: boolean) => void
 	onSectionGrantsUpdate?: () => void
 	chainId: SupportedChainId | undefined
-    role?: string
+	role?: string
 	changedVisibilityState?: string
 }
 
@@ -29,17 +29,18 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 	const buildComponent = () => (
 		<Box
 			w='100%'
+			h='auto'
 			background='white'
-			px={5}
-			pt={5}
+			p='12px 12px 16px 12px'
 			// h='13'
 			position='relative'
 			// boxShadow='0px 10px 18px rgba(31, 31, 51, 0.05), 0px 0px 1px rgba(31, 31, 51, 0.31);'
-			borderRadius='2px'
-			border='1px solid #E7E4DD'
+			borderRadius='12px'
+			border='1px solid #EFEEEB'
 			_hover={
 				{
-					border: 'none',
+					border: '1px solid #E1DED9',
+					boxShadow: '0px 2px 0px 0px #00000010',
 				}
 			}
 			cursor='pointer'
@@ -59,7 +60,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						return
 					}
 
-					let params: {grantId: string, chainId: number, role: string, proposalId?: string} = {
+					let params: { grantId: string, chainId: number, role: string, proposalId?: string } = {
 						grantId: grant.id,
 						chainId,
 						role: role === 'owner' ? 'admin' : (role ?? 'community'),
@@ -78,22 +79,25 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 				flexDirection='column'
 				h='100%'
 				gap={4}>
-				<Flex
-					justifyContent='space-between'
-					alignItems='flex-start'
+				<Box
+					bgColor='#F7F5F2'
+					// 12px, 12px, 16px, 12px
+					p='12px 12px 16px 12px'
+					borderRadius='8px'
 				>
-					<Image
-						src={grant.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)}
-						// my='8px'
-						w='56px'
-						h='56px'
-						objectFit='cover'
-						borderRadius='4px'
-					/>
-					<Flex gap={2}>
-						<motion.div
-						 whileHover={{ scale: 1.05 }}
-						 >
+					<Flex
+						justifyContent='space-between'
+						alignItems='flex-start'
+					>
+						<Image
+							src={grant.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)}
+							// my='8px'
+							w='56px'
+							h='56px'
+							objectFit='cover'
+							borderRadius='4px'
+						/>
+						<Flex gap={2}>
 							{
 								disabledGrants?.includes(grant?.id as string) ? (
 									<StateButton
@@ -105,13 +109,17 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 										title='Open' />
 								)
 							}
-						</motion.div>
-						<motion.div
-							whileHover={{ scale: 1.05 }}>
+
+							{/* <Text
+							variant={isOpen ? 'openTag' : 'closedTag'}
+						>
+							{isOpen ? 'Open' : 'Closed'}
+						</Text> */}
 							<Button
-				 borderRadius='3xl'
+				 borderRadius='8px'
 				 bgColor='#F1EEE8'
 				 size='sm'
+				 _hover={{ bgColor: 'blue.600', color: 'white' }}
 				 textColor='#53514F'
 				 fontSize='14px'
 				 onClick={
@@ -120,86 +128,82 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 										window.open(grant?.link, '_blank')
 									}
 								}
-				 rightIcon={<Image src='https://ipfs.io/ipfs/bafkreifd2bg7phi6c554iktdjxbhmwsfxuouaoruydcf5qt4lh7b5ghqlm' />}
+				 rightIcon={<ArrowForwardIcon />}
 
 				 >
 								Program Details
 							</Button>
-						</motion.div>
+							{
+								role && (
+									<Text
+										fontWeight='500'
+										fontSize='12px'
+										color='black.300'
+										bg='gray.200'
+										borderRadius='6px'
+										py={1.5}
+										px={3}
+									>
+										{titleCase(role)}
+									</Text>
+								)
+							}
+						</Flex>
 
-						{/* <Text
-							variant={isOpen ? 'openTag' : 'closedTag'}
-						>
-							{isOpen ? 'Open' : 'Closed'}
-						</Text> */}
 						{
-							role && (
-								<Text
-									fontWeight='500'
-									fontSize='12px'
-									color='black.300'
-									bg='gray.200'
-									borderRadius='6px'
-									py={1.5}
-									px={3}
-								>
-									{titleCase(role)}
-								</Text>
+							isQbAdmin && (
+								<>
+									<Switch
+										hidden
+										size='md'
+										// mx='10px'
+										height='20px'
+										borderRadius={0}
+										colorScheme='green'
+										isChecked={isVisible}
+										disabled={changedVisibilityState === 'checkbox'}
+										onChange={
+											() => {
+												onVisibilityUpdate?.(!isVisible)
+											}
+										}
+									/>
+									<Switch
+										hidden
+										disabled={changedVisibilityState === 'toggle' || !isVisible}
+										onChange={
+											() => {
+												logger.info('clicked')
+												onSectionGrantsUpdate?.()
+											}
+										}
+									>
+										Add to Section
+									</Switch>
+								</>
 							)
 						}
 					</Flex>
-
-					{
-						isQbAdmin && (
-							<>
-								<Switch
-									size='md'
-									// mx='10px'
-									height='20px'
-									borderRadius={0}
-									colorScheme='green'
-									isChecked={isVisible}
-									disabled={changedVisibilityState === 'checkbox'}
-									onChange={
-										() => {
-											onVisibilityUpdate?.(!isVisible)
-										}
-									}
-								/>
-								<Switch
-									disabled={changedVisibilityState === 'toggle' || !isVisible}
-									onChange={
-										() => {
-											logger.info('clicked')
-											onSectionGrantsUpdate?.()
-										}
-									}
-								>
-									Add to Section
-								</Switch>
-							</>
-						)
-					}
-				</Flex>
-				<Flex
-					direction='column'
-					gap={2}
-				>
 					<Flex
+						direction='column'
 						gap={2}
-						alignItems='center'
 					>
-						<Text
-							variant='title'
-							fontSize='18px'
-							fontWeight='500'
-							noOfLines={2}
+						<Flex
+							gap={2}
+							alignItems='center'
 						>
-							{grant.title}
-						</Text>
-					</Flex>
+							<Text
+								variant='title'
+								fontSize='18px'
+								fontWeight='500'
+								noOfLines={2}
+								mt={2}
+							>
+								{grant.title}
+							</Text>
+						</Flex>
 
-					{/* <Flex gap={1}>
+						{/* <Flex gap={1}>
 						<Text variant='subtitle'>
 							{isOpen ? 'Deadline on' : 'Ended on'}
 							{' '}
@@ -213,19 +217,19 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						</Text>
 					</Flex> */}
 
-				</Flex>
+					</Flex>
+				</Box>
 
 				<Flex
 					direction='column'
 				>
-					<Divider />
 					<Grid
-						mt={1}
+						mt={0}
 						templateColumns='repeat(4, 1fr)'
-						pt={3}
-						pb={5}
+						pt={2}
+						px={2}
 						justifyContent='space-between'
-					 >
+					>
 						<GridItem>
 							<Flex direction='column'>
 								{
@@ -242,7 +246,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 												usdAmount !== undefined && (
 													<Text fontWeight='500'>
 														$
-														{nFormatter(usdAmount?.toFixed(0), 0)}
+														{nFormatter(usdAmount?.toFixed(0), 1)}
 													</Text>
 												)
 											}

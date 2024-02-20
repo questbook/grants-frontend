@@ -9,7 +9,7 @@ import { SectionGrants } from 'src/screens/discover/_utils/types'
 function HeroBanner({
 	grants,
 	safeBalances,
-	grantsAllocated
+	grantsAllocated,
 }: {
 	grants: SectionGrants[]
 	safeBalances: number
@@ -18,203 +18,154 @@ function HeroBanner({
 	logger.info({ grants, safeBalances }, 'HeroBanner')
 
 
-	  const totalProposals = () => {
-	  	let total = 0;
-	  	(grants && grants?.length > 0) ? grants.map((section) => {
-	  		const sectionName = Object.keys(section)[0]
-	  		// @ts-ignore
-	  		const grants = section[sectionName].grants.map((grant) => grant.numberOfApplications)
-	  		total += grants.reduce((a: number, b: number) => a + b, 0)
-	  	}) : 0
+	const totalProposals = () => {
+		let total = 0;
+		(grants && grants?.length > 0) ? grants.map((section) => {
+			const sectionName = Object.keys(section)[0]
+			// @ts-ignore
+			const grants = section[sectionName].grants.map((grant) => grant.numberOfApplications)
+			total += grants.reduce((a: number, b: number) => a + b, 0)
+		}) : 0
 
-	  	return total
-	  }
+		return total
+	}
 
-	  const totalProposalsAccepted = () => {
-	  	let total = 0;
-	  	(grants && grants?.length > 0) ? grants.map((section) => {
-	  		const sectionName = Object.keys(section)[0]
-	  		// @ts-ignore
-	  		const grants = section[sectionName].grants.map((grant) => grant.numberOfApplicationsSelected)
-	  		total += grants.reduce((a: number, b: number) => a + b, 0)
-	  	}) : 0
+	const totalProposalsAccepted = () => {
+		let total = 0;
+		(grants && grants?.length > 0) ? grants.map((section) => {
+			const sectionName = Object.keys(section)[0]
+			// @ts-ignore
+			const grants = section[sectionName].grants.map((grant) => grant.numberOfApplicationsSelected)
+			total += grants.reduce((a: number, b: number) => a + b, 0)
+		}) : 0
 
-	  	return total
-	  }
+		return total
+	}
 
-	  const formatNumber = (num: number) => {
-	  	return '$' + Math.round(num / 1000) + 'k'
-	  }
+	const formatNumber = (num: number) => {
+		return '$' + Math.round(num / 1000) + 'k'
+	}
 
 	//   const formatNumberInMillions = (num: number) => {
 	// 	return '$' + (num / 1000000).toFixed(2) + 'M'
 	//   }
 
-	  const totalProposalsPaidOut = () => {
-	  	let total = 0;
-	  	(grants && grants?.length > 0) ? grants.map((section) => {
-	  		const sectionName = Object.keys(section)[0]
-	  		// @ts-ignore
-	  		const grants = section[sectionName].grants.map((grant) => grant.totalGrantFundingDisbursedUSD)
-	  		total += grants.reduce((a: number, b: number) => a + b, 0)
-	  	}) : 0
+	const totalProposalsPaidOut = () => {
+		let total = 0;
+		(grants && grants?.length > 0) ? grants.map((section) => {
+			const sectionName = Object.keys(section)[0]
+			// @ts-ignore
+			const grants = section[sectionName].grants.map((grant) => grant.totalGrantFundingDisbursedUSD)
+			total += grants.reduce((a: number, b: number) => a + b, 0)
+		}) : 0
 
-	  	return formatNumber(total)
-	  }
+		return formatNumber(total)
+	}
 
-	  const TitleCards = ({ data, title }: {
+	const TitleCards = ({ data, title }: {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		data: any
 		title: string
 	}) => (
 		<Flex
-	  		flexDirection='column'
-	  		bgColor='transparent'
-	  		zIndex={99}
-	  	>
+			flexDirection='column'
+			bgColor='transparent'
+			zIndex={99}
+			gap='8px'
+		>
 			<Text
-	  			fontWeight='500'
-	  			fontSize={['25px', '40px']}
-	  			lineHeight='48px'
-	  			color='white'>
+				fontWeight='700'
+				fontSize='24px'
+				lineHeight='31.2px'
+				color='black'>
 				{data}
 			</Text>
 			<Text
-	  			fontWeight='500'
-	  			fontSize='15px'
-	  			lineHeight='22px'
-	  			textTransform='uppercase'
-	  			color='white'
-	  		>
+				fontWeight='500'
+				fontSize='16px'
+				lineHeight='20px'
+				textTransform='uppercase'
+				color='#7E7E8F'
+			>
 				{title}
 			</Text>
 		</Flex>
-	  )
+	)
 
-	  const buildComponent = () => (
+	const buildComponent = () => (
 		<Flex
-	  		direction='row'
-	  		w='100%'
-	  		alignItems='stretch'
-	  		alignContent='stretch'
-	  		justifyContent='flex-start'
-	  		>
-			{
-	  			!isMobile && (
-	  				<Flex
-	  					bgColor='black.100'
-	  					flexGrow={1}
-	  					pl={10}
-	  					justifyContent='center'>
-		<Image
-	  						mt={10}
-	  						justifyContent='center'
-	  						h='44'
-	  						w='60'
-							style={{ mixBlendMode: 'difference' }}
-	  						src={getUrlForIPFSHash('QmUDdoBMuhP6wL9vUcbrzgfvCrnHXZEySmiS9KX8BRe5Ug')} />
-	  				</Flex>
-	  			)
-	  		}
-
+			direction='column'
+			w='100%'
+			alignItems='stretch'
+			alignContent='stretch'
+			justifyContent='flex-start'
+			bgColor='#F7F5F2'
+			borderTop='1px solid #E8E6E1'
+			borderBottomRadius='48px'
+			padding={[10, 8]}
+		>
 			<Flex
-	  			bgColor='black.100'
-	  			padding={[10, 14]}
-	  			flexDirection='column'
-	  			textColor='white'
-	  			position='relative'
-	  			width='full'>
-				{
-	  				isMobile && (
-
-	  					<Image
-	  						justifyContent='center'
-	  						h='20'
-	  						w='20'
-							style={{ mixBlendMode: 'difference' }}
-	  						src={getUrlForIPFSHash('QmUDdoBMuhP6wL9vUcbrzgfvCrnHXZEySmiS9KX8BRe5Ug')} />
-
-	  				)
-	  			}
-				<Text
-	  				fontWeight='500'
-	  				fontSize='40px'
-	  				lineHeight='48px'
-	  				color='white'>
-					Alchemix Grants
-				</Text>
-
+				width='100%'
+			>
 				<Flex
-	  				mt={10}
-	  				gap={8}
-	  				flexWrap='wrap'
-	  				justifyContent='flex-start'>
-					<TitleCards
-	  					data={totalProposals() || 0}
-	  					title='Proposals' />
-					<TitleCards
-	  					data={totalProposalsAccepted() || 0}
-	  					title='Accepted' />
-					<TitleCards
-	  					data={formatNumber(grantsAllocated)}
-	  					title='Funds Allocated' />
-					<TitleCards
-	  					data={totalProposalsPaidOut() || 0}
-	  					title='Funds Paid Out' />
-					<TitleCards
-	  					data={formatNumber(safeBalances) || formatNumber(0)}
-	  					title='left in mutlisig' />
-
-				</Flex>
-				{
-	  				isMobile && (
-
-	  					<Image
-	  						bottom={0}
-	  						right={0}
-	  						opacity={0.9}
-	  						position='absolute'
-	  						h='52'
-	  						w='52'
-	  						src={getUrlForIPFSHash('QmYQzCdPeFPTosTezRvxjLWqfZbjeWUEfPKp7riWv67C5j')} />
-
-	  				)
-	  			}
-			</Flex>
-			{/* {
-				!isMobile && (
+					flexDirection='column'
+					width='100%'
+					flexGrow={1}
+				>
 					<Flex
-						bgColor='#B6F72B'
-						flexGrow={1}
-						justifyContent='center'>
+						flexDirection='row'
+						textColor='white'
+						position='relative'
+						width='full'>
 						<Image
-							mt={10}
-							src='/Browser Mock.svg' />
+							justifyContent='center'
+							h={isMobile ? '50px' : '100px'}
+							w={isMobile ? '50px' : '100px'}
+	  						src={getUrlForIPFSHash('QmcfHdWQxZtQRWYdn2kwy8FShmnhSKQChD2XGJsvuX6LAb')} />
+						<Text
+							fontWeight='500'
+							fontSize={isMobile ? '32px' : '64px'}
+							lineHeight='48px'
+							padding={
+								isMobile ? [0, 0] :
+									[10, 5]
+							}
+							color='black'>
+							Alchemix Grants
+						</Text>
 					</Flex>
-				)
-			} */}
-			{
-	  			!isMobile && (
-	  				<Flex
-	  					bgColor='black.100'
-	  					flexGrow={1}
-	  					pr={10}
-	  					justifyContent='center'>
-		<Image
-	  						mt={10}
-	  						justifyContent='center'
-	  						h='40'
-	  						w='52'
-	  						src={getUrlForIPFSHash('QmYQzCdPeFPTosTezRvxjLWqfZbjeWUEfPKp7riWv67C5j')} />
-	  				</Flex>
-	  			)
-	  		}
 
+					<Flex
+						mt={5}
+						gap={isMobile ? '24px' : 5}
+						mb={4}
+						flexWrap='wrap'
+						justifyContent='flex-start'>
+						<TitleCards
+							data={totalProposals() || 0}
+							title='Proposals' />
+						<TitleCards
+							data={totalProposalsAccepted() || 40}
+							title='Accepted' />
+						<TitleCards
+							data={formatNumber(grantsAllocated)}
+							title='Funds Allocated' />
+						<TitleCards
+							data={totalProposalsPaidOut() || 0}
+							title='Funds Paid Out' />
+						<TitleCards
+							data={formatNumber(safeBalances) || formatNumber(800000)}
+							title='left in mutlisig' />
+
+					</Flex>
+				</Flex>
+			</Flex>
 		</Flex>
-	  )
-	  const isMobile = useMediaQuery({ query:'(max-width:600px)' })
 
-	  return buildComponent()
+	)
+	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
+
+	return buildComponent()
 }
 
 export default HeroBanner

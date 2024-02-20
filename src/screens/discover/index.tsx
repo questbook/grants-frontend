@@ -2,7 +2,7 @@
 /* eslint-disable react/jsx-indent */
 import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { Box, Button, Container, Divider, Flex, Image, Input, Link, Text } from '@chakra-ui/react'
+import { Box, Button, Container, Flex, Image, Input, Link, Text } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
 import { Telegram, Twitter } from 'src/generated/icons'
@@ -154,6 +154,7 @@ function Discover() {
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString } = useContext(DAOSearchContext)!
 	const { setSignIn } = useContext(SignInContext)!
+	logger.info({ searchString }, 'dao')
 
 	const toast = useCustomToast()
 	const { isBiconomyInitialised, updateDaoVisibility, updateSection } = useUpdateDaoVisibility()
@@ -232,45 +233,47 @@ function Discover() {
 	}) => (
 		<Flex
 			align='center'
-			mt={2}
 			alignItems='center'
-			justifyContent='space-between'
-			p={2}
+			px={3}
+			gap={4}
+			mb='6px'
 		>
 			<Flex
-				w='80%'
 			>
 				<Image
 					borderWidth='1px'
 					borderColor='black.100'
-
+					hidden
 					borderRadius='3xl'
-					src={ image ? getUrlForIPFSHash(image) : getAvatar(false, title) }
-					boxSize='20px' />
+					src={image ? getUrlForIPFSHash(image) : getAvatar(false, title)}
+					boxSize='16px' />
 				<Text
-					ml={2}
-					fontWeight='400'
+					fontWeight='500'
 					fontSize='16px'
 					variant='metadata'
-					lineHeight='16px'
+					lineHeight='20px'
+					color='#7E7E8F'
 
 				>
 					{title}
 				</Text>
 			</Flex>
 			<Flex
-				gap={2}>
+				gap={2}
+				mt={-1}
+			>
 				{
 					telegram && (
 						<motion.div
 							whileHover={{ scale: 1.1 }}
 							whileTap={{ scale: 0.9 }}
 						>
-						<Telegram
-							cursor='pointer'
-							_hover={{ color: 'blue.500' }}
-							onClick={() => window.open(`https://t.me/${telegram}`)}
-							boxSize='16px' />
+							<Telegram
+								cursor='pointer'
+								_hover={{ color: 'blue.500' }}
+								color='#7E7E8F'
+								onClick={() => window.open(`https://t.me/${telegram}`)}
+								boxSize='16px' />
 						</motion.div>
 					)
 				}
@@ -282,6 +285,7 @@ function Discover() {
 						>
 							<Twitter
 								cursor='pointer'
+								color='#7E7E8F'
 								_hover={{ color: 'blue.500' }}
 								onClick={() => window.open(`https://twitter.com/${twitter}`)}
 								boxSize='16px' />
@@ -301,29 +305,32 @@ function Discover() {
 					w='100%'
 				>
 					<HeroBanner
-grants={(sectionGrants && sectionGrants.length > 0 ? sectionGrants : []) as []}
+						grants={(sectionGrants && sectionGrants.length > 0 ? sectionGrants : []) as []}
 
-safeBalances={Object.values(safeBalances).reduce((a, b) => a + b, 0) ?? 0}
-grantsAllocated={grantsAllocated ?? 0}
+						safeBalances={Object.values(safeBalances).reduce((a, b) => a + b, 0) ?? 0}
+						grantsAllocated={grantsAllocated ?? 0}
 					/>
-
-
 					<Container
 						className='domainGrid'
 						minWidth='100%'
 						p={4}
-						w='100%'>
+						w='100%'
+						bgColor='white'
+					>
 
 
 						<Flex
 							w='100%'
 							my={4}
+							mt={isMobile ? '' : '12'}
 							justify='space-between'
 							direction={isMobile ? 'column' : 'row'}>
 
 							<Flex
 								direction='column'
-								w={isMobile ? '100%' : { sm: '50%', md: '60%', lg: '70%' }}>
+								px={isMobile ? 0 : 4}
+								w='100%'
+							>
 
 
 								{/* </Box> */}
@@ -337,162 +344,152 @@ grantsAllocated={grantsAllocated ?? 0}
 										w='100%'>
 										<Text
 											variant='heading3'
-											fontWeight='500'
+											fontWeight='700'
 											w='100%'
+											fontSize='24px'
+											lineHeight='31.2px'
 										>
-											Grants
+											Arbitrum DAO
 										</Text>
 
-										{/* <SearchField
-											bg='white'
-											w='100%'
-
-
-											placeholder='Enter Grant Program Name to search'
-											value={filterGrantName}
-											onKeyDown={
-												(e) => {
-													if(e.key === 'Enter' && filterGrantName !== undefined && filterGrantName?.trim().length > 0) {
-														setFilterGrantName(filterGrantName)
-													}
-												}
-											}
-											onChange={
-												(e) => {
-													setFilterGrantName(e.target.value)
-												}
-											}
-										/> */}
 									</Flex>
 									{
 										(sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
-											logger.info('section', { section, sectionGrants })
 											const sectionName = Object.keys(section)[0]
 
 											const grants = section[sectionName].grants.filter((grant) => grant.title.toLowerCase().includes(filterGrantName.trim().toLowerCase())).map(grant => ({ ...grant, role: 'community' as Roles }))
 											return (
-												<Box
+												<Flex
 													my={6}
 													key={index}
+													w='100%'
+													gap='46px'
+													flexDirection={isMobile ? 'column' : 'row'}
 												>
-													<RFPGrid
-														type='all'
-														grants={grants}
-														unsavedDomainVisibleState={unsavedDomainState}
-														onDaoVisibilityUpdate={onDaoVisibilityUpdate}
-														onSectionGrantsUpdate={onGrantsSectionUpdate}
-														changedVisibilityState={changedVisibility}
-													/>
-												</Box>
+
+													<Flex flexGrow={1}>
+														<RFPGrid
+															type='all'
+															grants={grants}
+															unsavedDomainVisibleState={unsavedDomainState}
+															onDaoVisibilityUpdate={onDaoVisibilityUpdate}
+															onSectionGrantsUpdate={onGrantsSectionUpdate}
+															changedVisibilityState={changedVisibility}
+														/>
+													</Flex>
+													{
+
+														(
+															<Flex
+																direction='column'
+																w={isMobile ? 'auto' : '408px'}
+																h='auto'
+																gap={5}
+
+															>
+																<Box
+																	w='100%'
+																	background='white'
+																	p='16px 16px 24px 16px'
+																	h='100%'
+																	// h='13'
+																	position='relative'
+																	borderRadius='8px'
+																	border='1px solid #EFEEEB'
+																>
+																	{' '}
+																	<Text
+																		fontWeight='600'
+																		lineHeight='23.4px'
+																		fontSize='18px'
+																		color='black.100'
+																		px={3}
+																	>
+																		About
+																	</Text>
+
+																	<Text
+																		fontSize='16px'
+																		fontWeight='500'
+																		lineHeight='20.16px'
+																		py={1.5}
+																		px={3}
+																		textAlign='match-parent'
+																		color='#7E7E8F'
+																	>
+																		The Alchemix grant program, administered via Questbook with more information on Notion, seeks to find builders for projects that benefit the Alchemix protocol and DAO. The program went live in February 2024 with an initial budget of $100k, set to be increased by governance pending initial results. The process may evolve and change as the program matures. The notion page consists of numerous ideas, across various disciplines, that Alchemix contributors would like to see built - or you can submit your original idea. More information on the process and project ideas can be found
+																		<Text
+																			fontSize='16px'
+																			lineHeight='20.16px'
+																			fontWeight='500'
+																			textAlign='match-parent'
+																			color='accent.azure'
+																			as='a'
+																			href='https://alchemixdao.notion.site/Alchemix-Grant-Specs-e6f931733b294e6da70c8c23db9a23e6'
+																			target='_blank'
+																			rel='noreferrer'>
+																			{' '}
+																			here.
+																		</Text>
+																	</Text>
+
+
+																	<Text
+																		fontWeight='600'
+																		lineHeight='23.4px'
+																		fontSize='18px'
+
+																		color='black.100'
+																		pb={2}
+																		px={3}
+																	>
+																		Domain Allocators
+																	</Text>
+																	<Box
+																	>
+																		{
+																			[
+																				{
+																					image: '',
+																					title: 'Ov3rKoalafied',
+																					twitter: 'Ov3rKoalafied'
+																				},
+																				{
+																					image: '',
+																					title: 'Barree',
+																					twitter: ''
+																				},
+																				{
+																					image: 'QmQY4LV5zn3VMPde5r4VHrD75YiBZNx512widJsRACnBjR',
+																					title: 'aesop',
+																					twitter: 'aesopfloppy'
+																				},
+																				{
+																					image: 'QmRcPr3UoGmksuEnW5tWQcN6TBtRwgS255oDxzJ58MAQgF',
+																					title: 'Felix',
+																					twitter: ''
+																				},
+																			].map((user, index) => (
+																				<UserCard
+																					key={index}
+																					image={user.image}
+																					title={user.title}
+																					twitter={user.twitter} />
+																			))
+																		}
+																	</Box>
+																</Box>
+
+															</Flex>
+														)
+													}
+												</Flex>
 											)
 										}) : null
 									}
 								</Box>
 							</Flex>
-							{
-							 (
-									<Flex
-										direction='column'
-										w={{ sm: '48%', md: '38%', lg: '28%' }}
-										gap={5}
-										overflowY='auto'
-										maxH='-webkit-max-content'>
-										<Box
-		  w='100%'
-		  background='white'
-		  px={5}
-		  pt={5}
-		  pb={5}
-		  // h='13'
-		  position='relative'
-		  // boxShadow='0px 10px 18px rgba(31, 31, 51, 0.05), 0px 0px 1px rgba(31, 31, 51, 0.31);'
-		  borderRadius='2px'
-		  border='1px solid #E7E4DD'
 
-		   >
-										{' '}
-										<Text
-		  			fontWeight='500'
-		  			lineHeight='48px'
-		  			fontSize='24px'
-		  			color='black.100'
-		  			borderRadius='6px'
-
-		  			px={3}
-		  		>
-												About Alchemix Grants
-          </Text>
-
-										<Divider my={2} />
-										<Text
-				  fontSize='14px'
-				   lineHeight={['20px']}
-		  			py={1.5}
-		  			px={3}
-		  			textAlign='justify'
-		  		>
-												The Alchemix grant program, administered via Questbook with more information on Notion, seeks to find builders for projects that benefit the Alchemix protocol and DAO. The program went live in February 2024 with an initial budget of $100k, set to be increased by governance pending initial results. The process may evolve and change as the program matures. The notion page consists of numerous ideas, across various disciplines, that Alchemix contributors would like to see built - or you can submit your original idea. More information on the process and project ideas can be found
-												<Text
-												  fontSize='14px'
-												  lineHeight={['20px']}
-													 textAlign='match-parent'
-													color='accent.azure'
-													as='a'
-													href='https://alchemixdao.notion.site/Alchemix-Grant-Specs-e6f931733b294e6da70c8c23db9a23e6'
-													target='_blank'
-													rel='noreferrer'>
-													{' '}
-													here.
-												</Text>
-          </Text>
-										<Text
-		  			fontWeight='500'
-		  			lineHeight='48px'
-		  			fontSize='24px'
-		  			color='black.100'
-		  			borderRadius='6px'
-
-		  			px={3}
-		  		>
-												Domain Allocators
-          </Text>
-										<Box p={1}>
-											{
-												[
-													{
-														image: '',
-														title: 'Ov3rKoalafied',
-														twitter: 'Ov3rKoalafied'
-													},
-													{
-														image: '',
-														title: 'Barree',
-														twitter: ''
-													},
-													{
-														image: 'QmQY4LV5zn3VMPde5r4VHrD75YiBZNx512widJsRACnBjR',
-														title: 'aesop',
-														twitter: 'aesopfloppy'
-													},
-													{
-														image: 'QmRcPr3UoGmksuEnW5tWQcN6TBtRwgS255oDxzJ58MAQgF',
-														title: 'Felix',
-														twitter: ''
-													},
-												].map((user, index) => (
-													<UserCard
-														key={index}
-														image={user.image}
-														title={user.title}
-														twitter={user.twitter} />
-												))
-											}
-          </Box>
-          </Box>
-
-									</Flex>
-								)
-							}
 						</Flex>
 						<Flex
 							flexDirection='column'
@@ -518,28 +515,6 @@ grantsAllocated={grantsAllocated ?? 0}
 						</Flex>
 
 					</Container>
-					{
-						isQbAdmin && (
-							<>
-								<Text
-									fontWeight='500'
-									fontSize='24px'
-									lineHeight='32px'>
-									Discover
-								</Text>
-								<RFPGrid
-									type='all'
-									unsavedDomainVisibleState={unsavedDomainState}
-									onDaoVisibilityUpdate={onDaoVisibilityUpdate}
-									onSectionGrantsUpdate={onGrantsSectionUpdate}
-									grants={searchString === undefined || searchString === '' ? grantsForAll : grantsForAll?.filter(g => g.title.includes(searchString))}
-									changedVisibilityState={changedVisibility}
-									filter={filterGrantName}
-								/>
-							</>
-
-						)
-					}
 					{
 						isQbAdmin && (Object.keys(unsavedDomainState).length !== 0 || Object.keys(unsavedSectionGrants).length !== 0) && (
 							<>

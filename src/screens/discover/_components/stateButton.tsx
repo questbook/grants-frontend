@@ -13,20 +13,22 @@ function StateButton({ state, title }: Props) {
 				align='center'
 				justify='center'
 				transition='all .5s ease'
-				py={1.5}
-				px={3}
+				p='4px 10px 4px 10px'
 				w='auto'
-				borderRadius='18px'
+				borderRadius='6px'
 				maxH='36px'
-				border='1px solid'
-				bg={config[state as keyof typeof config]?.bg + '66'}
-				borderColor={config[state as keyof typeof config]?.bg + '66'}
+				bg={
+					config[state as keyof typeof config]?.title === 'Accepted' || 	config[state as keyof typeof config]?.title === 'Not Responded Yet' ?
+						config[state as keyof typeof config]?.bg :
+						config[state as keyof typeof config]?.bg + '66'
+				}
 			>
-				{config[state as keyof typeof config].icon}
 				<Text
 					variant='metadata'
 					fontWeight='500'
-					ml={1}>
+					fontSize='12px'
+					lineHeight='16px'
+					color={config[state as keyof typeof config]?.title === 'Accepted' ? '#557B05' : config[state as keyof typeof config]?.title === 'Rejected' ? '#C50000' : 'black.100'}>
 					{title}
 				</Text>
 			</Flex>
@@ -35,7 +37,7 @@ function StateButton({ state, title }: Props) {
 
 	const [azure, carrot, orchid, jeans, gray] = useToken(
 		'colors',
-		['accent.azure', 'accent.carrot', 'accent.orchid', '#F1EEE8', '#F1EEE8']
+		['#C3F953', 'accent.carrot', 'accent.orchid', 'white', '#F1EEE8']
 	)
 
 	const config = {
@@ -63,6 +65,11 @@ function StateButton({ state, title }: Props) {
 			icon: <Link />,
 			title: 'Open',
 			bg: gray
+		},
+		review : {
+			icon: <Time />,
+			title: 'Review',
+			bg: jeans
 		}
 	}
 
