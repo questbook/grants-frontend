@@ -1,0 +1,15 @@
+query getSectionGrants {
+    sections {
+      grants(sort: NUMBEROFAPPLICATIONS_DESC) {
+        _id
+        applications(filter: {
+          state: "approved"
+        }, sort: UPDATEDATS_DESC, limit: 2000) {
+          milestones {
+            id: _id
+            amount
+          }
+      }
+    }
+  }
+}

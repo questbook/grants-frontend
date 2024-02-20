@@ -171,3 +171,13 @@ export const getRewardAmountMilestones = (decimals: number, application: {milest
 export function titleCase(str: string) {
 	return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase())
 }
+
+export const formatFundsAmount = (amount: number): string => {
+	if(amount >= 1e6) {
+		return `$${(amount / 1e6).toFixed(1)}M`
+	} else if(amount >= 1e3) {
+		return `$${(amount / 1e3).toFixed(0)}K`
+	} else {
+		return `$${amount}`
+	}
+}

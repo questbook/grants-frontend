@@ -1,0 +1,6 @@
+query getStats {
+    stats {
+        builders
+        proposals
+    }
+}

@@ -150,7 +150,7 @@ function Discover() {
 
 	// const discoverRef = useRef<HTMLDivElement>(null)
 
-	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, recentProposals, isLoading } = useContext(DiscoverContext)!
+	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, recentProposals, isLoading, stats } = useContext(DiscoverContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString } = useContext(DAOSearchContext)!
 	const { setSignIn } = useContext(SignInContext)!
@@ -250,7 +250,11 @@ function Discover() {
 				>
 					<HeroBanner />
 
-					<StatsBanner />
+					<StatsBanner
+						builders={stats?.builders}
+						funds={stats?.funds}
+						proposals={stats?.proposals}
+					/>
 
 					<Container
 						className='domainGrid'
@@ -544,7 +548,7 @@ function Discover() {
 				</Tooltip> */}
 			</>
 		)
-	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName, isMobile])
+	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName, isMobile, stats])
 
 	useEffect(() => {
 		if(!inviteInfo) {

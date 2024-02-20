@@ -1,6 +1,10 @@
 import { Flex, Text } from '@chakra-ui/react'
+import { logger } from 'ethers'
+import { formatFundsAmount } from 'src/libraries/utils/formatting'
+import { StatsType } from 'src/screens/discover/_utils/types'
 
-function StatsBanner() {
+function StatsBanner(stats: StatsType) {
+	logger.info({ stats }, 'StatsBanner')
 	const buildComponent = () => {
 		return (
 			<Flex
@@ -15,7 +19,8 @@ function StatsBanner() {
 						fontWeight='500'
 						fontSize={['25px', '40px']}
 						lineHeight='48px'>
-						20000+
+						{stats?.builders}
+						+
 					</Text>
 					<Text
 						fontWeight='500'
@@ -32,7 +37,8 @@ function StatsBanner() {
 						fontWeight='500'
 						fontSize={['25px', '40px']}
 						lineHeight='48px'>
-						$3.5m+
+						{formatFundsAmount(stats?.funds)}
+						+
 					</Text>
 					<Text
 						fontWeight='500'
@@ -49,7 +55,8 @@ function StatsBanner() {
 						fontWeight='500'
 						fontSize={['25px', '40px']}
 						lineHeight='48px'>
-						3000+
+						{stats?.proposals}
+						+
 					</Text>
 					<Text
 						fontWeight='500'

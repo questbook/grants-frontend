@@ -24,6 +24,7 @@ export type DiscoverContextType = {
     setSearch: (search: string) => void
     isLoading: boolean
     safeBalances: {[key: string]: number}
+    stats: StatsType
 }
 
 export type FundTransfer = {
@@ -35,4 +36,10 @@ export type FundTransfer = {
     grant: {
         id: string
     }
+}
+
+export type StatsType = {
+    builders: number
+    proposals: number
+    funds: number
 }

@@ -5,12 +5,14 @@ import { useQuery } from 'src/libraries/hooks/useQuery'
 import logger from 'src/libraries/logger'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
-import { DiscoverContextType, GrantProgramType, GrantType, RecentProposals, SectionGrants, WorkspaceMemberType } from 'src/screens/discover/_utils/types'
+import { DiscoverContextType, GrantProgramType, GrantType, RecentProposals, SectionGrants, StatsType, WorkspaceMemberType } from 'src/screens/discover/_utils/types'
 import { getAllGrants } from 'src/screens/discover/data/getAllGrants'
 import { getAllGrantsForMembers } from 'src/screens/discover/data/getAllGrantsForMembers'
+import { getFundsAllocated } from 'src/screens/discover/data/getFundsAllocated'
 import { GetGrantProgramDetails } from 'src/screens/discover/data/getGrantProgramDetails'
 import { getProposalNameAndAuthorsQuery } from 'src/screens/discover/data/getProposalNameAndAuthors'
 import { getSectionGrantsQuery } from 'src/screens/discover/data/getSectionGrants'
+import { getStatsQuery } from 'src/screens/discover/data/getStats'
 import { GetWorkspacesAndBuilderGrants } from 'src/screens/discover/data/getWorkspaceAndBuilderGrants'
 import { Roles } from 'src/types'
 
@@ -21,7 +23,7 @@ const PAGE_SIZE = 25
 const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	const provider = () => {
 		return (
-			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram, search, setSearch, sectionGrants, recentProposals, isLoading, safeBalances }}>
+			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram, search, setSearch, sectionGrants, recentProposals, isLoading, safeBalances, stats }}>
 				{children}
 			</DiscoverContext.Provider>
 		)
@@ -35,6 +37,11 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	const [grantProgram, setGrantProgram] = useState<GrantProgramType>()
 	const [sectionGrants, setSectionGrants] = useState<SectionGrants>()
 	const [recentProposals, setRecentProposals] = useState<RecentProposals>()
+	const [stats, setStats] = useState<StatsType>({
+		builders: 28981,
+		proposals: 3346,
+		funds: 3886298,
+	})
 
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 	const [search, setSearch] = useState<string>('')
@@ -62,6 +69,14 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 	const { fetchMore: fetchMoreProposalAuthorsAndName } = useQuery({
 		query: getProposalNameAndAuthorsQuery,
+	})
+
+	const { fetchMore: fetchStats } = useQuery({
+		query: getStatsQuery,
+	})
+
+	const { fetchMore: fetchFundsAllocated } = useQuery({
+		query: getFundsAllocated,
 	})
 
 	const fetchSafeBalances = async(grants: GrantType[]) => {
@@ -328,6 +343,38 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		setRecentProposals(recentProposals)
 	}
 
+	const getStats = async() => {
+		const results: any = await fetchStats()
+		logger.info({ results }, 'Stats')
+		if(!results?.stats) {
+			return 'no-stats'
+		}
+
+		const funds: any = await fetchFundsAllocated()
+		logger.info({ funds }, 'Funds')
+		function sumAmounts(data: any): number {
+			let total = 0
+
+			for(const grant of data.grants) {
+				for(const app of grant.applications) {
+					for(const milestone of app.milestones) {
+						total += milestone.amount
+					}
+				}
+			}
+
+			return total
+		}
+
+		// iterate over all sections and sum the amounts
+		const total = funds.sections.reduce((acc: number, cur: any) => acc + sumAmounts(cur), 0)
+
+		const statsCount = results?.stats
+		setStats({ builders: statsCount?.builders + 20000, proposals: statsCount?.proposals + 1540, funds: total + 786298 })
+
+		return 'stats-fetched'
+	}
+
 	useEffect(() => {
 		getGrantsForAll().then(r => logger.info(r, 'Get Grants for all'))
 	}, [search])
@@ -345,6 +392,10 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 			fetchDetails()
 		}
 	}, [inviteInfo])
+
+	useEffect(() => {
+		getStats().then(r => logger.info(r, 'Get Stats'))
+	}, [scwAddress, sectionGrants?.length])
 
 
 	useEffect(() => {
