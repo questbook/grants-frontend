@@ -19,7 +19,7 @@ function StatsBanner(stats: StatsType) {
 						fontWeight='500'
 						fontSize={['25px', '40px']}
 						lineHeight='48px'>
-						{stats?.builders}
+						{stats?.builders > 0 ? stats?.builders : 20000 }
 						+
 					</Text>
 					<Text
@@ -37,7 +37,7 @@ function StatsBanner(stats: StatsType) {
 						fontWeight='500'
 						fontSize={['25px', '40px']}
 						lineHeight='48px'>
-						{formatFundsAmount(stats?.funds)}
+						{formatFundsAmount(stats?.funds > 0 ? stats?.funds : 3500000)}
 						+
 					</Text>
 					<Text
@@ -55,7 +55,7 @@ function StatsBanner(stats: StatsType) {
 						fontWeight='500'
 						fontSize={['25px', '40px']}
 						lineHeight='48px'>
-						{stats?.proposals}
+						{stats?.proposals > 0 ? stats?.proposals : 3000}
 						+
 					</Text>
 					<Text

@@ -38,9 +38,9 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	const [sectionGrants, setSectionGrants] = useState<SectionGrants>()
 	const [recentProposals, setRecentProposals] = useState<RecentProposals>()
 	const [stats, setStats] = useState<StatsType>({
-		builders: 28981,
-		proposals: 3346,
-		funds: 3886298,
+		builders: 0,
+		proposals: 0,
+		funds: 0,
 	})
 
 	const [isLoading, setIsLoading] = useState<boolean>(true)
