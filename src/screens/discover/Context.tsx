@@ -71,7 +71,6 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		query: getSectionSubGrantsQuery
 	})
 
-
 	const fetchSafeBalances = async(grants: GrantType[]) => {
 		const safes: GrantType['workspace']['safe'][] = []
 		const safeSet = new Set<string>()
@@ -98,6 +97,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 				return 0
 			}
 
+
 			const safe = new SupportedPayouts().getSafe(parseInt(safeObj.chainId), safeObj.address)
 			try {
 				logger.info({ safe }, 'Safe (DISCOVER CONTEXT)')
@@ -106,12 +106,17 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 				if(balances?.value) {
 					const total = balances?.value?.reduce((acc: number, cur: {usdValueAmount: number}) => acc + cur.usdValueAmount, 0)
+					localStorage.setItem(`safe-${safeObj.chainId}-${safeObj.address}`, total.toString())
 					logger.info({ balances, safe }, 'Total (DISCOVER CONTEXT)')
 					return total
 				} else {
 					return 0
 				}
 			} catch(e) {
+				if(localStorage.getItem(`safe-${safeObj.chainId}-${safeObj.address}`)) {
+					return parseInt(localStorage.getItem(`safe-${safeObj.chainId}-${safeObj.address}`) ?? '0')
+				}
+
 				logger.info({ safe }, 'Error (DISCOVER CONTEXT)')
 				return 0
 			}
@@ -131,16 +136,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 		logger.info({ safeBalances }, 'Safe balances (DISCOVER CONTEXT)')
 
-		if(Object.values(safeBalances).some((b) => b > 0)) {
-			localStorage.setItem('safeBalances', JSON.stringify(safeBalances))
-			setSafeBalances(safeBalances)
-		} else {
-			const safeBalancesFromLocalStorage = localStorage.getItem('safeBalances')
-			if(safeBalancesFromLocalStorage) {
-				setSafeBalances(JSON.parse(safeBalancesFromLocalStorage))
-			}
-		}
-
+		setSafeBalances(safeBalances)
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
