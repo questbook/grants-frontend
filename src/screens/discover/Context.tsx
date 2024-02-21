@@ -12,6 +12,7 @@ import { getFundsAllocated } from 'src/screens/discover/data/getFundsAllocated'
 import { GetGrantProgramDetails } from 'src/screens/discover/data/getGrantProgramDetails'
 import { getProposalNameAndAuthorsQuery } from 'src/screens/discover/data/getProposalNameAndAuthors'
 import { getSectionGrantsQuery } from 'src/screens/discover/data/getSectionGrants'
+import { getSectionSubGrantsQuery } from 'src/screens/discover/data/getSectionSubGrants'
 import { getStatsQuery } from 'src/screens/discover/data/getStats'
 import { GetWorkspacesAndBuilderGrants } from 'src/screens/discover/data/getWorkspaceAndBuilderGrants'
 import { Roles } from 'src/types'
@@ -78,6 +79,11 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	const { fetchMore: fetchFundsAllocated } = useQuery({
 		query: getFundsAllocated,
 	})
+
+	const { fetchMore: getSubGrants } = useQuery({
+		query: getSectionSubGrantsQuery
+	})
+
 
 	const fetchSafeBalances = async(grants: GrantType[]) => {
 		const safes: GrantType['workspace']['safe'][] = []
@@ -291,6 +297,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 	const getSectionGrants = async() => {
 		const results: any = await fetchMoreSectionGrants()
+		const subgrantsResults: any = await getSubGrants()
 		logger.info({ results }, 'Section Grants')
 
 		if(results?.sections?.length === 0) {
@@ -303,6 +310,15 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		if(results?.sections?.length) {
 			allSectionGrants.push(...results?.sections.map((g: any) => ({ [g.sectionName]: { ...g } })))
 			recentProposals = [...recentProposals, ...results.sections.map((s: any) => s.grants.map((g: any) => g.applications).flat()).flat()]
+		}
+
+		if(subgrantsResults?.grants?.length) {
+			const arbitrum = allSectionGrants.find((s: any) => Object.keys(s)[0] === 'Arbitrum')
+			if(arbitrum) {
+				allSectionGrants[allSectionGrants.indexOf(arbitrum)] = { Arbitrum: { ...arbitrum.Arbitrum, grants: [...arbitrum.Arbitrum.grants, ...subgrantsResults?.grants] } }
+			}
+
+			recentProposals = [...recentProposals, ...subgrantsResults?.grants.map((g: any) => g.applications).flat()]
 		}
 
 		logger.info({ allSectionGrants, recentProposals }, 'All section grants (DISCOVER CONTEXT)')
