@@ -42,7 +42,7 @@ function HeroBanner() {
 						lineHeight='normal'
 						fontWeight='400'
 						color='#D8DED6'>
-						Share a few details and we&apos;ll recommend your profile to grant managers in our network, and subscribe to updates on all grant programs
+						Fill in a couple of details and we&apos;ll recommend you to grant managers. Receive relevant grant opportunities delivered to you as a bonus!
 
 					</Text>
 

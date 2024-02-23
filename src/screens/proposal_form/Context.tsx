@@ -32,7 +32,9 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 					chainId: ALL_SUPPORTED_CHAIN_IDS.indexOf(chainId) === -1 ? defaultChainId : chainId,
 					form,
 					setForm,
-					error
+					error,
+					telegram,
+					setTelegram
 				}
 			}>
 			{children}
@@ -45,7 +47,7 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 	const [grant, setGrant] = useState<Grant>()
 	const [proposal, setProposal] = useState<Proposal>()
 	const [form, setForm] = useState<Form>(DEFAULT_FORM)
-
+	const [telegram, setTelegram] = useState<string>('')
 	const router = useRouter()
 	const { grantId, proposalId, chainId: chainIdString } = router.query
 	const chainId = useMemo(() => {

@@ -401,6 +401,22 @@ function ProposalForm() {
 							)
 						}
 						{
+							/* Optinal Telegram Field (if it is not included in the form field) */
+							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('telegram')
+							|| field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('tg')
+							).length === 0 && (
+								<SectionInput
+									label='Telegram'
+									placeholder='@username'
+									value={telegram}
+									onChange={
+										(e) => {
+											setTelegram(e.target.value)
+										}
+									} />
+							)
+						}
+						{
 							containsField(grant, 'applicantAddress') && (
 								<SectionInput
 									label='Wallet Address'
@@ -418,7 +434,6 @@ function ProposalForm() {
 									errorText={`Invalid address on ${chainNames?.get(safeObj?.chainId?.toString() ?? '') !== undefined ? chainNames.get(safeObj?.chainId?.toString() ?? '')?.toString() : 'EVM / Solana / TON based chain'}`} />
 							)
 						}
-
 						{
 							containsField(grant, 'teamMembers') && (
 								<SectionSelect
@@ -1215,7 +1230,7 @@ function ProposalForm() {
 	}
 
 	const { setRole } = useContext(GrantsProgramContext)!
-	const { type, grant, chainId, form, setForm, error, } = useContext(ProposalFormContext)!
+	const { type, grant, chainId, form, setForm, error, telegram, setTelegram } = useContext(ProposalFormContext)!
 	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const { safeObj } = useSafeContext()!
 	const { setSignIn } = useContext(SignInContext)!
