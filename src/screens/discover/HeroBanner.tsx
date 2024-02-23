@@ -8,7 +8,6 @@ function HeroBanner() {
 	const buildComponent = () => (
 		<Flex
 			direction='row'
-			position='relative'
 			bg='#1F1F33'
 			w='100%'
 			alignItems='stretch'
@@ -21,7 +20,7 @@ function HeroBanner() {
 				alignItems='stretch'
 				alignContent='stretch'
 				textAlign='left'
-				h='100%'>
+				height='420px'>
 				<Flex
 					padding={[10, 24]}
 					w='700px'
@@ -50,7 +49,6 @@ function HeroBanner() {
 					<Flex>
 						<Button
 							variant='solid'
-							zIndex={1}
 							bgColor='#77AC06'
 							_hover={{ bgColor: '#77AC06' }}
 							color='white'
@@ -69,7 +67,6 @@ function HeroBanner() {
 					!isMobile && (
 						<Flex
 							flexShrink={0}
-							zIndex={1}
 							justifyContent='center'
 						>
 							<Image
