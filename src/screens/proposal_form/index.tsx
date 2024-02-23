@@ -401,7 +401,22 @@ function ProposalForm() {
 							)
 						}
 						{
+							containsField(grant, 'applicantTelegram') && (
+								<SectionInput
+									label='Telegram'
+									placeholder='@username'
+									value={findField(form, 'applicantTelegram').value}
+									onChange={
+										(e) => {
+											onChange(e, 'applicantTelegram')
+										}
+									}
+									 />
+							)
+						}
+						{
 							/* Optinal Telegram Field (if it is not included in the form field) */
+							type === 'submit' &&
 							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('telegram')
 							|| field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('tg')
 							).length === 0 && (
