@@ -1,71 +1,43 @@
 import { Flex, Text } from '@chakra-ui/react'
 import { logger } from 'ethers'
-import { formatFundsAmount } from 'src/libraries/utils/formatting'
+import { formatFundsAmount, formatNumber } from 'src/libraries/utils/formatting'
 import { StatsType } from 'src/screens/discover/_utils/types'
 
 function StatsBanner(stats: StatsType) {
 	logger.info({ stats }, 'StatsBanner')
+	const Fields = (value: string, label: string) => (
+		<Flex
+			flexDirection='column'
+			alignItems='center'>
+			<Text
+				fontWeight='800'
+				fontSize={['25px', '48px']}
+				lineHeight='62.4px'>
+				{value}
+				+
+			</Text>
+			<Text
+				fontWeight='500'
+				color='#7E7E8F'
+				fontSize='18px'
+				lineHeight='normal'
+				textTransform='uppercase'>
+				{label}
+			</Text>
+		</Flex>
+	)
+
 	const buildComponent = () => {
 		return (
 			<Flex
-				bgColor='gray.200'
-				padding={[3, 8]}
-				gap={4}
+				bgColor='#F7F5F2'
+				padding='32px 48px'
+				gap='20px'
+				borderRadius='0px 0px 48px 48px'
 				justifyContent='space-evenly'>
-				<Flex
-					flexDirection='column'
-					alignItems='center'>
-					<Text
-						fontWeight='500'
-						fontSize={['25px', '40px']}
-						lineHeight='48px'>
-						{stats?.builders > 0 ? stats?.builders : 20000 }
-						+
-					</Text>
-					<Text
-						fontWeight='500'
-						fontSize='15px'
-						lineHeight='22px'
-						textTransform='uppercase'>
-						Builders
-					</Text>
-				</Flex>
-				<Flex
-					flexDirection='column'
-					alignItems='center'>
-					<Text
-						fontWeight='500'
-						fontSize={['25px', '40px']}
-						lineHeight='48px'>
-						{formatFundsAmount(stats?.funds > 0 ? stats?.funds : 3500000)}
-						+
-					</Text>
-					<Text
-						fontWeight='500'
-						fontSize='15px'
-						lineHeight='22px'
-						textTransform='uppercase'>
-						Paid Out
-					</Text>
-				</Flex>
-				<Flex
-					flexDirection='column'
-					alignItems='center'>
-					<Text
-						fontWeight='500'
-						fontSize={['25px', '40px']}
-						lineHeight='48px'>
-						{stats?.proposals > 0 ? stats?.proposals : 3000}
-						+
-					</Text>
-					<Text
-						fontWeight='500'
-						fontSize='15px'
-						lineHeight='22px'
-						textTransform='uppercase'>
-						Proposals
-					</Text>
-				</Flex>
+				{Fields(stats?.builders > 0 ? formatNumber(stats?.builders) : formatNumber(20000), 'Builders')}
+				{Fields(stats?.proposals > 0 ? formatNumber(stats?.proposals) : formatNumber(3000), 'Proposals')}
+				{Fields(stats?.funds > 0 ? formatFundsAmount(stats?.funds) : formatFundsAmount(3500000), 'Paid out')}
 			</Flex>
 		)
 	}

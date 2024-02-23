@@ -24,7 +24,7 @@ const PAGE_SIZE = 25
 const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	const provider = () => {
 		return (
-			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram, search, setSearch, sectionGrants, recentProposals, isLoading, safeBalances, stats }}>
+			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram, search, setSearch, sectionGrants, recentProposals, isLoading, safeBalances, stats, buildersModal, setBuildersModal }}>
 				{children}
 			</DiscoverContext.Provider>
 		)
@@ -44,6 +44,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		funds: 0,
 	})
 
+	const [buildersModal, setBuildersModal] = useState<boolean>(false)
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 	const [search, setSearch] = useState<string>('')
 	const [safeBalances, setSafeBalances] = useState<{[key: string]: number}>({})
@@ -413,6 +414,12 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		getStats().then(r => logger.info(r, 'Get Stats'))
 	}, [scwAddress, sectionGrants?.length])
 
+	useEffect(() => {
+		// if the window contains builderModal = true, then we will open the modal
+		if(window.location.href.includes('builder_modal=true')) {
+			setBuildersModal(true)
+		}
+	}, [])
 
 	useEffect(() => {
 		// console.log('hi from',grantsForAll?.length, grantsForYou?.length, sectionGrants?.length)

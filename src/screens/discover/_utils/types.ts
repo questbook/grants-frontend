@@ -25,6 +25,8 @@ export type DiscoverContextType = {
     isLoading: boolean
     safeBalances: {[key: string]: number}
     stats: StatsType
+    buildersModal: boolean
+    setBuildersModal: (value: boolean) => void
 }
 
 export type FundTransfer = {

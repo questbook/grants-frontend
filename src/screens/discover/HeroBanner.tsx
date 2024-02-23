@@ -1,24 +1,19 @@
+import { useContext } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { Carousel } from 'react-responsive-carousel'
 import { Button, Flex, Image, Text } from '@chakra-ui/react'
-import { useRouter } from 'next/router'
-import { ArrowRight } from 'src/generated/icons'
-import 'react-responsive-carousel/lib/styles/carousel.min.css' // requires a loader
+import { DiscoverContext } from 'src/screens/discover/Context'
 
 
 function HeroBanner() {
 	const buildComponent = () => (
-		<Carousel
-			autoPlay={true}
-			interval={5000}
-			swipeable={true}
-			showArrows={!isMobile}
-			showStatus={false}
-			infiniteLoop={true}
-			stopOnHover={true}
-			emulateTouch={true}
-			showThumbs={false}
-			thumbWidth={0}
+		<Flex
+			direction='row'
+			position='relative'
+			bg='#1F1F33'
+			w='100%'
+			alignItems='stretch'
+			alignContent='stretch'
+			textAlign='left'
 		>
 			<Flex
 				direction='row'
@@ -26,50 +21,45 @@ function HeroBanner() {
 				alignItems='stretch'
 				alignContent='stretch'
 				textAlign='left'
-				h='460px'>
+				h='100%'>
 				<Flex
-					bgColor='black.100'
 					padding={[10, 24]}
+					w='700px'
 					flexDirection='column'
-					textColor='white'
-					width='600px'>
+					flexGrow={1}
+				>
 					<Text
-						fontWeight='500'
-						fontSize='35px'
-						lineHeight='48px'
-						color='white'>
-						Get a grant to build on
-						{' '}
-						top of
-						{' '}
-						<Text
-							fontWeight='500'
-							fontSize='35px'
-							lineHeight='48px'
-							color='#0A84FF'
-							as='span'>
-							{' '}
-							Reclaim Protocol
-							{' '}
-						</Text>
+						fontWeight='700'
+						fontSize='32px'
+						lineHeight='normal'
+						color='#F8FFF2'
+					>
+						Get your profile referred to grant managers
 					</Text>
 
 					<Text
 						mt={2}
-						fontSize='16px'
-						lineHeight='24px'
+						fontSize='18px'
+						lineHeight='normal'
 						fontWeight='400'
-						color='white'>
-						Use Reclaim to retrieve any user&apos;s data to your app
+						color='#D8DED6'>
+						Share a few details and we&apos;ll recommend your profile to grant managers in our network, and subscribe to updates on all grant programs
+
 					</Text>
 
 					<Flex>
 						<Button
-							variant='primaryLarge'
-							bgColor='#0A84FF'
+							variant='solid'
+							zIndex={1}
+							bgColor='#77AC06'
+							_hover={{ bgColor: '#77AC06' }}
+							color='white'
+							borderRadius='8px'
+							shadow='0px 1px 2px 0px rgba(22, 22, 22, 0.12)'
 							mt={8}
-							rightIcon={<ArrowRight color='white' />}
-							onClick={() => window.open('https://t.me/Srijith13', '_blank')}>
+							fontSize='18px'
+							fontWeight='600'
+							onClick={() => setBuildersModal(true)}>
 							Connect with us
 						</Button>
 					</Flex>
@@ -78,89 +68,53 @@ function HeroBanner() {
 				{
 					!isMobile && (
 						<Flex
-							bgColor='#045afd'
-							flexGrow={1}
-							justifyContent='center'>
+							flexShrink={0}
+							zIndex={1}
+							justifyContent='center'
+						>
 							<Image
-								src='/v2/images/reclaim_bg.svg' />
+								mt={10}
+								h='-webkit-fit-content'
+								w='100%'
+								src='/v2/images/banner.png' />
 						</Flex>
 					)
 				}
-			</Flex>
-			<Flex
-				direction='row'
-				w='100%'
-				alignItems='stretch'
-				alignContent='stretch'
-				textAlign='left'
-				h='460px'>
-				<Flex
-					bgColor='black.100'
-					padding={[10, 24]}
-					flexDirection='column'
-					textColor='white'
-					width='600px'>
-					<Text
-						fontWeight='500'
-						fontSize='40px'
-						lineHeight='48px'
-						color='white'>
-						Home for
-						<Text
-							fontWeight='500'
-							fontSize='40px'
-							lineHeight='48px'
-							color='#B6F72B'
-							as='span'>
-							{' '}
-							high quality
-							{' '}
-						</Text>
-						{' '}
-						builders
-					</Text>
-
-					<Text
-						mt={2}
-						fontSize='16px'
-						lineHeight='24px'
-						fontWeight='400'
-						color='white'>
-						Invite proposals from builders. Review and fund proposals with milestones - on chain.
-					</Text>
-
-					<Flex>
-						<Button
-							variant='primaryLarge'
-							mt={8}
-							rightIcon={<ArrowRight color='white' />}
-							onClick={
-								() => router.push({
-									pathname: '/request_proposal',
-								})
-							}>
-							Start a grant program
-						</Button>
-					</Flex>
-
-				</Flex>
+				{/* {
+					!isMobile && (
+						<Flex
+							position='absolute'
+							bottom='0'
+							left='0'
+							justifyContent='center'
+						>
+							<BannerVector
+								w='100%'
+								h='auto'
+							/>
+						</Flex>
+					)
+				}
 				{
 					!isMobile && (
 						<Flex
-							bgColor='#B6F72B'
-							flexGrow={1}
-							justifyContent='center'>
-							<Image
-								mt={10}
-								src='/Browser Mock.svg' />
+							position='absolute'
+							top='0'
+							right='0'
+							justifyContent='center'
+						>
+							<BannerVector2
+								w='100%'
+								h='auto'
+							/>
 						</Flex>
 					)
-				}
+				} */}
 			</Flex>
-		</Carousel>
+		</Flex>
 	)
-	const isMobile = useMediaQuery({ query:'(max-width:600px)' })
-	const router = useRouter()
+	const { setBuildersModal } = useContext(DiscoverContext)!
+	const isMobile = useMediaQuery({ query:'(max-width:800px)' })
 
 	return buildComponent()
 }

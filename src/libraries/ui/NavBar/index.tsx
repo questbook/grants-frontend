@@ -6,7 +6,7 @@ import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
 import config from 'src/constants/config.json'
-import { ArrowLeft, Pencil, Qb, Settings, ShareForward } from 'src/generated/icons'
+import { Add, ArrowLeft, Pencil, Qb, Settings, ShareForward } from 'src/generated/icons'
 import { QBAdminsContext } from 'src/libraries/hooks/QBAdminsContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
@@ -60,12 +60,12 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 				alignItems='center'
 				maxW='100vw'
 				bg={bg}
-				ps={[6, 24]}
+				ps={[6, 6]}
 				pe={24}
-				backgroundColor={['black.100', 'gray.100']}
+				backgroundColor={['gray.100', 'gray.100']}
 				py='16px'
 				minWidth={{ base: '-webkit-fill-available' }}
-				paddingInlineEnd={['35px', '120px']}
+				paddingInlineEnd={['35px', '35px']}
 			>
 				<Qb
 					boxSize='10rem'
@@ -253,7 +253,33 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 				}
 
 				<Spacer />
+				{
+					!isMobile[0] &&
+					(router.pathname === '/') && (
 
+						<Button
+							variant='solid'
+							fontWeight='500'
+							bgColor='#77AC06'
+							color='white'
+							ml='auto'
+							marginRight={2}
+							borderRadius='8px'
+							_hover={
+								{
+									bgColor: '#699804',
+								}
+							}
+							leftIcon={<Add />}
+							onClick={
+								() => {
+									router.push('/request_proposal')
+								}
+							} >
+							Start a grant program
+						</Button>
+					)
+				}
 				<AccountDetails
 					openModal={
 						(type) => {

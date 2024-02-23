@@ -181,3 +181,13 @@ export const formatFundsAmount = (amount: number): string => {
 		return `$${amount}`
 	}
 }
+
+export const formatNumber = (amount: number): string => {
+	if(amount >= 1e6) {
+		return `${(amount / 1e6).toFixed(1)}M`
+	} else if(amount >= 1e3) {
+		return `${(amount / 1e3).toFixed(0)}K`
+	} else {
+		return `${amount}`
+	}
+}

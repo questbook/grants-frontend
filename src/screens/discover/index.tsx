@@ -1,8 +1,7 @@
 import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { Box, Button, Container, Divider, Flex, Image, Input, Link, Skeleton, Text } from '@chakra-ui/react'
+import { Box, Button, Container, Flex, Image, Input, Link, Skeleton, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import config from 'src/constants/config.json'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { DAOSearchContext } from 'src/libraries/hooks/DAOSearchContext'
 import { QBAdminsContext } from 'src/libraries/hooks/QBAdminsContext'
@@ -14,11 +13,10 @@ import ImageUpload from 'src/libraries/ui/ImageUpload'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import SearchField from 'src/libraries/ui/SearchField'
-import { getAvatar } from 'src/libraries/utils'
 import { chainNames } from 'src/libraries/utils/constants'
 import getErrorMessage from 'src/libraries/utils/error'
-import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { ApiClientsContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
+import BuildersModal from 'src/screens/discover/_components/BuilderModal'
 import ProposalCard from 'src/screens/discover/_components/ProposalCard'
 import RFPGrid from 'src/screens/discover/_components/rfpGrid'
 import { DiscoverContext, DiscoverProvider } from 'src/screens/discover/Context'
@@ -245,6 +243,7 @@ function Discover() {
 		return (
 			<>
 				<Flex
+					bg='white'
 					direction='column'
 					w='100%'
 				>
@@ -255,15 +254,29 @@ function Discover() {
 						funds={stats?.funds}
 						proposals={stats?.proposals}
 					/>
+					<BuildersModal />
 
 					<Container
+						bg='white'
 						className='domainGrid'
 						minWidth='100%'
 						p={4}
 						w='100%'>
+						<Text
+							color='#07070C'
+							fontSize='32px'
+							lineHeight='41.6px'
+							variant='heading3'
+							fontWeight='700'
+							mt={8}
+							mb={8}
+						>
+							Explore Grants
+						</Text>
 						<SearchField
 							bg='white'
-							w='100%'
+							border='1px solid #E1DED9'
+							w={isMobile ? '100%' : '70%'}
 							// inputGroupProps={{ ml: 4 }}
 							mb={6}
 							placeholder='Enter Grant Program Name to search'
@@ -313,12 +326,6 @@ function Discover() {
 													changedVisibilityState={changedVisibility}
 													filter={filterGrantName}
 												/>
-												<Divider
-													width='100%'
-													borderColor='gray.300'
-													mt={8}
-													display={grantsForYou?.length ? '' : 'none'}
-												/>
 											</>
 										) : (
 											<Skeleton
@@ -333,18 +340,10 @@ function Discover() {
 								<Box
 									display={sectionGrants?.length ? '' : 'none'}
 								>
-									<Text
-										variant='heading3'
-										fontWeight='500'
-										mt={4}
-									>
-										Explore grant programs
-									</Text>
 									{
 										(sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
 											logger.info('section', { section, sectionGrants })
 											const sectionName = Object.keys(section)[0]
-											const sectionImage = section[sectionName].sectionLogoIpfsHash
 											const sectionLink = sectionName === 'Arbitrum' ? 'arbitrum' : sectionName === 'Compound' ? 'compoundgrants' : sectionName === 'Alchemix' ? 'alchemix' : false
 											const grants = section[sectionName].grants.filter((grant) => grant.title.toLowerCase().includes(filterGrantName.trim().toLowerCase())).map(grant => ({ ...grant, role: 'community' as Roles }))
 											return (
@@ -357,26 +356,16 @@ function Discover() {
 														alignItems='center'
 														mb={4}
 													>
-														<Image
-															src={sectionImage === config.defaultDAOImageHash ? getAvatar(true, sectionName) : getUrlForIPFSHash(sectionImage)}
-															boxSize={6} />
 														<Text
-															fontWeight='500'
+															color='#07070C'
+															fontWeight='700'
+															fontSize='24px'
+															lineHeight='31.2px'
 															variant='subheading'
 															onClick={() => sectionLink ? window.open(`https://${sectionLink}.questbook.app`, '_blank') : null}
 															cursor={sectionLink ? 'pointer' : 'text'}
 														>
 															{sectionName}
-														</Text>
-														<Text
-															fontSize='14px'
-															color='gray.500'
-															fontWeight='500'
-															ml='-6px'
-														>
-															(
-															{grants.length}
-															)
 														</Text>
 													</Flex>
 
