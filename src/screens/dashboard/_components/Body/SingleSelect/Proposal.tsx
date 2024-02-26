@@ -360,6 +360,22 @@ function Proposal() {
 				}
 
 				{
+					getFieldString(decryptedProposal, 'applicantTelegram') && (
+						<Flex
+							w='100%'
+							mt={4}
+							direction='column'>
+							<Text color='gray.500'>
+								Telegram
+							</Text>
+							<Text mt={1}>
+								{getFieldString(decryptedProposal, 'applicantTelegram')}
+							</Text>
+						</Flex>
+					)
+				}
+
+				{
 					proposal?.fields
 						?.filter((field) => field.id
 							.substring(field.id.indexOf('.') + 1)
