@@ -13,6 +13,12 @@ export default [
 		pii: true
 	},
 	{
+		title: 'Telegram',
+		id: 'applicantTelegram',
+		inputType: 'short-form',
+		isRequired: false,
+	},
+	{
 		title: 'Wallet Address',
 		id: 'applicantAddress',
 		inputType: 'short-form',

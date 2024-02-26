@@ -562,7 +562,6 @@ function Discover() {
 												w='100%'
 												fontSize='24px'
 												lineHeight='31.2px'
-												mb={4}
 											>
 												Reclaim Arbitrum Grants
 											</Text>

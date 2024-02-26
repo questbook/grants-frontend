@@ -32,7 +32,9 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 					chainId: ALL_SUPPORTED_CHAIN_IDS.indexOf(chainId) === -1 ? defaultChainId : chainId,
 					form,
 					setForm,
-					error
+					error,
+					telegram,
+					setTelegram,
 				}
 			}>
 			{children}
@@ -44,6 +46,7 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 	const [type, setType] = useState<FormType>('submit')
 	const [grant, setGrant] = useState<Grant>()
 	const [proposal, setProposal] = useState<Proposal>()
+	const [telegram, setTelegram] = useState<string>('')
 	const [form, setForm] = useState<Form>(DEFAULT_FORM)
 
 	const router = useRouter()

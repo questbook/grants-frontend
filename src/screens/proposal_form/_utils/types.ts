@@ -12,6 +12,8 @@ export type ProposalFormContextType = {
     setForm: (form: Form) => void
     type: FormType
     error?: string
+    telegram: string
+    setTelegram: (telegram: string) => void
 }
 
 export type Grant = GrantDetailsQuery['grant']
