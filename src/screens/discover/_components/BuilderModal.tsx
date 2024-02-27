@@ -225,9 +225,7 @@ function BuildersModal() {
 											padding='16px'
 											borderRadius='8px'
 										>
-
-											We&apos;ll share your details with the grant managers based on your GitHub details, we&apos;ll keep you posted via telegram
-
+											We&apos;ll recommend you to the grant managers based on your Github activity and keep you updated through Telegram
 										</Text>
 										<Button
 											mt={4}
