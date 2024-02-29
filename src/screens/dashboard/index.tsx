@@ -129,7 +129,7 @@ function Dashboard(props: DynamicData) {
 	const [step, setStep] = useState(false)
 	const [payWithSafe, setPayWithSafe] = useState <boolean> (true)
 
-	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
+	const isMobile = useMediaQuery({ query: '(max-width:768px)' })
 
 	useEffect(() => {
 		logger.info({ isLoading }, 'Loading state changed')
