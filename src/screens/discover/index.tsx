@@ -2,7 +2,7 @@
 /* eslint-disable react/jsx-indent */
 import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { Box, Button, Container, Divider, Flex, Image, Input, Link, Text } from '@chakra-ui/react'
+import { Box, Button, Container, Flex, Image, Input, Link, Text } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
 import { Telegram, Twitter } from 'src/generated/icons'
@@ -19,6 +19,7 @@ import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransact
 import { getAvatar } from 'src/libraries/utils'
 import { chainNames } from 'src/libraries/utils/constants'
 import getErrorMessage from 'src/libraries/utils/error'
+import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { ApiClientsContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import RFPGrid from 'src/screens/discover/_components/rfpGrid'
 import { DiscoverContext, DiscoverProvider } from 'src/screens/discover/Context'
@@ -153,6 +154,7 @@ function Discover() {
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString } = useContext(DAOSearchContext)!
 	const { setSignIn } = useContext(SignInContext)!
+	logger.info({ searchString }, 'dao')
 
 	const toast = useCustomToast()
 	const { isBiconomyInitialised, updateDaoVisibility, updateSection } = useUpdateDaoVisibility()
@@ -231,47 +233,47 @@ function Discover() {
 	}) => (
 		<Flex
 			align='center'
-			mt={2}
 			alignItems='center'
-			justifyContent='space-between'
-			p={2}
+			px={3}
+			gap={4}
+			mb='6px'
 		>
 			<Flex
-				w='80%'
 			>
 				<Image
 					borderWidth='1px'
 					borderColor='black.100'
+					hidden
 					borderRadius='3xl'
-					src={
-						image?.startsWith('0x') ?
-						getAvatar(false, image ?? '0x0') : image
-}
-					boxSize='20px' />
+					src={image ? getUrlForIPFSHash(image) : getAvatar(false, title)}
+					boxSize='16px' />
 				<Text
-					ml={2}
-					fontWeight='400'
-					fontSize='14px'
+					fontWeight='500'
+					fontSize='16px'
 					variant='metadata'
-					lineHeight='16px'
+					lineHeight='20px'
+					color='#7E7E8F'
 
 				>
 					{title}
 				</Text>
 			</Flex>
 			<Flex
-				gap={2}>
+				gap={2}
+				mt={-1}
+			>
 				{
 					telegram && (
 						<motion.div
 							whileHover={{ scale: 1.1 }}
 							whileTap={{ scale: 0.9 }}
 						>
-						<Telegram
-							cursor='pointer'
-							_hover={{ color: 'blue.500' }}
-							onClick={() => window.open(`https://t.me/${telegram}`)}
-							boxSize='16px' />
+							<Telegram
+								cursor='pointer'
+								_hover={{ color: 'blue.500' }}
+								color='#7E7E8F'
+								onClick={() => window.open(`https://t.me/${telegram}`)}
+								boxSize='16px' />
 						</motion.div>
 					)
 				}
@@ -283,6 +285,7 @@ function Discover() {
 						>
 							<Twitter
 								cursor='pointer'
+								color='#7E7E8F'
 								_hover={{ color: 'blue.500' }}
 								onClick={() => window.open(`https://twitter.com/${twitter}`)}
 								boxSize='16px' />
@@ -302,29 +305,32 @@ function Discover() {
 					w='100%'
 				>
 					<HeroBanner
-grants={(sectionGrants && sectionGrants.length > 0 ? sectionGrants : []) as []}
+						grants={(sectionGrants && sectionGrants.length > 0 ? sectionGrants : []) as []}
 
-safeBalances={Object.values(safeBalances).reduce((a, b) => a + b, 0) ?? 0}
-grantsAllocated={grantsAllocated ?? 0}
+						safeBalances={Object.values(safeBalances).reduce((a, b) => a + b, 0) ?? 0}
+						grantsAllocated={grantsAllocated ?? 0}
 					/>
-
-
 					<Container
 						className='domainGrid'
 						minWidth='100%'
 						p={4}
-						w='100%'>
+						w='100%'
+						bgColor='white'
+					>
 
 
 						<Flex
 							w='100%'
 							my={4}
+							mt={isMobile ? '' : '12'}
 							justify='space-between'
 							direction={isMobile ? 'column' : 'row'}>
 
 							<Flex
 								direction='column'
-								w={isMobile ? '100%' : { sm: '50%', md: '60%', lg: '70%' }}>
+								px={isMobile ? 0 : 4}
+								w='100%'
+							>
 
 
 								{/* </Box> */}
@@ -338,8 +344,10 @@ grantsAllocated={grantsAllocated ?? 0}
 										w='100%'>
 										<Text
 											variant='heading3'
-											fontWeight='600'
+											fontWeight='700'
 											w='100%'
+											fontSize='24px'
+											lineHeight='31.2px'
 										>
 											Domains
 										</Text>
@@ -347,140 +355,143 @@ grantsAllocated={grantsAllocated ?? 0}
 									</Flex>
 									{
 										(sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
-											logger.info('section', { section, sectionGrants })
 											const sectionName = Object.keys(section)[0]
 
 											const grants = section[sectionName].grants.filter((grant) => grant.title.toLowerCase().includes(filterGrantName.trim().toLowerCase())).map(grant => ({ ...grant, role: 'community' as Roles }))
 											return (
-												<Box
+												<Flex
 													my={6}
 													key={index}
+													w='100%'
+													gap='46px'
+													flexDirection={isMobile ? 'column' : 'row'}
 												>
 
+													<Flex flexGrow={1}>
+														<RFPGrid
+															type='all'
+															grants={grants}
+															unsavedDomainVisibleState={unsavedDomainState}
+															onDaoVisibilityUpdate={onDaoVisibilityUpdate}
+															onSectionGrantsUpdate={onGrantsSectionUpdate}
+															changedVisibilityState={changedVisibility}
+														/>
+													</Flex>
+													{
 
-													<RFPGrid
-														type='all'
-														grants={grants}
-														unsavedDomainVisibleState={unsavedDomainState}
-														onDaoVisibilityUpdate={onDaoVisibilityUpdate}
-														onSectionGrantsUpdate={onGrantsSectionUpdate}
-														changedVisibilityState={changedVisibility}
-													/>
-												</Box>
+														(
+															<Flex
+																direction='column'
+																w={isMobile ? 'auto' : '408px'}
+																h='auto'
+																gap={5}
+
+															>
+																<Box
+																	w='100%'
+																	background='white'
+																	p='16px 16px 24px 16px'
+																	h='100%'
+																	// h='13'
+																	position='relative'
+																	borderRadius='8px'
+																	border='1px solid #EFEEEB'
+																>
+																	{' '}
+																	<Text
+																		fontWeight='600'
+																		lineHeight='23.4px'
+																		fontSize='18px'
+																		color='black.100'
+																		px={3}
+																	>
+																		About
+																	</Text>
+
+																	<Text
+																		fontSize='16px'
+																		fontWeight='500'
+																		lineHeight='20.16px'
+																		py={1.5}
+																		px={3}
+																		textAlign='match-parent'
+																		color='#7E7E8F'
+																	>
+																		The Compound grants, administered via DDA by Questbook and 3 domain allocators, went live on the 30th of November with a grants budget of $1M spread across four domains. The Questbook Compound Grants program is useful for anyone developing in domain specific projects on top of Compound, ranging from New Dapps and Ideas, Multi-chain/Cross-chain, Dev Tooling and Security Tooling.
+																	</Text>
+																	<Text
+																		fontWeight='600'
+																		lineHeight='23.4px'
+																		fontSize='18px'
+
+																		color='black.100'
+																		pb={2}
+																		px={3}
+																	>
+																		Program Manager
+																	</Text>
+																	<Box
+																	>
+																		<UserCard
+													image='0x0125215125'
+													title='Ruchil Sharma'
+													twitter='roohchill'
+													telegram='roohchill' />
+																	</Box>
+																	<Text
+																		fontWeight='600'
+																		lineHeight='23.4px'
+																		fontSize='18px'
+
+																		color='black.100'
+																		pb={2}
+																		px={3}
+																	>
+																		Domain Allocators
+																	</Text>
+																	<Box
+																	>
+																		{
+																			[
+																				{
+																					image: 'https://ipfs.questbook.app:8080/ipfs/Qmapyv8FtFXgUGJNTA6axAuu4ehXNtpNJsZkkxki2WM8JD',
+																					title: 'allthecolors (New Dapps and Ideas)',
+																					twitter: '0xA1176ec01045',
+																					telegram: 'all_the_colors'
+																				},
+																				{
+																					image: 'https://ipfs.questbook.app:8080/ipfs/QmRp5u9wy2m23HzkD9t1GQAeicAdpLphvahqAWfmRtKMuF',
+																					title: 'Doo | StableLab (Multi-chain/Cross-chain, Dev Tooling)',
+																					twitter: 'DooWanNam',
+																					telegram: 'doowannam'
+																				},
+																				{
+																					image: '0x012523',
+																					title: 'Michael Lewellen (Security Tooling)',
+																					twitter: 'LewellenMichael',
+																					telegram: 'cyloncat'
+																				},
+																			].map((user, index) => (
+																				<UserCard
+																					key={index}
+																					image={user.image}
+																					title={user.title}
+																					twitter={user.twitter} />
+																			))
+																		}
+																	</Box>
+																</Box>
+
+															</Flex>
+														)
+													}
+												</Flex>
 											)
 										}) : null
 									}
 								</Box>
 							</Flex>
-							{
-							 (
-									<Flex
-										direction='column'
-										w={{ sm: '48%', md: '38%', lg: '28%' }}
-										gap={5}
-										overflowY='auto'
-										maxH='-webkit-max-content'>
-										<Box
-		  w='100%'
-		  background='white'
-		  px={5}
-		  pt={5}
-		  pb={5}
-		  // h='13'
-		  position='relative'
-		  // boxShadow='0px 10px 18px rgba(31, 31, 51, 0.05), 0px 0px 1px rgba(31, 31, 51, 0.31);'
-		  borderRadius='2px'
-		  border='1px solid #E7E4DD'
 
-		   >
-										{' '}
-										<Text
-		  			fontWeight='500'
-		  			lineHeight='48px'
-		  			fontSize='24px'
-		  			color='black.100'
-		  			borderRadius='6px'
-
-		  			px={3}
-		  		>
-												About Compound Grants
-          </Text>
-
-										<Divider my={2} />
-										<Text
-				  fontSize='14px'
-				   lineHeight={['20px']}
-		  			py={1.5}
-		  			px={3}
-		  			textAlign='match-parent'
-		  		>
-												The Compound grants, administered via DDA by Questbook and 3 domain allocators, went live on the 30th of November with a grants budget of $1M spread across four domains. The Questbook Compound Grants program is useful for anyone developing in domain specific projects on top of Compound, ranging from  New Dapps and Ideas, Multi-chain/Cross-chain, Dev Tooling and Security Tooling. Through the program, you can receive milestone-based funding based on domain specific needs, outlined by the domain allocators elected by the community. These domain allocators were elected from the community and by the community. The specific information regarding the accepted proposals and the funded teams can be found here.
-          </Text>
-										<Text
-		  			fontWeight='500'
-		  			lineHeight='48px'
-		  			fontSize='24px'
-		  			color='black.100'
-		  			borderRadius='6px'
-
-		  			px={3}
-		  		>
-												Program Manager
-          </Text>
-										<Box p={1}>
-												<UserCard
-													image='0x0125215125'
-													title='Ruchil Sharma'
-													twitter='roohchill'
-													telegram='roohchill' />
-          </Box>
-										<Divider my={2} />
-										<Text
-		  			fontWeight='500'
-		  			lineHeight='48px'
-		  			fontSize='24px'
-		  			color='black.100'
-		  			borderRadius='6px'
-
-		  			px={3}
-		  		>
-								Domain Allocators
-          </Text>
-										<Box p={1}>
-											{
-												[
-													{
-														image: 'https://ipfs.questbook.app:8080/ipfs/Qmapyv8FtFXgUGJNTA6axAuu4ehXNtpNJsZkkxki2WM8JD',
-														title: 'allthecolors (New Dapps and Ideas)',
-														twitter: '0xA1176ec01045',
-														telegram: 'all_the_colors'
-													},
-													{
-														image: 'https://ipfs.questbook.app:8080/ipfs/QmRp5u9wy2m23HzkD9t1GQAeicAdpLphvahqAWfmRtKMuF',
-														title: 'Doo | StableLab (Multi-chain/Cross-chain, Dev Tooling)',
-														twitter: 'DooWanNam',
-														telegram: 'doowannam'
-													},
-													{
-														image: '0x012523',
-														title: 'Michael Lewellen (Security Tooling)',
-														twitter: 'LewellenMichael',
-														telegram: 'cyloncat'
-													},
-												].map((user, index) => (
-													<UserCard
-														key={index}
-														image={user.image}
-														title={user.title}
-														twitter={user.twitter} />
-												))
-											}
-          </Box>
-          </Box>
-
-									</Flex>
-								)
-							}
 						</Flex>
 						<Flex
 							flexDirection='column'
@@ -506,28 +517,6 @@ grantsAllocated={grantsAllocated ?? 0}
 						</Flex>
 
 					</Container>
-					{
-						isQbAdmin && (
-							<>
-								<Text
-									fontWeight='500'
-									fontSize='24px'
-									lineHeight='32px'>
-									Discover
-								</Text>
-								<RFPGrid
-									type='all'
-									unsavedDomainVisibleState={unsavedDomainState}
-									onDaoVisibilityUpdate={onDaoVisibilityUpdate}
-									onSectionGrantsUpdate={onGrantsSectionUpdate}
-									grants={searchString === undefined || searchString === '' ? grantsForAll : grantsForAll?.filter(g => g.title.includes(searchString))}
-									changedVisibilityState={changedVisibility}
-									filter={filterGrantName}
-								/>
-							</>
-
-						)
-					}
 					{
 						isQbAdmin && (Object.keys(unsavedDomainState).length !== 0 || Object.keys(unsavedSectionGrants).length !== 0) && (
 							<>
