@@ -17,7 +17,7 @@ function SingleSelect() {
 			<Discussions />
 		</Flex>
 	)
-	const isMobile = useMediaQuery(['(max-width:768px)'])
+	const isMobile = useMediaQuery(['(max-width:959px)'])
 
 	return buildComponent()
 }

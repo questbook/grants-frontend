@@ -19,7 +19,7 @@ import { disabledGrants, disabledTonGrants } from 'src/screens/proposal_form/_ut
 function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boolean) => void }) {
 	const buildComponent = () => (
 		<Flex
-			w={['100%', '100%', '25%', '25%']}
+			w={['100%', '100%', '100%', '25%']}
 			h='100%'
 			bg='white'
 			direction='column'

@@ -12,7 +12,7 @@ function Body() {
 		return (
 			<Flex
 				mx='auto'
-				w={['100%', '100%', '70%', '48%']}>
+				w={['100%', '100%', '100%', '48%']}>
 				{selectedProposals.size > 1 ? <MultiSelect /> : selectedProposals.size === 1 ? <SingleSelect /> : <Empty />}
 			</Flex>
 		)
