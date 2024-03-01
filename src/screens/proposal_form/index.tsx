@@ -984,7 +984,7 @@ function ProposalForm() {
 									return (
 										<SectionInput
 											key={field.id}
-											label={title}
+											label={title + '*'}
 											value={findFieldBySuffix(form, modifiedId, id).value}
 											onChange={
 												(e) => {
@@ -1185,7 +1185,7 @@ function ProposalForm() {
 								return (
 									<SectionInput
 										key={field.id}
-										label={title}
+										label={title + '*'}
 										value={findFieldBySuffix(form, modifiedId, id).value}
 										onChange={
 											(e) => {
