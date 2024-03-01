@@ -1,6 +1,5 @@
 /* eslint-disable indent */
-import { useMediaQuery } from 'react-responsive'
-import { Flex, Image, Text } from '@chakra-ui/react'
+import { Flex, Image, Text, useMediaQuery } from '@chakra-ui/react'
 import { logger } from 'ethers'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { SectionGrants } from 'src/screens/discover/_utils/types'
@@ -163,7 +162,7 @@ function HeroBanner({
 		</Flex>
 
 	)
-	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
+	const isMobile = useMediaQuery(['(max-width:600px)'])[0]
 
 	return buildComponent()
 }
