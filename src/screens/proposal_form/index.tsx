@@ -828,7 +828,7 @@ function ProposalForm() {
 									return (
 										<SectionInput
 											key={field.id}
-											label={title}
+											label={title + '*'}
 											type='select'
 											value={findFieldBySuffix(form, modifiedId, id).value}
 											onChange={
@@ -847,7 +847,7 @@ function ProposalForm() {
 						{
 							containsField(grant, 'applicantName') && (
 								<SectionInput
-									label='Full Name'
+									label='Full Name*'
 									placeholder='Ryan Adams'
 									value={findField(form, 'applicantName').value}
 									onChange={
@@ -860,7 +860,7 @@ function ProposalForm() {
 						{
 							containsField(grant, 'applicantEmail') && (
 								<SectionInput
-									label='Email'
+									label='Email*'
 									placeholder='name@sample.com (will not be shown publicly)'
 									value={findField(form, 'applicantEmail').value}
 									onChange={
@@ -878,7 +878,7 @@ function ProposalForm() {
 						{
 							containsField(grant, 'applicantAddress') && (
 								<SectionInput
-									label='TON Wallet Address'
+									label='TON Wallet Address*'
 									placeholder='Wallet to receive funds on TON'
 									value={findField(form, 'applicantAddress').value}
 									onChange={
@@ -952,7 +952,7 @@ function ProposalForm() {
 									return (
 										<SectionInput
 											key={field.id}
-											label={title}
+											label={title + '*'}
 											placeholder='@telegram_handle (will not be shown publicly)'
 											value={findFieldBySuffix(form, modifiedId, id).value}
 											onChange={
@@ -1002,7 +1002,7 @@ function ProposalForm() {
 						{
 							containsField(grant, 'projectName') && (
 								<SectionInput
-									label='Title'
+									label='Title*'
 									placeholder='Name of your proposal'
 									maxLength={80}
 									value={findField(form, 'projectName').value}
@@ -1027,7 +1027,7 @@ function ProposalForm() {
 									return (
 										<SectionInput
 											key={field.id}
-											label={title}
+											label={title + '*'}
 											value={findFieldBySuffix(form, modifiedId, id).value}
 											onChange={
 												(e) => {
@@ -1056,7 +1056,7 @@ function ProposalForm() {
 						{
 							containsField(grant, 'projectDetails') && (
 								<SectionRichTextEditor
-									label='Details'
+									label='Details*'
 									flexProps={{ align: 'start' }}
 									editorState={form.details}
 									placeholder='What is the Problem you are solving? What is your Solution to this problem? Please provide link to your product demo or design frames, if available'
@@ -1073,7 +1073,7 @@ function ProposalForm() {
 							(
 								<>
 									<SelectArray
-										label='Milestones'
+										label='Milestones*'
 										allowMultiple={grant?.payoutType === 'milestones' || (containsField(grant, 'isMultipleMilestones') ?? false)}
 										config={
 											form?.milestones?.map((milestone, index) => {
