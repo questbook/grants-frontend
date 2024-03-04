@@ -348,7 +348,6 @@ function Discover() {
 											const grants = section[sectionName].grants.filter((grant) => grant.title.toLowerCase().includes(filterGrantName.trim().toLowerCase())).map(grant => ({ ...grant, role: 'community' as Roles }))
 											return (
 												<Box
-													my={6}
 													key={index}
 												>
 													<Flex

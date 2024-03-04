@@ -25,11 +25,12 @@ function ProposalCard({ proposal }: Props) {
 				px={5}
 				py={5}
 				position='relative'
-				borderRadius='2px'
+				borderRadius='12px'
 				border='1px solid #E7E4DD'
 				_hover={
 					{
-						border: 'none',
+						border: '1px solid #E1DED9',
+						boxShadow: '0px 2px 0px 0px #00000010',
 					}
 				}
 				cursor='pointer'
