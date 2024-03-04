@@ -1,14 +1,14 @@
 /* eslint-disable indent */
-import { useMediaQuery } from 'react-responsive'
-import { Flex, Image, Text } from '@chakra-ui/react'
+import { Flex, Image, Text, useMediaQuery } from '@chakra-ui/react'
 import { logger } from 'ethers'
+import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { SectionGrants } from 'src/screens/discover/_utils/types'
 // import { useRouter } from 'next/router'
 
 function HeroBanner({
 	grants,
 	safeBalances,
-	grantsAllocated
+	grantsAllocated,
 }: {
 	grants: SectionGrants[]
 	safeBalances: number
@@ -17,180 +17,154 @@ function HeroBanner({
 	logger.info({ grants, safeBalances }, 'HeroBanner')
 
 
-	  const totalProposals = () => {
-	  	let total = 0;
-	  	(grants && grants?.length > 0) ? grants.map((section) => {
-	  		const sectionName = Object.keys(section)[0]
-	  		// @ts-ignore
-	  		const grants = section[sectionName].grants.map((grant) => grant.numberOfApplications)
-	  		total += grants.reduce((a: number, b: number) => a + b, 0)
-	  	}) : 0
+	const totalProposals = () => {
+		let total = 0;
+		(grants && grants?.length > 0) ? grants.map((section) => {
+			const sectionName = Object.keys(section)[0]
+			// @ts-ignore
+			const grants = section[sectionName].grants.map((grant) => grant.numberOfApplications)
+			total += grants.reduce((a: number, b: number) => a + b, 0)
+		}) : 0
 
-	  	return total
-	  }
+		return total
+	}
 
-	  const totalProposalsAccepted = () => {
-	  	let total = 0;
-	  	(grants && grants?.length > 0) ? grants.map((section) => {
-	  		const sectionName = Object.keys(section)[0]
-	  		// @ts-ignore
-	  		const grants = section[sectionName].grants.map((grant) => grant.numberOfApplicationsSelected)
-	  		total += grants.reduce((a: number, b: number) => a + b, 0)
-	  	}) : 0
+	const totalProposalsAccepted = () => {
+		let total = 0;
+		(grants && grants?.length > 0) ? grants.map((section) => {
+			const sectionName = Object.keys(section)[0]
+			// @ts-ignore
+			const grants = section[sectionName].grants.map((grant) => grant.numberOfApplicationsSelected)
+			total += grants.reduce((a: number, b: number) => a + b, 0)
+		}) : 0
 
-	  	return total
-	  }
+		return total
+	}
 
-	  const formatNumber = (num: number) => {
-	  	return '$' + Math.round(num / 1000) + 'k'
-	  }
+	const formatNumber = (num: number) => {
+		return '$' + Math.round(num / 1000) + 'k'
+	}
 
-	  const formatNumberInMillions = (num: number) => {
-		return '$' + (num / 1000000).toFixed(2) + 'M'
-	  }
+	//   const formatNumberInMillions = (num: number) => {
+	// 	return '$' + (num / 1000000).toFixed(2) + 'M'
+	//   }
 
-	  const totalProposalsPaidOut = () => {
-	  	let total = 0;
-	  	(grants && grants?.length > 0) ? grants.map((section) => {
-	  		const sectionName = Object.keys(section)[0]
-	  		// @ts-ignore
-	  		const grants = section[sectionName].grants.map((grant) => grant.totalGrantFundingDisbursedUSD)
-	  		total += grants.reduce((a: number, b: number) => a + b, 0)
-	  	}) : 0
+	const totalProposalsPaidOut = () => {
+		let total = 0;
+		(grants && grants?.length > 0) ? grants.map((section) => {
+			const sectionName = Object.keys(section)[0]
+			// @ts-ignore
+			const grants = section[sectionName].grants.map((grant) => grant.totalGrantFundingDisbursedUSD)
+			total += grants.reduce((a: number, b: number) => a + b, 0)
+		}) : 0
 
-	  	return formatNumber(total)
-	  }
+		return formatNumber(total)
+	}
 
-	  const TitleCards = ({ data, title }: {
+	const TitleCards = ({ data, title }: {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		data: any
 		title: string
 	}) => (
 		<Flex
-	  		flexDirection='column'
-	  		bgColor='transparent'
-	  		zIndex={99}
-	  	>
+			flexDirection='column'
+			bgColor='transparent'
+			zIndex={99}
+			gap='8px'
+		>
 			<Text
-	  			fontWeight='500'
-	  			fontSize={['25px', '40px']}
-	  			lineHeight='48px'
-	  			color='white'>
+				fontWeight='700'
+				fontSize='24px'
+				lineHeight='31.2px'
+				color='black'>
 				{data}
 			</Text>
 			<Text
-	  			fontWeight='500'
-	  			fontSize='15px'
-	  			lineHeight='22px'
-	  			textTransform='uppercase'
-	  			color='white'
-	  		>
+				fontWeight='500'
+				fontSize='16px'
+				lineHeight='20px'
+				textTransform='uppercase'
+				color='#7E7E8F'
+			>
 				{title}
 			</Text>
 		</Flex>
-	  )
+	)
 
-	  const buildComponent = () => (
+	const buildComponent = () => (
 		<Flex
-	  		direction='row'
-	  		w='100%'
-	  		alignItems='stretch'
-	  		alignContent='stretch'
-	  		justifyContent='flex-start'
-	  		>
-			{
-	  			!isMobile && (
-	  				<Flex
-	  					bgColor='black.100'
-	  					flexGrow={1}
-	  					pl={10}
-	  					justifyContent='center'>
-		<Image
-							borderWidth='1px'
-							borderColor='black.100'
-							borderRadius='3xl'
-							boxSize='16px'
-	  						mt={10}
-	  						justifyContent='center'
-	  						h='48'
-	  						w='52'
-	  						src='https://ipfs.questbook.app:8080/ipfs/QmTkdKP8gFTmrM5UJYAtEahqtU7GQyDVaN9UHnNoEY6M3M' />
-	  				</Flex>
-	  			)
-	  		}
-
+			direction='column'
+			w='100%'
+			alignItems='stretch'
+			alignContent='stretch'
+			justifyContent='flex-start'
+			bgColor='#F7F5F2'
+			borderTop='1px solid #E8E6E1'
+			borderBottomRadius='48px'
+			padding={[10, 8]}
+		>
 			<Flex
-	  			bgColor='black.100'
-	  			padding={[10, 14]}
-	  			flexDirection='column'
-	  			textColor='white'
-	  			position='relative'
-	  			width='full'>
-				{
-	  				isMobile && (
-
-	  					<Image
-						  borderWidth='1px'
-						  borderColor='black.100'
-						  borderRadius='3xl'
-						  boxSize='16px'
-	  						justifyContent='center'
-	  						h='max'
-	  						w='24'
-	  						src='https://ipfs.questbook.app:8080/ipfs/QmTkdKP8gFTmrM5UJYAtEahqtU7GQyDVaN9UHnNoEY6M3M' />
-
-	  				)
-	  			}
-				<Text
-					mt={isMobile ? 2 : 0}
-	  				fontWeight='500'
-	  				fontSize={isMobile ? '38px' : '40px'}
-	  				lineHeight='48px'
-	  				color='white'>
-					Compound Grants
-				</Text>
-
+				width='100%'
+			>
 				<Flex
-	  				mt={isMobile ? 5 : 10}
-	  				gap={8}
-	  				flexWrap='wrap'
-	  				justifyContent='flex-start'>
-					<TitleCards
-	  					data={formatNumberInMillions(safeBalances) || formatNumber(800000)}
-	  					title='in MultiSig' />
-					<TitleCards
-	  					data={totalProposals() || 0}
-	  					title='Proposals Submitted' />
-					<TitleCards
-	  					data={totalProposalsAccepted() || 0}
-	  					title='Accepted' />
-					<TitleCards
-	  					data={totalProposalsPaidOut() || 0}
-	  					title='Paid Out' />
-					<TitleCards
-	  					data={formatNumber(grantsAllocated)}
-	  					title='Funds Allocated' />
+					flexDirection='column'
+					width='100%'
+					flexGrow={1}
+				>
+					<Flex
+						flexDirection='row'
+						textColor='white'
+						position='relative'
+						width='full'>
+						<Image
+							justifyContent='center'
+							h={isMobile ? '50px' : '100px'}
+							w={isMobile ? '50px' : '100px'}
+	  						src={getUrlForIPFSHash('QmTkdKP8gFTmrM5UJYAtEahqtU7GQyDVaN9UHnNoEY6M3M')} />
+						<Text
+							fontWeight='500'
+							fontSize={isMobile ? '32px' : '64px'}
+							lineHeight='48px'
+							padding={
+								isMobile ? [1, 4] :
+									[10, 5]
+							}
+							color='black'>
+							Compound Grants
+						</Text>
+					</Flex>
 
+					<Flex
+						mt={5}
+						gap={isMobile ? '24px' : 5}
+						mb={4}
+						flexWrap='wrap'
+						justifyContent='flex-start'>
+						<TitleCards
+							data={totalProposals() || 0}
+							title='Proposals' />
+						<TitleCards
+							data={totalProposalsAccepted() || 0}
+							title='Accepted' />
+						<TitleCards
+							data={formatNumber(grantsAllocated)}
+							title='Funds Allocated' />
+						<TitleCards
+							data={totalProposalsPaidOut() || 0}
+							title='Funds Paid Out' />
+						<TitleCards
+							data={formatNumber(safeBalances) || formatNumber(0)}
+							title='left in mutlisig' />
+
+					</Flex>
 				</Flex>
 			</Flex>
-			{/* {
-				!isMobile && (
-					<Flex
-						bgColor='#B6F72B'
-						flexGrow={1}
-						justifyContent='center'>
-						<Image
-							mt={10}
-							src='/Browser Mock.svg' />
-					</Flex>
-				)
-			} */}
-
 		</Flex>
-	  )
-	  const isMobile = useMediaQuery({ query:'(max-width:600px)' })
 
-	  return buildComponent()
+	)
+	const isMobile = useMediaQuery(['(max-width:600px)'])[0]
+
+	return buildComponent()
 }
 
 export default HeroBanner

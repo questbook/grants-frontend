@@ -56,12 +56,12 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 				alignItems='center'
 				maxW='100vw'
 				bg={bg}
-				ps={[6, 24]}
+				ps={[6, 6]}
 				pe={24}
-				backgroundColor={['black.100', 'gray.100']}
+				backgroundColor={['gray.100', 'gray.100']}
 				py='16px'
 				minWidth={{ base: '-webkit-fill-available' }}
-				paddingInlineEnd={['35px', '120px']}
+				paddingInlineEnd={['35px', '12px']}
 			>
 				<Qb
 					boxSize='10rem'
