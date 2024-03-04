@@ -34,7 +34,9 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 					setForm,
 					error,
 					telegram,
-					setTelegram
+					setTelegram,
+					twitter,
+					setTwitter,
 				}
 			}>
 			{children}
@@ -48,6 +50,7 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 	const [proposal, setProposal] = useState<Proposal>()
 	const [form, setForm] = useState<Form>(DEFAULT_FORM)
 	const [telegram, setTelegram] = useState<string>('')
+	const [twitter, setTwitter] = useState<string>('')
 	const router = useRouter()
 	const { grantId, proposalId, chainId: chainIdString } = router.query
 	const chainId = useMemo(() => {
