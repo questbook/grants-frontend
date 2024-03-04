@@ -245,7 +245,8 @@ function BuildersModal() {
 															username: github.username,
 															repos: github.repos,
 															token: token
-														}
+														},
+														email: '',
 													})
 													setTelegram('')
 													setToken('')
