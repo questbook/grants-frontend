@@ -35,6 +35,8 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 					error,
 					telegram,
 					setTelegram,
+					twitter,
+					setTwitter,
 				}
 			}>
 			{children}
@@ -47,6 +49,7 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 	const [grant, setGrant] = useState<Grant>()
 	const [proposal, setProposal] = useState<Proposal>()
 	const [telegram, setTelegram] = useState<string>('')
+	const [twitter, setTwitter] = useState<string>('')
 	const [form, setForm] = useState<Form>(DEFAULT_FORM)
 
 	const router = useRouter()

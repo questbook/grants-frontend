@@ -354,6 +354,21 @@ function ProposalForm() {
 							)
 						}
 						{
+							/* Optinal Telegram Field (if it is not included in the form field) */
+							type === 'submit' &&
+							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('twitter')).length === 0 && (
+								<SectionInput
+									label='Twitter'
+									placeholder='@twitterHandle'
+									value={twitter}
+									onChange={
+										(e) => {
+											setTwitter(e.target.value)
+										}
+									} />
+							)
+						}
+						{
 							containsField(grant, 'applicantAddress') && (
 								<SectionInput
 									label='Wallet Address'
@@ -604,7 +619,7 @@ function ProposalForm() {
 	}
 
 	const { setRole } = useContext(GrantsProgramContext)!
-	const { type, grant, chainId, form, setForm, error, telegram, setTelegram } = useContext(ProposalFormContext)!
+	const { type, grant, chainId, form, setForm, error, telegram, setTelegram, twitter, setTwitter } = useContext(ProposalFormContext)!
 	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const { safeObj } = useSafeContext()!
 	const { setSignIn } = useContext(SignInContext)!
