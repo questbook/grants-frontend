@@ -323,6 +323,52 @@ function ProposalForm() {
 							)
 						}
 						{
+							containsField(grant, 'applicantTelegram') && (
+								<SectionInput
+									label='Telegram'
+									placeholder='@username'
+									value={findField(form, 'applicantTelegram').value}
+									onChange={
+										(e) => {
+											onChange(e, 'applicantTelegram')
+										}
+									}
+									 />
+							)
+						}
+						{
+							/* Optinal Telegram Field (if it is not included in the form field) */
+							type === 'submit' &&
+							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('telegram')
+							|| field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('tg')
+							).length === 0 && (
+								<SectionInput
+									label='Telegram'
+									placeholder='@username'
+									value={telegram}
+									onChange={
+										(e) => {
+											setTelegram(e.target.value)
+										}
+									} />
+							)
+						}
+						{
+							/* Optinal Telegram Field (if it is not included in the form field) */
+							type === 'submit' &&
+							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('twitter')).length === 0 && (
+								<SectionInput
+									label='Twitter'
+									placeholder='@twitterHandle'
+									value={twitter}
+									onChange={
+										(e) => {
+											setTwitter(e.target.value)
+										}
+									} />
+							)
+						}
+						{
 							containsField(grant, 'applicantAddress') && (
 								<SectionInput
 									label='Wallet Address'
@@ -532,9 +578,9 @@ function ProposalForm() {
 							mt={10}
 							ml='auto'
 							variant='primaryLarge'
+							isDisabled={isDisabled}
 							isLoading={webwallet ? !scwAddress : false}
 							loadingText='Loading your wallet'
-							isDisabled={isDisabled}
 							onClick={
 								(e) => {
 									e.preventDefault()
@@ -573,11 +619,12 @@ function ProposalForm() {
 	}
 
 	const { setRole } = useContext(GrantsProgramContext)!
-	const { type, grant, chainId, form, setForm, error } = useContext(ProposalFormContext)!
+	const { type, grant, chainId, form, setForm, error, telegram, setTelegram, twitter, setTwitter } = useContext(ProposalFormContext)!
 	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const { safeObj } = useSafeContext()!
 	const { setSignIn } = useContext(SignInContext)!
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
+
 
 	const router = useRouter()
 	const { newTab } = router.query
