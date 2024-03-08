@@ -4,18 +4,18 @@ const seoConfig = {
 	description:
       'Discover Opportunities in Web 3.0 and Earn in Crypto',
 	// siteUrl: 'https://www.questbook.app/',
-	siteUrl: 'https://compoundgrants.questbook.app/',
+	siteUrl: 'https://polygon.questbook.app/',
 	twitter: {
 		handle: '@questbookapp',
 		site: '@questbookapp',
 		cardType: 'summary_large_image',
 		title: 'Questbook Grant',
-		image: 'https://ipfs.io/ipfs/QmTUB98Tntz22WjaA1Y2fXk8U4BEK28MGqXQhk9dNHrH88',
+		image: 'https://ipfs.io/ipfs/QmRuZmr3c76nExVWzwpbdDkNe8ymkwJuRDzWyLYQRZodgz',
 	},
 	openGraph: {
 		type: 'website',
 		locale: 'en_US',
-		url: 'https://compoundgrants.questbook.app/',
+		url: 'https://polygon.questbook.app/',
 		title: 'Questbook',
 		description:
         'Discover Opportunities in Web 3.0 and Earn in Crypto',
@@ -23,13 +23,13 @@ const seoConfig = {
 		site_name: 'Questbook',
 		images: [
 			{
-				url: 'https://ipfs.io/ipfs/QmTUB98Tntz22WjaA1Y2fXk8U4BEK28MGqXQhk9dNHrH88',
+				url: 'https://ipfs.io/ipfs/QmRuZmr3c76nExVWzwpbdDkNe8ymkwJuRDzWyLYQRZodgz',
 				width: 1240,
 				height: 480,
 				alt: 'Questbook Grant',
 			},
 			{
-				url: 'https://ipfs.io/ipfs/QmTUB98Tntz22WjaA1Y2fXk8U4BEK28MGqXQhk9dNHrH88',
+				url: 'https://ipfs.io/ipfs/QmRuZmr3c76nExVWzwpbdDkNe8ymkwJuRDzWyLYQRZodgz',
 				width: 1012,
 				height: 506,
 				alt: 'Questbook Grant',
