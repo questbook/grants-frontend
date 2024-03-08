@@ -3,7 +3,7 @@ import { gql } from '@apollo/client'
 
 export const getSectionGrantsQuery = gql`
 query getSectionGrants {
-  sections(filter: { _id: "Compound" }) {
+  sections(filter: { _id: "Polygon" }) {
     grants(sort: NUMBEROFAPPLICATIONS_DESC) {
       id:_id
       title

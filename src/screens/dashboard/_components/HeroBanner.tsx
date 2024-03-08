@@ -160,7 +160,7 @@ function HeroBannerBox({
 							justifyContent='center'
 							h='24'
 							w='48'
-							src='https://ipfs.questbook.app:8080/ipfs/QmTkdKP8gFTmrM5UJYAtEahqtU7GQyDVaN9UHnNoEY6M3M' />
+							src='https://ipfs.questbook.app:8080/ipfs/QmNfAjH9v44rgQA2aNy6k6iGh7u786r9ca3eXhxB6gk7Hb' />
 					</Flex>
 				)
 			}
@@ -224,7 +224,7 @@ function HeroBannerBox({
 						fontSize='12px'
 						lineHeight='16px'
 						color='white'>
-						This domain is focused on all new ideas that builders have that can boost Compound as an ecosystem overall
+						This domain is focused on all new ideas that builders have that can boost Polygon as an ecosystem overall
 					</Text>
 
 				</Flex>
@@ -244,7 +244,7 @@ function HeroBannerBox({
 						lineHeight='20px'
 
 						color='white'>
-						25000 USD
+						100k USD
 					</Text>
 				</Flex>
 			</Flex>

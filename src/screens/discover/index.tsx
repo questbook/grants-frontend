@@ -417,59 +417,17 @@ function Discover() {
 																		textAlign='match-parent'
 																		color='#7E7E8F'
 																	>
-																		The Compound grants, administered via DDA by Questbook and 3 domain allocators, went live on the 30th of November with a grants budget of $1M spread across four domains. The Questbook Compound Grants program is useful for anyone developing in domain specific projects on top of Compound, ranging from New Dapps and Ideas, Multi-chain/Cross-chain, Dev Tooling and Security Tooling.
-																	</Text>
-																	<Text
-																		fontWeight='600'
-																		lineHeight='23.4px'
-																		fontSize='18px'
-
-																		color='black.100'
-																		pb={2}
-																		px={3}
-																	>
-																		Program Manager
-																	</Text>
-																	<Box
-																	>
-																		<UserCard
-													image='0x0125215125'
-													title='Ruchil Sharma'
-													twitter='roohchill'
-													telegram='roohchill' />
-																	</Box>
-																	<Text
-																		fontWeight='600'
-																		lineHeight='23.4px'
-																		fontSize='18px'
-
-																		color='black.100'
-																		pb={2}
-																		px={3}
-																	>
-																		Domain Allocators
+																		The Village Build Ideas program is where innovation meets funding. We curate a list of startup ideas, and if you find one that aligns with your vision, we provide grant funding as you make progress. Village Build Ideas Grants are disbursed based on project milestones. As you reach these milestones, you unlock the financial support you need to turn your ideas into reality.
 																	</Text>
 																	<Box
 																	>
 																		{
 																			[
 																				{
-																					image: 'https://ipfs.questbook.app:8080/ipfs/Qmapyv8FtFXgUGJNTA6axAuu4ehXNtpNJsZkkxki2WM8JD',
-																					title: 'allthecolors (New Dapps and Ideas)',
-																					twitter: '0xA1176ec01045',
-																					telegram: 'all_the_colors'
-																				},
-																				{
-																					image: 'https://ipfs.questbook.app:8080/ipfs/QmRp5u9wy2m23HzkD9t1GQAeicAdpLphvahqAWfmRtKMuF',
-																					title: 'Doo | StableLab (Multi-chain/Cross-chain, Dev Tooling)',
-																					twitter: 'DooWanNam',
-																					telegram: 'doowannam'
-																				},
-																				{
-																					image: '0x012523',
-																					title: 'Michael Lewellen (Security Tooling)',
-																					twitter: 'LewellenMichael',
-																					telegram: 'cyloncat'
+																					image: '',
+																					title: '',
+																					twitter: '',
+																					telegram: ''
 																				},
 																			].map((user, index) => (
 																				<UserCard

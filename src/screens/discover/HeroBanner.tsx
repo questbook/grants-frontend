@@ -120,7 +120,7 @@ function HeroBanner({
 							justifyContent='center'
 							h={isMobile ? '50px' : '100px'}
 							w={isMobile ? '50px' : '100px'}
-	  						src={getUrlForIPFSHash('QmTkdKP8gFTmrM5UJYAtEahqtU7GQyDVaN9UHnNoEY6M3M')} />
+	  						src={getUrlForIPFSHash('QmNfAjH9v44rgQA2aNy6k6iGh7u786r9ca3eXhxB6gk7Hb')} />
 						<Text
 							fontWeight='500'
 							fontSize={isMobile ? '32px' : '64px'}
@@ -130,7 +130,7 @@ function HeroBanner({
 									[10, 5]
 							}
 							color='black'>
-							Compound Grants
+							Polygon Grants
 						</Text>
 					</Flex>
 
