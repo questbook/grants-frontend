@@ -256,28 +256,54 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 				{
 					!isMobile[0] &&
 					(router.pathname === '/') && (
+						<Flex
+							gap={4}
+							align='center'
 
-						<Button
-							variant='solid'
-							fontWeight='500'
-							bgColor='#77AC06'
-							color='white'
-							ml='auto'
-							marginRight={2}
-							borderRadius='8px'
-							_hover={
-								{
-									bgColor: '#699804',
+						>
+							<Text
+								fontWeight='500'
+								fontSize='18px'
+								_hover={
+									{
+										color: '#557B05'
+									}
 								}
-							}
-							leftIcon={<Add />}
-							onClick={
-								() => {
-									router.push('/request_proposal')
+								fontStyle='normal'
+								lineHeight='normal'
+								color='#07070C'
+								textAlign='center'
+								cursor='pointer'
+								onClick={
+									() => {
+										router.push('/grantees')
+									}
 								}
-							} >
-							Start a grant program
-						</Button>
+							>
+								Grantee List
+							</Text>
+							<Button
+								variant='solid'
+								fontWeight='500'
+								bgColor='#77AC06'
+								color='white'
+								ml='auto'
+								marginRight={2}
+								borderRadius='8px'
+								_hover={
+									{
+										bgColor: '#699804',
+									}
+								}
+								leftIcon={<Add />}
+								onClick={
+									() => {
+										router.push('/request_proposal')
+									}
+								} >
+								Start a grant program
+							</Button>
+						</Flex>
 					)
 				}
 				<AccountDetails

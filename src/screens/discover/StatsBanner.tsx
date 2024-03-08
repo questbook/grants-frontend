@@ -12,13 +12,15 @@ function StatsBanner(stats: StatsType) {
 			<Text
 				fontWeight='800'
 				fontSize={['25px', '48px']}
-				lineHeight='62.4px'>
+				lineHeight='62.4px'
+				color='#07070C'
+			>
 				{value}
 				+
 			</Text>
 			<Text
 				fontWeight='500'
-				color='#7E7E8F'
+				color='#557B05'
 				fontSize='18px'
 				lineHeight='normal'
 				textTransform='uppercase'>
@@ -30,7 +32,7 @@ function StatsBanner(stats: StatsType) {
 	const buildComponent = () => {
 		return (
 			<Flex
-				bgColor='#F7F5F2'
+				bgColor='#C3F953'
 				padding='32px 48px'
 				gap='20px'
 				borderRadius='0px 0px 48px 48px'
