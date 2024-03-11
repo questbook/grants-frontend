@@ -22,15 +22,15 @@ function StatsBanner() {
 				>
 					Grantee List
 				</Text>
-				{/* <Text
+				<Text
 					color='#7E7E8F'
 					fontSize='18px'
 					fontStyle='normal'
 					fontWeight='500'
 					lineHeight='normal'
 				>
-					Here is a list of apps, tools, and events funded by Questbook and its partners, like Arbitrum Grants Program. This list will be updated as grants are funded.
-				</Text> */}
+					These are all the grantees that have received grants via Questbook from different ecosystems including, Arbitrum, Ton, Compound and more
+				</Text>
 			</Flex>
 		)
 	}

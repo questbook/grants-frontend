@@ -133,7 +133,11 @@ function Grantee() {
 															</Flex>
 
 															<RFPGrid
-																proposals={proposals ?? []}
+																proposals={
+																	proposals?.sort((a) => {
+																		return a.milestones.filter((m) => m.amountPaid === m.amount).length === a.milestones.length ? -1 : 1
+																	}) || []
+																}
 															/>
 														</Box>
 													)
