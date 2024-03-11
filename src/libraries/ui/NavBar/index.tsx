@@ -104,7 +104,41 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 				}
 
 				<Box ml={4} />
+				{
+					!isMobile[0] &&
+					(router.pathname === '/') && (
+						<Flex
+							gap={4}
+							align='center'
 
+						>
+							<Text
+								fontWeight='500'
+								fontSize='18px'
+								_hover={
+									{
+										color: '#557B05'
+									}
+								}
+								fontStyle='normal'
+								lineHeight='normal'
+								color='#07070C'
+								textAlign='center'
+								cursor='pointer'
+								onClick={
+									() => {
+										const element = document.getElementById('#granteeList')
+										if(element) {
+											element.scrollIntoView({ behavior: 'smooth' })
+										}
+									}
+								}
+							>
+								Grantee List
+							</Text>
+						</Flex>
+					)
+				}
 				{
 					(shouldShowTitle && role === 'admin' && grant?.acceptingApplications) && (
 						<Pencil

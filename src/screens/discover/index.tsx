@@ -21,6 +21,7 @@ import { chainNames } from 'src/libraries/utils/constants'
 import getErrorMessage from 'src/libraries/utils/error'
 import { ApiClientsContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import GrantCard from 'src/screens/discover/_components/grantCard'
+import GranteeListRFPGrid from 'src/screens/discover/_components/granteeList/rfpGrid'
 import RFPGrid from 'src/screens/discover/_components/rfpGrid'
 import { DiscoverContext, DiscoverProvider } from 'src/screens/discover/Context'
 import HeroBanner from 'src/screens/discover/HeroBanner'
@@ -151,7 +152,7 @@ function Discover() {
 	// const discoverRef = useRef<HTMLDivElement>(null)
 	const reclaimRef = useRef<HTMLDivElement>(null)
 	const arbitrumRef = useRef<HTMLDivElement>(null)
-	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, safeBalances, grantsAllocated, sectionSubGrants } = useContext(DiscoverContext)!
+	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, safeBalances, grantsAllocated, sectionSubGrants, recentProposals } = useContext(DiscoverContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString } = useContext(DAOSearchContext)!
 	const { setSignIn } = useContext(SignInContext)!
@@ -692,6 +693,95 @@ function Discover() {
 														</Flex>
 													</Box>
 												)
+											}) : null
+										}
+
+									</Box>
+
+								</Flex>
+							</Flex>
+						}
+
+{
+							<Flex
+								w='100%'
+								my={4}
+								mt={isMobile ? '' : '12'}
+								justify='space-between'
+								direction={isMobile ? 'column' : 'row'}>
+
+								<Flex
+									direction='column'
+									px={isMobile ? 0 : 4}
+									w='100%'>
+									<Box
+										id='#granteeList'
+										display={recentProposals?.length ? '' : 'none'}
+									>
+
+										<Flex
+											justifyContent='space-between'
+											alignItems='center'
+											gap={2}
+											w='100%'>
+											<Text
+												variant='heading3'
+												fontWeight='600'
+												w='100%'
+												fontSize='24px'
+												lineHeight='31.2px'
+											>
+												Grantee List
+											</Text>
+
+										</Flex>
+
+										{
+											(recentProposals && recentProposals?.length > 0 && sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
+												logger.info('section', { section, sectionGrants })
+
+												const sectionName = Object.keys(section)[0]
+													//@ts-ignore
+													const proposals = recentProposals?.filter((p) => p.sectionName === sectionName && p.name[0].values[0].value.toLowerCase().includes(filterGrantName.toLowerCase()))
+													if(proposals?.length === 0) {
+														return null
+													}
+
+													return (
+														<Box
+														display='flex'
+														my={6}
+														key={index}
+														w='100%'
+														gap={isMobile ? '0' : '46px'}
+													>
+														<Flex
+															flexGrow={1}
+															height='100%'
+														>
+															<GranteeListRFPGrid
+																proposals={
+																	proposals?.sort((a) => {
+																		return a.milestones.filter((m) => m.amountPaid === m.amount).length === a.milestones.length ? -1 : 1
+																	}) || []
+																}
+															/>
+              </Flex>
+															{
+														!isMobile &&
+														(
+															<Flex
+																direction='column'
+																w='408px'
+																h='auto'
+																gap={5}
+
+															 />
+														)
+}
+														</Box>
+													)
+
 											}) : null
 										}
 

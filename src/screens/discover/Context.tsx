@@ -9,6 +9,7 @@ import { DiscoverContextType, GrantProgramType, GrantType, RecentProposals, Sect
 import { getAllGrants } from 'src/screens/discover/data/getAllGrants'
 import { getAllGrantsForMembers } from 'src/screens/discover/data/getAllGrantsForMembers'
 import { getFundsAllocated } from 'src/screens/discover/data/getFundsAllocated'
+import { getGranteeList } from 'src/screens/discover/data/getGranteeList'
 import { GetGrantProgramDetails } from 'src/screens/discover/data/getGrantProgramDetails'
 import { getSectionGrantsQuery } from 'src/screens/discover/data/getSectionGrants'
 import { getSectionSubGrantsQuery } from 'src/screens/discover/data/getSectionSubGrants'
@@ -69,6 +70,10 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 	const { fetchMore: getSubGrants } = useQuery({
 		query: getSectionSubGrantsQuery
+	})
+
+	const { fetchMore: getGrantees } = useQuery({
+		query: getGranteeList
 	})
 
 	const fetchSafeBalances = async(grants: GrantType[]) => {
@@ -309,6 +314,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	const getSectionGrants = async() => {
 		const results: any = await fetchMoreSectionGrants()
 		const subgrantsResults: any = await getSubGrants()
+		const granteesResults: any = await getGrantees()
 		logger.info({ results }, 'Section Grants')
 
 		if(results?.sections?.length === 0) {
@@ -320,7 +326,20 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 		if(results?.sections?.length) {
 			allSectionGrants.push(...results?.sections.map((g: any) => ({ [g.sectionName]: { ...g } })))
-			recentProposals = [...recentProposals, ...results.sections.map((s: any) => s.grants.map((g: any) => g.applications).flat()).flat()]
+			recentProposals = granteesResults.sections.map((s: any) => s.grants.
+				filter((g: any) => g.applications.length > 0).map((g: any) => {
+					return g.applications.map((a: any) => {
+						return {
+							...a,
+							sectionName: s.sectionName,
+							grant: {
+								title: g.title,
+								id: g.id,
+								workspace: g.workspace
+							}
+						}
+					})
+				}).flat()).flat()
 		}
 
 		if(subgrantsResults?.grants?.length) {
