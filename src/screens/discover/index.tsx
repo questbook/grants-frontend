@@ -21,10 +21,12 @@ import { chainNames } from 'src/libraries/utils/constants'
 import getErrorMessage from 'src/libraries/utils/error'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { ApiClientsContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
+import GranteeListRFPGrid from 'src/screens/discover/_components/granteeList/rfpGrid'
 import RFPGrid from 'src/screens/discover/_components/rfpGrid'
 import { DiscoverContext, DiscoverProvider } from 'src/screens/discover/Context'
 import HeroBanner from 'src/screens/discover/HeroBanner'
 import { Roles } from 'src/types'
+
 
 function Discover() {
 	const router = useRouter()
@@ -150,7 +152,7 @@ function Discover() {
 
 	// const discoverRef = useRef<HTMLDivElement>(null)
 
-	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, safeBalances, grantsAllocated } = useContext(DiscoverContext)!
+	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, safeBalances, grantsAllocated, recentProposals } = useContext(DiscoverContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString } = useContext(DAOSearchContext)!
 	const { setSignIn } = useContext(SignInContext)!
@@ -433,10 +435,10 @@ function Discover() {
 																	<Box
 																	>
 																		<UserCard
-													image='0x0125215125'
-													title='Ruchil Sharma'
-													twitter='roohchill'
-													telegram='roohchill' />
+																			image='0x0125215125'
+																			title='Ruchil Sharma'
+																			twitter='roohchill'
+																			telegram='roohchill' />
 																	</Box>
 																	<Text
 																		fontWeight='600'
@@ -489,10 +491,76 @@ function Discover() {
 											)
 										}) : null
 									}
+
+									<Box
+										id='#granteeList'
+										display={sectionGrants?.length ? '' : 'none'}
+									>
+										<Flex
+											justifyContent='space-between'
+											alignItems='center'
+											gap={2}
+											w='100%'>
+											<Text
+												variant='heading3'
+												fontWeight='700'
+												w='100%'
+												fontSize='24px'
+												lineHeight='31.2px'
+											>
+												Grantees List
+											</Text>
+
+										</Flex>
+
+									</Box>
+									{
+										(recentProposals && recentProposals?.length > 0 && sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
+											logger.info('section', { section, sectionGrants })
+
+											const sectionName = Object.keys(section)[0]
+											//@ts-ignore
+											const proposals = recentProposals?.filter((p) => p.sectionName === sectionName && p.name[0].values[0].value.toLowerCase().includes(filterGrantName.toLowerCase()))
+											if(proposals?.length === 0) {
+												return null
+											}
+
+											return (
+												<Flex
+													my={6}
+													key={index}
+													w='100%'
+													gap='146px'
+													flexDirection={isMobile ? 'column' : 'row'}
+												>
+
+													<Flex
+														flexGrow={1}
+														width='100%'>
+														<GranteeListRFPGrid
+															proposals={
+																proposals?.sort((a) => {
+																	return a.milestones.filter((m) => m.amountPaid === m.amount).length === a.milestones.length ? -1 : 1
+																}) || []
+															}
+														/>
+													</Flex>
+													<Flex
+														direction='column'
+														w={isMobile ? 'auto' : '408px'}
+														h='auto'
+														gap={5}
+
+													/>
+												</Flex>
+											)
+										}) : null
+									}
 								</Box>
 							</Flex>
 
 						</Flex>
+
 						<Flex
 							flexDirection='column'
 							w='100%'
@@ -599,7 +667,7 @@ function Discover() {
 				</Tooltip> */}
 			</>
 		)
-	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName, isMobile, safeBalances])
+	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName, isMobile, safeBalances, recentProposals])
 
 	useEffect(() => {
 		if(!inviteInfo) {
