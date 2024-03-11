@@ -20,6 +20,7 @@ import BuildersModal from 'src/screens/discover/_components/BuilderModal'
 import ProposalCard from 'src/screens/discover/_components/ProposalCard'
 import RFPGrid from 'src/screens/discover/_components/rfpGrid'
 import { DiscoverContext, DiscoverProvider } from 'src/screens/discover/Context'
+import FeaturedSections from 'src/screens/discover/FeaturedSections'
 import HeroBanner from 'src/screens/discover/HeroBanner'
 import StatsBanner from 'src/screens/discover/StatsBanner'
 import { Roles } from 'src/types'
@@ -254,6 +255,7 @@ function Discover() {
 						funds={stats?.funds}
 						proposals={stats?.proposals}
 					/>
+					<FeaturedSections sections={sectionGrants ?? []} />
 					<BuildersModal />
 
 					<Container
@@ -348,6 +350,7 @@ function Discover() {
 											const grants = section[sectionName].grants.filter((grant) => grant.title.toLowerCase().includes(filterGrantName.trim().toLowerCase())).map(grant => ({ ...grant, role: 'community' as Roles }))
 											return (
 												<Box
+													id={sectionName}
 													my={6}
 													key={index}
 												>
