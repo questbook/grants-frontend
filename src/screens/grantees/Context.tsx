@@ -24,7 +24,7 @@ const GranteeProvider = ({ children }: {children: ReactNode}) => {
 	const [sectionGrants, setSectionGrants] = useState<SectionGrants>()
 	const [recentProposals, setRecentProposals] = useState<RecentProposals>()
 
-	const [isLoading, setIsLoading] = useState<boolean>(false)
+	const [isLoading, setIsLoading] = useState<boolean>(true)
 	const [buildersModal, setBuildersModal] = useState<boolean>(false)
 	const [search, setSearch] = useState<string>('')
 
@@ -36,7 +36,6 @@ const GranteeProvider = ({ children }: {children: ReactNode}) => {
 	const getSectionGrants = async() => {
 		const results: any = await fetchMoreSectionGrants()
 		logger.info({ results }, 'Section Grants')
-		setIsLoading(true)
 		if(results?.sections?.length === 0) {
 			setIsLoading(false)
 			return 'no-grants'
@@ -85,10 +84,11 @@ const GranteeProvider = ({ children }: {children: ReactNode}) => {
 
 
 		setSectionGrants(allSectionGrants)
-		setIsLoading(false)
+
 		recentProposals.sort((a, b) => b.updatedAtS - a.updatedAtS)
 		logger.info({ recentProposals }, 'All recent grants (Grantee CONTEXT)')
 		setRecentProposals(recentProposals)
+		setIsLoading(false)
 	}
 
 
