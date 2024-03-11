@@ -43,26 +43,57 @@ function RFPCard({ proposal }: RFPCardProps) {
 					borderRadius='8px'
 				>
 					<Flex
-						justifyContent='space-between'
-						alignItems='flex-start'
+						direction='column'
+						gap={2}
 					>
-						<Image
-							src={getAvatar(false, proposal?.id)}
-							// my='8px'
-							w='48px'
-							h='48px'
-							objectFit='cover'
-							borderRadius='4px'
-							onError={
-								(e) => {
-									e.currentTarget.src = getAvatar(false, proposal?.id)
-								}
-							}
-						/>
+						<Flex
+							my={2}
+							direction='column'
+						>
+							<Text
+								color='#7E7E8F'
+								fontSize='14px'
+								fontWeight='500'
+								noOfLines={2}
+							>
+								{proposal.author[0].values[0].value}
+							</Text>
+							<Text
+								variant='title'
+								fontSize='18px'
+								fontWeight='500'
+								noOfLines={2}
+								mt={2}
+							>
+								{proposal.name[0].values[0].value}
+							</Text>
+
+						</Flex>
+
+						{/* <Flex gap={1}>
+						<Text variant='subtitle'>
+							{isOpen ? 'Deadline on' : 'Ended on'}
+							{' '}
+						</Text>
+						<Text
+							variant='subtitle'
+							fontWeight='500'
+							color='black.100'
+						>
+							{formattedDeadline}
+						</Text>
+					</Flex> */}
+
+					</Flex>
+					<Flex
+						justifyContent='end'
+						alignItems='end'
+					>
+
 						<Flex gap={2}>
 							<StateButton
 								state={proposal.milestones.filter((milestone) => milestone.amountPaid === milestone.amount).length === proposal.milestones.length ? 'approved' : 'submitted'}
-								title={proposal.milestones.filter((milestone) => milestone.amountPaid === milestone.amount).length === proposal.milestones.length ? 'Completed' : 'Pending'}
+								title={proposal.milestones.filter((milestone) => milestone.amountPaid === milestone.amount).length === proposal.milestones.length ? 'Completed' : 'In Progress'}
 							/>
 							<Button
 				 borderRadius='8px'
@@ -83,47 +114,6 @@ function RFPCard({ proposal }: RFPCardProps) {
 								View Proposal
 							</Button>
 						</Flex>
-
-					</Flex>
-					<Flex
-						direction='column'
-						gap={2}
-					>
-						<Flex
-							direction='column'
-						>
-							<Text
-								variant='title'
-								fontSize='18px'
-								fontWeight='500'
-								noOfLines={2}
-								mt={2}
-							>
-								{proposal.name[0].values[0].value}
-							</Text>
-							<Text
-								color='#7E7E8F'
-								fontSize='14px'
-								fontWeight='500'
-								noOfLines={2}
-							>
-								{proposal.author[0].values[0].value}
-							</Text>
-						</Flex>
-
-						{/* <Flex gap={1}>
-						<Text variant='subtitle'>
-							{isOpen ? 'Deadline on' : 'Ended on'}
-							{' '}
-						</Text>
-						<Text
-							variant='subtitle'
-							fontWeight='500'
-							color='black.100'
-						>
-							{formattedDeadline}
-						</Text>
-					</Flex> */}
 
 					</Flex>
 				</Box>
