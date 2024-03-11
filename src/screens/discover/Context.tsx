@@ -307,9 +307,10 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 		const allSectionGrants: SectionGrants = []
 		let recentProposals: RecentProposals = []
-
 		if(results?.sections?.length) {
+			// don't include the grants that are not in the topGrants
 			allSectionGrants.push(...results?.sections.map((g: any) => ({ [g.sectionName]: { ...g } })))
+
 			recentProposals = [...recentProposals, ...results.sections.map((s: any) => s.grants.map((g: any) => g.applications).flat()).flat()]
 		}
 
@@ -326,19 +327,16 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 		// move selected grants to top of the list
 		for(let i = 0; i < allSectionGrants.length; i++) {
-			const key = Object.keys(allSectionGrants[i])[0]
-			const topGrants = ['Arbitrum', 'Compound', 'TON Foundation', 'Alchemix', 'iExec']
-			const hideGrants = ['Golden gate protocol', 'Aleph Zero', 'Solana Ecosystem']
-			if(topGrants.includes(key)) {
-				const temp = allSectionGrants[topGrants.indexOf(key)]
-				allSectionGrants[topGrants.indexOf(key)] = allSectionGrants[i]
-				allSectionGrants[i] = temp
-			}
+			const topGrants = ['Arbitrum', 'Compound', 'TON Foundation', 'Alchemix', 'iExec', 'Reclaim Protocol', 'Questbook', 'Polygon']
 
-			if(hideGrants.includes(key)) {
-				allSectionGrants.splice(i, 1)
-				i--
-			}
+			// sort based on topGrants order
+			allSectionGrants.sort((a, b) => {
+				const aKey = Object.keys(a)[0]
+				const bKey = Object.keys(b)[0]
+				return topGrants.indexOf(aKey) - topGrants.indexOf(bKey)
+			})
+
+
 		}
 
 
