@@ -330,7 +330,36 @@ function Proposal() {
 						</Flex>
 					)
 				}
-
+				{
+					getFieldString(decryptedProposal, 'applicantTelegram') && (
+						<Flex
+							w='100%'
+							mt={4}
+							direction='column'>
+							<Text color='gray.500'>
+								Telegram
+							</Text>
+							<Text mt={1}>
+								{getFieldString(decryptedProposal, 'applicantTelegram')}
+							</Text>
+						</Flex>
+					)
+				}
+				{
+					getFieldString(decryptedProposal, 'applicantTwitter') && (
+						<Flex
+							w='100%'
+							mt={4}
+							direction='column'>
+							<Text color='gray.500'>
+								Twitter
+							</Text>
+							<Text mt={1}>
+								{getFieldString(decryptedProposal, 'applicantTwitter')}
+							</Text>
+						</Flex>
+					)
+				}
 				{
 					grant?.fields
 						?.filter((field) => field.id
