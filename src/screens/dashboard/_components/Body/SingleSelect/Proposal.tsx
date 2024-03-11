@@ -374,6 +374,21 @@ function Proposal() {
 						</Flex>
 					)
 				}
+				{
+					getFieldString(decryptedProposal, 'applicantTwitter') && (
+						<Flex
+							w='100%'
+							mt={4}
+							direction='column'>
+							<Text color='gray.500'>
+								Twitter
+							</Text>
+							<Text mt={1}>
+								{getFieldString(decryptedProposal, 'applicantTwitter')}
+							</Text>
+						</Flex>
+					)
+				}
 
 				{
 					proposal?.fields
