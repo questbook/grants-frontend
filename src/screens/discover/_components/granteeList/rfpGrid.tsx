@@ -15,6 +15,7 @@ function RFPGrid({
 	const buildComponent = () => (
 		<>
 			<Flex
+				w='100%'
 				flexDirection='column'
 			>
 				<Grid
