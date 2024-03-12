@@ -356,6 +356,7 @@ function Discover() {
 												>
 													<Flex
 														gap={3}
+														mt={8}
 														alignItems='center'
 														mb={4}
 													>

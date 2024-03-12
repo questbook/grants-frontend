@@ -420,6 +420,18 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	}, [])
 
 	useEffect(() => {
+		if(window.location.href.includes('grantId=') && sectionGrants?.length) {
+			const grantId = window.location.href.split('grantId=')[1]
+			window.history.pushState({}, '', window.location.href.split('?')[0])
+			const element = document.getElementById(grantId)
+			if(element) {
+				element.scrollIntoView({ behavior: 'smooth' })
+			}
+		}
+	}, [sectionGrants])
+
+
+	useEffect(() => {
 		// console.log('hi from',grantsForAll?.length, grantsForYou?.length, sectionGrants?.length)
 		if(!grantsForAll?.length || !sectionGrants?.length) {
 			return
