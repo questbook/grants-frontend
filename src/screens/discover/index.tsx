@@ -577,7 +577,7 @@ function Discover() {
 												fontSize='24px'
 												lineHeight='31.2px'
 											>
-												Grantees List
+												Grantee List
 											</Text>
 
 										</Flex>
