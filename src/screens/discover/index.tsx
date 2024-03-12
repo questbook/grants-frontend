@@ -368,6 +368,7 @@ function Discover() {
 															variant='subheading'
 															onClick={() => sectionLink ? window.open(`https://${sectionLink}.questbook.app`, '_blank') : null}
 															cursor={sectionLink ? 'pointer' : 'text'}
+															_hover={{ color: sectionLink ? '#6A6A6D' : '' }}
 														>
 															{sectionName}
 														</Text>
