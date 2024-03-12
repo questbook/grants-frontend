@@ -423,7 +423,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		if(window.location.href.includes('grantId=') && sectionGrants?.length) {
 			const grantId = window.location.href.split('grantId=')[1]
 			window.history.pushState({}, '', window.location.href.split('?')[0])
-			const element = document.getElementById(grantId)
+			const element = grantId.includes('%20') ? document.getElementById(grantId.split('%20').join(' ')) : document.getElementById(grantId)
 			if(element) {
 				element.scrollIntoView({ behavior: 'smooth' })
 			}
