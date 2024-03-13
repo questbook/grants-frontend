@@ -240,7 +240,7 @@ function HeroBannerBox({
 						color='white'>
 						{grantTicketSize?.replace('$', '')}
 						{' '}
-						Matic
+						MATIC
 					</Text>
 				</Flex>
 			</Flex>
