@@ -291,7 +291,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 		logger.info({ inviteInfo }, 'Invite Info')
 
-		const workspaceID = `0x${inviteInfo.workspaceId.toString(16)}`
+		const workspaceID = `${inviteInfo.workspaceId.toString(16)}`
 		logger.info({ workspaceID }, 'Workspace ID')
 		const results: any = await fetchGrantProgramData({ workspaceID }, true)
 		logger.info({ results }, 'Results grant program')
@@ -301,7 +301,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		}
 
 		logger.info({ grantProgram: results?.grantProgram[0] }, 'Results')
-		setGrantProgram(results[0]?.grantProgram?.[0])
+		setGrantProgram(results?.grantProgram[0])
 	}
 
 	const getSectionGrants = async() => {
