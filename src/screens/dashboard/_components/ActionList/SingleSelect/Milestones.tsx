@@ -105,7 +105,8 @@ function Milestones() {
 						<Text ml='auto'>
 							{chainInfo?.address === USD_ASSET ? milestone.amount : ethers.utils.formatUnits(milestone.amount, chainInfo.decimals)}
 							{' '}
-							{chainInfo?.label}
+							{/* {chainInfo?.label} */}
+							Matic
 						</Text>
 					)
 				}

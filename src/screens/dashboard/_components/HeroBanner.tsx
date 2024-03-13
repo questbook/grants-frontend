@@ -238,7 +238,9 @@ function HeroBannerBox({
 						lineHeight='20px'
 
 						color='white'>
-						{grantTicketSize}
+						{grantTicketSize?.replace('$', '')}
+						{' '}
+						Matic
 					</Text>
 				</Flex>
 			</Flex>

@@ -211,7 +211,8 @@ function Proposal() {
 									fontWeight='500'>
 									{getRewardAmountMilestones(chainInfo.decimals, proposal)}
 									{' '}
-									{chainInfo.label}
+									{/* {chainInfo.label} */}
+									Matic
 								</Text>
 							</Flex>
 						)
