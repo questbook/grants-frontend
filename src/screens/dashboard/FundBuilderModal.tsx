@@ -66,7 +66,7 @@ function FundBuilderModal({
 										align='start'>
 
 										<Text>
-											$
+											{grant?.reward?.token?.label !== 'USD' ? '' : 'USD'}
 										</Text>
 
 										<FlushedInput
@@ -92,18 +92,30 @@ function FundBuilderModal({
 											placeholder='0' />
 									</Flex>
 									{
-										amounts?.[0] > 0 && selectedTokenInfo?.fiatConversion ? (
+										grant?.reward?.token?.label !== 'USD' && amounts?.[0] > 0 && selectedTokenInfo?.fiatConversion ? (
 											<Text
 												color='#53514F'
 												fontSize='14px'
 												mt='8px'>
 												≈
 												{' '}
-												{(amounts?.[0] / (selectedTokenInfo?.fiatConversion)).toFixed(2)}
+												{(amounts?.[0] * (selectedTokenInfo?.fiatConversion)).toFixed(2)}
 												{' '}
-												{selectedTokenInfo?.tokenName}
+												USD
 											</Text>
-										) : null
+										) :
+											amounts?.[0] > 0 && selectedTokenInfo?.fiatConversion ? (
+												<Text
+													color='#53514F'
+													fontSize='14px'
+													mt='8px'>
+													≈
+													{' '}
+													{(amounts?.[0] / (selectedTokenInfo?.fiatConversion)).toFixed(2)}
+													{' '}
+													{selectedTokenInfo?.tokenName}
+												</Text>
+											) : null
 									}
 									{
 										proposal && (
