@@ -252,6 +252,10 @@ function Discover() {
 			'logo': 'QmNfAjH9v44rgQA2aNy6k6iGh7u786r9ca3eXhxB6gk7Hb',
 			'text': 'Polygon'
 		},
+		{
+			'logo': 'QmWsnbRQV8vYCSkrVU8uvgQeSnkiD9MLZv2kmuKDUXh2VC',
+			'text': 'Solana Ecosystem'
+		},
 	]
 	const UserCard = ({ image, title, twitter, telegram }: {
 		image: string
