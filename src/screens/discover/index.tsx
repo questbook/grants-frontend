@@ -5,7 +5,7 @@ import { useMediaQuery } from 'react-responsive'
 import { Box, Button, Container, Flex, Image, Input, Link, Text } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
-import { Telegram, Twitter } from 'src/generated/icons'
+import { ArrowRight, Telegram, Twitter } from 'src/generated/icons'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { DAOSearchContext } from 'src/libraries/hooks/DAOSearchContext'
 import { QBAdminsContext } from 'src/libraries/hooks/QBAdminsContext'
@@ -225,6 +225,36 @@ function Discover() {
 	}
 
 	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
+	const bannerText = [
+		{
+			'logo': 'QmQfZEDeLroURuySnfKDF1XpwmU94cGULHZwQhaHPYZxiJ',
+			'text': 'Arbitrum'
+		},
+		{
+			'logo': 'QmaTvGYbS3GtDdQmYKvnm5gkUX1aSf2ZVgrD8q7u1YG36P',
+			'text': 'Compound'
+		},
+		{
+			'logo': 'QmRmLRwFw6xQgJc2Mam45tYj9zLimLkjoXrR3Lvw6m2EEf',
+			'text': 'TON Foundation'
+		},
+		{
+			'logo': 'QmcfHdWQxZtQRWYdn2kwy8FShmnhSKQChD2XGJsvuX6LAb',
+			'text': 'Alchemix'
+		},
+		{
+			'logo': 'QmYvzshiSC6DSpYAWDWv3WbVvm3CxtnqEtHg4JhFPProTx',
+			'text': 'iExec'
+		},
+		{
+			'logo': 'QmWX8As9og6mLaiPhCaR3NqkinXMDymMaqf43qyVSE5hp8',
+			'text': 'Reclaim Protocol'
+		},
+		{
+			'logo': 'QmNfAjH9v44rgQA2aNy6k6iGh7u786r9ca3eXhxB6gk7Hb',
+			'text': 'Polygon'
+		},
+	]
 	const UserCard = ({ image, title, twitter, telegram }: {
 		image: string
 		title: string
@@ -297,13 +327,55 @@ function Discover() {
 		</Flex>
 	)
 	const normalView = useMemo(() => {
-
+		const bannerIndex = Math.floor(Math.random() * bannerText.length)
 		return (
 			<>
 				<Flex
 					direction='column'
 					w='100%'
 				>
+					<Box
+						bgColor='#B6F72B'
+						padding={[5, 5]}
+						justifyContent='center'
+						alignItems='center'
+						maxWidth='100%'
+						overscroll='auto'
+						maxHeight='400px'
+
+					>
+						<Flex
+							justifyContent='center'
+							alignItems='center'
+							cursor='pointer'
+							onClick={
+								() => {
+									window.open(`https://questbook.app/?grantId=${bannerText[bannerIndex].text}`, '_blank')
+								}
+							}
+						>
+
+							<Image
+								src={getUrlForIPFSHash(bannerText[bannerIndex].logo)}
+								boxSize='20px'
+							/>
+
+							<Text
+								fontWeight='600'
+								color='black.100'
+								fontSize={isMobile ? '14px' : '16px'}
+								mx={2}
+							>
+								{bannerText[bannerIndex].text}
+								{' '}
+								grants are also available on Questbook, check them now
+							</Text>
+							<ArrowRight
+								color='black.100'
+								boxSize='24px' />
+						</Flex>
+
+					</Box>
 					<HeroBanner
 						grants={(sectionGrants && sectionGrants.length > 0 ? sectionGrants : []) as []}
 
@@ -474,30 +546,105 @@ function Discover() {
 							</Flex>
 
 						</Flex>
-						<Flex
-							flexDirection='column'
-							w='100%'
-							align='center'
-							justify='center'>
-							<Link
-								textAlign='center'
-								isExternal
-								variant='body'
-								color='accent.azure'
-								href='https://questbook.app/termsofservice.html'>
-								Questbook - Terms of Service
-							</Link>
-							<Link
-								textAlign='center'
-								isExternal
-								variant='body'
-								color='accent.azure'
-								href='questbook.app/privacypolicy.html'>
-								Privacy Policy
-							</Link>
-						</Flex>
 
 					</Container>
+					<div
+						style={{ backgroundColor: 'white' }}
+					>
+						<Container
+							minWidth='100%'
+							w='100%'
+							borderRadius='48px 48px 0px 0px'
+							background='#F7F5F2'
+							padding='32px 32px 20px 32px'
+							flexDirection='column'
+							justifyContent='center'
+							alignItems='center'
+							gap='24px'
+						>
+							<span>
+								<Text
+									variant='heading3'
+									fontWeight='700'
+									w='100%'
+									fontSize='24px'
+									lineHeight='31.2px'
+									my={4}
+								>
+									More Grants on Questbook
+								</Text>
+								<Flex
+									gap='24px'
+									overflowX='auto'
+									p={0}
+									justifyContent='flex-start'>
+
+									{
+										bannerText.map((banner, index) => (
+											<Flex
+												key={index}
+												flexDirection='row'
+												justifyContent='center'
+												alignItems='center'
+												gap='16px'
+												borderRadius='8px'
+												border='1px solid #EFEEEB'
+												background='#FFF'
+												padding='16px'
+												cursor='pointer'
+												onClick={
+													() => {
+														window.open(`https://questbook.app/?grantId=${banner.text}`, '_blank')
+													}
+												}
+											>
+												<Image
+													src={getUrlForIPFSHash(banner.logo)}
+													alt={banner.text}
+													width='20px'
+													height='20px'
+												/>
+												<Text
+													fontSize='16px'
+													fontWeight='700'
+													lineHeight='normal'
+													color='#07070C'
+
+												>
+													{banner.text}
+												</Text>
+											</Flex>
+										))
+									}
+								</Flex>
+							</span>
+
+							<Flex
+								flexDirection='column'
+								w='100%'
+								align='center'
+								justify='center'
+								mt='24px'
+							>
+								<Link
+									textAlign='center'
+									isExternal
+									variant='body'
+									color='accent.azure'
+									href='https://questbook.app/termsofservice.html'>
+									Questbook - Terms of Service
+								</Link>
+								<Link
+									textAlign='center'
+									isExternal
+									variant='body'
+									color='accent.azure'
+									href='questbook.app/privacypolicy.html'>
+									Privacy Policy
+								</Link>
+							</Flex>
+						</Container>
+					</div>
 					{
 						isQbAdmin && (Object.keys(unsavedDomainState).length !== 0 || Object.keys(unsavedSectionGrants).length !== 0) && (
 							<>
