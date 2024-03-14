@@ -327,7 +327,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 		// move selected grants to top of the list
 		for(let i = 0; i < allSectionGrants.length; i++) {
-			const topGrants = ['Arbitrum', 'Compound', 'TON Foundation', 'Alchemix', 'iExec', 'Reclaim Protocol', 'Questbook', 'Polygon']
+			const topGrants = ['Arbitrum', 'Compound', 'TON Foundation', 'Alchemix', 'iExec', 'Reclaim Protocol', 'Polygon', 'Solana Ecosystem']
 
 			// sort based on topGrants order
 			allSectionGrants.sort((a, b) => {
