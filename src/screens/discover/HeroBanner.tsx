@@ -120,7 +120,7 @@ function HeroBanner({
 							justifyContent='center'
 							h={isMobile ? '50px' : '100px'}
 							w={isMobile ? '50px' : '100px'}
-	  						src={getUrlForIPFSHash('QmNfAjH9v44rgQA2aNy6k6iGh7u786r9ca3eXhxB6gk7Hb')} />
+	  						src={getUrlForIPFSHash('QmWsnbRQV8vYCSkrVU8uvgQeSnkiD9MLZv2kmuKDUXh2VC')} />
 						<Text
 							fontWeight='500'
 							fontSize={isMobile ? '32px' : '64px'}
@@ -130,7 +130,7 @@ function HeroBanner({
 									[10, 5]
 							}
 							color='black'>
-							Polygon Grants
+							Solana Grants
 						</Text>
 					</Flex>
 

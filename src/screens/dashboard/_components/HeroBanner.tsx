@@ -218,7 +218,7 @@ function HeroBannerBox({
 						fontSize='12px'
 						lineHeight='16px'
 						color='white'>
-						This domain is focused on grants related to the Polygon Ecosystem
+						This domain is focused on grants related to the Solana Ecosystem
 					</Text>
 
 				</Flex>
@@ -238,9 +238,7 @@ function HeroBannerBox({
 						lineHeight='20px'
 
 						color='white'>
-						{grantTicketSize?.replace('$', '')}
-						{' '}
-						MATIC
+						{grantTicketSize}
 					</Text>
 				</Flex>
 			</Flex>

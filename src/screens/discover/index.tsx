@@ -417,7 +417,18 @@ function Discover() {
 																		textAlign='match-parent'
 																		color='#7E7E8F'
 																	>
-																		The Village Build Ideas program is where innovation meets funding. We curate a list of startup ideas, and if you find one that aligns with your vision, we provide grant funding as you make progress. Village Build Ideas Grants are disbursed based on project milestones. As you reach these milestones, you unlock the financial support you need to turn your ideas into reality.
+																		Solana MCM赏金计划, 旨在支持MCM区域社区及开发者参与Solana生态建设并获取相应奖励，赏金任务分为由Solana MCM发放的Solana生态相关任务，及由Solana生态项目提供的相关任务，不管你是开发者/设计师/KOL/研究员/还是活跃社区成员，欢迎发挥您的强项加入我们，完成任务获取奖金，加入核心贡献者社区！
+																	</Text>
+																	<Text
+																		fontWeight='600'
+																		lineHeight='23.4px'
+																		fontSize='18px'
+
+																		color='black.100'
+																		pb={2}
+																		px={3}
+																	>
+																		Reviewers
 																	</Text>
 																	<Box
 																	>
@@ -425,7 +436,19 @@ function Discover() {
 																			[
 																				{
 																					image: '',
-																					title: '',
+																					title: 'Adam',
+																					twitter: '',
+																					telegram: ''
+																				},
+																				{
+																					image: '',
+																					title: 'Daniel',
+																					twitter: '',
+																					telegram: ''
+																				},
+																				{
+																					image: '',
+																					title: 'Yaoyao',
 																					twitter: '',
 																					telegram: ''
 																				},
