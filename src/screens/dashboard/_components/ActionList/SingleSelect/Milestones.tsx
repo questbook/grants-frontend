@@ -103,7 +103,10 @@ function Milestones() {
 				{
 					chainInfo && (
 						<Text ml='auto'>
-							{chainInfo?.address === USD_ASSET ? milestone.amount : ethers.utils.formatUnits(milestone.amount, chainInfo.decimals)}
+							{
+								chainInfo?.address === USD_ASSET ? milestone.amount :
+									parseFloat(ethers.utils.formatUnits(milestone.amount, chainInfo.decimals)) / parseFloat(ethers.utils.formatUnits(proposal?.grant?.reward?.committed as string, chainInfo.decimals)) * 100 + '%'
+							}
 							{' '}
 							{chainInfo?.label}
 						</Text>

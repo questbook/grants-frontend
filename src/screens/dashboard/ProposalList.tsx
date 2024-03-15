@@ -182,7 +182,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 					}
 				}>
 				{
-					proposalCount > 0 && filteredProposals?.map((proposal, index) => {
+					role !== 'community' && proposalCount > 0 && filteredProposals?.map((proposal, index) => {
 						return (
 							<ProposalCard
 								key={proposal.id}
