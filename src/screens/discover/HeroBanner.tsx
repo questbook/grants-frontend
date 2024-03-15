@@ -120,7 +120,7 @@ function HeroBanner({
 							justifyContent='center'
 							h={isMobile ? '50px' : '100px'}
 							w={isMobile ? '50px' : '100px'}
-	  						src={getUrlForIPFSHash('QmWsnbRQV8vYCSkrVU8uvgQeSnkiD9MLZv2kmuKDUXh2VC')} />
+	  						src={getUrlForIPFSHash('QmcZQwYXLgk9yam6RYafYNLYd52X8UggbsQAr6WdaYUtyb')} />
 						<Text
 							fontWeight='500'
 							fontSize={isMobile ? '32px' : '64px'}
@@ -130,7 +130,7 @@ function HeroBanner({
 									[10, 5]
 							}
 							color='black'>
-							Solana Grants
+							Elastos Grants
 						</Text>
 					</Flex>
 

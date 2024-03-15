@@ -250,6 +250,10 @@ function Discover() {
 			'logo': 'QmWX8As9og6mLaiPhCaR3NqkinXMDymMaqf43qyVSE5hp8',
 			'text': 'Reclaim Protocol'
 		},
+		{
+			'logo': 'QmWsnbRQV8vYCSkrVU8uvgQeSnkiD9MLZv2kmuKDUXh2VC',
+			'text': 'Solana Ecosystem'
+		}
 	]
 	const UserCard = ({ image, title, twitter, telegram }: {
 		image: string
@@ -485,18 +489,7 @@ function Discover() {
 																		textAlign='match-parent'
 																		color='#7E7E8F'
 																	>
-																		Solana MCM赏金计划, 旨在支持MCM区域社区及开发者参与Solana生态建设并获取相应奖励，赏金任务分为由Solana MCM发放的Solana生态相关任务，及由Solana生态项目提供的相关任务，不管你是开发者/设计师/KOL/研究员/还是活跃社区成员，欢迎发挥您的强项加入我们，完成任务获取奖金，加入核心贡献者社区！
-																	</Text>
-																	<Text
-																		fontWeight='600'
-																		lineHeight='23.4px'
-																		fontSize='18px'
-
-																		color='black.100'
-																		pb={2}
-																		px={3}
-																	>
-																		Reviewers
+																		The Destiny Calls Accelerator by Elastos pioneers the integration of Bitcoin Innovation including Layer 2 (BeL2) technologies with a full stack of decentralized Smart Web infrastructure to catalyze the development of a Web3 ecosystem. This ecosystem is geared towards empowering users, fostering equitable outcomes, and crafting inclusive futures. Through new BeL2 innovations, ESC-20 smart inscriptions, and comprehensive tools spanning Elastos Smart Chain and Elastos DID Chain, Destiny Calls aims to accelerate the emergence of a smarter, more connected world.
 																	</Text>
 																	<Box
 																	>
@@ -504,19 +497,7 @@ function Discover() {
 																			[
 																				{
 																					image: '',
-																					title: 'Adam',
-																					twitter: '',
-																					telegram: ''
-																				},
-																				{
-																					image: '',
-																					title: 'Daniel',
-																					twitter: '',
-																					telegram: ''
-																				},
-																				{
-																					image: '',
-																					title: 'Yaoyao',
+																					title: '',
 																					twitter: '',
 																					telegram: ''
 																				},
