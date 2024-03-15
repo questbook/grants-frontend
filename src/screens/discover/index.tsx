@@ -489,7 +489,7 @@ function Discover() {
 																		textAlign='match-parent'
 																		color='#7E7E8F'
 																	>
-																		The Destiny Calls Accelerator by Elastos pioneers the integration of Bitcoin Innovation including Layer 2 (BeL2) technologies with a full stack of decentralized Smart Web infrastructure to catalyze the development of a Web3 ecosystem. This ecosystem is geared towards empowering users, fostering equitable outcomes, and crafting inclusive futures. Through new BeL2 innovations, ESC-20 smart inscriptions, and comprehensive tools spanning Elastos Smart Chain and Elastos DID Chain, Destiny Calls aims to accelerate the emergence of a smarter, more connected world.
+																		Elastos, a pioneer in blockchain technology announced the launch of its Destiny Calls Program. Elastos is the creator of BeL2, the first Bitcoin Layer 2 applying zero-knowledge technology to enable the direct development and management of  ‘Bitcoin-native’ smart contracts. The new program is now welcoming applications from the digital entertainment, gaming and leisure sector utilizing Elastos’ decentralized infrastructure including BeL2 to deliver Bitcoin- denominated services and experiences.
 																	</Text>
 																	<Text
 																		fontWeight='600'
