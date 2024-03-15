@@ -14,7 +14,7 @@ import FilterTag from 'src/screens/dashboard/_components/FilterTag'
 import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { disabledGrants, disabledTonGrants } from 'src/screens/proposal_form/_utils/constants'
+import { disabledGrants, disabledSubmissions, disabledTonGrants } from 'src/screens/proposal_form/_utils/constants'
 
 function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boolean) => void }) {
 	const buildComponent = () => (
@@ -52,7 +52,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 							// w='103px'
 							// h='32px'
 							mr={4}
-							isDisabled={disabledTonGrants?.includes(grant?.id as string) || disabledGrants?.includes(grant?.id as string)}
+							isDisabled={disabledTonGrants?.includes(grant?.id as string) || disabledGrants?.includes(grant?.id as string) || disabledSubmissions?.includes(grant?.id as string)}
 							fontSize={['10px', '10px', '12px', '12px']}
 							onClick={
 								() => {

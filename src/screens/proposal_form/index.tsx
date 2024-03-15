@@ -26,7 +26,7 @@ import SectionSelect from 'src/screens/proposal_form/_components/SectionSelect'
 import SelectArray from 'src/screens/proposal_form/_components/SelectArray'
 import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposal'
 import { containsField, findField, findFieldBySuffix, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
-import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, disabledTonGrants, MILESTONE_INPUT_STYLE, SocialIntent, tonGrants } from 'src/screens/proposal_form/_utils/constants'
+import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, disabledSubmissions, disabledTonGrants, MILESTONE_INPUT_STYLE, SocialIntent, tonGrants } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
 
 
@@ -1449,7 +1449,7 @@ function ProposalForm() {
 			}
 		}
 
-		if((disabledGrants?.includes(grant?.id as string) || disabledTonGrants?.includes(grant?.id as string)) && type === 'submit') {
+		if((disabledGrants?.includes(grant?.id as string) || disabledTonGrants?.includes(grant?.id as string) || disabledSubmissions?.includes(grant?.id as string)) && type === 'submit') {
 			logger.info('Grant is disabled')
 			return true
 		}
