@@ -491,16 +491,39 @@ function Discover() {
 																	>
 																		The Destiny Calls Accelerator by Elastos pioneers the integration of Bitcoin Innovation including Layer 2 (BeL2) technologies with a full stack of decentralized Smart Web infrastructure to catalyze the development of a Web3 ecosystem. This ecosystem is geared towards empowering users, fostering equitable outcomes, and crafting inclusive futures. Through new BeL2 innovations, ESC-20 smart inscriptions, and comprehensive tools spanning Elastos Smart Chain and Elastos DID Chain, Destiny Calls aims to accelerate the emergence of a smarter, more connected world.
 																	</Text>
+																	<Text
+																		fontWeight='600'
+																		lineHeight='23.4px'
+																		fontSize='18px'
+
+																		color='black.100'
+																		pb={2}
+																		px={3}
+																	>
+																		Reviewers
+																	</Text>
 																	<Box
 																	>
 																		{
 																			[
 																				{
 																					image: '',
-																					title: '',
-																					twitter: '',
+																					title: 'Jonathan Hargreaves',
+																					twitter: '@metaverse4good',
 																					telegram: ''
 																				},
+																				{
+																					image: '',
+																					title: 'Agnes Serenio',
+																					twitter: '@SeAgnes1',
+																					telegram: ''
+																				},
+																				{
+																					image: '',
+																					title: 'Ian Anderson',
+																					twitter: '@0xWorkhorse',
+																					telegram: ''
+																				}
 																			].map((user, index) => (
 																				<UserCard
 																					key={index}
