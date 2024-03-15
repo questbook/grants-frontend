@@ -201,7 +201,7 @@ function HeroBannerBox({
 				 size='sm'
 				 textColor='white'
 				 fontSize='14px'
-				 w='50%'
+				 w={isMobile ? '160px' : '260px'}
 				 _hover={{ bgColor: 'blue.600' }}
 				 onClick={() => window.open(programDetails, '_blank')}
 				 rightIcon={<Image src='/v2/icons/projectDetails.svg' />}
