@@ -250,10 +250,6 @@ function Discover() {
 			'logo': 'QmWX8As9og6mLaiPhCaR3NqkinXMDymMaqf43qyVSE5hp8',
 			'text': 'Reclaim Protocol'
 		},
-		{
-			'logo': 'QmNfAjH9v44rgQA2aNy6k6iGh7u786r9ca3eXhxB6gk7Hb',
-			'text': 'Polygon'
-		},
 	]
 	const UserCard = ({ image, title, twitter, telegram }: {
 		image: string
