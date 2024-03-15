@@ -682,6 +682,10 @@ function ProposalForm() {
 			}
 		}
 
+		if(type === 'submit') {
+			return true
+		}
+
 		for(const member of members) {
 			if(member === '') {
 				logger.info({ member }, 'Member is empty')

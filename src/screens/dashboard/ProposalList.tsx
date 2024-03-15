@@ -51,6 +51,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 							// h='32px'
 							mr={4}
 							fontSize={['10px', '10px', '12px', '12px']}
+							isDisabled={true}
 							onClick={
 								() => {
 									const href = window.location.href.split('/')
