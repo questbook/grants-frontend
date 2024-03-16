@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 import { Checkbox, Flex, FlexProps, forwardRef, Image, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { Time } from 'src/generated/icons'
 import { getAvatar } from 'src/libraries/utils'
 import { getFieldString } from 'src/libraries/utils/formatting'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
@@ -73,6 +74,34 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 					{formatTime(proposal.updatedAtS, true)}
 				</Text>
 			</Flex>
+			{
+				unreadProposal?.unread && (
+					<Flex
+						align='center'
+						w='fit-content'
+						py={1}
+						px={2}
+						mt={2}
+						ml='auto'
+						borderRadius='18px'
+						border='1px solid'
+						bg='#5C62F54D'
+						borderColor='#5C62F566'
+						gap={1}
+						maxH='36px'
+
+					>
+						<Time />
+						<Text
+							variant='metadata'
+							fontWeight='500'
+							fontSize='10px'
+						>
+							unread update
+						</Text>
+					</Flex>
+				)
+			}
 			<Flex
 				align='center'
 				mt={2}>
@@ -107,7 +136,7 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 	const { selectedProposals, setSelectedProposals } = useContext(DashboardContext)!
 	const { role } = useContext(GrantsProgramContext)!
 	// const { tags } = useProposalTags({ proposal })
-
+	const unreadProposal = localStorage.getItem(`${proposal.id}-${proposal.grant.id}`) ? JSON.parse(localStorage.getItem(`${proposal.id}-${proposal.grant.id}`)!) : false
 	const onClick = (isText: boolean = false) => {
 		if(selectedProposals.size === 1 && selectedProposals.has(proposal.id)) {
 			// Only 1 proposal was selected and the user clicked on it again

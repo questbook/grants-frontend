@@ -10,11 +10,23 @@ export const getProposalsQuery = gql`query getProposals($first: Int, $skip: Int,
       applicantId
       applicantPublicKey
       state
+      comments {
+        updatedAtS
+      }
       fields {
         id:_id
         values {
           id:_id
           value
+        }
+      }
+      migratedFrom {
+        id: _id
+        title
+        workspace {
+          safe {
+            address
+          }
         }
       }
       pii {
@@ -48,6 +60,8 @@ export const getProposalsQuery = gql`query getProposals($first: Int, $skip: Int,
         feedbackDaoUpdatedAtS
         feedbackDev
         feedbackDevUpdatedAtS
+        details
+        deadline
       }
       feedbackDao
       feedbackDev

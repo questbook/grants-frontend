@@ -7,11 +7,23 @@ export const getSpecificProposalQuery = gql`query getProposals($grantID: String!
       applicantId
       applicantPublicKey
       state
+      comments {
+        updatedAtS
+      }
       fields {
         id:_id
         values {
           id:_id
           value
+        }
+      }
+      migratedFrom {
+        id: _id
+        title
+        workspace {
+          safe {
+            address
+          }
         }
       }
       pii {
@@ -45,6 +57,8 @@ export const getSpecificProposalQuery = gql`query getProposals($grantID: String!
         feedbackDaoUpdatedAtS
         feedbackDev
         feedbackDevUpdatedAtS
+        details
+        deadline
       }
       feedbackDao
       feedbackDev

@@ -665,6 +665,28 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 	}, [grantId])
 
 	useEffect(() => {
+		if(proposals.length > 0 && role !== 'builder' && role !== 'community') {
+			proposals.forEach((p) => {
+				logger.info({ p }, 'Proposal (UPDATE CHECK)')
+				//@ts-ignore
+				if(p.state === 'submitted' && ((p?.comments?.length > 0 && (p?.comments[p?.comments?.length - 1]?.updatedAtS > 1710571975) || (p?.updatedAtS > 1710571975)))) {
+					logger.info({ p }, 'Proposal updated')
+					const check = JSON.parse(localStorage.getItem(`${p.id}-${grantId}`) as string)
+					if(check) {
+						logger.info({ check }, 'Check (UPDATE CHECK)')
+						//@ts-ignore
+						if((parseFloat(check?.timeStamp as string) < p?.comments[p?.comments?.length - 1]?.updatedAtS) || (parseFloat(check?.timeStamp as string) < p?.updatedAtS)) {
+							localStorage.setItem(`${p.id}-${grantId}`, JSON.stringify({ unread: true, timeStamp: `${((new Date().getTime()) / 1000).toFixed()}` }) as string)
+						}
+					} else {
+						localStorage.setItem(`${p.id}-${grantId}`, JSON.stringify({ unread: true, timeStamp: `${((new Date().getTime()) / 1000).toFixed()}` }) as string)
+					}
+				}
+			})
+		}
+	}, [proposals, role])
+
+	useEffect(() => {
 		if(proposals.length === 0) {
 			setSelectedProposals(new Set<string>())
 			if(grant) {
@@ -733,6 +755,16 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		logger.info({ grant, scwAddress, proposals }, 'Loading state set to false')
 		setIsLoading(false)
 	}, [proposals, scwAddress, grant])
+
+	useEffect(() => {
+		if(proposals.length !== 0 && proposalId && typeof proposalId === 'string') {
+			const unreadProposal = localStorage.getItem(`${proposalId}-${grantId}`)
+			if(unreadProposal) {
+				logger.info({ unreadProposal }, 'Unread proposal')
+				localStorage.setItem(`${proposalId}-${grantId}`, JSON.stringify({ unread: false, timeStamp: `${((new Date().getTime()) / 1000).toFixed()}` }) as string)
+			}
+		}
+	}, [proposals, proposalId, grantId])
 
 	return (
 		<DashboardContext.Provider
