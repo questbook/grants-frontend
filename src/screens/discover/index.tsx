@@ -489,8 +489,10 @@ function Discover() {
 																		textAlign='match-parent'
 																		color='#7E7E8F'
 																	>
-																		Elastos, a pioneer in blockchain technology announced the launch of its Destiny Calls Program. Elastos is the creator of BeL2, the first Bitcoin Layer 2 applying zero-knowledge technology to enable the direct development and management of  ‘Bitcoin-native’ smart contracts. The new program is now welcoming applications from the digital entertainment, gaming and leisure sector utilizing Elastos’ decentralized infrastructure including BeL2 to deliver Bitcoin- denominated services and experiences.
+																		Participating in various initiatives with Axelar Foundation, including but not limited to the submission of non-technical community documents, creating, and sharing resources.
 																	</Text>
+
+
 																	<Text
 																		fontWeight='600'
 																		lineHeight='23.4px'
@@ -500,30 +502,33 @@ function Discover() {
 																		pb={2}
 																		px={3}
 																	>
-																		Reviewers
+																		Domain Allocators
 																	</Text>
 																	<Box
 																	>
 																		{
 																			[
+																				// marcin@axelar.foundation, georgios@axelar.foundation, alexey@axelar.foundation, nicolas@axelar.foundation
 																				{
 																					image: '',
-																					title: 'Jonathan Hargreaves',
-																					twitter: '@metaverse4good',
-																					telegram: ''
+																					title: 'Marcin',
+																					twitter: 'marcin@axelar.foundation'
 																				},
 																				{
 																					image: '',
-																					title: 'Agnes Serenio',
-																					twitter: '@SeAgnes1',
-																					telegram: ''
+																					title: 'Georgios',
+																					twitter: 'georgios@axelar.foundation'
 																				},
 																				{
 																					image: '',
-																					title: 'Ian Anderson',
-																					twitter: '@0xWorkhorse',
-																					telegram: ''
-																				}
+																					title: 'Alexey',
+																					twitter: 'alexey@axelar.foundation'
+																				},
+																				{
+																					image: '',
+																					title: 'Nicolas',
+																					twitter: 'nicolas@axelar.foundation'
+																				},
 																			].map((user, index) => (
 																				<UserCard
 																					key={index}

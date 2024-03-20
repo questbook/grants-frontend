@@ -218,7 +218,7 @@ function HeroBannerBox({
 						fontSize='12px'
 						lineHeight='16px'
 						color='white'>
-						This domain is focused on grants related to the Elastos Ecosystem
+						This domain is focused on grants related to the Axelar Ecosystem
 					</Text>
 
 				</Flex>

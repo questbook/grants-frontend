@@ -1,0 +1,5 @@
+mutation getSynapseId($id:String!, $type:String!){
+  getSynapsId(id: $id, type: $type){
+    link
+  }
+}
