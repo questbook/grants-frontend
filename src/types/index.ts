@@ -27,6 +27,8 @@ export type IApplicantData = {
   applicantName?: string
   applicantEmail?: string
   applicantAddress?: string
+  applicantTelegram?: string
+  applicantTwitter?: string
   sentOn: string
   updatedOn: string
   projectName?: string

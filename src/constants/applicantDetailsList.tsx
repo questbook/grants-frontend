@@ -16,13 +16,13 @@ export default [
 		title: 'Telegram',
 		id: 'applicantTelegram',
 		inputType: 'short-form',
-		isRequired: false,
+		isRequired: true,
 	},
 	{
 		title: 'Twitter',
 		id: 'applicantTwitter',
 		inputType: 'short-form',
-		isRequired: false,
+		isRequired: true,
 	},
 	{
 		title: 'Wallet Address',
