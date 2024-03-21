@@ -2,10 +2,11 @@
 /* eslint-disable react/jsx-indent */
 import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
+import { EmailIcon } from '@chakra-ui/icons'
 import { Box, Button, Container, Flex, Image, Input, Link, Text } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
-import { ArrowRight, Telegram, Twitter } from 'src/generated/icons'
+import { ArrowRight, Telegram } from 'src/generated/icons'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { DAOSearchContext } from 'src/libraries/hooks/DAOSearchContext'
 import { QBAdminsContext } from 'src/libraries/hooks/QBAdminsContext'
@@ -313,15 +314,16 @@ function Discover() {
 							whileHover={{ scale: 1.1 }}
 							whileTap={{ scale: 0.9 }}
 						>
-							<Twitter
+							<EmailIcon
 								cursor='pointer'
 								color='#7E7E8F'
 								_hover={{ color: 'blue.500' }}
-								onClick={() => window.open(`https://twitter.com/${twitter}`)}
+								onClick={() => window.open(`mailto:${twitter}`)}
 								boxSize='16px' />
 						</motion.div>
 					)
 				}
+
 			</Flex>
 
 		</Flex>
