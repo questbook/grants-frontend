@@ -5,6 +5,7 @@ import {
 	ModalCloseButton,
 	ModalContent,
 	ModalOverlay,
+	Select,
 	Text,
 	useToast,
 } from '@chakra-ui/react'
@@ -63,6 +64,7 @@ function SynapsModel({
 						}
 					/>
 
+
 					<Text
 						textAlign='center'
 						mt={2}
@@ -74,6 +76,26 @@ function SynapsModel({
 						Where do I find the API key?
 					</Text>
 
+					<Select
+						mt={2}
+						w='100%'
+						placeholder='Select KYC type'
+						variant='flushed'
+						value={kycType}
+						onChange={
+							(e) => {
+								setKycType(e.target.value as 'KYC' | 'KYB')
+							}
+						}
+						defaultValue={kycType}
+					>
+						<option value='KYC'>
+							KYC
+						</option>
+						<option value='KYB'>
+							KYB
+						</option>
+					</Select>
 
 					<Button
 						w='70%'
@@ -85,6 +107,7 @@ function SynapsModel({
 								const data = await executeMutation(updateSynaps, {
 									id: workspace.id,
 									synapsId: apiKey,
+									type: kycType,
 								})
 								if(data) {
 									customToast({
@@ -117,6 +140,7 @@ function SynapsModel({
 
 
 	const [apiKey, setApiKey] = useState<string>('')
+	const [kycType, setKycType] = useState<'KYC' | 'KYB'>('KYC')
 	const { workspace } = useContext(SettingsFormContext)!
 	const customToast = useToast()
 	logger.info({ workspace }, 'LinkYourSynapseModal')

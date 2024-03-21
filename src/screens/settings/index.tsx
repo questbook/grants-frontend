@@ -302,7 +302,7 @@ function Settings() {
 										</Box>
 
 									</Flex>
-									{/* <Flex
+									<Flex
 										direction='column'
 										gap={4.5}
 									>
@@ -363,7 +363,7 @@ function Settings() {
 												</Flex>
 											</Box>
 										</Flex>
-									</Flex> */}
+									</Flex>
 									{/* Members Section */}
 									<Flex
 										direction='column'
