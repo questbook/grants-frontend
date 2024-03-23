@@ -219,7 +219,7 @@ function HeroBannerBox({
 				 w={isMobile ? '50%' : ''}
 				 _hover={{ bgColor: 'blue.600' }}
 				 onClick={() => window.open(programDetails, '_blank')}
-				 rightIcon={<Image src='https://ipfs.io/ipfs/bafkreicnpfrdixcbocuksdful4gsaoetxrwby2a5tnpiehz7w4abbd2bcm' />}
+				 rightIcon={<Image src='/v2/icons/projectDetails.svg' />}
 				 >
 						Program Details
 					</Button>

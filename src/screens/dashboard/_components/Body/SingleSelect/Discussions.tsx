@@ -55,6 +55,16 @@ function Discussions() {
 				</Text>
 
 				{
+					comments.length > 0 && (
+						<Divider
+							my={4}
+							color='gray.300'
+							height={1} />
+					)
+				}
+
+				{comments.map(renderComment)}
+				{
 					areCommentsLoading && (
 						<Button
 							my={4}
@@ -65,17 +75,6 @@ function Discussions() {
 						/>
 					)
 				}
-
-				{
-					comments.length > 0 && (
-						<Divider
-							my={4}
-							color='gray.300'
-							height={1} />
-					)
-				}
-
-				{comments.map(renderComment)}
 				<Flex
 					display={scwAddress ? 'flex' : 'none'}
 					mt={4}
@@ -254,7 +253,6 @@ function Discussions() {
 												logger.info('Setting selected tag to undefined after posting comment')
 												setSelectedTag(undefined)
 												refreshComments(true)
-												refreshProposals(true)
 												setStep(undefined)
 												localStorage.removeItem(
 													`comment-${grant?.id}-${proposal?.id}`,
@@ -281,7 +279,9 @@ function Discussions() {
 						</Text>
 					)
 				}
+
 				<Box my={4} />
+
 			</Flex>
 		)
 	}
@@ -438,7 +438,6 @@ function Discussions() {
 		selectedProposals,
 		commentMap,
 		refreshComments,
-		refreshProposals,
 		areCommentsLoading,
 	} = useContext(DashboardContext)!
 
