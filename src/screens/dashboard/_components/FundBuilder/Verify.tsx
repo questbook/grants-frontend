@@ -142,12 +142,11 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 	const { switchChain, chains } = useSwitchChain()
 	const { phantomWallet, phantomWalletConnected } = usePhantomWallet()
 	const { connectTonWallet, tonWalletAddress, tonWalletConnected } = usetonWallet()
-	const { address, chainId: chain, isConnected } = useAccount()
+	const { address, chainId: chain, isConnected, connector } = useAccount()
 	const toast = useCustomToast()
 	logger.info({ address, chain, isConnected }, 'Account info')
 	const [verifying, setVerifying] = useState<string>()
 	const [selectedConnector, setSelectedConnector] = useState<Connector>()
-
 	const isEvmChain = useMemo(() => {
 		return safeObj?.getIsEvm()
 	}, [safeObj])
@@ -159,7 +158,9 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 	const verifyOwner = async(address: string) => {
 		logger.info({ address: safeObj?.safeAddress }, '1')
 		logger.info('lllllll', safeObj)
-		const isVerified = await safeObj?.isOwner(address)
+		const provider = await connector?.getProvider()
+		logger.info({ provider }, 'Provider')
+		const isVerified = await safeObj?.isOwner(address, provider)
 		if(isVerified) {
 			setSignerVerifiedState('verified')
 			toast({

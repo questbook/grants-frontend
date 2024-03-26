@@ -47,7 +47,7 @@ import { arbitrum, aurora, base, celo, iotex, mainnet, optimism, polygon } from 
 // import { infuraProvider } from 'wagmi/providers/infura'
 // import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 // import { publicProvider } from 'wagmi/providers/public'
-import { injected, metaMask, walletConnect } from 'wagmi/connectors'
+import { injected, walletConnect } from 'wagmi/connectors'
 import 'styles/globals.css'
 import 'draft-js/dist/Draft.css'
 import 'src/libraries/utils/appCopy'
@@ -79,9 +79,6 @@ const client = createConfig({
 			icons: ['https://arbitrum.questbook.app/favicon.svg'],
 		}
 		}),
-	  metaMask({
-			shouldShimWeb3: true,
-	  }),
 	],
 	transports: {
 	  [mainnet.id]: http(),

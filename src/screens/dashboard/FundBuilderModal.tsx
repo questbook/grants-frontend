@@ -26,6 +26,7 @@ import usetonWallet from 'src/screens/dashboard/_hooks/useTonWallet'
 import getToken from 'src/screens/dashboard/_utils/tonWalletUtils'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
 import TonWeb from 'tonweb'
+import { useAccount } from 'wagmi'
 interface Props {
 	payWithSafe: boolean
 }
@@ -227,7 +228,7 @@ function FundBuilderModal({
 	const customToast = useCustomToast()
 	const toast = useToast()
 	const payoutsInProcessToastRef = useRef<any>()
-
+	const { connector } = useAccount()
 	const Safe = {
 		logo: safeObj?.safeLogo,
 		value: safeAddress ?? ''
@@ -413,7 +414,8 @@ function FundBuilderModal({
 
 			let proposaladdress: any = ''
 			if(safeObj?.getIsEvm()) {
-				proposaladdress = await safeObj?.proposeTransactions(JSON.stringify({ workspaceId:  grant?.workspace?.id?.startsWith('0x') ? grant?.workspace?.id : `0x${grant?.workspace?.id?.slice(-2)}`, grantAddress:  grant?.id?.startsWith('0x') ? grant?.id : `0x${grant?.id?.slice(-2)}` }), temp, '')
+				const provider = await connector?.getProvider()
+				proposaladdress = await safeObj?.proposeTransactions(JSON.stringify({ workspaceId:  grant?.workspace?.id?.startsWith('0x') ? grant?.workspace?.id : `0x${grant?.workspace?.id?.slice(-2)}`, grantAddress:  grant?.id?.startsWith('0x') ? grant?.id : `0x${grant?.id?.slice(-2)}` }), temp, provider)
 				if(proposaladdress?.error) {
 					logger.error('Error while creating transaction on Gnosis Safe', { proposaladdress })
 					customToast({
