@@ -158,16 +158,9 @@ export const useMakeInvite = () => {
 				return undefined
 			}
 
-			const fakeAddress = '0x' + [...Array(40)].map(() => 1).join('')
+			logger.info({ role, workspaceId: grant.workspace.id }, 'estimating gas for make invite')
 
-			return await workspaceRegistry
-				.estimateGas
-				.createInviteLink(
-					grant.workspace.id,
-					role,
-					// testing address
-					fakeAddress,
-				)
+			return false
 		},
 		[workspaceRegistry, grant?.workspace?.id]
 	)
@@ -286,16 +279,7 @@ export const useJoinInvite = (inviteInfo: InviteInfo, profileInfo: WorkspaceMemb
 			switchNetwork(inviteInfo.chainId)
 		}
 
-		return await workspaceRegistry
-			.estimateGas
-			.joinViaInviteLink(
-				inviteInfo.workspaceId,
-				'123', // placeholder for metadata hash
-				inviteInfo.role,
-				signature.v,
-				signature.r,
-				signature.s
-			)
+		return false
 	}, [workspaceRegistry, inviteInfo, signature])
 
 	return { joinInvite, getJoinInviteGasEstimate }

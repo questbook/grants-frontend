@@ -93,6 +93,7 @@ function Discussions() {
 					<Flex
 						w='100%'
 						ml={4}
+						overflowX='auto'
 						direction='column'>
 						<Flex align='center'>
 							<Text

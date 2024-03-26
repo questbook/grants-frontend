@@ -1,6 +1,5 @@
 import { captureException } from '@sentry/nextjs'
-import { errorCodes, getMessageFromCode } from 'eth-rpc-errors'
-import { RpcError } from 'wagmi'
+import { errorCodes, EthereumRpcError, getMessageFromCode } from 'eth-rpc-errors'
 
 const TRANSACTION_UNDERPRICED_MSG = `
 Oh, no, it appears that the transaction did not have enough gas to go through 😭
@@ -24,7 +23,7 @@ Please try again
  * @returns the real error message
  */
 function getErrorMessage(
-	e: RpcError<{ message?: string }> | Error | { error: RpcError<{ message?: string }> },
+	e: EthereumRpcError<{ message?: string }> | Error | { error: EthereumRpcError<{ message?: string }> },
 	gasEstimationFailMessage = 'An Internal Smart Contract Error Occurred'
 ) {
 	captureException(e)

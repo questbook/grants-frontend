@@ -10,7 +10,7 @@ import { availableWallets, solanaWallets, tonWallets } from 'src/libraries/utils
 import ConnectWalletButton from 'src/screens/dashboard/_components/FundBuilder/ConnectWalletButton'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import usetonWallet from 'src/screens/dashboard/_hooks/useTonWallet'
-import { useAccount, useConnect, useDisconnect, useNetwork } from 'wagmi'
+import { useAccount, useConnect, useDisconnect } from 'wagmi'
 
 const VerifySignerModal = ({
 	owners,
@@ -129,7 +129,7 @@ const VerifySignerModal = ({
 															} else {
 																customToast({
 																	status: 'info',
-																	title: `Wallet already connected to address ${address} on chain ${chain?.name}`,
+																	title: `Wallet already connected to address ${address} on chain ${chain}`,
 																	duration: 5000,
 																})
 															}
@@ -208,8 +208,7 @@ const VerifySignerModal = ({
 	const customToast = useCustomToast()
 	const { t } = useTranslation()
 	const { isError: isErrorConnecting, connect, connectors } = useConnect()
-	const { address } = useAccount()
-	const { chain } = useNetwork()
+	const { address, chainId: chain } = useAccount()
 
 	const [isError, setIsError] = React.useState(false)
 
