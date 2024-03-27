@@ -25,7 +25,7 @@ const PaidByWallet = () => {
 				<Text
 					fontSize='16px'
 					mb='1rem'>
-					Payouts done to the applicant through TON Wallet
+					Payouts done to the applicant through Keplr Wallet
 				</Text>
 			</Flex>
 

@@ -37,6 +37,8 @@ import logger from 'src/libraries/utils/logger'
 import getSeo from 'src/libraries/utils/seo'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import theme from 'src/theme'
+import { ChainInfo } from "@keplr-wallet/types";
+import { GrazProvider } from "graz";
 import { GrantProgramContextType, GrantType, MinimalWorkspace, NotificationContextType, Roles } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import {
@@ -56,6 +58,7 @@ import { publicProvider } from 'wagmi/providers/public'
 import 'styles/globals.css'
 import 'draft-js/dist/Draft.css'
 import 'src/libraries/utils/appCopy'
+import { mainnetChains } from 'src/libraries/utils/keplrWallets'
 
 type NextPageWithLayout = NextPage & {
 	getLayout?: (page: ReactElement) => ReactNode
@@ -72,7 +75,7 @@ const { chains, provider } = configureChains(allChains, [
 	jsonRpcProvider({
 		rpc: (chain: Chain) => {
 			const rpcUrl = CHAIN_INFO[chain.id as SupportedChainId]?.rpcUrls[0]
-			if(!rpcUrl) {
+			if (!rpcUrl) {
 				return {
 					http: CHAIN_INFO[defaultChain.id as SupportedChainId].rpcUrls[0],
 				}
@@ -84,6 +87,7 @@ const { chains, provider } = configureChains(allChains, [
 	infuraProvider({ apiKey: infuraId! }),
 	publicProvider(),
 ])
+
 
 type InitiateBiconomyReturnType = {
 	biconomyDaoObj: typeof BiconomyContext
@@ -132,7 +136,7 @@ export const ApiClientsContext = createContext<{
 	inviteInfo: InviteInfo | undefined
 	setInviteInfo: (inviteInfo: InviteInfo) => void
 	isNewUser: boolean
-		} | null>(null)
+} | null>(null)
 
 export const GrantsProgramContext = createContext<GrantProgramContextType | null>(null)
 
@@ -142,16 +146,16 @@ export const SignInMethodContext = createContext<{
 	signInMethod: 'newWallet' | 'existingWallet' | 'choosing'
 	setSignInMethod: (signInMethod: 'newWallet' | 'existingWallet' | 'choosing') => void
 
-		} | null>(null)
+} | null>(null)
 export const SignInContext = createContext<{
 	signIn: boolean
 	setSignIn: (signIn: boolean) => void
-		} | null>(null)
+} | null>(null)
 
 export const SignInTitleContext = createContext<{
 	signInTitle: 'admin' | 'reviewer' | 'default' | 'postComment' | 'submitProposal'
 	setSignInTitle: (signInTitle: 'admin' | 'reviewer' | 'default' | 'postComment' | 'submitProposal') => void
-		} | null>(null)
+} | null>(null)
 
 export const WebwalletContext = createContext<{
 	webwallet?: Wallet | null
@@ -177,7 +181,7 @@ export const WebwalletContext = createContext<{
 	exportWebwallet: () => string
 	loadingScw: boolean
 	setLoadingScw: (loadingScw: boolean) => void
-		} | null>(null)
+} | null>(null)
 
 export const BiconomyContext = createContext<{
 	biconomyDaoObjs?: { [key: string]: typeof Biconomy }
@@ -186,7 +190,7 @@ export const BiconomyContext = createContext<{
 	loadingBiconomyMap: { [_: string]: boolean }
 	biconomyWalletClients?: { [key: string]: BiconomyWalletClient }
 	setBiconomyWalletClients: (biconomyWalletClients?: { [key: string]: BiconomyWalletClient }) => void
-		} | null>(null)
+} | null>(null)
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [network, switchNetwork] = useState<SupportedChainId>(defaultChainId)
@@ -222,7 +226,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	// used to poll for scwAddress in "waitForScwAddress"
 	const scwAddressRef = useRef(scwAddress)
 
-	const getUseNonce = useCallback(async() => {
+	const getUseNonce = useCallback(async () => {
 		const _nonce = await getNonce(webwallet)
 		return _nonce
 	}, [webwallet])
@@ -231,12 +235,12 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		hotjar.initialize(3167823, 6)
 	}, [])
 
-	const initiateBiconomyUnsafe = useCallback(async(chainId: string) => {
-		if(!webwallet) {
+	const initiateBiconomyUnsafe = useCallback(async (chainId: string) => {
+		if (!webwallet) {
 			throw new Error('Attempted init without webwallet')
 		}
 
-		if(!nonce) {
+		if (!nonce) {
 			throw new Error('Attempted init without nonce')
 		}
 
@@ -256,9 +260,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		let _biconomyWalletClient: BiconomyWalletClient
 		let readyCalled = false
 		const scwAddress = await new Promise<string>((resolve, reject) => {
-			_biconomy.onEvent(_biconomy.READY, async() => {
+			_biconomy.onEvent(_biconomy.READY, async () => {
 
-				if(readyCalled) {
+				if (readyCalled) {
 					_logger.warn('ready called multiple times')
 					return
 				}
@@ -269,11 +273,11 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				try {
 					do {
 						_biconomyWalletClient = _biconomy.biconomyWalletClient
-						if(!_biconomyWalletClient) {
+						if (!_biconomyWalletClient) {
 							_logger.warn('biconomyWalletClient does not exist')
 							await delay(500)
 						}
-					} while(!_biconomyWalletClient)
+					} while (!_biconomyWalletClient)
 
 					const result = await _biconomyWalletClient
 						.checkIfWalletExists({ eoa: webwallet.address })
@@ -281,7 +285,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 					logger.info({ result }, 'checkIfWalletExists')
 					let walletAddress = result.walletAddress
 					logger.info({ walletAddress }, 'already deployed')
-					if(!result.doesWalletExist) {
+					if (!result.doesWalletExist) {
 						// walletAddress = await deploySCW(webwallet, _biconomyWalletClient, chainId, nonce!)
 						walletAddress = webwallet.address
 						_logger.info({ walletAddress }, 'scw deployed')
@@ -289,13 +293,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 					const authToken = localStorage.getItem('authToken')
 					const jwtRegex = new RegExp('^[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+\\.[A-Za-z0-9-_.+/=]*$')
-					if(!authToken?.match(jwtRegex)) {
+					if (!authToken?.match(jwtRegex)) {
 						const token = await generateToken(walletAddress)
-						if(token) {
+						if (token) {
 							const sign = await webwallet.signMessage(token?.nonce)
 							const tokenData = await verifyToken(token?.id, sign)
 
-							if(tokenData) {
+							if (tokenData) {
 								localStorage.setItem('authToken', tokenData) // Storing the verified token directly
 							}
 						}
@@ -303,7 +307,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 
 					resolve(walletAddress)
-				} catch(err) {
+				} catch (err) {
 					_logger.error({ err }, 'error in scw deployment')
 					reject(err)
 				}
@@ -323,7 +327,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		// only switch the chainId if it's the most recently requested one
 		// this prevents race conditions when inititialisation of multiple chains is requested
 		// and the most recently requested one finishes later
-		if(mostRecentInitChainId.current === chainId) {
+		if (mostRecentInitChainId.current === chainId) {
 			setScwAddress(scwAddress)
 			setLoadingScw(false)
 			localStorage.setItem('scwAddress', scwAddress)
@@ -336,11 +340,11 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}, [webwallet, nonce])
 
 	const initiateBiconomy = useCallback(
-		async(chainId: string) => {
+		async (chainId: string) => {
 			let task = biconomyInitPromisesRef.current[chainId]
 
 			mostRecentInitChainId.current = chainId
-			if(!task) {
+			if (!task) {
 				setBiconomyLoading(prev => ({ ...prev, [chainId]: true }))
 
 				// @ts-ignore
@@ -356,7 +360,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				switchNetwork(parseInt(chainId))
 			}
 
-			if(task) {
+			if (task) {
 				return await task
 			}
 		}, [setBiconomyLoading, biconomyInitPromisesRef, initiateBiconomyUnsafe]
@@ -384,7 +388,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 	const exportWebwallet = useCallback(() => {
 
-		if(!webwallet) {
+		if (!webwallet) {
 			throw new Error('No webwallet to export')
 		}
 
@@ -393,20 +397,20 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}, [webwallet])
 
 	useEffect(() => {
-		if(!webwallet) {
+		if (!webwallet) {
 			return
 		}
 
-		if(nonce && nonce !== 'Token expired') {
+		if (nonce && nonce !== 'Token expired') {
 			return
 		}
 
-		(async() => {
+		(async () => {
 			try {
 				await addAuthorizedUser(webwallet?.address!)
 				const newNonce = await getUseNonce()
 				setNonce(newNonce)
-			} catch(err) {
+			} catch (err) {
 				logger.error({ err }, 'error in adding authorized user')
 			}
 		})()
@@ -424,7 +428,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	}, [])
 
 	useEffect(() => {
-		if(webwallet && nonce && nonce !== 'Token expired') {
+		if (webwallet && nonce && nonce !== 'Token expired') {
 			initiateBiconomy(network.toString())
 		}
 	}, [nonce, webwallet, network])
@@ -438,7 +442,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 		const _scwAddress = localStorage.getItem('scwAddress')
 
-		if(!_scwAddress) {
+		if (!_scwAddress) {
 			return undefined
 		}
 
@@ -449,7 +453,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 		const _nonce = localStorage.getItem('nonce')
 
-		if(!_nonce) {
+		if (!_nonce) {
 			return undefined
 		}
 
@@ -462,7 +466,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		const privateKey = localStorage.getItem('webwalletPrivateKey')
 		let newWebwallet = Wallet.createRandom()
 
-		if(!privateKey) {
+		if (!privateKey) {
 			return null
 		}
 
@@ -470,7 +474,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			newWebwallet = new Wallet(privateKey)
 			setIsNewUser(false)
 			return newWebwallet
-		} catch{
+		} catch {
 			return undefined
 		}
 	}
@@ -491,7 +495,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		() => ({
 			webwallet: webwallet,
 			setWebwallet: (newWebwallet?: Wallet | null) => {
-				if(newWebwallet) {
+				if (newWebwallet) {
 					localStorage.setItem('webwalletPrivateKey', newWebwallet.privateKey)
 				} else {
 					localStorage.removeItem('webwalletPrivateKey')
@@ -499,8 +503,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 				setWebwallet(newWebwallet)
 			},
-			waitForScwAddress: (async() => {
-				while(!scwAddressRef.current) {
+			waitForScwAddress: (async () => {
+				while (!scwAddressRef.current) {
 					await delay(500)
 				}
 
@@ -508,7 +512,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			})(),
 			network: network,
 			switchNetwork: (newNetwork?: SupportedChainId) => {
-				if(newNetwork) {
+				if (newNetwork) {
 					localStorage.setItem('network', newNetwork.toString())
 				} else {
 					localStorage.removeItem('network')
@@ -519,7 +523,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			},
 			scwAddress: scwAddress,
 			setScwAddress: (newScwAddress?: string) => {
-				if(newScwAddress) {
+				if (newScwAddress) {
 					localStorage.setItem('scwAddress', newScwAddress)
 				} else {
 					localStorage.removeItem('scwAddress')
@@ -531,7 +535,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			nonce: nonce,
 			setNonce: (newNonce?: string) => {
 				// console.log('called nonce: ', newNonce)
-				if(newNonce) {
+				if (newNonce) {
 					// console.log('setting nonce', newNonce)
 					localStorage.setItem('nonce', newNonce)
 				} else {
@@ -543,7 +547,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			},
 			glyph: glyph,
 			setGlyph: (newGlyph?: Boolean) => {
-				if(newGlyph) {
+				if (newGlyph) {
 					localStorage.setItem('glyph', newGlyph.toString())
 				} else {
 					localStorage.removeItem('glyph')
@@ -604,10 +608,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	useEffect(() => {
 		try {
 			const inviteInfo = extractInviteInfo()
-			if(inviteInfo) {
+			if (inviteInfo) {
 				setInviteInfo(inviteInfo)
 			}
-		} catch(error) {
+		} catch (error) {
 			toast({
 				title: `Invalid invite "${(error as Error).message}"`,
 				status: 'error',
@@ -622,7 +626,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			validatorApi,
 			workspace,
 			setWorkspace: (newWorkspace?: MinimalWorkspace) => {
-				if(newWorkspace) {
+				if (newWorkspace) {
 					localStorage.setItem(
 						DOMAIN_CACHE_KEY,
 						newWorkspace.supportedNetworks[0] + '-' + newWorkspace.id
@@ -688,35 +692,42 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				/>
 			</Head>
 			<WagmiConfig client={client}>
-				<ApiClientsContext.Provider value={apiClients}>
-					<NotificationContext.Provider value={notificationContext}>
-						<SignInContext.Provider value={SignInContextValue}>
-							<SignInTitleContext.Provider value={SignInTitleContextValue}>
-								<SignInMethodContext.Provider value={SignInMethodContextValue}>
-									<WebwalletContext.Provider value={webwalletContextValue}>
-										<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
-											<SafeProvider>
-												<>
-													<DAOSearchContextMaker>
-														<GrantsProgramContext.Provider value={grantProgram}>
-															<QBAdminsContextMaker>
-																<ChakraProvider theme={theme}>
-																	{getLayout(<Component {...pageProps} />)}
-																	<QRCodeModal />
-																</ChakraProvider>
-															</QBAdminsContextMaker>
-														</GrantsProgramContext.Provider>
+				<GrazProvider
+					grazOptions={{
+						chains: mainnetChains,
+						autoReconnect: false,
+					}}
+				>
+					<ApiClientsContext.Provider value={apiClients}>
+						<NotificationContext.Provider value={notificationContext}>
+							<SignInContext.Provider value={SignInContextValue}>
+								<SignInTitleContext.Provider value={SignInTitleContextValue}>
+									<SignInMethodContext.Provider value={SignInMethodContextValue}>
+										<WebwalletContext.Provider value={webwalletContextValue}>
+											<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
+												<SafeProvider>
+													<>
+														<DAOSearchContextMaker>
+															<GrantsProgramContext.Provider value={grantProgram}>
+																<QBAdminsContextMaker>
+																	<ChakraProvider theme={theme}>
+																		{getLayout(<Component {...pageProps} />)}
+																		<QRCodeModal />
+																	</ChakraProvider>
+																</QBAdminsContextMaker>
+															</GrantsProgramContext.Provider>
 
-													</DAOSearchContextMaker>
-												</>
-											</SafeProvider>
-										</BiconomyContext.Provider>
-									</WebwalletContext.Provider>
-								</SignInMethodContext.Provider>
-							</SignInTitleContext.Provider>
-						</SignInContext.Provider>
-					</NotificationContext.Provider>
-				</ApiClientsContext.Provider>
+														</DAOSearchContextMaker>
+													</>
+												</SafeProvider>
+											</BiconomyContext.Provider>
+										</WebwalletContext.Provider>
+									</SignInMethodContext.Provider>
+								</SignInTitleContext.Provider>
+							</SignInContext.Provider>
+						</NotificationContext.Provider>
+					</ApiClientsContext.Provider>
+				</GrazProvider>
 			</WagmiConfig>
 			<ChatWidget
 				token='5b3b08cf-8b27-4d4b-9c4e-2290f53e04f0'
@@ -744,7 +755,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	)
 }
 
-MyApp.getInitialProps = async(appContext: AppContext) => {
+MyApp.getInitialProps = async (appContext: AppContext) => {
 	// calls page's `getInitialProps` and fills `appProps.pageProps`
 	const appProps = await App.getInitialProps(appContext)
 	return { ...appProps }

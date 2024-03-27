@@ -79,7 +79,7 @@ function SynapsModel({
 					<Select
 						mt={2}
 						w='100%'
-						placeholder='Select KYC type'
+						placeholder='Select Verification type'
 						variant='flushed'
 						value={kycType}
 						onChange={

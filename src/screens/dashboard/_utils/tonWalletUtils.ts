@@ -22,14 +22,14 @@ const getTokenUSDonDate = async(tokenName: string) => {
 }
 
 const getToken = async() => {
-	const TONTokenId: string = 'the-open-network'
+	const TONTokenId: string = 'axelar'
 
 	// const currentTime = (new Date()).toLocaleDateString().split('/').join('-')
 
 	const tonUsdRate = await getTokenUSDonDate(TONTokenId)
 	const details: TokenDetailsInterface = {
 		tokenIcon: '/v2/icons/toncoin.svg',
-		tokenName: 'TON',
+		tokenName: 'AXL',
 		tokenValueAmount: 0,
 		usdValueAmount: 0,
 		mintAddress: '0x0000000',
@@ -39,7 +39,7 @@ const getToken = async() => {
 			fiatConversion: tonUsdRate
 		},
 		fiatConversion: tonUsdRate,
-		symbol: 'TON'
+		symbol: 'AXL'
 	}
 	return details
 }

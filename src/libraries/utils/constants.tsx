@@ -59,3 +59,12 @@ export const tonWallets = [{
 	ispopular:false,
 	id:'openMask'
 }]
+
+export const keplrWallet = [{
+	name: 'Keplr',
+	icon: <Openmask
+		h={8}
+		w='33px' />,
+	ispopular:false,
+	id:'keplr'
+}]

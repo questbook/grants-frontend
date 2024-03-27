@@ -23,7 +23,7 @@ function PayWithChoose({ selectedMode }: { selectedMode: { logo: string | undefi
 				</Text>
 				<Text>
 					{
-						!safeObj && selectedMode?.value === 'TON Wallet' ? 'TON'
+						!safeObj && selectedMode?.value === 'Keplr Wallet' ? 'AXL'
 							: tokenList ? (tokenList.length ? dropdown() : 'No tokens in the safe') : 'Fetching...'
 					}
 				</Text>
@@ -35,10 +35,10 @@ function PayWithChoose({ selectedMode }: { selectedMode: { logo: string | undefi
 		return (
 			<>
 				{
-					selectedMode?.value === 'TON Wallet' ? (
+					selectedMode?.value === 'Keplr Wallet' ? (
 						<>
 							<Text>
-								TON
+								AXL
 							</Text>
 						</>
 					) : (

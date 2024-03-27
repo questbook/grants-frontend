@@ -25,7 +25,11 @@ import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import usetonWallet from 'src/screens/dashboard/_hooks/useTonWallet'
 import getToken from 'src/screens/dashboard/_utils/tonWalletUtils'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
+import type { ChainInfo } from "@graz-sh/types";
+import { useAccount, useBalance, useSendTokens, useStargateSigningClient } from "graz";
 import TonWeb from 'tonweb'
+import { mainnetChains } from 'src/libraries/utils/keplrWallets'
+import { useConnect as keplrConnect, WalletType } from "graz";
 interface Props {
 	payWithSafe: boolean
 }
@@ -63,10 +67,12 @@ function FundBuilderModal({
 										mt={7}
 										w='100%'
 										justify='center'
+										
 										align='start'>
-
-										<Text>
-											{grant?.reward?.token?.label !== 'USD' ? '' : 'USD'}
+										
+										<Text
+										>
+											{grant?.reward?.token?.label !== 'USD' ? '' : '$'}
 										</Text>
 
 										<FlushedInput
@@ -113,7 +119,7 @@ function FundBuilderModal({
 													{' '}
 													{(amounts?.[0] / (selectedTokenInfo?.fiatConversion)).toFixed(2)}
 													{' '}
-													{selectedTokenInfo?.tokenName}
+													{'AXL'}
 												</Text>
 											) : null
 									}
@@ -215,7 +221,7 @@ function FundBuilderModal({
 
 	const { safeObj } = useSafeContext()!
 	const { grant } = useContext(GrantsProgramContext)!
-	const { proposals, selectedProposals } = useContext(DashboardContext)!
+	const { proposals, selectedProposals, refreshProposals } = useContext(DashboardContext)!
 	const {
 		isModalOpen,
 		setIsModalOpen,
@@ -237,8 +243,45 @@ function FundBuilderModal({
 	const [payoutInProcess, setPayoutInProcess] = useState(false)
 	const [safeAddress, setSafeAddress] = useState('')
 	const customToast = useCustomToast()
+	const { connect: connectKeplr } = keplrConnect()
 	const toast = useToast()
 	const payoutsInProcessToastRef = useRef<any>()
+	const { data: account, isConnected } = useAccount({
+		chainId: mainnetChains[0].chainId
+	  });
+	
+	  const coin = mainnetChains[0].stakeCurrency;
+	  const balance = useBalance({
+		chainId: mainnetChains[0].chainId,
+		bech32Address: account?.bech32Address,
+		denom: coin.coinMinimalDenom,
+	  });
+	
+	  const { data: signingClient, isLoading: isSCLoading } = useStargateSigningClient({
+		chainId: mainnetChains[0].chainId,
+	  });
+	
+	  const { isLoading, sendTokensAsync } = useSendTokens({
+		onSuccess: () => {
+			setPayoutInProcess(false)
+			setIsModalOpen(false)
+		  toast({
+			title: "Success",
+			description: "Transaction done",
+			status: "success",
+		  });
+		},
+		onError: (error) => {
+		  toast({
+			title: "Error",
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-expect-error
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+			description: error?.message || "Something went wrong",
+			status: "error",
+		  });
+		},
+	  });
 
 	const Safe = {
 		logo: safeObj?.safeLogo,
@@ -266,7 +309,11 @@ function FundBuilderModal({
 			value: wallet.name
 		}
 	})
-	const selectedMode = (payWithSafe === true && safeObj !== undefined) ? Safe : Wallets[0]
+	const Wallet = [{
+		logo: 'https://assets-global.website-files.com/63eb7ddf41cf5b1c8fdfbc74/63eb7ddf41cf5bddb7dfbcc9_Keplr_256.png',
+		value: 'Keplr Wallet'
+	}]
+	const selectedMode = (payWithSafe === true && safeObj !== undefined) ? Safe : Wallet[0]
 
 	const proposal = useMemo(() => {
 		return proposals.find(p => selectedProposals.has(p.id))
@@ -279,6 +326,7 @@ function FundBuilderModal({
 	useEffect(() => {
 		if(!payWithSafe && selectedTokenInfo?.tokenName !== 'TON') {
 			getToken().then((value) => {
+				logger.info('Token details', value)
 				setSelectedTokenInfo(value)
 			}), (() => logger.info('Error while fetching ton details'))
 		}
@@ -307,33 +355,42 @@ function FundBuilderModal({
 	}, [payoutInProcess])
 
 	const onContinue = async() => {
-		if(selectedMode?.value === 'TON Wallet') {
+		if(selectedMode?.value === 'Keplr Wallet') {
+			if(!isConnected || !account) {
+				await connectKeplr({ chainId: mainnetChains[0].chainId, walletType: WalletType.KEPLR })
+			} else if(isConnected && account) { 
+				try{
 			setPayoutInProcess(true)
 			setSignerVerifiedState('initiate_TON_transaction')
-			const tonWallet = new SupportedPayouts().getWallet('TON Wallet')
-			tonWallet.checkTonReady(window)
-			logger.info('TON Wallet', tonWallet)
-			tonWallet.sendMoney(tos[0], amounts[0], false, `${grant?.title}: Milestone #${milestoneIndices[0] + 1} Payout`, async(response: any) => {
-				logger.info('TON response', response)
-				if(response?.error) {
-					setPayoutInProcess(false)
-					customToast({
-						title: 'An error occurred while creating transaction on TON Wallet',
-						status: 'error',
-						duration: 5000,
-					})
-				} else {
-					customToast({
-						title: 'Payouts done through TON Wallet, executing transaction...',
-						status: 'success',
-						duration: 5000,
-					})
-					// setSafeProposalAddress(response?.transactionHash)
-					const currentDate = new Date()
-					const timestamp = currentDate.getTime()
-
-					logger.info('transaction hash', '99887341.' + timestamp)
-					// const methodArgs = [
+			const amountFormated = (amounts?.[0] / (selectedTokenInfo?.fiatConversion || 2.02)).toFixed(2)
+			const res = await sendTokensAsync({
+				amount: [
+				  {
+					// {(amounts?.[0] * (selectedTokenInfo?.fiatConversion)).toFixed(2)
+					// amount: String(Number(amounts?.[0]) * Math.pow(10, coin.coinDecimals || 6)),
+					// convert it to axl by multiplying fiatConversion
+					amount: String(Number(amountFormated) * Math.pow(10, coin.coinDecimals || 6)),
+					denom: coin.coinMinimalDenom || "",
+				  },
+				],
+				fee: {
+				  amount: [
+					{
+					  amount: "5000",
+					  denom: coin.coinMinimalDenom || "",
+					},
+				  ],
+				  gas: "200000",
+				},
+				memo: `${grant?.title}: Milestone #${milestoneIndices[0] + 1} Payout`,
+				senderAddress: account?.bech32Address || "",
+				recipientAddress: tos[0],
+				signingClient,
+			  });
+			  if(res){
+				setPayoutInProcess(false)
+				setIsModalOpen(false)
+						// const methodArgs = [
 					// 	[parseInt(proposal?.id!, 16)],
 					// 	[parseInt(milestones[milestoneIndices[0]].id?.split('.')[1])],
 					// 	'0x0000000000000000000000000000000000000001',
@@ -351,7 +408,7 @@ function FundBuilderModal({
 						tokenName: selectedTokenInfo?.tokenName!,
 						nonEvmAssetAddress: 'nonEvmAssetAddress-toBeChanged',
 						amounts: [amounts?.[0]],
-						transactionHash: '99887341.' + (response?.transactionHash ?? timestamp),
+						transactionHash: res?.transactionHash,
 						sender: safeAddress,
 						grant: grant?.id!,
 						to: tos?.[0]
@@ -359,26 +416,72 @@ function FundBuilderModal({
 
 					// // await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
 					await executeMutation(DisburseRewardSafeMutation, args)
+					await refreshProposals(true)
+				logger.info('Transaction done', res)
+			  }
+			} catch(e) {
+				setPayoutInProcess(false)
+				customToast({
+					title: 'An error occurred while creating transaction on Keplr Wallet',
+					status: 'error',
+					duration: 5000,
+				})
+				return 
+			}
+			} else {
+				setPayoutInProcess(false)
+				customToast({
+					title: 'An error occurred while creating transaction on Keplr Wallet',
+					status: 'error',
+					duration: 5000,
+				})
+				return 
+			}
 
-					// setSignerVerifiedState('transaction_initiated')
-					setIsModalOpen(false)
-					setPayoutInProcess(false)
-					// disburseRewardFromSafe(response?.transactionHash, false)
-					// 	.then(() => {
-					// 		// console.log('Sent transaction to contract - EVM', proposaladdress)
-					// 	})
-					// 	.catch((err) => {
-					// 		console.log('sending transction error:', err)
-					// 	})
-				}
+			// const tonWallet = new SupportedPayouts().getWallet('TON Wallet')
+			// tonWallet.checkTonReady(window)
+			// logger.info('TON Wallet', tonWallet)
+			// tonWallet.sendMoney(tos[0], amounts[0], false, `${grant?.title}: Milestone #${milestoneIndices[0] + 1} Payout`, async(response: any) => {
+			// 	logger.info('TON response', response)
+			// 	if(response?.error) {
+			// 		setPayoutInProcess(false)
+			// 		customToast({
+			// 			title: 'An error occurred while creating transaction on TON Wallet',
+			// 			status: 'error',
+			// 			duration: 5000,
+			// 		})
+			// 	} else {
+			// 		customToast({
+			// 			title: 'Payouts done through TON Wallet, executing transaction...',
+			// 			status: 'success',
+			// 			duration: 5000,
+			// 		})
+			// 		// setSafeProposalAddress(response?.transactionHash)
+			// 		const currentDate = new Date()
+			// 		const timestamp = currentDate.getTime()
 
-			})
+			// 		logger.info('transaction hash', '99887341.' + timestamp)
+			
+
+			// 		// setSignerVerifiedState('transaction_initiated')
+			// 		setIsModalOpen(false)
+			// 		setPayoutInProcess(false)
+			// 		// disburseRewardFromSafe(response?.transactionHash, false)
+			// 		// 	.then(() => {
+			// 		// 		// console.log('Sent transaction to contract - EVM', proposaladdress)
+			// 		// 	})
+			// 		// 	.catch((err) => {
+			// 		// 		console.log('sending transction error:', err)
+			// 		// 	})
+			// 	}
+
+			// })
 
 		}
 
-		if(selectedMode?.value !== 'TON Wallet' && signerVerifiedState === 'unverified') {
-			setSignerVerifiedState('initiate_verification')
-		}
+		// if(selectedMode?.value !== 'TON Wallet' && signerVerifiedState === 'unverified') {
+		// 	setSignerVerifiedState('initiate_verification')
+		// }
 	}
 
 
@@ -508,7 +611,6 @@ function FundBuilderModal({
 	}
 
 	const workspacechainId = getSupportedChainIdFromWorkspace(grant?.workspace) || defaultChainId
-
 	// const { call } = useFunctionCall({ chainId: workspacechainId, contractName: 'workspace' })
 	const { } = useFunctionCall({ chainId: workspacechainId, contractName: 'applications' })
 	const { scwAddress } = useContext(WebwalletContext)!

@@ -76,7 +76,7 @@ function FundingMethod({
 						}
 					>
 						{/* {isOwner ? 'Link Multisig' : 'Verify you are a signer'} */}
-						Use OpenMask for TON blockchain
+						Use Keplr Wallet for Axelar
 					</Button>
 
 

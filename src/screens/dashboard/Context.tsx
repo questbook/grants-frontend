@@ -162,14 +162,15 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const result: any = await fetchFundsAllocated({ id: grantId }, true)
 		if(result?.grantApplications) {
-
 			const totalAllocated = result?.grantApplications?.reduce((acc: number, grantApplication: { milestones: { amount: number }[] }) => {
 				return acc + grantApplication.milestones.reduce((acc: number, milestone: { amount: number }) => acc + milestone.amount, 0)
 			}, 0)
 			logger.info({ totalAllocated }, 'Funds allocated (GET FUNDS ALLOCATED)')
 			setFundsAllocated({
 				allocated: totalAllocated,
-				disbursed: result?.grantApplications[0]?.grant?.totalGrantFundingDisbursedUSD
+				disbursed: result?.grantApplications?.reduce((acc: number, grantApplication: { grant: { fundTransfers: { amount: number }[] } }) => {
+					return acc + grantApplication.grant.fundTransfers.reduce((acc: number, fundTransfer: { amount: number }) => acc + fundTransfer.amount, 0)
+				}, 0)
 			})
 		}
 

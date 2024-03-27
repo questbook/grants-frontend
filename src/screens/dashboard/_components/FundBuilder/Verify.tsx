@@ -4,13 +4,17 @@ import { Flex, Text, VStack } from '@chakra-ui/react'
 import { useSafeContext } from 'src/contexts/safeContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
-import { availableWallets, solanaWallets, tonWallets } from 'src/libraries/utils/constants'
+import { availableWallets, keplrWallet, solanaWallets, tonWallets } from 'src/libraries/utils/constants'
 import getErrorMessage from 'src/libraries/utils/error'
 import ConnectWalletButton from 'src/screens/dashboard/_components/FundBuilder/ConnectWalletButton'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import usetonWallet from 'src/screens/dashboard/_hooks/useTonWallet'
 import { SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
 import { Connector, useAccount, useConnect, useNetwork, useSwitchNetwork } from 'wagmi'
+import type { ChainInfo } from "@graz-sh/types";
+import { checkWallet, useAccount as useKeplrAccount } from "graz";
+import { useConnect as keplrConnect, WalletType } from "graz";
+import { mainnetChains } from 'src/libraries/utils/keplrWallets'
 
 interface Props {
 	signerVerifiedState: SignerVerifiedState
@@ -93,7 +97,7 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 									}
 								} />
 						)) : (
-							isTonChain ? (tonWallets.map(wallet => (
+							isTonChain ? (keplrWallet.map(wallet => (
 								<ConnectWalletButton
 									id={wallet.id}
 									maxW='100%'
@@ -105,7 +109,7 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 									onClick={
 										async() => {
 											setVerifying(wallet.id)
-											await connectTonWallet()
+											await connectKeplr({ chainId: mainnetChains[0].chainId, walletType: WalletType.KEPLR })
 										}
 									} />
 							)
@@ -146,7 +150,7 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 
 	const [verifying, setVerifying] = useState<string>()
 	const [selectedConnector, setSelectedConnector] = useState<Connector>()
-
+	const { connect: connectKeplr } = keplrConnect()
 	const isEvmChain = useMemo(() => {
 		return safeObj?.getIsEvm()
 	}, [safeObj])

@@ -153,6 +153,8 @@ function Payouts() {
 									} else {
 										window.open(getGnosisTansactionLink(grant?.workspace?.safe?.address, grant?.workspace?.safe?.chainId.toString(), payout?.transactionHash), '_blank')
 									}
+								} else if(payout?.transactionHash) {
+									window.open(`https://testnet.axelarscan.io/tx/${payout.transactionHash}`, '_blank')
 								} else {
 									toast({
 										status: 'warning',
@@ -165,7 +167,7 @@ function Payouts() {
 						<Text
 							fontWeight='400'
 							variant='body'>
-							{payout.status === 'queued' ? 'Queued' : payout.status === 'executed' ? 'Success' : 'Cancelled'}
+							{payout.status === 'queued' ? 'Success' : payout.status === 'executed' ? 'Success' : 'Cancelled'}
 						</Text>
 					</Button>
 
