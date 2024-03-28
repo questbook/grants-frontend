@@ -203,7 +203,7 @@ function SetupProfileModal({ walletAddress, isOpen, onClose }: Props) {
 
 	const { address, isConnected } = useAccount()
 
-	const sign = useSignMessage({ message: 'Some message' })
+	const { signMessageAsync } = useSignMessage()
 
 	const onClick = async() => {
 		if(isDisabled || networkTransactionModalStep !== undefined || !address) {
@@ -212,7 +212,7 @@ function SetupProfileModal({ walletAddress, isOpen, onClose }: Props) {
 
 		const message = 'Verification message'
 		const hashedMessage = ethers.utils.solidityKeccak256(['string'], [message])
-		const signature = await sign.signMessageAsync({ message: ethers.utils.arrayify(hashedMessage) })
+		const signature = await signMessageAsync({ message: hashedMessage })
 		if(!signature) {
 			return
 		}
