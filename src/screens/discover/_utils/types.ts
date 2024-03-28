@@ -25,7 +25,6 @@ export type DiscoverContextType = {
     isLoading: boolean
     safeBalances: {[key: string]: number}
     grantsAllocated: number
-    sectionSubGrants: GrantType[]
 }
 
 export type FundTransfer = {

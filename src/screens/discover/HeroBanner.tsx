@@ -1,8 +1,8 @@
 /* eslint-disable indent */
 import { useMediaQuery } from 'react-responsive'
-import { Box, Flex, Image, Text } from '@chakra-ui/react'
+import { Flex, Image, Text } from '@chakra-ui/react'
 import { logger } from 'ethers'
-import { ArrowRight } from 'src/generated/icons'
+import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { SectionGrants } from 'src/screens/discover/_utils/types'
 // import { useRouter } from 'next/router'
 
@@ -10,14 +10,10 @@ function HeroBanner({
 	grants,
 	safeBalances,
 	grantsAllocated,
-	reclaimRef,
-	arbitrumRef,
 }: {
 	grants: SectionGrants[]
 	safeBalances: number
 	grantsAllocated: number
-	reclaimRef: React.RefObject<HTMLDivElement>
-	arbitrumRef: React.RefObject<HTMLDivElement>
 }) {
 	logger.info({ grants, safeBalances }, 'HeroBanner')
 
@@ -125,7 +121,7 @@ function HeroBanner({
 							justifyContent='center'
 							h={isMobile ? '40px' : '80px'}
 							w={isMobile ? '40px' : '80px'}
-							src='https://cryptologos.cc/logos/arbitrum-arb-logo.png' />
+							src={getUrlForIPFSHash('QmWX8As9og6mLaiPhCaR3NqkinXMDymMaqf43qyVSE5hp8')} />
 						<Text
 							fontWeight='500'
 							fontSize={isMobile ? '32px' : '64px'}
@@ -136,7 +132,7 @@ function HeroBanner({
 									[10, 5]
 							}
 							color='black'>
-							Arbitrum Grants
+							Reclaim Grants
 						</Text>
 					</Flex>
 
@@ -164,61 +160,6 @@ function HeroBanner({
 
 					</Flex>
 				</Flex>
-				{
-					!isMobile && (
-						<Box
-							bgColor='white'
-							padding={[4, 4, 6, 4]}
-							borderRadius='8px'
-							border='1px solid #EFEEEB'
-							gap='16px'
-							// Fixed (403px)
-							width='30%'
-						>
-							<Text
-								fontWeight='600'
-								color='black.100'
-								fontSize='18px'
-								mb={4}
-							>
-								Listed grants
-							</Text>
-							{
-								['Arbitrum DAO', 'Reclaim Arbitrum Grants']?.map((grant: string, index: number) => (
-									<Flex
-										key={index}
-										gap={1}
-										mt={2}
-										cursor='pointer'
-										onClick={
-											() => {
-												if(grant === 'Reclaim Arbitrum Grants') {
-													reclaimRef.current?.scrollIntoView({ behavior: 'smooth' })
-												} else {
-													arbitrumRef.current?.scrollIntoView({ behavior: 'smooth' })
-												}
-											}
-										}
-									>
-										<Text
-											fontWeight='500'
-											color='#7E7E8F'
-											fontSize='16px'
-										>
-											{grant}
-										</Text>
-										<ArrowRight
-											color='#7E7E8F'
-											boxSize='20px'
-										/>
-									</Flex>
-								))
-							}
-
-
-						</Box>
-					)
-				}
 			</Flex>
 		</Flex>
 

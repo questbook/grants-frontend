@@ -23,7 +23,7 @@ const PAGE_SIZE = 40
 const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	const provider = () => {
 		return (
-			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram, search, setSearch, sectionGrants, recentProposals, isLoading, safeBalances, grantsAllocated, sectionSubGrants }}>
+			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram, search, setSearch, sectionGrants, recentProposals, isLoading, safeBalances, grantsAllocated }}>
 				{children}
 			</DiscoverContext.Provider>
 		)
@@ -38,7 +38,6 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	const [sectionGrants, setSectionGrants] = useState<SectionGrants>()
 	const [recentProposals, setRecentProposals] = useState<RecentProposals>()
 	const [grantsAllocated, setGrantsAllocated] = useState<number>(0)
-	const [sectionSubGrants, setSectionSubGrants] = useState<GrantType[]>([])
 
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 	const [search, setSearch] = useState<string>('')
@@ -343,22 +342,26 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		}
 
 		if(subgrantsResults?.grants?.length) {
-			setSectionSubGrants(subgrantsResults?.grants)
+			const reclaim = allSectionGrants.find((s: any) => Object.keys(s)[0] === 'Reclaim Protocol')
+			if(reclaim) {
+				allSectionGrants[allSectionGrants.indexOf(reclaim)] = { 'Reclaim Protocol': { ...reclaim['Reclaim Protocol'], grants: [...subgrantsResults?.grants, ...reclaim['Reclaim Protocol'].grants] } }
+			}
+
+			recentProposals = [...recentProposals, ...subgrantsResults?.grants.map((g: any) => g.applications.map((a: any) => {
+				return {
+					...a,
+					sectionName: 'Reclaim Arbitrum Grants',
+					grant: {
+						title: g.title,
+						id: g.id,
+						workspace: g.workspace
+					}
+				}
+			}).flat()).flat()]
 		}
+
 
 		logger.info({ allSectionGrants, recentProposals }, 'All section grants (DISCOVER CONTEXT)')
-
-		// move selected grants to top of the list
-		for(let i = 0; i < allSectionGrants.length; i++) {
-			const key = Object.keys(allSectionGrants[i])[0]
-			const topGrants = ['Arbitrum', 'Compound', 'TON Foundation', 'iExec']
-			if(topGrants.includes(key)) {
-				const temp = allSectionGrants[topGrants.indexOf(key)]
-				allSectionGrants[topGrants.indexOf(key)] = allSectionGrants[i]
-				allSectionGrants[i] = temp
-			}
-		}
-
 
 		recentProposals.sort((a, b) => b.updatedAtS - a.updatedAtS)
 		logger.info({ recentProposals }, 'All recent grants (DISCOVER CONTEXT)')
@@ -366,13 +369,6 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		setRecentProposals(recentProposals)
 	}
 
-	// useEffect(() => {
-	// 	getGrantsForAll().then(r => logger.info(r, 'Get Grants for all'))
-	// }, [search])
-
-	// useEffect(() => {
-	// 	getGrantsForYou().then(r => logger.info(r, 'Get Grants for you'))
-	// }, [scwAddress])
 	useEffect(() => {
 		getGrantsAllocated().then(r => logger.info(r, 'Get Grants Allocated'))
 	}, [])
@@ -401,7 +397,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 			}
 		}
 
-		const allGrants = [...grantsForAll, ...grantsForYou, ...sGrants, ...sectionSubGrants]
+		const allGrants = [...grantsForAll, ...grantsForYou, ...sGrants]
 		fetchSafeBalances(allGrants)
 
 

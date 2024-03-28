@@ -8,15 +8,32 @@ query getSectionSubGrants {
       title
       applications(filter: {
         state: "approved"
-      }, limit: 2, sort: UPDATEDATS_DESC) {
+      },sort: UPDATEDATS_DESC) {
         id: _id
         applicantId
         state
         createdAtS
         updatedAtS
+        name: fieldFilterBySection(
+          filter:{
+            field: "projectName"
+          }
+        ) {
+          values{
+            value
+          }
+        }
+        author:fieldFilterBySection(filter: {
+          field: "applicantName"
+        } ){
+          values {
+            value
+          }
+        }
         milestones {
           id: _id
           amount
+          amountPaid
         }
         grant {
           id: _id
