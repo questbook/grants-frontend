@@ -37,9 +37,9 @@ function StatsBanner(stats: StatsType) {
 				gap='20px'
 				borderRadius='0px 0px 48px 48px'
 				justifyContent='space-evenly'>
-				{Fields(stats?.builders > 0 ? formatNumber(stats?.builders) : formatNumber(30000), 'Builders')}
+				{Fields(stats?.builders > 0 ? formatNumber(stats?.builders) : formatNumber(37000), 'Builders')}
 				{Fields(stats?.proposals > 0 ? formatNumber(stats?.proposals) : formatNumber(3000), 'Proposals')}
-				{Fields(stats?.funds > 0 ? formatFundsAmount(stats?.funds) : formatFundsAmount(3900000), 'Paid out')}
+				{Fields(stats?.funds > 0 ? formatFundsAmount(stats?.funds) : formatFundsAmount(4800000), 'Paid out')}
 			</Flex>
 		)
 	}
