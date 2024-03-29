@@ -233,7 +233,7 @@ function HeroBannerBox({
 						fontSize='12px'
 						lineHeight='16px'
 						color='white'>
-						This domain is focused on grants related to the Arbitrum ecosystem
+						This domain is focused on grants related to the Reclaim ecosystem
 					</Text>
 
 				</Flex>
