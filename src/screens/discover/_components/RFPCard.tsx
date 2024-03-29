@@ -56,6 +56,11 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						return
 					}
 
+					// returning as onClick as program details button clicked
+					if(e.target.toString() === '[object HTMLButtonElement]') {
+						return
+					}
+
 					if(!chainId) {
 						return
 					}

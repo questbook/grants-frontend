@@ -4,18 +4,18 @@ const seoConfig = {
 	description:
       'Discover Opportunities in Web 3.0 and Earn in Crypto',
 	// siteUrl: 'https://www.questbook.app/',
-	siteUrl: 'https://arbitrum.questbook.app/',
+	siteUrl: 'https://reclaim.questbook.app/',
 	twitter: {
 		handle: '@questbookapp',
 		site: '@questbookapp',
 		cardType: 'summary_large_image',
 		title: 'Questbook Grant',
-		image: 'https://ipfs.io/ipfs/QmSJoY7G4rPzxWUKAdzRyfjK28wHHbSqjHi7SaCroVguwc',
+		image: 'https://ipfs.io/ipfs/QmSigB8rKCAzY5VChjRbmAUdgRd7dCz28oRmkdJomJSJqs',
 	},
 	openGraph: {
 		type: 'website',
 		locale: 'en_US',
-		url: 'https://arbitrum.questbook.app/',
+		url: 'https://reclaim.questbook.app/',
 		title: 'Questbook',
 		description:
         'Discover Opportunities in Web 3.0 and Earn in Crypto',
@@ -23,13 +23,13 @@ const seoConfig = {
 		site_name: 'Questbook',
 		images: [
 			{
-				url: 'https://ipfs.io/ipfs/QmSJoY7G4rPzxWUKAdzRyfjK28wHHbSqjHi7SaCroVguwc',
+				url: 'https://ipfs.io/ipfs/QmSigB8rKCAzY5VChjRbmAUdgRd7dCz28oRmkdJomJSJqs',
 				width: 1240,
 				height: 480,
 				alt: 'Questbook Grant',
 			},
 			{
-				url: 'https://ipfs.io/ipfs/QmSJoY7G4rPzxWUKAdzRyfjK28wHHbSqjHi7SaCroVguwc',
+				url: 'https://ipfs.io/ipfs/QmSigB8rKCAzY5VChjRbmAUdgRd7dCz28oRmkdJomJSJqs',
 				width: 1012,
 				height: 506,
 				alt: 'Questbook Grant',

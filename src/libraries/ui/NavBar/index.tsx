@@ -113,7 +113,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 								() => {
 									router.push(
 										{
-											pathname: grant?.subgrant ? '/create_subgrant/' : '/request_proposal/',
+											pathname: '/request_proposal/',
 											query: {
 												grantId: grant?.id,
 												chainId: getSupportedChainIdFromWorkspace(grant?.workspace),

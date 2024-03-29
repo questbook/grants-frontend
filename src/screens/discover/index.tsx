@@ -243,8 +243,8 @@ function Discover() {
 			'text': 'iExec'
 		},
 		{
-			'logo': 'QmWX8As9og6mLaiPhCaR3NqkinXMDymMaqf43qyVSE5hp8',
-			'text': 'Reclaim Protocol'
+			'logo': 'QmcZQwYXLgk9yam6RYafYNLYd52X8UggbsQAr6WdaYUtyb',
+			'text': 'Elastos'
 		},
 		{
 			'logo': 'QmWsnbRQV8vYCSkrVU8uvgQeSnkiD9MLZv2kmuKDUXh2VC',
@@ -489,7 +489,7 @@ function Discover() {
 																		textAlign='match-parent'
 																		color='#7E7E8F'
 																	>
-																		The Arbitrum grants, administered via DDA by Questbook and 4 domain allocators, went live on the 5th of October with a grants budget of $800k spread across four domains. The Questbook Arbitrum Grants program is useful for anyone developing in domain specific projects on top of Arbitrum
+																		The Reclaim Grant is for anyone that’s building a product top of Reclaim Protocol
 																	</Text>
 																	<Text
 																		fontWeight='600'
@@ -518,7 +518,7 @@ function Discover() {
 																		pb={2}
 																		px={3}
 																	>
-																		Domain Allocators
+																		Domain Allocator
 																	</Text>
 																	<Box
 																	>
@@ -526,24 +526,9 @@ function Discover() {
 																			[
 																				{
 																					image: '0x012521',
-																					title: 'JoJo (New Protocol Ideas)',
-																					twitter: 'jojo17568'
+																					title: 'Madhavan Malolan',
+																					twitter: 'madhavanmalolan'
 																				},
-																				{
-																					image: '0x012522',
-																					title: 'Adam (Gaming)',
-																					twitter: 'Flook_eth'
-																				},
-																				{
-																					image: '0x012523',
-																					title: 'Juandi (Dev Tooling)',
-																					twitter: 'ImJuandi'
-																				},
-																				{
-																					image: '0x012524',
-																					title: 'Cattin (Education, Community growth & Events)',
-																					twitter: 'Cattin0x'
-																				}
 																			].map((user, index) => (
 																				<UserCard
 																					key={index}
