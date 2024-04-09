@@ -1,6 +1,6 @@
 import { useMediaQuery } from 'react-responsive'
 import { Box, Button, Flex, Grid, Image, Text } from '@chakra-ui/react'
-import { Telegram, Twitter } from 'src/generated/icons'
+import { ProjectDetails, Telegram, Twitter } from 'src/generated/icons'
 import { getAvatar } from 'src/libraries/utils'
 import RoleTag from 'src/screens/dashboard/_components/RoleTag'
 // import { useRouter } from 'next/router'
@@ -210,7 +210,7 @@ function HeroBannerBox({
 				 _hover={{ bgColor: 'blue.600' }}
 				 w={isMobile ? '50%' : ''}
 				 onClick={() => window.open(programDetails, '_blank')}
-				 rightIcon={<Image src='https://ipfs.io/ipfs/bafkreicnpfrdixcbocuksdful4gsaoetxrwby2a5tnpiehz7w4abbd2bcm' />}
+				 rightIcon={<ProjectDetails />}
 				 >
 						Program Details
 					</Button>

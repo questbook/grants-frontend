@@ -26,6 +26,8 @@ export type DashboardContextType = {
   refreshProposals: (refresh: boolean) => void
   filterState: ApplicationState | undefined
   setFilterState: (state: ApplicationState | undefined) => void
+  sortBy: 'updatedAtS' | 'createdAtS'
+  setSortBy: (sortBy: 'updatedAtS' | 'createdAtS') => void
   fundsAllocated: { allocated: number, disbursed: number }
 };
 
