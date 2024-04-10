@@ -80,7 +80,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 					router.push({
 						pathname: '/dashboard/',
 						query: params,
-					})
+					}, undefined, { shallow: true })
 				}
 			}>
 			<Flex

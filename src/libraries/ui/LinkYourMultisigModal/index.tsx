@@ -67,7 +67,7 @@ function LinkYourMultisigModal({
 						flexProps={{ w: '100%' }}
 						mt={8}
 						textAlign='left'
-						placeholder='Solana or EVM address'
+						placeholder='Starknet address'
 						value={multiSigAddress}
 						onChange={
 							(e) => {
@@ -108,10 +108,8 @@ function LinkYourMultisigModal({
 								if(isOwner && selectedSafeNetwork) {
 									//mapping ton chainIds
 									let networkId = selectedSafeNetwork.networkId?.toString()
-									if(networkId === '-3') {
-										networkId = '512342'
-									} else if(networkId === '-239') {
-										networkId = '512341'
+									if(networkId === '9004') {
+										networkId = '9004'
 									}
 
 									// link the safe
@@ -258,7 +256,7 @@ function LinkYourMultisigModal({
 			icon: <Tonkey
 				h='2rem'
 				w='5rem' />
-		}
+		},
 	]
 
 	const [multiSigAddress, setMultiSigAddress] = useState<string>('')

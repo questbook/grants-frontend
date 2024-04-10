@@ -37,7 +37,7 @@ function SingleSelect() {
 							<Button
 								isDisabled={
 									role === 'builder' ? proposal?.applicantId?.toLowerCase() !== scwAddress?.toLowerCase() || (proposal?.state !== 'submitted' && proposal?.state !== 'resubmit') :
-										!!(role === 'admin' || role === 'reviewer')
+								  true
 								}
 								w='100%'
 								variant='primaryMedium'

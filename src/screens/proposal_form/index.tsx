@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChangeEvent, ReactElement, useContext, useEffect, useMemo, useState } from 'react'
 import QRCode from 'react-qr-code'
 import { Button, Container, Flex, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Text } from '@chakra-ui/react'
@@ -252,7 +251,7 @@ function ProposalForm() {
 																	role: 'builder',
 																	proposalId,
 																}
-															})
+															}, undefined, { shallow: true })
 															if(ret) {
 																router.reload()
 															}
@@ -570,7 +569,7 @@ function ProposalForm() {
 									value={findCustomField(form, 'Country').value}
 									onChange={
 										(e) => {
-											onChange(e as any, findCustomField(form, 'Country').id)
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Country').id)
 										}
 									} />
 							)
@@ -654,7 +653,7 @@ function ProposalForm() {
 									value={findCustomField(form, 'Project category').value}
 									onChange={
 										(e) => {
-											onChange(e as any, findCustomField(form, 'Project category').id)
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Project category').id)
 										}
 									} />
 							)
@@ -1026,12 +1025,12 @@ function ProposalForm() {
 								<SectionDropDown
 									label='How did you hear about the Seed Grants Program?'
 									width='-moz-fit-content'
-									/* Starknet Blog, Starknet Community Event, Starknet Website, Social Media, Other team/ project in the ecosystem, Other */
+									placeholder='Select an option'
 									options={['Starknet Blog', 'Starknet Community Event', 'Starknet Website', 'Social Media', 'Other team/ project in the ecosystem', 'Other']}
 									value={findCustomField(form, 'How did you hear about the Seed Grants Program?').value}
 									onChange={
 										(e) => {
-											onChange(e as any, findCustomField(form, 'How did you hear about the Seed Grants Program?').id)
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'How did you hear about the Seed Grants Program?').id)
 										}
 									} />
 							)
@@ -1162,7 +1161,7 @@ function ProposalForm() {
 		return val
 	}, [form])
 
-	logger.info({ fundingAsk }, 'Form')
+	logger.info({ fundingAsk }, 'funding ask')
 
 	const isDisabled = useMemo(() => {
 		if(!form) {
@@ -1175,7 +1174,7 @@ function ProposalForm() {
 		const optionalFields = ['projectDetails', 'fundingAsk', 'fundingBreakdown', 'projectGoals', 'projectLink']
 		const optionalFielsConditions = ['If yes,', 'Please include']
 		const { fields, members, details, milestones } = form
-		logger.info({ fields, members, details, milestones }, 'Fields')
+		logger.info({ fields, members, details, milestones }, 'Checking fields')
 		for(const field of fields) {
 			// f.id.substring(f.id.indexOf('.') + 1).includes(field)
 			if(field.value === '' && !optionalFields.includes(field.id) && !optionalFielsConditions.some((condition) => field.id?.substring(field.id.indexOf('.') + 1).includes(condition))) {

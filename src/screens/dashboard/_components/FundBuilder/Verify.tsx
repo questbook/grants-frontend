@@ -1,15 +1,16 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { Flex, Text, VStack } from '@chakra-ui/react'
+import { useAccount as useStarknetAccount, useConnect as useStarknetConnect } from '@starknet-react/core'
 import { useSafeContext } from 'src/contexts/safeContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
-import { availableWallets, solanaWallets, tonWallets } from 'src/libraries/utils/constants'
+import { availableWallets, tonWallets } from 'src/libraries/utils/constants'
 import getErrorMessage from 'src/libraries/utils/error'
 import ConnectWalletButton from 'src/screens/dashboard/_components/FundBuilder/ConnectWalletButton'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
-import usetonWallet from 'src/screens/dashboard/_hooks/useTonWallet'
 import { SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
+import { validateAndParseAddress } from 'starknet'
 import { Connector, useAccount, useConnect, useNetwork, useSwitchNetwork } from 'wagmi'
 
 interface Props {
@@ -105,13 +106,22 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 									onClick={
 										async() => {
 											setVerifying(wallet.id)
-											await connectTonWallet()
+											if(!isStarknetConnected) {
+												logger.info('Connecting to Starknet')
+												await starknetConnect({ connector: starknetConnectors[0] })
+											} else {
+												toast({
+													title: 'Already connected to Starknet',
+													status: 'info',
+													duration: 3000
+												})
+											}
 										}
 									} />
 							)
 							))
 								:
-								solanaWallets.map(wallet => (
+								tonWallets.map(wallet => (
 									<ConnectWalletButton
 										id={wallet.id}
 										maxW='100%'
@@ -121,9 +131,19 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 										verifying={verifying}
 										isDisabled={verifying !== undefined && verifying !== wallet.id}
 										onClick={
-											() => {
+											async() => {
+												logger.info('Connect wallet initiated')
 												setVerifying(wallet.id)
-												phantomWallet?.connect()
+												if(!isStarknetConnected) {
+													logger.info('Connecting to Starknet')
+													await starknetConnect({ connector: starknetConnectors[0] })
+												} else {
+													toast({
+														title: 'Already connected to Starknet',
+														status: 'info',
+														duration: 3000
+													})
+												}
 											}
 										} />
 								)
@@ -140,8 +160,9 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 	const { safeObj } = useSafeContext()!
 	const { switchNetwork } = useSwitchNetwork()
 	const { phantomWallet, phantomWalletConnected } = usePhantomWallet()
-	const { connectTonWallet, tonWalletAddress, tonWalletConnected } = usetonWallet()
 	const { address } = useAccount()
+	const { address: starknetAddress, isConnected: isStarknetConnected } = useStarknetAccount()
+	const { connect: starknetConnect, connectors: starknetConnectors } = useStarknetConnect()
 	const toast = useCustomToast()
 
 	const [verifying, setVerifying] = useState<string>()
@@ -158,7 +179,7 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 	const verifyOwner = async(address: string) => {
 		logger.info({ address: safeObj?.safeAddress }, '1')
 		logger.info('lllllll', safeObj)
-		const isVerified = await safeObj?.isOwner(address)
+		const isVerified = await safeObj?.isOwner(validateAndParseAddress(address))
 		if(isVerified) {
 			setSignerVerifiedState('verified')
 			toast({
@@ -185,15 +206,16 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 		}
 
 		const isConnected = selectedConnector ? await selectedConnector.isAuthorized().catch(() => false) : false
-		if(isConnected || phantomWalletConnected) {
+		if(isConnected || phantomWalletConnected || isStarknetConnected) {
 			setSignerVerifiedState('verifying')
 		}
 
+		logger.info({ verifying }, 'Verifying')
 		if(shouldVerify) {
 			if(safeObj?.getIsEvm() && isConnected && chain?.id === safeObj?.chainId) {
 				verifyOwner(address!)
-			} else if(isTonChain && tonWalletConnected) {
-				verifyOwner(tonWalletAddress)
+			} else if(isTonChain && isStarknetConnected) {
+				verifyOwner(validateAndParseAddress(starknetAddress!))
 			} else if(phantomWalletConnected) {
 				verifyOwner(phantomWallet?.publicKey?.toString()!)
 			}
@@ -223,10 +245,11 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 	}
 
 	useEffect(() => {
-		if((isTonChain && tonWalletConnected) || (address && verifying !== undefined)) {
+		if((isTonChain && isStarknetConnected) || (address && verifying !== undefined)) {
+			logger.info('Initiating owner verification')
 			initiateOwnerVerification()
 		}
-	}, [address, chain, selectedConnector, phantomWalletConnected, verifying, tonWalletConnected])
+	}, [address, chain, selectedConnector, phantomWalletConnected, verifying, isStarknetConnected])
 
 	useEffect(() => {
 		logger.info({ chain }, 'Current chain')

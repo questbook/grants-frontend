@@ -8,11 +8,14 @@ import {
 	Image,
 	Text,
 } from '@chakra-ui/react'
+import copy from 'copy-to-clipboard'
 import { ContentState, convertFromRaw, EditorState } from 'draft-js'
 import { defaultChainId } from 'src/constants/chains'
-import { Mail } from 'src/generated/icons'
+import { Mail, ShareForward } from 'src/generated/icons'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import CopyIcon from 'src/libraries/ui/CopyIcon'
+import NotificationPopover from 'src/libraries/ui/NavBar/_components/NotificationPopover'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
 import { getAvatar } from 'src/libraries/utils'
 import {
@@ -55,7 +58,45 @@ function Proposal() {
 				boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
 				bg='white'
 			>
-
+				<Flex
+					w='100%'
+					align='center'
+					justify='space-between'>
+					<Text
+						maxW='90%'
+						as='span'
+						variant='heading3'
+						fontWeight='500'>
+						{getFieldString(proposal, 'projectName')}
+					</Text>
+					<Flex
+						ml={4}
+						gap={4}>
+						<NotificationPopover
+							type='proposal'
+							proposalId={proposal?.id} />
+						<ShareForward
+							boxSize='20px'
+							cursor='pointer'
+							onClick={
+								() => {
+									const href = window.location.href.split('/')
+									const protocol = href[0]
+									const domain = href[2]
+									const link = `${protocol}//${domain}/dashboard/?grantId=${proposal.grant.id
+									}&chainId=${chainId}&proposalId=${proposal.id
+									}&isRenderingProposalBody=${true}`
+									copy(link)
+									toast({
+										title: 'Copied!',
+										status: 'success',
+										duration: 3000,
+									})
+								}
+							}
+						/>
+					</Flex>
+				</Flex>
 
 				{
 					shouldShowPII && (
@@ -193,7 +234,6 @@ function Proposal() {
 									{getFieldString(decryptedProposal, 'applicantName')}
 
 									{getFieldString(decryptedProposal, lastName as string) ?? ''}
-
 								</Text>
 							</Flex>
 						)
@@ -389,6 +429,7 @@ function Proposal() {
 	const { grant, role } = useContext(GrantsProgramContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
+	const toast = useCustomToast()
 
 	const proposal = useMemo(() => {
 		return proposals.find((p) => selectedProposals.has(p.id))

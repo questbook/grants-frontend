@@ -13,9 +13,11 @@ function PayFromChoose({ selectedMode }: { selectedMode: {logo: string | undefin
 					color='gray.600'>
 					Pay From
 				</Text>
-				<Flex alignItems='center'>
+				<Flex
+					alignItems='center'
+					overflowX='auto'>
 					<Image
-						src={selectedMode?.logo}
+						src='/v2/icons/starknet.svg'
 						boxSize='16px' />
 					<Text
 						ml={2}

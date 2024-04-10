@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import { Flex, FlexProps, Input, InputProps, Text, Textarea } from '@chakra-ui/react'
 
 interface Props extends InputProps {
@@ -52,8 +52,7 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 								onChange={
 									(e) => {
 										setValue(e.target.value)
-										// eslint-disable-next-line @typescript-eslint/no-explicit-any
-										props?.onChange?.(e as any)
+										props?.onChange?.(e as unknown as ChangeEvent<HTMLInputElement>)
 									}
 								} />
 						) : (

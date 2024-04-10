@@ -19,7 +19,7 @@ const formatAmount = (amount: number): string => {
 	} else if(amount >= 1e3) {
 		return `$${(amount / 1e3).toFixed(0)}K`
 	} else {
-		return `$${amount}`
+		return `$${(amount).toFixed(0)}`
 	}
 }
 

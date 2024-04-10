@@ -6,7 +6,7 @@ import { Dropdown, NewTab } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { useQuery } from 'src/libraries/hooks/useQuery'
 import logger from 'src/libraries/logger'
-import { getGnosisTansactionLink, getProposalUrl, getTonkeyProposalUrl } from 'src/libraries/utils/multisig'
+import { getProposalUrl, getTonkeyProposalUrl } from 'src/libraries/utils/multisig'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
@@ -85,13 +85,14 @@ function Payouts() {
 						w='50%'
 						variant='body'
 						color='gray.600'>
-						Milestone
+						Payout
 					</Text>
 					<Text
 						w='50%'
 						fontWeight='500'
 						variant='body'>
-						{formatMilestoneId(payout?.milestone?.id)}
+						{/* {formatMilestoneId(payout?.milestone?.id)} */}
+						{index + 1}
 					</Text>
 				</Flex>
 
@@ -151,7 +152,7 @@ function Payouts() {
 									if(grant?.workspace?.safe?.chainId === '900001') {
 										window.open(getProposalUrl(grant?.workspace?.safe?.address, payout.transactionHash), '_blank')
 									} else {
-										window.open(getGnosisTansactionLink(grant?.workspace?.safe?.address, grant?.workspace?.safe?.chainId.toString(), payout?.transactionHash), '_blank')
+										window.open('https://starkscan.co/tx/' + payout?.transactionHash, '_blank')
 									}
 								} else {
 									toast({
@@ -238,14 +239,14 @@ function Payouts() {
 		})
 	}, [proposal])
 
-	const formatMilestoneId = (id: string | undefined) => {
-		if(!id) {
-			return ''
-		}
+	// const formatMilestoneId = (id: string | undefined) => {
+	// 	if(!id) {
+	// 		return ''
+	// 	}
 
-		const index = Number.parseInt(id.split('.')[1])
-		return index < 9 ? `0${index + 1}` : (index + 1)
-	}
+	// 	const index = Number.parseInt(id.split('.')[1])
+	// 	return index < 9 ? `0${index + 1}` : (index + 1)
+	// }
 
 	const toast = useCustomToast()
 

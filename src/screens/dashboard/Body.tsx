@@ -21,7 +21,6 @@ function Body() {
 
 	const { selectedProposals } = useContext(DashboardContext)!
 	const { role } = useContext(GrantsProgramContext)!
-
 	return buildComponent()
 }
 

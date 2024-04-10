@@ -100,8 +100,8 @@ export default function useCreateRFP() {
 						grantId: data.createWorkspace.recordId,
 						chainId,
 						role: 'admin'
-					}
-				})
+					},
+				}, undefined, { shallow: true })
 			}
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {

@@ -226,8 +226,10 @@ function Payouts() {
 	const { createRFP, currentStep: createStep } = useCreateRFP()
 	const { updateRFP, currentStep: updateStep, loading } = useUpdateRFP()
 
+	logger.info({ updateStep }, 'rfpData')
+
 	const bigScreen = useMediaQuery('(min-width:601px)')
-	logger.info({ updateStep }, 'updateStep')
+
 	const handleOnChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
 		const _milestones: string[] = [...rfpData?.milestones]
 		if(index < _milestones.length) {

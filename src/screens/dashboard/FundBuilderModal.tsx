@@ -2,6 +2,7 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Box, Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text, useToast } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
+import { useAccount, useContract, useContractWrite, useNetwork, } from '@starknet-react/core'
 import { defaultChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
 import { DisburseRewardSafeMutation, reSubmitProposalMutation } from 'src/generated/mutation'
@@ -14,7 +15,6 @@ import { getFieldString } from 'src/libraries/utils/formatting'
 import { getGnosisTansactionLink, getProposalUrl } from 'src/libraries/utils/multisig'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
-import MilestoneChoose from 'src/screens/dashboard/_components/FundBuilder/MilestoneChoose'
 import PaidByWallet from 'src/screens/dashboard/_components/FundBuilder/PaidByWallet'
 import PayFromChoose from 'src/screens/dashboard/_components/FundBuilder/PayFromChoose'
 import PayWithChoose from 'src/screens/dashboard/_components/FundBuilder/PayWithChoose'
@@ -22,7 +22,7 @@ import ToChoose from 'src/screens/dashboard/_components/FundBuilder/ToChoose'
 import TransactionInitiated from 'src/screens/dashboard/_components/FundBuilder/TransactionInitiated'
 import Verify from 'src/screens/dashboard/_components/FundBuilder/Verify'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
-import usetonWallet from 'src/screens/dashboard/_hooks/useTonWallet'
+import erc20Abi from 'src/screens/dashboard/_utils/erc20ABI.json'
 import getToken from 'src/screens/dashboard/_utils/tonWalletUtils'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
 import TonWeb from 'tonweb'
@@ -119,9 +119,9 @@ function FundBuilderModal({
 													type='single'
 													proposal={proposal}
 													index={0} />
-												<MilestoneChoose
+												{/* <MilestoneChoose
 													proposal={proposal}
-													index={0} />
+													index={0} /> */}
 											</Flex>
 										)
 									}
@@ -219,7 +219,6 @@ function FundBuilderModal({
 		setSignerVerifiedState,
 	} = useContext(FundBuilderContext)!
 	const { phantomWallet } = usePhantomWallet()
-	const { tonWallet } = usetonWallet()
 	const [safeProposalLink, setSafeProposalLink] = useState<string | undefined>(undefined)
 	// const [selectedMode, setSelectedMode] = useState<{logo: string | undefined, value: string | undefined}>()
 	const [payoutInProcess, setPayoutInProcess] = useState(false)
@@ -227,6 +226,33 @@ function FundBuilderModal({
 	const customToast = useCustomToast()
 	const toast = useToast()
 	const payoutsInProcessToastRef = useRef<any>()
+	const { address } = useAccount()
+	const { chain } = useNetwork()
+
+	const { contract } = useContract({
+		abi: erc20Abi,
+		address: chain.nativeCurrency.address,
+	})
+
+	const calls = useMemo(() => {
+		if(!address || !contract ||
+			!(amounts?.[0] > 0)) {
+			return []
+		}
+
+		const amountInEth = amounts?.[0] > 0 && selectedTokenInfo?.fiatConversion ? (amounts?.[0] / (selectedTokenInfo?.fiatConversion)) : 0
+
+		return contract.populateTransaction['transfer']!(tos?.[0], { low: (amountInEth * 10 ** 18).toFixed(0), high: 0 })
+	}, [contract, address, amounts])
+
+	const {
+		writeAsync,
+	} = useContractWrite({
+		calls,
+		onSuccess(data, variables, context) {
+			logger.info({ data, variables, context }, 'onSuccess')
+		},
+	})
 
 	const Safe = {
 		logo: safeObj?.safeLogo,
@@ -444,13 +470,21 @@ function FundBuilderModal({
 				setSafeProposalLink(getProposalUrl(safeObj?.safeAddress ?? '', proposaladdress as string))
 			} else {
 				try {
-					if(!tonWallet && typeof window !== 'undefined' && !('ton' in window)) {
-						logger.error('TON Wallet not found', { tonWallet })
-						throw new Error('TON Wallet not found')
-					}
+					// if(!tonWallet && typeof window !== 'undefined' && !('ton' in window)) {
+					// 	logger.error('TON Wallet not found', { tonWallet })
+					// 	throw new Error('TON Wallet not found')
+					// }
 
-					proposaladdress = await safeObj?.proposeTransactions(`${grant?.title ?? 'grant'} / ${getFieldString(proposal, 'projectName') ?? proposal.id}: Milestone #${milestoneIndices[0] + 1} Payout`, temp, !tonWallet ? typeof window !== 'undefined' && ('ton' in window) ? window.ton : tonWallet : tonWallet)
-					setSafeProposalLink('https://tonkey.app/transactions/queue?safe=' + (safeObj?.safeAddress ?? ''))
+					// proposaladdress = await safeObj?.proposeTransactions(`${grant?.title ?? 'grant'} / ${getFieldString(proposal, 'projectName') ?? proposal.id}: Milestone #${milestoneIndices[0] + 1} Payout`, temp, !tonWallet ? typeof window !== 'undefined' && ('ton' in window) ? window.ton : tonWallet : tonWallet)
+					// send tokens to the multisig
+
+
+					const txData = await writeAsync()
+					logger.info({ txData }, 'txData')
+					if(txData?.transaction_hash) {
+						setSafeProposalLink('https://starkscan.co/tx/' + txData.transaction_hash)
+						proposaladdress = txData.transaction_hash
+					}
 				} catch(e) {
 					customToast({
 						title: (e as { message: string }).message,
@@ -483,7 +517,7 @@ function FundBuilderModal({
 				nonEvmAssetAddress: 'nonEvmAssetAddress-toBeChanged',
 				amounts: [amounts?.[0]],
 				// if the tx returns an error, the transaction hash will be empty
-				transactionHash: typeof proposaladdress === 'string' ? proposaladdress : '',
+				transactionHash: proposaladdress ?? '',
 				sender: safeAddress,
 				grant: grant?.id!,
 				to: tos?.[0]

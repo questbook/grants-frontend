@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Flex, FlexProps, Select, SelectProps, Text } from '@chakra-ui/react'
-import { logger } from 'ethers'
 
 interface Props extends SelectProps {
 	label: string
@@ -9,11 +8,10 @@ interface Props extends SelectProps {
 	errorText?: string
 }
 
-function SectionDropDown({ label, helperText, flexProps, errorText, options, ...props }: Props & { options:
+function SectionDropDown({ label, flexProps, options, ...props }: Props & { options:
     string[]
 }) {
 	const buildComponent = () => {
-		logger.info({ label, helperText, errorText, options, props }, 'SectionDropDown')
 		return (
 			<Flex
 				{...flexProps}

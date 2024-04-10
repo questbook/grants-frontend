@@ -84,6 +84,7 @@ export default function useUpdateRFP() {
 			setExecutionType('edit')
 			if(update) {
 				const grantId = update.updateGrant.recordId
+				setCreatingProposalStep(1)
 				router.push({
 					pathname: '/dashboard',
 					query: {
@@ -91,8 +92,7 @@ export default function useUpdateRFP() {
 						chainId,
 						role: 'admin'
 					}
-				})
-				setCreatingProposalStep(1)
+				}, undefined, { shallow: true })
 			}
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {

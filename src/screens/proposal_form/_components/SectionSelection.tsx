@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Flex, FlexProps, InputProps, Radio, RadioGroup, Stack, Text } from '@chakra-ui/react'
-import { logger } from 'ethers'
 
 interface Props extends InputProps {
 	label: string
@@ -9,10 +8,9 @@ interface Props extends InputProps {
 	errorText?: string
 }
 
-function SectionSelection({ label, helperText, flexProps, errorText, options, ...props }: Props & { options:
+function SectionSelection({ label, flexProps, options, ...props }: Props & { options:
     string[]
 }) {
-	logger.info({ label, helperText, errorText, options, props }, 'SectionSelection')
 	const buildComponent = () => {
 		return (
 			<Flex
