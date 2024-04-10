@@ -2,6 +2,7 @@
 
 import { createRef, useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Checkbox, Flex, Grid, GridItem, Text } from '@chakra-ui/react'
+import { Select } from 'chakra-react-select'
 import { useRouter } from 'next/router'
 import { ApplicationState } from 'src/generated/graphql'
 import { Filter } from 'src/generated/icons'
@@ -14,12 +15,11 @@ import FilterTag from 'src/screens/dashboard/_components/FilterTag'
 import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { disabledGrants, disabledSubmissions, disabledTonGrants } from 'src/screens/proposal_form/_utils/constants'
 
 function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boolean) => void }) {
 	const buildComponent = () => (
 		<Flex
-			w={['100%', '100%', '100%', '25%']}
+			w={['100%', '100%', '25%', '25%']}
 			h='100%'
 			bg='white'
 			direction='column'
@@ -45,14 +45,12 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 					</Text>
 				</Text>
 				{
-					(role === 'community' || role === 'builder') &&
-					(
+					(role === 'community' || role === 'builder') && (
 						<Button
 							variant='secondaryV2'
 							// w='103px'
 							// h='32px'
 							mr={4}
-							isDisabled={disabledTonGrants?.includes(grant?.id as string) || disabledGrants?.includes(grant?.id as string) || disabledSubmissions?.includes(grant?.id as string)}
 							fontSize={['10px', '10px', '12px', '12px']}
 							onClick={
 								() => {
@@ -89,6 +87,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 			<Flex
 				my={4}
 				align='center'
+				gap={2}
 				px={5}>
 				{
 					(role === 'admin' && selectedProposals?.size > 0) && (
@@ -114,25 +113,116 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 						</Checkbox>
 					)
 				}
-
-				<Button
+				<Flex
 					ml='auto'
-					variant='link'
-					rightIcon={isFilterClicked ? <Flex /> : <Filter />}
-					onClick={
-						() => {
-							setIsFilterClicked(!isFilterClicked)
+					gap={2}
+				>
+					<Select
+						isSearchable={false}
+						variant='unstyled'
+						useBasicStyles
+						value={
+							{
+								label: 'Sort By',
+								value: sortBy
+							}
+						}
+						options={
+							[
+								{
+									label: 'Submission Date',
+									value: 'createdAtS'
+								},
+								{
+									label: 'Modified Date',
+									value: 'updatedAtS'
+								}
+							]
+						}
+						onChange={(item) => setSortBy(item?.value as 'createdAtS' | 'updatedAtS')}
+						chakraStyles={
+							{
+								container: (provided) => ({
+									...provided,
+									fontSize: '12px',
+									fontWeight: '400',
+									color: 'black.100',
+									borderRadius: '2px',
+								}),
+								valueContainer: (provided) => ({
+									...provided,
+
+									fontSize: '12px',
+								}),
+								menu: (provided) => ({
+									...provided,
+									fontSize: '12px',
+									fontWeight: '400',
+									borderRadius: '2px',
+								}),
+								option: (provided) => ({
+									...provided,
+									borderRadius: '2px',
+									padding: '5px 10px',
+									fontSize: '12px',
+									fontWeight: '400',
+								}),
+
+							}
+						}
+					/>
+
+					<Button
+						ml='auto'
+						variant='link'
+						rightIcon={isFilterClicked ? <Flex /> : <Filter />}
+						onClick={
+							() => {
+								setIsFilterClicked(!isFilterClicked)
+							}
+						}>
+						<Text>
+							{isFilterClicked ? 'Done' : 'Filter'}
+						</Text>
+					</Button>
+				</Flex>
+
+			</Flex>
+
+			{/* <Flex
+				align='center'
+				justifyContent='flex-end'
+				gap={2}
+				mb={4}
+			>
+				<Text
+					fontSize='14px'
+					color='black.300'>
+					Sort by
+				</Text>
+				<Select
+					fontSize='14px'
+					variant='unstyled'
+					defaultValue={sortBy}
+					value='Sort By'
+					onChange={
+						(e) => {
+							setSortBy(e.target.value as 'createdAtS' | 'updatedAtS')
 						}
 					}>
-					<Text>
-						{isFilterClicked ? 'Done' : 'Filter'}
-					</Text>
-				</Button>
-			</Flex>
+					<option value='createdAtS'>
+						Submission Date
+					</option>
+					<option value='updatedAtS'>
+						Last Updated Date
+					</option>
+				</Select>
+			</Flex> */}
+
 
 			<Grid
 				display={isFilterClicked ? 'grid' : 'none'}
-				minH='120px'
+				minH='80px'
 				px={3}
 				m={2}
 				overflowX='scroll'
@@ -143,10 +233,10 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 						}
 					}
 				}
-				templateColumns='repeat(2, 0fr)'
+				templateColumns='repeat(2, 1fr)'
 				gap={1}>
 				{
-					(['approved', 'submitted', 'rejected', 'resubmit', 'review'] as ApplicationState[]).map(state => {
+					(['approved', 'submitted', 'rejected', 'resubmit'] as ApplicationState[]).map(state => {
 						return (
 							<GridItem
 								// colSpan={index > 1 ? 2 : 1}
@@ -191,7 +281,9 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 								ref={cardRefs[index]}
 								proposal={proposal}
 								step={step}
-								setStep={setStep} />
+								setStep={setStep}
+								type={sortBy}
+							/>
 						)
 					})
 				}
@@ -204,7 +296,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 	const { proposalId } = router.query
 
 	const { role, grant } = useContext(GrantsProgramContext)!
-	const { proposals, selectedProposals, setSelectedProposals, filterState, setFilterState } = useContext(DashboardContext)!
+	const { proposals, selectedProposals, setSelectedProposals, filterState, setFilterState, sortBy, setSortBy } = useContext(DashboardContext)!
 
 	const [isFilterClicked, setIsFilterClicked] = useState<boolean>(false)
 
@@ -227,8 +319,12 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 			allProposals = allProposals.filter(proposal => proposal.state === filterState)
 		}
 
+		if(sortBy === 'createdAtS') {
+			allProposals = allProposals.sort((a, b) => a.createdAtS - b.createdAtS)
+		}
+
 		return allProposals
-	}, [proposals, searchText, filterState])
+	}, [proposals, searchText, filterState, sortBy])
 
 	const proposalCount = useMemo(() => {
 		return grant?.numberOfApplications || 0
@@ -246,12 +342,12 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 
 		if(proposalId && typeof proposalId === 'string') {
 			// Scroll to the proposal
-			const proposalIndex = proposals.findIndex((_) => _.id === proposalId)
+			const proposalIndex = filteredProposals.findIndex((_) => _.id === proposalId)
 			if(proposalIndex !== -1) {
 				cardRefs[proposalIndex].current?.scrollIntoView({ behavior: 'smooth' })
 			}
 		}
-	}, [proposals, proposalId])
+	}, [proposals, proposalId, filteredProposals])
 
 	return buildComponent()
 }

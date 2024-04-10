@@ -79,6 +79,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 	const [showSubmitReviewPanel, setShowSubmitReviewPanel] = useState<boolean>(false)
 	const [areCommentsLoading, setAreCommentsLoading] = useState<boolean>(false)
 	const [filterState, setFilterState] = useState<ApplicationState>()
+	const [sortBy, setSortBy] = useState<'updatedAtS' | 'createdAtS'>('updatedAtS')
 
 	const getGrant = useCallback(async() => {
 		if(!grantId || chainId === -1 || typeof grantId !== 'string') {
@@ -737,7 +738,9 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 						}
 					},
 					filterState,
-					setFilterState
+					setFilterState,
+					sortBy,
+					setSortBy
 				}
 			}>
 			{children}

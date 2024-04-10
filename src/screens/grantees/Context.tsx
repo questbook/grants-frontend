@@ -69,7 +69,7 @@ const GranteeProvider = ({ children }: {children: ReactNode}) => {
 		for(let i = 0; i < allSectionGrants.length; i++) {
 			const key = Object.keys(allSectionGrants[i])[0]
 			const topGrants = ['Arbitrum', 'Compound', 'TON Foundation', 'Alchemix', 'iExec']
-			const hideGrants = ['Golden gate protocol', 'Aleph Zero', 'Solana Ecosystem', 'Polygon']
+			const hideGrants = ['Golden gate protocol', 'Aleph Zero', 'Solana Ecosystem', 'Polygon', 'Starknet']
 			if(topGrants.includes(key)) {
 				const temp = allSectionGrants[topGrants.indexOf(key)]
 				allSectionGrants[topGrants.indexOf(key)] = allSectionGrants[i]
