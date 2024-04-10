@@ -43,7 +43,7 @@ function ProposalCard({ proposal }: Props) {
 								chainId: getSupportedChainIdFromWorkspace(proposal.grant.workspace) ?? defaultChainId,
 								proposalId: proposal.id,
 							},
-						})
+						}, undefined, { shallow: true })
 					}
 				}>
 				<Flex
