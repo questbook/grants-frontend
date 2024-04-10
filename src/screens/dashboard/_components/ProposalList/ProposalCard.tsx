@@ -75,6 +75,30 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 					{formatTime(proposal[props.type || 'updatedAtS'], true)}
 				</Text>
 			</Flex>
+			{
+				proposal?.migratedFrom?.title && (
+					<Flex
+						align='center'
+						w='fit-content'
+						py={1}
+						px={2}
+						mt={2}
+						borderRadius='18px'
+						border='1px solid'
+						bg='#0A84FF66'
+						borderColor='#0A84FF66'
+					>
+
+						<Text
+							variant='metadata'
+							fontWeight='500'
+							fontSize='10px'
+						>
+							{proposal?.migratedFrom?.title}
+						</Text>
+					</Flex>
+				)
+			}
 			<Flex
 				align='center'
 				mt={2}>

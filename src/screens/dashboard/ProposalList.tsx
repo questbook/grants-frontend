@@ -15,11 +15,12 @@ import FilterTag from 'src/screens/dashboard/_components/FilterTag'
 import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
 import { DashboardContext } from 'src/screens/dashboard/Context'
+import { disabledGrants, disabledSubmissions, disabledTonGrants } from 'src/screens/proposal_form/_utils/constants'
 
 function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boolean) => void }) {
 	const buildComponent = () => (
 		<Flex
-			w={['100%', '100%', '25%', '25%']}
+			w={['100%', '100%', '100%', '25%']}
 			h='100%'
 			bg='white'
 			direction='column'
@@ -51,6 +52,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 							// w='103px'
 							// h='32px'
 							mr={4}
+							isDisabled={disabledTonGrants?.includes(grant?.id as string) || disabledGrants?.includes(grant?.id as string) || disabledSubmissions?.includes(grant?.id as string)}
 							fontSize={['10px', '10px', '12px', '12px']}
 							onClick={
 								() => {
@@ -222,7 +224,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 
 			<Grid
 				display={isFilterClicked ? 'grid' : 'none'}
-				minH='80px'
+				minH='120px'
 				px={3}
 				m={2}
 				overflowX='scroll'
@@ -233,10 +235,10 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 						}
 					}
 				}
-				templateColumns='repeat(2, 1fr)'
+				templateColumns='repeat(2, 0fr)'
 				gap={1}>
 				{
-					(['approved', 'submitted', 'rejected', 'resubmit'] as ApplicationState[]).map(state => {
+					(['approved', 'submitted', 'rejected', 'resubmit', 'review'] as ApplicationState[]).map(state => {
 						return (
 							<GridItem
 								// colSpan={index > 1 ? 2 : 1}
