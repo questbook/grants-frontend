@@ -4,11 +4,13 @@ import Proposal from 'src/screens/dashboard/_components/Body/SingleSelect/Propos
 import ActionList from 'src/screens/dashboard/ActionList'
 
 function SingleSelect() {
+
 	const buildComponent = () => (
 		<Flex
 			direction='column'
 			overflowY='auto'
 			w='100%'>
+
 			<Proposal />
 			{
 				isMobile[0] && (
@@ -23,3 +25,4 @@ function SingleSelect() {
 }
 
 export default SingleSelect
+

@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 export const getAdminTableQuery = gql`query adminTable($id: String!){
     grant(_id: $id){
-      applications(sort: UPDATEDATS_DESC, limit:1000){
+      applications(sort: UPDATEDATS_DESC){
         id: _id
         applicantId
         state

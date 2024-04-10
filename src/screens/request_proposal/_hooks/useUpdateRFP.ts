@@ -21,15 +21,15 @@ export default function useUpdateRFP() {
 	const customToast = useCustomToast()
 
 	const updateRFP = async() => {
-		if(role !== 'admin') {
-			customToast({
-				title: 'You are not authorized to perform this action',
-				description: 'Only an admin can edit the grant program details. Try again with a different account.',
-				status: 'error'
-			})
+		// if(role !== 'admin') {
+		// 	customToast({
+		// 		title: 'You are not authorized to perform this action',
+		// 		description: 'Only an admin can edit the grant program details. Try again with a different account.',
+		// 		status: 'error'
+		// 	})
 
-			return
-		}
+		// 	return
+		// }
 
 		setLoading(true)
 
@@ -84,7 +84,6 @@ export default function useUpdateRFP() {
 			setExecutionType('edit')
 			if(update) {
 				const grantId = update.updateGrant.recordId
-				setCreatingProposalStep(1)
 				router.push({
 					pathname: '/dashboard',
 					query: {
@@ -93,6 +92,7 @@ export default function useUpdateRFP() {
 						role: 'admin'
 					}
 				})
+				setCreatingProposalStep(1)
 			}
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {

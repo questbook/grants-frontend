@@ -182,8 +182,8 @@ function Payouts() {
 							w='261px'
 							h='48px'
 							onClick={handleOnClickContinue}
-							isLoading={(rfpFormType === 'edit' ? updateStep : createStep) !== undefined}
-							loadingText='Creating grant program'
+							isLoading={(rfpFormType === 'edit' ? loading : createStep !== undefined)}
+							loadingText={(rfpFormType === 'edit' ? 'Saving' : 'Creating') + ' Grant Program'}
 							isDisabled={!rfpData?.payoutMode || !rfpData?.amount || !scwAddress }
 						>
 							{/* {shouldCreateRFP ? 'Create RFP' : 'Continue'} */}
@@ -224,10 +224,10 @@ function Payouts() {
 	const payoutTypeOptions = [{ value: 'in_one_go', label: 'In One Go' }, { value: 'milestones', label: 'Based on Milestones' }]
 
 	const { createRFP, currentStep: createStep } = useCreateRFP()
-	const { updateRFP, currentStep: updateStep } = useUpdateRFP()
+	const { updateRFP, currentStep: updateStep, loading } = useUpdateRFP()
 
 	const bigScreen = useMediaQuery('(min-width:601px)')
-
+	logger.info({ updateStep }, 'updateStep')
 	const handleOnChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
 		const _milestones: string[] = [...rfpData?.milestones]
 		if(index < _milestones.length) {

@@ -180,7 +180,6 @@ function ReviewProposal() {
 							placeholder='Add comments'
 							fontSize='14px'
 							lineHeight='20px'
-							maxLength={300}
 							borderBottom='1px solid #E7E4DD'
 							flexProps={{ mt: 3 }}
 							onChange={
@@ -262,7 +261,6 @@ function ReviewProposal() {
 							placeholder='Add comments'
 							fontSize='14px'
 							lineHeight='20px'
-							maxLength={300}
 							borderBottom='1px solid #E7E4DD'
 							flexProps={{ mt: 3 }}
 							onChange={

@@ -115,6 +115,7 @@ const client = createClient({
 				qrcode: true,
 				rpc: {
 					'137': `https://polygon-mainnet.infura.io/v3/${infuraId}`,
+					'5': `https://goerli.infura.io/v3/${infuraId}`
 				},
 			},
 		}),

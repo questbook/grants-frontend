@@ -15,9 +15,7 @@ export const getCommentsQuery = gql`query getComments($grantId: String!, $first:
         data
       }
       workspace {
-        members: membersFilter(filter: {
-          enabled: true
-        })  {
+        members {
           actorId
           fullName
           profilePictureIpfsHash

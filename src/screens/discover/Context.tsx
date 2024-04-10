@@ -9,7 +9,6 @@ import { DiscoverContextType, GrantProgramType, GrantType, RecentProposals, Sect
 import { getAllGrants } from 'src/screens/discover/data/getAllGrants'
 import { getAllGrantsForMembers } from 'src/screens/discover/data/getAllGrantsForMembers'
 import { getFundsAllocated } from 'src/screens/discover/data/getFundsAllocated'
-import { getGranteeList } from 'src/screens/discover/data/getGranteeList'
 import { GetGrantProgramDetails } from 'src/screens/discover/data/getGrantProgramDetails'
 import { getSectionGrantsQuery } from 'src/screens/discover/data/getSectionGrants'
 import { GetWorkspacesAndBuilderGrants } from 'src/screens/discover/data/getWorkspaceAndBuilderGrants'
@@ -64,10 +63,6 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 	const { fetchMore: getFunds } = useQuery({
 		query: getFundsAllocated
-	})
-
-	const { fetchMore: getGrantees } = useQuery({
-		query: getGranteeList
 	})
 
 
@@ -296,7 +291,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 		logger.info({ inviteInfo }, 'Invite Info')
 
-		const workspaceID = `0x${inviteInfo.workspaceId.toString(16)}`
+		const workspaceID = `${inviteInfo.workspaceId.toString(16)}`
 		logger.info({ workspaceID }, 'Workspace ID')
 		const results: any = await fetchGrantProgramData({ workspaceID }, true)
 		logger.info({ results }, 'Results grant program')
@@ -306,12 +301,12 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		}
 
 		logger.info({ grantProgram: results?.grantProgram[0] }, 'Results')
-		setGrantProgram(results[0]?.grantProgram?.[0])
+		setGrantProgram(results?.grantProgram[0])
 	}
+
 
 	const getSectionGrants = async() => {
 		const results: any = await fetchMoreSectionGrants()
-		const granteesResults: any = await getGrantees()
 		logger.info({ results }, 'Section Grants')
 
 		if(results?.sections?.length === 0) {
@@ -323,23 +318,22 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 		if(results?.sections?.length) {
 			allSectionGrants.push(...results?.sections.map((g: any) => ({ [g.sectionName]: { ...g } })))
-			recentProposals = granteesResults.sections.map((s: any) => s.grants.
-				filter((g: any) => g.applications.length > 0).map((g: any) => {
-					return g.applications.map((a: any) => {
-						return {
-							...a,
-							sectionName: s.sectionName,
-							grant: {
-								title: g.title,
-								id: g.id,
-								workspace: g.workspace
-							}
-						}
-					})
-				}).flat()).flat()
+			recentProposals = [...recentProposals, ...results.sections.map((s: any) => s.grants.map((g: any) => g.applications).flat()).flat()]
 		}
 
 		logger.info({ allSectionGrants, recentProposals }, 'All section grants (DISCOVER CONTEXT)')
+
+		// move selected grants to top of the list
+		for(let i = 0; i < allSectionGrants.length; i++) {
+			const key = Object.keys(allSectionGrants[i])[0]
+			const topGrants = ['Arbitrum', 'Compound', 'TON Foundation', 'iExec']
+			if(topGrants.includes(key)) {
+				const temp = allSectionGrants[topGrants.indexOf(key)]
+				allSectionGrants[topGrants.indexOf(key)] = allSectionGrants[i]
+				allSectionGrants[i] = temp
+			}
+		}
+
 
 		recentProposals.sort((a, b) => b.updatedAtS - a.updatedAtS)
 		logger.info({ recentProposals }, 'All recent grants (DISCOVER CONTEXT)')

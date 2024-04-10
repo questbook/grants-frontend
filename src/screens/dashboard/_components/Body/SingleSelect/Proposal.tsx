@@ -8,14 +8,11 @@ import {
 	Image,
 	Text,
 } from '@chakra-ui/react'
-import copy from 'copy-to-clipboard'
 import { ContentState, convertFromRaw, EditorState } from 'draft-js'
 import { defaultChainId } from 'src/constants/chains'
-import { Mail, ShareForward } from 'src/generated/icons'
-import useCustomToast from 'src/libraries/hooks/useCustomToast'
+import { Mail } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import CopyIcon from 'src/libraries/ui/CopyIcon'
-import NotificationPopover from 'src/libraries/ui/NavBar/_components/NotificationPopover'
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
 import { getAvatar } from 'src/libraries/utils'
 import {
@@ -28,7 +25,7 @@ import { getFromIPFS } from 'src/libraries/utils/ipfs'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
-import { GrantsProgramContext } from 'src/pages/_app'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -47,6 +44,8 @@ function Proposal() {
 			)
 		}
 
+		const lastName = grant?.fields?.find((field) => field.id?.includes('Last Name'))?.id?.split('.')?.pop() ?? 'Last Name'
+
 		return (
 			<Flex
 				w='100%'
@@ -56,45 +55,7 @@ function Proposal() {
 				boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
 				bg='white'
 			>
-				<Flex
-					w='100%'
-					align='center'
-					justify='space-between'>
-					<Text
-						maxW='90%'
-						as='span'
-						variant='heading3'
-						fontWeight='500'>
-						{getFieldString(proposal, 'projectName')}
-					</Text>
-					<Flex
-						ml={4}
-						gap={4}>
-						<NotificationPopover
-							type='proposal'
-							proposalId={proposal?.id} />
-						<ShareForward
-							boxSize='20px'
-							cursor='pointer'
-							onClick={
-								() => {
-									const href = window.location.href.split('/')
-									const protocol = href[0]
-									const domain = href[2]
-									const link = `${protocol}//${domain}/dashboard/?grantId=${proposal.grant.id
-									}&chainId=${chainId}&proposalId=${proposal.id
-									}&isRenderingProposalBody=${true}`
-									copy(link)
-									toast({
-										title: 'Copied!',
-										status: 'success',
-										duration: 3000,
-									})
-								}
-							}
-						/>
-					</Flex>
-				</Flex>
+
 
 				{
 					shouldShowPII && (
@@ -117,6 +78,8 @@ function Proposal() {
 									direction='column'>
 									<Text fontWeight='500'>
 										{getFieldString(decryptedProposal, 'applicantName')}
+
+										{getFieldString(decryptedProposal, lastName as string) ?? ''}
 									</Text>
 									<Flex align='center'>
 										<Button
@@ -199,7 +162,7 @@ function Proposal() {
 					mt={4}
 					w='100%'>
 					{
-						chainInfo && (
+						chainInfo && getRewardAmountMilestones(chainInfo.decimals, proposal) !== '0' && (
 							<Flex
 								direction='column'
 								w='50%'>
@@ -216,6 +179,25 @@ function Proposal() {
 							</Flex>
 						)
 					}
+					{
+						chainInfo && (
+							<Flex
+								direction='column'
+								w='50%'>
+								<Text color='gray.500'>
+									Applicant Name
+								</Text>
+								<Text
+									mt={1}
+									fontWeight='500'>
+									{getFieldString(decryptedProposal, 'applicantName')}
+
+									{getFieldString(decryptedProposal, lastName as string) ?? ''}
+
+								</Text>
+							</Flex>
+						)
+					}
 					<Flex
 						direction='column'
 						w='50%'>
@@ -228,7 +210,7 @@ function Proposal() {
 							{formatTime(proposal.createdAtS, true)}
 						</Text>
 					</Flex>
-					<Flex
+					{/* <Flex
 						direction='column'
 						w='50%'>
 						<Text color='gray.500'>
@@ -239,7 +221,7 @@ function Proposal() {
 							fontWeight='500'>
 							{proposal.milestones.length}
 						</Text>
-					</Flex>
+					</Flex> */}
 				</Flex>
 
 
@@ -332,19 +314,25 @@ function Proposal() {
 				}
 
 				{
-					grant?.fields
+					proposal?.fields
 						?.filter((field) => field.id
 							.substring(field.id.indexOf('.') + 1)
-							.startsWith('customField'),
+							.startsWith('customField')
 						)
-						.map((field, index) => {
+
+						?.sort((a, b) => {
+							const aId = a.id.substring(a.id.indexOf('.customField') + 12)?.split('-')[0]
+							const bId = b.id.substring(b.id.indexOf('.customField') + 12)?.split('-')[0]
+							return parseInt(aId) - parseInt(bId)
+						})?.map((field, index) => {
 							const id = field.id.substring(field.id.indexOf('.') + 1)
-							const title = field.title
-								.substring(field.title.indexOf('-') + 1)
+
+							const title = field.id
+								.substring(field.id.indexOf('-') + 1)
 								.split('\\s')
 								.join(' ')
 							const value = getFieldString(proposal, id)
-							if(value === undefined) {
+							if(value === undefined || value === '' || title === 'Last Name') {
 								return <Flex key={index} />
 							}
 
@@ -400,7 +388,7 @@ function Proposal() {
 
 	const { grant, role } = useContext(GrantsProgramContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
-	const toast = useCustomToast()
+	const { scwAddress } = useContext(WebwalletContext)!
 
 	const proposal = useMemo(() => {
 		return proposals.find((p) => selectedProposals.has(p.id))
@@ -422,8 +410,8 @@ function Proposal() {
 	}, [proposal?.grant, chainId])
 
 	const shouldShowPII = useMemo(() => {
-		return role !== 'community'
-	}, [])
+		return role !== 'community' && (role === 'builder' ? proposal?.applicantId === scwAddress : true)
+	}, [role, proposal?.applicantId, scwAddress])
 
 	const [decryptedProposal, setDecryptedProposal] = useState<
 		ProposalType | undefined

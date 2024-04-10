@@ -1,9 +1,9 @@
 import { gql } from '@apollo/client'
-
+import SubDomainConfig from 'src/constants/subdomain.json'
 
 export const getSectionGrantsQuery = gql`
 query getSectionGrants {
-  sections(filter: { _id: "Compound" }) {
+  sections(filter: { _id: "${SubDomainConfig.id}" }) {
     grants(sort: NUMBEROFAPPLICATIONS_DESC) {
       id:_id
       title

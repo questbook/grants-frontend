@@ -1,9 +1,10 @@
 /* eslint-disable indent */
 import { Flex, Image, Text, useMediaQuery } from '@chakra-ui/react'
 import { logger } from 'ethers'
+// import { useRouter } from 'next/router'
+import SubDomainConfig from 'src/constants/subdomain.json'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { SectionGrants } from 'src/screens/discover/_utils/types'
-// import { useRouter } from 'next/router'
 
 function HeroBanner({
 	grants,
@@ -115,22 +116,24 @@ function HeroBanner({
 						flexDirection='row'
 						textColor='white'
 						position='relative'
-						width='full'>
+						width='full'
+						gap={2}
+						>
 						<Image
 							justifyContent='center'
-							h={isMobile ? '50px' : '100px'}
-							w={isMobile ? '50px' : '100px'}
-	  						src={getUrlForIPFSHash('QmTkdKP8gFTmrM5UJYAtEahqtU7GQyDVaN9UHnNoEY6M3M')} />
+							h={isMobile ? '50px' : '90px'}
+							w={isMobile ? '50px' : '90px'}
+	  						src={getUrlForIPFSHash(`${SubDomainConfig.logo}`)} />
 						<Text
 							fontWeight='500'
 							fontSize={isMobile ? '32px' : '64px'}
 							lineHeight='48px'
 							padding={
-								isMobile ? [1, 4] :
+								isMobile ? [0, 0] :
 									[10, 5]
 							}
 							color='black'>
-							Compound Grants
+							{SubDomainConfig.name}
 						</Text>
 					</Flex>
 
@@ -162,7 +165,7 @@ function HeroBanner({
 		</Flex>
 
 	)
-	const isMobile = useMediaQuery(['(max-width:600px)'])[0]
+	const isMobile = useMediaQuery(['(max-width:700px)'])[0]
 
 	return buildComponent()
 }

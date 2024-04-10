@@ -21,7 +21,11 @@ function Empty() {
 				<Text
 					variant='heading3'
 					fontWeight='500'>
-					{role === 'admin' ? 'Your invitation for proposals is live!' : 'Be the first to submit a proposal'}
+					{
+						role === 'admin' ? 'Your invitation for proposals is live!' :
+							role === 'community' ? 'This is a Private Grant Program' :
+								'Be the first to submit a proposal'
+					}
 
 				</Text>
 

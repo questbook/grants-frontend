@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Divider, Flex, Image, Text } from '@chakra-ui/react'
-// import { useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
 import config from 'src/constants/config.json'
 import { getAvatar } from 'src/libraries/utils'
@@ -35,15 +35,14 @@ function ProposalCard({ proposal }: Props) {
 				cursor='pointer'
 				onClick={
 					() => {
-						// router.push({
-						// 	pathname: '/dashboard/',
-						// 	query: {
-						// 		grantId: proposal.grant.id,
-						// 		chainId: getSupportedChainIdFromWorkspace(proposal.grant.workspace) ?? defaultChainId,
-						// 		proposalId: proposal.id,
-						// 	},
-						// })
-						window.location.href = `/dashboard/?grantId=${proposal.grant.id}&chainId=${getSupportedChainIdFromWorkspace(proposal.grant.workspace) ?? defaultChainId}&proposalId=${proposal.id}`
+						router.push({
+							pathname: '/dashboard/',
+							query: {
+								grantId: proposal.grant.id,
+								chainId: getSupportedChainIdFromWorkspace(proposal.grant.workspace) ?? defaultChainId,
+								proposalId: proposal.id,
+							},
+						})
 					}
 				}>
 				<Flex
@@ -134,7 +133,7 @@ function ProposalCard({ proposal }: Props) {
 		)
 	}
 
-	// const router = useRouter()
+	const router = useRouter()
 
 	const chainId = useMemo(() => {
 		return (

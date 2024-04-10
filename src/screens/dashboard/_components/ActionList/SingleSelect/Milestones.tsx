@@ -1,11 +1,14 @@
-import { useContext, useMemo, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { Flex, Text } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import { defaultChainId, USD_ASSET } from 'src/constants/chains'
 import { Accept, Dropdown } from 'src/generated/icons'
+import { useQuery } from 'src/libraries/hooks/useQuery'
+import logger from 'src/libraries/logger'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
-import { ProposalType } from 'src/screens/dashboard/_utils/types'
+import { getPayoutQuery } from 'src/screens/dashboard/_data/getPayoutQuery'
+import { PayoutsType, ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 
 function Milestones() {
@@ -69,7 +72,7 @@ function Milestones() {
 						{milestone?.title}
 					</Text>
 					{
-						milestone?.amount === milestone?.amountPaid ? (
+						payouts?.find(p => p.milestone?.id === milestone.id)?.status === 'executed' ? (
 							<Flex
 								align='center'
 								justify='center'
@@ -112,6 +115,7 @@ function Milestones() {
 
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 	const [expanded, setExpanded] = useState(true)
+	const [payouts, setPayouts] = useState<PayoutsType>([])
 
 	const proposal = useMemo(() => {
 		return proposals.find(p => selectedProposals.has(p.id))
@@ -119,6 +123,44 @@ function Milestones() {
 
 	const milestones = useMemo(() => {
 		return proposal?.milestones || []
+	}, [proposal])
+
+
+	const { fetchMore } = useQuery({
+		query: getPayoutQuery
+	})
+
+	const getPayouts = useCallback(async() => {
+		if(!proposal) {
+			setPayouts([])
+			return 'no-proposal'
+		}
+
+		const first = 100
+		let skip = 0
+
+		const data: PayoutsType = []
+		let shouldContinue = true
+		do {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const results: any = await fetchMore({ first, skip, proposalID: proposal.id })
+			if(!results?.fundTransfers || results?.fundTransfers?.length === 0) {
+				shouldContinue = false
+				break
+			}
+
+			data.push(...results?.fundTransfers)
+			skip += first
+		} while(shouldContinue)
+
+		setPayouts(data)
+		return 'payouts-fetched'
+	}, [proposal])
+
+	useEffect(() => {
+		getPayouts().then((ret) => {
+			logger.info({ ret }, 'Payouts')
+		})
 	}, [proposal])
 
 

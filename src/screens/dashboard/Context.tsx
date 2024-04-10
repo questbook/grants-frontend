@@ -83,7 +83,6 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 	const [showSubmitReviewPanel, setShowSubmitReviewPanel] = useState<boolean>(false)
 	const [areCommentsLoading, setAreCommentsLoading] = useState<boolean>(false)
 	const [filterState, setFilterState] = useState<ApplicationState>()
-	const [sortBy, setSortBy] = useState<'updatedAtS' | 'createdAtS'>('updatedAtS')
 	const [fundsAllocated, setFundsAllocated] = useState<{
 		allocated: number
 		disbursed: number
@@ -761,8 +760,6 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 					},
 					filterState,
 					setFilterState,
-					sortBy,
-					setSortBy,
 					fundsAllocated,
 				}
 			}>

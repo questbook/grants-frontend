@@ -16,7 +16,7 @@ query getComments($grantId: String!, $first: Int, $skip: Int) {
     workspace {
       members: membersFilter(filter: {
       enabled: true
-    })  {
+    }) {
         actorId
         fullName
         profilePictureIpfsHash

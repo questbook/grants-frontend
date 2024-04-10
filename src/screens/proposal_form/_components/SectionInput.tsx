@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Flex, FlexProps, Input, InputProps, Text } from '@chakra-ui/react'
+import { Flex, FlexProps, Input, InputProps, Text, Textarea } from '@chakra-ui/react'
 
 interface Props extends InputProps {
     label: string
@@ -29,29 +29,58 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 						textAlign={['left', 'right']}>
 						{label}
 					</Text>
-
-					<Input
-						{...props}
-						w={['100%', '70%']}
-						variant='flushed'
-						textAlign='left'
-						borderColor='gray.300'
-						borderBottom='1px solid'
-						fontSize='20px'
-						lineHeight='28px'
-						color='black.100'
-						onWheel={(e) => (e.target as HTMLElement).blur()}
-						_placeholder={
-							{
-								color: 'gray.500'
-							}
-						}
-						onChange={
-							(e) => {
-								setValue(e.target.value)
-								props?.onChange?.(e)
-							}
-						} />
+					{
+						props?.type === 'textarea' ? (
+							<Textarea
+								w={['100%', '70%']}
+								h='120px'
+								variant='filled'
+								textAlign='left'
+								borderColor='gray.300'
+								borderBottom='1px solid'
+								fontSize='20px'
+								lineHeight='28px'
+								borderRadius={0}
+								color='black.100'
+								backgroundColor='transparent'
+								onWheel={(e) => (e.target as HTMLElement).blur()}
+								_placeholder={
+									{
+										color: 'gray.500'
+									}
+								}
+								onChange={
+									(e) => {
+										setValue(e.target.value)
+										// eslint-disable-next-line @typescript-eslint/no-explicit-any
+										props?.onChange?.(e as any)
+									}
+								} />
+						) : (
+							<Input
+								{...props}
+								w={['100%', '70%']}
+								variant='flushed'
+								textAlign='left'
+								borderColor='gray.300'
+								borderBottom='1px solid'
+								fontSize='20px'
+								lineHeight='28px'
+								color='black.100'
+								onWheel={(e) => (e.target as HTMLElement).blur()}
+								_placeholder={
+									{
+										color: 'gray.500'
+									}
+								}
+								onChange={
+									(e) => {
+										setValue(e.target.value)
+										props?.onChange?.(e)
+									}
+								} />
+						)
+					}
 				</Flex>
 				{
 					props?.maxLength && (

@@ -3,7 +3,6 @@ import { convertToRaw } from 'draft-js'
 import { ethers } from 'ethers'
 import { USD_ASSET } from 'src/constants/chains'
 import { reSubmitProposalMutation, submitProposalMutation } from 'src/generated/mutation'
-import { createBuilder } from 'src/generated/mutation/createBuilder'
 import { executeMutation } from 'src/graphql/apollo'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 // import useCustomToast from 'src/libraries/hooks/useCustomToast'
@@ -20,6 +19,7 @@ import { Form } from 'src/screens/proposal_form/_utils/types'
 import { ProposalFormContext } from 'src/screens/proposal_form/Context'
 import { GrantApplicationRequest } from 'src/types/gen'
 
+
 interface Props {
 	setNetworkTransactionModalStep: (step: number | undefined) => void
 	setTransactionHash: (hash: string) => void
@@ -27,7 +27,7 @@ interface Props {
 
 function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash }: Props) {
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
-	const { type, grant, proposal, chainId, telegram, twitter } = useContext(ProposalFormContext)!
+	const { type, grant, proposal, chainId } = useContext(ProposalFormContext)!
 	const { encrypt } = useEncryptPiiForApplication(grant?.id, webwallet?.publicKey, chainId)
 	const [isExecuting, setIsExecuting] = useState(true)
 	const customToast = useCustomToast()
@@ -197,20 +197,6 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 				// 	logger.info({ proposalId }, 'proposalId (Event Data)')
 				// 	setProposalId(`0x${proposalId.toString(16)}`)
 				setNetworkTransactionModalStep(3)
-				if(type === 'submit') {
-					await executeMutation(createBuilder, {
-						telegram: telegram ?? '',
-						github: {
-							username: '',
-							repos: 0,
-							token: ''
-						},
-						application: receipt['createNewGrantApplication'].record._id,
-						email: findField(form, 'applicantEmail').value ?? '',
-						twitter: twitter ?? ''
-					})
-				}
-
 				// 	await createMapping({ email: findField(form, 'applicantEmail').value })
 				const proposalId = receipt[type === 'submit' ? 'createNewGrantApplication' : 'updateGrantApplication'].record._id
 				 logger.info({ proposalId }, 'proposalId (Event Data)')

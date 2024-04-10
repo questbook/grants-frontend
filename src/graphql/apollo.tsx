@@ -4,6 +4,7 @@ import { logger } from 'ethers'
 
 export const ENDPOINT_CLIENT = 'https://api-grants.questbook.app/graphql'
 
+
 export const client = new ApolloClient({
 	uri: ENDPOINT_CLIENT,
 	cache: new InMemoryCache(),

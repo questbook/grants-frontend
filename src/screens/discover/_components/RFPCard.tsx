@@ -13,6 +13,7 @@ import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import StateButton from 'src/screens/discover/_components/stateButton'
 import { GrantType } from 'src/screens/discover/_utils/types'
 import { DiscoverContext } from 'src/screens/discover/Context'
+import { disabledGrants } from 'src/screens/proposal_form/_utils/constants'
 
 type RFPCardProps = {
 	grant: GrantType
@@ -55,6 +56,14 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						return
 					}
 
+					// if it program details button is clicked then open the link in new tab
+					if([
+						'[object HTMLButtonElement]',
+						'[object SVGSVGElement]',
+					].includes(e.target.toString())) {
+						return
+					}
+
 					if(!chainId) {
 						return
 					}
@@ -77,6 +86,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 			<Flex
 				flexDirection='column'
 				h='100%'
+				overflow='hidden'
 				gap={4}>
 				<Box
 					bgColor='#F7F5F2'
@@ -97,9 +107,17 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 							borderRadius='4px'
 						/>
 						<Flex gap={2}>
-							<StateButton
-								state='approved'
-								title='Open' />
+							{
+								disabledGrants?.includes(grant?.id as string) ? (
+									<StateButton
+										state='rejected'
+										title='Closed' />
+								) : (
+									<StateButton
+										state='approved'
+										title='Open' />
+								)
+							}
 
 							{/* <Text
 							variant={isOpen ? 'openTag' : 'closedTag'}

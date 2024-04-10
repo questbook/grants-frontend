@@ -13,7 +13,6 @@ type Props = {
 	proposal: ProposalType
 	step?: boolean
 	setStep?: (value: boolean) => void
-	type?: 'updatedAtS' | 'createdAtS'
 } & FlexProps
 
 const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
@@ -71,8 +70,7 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 					ml='auto'
 					color='gray.500'
 					variant='metadata'>
-					{/* {formatTime(proposal.updatedAtS, true)} */}
-					{formatTime(proposal[props.type || 'updatedAtS'], true)}
+					{formatTime(proposal.updatedAtS, true)}
 				</Text>
 			</Flex>
 			<Flex

@@ -26,7 +26,7 @@ const EIP712_WALLET_TX_TYPE = {
 
 export const jsonRpcProviders: { [key: string]: ethers.providers.JsonRpcProvider } =
 {
-	'5': new ethers.providers.JsonRpcProvider('https://polygon-mainnet.g.alchemy.com/v2/zcWxjKH0Sif5PLp-b-vxP_M1JYF1aoPG'),
+	'5': new ethers.providers.JsonRpcProvider('https://eth-goerli.g.alchemy.com/v2/c7FL3Wd0zxt_DtjeN1wqMWtCFVUTV_sP'),
 	'137': new ethers.providers.JsonRpcProvider('https://polygon-mainnet.g.alchemy.com/v2/zcWxjKH0Sif5PLp-b-vxP_M1JYF1aoPG'),
 	'10': new ethers.providers.JsonRpcProvider('https://opt-mainnet.g.alchemy.com/v2/8iYVobmm24k85ejRIS0fd8sBzSVbQtZv'),
 	'42220': new ethers.providers.JsonRpcProvider('https://forno.celo.org/'),
@@ -34,8 +34,8 @@ export const jsonRpcProviders: { [key: string]: ethers.providers.JsonRpcProvider
 
 export const bicoDapps: { [key: string]: { apiKey: string, webHookId: string } } = {
 	'5': {
-		apiKey: 'cCEUGyH2y.37cd0d5e-704c-49e6-9f3d-e20fe5bb13d5',
-		webHookId: '7726ab3f-2b4b-4a80-bfdd-c8ebb2d5ea2f',
+		apiKey: 'kcwSbypnqq.f5fe6fbd-10e3-4dfe-a731-5eb4b6d85445',
+		webHookId: '33d5557b-6882-4a3d-a7c3-a4543682b9c0',
 	},
 	'137': {
 		apiKey: 'kcwSbypnqq.f5fe6fbd-10e3-4dfe-a731-5eb4b6d85445',

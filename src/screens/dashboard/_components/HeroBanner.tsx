@@ -1,10 +1,15 @@
+import { useContext } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { Box, Button, Flex, Grid, Image, Text } from '@chakra-ui/react'
-import { ProjectDetails, Telegram, Twitter } from 'src/generated/icons'
-import { getAvatar } from 'src/libraries/utils'
-import RoleTag from 'src/screens/dashboard/_components/RoleTag'
+import config from 'src/constants/config.json'
 // import { useRouter } from 'next/router'
-
+import SubDomainConfig from 'src/constants/subdomain.json'
+import { WorkspaceMember } from 'src/generated/graphql'
+import { Telegram, Twitter } from 'src/generated/icons'
+import { getAvatar } from 'src/libraries/utils'
+import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
+import { GrantsProgramContext } from 'src/pages/_app'
+import RoleTag from 'src/screens/dashboard/_components/RoleTag'
 
 function HeroBannerBox({
 	title,
@@ -15,40 +20,34 @@ function HeroBannerBox({
 	paidOut,
 	allocated,
 	safeBalances,
+	grantTicketSize,
 }: {
 	title: string
 	programDetails: string
-	reviewers: string[]
+	reviewers: WorkspaceMember[]
 	proposalCount: number
 	proposalCountAccepted: number
 	paidOut: string
     allocated: string
     safeBalances: string
+	grantTicketSize: string
 }) {
-
-
 	const socialList = [
 		{
-			image: 'https://ipfs.questbook.app:8080/ipfs/Qmapyv8FtFXgUGJNTA6axAuu4ehXNtpNJsZkkxki2WM8JD',
-			title: 'allthecolors',
-			twitter: '0xA1176ec01045'
+			title: 'Srijith',
+			twitter: 'Srijith_Padmesh'
 		},
 		{
-			image: 'https://ipfs.questbook.app:8080/ipfs/QmRp5u9wy2m23HzkD9t1GQAeicAdpLphvahqAWfmRtKMuF',
-			title: 'Doo_StableLab',
-			twitter: 'DooWanNam'
-		},
-		{
-			image: '0x012523',
-			title: 'Michael Lewellen',
-			twitter: 'LewellenMichael'
-		},
+			title: 'Srijith padmesh',
+			twitter: 'Srijith_Padmesh'
+		}
 	]
-	const UserCard = ({ image, title, twitter, telegram }: {
+	const UserCard = ({ image, title, twitter, telegram, accessLevel }: {
 		image: string
 		title: string
 		twitter?: string
 		telegram?: string
+		accessLevel?: 'admin' | 'reviewer' | 'community' | 'builder'
 	}) => (
 		<Flex
 			mt={2}
@@ -59,7 +58,7 @@ function HeroBannerBox({
 				<Image
 					borderRadius='3xl'
 					bgColor='white'
-					src={getAvatar(false, image ?? '0x0')}
+					src={image ? getUrlForIPFSHash(image) : getAvatar(false, image ?? title) }
 					boxSize='16px' />
 				<Flex>
 					<Text
@@ -72,7 +71,7 @@ function HeroBannerBox({
 						{title}
 					</Text>
 					<RoleTag
-						role='admin'
+						role={accessLevel ?? 'admin'}
 						isBuilder={false}
 					/>
 				</Flex>
@@ -152,15 +151,13 @@ function HeroBannerBox({
 						pl={10}
 						justifyContent='center'>
 						<Image
-							  borderWidth='1px'
-							  borderColor='black.100'
-							  borderRadius='lg'
-							  boxSize='16px'
+							bgColor='white'
+							borderRadius='8px'
 							mt={10}
 							justifyContent='center'
 							h='24'
 							w='48'
-							src='https://ipfs.questbook.app:8080/ipfs/QmTkdKP8gFTmrM5UJYAtEahqtU7GQyDVaN9UHnNoEY6M3M' />
+							src={grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)} />
 					</Flex>
 				)
 			}
@@ -176,15 +173,12 @@ function HeroBannerBox({
 					isMobile && (
 
 						<Image
-							borderWidth='1px'
-							borderColor='black.100'
-							borderRadius='lg'
-							boxSize='16px'
 							justifyContent='center'
-							h='16'
+							h='12'
 							mb={4}
-							w='16'
-							src='https://ipfs.questbook.app:8080/ipfs/QmTkdKP8gFTmrM5UJYAtEahqtU7GQyDVaN9UHnNoEY6M3M' />
+							w='12'
+							style={{ mixBlendMode: 'difference' }}
+							src={grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)} />
 
 					)
 				}
@@ -207,10 +201,10 @@ function HeroBannerBox({
 				 size='sm'
 				 textColor='white'
 				 fontSize='14px'
-				 _hover={{ bgColor: 'blue.600' }}
 				 w={isMobile ? '50%' : ''}
+				 _hover={{ bgColor: 'blue.600' }}
 				 onClick={() => window.open(programDetails, '_blank')}
-				 rightIcon={<ProjectDetails />}
+				 rightIcon={<Image src='/v2/icons/projectDetails.svg' />}
 				 >
 						Program Details
 					</Button>
@@ -224,7 +218,7 @@ function HeroBannerBox({
 						fontSize='12px'
 						lineHeight='16px'
 						color='white'>
-						This domain is focused on all new ideas that builders have that can boost Compound as an ecosystem overall
+						{`This domain is focused on grants related to the ${SubDomainConfig.grants_name} Ecosystem`}
 					</Text>
 
 				</Flex>
@@ -244,7 +238,7 @@ function HeroBannerBox({
 						lineHeight='20px'
 
 						color='white'>
-						25000 USD
+						{grantTicketSize}
 					</Text>
 				</Flex>
 			</Flex>
@@ -257,7 +251,10 @@ function HeroBannerBox({
 				textColor='white'
 			>
 				<Box
-					border='1px solid #53514F'
+					borderTop='1px solid #53514F'
+					borderLeft='1px solid #53514F'
+					borderBottom='1px solid #53514F'
+					borderRight={isMobile ? '1px solid #53514F' : 'none'}
 					p={5}
 					w='100%'
 				>
@@ -278,12 +275,12 @@ function HeroBannerBox({
 						justifyContent='flex-start'>
 						<TitleCards
 							data={safeBalances ?? 0}
-							title='in MultiSig' />
+							title='left in multisig' />
 						<TitleCards
 							data={proposalCount ?? 0}
-							title='Proposals Submitted' />
+							title='Proposals' />
 						<TitleCards
-							data={proposalCountAccepted ?? 11}
+							data={proposalCountAccepted ?? 0}
 							title='Accepted' />
 						<TitleCards
 							data={paidOut ?? 0}
@@ -299,10 +296,8 @@ function HeroBannerBox({
 					w={isMobile ? '100%' : '70%'}
 				>
 					<Box
-						border='1px solid #53514F'
+						borderBottom='1px solid #53514F'
 						p={2}
-
-
 					>
 						<Text
 							fontWeight='500'
@@ -324,9 +319,10 @@ function HeroBannerBox({
 							reviewers?.map((reviewer, i) => (
 								<UserCard
 									key={i}
-									image={reviewer}
-									title={reviewer}
-									twitter={socialList?.find((social) => social.title?.trim()?.toLowerCase() === reviewer?.trim()?.toLowerCase())?.twitter ?? ''}
+									image={reviewer?.profilePictureIpfsHash as string}
+									title={reviewer?.fullName ?? reviewer?.actorId?.slice(0, 6) + '...' + reviewer?.actorId?.slice(-4)}
+									twitter={socialList?.find((social) => social.title?.trim()?.toLowerCase() === reviewer?.fullName?.trim()?.toLowerCase())?.twitter ?? ''}
+									accessLevel={reviewer?.accessLevel === 'reviewer' ? 'reviewer' : 'admin'}
 								/>
 							))
 						}
@@ -351,7 +347,7 @@ function HeroBannerBox({
 		</Flex>
 	)
 	const isMobile = useMediaQuery({ query:'(max-width:600px)' })
-
+	const { grant } = useContext(GrantsProgramContext)!
 	return buildComponent()
 }
 
