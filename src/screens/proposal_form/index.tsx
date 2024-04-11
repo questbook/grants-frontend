@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
 import countries from 'src/constants/countries.json'
 import { useSafeContext } from 'src/contexts/safeContext'
-import { Doc, Twitter } from 'src/generated/icons'
+import { Doc } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import BackButton from 'src/libraries/ui/BackButton'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
@@ -26,7 +26,7 @@ import SectionSelect from 'src/screens/proposal_form/_components/SectionSelect'
 import SectionSelection from 'src/screens/proposal_form/_components/SectionSelection'
 import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposal'
 import { containsCustomField, containsField, findCustomField, findField, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
-import { customSteps, customStepsHeader, disabledGrants, SocialIntent } from 'src/screens/proposal_form/_utils/constants'
+import { customSteps, customStepsHeader, disabledGrants } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
 
 
@@ -200,7 +200,7 @@ function ProposalForm() {
 												gap={6}
 												flexDirection='column'
 											>
-												<Button
+												{/* <Button
 													w='100%'
 													bg='#77AC06'
 													border='1px solid #E1DED9'
@@ -213,10 +213,10 @@ function ProposalForm() {
 														fontWeight='500'>
 														Share on Twitter
 													</Text>
-												</Button>
+												</Button> */}
 												<Button
 													w='100%'
-													bg='transparent'
+													bg='#77AC06'
 													border='1px solid #E1DED9'
 													variant='primaryLarge'
 													onClick={
@@ -231,6 +231,7 @@ function ProposalForm() {
 
 												>
 													<Text
+														color='white'
 														fontWeight='500'>
 														Subscribe to notifications
 													</Text>
@@ -727,7 +728,7 @@ function ProposalForm() {
 							containsCustomField(grant, 'Previous work Describe any relevant prior work your team has undertaken?') && (
 								<SectionInput
 									label='Previous work Describe any relevant prior work your team has undertaken?'
-									placeholder='Information about previous work done by your team.'
+									placeholder='Previous work Describe any relevant prior work your team has undertaken?'
 									type='textarea'
 									maxLength={100}
 									value={findCustomField(form, 'Previous work Describe any relevant prior work your team has undertaken?').value}
@@ -779,7 +780,7 @@ function ProposalForm() {
 							containsCustomField(grant, 'Proposed tasks and roadmap Outline how you plan to use the grant funds') && (
 								<SectionInput
 									label='Proposed tasks and roadmap Outline how you plan to use the grant funds'
-									placeholder='Tasks and roadmap'
+									placeholder='Outline how you plan to use the grant funds'
 									type='textarea'
 									value={findCustomField(form, 'Proposed tasks and roadmap Outline how you plan to use the grant funds').value}
 									maxLength={300}
@@ -794,7 +795,7 @@ function ProposalForm() {
 							containsCustomField(grant, 'Describe what your project would look like three months after being awarded this grant') && (
 								<SectionInput
 									label='Describe what your project would look like three months after being awarded this grant'
-									placeholder='Project after 3 months'
+									placeholder='Describe what your project would look like three months after being awarded this grant'
 									type='textarea'
 									maxLength={150}
 									value={findCustomField(form, 'Describe what your project would look like three months after being awarded this grant').value}
@@ -806,16 +807,16 @@ function ProposalForm() {
 							)
 						}
 						{
-							containsCustomField(grant, 'What are your plans after the grant is completed? What kind of resources would you potentially need after this grant') && (
+							containsCustomField(grant, 'What are your plans after the grant is completed? What kind of resources would you potentially need after this grant?') && (
 								<SectionInput
-									label='What are your plans after the grant is completed? What kind of resources would you potentially need after this grant'
-									placeholder='Plans after grant'
+									label='What are your plans after the grant is completed? What kind of resources would you potentially need after this grant?'
+									placeholder='What are your plans after the grant is completed? What kind of resources would you potentially need after this grant'
 									type='textarea'
 									maxLength={150}
-									value={findCustomField(form, 'What are your plans after the grant is completed? What kind of resources would you potentially need after this grant').value}
+									value={findCustomField(form, 'What are your plans after the grant is completed? What kind of resources would you potentially need after this grant?').value}
 									onChange={
 										(e) => {
-											onChange(e, findCustomField(form, 'What are your plans after the grant is completed? What kind of resources would you potentially need after this grant').id)
+											onChange(e, findCustomField(form, 'What are your plans after the grant is completed? What kind of resources would you potentially need after this grant?').id)
 										}
 									} />
 							)
@@ -1034,6 +1035,21 @@ function ProposalForm() {
 										}
 									} />
 							)
+						}
+						{
+							containsCustomField(grant, 'Which team project helped you hear about this program?') &&
+								findCustomField(form, 'How did you hear about the Seed Grants Program?').value?.includes('Other') &&
+								(
+									<SectionInput
+										label='Which team project helped you hear about this program?'
+										placeholder='Please specify the team project/ source'
+										value={findCustomField(form, 'Which team project helped you hear about this program').value}
+										onChange={
+											(e) => {
+												onChange(e, findCustomField(form, 'Which team project helped you hear about this program?').id)
+											}
+										} />
+								)
 						}
 						{
 							containsCustomField(grant, 'Did anyone recommend that you submit an application to the Seed Grants Program?') && (

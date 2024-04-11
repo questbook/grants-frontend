@@ -119,7 +119,7 @@ function Proposal() {
 									direction='column'>
 									<Text fontWeight='500'>
 										{getFieldString(decryptedProposal, 'applicantName')}
-
+										{' '}
 										{getFieldString(decryptedProposal, lastName as string) ?? ''}
 									</Text>
 									<Flex align='center'>
@@ -232,7 +232,7 @@ function Proposal() {
 									mt={1}
 									fontWeight='500'>
 									{getFieldString(decryptedProposal, 'applicantName')}
-
+									{' '}
 									{getFieldString(decryptedProposal, lastName as string) ?? ''}
 								</Text>
 							</Flex>
