@@ -1188,7 +1188,7 @@ function ProposalForm() {
 		logger.info({ form }, 'Checking if form is disabled')
 
 		const optionalFields = ['projectDetails', 'fundingAsk', 'fundingBreakdown', 'projectGoals', 'projectLink']
-		const optionalFielsConditions = ['If yes,', 'Please include']
+		const optionalFielsConditions = ['If yes,', 'Please include', 'Which team project helped you hear about this program?']
 		const { fields, members, details, milestones } = form
 		logger.info({ fields, members, details, milestones }, 'Checking fields')
 		for(const field of fields) {
