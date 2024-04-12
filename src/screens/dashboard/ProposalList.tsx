@@ -1,7 +1,6 @@
 // This renders the list of proposals that show up as the first column
 
 import { createRef, useContext, useEffect, useMemo, useState } from 'react'
-import { useMediaQuery } from 'react-responsive'
 import { Button, Checkbox, Flex, Grid, GridItem, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { ApplicationState } from 'src/generated/graphql'
@@ -11,7 +10,6 @@ import SearchField from 'src/libraries/ui/SearchField'
 import { getFieldString } from 'src/libraries/utils/formatting'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
-import EmptyCard from 'src/screens/dashboard/_components/Body/Empty'
 import FilterTag from 'src/screens/dashboard/_components/FilterTag'
 import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
@@ -186,7 +184,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 					}
 				}>
 				{
-					role !== 'community' && proposalCount > 0 && filteredProposals?.map((proposal, index) => {
+					proposalCount > 0 && filteredProposals?.map((proposal, index) => {
 						return (
 							<ProposalCard
 								key={proposal.id}
@@ -197,7 +195,6 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 						)
 					})
 				}
-				{role === 'community' && proposalCount > 0 && (isMobile ? <EmptyCard /> : '') }
 				{proposalCount === 0 && <Empty />}
 			</Flex>
 		</Flex>
@@ -210,7 +207,6 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 	const { proposals, selectedProposals, setSelectedProposals, filterState, setFilterState } = useContext(DashboardContext)!
 
 	const [isFilterClicked, setIsFilterClicked] = useState<boolean>(false)
-	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
 
 	const [searchText, setSearchText] = useState<string>('')
 	const filteredProposals = useMemo(() => {

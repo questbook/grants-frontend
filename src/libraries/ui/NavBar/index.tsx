@@ -75,17 +75,6 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 					display='inherit'
 					mr='auto'
 					cursor='pointer' />
-				{/* {
-					isQbAdmin && (
-						<>
-							<Image
-								display={{ base: 'none', lg: 'inherit' }}
-								ml='10px'
-								src='/v2/icons/images/builders.svg'
-								alt='Questbook Builders' />
-						</>
-					)
-				} */}
 				<Spacer />
 				{
 					shouldShowTitle && (

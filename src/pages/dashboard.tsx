@@ -27,6 +27,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 			throw new Error('Invalid chainId')
 		}
 
+
 		const graphQLClient = new GraphQLClient(ENDPOINT_CLIENT)
 
 		if(proposalId === undefined) {

@@ -21,11 +21,7 @@ function Empty() {
 				<Text
 					variant='heading3'
 					fontWeight='500'>
-					{
-						role === 'admin' ? 'Your invitation for proposals is live!' :
-							role === 'community' ? 'This is a Private Grant Program' :
-								'Be the first to submit a proposal'
-					}
+					{role === 'admin' ? 'Your invitation for proposals is live!' : 'Be the first to submit a proposal'}
 
 				</Text>
 
@@ -53,47 +49,9 @@ function Empty() {
 						</>
 					) : grant?.link ? (
 						<>
-							<Text
-								align='justify'
-								mt={2}
-								variant='body'
-								width='80%'
-							>
-								{
-									`
-The Seed Grants Program is designed to provide teams with grants up to $25k in non-dilutive funding to enhance the growth of the Starknet ecosystem.
-`
-								}
-								<br />
-
-								{
-									`A Seed Grant is appropriate for projects and teams that meet any of the following criteria:
-`
-								}
-								{' '}
-								<br />
-								{
-									`
-- Actively involved in the Starknet community and/ or participated in a Starknet hackathon, builder program, or other entry-level initiative.`
-								}
-								<br />
-								{
-									`
-- Already developed an MVP or proof of concept.`
-								}
-								<br />
-								{
-									`
-- Engaged in experimentation of innovative concepts aimed at pushing boundaries of what is possible on Starknet.
-`
-								}
-								<br />
-								{
-									`
-There is no specific industry vertical targeted and the program is open to all types of submissions.`
-								}
-
-								{/* <Text
+							<Text variant='body'>
+								Read more about the grant
+								<Text
 									variant='body'
 									display='inline-block'
 									fontWeight={500}
@@ -108,7 +66,7 @@ There is no specific industry vertical targeted and the program is open to all t
 									}
 								>
 									here
-								</Text> */}
+								</Text>
 							</Text>
 
 						</>

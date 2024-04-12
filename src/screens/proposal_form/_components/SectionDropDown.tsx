@@ -33,6 +33,8 @@ function SectionDropDown({ label, flexProps, options, ...props }: Props & { opti
 					</Text>
 					<Select
 						{...props}
+						fontSize='14px'
+						color='black.100'
 						variant='flushed'
 						colorScheme='blue'
 						placeholder={props.placeholder}
@@ -46,7 +48,8 @@ function SectionDropDown({ label, flexProps, options, ...props }: Props & { opti
 							options?.map((option) => (
 								<option
 									key={option}
-									value={option}>
+									value={option}
+								>
 									{option}
 								</option>
 							))

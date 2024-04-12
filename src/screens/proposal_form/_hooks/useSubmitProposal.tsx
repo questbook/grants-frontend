@@ -128,7 +128,7 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 
 			const data: GrantApplicationRequest = {
 				grantId: grant.id,
-				applicantId: await webwallet.getAddress(), // The value you set here does not matter
+				applicantId: scwAddress, // The value you set here does not matter
 				applicantPublicKey: webwallet.publicKey,
 				fields: {
 					...fields,
@@ -150,9 +150,9 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 			}
 
 			// Step - 3: Encrypt the PII Enabled fields
-			const piiFields = form?.fields?.filter((f) => f.isPii).map((f) => f.id)
-			await encrypt(data, piiFields)
-			logger.info({ data, piiFields }, 'useSubmitProposal: encryptedPii')
+			// const piiFields = form?.fields?.filter((f) => f.isPii).map((f) => f.id)
+			// await encrypt(data, piiFields)
+			// logger.info({ data, piiFields }, 'useSubmitProposal: encryptedPii')
 
 			// TODO: Step - 4: Validate the form data
 			// const validate = await validateRequest('GrantApplicationUpdate', { ...data, grantId: undefined })

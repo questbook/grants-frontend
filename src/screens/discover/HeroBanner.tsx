@@ -165,7 +165,7 @@ function HeroBanner({
 		</Flex>
 
 	)
-	const isMobile = useMediaQuery(['(max-width:700px)'])[0]
+	const isMobile = useMediaQuery(['(max-width:600px)'])[0]
 
 	return buildComponent()
 }

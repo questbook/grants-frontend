@@ -56,11 +56,8 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						return
 					}
 
-					// if it program details button is clicked then open the link in new tab
-					if([
-						'[object HTMLButtonElement]',
-						'[object SVGSVGElement]',
-					].includes(e.target.toString())) {
+					// if clicked on the program details button open the link in new tab
+					if(e.target.toString() === '[object HTMLButtonElement]') {
 						return
 					}
 
@@ -80,13 +77,12 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 					router.push({
 						pathname: '/dashboard/',
 						query: params,
-					}, undefined, { shallow: true })
+					})
 				}
 			}>
 			<Flex
 				flexDirection='column'
 				h='100%'
-				overflow='hidden'
 				gap={4}>
 				<Box
 					bgColor='#F7F5F2'

@@ -33,17 +33,15 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 						props?.type === 'textarea' ? (
 							<Textarea
 								w={['100%', '70%']}
-								h='100px'
-								variant='filled'
+								height='100px'
+								variant='flushed'
 								textAlign='left'
-								placeholder={props?.placeholder}
 								borderColor='gray.300'
 								borderBottom='1px solid'
 								fontSize='20px'
-								value={value}
 								lineHeight='28px'
-								maxLength={props?.maxLength && value?.split(' ')?.length - 1 >= props?.maxLength ? props?.maxLength : undefined}
 								borderRadius={0}
+								placeholder={props.placeholder}
 								color='black.100'
 								backgroundColor='transparent'
 								onWheel={(e) => (e.target as HTMLElement).blur()}
@@ -54,12 +52,8 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 								}
 								onChange={
 									(e) => {
-										if(props?.maxLength && e.target.value.split(' ').length > props?.maxLength) {
-											setValue(value)
-										} else {
-											setValue(e.target.value)
-											props?.onChange?.(e as unknown as ChangeEvent<HTMLInputElement>)
-										}
+										setValue(e.target.value)
+										props?.onChange?.(e as unknown as ChangeEvent<HTMLInputElement>)
 									}
 								} />
 						) : (
@@ -95,11 +89,7 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 							ml='auto'
 							variant='metadata'
 							color='gray.500'>
-							{
-								props?.type === 'textarea' ?
-									(value?.length === 0 ? 0 :
-										value?.split(' ')?.length) : value?.length
-							}
+							{value?.length}
 							/
 							{props?.maxLength}
 						</Text>

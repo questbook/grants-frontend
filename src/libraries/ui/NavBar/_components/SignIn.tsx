@@ -1,10 +1,15 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
-import { Wallet } from 'ethers'
+import { ethers, logger, Wallet } from 'ethers'
 import { Qb } from 'src/generated/icons'
 import CreateNewWallet from 'src/libraries/ui/NavBar/_components/CreateNewWallet'
 import RestoreWallet from 'src/libraries/ui/NavBar/_components/RestoreWallet'
 import { SignInMethodContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
+import { useAccount, useSignMessage, useAccountEffect, useDisconnect } from 'wagmi'
+import { generateToken, verifyToken } from 'src/libraries/utils/authToken'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { WalletButton } from '@rainbow-me/rainbowkit';
+
 interface Props {
     isOpen: boolean
     setSignIn: (signIn: boolean) => void
@@ -19,7 +24,111 @@ interface Props {
 function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen, onClose, setSignIn }: Props) {
 	// const [signInMethod, setSignInMethod] = useState<'newWallet' | 'existingWallet' | 'choosing'>('choosing')
 	const { signInMethod, setSignInMethod } = useContext(SignInMethodContext)!
-	const { importWebwallet } = useContext(WebwalletContext)!
+	const { importWebwallet, existingWallets, setScwAddress, setWebwallet, webwallet } = useContext(WebwalletContext)!
+	const { isConnected, address, connector, isDisconnected } = useAccount()
+	const { disconnect } = useDisconnect()
+	const accountData = useAccountEffect({
+		onDisconnect() {
+			setWebwallet(undefined)
+			setScwAddress(undefined)
+			localStorage.removeItem('isEOA')
+			localStorage.removeItem('scwAddress')
+			localStorage.removeItem('webwalletPrivateKey')
+			localStorage.removeItem('authToken')
+			setSignInMethod('choosing')
+		}
+
+	})
+
+
+	
+
+	// useEffect(() => {
+	// 	const scw = localStorage.getItem('scwAddress') 
+	// 	if(isDisconnected && scw){
+	// 		setWebwallet(undefined)
+	// 		setScwAddress(undefined)
+	// 		localStorage.removeItem('isEOA')
+	// 		localStorage.removeItem('scwAddress')
+	// 		localStorage.removeItem('webwalletPrivateKey')
+	// 		localStorage.removeItem('authToken')
+	// 		setSignInMethod('choosing')
+	// 	}
+		
+	// }, [isDisconnected])
+
+	useEffect(() => {
+		const authToken = localStorage.getItem('authToken')
+		const scwAddress = localStorage.getItem('scwAddress')
+		if(isConnected && address && authToken && !webwallet) {
+			logger.info('Setting webwallet')
+			setWebwallet({
+				address: address,
+				publicKey: address,
+				privateKey: address,
+				mnemonic: address,
+				...connector,
+			} as any)
+			setScwAddress(address)
+			setSignIn(false)
+			
+		}
+		if(isConnected && address && scwAddress && (address !== scwAddress)) {
+			logger.info('Disconnecting')
+			setWebwallet(undefined)
+			setScwAddress(undefined)
+			localStorage.removeItem('isEOA')
+			localStorage.removeItem('scwAddress')
+			localStorage.removeItem('webwalletPrivateKey')
+			localStorage.removeItem('authToken')
+			setSignInMethod('choosing')
+			disconnect()
+		}
+		// if(!authToken){
+		// 	ConnectAuth(address)
+		// }
+	}, [isConnected, address])
+
+
+	const { data: signMessageData, error, signMessage, variables } = useSignMessage({
+		mutation: {
+			async onSuccess(data, variables, context) {
+				logger.info('Sign message success', data, variables)
+				
+			
+				 const wallet = {
+					address: address,
+					publicKey: address,
+					privateKey: address,
+					mnemonic: address,
+					provider: await connector?.getProvider(),
+					...connector,
+				 }
+				//  localStorage.setItem('isEOA', data)
+				//  localStorage.setItem('authToken', data)
+				const tokenId = localStorage.getItem('authTokenId')
+				if(data && tokenId) {
+					const tokenData = await verifyToken(tokenId, data)
+					localStorage.removeItem('authTokenId')
+					if (tokenData) {
+						localStorage.setItem('authToken', tokenData) // Storing the verified token directly
+					}
+					logger.info('Token signed', tokenData)
+					setScwAddress(address)
+					setWebwallet(wallet as any)
+					setSignIn(false)
+				}
+
+
+				
+
+			},
+			onError(error, variables, context) {
+				logger.info('Sign message error', error)
+			},
+		}
+	
+	})
 	const { signInTitle } = useContext(SignInTitleContext)!
 	function Title() {
 		if(signInTitle === 'admin') {
@@ -41,6 +150,23 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 		return 'To run a grant program, sign in with wallet'
 	}
 
+	const ConnectAuth = async(address: string) => {
+		
+		const authToken = localStorage.getItem('authToken')
+					const jwtRegex = new RegExp('^[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+\\.[A-Za-z0-9-_.+/=]*$')
+					if (!authToken?.match(jwtRegex)) {
+						const token = await generateToken(address)
+						localStorage.setItem('authTokenId', token?.id)
+						localStorage.setItem('isEOA', 'true')
+						if (token) {
+							// const sign = await webwallet.signMessage(token?.nonce)
+							await signMessage({
+								message: token?.nonce,
+							})
+						}
+	}
+}
+
 	const buildComponent = () => {
 		return (
 			<Modal
@@ -54,7 +180,11 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 				>
 
 
-					<ModalCloseButton />
+					<ModalCloseButton 
+						onClick={() => {
+							setSignInMethod('choosing')
+						}}
+					/>
 					{/* {signInMethod!='choosing'&&
                     } */}
 					{
@@ -99,6 +229,22 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 											Create new wallet
 										</Text>
 									</Button>
+									<Button
+										variant='primaryMedium'
+										marginTop={[4, 6]}
+										borderRadius='20'
+										width={['90%', '75%']}
+										height='45px'
+										onClick={() => setSignInMethod('externalWallet')}
+									>
+										<Text
+											variant='body'
+											color='gray.100'
+											fontWeight='500'
+										>
+											Connect external wallet
+										</Text>
+									</Button>
 
 									<Button
 										variant='primaryMedium'
@@ -117,6 +263,53 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 										>
 											I have a Questbook wallet
 										</Text>
+									</Button>
+								</Flex>
+							</ModalBody>
+						)
+					}
+					{
+						signInMethod === 'externalWallet' && (
+							<ModalBody>
+								<Flex
+									p={6}
+									direction='column'
+									align='center'>
+									<Qb
+										maxH='64px'
+										boxSize='10rem' />
+									<Text
+										variant='subheading'
+										fontSize='16px'
+										fontWeight='500'
+										mt={[5, 0]}
+									>
+										{Title()}
+									</Text>
+									<Text
+										variant='body'
+										mt={1}
+										fontSize='14px'
+										mb={5}
+										color='black.300'>
+										Connect using your external wallet
+									</Text>
+									<Button
+										variant='primaryMedium'
+										marginTop={[4, 6]}
+										borderRadius='20'
+										width={['90%', '75%']}
+										height='45px'
+										onClick={async () => {
+											if(isConnected) {
+												await ConnectAuth(address as string)
+											}
+										}}
+									>
+										
+										{isConnected ? 'Verify to Continue' : 
+											<ConnectButton /> }
+
 									</Button>
 								</Flex>
 							</ModalBody>

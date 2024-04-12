@@ -4,9 +4,8 @@ import { Button, Container, Flex, Image, Modal, ModalBody, ModalCloseButton, Mod
 import { convertToRaw } from 'draft-js'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
-import countries from 'src/constants/countries.json'
 import { useSafeContext } from 'src/contexts/safeContext'
-import { Doc } from 'src/generated/icons'
+import { Doc, Twitter } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import BackButton from 'src/libraries/ui/BackButton'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
@@ -24,9 +23,10 @@ import SectionInput from 'src/screens/proposal_form/_components/SectionInput'
 import SectionRichTextEditor from 'src/screens/proposal_form/_components/SectionRichTextEditor'
 import SectionSelect from 'src/screens/proposal_form/_components/SectionSelect'
 import SectionSelection from 'src/screens/proposal_form/_components/SectionSelection'
+import SelectArray from 'src/screens/proposal_form/_components/SelectArray'
 import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposal'
 import { containsCustomField, containsField, findCustomField, findField, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
-import { customSteps, customStepsHeader, disabledGrants } from 'src/screens/proposal_form/_utils/constants'
+import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, MILESTONE_INPUT_STYLE, SocialIntent } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
 
 
@@ -200,7 +200,7 @@ function ProposalForm() {
 												gap={6}
 												flexDirection='column'
 											>
-												{/* <Button
+												<Button
 													w='100%'
 													bg='#77AC06'
 													border='1px solid #E1DED9'
@@ -213,10 +213,10 @@ function ProposalForm() {
 														fontWeight='500'>
 														Share on Twitter
 													</Text>
-												</Button> */}
+												</Button>
 												<Button
 													w='100%'
-													bg='#77AC06'
+													bg='transparent'
 													border='1px solid #E1DED9'
 													variant='primaryLarge'
 													onClick={
@@ -231,7 +231,6 @@ function ProposalForm() {
 
 												>
 													<Text
-														color='white'
 														fontWeight='500'>
 														Subscribe to notifications
 													</Text>
@@ -252,7 +251,7 @@ function ProposalForm() {
 																	role: 'builder',
 																	proposalId,
 																}
-															}, undefined, { shallow: true })
+															})
 															if(ret) {
 																router.reload()
 															}
@@ -435,30 +434,17 @@ function ProposalForm() {
 
 						{/* Builder Details */}
 						<SectionHeader mt={8}>
-							Applicant information
+							Builder details
 						</SectionHeader>
 						{
 							containsField(grant, 'applicantName') && (
 								<SectionInput
-									label='First Name'
-									placeholder='Ryan'
+									label='Full Name'
+									placeholder='Ryan Adams'
 									value={findField(form, 'applicantName').value}
 									onChange={
 										(e) => {
 											onChange(e, 'applicantName')
-										}
-									} />
-							)
-						}
-						{
-							containsCustomField(grant, 'Last Name') && (
-								<SectionInput
-									label='Last Name'
-									placeholder='Adams'
-									value={findCustomField(form, 'Last Name').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'Last Name').id)
 										}
 									} />
 							)
@@ -482,105 +468,38 @@ function ProposalForm() {
 							)
 						}
 						{
-							containsCustomField(grant, 'Telegram') && (
+							containsField(grant, 'applicantTelegram') && (
 								<SectionInput
 									label='Telegram'
-									placeholder='@telegram'
-									value={findCustomField(form, 'Telegram').value}
+									placeholder='@username'
+									value={findField(form, 'applicantTelegram').value}
 									onChange={
 										(e) => {
-											onChange(e, findCustomField(form, 'Telegram').id)
+											onChange(e, 'applicantTelegram')
 										}
-									} />
+									}
+									 />
 							)
 						}
 						{
-							containsCustomField(grant, 'Discord') && (
+							containsField(grant, 'applicantTwitter') && (
 								<SectionInput
-									label='Discord ID'
-									placeholder='@discord'
-									value={findCustomField(form, 'Discord').value}
+									label='Twitter'
+									placeholder='@twitterHandle'
+									value={findField(form, 'applicantTwitter').value}
 									onChange={
 										(e) => {
-											onChange(e, findCustomField(form, 'Discord').id)
+											onChange(e, 'applicantTwitter')
 										}
-									} />
+									}
+									 />
 							)
 						}
-						{
-							containsCustomField(grant, 'Github Username') && (
-								<SectionInput
-									label='Github'
-									placeholder='@github'
-									value={findCustomField(form, 'Github Username').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'Github Username').id)
-										}
-									} />
-							)
-						}
-						{
-							containsCustomField(grant, 'Are you applying as an individual or on behalf of a team?') && (
-								<SectionSelection
-									label='Are you applying as an individual or on behalf of a team?'
-									placeholder='Individual / Team'
-									value={findCustomField(form, 'Are you applying as an individual or on behalf of a team?').value}
-									options={['Individual', 'Team']}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'Are you applying as an individual or on behalf of a team?').id)
-										}
-									} />
-							)
-						}
-						{
-							containsCustomField(grant, 'Introduce yourself, your background, and motivation') && (
-								<SectionInput
-									label='Introduce yourself, your background, and motivation'
-									placeholder='Ryan Adams, 5 years of experience in blockchain development, passionate about DeFi and NFTs.'
-									value={findCustomField(form, 'Introduce yourself, your background, and motivation').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'Introduce yourself, your background, and motivation').id)
-										}
-									} />
-							)
-						}
-						{
-							containsCustomField(grant, 'City') && (
-								<SectionInput
-									label='City'
-									placeholder='New York'
-									value={findCustomField(form, 'City').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'City').id)
-										}
-									} />
-							)
-						}
-						{
-							containsCustomField(grant, 'Country') && (
-								<SectionDropDown
-									label='Country'
-									width='-moz-fit-content'
-									options={countries?.map((c) => c.name)}
-									placeholder='Select a Country'
-									value={findCustomField(form, 'Country').value}
-									onChange={
-										(e) => {
-											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Country').id)
-										}
-									} />
-							)
-						}
-
 						{
 							containsField(grant, 'applicantAddress') && (
 								<SectionInput
 									label='Wallet Address'
-									placeholder='Wallet to receive funds on Starknet'
+									placeholder='Wallet to receive funds on EVM based chain / Solana / TON'
 									value={findField(form, 'applicantAddress').value}
 									onChange={
 										async(e) => {
@@ -640,21 +559,27 @@ function ProposalForm() {
 							})
 						}
 
-						{/* Project information */}
+						{/* Proposal Details */}
 						<SectionHeader mt={8}>
-							Project information
+							Proposal
 						</SectionHeader>
 						{
-							containsCustomField(grant, 'Project category') && (
+							containsCustomField(grant, 'Which Category does your submission belong') && (
 								<SectionDropDown
-									label='Project category'
+									label='Which Category does your submission belong'
 									width='-moz-fit-content'
-									options={['Defi', 'Gaming', 'Social', 'NFT', 'Other dApp', 'Tooling/ Infra']}
-									placeholder='Select a category'
-									value={findCustomField(form, 'Project category').value}
+									options={
+										[
+											'Infrastructure - Core technical implementations used by Web3 developers or enable the Ethereum network.',
+											'Tools - Utilities that improve the way we interact with Web3 and Ethereum.',
+											'Education - Information and resources that foster a better understanding of Ethereum or Web3.'
+										]
+									}
+									placeholder='Which Category does your submission belong'
+									value={findCustomField(form, 'Which Category does your submission belong').value}
 									onChange={
 										(e) => {
-											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Project category').id)
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Which Category does your submission belong').id)
 										}
 									} />
 							)
@@ -662,8 +587,9 @@ function ProposalForm() {
 						{
 							containsField(grant, 'projectName') && (
 								<SectionInput
-									label='Project Name'
-									placeholder='Name of your project'
+									label='Title'
+									placeholder='Name of your proposal'
+									maxLength={80}
 									value={findField(form, 'projectName').value}
 									onChange={
 										(e) => {
@@ -672,78 +598,6 @@ function ProposalForm() {
 									} />
 							)
 						}
-						{
-							containsCustomField(grant, 'Website') && (
-								<SectionInput
-									label='Website'
-									placeholder='Link to your project website'
-									value={findCustomField(form, 'Website').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'Website').id)
-										}
-									} />
-							)
-						}
-						{
-							containsCustomField(grant, 'Twitter') && (
-								<SectionInput
-									label='Twitter'
-									placeholder='@twitter'
-									value={findCustomField(form, 'Twitter').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'Twitter').id)
-										}
-									} />
-							)
-						}
-						{
-							containsCustomField(grant, 'Project repo') && (
-								<SectionInput
-									label='Project repo'
-									placeholder='Link to your project repository'
-									value={findCustomField(form, 'Project repo').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'Project repo').id)
-										}
-									} />
-							)
-						}
-						{
-							containsCustomField(grant, 'Github of each team member') && (
-								<SectionInput
-									label='Github of each team member'
-									placeholder='Link to Github profile of each team member'
-									value={findCustomField(form, 'Github of each team member').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'Github of each team member').id)
-										}
-									} />
-							)
-						}
-						{
-							containsCustomField(grant, 'Previous work Describe any relevant prior work your team has undertaken?') && (
-								<SectionInput
-									label='Previous work'
-									placeholder='Describe any relevant prior work your team has undertaken?'
-									type='textarea'
-									maxLength={100}
-									value={findCustomField(form, 'Previous work Describe any relevant prior work your team has undertaken?').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'Previous work Describe any relevant prior work your team has undertaken?').id)
-										}
-									} />
-							)
-						}
-
-						{/* Project details */}
-						<SectionHeader mt={8}>
-							Project details
-						</SectionHeader>
 
 						{
 							containsField(grant, 'tldr') && (
@@ -761,9 +615,23 @@ function ProposalForm() {
 						}
 
 						{
+							containsCustomField(grant, 'Website') && (
+								<SectionInput
+									label='Website'
+									placeholder='link to your project'
+									value={findCustomField(form, 'Website').value}
+									onChange={
+										(e) => {
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Website').id)
+										}
+									} />
+							)
+						}
+
+						{
 							containsField(grant, 'projectDetails') && (
 								<SectionRichTextEditor
-									label='Project Details'
+									label='Details'
 									flexProps={{ align: 'start' }}
 									editorState={form.details}
 									setEditorState={
@@ -776,53 +644,7 @@ function ProposalForm() {
 							)
 						}
 
-						{
-							containsCustomField(grant, 'Proposed tasks and roadmap Outline how you plan to use the grant funds') && (
-								<SectionInput
-									label='Proposed tasks'
-									placeholder='Outline how you plan to use the grant funds'
-									type='textarea'
-									value={findCustomField(form, 'Proposed tasks and roadmap Outline how you plan to use the grant funds').value}
-									maxLength={300}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'Proposed tasks and roadmap Outline how you plan to use the grant funds').id)
-										}
-									} />
-							)
-						}
-						{
-							containsCustomField(grant, 'Describe what your project would look like three months after being awarded this grant') && (
-								<SectionInput
-									label='Describe what your project would look like three months after being awarded this grant'
-									placeholder=''
-									type='textarea'
-									maxLength={150}
-									value={findCustomField(form, 'Describe what your project would look like three months after being awarded this grant').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'Describe what your project would look like three months after being awarded this grant').id)
-										}
-									} />
-							)
-						}
-						{
-							containsCustomField(grant, 'What are your plans after the grant is completed? What kind of resources would you potentially need after this grant?') && (
-								<SectionInput
-									label='What are your plans after the grant is completed?'
-									placeholder='What kind of resources would you potentially need after this grant ?'
-									type='textarea'
-									maxLength={150}
-									value={findCustomField(form, 'What are your plans after the grant is completed? What kind of resources would you potentially need after this grant?').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'What are your plans after the grant is completed? What kind of resources would you potentially need after this grant?').id)
-										}
-									} />
-							)
-						}
-
-						{/* <SelectArray
+						<SelectArray
 							label='Milestones'
 							allowMultiple={grant?.payoutType === 'milestones' || (containsField(grant, 'isMultipleMilestones') ?? false)}
 							config={
@@ -872,225 +694,79 @@ function ProposalForm() {
 									copy.milestones.splice(index, 1)
 									setForm(copy)
 								}
-							} /> */}
+							} />
 
-						{/* <SectionInput
+						<SectionInput
 							label='Funding Asked'
 							isDisabled
 							placeholder='12000 USD'
 							value={`${fundingAsk} ${chainInfo?.label}`}
-						/> */}
+						/>
+
 
 						{/* Render custom Fields */}
-						<SectionHeader mt={8}>
-							Additional Questions
-						</SectionHeader>
-
 						{
-							containsCustomField(grant, 'Is your project open source?') && (
-								<SectionSelection
-									label='Is your project open source? '
-									options={['Yes', 'No']}
-									value={findCustomField(form, 'Is your project open source?').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'Is your project open source?').id)
-										}
-									} />
+							containsField(grant, 'customField0') && (
+								<SectionHeader mt={8}>
+									Other information
+								</SectionHeader>
 							)
 						}
 
 						{
-							containsCustomField(grant, 'Have you previously received a grant from Starknet Foundation or Starkware?') && (
-								<SectionSelection
-									label='Have you previously received a grant from Starknet Foundation or Starkware?'
-									options={['Yes', 'No']}
-									value={findCustomField(form, 'Have you previously received a grant from Starknet Foundation or Starkware?').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'Have you previously received a grant from Starknet Foundation or Starkware?').id)
-										}
-									} />
-							)
-						}
-
-						{
-							containsCustomField(grant, 'If yes, what grant did you receive and what progress have you made since the last time you applied?') &&
-							findCustomField(form, 'Have you previously received a grant from Starknet Foundation or Starkware?').value === 'Yes' &&
-							(
+							containsCustomField(grant, 'Have you launched a token?') && (
 								<SectionInput
-									label='If yes, what grant did you receive and what progress have you made since the last time you applied?'
-									placeholder='Previous grant and progress'
+									label='Have you launched a token?'
+									placeholder='Yes / No'
+									value={findCustomField(form, 'Have you launched a token?').value}
+									onChange={
+										(e) => {
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Have you launched a token?').id)
+										}
+									} />
+							)
+						}
+
+						{
+							containsCustomField(grant, 'How is your submission exceptionally useful to users or developers of Web3/Ethereum?') && (
+								<SectionInput
+									label='How is your submission exceptionally useful to users or developers of Web3/Ethereum?'
 									type='textarea'
-									value={findCustomField(form, 'If yes, what grant did you receive and what progress have you made since the last time you applied?').value}
+									placeholder='Communicate why your submission is useful. This is the, "why," or value add. you will substantiate this with data in the following question.)'
+									value={findCustomField(form, 'How is your submission exceptionally useful to users or developers of Web3/Ethereum?').value}
 									onChange={
 										(e) => {
-											onChange(e, findCustomField(form, 'If yes, what grant did you receive and what progress have you made since the last time you applied?').id)
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'How is your submission exceptionally useful to users or developers of Web3/Ethereum?').id)
 										}
 									} />
 							)
 						}
+
 						{
-							containsCustomField(grant, 'Have you previously participated in any Starknet hackathon, fellowship, or builder program?') && (
+							containsCustomField(grant, 'Substantiating the previous question, provide data or demonstrate the exceptional value, reach or impact this submission has had') && (
+								<SectionInput
+									label='Substantiating the previous question, provide data or demonstrate the exceptional value, reach or impact this submission has had'
+									type='textarea'
+									placeholder='Draw from many sources such as Dune dashboards, twitter and tweets, number of downloads, etc. Links to resources are encouraged and likely required to successfully communicate this.'
+									value={findCustomField(form, 'Substantiating the previous question, provide data or demonstrate the exceptional value, reach or impact this submission has had').value}
+									onChange={
+										(e) => {
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Substantiating the previous question, provide data or demonstrate the exceptional value, reach or impact this submission has had').id)
+										}
+									} />
+							)
+						}
+
+						{
+							containsCustomField(grant, 'Have you ensured your submission is complete?') && (
 								<SectionSelection
-									label='Have you previously participated in any Starknet hackathon, fellowship, or builder program?'
+									label='Have you ensured your submission is complete?'
 									options={['Yes', 'No']}
-									value={findCustomField(form, 'Have you previously participated in any Starknet hackathon, fellowship, or builder program?').value}
+									placeholder='Yes / No'
+									value={findCustomField(form, 'Have you ensured your submission is complete?').value}
 									onChange={
 										(e) => {
-											onChange(e, findCustomField(form, 'Have you previously participated in any Starknet hackathon, fellowship, or builder program?').id)
-										}
-									} />
-							)
-						}
-
-						{
-							containsCustomField(grant, 'If yes, please note which programs you participated in and when') &&
-							findCustomField(form, 'Have you previously participated in any Starknet hackathon, fellowship, or builder program?').value === 'Yes' &&
-							(
-								<SectionInput
-									label='If yes, please note which programs you participated in and when'
-									placeholder='Programs participated in'
-									value={findCustomField(form, 'If yes, please note which programs you participated in and when').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'If yes, please note which programs you participated in and when').id)
-										}
-									} />
-							)
-						}
-						{
-							containsCustomField(grant, 'Have you applied for or received funding from other crypto projects or ecosystems?') && (
-								<SectionSelection
-									label='Have you applied for or received funding from other crypto projects or ecosystems?'
-									options={['Yes', 'No']}
-									value={findCustomField(form, 'Have you applied for or received funding from other crypto projects or ecosystems?').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'Have you applied for or received funding from other crypto projects or ecosystems?').id)
-										}
-									} />
-							)
-						}
-
-						{
-							containsCustomField(grant, 'If yes, where else did you get funding from?') &&
-							findCustomField(form, 'Have you applied for or received funding from other crypto projects or ecosystems?').value === 'Yes' &&
-							(
-								<SectionInput
-									label='If yes, where else did you get funding from?'
-									placeholder='Funding sources'
-									value={findCustomField(form, 'If yes, where else did you get funding from?').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'If yes, where else did you get funding from?').id)
-										}
-									} />
-							)
-						}
-
-						{/* {
-							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1).startsWith('customField'))?.sort((a, b) => {
-								const aId = a.id.substring(a.id.indexOf('.customField') + 12)?.split('-')[0]
-								const bId = b.id.substring(b.id.indexOf('.customField') + 12)?.split('-')[0]
-								return parseInt(aId) - parseInt(bId)
-							}).map((field) => {
-								const id = field.id.substring(field.id.indexOf('.') + 1)
-								const modifiedId = id.substring(id.indexOf('-') + 1)
-								const title = field.title.substring(field.title.indexOf('-') + 1)
-									.split('\\s')
-									.join(' ')
-
-								// console.log('hasan', { id, field: findFieldBySuffix(form, modifiedId, id)})
-
-								return (
-									<SectionInput
-										key={field.id}
-										label={title}
-										value={findFieldBySuffix(form, modifiedId, id).value}
-										onChange={
-											(e) => {
-												onChange(e, findFieldBySuffix(form, modifiedId, id).id)
-											}
-										} />
-								)
-							})
-						} */}
-
-						{/* Builder Details */}
-						<SectionHeader mt={8}>
-							Questions to determine status within the ecosystem
-						</SectionHeader>
-
-						{
-							containsCustomField(grant, 'How did you hear about the Seed Grants Program?') && (
-								<SectionDropDown
-									label='How did you hear about the Seed Grants Program?'
-									width='-moz-fit-content'
-									placeholder='Select an option'
-									options={['Starknet Blog', 'Starknet Community Event', 'Starknet Website', 'Social Media', 'Other team / project in the ecosystem', 'Other']}
-									value={findCustomField(form, 'How did you hear about the Seed Grants Program?').value}
-									onChange={
-										(e) => {
-											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'How did you hear about the Seed Grants Program?').id)
-										}
-									} />
-							)
-						}
-						{
-							containsCustomField(grant, 'Which team project helped you hear about this program?') &&
-								findCustomField(form, 'How did you hear about the Seed Grants Program?').value?.includes('Other') &&
-								(
-									<SectionInput
-										label='Which team project helped you hear about this program?'
-										placeholder='Please specify'
-										value={findCustomField(form, 'Which team project helped you hear about this program').value}
-										onChange={
-											(e) => {
-												onChange(e, findCustomField(form, 'Which team project helped you hear about this program?').id)
-											}
-										} />
-								)
-						}
-						{
-							containsCustomField(grant, 'Did anyone recommend that you submit an application to the Seed Grants Program?') && (
-								<SectionSelection
-									label='Did anyone recommend that you submit an application to the Seed Grants  Program? '
-									options={['Yes', 'No']}
-									value={findCustomField(form, 'Did anyone recommend that you submit an application to the Seed Grants Program?').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'Did anyone recommend that you submit an application to the Seed Grants Program?').id)
-										}
-									} />
-							)
-						}
-
-						{
-							containsCustomField(grant, 'Please include the person’s name and details of their referral') &&
-							findCustomField(form, 'Did anyone recommend that you submit an application to the Seed Grants Program?').value === 'Yes' &&
-							(
-								<SectionInput
-									label='Please include the person’s name and details of their referral'
-									placeholder='Please include the person’s name and details of their referral'
-									value={findCustomField(form, 'Please include the person’s name and details of their referral').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'Please include the person’s name and details of their referral').id)
-										}
-									} />
-							)
-						}
-
-						{
-							containsCustomField(grant, 'Is there anything else you’d like to share?') && (
-								<SectionInput
-									label='Is there anything else you’d like to share?'
-									placeholder='Anything else you’d like to share'
-									value={findCustomField(form, 'Is there anything else you’d like to share?').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'Is there anything else you’d like to share?').id)
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Have you ensured your submission is complete?').id)
 										}
 									} />
 							)
@@ -1147,8 +823,8 @@ function ProposalForm() {
 	const { safeObj } = useSafeContext()!
 	const { setSignIn } = useContext(SignInContext)!
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
+	logger.info({ scwAddress, webwallet }, 'Webwallet context')
 	const [qrCodeText, setQrCodeText] = useState<string>('')
-
 
 	const router = useRouter()
 	const { newTab } = router.query
@@ -1178,23 +854,16 @@ function ProposalForm() {
 		return val
 	}, [form])
 
-	logger.info({ fundingAsk }, 'funding ask')
-
 	const isDisabled = useMemo(() => {
 		if(!form) {
 			logger.info('Form is not initialised')
 			return true
 		}
 
-		logger.info({ form }, 'Checking if form is disabled')
-
 		const optionalFields = ['projectDetails', 'fundingAsk', 'fundingBreakdown', 'projectGoals', 'projectLink']
-		const optionalFielsConditions = ['If yes,', 'Please include', 'Which team project helped you hear about this program?']
 		const { fields, members, details, milestones } = form
-		logger.info({ fields, members, details, milestones }, 'Checking fields')
 		for(const field of fields) {
-			// f.id.substring(f.id.indexOf('.') + 1).includes(field)
-			if(field.value === '' && !optionalFields.includes(field.id) && !optionalFielsConditions.some((condition) => field.id?.substring(field.id.indexOf('.') + 1).includes(condition))) {
+			if(field.value === '' && !optionalFields.includes(field.id)) {
 				logger.info({ field }, 'Field is empty')
 				return true
 			}
@@ -1217,12 +886,12 @@ function ProposalForm() {
 			return true
 		}
 
-		// for(const milestone of milestones) {
-		// 	if(milestone.title === '' || !milestone.amount) {
-		// 		logger.info({ index: milestone.index }, 'Milestone is empty')
-		// 		return true
-		// 	}
-		// }
+		for(const milestone of milestones) {
+			if(milestone.title === '' || !milestone.amount) {
+				logger.info({ index: milestone.index }, 'Milestone is empty')
+				return true
+			}
+		}
 
 		if(emailError || walletAddressError) {
 			return true

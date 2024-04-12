@@ -28,7 +28,7 @@ import { getFromIPFS } from 'src/libraries/utils/ipfs'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
-import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext } from 'src/pages/_app'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -46,8 +46,6 @@ function Proposal() {
 				</Flex>
 			)
 		}
-
-		const lastName = grant?.fields?.find((field) => field.id?.includes('Last Name'))?.id?.split('.')?.pop() ?? 'Last Name'
 
 		return (
 			<Flex
@@ -119,8 +117,6 @@ function Proposal() {
 									direction='column'>
 									<Text fontWeight='500'>
 										{getFieldString(decryptedProposal, 'applicantName')}
-										{' '}
-										{getFieldString(decryptedProposal, lastName as string) ?? ''}
 									</Text>
 									<Flex align='center'>
 										<Button
@@ -203,7 +199,7 @@ function Proposal() {
 					mt={4}
 					w='100%'>
 					{
-						chainInfo && getRewardAmountMilestones(chainInfo.decimals, proposal) !== '0' && (
+						chainInfo && (
 							<Flex
 								direction='column'
 								w='50%'>
@@ -220,24 +216,6 @@ function Proposal() {
 							</Flex>
 						)
 					}
-					{
-						chainInfo && (
-							<Flex
-								direction='column'
-								w='50%'>
-								<Text color='gray.500'>
-									Applicant Name
-								</Text>
-								<Text
-									mt={1}
-									fontWeight='500'>
-									{getFieldString(decryptedProposal, 'applicantName')}
-									{' '}
-									{getFieldString(decryptedProposal, lastName as string) ?? ''}
-								</Text>
-							</Flex>
-						)
-					}
 					<Flex
 						direction='column'
 						w='50%'>
@@ -250,7 +228,7 @@ function Proposal() {
 							{formatTime(proposal.createdAtS, true)}
 						</Text>
 					</Flex>
-					{/* <Flex
+					<Flex
 						direction='column'
 						w='50%'>
 						<Text color='gray.500'>
@@ -261,7 +239,7 @@ function Proposal() {
 							fontWeight='500'>
 							{proposal.milestones.length}
 						</Text>
-					</Flex> */}
+					</Flex>
 				</Flex>
 
 
@@ -372,7 +350,7 @@ function Proposal() {
 								.split('\\s')
 								.join(' ')
 							const value = getFieldString(proposal, id)
-							if(value === undefined || value === '' || title === 'Last Name') {
+							if(value === undefined || value === '' || title === 'Have you ensured your submission is complete?') {
 								return <Flex key={index} />
 							}
 
@@ -426,9 +404,8 @@ function Proposal() {
 		)
 	}
 
-	const { grant, role } = useContext(GrantsProgramContext)!
+	const { role } = useContext(GrantsProgramContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
-	const { scwAddress } = useContext(WebwalletContext)!
 	const toast = useCustomToast()
 
 	const proposal = useMemo(() => {
@@ -451,8 +428,8 @@ function Proposal() {
 	}, [proposal?.grant, chainId])
 
 	const shouldShowPII = useMemo(() => {
-		return role !== 'community' && (role === 'builder' ? proposal?.applicantId === scwAddress : true)
-	}, [role, proposal?.applicantId, scwAddress])
+		return role !== 'community'
+	}, [])
 
 	const [decryptedProposal, setDecryptedProposal] = useState<
 		ProposalType | undefined

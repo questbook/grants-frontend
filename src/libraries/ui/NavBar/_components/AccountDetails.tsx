@@ -24,6 +24,9 @@ import { getAvatar } from 'src/libraries/utils'
 import { formatAddress } from 'src/libraries/utils/formatting'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { GrantsProgramContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { useAccount, useDisconnect } from 'wagmi'
+
 
 const IN_APP_WALLET_LEARN_MORE_URL =
 	'https://blog.questbook.xyz/posts/aug-2022-release/#:~:text=App%20Specific%20Wallet%20%2D%20Zero%20Wallet'
@@ -35,6 +38,9 @@ interface Props {
 }
 
 function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: Props) {
+	const { isConnected: rainbowIsConnected } = useAccount()
+	const isEOA = typeof window !== 'undefined' && localStorage.getItem('isEOA') ? localStorage.getItem('isEOA') : false
+
 	const buildComponent = () => (
 		<Popover
 			placement='bottom-end'
@@ -44,6 +50,21 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 				({ onClose }) => (
 					<>
 						<PopoverTrigger>
+							{
+								(rainbowIsConnected && isEOA) ? 
+								<ConnectButton
+								showBalance={false}
+								chainStatus={{
+									smallScreen:'none',
+									largeScreen:'none',
+								}}
+								accountStatus={{
+									smallScreen: 'avatar',
+									largeScreen: 'full',
+								}}
+								
+								/> :
+							
 							<Button
 								variant='ghost'
 								bg={['gray.100', 'gray.100']}
@@ -56,7 +77,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 									src={member?.profilePictureIpfsHash ? getUrlForIPFSHash(member.profilePictureIpfsHash) : getAvatar(false, scwAddress ?? 'generic')}
 									boxSize='24px'
 								/>
-							</Button>
+							</Button> }
 						</PopoverTrigger>
 						<PopoverContent>
 							<PopoverArrow />

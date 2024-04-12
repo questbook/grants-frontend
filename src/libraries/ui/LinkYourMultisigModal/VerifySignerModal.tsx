@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AlertDialogOverlay, Box, Flex, Modal, ModalBody, ModalContent, Text, useToast, VStack } from '@chakra-ui/react'
-import { useAccount as useStarknetAccount, useConnect as useStarknetConnect } from '@starknet-react/core'
 import { NetworkType } from 'src/constants/Networks'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
@@ -10,8 +9,8 @@ import { delay } from 'src/libraries/utils'
 import { availableWallets, solanaWallets, tonWallets } from 'src/libraries/utils/constants'
 import ConnectWalletButton from 'src/screens/dashboard/_components/FundBuilder/ConnectWalletButton'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
-import { validateAndParseAddress } from 'starknet'
-import { useAccount, useConnect, useDisconnect, useNetwork } from 'wagmi'
+import usetonWallet from 'src/screens/dashboard/_hooks/useTonWallet'
+import { useAccount, useConnect, useDisconnect } from 'wagmi'
 
 const VerifySignerModal = ({
 	owners,
@@ -130,7 +129,7 @@ const VerifySignerModal = ({
 															} else {
 																customToast({
 																	status: 'info',
-																	title: `Wallet already connected to address ${address} on chain ${chain?.name}`,
+																	title: `Wallet already connected to address ${address} on chain ${chain}`,
 																	duration: 5000,
 																})
 															}
@@ -169,7 +168,7 @@ const VerifySignerModal = ({
 															onClick={
 																async() => {
 																	setVerifying(wallet.id)
-																	await starknetConnect({ connector: starknetConnectors[0] })
+																	await connectTonWallet()
 																	setWalletClicked(true)
 																}
 															} />
@@ -203,15 +202,13 @@ const VerifySignerModal = ({
 	const [verifying, setVerifying] = useState<string>()
 	const [redirectInitiated, setRedirectInitiated] = useState(false)
 	const { phantomWallet } = usePhantomWallet()
+	const { connectTonWallet, tonWalletAddress } = usetonWallet()
 	const { disconnectAsync } = useDisconnect()
 	const toast = useToast()
 	const customToast = useCustomToast()
 	const { t } = useTranslation()
 	const { isError: isErrorConnecting, connect, connectors } = useConnect()
-	const { address } = useAccount()
-	const { chain } = useNetwork()
-	const { address: starknetAddress } = useStarknetAccount()
-	const { connect: starknetConnect, connectors: starknetConnectors } = useStarknetConnect()
+	const { address, chainId: chain } = useAccount()
 
 	const [isError, setIsError] = React.useState(false)
 
@@ -254,7 +251,7 @@ const VerifySignerModal = ({
 	}, [address])
 
 	useEffect(() => {
-		logger.info('VerifySignerModal', { owners, isOpen, walletClicked, networkType, phantomWallet, address, starknetAddress })
+		logger.info('VerifySignerModal', { owners, isOpen, walletClicked, networkType, phantomWallet, address })
 		if(isOpen && walletClicked) {
 			if(networkType === NetworkType.EVM && address && owners.includes(address)) {
 				setIsOwner(true)
@@ -298,9 +295,9 @@ const VerifySignerModal = ({
 					title: 'Whoops! Looks like this wallet is not an owner of the safe.',
 					status: 'error',
 				})
-			} else if(networkType === NetworkType.TON && owners.includes(validateAndParseAddress(starknetAddress ?? ''))) {
+			} else if(networkType === NetworkType.TON && owners.includes(tonWalletAddress)) {
 				setIsOwner(true)
-				logger.info('verifed starknet owner')
+				logger.info('verifed tonkey owner')
 				customToast({
 					duration: 3000,
 					isClosable: true,
@@ -310,7 +307,7 @@ const VerifySignerModal = ({
 				})
 			} else {
 				toast({
-					title: 'Switch to the Multisig wallet to verify ownership.',
+					title: 'The first selected wallet is not an owner!',
 					status: 'error',
 					duration: 3000
 				})
@@ -326,4 +323,3 @@ const VerifySignerModal = ({
 }
 
 export default VerifySignerModal
-

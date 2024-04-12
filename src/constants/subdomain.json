@@ -1,14 +1,24 @@
 {
-    "name": "Starknet Grants",
-    "id":"Starknet",
-    "grants_name": "Starknet",
-    "logo":"QmPwJ67iJN3WscAvgPrU6JVXfhkDwxkU5M5qdChpvYaMyw",
-    "info":"StarkNet is a permissionless, decentralized validity rollup operating as an L2 network over Ethereum, where any dApp can achieve vastly increased scale for its computation, without compromising Ethereum's composability and security.",
+    "name": "ENS Grants",
+    "id":"ENS",
+    "grants_name": "ENS",
+    "logo":"QmNrd1rxQx5BZzWFWY5ZSaFPhNXyijUSRCTLMVveHpK8LF",
+    "info":"This is where builders building on ENS and public goods can get funding from the ENS ecosystem",
     "DA": [
         {
             "image": "",
-            "title": "",
-            "twitter": ""
+            "title": "Coltron",
+            "twitter": "coltron_eth"
+        },
+        {
+            "image": "",
+            "title": "Simona",
+            "twitter": "Sim_Pop"
+        },
+        {
+            "image": "",
+            "title": "Eduardo",
+            "twitter": "vegaypatino"
         }
     ]
 }

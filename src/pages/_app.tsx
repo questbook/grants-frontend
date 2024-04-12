@@ -8,6 +8,11 @@ import {
 	Configuration,
 	ValidationApi,
 } from '@questbook/service-validator-client'
+import {
+	getDefaultConfig,
+	RainbowKitProvider,
+} from '@rainbow-me/rainbowkit'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ethers, Wallet } from 'ethers'
 import { NextPage } from 'next'
 import type { AppContext, AppProps } from 'next/app'
@@ -18,7 +23,6 @@ import { DefaultSeo } from 'next-seo'
 import favIcon from 'public/favicon.ico'
 import {
 	ALL_SUPPORTED_CHAIN_IDS,
-	CHAIN_INFO,
 	defaultChainId,
 	SupportedChainId,
 } from 'src/constants/chains'
@@ -29,7 +33,6 @@ import { QBAdminsContextMaker } from 'src/libraries/hooks/QBAdminsContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import QRCodeModal from 'src/libraries/ui/QRCodeModal'
-import { StarknetProvider } from 'src/libraries/ui/starknetProvider'
 import { delay } from 'src/libraries/utils'
 import { generateToken, verifyToken } from 'src/libraries/utils/authToken'
 import { addAuthorizedUser, bicoDapps, getNonce, jsonRpcProviders, networksMapping } from 'src/libraries/utils/gasless'
@@ -40,20 +43,16 @@ import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validation
 import theme from 'src/theme'
 import { GrantProgramContextType, GrantType, MinimalWorkspace, NotificationContextType, Roles } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
-import {
-	allChains,
-	Chain,
-	chain,
-	configureChains,
-	createClient,
-	WagmiConfig,
-} from 'wagmi'
-import { InjectedConnector } from 'wagmi/connectors/injected'
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
-import { infuraProvider } from 'wagmi/providers/infura'
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
-import { publicProvider } from 'wagmi/providers/public'
+import { createConfig, http, WagmiProvider } from 'wagmi'
+import { arbitrum, aurora, base, celo, iotex, mainnet, optimism, polygon, sepolia, zkSync } from 'wagmi/chains'
+// import { InjectedConnector } from 'wagmi/connectors/injected'
+// import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
+// import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+// import { infuraProvider } from 'wagmi/providers/infura'
+// import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
+// import { publicProvider } from 'wagmi/providers/public'
+import { injected, walletConnect } from 'wagmi/connectors'
+import '@rainbow-me/rainbowkit/styles.css'
 import 'styles/globals.css'
 import 'draft-js/dist/Draft.css'
 import 'src/libraries/utils/appCopy'
@@ -66,25 +65,77 @@ type AppPropsWithLayout = AppProps & {
 	Component: NextPageWithLayout
 };
 
-const infuraId = process.env.NEXT_PUBLIC_INFURA_ID
 
-const defaultChain = chain.polygon
-const { chains, provider } = configureChains(allChains, [
-	jsonRpcProvider({
-		rpc: (chain: Chain) => {
-			const rpcUrl = CHAIN_INFO[chain.id as SupportedChainId]?.rpcUrls[0]
-			if(!rpcUrl) {
-				return {
-					http: CHAIN_INFO[defaultChain.id as SupportedChainId].rpcUrls[0],
-				}
+const client = createConfig({
+	chains: [mainnet, base, polygon, arbitrum, optimism, celo, aurora, iotex, zkSync, sepolia],
+	syncConnectedChain: true,
+	connectors: [
+		injected({
+			shimDisconnect: true,
+		}),
+		walletConnect({
+			projectId: '1a646363ec322c7ba5b21240860f2aec', qrModalOptions: {
+				themeVariables: {
+					'--wcm-z-index': '10000',
+				},
+				enableExplorer: false,
+			},
+			showQrModal: true,
+			metadata: {
+				name: 'Questbook',
+				url: 'https://ens.questbook.app',
+				description: 'Discover Opportunities in Web 3.0 and Earn in Crypto',
+				icons: ['https://ens.questbook.app/favicon.svg'],
 			}
+		}),
+	],
+	transports: {
+		[mainnet.id]: http(),
+		[base.id]: http(),
+		[polygon.id]: http(),
+		[arbitrum.id]: http(),
+		[optimism.id]: http(),
+		[celo.id]: http(),
+		[aurora.id]: http(),
+		[iotex.id]: http(),
+		[zkSync.id]: http(),
+		[sepolia.id]: http(),
+	},
+})
 
-			return { http: rpcUrl }
-		},
-	}),
-	infuraProvider({ apiKey: infuraId! }),
-	publicProvider(),
-])
+logger.info('client', client)
+
+const config = getDefaultConfig({
+	appName: 'Questbook',
+	projectId: '1a646363ec322c7ba5b21240860f2aec',
+	chains: [mainnet, polygon, optimism, arbitrum, base, celo, aurora, iotex, zkSync, sepolia],
+	syncConnectedChain: true,
+	appDescription: 'Discover Opportunities in Web 3.0 and Earn in Crypto',
+	appUrl: 'https://ens.questbook.app',
+	ssr: true, // If your dApp uses server side rendering (SSR)
+
+})
+
+
+// const defaultChain = chain.polygon
+// const { chains, provider } = configureChains(allChains, [
+// 	jsonRpcProvider({
+// 		rpc: (chain: Chain) => {
+// 			const rpcUrl = CHAIN_INFO[chain.id as SupportedChainId]?.rpcUrls[0]
+// 			if(!rpcUrl) {
+// 				return {
+// 					http: CHAIN_INFO[defaultChain.id as SupportedChainId].rpcUrls[0],
+// 				}
+// 			}
+
+// 			return { http: rpcUrl }
+// 		},
+// 	}),
+// 	infuraProvider({ apiKey: infuraId! }),
+// 	publicProvider(),
+// ])
+const queryClient = new QueryClient()
+
 
 type InitiateBiconomyReturnType = {
 	biconomyDaoObj: typeof BiconomyContext
@@ -92,37 +143,37 @@ type InitiateBiconomyReturnType = {
 }
 
 // Set up client
-const client = createClient({
-	autoConnect: true,
-	connectors: [
-		new InjectedConnector({
-			chains,
-			options: {
-				name: 'Injected',
-				shimDisconnect: true,
-				shimChainChangedDisconnect: true
-			},
-		}),
-		new MetaMaskConnector({
-			chains,
-			options: {
-				shimDisconnect: true,
-				shimChainChangedDisconnect: true
-			},
-		}),
-		new WalletConnectConnector({
-			chains,
-			options: {
-				qrcode: true,
-				rpc: {
-					'137': `https://polygon-mainnet.infura.io/v3/${infuraId}`,
-					'5': `https://goerli.infura.io/v3/${infuraId}`
-				},
-			},
-		}),
-	],
-	provider,
-})
+// const client = createClient({
+// 	autoConnect: true,
+// 	connectors: [
+// 		new InjectedConnector({
+// 			chains,
+// 			options: {
+// 				name: 'Injected',
+// 				shimDisconnect: true,
+// 				shimChainChangedDisconnect: true
+// 			},
+// 		}),
+// 		new MetaMaskConnector({
+// 			chains,
+// 			options: {
+// 				shimDisconnect: true,
+// 				shimChainChangedDisconnect: true
+// 			},
+// 		}),
+// 		new WalletConnectConnector({
+// 			chains,
+// 			options: {
+// 				qrcode: true,
+// 				rpc: {
+// 					'137': `https://polygon-mainnet.infura.io/v3/${infuraId}`,
+// 					'5': `https://goerli.infura.io/v3/${infuraId}`
+// 				},
+// 			},
+// 		}),
+// 	],
+// 	provider,
+// })
 
 export const ApiClientsContext = createContext<{
 	validatorApi: ValidationApi
@@ -140,8 +191,8 @@ export const GrantsProgramContext = createContext<GrantProgramContextType | null
 export const NotificationContext = createContext<NotificationContextType | null>(null)
 
 export const SignInMethodContext = createContext<{
-	signInMethod: 'newWallet' | 'existingWallet' | 'choosing'
-	setSignInMethod: (signInMethod: 'newWallet' | 'existingWallet' | 'choosing') => void
+	signInMethod: 'newWallet' | 'existingWallet' | 'choosing' | 'externalWallet'
+	setSignInMethod: (signInMethod: 'newWallet' | 'existingWallet' | 'choosing' | 'externalWallet') => void
 
 		} | null>(null)
 export const SignInContext = createContext<{
@@ -175,6 +226,7 @@ export const WebwalletContext = createContext<{
 	loadingNonce: boolean
 	setLoadingNonce: (loadingNonce: boolean) => void
 	importWebwallet: (privateKey: string) => void
+	existingWallets: (address: string) => void
 	exportWebwallet: () => string
 	loadingScw: boolean
 	setLoadingScw: (loadingScw: boolean) => void
@@ -206,12 +258,12 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [nonce, setNonce] = useState<string>()
 	const [loadingNonce, setLoadingNonce] = useState<boolean>(false)
 	const [isNewUser, setIsNewUser] = useState<boolean>(true)
-
+	// const { isConnected } = useAccount()
 	const [qrCodeText, setQrCodeText] = useState<string>()
 	const [dashboardStep, setDashboardStep] = useState<boolean>(false)
 	const [createingProposalStep, setCreatingProposalStep] = useState<number>(1)
 	const [biconomyLoading, setBiconomyLoading] = useState<{ [chainId: string]: boolean }>({})
-	const [signInMethod, setSignInMethod] = useState<'newWallet' | 'existingWallet' | 'choosing'>('choosing')
+	const [signInMethod, setSignInMethod] = useState<'newWallet' | 'existingWallet' | 'choosing' | 'externalWallet'>('choosing')
 	const [signInTitle, setSignInTitle] = useState<'admin' | 'reviewer' | 'default' | 'postComment' | 'submitProposal'>('default')
 	const [signIn, setSignIn] = useState<boolean>(false)
 	// store the chainId that was most recently asked to be init
@@ -290,9 +342,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 					const authToken = localStorage.getItem('authToken')
 					const jwtRegex = new RegExp('^[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+\\.[A-Za-z0-9-_.+/=]*$')
+					const isEOA = localStorage.getItem('isEOA')
 					if(!authToken?.match(jwtRegex)) {
-						const token = await generateToken(walletAddress)
-						if(token) {
+						const token = await generateToken(!result.doesWalletExist ? walletAddress : webwallet.address)
+						if(token && !isEOA) {
 							const sign = await webwallet.signMessage(token?.nonce)
 							const tokenData = await verifyToken(token?.id, sign)
 
@@ -300,6 +353,18 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 								localStorage.setItem('authToken', tokenData) // Storing the verified token directly
 							}
 						}
+						// else if(token && isEOA){
+						// 	await signMessage({
+						// 		message: token?.nonce
+						// 	})
+						// 	if (variables?.message && signMessageData) {
+						// 		const tokenData = await verifyToken(token?.id, signMessageData)
+						// 		if(tokenData){
+						// 			localStorage.setItem('authToken', tokenData)
+						// 		}
+						// 	}
+
+						// }
 					}
 
 
@@ -381,6 +446,24 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 		biconomyInitPromisesRef.current = {}
 
+	}, [setWebwallet])
+
+	const existingWallets = useCallback((address: string) => {
+		const walletObj = {
+			address: address,
+			privateKey: address,
+			provider: ethers.getDefaultProvider(),
+			publicKey: address
+		}
+		setWebwallet(walletObj as never as Wallet)
+		setLoadingNonce(false)
+		setNonce(undefined)
+		setScwAddress(undefined)
+		setLoadingScw(true)
+		setBiconomyWalletClients({})
+		setBiconomyDaoObjs({})
+		setBiconomyLoading({})
+		biconomyInitPromisesRef.current = {}
 	}, [setWebwallet])
 
 	const exportWebwallet = useCallback(() => {
@@ -561,6 +644,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			loadingScw,
 			setLoadingScw,
 			importWebwallet,
+			existingWallets,
 			exportWebwallet
 		}),
 		[dashboardStep, createingProposalStep, setCreatingProposalStep, setDashboardStep, webwallet, setWebwallet, network, switchNetwork, scwAddress, setScwAddress, nonce, setNonce, loadingNonce, setLoadingNonce, loadingScw, setLoadingScw, glyph, setGlyph]
@@ -688,39 +772,41 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 					}
 				/>
 			</Head>
-			<WagmiConfig client={client}>
-				<StarknetProvider>
-					<ApiClientsContext.Provider value={apiClients}>
-						<NotificationContext.Provider value={notificationContext}>
-							<SignInContext.Provider value={SignInContextValue}>
-								<SignInTitleContext.Provider value={SignInTitleContextValue}>
-									<SignInMethodContext.Provider value={SignInMethodContextValue}>
-										<WebwalletContext.Provider value={webwalletContextValue}>
-											<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
-												<SafeProvider>
-													<>
-														<DAOSearchContextMaker>
-															<GrantsProgramContext.Provider value={grantProgram}>
-																<QBAdminsContextMaker>
-																	<ChakraProvider theme={theme}>
-																		{getLayout(<Component {...pageProps} />)}
-																		<QRCodeModal />
-																	</ChakraProvider>
-																</QBAdminsContextMaker>
-															</GrantsProgramContext.Provider>
+			<WagmiProvider config={config}>
+				<QueryClientProvider client={queryClient}>
+					<RainbowKitProvider initialChain={1}>
+						<ApiClientsContext.Provider value={apiClients}>
+							<NotificationContext.Provider value={notificationContext}>
+								<SignInContext.Provider value={SignInContextValue}>
+									<SignInTitleContext.Provider value={SignInTitleContextValue}>
+										<SignInMethodContext.Provider value={SignInMethodContextValue}>
+											<WebwalletContext.Provider value={webwalletContextValue}>
+												<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
+													<SafeProvider>
+														<>
+															<DAOSearchContextMaker>
+																<GrantsProgramContext.Provider value={grantProgram}>
+																	<QBAdminsContextMaker>
+																		<ChakraProvider theme={theme}>
+																			{getLayout(<Component {...pageProps} />)}
+																			<QRCodeModal />
+																		</ChakraProvider>
+																	</QBAdminsContextMaker>
+																</GrantsProgramContext.Provider>
 
-														</DAOSearchContextMaker>
-													</>
-												</SafeProvider>
-											</BiconomyContext.Provider>
-										</WebwalletContext.Provider>
-									</SignInMethodContext.Provider>
-								</SignInTitleContext.Provider>
-							</SignInContext.Provider>
-						</NotificationContext.Provider>
-					</ApiClientsContext.Provider>
-				</StarknetProvider>
-			</WagmiConfig>
+															</DAOSearchContextMaker>
+														</>
+													</SafeProvider>
+												</BiconomyContext.Provider>
+											</WebwalletContext.Provider>
+										</SignInMethodContext.Provider>
+									</SignInTitleContext.Provider>
+								</SignInContext.Provider>
+							</NotificationContext.Provider>
+						</ApiClientsContext.Provider>
+					</RainbowKitProvider>
+				</QueryClientProvider>
+			</WagmiProvider>
 			<ChatWidget
 				token='5b3b08cf-8b27-4d4b-9c4e-2290f53e04f0'
 				inbox='cb5e60c6-dfe5-481d-9dde-3f13e83344cd'

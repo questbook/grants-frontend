@@ -2,12 +2,11 @@
 /* eslint-disable react/jsx-indent */
 import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { EmailIcon } from '@chakra-ui/icons'
 import { Box, Button, Container, Flex, Image, Input, Link, Text } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
 import SubDomainConfig from 'src/constants/subdomain.json'
-import { Telegram } from 'src/generated/icons'
+import { Telegram, Twitter } from 'src/generated/icons'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { DAOSearchContext } from 'src/libraries/hooks/DAOSearchContext'
 import { QBAdminsContext } from 'src/libraries/hooks/QBAdminsContext'
@@ -285,11 +284,11 @@ function Discover() {
 							whileHover={{ scale: 1.1 }}
 							whileTap={{ scale: 0.9 }}
 						>
-							<EmailIcon
+							<Twitter
 								cursor='pointer'
 								color='#7E7E8F'
 								_hover={{ color: 'blue.500' }}
-								onClick={() => window.open(`mailto:${twitter}`)}
+								onClick={() => window.open(`https://twitter.com/${twitter}`)}
 								boxSize='16px' />
 						</motion.div>
 					)
@@ -351,7 +350,7 @@ function Discover() {
 											fontSize='24px'
 											lineHeight='31.2px'
 										>
-											{SubDomainConfig.grants_name}
+											Domains
 										</Text>
 
 									</Flex>
@@ -421,6 +420,16 @@ function Discover() {
 																	>
 																		{SubDomainConfig.info}
 																	</Text>
+																	<Text
+																		fontWeight='600'
+																		lineHeight='23.4px'
+																		fontSize='18px'
+																		color='black.100'
+																		px={3}
+																		mb={3}
+																	>
+																		Reviewers
+																	</Text>
 																	<Box
 																	>
 																		{
@@ -464,7 +473,7 @@ function Discover() {
 								isExternal
 								variant='body'
 								color='accent.azure'
-								href='questbook.app/privacypolicy.html'>
+								href='https://questbook.app/privacypolicy.html'>
 								Privacy Policy
 							</Link>
 						</Flex>

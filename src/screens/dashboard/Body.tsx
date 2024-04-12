@@ -2,7 +2,6 @@
 
 import { useContext } from 'react'
 import { Flex } from '@chakra-ui/react'
-import { GrantsProgramContext } from 'src/pages/_app'
 import Empty from 'src/screens/dashboard/_components/Body/Empty'
 import MultiSelect from 'src/screens/dashboard/_components/Body/MultiSelect'
 import SingleSelect from 'src/screens/dashboard/_components/Body/SingleSelect'
@@ -14,13 +13,13 @@ function Body() {
 			<Flex
 				mx='auto'
 				w={['100%', '100%', '70%', '48%']}>
-				{selectedProposals.size > 1 && role !== 'community' ? <MultiSelect /> : selectedProposals.size === 1 && role !== 'community' ? <SingleSelect /> : <Empty />}
+				{selectedProposals.size > 1 ? <MultiSelect /> : selectedProposals.size === 1 ? <SingleSelect /> : <Empty />}
 			</Flex>
 		)
 	}
 
 	const { selectedProposals } = useContext(DashboardContext)!
-	const { role } = useContext(GrantsProgramContext)!
+
 	return buildComponent()
 }
 

@@ -92,7 +92,7 @@ export default function useUpdateRFP() {
 						chainId,
 						role: 'admin'
 					}
-				}, undefined, { shallow: true })
+				})
 			}
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch(e: any) {

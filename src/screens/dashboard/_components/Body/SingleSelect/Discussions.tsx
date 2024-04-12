@@ -4,7 +4,6 @@ import { LockIcon } from '@chakra-ui/icons'
 import {
 	Box,
 	Button,
-	Checkbox,
 	Divider,
 	Flex,
 	IconButton,
@@ -55,6 +54,16 @@ function Discussions() {
 				</Text>
 
 				{
+					comments.length > 0 && (
+						<Divider
+							my={4}
+							color='gray.300'
+							height={1} />
+					)
+				}
+
+				{comments.map(renderComment)}
+				{
 					areCommentsLoading && (
 						<Button
 							my={4}
@@ -65,17 +74,6 @@ function Discussions() {
 						/>
 					)
 				}
-
-				{
-					comments.length > 0 && (
-						<Divider
-							my={4}
-							color='gray.300'
-							height={1} />
-					)
-				}
-
-				{comments.map(renderComment)}
 				<Flex
 					display={scwAddress ? 'flex' : 'none'}
 					mt={4}
@@ -206,7 +204,7 @@ function Discussions() {
 							<Flex
 								mt={4}
 								align='center'>
-								{
+								{/* {
 									(role === 'admin' && selectedTag?.id === 'feedback') && (
 										<Checkbox
 											isChecked={isCommentPrivate}
@@ -223,7 +221,7 @@ function Discussions() {
 											</Text>
 										</Checkbox>
 									)
-								}
+								} */}
 								{
 									(role === 'admin' && selectedTag?.id !== 'feedback') && (
 										<Text variant='body'>
@@ -282,7 +280,9 @@ function Discussions() {
 						</Text>
 					)
 				}
+
 				<Box my={4} />
+
 			</Flex>
 		)
 	}
@@ -445,7 +445,7 @@ function Discussions() {
 
 	const [step, setStep] = useState<number>()
 	const [, setTransactionHash] = useState('')
-	const [isCommentPrivate, setIsCommentPrivate] = useState<boolean>(false)
+	const [isCommentPrivate,] = useState<boolean>(false)
 	const [selectedTag, setSelectedTag] = useState<TagType>()
 	const [text, setText] = useState<string>('')
 	const [editorState, setEditorState] = useState(() => EditorState.createEmpty())

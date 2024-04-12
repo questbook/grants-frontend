@@ -5,7 +5,7 @@ import { defaultChainId } from 'src/constants/chains'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
-// import Milestones from 'src/screens/dashboard/_components/ActionList/SingleSelect/Milestones'
+import Milestones from 'src/screens/dashboard/_components/ActionList/SingleSelect/Milestones'
 import Payouts from 'src/screens/dashboard/_components/ActionList/SingleSelect/Payouts'
 import ReviewProposal from 'src/screens/dashboard/_components/ActionList/SingleSelect/ReviewProposal'
 import Reviews from 'src/screens/dashboard/_components/ActionList/SingleSelect/Reviews'
@@ -22,7 +22,7 @@ function SingleSelect() {
 				h='100%'
 				w='100%'
 				direction='column'>
-				{/* <Milestones /> */}
+				<Milestones />
 				<Divider />
 				<Reviews />
 				<Divider />
@@ -35,10 +35,7 @@ function SingleSelect() {
 							px={5}
 							py={4}>
 							<Button
-								isDisabled={
-									role === 'builder' ? proposal?.applicantId?.toLowerCase() !== scwAddress?.toLowerCase() || (proposal?.state !== 'submitted' && proposal?.state !== 'resubmit') :
-								  true
-								}
+								isDisabled={role === 'builder' ? proposal?.applicantId?.toLowerCase() !== scwAddress?.toLowerCase() || (proposal?.state !== 'submitted' && proposal?.state !== 'resubmit') : false}
 								w='100%'
 								variant='primaryMedium'
 								onClick={

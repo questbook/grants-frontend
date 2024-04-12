@@ -22,6 +22,7 @@ import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import usetonWallet from 'src/screens/dashboard/_hooks/useTonWallet'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
+import { useAccount } from 'wagmi'
 
 function FundBuilderDrawer() {
 	const buildComponent = () => {
@@ -185,7 +186,7 @@ function FundBuilderDrawer() {
 	const [safeProposalLink, setSafeProposalLink] = useState<string | undefined>(undefined)
 	const [selectedMode, setSelectedMode] = useState<any>()
 	const [payoutInProcess, setPayoutInProcess] = useState(false)
-
+	const { connector } = useAccount()
 	const customToast = useCustomToast()
 
 	const Safe = {
@@ -282,9 +283,10 @@ function FundBuilderDrawer() {
 
 			let proposaladdress: any = ''
 			if(safeObj?.getIsEvm()) {
+				const provider = await connector?.getProvider()
 				// // { workspaceId:  grant?.workspace?.id?.startsWith('0x') ? grant?.workspace?.id : `0x${grant?.workspace?.id?.slice(-2)}`, grantAddress:  grant?.id?.startsWith('0x') ? grant?.id : `0x${grant?.id?.slice(-2)}` }
 				// proposaladdress = await safeObj?.proposeTransactions(JSON.stringify({ workspaceId: grant?.workspace?.id, grantAddress: grant?.id }), transactionData, '')
-				proposaladdress = await safeObj?.proposeTransactions(JSON.stringify({ workspaceId: grant?.workspace?.id?.startsWith('0x') ? grant?.workspace?.id : `0x${grant?.workspace?.id?.slice(-2)}`, grantAddress: grant?.id?.startsWith('0x') ? grant?.id : `0x${grant?.id?.slice(-2)}` }), transactionData, '')
+				proposaladdress = await safeObj?.proposeTransactions(JSON.stringify({ workspaceId: grant?.workspace?.id?.startsWith('0x') ? grant?.workspace?.id : `0x${grant?.workspace?.id?.slice(-2)}`, grantAddress: grant?.id?.startsWith('0x') ? grant?.id : `0x${grant?.id?.slice(-2)}` }), transactionData, provider)
 				if(proposaladdress?.error) {
 					customToast({
 						title: 'An error occurred while creating transaction on Gnosis Safe',
