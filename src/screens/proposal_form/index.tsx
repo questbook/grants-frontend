@@ -499,7 +499,7 @@ function ProposalForm() {
 							containsField(grant, 'applicantAddress') && (
 								<SectionInput
 									label='Wallet Address'
-									placeholder='Wallet to receive funds on EVM based chain / Solana / TON'
+									placeholder='Wallet to receive funds on EVM based chain'
 									value={findField(form, 'applicantAddress').value}
 									onChange={
 										async(e) => {
