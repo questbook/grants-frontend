@@ -22,7 +22,7 @@ function FeaturedSections(sections: {
 			borderRadius='8px'
 			border='1px solid #EFEEEB'
 			background='#FFF'
-			padding='16px'
+			padding={['8px 24px', '14px 20px']}
 			cursor='pointer'
 			onClick={
 				() => {

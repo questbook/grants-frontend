@@ -20,7 +20,7 @@ function HeroBanner() {
 				alignItems='stretch'
 				alignContent='stretch'
 				textAlign='left'
-				height='420px'>
+			>
 				<Flex
 					padding={[10, 24]}
 					w='700px'
@@ -68,6 +68,7 @@ function HeroBanner() {
 						<Flex
 							flexShrink={0}
 							justifyContent='center'
+							height='420px'
 						>
 							<Image
 								mt={10}

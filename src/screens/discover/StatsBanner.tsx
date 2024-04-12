@@ -11,7 +11,7 @@ function StatsBanner(stats: StatsType) {
 			alignItems='center'>
 			<Text
 				fontWeight='800'
-				fontSize={['25px', '48px']}
+				fontSize={['25px', '25px', '48px']}
 				lineHeight='62.4px'
 				color='#07070C'
 			>
@@ -21,7 +21,7 @@ function StatsBanner(stats: StatsType) {
 			<Text
 				fontWeight='500'
 				color='#557B05'
-				fontSize='18px'
+				fontSize={['14px', '16px', '18px']}
 				lineHeight='normal'
 				textTransform='uppercase'>
 				{label}
@@ -33,7 +33,8 @@ function StatsBanner(stats: StatsType) {
 		return (
 			<Flex
 				bgColor='#C3F953'
-				padding='32px 48px'
+				// padding='32px 48px'
+				padding={['16px 24px', '32px 48px']}
 				gap='20px'
 				borderRadius='0px 0px 48px 48px'
 				justifyContent='space-evenly'>
