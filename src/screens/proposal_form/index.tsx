@@ -727,8 +727,8 @@ function ProposalForm() {
 						{
 							containsCustomField(grant, 'Previous work Describe any relevant prior work your team has undertaken?') && (
 								<SectionInput
-									label='Previous work Describe any relevant prior work your team has undertaken?'
-									placeholder='Previous work Describe any relevant prior work your team has undertaken?'
+									label='Previous work'
+									placeholder='Describe any relevant prior work your team has undertaken?'
 									type='textarea'
 									maxLength={100}
 									value={findCustomField(form, 'Previous work Describe any relevant prior work your team has undertaken?').value}
@@ -779,7 +779,7 @@ function ProposalForm() {
 						{
 							containsCustomField(grant, 'Proposed tasks and roadmap Outline how you plan to use the grant funds') && (
 								<SectionInput
-									label='Proposed tasks and roadmap Outline how you plan to use the grant funds'
+									label='Proposed tasks'
 									placeholder='Outline how you plan to use the grant funds'
 									type='textarea'
 									value={findCustomField(form, 'Proposed tasks and roadmap Outline how you plan to use the grant funds').value}
@@ -795,7 +795,7 @@ function ProposalForm() {
 							containsCustomField(grant, 'Describe what your project would look like three months after being awarded this grant') && (
 								<SectionInput
 									label='Describe what your project would look like three months after being awarded this grant'
-									placeholder='Describe what your project would look like three months after being awarded this grant'
+									placeholder=''
 									type='textarea'
 									maxLength={150}
 									value={findCustomField(form, 'Describe what your project would look like three months after being awarded this grant').value}
@@ -809,8 +809,8 @@ function ProposalForm() {
 						{
 							containsCustomField(grant, 'What are your plans after the grant is completed? What kind of resources would you potentially need after this grant?') && (
 								<SectionInput
-									label='What are your plans after the grant is completed? What kind of resources would you potentially need after this grant?'
-									placeholder='What are your plans after the grant is completed? What kind of resources would you potentially need after this grant'
+									label='What are your plans after the grant is completed?'
+									placeholder='What kind of resources would you potentially need after this grant ?'
 									type='textarea'
 									maxLength={150}
 									value={findCustomField(form, 'What are your plans after the grant is completed? What kind of resources would you potentially need after this grant?').value}
@@ -921,6 +921,7 @@ function ProposalForm() {
 								<SectionInput
 									label='If yes, what grant did you receive and what progress have you made since the last time you applied?'
 									placeholder='Previous grant and progress'
+									type='textarea'
 									value={findCustomField(form, 'If yes, what grant did you receive and what progress have you made since the last time you applied?').value}
 									onChange={
 										(e) => {
@@ -1027,7 +1028,7 @@ function ProposalForm() {
 									label='How did you hear about the Seed Grants Program?'
 									width='-moz-fit-content'
 									placeholder='Select an option'
-									options={['Starknet Blog', 'Starknet Community Event', 'Starknet Website', 'Social Media', 'Other team/ project in the ecosystem', 'Other']}
+									options={['Starknet Blog', 'Starknet Community Event', 'Starknet Website', 'Social Media', 'Other team / project in the ecosystem', 'Other']}
 									value={findCustomField(form, 'How did you hear about the Seed Grants Program?').value}
 									onChange={
 										(e) => {
@@ -1042,7 +1043,7 @@ function ProposalForm() {
 								(
 									<SectionInput
 										label='Which team project helped you hear about this program?'
-										placeholder='Please specify the team project/ source'
+										placeholder='Please specify'
 										value={findCustomField(form, 'Which team project helped you hear about this program').value}
 										onChange={
 											(e) => {
