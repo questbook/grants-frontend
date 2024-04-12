@@ -1,5 +1,5 @@
 import { useContext, useMemo, useState } from 'react'
-import { Box, Button, Checkbox, Flex, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text, Textarea } from '@chakra-ui/react'
+import { Box, Button, Flex, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text, Textarea } from '@chakra-ui/react'
 import QuickReplyButton from 'src/screens/dashboard/_components/QuickReplyButton'
 import useAddComments from 'src/screens/dashboard/_hooks/useAddComments'
 import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
@@ -45,14 +45,17 @@ function SendAnUpdateModal() {
 							proposalTags?.length > 0 && (
 								<Flex
 									mt={2}
-									gap={3}>
+									gap={2}
+								>
 									{
 										proposalTags?.map((tag, index) => {
 											return (
 												<QuickReplyButton
-													id={tag.id as 'accept' | 'reject' | 'resubmit' | 'feedback'}
+													id={tag.id as 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review'}
 													key={index}
 													tag={tag}
+													fontSize='sm'
+													px={2}
 													isSelected={selectedTag === tag.id}
 													onClick={
 														() => {
@@ -77,7 +80,7 @@ function SendAnUpdateModal() {
 							onChange={(e) => setText(e.target.value)}
 							placeholder='Add a comment here' />
 
-						<Checkbox
+						{/* <Checkbox
 							mt={4}
 							isChecked={isCommentPrivate}
 							onChange={
@@ -91,7 +94,7 @@ function SendAnUpdateModal() {
 								color='gray.500'>
 								Show only to reviewers and builder
 							</Text>
-						</Checkbox>
+						</Checkbox> */}
 
 						<Button
 							mt={8}
@@ -126,7 +129,7 @@ function SendAnUpdateModal() {
 	const [ text, setText ] = useState<string>('')
 
 	const [ selectedTag, setSelectedTag ] = useState<string>()
-	const [ isCommentPrivate, setIsCommentPrivate ] = useState<boolean>(false)
+	const [ isCommentPrivate, ] = useState<boolean>(false)
 
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
 	const [, setTransactionHash] = useState<string>('')
