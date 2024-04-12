@@ -28,7 +28,7 @@ interface Props {
 function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash }: Props) {
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 	const { type, grant, proposal, chainId } = useContext(ProposalFormContext)!
-	const { encrypt } = useEncryptPiiForApplication(grant?.id, webwallet?.publicKey, chainId)
+	const { } = useEncryptPiiForApplication(grant?.id, webwallet?.publicKey, chainId)
 	const [isExecuting, setIsExecuting] = useState(true)
 	const customToast = useCustomToast()
 

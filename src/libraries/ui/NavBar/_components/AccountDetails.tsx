@@ -15,6 +15,7 @@ import {
 	PopoverTrigger,
 	Text,
 } from '@chakra-ui/react'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 import copy from 'copy-to-clipboard'
 import { useRouter } from 'next/router'
 import { AddUser, ArrowRight, Key, Pencil } from 'src/generated/icons'
@@ -24,8 +25,7 @@ import { getAvatar } from 'src/libraries/utils'
 import { formatAddress } from 'src/libraries/utils/formatting'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { GrantsProgramContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { useAccount, useDisconnect } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 
 const IN_APP_WALLET_LEARN_MORE_URL =
@@ -51,33 +51,39 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 					<>
 						<PopoverTrigger>
 							{
-								(rainbowIsConnected && isEOA) ? 
-								<ConnectButton
-								showBalance={false}
-								chainStatus={{
-									smallScreen:'none',
-									largeScreen:'none',
-								}}
-								accountStatus={{
-									smallScreen: 'avatar',
-									largeScreen: 'full',
-								}}
-								
-								/> :
-							
-							<Button
-								variant='ghost'
-								bg={['gray.100', 'gray.100']}
-								disabled={isConnecting}
-								as={Button}
-								rightIcon={<ChevronDownIcon />}
-							>
-								<Image
-									borderRadius='3xl'
-									src={member?.profilePictureIpfsHash ? getUrlForIPFSHash(member.profilePictureIpfsHash) : getAvatar(false, scwAddress ?? 'generic')}
-									boxSize='24px'
-								/>
-							</Button> }
+								(rainbowIsConnected && isEOA) ? (
+									<ConnectButton
+										showBalance={false}
+										chainStatus={
+											{
+												smallScreen:'none',
+												largeScreen:'none',
+											}
+										}
+										accountStatus={
+											{
+												smallScreen: 'avatar',
+												largeScreen: 'full',
+											}
+										}
+
+									/>
+								) : (
+									<Button
+										variant='ghost'
+										bg={['gray.100', 'gray.100']}
+										disabled={isConnecting}
+										as={Button}
+										rightIcon={<ChevronDownIcon />}
+									>
+										<Image
+											borderRadius='3xl'
+											src={member?.profilePictureIpfsHash ? getUrlForIPFSHash(member.profilePictureIpfsHash) : getAvatar(false, scwAddress ?? 'generic')}
+											boxSize='24px'
+										/>
+									</Button>
+								)
+							}
 						</PopoverTrigger>
 						<PopoverContent>
 							<PopoverArrow />

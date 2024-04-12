@@ -9,7 +9,7 @@ function containsField(grant: Grant, field: string) {
 }
 
 function containsCustomField(grant: Grant, field: string) {
-	return grant?.fields?.some((f) => f.id.substring(f.id.indexOf('.') + 1).includes(field)) 
+	return grant?.fields?.some((f) => f.id.substring(f.id.indexOf('.') + 1).includes(field))
 }
 
 function findField(form: Form, id: string) {
