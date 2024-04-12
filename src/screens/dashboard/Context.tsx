@@ -11,6 +11,7 @@ import { getFromIPFS } from 'src/libraries/utils/ipfs'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { getApplicantProposalsQuery } from 'src/screens/dashboard/_data/getApplicantProposalsQuery'
 import { getFundsAllocatedQuery } from 'src/screens/dashboard/_data/getFundsAllocatedQuery'
 import { getGrantsQuery } from 'src/screens/dashboard/_data/getGrantsQuery'
 import { getProposalsQuery } from 'src/screens/dashboard/_data/getProposalsQuery'
@@ -50,6 +51,10 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
 	const { fetchMore: fetchMoreProposals } = useQuery({
 		query: getProposalsQuery,
+	})
+
+	const { fetchMore: fetchApplicantProposals } = useQuery({
+		query: getApplicantProposalsQuery,
 	})
 
 	// const { fetchMore: fetchMoreComments } = useQuery({
@@ -314,6 +319,43 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		return tempCommentMap
 	}
 
+	const getApplicantProposals = useCallback(async() => {
+		logger.info({ role, grantId, scwAddress }, 'Fetching proposals (GET PROPOSALS)')
+		// if(!webwallet) {
+		// 	return 'no-webwallet'
+		// }
+		if(!grantId || typeof grantId !== 'string' || !scwAddress) {
+			return 'no-grant-id'
+		}
+
+		logger.info({ proposals }, 'Proposals (GET PROPOSALS)')
+		const proposalData: Proposals = []
+
+		const first = 10
+		let skip = 0
+		let shouldContinue = true
+		do {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const results: any = await fetchApplicantProposals({ first, skip, grantID: grantId, applicantId: scwAddress }, true)
+			logger.info({ results }, 'Results (Proposals)')
+			if(results?.grantApplications?.length === 0) {
+				shouldContinue = false
+				break
+			}
+
+			//make sure the proposal is not already in the proposals array
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			proposalData.push(...results?.grantApplications?.filter((p: { id: string}) => !proposals.map((p: any) => p?.id).includes(p.id)) ?? [])
+			setProposals([...proposals as [], ...proposalData])
+			skip += first
+		} while(shouldContinue)
+
+
+		// append the proposals to the existing proposals
+		// await getFetchCommentsInBackground()
+
+		return 'proposals-fetched'
+	}, [role, grantId, scwAddress, webwallet])
 
 	const fetchPerProposalComments = useCallback(async() => {
 		if(typeof grantId !== 'string' || !proposalId || typeof proposalId !== 'string') {
@@ -629,11 +671,16 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		getGrant().then((r) => logger.info({ r }, 'Get grant result'))
 	}, [grantId, chainId, scwAddress])
 	useEffect(() => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		getProposals().then((proposals: any) => {
-			getFetchBackgroundProposals(proposals ?? [])
-		})
-	}, [grantId, chainId, scwAddress, webwallet])
+		if(role === 'admin' || role === 'reviewer') {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			getProposals().then((proposals: any) => {
+				getFetchBackgroundProposals(proposals ?? [])
+			})
+		} else {
+			getApplicantProposals().then((r) => logger.info({ r }, 'Get applicant proposals result'))
+
+		}
+	}, [grantId, chainId, scwAddress, webwallet, role])
 
 	useEffect(() => {
 		if(proposalId && typeof proposalId === 'string') {

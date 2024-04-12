@@ -228,89 +228,104 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 
 					</Flex>
 				</Box>
-
-				<Flex
-					direction='column'
-				>
-					<Grid
-						mt={0}
-						templateColumns='repeat(4, 1fr)'
-						pt={2}
-						px={2}
-						justifyContent='space-between'
-					>
-						<GridItem>
-							<Flex direction='column'>
-								{
-									grant?.workspace?.safe === null ? (
-										<Alert
+				{
+					(role === 'admin' || role === 'reviwer') ? (
+						<Flex
+							direction='column'
+						>
+							<Grid
+								mt={0}
+								templateColumns='repeat(4, 1fr)'
+								pt={2}
+								px={2}
+								justifyContent='space-between'
+							>
+								<GridItem>
+									<Flex direction='column'>
+										{
+											grant?.workspace?.safe === null ? (
+												<Alert
+													mt={1}
+													color='accent.royal' />
+											) : (
+												<Flex
+													gap={2}
+													align='center'>
+													{usdAmount === 0 && <Alert color='accent.royal' />}
+													{
+														usdAmount !== undefined && (
+															<Text fontWeight='500'>
+																$
+																{nFormatter(usdAmount?.toFixed(0), 1)}
+															</Text>
+														)
+													}
+												</Flex>
+											)
+										}
+										<Text
 											mt={1}
-											color='accent.royal' />
-									) : (
-										<Flex
-											gap={2}
-											align='center'>
-											{usdAmount === 0 && <Alert color='accent.royal' />}
-											{
-												usdAmount !== undefined && (
-													<Text fontWeight='500'>
-														$
-														{nFormatter(usdAmount?.toFixed(0), 1)}
-													</Text>
-												)
-											}
-										</Flex>
-									)
-								}
-								<Text
-									mt={1}
-									variant='body'
-									color='gray.600'>
-									{grant?.workspace?.safe === null ? 'No multisig' : usdAmount === undefined ? '' : usdAmount === 0 ? 'in multisig' : 'available'}
-								</Text>
-							</Flex>
-						</GridItem>
-						<GridItem>
-							<Flex direction='column'>
-								<Text fontWeight='500'>
-									{grant?.totalGrantFundingDisbursedUSD === '0' ? '-' : `$${nFormatter(grant?.totalGrantFundingDisbursedUSD, 0, grant.id === '0xe92b011b2ecb97dbe168c802d582037e28036f9b')}`}
-								</Text>
-								<Text
-									mt={1}
-									variant='body'
-									color='gray.600'>
-									paid out
-								</Text>
-							</Flex>
-						</GridItem>
-						<GridItem>
-							<Flex direction='column'>
-								<Text fontWeight='500'>
-									{grant?.numberOfApplicationsSelected}
-								</Text>
-								<Text
-									mt={1}
-									variant='body'
-									color='gray.600'>
-									accepted
-								</Text>
-							</Flex>
-						</GridItem>
-						<GridItem>
-							<Flex direction='column'>
-								<Text fontWeight='500'>
-									{grant?.numberOfApplications}
-								</Text>
-								<Text
-									mt={1}
-									variant='body'
-									color='gray.600'>
-									proposals
-								</Text>
-							</Flex>
-						</GridItem>
-					</Grid>
-				</Flex>
+											variant='body'
+											color='gray.600'>
+											{grant?.workspace?.safe === null ? 'No multisig' : usdAmount === undefined ? '' : usdAmount === 0 ? 'in multisig' : 'available'}
+										</Text>
+									</Flex>
+								</GridItem>
+								<GridItem>
+									<Flex direction='column'>
+										<Text fontWeight='500'>
+											{grant?.totalGrantFundingDisbursedUSD === '0' ? '-' : `$${nFormatter(grant?.totalGrantFundingDisbursedUSD, 0, grant.id === '0xe92b011b2ecb97dbe168c802d582037e28036f9b')}`}
+										</Text>
+										<Text
+											mt={1}
+											variant='body'
+											color='gray.600'>
+											paid out
+										</Text>
+									</Flex>
+								</GridItem>
+								<GridItem>
+									<Flex direction='column'>
+										<Text fontWeight='500'>
+											{grant?.numberOfApplicationsSelected}
+										</Text>
+										<Text
+											mt={1}
+											variant='body'
+											color='gray.600'>
+											accepted
+										</Text>
+									</Flex>
+								</GridItem>
+								<GridItem>
+									<Flex direction='column'>
+										<Text fontWeight='500'>
+											{grant?.numberOfApplications}
+										</Text>
+										<Text
+											mt={1}
+											variant='body'
+											color='gray.600'>
+											proposals
+										</Text>
+									</Flex>
+								</GridItem>
+							</Grid>
+						</Flex>
+					) : (
+						<Flex
+							direction='column'
+						>
+							<Grid
+								mt={0}
+								templateColumns='repeat(4, 1fr)'
+								pt={8}
+								px={2}
+								justifyContent='space-between'
+							 />
+						</Flex>
+					)
+				}
 
 			</Flex>
 		</Box>

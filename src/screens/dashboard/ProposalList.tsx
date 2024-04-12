@@ -39,12 +39,16 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 					color='black.100'
 					fontSize={['14px', '14px', '16px', '16px']}>
 					Proposals
-					<Text
-						ml={1}
-						display='inline-block'
-						color='black.300'>
-						{`(${proposalCount})`}
-					</Text>
+					{
+						(role === 'admin' || role === 'reviewer') && (
+							<Text
+								ml={1}
+								display='inline-block'
+								color='black.300'>
+								{`(${proposalCount})`}
+							</Text>
+						)
+					}
 				</Text>
 				{
 					(role === 'community' || role === 'builder') &&

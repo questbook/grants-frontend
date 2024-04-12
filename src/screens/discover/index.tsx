@@ -351,7 +351,7 @@ function Discover() {
 											fontSize='24px'
 											lineHeight='31.2px'
 										>
-											{SubDomainConfig.grants_name}
+											Domains
 										</Text>
 
 									</Flex>
@@ -449,6 +449,7 @@ function Discover() {
 						<Flex
 							flexDirection='column'
 							w='100%'
+							mt={48}
 							align='center'
 							justify='center'>
 							<Link

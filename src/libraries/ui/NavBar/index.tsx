@@ -88,7 +88,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 				} */}
 				<Spacer />
 				{
-					shouldShowTitle && (
+					shouldShowTitle && (role === 'admin' || role === 'reviewer') && (
 						<Flex
 							align='center'
 							gap={2}
@@ -328,7 +328,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 				<Spacer />
 
 				{
-					shouldShowTitle && (
+					shouldShowTitle && (role === 'admin' || role === 'reviewer') && (
 						<Flex
 							align='center'
 							gap={2}

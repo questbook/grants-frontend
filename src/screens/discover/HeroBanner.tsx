@@ -1,9 +1,11 @@
 /* eslint-disable indent */
+import { useContext } from 'react'
 import { Flex, Image, Text, useMediaQuery } from '@chakra-ui/react'
 import { logger } from 'ethers'
 // import { useRouter } from 'next/router'
 import SubDomainConfig from 'src/constants/subdomain.json'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
+import { GrantsProgramContext } from 'src/pages/_app'
 import { SectionGrants } from 'src/screens/discover/_utils/types'
 
 function HeroBanner({
@@ -136,7 +138,9 @@ function HeroBanner({
 							{SubDomainConfig.name}
 						</Text>
 					</Flex>
-
+					{
+						(role === 'admin' || role === 'reviewer') &&
+					(
 					<Flex
 						mt={5}
 						gap={isMobile ? '24px' : 5}
@@ -159,13 +163,17 @@ function HeroBanner({
 							data={formatNumber(safeBalances) || formatNumber(0)}
 							title='left in mutlisig' />
 
+
 					</Flex>
+ )
+}
 				</Flex>
 			</Flex>
 		</Flex>
 
 	)
 	const isMobile = useMediaQuery(['(max-width:700px)'])[0]
+	const { role } = useContext(GrantsProgramContext)!
 
 	return buildComponent()
 }

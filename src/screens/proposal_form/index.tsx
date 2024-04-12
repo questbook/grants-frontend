@@ -351,6 +351,7 @@ function ProposalForm() {
 							<Text
 								variant='heading3'
 								fontWeight='500'
+								align='center'
 							>
 								{grant?.title}
 							</Text>
@@ -370,68 +371,95 @@ function ProposalForm() {
 							width='max-content'
 						>
 							<Flex
-								direction={['column', 'row']}
+								direction='row'
 								justifyContent='space-between'
 								width='max-content'
 								gap={2}
+								alignItems='center'
 							>
-								<Flex
-									alignItems='center'
+
+								<Doc />
+								<Text
+									variant='heading4'
+									fontWeight='500'
+									color='black.100'
 								>
-									{/* <Flex gap={4}>
-										<CalendarIcon />
-										<Flex direction='column'>
-											<Text
-												variant='title'
-												fontWeight='400'
-												color='black.100'
-											>
-												Accepting proposals until
-												{' '}
-											</Text>
-											<Text
-												variant='title'
-												fontWeight='500'
-												color='black.100'
-											>
-												{extractDateFromDateTime(grant?.deadline!)}
-											</Text>
-										</Flex>
-									</Flex> */}
-								</Flex>
-								{/* <Divider
-									orientation='vertical'
-									h='100%' /> */}
-								{
-									grant?.link && (
-										<Flex alignItems='center'>
-											<Flex gap={4}>
-												<Doc />
-												<Flex direction='column'>
-													<Text
-														variant='title'
-														fontWeight='400'
-													>
-														Grant program details
-														{' '}
-													</Text>
-													<Text
-														variant='title'
-														fontWeight='500'
-														color='black.100'
-														cursor='pointer'
-														onClick={() => window.open(grant?.link!, '_blank')}
-													>
-														Read here
-													</Text>
-												</Flex>
-											</Flex>
-										</Flex>
-									)
-								}
+									Grant program details
+								</Text>
 
 							</Flex>
 						</Container>
+
+
+						<Flex
+							mt={4}
+							align='center'
+							fontWeight='800'
+							lineHeight='1.5'
+							color='black.100'
+							gap={2}
+							justifyContent='center'
+
+						>
+
+
+							<Text
+								align='justify'
+								mt={2}
+								variant='body'
+								width={['100%', '60%']}
+							>
+								{
+									`
+The Seed Grants Program is designed to provide teams with grants up to $25k in non-dilutive funding to enhance the growth of the Starknet ecosystem.
+`
+								}
+
+								{
+									`A Seed Grant is appropriate for projects and teams that meet any of the following criteria:
+`
+								}
+								{' '}
+								<br />
+								{
+									`
+- Actively involved in the Starknet community and/ or participated in a Starknet hackathon, builder program, or other entry-level initiative.`
+								}
+								<br />
+								{
+									`
+- Already developed an MVP or proof of concept.`
+								}
+								<br />
+								{
+									`
+- Engaged in experimentation of innovative concepts aimed at pushing boundaries of what is possible on Starknet.
+`
+								}
+								<br />
+								{
+									`
+There is no specific industry vertical targeted and the program is open to all types of submissions.`
+								}
+
+								{/* <Text
+									variant='body'
+									display='inline-block'
+									fontWeight={500}
+									marginLeft={1}
+									cursor='pointer'
+									onClick={
+										() => {
+											if(grant.link !== null) {
+												window.open(grant.link, '_blank')
+											}
+										}
+									}
+								>
+									here
+								</Text> */}
+							</Text>
+						</Flex>
 
 						{/* Builder Details */}
 						<SectionHeader mt={8}>
@@ -1028,7 +1056,7 @@ function ProposalForm() {
 									label='How did you hear about the Seed Grants Program?'
 									width='-moz-fit-content'
 									placeholder='Select an option'
-									options={['Starknet Blog', 'Starknet Community Event', 'Starknet Website', 'Social Media', 'Other team / project in the ecosystem', 'Other']}
+									options={['Starknet Blog', 'Starknet Community Event', 'Starknet Website', 'Social Media', 'Other team / project in the ecosystem', 'Please specify']}
 									value={findCustomField(form, 'How did you hear about the Seed Grants Program?').value}
 									onChange={
 										(e) => {
@@ -1039,7 +1067,10 @@ function ProposalForm() {
 						}
 						{
 							containsCustomField(grant, 'Which team project helped you hear about this program?') &&
-								findCustomField(form, 'How did you hear about the Seed Grants Program?').value?.includes('Other') &&
+								(findCustomField(form, 'How did you hear about the Seed Grants Program?').value?.includes('Other team / project in the ecosystem') ||
+								findCustomField(form, 'How did you hear about the Seed Grants Program?').value?.includes('Please specify'))
+
+								&&
 								(
 									<SectionInput
 										label='Which team project helped you hear about this program?'
