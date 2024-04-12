@@ -103,7 +103,7 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 				}
 
 				const pii = member.pii?.find((pii: any) => pii?.id?.includes(scwAddress?.toLowerCase()))
-				if(!pii) {
+				if(pii) {
 					workspaceMembers.push(member)
 					continue
 				}
