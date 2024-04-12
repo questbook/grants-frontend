@@ -109,8 +109,8 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 				}
 
 				const value = pii?.data
-				const channel = await getSecureChannelFromPublicKey(webwallet, member.publicKey, getKeyForMemberPii(`${grant?.workspace?.id}.${scwAddress.toLowerCase()}`))
 				try {
+					const channel = await getSecureChannelFromPublicKey(webwallet, member.publicKey, getKeyForMemberPii(`${grant?.workspace?.id}.${scwAddress.toLowerCase()}`))
 					const data = await channel.decrypt(value)
 					const json = JSON.parse(data)
 					if(json.email) {
