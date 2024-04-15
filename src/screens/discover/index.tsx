@@ -227,6 +227,10 @@ function Discover() {
 	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
 	const bannerText = [
 		{
+			'logo': 'QmQfZEDeLroURuySnfKDF1XpwmU94cGULHZwQhaHPYZxiJ',
+			'text': 'Arbitrum'
+		},
+		{
 			'logo': 'QmaTvGYbS3GtDdQmYKvnm5gkUX1aSf2ZVgrD8q7u1YG36P',
 			'text': 'Compound'
 		},
@@ -249,6 +253,10 @@ function Discover() {
 		{
 			'logo': 'QmWsnbRQV8vYCSkrVU8uvgQeSnkiD9MLZv2kmuKDUXh2VC',
 			'text': 'Solana Ecosystem'
+		},
+		{
+			'logo': 'QmTh5y94Hywn61bJQmZe7iFoPe8DsmHEHACCvatFrWyeLd',
+			'text': 'Haberdashery'
 		},
 	]
 	const UserCard = ({ image, title, twitter, telegram }: {
