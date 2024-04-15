@@ -239,6 +239,10 @@ function Discover() {
 			'text': 'TON Foundation'
 		},
 		{
+			'logo': 'QmcZQwYXLgk9yam6RYafYNLYd52X8UggbsQAr6WdaYUtyb',
+			'text': 'Elastos'
+		},
+		{
 			'logo': 'QmcfHdWQxZtQRWYdn2kwy8FShmnhSKQChD2XGJsvuX6LAb',
 			'text': 'Alchemix'
 		},
@@ -249,6 +253,10 @@ function Discover() {
 		{
 			'logo': 'QmWX8As9og6mLaiPhCaR3NqkinXMDymMaqf43qyVSE5hp8',
 			'text': 'Reclaim Protocol'
+		},
+		{
+			'logo': 'QmTh5y94Hywn61bJQmZe7iFoPe8DsmHEHACCvatFrWyeLd',
+			'text': 'Haberdashery'
 		},
 	]
 	const UserCard = ({ image, title, twitter, telegram }: {
