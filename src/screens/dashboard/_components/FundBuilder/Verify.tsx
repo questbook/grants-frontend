@@ -1,20 +1,18 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { Flex, Text, VStack } from '@chakra-ui/react'
+import { useConnect as keplrConnect, WalletType } from 'graz'
 import { useSafeContext } from 'src/contexts/safeContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
-import { availableWallets, keplrWallet, solanaWallets, tonWallets } from 'src/libraries/utils/constants'
+import { availableWallets, keplrWallet, solanaWallets } from 'src/libraries/utils/constants'
 import getErrorMessage from 'src/libraries/utils/error'
+import { mainnetChains } from 'src/libraries/utils/keplrWallets'
 import ConnectWalletButton from 'src/screens/dashboard/_components/FundBuilder/ConnectWalletButton'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import usetonWallet from 'src/screens/dashboard/_hooks/useTonWallet'
 import { SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
 import { Connector, useAccount, useConnect, useNetwork, useSwitchNetwork } from 'wagmi'
-import type { ChainInfo } from "@graz-sh/types";
-import { checkWallet, useAccount as useKeplrAccount } from "graz";
-import { useConnect as keplrConnect, WalletType } from "graz";
-import { mainnetChains } from 'src/libraries/utils/keplrWallets'
 
 interface Props {
 	signerVerifiedState: SignerVerifiedState
@@ -144,7 +142,7 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 	const { safeObj } = useSafeContext()!
 	const { switchNetwork } = useSwitchNetwork()
 	const { phantomWallet, phantomWalletConnected } = usePhantomWallet()
-	const { connectTonWallet, tonWalletAddress, tonWalletConnected } = usetonWallet()
+	const { tonWalletAddress, tonWalletConnected } = usetonWallet()
 	const { address } = useAccount()
 	const toast = useCustomToast()
 

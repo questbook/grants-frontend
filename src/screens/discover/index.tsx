@@ -244,6 +244,10 @@ function Discover() {
 			'text': 'Alchemix'
 		},
 		{
+			'logo': 'QmcZQwYXLgk9yam6RYafYNLYd52X8UggbsQAr6WdaYUtyb',
+			'text': 'Elastos'
+		},
+		{
 			'logo': 'QmYvzshiSC6DSpYAWDWv3WbVvm3CxtnqEtHg4JhFPProTx',
 			'text': 'iExec'
 		},
