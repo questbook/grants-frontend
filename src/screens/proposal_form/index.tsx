@@ -1164,8 +1164,20 @@ There is no specific industry vertical targeted and the program is open to all t
 					customSteps={customSteps}
 					customStepsHeader={customStepsHeader}
 					onClose={
-						() => {
-							setNetworkTransactionModalStep(undefined)
+						async() => {
+							setRole('builder')
+							const ret = await router.push({
+								pathname: '/dashboard',
+								query: {
+									grantId: grant?.id,
+									chainId: chainId,
+									role: 'builder',
+									proposalId,
+								}
+							}, undefined, { shallow: true })
+							if(ret) {
+								router.reload()
+							}
 						}
 					} />
 			</Flex>
