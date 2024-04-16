@@ -1,6 +1,6 @@
 {
     "name": "Starknet Foundation Grants",
-    "id":"Starknet",
+    "id":"Starknet Grants",
     "grants_name": "Starknet",
     "logo":"QmPwJ67iJN3WscAvgPrU6JVXfhkDwxkU5M5qdChpvYaMyw",
     "info":"StarkNet is a permissionless, decentralized validity rollup operating as an L2 network over Ethereum, where any dApp can achieve vastly increased scale for its computation, without compromising Ethereum's composability and security.",

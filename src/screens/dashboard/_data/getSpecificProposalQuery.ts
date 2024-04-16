@@ -97,6 +97,7 @@ export const getSpecificProposalQuery = gql`query getProposals($grantID: String!
           updatedAt
           enabled
         }
+        status
         assignedAtS
       }
       version

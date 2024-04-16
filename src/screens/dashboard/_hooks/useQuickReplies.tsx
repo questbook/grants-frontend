@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { Chat, CheckDouble, Close, Resubmit } from 'src/generated/icons'
-import { GrantsProgramContext } from 'src/pages/_app'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { ProposalType, TagType } from 'src/screens/dashboard/_utils/types'
 
 interface Props {
@@ -17,6 +17,8 @@ function useProposalTags({ proposals }: Props) {
 			{ id: 'review', title: 'Review', commentString: 'Your proposal is under review', icon: <Chat color='accent.vivid' />, isPrivate: false }
 		],
 		reviewer: [
+			{ id: 'reviewAccept', title: 'Review & Accept', commentString: 'Your review has been accepted', icon: <CheckDouble color='accent.jeans' />, isPrivate: false },
+			{ id: 'reviewReject', title: 'Review & Reject', commentString: 'Your review has been rejected', icon: <Close color='accent.carrot' />, isPrivate: false },
 			{ id: 'feedback', title: 'Feedback / Comment', commentString: '', icon: <Chat color='accent.vivid' />, isPrivate: false }
 		],
 		builder: [
@@ -28,6 +30,7 @@ function useProposalTags({ proposals }: Props) {
 	}
 
 	const { role } = useContext(GrantsProgramContext)!
+	const { scwAddress } = useContext(WebwalletContext)!
 
 	if(role === 'admin') {
 		if(proposals.every(p => p.state === 'submitted')) {
@@ -38,6 +41,14 @@ function useProposalTags({ proposals }: Props) {
 			return { proposalTags: allTags['admin'].slice(0, 4) }
 		} else {
 			return { proposalTags: allTags['admin'].slice(3, 4) }
+		}
+	} else if(role === 'reviewer') {
+		if(proposals.every(p => p.applicationReviewers?.find(r => r.member.actorId?.toLowerCase() === scwAddress?.toLowerCase())?.status === 'pending')) {
+			return { proposalTags: allTags['reviewer'].slice(0, 2).concat(allTags['admin'].slice(3, 4)) }
+		} else if(proposals.every(p => p.state === 'submitted') && !proposals.every(p => p.applicationReviewers?.find(r => r.status === 'rejected' || r.status === 'pending'))) {
+			return { proposalTags: allTags['admin'].slice(0, 2).concat(allTags['admin'].slice(3, 4)) }
+		} else {
+			return { proposalTags: allTags['community'] }
 		}
 	} else {
 		return { proposalTags: allTags[role] }

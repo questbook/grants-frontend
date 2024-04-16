@@ -16,7 +16,7 @@ interface Props {
 function useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash }: Props) {
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 	const { grant } = useContext(GrantsProgramContext)!
-	const { selectedProposals, proposals, review, refreshProposals } = useContext(DashboardContext)!
+	const { selectedProposals, proposals, review, refreshProposals, reviewStatus, setShowSubmitReviewPanel } = useContext(DashboardContext)!
 
 	const chainId = useMemo(() => {
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
@@ -73,18 +73,21 @@ function useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash }:
 					applicationId: proposal.id,
 					grantAddress: grant.id,
 					metadata: ipfsHash,
-					reviewerAddress: scwAddress
+					reviewerAddress: scwAddress,
+					status: reviewStatus
 				}
 				const updateReview = await executeMutation(submitReviewsMutation, variables)
 				setTransactionHash(updateReview?.submitReviews?.recordId)
 				if(!updateReview?.submitReviews?.recordId) {
 					throw new Error('Failed to submit review')
 				}
+
+				setShowSubmitReviewPanel(false)
 			}
 
-			window.location.reload()
+			// window.location.reload()
 
-			refreshProposals(true)
+			await refreshProposals(true)
 
 		} catch(e) {
 			logger.error(e, 'useSubmitReview: (Error)')

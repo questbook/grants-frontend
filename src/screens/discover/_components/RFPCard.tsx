@@ -229,7 +229,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 					</Flex>
 				</Box>
 				{
-					(role === 'admin' || role === 'reviwer') ? (
+					(role === 'admin' || role === 'reviwer' || isQbAdmin) ? (
 						<Flex
 							direction='column'
 						>

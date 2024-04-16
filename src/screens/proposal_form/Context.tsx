@@ -126,7 +126,7 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 		}
 		logger.info('grants', result)
 		try {
-			const cache = false
+			const cache = localStorage.getItem(`form-${result.grant.id}`)
 			if(cache) {
 				const formFromCache = JSON.parse(cache)
 				logger.info({ formFromCache }, 'ProposalForm: fetchGrant (formFromCache)')

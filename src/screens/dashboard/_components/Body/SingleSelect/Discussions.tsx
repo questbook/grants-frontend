@@ -146,13 +146,17 @@ function Discussions() {
 										return (
 											<QuickReplyButton
 												zIndex={10}
-												id={tag.id as 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review'}
+												id={tag.id as 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review' | 'reviewAccept' | 'reviewReject'}
 												key={index}
 												tag={tag}
 												isSelected={tag.id === selectedTag?.id}
 												onClick={
 													() => {
-														if(selectedTag) {
+														if(tag?.id === 'reviewAccept' || tag?.id === 'reviewReject') {
+															setReviewStatus(tag.id === 'reviewAccept' ? 'approved' : 'rejected')
+															setShowSubmitReviewPanel(true)
+														} else if(selectedTag) {
+															logger.info('selecting tag', selectedTag)
 															logger.info('Deselecting tag')
 															setSelectedTag(undefined)
 															setText('')
@@ -441,6 +445,8 @@ function Discussions() {
 		refreshComments,
 		refreshProposals,
 		areCommentsLoading,
+		setShowSubmitReviewPanel,
+		setReviewStatus,
 	} = useContext(DashboardContext)!
 
 	const [step, setStep] = useState<number>()
@@ -591,6 +597,14 @@ function Discussions() {
 		review: {
 			title: 'review',
 			bg: jeans
+		},
+		reviewAccept: {
+			title: 'review and accept',
+			bg: azure
+		},
+		reviewReject: {
+			title: 'review and reject',
+			bg: carrot
 		}
 	}
 

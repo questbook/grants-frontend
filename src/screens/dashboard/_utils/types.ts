@@ -27,6 +27,8 @@ export type DashboardContextType = {
   filterState: ApplicationState | undefined
   setFilterState: (state: ApplicationState | undefined) => void
   fundsAllocated: { allocated: number, disbursed: number }
+  reviewStatus: 'pending' | 'approved' | 'rejected'
+  setReviewStatus: (status: 'pending' | 'approved' | 'rejected') => void
 };
 
 // export interface TokenInfo {

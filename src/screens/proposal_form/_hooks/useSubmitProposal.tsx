@@ -174,6 +174,7 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 				pii: data.pii,
 				id: proposal?.id,
 				state: 'submitted',
+				autoAssignReviewers: true
 			}
 			setNetworkTransactionModalStep(2)
 			logger.info({ variables }, 'useSubmitProposal: (variables)')

@@ -100,6 +100,7 @@ export const getProposalsQuery = gql`query getProposals($first: Int, $skip: Int,
           updatedAt
           enabled
         }
+        status
         assignedAtS
       }
       version

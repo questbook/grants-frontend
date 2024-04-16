@@ -95,6 +95,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		allocated: 0,
 		disbursed: 0,
 	})
+	const [reviewStatus, setReviewStatus] = useState<'pending' | 'approved' | 'rejected'>('pending')
 
 	const getGrant = useCallback(async() => {
 		if(!grantId || chainId === -1 || typeof grantId !== 'string') {
@@ -808,6 +809,8 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 					filterState,
 					setFilterState,
 					fundsAllocated,
+					reviewStatus,
+					setReviewStatus,
 				}
 			}>
 			{children}

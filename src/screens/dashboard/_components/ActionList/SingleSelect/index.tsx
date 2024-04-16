@@ -1,5 +1,5 @@
 import { useContext, useMemo } from 'react'
-import { Box, Button, Divider, Flex } from '@chakra-ui/react'
+import { Box, Button, Divider, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
@@ -13,7 +13,7 @@ import { DashboardContext, ModalContext } from 'src/screens/dashboard/Context'
 
 function SingleSelect() {
 	const buildComponent = () => {
-		return showSubmitReviewPanel ? reviewerComponent() : adminComponent()
+		return adminComponent()
 	}
 
 	const adminComponent = () => {
@@ -29,6 +29,7 @@ function SingleSelect() {
 				<Payouts />
 				<Box mt='auto' />
 				<Divider />
+				{showSubmitReviewPanel && reviewerComponent()}
 				{
 					(role !== 'reviewer' && role !== 'community') && (
 						<Flex
@@ -84,12 +85,44 @@ function SingleSelect() {
 		return (
 			<Flex
 				h='100%'
-				w='100%'
-				direction='column'>
-				<ReviewProposal />
+				w='100%'>
+				<Modal
+					isOpen={true}
+					size='xl'
+					onClose={
+						() => {
+							setShowSubmitReviewPanel(false)
+						}
+					}
+					closeOnEsc
+					isCentered
+					scrollBehavior='outside'>
+					<ModalOverlay />
+					<ModalContent
+						borderRadius='8px'
+					>
+						<ModalHeader
+							fontSize='24px'
+							fontWeight='700'
+							lineHeight='32.4px'
+							color='#07070C'
+							alignItems='center'
+						>
+							<ModalCloseButton
+								mt={1}
+							/>
+						</ModalHeader>
+						<ModalBody>
+
+							<ReviewProposal />
+						</ModalBody>
+					</ModalContent>
+				</Modal>
+
 			</Flex>
 		)
 	}
+
 
 	const router = useRouter()
 	const toast = useCustomToast()
@@ -97,7 +130,7 @@ function SingleSelect() {
 	const { role } = useContext(GrantsProgramContext)!
 	const { setIsFundingMethodModalOpen } = useContext(ModalContext)!
 	// const { setIsModalOpen } = useContext(FundBuilderContext)!
-	const { proposals, selectedProposals, showSubmitReviewPanel } = useContext(DashboardContext)!
+	const { proposals, selectedProposals, showSubmitReviewPanel, setShowSubmitReviewPanel } = useContext(DashboardContext)!
 
 	const proposal = useMemo(() => {
 		return proposals.find(p => selectedProposals.has(p.id))
