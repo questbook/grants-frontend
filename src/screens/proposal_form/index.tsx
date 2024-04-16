@@ -191,7 +191,7 @@ function ProposalForm() {
 													fontWeight='400'
 													lineHeight='150%'
 												>
-													Let the world know about this by sharing through your twitter and also subscribe to the notifications to get updates regarding your proposal.
+													Subscribe to the notifications to get updates regarding your proposal.
 												</Text>
 
 											</Flex>
@@ -1165,19 +1165,7 @@ There is no specific industry vertical targeted and the program is open to all t
 					customStepsHeader={customStepsHeader}
 					onClose={
 						async() => {
-							setRole('builder')
-							const ret = await router.push({
-								pathname: '/dashboard',
-								query: {
-									grantId: grant?.id,
-									chainId: chainId,
-									role: 'builder',
-									proposalId,
-								}
-							}, undefined, { shallow: true })
-							if(ret) {
-								router.reload()
-							}
+							setNetworkTransactionModalStep(undefined)
 						}
 					} />
 			</Flex>

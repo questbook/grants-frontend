@@ -1,5 +1,5 @@
 import { RefObject, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { Box, Button, ButtonProps, Checkbox, Divider, Flex, Image, InputGroup, InputRightElement, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text, Tooltip } from '@chakra-ui/react'
+import { Box, Button, ButtonProps, Checkbox, Divider, Flex, Image, InputGroup, InputRightElement, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text, Tooltip, useToast } from '@chakra-ui/react'
 import Safe from '@safe-global/safe-core-sdk'
 import EthersAdapter from '@safe-global/safe-ethers-lib'
 import { ethers } from 'ethers'
@@ -80,7 +80,7 @@ function Reviews() {
 
 					{
 						proposal?.applicationReviewers?.filter((reviewer) => !guardContractReviewers.find(gcr => gcr.member?.actorId === reviewer?.member?.actorId)).map((reviewer, index) => {
-							return reviewerItem(reviewer?.member, reviews.find(r => r.reviewer === reviewer?.member.actorId), index)
+							return reviewerItem(reviewer?.member, reviews.find(r => r.reviewer === reviewer?.member.actorId), index, reviewer?.status)
 						})
 					}
 
@@ -647,6 +647,14 @@ function Reviews() {
 												() => {
 													logger.info({ reviewType, isReviewPrivate, rubricItems }, 'setRubrics')
 													setRubrics(reviewType, isReviewPrivate, rubricItems)
+													toast({
+														title: 'Rubric Updated',
+														description: 'Rubric has been successfully updated',
+														status: 'success',
+														duration: 5000,
+														isClosable: true,
+													})
+													onClose()
 												}
 											}>
 											<Text
@@ -702,7 +710,7 @@ function Reviews() {
 		)
 	}
 
-	const reviewerItem = (reviewer: ProposalType['applicationReviewers'][number]['member'], review: IReviewFeedback | undefined, index: number) => {
+	const reviewerItem = (reviewer: ProposalType['applicationReviewers'][number]['member'], review: IReviewFeedback | undefined, index: number, status?: string) => {
 		return (
 			<Flex
 				mt={index === 0 ? 5 : 3}
@@ -734,6 +742,22 @@ function Reviews() {
 							ml={3}
 							noOfLines={3}>
 							{reviewer?.fullName}
+							{
+								status && status !== 'pending' && (
+									<Text
+										ml={2}
+										display='inline-block'
+										variant='body'
+										fontWeight='600'
+										px={2}
+										py={0.1}
+										fontSize='10px'
+										bg={status === 'approved' ? 'accent.azure' : 'accent.royal'}
+										color='white'>
+										{status === 'approved' ? 'Approved' : 'Rejected'}
+									</Text>
+								)
+							}
 							{review?.items?.[0]?.rubric?.maximumPoints === 1 && ' voted'}
 							{
 								review?.items?.[0]?.rubric?.maximumPoints === 1 && (
@@ -798,7 +822,7 @@ function Reviews() {
 					{
 						!review && reviewer.actorId.toLowerCase() === scwAddress?.toLowerCase() && (
 							<Button
-								isDisabled={true}
+								isDisabled={proposal?.state !== 'approved' && proposal?.state !== 'rejected'}
 								variant='link'>
 								<Text
 									color='accent.azure'
@@ -906,6 +930,7 @@ function Reviews() {
 	const [rubricItems, setRubricItems] = useState<RubricItem[]>([])
 	const [anotherRubricTitle, setAnotherRubricTitle] = useState<string>()
 	const { setRubrics } = useSetRubrics({ setNetworkTransactionModalStep, setTransactionHash })
+	const toast = useToast()
 
 	const proposal = useMemo(() => {
 		return proposals.find(p => selectedProposals.has(p.id))

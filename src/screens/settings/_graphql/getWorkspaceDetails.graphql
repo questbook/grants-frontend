@@ -6,6 +6,7 @@ query getWorkspaceDetails($workspaceID: String!) {
     about
     logoIpfsHash
     coverImageIpfsHash
+    synapsId
     supportedNetworks
     safe {
       address

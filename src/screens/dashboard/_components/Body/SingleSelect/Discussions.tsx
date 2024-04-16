@@ -33,6 +33,7 @@ import QuickReplyButton from 'src/screens/dashboard/_components/QuickReplyButton
 import RoleTag from 'src/screens/dashboard/_components/RoleTag'
 import useAddComment from 'src/screens/dashboard/_hooks/useAddComment'
 import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
+import GetSynapsLink from 'src/screens/dashboard/_hooks/useSynaps'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { CommentType, TagType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -146,15 +147,24 @@ function Discussions() {
 										return (
 											<QuickReplyButton
 												zIndex={10}
-												id={tag.id as 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review' | 'reviewAccept' | 'reviewReject'}
+												id={tag.id as 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review' | 'reviewAccept' | 'reviewReject' | 'KYC' | 'KYB'}
 												key={index}
 												tag={tag}
 												isSelected={tag.id === selectedTag?.id}
 												onClick={
-													() => {
+													async() => {
 														if(tag?.id === 'reviewAccept' || tag?.id === 'reviewReject') {
 															setReviewStatus(tag.id === 'reviewAccept' ? 'approved' : 'rejected')
 															setShowSubmitReviewPanel(true)
+														} else if(tag.id === 'KYC' || tag.id === 'KYB') {
+															const link = await getSynapsLink(tag.id, proposal?.id as string)
+															logger.info({ link }, 'SYNAPS LINK')
+															if(link) {
+																setText(link)
+																setSelectedTag(tag)
+																setIsCommentPrivate(tag.isPrivate)
+																setEditorState(EditorState.createWithContent(convertFromRaw(mdToDraftjs(`${tag.commentString} \n\n${link}`))))
+															}
 														} else if(selectedTag) {
 															logger.info('selecting tag', selectedTag)
 															logger.info('Deselecting tag')
@@ -260,6 +270,7 @@ function Discussions() {
 												setSelectedTag(undefined)
 												refreshComments(true)
 												refreshProposals(true)
+												setIsCommentPrivate(false)
 												setStep(undefined)
 												localStorage.removeItem(
 													`comment-${grant?.id}-${proposal?.id}`,
@@ -322,9 +333,10 @@ function Discussions() {
 					src={
 						comment.role === 'builder' || comment.role === 'community'
 							? getAvatar(false, comment.sender?.toLowerCase() ?? '')
-							: member?.profilePictureIpfsHash
-								? getUrlForIPFSHash(member.profilePictureIpfsHash)
-								: getAvatar(false, member?.actorId)
+							: comment.role === 'app' ? 'https://avatars.githubusercontent.com/u/63306624?s=280&v=4'
+								: member?.profilePictureIpfsHash
+									? getUrlForIPFSHash(member.profilePictureIpfsHash)
+									: getAvatar(false, member?.actorId)
 					}
 				/>
 				<Flex
@@ -455,6 +467,7 @@ function Discussions() {
 	const [selectedTag, setSelectedTag] = useState<TagType>()
 	const [text, setText] = useState<string>('')
 	const [editorState, setEditorState] = useState(() => EditorState.createEmpty())
+	const { getSynapsLink } = GetSynapsLink()
 
 	const { addComment } = useAddComment({
 		setStep,
@@ -535,6 +548,10 @@ function Discussions() {
 			return 'On clicking “Post” the builder will be notified to resubmit his proposal.'
 		case 'review':
 			return 'On clicking “Post” the proposal will be under review. Builder will be notified.'
+		case 'KYC':
+			return 'On clicking “Post” the builder will be notified to complete KYC.'
+		case 'KYB':
+			return 'On clicking “Post” the builder will be notified to complete KYB.'
 		default:
 			return ''
 		}
@@ -549,6 +566,9 @@ function Discussions() {
 				return member?.fullName
 			} else if(member?.actorId) {
 				return formatAddress(member?.actorId)
+			//@ts-ignore
+			} else if(comment.role === 'app') {
+				return comment.sender
 			} else {
 				return 'No name found'
 			}
@@ -605,7 +625,15 @@ function Discussions() {
 		reviewReject: {
 			title: 'review and reject',
 			bg: carrot
-		}
+		},
+		KYC: {
+			title: 'send KYC link to',
+			bg: jeans
+		},
+		KYB: {
+			title: 'send KYB link to',
+			bg: jeans
+		},
 	}
 
 	return buildComponents()

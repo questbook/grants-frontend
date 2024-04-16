@@ -10,6 +10,7 @@ export const getProposalsQuery = gql`query getProposals($first: Int, $skip: Int,
       applicantId
       applicantPublicKey
       state
+      synapsId
       fields {
         id:_id
         values {
