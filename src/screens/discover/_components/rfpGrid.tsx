@@ -33,9 +33,8 @@ function RFPGrid({
 			{
 				grants?.filter((g) => g.title.toLowerCase().includes(filter?.toLowerCase() || '')).map((grant, index: number) => {
 					const workspaceChainId = getSupportedChainIdFromSupportedNetwork(grant.workspace.supportedNetworks[0])
-
-					const role = type === 'all' ? undefined : grant.role
-					logger.info('role', role, grant)
+					logger.info({ type }, 'type')
+					const role = grant?.role ?? 'community'
 					return (
 						<GridItem
 						 key={index}>

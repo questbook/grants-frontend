@@ -8,7 +8,7 @@ import SupportedChainId from 'src/generated/SupportedChainId'
 import { QBAdminsContext } from 'src/libraries/hooks/QBAdminsContext'
 import logger from 'src/libraries/logger'
 import { getAvatar } from 'src/libraries/utils'
-import { nFormatter, titleCase } from 'src/libraries/utils/formatting'
+import { nFormatter } from 'src/libraries/utils/formatting'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import StateButton from 'src/screens/discover/_components/stateButton'
 import { GrantType } from 'src/screens/discover/_utils/types'
@@ -71,7 +71,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 					let params: { grantId: string, chainId: number, role: string, proposalId?: string } = {
 						grantId: grant.id,
 						chainId,
-						role: role === 'owner' ? 'admin' : (role ?? 'community'),
+						role: role === 'owner' ? 'admin' : role === 'reviewer' ? 'reviewer' : 'community'
 					}
 					if(role === 'builder') {
 						params = { ...params, proposalId: grant.applications[0].id }
@@ -142,7 +142,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 				 >
 								Program Details
 							</Button>
-							{
+							{/* {
 								role && (
 									<Text
 										fontWeight='500'
@@ -156,7 +156,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 										{titleCase(role)}
 									</Text>
 								)
-							}
+							} */}
 						</Flex>
 
 						{

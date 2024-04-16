@@ -345,9 +345,9 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	// 	getGrantsForAll().then(r => logger.info(r, 'Get Grants for all'))
 	// }, [search])
 
-	// useEffect(() => {
-	// 	getGrantsForYou().then(r => logger.info(r, 'Get Grants for you'))
-	// }, [scwAddress])
+	useEffect(() => {
+		getGrantsForYou().then(r => logger.info(r, 'Get Grants for you'))
+	}, [scwAddress])
 	useEffect(() => {
 		getGrantsAllocated().then(r => logger.info(r, 'Get Grants Allocated'))
 	}, [])

@@ -359,7 +359,7 @@ function Discover() {
 										(sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
 											const sectionName = Object.keys(section)[0]
 
-											const grants = section[sectionName].grants.filter((grant) => grant.title.toLowerCase().includes(filterGrantName.trim().toLowerCase())).map(grant => ({ ...grant, role: 'community' as Roles }))
+											const grants = section[sectionName].grants.filter((grant) => grant.title.toLowerCase().includes(filterGrantName.trim().toLowerCase())).map(grant => ({ ...grant, role: grantsForYou?.find(g => g.id === grant.id)?.role as Roles }))
 											return (
 												<Flex
 													my={6}
@@ -553,7 +553,9 @@ function Discover() {
 				</Tooltip> */}
 			</>
 		)
-	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName, isMobile, safeBalances])
+	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName, isMobile, safeBalances, grantsForYou])
+
+	logger.info({ grantsForYou }, 'grantsForYou')
 
 	useEffect(() => {
 		if(!inviteInfo) {
