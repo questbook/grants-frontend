@@ -71,7 +71,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 					let params: { grantId: string, chainId: number, role: string, proposalId?: string } = {
 						grantId: grant.id,
 						chainId,
-						role: role === 'owner' ? 'admin' : role === 'reviewer' ? 'reviewer' : 'community'
+						role: (role === 'owner' || role === 'admin') ? 'admin' : role === 'reviewer' ? 'reviewer' : 'community'
 					}
 					if(role === 'builder') {
 						params = { ...params, proposalId: grant.applications[0].id }
@@ -229,7 +229,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 					</Flex>
 				</Box>
 				{
-					(role === 'admin' || role === 'reviwer' || isQbAdmin) ? (
+					(role === 'admin' || role === 'reviewer' || role === 'owner' || isQbAdmin) ? (
 						<Flex
 							direction='column'
 						>
