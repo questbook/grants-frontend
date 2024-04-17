@@ -300,7 +300,7 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 										variant='primaryMedium'
 										marginTop={[4, 6]}
 										borderRadius='20'
-										width={['90%', '75%']}
+										width={isConnected ? ['90%', '75%'] : ''}
 										height='45px'
 										onClick={
 											async() => {
