@@ -1,9 +1,10 @@
+import { IoMdDocument } from 'react-icons/io'
 import { Button, ButtonProps, Flex, Text, TextProps, useToken } from '@chakra-ui/react'
 import { Accept, AddUser, Chat, Reject, Resubmit, Time } from 'src/generated/icons'
 import { TagType } from 'src/screens/dashboard/_utils/types'
 
 type Props = {
-	id: 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review' | 'KYC' | 'KYB'
+	id: 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review' | 'KYC' | 'KYB' | 'HelloSign'
     tag: TagType | undefined
     isSelected: boolean
     index: number
@@ -80,6 +81,11 @@ function QuickReplyButton({ tag, index, textProps, ...props }: Props) {
 			title: 'Send KYB link',
 			bg: vivid
 		},
+		HelloSign: {
+			icon: <IoMdDocument />,
+			title: 'Send Document',
+			bg: azure
+		}
 	}
 
 	return buildComponent()

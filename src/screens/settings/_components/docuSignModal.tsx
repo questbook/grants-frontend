@@ -138,7 +138,12 @@ function DocuSignModal({
 	const checkAPI = async(apiKey: string) => {
 		try {
 			logger.info({ apiKey }, 'DocuSignModal1')
-			const response = await fetch(`https://${apiKey}:@api.hellosign.com/v3/template/list`)
+			// const response = await fetch(`https://${apiKey}:@api.hellosign.com/v3/template/list`)
+			const response = await fetch('https://api.hellosign.com/v3/template/list', {
+				headers: {
+					Authorization: `Basic ${Buffer.from(apiKey + ':').toString('base64')}`
+				}
+			})
 			const data = await response.json()
 			logger.info({ data }, 'DocuSignModal')
 			if(data.templates) {
@@ -149,21 +154,21 @@ function DocuSignModal({
 			setIsAPIValid(false)
 			return false
 		} catch(error) {
-            logger.info('Error checking API key', error)
+			logger.info('Error checking API key', error)
 			setIsAPIValid(false)
 			return false
 		}
 	}
 
 	useEffect(() => {
-		if(apiKey.length === 0 && apiKey.length < 64) {
-			return
+		if(apiKey.length === 64) {
+			checkAPI(apiKey)
 		}
 
 		logger.info({ apiKey }, 'DocuSignModal')
 
 
-		checkAPI(apiKey)
+		return
 	}, [apiKey])
 
 

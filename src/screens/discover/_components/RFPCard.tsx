@@ -1,7 +1,7 @@
 import { useContext, useMemo } from 'react'
 import { ArrowForwardIcon } from '@chakra-ui/icons'
 import { Box, Button, Flex, Grid, GridItem, Image, Switch, Text } from '@chakra-ui/react'
-import { useRouter } from 'next/router'
+// import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
 import { Alert } from 'src/generated/icons'
 import SupportedChainId from 'src/generated/SupportedChainId'
@@ -59,19 +59,20 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						return
 					}
 
-					let params: { grantId: string, chainId: number, role: string, proposalId?: string } = {
-						grantId: grant.id,
-						chainId,
-						role: role === 'owner' ? 'admin' : (role ?? 'community'),
-					}
-					if(role === 'builder') {
-						params = { ...params, proposalId: grant.applications[0].id }
-					}
+					// let params: { grantId: string, chainId: number, role: string, proposalId?: string } = {
+					// 	grantId: grant.id,
+					// 	chainId,
+					// 	role: role === 'owner' ? 'admin' : (role ?? 'community'),
+					// }
+					// if(role === 'builder') {
+					// 	params = { ...params, proposalId: grant.applications[0].id }
+					// }
 
-					router.push({
-						pathname: '/dashboard/',
-						query: params,
-					})
+					// router.push({
+					// 	pathname: '/dashboard/',
+					// 	query: params,
+					// })
+					window.location.href = `/dashboard/?grantId=${grant.id}&chainId=${chainId}&role=${role === 'owner' ? 'admin' : role ?? 'community'}${role === 'builder' ? `&proposalId=${grant.applications[0].id}` : ''}`
 				}
 			}>
 			<Flex
@@ -300,7 +301,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 
 	const { safeBalances } = useContext(DiscoverContext)!
 
-	const router = useRouter()
+	// const router = useRouter()
 
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	logger.info({ isQbAdmin }, 'isQbAdmin')

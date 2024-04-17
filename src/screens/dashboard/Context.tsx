@@ -638,6 +638,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
 	useEffect(() => {
 		if(proposalId && typeof proposalId === 'string') {
+			logger.info({ grantId, proposalId }, 'Fetching per proposal comments')
 			fetchPerProposalComments().then((r) => logger.info({ r }, 'Fetch per proposal comments result'))
 		}
 	}, [grantId, chainId, scwAddress, webwallet, proposalId])
@@ -812,8 +813,9 @@ const ModalProvider = ({ children }: { children: ReactNode }) => {
 	const [isSendAnUpdateModalOpen, setIsSendAnUpdateModalOpen] = useState<boolean>(false)
 	const [isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen] = useState<boolean>(false)
 	const [isFundingMethodModalOpen, setIsFundingMethodModalOpen] = useState<boolean>(false)
+	const [isHelloSignModalOpen, setIsHelloSignModalOpen] = useState<boolean>(false)
 	return (
-		<ModalContext.Provider value={{ isSendAnUpdateModalOpen, setIsSendAnUpdateModalOpen, isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen, isFundingMethodModalOpen, setIsFundingMethodModalOpen }}>
+		<ModalContext.Provider value={{ isSendAnUpdateModalOpen, setIsSendAnUpdateModalOpen, isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen, isFundingMethodModalOpen, setIsFundingMethodModalOpen, isHelloSignModalOpen, setIsHelloSignModalOpen }}>
 			{children}
 		</ModalContext.Provider>
 	)
