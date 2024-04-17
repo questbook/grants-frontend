@@ -31,7 +31,7 @@ function SingleSelect() {
 				<Divider />
 				{showSubmitReviewPanel && reviewerComponent()}
 				{
-					(role !== 'reviewer' && role !== 'community') && (
+					(role !== 'community') && (
 						<Flex
 							px={5}
 							py={4}>
