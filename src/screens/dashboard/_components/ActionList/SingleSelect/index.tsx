@@ -59,10 +59,12 @@ function SingleSelect() {
 												return
 											}
 
-											router.push({ pathname: '/proposal_form', query: {
-												proposalId: proposal?.id,
-												chainId,
-											} })
+											// router.push({ pathname: '/proposal_form', query: {
+											// 	proposalId: proposal?.id,
+											// 	chainId,
+											// } }, undefined, { shallow: true })
+											router.query = { proposalId: proposal?.id, chainId: chainId?.toString() ?? '10' }
+											window.location.replace(`/proposal_form?proposalId=${proposal?.id}&chainId=${chainId}`)
 										} else {
 											setIsFundingMethodModalOpen(true)
 										}

@@ -213,6 +213,7 @@ function HelloSignModal({
 									name: name,
 									email: email,
 									templateId: selectedTemplated,
+									templateName: agreementTitle,
 								})
 								if(!update?.sendDocuSign.recordId) {
 									await toast({
@@ -235,7 +236,7 @@ function HelloSignModal({
 									}
 
 									await toast({
-										title: `Successfully sent document to ${name} at ${email} with template ${selectedTemplated}`,
+										title: `Successfully sent agreement to ${name} at ${email}`,
 										status: 'success',
 										duration: 5000,
 									})
@@ -319,12 +320,11 @@ function HelloSignModal({
 	}, [proposal, decrypt])
 
 	useEffect(() => {
-		// if(proposal?.helloSignId === null && grant?.workspace?.docuSign && proposal?.synapsId !== null) {
-		// 	getHelloSignTemplates().then((data) => {
-		// 		setDocuSign(data)
-		// 	})
-		// }
-		setDocuSign([])
+		if(proposal?.helloSignId === null && grant?.workspace?.docuSign && proposal?.synapsId !== null) {
+			getHelloSignTemplates().then((data) => {
+				setDocuSign(data)
+			})
+		}
 	}, [proposal])
 
 

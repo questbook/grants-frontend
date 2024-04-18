@@ -67,9 +67,11 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 					boxSize='10rem'
 					onClick={
 						() => {
-							router.push({
-								pathname: '/'
-							})
+							// router.push({
+							// 	pathname: '/'
+							// })
+							// navRouter.push('/')
+							window.location.href = '/'
 						}
 					}
 					display='inherit'
@@ -123,15 +125,16 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 							boxSize='20px'
 							onClick={
 								() => {
-									router.push(
-										{
-											pathname: '/request_proposal/',
-											query: {
-												grantId: grant?.id,
-												chainId: getSupportedChainIdFromWorkspace(grant?.workspace),
-												workspaceId: grant?.workspace?.id
-											},
-										})
+									// router.push(
+									// 	{
+									// 		pathname: '/request_proposal/',
+									// 		query: {
+									// 			grantId: grant?.id,
+									// 			chainId: getSupportedChainIdFromWorkspace(grant?.workspace),
+									// 			workspaceId: grant?.workspace?.id
+									// 		},
+									// 	})
+									window.location.replace(`/request_proposal/?grantId=${grant?.id}&chainId=${getSupportedChainIdFromWorkspace(grant?.workspace)}&workspaceId=${grant?.workspace?.id}`)
 
 								}
 							} />
@@ -146,10 +149,11 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 							cursor='pointer'
 							onClick={
 								() => {
-									router.push(
-										{
-											pathname: '/settings'
-										})
+									// router.push(
+									// 	{
+									// 		pathname: '/settings'
+									// 	})
+									window.location.replace('/settings')
 
 								}
 							} />

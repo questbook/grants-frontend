@@ -103,18 +103,19 @@ function ProposalForm() {
 								onClick={
 									async() => {
 										setRole('builder')
-										const ret = await router.push({
-											pathname: '/dashboard',
-											query: {
-												grantId: grant?.id,
-												chainId: chainId,
-												role: 'builder',
-												proposalId,
-											}
-										})
-										if(ret) {
-											router.reload()
-										}
+										// const ret = await router.push({
+										// 	pathname: '/dashboard',
+										// 	query: {
+										// 		grantId: grant?.id,
+										// 		chainId: chainId,
+										// 		role: 'builder',
+										// 		proposalId,
+										// 	}
+										// })
+										// if(ret) {
+										// 	router.reload()
+										// }
+										window.location.replace(`/dashboard?grantId=${grant?.id}&chainId=${chainId}&role=builder&proposalId=${proposalId}`)
 									}
 								}>
 								I&apos;ll do it later

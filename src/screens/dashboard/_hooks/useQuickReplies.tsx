@@ -42,7 +42,7 @@ function useProposalTags({ proposals }: Props) {
 			return { proposalTags: allTags['admin'].slice(0, 4) }
 		} else if(proposals.every(p => p.state === 'approved') && (grant?.workspace?.synapsKYC && grant?.workspace?.synapsId && proposals?.every(p => p.synapsId === null))) {
 			return { proposalTags: allTags['admin'].slice(5, 7).concat(allTags['admin'].slice(3, 4)) }
-		} else if(proposals.every(p => p.state === 'approved') && (grant?.workspace?.docuSign && proposals?.every(p => p.helloSignId === null))) {
+		} else if(proposals.every(p => p.state === 'approved' && p.synapsId !== null) && (grant?.workspace?.docuSign && proposals?.every(p => p.helloSignId === null))) {
 			return { proposalTags: allTags['admin'].slice(7, 8).concat(allTags['admin'].slice(3, 4)) }
 		} else {
 			return { proposalTags: allTags['admin'].slice(3, 4) }
