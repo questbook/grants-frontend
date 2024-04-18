@@ -53,11 +53,11 @@ function HelloSignModal({
 					<ModalCloseButton />
 
 					<Text fontWeight='500'>
-						HelloSign Modal
+						Send Agreement to Builder
 					</Text>
 
 					<Text mt={1}>
-						Verify and Send Document to the Builder
+						Verify and Send Agreement to the Builder
 					</Text>
 
 					<Flex
@@ -128,10 +128,39 @@ function HelloSignModal({
 							textAlign='left'
 							fontWeight='500'
 						>
-							Select Document:
+							Enter Agreement Title:
+						</Text>
+
+						<FlushedInput
+							w='100%'
+							flexProps={{ w: '100%' }}
+
+							textAlign='left'
+							placeholder='Enter Agreement Title'
+							value={agreementTitle}
+							onChange={
+								(e) => {
+									setAgreementTitle(e.target.value)
+								}
+							}
+						/>
+					</Flex>
+
+					<Flex
+						w='100%'
+						direction='column'
+						justifyContent='space-between'
+						mt={8}
+					>
+						<Text
+
+							textAlign='left'
+							fontWeight='500'
+						>
+							Select Agreement Template:
 						</Text>
 						<Select
-							placeholder='Select Document'
+							placeholder='Select Agreement Template'
 							mt={2}
 							w='100%'
 							value={selectedTemplated}
@@ -156,21 +185,6 @@ function HelloSignModal({
 						</Select>
 					</Flex>
 
-					{/*
-
-					{
-						!isAPIValid && apiKey.length > 0 && (
-							<Text
-								textAlign='center'
-								mt={2}
-								fontSize='14px'
-								color='red.400'
-							>
-								Invalid API key
-							</Text>
-						)
-					}
-
 
 					<Text
 						textAlign='center'
@@ -178,10 +192,10 @@ function HelloSignModal({
 						fontSize='14px'
 						color='gray.400'
 						cursor='pointer'
-						onClick={() => window.open('https://app.hellosign.com/home/myAccount?current_tab=api', '_blank')}
+						onClick={() => window.open('https://app.hellosign.com/home/createReusableDocs', '_blank')}
 					>
-						Where do I find the API key?
-					</Text> */}
+						Where can I create/edit a template?
+					</Text>
 
 
 					<Button
@@ -189,7 +203,7 @@ function HelloSignModal({
 						mt={8}
 						variant='solid'
 						isLoading={loader}
-						isDisabled={loader}
+						isDisabled={loader || !email || !name || !selectedTemplated || !agreementTitle}
 						onClick={
 							async() => {
 								setLoader(true)
@@ -256,6 +270,7 @@ function HelloSignModal({
 	const [email, setEmail] = useState('')
 	const [name, setName] = useState('')
 	const [docuSign, setDocuSign] = useState([])
+	const [agreementTitle, setAgreementTitle] = useState('')
 	const [selectedTemplated, setSelectedTemplate] = useState('')
 	const [, setStep] = useState<number>()
 	const [, setTransactionHash] = useState('')
@@ -299,15 +314,17 @@ function HelloSignModal({
 			setDecryptedProposal({ ...proposal, ...decryptedProposal })
 			setEmail(getFieldString(decryptedProposal, 'applicantEmail') as string)
 			setName(getFieldString(decryptedProposal, 'applicantName') as string)
+			setAgreementTitle(getFieldString(decryptedProposal, 'projectName') as string + '-' + grant?.title as string + ' Grant Agreement')
 		})
 	}, [proposal, decrypt])
 
 	useEffect(() => {
-		if(proposal?.helloSignId === null && grant?.workspace?.docuSign && proposal?.synapsId !== null) {
-			getHelloSignTemplates().then((data) => {
-				setDocuSign(data)
-			})
-		}
+		// if(proposal?.helloSignId === null && grant?.workspace?.docuSign && proposal?.synapsId !== null) {
+		// 	getHelloSignTemplates().then((data) => {
+		// 		setDocuSign(data)
+		// 	})
+		// }
+		setDocuSign([])
 	}, [proposal])
 
 

@@ -83,7 +83,7 @@ function QuickReplyButton({ tag, index, textProps, ...props }: Props) {
 		},
 		HelloSign: {
 			icon: <IoMdDocument />,
-			title: 'Send Document',
+			title: 'Send Agreement',
 			bg: azure
 		}
 	}
