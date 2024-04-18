@@ -54,7 +54,7 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 									}
 								} >
 								{
-									['Telegram Mini Apps: Social Web3 Use Cases', 'DeFi', 'GameFi', 'Developer Education', 'Other'].map((option, index) => {
+									['Telegram Mini Apps: Social Web3 Use Cases inside Telegram', 'DeFi', 'GameFi', 'Developer Education', 'Other'].map((option, index) => {
 										return (
 											<option
 												key={index}
