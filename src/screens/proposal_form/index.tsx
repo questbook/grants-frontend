@@ -1338,7 +1338,7 @@ function ProposalForm() {
 								return (
 									<SectionInput
 										key={field.id}
-										label={title + '*'}
+										label={title === 'Indicate your current traction (MAU, DAU, retention, TVL or other relevant metrics) if your product is already live on TON or on a different chain' ? `${title}* The more relevant metrics you provide, the better.` : title}
 										value={findFieldBySuffix(form, modifiedId, id).value}
 										onChange={
 											(e) => {
