@@ -231,18 +231,18 @@ function FundBuilderModal({
 
 	const { contract } = useContract({
 		abi: erc20Abi,
-		address: chain.nativeCurrency.address,
+		address: selectedTokenInfo?.mintAddress ?? chain.nativeCurrency.address,
 	})
 
 	const calls = useMemo(() => {
 		if(!address || !contract ||
-			!(amounts?.[0] > 0)) {
+			!(amounts?.[0] > 0) || !selectedTokenInfo?.tokenName) {
 			return []
 		}
 
 		const amountInEth = amounts?.[0] > 0 && selectedTokenInfo?.fiatConversion ? (amounts?.[0] / (selectedTokenInfo?.fiatConversion)) : 0
 
-		return contract.populateTransaction['transfer']!(tos?.[0], { low: (amountInEth * 10 ** 18).toFixed(0), high: 0 })
+		return contract.populateTransaction['transfer']!(tos?.[0], { low: (amountInEth * 10 ** selectedTokenInfo?.info?.decimals).toFixed(0), high: 0 })
 	}, [contract, address, amounts])
 
 	const {
