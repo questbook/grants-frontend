@@ -152,7 +152,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		}
 
 		return 'grant-details-fetched'
-	}, [grantId, chainId, scwAddress])
+	}, [grantId, chainId, scwAddress, role])
 
 	const getFundsAllocated = useCallback(async() => {
 		if(!grantId) {

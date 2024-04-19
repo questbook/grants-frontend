@@ -1,13 +1,12 @@
-
+'use client'
 import { useEffect, useMemo, useState } from 'react'
 import { Flex, Text, VStack } from '@chakra-ui/react'
-import { useConnect as keplrConnect, WalletType } from 'graz'
+import { useConfig, useConnect as keplrConnect } from '@quirks/react'
 import { useSafeContext } from 'src/contexts/safeContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import { availableWallets, keplrWallet, solanaWallets } from 'src/libraries/utils/constants'
 import getErrorMessage from 'src/libraries/utils/error'
-import { mainnetChains } from 'src/libraries/utils/keplrWallets'
 import ConnectWalletButton from 'src/screens/dashboard/_components/FundBuilder/ConnectWalletButton'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import usetonWallet from 'src/screens/dashboard/_hooks/useTonWallet'
@@ -107,7 +106,7 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 									onClick={
 										async() => {
 											setVerifying(wallet.id)
-											await connectKeplr({ chainId: mainnetChains[0].chainId, walletType: WalletType.KEPLR })
+											await connectKeplr(wallets[0].options.wallet_name)
 										}
 									} />
 							)
@@ -148,7 +147,11 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 
 	const [verifying, setVerifying] = useState<string>()
 	const [selectedConnector, setSelectedConnector] = useState<Connector>()
-	const { connect: connectKeplr } = keplrConnect()
+	const {
+		connect: connectKeplr,
+	  } = keplrConnect()
+	  const { wallets } = useConfig()
+
 	const isEvmChain = useMemo(() => {
 		return safeObj?.getIsEvm()
 	}, [safeObj])

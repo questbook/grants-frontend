@@ -2,8 +2,10 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Box, Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text, useToast } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
-import { useAccount, useBalance, useSendTokens, useStargateSigningClient } from 'graz'
-import { useConnect as keplrConnect, WalletType } from 'graz'
+import { useChains, useConfig, useConnect } from '@quirks/react'
+// import { useAccount, useBalance, useSendTokens, useStargateSigningClient } from 'graz'
+// import { useConnect as keplrConnect, WalletType } from 'graz'
+import { broadcast, getAddress, sign, signArbitrary } from '@quirks/store'
 import { defaultChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
 import { DisburseRewardSafeMutation, reSubmitProposalMutation } from 'src/generated/mutation'
@@ -242,48 +244,53 @@ function FundBuilderModal({
 	const [payoutInProcess, setPayoutInProcess] = useState(false)
 	const [safeAddress, setSafeAddress] = useState('')
 	const customToast = useCustomToast()
-	const { connect: connectKeplr } = keplrConnect()
+	// const { connect: connectKeplr } = keplrConnect()
+	const { status, connected, connect: connectKeplr, disconnect } = useConnect()
+	const { wallets } = useConfig()
+	const { accounts } = useChains()
+
+
 	const toast = useToast()
 	const payoutsInProcessToastRef = useRef<any>()
-	const { data: account, isConnected } = useAccount({
-		chainId: mainnetChains[0].chainId
-	  })
+	// const { data: account, isConnected } = useAccount({
+	// 	chainId: mainnetChains[0].chainId
+	//   })
 
-	  const coin = mainnetChains[0].stakeCurrency
-	  const balance = useBalance({
-		chainId: mainnetChains[0].chainId,
-		bech32Address: account?.bech32Address,
-		denom: coin.coinMinimalDenom,
-	  })
+	//   const coin = mainnetChains[0].stakeCurrency
+	//   const balance = useBalance({
+	// 	chainId: mainnetChains[0].chainId,
+	// 	bech32Address: account?.bech32Address,
+	// 	denom: coin.coinMinimalDenom,
+	//   })
 
-	  logger.info('Balance', balance)
+	//   logger.info('Balance', balance)
 
-	  const { data: signingClient } = useStargateSigningClient({
-		chainId: mainnetChains[0].chainId,
-	  })
+	//   const { data: signingClient } = useStargateSigningClient({
+	// 	chainId: mainnetChains[0].chainId,
+	//   })
 
 
-	  const { sendTokensAsync } = useSendTokens({
-		onSuccess: () => {
-			setPayoutInProcess(false)
-			setIsModalOpen(false)
-		  toast({
-				title: 'Success',
-				description: 'Transaction done',
-				status: 'success',
-		  })
-		},
-		onError: (error) => {
-		  toast({
-				title: 'Error',
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-expect-error
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-				description: error?.message || 'Something went wrong',
-				status: 'error',
-		  })
-		},
-	  })
+	//   const { sendTokensAsync } = useSendTokens({
+	// 	onSuccess: () => {
+	// 		setPayoutInProcess(false)
+	// 		setIsModalOpen(false)
+	// 	  toast({
+	// 			title: 'Success',
+	// 			description: 'Transaction done',
+	// 			status: 'success',
+	// 	  })
+	// 	},
+	// 	onError: (error) => {
+	// 	  toast({
+	// 			title: 'Error',
+	// 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// 			// @ts-expect-error
+	// 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+	// 			description: error?.message || 'Something went wrong',
+	// 			status: 'error',
+	// 	  })
+	// 	},
+	//   })
 
 	const Safe = {
 		logo: safeObj?.safeLogo,
@@ -359,37 +366,71 @@ function FundBuilderModal({
 
 	const onContinue = async() => {
 		if(selectedMode?.value === 'Keplr Wallet') {
-			if(!isConnected || !account) {
-				await connectKeplr({ chainId: mainnetChains[0].chainId, walletType: WalletType.KEPLR })
-			} else if(isConnected && account) {
+			logger.info('Keplr Wallet selected', { connected, accounts, wallets, status })
+			if(!connected || !accounts[0]?.bech32Address) {
+				if(!wallets[0]?.injected) {
+					customToast({
+						title: 'Please Install Keplr Wallet Extension',
+						status: 'error',
+						duration: 5000,
+					})
+					return
+				}
+
+				// await connectKeplr({ chainId: mainnetChains[0].chainId, walletType: WalletType.KEPLR })
+				await connectKeplr(wallets[0]?.options?.wallet_name)
+			} else if(connected && accounts[0]?.bech32Address) {
 				try {
-					setPayoutInProcess(true)
-					setSignerVerifiedState('initiate_TON_transaction')
-					const amountFormated = (amounts?.[0] / (selectedTokenInfo?.fiatConversion || 2.02)).toFixed(2)
-					const res = await sendTokensAsync({
+					const cosmos = (await import('osmojs')).cosmos
+					const { send } = cosmos.bank.v1beta1.MessageComposer.withTypeUrl
+
+					const address = getAddress('axelar')
+
+					const msg = send({
 						amount: [
-				  {
-								// {(amounts?.[0] * (selectedTokenInfo?.fiatConversion)).toFixed(2)
-								// amount: String(Number(amounts?.[0]) * Math.pow(10, coin.coinDecimals || 6)),
-								// convert it to axl by multiplying fiatConversion
-								amount: String(Number(amountFormated) * Math.pow(10, coin.coinDecimals || 6)),
-								denom: coin.coinMinimalDenom || '',
-				  },
+							{
+								denom: 'axl',
+								amount: '1',
+							},
 						],
-						fee: {
-				  amount: [
-								{
-					  amount: '5000',
-					  denom: coin.coinMinimalDenom || '',
-								},
-				  ],
-				  gas: '200000',
-						},
-						memo: `${grant?.title}: Milestone #${milestoneIndices[0] + 1} Payout`,
-						senderAddress: account?.bech32Address || '',
-						recipientAddress: tos[0],
-						signingClient,
-			  })
+						toAddress: address,
+						fromAddress: address,
+					})
+
+					logger.info(msg, 'keplr')
+
+					const txRaw = await sign('axelarTestnet', [msg])
+
+					const res1 = await broadcast('axelarTestnet', txRaw)
+					logger.info(res1, 'keplr')
+
+
+					// 		const res = await sendTokensAsync({
+					// 			amount: [
+					// 	  {
+					// 					// {(amounts?.[0] * (selectedTokenInfo?.fiatConversion)).toFixed(2)
+					// 					// amount: String(Number(amounts?.[0]) * Math.pow(10, coin.coinDecimals || 6)),
+					// 					// convert it to axl by multiplying fiatConversion
+					// 					amount: String(Number(amountFormated) * Math.pow(10, coin.coinDecimals || 6)),
+					// 					denom: coin.coinMinimalDenom || '',
+					// 	  },
+					// 			],
+					// 			fee: {
+					// 	  amount: [
+					// 					{
+					// 		  amount: '5000',
+					// 		  denom: coin.coinMinimalDenom || '',
+					// 					},
+					// 	  ],
+					// 	  gas: '200000',
+					// 			},
+					// 			memo: `${grant?.title}: Milestone #${milestoneIndices[0] + 1} Payout`,
+					// 			senderAddress: account?.bech32Address || '',
+					// 			recipientAddress: tos[0],
+					// 			signingClient,
+					//   })
+
+					const res = false
 			  if(res) {
 						setPayoutInProcess(false)
 						setIsModalOpen(false)
@@ -423,6 +464,7 @@ function FundBuilderModal({
 						logger.info('Transaction done', res)
 			  }
 				} catch(e) {
+					logger.error('Error while sending transaction', e)
 					setPayoutInProcess(false)
 					customToast({
 						title: 'An error occurred while creating transaction on Keplr Wallet',

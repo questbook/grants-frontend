@@ -112,26 +112,20 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 		if(selectedProposals.size === 1 && selectedProposals.has(proposal.id)) {
 			// Only 1 proposal was selected and the user clicked on it again
 			setDashboardStep(true)
-			window.history.pushState({ ...router.query, proposalId: proposal.id,
-				grantId: proposal?.grant?.id,
-				chainId: 10,
-				role: role,
-				isRenderingProposalBody: true }, '', `/dashboard?grantId=${proposal?.grant?.id}&proposalId=${proposal.id}&chainId=${10}&role=${role}&isRenderingProposalBody=true`)
-			router.query = { ...router.query, proposalId: proposal.id, isRenderingProposalBody: 'true', role: role }
+			router.replace({
+				pathname: '/dashboard',
+				query: { ...router.query, proposalId: proposal.id, isRenderingProposalBody: true }
+			}, undefined, { shallow: true })
 			return
 		}
 
 		if(selectedProposals.size === 1 && isText) {
 			// Only 1 proposal was selected and the user clicked on its name
 			setSelectedProposals(new Set<string>([proposal.id]))
-
-			window.history.pushState({ ...router.query,
-				grantId: proposal?.grant?.id,
-				proposalId: proposal.id,
-				chainId: 10,
-				role: role,
-				isRenderingProposalBody: true }, '', `/dashboard?grantId=${proposal?.grant?.id}&proposalId=${proposal.id}&chainId=${10}&role=${role}&isRenderingProposalBody=true`)
-			router.query = { ...router.query, proposalId: proposal.id, isRenderingProposalBody: 'true', role: role }
+			router.replace({
+				pathname: '/dashboard',
+				query: { ...router.query, proposalId: proposal.id, isRenderingProposalBody: true }
+			}, undefined, { shallow: true })
 			setDashboardStep(true)
 		} else {
 			// Either more proposals are selected or the user clicked on the checkbox
