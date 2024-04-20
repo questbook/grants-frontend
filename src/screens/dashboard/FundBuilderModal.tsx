@@ -365,7 +365,7 @@ function FundBuilderModal({
 					}
 
 					const { send } = cosmos.bank.v1beta1.MessageComposer.withTypeUrl
-					const amountFormated = (amounts?.[0] / (selectedTokenInfo?.fiatConversion || 2.02)).toFixed(2)
+					const amountFormated = (amounts?.[0] / (selectedTokenInfo?.fiatConversion || 1.19)).toFixed(2)
 					const msg = send({
 					  amount: [
 							{
@@ -374,7 +374,7 @@ function FundBuilderModal({
 
 							},
 					  ],
-					  toAddress: address,
+					  toAddress: tos?.[0],
 					  fromAddress: address,
 					})
 
@@ -408,7 +408,7 @@ function FundBuilderModal({
 							nonEvmAssetAddress: 'nonEvmAssetAddress-toBeChanged',
 							amounts: [amounts?.[0]],
 							transactionHash: res?.transactionHash,
-							sender: safeAddress,
+							sender: address,
 							grant: grant?.id!,
 							to: tos?.[0]
 						}

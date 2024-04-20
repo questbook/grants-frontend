@@ -161,7 +161,7 @@ function Discussions() {
 																setIsLoading(false)
 																await toast({
 																	title: 'Error generating Synaps link',
-																	description: 'Please double check the Synaps configuration or contact support',
+																	description: 'Please check the Synaps configuration or contact support',
 																	status: 'error',
 																	duration: 5000,
 																	position: 'top-right',
