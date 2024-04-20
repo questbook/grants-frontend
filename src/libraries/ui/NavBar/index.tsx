@@ -5,7 +5,7 @@ import { SupportedPayouts } from '@questbook/supported-safes'
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
-import { ArrowLeft, Pencil, Qb, Settings, ShareForward } from 'src/generated/icons'
+import { ArrowLeft, NotVisible, Pencil, Qb, Settings, ShareForward, Visible } from 'src/generated/icons'
 import { QBAdminsContext } from 'src/libraries/hooks/QBAdminsContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
@@ -98,11 +98,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 							onClick={() => setGlyph(!glyph)}
 						>
 
-							<Image
-
-
-								src={glyph ? 'https://ipfs.io/ipfs/bafkreigfsecqz2nni7jcuiwpywu54l7vgkaf3q2djad2dwttj5yehcvwbu' : 'https://ipfs.io/ipfs/bafkreieskgwijh57vzifmazsgwo454poo66pkt4m7ihw4lf7uyhkarpn6m'}
-							/>
+							{glyph ? <NotVisible /> : <Visible />}
 
 
 							<Text
@@ -342,12 +338,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 							onClick={() => setGlyph(!glyph)}
 						>
 
-							<Image
-
-
-								src={glyph ? 'https://ipfs.io/ipfs/bafkreigfsecqz2nni7jcuiwpywu54l7vgkaf3q2djad2dwttj5yehcvwbu' : 'https://ipfs.io/ipfs/bafkreieskgwijh57vzifmazsgwo454poo66pkt4m7ihw4lf7uyhkarpn6m'}
-							/>
-
+							{glyph ? <NotVisible /> : <Visible />}
 
 							<Text
 							>
