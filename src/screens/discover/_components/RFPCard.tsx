@@ -59,23 +59,19 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						return
 					}
 
-					// let params: { grantId: string, chainId: number, role: string, proposalId?: string } = {
-					// 	grantId: grant.id,
-					// 	chainId,
-					// 	role: role === 'owner' ? 'admin' : (role ?? 'community'),
-					// }
-					// if(role === 'builder') {
-					// 	params = { ...params, proposalId: grant.applications[0].id }
-					// }
+					let params: { grantId: string, chainId: number, role: string, proposalId?: string } = {
+						grantId: grant.id,
+						chainId,
+						role: role === 'owner' ? 'admin' : (role ?? 'community'),
+					}
+					if(role === 'builder') {
+						params = { ...params, proposalId: grant.applications[0].id }
+					}
 
-					router.query = { ...router.query, grantId: grant.id, chainId: chainId?.toString() ?? '10', role: role === 'owner' ? 'admin' : role ?? 'community', proposalId: grant.applications[0].id }
-					//window.location.replace({ grantId: grant.id, chainId, role: role === 'owner' ? 'admin' : role ?? 'community' }, '', `/dashboard/?grantId=${grant.id}&chainId=${chainId}&role=${role === 'owner' ? 'admin' : role ?? 'community'}${`&proposalId=${grant.applications[0].id}`}`)
-					window.location.replace(`/dashboard/?grantId=${grant.id}&chainId=${chainId}&role=${role === 'owner' ? 'admin' : role ?? 'community'}${`&proposalId=${grant.applications[0].id}`}`)
-
-					// router.push({
-					// 	pathname: '/dashboard/',
-					// 	query: params,
-					// })
+					router.push({
+						pathname: '/dashboard/',
+						query: params,
+					})
 				}
 			}>
 			<Flex
