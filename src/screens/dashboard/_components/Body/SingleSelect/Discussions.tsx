@@ -11,6 +11,7 @@ import {
 	Image,
 	Text,
 	Tooltip,
+	useToast,
 	useToken,
 } from '@chakra-ui/react'
 import autosize from 'autosize'
@@ -56,7 +57,7 @@ function Discussions() {
 				</Text>
 
 				{
-					areCommentsLoading && (
+					(areCommentsLoading || isLoading) && (
 						<Button
 							my={4}
 							isLoading={areCommentsLoading}
@@ -142,7 +143,7 @@ function Discussions() {
 						>
 							<Flex gap={3}>
 								{
-									proposalTags?.map((tag, index) => {
+									!isLoading && proposalTags?.map((tag, index) => {
 										return (
 											<QuickReplyButton
 												zIndex={10}
@@ -152,21 +153,52 @@ function Discussions() {
 												isSelected={tag.id === selectedTag?.id}
 												onClick={
 													async() => {
-														if(selectedTag) {
-															logger.info('Deselecting tag')
-															setSelectedTag(undefined)
-															setText('')
-															setEditorState(EditorState.createEmpty())
-														} else if(tag.id === 'KYC' || tag.id === 'KYB') {
+														if(tag.id === 'KYC' || tag.id === 'KYB') {
+															setIsLoading(true)
 															const link = await getSynapsLink(tag.id, proposal?.id as string)
 															logger.info({ link }, 'SYNAPS LINK')
+															if((!link && !link?.includes('https://verify.synaps.io/?')) || link?.includes('undefined')) {
+																setIsLoading(false)
+																await toast({
+																	title: 'Error generating Synaps link',
+																	description: 'Please double check the Synaps configuration or contact support',
+																	status: 'error',
+																	duration: 5000,
+																	position: 'top-right',
+																})
+																return
+															}
+
 															if(link) {
 																setText(link)
 																setSelectedTag(tag)
 																setIsCommentPrivate(tag.isPrivate)
-																setEditorState(EditorState.createWithContent(convertFromRaw(mdToDraftjs(`${tag.commentString} \n\n${link}`))))
+																const ret = await addComment(
+																	`${tag.commentString} \n\n${link}`,
+																	true,
+																	selectedTag?.id,
+																)
+																if(ret) {
+																	setText('')
+																	setEditorState(EditorState.createEmpty())
+																	logger.info('Setting selected tag to undefined after posting comment')
+																	setSelectedTag(undefined)
+																	refreshComments(true)
+																	refreshProposals(true)
+																	setIsCommentPrivate(false)
+																	setStep(undefined)
+																	setIsLoading(false)
+																	localStorage.removeItem(
+																		`comment-${grant?.id}-${proposal?.id}`,
+																	)
+																}
 															}
- 														} else if(tag.id === 'HelloSign') {
+														} else if(selectedTag) {
+															logger.info('Deselecting tag')
+															setSelectedTag(undefined)
+															setText('')
+															setEditorState(EditorState.createEmpty())
+														} else if(tag.id === 'HelloSign') {
 															setIsHelloSignModalOpen(true)
 														} else {
 															logger.info('Selecting tag')
@@ -448,6 +480,7 @@ function Discussions() {
 
 	const { scwAddress } = useContext(WebwalletContext)!
 	const { grant, role } = useContext(GrantsProgramContext)!
+	const toast = useToast()
 	logger.info({ grant, role }, 'GRANT AND ROLE')
 	const {
 		proposals,
@@ -465,6 +498,7 @@ function Discussions() {
 	const [selectedTag, setSelectedTag] = useState<TagType>()
 	const [text, setText] = useState<string>('')
 	const [editorState, setEditorState] = useState(() => EditorState.createEmpty())
+	const [isLoading, setIsLoading] = useState(false)
 
 	const { getSynapsLink } = GetSynapsLink()
 	const { addComment } = useAddComment({

@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useMemo, useState } from 'react'
 import { Flex, Text, VStack } from '@chakra-ui/react'
-import { useConfig, useConnect as keplrConnect } from '@quirks/react'
+import { useChain } from '@cosmos-kit/react'
 import { useSafeContext } from 'src/contexts/safeContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
@@ -106,7 +106,7 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 									onClick={
 										async() => {
 											setVerifying(wallet.id)
-											await connectKeplr(wallets[0].options.wallet_name)
+											await keplrConnect()
 										}
 									} />
 							)
@@ -147,10 +147,12 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 
 	const [verifying, setVerifying] = useState<string>()
 	const [selectedConnector, setSelectedConnector] = useState<Connector>()
+	const chainContext = useChain('axelartestnet')
+
 	const {
-		connect: connectKeplr,
-	  } = keplrConnect()
-	  const { wallets } = useConfig()
+		connect: keplrConnect
+	} = chainContext
+
 
 	const isEvmChain = useMemo(() => {
 		return safeObj?.getIsEvm()

@@ -3,16 +3,15 @@ import { createContext, ReactElement, ReactNode, useCallback, useEffect, useMemo
 import { hotjar } from 'react-hotjar'
 import { Biconomy } from '@biconomy/mexa'
 import { ChakraProvider } from '@chakra-ui/react'
-import { axelartestnet, axelartestnetAssetList } from '@nabla-studio/chain-registry'
+import { wallets } from '@cosmos-kit/keplr-extension'
+import { ChainProvider } from '@cosmos-kit/react'
 import { ChatWidget } from '@papercups-io/chat-widget'
 // import dynamic from 'next/dynamic';
 import {
 	Configuration,
 	ValidationApi,
 } from '@questbook/service-validator-client'
-import { QuirksConfig, QuirksNextProvider } from '@quirks/react'
-import { Config } from '@quirks/store'
-import { keplrExtension } from '@quirks/wallets'
+import { assets, chains as cosmosChains } from 'chain-registry'
 import { ethers, Wallet } from 'ethers'
 import { NextPage } from 'next'
 import type { AppContext, AppProps } from 'next/app'
@@ -61,6 +60,7 @@ import { publicProvider } from 'wagmi/providers/public'
 import 'styles/globals.css'
 import 'draft-js/dist/Draft.css'
 import 'src/libraries/utils/appCopy'
+import '@interchain-ui/react/styles'
 
 
 type NextPageWithLayout = NextPage & {
@@ -90,13 +90,6 @@ const { chains, provider } = configureChains(allChains, [
 	infuraProvider({ apiKey: infuraId! }),
 	publicProvider(),
 ])
-
-const config: Config = {
-	wallets: [keplrExtension], // use a list of wallet, like keplr and leap, from wallets
-	chains: [axelartestnet], // use a list of chains, like osmosis, from chain-registry
-	assetsLists: [axelartestnetAssetList], // use a list of assetlist, like the osmosis one, from chain-registry
-	autoConnect: false,
-}
 
 
 type InitiateBiconomyReturnType = {
@@ -702,40 +695,42 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				/>
 			</Head>
 			<WagmiConfig client={client}>
-				{/* @ts-ignore */}
-				<QuirksNextProvider>
-					<QuirksConfig config={config}>
-						<ApiClientsContext.Provider value={apiClients}>
-							<NotificationContext.Provider value={notificationContext}>
-								<SignInContext.Provider value={SignInContextValue}>
-									<SignInTitleContext.Provider value={SignInTitleContextValue}>
-										<SignInMethodContext.Provider value={SignInMethodContextValue}>
-											<WebwalletContext.Provider value={webwalletContextValue}>
-												<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
-													<SafeProvider>
-														<>
-															<DAOSearchContextMaker>
-																<GrantsProgramContext.Provider value={grantProgram}>
-																	<QBAdminsContextMaker>
-																		<ChakraProvider theme={theme}>
-																			{getLayout(<Component {...pageProps} />)}
-																			<QRCodeModal />
-																		</ChakraProvider>
-																	</QBAdminsContextMaker>
-																</GrantsProgramContext.Provider>
+				<ChainProvider
+					chains={cosmosChains} // supported chains
+					assetLists={assets} // supported asset lists
+					wallets={wallets} // supported wallets
+				>
 
-															</DAOSearchContextMaker>
-														</>
-													</SafeProvider>
-												</BiconomyContext.Provider>
-											</WebwalletContext.Provider>
-										</SignInMethodContext.Provider>
-									</SignInTitleContext.Provider>
-								</SignInContext.Provider>
-							</NotificationContext.Provider>
-						</ApiClientsContext.Provider>
-					</QuirksConfig>
-				</QuirksNextProvider>
+					<ApiClientsContext.Provider value={apiClients}>
+						<NotificationContext.Provider value={notificationContext}>
+							<SignInContext.Provider value={SignInContextValue}>
+								<SignInTitleContext.Provider value={SignInTitleContextValue}>
+									<SignInMethodContext.Provider value={SignInMethodContextValue}>
+										<WebwalletContext.Provider value={webwalletContextValue}>
+											<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
+												<SafeProvider>
+													<>
+														<DAOSearchContextMaker>
+															<GrantsProgramContext.Provider value={grantProgram}>
+																<QBAdminsContextMaker>
+																	<ChakraProvider theme={theme}>
+																		{getLayout(<Component {...pageProps} />)}
+																		<QRCodeModal />
+																	</ChakraProvider>
+																</QBAdminsContextMaker>
+															</GrantsProgramContext.Provider>
+
+														</DAOSearchContextMaker>
+													</>
+												</SafeProvider>
+											</BiconomyContext.Provider>
+										</WebwalletContext.Provider>
+									</SignInMethodContext.Provider>
+								</SignInTitleContext.Provider>
+							</SignInContext.Provider>
+						</NotificationContext.Provider>
+					</ApiClientsContext.Provider>
+				</ChainProvider>
 			</WagmiConfig>
 			<ChatWidget
 				token='5b3b08cf-8b27-4d4b-9c4e-2290f53e04f0'

@@ -1,11 +1,15 @@
+'use client'
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { Asset, AssetList } from '@chain-registry/types'
 import { Box, Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text, useToast } from '@chakra-ui/react'
-import { SupportedPayouts } from '@questbook/supported-safes'
-import { useChains, useConfig, useConnect } from '@quirks/react'
+import { StdFee } from '@cosmjs/amino'
 // import { useAccount, useBalance, useSendTokens, useStargateSigningClient } from 'graz'
 // import { useConnect as keplrConnect, WalletType } from 'graz'
-import { broadcast, getAddress, sign, signArbitrary } from '@quirks/store'
+import { useChain } from '@cosmos-kit/react'
+import { SupportedPayouts } from '@questbook/supported-safes'
+import { assets } from 'chain-registry'
+import { cosmos } from 'juno-network'
 import { defaultChainId } from 'src/constants/chains'
 import { useSafeContext } from 'src/contexts/safeContext'
 import { DisburseRewardSafeMutation, reSubmitProposalMutation } from 'src/generated/mutation'
@@ -15,7 +19,6 @@ import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import { getFieldString } from 'src/libraries/utils/formatting'
-import { mainnetChains } from 'src/libraries/utils/keplrWallets'
 import { getGnosisTansactionLink, getProposalUrl } from 'src/libraries/utils/multisig'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
@@ -31,6 +34,8 @@ import usetonWallet from 'src/screens/dashboard/_hooks/useTonWallet'
 import getToken from 'src/screens/dashboard/_utils/tonWalletUtils'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
 import TonWeb from 'tonweb'
+
+
 interface Props {
 	payWithSafe: boolean
 }
@@ -245,52 +250,27 @@ function FundBuilderModal({
 	const [safeAddress, setSafeAddress] = useState('')
 	const customToast = useCustomToast()
 	// const { connect: connectKeplr } = keplrConnect()
-	const { status, connected, connect: connectKeplr, disconnect } = useConnect()
-	const { wallets } = useConfig()
-	const { accounts } = useChains()
+	const chainContext = useChain('axelartestnet')
+
+	const {
+		status,
+		address,
+		connect: connectKeplr,
+		getSigningStargateClient,
+	} = chainContext
+
+	const chainassets: AssetList = assets.find(
+		(chain) => chain.chain_name === 'axelartestnet'
+	  ) as AssetList
+
+
+	const coin: Asset = chainassets.assets.find(
+		(asset) => asset.base === 'uaxl'
+	  ) as Asset
 
 
 	const toast = useToast()
 	const payoutsInProcessToastRef = useRef<any>()
-	// const { data: account, isConnected } = useAccount({
-	// 	chainId: mainnetChains[0].chainId
-	//   })
-
-	//   const coin = mainnetChains[0].stakeCurrency
-	//   const balance = useBalance({
-	// 	chainId: mainnetChains[0].chainId,
-	// 	bech32Address: account?.bech32Address,
-	// 	denom: coin.coinMinimalDenom,
-	//   })
-
-	//   logger.info('Balance', balance)
-
-	//   const { data: signingClient } = useStargateSigningClient({
-	// 	chainId: mainnetChains[0].chainId,
-	//   })
-
-
-	//   const { sendTokensAsync } = useSendTokens({
-	// 	onSuccess: () => {
-	// 		setPayoutInProcess(false)
-	// 		setIsModalOpen(false)
-	// 	  toast({
-	// 			title: 'Success',
-	// 			description: 'Transaction done',
-	// 			status: 'success',
-	// 	  })
-	// 	},
-	// 	onError: (error) => {
-	// 	  toast({
-	// 			title: 'Error',
-	// 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// 			// @ts-expect-error
-	// 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-	// 			description: error?.message || 'Something went wrong',
-	// 			status: 'error',
-	// 	  })
-	// 	},
-	//   })
 
 	const Safe = {
 		logo: safeObj?.safeLogo,
@@ -366,84 +346,59 @@ function FundBuilderModal({
 
 	const onContinue = async() => {
 		if(selectedMode?.value === 'Keplr Wallet') {
-			logger.info('Keplr Wallet selected', { connected, accounts, wallets, status })
-			if(!connected || !accounts[0]?.bech32Address) {
-				if(!wallets[0]?.injected) {
-					customToast({
-						title: 'Please Install Keplr Wallet Extension',
-						status: 'error',
-						duration: 5000,
-					})
-					return
-				}
-
-				// await connectKeplr({ chainId: mainnetChains[0].chainId, walletType: WalletType.KEPLR })
-				await connectKeplr(wallets[0]?.options?.wallet_name)
-			} else if(connected && accounts[0]?.bech32Address) {
+			if(!address && status !== 'Connected') {
+				setIsModalOpen(false)
+				await connectKeplr()
+			} else if(address && status === 'Connected') {
 				try {
-					const cosmos = (await import('osmojs')).cosmos
+
+					setPayoutInProcess(true)
+
+					const stargateClient = await getSigningStargateClient()
+					if(!stargateClient || !address) {
+					  await toast({
+							title: 'Error',
+							description: 'Keplr not connected',
+							status: 'error',
+					  })
+					  return
+					}
+
 					const { send } = cosmos.bank.v1beta1.MessageComposer.withTypeUrl
-
-					const address = getAddress('axelar')
-
+					const amountFormated = (amounts?.[0] / (selectedTokenInfo?.fiatConversion || 2.02)).toFixed(2)
 					const msg = send({
-						amount: [
+					  amount: [
 							{
-								denom: 'axl',
-								amount: '1',
+						  denom: coin.base,
+						  amount: String(Number(amountFormated) * Math.pow(10, parseInt(coin.base) || 6)),
+
 							},
-						],
-						toAddress: address,
-						fromAddress: address,
+					  ],
+					  toAddress: address,
+					  fromAddress: address,
 					})
 
-					logger.info(msg, 'keplr')
+					const fee: StdFee = {
+					  amount: [
+							{
+						  denom: coin.base,
+						  amount: '1',
+							},
+					  ],
+					  gas: '86364',
+					}
 
-					const txRaw = await sign('axelarTestnet', [msg])
 
-					const res1 = await broadcast('axelarTestnet', txRaw)
-					logger.info(res1, 'keplr')
+					const res = await stargateClient.signAndBroadcast(
+						address,
+						[msg],
+						fee,
+						`${grant?.title}: Milestone #${milestoneIndices[0] + 1} Payout`,
+						  )
 
-
-					// 		const res = await sendTokensAsync({
-					// 			amount: [
-					// 	  {
-					// 					// {(amounts?.[0] * (selectedTokenInfo?.fiatConversion)).toFixed(2)
-					// 					// amount: String(Number(amounts?.[0]) * Math.pow(10, coin.coinDecimals || 6)),
-					// 					// convert it to axl by multiplying fiatConversion
-					// 					amount: String(Number(amountFormated) * Math.pow(10, coin.coinDecimals || 6)),
-					// 					denom: coin.coinMinimalDenom || '',
-					// 	  },
-					// 			],
-					// 			fee: {
-					// 	  amount: [
-					// 					{
-					// 		  amount: '5000',
-					// 		  denom: coin.coinMinimalDenom || '',
-					// 					},
-					// 	  ],
-					// 	  gas: '200000',
-					// 			},
-					// 			memo: `${grant?.title}: Milestone #${milestoneIndices[0] + 1} Payout`,
-					// 			senderAddress: account?.bech32Address || '',
-					// 			recipientAddress: tos[0],
-					// 			signingClient,
-					//   })
-
-					const res = false
 			  if(res) {
 						setPayoutInProcess(false)
 						setIsModalOpen(false)
-						// const methodArgs = [
-						// 	[parseInt(proposal?.id!, 16)],
-						// 	[parseInt(milestones[milestoneIndices[0]].id?.split('.')[1])],
-						// 	'0x0000000000000000000000000000000000000001',
-						// 	'the-open-network',
-						// 	'nonEvmAssetAddress-toBeChanged',
-						// 	[amounts?.[0]],
-						// 	grant?.workspace?.id,
-						// 	'99887341.' + timestamp
-						// ]
 
 						const args = {
 							applicationIds: [String(proposal?.id)],
@@ -461,6 +416,13 @@ function FundBuilderModal({
 						// // await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
 						await executeMutation(DisburseRewardSafeMutation, args)
 						await refreshProposals(true)
+						await toast({
+							title: 'Transaction Successful',
+							status: 'success',
+							description: `Transaction hash: ${res?.transactionHash}`,
+							duration: 5000,
+							position: 'top-right',
+						})
 						logger.info('Transaction done', res)
 			  }
 				} catch(e) {
