@@ -64,22 +64,6 @@ function FundingMethod({
 						Use a Multisig wallet
 					</Button>
 
-					<Button
-						w='100%'
-						variant='primaryLarge'
-						onClick={
-							() => {
-								setIsModalOpen(true)
-								setPayWithSafe(false)
-								onClose()
-							}
-						}
-					>
-						{/* {isOwner ? 'Link Multisig' : 'Verify you are a signer'} */}
-						Use OpenMask for TON blockchain
-					</Button>
-
-
 				</ModalContent>
 			</Modal>
 		)
