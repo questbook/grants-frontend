@@ -69,6 +69,7 @@ type AppPropsWithLayout = AppProps & {
 const client = createConfig({
 	chains: [mainnet, base, polygon, arbitrum, optimism, celo, aurora, iotex, zkSync, sepolia],
 	syncConnectedChain: true,
+	ssr: true,
 	connectors: [
 		injected({
 			shimDisconnect: true,
