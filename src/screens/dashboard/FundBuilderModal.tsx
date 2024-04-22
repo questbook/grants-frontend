@@ -250,7 +250,7 @@ function FundBuilderModal({
 	const [safeAddress, setSafeAddress] = useState('')
 	const customToast = useCustomToast()
 	// const { connect: connectKeplr } = keplrConnect()
-	const chainContext = useChain('axelartestnet')
+	const chainContext = useChain('axelar')
 
 	const {
 		status,
@@ -260,7 +260,7 @@ function FundBuilderModal({
 	} = chainContext
 
 	const chainassets: AssetList = assets.find(
-		(chain) => chain.chain_name === 'axelartestnet'
+		(chain) => chain.chain_name === 'axelar'
 	  ) as AssetList
 
 

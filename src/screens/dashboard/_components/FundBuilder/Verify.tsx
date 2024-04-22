@@ -147,7 +147,7 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 
 	const [verifying, setVerifying] = useState<string>()
 	const [selectedConnector, setSelectedConnector] = useState<Connector>()
-	const chainContext = useChain('axelartestnet')
+	const chainContext = useChain('axelar')
 
 	const {
 		connect: keplrConnect

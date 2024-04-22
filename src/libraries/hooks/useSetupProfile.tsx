@@ -138,17 +138,20 @@ function useSetupProfile({ workspaceId, memberId, setNetworkTransactionModalStep
 			// const receipt = await call({ method: type === 'join-using-link' ? 'joinViaInviteLink' : type === 'join-reviewer-guard' ? 'proveMembership' : 'updateWorkspaceMembers', args: methodArgs })
 			const receipt = await executeMutation(type === 'update' ? updateWorkspaceMemberMutation : joinViaInviteLinkMutation, variables)
 			if(!receipt) {
-				throw new Error('Some error occured on Biconomy side')
+				throw new Error('Oops! It seems this invite link has already been used. Contact the workspace admin for a new one')
 			}
 
 			//await createMapping({ email })
 			if(type === 'update') {
 				window.location.reload()
 			} else {
-				router.push({
+				const ret = await router.push({
 					pathname: '/dashboard',
 					query: { ...router.query, chainId: inviteInfo?.chainId }
 				})
+				if(ret) {
+					window.location.reload()
+				}
 			}
 
 			return true
