@@ -17,7 +17,7 @@ import { getSpecificApplicationActionQuery } from 'src/screens/dashboard/_data/g
 import { getSpecificProposalCommentsQuery } from 'src/screens/dashboard/_data/getSpecificProposalCommentsQuery'
 import { getSpecificProposalQuery } from 'src/screens/dashboard/_data/getSpecificProposalQuery'
 import { CommentMap, CommentType, DashboardContextType, FundBuilderContextType, ModalContextType, Proposals, ReviewInfo, SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
-import { disabledTonGrants, tonGrants } from 'src/screens/proposal_form/_utils/constants'
+import { disabledTonGrants, subdomains, tonGrants } from 'src/screens/proposal_form/_utils/constants'
 import { Roles } from 'src/types'
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined)
@@ -639,6 +639,9 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 					grantId: tonGrants
 				}
 			}, undefined, { shallow: true })
+		} else if(proposalId && typeof proposalId === 'string' && subdomains.map((s) => s.grants).flat().includes(grantId as string)) {
+			const id = subdomains.find((s) => s.grants.includes(grantId as string)) ?? { name: 'www' }
+			window.location.href = `https://${id.name}.questbook.app/dashboard?grantId=${grantId}&proposalId=${proposalId}&isRenderingProposalBody=true&role=${role}&chainId=${chainId}`
 		}
 	}, [proposalId, grantId])
 
