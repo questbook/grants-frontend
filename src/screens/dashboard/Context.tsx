@@ -639,7 +639,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 					grantId: tonGrants
 				}
 			}, undefined, { shallow: true })
-		} else if(proposalId && typeof proposalId === 'string' && subdomains.map((s) => s.grants).flat().includes(grantId as string)) {
+		} else if(grantId && typeof grantId === 'string' && subdomains.map((s) => s.grants).flat().includes(grantId as string)) {
 			const id = subdomains.find((s) => s.grants.includes(grantId as string)) ?? { name: 'www' }
 			window.location.href = `https://${id.name}.questbook.app/dashboard?grantId=${grantId}&proposalId=${proposalId}&isRenderingProposalBody=true&role=${role}&chainId=${chainId}`
 		}
