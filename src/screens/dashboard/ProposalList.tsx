@@ -15,6 +15,7 @@ import FilterTag from 'src/screens/dashboard/_components/FilterTag'
 import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
 import { DashboardContext } from 'src/screens/dashboard/Context'
+import { inActiveProposals } from 'src/screens/discover/_utils/constants'
 
 function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boolean) => void }) {
 	const buildComponent = () => (
@@ -139,7 +140,12 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 								}
 							]
 						}
-						onChange={(item) => setSortBy(item?.value as 'createdAtS' | 'updatedAtS')}
+						onChange={
+							(item) => {
+								setSortBy(item?.value as 'createdAtS' | 'updatedAtS')
+								setIsSortByFilterClicked(true)
+							}
+						}
 						chakraStyles={
 							{
 								container: (provided) => ({
@@ -299,7 +305,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 	const { proposals, selectedProposals, setSelectedProposals, filterState, setFilterState, sortBy, setSortBy } = useContext(DashboardContext)!
 
 	const [isFilterClicked, setIsFilterClicked] = useState<boolean>(false)
-
+	const [isSortByFilterClicked, setIsSortByFilterClicked] = useState<boolean>(false)
 	const [searchText, setSearchText] = useState<string>('')
 	const filteredProposals = useMemo(() => {
 		let allProposals = [...proposals]
@@ -323,8 +329,13 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 			allProposals = allProposals.sort((a, b) => a.createdAtS - b.createdAtS)
 		}
 
+		if(!isSortByFilterClicked) {
+			const inActive = allProposals.filter((_) => inActiveProposals.includes(_.id))
+			allProposals = [ ...allProposals.filter((_) => !inActiveProposals.includes(_.id)), ...inActive]
+		}
+
 		return allProposals
-	}, [proposals, searchText, filterState, sortBy])
+	}, [proposals, searchText, filterState, sortBy, isSortByFilterClicked])
 
 	const proposalCount = useMemo(() => {
 		return grant?.numberOfApplications || 0
