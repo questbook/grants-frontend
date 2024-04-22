@@ -157,7 +157,7 @@ function Discussions() {
 															setIsLoading(true)
 															const link = await getSynapsLink(tag.id, proposal?.id as string)
 															logger.info({ link }, 'SYNAPS LINK')
-															if((!link && !link?.includes('https://verify.synaps.io/?')) || link?.includes('undefined')) {
+															if((!link && !link?.includes('?session_id=')) || link?.includes('undefined')) {
 																setIsLoading(false)
 																await toast({
 																	title: 'Error generating Synaps link',
