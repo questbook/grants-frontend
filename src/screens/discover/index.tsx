@@ -23,6 +23,7 @@ import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { ApiClientsContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import GranteeListRFPGrid from 'src/screens/discover/_components/granteeList/rfpGrid'
 import RFPGrid from 'src/screens/discover/_components/rfpGrid'
+import { inActiveProposals } from 'src/screens/discover/_utils/constants'
 import { DiscoverContext, DiscoverProvider } from 'src/screens/discover/Context'
 import HeroBanner from 'src/screens/discover/HeroBanner'
 import { Roles } from 'src/types'
@@ -612,8 +613,19 @@ function Discover() {
 														width='100%'>
 														<GranteeListRFPGrid
 															proposals={
-																proposals?.sort((a) => {
-																	return a.milestones.filter((m) => m.amountPaid === m.amount).length === a.milestones.length ? -1 : 1
+																proposals
+																.sort((a, b) => {
+																  const aFullyPaid = a.milestones.every((m) => m.amountPaid === m.amount)
+																  const bFullyPaid = b.milestones.every((m) => m.amountPaid === m.amount)
+																  if(aFullyPaid && !bFullyPaid) {
+																	return -1
+																  } else if(!aFullyPaid && bFullyPaid) {
+																	return 1
+																  } else if(aFullyPaid && bFullyPaid) {
+																	return 0
+																  } else {
+																	return inActiveProposals.includes(a.id) ? 1 : -1
+																  }
 																}) || []
 															}
 														/>
