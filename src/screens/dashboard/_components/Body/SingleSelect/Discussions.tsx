@@ -617,7 +617,7 @@ function Discussions() {
 			) {
 				return getFieldString(proposal, 'applicantName')
 			} else {
-				return formatAddress(comment.sender ?? '')
+				return comment?.role === 'app' ? comment?.sender : formatAddress(comment.sender ?? '')
 			}
 		}
 	}
