@@ -40,7 +40,7 @@ import theme from 'src/theme'
 import { GrantProgramContextType, GrantType, MinimalWorkspace, NotificationContextType, Roles } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import { createConfig, http, WagmiProvider } from 'wagmi'
-import { arbitrum, aurora, base, celo, iotex, mainnet, optimism, polygon } from 'wagmi/chains'
+import { arbitrum, aurora, base, celo, iotex, mainnet, optimism, polygon, sepolia } from 'wagmi/chains'
 // import { InjectedConnector } from 'wagmi/connectors/injected'
 // import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 // import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
@@ -62,7 +62,7 @@ type AppPropsWithLayout = AppProps & {
 
 
 const client = createConfig({
-	chains: [mainnet, base, polygon, arbitrum, optimism, celo, aurora, iotex],
+	chains: [mainnet, base, polygon, arbitrum, optimism, celo, aurora, iotex, sepolia],
 	connectors: [
 	  injected(),
 	  walletConnect({ projectId: '1a646363ec322c7ba5b21240860f2aec', qrModalOptions: {
@@ -89,6 +89,7 @@ const client = createConfig({
 	  [celo.id]: http(),
 	  [aurora.id]: http(),
 	  [iotex.id]: http(),
+	  [sepolia.id]: http(),
 	},
 })
 
