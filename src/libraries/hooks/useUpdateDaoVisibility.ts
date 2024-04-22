@@ -1,5 +1,5 @@
 import { useCallback, useContext } from 'react'
-import { Contract } from 'ethers'
+import { ethers } from 'ethers'
 import { WORKSPACE_REGISTRY_ADDRESS } from 'src/constants/addresses'
 import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import { useQuestbookAccount } from 'src/libraries/hooks/gasless/useQuestbookAccount'
@@ -19,7 +19,7 @@ export default function useUpdateDaoVisibility() {
 	const workspaceContractOptimism = useQBContract('workspace', SupportedChainId.OPTIMISM_MAINNET)
 	const workspaceContractCelo = useQBContract('workspace', SupportedChainId.CELO_MAINNET)
 
-	const contractsMap: { [C in SupportedChainId]: Contract } = {
+	const contractsMap = {
 		[SupportedChainId.GOERLI_TESTNET]: workspaceContractGoerli,
 		[SupportedChainId.CELO_MAINNET]: workspaceContractCelo,
 		[SupportedChainId.OPTIMISM_MAINNET]: workspaceContractOptimism,
@@ -83,7 +83,7 @@ export default function useUpdateDaoVisibility() {
 
 				const response = await sendGaslessTransaction(
 					biconomy,
-					workspaceContract,
+					workspaceContract as unknown as ethers.Contract,
 					'updateWorkspacesVisible',
 					[workspaceIds, isVisible],
 					WORKSPACE_REGISTRY_ADDRESS[chain as unknown as SupportedChainId],
@@ -174,7 +174,7 @@ export default function useUpdateDaoVisibility() {
 			)
 			const response = await sendGaslessTransaction(
 				biconomy,
-				workspaceContract,
+				workspaceContract as unknown as ethers.Contract,
 				'updateGrantsSection',
 				[grantIds, sectionName, logoIpfsHash],
 				WORKSPACE_REGISTRY_ADDRESS[chain as unknown as SupportedChainId],

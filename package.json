@@ -38,6 +38,7 @@
     "@sentry/nextjs": "^7.13.0",
     "@solana/web3.js": "^1.52.0",
     "ajv": "^8.11.2",
+    "@tanstack/react-query": "^5.28.8",
     "ajv-formats": "^2.1.1",
     "autosize": "^6.0.1",
     "axios": "^1.4.0",
@@ -78,7 +79,8 @@
     "remark-gfm": "^4.0.0",
     "tonweb": "^0.0.62",
     "ts-node": "^10.9.1",
-    "wagmi": "^0.6.5"
+    "viem": "^2.9.2",
+    "wagmi": "^2.5.12"
   },
   "devDependencies": {
     "@creatoros/eslint-config": "git+https://github.com/CreatorOS/eslint-config",

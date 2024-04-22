@@ -72,7 +72,7 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 			setTransactionStep?.(0)
 			const tx = await sendGaslessTransaction(
 				biconomy,
-				contract,
+				contract as unknown as ethers.Contract,
 				method,
 				args,
 				contract.address,
