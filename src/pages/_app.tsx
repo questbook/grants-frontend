@@ -63,6 +63,7 @@ type AppPropsWithLayout = AppProps & {
 
 const client = createConfig({
 	chains: [mainnet, base, polygon, arbitrum, optimism, celo, aurora, iotex, sepolia],
+	ssr: true,
 	connectors: [
 	  injected(),
 	  walletConnect({ projectId: '1a646363ec322c7ba5b21240860f2aec', qrModalOptions: {
