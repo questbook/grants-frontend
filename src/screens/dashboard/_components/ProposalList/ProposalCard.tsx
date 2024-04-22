@@ -8,6 +8,8 @@ import StateTag from 'src/screens/dashboard/_components/StateTag'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
+import StateButton from 'src/screens/discover/_components/stateButton'
+import { inActiveProposals } from 'src/screens/discover/_utils/constants'
 
 type Props = {
 	proposal: ProposalType
@@ -56,7 +58,7 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 				>
 					{getFieldString(proposal, 'projectName')}
 				</Text>
-				{
+				{/* {
 					process.env.NODE_ENV === 'development' && (
 						<Text
 							ml={2}
@@ -65,7 +67,7 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 							{`(${proposal.id}) - ${proposal.state}`}
 						</Text>
 					)
-				}
+				} */}
 				<Text
 					alignSelf='flex-start'
 					ml='auto'
@@ -89,15 +91,28 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 					variant='metadata'>
 					{getFieldString(proposal, 'applicantName')}
 				</Text>
-				{
-					(proposal?.state !== 'submitted') && (
-						<StateTag
-							ml='auto'
-							state={proposal?.state}
-							isSelected={selectedProposals.has(proposal.id)}
-						/>
-					)
-				}
+				<Flex
+					ml='auto'
+					gap={2}
+				>
+					{
+						(proposal?.state === 'approved') && (inActiveProposals?.includes(proposal?.id)) && (
+							<StateButton
+								state='rejected'
+								title='Inactive'
+							/>
+						)
+					}
+					{
+						(proposal?.state !== 'submitted') && (
+							<StateTag
+								ml='auto'
+								state={proposal?.state}
+								isSelected={selectedProposals.has(proposal.id)}
+							/>
+						)
+					}
+				</Flex>
 			</Flex>
 
 		</Flex>
