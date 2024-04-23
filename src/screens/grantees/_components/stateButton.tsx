@@ -2,7 +2,7 @@ import { Flex, Text, useToken } from '@chakra-ui/react'
 import { Accept, Link, Reject, Resubmit, Time } from 'src/generated/icons'
 
 type Props = {
-	state: 'approved' | 'rejected' | 'resubmit' | 'submitted' | 'open'
+	state: 'approved' | 'rejected' | 'resubmit' | 'submitted' | 'open' | 'review' | 'cancelled'
     title: string
 }
 
@@ -70,6 +70,11 @@ function StateButton({ state, title }: Props) {
 			icon: <Time />,
 			title: 'Review',
 			bg: jeans
+		},
+		cancelled: {
+			icon: <Reject />,
+			title: 'Cancelled',
+			bg: carrot
 		}
 	}
 

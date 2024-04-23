@@ -146,7 +146,7 @@ function Discussions() {
 										return (
 											<QuickReplyButton
 												zIndex={10}
-												id={tag.id as 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review'}
+												id={tag.id as 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review' | 'cancelled'}
 												key={index}
 												tag={tag}
 												isSelected={tag.id === selectedTag?.id}
@@ -529,6 +529,8 @@ function Discussions() {
 			return 'On clicking “Post” the builder will be notified to resubmit his proposal.'
 		case 'review':
 			return 'On clicking “Post” the proposal will be under review. Builder will be notified.'
+		case 'cancelled':
+			return 'On clicking “Post” the proposal will be cancelled.'
 		default:
 			return ''
 		}
@@ -591,7 +593,11 @@ function Discussions() {
 		review: {
 			title: 'review',
 			bg: jeans
-		}
+		},
+		cancelled: {
+			title: 'cancel / withdraw',
+			bg: carrot
+		},
 	}
 
 	return buildComponents()

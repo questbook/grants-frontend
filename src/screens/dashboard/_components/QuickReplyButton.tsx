@@ -3,7 +3,7 @@ import { Accept, Chat, Reject, Resubmit, Time } from 'src/generated/icons'
 import { TagType } from 'src/screens/dashboard/_utils/types'
 
 type Props = {
-	id: 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review'
+	id: 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review' | 'cancelled'
     tag: TagType | undefined
     isSelected: boolean
     index: number
@@ -69,7 +69,12 @@ function QuickReplyButton({ tag, index, textProps, ...props }: Props) {
 			icon: <Time />,
 			title: 'Review',
 			bg: jeans
-		}
+		},
+		cancelled: {
+			icon: <Reject />,
+			title: 'Cancel / Withdraw',
+			bg: carrot
+		},
 	}
 
 	return buildComponent()
