@@ -19,7 +19,7 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 				<Flex
 					w='100%'
 					direction={['column', 'row']}
-					align={['stretch', 'end']}>
+					align='stretch'>
 					<Text
 						mr={8}
 						pb={2}
