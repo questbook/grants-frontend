@@ -142,7 +142,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 										)
 									}
 									{
-										safeUSDAmount !== undefined && (
+										(safeUSDAmount !== undefined) && (role === 'admin' || role === 'reviewer') && (
 											<Flex gap={1}>
 												<Text
 													as='span'
