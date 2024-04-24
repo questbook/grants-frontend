@@ -2,6 +2,7 @@ import { useContext } from 'react'
 import { Chat, CheckDouble, Close, Resubmit } from 'src/generated/icons'
 import { GrantsProgramContext } from 'src/pages/_app'
 import { ProposalType, TagType } from 'src/screens/dashboard/_utils/types'
+import { tonGrants } from 'src/screens/proposal_form/_utils/constants'
 
 interface Props {
 	proposals: ProposalType[]
@@ -37,7 +38,7 @@ function useProposalTags({ proposals }: Props) {
 			return { proposalTags: allTags['admin'].slice(0, 2).concat(allTags['admin'].slice(3, 5)) }
 		} else if(proposals.every(p => p.state === 'review')) {
 			return { proposalTags: allTags['admin'].slice(0, 4) }
-		} else if(proposals.every(p => p.state === 'approved') && grant?.id === '662225d8e423aa008db57b09') {
+		} else if(proposals.every(p => p.state === 'approved') && grant?.id === tonGrants) {
 			return { proposalTags: allTags['admin'].slice(3, 4).concat(allTags['admin'].slice(5)) }
 		} else {
 			return { proposalTags: allTags['admin'].slice(3, 4) }
