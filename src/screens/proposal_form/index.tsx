@@ -607,7 +607,7 @@ There is no specific industry vertical targeted and the program is open to all t
 						{
 							containsField(grant, 'applicantAddress') && (
 								<SectionInput
-									label='Wallet Address'
+									label='Starknet Wallet Address'
 									placeholder='Wallet to receive funds on Starknet'
 									value={findField(form, 'applicantAddress').value}
 									onChange={
