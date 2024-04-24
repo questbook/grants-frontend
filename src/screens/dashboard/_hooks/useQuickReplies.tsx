@@ -15,7 +15,7 @@ function useProposalTags({ proposals }: Props) {
 			{ id: 'resubmit', title: 'Resubmit', commentString: 'Please resubmit your proposal', icon: <Resubmit color='accent.royal' />, isPrivate: false },
 			{ id: 'feedback', title: 'Feedback / Comment', commentString: '', icon: <Chat color='accent.vivid' />, isPrivate: false },
 			{ id: 'review', title: 'Review', commentString: 'Your proposal is under review', icon: <Chat color='accent.vivid' />, isPrivate: false },
-			{ id: 'cancelled', title: 'Cancelled / Withdrawn', commentString: 'Your proposal is cancelled', icon: <Close color='accent.carrot' />, isPrivate: false }
+			{ id: 'cancelled', title: 'Cancelled / Withdrawn', commentString: 'Sorry! Your proposal is Cancelled/Withdrawn', icon: <Close color='accent.carrot' />, isPrivate: false }
 		],
 		reviewer: [
 			{ id: 'feedback', title: 'Feedback / Comment', commentString: '', icon: <Chat color='accent.vivid' />, isPrivate: false }
@@ -28,16 +28,16 @@ function useProposalTags({ proposals }: Props) {
 		]
 	}
 
-	const { role } = useContext(GrantsProgramContext)!
+	const { role, grant } = useContext(GrantsProgramContext)!
 
 	if(role === 'admin') {
 		if(proposals.every(p => p.state === 'submitted')) {
-			return { proposalTags: allTags['admin'] }
+			return { proposalTags: allTags['admin']?.slice(0, 5) }
 		} else if(proposals.every(p => p.state === 'resubmit')) {
-			return { proposalTags: allTags['admin'].slice(0, 2).concat(allTags['admin'].slice(3)) }
+			return { proposalTags: allTags['admin'].slice(0, 2).concat(allTags['admin'].slice(3, 5)) }
 		} else if(proposals.every(p => p.state === 'review')) {
 			return { proposalTags: allTags['admin'].slice(0, 4) }
-		} else if(proposals.every(p => p.state === 'approved')) {
+		} else if(proposals.every(p => p.state === 'approved') && grant?.id === '662225d8e423aa008db57b09') {
 			return { proposalTags: allTags['admin'].slice(3, 4).concat(allTags['admin'].slice(5)) }
 		} else {
 			return { proposalTags: allTags['admin'].slice(3, 4) }
