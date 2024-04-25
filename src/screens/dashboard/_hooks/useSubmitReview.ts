@@ -74,7 +74,7 @@ function useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash }:
 					grantAddress: grant.id,
 					metadata: ipfsHash,
 					reviewerAddress: scwAddress,
-					status: reviewStatus
+					status: reviewStatus ?? 'approved'
 				}
 				const updateReview = await executeMutation(submitReviewsMutation, variables)
 				setTransactionHash(updateReview?.submitReviews?.recordId)

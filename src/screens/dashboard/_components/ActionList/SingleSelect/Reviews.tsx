@@ -822,7 +822,6 @@ function Reviews() {
 					{
 						!review && reviewer.actorId.toLowerCase() === scwAddress?.toLowerCase() && (
 							<Button
-								isDisabled={proposal?.state !== 'approved' && proposal?.state !== 'rejected'}
 								variant='link'>
 								<Text
 									color='accent.azure'
