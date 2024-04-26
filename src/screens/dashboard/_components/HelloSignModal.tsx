@@ -1,4 +1,5 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
+import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons'
 import {
 	Button,
 	Flex,
@@ -59,63 +60,6 @@ function HelloSignModal({
 					<Text mt={1}>
 						Verify and Send Agreement to the Builder
 					</Text>
-
-					<Flex
-						w='100%'
-						direction='column'
-						justifyContent='space-between'
-						mt={8}
-					>
-						<Text
-
-							textAlign='left'
-							fontWeight='500'
-						>
-							Builder Email:
-						</Text>
-
-						<FlushedInput
-							w='100%'
-							flexProps={{ w: '100%' }}
-
-							textAlign='left'
-							placeholder='Enter Builder Email'
-							value={email}
-							onChange={
-								(e) => {
-									setEmail(e.target.value)
-								}
-							}
-						/>
-					</Flex>
-					<Flex
-						w='100%'
-						direction='column'
-						justifyContent='space-between'
-						mt={8}
-					>
-						<Text
-
-							textAlign='left'
-							fontWeight='500'
-						>
-							Builder Name:
-						</Text>
-
-						<FlushedInput
-							w='100%'
-							flexProps={{ w: '100%' }}
-
-							textAlign='left'
-							placeholder='Enter Builder Name'
-							value={name}
-							onChange={
-								(e) => {
-									setName(e.target.value)
-								}
-							}
-						/>
-					</Flex>
 
 					<Flex
 						w='100%'
@@ -197,6 +141,103 @@ function HelloSignModal({
 						Where can I create/edit a template?
 					</Text>
 
+					{
+						signers?.map((signer, index) => (
+							<>
+								<Button
+									fontWeight='500'
+									mt={8}
+									justifyContent='space-between'
+									variant={signer.isHidden ? 'link' : 'outline'}
+									w='100%'
+									rightIcon={signer.isHidden ? <ChevronDownIcon /> : <ChevronUpIcon />}
+									onClick={
+										() => {
+											const newSigners = [...signers]
+											newSigners[index].isHidden = !newSigners[index].isHidden
+											setSigners(newSigners)
+										}
+									}
+								>
+									{' '}
+									{signer.role}
+									{' '}
+									Details
+								</Button>
+								{
+									signer?.isHidden ? <></> : (
+										<>
+											<Flex
+												w='100%'
+												direction='column'
+												justifyContent='space-between'
+												mt={8}
+											>
+												<Text
+
+													textAlign='left'
+													fontWeight='500'
+												>
+													{signer.role}
+													{' '}
+													Email:
+												</Text>
+
+												<FlushedInput
+													w='100%'
+													flexProps={{ w: '100%' }}
+
+													textAlign='left'
+													placeholder='Enter Builder Email'
+													value={signer?.email}
+													onChange={
+														(e) => {
+															const newSigners = [...signers]
+															newSigners[index].email = e.target.value
+															setSigners(newSigners)
+														}
+													}
+												/>
+											</Flex>
+											<Flex
+												w='100%'
+												direction='column'
+												justifyContent='space-between'
+												mt={8}
+											>
+												<Text
+
+													textAlign='left'
+													fontWeight='500'
+												>
+													{signer.role}
+													{' '}
+													Name:
+												</Text>
+
+												<FlushedInput
+													w='100%'
+													flexProps={{ w: '100%' }}
+
+													textAlign='left'
+													placeholder='Enter Builder Name'
+													value={signer?.name}
+													onChange={
+														(e) => {
+															const newSigners = [...signers]
+															newSigners[index].name = e.target.value
+															setSigners(newSigners)
+														}
+													}
+												/>
+											</Flex>
+										</>
+									)
+								}
+							</>
+						))
+					}
+
 
 					<Button
 						w='70%'
@@ -210,8 +251,7 @@ function HelloSignModal({
 								const update = await executeMutation(sendDocuSign, {
 									id: grant?.workspace?.id,
 									proposalId: proposal?.id,
-									name: name,
-									email: email,
+									email: signers,
 									templateId: selectedTemplated,
 									templateName: agreementTitle,
 								})
@@ -224,7 +264,7 @@ function HelloSignModal({
 									return
 								} else {
 									const ret = await addComment(
-										`Successfully sent document to ${name} at ${email}`,
+										`Successfully sent document to ${signers.filter((signer) => signer.role === 'Grantee')[0].name} at ${signers.filter((signer) => signer.role === 'Grantee')[0].email}`,
 										true,
 										'helloSign',
 									)
@@ -236,7 +276,7 @@ function HelloSignModal({
 									}
 
 									await toast({
-										title: `Successfully sent agreement to ${name} at ${email}`,
+										title: `Successfully sent document to ${signers.filter((signer) => signer.role === 'Grantee')[0].name} at ${signers.filter((signer) => signer.role === 'Grantee')[0].email}`,
 										status: 'success',
 										duration: 5000,
 									})
@@ -273,6 +313,12 @@ function HelloSignModal({
 	const [docuSign, setDocuSign] = useState([])
 	const [agreementTitle, setAgreementTitle] = useState('')
 	const [selectedTemplated, setSelectedTemplate] = useState('')
+	const [signers, setSigners] = useState<{
+		name: string
+		email: string
+		role: string
+		isHidden?: boolean
+	}[]>([])
 	const [, setStep] = useState<number>()
 	const [, setTransactionHash] = useState('')
 	const [loader, setLoader] = useState(false)
@@ -307,7 +353,7 @@ function HelloSignModal({
 
 		Promise.all([
 			decrypt(proposal),
-		]).then(([decryptedProposal]) => {
+		]).then(async([decryptedProposal]) => {
 			logger.info(
 				{ decryptedProposal },
 				'(Proposal) decrypted proposal',
@@ -316,8 +362,38 @@ function HelloSignModal({
 			setEmail(getFieldString(decryptedProposal, 'applicantEmail') as string)
 			setName(getFieldString(decryptedProposal, 'applicantName') as string)
 			setAgreementTitle(getFieldString(decryptedProposal, 'projectName') as string + '-' + grant?.title as string + ' Grant Agreement')
+			if(selectedTemplated !== '' && selectedTemplated !== null && docuSign.length > 0) {
+				await docuSign?.filter((doc: {
+					template_id: string
+					signer_roles: [
+						{
+							name: string
+						},
+					]
+				}) => doc.template_id === selectedTemplated).map((doc: {
+					template_id: string
+					signer_roles: [
+						{
+							name: string
+						},
+					]
+				}) => {
+					setSigners(doc.signer_roles?.map((signer: {
+						name: string
+						}) => ({
+						role: signer.name,
+						name: signer?.name === 'Grantee' ? getFieldString(decryptedProposal, 'applicantName') as string : '',
+						email: signer?.name === 'Grantee' ? getFieldString(decryptedProposal, 'applicantEmail') as string : '',
+						isHidden: signer?.name !== 'Grantee',
+					})))
+
+
+				})
+			}
 		})
-	}, [proposal, decrypt])
+	}, [proposal, decrypt, selectedTemplated, docuSign])
+
+	logger.info({ signers }, 'HelloSign Modal')
 
 	useEffect(() => {
 		if(proposal?.helloSignId === null && grant?.workspace?.docuSign && proposal?.synapsId !== null) {

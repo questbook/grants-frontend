@@ -23,7 +23,7 @@ function QuickReplyButton({ tag, index, textProps, ...props }: Props) {
 				variant='outline'
 				justifyContent='start'
 				py={1}
-				px={3}
+				px={2}
 				borderRadius='18px'
 				maxH='36px'
 				leftIcon={ config[tag?.id as keyof typeof config].icon }
