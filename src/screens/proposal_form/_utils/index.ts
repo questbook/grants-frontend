@@ -1,4 +1,5 @@
 import { ContentState, convertFromRaw, EditorState } from 'draft-js'
+import { logger } from 'ethers'
 import { getFromIPFS, isIpfsHash } from 'src/libraries/utils/ipfs'
 import { isSupportedAddress } from 'src/libraries/utils/validations'
 import { Form, Grant } from 'src/screens/proposal_form/_utils/types'
@@ -7,8 +8,19 @@ function containsField(grant: Grant, field: string) {
 	return grant?.fields?.some((f) => f.id.endsWith(field))
 }
 
+function containsCustomField(grant: Grant, field: string) {
+	return grant?.fields?.some((f) => f.id.substring(f.id.indexOf('.') + 1).includes(field))
+}
+
 function findField(form: Form, id: string) {
 	return form.fields.find((f) => f.id === id) ?? { id, value: '' }
+}
+
+function findCustomField(form: Form, field: string) {
+	const f = form.fields.find((f) => f.id.substring(f.id.indexOf('.') + 1).includes(field))
+	logger.info('Custom field: ', f, field)
+	// return form.fields.find((f) => f.id.substring(f.id.indexOf('.') + 1).includes(field)) ?? { id: '', value: '' }
+	return form.fields.find((f) => f.id.substring(f.id.indexOf('.') + 1).includes(field)) ?? { id: '', value: '' }
 }
 
 function findFieldBySuffix(form: Form, suffix: string, defaultId: string) {
@@ -60,4 +72,4 @@ const validateWalletAddress = async(address: string, callback: (isValid: boolean
 	}
 }
 
-export { containsField, findField, getProjectDetails, validateEmail, validateWalletAddress, findFieldBySuffix }
+export { containsField, containsCustomField, findField, getProjectDetails, validateEmail, validateWalletAddress, findFieldBySuffix, findCustomField }

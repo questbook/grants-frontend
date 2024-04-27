@@ -3,9 +3,8 @@
 import { ReactElement, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { Box, Button, Container, Flex, Image, Input, Link, Text } from '@chakra-ui/react'
-import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
-import { ArrowRight, Telegram, Twitter } from 'src/generated/icons'
+import { ArrowRight } from 'src/generated/icons'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { DAOSearchContext } from 'src/libraries/hooks/DAOSearchContext'
 import { QBAdminsContext } from 'src/libraries/hooks/QBAdminsContext'
@@ -16,12 +15,10 @@ import ConfirmationModal from 'src/libraries/ui/ConfirmationModal'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
-import { getAvatar } from 'src/libraries/utils'
 import { chainNames } from 'src/libraries/utils/constants'
 import getErrorMessage from 'src/libraries/utils/error'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { ApiClientsContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
-import GranteeListRFPGrid from 'src/screens/discover/_components/granteeList/rfpGrid'
 import RFPGrid from 'src/screens/discover/_components/rfpGrid'
 import { DiscoverContext, DiscoverProvider } from 'src/screens/discover/Context'
 import HeroBanner from 'src/screens/discover/HeroBanner'
@@ -151,7 +148,7 @@ function Discover() {
 
 	// const discoverRef = useRef<HTMLDivElement>(null)
 	const ReclaimGrantsRef = useRef<HTMLDivElement>(null)
-	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, safeBalances, grantsAllocated, recentProposals } = useContext(DiscoverContext)!
+	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, safeBalances, grantsAllocated } = useContext(DiscoverContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString } = useContext(DAOSearchContext)!
 	const { setSignIn } = useContext(SignInContext)!
@@ -259,77 +256,6 @@ function Discover() {
 			'text': 'Haberdashery'
 		},
 	]
-	const UserCard = ({ image, title, twitter, telegram }: {
-		image: string
-		title: string
-		twitter?: string
-		telegram?: string
-	}) => (
-		<Flex
-			align='center'
-			alignItems='center'
-			px={3}
-			gap={4}
-			mb='6px'
-		>
-			<Flex
-			>
-				<Image
-					borderWidth='1px'
-					borderColor='black.100'
-					hidden
-					borderRadius='3xl'
-					src={getAvatar(false, image ?? '0x0')}
-					boxSize='16px' />
-				<Text
-					fontWeight='500'
-					fontSize='16px'
-					variant='metadata'
-					lineHeight='20px'
-					color='#7E7E8F'
-
-				>
-					{title}
-				</Text>
-			</Flex>
-			<Flex
-				gap={2}
-				mt={-1}
-			>
-				{
-					telegram && (
-						<motion.div
-							whileHover={{ scale: 1.1 }}
-							whileTap={{ scale: 0.9 }}
-						>
-							<Telegram
-								cursor='pointer'
-								_hover={{ color: 'blue.500' }}
-								color='#7E7E8F'
-								onClick={() => window.open(`https://t.me/${telegram}`)}
-								boxSize='16px' />
-						</motion.div>
-					)
-				}
-				{
-					twitter && (
-						<motion.div
-							whileHover={{ scale: 1.1 }}
-							whileTap={{ scale: 0.9 }}
-						>
-							<Twitter
-								cursor='pointer'
-								color='#7E7E8F'
-								_hover={{ color: 'blue.500' }}
-								onClick={() => window.open(`https://twitter.com/${twitter}`)}
-								boxSize='16px' />
-						</motion.div>
-					)
-				}
-			</Flex>
-
-		</Flex>
-	)
 	const normalView = useMemo(() => {
 		const bannerIndex = Math.floor(Math.random() * bannerText.length)
 		return (
@@ -497,55 +423,8 @@ function Discover() {
 																		textAlign='match-parent'
 																		color='#7E7E8F'
 																	>
-																		The Reclaim Grant is for anyone that’s building a product top of Reclaim Protocol
+																		A club of. Dreamers. with pioneering community, fusing culture and digital assets, crafting humanity`s collaborative future.
 																	</Text>
-																	<Text
-																		fontWeight='600'
-																		lineHeight='23.4px'
-																		fontSize='18px'
-																		color='black.100'
-																		pb={2}
-																		px={3}
-																	>
-																		Program Manager
-																	</Text>
-																	<Box pb={2}>
-																		<UserCard
-																			image='0x0125215125'
-																			title='Srijith'
-																			twitter='Srijith_Padmesh'
-																			telegram='Srijith13' />
-																	</Box>
-
-																	<Text
-																		fontWeight='600'
-																		lineHeight='23.4px'
-																		fontSize='18px'
-
-																		color='black.100'
-																		pb={2}
-																		px={3}
-																	>
-																		Domain Allocator
-																	</Text>
-																	<Box
-																	>
-																		{
-																			[
-																				{
-																					image: '0x012521',
-																					title: 'Madhavan Malolan',
-																					twitter: 'madhavanmalolan'
-																				},
-																			].map((user, index) => (
-																				<UserCard
-																					key={index}
-																					image={user.image}
-																					title={user.title}
-																					twitter={user.twitter} />
-																			))
-																		}
-																	</Box>
 																</Box>
 
 															</Flex>
@@ -560,86 +439,6 @@ function Discover() {
 
 						</Flex>
 
-						<Flex
-								w='100%'
-								my={4}
-								mt={isMobile ? '' : '12'}
-								justify='space-between'
-								direction={isMobile ? 'column' : 'row'}>
-
-								<Flex
-									direction='column'
-									px={isMobile ? 0 : 4}
-									w='100%'>
-									<Box
-										id='#granteeList'
-										display={recentProposals?.length ? '' : 'none'}
-									>
-
-										<Flex
-											justifyContent='space-between'
-											alignItems='center'
-											gap={2}
-											w='100%'>
-											<Text
-												variant='heading3'
-												fontWeight='600'
-												w='100%'
-												fontSize='24px'
-												lineHeight='31.2px'
-											>
-												Grantee List
-											</Text>
-
-										</Flex>
-
-										{
-											(recentProposals && recentProposals?.length > 0 && sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
-												logger.info('section', { section, sectionGrants })
-
-
-												return (
-													<Box
-														display='flex'
-														my={6}
-														key={index}
-														w='100%'
-														gap={isMobile ? '0' : '46px'}
-													>
-														<Flex
-															flexGrow={1}
-															height='100%'
-														>
-															<GranteeListRFPGrid
-																proposals={
-																	recentProposals?.sort((a) => {
-																		return a.milestones.filter((m) => m.amountPaid === m.amount).length === a.milestones.length ? -1 : 1
-																	}) || []
-																}
-															/>
-														</Flex>
-														{
-															!isMobile &&
-															(
-																<Flex
-																	direction='column'
-																	w='408px'
-																	h='auto'
-																	gap={5}
-
-																/>
-															)
-														}
-													</Box>
-												)
-
-											}) : null
-										}
-
-									</Box>
-
-								</Flex>
-      </Flex>
 
 					</Container>
 					<div

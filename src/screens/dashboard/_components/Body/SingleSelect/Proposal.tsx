@@ -201,6 +201,7 @@ function Proposal() {
 					{
 						chainInfo && (
 							<Flex
+								hidden
 								direction='column'
 								w='50%'>
 								<Text color='gray.500'>
@@ -229,6 +230,7 @@ function Proposal() {
 						</Text>
 					</Flex>
 					<Flex
+						hidden
 						direction='column'
 						w='50%'>
 						<Text color='gray.500'>

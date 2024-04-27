@@ -121,7 +121,7 @@ function HeroBanner({
 							justifyContent='center'
 							h={isMobile ? '40px' : '80px'}
 							w={isMobile ? '40px' : '80px'}
-							src={getUrlForIPFSHash('QmWX8As9og6mLaiPhCaR3NqkinXMDymMaqf43qyVSE5hp8')} />
+							src={getUrlForIPFSHash('QmNdqwvRbANssyC7evfa22Nnv5HLWzVkXPo9AQa7HCHqsq')} />
 						<Text
 							fontWeight='500'
 							fontSize={isMobile ? '32px' : '64px'}
@@ -132,7 +132,7 @@ function HeroBanner({
 									[10, 5]
 							}
 							color='black'>
-							Reclaim Grants
+							DefiMania
 						</Text>
 					</Flex>
 

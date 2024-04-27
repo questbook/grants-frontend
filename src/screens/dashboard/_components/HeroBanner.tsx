@@ -233,11 +233,12 @@ function HeroBannerBox({
 						fontSize='12px'
 						lineHeight='16px'
 						color='white'>
-						This domain is focused on grants related to the Reclaim ecosystem
+						This domain is focused on DeFi Mania Registration
 					</Text>
 
 				</Flex>
 				<Flex
+					hidden
 					pt={2}
 					gap={2}>
 					<Text
