@@ -17,6 +17,7 @@ query getProposals($first: Int, $skip: Int, $grantID: String!) {
         value
       }
     }
+    helloSignId
     pii {
       id:_id
       manager {

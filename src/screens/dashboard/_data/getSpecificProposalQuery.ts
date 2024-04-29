@@ -15,6 +15,7 @@ export const getSpecificProposalQuery = gql`query getProposals($grantID: String!
           value
         }
       }
+      helloSignId
       pii {
         id:_id
         manager {

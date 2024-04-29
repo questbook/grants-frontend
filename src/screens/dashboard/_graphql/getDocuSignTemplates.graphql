@@ -1,0 +1,5 @@
+mutation getDocuSignTemplates($id: String!){
+  getDocuSignTemplates(id: $id){
+   templates
+  }
+}

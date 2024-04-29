@@ -37,7 +37,7 @@ import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
 import GetSynapsLink from 'src/screens/dashboard/_hooks/useSynaps'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { CommentType, TagType } from 'src/screens/dashboard/_utils/types'
-import { DashboardContext } from 'src/screens/dashboard/Context'
+import { DashboardContext, ModalContext } from 'src/screens/dashboard/Context'
 import { Roles } from 'src/types'
 
 function Discussions() {
@@ -148,7 +148,7 @@ function Discussions() {
 										return (
 											<QuickReplyButton
 												zIndex={10}
-												id={tag.id as 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review' | 'reviewAccept' | 'reviewReject' | 'KYC' | 'KYB'}
+												id={tag.id as 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review' | 'reviewAccept' | 'reviewReject' | 'KYC' | 'KYB' | 'HelloSign'}
 												key={index}
 												tag={tag}
 												isSelected={tag.id === selectedTag?.id}
@@ -197,6 +197,8 @@ function Discussions() {
 																	)
 																}
 															}
+														} else if(tag.id === 'HelloSign') {
+															setIsHelloSignModalOpen(true)
 														} else if(selectedTag) {
 															logger.info('selecting tag', selectedTag)
 															logger.info('Deselecting tag')
@@ -365,7 +367,7 @@ function Discussions() {
 					src={
 						comment.role === 'builder' || comment.role === 'community'
 							? getAvatar(false, comment.sender?.toLowerCase() ?? '')
-							: comment.role === 'app' ? 'https://avatars.githubusercontent.com/u/63306624?s=280&v=4'
+							: comment.role === 'app' ? comment?.sender === 'helloSign' ? 'https://avatars.githubusercontent.com/u/25623857?s=280&v=4' : 'https://avatars.githubusercontent.com/u/63306624?s=280&v=4'
 								: member?.profilePictureIpfsHash
 									? getUrlForIPFSHash(member.profilePictureIpfsHash)
 									: getAvatar(false, member?.actorId)
@@ -493,6 +495,7 @@ function Discussions() {
 		setShowSubmitReviewPanel,
 		setReviewStatus,
 	} = useContext(DashboardContext)!
+	const { setIsHelloSignModalOpen } = useContext(ModalContext)!
 
 	const [step, setStep] = useState<number>()
 	const [, setTransactionHash] = useState('')
@@ -586,6 +589,8 @@ function Discussions() {
 			return 'On clicking “Post” the builder will be notified to complete KYC.'
 		case 'KYB':
 			return 'On clicking “Post” the builder will be notified to complete KYB.'
+		case 'HelloSign':
+			return 'On clicking “Post” the builder will be notified to sign the document.'
 		default:
 			return ''
 		}
@@ -617,7 +622,7 @@ function Discussions() {
 			) {
 				return getFieldString(proposal, 'applicantName')
 			} else {
-				return comment?.role === 'app' ? comment?.sender : formatAddress(comment.sender ?? '')
+				return comment?.role === 'app' || comment?.role === 'helloSign' ? comment?.sender : formatAddress(comment.sender ?? '')
 			}
 		}
 	}
@@ -668,6 +673,10 @@ function Discussions() {
 			title: 'send KYB link to',
 			bg: jeans
 		},
+		HelloSign: {
+			title: 'send document to',
+			bg: azure
+		}
 	}
 
 	return buildComponents()

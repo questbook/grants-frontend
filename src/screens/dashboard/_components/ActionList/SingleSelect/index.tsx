@@ -24,7 +24,10 @@ function SingleSelect() {
 				direction='column'>
 				{/* <Milestones /> */}
 				<Divider />
-				<Reviews />
+				{
+					(role === 'admin' || role === 'reviewer') && (
+						<Reviews />)
+				}
 				<Divider />
 				<Payouts />
 				<Box mt='auto' />

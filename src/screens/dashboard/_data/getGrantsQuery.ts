@@ -58,6 +58,7 @@ export const getGrantsQuery = gql`query getGrant($grantId: String!, $actorId: St
         title
         synapsId
         synapsKYC
+        docuSign
         supportedNetworks
         safe {
           id: _id

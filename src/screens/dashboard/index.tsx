@@ -8,6 +8,7 @@ import LinkYourMultisigModal from 'src/libraries/ui/LinkYourMultisigModal'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import Banner from 'src/screens/dashboard/_components/Banner'
+import HelloSignModal from 'src/screens/dashboard/_components/HelloSignModal'
 import HeroBannerBox from 'src/screens/dashboard/_components/HeroBanner'
 import ThreeColumnSkeleton from 'src/screens/dashboard/_components/ThreeColumnSkeleton'
 import { formatAmount } from 'src/screens/dashboard/_utils/formatters'
@@ -119,6 +120,13 @@ function Dashboard(props: DynamicData) {
 								setIsLinkYourMultisigModalOpen(false)
 							}
 						} />
+					<HelloSignModal
+						isOpen={isHelloSignModalOpen}
+						onClose={
+							() => {
+								setIsHelloSignModalOpen(false)
+							}
+						} />
 
 					{/* Drawers */}
 					<FundingMethod
@@ -136,7 +144,7 @@ function Dashboard(props: DynamicData) {
 		</>
 	)
 
-	const { isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen, isFundingMethodModalOpen, setIsFundingMethodModalOpen } = useContext(ModalContext)!
+	const { isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen, isFundingMethodModalOpen, setIsFundingMethodModalOpen, isHelloSignModalOpen, setIsHelloSignModalOpen } = useContext(ModalContext)!
 	const { role, isLoading, grant } = useContext(GrantsProgramContext)!
 	const { dashboardStep, setDashboardStep, glyph } = useContext(WebwalletContext)!
 	const { fundsAllocated } = useContext(DashboardContext)!

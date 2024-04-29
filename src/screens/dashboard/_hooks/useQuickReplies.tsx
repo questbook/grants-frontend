@@ -16,7 +16,8 @@ function useProposalTags({ proposals }: Props) {
 			{ id: 'feedback', title: 'Feedback / Comment', commentString: '', icon: <Chat color='accent.vivid' />, isPrivate: false },
 			{ id: 'review', title: 'Review', commentString: 'Your proposal is under review', icon: <Chat color='accent.vivid' />, isPrivate: false },
 			{ id: 'KYC', title: 'Send KYC Link', commentString: 'Please complete your KYC', icon: <Chat color='accent.vivid' />, isPrivate: true },
-			{ id: 'KYB', title: 'Send KYB Link', commentString: 'Please complete your KYB', icon: <Chat color='accent.vivid' />, isPrivate: true }
+			{ id: 'KYB', title: 'Send KYB Link', commentString: 'Please complete your KYB', icon: <Chat color='accent.vivid' />, isPrivate: true },
+			{ id: 'HelloSign', title: 'Send Document', commentString: 'Please sign the document', icon: <Chat color='accent.vivid' />, isPrivate: true }
 		],
 		reviewer: [
 			{ id: 'reviewAccept', title: 'Review & Accept', commentString: 'Your review has been accepted', icon: <CheckDouble color='accent.jeans' />, isPrivate: false },
@@ -43,6 +44,8 @@ function useProposalTags({ proposals }: Props) {
 			return { proposalTags: allTags['admin'].slice(0, 4) }
 		} else if(proposals.every(p => p.state === 'approved') && (grant?.workspace?.synapsKYC && grant?.workspace?.synapsId && proposals?.every(p => p.synapsId === null))) {
 			return { proposalTags: allTags['admin'].slice(5, 7).concat(allTags['admin'].slice(3, 4)) }
+		} else if(proposals.every(p => p.state === 'approved' && p.synapsId !== null) && (grant?.workspace?.docuSign && proposals?.every(p => p.helloSignId === null))) {
+			return { proposalTags: allTags['admin'].slice(7, 8).concat(allTags['admin'].slice(3, 4)) }
 		} else {
 			return { proposalTags: allTags['admin'].slice(3, 4) }
 		}

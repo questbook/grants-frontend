@@ -10,6 +10,7 @@ export const getWorkspaceDetailsQuery = gql`query getWorkspaceDetails($workspace
       logoIpfsHash
       coverImageIpfsHash
       synapsId
+      docuSign
       supportedNetworks
       safe {
         address
