@@ -63,6 +63,7 @@ export type FundBuilderContextType = {
 
   signerVerifiedState: SignerVerifiedState
   setSignerVerifiedState: (state: SignerVerifiedState) => void
+
 };
 
 export type ModalContextType = {
@@ -72,6 +73,8 @@ export type ModalContextType = {
   setIsSendAnUpdateModalOpen: (isOpen: boolean) => void
   isLinkYourMultisigModalOpen: boolean
   setIsLinkYourMultisigModalOpen: (isOpen: boolean) => void
+  isHelloSignModalOpen: boolean
+  setIsHelloSignModalOpen: (isOpen: boolean) => void
 };
 
 export type ReviewData = {

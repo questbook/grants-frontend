@@ -75,6 +75,8 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 				about: response?.workspace?.about,
 				bio: response?.workspace?.bio,
 				logoIpfsHash: response?.workspace?.logoIpfsHash,
+				synapsId: response?.workspace?.synapsId || '',
+				docuSign: response?.workspace?.docuSign || '',
 				socials: response?.workspace?.socials.map((social: any) => {
 					return {
 						name: social.name,

@@ -11,6 +11,7 @@ import {
 	Image,
 	Text,
 	Tooltip,
+	useToast,
 	useToken,
 } from '@chakra-ui/react'
 import autosize from 'autosize'
@@ -33,9 +34,10 @@ import QuickReplyButton from 'src/screens/dashboard/_components/QuickReplyButton
 import RoleTag from 'src/screens/dashboard/_components/RoleTag'
 import useAddComment from 'src/screens/dashboard/_hooks/useAddComment'
 import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
+import GetSynapsLink from 'src/screens/dashboard/_hooks/useSynaps'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { CommentType, TagType } from 'src/screens/dashboard/_utils/types'
-import { DashboardContext } from 'src/screens/dashboard/Context'
+import { DashboardContext, ModalContext } from 'src/screens/dashboard/Context'
 import { Roles } from 'src/types'
 
 function Discussions() {
@@ -55,17 +57,7 @@ function Discussions() {
 				</Text>
 
 				{
-					comments.length > 0 && (
-						<Divider
-							my={4}
-							color='gray.300'
-							height={1} />
-					)
-				}
-
-				{comments.map(renderComment)}
-				{
-					areCommentsLoading && (
+					(areCommentsLoading || isLoading) && (
 						<Button
 							my={4}
 							isLoading={areCommentsLoading}
@@ -75,6 +67,17 @@ function Discussions() {
 						/>
 					)
 				}
+
+				{
+					comments.length > 0 && (
+						<Divider
+							my={4}
+							color='gray.300'
+							height={1} />
+					)
+				}
+
+				{comments.map(renderComment)}
 				<Flex
 					display={scwAddress ? 'flex' : 'none'}
 					mt={4}
@@ -93,7 +96,6 @@ function Discussions() {
 					<Flex
 						w='100%'
 						ml={4}
-						overflowX='auto'
 						direction='column'>
 						<Flex align='center'>
 							<Text
@@ -141,23 +143,67 @@ function Discussions() {
 						>
 							<Flex gap={3}>
 								{
-									proposalTags?.map((tag, index) => {
+									!isLoading && proposalTags?.map((tag, index) => {
 										return (
 											<QuickReplyButton
 												zIndex={10}
-												id={tag.id as 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review'}
+												id={tag.id as 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review' | 'KYC' | 'KYB' | 'HelloSign'}
 												key={index}
 												tag={tag}
 												isSelected={tag.id === selectedTag?.id}
 												onClick={
-													() => {
-														if(selectedTag) {
+													async() => {
+														if(tag.id === 'KYC' || tag.id === 'KYB') {
+															setIsLoading(true)
+															const link = await getSynapsLink(tag.id, proposal?.id as string)
+															logger.info({ link }, 'SYNAPS LINK')
+															if((!link && !link?.includes('?session_id=')) || link?.includes('undefined')) {
+																setIsLoading(false)
+																await toast({
+																	title: 'Error generating Synaps link',
+																	description: 'Please check the Synaps configuration or contact support',
+																	status: 'error',
+																	duration: 5000,
+																	position: 'top-right',
+																})
+																return
+															}
+
+															if(link) {
+																setText(link)
+																setSelectedTag(tag)
+																setIsCommentPrivate(tag.isPrivate)
+																const ret = await addComment(
+																	`${tag.commentString} \n\n${link}`,
+																	true,
+																	selectedTag?.id,
+																)
+																if(ret) {
+																	setText('')
+																	setEditorState(EditorState.createEmpty())
+																	logger.info('Setting selected tag to undefined after posting comment')
+																	setSelectedTag(undefined)
+																	refreshComments(true)
+																	refreshProposals(true)
+																	setIsCommentPrivate(false)
+																	setStep(undefined)
+																	setIsLoading(false)
+																	localStorage.removeItem(
+																		`comment-${grant?.id}-${proposal?.id}`,
+																	)
+																}
+															}
+														} else if(selectedTag) {
 															logger.info('Deselecting tag')
 															setSelectedTag(undefined)
 															setText('')
 															setEditorState(EditorState.createEmpty())
+														} else if(tag.id === 'HelloSign') {
+															setIsHelloSignModalOpen(true)
 														} else {
 															logger.info('Selecting tag')
+															// if it is KYC or KYB then we need to call the function to send the link
+
 															setSelectedTag(tag)
 															setEditorState(EditorState.createWithContent(convertFromRaw(mdToDraftjs(tag.commentString))))
 														}
@@ -254,6 +300,8 @@ function Discussions() {
 												logger.info('Setting selected tag to undefined after posting comment')
 												setSelectedTag(undefined)
 												refreshComments(true)
+												refreshProposals(true)
+												setIsCommentPrivate(false)
 												setStep(undefined)
 												localStorage.removeItem(
 													`comment-${grant?.id}-${proposal?.id}`,
@@ -280,9 +328,7 @@ function Discussions() {
 						</Text>
 					)
 				}
-
 				<Box my={4} />
-
 			</Flex>
 		)
 	}
@@ -318,9 +364,10 @@ function Discussions() {
 					src={
 						comment.role === 'builder' || comment.role === 'community'
 							? getAvatar(false, comment.sender?.toLowerCase() ?? '')
-							: member?.profilePictureIpfsHash
-								? getUrlForIPFSHash(member.profilePictureIpfsHash)
-								: getAvatar(false, member?.actorId)
+							: comment.role === 'app' ? comment?.sender === 'helloSign' ? 'https://avatars.githubusercontent.com/u/25623857?s=280&v=4' : 'https://avatars.githubusercontent.com/u/63306624?s=280&v=4'
+								: member?.profilePictureIpfsHash
+									? getUrlForIPFSHash(member.profilePictureIpfsHash)
+									: getAvatar(false, member?.actorId)
 					}
 				/>
 				<Flex
@@ -433,14 +480,17 @@ function Discussions() {
 
 	const { scwAddress } = useContext(WebwalletContext)!
 	const { grant, role } = useContext(GrantsProgramContext)!
+	const toast = useToast()
 	logger.info({ grant, role }, 'GRANT AND ROLE')
 	const {
 		proposals,
 		selectedProposals,
 		commentMap,
 		refreshComments,
+		refreshProposals,
 		areCommentsLoading,
 	} = useContext(DashboardContext)!
+	const { setIsHelloSignModalOpen } = useContext(ModalContext)!
 
 	const [step, setStep] = useState<number>()
 	const [, setTransactionHash] = useState('')
@@ -448,7 +498,9 @@ function Discussions() {
 	const [selectedTag, setSelectedTag] = useState<TagType>()
 	const [text, setText] = useState<string>('')
 	const [editorState, setEditorState] = useState(() => EditorState.createEmpty())
+	const [isLoading, setIsLoading] = useState(false)
 
+	const { getSynapsLink } = GetSynapsLink()
 	const { addComment } = useAddComment({
 		setStep,
 		setTransactionHash,
@@ -528,6 +580,12 @@ function Discussions() {
 			return 'On clicking “Post” the builder will be notified to resubmit his proposal.'
 		case 'review':
 			return 'On clicking “Post” the proposal will be under review. Builder will be notified.'
+		case 'KYC':
+			return 'On clicking “Post” the builder will be notified to complete KYC.'
+		case 'KYB':
+			return 'On clicking “Post” the builder will be notified to complete KYB.'
+		case 'HelloSign':
+			return 'On clicking “Post” the builder will be notified to sign the document.'
 		default:
 			return ''
 		}
@@ -545,6 +603,8 @@ function Discussions() {
 			} else {
 				return 'No name found'
 			}
+		} else if(comment.role === 'app') {
+			return comment.sender
 		} else {
 			logger.info(
 				{ comment: comment?.sender, proposalId: proposal?.applicantId },
@@ -590,6 +650,18 @@ function Discussions() {
 		review: {
 			title: 'review',
 			bg: jeans
+		},
+		KYC: {
+			title: 'send KYC link to',
+			bg: jeans
+		},
+		KYB: {
+			title: 'send KYB link to',
+			bg: jeans
+		},
+		HelloSign: {
+			title: 'send document to',
+			bg: azure
 		}
 	}
 

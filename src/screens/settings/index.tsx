@@ -22,7 +22,9 @@ import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validation
 import { GrantsProgramContext } from 'src/pages/_app'
 import AddMemberButton from 'src/screens/settings/_components/AddMemberButton'
 import AdminTable from 'src/screens/settings/_components/AdminTable'
+import DocuSignModal from 'src/screens/settings/_components/docuSignModal'
 import { DropdownIcon } from 'src/screens/settings/_components/DropdownIcon'
+import SynapsModel from 'src/screens/settings/_components/SynapsModel'
 import useUpdateGrantProgram from 'src/screens/settings/_hooks/useUpdateGrantProgram'
 import { WorkspaceMembers } from 'src/screens/settings/_utils/types'
 import { SettingsFormContext, SettingsFormProvider } from 'src/screens/settings/Context'
@@ -301,7 +303,111 @@ function Settings() {
 										</Box>
 
 									</Flex>
+									<Flex
+										direction='column'
+										gap={4.5}
+									>
+										<Flex
+											gap={2}
+											alignItems='center'
+										>
+											<Text
+												variant='body'
+												fontWeight='500'
+											>
+												Third Party Apps
+											</Text>
+											<Spacer />
+										</Flex>
+										<Flex gap={6}>
+											<Box
+												border='1px solid #E7E4DD'
+												p={4}
+											>
+												<Flex
+													gap={2}
+													alignItems='center'
+												>
+													<Flex
+													>
+														<Image
+															src='https://avatars.githubusercontent.com/u/63306624?s=280&v=4'
+															boxSize='20' />
+													</Flex>
 
+													<Flex
+														direction='column'
+														gap={2}
+														onClick={() => setIsLinkYourSynapsModalOpen(true)}
+														cursor='pointer'
+													>
+														<Text
+															variant='title'
+															fontWeight='500'
+															cursor='pointer'
+														>
+															Builder KYC
+														</Text>
+														<Text
+															variant='subtitle'
+														>
+															Initiate and Verify KYC Status
+														</Text>
+														<Text
+															variant='subtitle'
+														>
+															{grantProgramData?.synapsId ? 'Update ' : 'Connect '}
+															 your Synaps account
+
+														</Text>
+													</Flex>
+												</Flex>
+											</Box>
+											<Box
+												border='1px solid #E7E4DD'
+												p={4}
+											>
+												<Flex
+													gap={2}
+													alignItems='center'
+												>
+													<Flex
+													>
+														<Image
+															src='https://avatars.githubusercontent.com/u/25623857?s=280&v=4'
+															boxSize='20' />
+													</Flex>
+
+													<Flex
+														direction='column'
+														gap={2}
+														onClick={() => setIsLinkYourDocuSignModalOpen(true)}
+														cursor='pointer'
+													>
+														<Text
+															variant='title'
+															fontWeight='500'
+															cursor='pointer'
+														>
+															HelloSign (DocuSign)
+														</Text>
+														<Text
+															variant='subtitle'
+														>
+															Initiate and Verify DocuSign Status
+														</Text>
+														<Text
+															variant='subtitle'
+														>
+															{grantProgramData?.docuSign ? 'Update ' : 'Connect '}
+															 your DocuSign account
+
+														</Text>
+													</Flex>
+												</Flex>
+											</Box>
+										</Flex>
+									</Flex>
 									{/* Members Section */}
 									<Flex
 										direction='column'
@@ -421,6 +527,14 @@ function Settings() {
 					isOpen={isLinkYourMultisigModalOpen}
 					onClose={() => setIsLinkYourMultisigModalOpen(false)}
 				/>
+				<SynapsModel
+					isOpen={isLinkYourSynapsModalOpen}
+					onClose={() => setIsLinkYourSynapsModalOpen(false)}
+				/>
+				<DocuSignModal
+					isOpen={isLinkYourDocuSignModalOpen}
+					onClose={() => setIsLinkYourDocuSignModalOpen(false)}
+				/>
 			</Flex>
 		)
 	}
@@ -446,6 +560,8 @@ function Settings() {
 	const [currentStepIndex, setCurrentStepIndex] = useState<number| undefined>()
 	const [openConfirmationModal, setOpenConfirmationModal] = useState<WorkspaceMembers[number]>()
 	const [isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen] = useState(false)
+	const [isLinkYourSynapsModalOpen, setIsLinkYourSynapsModalOpen] = useState(false)
+	const [isLinkYourDocuSignModalOpen, setIsLinkYourDocuSignModalOpen] = useState(false)
 	const [revokeTxHash, setRevokeTxHash] = useState<string>('')
 
 	const [imageChanged, setImageChanged] = useState(false)

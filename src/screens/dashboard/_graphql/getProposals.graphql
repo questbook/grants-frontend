@@ -9,6 +9,7 @@ query getProposals($first: Int, $skip: Int, $grantID: String!) {
     applicantId
     applicantPublicKey
     state
+    synapsId
     fields {
       id:_id
       values {
@@ -16,6 +17,7 @@ query getProposals($first: Int, $skip: Int, $grantID: String!) {
         value
       }
     }
+    helloSignId
     pii {
       id:_id
       manager {

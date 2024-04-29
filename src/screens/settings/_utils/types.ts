@@ -38,5 +38,7 @@ export type GrantProgramForm = {
     about: string
     bio: string
     socials?: SocialLinks[]
+    synapsId?: string
+    docuSign?: string
     logoIpfsHash: string
 }

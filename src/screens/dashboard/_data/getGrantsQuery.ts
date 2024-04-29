@@ -3,7 +3,6 @@ export const getGrantsQuery = gql`query getGrant($grantId: String!, $actorId: St
     grant(_id: $grantId) {
       id: _id
       title
-      subgrant
       acceptingApplications
       numberOfApplications
       numberOfApplicationsSelected
@@ -57,6 +56,9 @@ export const getGrantsQuery = gql`query getGrant($grantId: String!, $actorId: St
         ownerId
         logoIpfsHash
         title
+        synapsId
+        synapsKYC
+        docuSign
         supportedNetworks
         safe {
           id: _id
