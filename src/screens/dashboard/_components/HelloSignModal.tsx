@@ -147,8 +147,9 @@ function HelloSignModal({
 								<Button
 									fontWeight='500'
 									mt={8}
+									p={2}
+									bg={signer.isHidden ? '' : 'gray.200'}
 									justifyContent='space-between'
-									variant={signer.isHidden ? 'link' : 'outline'}
 									w='100%'
 									rightIcon={signer.isHidden ? <ChevronDownIcon /> : <ChevronUpIcon />}
 									onClick={

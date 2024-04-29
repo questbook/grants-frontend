@@ -1,6 +1,6 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import React from 'react'
-import { Box, Button, Container, Flex, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Spacer, Text, useMediaQuery } from '@chakra-ui/react'
+import { Box, Button, Container, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Spacer, Text, useMediaQuery } from '@chakra-ui/react'
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
