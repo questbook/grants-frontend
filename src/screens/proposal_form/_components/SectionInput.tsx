@@ -19,7 +19,7 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 				<Flex
 					w='100%'
 					direction={['column', 'row']}
-					align='stretch'>
+					align={props?.type === 'textarea' ? 'stretch' : 'end'}>
 					<Text
 						mr={8}
 						pb={2}

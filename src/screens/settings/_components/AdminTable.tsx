@@ -131,8 +131,8 @@ function AdminTable() {
 						{
 							row.synapsStatus?.length > 0 ? (
 								<StateButton
-									state={row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed' ? 'approved' : 'submitted'}
-									title={row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed' ? `Verified - ${row?.synapsType}` : `Pending - ${row?.synapsType}`}
+									state={row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed' ? 'approved' : row?.synapsStatus === 'rejected' ? 'rejected' : 'submitted'}
+									title={row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed' ? `Verified - ${row?.synapsType}` : row?.synapsStatus === 'rejected' ? `Rejected - ${row?.synapsType}` : `Pending - ${row?.synapsType}`}
 								/>
 							)
 								: row?.state === 'approved' ? (
