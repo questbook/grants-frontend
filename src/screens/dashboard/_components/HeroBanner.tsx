@@ -195,7 +195,9 @@ function HeroBannerBox({
 						color='white'>
 						{title}
 					</Text>
-					<Button
+					{
+						programDetails && (
+							<Button
 				 borderRadius='3xl'
 				 bgColor='#323639'
 				 size='sm'
@@ -206,8 +208,10 @@ function HeroBannerBox({
 				 onClick={() => window.open(programDetails, '_blank')}
 				 rightIcon={<Image src='/v2/icons/projectDetails.svg' />}
 				 >
-						Program Details
-					</Button>
+								Program Details
+							</Button>
+						)
+					}
 				</Flex>
 				<Flex
 					w={isMobile ? '100%' : '80%'}

@@ -106,7 +106,11 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						>
 							{isOpen ? 'Open' : 'Closed'}
 						</Text> */}
-							<Button
+
+
+							{
+								grant?.link && (
+									<Button
 				 borderRadius='8px'
 				 bgColor='#F1EEE8'
 				 size='sm'
@@ -114,16 +118,17 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 				 textColor='#53514F'
 				 fontSize='14px'
 				 onClick={
-									() => {
-										/* @ts-ignore */
-										window.open(grant?.link, '_blank')
-									}
-								}
+											() => {
+												window.open(grant?.link, '_blank')
+											}
+										}
 				 rightIcon={<ArrowForwardIcon />}
 
 				 >
-								Program Details
-							</Button>
+										Program Details
+									</Button>
+								)
+							}
 							{
 								role && (
 									<Text
