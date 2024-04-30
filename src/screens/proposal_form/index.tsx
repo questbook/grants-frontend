@@ -1118,7 +1118,7 @@ There is no specific industry vertical targeted and the program is open to all t
 							(
 								<SectionInput
 									label='Does your project have a legal entity? If so, what is the legal entity name?'
-									placeholder='Does your project have a legal entity? If so, what is the legal entity name?'
+									placeholder=''
 									value={findCustomField(form, 'Does your project have a legal entity? If so, what is the legal entity name?').value}
 									onChange={
 										(e) => {
