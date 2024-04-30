@@ -384,8 +384,8 @@ function HelloSignModal({
 						name: string
 						}) => ({
 						role: signer.name,
-						name: signer?.name === 'Grantee' ? getFieldString(decryptedProposal, 'applicantName') as string : '',
-						email: signer?.name === 'Grantee' ? getFieldString(decryptedProposal, 'applicantEmail') as string : '',
+						name: signer?.name === 'Grantee' ? getFieldString(decryptedProposal, 'applicantName') as string : signer?.name === 'Director' ? 'Alexey Gribov' : '',
+						email: signer?.name === 'Grantee' ? getFieldString(decryptedProposal, 'applicantEmail') as string : signer?.name === 'Director' ? 'alexey@axelar.foundation' : '',
 						isHidden: false,
 					})))
 
