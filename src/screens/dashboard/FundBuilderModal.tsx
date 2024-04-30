@@ -74,12 +74,14 @@ function FundBuilderModal({
 										w='100%'
 										justify='center'
 
-										align='start'>
+										align='center'>
+
 
 										<Text
 										>
 											{grant?.reward?.token?.label !== 'USD' ? '' : '$'}
 										</Text>
+
 
 										<FlushedInput
 											borderBottom='2px solid'
@@ -102,6 +104,14 @@ function FundBuilderModal({
 												}
 											}
 											placeholder='0' />
+										{
+											grant?.reward?.token?.label !== 'USD' && (
+												<Text>
+													{' '}
+													{selectedTokenInfo?.tokenName}
+												</Text>
+											)
+										}
 									</Flex>
 									{
 										grant?.reward?.token?.label !== 'USD' && amounts?.[0] > 0 && selectedTokenInfo?.fiatConversion ? (
@@ -365,12 +375,11 @@ function FundBuilderModal({
 					}
 
 					const { send } = cosmos.bank.v1beta1.MessageComposer.withTypeUrl
-					const amountFormated = (amounts?.[0] / (selectedTokenInfo?.fiatConversion || 1.19)).toFixed(2)
 					const msg = send({
 					  amount: [
 							{
 						  denom: coin.base,
-						  amount: String(Number(amountFormated) * Math.pow(10, parseInt(coin.base) || 6)),
+						  amount: String(Number(amounts?.[0]) * Math.pow(10, parseInt(coin.base) || 6)),
 
 							},
 					  ],

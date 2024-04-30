@@ -15,10 +15,18 @@ export interface TokenDetailsInterface {
     fiatConversion: number
 }
 const getTokenUSDonDate = async(tokenName: string) => {
-	const url = `https://api.coingecko.com/api/v3/simple/price?ids=${tokenName}&vs_currencies=usd`
-	const tokenUsdValue = parseFloat((await axios.get(url)).data[tokenName].usd)
+	try {
+		const url = `https://api.coingecko.com/api/v3/simple/price?ids=${tokenName}&vs_currencies=usd`
+		const tokenUsdValue = parseFloat((await axios.get(url)).data[tokenName].usd)
+		localStorage.setItem(`tokenUsdValue-${tokenName}`, tokenUsdValue.toString())
+		return tokenUsdValue
+	} catch(e) {
+		if(localStorage.getItem(`tokenUsdValue-${tokenName}`)) {
+			return parseFloat(localStorage.getItem(`tokenUsdValue-${tokenName}`) as string)
+		}
 
-	return tokenUsdValue
+		return 0
+	}
 }
 
 const getToken = async() => {
@@ -34,7 +42,7 @@ const getToken = async() => {
 		usdValueAmount: 0,
 		mintAddress: '0x0000000',
 		info: {
-			decimals: 9,
+			decimals: 18,
 			tokenAddress: TONTokenId,
 			fiatConversion: tonUsdRate
 		},
