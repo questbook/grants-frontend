@@ -19,6 +19,7 @@ export const getProposalsQuery = gql`query getProposals($first: Int, $skip: Int,
         }
       }
       helloSignId
+      helloSignStatus
       pii {
         id:_id
         manager {
