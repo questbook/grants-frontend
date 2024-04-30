@@ -147,10 +147,9 @@ function HelloSignModal({
 								<Button
 									fontWeight='500'
 									mt={8}
-									justifyContent='space-between'
 									p={2}
 									bg={signer.isHidden ? '' : 'gray.200'}
-									variant={signer.isHidden ? 'link' : 'link'}
+									justifyContent='space-between'
 									w='100%'
 									rightIcon={signer.isHidden ? <ChevronDownIcon /> : <ChevronUpIcon />}
 									onClick={
@@ -162,7 +161,7 @@ function HelloSignModal({
 									}
 								>
 									{' '}
-									{signer.role === 'Subhash' ? 'Grantor' : signer.role}
+									{signer.role}
 									{' '}
 									Details
 								</Button>
@@ -180,7 +179,7 @@ function HelloSignModal({
 													textAlign='left'
 													fontWeight='500'
 												>
-													{signer.role === 'Subhash' ? 'Grantor' : signer.role}
+													{signer.role}
 													{' '}
 													Email:
 												</Text>
@@ -190,7 +189,7 @@ function HelloSignModal({
 													flexProps={{ w: '100%' }}
 
 													textAlign='left'
-													placeholder='Enter Builder Email'
+													placeholder={`Enter ${signer.role} Email`}
 													value={signer?.email}
 													onChange={
 														(e) => {
@@ -212,7 +211,7 @@ function HelloSignModal({
 													textAlign='left'
 													fontWeight='500'
 												>
-													{signer.role === 'Subhash' ? 'Grantor' : signer.role}
+													{signer.role}
 													{' '}
 													Name:
 												</Text>
@@ -222,7 +221,7 @@ function HelloSignModal({
 													flexProps={{ w: '100%' }}
 
 													textAlign='left'
-													placeholder='Enter Builder Name'
+													placeholder={`Enter ${signer.role} Name`}
 													value={signer?.name}
 													onChange={
 														(e) => {
@@ -246,7 +245,7 @@ function HelloSignModal({
 						mt={8}
 						variant='solid'
 						isLoading={loader}
-						isDisabled={loader || !email || !name || !selectedTemplated || !agreementTitle}
+						isDisabled={loader || !email || !name || !selectedTemplated || !agreementTitle || isDisabled}
 						onClick={
 							async() => {
 								setLoader(true)
@@ -296,6 +295,7 @@ function HelloSignModal({
 			</Modal>
 		)
 	}
+
 
 	const {
 		proposals,
@@ -384,9 +384,9 @@ function HelloSignModal({
 						name: string
 						}) => ({
 						role: signer.name,
-						name: signer?.name === 'Grantee' ? getFieldString(decryptedProposal, 'applicantName') as string : signer?.name === 'Subhash' ? 'Subhash Karri' : '',
-						email: signer?.name === 'Grantee' ? getFieldString(decryptedProposal, 'applicantEmail') as string : signer?.name === 'Subhash' ? 'Subhash@creatoros.co' : '',
-						isHidden: signer?.name !== 'Grantee',
+						name: signer?.name === 'Grantee' ? getFieldString(decryptedProposal, 'applicantName') as string : '',
+						email: signer?.name === 'Grantee' ? getFieldString(decryptedProposal, 'applicantEmail') as string : '',
+						isHidden: false,
 					})))
 
 
@@ -399,15 +399,20 @@ function HelloSignModal({
 
 	useEffect(() => {
 		if(proposal?.helloSignId === null && grant?.workspace?.docuSign && proposal?.synapsId !== null) {
-			getHelloSignTemplates().then(async(data) => {
-				// filter and select only _arbitrum template
-				const filter = await data?.filter((doc: {
-                title: string
-                }) => doc.title.includes('_Arbitrum Grants (Domain)'))
-				setDocuSign(filter)
+			getHelloSignTemplates().then((data) => {
+				setDocuSign(data)
 			})
 		}
 	}, [proposal])
+
+	const isDisabled = useMemo(() => {
+		logger.info({ signers }, 'HelloSign Modal')
+		for(const signer of signers) {
+			if(signer.email.length === 0 || signer.name.length === 0) {
+				return true
+			}
+		}
+	}, [signers, selectedTemplated])
 
 
 	// const customToast = useToast()
