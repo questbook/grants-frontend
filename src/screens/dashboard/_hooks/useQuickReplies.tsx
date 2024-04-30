@@ -34,9 +34,10 @@ function useProposalTags({ proposals }: Props) {
 
 	const { role, grant } = useContext(GrantsProgramContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
-
 	if(role === 'admin') {
-		if(proposals.every(p => p.state === 'submitted')) {
+		if((proposals.every(p => p.state === 'submitted')) && proposals.every(p => p.applicationReviewers?.find(r => (r.status === null || r.status === 'pending') && r.member.actorId?.toLowerCase() === scwAddress?.toLowerCase()) && !p.doneReviewerAddresses?.includes(scwAddress!))) {
+			return { proposalTags: allTags['reviewer'].slice(0, 2).concat(allTags['admin'].slice(2, 4)) }
+		} else if(proposals.every(p => p.state === 'submitted')) {
 			return { proposalTags: allTags['admin']?.slice(0, 5) }
 		} else if(proposals.every(p => p.state === 'resubmit')) {
 			return { proposalTags: allTags['admin'].slice(0, 2).concat(allTags['admin'].slice(3)) }
@@ -50,11 +51,11 @@ function useProposalTags({ proposals }: Props) {
 			return { proposalTags: allTags['admin'].slice(3, 4) }
 		}
 	} else if(role === 'reviewer') {
-		if(proposals.every(p => p.state !== 'approved' && p.state !== 'rejected') && proposals.every(p => p.applicationReviewers?.find(r => r.member.actorId?.toLowerCase() === scwAddress?.toLowerCase())?.status === 'pending')) {
+		if(proposals.every(p => p.state !== 'approved' && p.state !== 'rejected') && proposals.every(p => p.applicationReviewers?.find(r => (r.status === null || r.status === 'pending') && r.member.actorId?.toLowerCase() === scwAddress?.toLowerCase()) && !p.doneReviewerAddresses?.includes(scwAddress!))) {
 			return proposals?.every(p => p.state === 'resubmit') ? { proposalTags: allTags['reviewer'].slice(0, 2).concat(allTags['reviewer'].slice(2)) } : { proposalTags: allTags['reviewer'].slice(0, 2).concat(allTags['admin'].slice(2, 4)) }
 		} else if(proposals.every(p => p.state === 'submitted') &&
 		proposals?.every(p => p.applicationReviewers?.find(r => r.member.actorId?.toLowerCase() === scwAddress?.toLowerCase())) &&
-		!proposals.every(p => p.applicationReviewers?.find(r => r.status === 'rejected' || r.status === 'pending'))) {
+		proposals.every(p => p.applicationReviewers?.find(r => r.status !== 'rejected' && r.status !== 'pending') && p.doneReviewerAddresses.length === p.applicationReviewers.length)) {
 			return { proposalTags: allTags['admin'].slice(0, 2).concat(allTags['admin'].slice(3, 4)) }
 		} else {
 			return { proposalTags: allTags['community'] }
