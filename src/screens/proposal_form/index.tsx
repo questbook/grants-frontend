@@ -385,7 +385,7 @@ function ProposalForm() {
 						{
 							containsField(grant, 'applicantAddress') && (
 								<SectionInput
-									label='Wallet Address'
+									label='Axelar Wallet Address'
 									placeholder='Wallet to receive funds on Axelar'
 									value={findField(form, 'applicantAddress').value}
 									onChange={

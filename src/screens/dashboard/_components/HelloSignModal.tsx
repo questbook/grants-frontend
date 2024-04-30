@@ -189,7 +189,7 @@ function HelloSignModal({
 													flexProps={{ w: '100%' }}
 
 													textAlign='left'
-													placeholder='Enter Builder Email'
+													placeholder={`Enter ${signer.role} Email`}
 													value={signer?.email}
 													onChange={
 														(e) => {
@@ -221,7 +221,7 @@ function HelloSignModal({
 													flexProps={{ w: '100%' }}
 
 													textAlign='left'
-													placeholder='Enter Builder Name'
+													placeholder={`Enter ${signer.role} Name`}
 													value={signer?.name}
 													onChange={
 														(e) => {
@@ -245,7 +245,7 @@ function HelloSignModal({
 						mt={8}
 						variant='solid'
 						isLoading={loader}
-						isDisabled={loader || !email || !name || !selectedTemplated || !agreementTitle}
+						isDisabled={loader || !email || !name || !selectedTemplated || !agreementTitle || isDisabled}
 						onClick={
 							async() => {
 								setLoader(true)
@@ -295,6 +295,7 @@ function HelloSignModal({
 			</Modal>
 		)
 	}
+
 
 	const {
 		proposals,
@@ -385,7 +386,7 @@ function HelloSignModal({
 						role: signer.name,
 						name: signer?.name === 'Grantee' ? getFieldString(decryptedProposal, 'applicantName') as string : '',
 						email: signer?.name === 'Grantee' ? getFieldString(decryptedProposal, 'applicantEmail') as string : '',
-						isHidden: signer?.name !== 'Grantee',
+						isHidden: false,
 					})))
 
 
@@ -403,6 +404,15 @@ function HelloSignModal({
 			})
 		}
 	}, [proposal])
+
+	const isDisabled = useMemo(() => {
+		logger.info({ signers }, 'HelloSign Modal')
+		for(const signer of signers) {
+			if(signer.email.length === 0 || signer.name.length === 0) {
+				return true
+			}
+		}
+	}, [signers, selectedTemplated])
 
 
 	// const customToast = useToast()
