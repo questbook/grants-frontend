@@ -148,18 +148,18 @@ function AdminTable() {
 					<Td
 						w='5%'
 						cursor='pointer'
-						// onClick={
-						// 	() => {
-						// 		if(row?.state === 'approved') {
-						// 			setShowKYCStatusUpdateModal({
-						// 				...showKYCStatusUpdateModal,
-						// 				isOpen: true,
-						// 				grantId: row.id,
-						// 				type: 'hellosign'
-						// 			})
-						// 		}
-						// 	}
-						// }
+						onClick={
+							() => {
+								if(row?.state === 'approved') {
+									setShowKYCStatusUpdateModal({
+										...showKYCStatusUpdateModal,
+										isOpen: true,
+										grantId: row.id,
+										type: 'hellosign'
+									})
+								}
+							}
+						}
 					>
 						{
 							row.helloSignStatus?.length > 0 ? (
