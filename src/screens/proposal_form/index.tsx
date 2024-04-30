@@ -1114,6 +1114,21 @@ There is no specific industry vertical targeted and the program is open to all t
 						}
 
 						{
+							containsCustomField(grant, 'Does your project have a legal entity? If so, what is the legal entity name?') &&
+							(
+								<SectionInput
+									label='Does your project have a legal entity? If so, what is the legal entity name?'
+									placeholder='Does your project have a legal entity? If so, what is the legal entity name?'
+									value={findCustomField(form, 'Does your project have a legal entity? If so, what is the legal entity name?').value}
+									onChange={
+										(e) => {
+											onChange(e, findCustomField(form, 'Does your project have a legal entity? If so, what is the legal entity name?').id)
+										}
+									} />
+							)
+						}
+
+						{
 							containsCustomField(grant, 'Is there anything else you’d like to share?') && (
 								<SectionInput
 									label='Is there anything else you’d like to share?'
