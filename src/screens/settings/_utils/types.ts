@@ -26,6 +26,7 @@ export type adminTable = {
     name: { values: { value: string }[] }[]
     state: string
     synapsStatus: string
+    synapsType: string
     helloSignStatus: string
     milestones: { id: string, title: string, amount: number, amountPaid: number, milestoneState: string }[]
     notes: string

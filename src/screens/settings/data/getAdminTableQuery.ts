@@ -7,6 +7,7 @@ export const getAdminTableQuery = gql`query adminTable($id: String!){
         state
         synapsStatus
         helloSignStatus
+        synapsType
         notes
         milestones{
           id: _id

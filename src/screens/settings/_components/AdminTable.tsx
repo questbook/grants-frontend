@@ -54,6 +54,7 @@ function AdminTable() {
 					'Proposal Name': row.name[0].values[0].value,
 					'Proposal Status': row.state,
 					'KYC/KYB Status': row?.state === 'approved' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? 'Verified' : 'Pending' : '',
+					'Synaps Type': row?.synapsStatus !== '' ? row?.synapsType : '',
 					'Grant Agreement Status': row?.state === 'approved' ? row?.helloSignStatus === 'verified' ? 'Verified' : 'Pending' : '',
 					'Notes': row?.notes,
 					...milestones?.reduce((acc, curr) => {
@@ -131,7 +132,7 @@ function AdminTable() {
 							row.synapsStatus?.length > 0 ? (
 								<StateButton
 									state={row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed' ? 'approved' : 'submitted'}
-									title={row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed' ? 'Verified' : 'Pending'}
+									title={row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed' ? `Verified - ${row?.synapsType}` : `Pending - ${row?.synapsType}`}
 								/>
 							)
 								: row?.state === 'approved' ? (
