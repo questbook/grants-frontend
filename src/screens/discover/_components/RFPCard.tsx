@@ -55,6 +55,10 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						return
 					}
 
+					if(e.target.toString() === '[object HTMLButtonElement]') {
+						return
+					}
+
 					if(!chainId) {
 						return
 					}
@@ -71,7 +75,8 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 					router.push({
 						pathname: '/dashboard/',
 						query: params,
-					})
+					// eslint-disable-next-line camelcase
+					}, undefined, { shallow: true, unstable_skipClientCache: true })
 				}
 			}>
 			<Flex
