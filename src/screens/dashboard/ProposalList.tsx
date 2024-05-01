@@ -203,6 +203,17 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 				}
 				{role === 'community' && proposalCount > 0 && (isMobile ? <EmptyCard /> : '') }
 				{proposalCount === 0 && <Empty />}
+				{
+					(role === 'admin' || role === 'reviewer') ? proposalCount !== filteredProposals.length && (
+						<Button
+							my={4}
+							isLoading={true}
+							loadingText='Loading Proposals, please wait.'
+							variant='link'
+							cursor='default'
+						/>
+					) : ''
+				}
 			</Flex>
 		</Flex>
 	)

@@ -80,7 +80,8 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 					router.push({
 						pathname: '/dashboard/',
 						query: params,
-					}, undefined, { shallow: true })
+					// eslint-disable-next-line camelcase
+					}, undefined, { shallow: true, unstable_skipClientCache: true })
 				}
 			}>
 			<Flex
