@@ -689,6 +689,18 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		}
 	}, [grantId, chainId, scwAddress, webwallet, proposalId])
 
+	const refreshAllProposals = useCallback(async() => {
+		if(role === 'admin' || role === 'reviewer') {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			getProposals().then((proposals: any) => {
+				getFetchBackgroundProposals(proposals ?? [])
+			})
+		} else {
+			getApplicantProposals().then((r) => logger.info({ r }, 'Get applicant proposals result'))
+
+		}
+	}, [grantId, chainId, scwAddress, webwallet, role])
+
 	// useEffect(() => {
 	// 	logger.info(proposals.length > 0, 'test')
 	// 	if(!proposals.map((p) => p.id).includes(proposalId as string)) {
@@ -803,7 +815,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 					},
 					refreshProposals: (refresh: boolean) => {
 						if(refresh) {
-							getProposals()
+							refreshAllProposals()
 						}
 					},
 					filterState,
