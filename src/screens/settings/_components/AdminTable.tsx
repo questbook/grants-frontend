@@ -22,7 +22,7 @@ import { SettingsFormContext } from 'src/screens/settings/Context'
 
 function AdminTable() {
 
-	const TableHeader = ['No', 'Proposal Name', 'Proposal Status', 'KYC Status', 'Grant Agreement Status', 'Milestone', 'Funding Status', 'Notes']
+	const TableHeader = ['No', 'Proposal Name', 'Proposal Status', 'KYC/KYB Status', 'Grant Agreement Status', 'Milestone', 'Funding Status', 'Notes']
 
 	const buildComponent = () => {
 
@@ -53,7 +53,8 @@ function AdminTable() {
 					'No': index + 1,
 					'Proposal Name': row.name[0].values[0].value,
 					'Proposal Status': row.state,
-					'KYC Status': row?.state === 'approved' ? row?.synapsStatus === 'verified' ? 'Verified' : 'Pending' : '',
+					'KYC/KYB Status': row?.state === 'approved' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? 'Verified' : 'Pending' : '',
+					'Synaps Type': row?.synapsStatus !== '' ? row?.synapsType : '',
 					'Grant Agreement Status': row?.state === 'approved' ? row?.helloSignStatus === 'verified' ? 'Verified' : 'Pending' : '',
 					'Notes': row?.notes,
 					...milestones?.reduce((acc, curr) => {
@@ -114,24 +115,24 @@ function AdminTable() {
 					<Td
 						w='5%'
 						cursor='pointer'
-						onClick={
-							() => {
-								if(row?.state === 'approved') {
-									setShowKYCStatusUpdateModal({
-										...showKYCStatusUpdateModal,
-										isOpen: true,
-										grantId: row.id,
-										type: 'kyc'
-									})
-								}
-							}
-						}
+						// onClick={
+						// 	() => {
+						// 		if(row?.state === 'approved') {
+						// 			setShowKYCStatusUpdateModal({
+						// 				...showKYCStatusUpdateModal,
+						// 				isOpen: true,
+						// 				grantId: row.id,
+						// 				type: 'kyc'
+						// 			})
+						// 		}
+						// 	}
+						// }
 					>
 						{
 							row.synapsStatus?.length > 0 ? (
 								<StateButton
-									state={row?.synapsStatus === 'verified' ? 'approved' : 'submitted'}
-									title={row?.synapsStatus === 'verified' ? 'Verified' : 'Pending'}
+									state={row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed' ? 'approved' : row?.synapsStatus === 'rejected' ? 'rejected' : 'submitted'}
+									title={row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed' ? `Verified - ${row?.synapsType}` : row?.synapsStatus === 'rejected' ? `Rejected - ${row?.synapsType}` : `Pending - ${row?.synapsType}`}
 								/>
 							)
 								: row?.state === 'approved' ? (
