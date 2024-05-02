@@ -196,6 +196,17 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 					})
 				}
 				{proposalCount === 0 && <Empty />}
+				{
+					(proposalCount !== proposals.length - 1) && (
+						<Button
+							my={4}
+							isLoading={true}
+							loadingText='Loading Proposals, please wait.'
+							variant='link'
+							cursor='default'
+						/>
+					)
+				}
 			</Flex>
 		</Flex>
 	)

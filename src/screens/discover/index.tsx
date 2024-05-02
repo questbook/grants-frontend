@@ -438,7 +438,7 @@ function Discover() {
 										(sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
 											const sectionName = Object.keys(section)[0]
 
-											const grants = section[sectionName].grants.filter((grant) => grant.title.toLowerCase().includes(filterGrantName.trim().toLowerCase())).map(grant => ({ ...grant, role: 'community' as Roles }))
+											const grants = section[sectionName].grants.filter((grant) => (grant.title.toLowerCase().includes(filterGrantName.trim().toLowerCase()) && (grant.title?.includes('2.0')))).map(grant => ({ ...grant, role: 'community' as Roles }))
 											return (
 												<Flex
 													my={6}
@@ -752,6 +752,183 @@ function Discover() {
 								<Flex
 									direction='column'
 									px={isMobile ? 0 : 4}
+									w='100%'
+								>
+
+
+									{/* </Box> */}
+									<Box
+										display={sectionGrants?.length ? '' : 'none'}
+									>
+										<Flex
+											justifyContent='space-between'
+											alignItems='center'
+											gap={2}
+											w='100%'>
+											<Text
+												variant='heading3'
+												fontWeight='700'
+												w='100%'
+												fontSize='24px'
+												lineHeight='31.2px'
+											>
+												Arbitrum DAO
+											</Text>
+
+										</Flex>
+										{
+											(sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
+												const sectionName = Object.keys(section)[0]
+
+												const grants = section[sectionName].grants.filter((grant) => (grant.title.toLowerCase().includes(filterGrantName.trim().toLowerCase()) && (!grant.title?.includes('2.0')))).map(grant => ({ ...grant, role: 'community' as Roles }))
+												return (
+													<Flex
+														my={6}
+														key={index}
+														w='100%'
+														gap='46px'
+													>
+
+														<Flex flexGrow={1}>
+															<RFPGrid
+																type='all'
+																grants={grants}
+																unsavedDomainVisibleState={unsavedDomainState}
+																onDaoVisibilityUpdate={onDaoVisibilityUpdate}
+																onSectionGrantsUpdate={onGrantsSectionUpdate}
+																changedVisibilityState={changedVisibility}
+															/>
+														</Flex>
+														{
+															!isMobile &&
+															(
+																<Flex
+																	direction='column'
+																	w='408px'
+																	h='auto'
+																	gap={5}
+
+																>
+																	<Box
+																		w='100%'
+																		background='white'
+																		p='16px 16px 24px 16px'
+																		h='100%'
+																		// h='13'
+																		position='relative'
+																		borderRadius='8px'
+																		border='1px solid #EFEEEB'
+																	>
+																		{' '}
+																		<Text
+																			fontWeight='600'
+																			lineHeight='23.4px'
+																			fontSize='18px'
+																			color='black.100'
+																			px={3}
+																		>
+																			About
+																		</Text>
+
+																		<Text
+																			fontSize='16px'
+																			fontWeight='500'
+																			lineHeight='20.16px'
+																			py={1.5}
+																			px={3}
+																			textAlign='match-parent'
+																			color='#7E7E8F'
+																		>
+																			The Arbitrum grants, administered via DDA by Questbook and 4 domain allocators, went live on the 1st of May with a grants budget of $4M spread across four domains. The Questbook Arbitrum Grants program is useful for anyone developing in domain specific projects on top of Arbitrum
+																		</Text>
+																		<Text
+																			fontWeight='600'
+																			lineHeight='23.4px'
+																			fontSize='18px'
+																			color='black.100'
+																			pb={2}
+																			px={3}
+																		>
+																			Program Manager
+																		</Text>
+																		<Box pb={2}>
+																			<UserCard
+																				image='0x0125215125'
+																				title='Srijith'
+																				twitter='Srijith_Padmesh'
+																				telegram='Srijith13' />
+																		</Box>
+
+																		<Text
+																			fontWeight='600'
+																			lineHeight='23.4px'
+																			fontSize='18px'
+
+																			color='black.100'
+																			pb={2}
+																			px={3}
+																		>
+																			Domain Allocators
+																		</Text>
+																		<Box
+																		>
+																			{
+																				[
+																					{
+																						image: '0x012521',
+																						title: 'JoJo (New Protocol Ideas)',
+																						twitter: 'jojo17568'
+																					},
+																					{
+																						image: '0x012522',
+																						title: 'Adam (Gaming)',
+																						twitter: 'Flook_eth'
+																					},
+																					{
+																						image: '0x012523',
+																						title: 'Juandi (Dev Tooling)',
+																						twitter: 'ImJuandi'
+																					},
+																					{
+																						image: '0x012524',
+																						title: 'Cattin (Education, Community growth & Events)',
+																						twitter: 'Cattin0x'
+																					}
+																				].map((user, index) => (
+																					<UserCard
+																						key={index}
+																						image={user.image}
+																						title={user.title}
+																						twitter={user.twitter} />
+																				))
+																			}
+																		</Box>
+																	</Box>
+
+																</Flex>
+															)
+														}
+													</Flex>
+												)
+											}) : null
+										}
+									</Box>
+								</Flex>
+
+							</Flex>
+						}
+
+						{
+							<Flex
+								w='100%'
+								my={4}
+								mt={isMobile ? '' : '12'}
+								justify='space-between'
+								direction={isMobile ? 'column' : 'row'}>
+
+								<Flex
+									direction='column'
+									px={isMobile ? 0 : 4}
 									w='100%'>
 									<Box
 										id='#granteeList'
@@ -833,101 +1010,101 @@ function Discover() {
 					</Container>
 					<div
 						style={{ backgroundColor: 'white' }}
-							>
-								<Container
-								minWidth='100%'
-								w='100%'
-								borderRadius='48px 48px 0px 0px'
-								background='#F7F5F2'
-								padding='32px 32px 20px 32px'
-								flexDirection='column'
-								justifyContent='center'
-								alignItems='center'
-								gap='24px'
-								>
-									<span>
-						<Text
-											variant='heading3'
-											fontWeight='700'
-											w='100%'
-											fontSize='24px'
-											lineHeight='31.2px'
-											my={4}
-										>
-											More Grants on Questbook
-      </Text>
-						<Flex
-					gap='24px'
-					overflowX='auto'
-					p={0}
-					justifyContent='flex-start'>
-
-						{
-							bannerText.map((banner, index) => (
-								<Flex
-			key={index}
-			flexDirection='row'
-			justifyContent='center'
-			alignItems='center'
-			gap='16px'
-			borderRadius='8px'
-			border='1px solid #EFEEEB'
-			background='#FFF'
-			padding='16px'
-			cursor='pointer'
-			onClick={
-				() => {
-					window.open(`https://questbook.app/?grantId=${banner.text}`, '_blank')
-				}
-			}
-		>
-			<Image
-				src={getUrlForIPFSHash(banner.logo)}
-				alt={banner.text}
-				width='20px'
-				height='20px'
-			/>
-			<Text
-				fontSize='16px'
-				fontWeight='700'
-				lineHeight='normal'
-				color='#07070C'
-
-			>
-				{banner.text}
-			</Text>
-        </Flex>
- ))
-}
-      </Flex>
-         </span>
-
-						<Flex
-							flexDirection='column'
+					>
+						<Container
+							minWidth='100%'
 							w='100%'
-							align='center'
-							justify='center'
-							mt='24px'
+							borderRadius='48px 48px 0px 0px'
+							background='#F7F5F2'
+							padding='32px 32px 20px 32px'
+							flexDirection='column'
+							justifyContent='center'
+							alignItems='center'
+							gap='24px'
+						>
+							<span>
+								<Text
+									variant='heading3'
+									fontWeight='700'
+									w='100%'
+									fontSize='24px'
+									lineHeight='31.2px'
+									my={4}
+								>
+									More Grants on Questbook
+								</Text>
+								<Flex
+									gap='24px'
+									overflowX='auto'
+									p={0}
+									justifyContent='flex-start'>
+
+									{
+										bannerText.map((banner, index) => (
+											<Flex
+												key={index}
+												flexDirection='row'
+												justifyContent='center'
+												alignItems='center'
+												gap='16px'
+												borderRadius='8px'
+												border='1px solid #EFEEEB'
+												background='#FFF'
+												padding='16px'
+												cursor='pointer'
+												onClick={
+													() => {
+														window.open(`https://questbook.app/?grantId=${banner.text}`, '_blank')
+													}
+												}
+											>
+												<Image
+													src={getUrlForIPFSHash(banner.logo)}
+													alt={banner.text}
+													width='20px'
+													height='20px'
+												/>
+												<Text
+													fontSize='16px'
+													fontWeight='700'
+													lineHeight='normal'
+													color='#07070C'
+
+												>
+													{banner.text}
+												</Text>
+											</Flex>
+										))
+									}
+								</Flex>
+							</span>
+
+							<Flex
+								flexDirection='column'
+								w='100%'
+								align='center'
+								justify='center'
+								mt='24px'
 							>
-							<Link
-								textAlign='center'
-								isExternal
-								variant='body'
-								color='accent.azure'
-								href='https://questbook.app/termsofservice.html'>
-								Questbook - Terms of Service
-							</Link>
-							<Link
-								textAlign='center'
-								isExternal
-								variant='body'
-								color='accent.azure'
-								href='questbook.app/privacypolicy.html'>
-								Privacy Policy
-							</Link>
-						</Flex>
-        </Container>
-     </div>
+								<Link
+									textAlign='center'
+									isExternal
+									variant='body'
+									color='accent.azure'
+									href='https://questbook.app/termsofservice.html'>
+									Questbook - Terms of Service
+								</Link>
+								<Link
+									textAlign='center'
+									isExternal
+									variant='body'
+									color='accent.azure'
+									href='questbook.app/privacypolicy.html'>
+									Privacy Policy
+								</Link>
+							</Flex>
+						</Container>
+					</div>
 					{
 						isQbAdmin && (Object.keys(unsavedDomainState).length !== 0 || Object.keys(unsavedSectionGrants).length !== 0) && (
 							<>
