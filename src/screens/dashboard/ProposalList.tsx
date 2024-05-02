@@ -204,7 +204,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 				{role === 'community' && proposalCount > 0 && (isMobile ? <EmptyCard /> : '') }
 				{proposalCount === 0 && <Empty />}
 				{
-					(role === 'admin' || role === 'reviewer') ? proposalCount !== filteredProposals.length && (
+					(role === 'admin' || role === 'reviewer') ? (proposalCount !== proposals.length) && (
 						<Button
 							my={4}
 							isLoading={true}
@@ -248,6 +248,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 
 		return allProposals
 	}, [proposals, searchText, filterState])
+
 
 	const proposalCount = useMemo(() => {
 		return grant?.numberOfApplications || 0
