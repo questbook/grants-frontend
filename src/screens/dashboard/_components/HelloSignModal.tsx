@@ -265,7 +265,7 @@ function HelloSignModal({
 									return
 								} else {
 									const ret = await addComment(
-										`Successfully sent document to ${signers.filter((signer) => signer.role === 'Grant recipient')[0].name} at ${signers.filter((signer) => signer.role === 'Grant recipient')[0].email}`,
+										'Successfully sent document to the contract administrator. Please expect to receive the grant for signing within five business days.',
 										true,
 										'helloSign',
 									)
@@ -277,7 +277,7 @@ function HelloSignModal({
 									}
 
 									await toast({
-										title: `Successfully sent document to ${signers.filter((signer) => signer.role === 'Grant recipient')[0].name} at ${signers.filter((signer) => signer.role === 'Grant recipient')[0].email}`,
+										title: 'Successfully sent document to the contract administrator.',
 										status: 'success',
 										duration: 5000,
 									})
