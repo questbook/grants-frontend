@@ -265,7 +265,7 @@ function HelloSignModal({
 									return
 								} else {
 									const ret = await addComment(
-										`Successfully sent document to ${signers.filter((signer) => signer.role === 'Grantee')[0].name} at ${signers.filter((signer) => signer.role === 'Grantee')[0].email}`,
+										`Successfully sent document to ${signers.filter((signer) => signer.role === 'Grant recipient')[0].name} at ${signers.filter((signer) => signer.role === 'Grant recipient')[0].email}`,
 										true,
 										'helloSign',
 									)
@@ -277,7 +277,7 @@ function HelloSignModal({
 									}
 
 									await toast({
-										title: `Successfully sent document to ${signers.filter((signer) => signer.role === 'Grantee')[0].name} at ${signers.filter((signer) => signer.role === 'Grantee')[0].email}`,
+										title: `Successfully sent document to ${signers.filter((signer) => signer.role === 'Grant recipient')[0].name} at ${signers.filter((signer) => signer.role === 'Grant recipient')[0].email}`,
 										status: 'success',
 										duration: 5000,
 									})
@@ -384,8 +384,8 @@ function HelloSignModal({
 						name: string
 						}) => ({
 						role: signer.name,
-						name: signer?.name === 'Grantee' ? getFieldString(decryptedProposal, 'applicantName') as string : '',
-						email: signer?.name === 'Grantee' ? getFieldString(decryptedProposal, 'applicantEmail') as string : '',
+						name: signer?.name === 'Grant recipient' ? getFieldString(decryptedProposal, 'applicantName') as string : '',
+						email: signer?.name === 'Grant recipient' ? getFieldString(decryptedProposal, 'applicantEmail') as string : '',
 						isHidden: false,
 					})))
 
