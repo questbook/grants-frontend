@@ -129,8 +129,8 @@ function useAddComments({ setStep, setTransactionHash }: Props) {
 
 			logger.info({ commentHashes }, 'Comment Hashes')
 
-			if(tag === 'accept' || tag === 'reject' || tag === 'resubmit' || tag === 'review') {
-				const toState = tag === 'accept' ? 'approved' : tag === 'reject' ? 'rejected' : tag === 'review' ? 'review' : 'resubmit'
+			if(tag === 'accept' || tag === 'reject' || tag === 'resubmit' || tag === 'review' || tag === 'cancelled') {
+				const toState = tag === 'accept' ? 'approved' : tag === 'reject' ? 'rejected' : tag === 'review' ? 'review' : tag === 'cancelled' ? 'cancelled' : 'resubmit'
 				const applicationUpdateHash = commentHashes[0]
 
 				const methodArgs = {

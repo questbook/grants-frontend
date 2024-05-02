@@ -4,7 +4,7 @@ import { Accept, AddUser, Chat, Reject, Resubmit, Time } from 'src/generated/ico
 import { TagType } from 'src/screens/dashboard/_utils/types'
 
 type Props = {
-	id: 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review' | 'KYC' | 'KYB' | 'HelloSign'
+	id: 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review' | 'KYC' | 'KYB' | 'HelloSign' | 'cancelled'
     tag: TagType | undefined
     isSelected: boolean
     index: number
@@ -85,7 +85,12 @@ function QuickReplyButton({ tag, index, textProps, ...props }: Props) {
 			icon: <IoMdDocument />,
 			title: 'Send Agreement',
 			bg: azure
-		}
+		},
+		cancelled: {
+			icon: <Reject />,
+			title: 'Cancel / Withdraw',
+			bg: carrot
+		},
 	}
 
 	return buildComponent()

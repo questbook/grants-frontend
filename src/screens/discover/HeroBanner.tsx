@@ -12,12 +12,14 @@ function HeroBanner({
 	grantsAllocated,
 	reclaimRef,
 	arbitrumRef,
+	arbitrum1Ref,
 }: {
 	grants: SectionGrants[]
 	safeBalances: number
 	grantsAllocated: number
 	reclaimRef: React.RefObject<HTMLDivElement>
 	arbitrumRef: React.RefObject<HTMLDivElement>
+	arbitrum1Ref: React.RefObject<HTMLDivElement>
 }) {
 	logger.info({ grants, safeBalances }, 'HeroBanner')
 
@@ -184,7 +186,7 @@ function HeroBanner({
 								Listed grants
 							</Text>
 							{
-								['Arbitrum DAO', 'Reclaim Arbitrum Grants']?.map((grant: string, index: number) => (
+								['Arbitrum DDA 2.0', 'Arbitrum DDA 1.0', 'Reclaim Arbitrum Grants']?.map((grant: string, index: number) => (
 									<Flex
 										key={index}
 										gap={1}
@@ -194,6 +196,8 @@ function HeroBanner({
 											() => {
 												if(grant === 'Reclaim Arbitrum Grants') {
 													reclaimRef.current?.scrollIntoView({ behavior: 'smooth' })
+												} else if(grant === 'Arbitrum DDA 1.0') {
+													arbitrum1Ref.current?.scrollIntoView({ behavior: 'smooth' })
 												} else {
 													arbitrumRef.current?.scrollIntoView({ behavior: 'smooth' })
 												}

@@ -153,6 +153,7 @@ function Discover() {
 	// const discoverRef = useRef<HTMLDivElement>(null)
 	const reclaimRef = useRef<HTMLDivElement>(null)
 	const arbitrumRef = useRef<HTMLDivElement>(null)
+	const arbitrum1Ref = useRef<HTMLDivElement>(null)
 	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, safeBalances, grantsAllocated, sectionSubGrants, recentProposals } = useContext(DiscoverContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString } = useContext(DAOSearchContext)!
@@ -387,6 +388,7 @@ function Discover() {
 						grantsAllocated={grantsAllocated ?? 0}
 						arbitrumRef={arbitrumRef}
 						reclaimRef={reclaimRef}
+						arbitrum1Ref={arbitrum1Ref}
 					/>
 
 
@@ -430,7 +432,7 @@ function Discover() {
 											fontSize='24px'
 											lineHeight='31.2px'
 										>
-											Arbitrum DAO
+											Arbitrum DDA 2.0
 										</Text>
 
 									</Flex>
@@ -497,7 +499,7 @@ function Discover() {
 																		textAlign='match-parent'
 																		color='#7E7E8F'
 																	>
-																		The Arbitrum grants, administered via DDA by Questbook and 4 domain allocators, went live on the 5th of October with a grants budget of $800k spread across four domains. The Questbook Arbitrum Grants program is useful for anyone developing in domain specific projects on top of Arbitrum
+																		The Arbitrum grants, administered via DDA by Questbook and 4 domain allocators, went live on the 1st of May with a grants budget of $4M spread across four domains. The Questbook Arbitrum Grants program is useful for anyone developing in domain specific projects on top of Arbitrum
 																	</Text>
 																	<Text
 																		fontWeight='600'
@@ -758,6 +760,7 @@ function Discover() {
 
 									{/* </Box> */}
 									<Box
+										ref={arbitrum1Ref}
 										display={sectionGrants?.length ? '' : 'none'}
 									>
 										<Flex
@@ -772,7 +775,7 @@ function Discover() {
 												fontSize='24px'
 												lineHeight='31.2px'
 											>
-												Arbitrum DAO
+												Arbitrum DDA 1.0
 											</Text>
 
 										</Flex>
@@ -839,7 +842,7 @@ function Discover() {
 																			textAlign='match-parent'
 																			color='#7E7E8F'
 																		>
-																			The Arbitrum grants, administered via DDA by Questbook and 4 domain allocators, went live on the 1st of May with a grants budget of $4M spread across four domains. The Questbook Arbitrum Grants program is useful for anyone developing in domain specific projects on top of Arbitrum
+																			The Arbitrum grants, administered via DDA by Questbook and 4 domain allocators, went live on the 5th of October with a grants budget of $800k spread across four domains. The Questbook Arbitrum Grants program is useful for anyone developing in domain specific projects on top of Arbitrum
 																		</Text>
 																		<Text
 																			fontWeight='600'

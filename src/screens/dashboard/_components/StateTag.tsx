@@ -69,7 +69,12 @@ function StateTag({ state, isSelected = true, ...props }: Props) {
 			icon: <Time />,
 			title: 'Reviewing',
 			bg: jeans
-		}
+		},
+		cancelled: {
+			icon: <Reject />,
+			title: 'Cancelled',
+			bg: carrot
+		},
 	}
 
 	return buildComponent()
