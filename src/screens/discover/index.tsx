@@ -427,7 +427,7 @@ function Discover() {
 																		textAlign='match-parent'
 																		color='#7E7E8F'
 																	>
-																		BLRxZo is a dynamic hub for developers and innovators in Bangalore, serving as the core of the Zo ecosystem in the city. It's a collaborative space where tech enthusiasts and builders converge to push the boundaries of digital assets and decentralized technology. Situated at the intersection of culture and innovation, BLRxZo fosters a community dedicated to shaping the future of web3 and beyond, making it the epicenter for pioneering projects and transformative ideas in India. BLRxZo benefits from being part of an expanding network of Zo houses, including locations like SFOxZo and DXBxZo, enhancing its reach and impact across global tech communities.
+																		{'BLRxZo is a dynamic hub for developers and innovators in Bangalore, serving as the core of the Zo ecosystem in the city. It\'s a collaborative space where tech enthusiasts and builders converge to push the boundaries of digital assets and decentralized technology. Situated at the intersection of culture and innovation, BLRxZo fosters a community dedicated to shaping the future of web3 and beyond, making it the epicenter for pioneering projects and transformative ideas in India. BLRxZo benefits from being part of an expanding network of Zo houses, including locations like SFOxZo and DXBxZo, enhancing its reach and impact across global tech communities.'}
 																	</Text>
 																</Box>
 
