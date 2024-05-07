@@ -53,7 +53,7 @@ function AdminTable() {
 					'No': index + 1,
 					'Proposal Name': row.name[0].values[0].value,
 					'Proposal Status': row.state,
-					'KYC/KYB Status': row?.state === 'approved' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? `Verified - ${row?.synapsType}` : row?.synapsStatus === 'rejected' ? `Rejected - ${row?.synapsType}` : `Pending - ${row?.synapsType ?? ''}` : '',
+					'KYC/KYB Status': row?.state === 'approved' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? 'Verified' : row?.synapsStatus === 'rejected' ? 'Rejected' : 'Pending' : '',
 					'Synaps Type': row?.synapsStatus !== '' ? row?.synapsType : '',
 					'Grant Agreement Status': row?.state === 'approved' ? row?.helloSignStatus === 'verified' || row?.helloSignStatus === 'completed' ? 'Verified' : row?.helloSignStatus === 'declined' ? 'Declined' : 'Pending' : '',
 					'Notes': row?.notes,
