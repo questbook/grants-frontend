@@ -121,7 +121,7 @@ function HeroBanner({
 							justifyContent='center'
 							h={isMobile ? '40px' : '80px'}
 							w={isMobile ? '40px' : '80px'}
-							src={getUrlForIPFSHash('QmNdqwvRbANssyC7evfa22Nnv5HLWzVkXPo9AQa7HCHqsq')} />
+							src={getUrlForIPFSHash('QmehZaEudaZeHnAs19yBKepSL9sydxHENsLvWgUbnc2xzo')} />
 						<Text
 							fontWeight='500'
 							fontSize={isMobile ? '32px' : '64px'}
