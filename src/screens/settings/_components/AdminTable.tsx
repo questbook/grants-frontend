@@ -164,8 +164,8 @@ function AdminTable() {
 						{
 							row.helloSignStatus?.length > 0 ? (
 								<StateButton
-									state={row?.helloSignStatus === 'verified' ? 'approved' : 'submitted'}
-									title={row?.helloSignStatus === 'verified' ? 'Verified' : 'Pending'}
+									state={row?.helloSignStatus === 'verified' || row?.helloSignStatus === 'completed' ? 'approved' : row?.helloSignStatus === 'declined' ? 'rejected' : 'submitted'}
+									title={row?.helloSignStatus === 'verified' || row?.helloSignStatus === 'completed' ? 'Verified' : row?.helloSignStatus === 'declined' ? 'Declined' : 'Pending'}
 								/>
 							) : row?.state === 'approved' ? (
 								<StateButton
