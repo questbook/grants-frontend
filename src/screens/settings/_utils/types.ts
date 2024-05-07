@@ -11,6 +11,9 @@ export type SettingsFormContextType = {
     showAdminTable: boolean
     setShowAdminTable: (show: boolean) => void
     adminTable: adminTable
+    listAllGrants: boolean
+    setListAllGrants: (list: boolean) => void
+    allGrantsAdminTable: adminTable
 }
 
 export type Workspace = GetWorkspaceDetailsQuery['workspace']
