@@ -79,13 +79,14 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 			// 	logger.info({ result }, 'useSubmitProposal: (result)')
 			// }
 			logger.info(result?.grantApplications?.length, 'useSubmitProposal: (result)')
-			if(result?.grantApplications?.length > 2 && type === 'submit') {
+			if(result?.grantApplications[result?.grantApplications?.length - 1]?.createdAtS && (Math.round(Date.now() / 1000) - result?.grantApplications[result?.grantApplications?.length - 1]?.createdAtS) < 900 &&
+				type === 'submit') {
 				setNetworkTransactionModalStep(undefined)
 				logger.info({ result }, 'length')
 				customToast({
-					title: 'You have exceeded the maximum number of applications for this grant',
+					title: 'You have been rate limited, please try again later',
 					status: 'error',
-					description: 'This wallet address has already been used for this grant'
+					description: 'Error submitting proposal'
 				})
 				return
 			}
