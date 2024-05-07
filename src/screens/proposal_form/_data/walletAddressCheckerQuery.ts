@@ -4,5 +4,6 @@ export const walletAddressCheckerQuery = gql`query walletAddressChecker($grantId
      id:_id
      walletAddress
      applicantId
+     createdAtS
        }
    }`

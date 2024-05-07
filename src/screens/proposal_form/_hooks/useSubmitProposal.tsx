@@ -98,17 +98,15 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 			logger.info({ builderAddressInBytes }, 'useSubmitProposal: (builderAddressInBytes)')
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const result: any = await fetchIsWalletAddressUsed({ grantId:grant.id, walletAddress: scwAddress as string }, true)
-			// if(result?.grantApplications.length && result?.grantApplications[0].applicantId?.toLowerCase() !== scwAddress.toLowerCase()) {
-			// 	logger.info({ result }, 'useSubmitProposal: (result)')
-			// }
 			logger.info(result?.grantApplications?.length, 'useSubmitProposal: (result)')
-			if(result?.grantApplications?.length > 2 && type === 'submit') {
+			if(result?.grantApplications[result?.grantApplications?.length - 1]?.createdAtS && (Math.round(Date.now() / 1000) - result?.grantApplications[result?.grantApplications?.length - 1]?.createdAtS) < 900 &&
+				type === 'submit') {
 				setNetworkTransactionModalStep(undefined)
 				logger.info({ result }, 'length')
 				customToast({
-					title: 'You have exceeded the maximum number of applications for this grant',
+					title: 'You have been rate limited, please try again later',
 					status: 'error',
-					description: 'This wallet address has already been used for this grant'
+					description: 'Error submitting proposal'
 				})
 				return
 			}
