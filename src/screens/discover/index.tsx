@@ -432,7 +432,7 @@ function Discover() {
 								isExternal
 								variant='body'
 								color='accent.azure'
-								href='questbook.app/privacypolicy.html'>
+								href='https://questbook.app/privacypolicy.html'>
 								Privacy Policy
 							</Link>
 						</Flex>
