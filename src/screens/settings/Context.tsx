@@ -10,6 +10,7 @@ import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { adminTable, GrantProgramForm, SettingsFormContextType, WorkspaceMembers } from 'src/screens/settings/_utils/types'
 import { getWorkspaceDetailsQuery, getWorkspaceMembersByWorkspaceIdQuery } from 'src/screens/settings/data'
 import { getAdminTableQuery } from 'src/screens/settings/data/getAdminTableQuery'
+import { getAllGrantsAdminTableQuery } from 'src/screens/settings/data/getAllGrantsAdminTableQuery'
 
 const SettingsFormContext = createContext<SettingsFormContextType | undefined>(undefined)
 
@@ -33,6 +34,9 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 					adminTable: adminTable!,
 					showAdminTable: showAdminTable!,
 					setShowAdminTable: setShowAdminTable!,
+					listAllGrants: listAllGrants!,
+					setListAllGrants: setListAllGrants!,
+					allGrantsAdminTable: allGrantsAdminTable!,
 				}
 			}>
 			{children}
@@ -44,6 +48,8 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 	const [safeURL, setSafeURL] = useState<string>('')
 	const [adminTable, setAdminTable] = useState<adminTable>([])
 	const [showAdminTable, setShowAdminTable] = useState<boolean>(false)
+	const [listAllGrants, setListAllGrants] = useState<boolean>(false)
+	const [allGrantsAdminTable, setAllGrantsAdminTable] = useState<adminTable>([])
 
 	const { grant, setGrant } = useContext(GrantsProgramContext)!
 
@@ -63,6 +69,10 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 
 	const { fetchMore: fetchMoreAdminTable } = useQuery({
 		query: getAdminTableQuery,
+	})
+
+	const { fetchMore: fetchAllGrantsAdminTable } = useQuery({
+		query: getAllGrantsAdminTableQuery,
 	})
 
 	const fetchGrantProgramDetails = useCallback(async() => {
@@ -179,6 +189,65 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 		return 'grant-details-fetched'
 	}, [grant?.id])
 
+	const getAdminTableAllGrants = useCallback(async() => {
+		const details: any = await fetchAllGrantsAdminTable({}, true)
+		logger.info({ details }, 'Grant details (GET ALL GRANTS)')
+		let allGrants = []
+		if(!details?.section?.grants) {
+			return 'no-grant-in-query'
+		}
+
+		if(details?.section?.grants) {
+			allGrants = details?.section?.grants.map((grant: {
+				id: string
+				title: string
+			}) => {
+				return {
+					id: grant.id,
+					title: grant.title
+				}
+			})
+
+		}
+
+		let applications = []
+		if(allGrants?.length > 0) {
+			for(const grants of allGrants) {
+				logger.info({ grants }, 'grant details')
+				const details: any = await fetchMoreAdminTable({ id: grants?.id }, true)
+				logger.info({ details }, 'Grant details (GET GRANT)')
+				if(!details?.grant) {
+					return 'no-grant-in-query'
+				}
+
+				logger.info(details?.grant?.applications, 'Application details')
+
+				if(details?.fundTransfers) {
+					applications = details?.grant?.applications?.map((application: any) => {
+						const fundTransfer = details?.fundTransfers?.find((fundTransfer: any) => fundTransfer?.application?.id === application?.id)
+						logger.info({ fundTransfer }, 'Fund transfer')
+						return {
+							...application,
+							grantId: grants?.id,
+							grantTitle: grants?.title,
+							fundTransfer: fundTransfer !== undefined ? [fundTransfer] : false
+						}
+					})
+				}
+
+				logger.info({ applications }, 'Applications')
+
+				if(applications?.length > 0) {
+					setAllGrantsAdminTable(applications)
+				}
+			}
+		}
+
+		logger.info({ allGrantsAdminTable }, 'All grants')
+
+		return 'grant-details-fetched'
+	}, [listAllGrants])
+
 	useEffect(() => {
 		if(grant?.id) {
 			getAdminTable()
@@ -194,6 +263,15 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 			logger.info({ message }, 'Fetch grant members message')
 		})
 	}, [grant, chainId])
+
+	useEffect(() => {
+		if(listAllGrants) {
+			getAdminTableAllGrants().then((message) => {
+				logger.info({ message }, 'Fetch all grants message')
+			})
+		}
+	}, [listAllGrants])
+
 
 	useEffect(() => {
 		if(!grant) {

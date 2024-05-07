@@ -154,7 +154,7 @@ function Payouts() {
 										window.open(getGnosisTansactionLink(grant?.workspace?.safe?.address, grant?.workspace?.safe?.chainId.toString(), payout?.transactionHash), '_blank')
 									}
 								} else if(payout?.transactionHash) {
-									window.open(`https://testnet.axelarscan.io/tx/${payout.transactionHash}`, '_blank')
+									window.open(`https://axelarscan.io/tx/${payout.transactionHash}`, '_blank')
 								} else {
 									toast({
 										status: 'warning',

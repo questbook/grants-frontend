@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react'
 import { CSVLink } from 'react-csv'
 import { Button, Flex, Select, Text, Textarea } from '@chakra-ui/react'
 import {
+	Switch,
 	Table,
 	TableContainer,
 	Tbody,
@@ -22,7 +23,6 @@ import { SettingsFormContext } from 'src/screens/settings/Context'
 
 function AdminTable() {
 
-	const TableHeader = ['No', 'Proposal Name', 'Proposal Status', 'KYC/KYB Status', 'Grant Agreement Status', 'Milestone', 'Funding Status', 'Notes']
 
 	const buildComponent = () => {
 
@@ -51,6 +51,9 @@ function AdminTable() {
 				})
 				return {
 					'No': index + 1,
+					...(listAllGrants ? {
+						'Grant Title': grant?.title,
+					} : {}),
 					'Proposal Name': row.name[0].values[0].value,
 					'Proposal Status': row.state,
 					'KYC/KYB Status': row?.state === 'approved' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? 'Verified' : 'Pending' : '',
@@ -62,7 +65,7 @@ function AdminTable() {
 							...acc,
 							...curr
 						}
-					}, {})
+					}, {}),
 				}
 			}) : []
 
@@ -88,13 +91,24 @@ function AdminTable() {
 					<Td>
 						{index + 1}
 					</Td>
+					{
+						listAllGrants && (
+							<Td>
+								<Text
+									fontSize='sm'
+								>
+									{row?.grantTitle && row?.grantTitle?.length > 40 ? row?.grantTitle.substring(0, 40) + '...' : row?.grantTitle}
+								</Text>
+							</Td>
+						)
+					}
 					<Td>
 						<Text
 							fontSize='sm'
 							onClick={
 								() => {
 
-									window.open(`${window.location.origin}/dashboard/?grantId=${grant?.id}&proposalId=${row.id}&chainId=10`, '_blank')
+									window.open(`${window.location.origin}/dashboard/?grantId=${listAllGrants ? row?.grantId : grant?.id}&proposalId=${row.id}&chainId=10`, '_blank')
 
 								}
 							}
@@ -150,7 +164,7 @@ function AdminTable() {
 						cursor='pointer'
 						onClick={
 							() => {
-								if(row?.state === 'approved') {
+								if(row?.state === 'approved' && !listAllGrants) {
 									setShowKYCStatusUpdateModal({
 										...showKYCStatusUpdateModal,
 										isOpen: true,
@@ -272,32 +286,36 @@ function AdminTable() {
 						}
 
 					</Td>
-					<Td
-						w='15%'
-					>
-						<Textarea
-							w='100%'
-							size='sm'
-							value={row?.notes}
-							onChange={
-								(e) => {
-									const newTableData = [...tableData]
-									newTableData[index].notes = e.target.value
-									setTableData(newTableData)
-								}
-							}
-							onBlur={
-								async() => {
-									await executeMutation(addTableNotesMutation, {
-										id: row.id,
-										notes: row?.notes,
-										workspace: workspace?.id
-									})
-								}
-							}
-						/>
+					{
+						!listAllGrants && (
+							<Td
+								w='15%'
+							>
+								<Textarea
+									w='100%'
+									size='sm'
+									value={row?.notes}
+									onChange={
+										(e) => {
+											const newTableData = [...tableData]
+											newTableData[index].notes = e.target.value
+											setTableData(newTableData)
+										}
+									}
+									onBlur={
+										async() => {
+											await executeMutation(addTableNotesMutation, {
+												id: row.id,
+												notes: row?.notes,
+												workspace: workspace?.id
+											})
+										}
+									}
+								/>
 
-					</Td>
+							</Td>
+						)
+					}
 
 				</Tr>
 			)
@@ -317,24 +335,46 @@ function AdminTable() {
 					align='center'
 					mb='4'
 				>
-					<Select
-						w='auto'
-						variant='outline'
-						value={filter}
-						onChange={(e) => setFilter(e.target.value as 'all' | 'submitted' | 'approved' | 'rejected')}
+					<Flex
+						gap={4}
 					>
-						{
-							['All', 'Submitted', 'Approved', 'Rejected']?.map((state, index) => {
-								return (
-									<option
-										key={index}
-										value={state.toLowerCase()}>
-										{state}
-									</option>
-								)
-							})
-						}
-					</Select>
+						<Select
+							w='auto'
+							variant='outline'
+							value={filter}
+							onChange={(e) => setFilter(e.target.value as 'all' | 'submitted' | 'approved' | 'rejected')}
+						>
+							{
+								['All', 'Submitted', 'Approved', 'Rejected']?.map((state, index) => {
+									return (
+										<option
+											key={index}
+											value={state.toLowerCase()}>
+											{state}
+										</option>
+									)
+								})
+							}
+						</Select>
+						<Flex
+							align='center'
+							justify='space-between'
+							gap={4}
+						>
+							<Text
+								fontSize='sm'
+							>
+								List All Grants
+							</Text>
+							<Switch
+
+								colorScheme='blue'
+								size='md'
+								onChange={() => setListAllGrants(!listAllGrants)}
+							/>
+						</Flex>
+					</Flex>
+
 
 					<CSVLink
 						data={downloadCSV()}
@@ -352,7 +392,7 @@ function AdminTable() {
 				<TableContainer >
 					<Table
 						variant='simple'
-						size='sm'>
+						size={listAllGrants ? 'lg' : 'sm'}>
 						<Thead>
 							<Tr>
 								{
@@ -407,12 +447,14 @@ function AdminTable() {
 		value: ''
 	}])
 	const [tableData, setTableData] = useState<adminTable>([])
-	const { adminTable, workspace } = useContext(SettingsFormContext)!
+	const { adminTable, workspace, listAllGrants, setListAllGrants, allGrantsAdminTable } = useContext(SettingsFormContext)!
 	const { grant } = useContext(GrantsProgramContext)!
 
+	const TableHeader = listAllGrants ? ['No', 'Grant Title', 'Proposal Name', 'Proposal Status', 'KYC/KYB Status', 'Grant Agreement Status', 'Milestone', 'Funding Status' ] : ['No', 'Proposal Name', 'Proposal Status', 'KYC/KYB Status', 'Grant Agreement Status', 'Milestone', 'Funding Status', 'Notes']
+
 	useEffect(() => {
-		setTableData(adminTable)
-	}, [adminTable])
+		setTableData(listAllGrants ? allGrantsAdminTable : adminTable)
+	}, [adminTable, allGrantsAdminTable, listAllGrants])
 
 
 	return buildComponent()

@@ -25,6 +25,8 @@ export type SocialLinks = {
 }
 
 export type adminTable = {
+    grantId?: string
+    grantTitle?: string
     id: string
     name: { values: { value: string }[] }[]
     state: string

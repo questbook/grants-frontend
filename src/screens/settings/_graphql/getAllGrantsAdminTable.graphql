@@ -2,6 +2,7 @@ query getAllGrants {
     section(_id: "Axelar"){
         grants {
             id: _id
+            title
     }
     }
 }
