@@ -232,6 +232,10 @@ function Discover() {
 			'text': 'Compound'
 		},
 		{
+			'logo': 'QmWX8As9og6mLaiPhCaR3NqkinXMDymMaqf43qyVSE5hp8',
+			'text': 'Reclaim Protocol'
+		},
+		{
 			'logo': 'QmRmLRwFw6xQgJc2Mam45tYj9zLimLkjoXrR3Lvw6m2EEf',
 			'text': 'TON Foundation'
 		},
