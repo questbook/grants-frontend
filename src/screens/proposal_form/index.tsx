@@ -1,9 +1,11 @@
 import { ChangeEvent, ReactElement, useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Container, Flex, Image, Text } from '@chakra-ui/react'
+import { convertToRaw } from 'draft-js'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
 import { useSafeContext } from 'src/contexts/safeContext'
 import { Doc } from 'src/generated/icons'
+import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import BackButton from 'src/libraries/ui/BackButton'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
@@ -17,10 +19,12 @@ import { getChainInfo } from 'src/libraries/utils/token'
 import { GrantsProgramContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
 import SectionHeader from 'src/screens/proposal_form/_components/SectionHeader'
 import SectionInput from 'src/screens/proposal_form/_components/SectionInput'
+import SectionRichTextEditor from 'src/screens/proposal_form/_components/SectionRichTextEditor'
 import SectionSelect from 'src/screens/proposal_form/_components/SectionSelect'
+import SelectArray from 'src/screens/proposal_form/_components/SelectArray'
 import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposal'
-import { containsCustomField, containsField, findCustomField, findField, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
-import { customSteps, customStepsHeader, disabledGrants } from 'src/screens/proposal_form/_utils/constants'
+import { containsField, findField, findFieldBySuffix, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
+import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, MILESTONE_INPUT_STYLE } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
 
 
@@ -291,7 +295,7 @@ function ProposalForm() {
 						{
 							containsField(grant, 'applicantName') && (
 								<SectionInput
-									label='Name (anon or full)'
+									label='Full Name'
 									placeholder='Ryan Adams'
 									value={findField(form, 'applicantName').value}
 									onChange={
@@ -304,7 +308,7 @@ function ProposalForm() {
 						{
 							containsField(grant, 'applicantEmail') && (
 								<SectionInput
-									label='Email (required)'
+									label='Email'
 									placeholder='name@sample.com'
 									value={findField(form, 'applicantEmail').value}
 									onChange={
@@ -334,14 +338,33 @@ function ProposalForm() {
 							)
 						}
 						{
-							containsCustomField(grant, 'X Handle') && (
+							/* Optinal Telegram Field (if it is not included in the form field) */
+							type === 'submit' &&
+							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('telegram')
+							|| field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('tg')
+							).length === 0 && (
 								<SectionInput
-									label='X Handle'
+									label='Telegram'
 									placeholder='@username'
-									value={findCustomField(form, 'X Handle').value}
+									value={telegram}
 									onChange={
 										(e) => {
-											onChange(e, findCustomField(form, 'X Handle').id)
+											setTelegram(e.target.value)
+										}
+									} />
+							)
+						}
+						{
+							/* Optinal Telegram Field (if it is not included in the form field) */
+							type === 'submit' &&
+							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('twitter')).length === 0 && (
+								<SectionInput
+									label='Twitter'
+									placeholder='@twitterHandle'
+									value={twitter}
+									onChange={
+										(e) => {
+											setTwitter(e.target.value)
 										}
 									} />
 							)
@@ -362,20 +385,6 @@ function ProposalForm() {
 									}
 									isInvalid={walletAddressError}
 									errorText={`Invalid address on ${chainNames?.get(safeObj?.chainId?.toString() ?? '') !== undefined ? chainNames.get(safeObj?.chainId?.toString() ?? '')?.toString() : 'EVM / Solana / TON based chain'}`} />
-							)
-						}
-
-						{
-							containsCustomField(grant, 'Phone Number') && (
-								<SectionInput
-									label='Phone Number (for coordination purposes only)'
-									placeholder=''
-									value={findCustomField(form, 'Phone Number').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'Phone Number').id)
-										}
-									} />
 							)
 						}
 
@@ -457,7 +466,7 @@ function ProposalForm() {
 							)
 						}
 
-						{/* {
+						{
 							containsField(grant, 'projectDetails') && (
 								<SectionRichTextEditor
 									label='Details'
@@ -471,9 +480,9 @@ function ProposalForm() {
 										}
 									} />
 							)
-						} */}
+						}
 
-						{/* <SelectArray
+						<SelectArray
 							label='Milestones'
 							allowMultiple={grant?.payoutType === 'milestones' || (containsField(grant, 'isMultipleMilestones') ?? false)}
 							config={
@@ -523,14 +532,14 @@ function ProposalForm() {
 									copy.milestones.splice(index, 1)
 									setForm(copy)
 								}
-							} /> */}
+							} />
 
-						{/* <SectionInput
+						<SectionInput
 							label='Funding Asked'
 							isDisabled
 							placeholder='12000 USD'
 							value={`${fundingAsk} ${chainInfo?.label}`}
-						/> */}
+						/>
 
 						{/* Render custom Fields */}
 						{
@@ -542,63 +551,6 @@ function ProposalForm() {
 						}
 
 						{
-							containsCustomField(grant, 'Do you hold a Zo World Founder NFT?') && (
-								<SectionInput
-									label='Do you hold a Zo World Founder NFT?'
-									placeholder=''
-									value={findCustomField(form, 'Do you hold a Zo World Founder NFT?').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'Do you hold a Zo World Founder NFT?').id)
-										}
-									} />
-							)
-						}
-
-						{
-							containsCustomField(grant, 'Github/Gitlab or any other master repository URL') && (
-								<SectionInput
-									label='Github/Gitlab or any other master repository URL (required)'
-									placeholder=''
-									value={findCustomField(form, 'Github/Gitlab or any other master repository URL').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'Github/Gitlab or any other master repository URL').id)
-										}
-									} />
-							)
-						}
-
-						{
-							containsCustomField(grant, 'What brings you to DeFi?') && (
-								<SectionInput
-									label='What brings you to DeFi? (required)'
-									placeholder=''
-									value={findCustomField(form, 'What brings you to DeFi?').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'What brings you to DeFi?').id)
-										}
-									} />
-							)
-						}
-
-						{
-							containsCustomField(grant, 'Please share any proof of works you\'ve had in the past? - the more descriptive the better') && (
-								<SectionInput
-									label={'Please share any proof of works you\'ve had in the past? - the more descriptive the better'}
-									placeholder=''
-									helperText={'(If there isn\'t any, please share one two liner reason for so. We just want to make sure, we don\'t miss your application just because you don\'t have an existing repository for the same.)'}
-									value={findCustomField(form, 'Please share any proof of works you\'ve had in the past? - the more descriptive the better').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'Please share any proof of works you\'ve had in the past? - the more descriptive the better').id)
-										}
-									} />
-							)
-						}
-
-						{/* {
 							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1).startsWith('customField')).map((field) => {
 								const id = field.id.substring(field.id.indexOf('.') + 1)
 								const modifiedId = id.substring(id.indexOf('-') + 1)
@@ -620,7 +572,7 @@ function ProposalForm() {
 										} />
 								)
 							})
-						} */}
+						}
 
 
 						<Button
@@ -637,8 +589,11 @@ function ProposalForm() {
 										setSignIn(true)
 										return
 									} else {
-										setNetworkTransactionModalStep(0)
-										submitProposal(form)
+										const check = formCheck()
+										if(check) {
+											setNetworkTransactionModalStep(0)
+											submitProposal(form)
+										}
 									}
 								}
 							}>
@@ -668,7 +623,7 @@ function ProposalForm() {
 	}
 
 	const { setRole } = useContext(GrantsProgramContext)!
-	const { type, grant, chainId, form, setForm, error } = useContext(ProposalFormContext)!
+	const { type, grant, chainId, form, setForm, error, telegram, setTelegram, twitter, setTwitter } = useContext(ProposalFormContext)!
 	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const { safeObj } = useSafeContext()!
 	const { setSignIn } = useContext(SignInContext)!
@@ -683,6 +638,7 @@ function ProposalForm() {
 	const { submitProposal, proposalId, isExecuting } = useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash })
 	const [emailError, setEmailError] = useState<boolean>(false)
 	const [walletAddressError, setWalletAddressError] = useState<boolean>(false)
+	const toast = useCustomToast()
 
 	const [isSetupNotificationModalOpen, setIsSetupNotificationModalOpen] = useState<boolean>(false)
 
@@ -703,7 +659,23 @@ function ProposalForm() {
 		return val
 	}, [form])
 
-	logger.info(fundingAsk, 'funding Ask')
+
+	const formCheck = () => {
+		const { milestones } = form
+		const fundingAsk = milestones.reduce((acc, curr) => acc + curr.amount, 0)
+		if((fundingAsk) > parseInt(grant?.reward?.committed as string)) {
+			toast({
+				title: `Funding ask exceeds the committed amount of ${grant?.reward?.committed} USD`,
+				status: 'error',
+				duration: 5000,
+				isClosable: true,
+			})
+			return false
+		}
+
+		return true
+	}
+
 
 	const isDisabled = useMemo(() => {
 		if(!form) {
@@ -713,13 +685,18 @@ function ProposalForm() {
 
 		const optionalFields = ['projectDetails', 'fundingAsk', 'fundingBreakdown', 'projectGoals', 'projectLink']
 		const { fields, members, details, milestones } = form
-		logger.info({ fields, members, details, milestones }, 'Checking form')
 		for(const field of fields) {
 			if(field.value === '' && !optionalFields.includes(field.id)) {
 				logger.info({ field }, 'Field is empty')
 				return true
 			}
 		}
+
+		const fundingAsk = milestones.reduce((acc, curr) => acc + curr.amount, 0)
+		if((fundingAsk) > parseInt(grant?.reward?.committed as string)) {
+			return true
+		}
+
 
 		if(disabledGrants?.includes(grant?.id as string) && type === 'submit') {
 			logger.info('Grant is disabled')
@@ -733,17 +710,17 @@ function ProposalForm() {
 			}
 		}
 
-		// if(!convertToRaw(details.getCurrentContent()).blocks[0]) {
-		// 	logger.info('Details is empty')
-		// 	return true
-		// }
+		if(!convertToRaw(details.getCurrentContent()).blocks[0]) {
+			logger.info('Details is empty')
+			return true
+		}
 
-		// for(const milestone of milestones) {
-		// 	if(milestone.title === '' || !milestone.amount) {
-		// 		logger.info({ index: milestone.index }, 'Milestone is empty')
-		// 		return true
-		// 	}
-		// }
+		for(const milestone of milestones) {
+			if(milestone.title === '' || !milestone.amount) {
+				logger.info({ index: milestone.index }, 'Milestone is empty')
+				return true
+			}
+		}
 
 		if(emailError || walletAddressError) {
 			return true
