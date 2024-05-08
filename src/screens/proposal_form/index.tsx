@@ -800,7 +800,7 @@ function ProposalForm() {
 								textAlign='center'
 								mt={4}
 							>
-								Funding asked in milestones exceeds the total funding committed
+								Funding asked in milestones exceeds the total funding committed - ${grant?.reward?.committed} USD
 							</Text>
 
 						)
