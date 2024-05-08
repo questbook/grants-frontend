@@ -788,6 +788,24 @@ function ProposalForm() {
 							})
 						}
 
+						{
+							(grant?.id === '661cb739ccf6446509caa385'
+						&& form?.milestones?.reduce((acc, curr) => acc + curr.amount, 0) > parseInt(grant?.reward?.committed as string))
+						&& (
+
+							<Text
+								fontWeight='500'
+								color='red.500'
+								fontSize='14px'
+								textAlign='center'
+								mt={4}
+							>
+								Funding asked in milestones exceeds the total funding committed
+							</Text>
+
+						)
+						}
+
 
 						<Button
 							mt={10}
@@ -1440,13 +1458,24 @@ function ProposalForm() {
 			return true
 		}
 
+
 		const optionalFields = ['projectDetails', 'fundingAsk', 'fundingBreakdown', 'projectGoals', 'projectLink']
 		const { fields, members, details, milestones } = form
+		const fundingAsk = milestones.reduce((acc, curr) => acc + curr.amount, 0)
+		const check = (fundingAsk) > parseInt(grant?.reward?.committed ?? '0')
+
+		const funding = (fundingAsk)
+		const grantCommitted = parseInt(grant?.reward?.committed ?? '0')
+		logger.info({ check, funding, grantCommitted }, 'check')
 		for(const field of fields) {
 			if(field.value === '' && !optionalFields.includes(field.id)) {
 				logger.info({ field }, 'Field is empty')
 				return true
 			}
+		}
+
+		if(grant?.id === '661cb739ccf6446509caa385' && (fundingAsk) > parseInt(grant?.reward?.committed)) {
+			return true
 		}
 
 		if((disabledGrants?.includes(grant?.id as string) || disabledTonGrants?.includes(grant?.id as string) || disabledSubmissions?.includes(grant?.id as string)) && type === 'submit') {
