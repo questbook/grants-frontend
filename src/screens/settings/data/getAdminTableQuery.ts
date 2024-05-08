@@ -32,6 +32,15 @@ export const getAdminTableQuery = gql`query adminTable($id: String!){
               value
             }
           }
+          wallet: fieldFilterBySection(
+            filter:{
+              field: "applicantAddress"
+            }
+          ) {
+            values{
+              value
+            }
+          }
       }
     }
     fundTransfers(filter: {

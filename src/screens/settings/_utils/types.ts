@@ -24,6 +24,7 @@ export type SocialLinks = {
 export type adminTable = {
     id: string
     name: { values: { value: string }[] }[]
+    wallet: { values: { value: string }[] }[]
     state: string
     synapsStatus: string
     synapsType: string

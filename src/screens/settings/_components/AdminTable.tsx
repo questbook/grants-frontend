@@ -22,7 +22,7 @@ import { SettingsFormContext } from 'src/screens/settings/Context'
 
 function AdminTable() {
 
-	const TableHeader = ['No', 'Proposal Name', 'Proposal Status', 'KYC/KYB Status', 'Grant Agreement Status', 'Milestone', 'Funding Status', 'Notes']
+	const TableHeader = ['No', 'Proposal Name', 'Proposal Status', 'Wallet Address', 'KYC/KYB Status', 'Grant Agreement Status', 'Milestone', 'Funding Status', 'Notes']
 
 	const buildComponent = () => {
 
@@ -53,6 +53,7 @@ function AdminTable() {
 					'No': index + 1,
 					'Proposal Name': row.name[0].values[0].value,
 					'Proposal Status': row.state,
+					'Wallet Address': row.wallet[0].values[0].value,
 					'KYC/KYB Status': row?.state === 'approved' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? 'Verified' : row?.synapsStatus === 'rejected' ? 'Rejected' : 'Pending' : '',
 					'Synaps Type': row?.synapsStatus !== '' ? row?.synapsType : '',
 					'Grant Agreement Status': row?.state === 'approved' ? row?.helloSignStatus === 'verified' || row?.helloSignStatus === 'completed' ? 'Verified' : row?.helloSignStatus === 'declined' ? 'Declined' : 'Pending' : '',
@@ -111,6 +112,14 @@ function AdminTable() {
 							state={row.state === 'approved' ? 'approved' : row.state === 'rejected' ? 'rejected' : 'submitted'}
 							title={row.state}
 						/>
+					</Td>
+					<Td>
+						<Text
+							fontSize='sm'
+
+						>
+							{row.wallet[0].values[0].value?.length > 20 ? (row.wallet[0].values[0].value.slice(0, 6) + '...' + row.wallet[0].values[0].value?.slice(-4)) : row.wallet[0].values[0].value}
+						</Text>
 					</Td>
 					<Td
 						w='5%'
