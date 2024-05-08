@@ -28,7 +28,7 @@ import { getFromIPFS } from 'src/libraries/utils/ipfs'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
-import { GrantsProgramContext } from 'src/pages/_app'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -95,7 +95,6 @@ function Proposal() {
 						/>
 					</Flex>
 				</Flex>
-
 				{
 					shouldShowPII && (
 						<Flex
@@ -201,7 +200,6 @@ function Proposal() {
 					{
 						chainInfo && (
 							<Flex
-								hidden
 								direction='column'
 								w='50%'>
 								<Text color='gray.500'>
@@ -230,7 +228,6 @@ function Proposal() {
 						</Text>
 					</Flex>
 					<Flex
-						hidden
 						direction='column'
 						w='50%'>
 						<Text color='gray.500'>
@@ -334,19 +331,58 @@ function Proposal() {
 				}
 
 				{
-					grant?.fields
+					getFieldString(decryptedProposal, 'applicantTelegram') && (
+						<Flex
+							w='100%'
+							mt={4}
+							direction='column'>
+							<Text color='gray.500'>
+								Telegram
+							</Text>
+							<Text mt={1}>
+								{getFieldString(decryptedProposal, 'applicantTelegram')}
+							</Text>
+						</Flex>
+					)
+				}
+				{
+					getFieldString(decryptedProposal, 'applicantTwitter') && (
+						<Flex
+							w='100%'
+							mt={4}
+							direction='column'>
+							<Text color='gray.500'>
+								Twitter
+							</Text>
+							<Text mt={1}>
+								{getFieldString(decryptedProposal, 'applicantTwitter')}
+							</Text>
+						</Flex>
+					)
+				}
+
+				{
+					proposal?.fields
 						?.filter((field) => field.id
 							.substring(field.id.indexOf('.') + 1)
 							.startsWith('customField'),
-						)
-						.map((field, index) => {
+						)?.sort((a, b) => {
+							const aId = a.id.substring(a.id.indexOf('.customField') + 12)?.split('-')[0]
+							const bId = b.id.substring(b.id.indexOf('.customField') + 12)?.split('-')[0]
+							return parseInt(aId) - parseInt(bId)
+						})?.map((field, index) => {
 							const id = field.id.substring(field.id.indexOf('.') + 1)
-							const title = field.title
-								.substring(field.title.indexOf('-') + 1)
+
+							const title = field.id
+								.substring(field.id.indexOf('-') + 1)
 								.split('\\s')
 								.join(' ')
 							const value = getFieldString(proposal, id)
 							if(value === undefined) {
+								return <Flex key={index} />
+							}
+
+							if(!shouldShowPII) {
 								return <Flex key={index} />
 							}
 
@@ -400,8 +436,9 @@ function Proposal() {
 		)
 	}
 
-	const { grant, role } = useContext(GrantsProgramContext)!
+	const { role } = useContext(GrantsProgramContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
+	const { scwAddress } = useContext(WebwalletContext)!
 	const toast = useCustomToast()
 
 	const proposal = useMemo(() => {
@@ -424,8 +461,8 @@ function Proposal() {
 	}, [proposal?.grant, chainId])
 
 	const shouldShowPII = useMemo(() => {
-		return role !== 'community'
-	}, [])
+		return role !== 'community' && (role === 'builder' ? proposal?.applicantId === scwAddress : true)
+	}, [role, proposal?.applicantId, scwAddress])
 
 	const [decryptedProposal, setDecryptedProposal] = useState<
 		ProposalType | undefined
@@ -433,7 +470,6 @@ function Proposal() {
 	const [editorState, setEditorState] = useState<EditorState>(
 		EditorState.createEmpty(),
 	)
-
 	const { decrypt } = useEncryptPiiForApplication(
 		proposal?.grant?.id,
 		proposal?.applicantPublicKey,
