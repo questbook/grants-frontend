@@ -325,6 +325,7 @@ function Discover() {
 						minWidth='100%'
 						p={4}
 						w='100%'
+						h='100vh'
 						bgColor='white'
 					>
 

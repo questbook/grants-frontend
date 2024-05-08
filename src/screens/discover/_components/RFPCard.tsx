@@ -29,7 +29,6 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 	const buildComponent = () => (
 		<Box
 			w='100%'
-			h='100%'
 			background='white'
 			p='12px 12px 16px 12px'
 			// h='13'
