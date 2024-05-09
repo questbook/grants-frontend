@@ -25,14 +25,14 @@ import SectionRichTextEditor from 'src/screens/proposal_form/_components/Section
 import SectionSelect from 'src/screens/proposal_form/_components/SectionSelect'
 import SelectArray from 'src/screens/proposal_form/_components/SelectArray'
 import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposal'
-import { containsField, findField, findFieldBySuffix, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
-import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, disabledSubmissions, disabledTonGrants, MILESTONE_INPUT_STYLE, SocialIntent, tonGrants } from 'src/screens/proposal_form/_utils/constants'
+import { containsCustomField, containsField, findCustomField, findField, findFieldBySuffix, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
+import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, disabledSubmissions, disabledTonGrants, MILESTONE_INPUT_STYLE, SocialIntent, tonAPACGrants, tonGrants } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
 
 
 function ProposalForm() {
 	const buildComponent = () => {
-		return isExecuting !== undefined && !isExecuting && networkTransactionModalStep === undefined ? successComponent() : (error ? errorComponent() : grant?.id === tonGrants ? customTONformComponent() : formComponent())
+		return isExecuting !== undefined && !isExecuting && networkTransactionModalStep === undefined ? successComponent() : (error ? errorComponent() : grant?.id === tonGrants ? customTONformComponent() : grant?.id === tonAPACGrants ? customTONAPACformComponent() : formComponent())
 	}
 
 
@@ -800,7 +800,10 @@ function ProposalForm() {
 								textAlign='center'
 								mt={4}
 							>
-								Funding asked in milestones exceeds the total funding committed - ${grant?.reward?.committed} USD
+								Funding asked in milestones exceeds the total funding committed - $
+								{grant?.reward?.committed}
+								{' '}
+								USD
 							</Text>
 
 						)
@@ -1366,6 +1369,632 @@ function ProposalForm() {
 								)
 							})
 						}
+
+
+						<Button
+							mt={10}
+							ml='auto'
+							variant='primaryLarge'
+							isLoading={webwallet ? !scwAddress : false}
+							loadingText='Loading your wallet'
+							isDisabled={isDisabled}
+							onClick={
+								(e) => {
+									e.preventDefault()
+									if(!webwallet) {
+										setSignIn(true)
+										return
+									} else {
+										const check = formCheck()
+										if(check) {
+											setNetworkTransactionModalStep(0)
+											submitProposal(form)
+										}
+									}
+								}
+							}>
+							<Text
+								color='white'
+								fontWeight='500'>
+								{type === 'submit' ? 'Submit' : 'Resubmit'}
+								{' '}
+								Proposal
+							</Text>
+						</Button>
+					</Flex>
+				</Flex>
+				<NetworkTransactionFlowStepperModal
+					isOpen={networkTransactionModalStep !== undefined}
+					currentStepIndex={networkTransactionModalStep || 0}
+					viewTxnLink={getExplorerUrlForTxHash(chainId, transactionHash)}
+					customSteps={customSteps}
+					customStepsHeader={customStepsHeader}
+					onClose={
+						() => {
+							setNetworkTransactionModalStep(undefined)
+						}
+					} />
+			</Flex>
+		)
+	}
+
+	const customTONAPACformComponent = () => {
+
+		return (
+			<Flex
+				w='100%'
+				h='calc(100vh - 64px)'
+				align='start'
+				justify='center'>
+
+				<Flex
+					direction='column'
+					w='90%'
+					bg='white'
+					boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
+					overflowY='auto'
+					my={5}
+					px={6}
+					py={10}>
+					{
+						newTab !== 'true' && (
+							<Flex justify='start'>
+								<BackButton />
+							</Flex>
+						)
+					}
+
+					<Flex
+						mx='auto'
+						direction='column'
+						w='84%'
+						h='100%'
+						align='center'
+					>
+
+						<Text
+							w='100%'
+							textAlign='center'
+							variant='heading3'
+							fontWeight='500'
+							borderBottom='1px solid #E7E4DD'
+							pb={4}>
+							Submit Proposal
+						</Text>
+						{/* Grant Name */}
+
+						{/* <Flex alignItems='center'>
+							<Image
+								src='/v2/images/tonBanner.png'
+								alt='banner'
+								width='100%'
+								height='100%'
+							/>
+						</Flex> */}
+
+
+						{/* Grant Info */}
+						{/* Grant Info */}
+						<Container
+							mt={4}
+							p={4}
+							// border='1px solid #E7E4DD'
+							className='container'
+							width='max-content'
+						>
+							<Flex
+								direction={['column', 'row']}
+								justifyContent='space-between'
+								width='max-content'
+								gap={2}
+							>
+								<Flex
+									alignItems='center'
+								>
+									{/* <Flex gap={4}>
+										<CalendarIcon />
+										<Flex direction='column'>
+											<Text
+												variant='title'
+												fontWeight='400'
+												color='black.100'
+											>
+												Accepting proposals until
+												{' '}
+											</Text>
+											<Text
+												variant='title'
+												fontWeight='500'
+												color='black.100'
+											>
+												{extractDateFromDateTime(grant?.deadline!)}
+											</Text>
+										</Flex>
+									</Flex> */}
+								</Flex>
+								{/* <Divider
+									orientation='vertical'
+									h='100%' /> */}
+								{
+									grant?.link && (
+										<Flex alignItems='center'>
+											<Flex gap={4}>
+												<Doc />
+												<Flex direction='column'>
+													<Text
+														variant='title'
+														fontWeight='400'
+													>
+														Grant program details
+														{' '}
+													</Text>
+													<Text
+														variant='title'
+														fontWeight='500'
+														color='black.100'
+														cursor='pointer'
+														onClick={() => window.open(grant?.link!, '_blank')}
+													>
+														Read here
+													</Text>
+												</Flex>
+											</Flex>
+										</Flex>
+									)
+								}
+
+							</Flex>
+						</Container>
+
+
+						{/* Builder Details */}
+						<SectionHeader mt={8}>
+							Builder details
+						</SectionHeader>
+						{
+							containsField(grant, 'applicantName') && (
+								<SectionInput
+									label='Full Name*'
+									placeholder='Ryan Adams'
+									value={findField(form, 'applicantName').value}
+									onChange={
+										(e) => {
+											onChange(e, 'applicantName')
+										}
+									} />
+							)
+						}
+						{
+							containsField(grant, 'applicantEmail') && (
+								<SectionInput
+									label='Email*'
+									placeholder='name@sample.com (will not be shown publicly)'
+									value={findField(form, 'applicantEmail').value}
+									onChange={
+										(e) => {
+											onChange(e, 'applicantEmail')
+											validateEmail(e.target.value, (isValid) => {
+												setEmailError(!isValid)
+											})
+										}
+									}
+									isInvalid={emailError}
+									errorText='Invalid email address' />
+							)
+						}
+						{
+							containsField(grant, 'applicantAddress') && (
+								<SectionInput
+									label='TON Wallet Address*'
+									placeholder='Wallet to receive funds on TON'
+									value={findField(form, 'applicantAddress').value}
+									onChange={
+										async(e) => {
+											onChange(e, 'applicantAddress')
+											await validateWalletAddress(e.target.value, (isValid) => {
+												setWalletAddressError(!isValid)
+											})
+										}
+									}
+									isInvalid={walletAddressError}
+									errorText={`Invalid address on ${chainNames?.get(safeObj?.chainId?.toString() ?? '') !== undefined ? chainNames.get(safeObj?.chainId?.toString() ?? '')?.toString() : ' TON based chain'}`} />
+							)
+						}
+
+						{
+							containsField(grant, 'teamMembers') && (
+								<SectionSelect
+									label='Team Members'
+									defaultValue={1}
+									min={1}
+									max={10}
+									value={form?.members?.length}
+									onChange={
+										(e) => {
+											const copy = { ...form }
+											const newLength = parseInt(e)
+											if(newLength > copy.members.length) {
+												copy.members = copy.members.concat(Array(newLength - copy.members.length).fill(''))
+											} else if(newLength < copy.members.length) {
+												copy.members = copy.members.slice(0, newLength)
+											}
+
+											findField(copy, 'teamMembers').value = newLength.toString()
+											setForm(copy)
+										}
+									} />
+							)
+						}
+
+						{
+							containsField(grant, 'teamMembers') && form.members?.map((member, index) => {
+								return (
+									<SectionInput
+										key={index}
+										label={`Member ${index + 1}`}
+										placeholder={`Bio about member ${index + 1}`}
+										maxLength={300}
+										value={member}
+										onChange={
+											(e) => {
+												const copy = { ...form }
+												copy.members[index] = e.target.value
+												setForm(copy)
+											}
+										} />
+								)
+							})
+						}
+						{
+							containsCustomField(grant, 'Personal Telegram Handle') && (
+								<SectionInput
+									label='Personal Telegram Handle*'
+									placeholder='@github (will not be shown publicly)'
+									value={findCustomField(form, 'Personal Telegram Handle').value}
+									onChange={
+										(e) => {
+											onChange(e, findCustomField(form, 'Personal Telegram Handle').id)
+										}
+									} />
+							)
+						}
+						{
+							containsCustomField(grant, 'Personal WeChat Handle') && (
+								<SectionInput
+									label='Personal WeChat Handle*'
+									placeholder='@wechat (will not be shown publicly)'
+									value={findCustomField(form, 'Personal WeChat Handle').value}
+									onChange={
+										(e) => {
+											onChange(e, findCustomField(form, 'Personal WeChat Handle').id)
+										}
+									} />
+							)
+						}
+						{
+							containsCustomField(grant, 'Education & Working experience & achievements of the founder and/or chief creator of Mini-app') && (
+								<SectionInput
+									label='Education & Working experience & achievements of the founder and/or chief creator of Mini-app*'
+									placeholder=''
+									value={findCustomField(form, 'Education & Working experience & achievements of the founder and/or chief creator of Mini-app').value}
+									onChange={
+										(e) => {
+											onChange(e, findCustomField(form, 'Education & Working experience & achievements of the founder and/or chief creator of Mini-app').id)
+										}
+									} />
+							)
+						}
+						{/* Project Details */}
+						<SectionHeader mt={8}>
+							Project Details
+						</SectionHeader>
+						{
+							(
+
+								grant?.fields?.filter((field) => ['Website', 'Pitch deck (if available)', 'Twitter', 'Telegram Channel', 'Telegram Bot Link (official, not bots for development test)', 'Github Link']?.
+									some((title) => field.title.substring(field.title.indexOf('-') + 1).includes(title))).map((field) => {
+									const id = field.id.substring(field.id.indexOf('.') + 1)
+									const modifiedId = id.substring(id.indexOf('-') + 1)
+									const title = field.title.substring(field.title.indexOf('-') + 1)
+										.split('\\s')
+										.join(' ')
+									return (
+										<SectionInput
+											key={field.id}
+											label={title?.includes('Pitch deck') ? `${title}` : title + '*'}
+											value={findFieldBySuffix(form, modifiedId, id).value}
+											onChange={
+												(e) => {
+													onChange(e, findFieldBySuffix(form, modifiedId, id).id)
+												}
+											} />
+									)
+								}))
+						}
+
+						{/* Qualification Details */}
+						<SectionHeader mt={8}>
+							Qualification
+						</SectionHeader>
+						{
+							(
+
+								grant?.fields?.filter((field) => ['Name of your past successful App, on which internet platform and one sentence introduction.', 'Any materials or links which can prove your achievement of building an App in Telegram with >10 thousand daily active users, or >1 million daily active users in any other internet platforms such as WeChat, QQ, Facebook, Google, Line, Kakao, etc. in the past', 'How can we verify your DAU achievement from a 3rd-party?(e.g. Database like We分析,WeData, 阿拉丁小程序, Questmobile, FB or Google ads system, any contacts in the big internet platform)']?.
+									some((title) => field.title.substring(field.title.indexOf('-') + 1).includes(title))).map((field) => {
+									const id = field.id.substring(field.id.indexOf('.') + 1)
+									const modifiedId = id.substring(id.indexOf('-') + 1)
+									const title = field.title.substring(field.title.indexOf('-') + 1)
+										.split('\\s')
+										.join(' ')
+									return (
+										<SectionInput
+											key={field.id}
+											label={title + '*'}
+											placeholder={title?.includes('Any materials') ? 'you can add screenshots links, will not be shown publicly' : ''}
+											value={findFieldBySuffix(form, modifiedId, id).value}
+											onChange={
+												(e) => {
+													onChange(e, findFieldBySuffix(form, modifiedId, id).id)
+												}
+											} />
+									)
+								}))
+						}
+
+						{/* Proposal Details */}
+						<SectionHeader mt={8}>
+							Proposal
+						</SectionHeader>
+						{
+							containsField(grant, 'projectName') && (
+								<SectionInput
+									label='Title*'
+									placeholder='Name of your proposal'
+									maxLength={80}
+									value={findField(form, 'projectName').value}
+									onChange={
+										(e) => {
+											onChange(e, 'projectName')
+										}
+									} />
+							)
+						}
+						{
+							containsCustomField(grant, 'Your idea of your Mini-app in 1 sentence') && (
+								<SectionInput
+									label='Your idea of your Mini-app in 1 sentence*'
+									placeholder=''
+									value={findCustomField(form, 'Your idea of your Mini-app in 1 sentence').value}
+									onChange={
+										(e) => {
+											onChange(e, findCustomField(form, 'Your idea of your Mini-app in 1 sentence').id)
+										}
+									} />
+							)
+						}
+
+						{
+							containsField(grant, 'tldr') && (
+								<SectionInput
+									label='tl;dr'
+									placeholder='Explain your proposal in one sentence'
+									maxLength={120}
+									value={findField(form, 'tldr').value}
+									onChange={
+										(e) => {
+											onChange(e, 'tldr')
+										}
+									} />
+							)
+						}
+
+						{
+							containsField(grant, 'projectDetails') && (
+								<SectionRichTextEditor
+									label='Details*'
+									flexProps={{ align: 'start' }}
+									editorState={form.details}
+									placeholder='what is the problem you are solving? What is your solution to this problem? Please provide link to your product demo or design frames, if available'
+									setEditorState={
+										(e) => {
+											const copy = { ...form }
+											copy.details = e
+											setForm(copy)
+										}
+									} />
+							)
+						}
+						{
+							(
+
+								grant?.fields?.filter((field) => ['How does your project implement the TON blockchain and which parts will be on-chain?', 'If you already developed the Telegram mini-app, Indicate your current traction (MAU, DAU, retention, TVL or other relevant metrics). We prefer on-chain data with their specific smart contract links for everyone to verify. The more relevant metrics you provide, the better.', 'Who are your competitors? Are there any similar existing solutions on TON? If yes, mention similar solutions and elaborate on your product\'s advantages.', 'Who is your target user? Please describe your user acquisition strategy', 'Overview of the technology stack to be used']?.
+									some((title) => field.title.substring(field.title.indexOf('-') + 1).includes(title))).map((field) => {
+									const id = field.id.substring(field.id.indexOf('.') + 1)
+									const modifiedId = id.substring(id.indexOf('-') + 1)
+									const title = field.title.substring(field.title.indexOf('-') + 1)
+										.split('\\s')
+										.join(' ')
+									return (
+										<SectionInput
+											key={field.id}
+											label={title?.includes('If you already') || title?.includes('Who are') ? title : title + '*'}
+											value={findFieldBySuffix(form, modifiedId, id).value}
+											onChange={
+												(e) => {
+													onChange(e, findFieldBySuffix(form, modifiedId, id).id)
+												}
+											} />
+									)
+								}))
+						}
+						{
+							(
+								<>
+									<SelectArray
+										label='Milestones*'
+										allowMultiple={grant?.payoutType === 'milestones' || (containsField(grant, 'isMultipleMilestones') ?? false)}
+										config={
+											form?.milestones?.map((milestone, index) => {
+												return [
+													{
+														...MILESTONE_INPUT_STYLE[0],
+														value: milestone?.title,
+														// isDisabled: index < (grant?.milestones?.length || 0),
+														onChange: (e) => {
+															const copy = { ...form }
+															copy.milestones[index] = { ...copy.milestones[index], title: e.target.value }
+															setForm(copy)
+														}
+													},
+													{
+														...MILESTONE_INPUT_STYLE[2],
+														value: milestone?.details,
+														type: 'textarea',
+														// isDisabled: index < (grant?.milestones?.length || 0),
+														onChange: (e) => {
+															const copy = { ...form }
+															copy.milestones[index] = { ...copy.milestones[index], details: e.target.value }
+															setForm(copy)
+														}
+													},
+													{
+														...MILESTONE_INPUT_STYLE[3],
+														value: milestone?.deadline,
+														type: 'date',
+														label: 'Deadline',
+														// isDisabled: index < (grant?.milestones?.length || 0),
+														onChange: (e) => {
+															const copy = { ...form }
+															copy.milestones[index] = { ...copy.milestones[index], deadline: e.target.value }
+															setForm(copy)
+														}
+													},
+													{
+														...MILESTONE_INPUT_STYLE[1],
+														value: milestone?.amount > 0 ? milestone?.amount : '',
+														onChange: (e) => {
+															if(e.target.value?.includes('.')) {
+																return
+															} else {
+																try {
+																	const copy = { ...form }
+																	copy.milestones[index] = { ...copy.milestones[index], amount: parseInt(e.target.value) }
+																	setForm(copy)
+																} catch(e) {
+																	logger.error(e)
+																}
+															}
+														}
+													},
+												]
+											})
+										}
+										onAdd={
+											() => {
+												const copy = { ...form }
+												copy.milestones.push(DEFAULT_MILESTONE)
+												setForm(copy)
+											}
+										}
+										onRemove={
+											(index) => {
+												const copy = { ...form }
+												logger.info({ index, copy }, 'Splicing')
+												copy.milestones.splice(index, 1)
+												setForm(copy)
+											}
+										} />
+
+									<SectionInput
+										label='Total Funding Requested'
+										isDisabled
+										placeholder='12000 USD'
+										value={`${fundingAsk} ${chainInfo?.label}`}
+									/>
+
+									<Text
+										mt={4}
+										mx='auto'
+										fontSize='sm'
+										color='gray.500'>
+										{'The total fund will be < $50,000 and depended on the decision of the Foundation by installments. Grants don’t mean that the Foundation sees your project as a promised success in the future. You need to think about your long-term plan of funding by yourself.'}
+									</Text>
+								</>
+							)
+						}
+
+						{/* Render custom Fields */}
+						{
+							containsField(grant, 'customField0') && (
+								<SectionHeader mt={8}>
+									Other information
+								</SectionHeader>
+							)
+						}
+						{
+							containsCustomField(grant, 'What is your plan for the use of this grant (how & when & specific number)?') && (
+								<SectionInput
+									label='What is your plan for the use of this grant (how & when & specific number)?*'
+									placeholder=''
+									value={findCustomField(form, 'What is your plan for the use of this grant (how & when & specific number)?').value}
+									onChange={
+										(e) => {
+											onChange(e, findCustomField(form, 'What is your plan for the use of this grant (how & when & specific number)?').id)
+										}
+									} />
+							)
+						}
+
+						<Text
+							mt={8}
+							fontSize='lg'
+							w='100%'
+							fontWeight='500'
+							color='red.500'
+						>
+							If you do evil, the Foundation will post your bad action to the public through all the channels we own, and stop any connections with you.
+						</Text>
+
+						{
+							containsCustomField(grant, 'I confirm that I have studied the Grant Program Guidelines and the Ecosystem Map with the existing solutions on TON (please write \'yes\')') && (
+								<SectionInput
+									label={'I confirm that I have studied the Grant Program Guidelines and the Ecosystem Map with the existing solutions on TON (please write \'yes\')*'}
+									placeholder=''
+									value={findCustomField(form, 'I confirm that I have studied the Grant Program Guidelines and the Ecosystem Map with the existing solutions on TON (please write \'yes\')').value}
+									onChange={
+										(e) => {
+											onChange(e, findCustomField(form, 'I confirm that I have studied the Grant Program Guidelines and the Ecosystem Map with the existing solutions on TON (please write \'yes\')').id)
+										}
+									} />
+							)
+						}
+
+						<Text
+							mt={8}
+							fontSize='md'
+							w='100%'
+						>
+							For any projects who have integrated with TON, grants are not suitable for you. Please join our Open League Competition and you will have a much bigger size of fund and exposure support from Foundation.
+							<a
+								href='https://ton.org/en/open-league'
+								target='_blank'
+								style={{ textDecoration: 'underline', color: '#3B82F6' }}
+								rel='noreferrer'>
+								{' '}
+								{' '}
+								https://ton.org/en/open-league
+							</a>
+						</Text>
+
+						<Text
+							mt={10}
+							fontSize='sm'
+							w='100%'
+							color='gray.500'
+						>
+							Make sure all the fields are filled correctly before submitting the proposal
+							(Fields marked with * are mandatory) and other fields are optional (please fill them with N/A or `-` if not applicable)
+						</Text>
 
 
 						<Button

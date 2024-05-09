@@ -411,7 +411,7 @@ function Proposal() {
 								return <Flex key={index} />
 							}
 
-							if(!shouldShowPII && proposal?.grant?.id === tonGrants && title === 'Personal Telegram Handle' || title === 'I confirm that I have studied the Grant Program Guidelines and the Ecosystem Map with the existing solutions on TON (please write \'yes\')') {
+							if(!shouldShowPII && proposal?.grant?.id === tonGrants && [title === 'Personal Telegram Handle', title === 'Personal WeChat Handle', title === 'I confirm that I have studied the Grant Program Guidelines and the Ecosystem Map with the existing solutions on TON (please write \'yes\')'].some(Boolean)) {
 								return <Flex key={index} />
 							}
 
