@@ -1369,6 +1369,14 @@ function ProposalForm() {
 								)
 							})
 						}
+						<Text
+							mt={10}
+							fontSize='sm'
+							w='100%'
+							color='gray.500'
+						>
+							{'Please ensure that all fields are filled correctly before submitting the proposal. Fields marked with * are mandatory, while other fields are optional. Please fill them with \'N/A\' or \'-\' if not applicable'}
+						</Text>
 
 
 						<Button
@@ -2000,8 +2008,7 @@ function ProposalForm() {
 							w='100%'
 							color='gray.500'
 						>
-							Make sure all the fields are filled correctly before submitting the proposal
-							(Fields marked with * are mandatory) and other fields are optional (please fill them with N/A or `-` if not applicable)
+							{'Please ensure that all fields are filled correctly before submitting the proposal. Fields marked with * are mandatory, while other fields are optional. Please fill them with \'N/A\' or \'-\' if not applicable'}
 						</Text>
 
 
