@@ -32,7 +32,7 @@ import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { tonGrants } from 'src/screens/proposal_form/_utils/constants'
+import { tonAPACGrants, tonGrants } from 'src/screens/proposal_form/_utils/constants'
 
 function Proposal() {
 	const buildComponent = () => {
@@ -411,7 +411,12 @@ function Proposal() {
 								return <Flex key={index} />
 							}
 
-							if(!shouldShowPII && proposal?.grant?.id === tonGrants && [title === 'Personal Telegram Handle', title === 'Personal WeChat Handle', title === 'I confirm that I have studied the Grant Program Guidelines and the Ecosystem Map with the existing solutions on TON (please write \'yes\')'].some(Boolean)) {
+							if(!shouldShowPII && (proposal?.grant?.id === tonGrants || proposal?.grant?.id === tonAPACGrants) && ([
+								'Personal Telegram Handle',
+								'Personal WeChat Handle',
+								'I confirm that I have studied the Grant Program Guidelines and the Ecosystem Map with the existing solutions on TON (please write \'yes\')',
+								'Any materials or links which can prove your achievement of building an App in Telegram with >10 thousand daily active users, or >1 million daily active users in any other internet platforms such as WeChat, QQ, Facebook, Google, Line, Kakao, etc. in the past',
+							  ]?.some((s) => title === s))) {
 								return <Flex key={index} />
 							}
 

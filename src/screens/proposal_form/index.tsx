@@ -1729,6 +1729,7 @@ function ProposalForm() {
 									return (
 										<SectionInput
 											key={field.id}
+											type='textarea'
 											label={title + '*'}
 											placeholder={title?.includes('Any materials') ? 'you can add screenshots links, will not be shown publicly' : ''}
 											value={findFieldBySuffix(form, modifiedId, id).value}
@@ -1817,6 +1818,7 @@ function ProposalForm() {
 									return (
 										<SectionInput
 											key={field.id}
+											type='textarea'
 											label={title?.includes('If you already') || title?.includes('Who are') ? title : title + '*'}
 											value={findFieldBySuffix(form, modifiedId, id).value}
 											onChange={

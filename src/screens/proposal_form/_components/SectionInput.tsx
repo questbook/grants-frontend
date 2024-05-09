@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Flex, FlexProps, Input, InputProps, Select, Text } from '@chakra-ui/react'
+import { ChangeEvent, useState } from 'react'
+import { Flex, FlexProps, Input, InputProps, Select, Text, Textarea } from '@chakra-ui/react'
 
 interface Props extends InputProps {
     label: string
@@ -68,7 +68,39 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 							</Select>
 						)
 
-							: (
+							: props?.type === 'textarea' ? (
+								<Textarea
+									w={['100%', '70%']}
+									h={label?.length > 0 ? `${label?.length - 10}px` : '4rem'}
+									variant='filled'
+									textAlign='left'
+									placeholder={props?.placeholder}
+									borderColor='gray.300'
+									borderBottom='1px solid'
+									fontSize='20px'
+									value={value}
+									lineHeight='28px'
+									borderRadius={0}
+									color='black.100'
+									_hover={
+										{
+											backgroundColor: 'transparent'
+										}
+									}
+									backgroundColor='transparent'
+									onWheel={(e) => (e.target as HTMLElement).blur()}
+									_placeholder={
+										{
+											color: 'gray.500'
+										}
+									}
+									onChange={
+										(e) => {
+											setValue(e.target.value)
+											props?.onChange?.(e as unknown as ChangeEvent<HTMLInputElement>)
+										}
+									} />
+							) : (
 								<Input
 									{...props}
 									w={['100%', '70%']}
