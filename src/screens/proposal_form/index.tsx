@@ -1463,17 +1463,23 @@ function ProposalForm() {
 						</Text>
 						{/* Grant Name */}
 
-						{/* <Flex alignItems='center'>
-							<Image
-								src='/v2/images/tonBanner.png'
-								alt='banner'
-								width='100%'
-								height='100%'
-							/>
-						</Flex> */}
+						<Flex
+							mt={4}
+							mx='auto'
+							alignItems='center'>
+							{
+								grant?.workspace?.logoIpfsHash && (
+									<Image
+										src={getUrlForIPFSHash(grant?.workspace?.logoIpfsHash)}
+										alt='banner'
+										w='100px'
+										mx='auto'
+									/>
+								)
+							}
+						</Flex>
 
 
-						{/* Grant Info */}
 						{/* Grant Info */}
 						<Container
 							mt={4}
