@@ -1533,19 +1533,33 @@ function ProposalForm() {
 									grant?.link && (
 										<Flex alignItems='center'>
 											<Flex gap={4}>
-												<Doc />
 												<Flex direction='column'>
 													<Text
 														variant='title'
-														fontWeight='400'
+														fontWeight='500'
+														color='black.100'
+														fontSize={['sm', 'lg']}
 													>
-														Grant program details
+														{grant?.title}
+														{' '}
+													</Text>
+													<Text
+														mt={2}
+														variant='title'
+														fontWeight='500'
+														color='black.100'
+														fontSize={['sm', 'md']}
+														align={['start', 'center']}
+													>
+														Grant Program Details
 														{' '}
 													</Text>
 													<Text
 														variant='title'
 														fontWeight='500'
-														color='black.100'
+														color='blue.500'
+														fontSize={['sm', 'md']}
+														align={['start', 'center']}
 														cursor='pointer'
 														onClick={() => window.open(grant?.link!, '_blank')}
 													>
@@ -1715,7 +1729,7 @@ function ProposalForm() {
 									return (
 										<SectionInput
 											key={field.id}
-											label={title?.includes('Pitch deck') ? `${title}` : title + '*'}
+											label={['Pitch deck', 'Website', 'Github']?.some((el) => title.includes(el)) ? `${title}` : title + '*'}
 											value={findFieldBySuffix(form, modifiedId, id).value}
 											onChange={
 												(e) => {
@@ -1733,7 +1747,7 @@ function ProposalForm() {
 						{
 							(
 
-								grant?.fields?.filter((field) => ['Name of your past successful App, on which internet platform and one sentence introduction.', 'Any materials or links which can prove your achievement of building an App in Telegram with >10 thousand daily active users, or >1 million daily active users in any other internet platforms such as WeChat, QQ, Facebook, Google, Line, Kakao, etc. in the past', 'How can we verify your DAU achievement from a 3rd-party?(e.g. Database like We分析,WeData, 阿拉丁小程序, Questmobile, FB or Google ads system, any contacts in the big internet platform)']?.
+								grant?.fields?.filter((field) => ['Name of your past successful App, on which internet platform and one sentence introduction.', 'Any materials or links which can prove your achievement of building an App in Telegram with >10 thousand daily active users, or >1 million daily active users in any other internet platforms such as WeChat, QQ, Facebook, Google, Line, Kakao, etc. in the past', 'How can we verify your DAU achievement from a 3rd-party?(e.g. Database like We分析,WeData, 阿拉丁小程序, Questmobile, FB or Google ads system, any contacts (联系人) currently in the big internet platform)']?.
 									some((title) => field.title.substring(field.title.indexOf('-') + 1).includes(title))).map((field) => {
 									const id = field.id.substring(field.id.indexOf('.') + 1)
 									const modifiedId = id.substring(id.indexOf('-') + 1)
@@ -1744,8 +1758,11 @@ function ProposalForm() {
 										<SectionInput
 											key={field.id}
 											type='textarea'
-											label={title + '*'}
-											placeholder={title?.includes('Any materials') ? 'you can add screenshots links, will not be shown publicly' : ''}
+											label={
+												title?.includes('Any materials') ? title + ' (you can upload screenshots, will not be shown publicly)' :
+													title + '*'
+											}
+											placeholder={title?.includes('Any materials') ? 'Please Email the screenshots to john@ton.org' : ''}
 											value={findFieldBySuffix(form, modifiedId, id).value}
 											onChange={
 												(e) => {
@@ -1774,19 +1791,6 @@ function ProposalForm() {
 									} />
 							)
 						}
-						{
-							containsCustomField(grant, 'Your idea of your Mini-app in 1 sentence') && (
-								<SectionInput
-									label='Your idea of your Mini-app in 1 sentence*'
-									placeholder=''
-									value={findCustomField(form, 'Your idea of your Mini-app in 1 sentence').value}
-									onChange={
-										(e) => {
-											onChange(e, findCustomField(form, 'Your idea of your Mini-app in 1 sentence').id)
-										}
-									} />
-							)
-						}
 
 						{
 							containsField(grant, 'tldr') && (
@@ -1806,7 +1810,7 @@ function ProposalForm() {
 						{
 							containsField(grant, 'projectDetails') && (
 								<SectionRichTextEditor
-									label='Details*'
+									label='Your idea of your Mini-app in 1 sentence*'
 									flexProps={{ align: 'start' }}
 									editorState={form.details}
 									placeholder='what is the problem you are solving? What is your solution to this problem? Please provide link to your product demo or design frames, if available'
@@ -1848,58 +1852,19 @@ function ProposalForm() {
 								<>
 									<SelectArray
 										label='Milestones*'
-										allowMultiple={grant?.payoutType === 'milestones' || (containsField(grant, 'isMultipleMilestones') ?? false)}
+										allowMultiple={false}
 										config={
 											form?.milestones?.map((milestone, index) => {
 												return [
 													{
 														...MILESTONE_INPUT_STYLE[0],
 														value: milestone?.title,
+														isDisabled: true,
 														// isDisabled: index < (grant?.milestones?.length || 0),
 														onChange: (e) => {
 															const copy = { ...form }
 															copy.milestones[index] = { ...copy.milestones[index], title: e.target.value }
 															setForm(copy)
-														}
-													},
-													{
-														...MILESTONE_INPUT_STYLE[2],
-														value: milestone?.details,
-														type: 'textarea',
-														// isDisabled: index < (grant?.milestones?.length || 0),
-														onChange: (e) => {
-															const copy = { ...form }
-															copy.milestones[index] = { ...copy.milestones[index], details: e.target.value }
-															setForm(copy)
-														}
-													},
-													{
-														...MILESTONE_INPUT_STYLE[3],
-														value: milestone?.deadline,
-														type: 'date',
-														label: 'Deadline',
-														// isDisabled: index < (grant?.milestones?.length || 0),
-														onChange: (e) => {
-															const copy = { ...form }
-															copy.milestones[index] = { ...copy.milestones[index], deadline: e.target.value }
-															setForm(copy)
-														}
-													},
-													{
-														...MILESTONE_INPUT_STYLE[1],
-														value: milestone?.amount > 0 ? milestone?.amount : '',
-														onChange: (e) => {
-															if(e.target.value?.includes('.')) {
-																return
-															} else {
-																try {
-																	const copy = { ...form }
-																	copy.milestones[index] = { ...copy.milestones[index], amount: parseInt(e.target.value) }
-																	setForm(copy)
-																} catch(e) {
-																	logger.error(e)
-																}
-															}
 														}
 													},
 												]
@@ -1914,25 +1879,24 @@ function ProposalForm() {
 										}
 										onRemove={
 											(index) => {
-												const copy = { ...form }
-												logger.info({ index, copy }, 'Splicing')
-												copy.milestones.splice(index, 1)
-												setForm(copy)
+												logger.info({ index, form }, 'Splicing')
 											}
 										} />
 
-									<SectionInput
+									{/* <SectionInput
 										label='Total Funding Requested'
 										isDisabled
 										placeholder='12000 USD'
 										value={`${fundingAsk} ${chainInfo?.label}`}
-									/>
+									/> */}
 
 									<Text
 										mt={4}
+										p={4}
+										bg='gray.100'
 										mx='auto'
 										fontSize='sm'
-										color='gray.500'>
+										color='black.500'>
 										{'The total fund will be < $50,000 and depended on the decision of the Foundation by installments. Grants don’t mean that the Foundation sees your project as a promised success in the future. You need to think about your long-term plan of funding by yourself.'}
 									</Text>
 								</>
@@ -1963,6 +1927,8 @@ function ProposalForm() {
 
 						<Text
 							mt={8}
+							p={4}
+							bg='gray.100'
 							fontSize='lg'
 							w='100%'
 							fontWeight='500'
@@ -1987,6 +1953,8 @@ function ProposalForm() {
 
 						<Text
 							mt={8}
+							p={4}
+							bg='gray.100'
 							fontSize='md'
 							w='100%'
 						>
@@ -2026,11 +1994,8 @@ function ProposalForm() {
 										setSignIn(true)
 										return
 									} else {
-										const check = formCheck()
-										if(check) {
-											setNetworkTransactionModalStep(0)
-											submitProposal(form)
-										}
+										setNetworkTransactionModalStep(0)
+										submitProposal(form)
 									}
 								}
 							}>
@@ -2140,7 +2105,7 @@ function ProposalForm() {
 		}
 
 		for(const milestone of milestones) {
-			if(milestone.title === '' || !milestone.amount) {
+			if((milestone.title === '' || !milestone.amount) && grant?.id !== tonAPACGrants) {
 				logger.info({ index: milestone.index }, 'Milestone is empty')
 				return true
 			}
