@@ -599,11 +599,20 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		getGrant().then((r) => logger.info({ r }, 'Get grant result'))
 	}, [grantId, chainId, scwAddress])
 	useEffect(() => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		getProposals().then((proposals: any) => {
-			getFetchBackgroundProposals(proposals ?? [])
-		})
-	}, [grantId, chainId, scwAddress, webwallet])
+		if(grantId && typeof grantId === 'string' && subdomains.map((s) => s.grants).flat().includes(grantId as string)) {
+			if(role !== 'community') {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				getProposals().then((proposals: any) => {
+					getFetchBackgroundProposals(proposals ?? [])
+				})
+			}
+		} else {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			getProposals().then((proposals: any) => {
+				getFetchBackgroundProposals(proposals ?? [])
+			})
+		}
+	}, [grantId, chainId, scwAddress, webwallet, role])
 
 	useEffect(() => {
 		if(proposalId && typeof proposalId === 'string') {

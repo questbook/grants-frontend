@@ -6,7 +6,7 @@ import SetupNotificationModal from 'src/libraries/ui/SetupNotificationModal'
 import { copyGrantLink } from 'src/libraries/utils/copy'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
-import { disabledTonGrants, tonGrants } from 'src/screens/proposal_form/_utils/constants'
+import { disabledTonGrants, subdomains, tonGrants } from 'src/screens/proposal_form/_utils/constants'
 
 function Empty() {
 	const buildComponent = () => {
@@ -136,6 +136,7 @@ function Empty() {
 								<Button
 									variant='primaryMedium'
 									mt={6}
+									isDisabled={subdomains.map((s) => s.grants).flat().includes(grant?.id as string)}
 									onClick={
 										() => {
 											const href = window.location.href.split('/')
