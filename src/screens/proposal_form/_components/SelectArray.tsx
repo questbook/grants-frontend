@@ -67,6 +67,7 @@ function SelectArray({ label, allowMultiple, flexProps, config, onAdd, onRemove 
 																		variant='flushed'
 																		textAlign='left'
 																		borderColor='gray.300'
+																		isDisabled={inputProps.isDisabled}
 																		borderBottom='1px solid'
 																		fontSize='20px'
 																		maxLength={inputProps.maxLength}
@@ -122,6 +123,7 @@ function SelectArray({ label, allowMultiple, flexProps, config, onAdd, onRemove 
 																)
 															 }
 															{
+																!inputProps.isDisabled &&
 																inputProps.maxLength && (
 																	<Text
 																		mt={1}

@@ -1748,7 +1748,11 @@ function ProposalForm() {
 							(
 
 								grant?.fields?.filter((field) => ['Name of your past successful App, on which internet platform and one sentence introduction.', 'Any materials or links which can prove your achievement of building an App in Telegram with >10 thousand daily active users, or >1 million daily active users in any other internet platforms such as WeChat, QQ, Facebook, Google, Line, Kakao, etc. in the past', 'How can we verify your DAU achievement from a 3rd-party?(e.g. Database like We分析,WeData, 阿拉丁小程序, Questmobile, FB or Google ads system, any contacts (联系人) currently in the big internet platform)']?.
-									some((title) => field.title.substring(field.title.indexOf('-') + 1).includes(title))).map((field) => {
+									some((title) => field.title.substring(field.title.indexOf('-') + 1).includes(title))).sort((a, b) => {
+									const aId = a.id.substring(a.id.indexOf('.customField') + 12)?.split('-')[0]
+									const bId = b.id.substring(b.id.indexOf('.customField') + 12)?.split('-')[0]
+									return parseInt(aId) - parseInt(bId)
+								}).map((field) => {
 									const id = field.id.substring(field.id.indexOf('.') + 1)
 									const modifiedId = id.substring(id.indexOf('-') + 1)
 									const title = field.title.substring(field.title.indexOf('-') + 1)
@@ -1762,7 +1766,7 @@ function ProposalForm() {
 												title?.includes('Any materials') ? title + ' (you can upload screenshots, will not be shown publicly)' :
 													title + '*'
 											}
-											placeholder={title?.includes('Any materials') ? 'Please Email the screenshots to john@ton.org' : ''}
+											placeholder={title?.includes('Any materials') ? 'Please Email the screenshots to ton.asianpacific@gmail.com' : ''}
 											value={findFieldBySuffix(form, modifiedId, id).value}
 											onChange={
 												(e) => {
@@ -1780,8 +1784,8 @@ function ProposalForm() {
 						{
 							containsField(grant, 'projectName') && (
 								<SectionInput
-									label='Title*'
-									placeholder='Name of your proposal'
+									label='Project name*'
+									placeholder='Name of your project'
 									maxLength={80}
 									value={findField(form, 'projectName').value}
 									onChange={
@@ -1851,7 +1855,7 @@ function ProposalForm() {
 							(
 								<>
 									<SelectArray
-										label='Milestones*'
+										label='Milestones'
 										allowMultiple={false}
 										config={
 											form?.milestones?.map((milestone, index) => {
@@ -1860,6 +1864,7 @@ function ProposalForm() {
 														...MILESTONE_INPUT_STYLE[0],
 														value: milestone?.title,
 														isDisabled: true,
+														type: 'textarea',
 														// isDisabled: index < (grant?.milestones?.length || 0),
 														onChange: (e) => {
 															const copy = { ...form }
