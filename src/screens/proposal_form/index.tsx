@@ -1677,7 +1677,7 @@ function ProposalForm() {
 							containsCustomField(grant, 'Personal Telegram Handle') && (
 								<SectionInput
 									label='Personal Telegram Handle*'
-									placeholder='@github (will not be shown publicly)'
+									placeholder='@telegram (will not be shown publicly)'
 									value={findCustomField(form, 'Personal Telegram Handle').value}
 									onChange={
 										(e) => {
@@ -1702,7 +1702,7 @@ function ProposalForm() {
 						{
 							containsCustomField(grant, 'Education & Working experience & achievements of the founder and/or chief creator of Mini-app') && (
 								<SectionInput
-									label='Education & Working experience & achievements of the founder and/or chief creator of Mini-app*'
+									label='Education & Working experience & achievements of the founder and/or chief creator of Mini-app* will not be shown publicly)'
 									placeholder=''
 									value={findCustomField(form, 'Education & Working experience & achievements of the founder and/or chief creator of Mini-app').value}
 									onChange={
@@ -1814,7 +1814,7 @@ function ProposalForm() {
 						{
 							containsField(grant, 'projectDetails') && (
 								<SectionRichTextEditor
-									label='Your idea of your Mini-app in 1 sentence*'
+									label='Your idea of your Telegram Mini-app in one sentence*'
 									flexProps={{ align: 'start' }}
 									editorState={form.details}
 									placeholder='what is the problem you are solving? What is your solution to this problem? Please provide link to your product demo or design frames, if available'
