@@ -1974,6 +1974,24 @@ function ProposalForm() {
 								https://ton.org/en/open-league
 							</a>
 						</Text>
+						<Text
+							mt={4}
+							p={4}
+							bg='gray.100'
+							fontSize='md'
+							w='100%'
+						>
+							For more kinds of support from TON Foundation, please read the page:
+							<a
+								href='https://ton-org.notion.site/Welcome-to-TON-founder-ca6c2e3607fe4170a9fe984397e7bf5c'
+								target='_blank'
+								style={{ textDecoration: 'underline', color: '#3B82F6' }}
+								rel='noreferrer'>
+								{' '}
+								{' '}
+								https://ton-org.notion.site/Welcome-to-TON-founder-ca6c2e3607fe4170a9fe984397e7bf5c
+							</a>
+						</Text>
 
 						<Text
 							mt={10}
