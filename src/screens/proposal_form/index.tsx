@@ -1763,7 +1763,7 @@ function ProposalForm() {
 											key={field.id}
 											type='textarea'
 											label={
-												title?.includes('Any materials') ? title + ' (you can upload screenshots, will not be shown publicly)' :
+												title?.includes('Any materials') ? title + '(you can send any screenshots to ton.asianpacific@gmail.com, will not be shown publicly)' :
 													title + '*'
 											}
 											placeholder={title?.includes('Any materials') ? 'Please Email the screenshots to ton.asianpacific@gmail.com' : ''}
