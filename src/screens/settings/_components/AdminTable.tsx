@@ -57,6 +57,7 @@ function AdminTable() {
 					'Proposal Name': row.name[0].values[0].value,
 					'Proposal Status': row.state,
 					'KYC/KYB Status': row?.state === 'approved' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? 'Verified' : 'Pending' : '',
+					'KYC/KYB Country': row?.synapsStatus !== '' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? '' : 'N/A' : 'N/A',
 					'Synaps Type': row?.synapsStatus !== '' ? row?.synapsType : '',
 					'Grant Agreement Status': row?.state === 'approved' ? row?.helloSignStatus === 'verified' ? 'Verified' : 'Pending' : '',
 					'Notes': row?.notes,
@@ -147,6 +148,38 @@ function AdminTable() {
 								<StateButton
 									state={row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed' ? 'approved' : row?.synapsStatus === 'rejected' ? 'rejected' : 'submitted'}
 									title={row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed' ? `Verified - ${row?.synapsType}` : row?.synapsStatus === 'rejected' ? `Rejected - ${row?.synapsType}` : `Pending - ${row?.synapsType}`}
+								/>
+							)
+								: row?.state === 'approved' ? (
+									<StateButton
+										state='submitted'
+										title='Pending'
+									/>
+								) : '-'
+
+						}
+					</Td>
+					<Td
+						w='5%'
+						cursor='pointer'
+						// onClick={
+						// 	() => {
+						// 		if(row?.state === 'approved') {
+						// 			setShowKYCStatusUpdateModal({
+						// 				...showKYCStatusUpdateModal,
+						// 				isOpen: true,
+						// 				grantId: row.id,
+						// 				type: 'kyc'
+						// 			})
+						// 		}
+						// 	}
+						// }
+					>
+						{
+							row.synapsStatus?.length > 0 ? (
+								<StateButton
+									state={row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed' ? 'approved' : row?.synapsStatus === 'rejected' ? 'rejected' : 'submitted'}
+									title={row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed' ? '' : 'N/A'}
 								/>
 							)
 								: row?.state === 'approved' ? (
@@ -450,7 +483,7 @@ function AdminTable() {
 	const { adminTable, workspace, listAllGrants, setListAllGrants, allGrantsAdminTable } = useContext(SettingsFormContext)!
 	const { grant } = useContext(GrantsProgramContext)!
 
-	const TableHeader = listAllGrants ? ['No', 'Grant Title', 'Proposal Name', 'Proposal Status', 'KYC/KYB Status', 'Grant Agreement Status', 'Milestone', 'Funding Status' ] : ['No', 'Proposal Name', 'Proposal Status', 'KYC/KYB Status', 'Grant Agreement Status', 'Milestone', 'Funding Status', 'Notes']
+	const TableHeader = listAllGrants ? ['No', 'Grant Title', 'Proposal Name', 'Proposal Status', 'KYC/KYB Status', 'KYC/KYB Country', 'Grant Agreement Status', 'Milestone', 'Funding Status' ] : ['No', 'Proposal Name', 'Proposal Status', 'KYC/KYB Status', 'KYC/KYB Country', 'Grant Agreement Status', 'Milestone', 'Funding Status', 'Notes']
 
 	useEffect(() => {
 		setTableData(listAllGrants ? allGrantsAdminTable : adminTable)
