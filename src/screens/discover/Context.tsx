@@ -317,7 +317,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		if(subgrantsResults?.grants?.length) {
 			const arbitrum = allSectionGrants.find((s: any) => Object.keys(s)[0] === 'Arbitrum')
 			if(arbitrum) {
-				allSectionGrants[allSectionGrants.indexOf(arbitrum)] = { Arbitrum: { ...arbitrum.Arbitrum, grants: [...arbitrum.Arbitrum.grants, ...subgrantsResults?.grants] } }
+				allSectionGrants[allSectionGrants.indexOf(arbitrum)] = { Arbitrum: { ...arbitrum.Arbitrum, grants: [...arbitrum.Arbitrum.grants?.filter((g: any) => g.title?.includes('2.0')), ...subgrantsResults?.grants] } }
 			}
 
 			recentProposals = [...recentProposals, ...subgrantsResults?.grants.map((g: any) => g.applications).flat()]
