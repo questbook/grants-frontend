@@ -1,4 +1,6 @@
+import Markdown from 'react-markdown'
 import { Button, Flex, FlexProps, IconButton, Input, InputProps, Text, Textarea } from '@chakra-ui/react'
+import remarkGfm from 'remark-gfm'
 import { Add, Close } from 'src/generated/icons'
 
 interface Props {
@@ -88,39 +90,87 @@ function SelectArray({ label, allowMultiple, flexProps, config, onAdd, onRemove 
 																			}
 																		}
 																	/>
-																) : (
-																	<>
-																		{
-																			inputProps.type === 'date' && (
-																				<Text
-																					variant='metadata'
-																					color='gray.500'
-																					mb={1}>
-																					Deadline for this milestone
-																				</Text>
-
-																			)
-																		}
-																		<Input
-																			{...inputProps}
-																			variant='flushed'
-																			textAlign='left'
-																			borderColor='gray.300'
-																			borderBottom='1px solid'
-																			type={inputProps.type ?? 'text'}
-																			fontSize='20px'
-																			lineHeight='28px'
-																			color='black.100'
-																			onWheel={(e) => (e.target as HTMLElement).blur()}
-																			defaultValue={inputProps.defaultValue ?? ''}
-																			_placeholder={
+																) :
+																	inputProps?.type === 'prefilled' ? (
+																		<Markdown
+																			remarkPlugins={[remarkGfm]}
+																			components={
 																				{
-																					color: 'gray.500'
+																					a: props => {
+																						return (
+																							<Text
+																								display='inline-block'
+																								wordBreak='break-all'
+																								color='accent.azure'
+																								variant='body'
+																								cursor='pointer'
+																								_hover={
+																									{
+																										textDecoration: 'underline',
+																									}
+																								}
+																								onClick={
+																									() => {
+																										window.open(props.href, '_blank')
+																									}
+																								}
+																							>
+																								{props.href}
+																							</Text>
+
+																						)
+																					},
+																					p: ({ ...props }) => {
+																						return (
+																							<Text
+																								{...props}
+																								variant='body'
+																								fontSize='14px'
+																								mt={2}
+																								whiteSpace='pre-line'
+																								wordBreak='break-word'
+																							/>
+																						)
+																					},
 																				}
 																			}
-																		/>
-																	</>
-																)
+																		>
+																			{config[index][i]?.value?.toString()}
+																		</Markdown>
+																	)
+																		: (
+																			<>
+																				{
+																					inputProps.type === 'date' && (
+																						<Text
+																							variant='metadata'
+																							color='gray.500'
+																							mb={1}>
+																							Deadline for this milestone
+																						</Text>
+
+																					)
+																				}
+																				<Input
+																					{...inputProps}
+																					variant='flushed'
+																					textAlign='left'
+																					borderColor='gray.300'
+																					borderBottom='1px solid'
+																					type={inputProps.type ?? 'text'}
+																					fontSize='20px'
+																					lineHeight='28px'
+																					color='black.100'
+																					onWheel={(e) => (e.target as HTMLElement).blur()}
+																					defaultValue={inputProps.defaultValue ?? ''}
+																					_placeholder={
+																						{
+																							color: 'gray.500'
+																						}
+																					}
+																				/>
+																			</>
+																		)
 															 }
 															{
 																!inputProps.isDisabled &&

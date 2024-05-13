@@ -1864,7 +1864,7 @@ function ProposalForm() {
 														...MILESTONE_INPUT_STYLE[0],
 														value: milestone?.title,
 														isDisabled: true,
-														type: 'textarea',
+														type: 'prefilled',
 														// isDisabled: index < (grant?.milestones?.length || 0),
 														onChange: (e) => {
 															const copy = { ...form }
