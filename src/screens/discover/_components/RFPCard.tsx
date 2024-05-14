@@ -56,6 +56,14 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						return
 					}
 
+					// if it is clicked to open the program details on new tab
+					if([
+						'[object HTMLButtonElement]',
+						'[object HTMLImageElement]',
+					].includes(e.target.toString())) {
+						return
+					}
+
 					if(!chainId) {
 						return
 					}
