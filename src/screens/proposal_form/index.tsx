@@ -1872,6 +1872,24 @@ function ProposalForm() {
 															setForm(copy)
 														}
 													},
+													{
+														...MILESTONE_INPUT_STYLE[1],
+														value: index === 0 ? 0 : milestone?.amount > 0 ? milestone?.amount : '',
+														isDisabled: index === 0,
+														onChange: (e) => {
+															if(e.target.value?.includes('.')) {
+																return
+															} else {
+																try {
+																	const copy = { ...form }
+																	copy.milestones[index] = { ...copy.milestones[index], amount: parseInt(e.target.value) }
+																	setForm(copy)
+																} catch(e) {
+																	logger.error(e)
+																}
+															}
+														}
+													},
 												]
 											})
 										}
@@ -1888,12 +1906,32 @@ function ProposalForm() {
 											}
 										} />
 
-									{/* <SectionInput
+									<SectionInput
 										label='Total Funding Requested'
 										isDisabled
 										placeholder='12000 USD'
 										value={`${fundingAsk} ${chainInfo?.label}`}
-									/> */}
+									/>
+									{
+										(form?.milestones?.reduce((acc, curr) => acc + curr.amount, 0) > parseInt(grant?.reward?.committed as string))
+						&& (
+
+							<Text
+								fontWeight='500'
+								color='red.500'
+								fontSize='14px'
+								textAlign='center'
+								mt={4}
+							>
+								Funding asked in milestones exceeds the total funding committed -
+								{' '}
+								{grant?.reward?.committed}
+								{' '}
+								{grant?.reward?.token?.label}
+							</Text>
+
+						)
+									}
 
 									<Text
 										mt={4}
@@ -2106,7 +2144,7 @@ function ProposalForm() {
 			}
 		}
 
-		if(grant?.id === '661cb739ccf6446509caa385' && (fundingAsk) > parseInt(grant?.reward?.committed)) {
+		if((grant?.id === '661cb739ccf6446509caa385' || grant?.id === tonAPACGrants) && (fundingAsk) > parseInt(grant?.reward?.committed)) {
 			return true
 		}
 

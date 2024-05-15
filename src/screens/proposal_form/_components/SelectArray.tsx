@@ -103,6 +103,8 @@ function SelectArray({ label, allowMultiple, flexProps, config, onAdd, onRemove 
 																								wordBreak='break-all'
 																								color='accent.azure'
 																								variant='body'
+																								fontSize='20px'
+																								lineHeight='28px'
 																								cursor='pointer'
 																								_hover={
 																									{
@@ -125,7 +127,8 @@ function SelectArray({ label, allowMultiple, flexProps, config, onAdd, onRemove 
 																							<Text
 																								{...props}
 																								variant='body'
-																								fontSize='14px'
+																								fontSize='20px'
+																								lineHeight='28px'
 																								mt={2}
 																								whiteSpace='pre-line'
 																								wordBreak='break-word'
