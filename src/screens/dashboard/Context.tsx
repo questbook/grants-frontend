@@ -650,7 +650,9 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 			}, undefined, { shallow: true })
 		} else if(grantId && typeof grantId === 'string' && subdomains.map((s) => s.grants).flat().includes(grantId as string)) {
 			const id = subdomains.find((s) => s.grants.includes(grantId as string)) ?? { name: 'www' }
-			window.location.replace(`https://${id.name}.questbook.app/dashboard?grantId=${grantId}&proposalId=${proposalId}&isRenderingProposalBody=true&role=${role}&chainId=${chainId}`)
+			if(id.name !== 'polygon') {
+				window.location.replace(`https://${id.name}.questbook.app/dashboard?grantId=${grantId}&proposalId=${proposalId}&isRenderingProposalBody=true&role=${role}&chainId=${chainId}`)
+			}
 		}
 	}, [proposalId, grantId])
 
