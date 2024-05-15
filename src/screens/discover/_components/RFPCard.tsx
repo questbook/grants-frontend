@@ -62,7 +62,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 					let params: { grantId: string, chainId: number, role: string, proposalId?: string } = {
 						grantId: grant.id,
 						chainId,
-						role: role === 'owner' ? 'admin' : (role ?? 'community'),
+						role: role === 'owner' ? 'admin' : role === 'reviewer' ? 'reviewer' : (role ?? 'community'),
 					}
 					if(role === 'builder') {
 						params = { ...params, proposalId: grant.applications[0].id }

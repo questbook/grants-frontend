@@ -120,7 +120,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
 		logger.info({ _grant, scwAddress }, 'Setting role (GET GRANT)')
 
-		const possibleRoles: Roles[] = ['community']
+		let possibleRoles: Roles[] = ['community']
 
 		if(_grant?.myApplications?.length > 0) {
 			possibleRoles.push('builder')
@@ -130,7 +130,8 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 			for(const member of _grant?.workspace?.members ?? []) {
 				if(member.actorId.toLowerCase() === scwAddress.toLowerCase()) {
 					logger.info({ member }, 'Member (ROLE)')
-					possibleRoles.push(member.accessLevel === 'reviewer' ? 'reviewer' : 'admin')
+					// possibleRoles.push(member.accessLevel === 'reviewer' ? 'reviewer' : 'admin')
+					possibleRoles = member.accessLevel === 'reviewer' ? ['reviewer'] : ['admin']
 					break
 				}
 			}
