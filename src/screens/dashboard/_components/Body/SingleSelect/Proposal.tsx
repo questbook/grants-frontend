@@ -360,7 +360,7 @@ function Proposal() {
 				}
 
 				{
-					getFieldString(decryptedProposal, 'applicantTelegram') && (
+					(getFieldString(decryptedProposal, 'applicantTelegram') || (shouldShowPII && builderInfo)) && (
 						<Flex
 							w='100%'
 							mt={4}
@@ -369,7 +369,7 @@ function Proposal() {
 								Telegram
 							</Text>
 							<Text mt={1}>
-								{getFieldString(decryptedProposal, 'applicantTelegram')}
+								{getFieldString(decryptedProposal, 'applicantTelegram') || (shouldShowPII && builderInfo)}
 							</Text>
 						</Flex>
 					)
@@ -472,7 +472,7 @@ function Proposal() {
 	}
 
 	const { role } = useContext(GrantsProgramContext)!
-	const { proposals, selectedProposals } = useContext(DashboardContext)!
+	const { proposals, selectedProposals, builderInfo } = useContext(DashboardContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
 	const toast = useCustomToast()
 

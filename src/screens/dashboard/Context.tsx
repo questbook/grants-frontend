@@ -11,6 +11,8 @@ import { getFromIPFS } from 'src/libraries/utils/ipfs'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { getBuilderInfoQuery } from 'src/screens/dashboard/_data/getBuilderInfoQuery'
+import { getFundsAllocatedQuery } from 'src/screens/dashboard/_data/getFundsAllocatedQuery'
 import { getGrantsQuery } from 'src/screens/dashboard/_data/getGrantsQuery'
 import { getProposalsQuery } from 'src/screens/dashboard/_data/getProposalsQuery'
 import { getSpecificApplicationActionQuery } from 'src/screens/dashboard/_data/getSpecificApplicationActionQuery'
@@ -72,6 +74,14 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		query: getSpecificApplicationActionQuery,
 	})
 
+	const { fetchMore: fetchBuilderInfo } = useQuery({
+		query: getBuilderInfoQuery,
+	})
+
+	const { fetchMore: fetchFundsAllocated } = useQuery({
+		query: getFundsAllocatedQuery
+	})
+
 	const [proposals, setProposals] = useState<Proposals>([])
 	const [commentMap, setCommentMap] = useState<CommentMap>({})
 	const [selectedProposals, setSelectedProposals] = useState<Set<string>>(new Set<string>())
@@ -80,6 +90,14 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 	const [areCommentsLoading, setAreCommentsLoading] = useState<boolean>(false)
 	const [filterState, setFilterState] = useState<ApplicationState>()
 	const [sortBy, setSortBy] = useState<'updatedAtS' | 'createdAtS'>('updatedAtS')
+	const [builderInfo, setBuilderInfo] = useState<string>()
+	const [fundsAllocated, setFundsAllocated] = useState<{
+		allocated: number
+		disbursed: number
+	}>({
+		allocated: 0,
+		disbursed: 0,
+	})
 
 	const getGrant = useCallback(async() => {
 		if(!grantId || chainId === -1 || typeof grantId !== 'string') {
@@ -145,6 +163,28 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
 		return 'grant-details-fetched'
 	}, [grantId, chainId, scwAddress])
+
+	const getFundsAllocated = useCallback(async() => {
+		if(!grantId) {
+			return 'no-grant-id'
+		}
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const result: any = await fetchFundsAllocated({ id: grantId }, true)
+		if(result?.grantApplications) {
+
+			const totalAllocated = result?.grantApplications?.reduce((acc: number, grantApplication: { milestones: { amount: number }[] }) => {
+				return acc + grantApplication.milestones.reduce((acc: number, milestone: { amount: number }) => acc + milestone.amount, 0)
+			}, 0)
+			logger.info({ totalAllocated }, 'Funds allocated (GET FUNDS ALLOCATED)')
+			setFundsAllocated({
+				allocated: totalAllocated,
+				disbursed: result?.grantApplications[0]?.grant?.totalGrantFundingDisbursedUSD
+			})
+		}
+
+		return 'funds-allocated-fetched'
+	}, [grantId])
 
 	const handleComments = async(allComments: CommentType[]) => {
 		logger.info({ allComments }, 'ALL COMMENTS (COMMENT DECRYPT)')
@@ -438,6 +478,29 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		return proposals
 	}, [role, grantId, scwAddress, webwallet])
 
+
+	const fetchBuilder = useCallback(async() => {
+		if(!grantId || typeof grantId !== 'string' || !scwAddress || typeof proposalId !== 'string' || !proposalId) {
+			return 'no-grant-id'
+		}
+
+		logger.info({ grantId, scwAddress }, 'Fetching builder info (GET BUILDER INFO)')
+
+		const results: {
+			builder: {
+				telegram: string
+			}
+		} = await fetchBuilderInfo({ id: proposalId }, true) as {
+			builder: {
+			  telegram: string
+			}
+		  }
+		logger.info({ results }, 'Results (Builder Info)')
+		if(results?.builder) {
+			setBuilderInfo(results.builder.telegram)
+		}
+	}, [grantId, scwAddress, proposalId])
+
 	// const getFetchCommentsInBackground = useCallback(async() => {
 	// 	logger.info({ role, grantId, scwAddress }, 'Fetching comments (GET COMMENTS)')
 	// 	// if(!webwallet) {
@@ -597,10 +660,11 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
 	useEffect(() => {
 		getGrant().then((r) => logger.info({ r }, 'Get grant result'))
+		getFundsAllocated().then((r) => logger.info({ r }, 'Get funds allocated result'))
 	}, [grantId, chainId, scwAddress])
 	useEffect(() => {
 		if(grantId && typeof grantId === 'string' && subdomains.map((s) => s.grants).flat().includes(grantId as string)) {
-			if(role !== 'community') {
+			if(role !== 'community' && grantId !== '661667585afea0acb56c9f08') {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				getProposals().then((proposals: any) => {
 					getFetchBackgroundProposals(proposals ?? [])
@@ -617,8 +681,11 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 	useEffect(() => {
 		if(proposalId && typeof proposalId === 'string') {
 			fetchPerProposalComments().then((r) => logger.info({ r }, 'Fetch per proposal comments result'))
+			if(role === 'admin' || role === 'reviewer') {
+				fetchBuilder().then((r) => logger.info({ r }, 'Fetch builder result'))
+			}
 		}
-	}, [grantId, chainId, scwAddress, webwallet, proposalId])
+	}, [grantId, chainId, scwAddress, webwallet, proposalId, role])
 
 	// useEffect(() => {
 	// 	logger.info(proposals.length > 0, 'test')
@@ -754,7 +821,9 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 					filterState,
 					setFilterState,
 					sortBy,
-					setSortBy
+					setSortBy,
+					fundsAllocated,
+					builderInfo,
 				}
 			}>
 			{children}

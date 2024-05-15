@@ -1,0 +1,5 @@
+query getBuilderInfo($id: String!) {
+  builder(applicationId: $id) {
+    telegram
+  }
+}

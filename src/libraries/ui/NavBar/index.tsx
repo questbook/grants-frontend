@@ -1,12 +1,10 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import React from 'react'
 import { Box, Button, Container, Flex, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Spacer, Text, useMediaQuery } from '@chakra-ui/react'
-import { SupportedPayouts } from '@questbook/supported-safes'
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
-import config from 'src/constants/config.json'
-import { Add, ArrowLeft, Pencil, Qb, Settings, ShareForward } from 'src/generated/icons'
+import { ArrowLeft, NotVisible, Pencil, Qb, Settings, ShareForward, Visible } from 'src/generated/icons'
 import { QBAdminsContext } from 'src/libraries/hooks/QBAdminsContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
@@ -19,11 +17,8 @@ import RestoreWallet from 'src/libraries/ui/NavBar/_components/RestoreWallet'
 import SignIn from 'src/libraries/ui/NavBar/_components/SignIn'
 import UpdateProfileModal from 'src/libraries/ui/NavBar/_components/UpdateProfileModal'
 import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
-import { getAvatar } from 'src/libraries/utils'
 import { copyShareGrantLink } from 'src/libraries/utils/copy'
-import { nFormatter } from 'src/libraries/utils/formatting'
 import { getNonce } from 'src/libraries/utils/gasless'
-import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, SignInContext, WebwalletContext } from 'src/pages/_app'
 
@@ -34,13 +29,13 @@ type Props = {
 	openSignIn?: boolean
 }
 
-function getAbsoluteURL(url: string) {
-	if(!url.startsWith('http://') && !url.startsWith('https://')) {
-	  return 'https://' + url
-	}
+// function getAbsoluteURL(url: string) {
+// 	if(!url.startsWith('http://') && !url.startsWith('https://')) {
+// 	  return 'https://' + url
+// 	}
 
-	return url
-}
+// 	return url
+// }
 
 function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 	const { webwallet } = useContext(WebwalletContext)!
@@ -65,7 +60,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 				backgroundColor={['gray.100', 'gray.100']}
 				py='16px'
 				minWidth={{ base: '-webkit-fill-available' }}
-				paddingInlineEnd={['35px', '35px']}
+				paddingInlineEnd={['35px', '12px']}
 			>
 				<Qb
 					boxSize='10rem'
@@ -79,14 +74,18 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 					display='inherit'
 					mr='auto'
 					cursor='pointer' />
-				{
+				{/* {
 					isQbAdmin && (
 						<>
+							<Image
+								display={{ base: 'none', lg: 'inherit' }}
+								ml='10px'
+								src='/v2/icons/images/builders.svg'
+								alt='Questbook Builders' />
 						</>
 					)
-				}
+				} */}
 				<Spacer />
-
 				{
 					shouldShowTitle && (
 						<Flex
@@ -94,80 +93,21 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 							gap={2}
 							direction='row'
 							alignItems='center'
+							cursor='pointer'
+							onClick={() => setGlyph(!glyph)}
 						>
 
 							<Image
-								boxSize={8}
-								borderRadius='4px'
-								src={grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)}
+
+
+								src={glyph ? 'https://ipfs.io/ipfs/bafkreigfsecqz2nni7jcuiwpywu54l7vgkaf3q2djad2dwttj5yehcvwbu' : 'https://ipfs.io/ipfs/bafkreieskgwijh57vzifmazsgwo454poo66pkt4m7ihw4lf7uyhkarpn6m'}
 							/>
-							<Flex
-								gap={0}
-								direction='column'
+
+
+							<Text
 							>
-								<Text
-									fontWeight='500'
-									variant='subheading'>
-									{grant?.title}
-								</Text>
-								<Flex
-									align='center'
-									gap={2}>
-									{
-										(grant?.link !== undefined && grant?.link !== null) && (
-											<Flex gap={1}>
-												<Text
-													as='span'
-													variant='metadata'>
-													Program details
-												</Text>
-												<Text
-													as='span'
-													variant='metadata'
-													fontWeight={500}
-													cursor='pointer'
-													onClick={
-														() => {
-															if(grant.link !== null) {
-																window.open(getAbsoluteURL(grant.link!), '_blank')
-															}
-														}
-													}
-												>
-													here
-												</Text>
-											</Flex>
-
-										)
-									}
-									{
-										safeUSDAmount !== undefined && (
-											<Flex gap={1}>
-												<Text
-													as='span'
-													variant='metadata'>
-													Program multisig:
-												</Text>
-												<Text
-													as='span'
-													variant='metadata'
-													fontWeight={500}
-												>
-													{nFormatter(safeUSDAmount.toFixed(0), 0)}
-													{' '}
-													USD
-												</Text>
-											</Flex>
-
-										)
-									}
-								</Flex>
-							</Flex>
-
-							{/* <Text
-								variant={grant?.acceptingApplications ? 'openTag' : 'closedTag'}>
-								{grant?.acceptingApplications ? 'Open' : 'Closed'}
-							</Text> */}
+								{glyph ? 'Hide Program info' : 'Show Program info'}
+							</Text>
 						</Flex>
 
 					)
@@ -254,6 +194,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 						<Flex
 							gap={4}
 							align='center'
+							mx={4}
 
 						>
 							<Text
@@ -271,36 +212,19 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 								cursor='pointer'
 								onClick={
 									() => {
-										router.push('/grantees')
+										const element = document.getElementById('#granteeList')
+										if(element) {
+											element.scrollIntoView({ behavior: 'smooth' })
+										}
 									}
 								}
 							>
 								Grantee List
 							</Text>
-							<Button
-								variant='solid'
-								fontWeight='500'
-								bgColor='#77AC06'
-								color='white'
-								ml='auto'
-								marginRight={2}
-								borderRadius='8px'
-								_hover={
-									{
-										bgColor: '#699804',
-									}
-								}
-								leftIcon={<Add />}
-								onClick={
-									() => {
-										router.push('/request_proposal')
-									}
-								} >
-								Start a grant program
-							</Button>
 						</Flex>
 					)
 				}
+
 				<AccountDetails
 					openModal={
 						(type) => {
@@ -427,7 +351,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 							}
 						}
 					} />
-				{/* {
+				{
 					isQbAdmin && (
 						<>
 							<Image
@@ -437,7 +361,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 								alt='Questbook Builders' />
 						</>
 					)
-				} */}
+				}
 				<Spacer />
 
 				{
@@ -445,63 +369,28 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 						<Flex
 							align='center'
 							gap={2}
+							textAlign='center'
 							direction='row'
 							alignItems='center'
 							width='100%'
+							cursor='pointer'
+							onClick={() => setGlyph(!glyph)}
 						>
 
-							<Image
-								boxSize={8}
-								borderRadius='4px'
-								src={grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)} />
-							<Flex
-								gap={0}
-								direction='column'
+							{glyph ? <NotVisible /> : <Visible />}
+
+
+							<Text
 							>
-								<Text
-									fontWeight='500'
-									variant='subheading'
-									fontSize='12px'
-									width='100%'
-								>
-									{grant?.title}
-								</Text>
-								{
-									(grant?.link !== undefined && grant?.link !== null) && (
-										<Text
-											variant='metadata'
-											display={grant?.link ? '' : 'none'}>
-											Program details
-											<Text
-												variant='metadata'
-												display='inline-block'
-												fontWeight={500}
-												marginLeft={1}
-												cursor='pointer'
-												onClick={
-													() => {
-														if(grant.link !== null) {
-															window.open(getAbsoluteURL(grant.link!), '_blank')
-														}
-													}
-												}
-											>
-												here
-											</Text>
-										</Text>
-									)
-								}
-							</Flex>
-							{/* <Text
-								variant={grant?.acceptingApplications ? 'openTag' : 'closedTag'}>
-								{grant?.acceptingApplications ? 'Open' : 'Closed'}
-							</Text> */}
+								{glyph ? 'Hide Program info' : 'Show Program info'}
+							</Text>
 						</Flex>
 
 					)
 				}
 
 				<Box ml={4} />
+
 
 				{
 					(shouldShowTitle && role === 'admin' && grant?.acceptingApplications) && (
@@ -637,14 +526,14 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 	const { inited, loading, importWalletFromGD, exportWalletToGD } = useGoogleDriveWalletRecoveryReact({ googleClientID: '986000900135-tscgujbu2tjq4qk9duljom0oimnb79la.apps.googleusercontent.com' })
 
 	const { grant, role, isLoading } = useContext(GrantsProgramContext)!
-	const { dashboardStep, setDashboardStep, createingProposalStep, setCreatingProposalStep } = useContext(WebwalletContext)!
+	const { dashboardStep, setDashboardStep, createingProposalStep, setCreatingProposalStep, glyph, setGlyph } = useContext(WebwalletContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { signIn, setSignIn } = useContext(SignInContext)!
 	// const { searchString, setSearchString } = useContext(DAOSearchContext)!
 	const router = useRouter()
 	const toast = useCustomToast()
 	const [privateKey, setPrivateKey] = useState<string>('')
-	const [safeUSDAmount, setSafeUSDAmount] = useState<number>()
+
 
 	const [isRecoveryModalOpen, setIsRecoveryModalOpen] = useState<boolean>(false)
 	const [isImportConfirmationModalOpen, setImportConfirmationModalOpen] = useState<boolean>(false)
@@ -680,28 +569,20 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 			setPrivateKey(webwallet?.privateKey ?? '')
 		}
 	}, [type, webwallet])
-	useEffect(() => {
-		if(!grant?.workspace?.safe?.address || !grant?.workspace?.safe?.chainId) {
-			return
-		}
+	// useEffect(() => {
+	// 	if(!grant?.workspace?.safe?.address || !grant?.workspace?.safe?.chainId) {
+	// 		return
+	// 	}
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		new SupportedPayouts().getSafe(parseInt(grant.workspace?.safe?.chainId), grant.workspace.safe.address).getTokenAndbalance().then((result: any) => {
-			logger.info({ result }, 'safe balance')
-			if(result?.value) {
-				const total = result.value.reduce((acc: number, cur: { usdValueAmount: number }) => acc + cur.usdValueAmount, 0)
-				localStorage.setItem(`safeBalance-${grant?.workspace?.safe?.address}-${grant?.workspace?.safe?.chainId}`, total.toString())
-				logger.info({ total }, 'balance total')
-				setSafeUSDAmount(total)
-			}
-		}).catch((e: Error) => {
-			if(localStorage.getItem(`safeBalance-${grant?.workspace?.safe?.address}-${grant?.workspace?.safe?.chainId}`)) {
-				setSafeUSDAmount(parseFloat(localStorage.getItem(`safeBalance-${grant?.workspace?.safe?.address}-${grant?.workspace?.safe?.chainId}`)!))
-			}
-
-			logger.error(e, 'error fetching safe balance')
-		})
-	}, [grant?.workspace?.safe])
+	// 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	// 	new SupportedPayouts().getSafe(parseInt(grant.workspace?.safe?.chainId), grant.workspace.safe.address).getTokenAndbalance().then((result: any) => {
+	// 		logger.info({ result }, 'safe balance')
+	// 		if(result?.value) {
+	// 			const total = result.value.reduce((acc: number, cur: { usdValueAmount: number }) => acc + cur.usdValueAmount, 0)
+	// 			logger.info({ total }, 'balance total')
+	// 		}
+	// 	})
+	// }, [grant?.workspace?.safe])
 
 	const saveWallet = async() => {
 		const Wallet = new ethers.Wallet(privateKey)

@@ -77,6 +77,7 @@ query getSectionGrants {
           iconHash
         }
       }
+      link
       deadlineS
       deadline
       numberOfApplications
