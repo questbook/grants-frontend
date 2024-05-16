@@ -56,10 +56,10 @@ function AdminTable() {
 					} : {}),
 					'Proposal Name': row.name[0].values[0].value,
 					'Proposal Status': row.state,
-					'KYC/KYB Status': row?.state === 'approved' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? 'Verified' : 'Pending' : '',
+					'KYC/KYB Status': row?.state === 'approved' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? 'Verified' : row?.synapsStatus === 'rejected' ? 'Rejected' : 'Pending' : '',
 					'KYC/KYB Country': row?.synapsStatus !== '' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? row?.synapsCountry : 'N/A' : 'N/A',
 					'Synaps Type': row?.synapsStatus !== '' ? row?.synapsType : '',
-					'Grant Agreement Status': row?.state === 'approved' ? row?.helloSignStatus === 'verified' ? 'Verified' : 'Pending' : '',
+					'Grant Agreement Status': row?.state === 'approved' ? (row?.helloSignStatus === 'verified' || row?.helloSignStatus === 'completed') ? 'Verified' : row?.helloSignStatus === 'rejected' ? 'Rejected' : 'Pending' : '',
 					'Notes': row?.notes,
 					...milestones?.reduce((acc, curr) => {
 						return {
@@ -211,8 +211,8 @@ function AdminTable() {
 						{
 							row.helloSignStatus?.length > 0 ? (
 								<StateButton
-									state={row?.helloSignStatus === 'verified' ? 'approved' : 'submitted'}
-									title={row?.helloSignStatus === 'verified' ? 'Verified' : 'Pending'}
+									state={row?.helloSignStatus === 'verified' || row?.helloSignStatus === 'completed' ? 'approved' : row?.helloSignStatus === 'rejected' ? 'rejected' : 'submitted'}
+									title={row?.helloSignStatus === 'verified' || row?.helloSignStatus === 'completed' ? 'Verified' : row?.helloSignStatus === 'rejected' ? 'Rejected' : 'Pending'}
 								/>
 							) : row?.state === 'approved' ? (
 								<StateButton
