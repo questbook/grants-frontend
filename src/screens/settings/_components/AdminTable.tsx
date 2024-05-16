@@ -57,7 +57,7 @@ function AdminTable() {
 					'Proposal Name': row.name[0].values[0].value,
 					'Proposal Status': row.state,
 					'KYC/KYB Status': row?.state === 'approved' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? 'Verified' : 'Pending' : '',
-					'KYC/KYB Country': row?.synapsStatus !== '' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? '' : 'N/A' : 'N/A',
+					'KYC/KYB Country': row?.synapsStatus !== '' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? row?.synapsCountry : 'N/A' : 'N/A',
 					'Synaps Type': row?.synapsStatus !== '' ? row?.synapsType : '',
 					'Grant Agreement Status': row?.state === 'approved' ? row?.helloSignStatus === 'verified' ? 'Verified' : 'Pending' : '',
 					'Notes': row?.notes,
@@ -178,8 +178,8 @@ function AdminTable() {
 						{
 							row.synapsStatus?.length > 0 ? (
 								<StateButton
-									state={row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed' ? 'approved' : row?.synapsStatus === 'rejected' ? 'rejected' : 'submitted'}
-									title={row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed' ? '' : 'N/A'}
+									state={(row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed') && row?.synapsCountry?.length > 0 ? 'approved' : row?.synapsStatus === 'rejected' ? 'rejected' : 'submitted'}
+									title={row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed' ? row?.synapsCountry ?? '-' : 'N/A'}
 								/>
 							)
 								: row?.state === 'approved' ? (
