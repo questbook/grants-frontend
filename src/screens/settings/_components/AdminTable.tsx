@@ -58,6 +58,7 @@ function AdminTable() {
 					'Proposal Status': row.state,
 					'KYC/KYB Status': row?.state === 'approved' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? 'Verified' : row?.synapsStatus === 'rejected' ? 'Rejected' : 'Pending' : '',
 					'KYC/KYB Country': row?.synapsStatus !== '' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? row?.synapsCountry : 'N/A' : 'N/A',
+					'KYC/KYB Name': row?.synapsStatus !== '' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? row?.synapsName : 'N/A' : 'N/A',
 					'Synaps Type': row?.synapsStatus !== '' ? row?.synapsType : '',
 					'Grant Agreement Status': row?.state === 'approved' ? (row?.helloSignStatus === 'verified' || row?.helloSignStatus === 'completed') ? 'Verified' : row?.helloSignStatus === 'rejected' ? 'Rejected' : 'Pending' : '',
 					'Notes': row?.notes,
@@ -161,25 +162,31 @@ function AdminTable() {
 					</Td>
 					<Td
 						w='5%'
-						cursor='pointer'
-						// onClick={
-						// 	() => {
-						// 		if(row?.state === 'approved') {
-						// 			setShowKYCStatusUpdateModal({
-						// 				...showKYCStatusUpdateModal,
-						// 				isOpen: true,
-						// 				grantId: row.id,
-						// 				type: 'kyc'
-						// 			})
-						// 		}
-						// 	}
-						// }
 					>
 						{
 							row.synapsStatus?.length > 0 ? (
 								<StateButton
-									state={(row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed') && row?.synapsCountry?.length > 0 ? 'approved' : row?.synapsStatus === 'rejected' ? 'rejected' : 'submitted'}
+									state={(row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed') && row?.synapsCountry?.length > 0 ? 'submitted' : row?.synapsStatus === 'rejected' ? 'rejected' : 'submitted'}
 									title={row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed' ? row?.synapsCountry ?? '-' : 'N/A'}
+								/>
+							)
+								: row?.state === 'approved' ? (
+									<StateButton
+										state='submitted'
+										title='Pending'
+									/>
+								) : '-'
+
+						}
+					</Td>
+					<Td
+						w='5%'
+					>
+						{
+							row.synapsStatus?.length > 0 ? (
+								<StateButton
+									state={(row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed') && row?.synapsName?.length > 0 ? 'submitted' : row?.synapsStatus === 'rejected' ? 'rejected' : 'submitted'}
+									title={row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed' ? row?.synapsName ?? '-' : 'N/A'}
 								/>
 							)
 								: row?.state === 'approved' ? (
@@ -483,7 +490,7 @@ function AdminTable() {
 	const { adminTable, workspace, listAllGrants, setListAllGrants, allGrantsAdminTable } = useContext(SettingsFormContext)!
 	const { grant } = useContext(GrantsProgramContext)!
 
-	const TableHeader = listAllGrants ? ['No', 'Grant Title', 'Proposal Name', 'Proposal Status', 'KYC/KYB Status', 'KYC/KYB Country', 'Grant Agreement Status', 'Milestone', 'Funding Status' ] : ['No', 'Proposal Name', 'Proposal Status', 'KYC/KYB Status', 'KYC/KYB Country', 'Grant Agreement Status', 'Milestone', 'Funding Status', 'Notes']
+	const TableHeader = listAllGrants ? ['No', 'Grant Title', 'Proposal Name', 'Proposal Status', 'KYC/KYB Status', 'KYC/KYB Country', 'KYC/KYB Name', 'Grant Agreement Status', 'Milestone', 'Funding Status' ] : ['No', 'Proposal Name', 'Proposal Status', 'KYC/KYB Status', 'KYC/KYB Country', 'KYC/KYB Name', 'Grant Agreement Status', 'Milestone', 'Funding Status', 'Notes']
 
 	useEffect(() => {
 		setTableData(listAllGrants ? allGrantsAdminTable : adminTable)

@@ -7,6 +7,7 @@ query adminTable($id: String!){
       synapsStatus
       synapsType
       synapsCountry
+      synapsName
       helloSignStatus
       notes
       milestones{

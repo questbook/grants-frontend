@@ -238,7 +238,6 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 				logger.info({ applications }, 'Applications')
 
 				if(applications?.length > 0) {
-					// fi
 					setAllGrantsAdminTable((prev: any) => [...prev, ...applications.filter((application: any) => !prev.some((prevApplication: any) => prevApplication.id === application.id))])
 				}
 			}
