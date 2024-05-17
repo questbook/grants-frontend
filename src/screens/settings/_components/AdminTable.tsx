@@ -22,7 +22,7 @@ import { SettingsFormContext } from 'src/screens/settings/Context'
 
 function AdminTable() {
 
-	const TableHeader = ['No', 'Proposal Name', 'Proposal Status', 'Wallet Address', 'KYC/KYB Status', 'Grant Agreement Status', 'Milestone', 'Funding Status', 'Notes']
+	const TableHeader = ['No', 'Proposal Name', 'Proposal Status', 'Wallet Address', 'KYC/KYB Status', 'KYC/KYB Name', 'Grant Agreement Status', 'Milestone', 'Funding Status', 'Notes']
 
 	const buildComponent = () => {
 
@@ -55,6 +55,7 @@ function AdminTable() {
 					'Proposal Status': row.state,
 					'Wallet Address': row.wallet[0].values[0].value,
 					'KYC/KYB Status': row?.state === 'approved' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? 'Verified' : row?.synapsStatus === 'rejected' ? 'Rejected' : 'Pending' : '',
+					'KYC/KYB Name': row?.state === 'approved' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? 'Verified' : row?.synapsName : '-',
 					'Synaps Type': row?.synapsStatus !== '' ? row?.synapsType : '',
 					'Grant Agreement Status': row?.state === 'approved' ? row?.helloSignStatus === 'verified' || row?.helloSignStatus === 'completed' ? 'Verified' : row?.helloSignStatus === 'declined' ? 'Declined' : 'Pending' : '',
 					'Notes': row?.notes,
@@ -148,6 +149,25 @@ function AdminTable() {
 									<StateButton
 										state='submitted'
 										title='Pending'
+									/>
+								) : '-'
+
+						}
+					</Td>
+					<Td
+						w='5%'
+					>
+						{
+							row.synapsStatus?.length > 0 ? (
+								<StateButton
+									state='submitted'
+									title={row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed' ? row?.synapsName : row?.synapsStatus === 'rejected' ? '-' : '-'}
+								/>
+							)
+								: row?.state === 'approved' ? (
+									<StateButton
+										state='submitted'
+										title='-'
 									/>
 								) : '-'
 
