@@ -66,13 +66,16 @@ function Settings() {
 						<Flex
 							gap={2}
 						>
-
-							<Button
-								variant='primaryMedium'
-								onClick={() => setShowAdminTable(!showAdminTable)}
-							>
-								{showAdminTable ? 'Hide Table' : 'Show Table'}
-							</Button>
+							{
+								(role === 'admin' || role === 'reviewer') && (
+									<Button
+										variant='primaryMedium'
+										onClick={() => setShowAdminTable(!showAdminTable)}
+									>
+										{showAdminTable ? 'Hide Table' : 'Show Table'}
+									</Button>
+								)
+							}
 							<Button
 								// isLoading={isNetworkTransactionModalOpen}
 								variant='primaryMedium'
