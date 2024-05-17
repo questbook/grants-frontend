@@ -210,14 +210,14 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 
 		}
 
-		let applications = []
+		let applications: adminTable = []
 		if(allGrants?.length > 0) {
 			for(const grants of allGrants) {
 				logger.info({ grants }, 'grant details')
 				const details: any = await fetchMoreAdminTable({ id: grants?.id }, true)
 				logger.info({ details }, 'Grant details (GET GRANT)')
 				if(!details?.grant) {
-					return 'no-grant-in-query'
+					continue
 				}
 
 				logger.info(details?.grant?.applications, 'Application details')
@@ -238,7 +238,8 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 				logger.info({ applications }, 'Applications')
 
 				if(applications?.length > 0) {
-					setAllGrantsAdminTable(applications)
+					// fi
+					setAllGrantsAdminTable((prev: any) => [...prev, ...applications.filter((application: any) => !prev.some((prevApplication: any) => prevApplication.id === application.id))])
 				}
 			}
 		}
