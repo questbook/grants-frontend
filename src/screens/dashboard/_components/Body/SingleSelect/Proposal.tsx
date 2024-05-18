@@ -382,9 +382,9 @@ function Proposal() {
 								return <Flex key={index} />
 							}
 
-							if(!shouldShowPII) {
-								return <Flex key={index} />
-							}
+							// if(!shouldShowPII) {
+							// 	return <Flex key={index} />
+							// }
 
 							return (
 								<Flex
