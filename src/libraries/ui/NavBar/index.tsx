@@ -4,7 +4,7 @@ import { Box, Button, Container, Flex, Image, Modal, ModalBody, ModalCloseButton
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
-import { ArrowLeft, NotVisible, Pencil, Qb, Settings, ShareForward, Visible } from 'src/generated/icons'
+import { Add, ArrowLeft, NotVisible, Pencil, Qb, Settings, ShareForward, Visible } from 'src/generated/icons'
 import { QBAdminsContext } from 'src/libraries/hooks/QBAdminsContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
@@ -221,6 +221,27 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 							>
 								Grantee List
 							</Text>
+							<Button
+								variant='solid'
+								fontWeight='500'
+								bgColor='#77AC06'
+								color='white'
+								ml='auto'
+								marginRight={2}
+								borderRadius='8px'
+								_hover={
+									{
+										bgColor: '#699804',
+									}
+								}
+								leftIcon={<Add />}
+								onClick={
+									() => {
+										router.push('/request_proposal')
+									}
+								} >
+								Start a grant program
+							</Button>
 						</Flex>
 					)
 				}
