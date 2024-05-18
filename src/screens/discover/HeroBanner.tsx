@@ -132,7 +132,7 @@ function HeroBanner({
 									[10, 5]
 							}
 							color='black'>
-							DefiMania
+							DeFi Mania
 						</Text>
 					</Flex>
 
