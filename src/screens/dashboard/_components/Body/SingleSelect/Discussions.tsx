@@ -318,9 +318,10 @@ function Discussions() {
 					src={
 						comment.role === 'builder' || comment.role === 'community'
 							? getAvatar(false, comment.sender?.toLowerCase() ?? '')
-							: member?.profilePictureIpfsHash
-								? getUrlForIPFSHash(member.profilePictureIpfsHash)
-								: getAvatar(false, member?.actorId)
+							: comment.role === 'app' ? comment?.sender === 'helloSign' ? 'https://avatars.githubusercontent.com/u/25623857?s=280&v=4' : 'https://avatars.githubusercontent.com/u/63306624?s=280&v=4'
+								: member?.profilePictureIpfsHash
+									? getUrlForIPFSHash(member.profilePictureIpfsHash)
+									: getAvatar(false, member?.actorId)
 					}
 				/>
 				<Flex
@@ -548,6 +549,8 @@ function Discussions() {
 			} else {
 				return 'No name found'
 			}
+		} else if(comment.role === 'app') {
+			return comment.sender
 		} else {
 			logger.info(
 				{ comment: comment?.sender, proposalId: proposal?.applicantId },

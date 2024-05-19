@@ -1359,6 +1359,7 @@ function ProposalForm() {
 								return (
 									<SectionInput
 										key={field.id}
+										type='textarea'
 										label={title === 'Indicate your current traction (MAU, DAU, retention, TVL or other relevant metrics) if your product is already live on TON or on a different chain' ? `${title}* The more relevant metrics you provide, the better.` : title}
 										value={findFieldBySuffix(form, modifiedId, id).value}
 										onChange={
@@ -1369,6 +1370,66 @@ function ProposalForm() {
 								)
 							})
 						}
+						<Box
+							mt={8}
+							p={4}
+							bg='gray.100'
+							w='100%'
+						>
+							<Text
+								fontSize='lg'
+								fontWeight='500'
+								mb={4}
+							>
+								By submitting this application, I agree to
+							</Text>
+							<Text
+								fontSize='md'
+								fontWeight='400'
+								mb={2}
+							>
+								Comply with the Grant Guidelines:
+								<a
+									href='https://github.com/ton-society/grants-and-bounties/blob/main/grants/GRANT_PROGRAM_GUIDELINES.md'
+									target='_blank'
+									style={{ textDecoration: 'underline', color: '#3B82F6' }}
+									rel='noreferrer'>
+									{' '}
+									{' '}
+									GRANT_PROGRAM_GUIDELINES
+								</a>
+							</Text>
+							<Text
+								fontSize='md'
+								fontWeight='400'
+								mb={2}
+							>
+								Follow the Grant Rules:
+								<a
+									href='https://ton-org.notion.site/TON-Grants-Rules-4548acab386a4fc7b086aba53333e917?pvs=4 '
+									target='_blank'
+									style={{ textDecoration: 'underline', color: '#3B82F6' }}
+									rel='noreferrer'>
+									{' '}
+									{' '}
+									GRANT_PROGRAM_RULES
+								</a>
+							</Text>
+							{
+								containsCustomField(grant, 'In case my proposal is approved, sign an official grant agreement and abide by its provisions in good faith') && (
+									<SectionInput
+										label={'In case my proposal is approved, sign an official grant agreement and abide by its provisions in good faith (please write \'yes\')*'}
+										placeholder=''
+										value={findCustomField(form, 'In case my proposal is approved, sign an official grant agreement and abide by its provisions in good faith').value}
+										onChange={
+											(e) => {
+												onChange(e, findCustomField(form, 'In case my proposal is approved, sign an official grant agreement and abide by its provisions in good faith').id)
+											}
+										} />
+								)
+							}
+						</Box>
+
 						<Text
 							mt={10}
 							fontSize='sm'
