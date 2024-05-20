@@ -1415,6 +1415,13 @@ function ProposalForm() {
 									GRANT_PROGRAM_RULES
 								</a>
 							</Text>
+							<Text
+								fontSize='md'
+								fontWeight='400'
+								mb={-8}
+							>
+								In case my proposal is approved, sign an official grant agreement and abide by its provisions in good faith
+							</Text>
 							{
 								containsCustomField(grant, 'In case my proposal is approved, sign an official grant agreement and abide by its provisions in good faith') && (
 									<SectionInput
@@ -1422,7 +1429,7 @@ function ProposalForm() {
 										fontWeight={400}
 										lineHeight='20px'
 										textAlign='left'
-										label={'In case my proposal is approved, sign an official grant agreement and abide by its provisions in good faith (please write \'yes\')*'}
+										label='please write yes *'
 										placeholder=''
 										value={findCustomField(form, 'In case my proposal is approved, sign an official grant agreement and abide by its provisions in good faith').value}
 										onChange={
