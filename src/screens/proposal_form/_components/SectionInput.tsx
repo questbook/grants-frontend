@@ -23,10 +23,12 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 					<Text
 						mr={8}
 						pb={2}
+						fontSize={props?.fontSize}
+						lineHeight={props?.lineHeight}
 						variant='subheading'
 						w={['100%', 'calc(30% - 32px)']}
-						fontWeight='500'
-						textAlign={['left', 'right']}>
+						fontWeight={props?.fontWeight ?? '500'}
+						textAlign={props?.textAlign ?? ['left', 'right']}>
 						{label}
 					</Text>
 
