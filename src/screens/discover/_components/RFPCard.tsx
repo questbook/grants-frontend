@@ -209,7 +209,10 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 								noOfLines={2}
 								mt={2}
 							>
-								{grant.title}
+								{
+									grant?.title?.length > 40 ?
+										grant?.title.split(' ').slice(0, 2).join(' ') : grant?.title
+								}
 							</Text>
 						</Flex>
 

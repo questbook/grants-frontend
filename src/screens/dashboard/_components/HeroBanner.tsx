@@ -208,7 +208,7 @@ function HeroBannerBox({
 						lineHeight='20px'
 						mt={isMobile ? 0 : 2}
 						color='white'>
-						{title}
+						{title?.length > 40 ? title.slice(0, 40) + '...' : title}
 					</Text>
 					<Button
 				 borderRadius='3xl'
@@ -233,7 +233,11 @@ function HeroBannerBox({
 						fontSize='12px'
 						lineHeight='16px'
 						color='white'>
-						This domain is focused on DeFi Mania Registration
+						This domain is focused on
+						{' '}
+						{title}
+						{' '}
+						Registration
 					</Text>
 
 				</Flex>
