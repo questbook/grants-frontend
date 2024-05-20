@@ -1342,7 +1342,7 @@ function ProposalForm() {
 
 						{
 							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1).startsWith('customField')
-							&& !['Personal Telegram Handle', 'Grant category', 'Your idea in 1 sentence', 'Website', 'Pitch deck (if available)', 'Twitter', 'Telegram Channel', 'Telegram Bot (if available)', 'Github Link']?.some((el) => field.id?.substring(field.id.indexOf('.') + 1).includes(el))
+							&& !['Personal Telegram Handle', 'Grant category', 'Your idea in 1 sentence', 'Website', 'Pitch deck (if available)', 'Twitter', 'Telegram Channel', 'Telegram Bot (if available)', 'Github Link', 'In case my proposal is approved, sign an official grant agreement and abide by its provisions in good faith']?.some((el) => field.id?.substring(field.id.indexOf('.') + 1).includes(el))
 							)?.sort((a, b) => {
 								const aId = a.id.substring(a.id.indexOf('.customField') + 12)?.split('-')[0]
 								const bId = b.id.substring(b.id.indexOf('.customField') + 12)?.split('-')[0]
