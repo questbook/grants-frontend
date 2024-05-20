@@ -1420,7 +1420,7 @@ function ProposalForm() {
 								fontWeight='400'
 								mb={-8}
 							>
-								In case my proposal is approved, sign an official grant agreement and abide by its provisions in good faith
+								In case my proposal is approved, sign an official grant agreement and abide by its provisions in good faith.
 							</Text>
 							{
 								containsCustomField(grant, 'In case my proposal is approved, sign an official grant agreement and abide by its provisions in good faith') && (
@@ -1429,7 +1429,7 @@ function ProposalForm() {
 										fontWeight={400}
 										lineHeight='20px'
 										textAlign='left'
-										label='please write yes *'
+										label={'Please write \'yes\' *'}
 										placeholder=''
 										value={findCustomField(form, 'In case my proposal is approved, sign an official grant agreement and abide by its provisions in good faith').value}
 										onChange={
