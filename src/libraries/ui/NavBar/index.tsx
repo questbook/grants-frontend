@@ -97,11 +97,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 							onClick={() => setGlyph(!glyph)}
 						>
 
-							<Image
-
-
-								src={glyph ? 'https://ipfs.io/ipfs/bafkreigfsecqz2nni7jcuiwpywu54l7vgkaf3q2djad2dwttj5yehcvwbu' : 'https://ipfs.io/ipfs/bafkreieskgwijh57vzifmazsgwo454poo66pkt4m7ihw4lf7uyhkarpn6m'}
-							/>
+							{glyph ? <NotVisible /> : <Visible />}
 
 
 							<Text

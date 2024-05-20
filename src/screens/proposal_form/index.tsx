@@ -1420,7 +1420,7 @@ function ProposalForm() {
 								fontWeight='400'
 								mb={-8}
 							>
-								In case my proposal is approved, sign an official grant agreement and abide by its provisions in good faith.
+								Sign an official agreement and abide by its provisions in good faith if my proposal is accepted.
 							</Text>
 							{
 								containsCustomField(grant, 'In case my proposal is approved, sign an official grant agreement and abide by its provisions in good faith') && (
