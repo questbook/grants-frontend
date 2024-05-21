@@ -224,7 +224,7 @@ function Discover() {
 
 	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
 
-	const isTV = useMediaQuery({ query: '(min-height:1600px)' })
+	const isTV = true
 	const bannerText = [
 		{
 			'logo': 'QmQfZEDeLroURuySnfKDF1XpwmU94cGULHZwQhaHPYZxiJ',
