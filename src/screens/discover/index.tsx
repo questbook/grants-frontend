@@ -577,7 +577,8 @@ function Discover() {
 													width='100%'
 												>
 													<Text
-														variant='body'
+														fontSize='2xl'
+														variant='heading1'
 														fontWeight='500'
 													>
 														{grant.title}
