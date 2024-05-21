@@ -550,7 +550,7 @@ function Discover() {
 
 
 					{
-isTV &&					(
+!isMobile &&					(
 <Container
 
 							minWidth='100%'
