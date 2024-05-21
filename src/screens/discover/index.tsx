@@ -1,6 +1,7 @@
 /* eslint-disable indent */
 /* eslint-disable react/jsx-indent */
 import { ReactElement, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import QRCode from 'react-qr-code'
 import { useMediaQuery } from 'react-responsive'
 import { Box, Button, Container, Flex, Image, Input, Link, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
@@ -448,101 +449,157 @@ function Discover() {
 					</Container>
 					<div
 						style={{ backgroundColor: 'white' }}
-							>
-								<Container
-								minWidth='100%'
-								w='100%'
-								borderRadius='48px 48px 0px 0px'
-								background='#F7F5F2'
-								padding='32px 32px 20px 32px'
-								flexDirection='column'
-								justifyContent='center'
-								alignItems='center'
-								gap='24px'
-								>
-									<span>
-						<Text
-											variant='heading3'
-											fontWeight='700'
-											w='100%'
-											fontSize='24px'
-											lineHeight='31.2px'
-											my={4}
-										>
-											More Grants on Questbook
-      </Text>
-						<Flex
-					gap='24px'
-					overflowX='auto'
-					p={0}
-					justifyContent='flex-start'>
-
-						{
-							bannerText.map((banner, index) => (
-								<Flex
-			key={index}
-			flexDirection='row'
-			justifyContent='center'
-			alignItems='center'
-			gap='16px'
-			borderRadius='8px'
-			border='1px solid #EFEEEB'
-			background='#FFF'
-			padding='16px'
-			cursor='pointer'
-			onClick={
-				() => {
-					window.open(`https://questbook.app/?grantId=${banner.text}`, '_blank')
-				}
-			}
-		>
-			<Image
-				src={getUrlForIPFSHash(banner.logo)}
-				alt={banner.text}
-				width='20px'
-				height='20px'
-			/>
-			<Text
-				fontSize='16px'
-				fontWeight='700'
-				lineHeight='normal'
-				color='#07070C'
-
-			>
-				{banner.text}
-			</Text>
-        </Flex>
- ))
-}
-      </Flex>
-         </span>
-
-						<Flex
-							flexDirection='column'
+					>
+						<Container
+							minWidth='100%'
 							w='100%'
-							align='center'
-							justify='center'
-							mt='24px'
+							borderRadius='48px 48px 0px 0px'
+							background='#F7F5F2'
+							padding='32px 32px 20px 32px'
+							flexDirection='column'
+							justifyContent='center'
+							alignItems='center'
+							gap='24px'
+						>
+							<span>
+								<Text
+									variant='heading3'
+									fontWeight='700'
+									w='100%'
+									fontSize='24px'
+									lineHeight='31.2px'
+									my={4}
+								>
+									More Grants on Questbook
+								</Text>
+								<Flex
+									gap='24px'
+									overflowX='auto'
+									style={{ scrollbarWidth: 'none' }}
+									p={0}
+									justifyContent='flex-start'>
+
+									{
+										bannerText.map((banner, index) => (
+											<Flex
+												key={index}
+												flexDirection='row'
+												justifyContent='center'
+												alignItems='center'
+												gap='16px'
+												borderRadius='8px'
+												border='1px solid #EFEEEB'
+												background='#FFF'
+												padding='8px 16px'
+												cursor='pointer'
+												onClick={
+													() => {
+														window.open(`https://questbook.app/?grantId=${banner.text}`, '_blank')
+													}
+												}
+											>
+												<Image
+													src={getUrlForIPFSHash(banner.logo)}
+													alt={banner.text}
+													width='20px'
+													height='20px'
+												/>
+												<Text
+													fontSize='16px'
+													fontWeight='700'
+													lineHeight='normal'
+													color='#07070C'
+
+												>
+													{banner.text}
+												</Text>
+											</Flex>
+										))
+									}
+								</Flex>
+							</span>
+
+							<Flex
+								flexDirection='column'
+								w='100%'
+								align='center'
+								justify='center'
+								mt='24px'
 							>
-							<Link
-								textAlign='center'
-								isExternal
-								variant='body'
-								color='accent.azure'
-								href='https://questbook.app/termsofservice.html'>
-								Questbook - Terms of Service
-							</Link>
-							<Link
-								textAlign='center'
-								isExternal
-								variant='body'
-								color='accent.azure'
-								href='questbook.app/privacypolicy.html'>
-								Privacy Policy
-							</Link>
-						</Flex>
-        </Container>
-     </div>
+								<Link
+									textAlign='center'
+									isExternal
+									variant='body'
+									color='accent.azure'
+									href='https://zo.questbook.app/termsofservice.html'>
+									Questbook - Terms of Service
+								</Link>
+								<Link
+									textAlign='center'
+									isExternal
+									variant='body'
+									color='accent.azure'
+									href='https://zo.questbook.app/privacypolicy.html'>
+									Privacy Policy
+								</Link>
+							</Flex>
+						</Container>
+					</div>
+
+
+					<>
+						<Container
+
+							minWidth='100%'
+							p={4}
+							w='100%'
+							h='100vh'
+							bgColor='white'
+						>
+							<Flex
+
+								width='100%'
+								my={4}
+								mt={isMobile ? '' : '12'}
+								justify='space-between'
+								direction='row'
+							>
+								{
+									sectionGrants && sectionGrants.length > 0
+										? sectionGrants.map((section) => (
+											section['DeFi Mania'].grants.map((grant, index) => (
+
+												<Flex
+													direction='column'
+														key={index}
+													align='center'
+													p={8}
+													width='100%'
+												>
+													<Text
+														variant='body'
+														fontWeight='500'
+													>
+														{grant.title}
+													</Text>
+													<Box mt={4} />
+													<QRCode
+														fgColor='#4D9CD4'
+														style={{ height: 'auto', maxWidth: '100%', width: '50%' }}
+														value={`https://zo.questbook.app/dashboard/?grantId=${grant?.id}&chainId=10&role=community`}
+													/>
+												</Flex>
+
+											))
+
+										)) : null
+								}
+							</Flex>
+
+						</Container>
+
+
+					</>
 					{
 						isQbAdmin && (Object.keys(unsavedDomainState).length !== 0 || Object.keys(unsavedSectionGrants).length !== 0) && (
 							<>
