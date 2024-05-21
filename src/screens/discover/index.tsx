@@ -26,6 +26,7 @@ import GranteeListRFPGrid from 'src/screens/discover/_components/granteeList/rfp
 import RFPGrid from 'src/screens/discover/_components/rfpGrid'
 import { DiscoverContext, DiscoverProvider } from 'src/screens/discover/Context'
 import HeroBanner from 'src/screens/discover/HeroBanner'
+import SubSectionBanner from 'src/screens/discover/SubSectionBanner'
 import { Roles } from 'src/types'
 
 function Discover() {
@@ -230,6 +231,10 @@ function Discover() {
 	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
 	const bannerText = [
 		{
+			'logo': 'Qmd23bt7TM68CYB3qiTQMhgDBAu8nFYsHyReYy5f3an3Gm',
+			'text': 'Axelar'
+		},
+		{
 			'logo': 'QmaTvGYbS3GtDdQmYKvnm5gkUX1aSf2ZVgrD8q7u1YG36P',
 			'text': 'Compound'
 		},
@@ -385,7 +390,7 @@ function Discover() {
 						grants={(sectionGrants && sectionGrants.length > 0 ? sectionGrants : []) as []}
 
 						safeBalances={Object.values(safeBalances).reduce((a, b) => a + b, 0) ?? 0}
-						grantsAllocated={grantsAllocated ?? 0}
+						grantsAllocated={grantsAllocated?.total ?? 0}
 						arbitrumRef={arbitrumRef}
 						reclaimRef={reclaimRef}
 						arbitrum1Ref={arbitrum1Ref}
@@ -449,7 +454,22 @@ function Discover() {
 													gap='46px'
 												>
 
-													<Flex flexGrow={1}>
+													<Flex
+														flexGrow={1}
+														gap='46px'
+														flexDirection='column'
+													>
+														{
+															!isMobile && (
+																<SubSectionBanner
+																	totalProposals={grants?.reduce((acc, grant) => acc + grant.numberOfApplications, 0)}
+																	totalProposalsAccepted={grants?.reduce((acc, grant) => acc + grant.numberOfApplicationsSelected, 0)}
+																	fundsAllocated={grantsAllocated?.arbitrum2 ?? 0}
+																	fundsPaidOut={grants?.reduce((acc, grant) => acc + parseFloat(grant?.totalGrantFundingDisbursedUSD), 0)}
+																	safeBalances={grants?.map(grant => safeBalances[`${grant.workspace.safe?.chainId}-${grant.workspace.safe?.address}`] ?? 0).reduce((a, b) => a + b, 0) ?? 0}
+																/>
+															)
+														}
 														<RFPGrid
 															type='all'
 															grants={grants}
@@ -767,6 +787,7 @@ function Discover() {
 											justifyContent='space-between'
 											alignItems='center'
 											gap={2}
+											flexDirection='row'
 											w='100%'>
 											<Text
 												variant='heading3'
@@ -778,7 +799,9 @@ function Discover() {
 												Arbitrum DDA 1.0
 											</Text>
 
+
 										</Flex>
+
 										{
 											(sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
 												const sectionName = Object.keys(section)[0]
@@ -792,7 +815,23 @@ function Discover() {
 														gap='46px'
 													>
 
-														<Flex flexGrow={1}>
+
+														<Flex
+															flexGrow={1}
+															gap='46px'
+															flexDirection='column'
+														>
+															{
+																!isMobile && (
+																	<SubSectionBanner
+																		totalProposals={grants?.reduce((acc, grant) => acc + grant.numberOfApplications, 0)}
+																		totalProposalsAccepted={grants?.reduce((acc, grant) => acc + grant.numberOfApplicationsSelected, 0)}
+																		fundsAllocated={grantsAllocated?.arbitrum1 ?? 0}
+																		fundsPaidOut={grants?.reduce((acc, grant) => acc + parseFloat(grant?.totalGrantFundingDisbursedUSD), 0)}
+																		safeBalances={grants?.map(grant => safeBalances[`${grant.workspace.safe?.chainId}-${grant.workspace.safe?.address}`] ?? 0).reduce((a, b) => a + b, 0) ?? 0}
+																	/>
+																)
+															}
 															<RFPGrid
 																type='all'
 																grants={grants}

@@ -37,7 +37,15 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	const [grantProgram, setGrantProgram] = useState<GrantProgramType>()
 	const [sectionGrants, setSectionGrants] = useState<SectionGrants>()
 	const [recentProposals, setRecentProposals] = useState<RecentProposals>()
-	const [grantsAllocated, setGrantsAllocated] = useState<number>(0)
+	const [grantsAllocated, setGrantsAllocated] = useState<{
+		total: number
+		arbitrum1: number
+		arbitrum2: number
+	}>({
+		total: 0,
+		arbitrum1: 0,
+		arbitrum2: 0,
+	})
 	const [sectionSubGrants, setSectionSubGrants] = useState<GrantType[]>([])
 
 	const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -244,12 +252,35 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 			return total
 		}
 
+		function sumArbitrum(data: any, type: string): number {
+			let total = 0
+
+			for(const grant of data.grants) {
+				if(grant.title.includes('Arbitrum') &&
+				type === '1.0' ? !grant.title.includes('2.0') : grant.title.includes('2.0')) {
+					for(const app of grant.applications) {
+						for(const milestone of app.milestones) {
+							total += milestone.amount
+						}
+					}
+				}
+			}
+
+			return total
+		}
+
+
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const funds: any = await getFunds()
 		logger.info({ funds }, 'funds')
 		const total = sumAmounts(funds.sections[0])
-		logger.info({ total }, 'totalFundsAllocated')
-		setGrantsAllocated(total)
+		const arbitrum1 = sumArbitrum(funds.sections[0], '1.0')
+		const arbitrum2 = sumArbitrum(funds.sections[0], '2.0')
+		setGrantsAllocated({
+			total,
+			arbitrum1,
+			arbitrum2
+		})
 		return total
 	}
 
