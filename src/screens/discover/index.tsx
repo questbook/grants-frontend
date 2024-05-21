@@ -223,6 +223,8 @@ function Discover() {
 	}
 
 	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
+
+	const isTV = useMediaQuery({ query: '(min-height:1600px)' })
 	const bannerText = [
 		{
 			'logo': 'QmQfZEDeLroURuySnfKDF1XpwmU94cGULHZwQhaHPYZxiJ',
@@ -547,8 +549,9 @@ function Discover() {
 					</div>
 
 
-					<>
-						<Container
+					{
+isTV &&					(
+<Container
 
 							minWidth='100%'
 							p={4}
@@ -597,10 +600,11 @@ function Discover() {
 								}
 							</Flex>
 
-						</Container>
+</Container>
+)
 
 
-					</>
+							}
 					{
 						isQbAdmin && (Object.keys(unsavedDomainState).length !== 0 || Object.keys(unsavedSectionGrants).length !== 0) && (
 							<>
@@ -683,7 +687,7 @@ function Discover() {
 				</Tooltip> */}
 			</>
 		)
-	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName, isMobile, safeBalances])
+	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName, isMobile, safeBalances, isTV])
 
 	useEffect(() => {
 		if(!inviteInfo) {
