@@ -45,8 +45,8 @@ function Dashboard(props: DynamicData) {
 						reviewers={grant?.workspace?.members as []}
 						proposalCount={grant?.numberOfApplications as number}
 						proposalCountAccepted={grant?.numberOfApplicationsSelected as number}
-						paidOut={formatAmount(fundsAllocated?.disbursed as number ?? 0)}
-						allocated={formatAmount(fundsAllocated?.allocated as number ?? 0)}
+						paidOut={formatAmount(fundsAllocated?.disbursed as number ?? 0, grant?.reward?.token?.label as string)}
+						allocated={formatAmount(fundsAllocated?.allocated as number ?? 0, grant?.reward?.token?.label as string)}
 						safeBalances={formatAmount(safeBalances as number ?? 0)}
 					/>
 				)

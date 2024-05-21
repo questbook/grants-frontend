@@ -171,7 +171,7 @@ function HeroBannerBox({
 							mb={4}
 							w='12'
 							style={{ mixBlendMode: 'difference' }}
-							src={logoURL ? getAvatar(true, logoURL) : getUrlForIPFSHash(logoURL!)} />
+							src={logoURL === config.defaultDAOImageHash ? getAvatar(true, logoURL) : getUrlForIPFSHash(logoURL!)} />
 
 					)
 				}

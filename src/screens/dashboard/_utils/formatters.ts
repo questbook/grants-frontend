@@ -13,13 +13,18 @@ const formatTime = (timestamp: number, isPayout: boolean = false) => {
 	}
 }
 
-const formatAmount = (amount: number): string => {
+const formatAmount = (amount: number, symbol?: string): string => {
+	const defaultSymbol = 'USD'
+	if(!symbol) {
+		symbol = defaultSymbol
+	}
+
 	if(amount >= 1e6) {
-		return `$${(amount / 1e6).toFixed(1)}M`
+		return symbol === 'USD' ? `$${(amount / 1e6).toFixed(1)}M` : `${(amount / 1e6).toFixed(1)}M ${symbol}`
 	} else if(amount >= 1e3) {
-		return `$${(amount / 1e3).toFixed(0)}K`
+		return symbol === 'USD' ? `$${(amount / 1e3).toFixed(0)}K` : `${(amount / 1e3).toFixed(0)}K ${symbol}`
 	} else {
-		return `$${amount}`
+		return symbol === 'USD' ? `$${amount}` : `${amount} ${symbol}`
 	}
 }
 
