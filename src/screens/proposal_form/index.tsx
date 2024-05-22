@@ -18,6 +18,7 @@ import { getChainInfo } from 'src/libraries/utils/token'
 import { GrantsProgramContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
 import SectionHeader from 'src/screens/proposal_form/_components/SectionHeader'
 import SectionInput from 'src/screens/proposal_form/_components/SectionInput'
+import SectionRadioButton from 'src/screens/proposal_form/_components/SectionRadioButton'
 import SectionRichTextEditor from 'src/screens/proposal_form/_components/SectionRichTextEditor'
 import SectionSelect from 'src/screens/proposal_form/_components/SectionSelect'
 import SelectArray from 'src/screens/proposal_form/_components/SelectArray'
@@ -587,6 +588,39 @@ function ProposalForm() {
 							})
 						}
 
+						{
+							/* Optinal Referral Field (if it is not included in the form field) */
+							type === 'submit' &&
+							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('referral')
+							|| field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('tg')
+							).length === 0 && (
+								<SectionRadioButton
+									label='How did you find out about this program?'
+									placeholder='Select an option'
+									value={referral?.type}
+									options={['Questbook Twitter', 'Website', 'Someone referred me', 'Other']}
+									onChange={
+										(e) => {
+											setReferral({ type: e.target.value, value: '' })
+										}
+									}
+								 />
+							)
+						}
+						{
+							['Someone referred me', 'Website', 'Other']?.includes(referral?.type) && (
+								<SectionInput
+									label={referral?.type === 'Website' ? 'Which website?' : referral?.type === 'Other' ? 'Please specify' : 'Who referred you?'}
+									placeholder=''
+									value={referral?.value}
+									onChange={
+										(e) => {
+											setReferral({ ...referral, value: e.target.value })
+										}
+									} />
+							)
+						}
+
 
 						<Button
 							mt={10}
@@ -633,7 +667,7 @@ function ProposalForm() {
 	}
 
 	const { setRole } = useContext(GrantsProgramContext)!
-	const { type, grant, chainId, form, setForm, error, telegram, setTelegram, twitter, setTwitter } = useContext(ProposalFormContext)!
+	const { type, grant, chainId, form, setForm, error, telegram, setTelegram, twitter, setTwitter, referral, setReferral } = useContext(ProposalFormContext)!
 	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const { safeObj } = useSafeContext()!
 	const { setSignIn } = useContext(SignInContext)!
