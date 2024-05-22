@@ -24,6 +24,7 @@ import SectionInput from 'src/screens/proposal_form/_components/SectionInput'
 import SectionRichTextEditor from 'src/screens/proposal_form/_components/SectionRichTextEditor'
 import SectionSelect from 'src/screens/proposal_form/_components/SectionSelect'
 import SelectArray from 'src/screens/proposal_form/_components/SelectArray'
+import SectionRadioButton from 'src/screens/proposal_form/_components/SelectRadioButton'
 import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposal'
 import { containsCustomField, containsField, findCustomField, findField, findFieldBySuffix, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
 import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, disabledSubmissions, disabledTonGrants, MILESTONE_INPUT_STYLE, SocialIntent, tonAPACGrants, tonGrants } from 'src/screens/proposal_form/_utils/constants'
@@ -807,6 +808,38 @@ function ProposalForm() {
 							</Text>
 
 						)
+						}
+						{
+							/* Optinal Referral Field (if it is not included in the form field) */
+							type === 'submit' &&
+							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('referral')
+							|| field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('tg')
+							).length === 0 && (
+								<SectionRadioButton
+									label='How did you find out about this program?'
+									placeholder='Select an option'
+									value={referral?.type}
+									options={['Questbook Twitter', 'Website', 'Someone referred me', 'Other']}
+									onChange={
+										(e) => {
+											setReferral({ type: e.target.value, value: '' })
+										}
+									}
+								 />
+							)
+						}
+						{
+							['Someone referred me', 'Website', 'Other']?.includes(referral?.type) && (
+								<SectionInput
+									label={referral?.type === 'Website' ? 'Which website?' : referral?.type === 'Other' ? 'Please specify' : 'Who referred you?'}
+									placeholder=''
+									value={referral?.value}
+									onChange={
+										(e) => {
+											setReferral({ ...referral, value: e.target.value })
+										}
+									} />
+							)
 						}
 
 
@@ -2158,7 +2191,7 @@ function ProposalForm() {
 	}
 
 	const { setRole } = useContext(GrantsProgramContext)!
-	const { type, grant, chainId, form, setForm, error, telegram, setTelegram, twitter, setTwitter } = useContext(ProposalFormContext)!
+	const { type, grant, chainId, form, setForm, error, telegram, setTelegram, twitter, setTwitter, referral, setReferral } = useContext(ProposalFormContext)!
 	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const { safeObj } = useSafeContext()!
 	const { setSignIn } = useContext(SignInContext)!

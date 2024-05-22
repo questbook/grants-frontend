@@ -16,6 +16,8 @@ export type ProposalFormContextType = {
     setTelegram: (telegram: string) => void
     twitter: string
     setTwitter: (twitter: string) => void
+    referral: { type: string, value: string }
+    setReferral: (referral: { type: string, value: string }) => void
 }
 
 export type Grant = GrantDetailsQuery['grant']
