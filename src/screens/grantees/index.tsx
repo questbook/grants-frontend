@@ -6,6 +6,7 @@ import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import SearchField from 'src/libraries/ui/SearchField'
 import { ApiClientsContext, SignInContext, SignInTitleContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
 import RFPGrid from 'src/screens/grantees/_components/rfpGrid'
+import { inActiveProposals } from 'src/screens/grantees/_utils/constants'
 import { GranteeContext, GranteeProvider } from 'src/screens/grantees/Context'
 import HeroBanner from 'src/screens/grantees/HeroBanner'
 
@@ -134,9 +135,20 @@ function Grantee() {
 
 															<RFPGrid
 																proposals={
-																	proposals?.sort((a) => {
-																		return a.milestones.filter((m) => m.amountPaid === m.amount).length === a.milestones.length ? -1 : 1
+																	proposals?.sort((a, b) => {
+																	  const aFullyPaid = a.milestones.every((m) => m.amountPaid === m.amount)
+																	  const bFullyPaid = b.milestones.every((m) => m.amountPaid === m.amount)
+																	  if(aFullyPaid && !bFullyPaid) {
+																			return -1
+																	  } else if(!aFullyPaid && bFullyPaid) {
+																			return 1
+																	  } else if(aFullyPaid && bFullyPaid) {
+																			return 0
+																	  } else {
+																			return inActiveProposals.includes(a.id) ? 1 : -1
+																	  }
 																	}) || []
+
 																}
 															/>
 														</Box>

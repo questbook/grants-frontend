@@ -7,6 +7,7 @@ import logger from 'src/libraries/logger'
 import { getAvatar } from 'src/libraries/utils'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import StateButton from 'src/screens/grantees/_components/stateButton'
+import { inActiveProposals } from 'src/screens/grantees/_utils/constants'
 import { RecentProposals } from 'src/screens/grantees/_utils/types'
 
 
@@ -92,8 +93,15 @@ function RFPCard({ proposal }: RFPCardProps) {
 
 						<Flex gap={2}>
 							<StateButton
-								state={proposal.milestones.filter((milestone) => milestone.amountPaid === milestone.amount).length === proposal.milestones.length ? 'approved' : 'submitted'}
-								title={proposal.milestones.filter((milestone) => milestone.amountPaid === milestone.amount).length === proposal.milestones.length ? 'Completed' : 'In Progress'}
+								state={
+									inActiveProposals?.includes(proposal.id) ? 'rejected' :
+										proposal.milestones.filter((milestone) => milestone.amountPaid === milestone.amount).length === proposal.milestones.length ? 'approved' : 'submitted'
+								}
+								title={
+									inActiveProposals?.includes(proposal.id) ? 'Inactive' :
+										proposal.milestones.filter((milestone) => milestone.amountPaid === milestone.amount).length === proposal.milestones.length ? 'Completed' : 'In Progress'
+								}
+
 							/>
 							<Button
 				 borderRadius='8px'

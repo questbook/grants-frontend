@@ -191,36 +191,6 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 
 			</Flex>
 
-			{/* <Flex
-				align='center'
-				justifyContent='flex-end'
-				gap={2}
-				mb={4}
-			>
-				<Text
-					fontSize='14px'
-					color='black.300'>
-					Sort by
-				</Text>
-				<Select
-					fontSize='14px'
-					variant='unstyled'
-					defaultValue={sortBy}
-					value='Sort By'
-					onChange={
-						(e) => {
-							setSortBy(e.target.value as 'createdAtS' | 'updatedAtS')
-						}
-					}>
-					<option value='createdAtS'>
-						Submission Date
-					</option>
-					<option value='updatedAtS'>
-						Last Updated Date
-					</option>
-				</Select>
-			</Flex> */}
-
 
 			<Grid
 				display={isFilterClicked ? 'grid' : 'none'}

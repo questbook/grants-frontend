@@ -29,6 +29,7 @@ import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { GRANT_PII } from 'src/screens/dashboard/_utils/constants'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -411,14 +412,7 @@ function Proposal() {
 								return <Flex key={index} />
 							}
 
-							if(!shouldShowPII && (proposal?.grant?.id === tonGrants || proposal?.grant?.id === tonAPACGrants) && ([
-								'Personal Telegram Handle',
-								'Personal WeChat Handle',
-								'I confirm that I have studied the Grant Program Guidelines and the Ecosystem Map with the existing solutions on TON (please write \'yes\')',
-								'In case my proposal is approved, sign an official grant agreement and abide by its provisions in good faith',
-								'Any materials or links which can prove your achievement of building an App in Telegram with >10 thousand daily active users, or >1 million daily active users in any other internet platforms such as WeChat, QQ, Facebook, Google, Line, Kakao, etc. in the past',
-								'Education & Working experience & achievements of the founder and/or chief creator of Mini-app'
-							  ]?.some((s) => title === s))) {
+							if(!shouldShowPII && (proposal?.grant?.id === tonGrants || proposal?.grant?.id === tonAPACGrants) && (GRANT_PII?.some((s) => title === s))) {
 								return <Flex key={index} />
 							}
 
