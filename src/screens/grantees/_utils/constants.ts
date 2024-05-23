@@ -4,5 +4,5 @@ export const inActiveProposals = [
 	'0x26c',
 	'0x291',
 	'0x27b',
-	'0x5d3'
+	'0x1de'
 ]
