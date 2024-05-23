@@ -234,6 +234,10 @@ function Discover() {
 			'text': 'Arbitrum'
 		},
 		{
+			'logo': 'QmbS1MwNDNPJt9ve4UYspg1WAqoYam6J6E2kVg24N9Nh3h',
+			'text': 'Axelar'
+		},
+		{
 			'logo': 'QmRmLRwFw6xQgJc2Mam45tYj9zLimLkjoXrR3Lvw6m2EEf',
 			'text': 'TON Foundation'
 		},
@@ -244,6 +248,10 @@ function Discover() {
 		{
 			'logo': 'QmYvzshiSC6DSpYAWDWv3WbVvm3CxtnqEtHg4JhFPProTx',
 			'text': 'iExec'
+		},
+		{
+			'logo': 'QmcZQwYXLgk9yam6RYafYNLYd52X8UggbsQAr6WdaYUtyb',
+			'text': 'Elastos'
 		},
 		{
 			'logo': 'QmWX8As9og6mLaiPhCaR3NqkinXMDymMaqf43qyVSE5hp8',

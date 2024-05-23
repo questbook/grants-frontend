@@ -104,6 +104,14 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 						)
 					}
 					{
+						(proposal?.state === 'approved') && (proposal.milestones.filter((milestone) => parseFloat(milestone.amountPaid) >= parseFloat(milestone.amount)).length === proposal.milestones.length) && (
+							<StateButton
+								state='approved'
+								title='Completed'
+							/>
+						)
+					}
+					{
 						(proposal?.state !== 'submitted') && (
 							<StateTag
 								ml='auto'
