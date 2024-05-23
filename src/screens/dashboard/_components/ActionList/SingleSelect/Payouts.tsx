@@ -151,6 +151,8 @@ function Payouts() {
 									} else {
 										window.open(getGnosisTansactionLink(grant?.workspace?.safe?.address, grant?.workspace?.safe?.chainId.toString(), payout?.transactionHash), '_blank')
 									}
+								} else if(grant?.workspace?.tokens[0]?.label === 'AXL' && payout?.transactionHash) {
+									window.open(`https://axelarscan.io/tx/${payout?.transactionHash}`, '_blank')
 								} else {
 									toast({
 										status: 'warning',
