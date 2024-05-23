@@ -6,9 +6,10 @@ import {
 	ModalContent,
 	ModalOverlay,
 	Text,
+	useToast,
 } from '@chakra-ui/react'
 import { GrantsProgramContext } from 'src/pages/_app'
-import { FundBuilderContext, ModalContext } from 'src/screens/dashboard/Context'
+import { FundBuilderContext } from 'src/screens/dashboard/Context'
 
 interface Props {
     isOpen: boolean
@@ -52,7 +53,13 @@ function FundingMethod({
 								if(grant?.workspace?.safe) {
 									setIsModalOpen(true)
 								} else {
-									setIsLinkYourMultisigModalOpen(true)
+									toast({
+										title: 'Please Link your multisig wallet',
+										description: 'Connect your multisig wallet from the settings page',
+										status: 'error',
+										duration: 5000,
+										isClosable: true
+									})
 								}
 
 								setPayWithSafe(true)
@@ -86,7 +93,7 @@ function FundingMethod({
 	}
 
 	const { grant } = useContext(GrantsProgramContext)!
-	const { setIsLinkYourMultisigModalOpen } = useContext(ModalContext)!
+	const toast = useToast()
 	const { setIsModalOpen } = useContext(FundBuilderContext)!
 	return buildComponent()
 }
