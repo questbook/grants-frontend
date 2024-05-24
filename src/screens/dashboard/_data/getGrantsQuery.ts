@@ -9,6 +9,7 @@ export const getGrantsQuery = gql`query getGrant($grantId: String!, $actorId: St
       numberOfApplicationsSelected
       numberOfApplicationsPending
       link
+      details
       fields {
         id: _id
         title

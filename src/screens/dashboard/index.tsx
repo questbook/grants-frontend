@@ -40,6 +40,7 @@ function Dashboard(props: DynamicData) {
 						<HeroBannerBox
 							title={grant?.title as string}
 							programDetails={grant?.link as string}
+							details={grant?.details as string}
 							grantTicketSize={formatAmount(parseFloat(grant?.reward?.committed ?? '0'))}
 							reviewers={grant?.workspace?.members as []}
 							proposalCount={grant?.numberOfApplications as number}

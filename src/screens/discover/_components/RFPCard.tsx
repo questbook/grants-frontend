@@ -92,6 +92,8 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 					<Flex
 						justifyContent='space-between'
 						alignItems='flex-start'
+						gap={4}
+						flexWrap='wrap'
 					>
 						<Image
 							src={grant.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)}

@@ -431,7 +431,25 @@ function Discover() {
 																		textAlign='match-parent'
 																		color='#7E7E8F'
 																	>
-																		{'BLRxZo is a dynamic hub for developers and innovators in Bangalore, serving as the core of the Zo ecosystem in the city. It\'s a collaborative space where tech enthusiasts and builders converge to push the boundaries of digital assets and decentralized technology. Situated at the intersection of culture and innovation, BLRxZo fosters a community dedicated to shaping the future of web3 and beyond, making it the epicenter for pioneering projects and transformative ideas in India. BLRxZo benefits from being part of an expanding network of Zo houses, including locations like SFOxZo and DXBxZo, enhancing its reach and impact across global tech communities.'}
+																		{
+																			`DeFi Mania by Zo World offers an immersive journey into decentralized finance, with a series of targeted workshops with a hacker house finale.  
+Each week, participants will dive into critical DeFi topics, advancing from foundational knowledge to complex strategies, all designed to ignite passion, foster innovation, and equip them for success in the DeFi landscape.  
+The grand finale, the DeFi Hacker House, will bring together 16 elite hackers selected through rigorous scrutiny of their proposals*.`
+}
+<br />
+<br />
+{
+`
+The Selects will join us at Zo House BLR for a week of intense collaboration and creativity in an in-person hackerhouse. Guided by top-tier mentors, they will tackle mega bounties, pushing the boundaries of DeFi innovation, ensuring their projects are market-ready and poised for success.`
+}
+<br />
+<br />
+{
+`
+* Only winners of the online tracks will get invited and incubated at the Hacker House.`
+}
+
+
 																	</Text>
 																</Box>
 
@@ -550,61 +568,61 @@ function Discover() {
 
 
 					{
-!isMobile &&					(
-<Container
+						!isMobile && (
+							<Container
 
-							minWidth='100%'
-							p={4}
-							w='100%'
-							h='100vh'
-							bgColor='white'
-						>
-							<Flex
-
-								width='100%'
-								my={4}
-								mt={isMobile ? '' : '12'}
-								justify='space-between'
-								direction='row'
+								minWidth='100%'
+								p={4}
+								w='100%'
+								h='100vh'
+								bgColor='white'
 							>
-								{
-									sectionGrants && sectionGrants.length > 0
-										? sectionGrants.map((section) => (
-											section['DeFi Mania'].grants.map((grant, index) => (
+								<Flex
 
-												<Flex
-													direction='column'
+									width='100%'
+									my={4}
+									mt={isMobile ? '' : '12'}
+									justify='space-between'
+									direction='row'
+								>
+									{
+										sectionGrants && sectionGrants.length > 0
+											? sectionGrants.map((section) => (
+												section['DeFi Mania'].grants.map((grant, index) => (
+
+													<Flex
+														direction='column'
 														key={index}
-													align='center'
-													p={8}
-													width='100%'
-												>
-													<Text
-														fontSize='2xl'
-														variant='heading1'
-														fontWeight='500'
+														align='center'
+														p={8}
+														width='100%'
 													>
-														{grant.title}
-													</Text>
-													<Box mt={4} />
-													<QRCode
-														fgColor='#4D9CD4'
-														style={{ height: 'auto', maxWidth: '100%', width: '50%' }}
-														value={`https://zo.questbook.app/dashboard/?grantId=${grant?.id}&chainId=10&role=community`}
-													/>
-												</Flex>
+														<Text
+															fontSize='2xl'
+															variant='heading1'
+															fontWeight='500'
+														>
+															{grant.title}
+														</Text>
+														<Box mt={4} />
+														<QRCode
+															fgColor='#4D9CD4'
+															style={{ height: 'auto', maxWidth: '100%', width: '50%' }}
+															value={`https://zo.questbook.app/dashboard/?grantId=${grant?.id}&chainId=10&role=community`}
+														/>
+													</Flex>
 
-											))
+												))
 
-										)) : null
-								}
-							</Flex>
+											)) : null
+									}
+								</Flex>
 
-</Container>
-)
+							</Container>
+						)
 
 
-							}
+					}
 					{
 						isQbAdmin && (Object.keys(unsavedDomainState).length !== 0 || Object.keys(unsavedSectionGrants).length !== 0) && (
 							<>

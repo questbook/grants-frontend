@@ -14,6 +14,7 @@ import RoleTag from 'src/screens/dashboard/_components/RoleTag'
 function HeroBannerBox({
 	title,
 	programDetails,
+	details,
 	reviewers,
 	proposalCount,
 	proposalCountAccepted,
@@ -24,6 +25,7 @@ function HeroBannerBox({
 }: {
 	title: string
 	programDetails: string
+	details: string
 	reviewers: WorkspaceMember[]
 	proposalCount: number
 	proposalCountAccepted: number
@@ -233,11 +235,14 @@ function HeroBannerBox({
 						fontSize='12px'
 						lineHeight='16px'
 						color='white'>
-						This domain is focused on
+						{
+							details?.length ? details :
+								`This domain is focused on
 						{' '}
-						{title}
+						${title}
 						{' '}
-						Registration
+						Registration`
+						}
 					</Text>
 
 				</Flex>
