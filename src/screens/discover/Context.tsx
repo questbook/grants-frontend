@@ -385,7 +385,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		const total = funds.sections.reduce((acc: number, cur: any) => acc + sumAmounts(cur), 0)
 
 		const statsCount = results?.stats
-		setStats({ builders: statsCount?.builders + 20000, proposals: statsCount?.proposals + 1540, funds: total + 786298 })
+		setStats({ builders: statsCount?.builders + 52000, proposals: statsCount?.proposals + 1540, funds: total + 786298 })
 
 		return 'stats-fetched'
 	}
