@@ -708,7 +708,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 			const initialSelectionSet = new Set<string>()
 			initialSelectionSet.add(proposals[0].id)
 			if(role === 'builder' || role === 'community') {
-				setRole(proposals[0].applicantId?.toLowerCase() === scwAddress?.toLowerCase() ? 'builder' : 'community')
+				setRole(proposals?.find((p) => p.applicantId?.toLowerCase() === scwAddress?.toLowerCase()) ? 'builder' : 'community')
 			}
 
 			let params = { ...router.query }
