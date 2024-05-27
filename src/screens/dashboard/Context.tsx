@@ -122,7 +122,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
 		let possibleRoles: Roles[] = ['community']
 
-		if(_grant?.myApplications?.length > 0) {
+		if(_grant?.applications?.length > 0) {
 			possibleRoles.push('builder')
 		}
 
@@ -685,7 +685,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 			if(proposalIndex !== -1) {
 				setSelectedProposals(new Set<string>([proposalId]))
 				if(role === 'builder' || role === 'community') {
-					setRole(proposals[proposalIndex].applicantId?.toLowerCase() === scwAddress?.toLowerCase() ? 'builder' : 'community')
+					setRole(proposals?.find((p) => p.applicantId?.toLowerCase() === scwAddress?.toLowerCase()) ? 'builder' : 'community')
 				}
 
 				let params = { ...router.query }
