@@ -69,6 +69,11 @@ function StateTag({ state, isSelected = true, ...props }: Props) {
 			icon: <Time />,
 			title: 'Reviewing',
 			bg: jeans
+		},
+		completed: {
+			icon: <Time />,
+			title: 'Completed',
+			bg: jeans
 		}
 	}
 

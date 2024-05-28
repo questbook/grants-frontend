@@ -228,7 +228,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 
 			<Grid
 				display={isFilterClicked ? 'grid' : 'none'}
-				minH='80px'
+				minH='120px'
 				px={3}
 				m={2}
 				overflowX='scroll'
@@ -239,10 +239,10 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 						}
 					}
 				}
-				templateColumns='repeat(2, 1fr)'
+				templateColumns='repeat(2, 0fr)'
 				gap={1}>
 				{
-					(['approved', 'submitted', 'rejected', 'resubmit'] as ApplicationState[]).map(state => {
+					(['approved', 'submitted', 'rejected', 'resubmit', 'review', 'completed'] as ApplicationState[]).map(state => {
 						return (
 							<GridItem
 								// colSpan={index > 1 ? 2 : 1}
@@ -321,8 +321,12 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 			})
 		}
 
-		if(filterState !== undefined) {
+		if(filterState !== undefined && filterState !== 'completed') {
 			allProposals = allProposals.filter(proposal => proposal.state === filterState)
+		}
+
+		if(filterState === 'completed') {
+			allProposals = allProposals.filter(proposals => proposals.milestones.filter((milestone) => parseFloat(milestone.amountPaid) >= parseFloat(milestone.amount)).length === proposals.milestones.length)
 		}
 
 		if(sortBy === 'createdAtS') {
@@ -331,7 +335,9 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 
 		if(!isSortByFilterClicked) {
 			const inActive = allProposals.filter((_) => inActiveProposals.includes(_.id))
-			allProposals = [ ...allProposals.filter((_) => !inActiveProposals.includes(_.id)), ...inActive]
+			const completed = allProposals.filter((_) => _.milestones.filter((milestone) => parseFloat(milestone.amountPaid) >= parseFloat(milestone.amount)).length === _.milestones.length)
+			allProposals = [ ...allProposals.filter((_) => !completed.includes(_)), ...completed ]
+			allProposals = [ ...allProposals.filter((_) => !inActive.includes(_)), ...inActive ]
 		}
 
 		return allProposals
