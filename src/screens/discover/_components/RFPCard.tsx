@@ -8,8 +8,10 @@ import SupportedChainId from 'src/generated/SupportedChainId'
 import { QBAdminsContext } from 'src/libraries/hooks/QBAdminsContext'
 import logger from 'src/libraries/logger'
 import { getAvatar } from 'src/libraries/utils'
+import { AmplitudeContext } from 'src/libraries/utils/amplitude'
 import { nFormatter, titleCase } from 'src/libraries/utils/formatting'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
+import { WebwalletContext } from 'src/pages/_app'
 import StateButton from 'src/screens/discover/_components/stateButton'
 import { GrantType } from 'src/screens/discover/_utils/types'
 import { DiscoverContext } from 'src/screens/discover/Context'
@@ -74,6 +76,10 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						params = { ...params, proposalId: grant.applications[0].id }
 					}
 
+					trackAmplitudeEvent('Grant_Program_Visits', {
+						programName: grant?.title,
+						isSignedIn: scwAddress ? 'true' : 'false'
+					})
 					router.push({
 						pathname: '/dashboard/',
 						query: params,
@@ -125,6 +131,10 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 				 fontSize='14px'
 				 onClick={
 											() => {
+												trackAmplitudeEvent('program_info', {
+													programName: grant?.title,
+													isSignedIn: scwAddress ? 'true' : 'false'
+												})
 												/* @ts-ignore */
 												window.open(grant?.link, '_blank')
 											}
@@ -316,7 +326,8 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 	)
 
 	const { safeBalances } = useContext(DiscoverContext)!
-
+	const { trackAmplitudeEvent } = useContext(AmplitudeContext)!
+	const { scwAddress } = useContext(WebwalletContext)!
 	const router = useRouter()
 
 	const { isQbAdmin } = useContext(QBAdminsContext)!

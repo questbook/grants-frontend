@@ -12,6 +12,7 @@ import BackButton from 'src/libraries/ui/BackButton'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 import { getAvatar } from 'src/libraries/utils'
+import { AmplitudeContext } from 'src/libraries/utils/amplitude'
 import { chainNames } from 'src/libraries/utils/constants'
 import { getExplorerUrlForTxHash, getRewardAmountMilestones } from 'src/libraries/utils/formatting'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
@@ -151,7 +152,15 @@ function ProposalForm() {
 												border='1px solid #E1DED9'
 												mb={6}
 												variant='primaryLarge'
-												onClick={() => window.open(qrCodeText, '_blank')}
+												onClick={
+													() => {
+														trackAmplitudeEvent('telegram_notifications', {
+															programName: grant?.title,
+															isSignedIn: scwAddress ? 'true' : 'false'
+														})
+														window.open(qrCodeText, '_blank')
+													}
+												}
 											>
 												<Text
 													fontWeight='500'>
@@ -209,7 +218,14 @@ function ProposalForm() {
 													bg='#77AC06'
 													border='1px solid #E1DED9'
 													variant='primaryLarge'
-													onClick={() => window.open(`https://twitter.com/intent/tweet?text=${SocialIntent[Math.floor(Math.random() * SocialIntent.length)]}&url=${window.location.origin}/dashboard/?grantId=${grant?.id}%26chainId=${chainId}%26proposalId=${proposalId}`, '_blank')}
+													onClick={
+														() => {
+															trackAmplitudeEvent('Social_Shares', {
+																programName: grant?.title
+															})
+															window.open(`https://twitter.com/intent/tweet?text=${SocialIntent[Math.floor(Math.random() * SocialIntent.length)]}&url=${window.location.origin}/dashboard/?grantId=${grant?.id}%26chainId=${chainId}%26proposalId=${proposalId}`, '_blank')
+														}
+													}
 													leftIcon={<Twitter />}
 												>
 													<Text
@@ -225,6 +241,9 @@ function ProposalForm() {
 													variant='primaryLarge'
 													onClick={
 														() => {
+															trackAmplitudeEvent('Social_Shares', {
+																programName: grant?.title,
+															})
 															const payload = getPayload({ type: 'proposal', proposalId: proposalId!, grantId: grant?.id! })
 															if(payload) {
 																setQrCodeText(`https://t.me/${process.env.NOTIF_BOT_USERNAME}?start=${payload}`)
@@ -2196,6 +2215,7 @@ function ProposalForm() {
 	const { safeObj } = useSafeContext()!
 	const { setSignIn } = useContext(SignInContext)!
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
+	const { trackAmplitudeEvent } = useContext(AmplitudeContext)!
 	const [qrCodeText, setQrCodeText] = useState<string>('')
 
 	const router = useRouter()

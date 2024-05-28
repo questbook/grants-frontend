@@ -1,6 +1,8 @@
 import { useContext } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { Button, Flex, Image, Text } from '@chakra-ui/react'
+import { AmplitudeContext } from 'src/libraries/utils/amplitude'
+import { WebwalletContext } from 'src/pages/_app'
 import { DiscoverContext } from 'src/screens/discover/Context'
 
 
@@ -57,7 +59,14 @@ function HeroBanner() {
 							mt={8}
 							fontSize='18px'
 							fontWeight='600'
-							onClick={() => setBuildersModal(true)}>
+							onClick={
+								() => {
+									trackAmplitudeEvent('connect_with_us', {
+										isSignedIn: scwAddress ? 'true' : 'false'
+									})
+									setBuildersModal(true)
+								}
+							}>
 							Connect with us
 						</Button>
 					</Flex>
@@ -113,6 +122,8 @@ function HeroBanner() {
 	)
 	const { setBuildersModal } = useContext(DiscoverContext)!
 	const isMobile = useMediaQuery({ query:'(max-width:800px)' })
+	const { trackAmplitudeEvent } = useContext(AmplitudeContext)!
+	const { scwAddress } = useContext(WebwalletContext)!
 
 	return buildComponent()
 }

@@ -1,11 +1,13 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { Box, Button, Flex, Grid, Image, Text } from '@chakra-ui/react'
 import config from 'src/constants/config.json'
 import { WorkspaceMember } from 'src/generated/graphql'
 import { ProjectDetails, Telegram, Twitter } from 'src/generated/icons'
 import { getAvatar } from 'src/libraries/utils'
+import { AmplitudeContext } from 'src/libraries/utils/amplitude'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
+import { WebwalletContext } from 'src/pages/_app'
 import RoleTag from 'src/screens/dashboard/_components/RoleTag'
 // import { useRouter } from 'next/router'
 
@@ -198,7 +200,15 @@ function HeroBannerBox({
 				 fontSize='14px'
 				 w={isMobile ? '50%' : ''}
 				 _hover={{ bgColor: 'blue.600' }}
-				 onClick={() => window.open(programDetails, '_blank')}
+				 onClick={
+									() => {
+										trackAmplitudeEvent('program_info', {
+											programName: title,
+											isSignedIn: scwAddress ? 'true' : 'false'
+										})
+										window.open(programDetails, '_blank')
+									}
+								}
 				 rightIcon={<ProjectDetails />}
 				 >
 								Program Details
@@ -359,6 +369,8 @@ function HeroBannerBox({
 		</Flex>
 	)
 	const [expandReviewers, setExpandReviewers] = useState(4)
+	const { scwAddress } = useContext(WebwalletContext)!
+	const { trackAmplitudeEvent } = useContext(AmplitudeContext)!
 	const isMobile = useMediaQuery({ query:'(max-width:600px)' })
 	return buildComponent()
 }
