@@ -208,7 +208,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 				templateColumns='repeat(2, 0fr)'
 				gap={1}>
 				{
-					(['approved', 'submitted', 'rejected', 'resubmit', 'review', 'cancelled'] as ApplicationState[]).map(state => {
+					(['approved', 'submitted', 'rejected', 'resubmit', 'review', 'completed'] as ApplicationState[]).map(state => {
 						return (
 							<GridItem
 								// colSpan={index > 1 ? 2 : 1}
@@ -287,8 +287,12 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 			})
 		}
 
-		if(filterState !== undefined) {
+		if(filterState !== undefined && filterState !== 'completed') {
 			allProposals = allProposals.filter(proposal => proposal.state === filterState)
+		}
+
+		if(filterState === 'completed') {
+			allProposals = allProposals.filter(proposals => proposals.milestones.filter((milestone) => parseFloat(milestone.amountPaid) >= parseFloat(milestone.amount)).length === proposals.milestones.length)
 		}
 
 		if(sortBy === 'createdAtS') {

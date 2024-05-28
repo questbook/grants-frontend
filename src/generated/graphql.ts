@@ -656,7 +656,8 @@ export enum FundsTransferStatusType {
   Cancelled = 'cancelled',
   Executed = 'executed',
   Queued = 'queued',
-  Failed = 'failed'
+  Failed = 'failed',
+  Completed = 'completed'
 }
 
 export enum FundsTransferType {
