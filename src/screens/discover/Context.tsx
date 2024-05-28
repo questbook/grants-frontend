@@ -354,7 +354,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 	useEffect(() => {
 		getSectionGrants().then(r => logger.info(r, 'Get Section Grants'))
-	}, [scwAddress])
+	}, [])
 
 	useEffect(() => {
 		if(inviteInfo) {
