@@ -45,6 +45,7 @@ const ProfileProvider = ({ children }: {children: ReactNode}) => {
 	const { scwAddress, setBuildersProfileModal } = useContext(WebwalletContext)!
 	const [proposals, setProposals] = useState<BuilderProposals[] | undefined>(undefined)
 	const [builder, setBuilder] = useState<BuilderInfoType | undefined>(undefined)
+	const [isBuilderInfoLoading, setBuilderInfoLoading] = useState<boolean>(true)
 
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 
@@ -59,7 +60,7 @@ const ProfileProvider = ({ children }: {children: ReactNode}) => {
 
 	const getBuilderDetails = async() => {
 		if(!address) {
-			setIsLoading(false)
+			setBuilderInfoLoading(false)
 			return 'No Address'
 		}
 
@@ -71,7 +72,7 @@ const ProfileProvider = ({ children }: {children: ReactNode}) => {
 			setBuilder(results.getProfile)
 		}
 
-		setIsLoading(false)
+		setBuilderInfoLoading(false)
 	}
 
 	const getBuilderProposals = async() => {
@@ -103,11 +104,11 @@ const ProfileProvider = ({ children }: {children: ReactNode}) => {
 	}, [address, scwAddress])
 
 	useEffect(() => {
-		if(!isLoading && !builder?._id && scwAddress?.toLowerCase() === address?.toString().toLowerCase()) {
+		if(!isBuilderInfoLoading && builder === undefined && scwAddress?.toLowerCase() === address?.toString().toLowerCase()) {
 			logger.info('Setting Profile Modal', builder, scwAddress, address)
 			setBuildersProfileModal(true)
 		}
-	}, [builder, scwAddress, address])
+	}, [builder, scwAddress, address, isBuilderInfoLoading])
 
 
 	return provider()
