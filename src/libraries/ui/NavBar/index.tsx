@@ -1,6 +1,7 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import React from 'react'
 import { Box, Button, Container, Flex, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Spacer, Text, useMediaQuery } from '@chakra-ui/react'
+import copy from 'copy-to-clipboard'
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
@@ -235,6 +236,69 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 								} >
 								Start a grant program
 							</Button>
+						</Flex>
+					)
+				}
+				{
+					!isMobile[0] &&
+					(router.pathname === '/profile/[address]') && (
+						<Flex
+							gap={4}
+							align='center'
+							mx={4}
+
+						>
+							 {
+								router.query.address === scwAddress && (
+									<Text
+										fontWeight='500'
+										fontSize='18px'
+										_hover={
+											{
+												color: '#557B05'
+											}
+										}
+										fontStyle='normal'
+										lineHeight='normal'
+										color='#07070C'
+										textAlign='center'
+										cursor='pointer'
+										onClick={
+											() => {
+												setBuildersProfileModal(true)
+											}
+										}
+									>
+										Edit Profile
+									</Text>
+								)
+							}
+							<Text
+								fontWeight='500'
+								fontSize='18px'
+								_hover={
+									{
+										color: '#557B05'
+									}
+								}
+								fontStyle='normal'
+								lineHeight='normal'
+								color='#07070C'
+								textAlign='center'
+								cursor='pointer'
+								onClick={
+									() => {
+										copy(window.location.href)
+										toast({
+											title: 'Profile link copied!',
+											status: 'success',
+											duration: 3000,
+										})
+									}
+								}
+							>
+								Share Profile
+							</Text>
 						</Flex>
 					)
 				}
@@ -540,7 +604,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 	const { inited, loading, importWalletFromGD, exportWalletToGD } = useGoogleDriveWalletRecoveryReact({ googleClientID: '986000900135-tscgujbu2tjq4qk9duljom0oimnb79la.apps.googleusercontent.com' })
 
 	const { grant, role, isLoading } = useContext(GrantsProgramContext)!
-	const { dashboardStep, setDashboardStep, createingProposalStep, setCreatingProposalStep, glyph, setGlyph } = useContext(WebwalletContext)!
+	const { dashboardStep, setDashboardStep, createingProposalStep, setCreatingProposalStep, glyph, setGlyph, scwAddress, setBuildersProfileModal } = useContext(WebwalletContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { signIn, setSignIn } = useContext(SignInContext)!
 	// const { searchString, setSearchString } = useContext(DAOSearchContext)!

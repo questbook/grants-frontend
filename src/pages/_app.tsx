@@ -188,6 +188,8 @@ export const WebwalletContext = createContext<{
 	setWebwallet: (webwallet?: Wallet | null) => void
 	glyph?: Boolean
 	setGlyph: (glyph?: Boolean) => void
+	buildersProfileModal: boolean
+	setBuildersProfileModal: (buildersProfileModal: boolean) => void
 	network?: SupportedChainId
 	switchNetwork: (newNetwork?: SupportedChainId) => void
 	scwAddress?: string
@@ -228,6 +230,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [role, setRole] = useState<Roles>('community')
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 	const [glyph, setGlyph] = useState<boolean>(false)
+	const [buildersProfileModal, setBuildersProfileModal] = useState<boolean>(false)
 	const [scwAddress, setScwAddress] = useState<string>()
 	const [loadingScw, setLoadingScw] = useState<boolean>(true)
 	const [biconomyDaoObjs, setBiconomyDaoObjs] = useState<{ [key: string]: typeof BiconomyContext }>()
@@ -235,7 +238,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [nonce, setNonce] = useState<string>()
 	const [loadingNonce, setLoadingNonce] = useState<boolean>(false)
 	const [isNewUser, setIsNewUser] = useState<boolean>(true)
-
 	const [qrCodeText, setQrCodeText] = useState<string>()
 	const [dashboardStep, setDashboardStep] = useState<boolean>(false)
 	const [createingProposalStep, setCreatingProposalStep] = useState<number>(1)
@@ -581,6 +583,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 				setGlyph(newGlyph as boolean)
 			},
+			buildersProfileModal: buildersProfileModal,
+			setBuildersProfileModal,
 			dashboardStep,
 			setDashboardStep,
 			createingProposalStep,
@@ -592,7 +596,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			importWebwallet,
 			exportWebwallet
 		}),
-		[dashboardStep, createingProposalStep, setCreatingProposalStep, setDashboardStep, webwallet, setWebwallet, network, switchNetwork, scwAddress, setScwAddress, nonce, setNonce, loadingNonce, setLoadingNonce, loadingScw, setLoadingScw, glyph, setGlyph]
+		[dashboardStep, createingProposalStep, setCreatingProposalStep, setDashboardStep, webwallet, setWebwallet, network, switchNetwork, scwAddress, setScwAddress, nonce, setNonce, loadingNonce, setLoadingNonce, loadingScw, setLoadingScw, glyph, setGlyph, buildersProfileModal, setBuildersProfileModal]
 	)
 
 	const biconomyDaoObjContextValue = useMemo(

@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from 'react'
 import { init, track } from '@amplitude/analytics-browser'
 
-const AMPLITUDE_API_KEY = '360c5ac8808af111bfd9f36ef5d3bab'
+const AMPLITUDE_API_KEY = process.env.AMPLITUDE_API_KEY!
 
 const AmplitudeContext = createContext<{
   trackAmplitudeEvent: (eventName: string, eventProperties: object) => void
