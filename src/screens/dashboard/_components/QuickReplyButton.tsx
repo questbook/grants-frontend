@@ -67,7 +67,7 @@ function QuickReplyButton({ tag, index, textProps, ...props }: Props) {
 		},
 		review: {
 			icon: <Time />,
-			title: 'Review',
+			title: 'Under Review',
 			bg: jeans
 		}
 	}
