@@ -54,7 +54,7 @@ function AdminTable() {
 					'Proposal Name': row.name[0].values[0].value,
 					'Proposal Status': row.state,
 					'KYC/KYB Status': row?.state === 'approved' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? 'Verified' : 'Pending' : '',
-					'Grant Agreement Status': row?.state === 'approved' ? row?.helloSignStatus === 'verified' ? 'Verified' : 'Pending' : '',
+					'Grant Agreement Status': row?.state === 'approved' ? row?.helloSignStatus === 'verified' || row?.helloSignStatus === 'completed' ? 'Verified' : row?.helloSignStatus === 'declined' ? 'Declined' : 'Pending' : '',
 					'Notes': row?.notes,
 					...milestones?.reduce((acc, curr) => {
 						return {
@@ -147,24 +147,12 @@ function AdminTable() {
 					<Td
 						w='5%'
 						cursor='pointer'
-						// onClick={
-						// 	() => {
-						// 		if(row?.state === 'approved') {
-						// 			setShowKYCStatusUpdateModal({
-						// 				...showKYCStatusUpdateModal,
-						// 				isOpen: true,
-						// 				grantId: row.id,
-						// 				type: 'hellosign'
-						// 			})
-						// 		}
-						// 	}
-						// }
 					>
 						{
 							row.helloSignStatus?.length > 0 ? (
 								<StateButton
-									state={row?.helloSignStatus === 'verified' ? 'approved' : 'submitted'}
-									title={row?.helloSignStatus === 'verified' ? 'Verified' : 'Pending'}
+									state={row?.helloSignStatus === 'verified' || row?.helloSignStatus === 'completed' ? 'approved' : row?.helloSignStatus === 'declined' ? 'rejected' : 'submitted'}
+									title={row?.helloSignStatus === 'verified' || row?.helloSignStatus === 'completed' ? 'Verified' : row?.helloSignStatus === 'declined' ? 'Declined' : 'Pending'}
 								/>
 							) : row?.state === 'approved' ? (
 								<StateButton
