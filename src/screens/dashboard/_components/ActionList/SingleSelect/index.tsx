@@ -35,13 +35,13 @@ function SingleSelect() {
 							px={5}
 							py={4}>
 							<Button
-								isDisabled={role === 'builder' ? proposal?.applicantId?.toLowerCase() !== scwAddress?.toLowerCase() || (proposal?.state !== 'submitted' && proposal?.state !== 'resubmit') : false}
+								isDisabled={role === 'builder' ? proposal?.applicantId?.toLowerCase() !== scwAddress?.toLowerCase() || (proposal?.state !== 'submitted' && proposal?.state !== 'resubmit' && proposal?.state !== 'review') : false}
 								w='100%'
 								variant='primaryMedium'
 								onClick={
 									() => {
 										if(role === 'builder') {
-											if(proposal?.state !== 'submitted' && proposal?.state !== 'resubmit') {
+											if(proposal?.state !== 'submitted' && proposal?.state !== 'resubmit' && proposal?.state !== 'review') {
 												toast({
 													title: 'Oops! This proposal is not in the right state to be resubmitted.',
 													description: `This proposal has already been ${proposal?.state}. It cannot be resubmitted.`,
