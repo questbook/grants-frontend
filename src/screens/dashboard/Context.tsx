@@ -12,13 +12,14 @@ import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/librari
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { getBuilderInfoQuery } from 'src/screens/dashboard/_data/getBuilderInfoQuery'
+import { getBuilderVerificationQuery } from 'src/screens/dashboard/_data/getBuilderInfoVerification'
 import { getFundsAllocatedQuery } from 'src/screens/dashboard/_data/getFundsAllocatedQuery'
 import { getGrantsQuery } from 'src/screens/dashboard/_data/getGrantsQuery'
 import { getProposalsQuery } from 'src/screens/dashboard/_data/getProposalsQuery'
 import { getSpecificApplicationActionQuery } from 'src/screens/dashboard/_data/getSpecificApplicationActionQuery'
 import { getSpecificProposalCommentsQuery } from 'src/screens/dashboard/_data/getSpecificProposalCommentsQuery'
 import { getSpecificProposalQuery } from 'src/screens/dashboard/_data/getSpecificProposalQuery'
-import { CommentMap, CommentType, DashboardContextType, FundBuilderContextType, ModalContextType, Proposals, ReviewInfo, SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
+import { BuilderInfoResult, CommentMap, CommentType, DashboardContextType, FundBuilderContextType, ModalContextType, Proposals, ReviewInfo, SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
 import { disabledTonGrants, subdomains, tonGrants } from 'src/screens/proposal_form/_utils/constants'
 import { Roles } from 'src/types'
 
@@ -80,6 +81,10 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
 	const { fetchMore: fetchFundsAllocated } = useQuery({
 		query: getFundsAllocatedQuery
+	})
+
+	const { fetchMore: fetchBuilderVerifiedState } = useQuery({
+		query: getBuilderVerificationQuery
 	})
 
 	const [proposals, setProposals] = useState<Proposals>([])
@@ -313,6 +318,13 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 			const comments = commentMap[application]
 			for(const comment of comments) {
 				if(comment.role === 'community') {
+					const isVerified = await getBuilderStatus(comment?.sender as string)
+					if(!isVerified.error) {
+						comment.isVerified = isVerified.verified
+						comment.username = isVerified.username
+						comment.image = isVerified.image
+					}
+
 					const workspaceMember = comment.workspace.members.find(m => m.actorId === comment.sender?.toLowerCase())?.accessLevel
 					const role = comment.application.applicantId === comment.sender?.toLowerCase() ? 'builder' : workspaceMember === 'owner' ? 'admin' : workspaceMember
 					comment.role = role ?? 'community'
@@ -322,6 +334,24 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
 		logger.info(tempCommentMap, 'commentMap (COMMENT DECRYPT)')
 		return tempCommentMap
+	}
+
+	const getBuilderStatus = async(address: string) => {
+		if(!address) {
+			return { error: true }
+		}
+
+		const result: BuilderInfoResult = await fetchBuilderVerifiedState({ wallet: address }, true) as BuilderInfoResult
+		if(result?.getProfile) {
+			const { telegram, twitter, github, imageURL, username } = result?.getProfile
+			if(telegram.length > 0 || twitter.length > 0 || github.length > 0) {
+				return { verified: true, username: username, image: imageURL }
+			} else {
+				return { verified: false, username: username, image: imageURL }
+			}
+		}
+
+		return { error: true }
 	}
 
 

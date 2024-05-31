@@ -1,4 +1,5 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { MdVerified } from 'react-icons/md'
 import Markdown from 'react-markdown'
 import { LockIcon } from '@chakra-ui/icons'
 import {
@@ -37,6 +38,7 @@ import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { CommentType, TagType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { Roles } from 'src/types'
+
 
 function Discussions() {
 	const { setSignIn } = useContext(SignInContext)!
@@ -317,7 +319,7 @@ function Discussions() {
 					boxSize='36px'
 					src={
 						comment.role === 'builder' || comment.role === 'community'
-							? getAvatar(false, comment.sender?.toLowerCase() ?? '')
+							? comment?.image ? getUrlForIPFSHash(comment.image) : getAvatar(false, comment.sender?.toLowerCase() ?? '')
 							: comment.role === 'app' ? comment?.sender === 'helloSign' ? 'https://avatars.githubusercontent.com/u/25623857?s=280&v=4' : 'https://avatars.githubusercontent.com/u/63306624?s=280&v=4'
 								: member?.profilePictureIpfsHash
 									? getUrlForIPFSHash(member.profilePictureIpfsHash)
@@ -331,6 +333,13 @@ function Discussions() {
 						<Text fontWeight='500'>
 							{getCommentDisplayName(comment)}
 						</Text>
+						{
+							comment.isVerified && (
+								<MdVerified
+									style={{ marginLeft: '5px' }}
+									color='green' />
+							)
+						}
 						<RoleTag
 							role={(comment?.role as Roles) ?? 'community'}
 							isBuilder={proposal?.applicantId?.toLowerCase() === comment?.sender?.toLowerCase()}
@@ -562,7 +571,7 @@ function Discussions() {
 			) {
 				return getFieldString(proposal, 'applicantName')
 			} else {
-				return formatAddress(comment.sender ?? '')
+				return comment?.username ?? formatAddress(comment.sender ?? '')
 			}
 		}
 	}

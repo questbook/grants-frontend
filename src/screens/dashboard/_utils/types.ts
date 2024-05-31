@@ -9,7 +9,7 @@ import {
 } from 'src/generated/graphql'
 import { PIIForCommentType } from 'src/libraries/utils/types'
 
-export type CommentMap = {[key: string]: CommentType[]}
+export type CommentMap = { [key: string]: CommentType[] };
 
 export type DashboardContextType = {
   proposals: Proposals
@@ -101,12 +101,21 @@ export type PayoutsType = Exclude<
 >;
 export type Payout = PayoutsType[number];
 
-export type SignerVerifiedState = 'unverified' | 'initiate_verification' | 'verifying'| 'failed' | 'verified' | 'transaction_initiated' | 'initiate_TON_transaction' | 'transaction_done_wallet'
+export type SignerVerifiedState =
+  | 'unverified'
+  | 'initiate_verification'
+  | 'verifying'
+  | 'failed'
+  | 'verified'
+  | 'transaction_initiated'
+  | 'initiate_TON_transaction'
+  | 'transaction_done_wallet';
 
 export type CommentType = Exclude<
   GetCommentsQuery['comments'],
   null | undefined
->[number] & PIIForCommentType;
+>[number] &
+  PIIForCommentType & { isVerified?: boolean, username?: string, image?: string };
 
 export type TagType = {
   id: string
@@ -114,25 +123,25 @@ export type TagType = {
   icon: ReactElement
   isPrivate: boolean
   commentString: string
-}
+};
 
 export type DynamicData = {
-	title: string
-	description: string
-}
+  title: string
+  description: string
+};
 
 export type DisburseRewardSafe = {
-	applicationIds: string[]
-	milestoneIds: string[]
-	asset: string
-	tokenName: string
-	nonEvmAssetAddress: string
-	amounts: number[]
-	transactionHash: string
-	sender: string
-	grant: string
-	to: string
-}
+  applicationIds: string[]
+  milestoneIds: string[]
+  asset: string
+  tokenName: string
+  nonEvmAssetAddress: string
+  amounts: number[]
+  transactionHash: string
+  sender: string
+  grant: string
+  to: string
+};
 
 export type FundTransfer = {
   amount: number
@@ -161,4 +170,16 @@ export type FundTransfer = {
       }
     }
   }
-}
+};
+
+export type BuilderInfoResult = {
+  getProfile: {
+    _id: string
+    telegram: string
+    github: string
+    twitter: string
+    username: string
+    imageURL: string
+    proofs: string
+  }
+};
