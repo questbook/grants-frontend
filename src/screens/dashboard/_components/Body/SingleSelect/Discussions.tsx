@@ -272,14 +272,22 @@ function Discussions() {
 				</Flex>
 				{
 					!scwAddress && (
-						<Text
+						<Button
 							variant='body'
 							mt={4}
 							w='100%'
+							isLoading={webwallet ? !scwAddress : false}
+							loadingText='Loading your wallet'
+							onClick={
+								() => {
+									setSignInTitle('postComment')
+									setSignIn(true)
+								}
+							}
 							textAlign='center'
 							color='gray.600'>
 							~ Sign in to post comments! ~
-						</Text>
+						</Button>
 					)
 				}
 				<Box my={4} />
@@ -432,7 +440,7 @@ function Discussions() {
 
 	const ref = useRef<HTMLTextAreaElement>(null)
 
-	const { scwAddress } = useContext(WebwalletContext)!
+	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 	const { grant, role } = useContext(GrantsProgramContext)!
 	logger.info({ grant, role }, 'GRANT AND ROLE')
 	const {
