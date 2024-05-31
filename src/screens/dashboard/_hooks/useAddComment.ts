@@ -142,7 +142,7 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 
 		if(tag === 'accept' || tag === 'reject' || tag === 'resubmit' || tag === 'review' || tag === 'cancelled') {
 			const toState = tag === 'accept' ? 'approved' : tag === 'reject' ? 'rejected' : tag === 'review' ? 'review' : tag === 'cancelled' ? 'cancelled' : 'resubmit'
-			await trackAmplitudeEvent('Proposal_Action', {
+			trackAmplitudeEvent('Proposal_Action', {
 				action: toState,
 				programName: grant?.title,
 				proposalId: proposal.id,
