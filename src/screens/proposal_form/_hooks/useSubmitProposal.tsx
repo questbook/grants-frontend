@@ -9,6 +9,7 @@ import useCustomToast from 'src/libraries/hooks/useCustomToast'
 // import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { useQuery } from 'src/libraries/hooks/useQuery'
 import logger from 'src/libraries/logger'
+import { AmplitudeContext } from 'src/libraries/utils/amplitude'
 import { parseAmount } from 'src/libraries/utils/formatting'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
 import { getChainInfo } from 'src/libraries/utils/token'
@@ -29,6 +30,7 @@ interface Props {
 function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash }: Props) {
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 	const { type, grant, proposal, chainId, telegram, twitter, referral } = useContext(ProposalFormContext)!
+	const { trackAmplitudeEvent } = useContext(AmplitudeContext)!
 	const { encrypt } = useEncryptPiiForApplication(grant?.id, webwallet?.publicKey, chainId)
 	const [isExecuting, setIsExecuting] = useState(true)
 	const customToast = useCustomToast()
@@ -211,6 +213,12 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 						email: findField(form, 'applicantEmail').value ?? '',
 						twitter: twitter ?? '',
 						referral: referral
+					})
+					trackAmplitudeEvent('referral', {
+						programName: grant.title,
+						referralType: referral?.type,
+						proposalId: receipt['createNewGrantApplication'].record._id,
+						referralFrom: referral?.value,
 					})
 				}
 

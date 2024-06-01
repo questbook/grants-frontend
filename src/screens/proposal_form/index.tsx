@@ -156,6 +156,7 @@ function ProposalForm() {
 													() => {
 														trackAmplitudeEvent('telegram_notifications', {
 															programName: grant?.title,
+															telegramId: telegram ?? '',
 															isSignedIn: scwAddress ? 'true' : 'false'
 														})
 														window.open(qrCodeText, '_blank')
@@ -221,7 +222,8 @@ function ProposalForm() {
 													onClick={
 														() => {
 															trackAmplitudeEvent('Social_Shares', {
-																programName: grant?.title
+																programName: grant?.title,
+																telegramId: telegram ?? '',
 															})
 															window.open(`https://twitter.com/intent/tweet?text=${SocialIntent[Math.floor(Math.random() * SocialIntent.length)]}&url=${window.location.origin}/dashboard/?grantId=${grant?.id}%26chainId=${chainId}%26proposalId=${proposalId}`, '_blank')
 														}
@@ -552,6 +554,7 @@ function ProposalForm() {
 									value={findField(form, 'applicantTelegram').value}
 									onChange={
 										(e) => {
+											setTelegram(e.target.value)
 											onChange(e, 'applicantTelegram')
 										}
 									}
@@ -566,6 +569,7 @@ function ProposalForm() {
 									value={findField(form, 'applicantTwitter').value}
 									onChange={
 										(e) => {
+											setTwitter(e.target.value)
 											onChange(e, 'applicantTwitter')
 										}
 									}
