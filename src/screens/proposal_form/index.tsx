@@ -397,7 +397,7 @@ function ProposalForm() {
 								w='100%'
 								bg='gray.200'
 							>
-								<Banner message='The domain is closed until further notice as the funds have been fully allocated.' />
+								<Banner message='The domain is closed until further notice.' />
 							</Flex>
 						)
 					}
