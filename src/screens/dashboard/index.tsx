@@ -61,7 +61,7 @@ function Dashboard(props: DynamicData) {
 						{
 							disabledGrants?.includes(grant?.id as string) && (
 								<Banner
-									message='The domain is closed until further notice as the funds have been fully allocated.'
+									message='The domain is closed until further notice.'
 								/>
 							)
 						}
@@ -92,7 +92,7 @@ function Dashboard(props: DynamicData) {
 						{
 							disabledGrants?.includes(grant?.id as string) && (
 								<Banner
-									message='The domain is closed until further notice as the funds have been fully allocated.'
+									message='The domain is closed until further notice.'
 								/>
 							)
 						}
