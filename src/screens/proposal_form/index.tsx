@@ -16,6 +16,7 @@ import { getExplorerUrlForTxHash, getRewardAmountMilestones } from 'src/librarie
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { GrantsProgramContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
+import Banner from 'src/screens/dashboard/_components/Banner'
 import SectionHeader from 'src/screens/proposal_form/_components/SectionHeader'
 import SectionInput from 'src/screens/proposal_form/_components/SectionInput'
 import SectionRadioButton from 'src/screens/proposal_form/_components/SectionRadioButton'
@@ -24,7 +25,7 @@ import SectionSelect from 'src/screens/proposal_form/_components/SectionSelect'
 import SelectArray from 'src/screens/proposal_form/_components/SelectArray'
 import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposal'
 import { containsField, findField, findFieldBySuffix, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
-import { customSteps, customStepsHeader, DEFAULT_MILESTONE, MILESTONE_INPUT_STYLE } from 'src/screens/proposal_form/_utils/constants'
+import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, MILESTONE_INPUT_STYLE } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
 
 
@@ -177,6 +178,20 @@ function ProposalForm() {
 						newTab !== 'true' && (
 							<Flex justify='start'>
 								<BackButton />
+							</Flex>
+						)
+					}
+					{
+						disabledGrants?.includes(grant?.id as string) &&
+						type === 'submit' &&
+						(
+							<Flex
+								justify='center'
+								mb={4}
+								w='100%'
+								bg='gray.200'
+							>
+								<Banner message='The domain is closed until further notice.' />
 							</Flex>
 						)
 					}
@@ -695,6 +710,12 @@ function ProposalForm() {
 
 		const optionalFields = ['projectDetails', 'fundingAsk', 'fundingBreakdown', 'projectGoals', 'projectLink']
 		const { fields, members, details, milestones } = form
+
+		if(disabledGrants?.includes(grant?.id as string) && type === 'submit') {
+			logger.info('Grant is disabled')
+			return true
+		}
+
 		for(const field of fields) {
 			if(field.value === '' && !optionalFields.includes(field.id)) {
 				logger.info({ field }, 'Field is empty')

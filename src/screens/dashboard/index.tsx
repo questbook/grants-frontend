@@ -7,6 +7,7 @@ import logger from 'src/libraries/logger'
 import LinkYourMultisigModal from 'src/libraries/ui/LinkYourMultisigModal'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import Banner from 'src/screens/dashboard/_components/Banner'
 import HeroBannerBox from 'src/screens/dashboard/_components/HeroBanner'
 import ThreeColumnSkeleton from 'src/screens/dashboard/_components/ThreeColumnSkeleton'
 import { DynamicData } from 'src/screens/dashboard/_utils/types'
@@ -18,6 +19,7 @@ import FundBuilderModal from 'src/screens/dashboard/FundBuilderModal'
 import FundingMethod from 'src/screens/dashboard/FundingMethod'
 import ProposalList from 'src/screens/dashboard/ProposalList'
 import SendAnUpdateModal from 'src/screens/dashboard/SendAnUpdateModal'
+import { disabledGrants } from 'src/screens/proposal_form/_utils/constants'
 
 function Dashboard(props: DynamicData) {
 	const { title, description } = props
@@ -58,35 +60,54 @@ function Dashboard(props: DynamicData) {
 						description={description} />
 					{
 						!isLoading && isMobile && (
-							<Flex
-								h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
-								overflowY='clip'>
+							<>
+
 								{
-									(dashboardStep === false) && (
-										<ProposalList
-											step={step}
-											setStep={setStep} />
+									disabledGrants?.includes(grant?.id as string) && (
+										<Banner
+											message='The domain is closed until further notice.'
+										/>
 									)
 								}
-								{
-									(dashboardStep === true) && (
-										<>
-											<Body />
-										</>
-									)
-								}
-							</Flex>
+								<Flex
+									h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
+									overflowY='clip'>
+									{
+										(dashboardStep === false) && (
+											<ProposalList
+												step={step}
+												setStep={setStep} />
+										)
+									}
+									{
+										(dashboardStep === true) && (
+											<>
+												<Body />
+											</>
+										)
+									}
+								</Flex>
+							</>
 						)
 					}
 					{
 						!isLoading && (isMobile === false) && (
-							<Flex
-								h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
-								overflowY='clip'>
-								<ProposalList />
-								<Body />
-								<ActionList />
-							</Flex>
+							<>
+								{
+									disabledGrants?.includes(grant?.id as string) && (
+										<Banner
+											message='The domain is closed until further notice.'
+										/>
+									)
+								}
+								<Flex
+									h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
+									overflowY='clip'>
+									<ProposalList />
+									<Body />
+									<ActionList />
+								</Flex>
+							</>
 						)
 					}
 
