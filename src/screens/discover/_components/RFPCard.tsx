@@ -98,10 +98,6 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 							borderRadius='4px'
 						/>
 						<Flex gap={2}>
-							<StateButton
-								state='approved'
-								title='Open' />
-
 							{/* <Text
 							variant={isOpen ? 'openTag' : 'closedTag'}
 						>
