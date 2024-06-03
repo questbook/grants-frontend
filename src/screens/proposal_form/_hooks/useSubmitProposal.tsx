@@ -29,7 +29,7 @@ interface Props {
 
 function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash }: Props) {
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
-	const { type, grant, proposal, chainId, telegram, twitter, referral } = useContext(ProposalFormContext)!
+	const { type, grant, proposal, chainId, telegram, twitter, referral, newsletter } = useContext(ProposalFormContext)!
 	const { trackAmplitudeEvent } = useContext(AmplitudeContext)!
 	const { encrypt } = useEncryptPiiForApplication(grant?.id, webwallet?.publicKey, chainId)
 	const [isExecuting, setIsExecuting] = useState(true)
@@ -212,7 +212,8 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 						application: receipt['createNewGrantApplication'].record._id,
 						email: findField(form, 'applicantEmail').value ?? '',
 						twitter: twitter ?? '',
-						referral: referral
+						referral: referral,
+						newsletter: newsletter === 'Yes'
 					})
 					trackAmplitudeEvent('referral', {
 						programName: grant.title,

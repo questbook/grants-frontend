@@ -836,7 +836,6 @@ function ProposalForm() {
 							/* Optinal Referral Field (if it is not included in the form field) */
 							type === 'submit' &&
 							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('referral')
-							|| field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('tg')
 							).length === 0 && (
 								<SectionRadioButton
 									label='How did you find out about this program?'
@@ -862,6 +861,22 @@ function ProposalForm() {
 											setReferral({ ...referral, value: e.target.value })
 										}
 									} />
+							)
+						}
+						{
+							/* Optinal Referral Field (if it is not included in the form field) */
+							type === 'submit' && (
+								<SectionRadioButton
+									label='Subscribe to Questbook Newsletter'
+									placeholder='Select an option'
+									value={newsletter}
+									options={['Yes', 'No']}
+									onChange={
+										(e) => {
+											setNewsLetter(e.target.value)
+										}
+									}
+								 />
 							)
 						}
 
@@ -2214,7 +2229,7 @@ function ProposalForm() {
 	}
 
 	const { setRole } = useContext(GrantsProgramContext)!
-	const { type, grant, chainId, form, setForm, error, telegram, setTelegram, twitter, setTwitter, referral, setReferral } = useContext(ProposalFormContext)!
+	const { type, grant, chainId, form, setForm, error, telegram, setTelegram, twitter, setTwitter, referral, setReferral, newsletter, setNewsLetter } = useContext(ProposalFormContext)!
 	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const { safeObj } = useSafeContext()!
 	const { setSignIn } = useContext(SignInContext)!
