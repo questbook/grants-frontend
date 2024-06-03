@@ -24,7 +24,8 @@ const nextConfig = {
 		API_ENDPOINT: process.env.API_ENDPOINT,
 		NOTIF_BOT_USERNAME: process.env.NOTIF_BOT_USERNAME,
 		INFURA_IPFS_PROJECT_ID: process.env.INFURA_IPFS_PROJECT_ID,
-		INFURA_IPFS_API_KEY: process.env.INFURA_IPFS_API_KEY
+		INFURA_IPFS_API_KEY: process.env.INFURA_IPFS_API_KEY,
+		AMPLITUDE_API_KEY: process.env.AMPLITUDE_API_KEY,
 	},
 	sentry: {
 		disableServerWebpackPlugin: true,

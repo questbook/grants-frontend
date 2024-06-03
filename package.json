@@ -17,6 +17,7 @@
     "generate": "npm run generate:types && npm run generate:graphql && npm run generate:typechain && npm run generate:icons"
   },
   "dependencies": {
+    "@amplitude/analytics-browser": "^2.8.1",
     "@apollo/client": "^3.5.8",
     "@biconomy/mexa": "2.0.38",
     "@chakra-ui/icons": "^2.0.17",

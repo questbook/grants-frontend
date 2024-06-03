@@ -30,6 +30,7 @@ import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import QRCodeModal from 'src/libraries/ui/QRCodeModal'
 import { delay } from 'src/libraries/utils'
+import { AmplitudeProvider } from 'src/libraries/utils/amplitude'
 import { generateToken, verifyToken } from 'src/libraries/utils/authToken'
 import { addAuthorizedUser, bicoDapps, getNonce, jsonRpcProviders, networksMapping } from 'src/libraries/utils/gasless'
 import { extractInviteInfo, InviteInfo } from 'src/libraries/utils/invite'
@@ -717,35 +718,37 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			</Head>
 			<WagmiProvider config={client}>
 				<QueryClientProvider client={queryClient}>
-					<ApiClientsContext.Provider value={apiClients}>
-						<NotificationContext.Provider value={notificationContext}>
-							<SignInContext.Provider value={SignInContextValue}>
-								<SignInTitleContext.Provider value={SignInTitleContextValue}>
-									<SignInMethodContext.Provider value={SignInMethodContextValue}>
-										<WebwalletContext.Provider value={webwalletContextValue}>
-											<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
-												<SafeProvider>
-													<>
-														<DAOSearchContextMaker>
-															<GrantsProgramContext.Provider value={grantProgram}>
-																<QBAdminsContextMaker>
-																	<ChakraProvider theme={theme}>
-																		{getLayout(<Component {...pageProps} />)}
-																		<QRCodeModal />
-																	</ChakraProvider>
-																</QBAdminsContextMaker>
-															</GrantsProgramContext.Provider>
+					<AmplitudeProvider>
+						<ApiClientsContext.Provider value={apiClients}>
+							<NotificationContext.Provider value={notificationContext}>
+								<SignInContext.Provider value={SignInContextValue}>
+									<SignInTitleContext.Provider value={SignInTitleContextValue}>
+										<SignInMethodContext.Provider value={SignInMethodContextValue}>
+											<WebwalletContext.Provider value={webwalletContextValue}>
+												<BiconomyContext.Provider value={biconomyDaoObjContextValue}>
+													<SafeProvider>
+														<>
+															<DAOSearchContextMaker>
+																<GrantsProgramContext.Provider value={grantProgram}>
+																	<QBAdminsContextMaker>
+																		<ChakraProvider theme={theme}>
+																			{getLayout(<Component {...pageProps} />)}
+																			<QRCodeModal />
+																		</ChakraProvider>
+																	</QBAdminsContextMaker>
+																</GrantsProgramContext.Provider>
 
-														</DAOSearchContextMaker>
-													</>
-												</SafeProvider>
-											</BiconomyContext.Provider>
-										</WebwalletContext.Provider>
-									</SignInMethodContext.Provider>
-								</SignInTitleContext.Provider>
-							</SignInContext.Provider>
-						</NotificationContext.Provider>
-					</ApiClientsContext.Provider>
+															</DAOSearchContextMaker>
+														</>
+													</SafeProvider>
+												</BiconomyContext.Provider>
+											</WebwalletContext.Provider>
+										</SignInMethodContext.Provider>
+									</SignInTitleContext.Provider>
+								</SignInContext.Provider>
+							</NotificationContext.Provider>
+						</ApiClientsContext.Provider>
+					</AmplitudeProvider>
 				</QueryClientProvider>
 			</WagmiProvider>
 			<ChatWidget

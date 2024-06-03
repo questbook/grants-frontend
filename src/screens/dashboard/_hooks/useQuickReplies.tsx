@@ -38,7 +38,7 @@ function useProposalTags({ proposals }: Props) {
 			// remove last 2 tags
 			return { proposalTags: allTags['admin']?.slice(0, 5) }
 		} else if(proposals.every(p => p.state === 'resubmit')) {
-			return { proposalTags: allTags['admin'].slice(0, 2).concat(allTags['admin'].slice(3)) }
+			return { proposalTags: allTags['admin'].slice(0, 2).concat(allTags['admin'].slice(3, 5)) }
 		} else if(proposals.every(p => p.state === 'review')) {
 			return { proposalTags: allTags['admin'].slice(0, 4) }
 		} else if(proposals.every(p => p.state === 'approved') && (grant?.workspace?.synapsKYC && grant?.workspace?.synapsId && proposals?.every(p => p.synapsId === null))) {

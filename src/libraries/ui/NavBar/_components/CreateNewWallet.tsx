@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { BsArrowLeft } from 'react-icons/bs'
 import { Button, Checkbox, Flex, ModalBody, Text } from '@chakra-ui/react'
 import { ethers, Wallet } from 'ethers'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import BackupWallet from 'src/libraries/ui/NavBar/_components/BackupWallet'
+import { AmplitudeContext } from 'src/libraries/utils/amplitude'
 interface Props {
     importWebwallet: (privateKey: string) => void
     inited: boolean
@@ -17,6 +18,7 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
 	const toast = useCustomToast()
 	const [isPrivateKeySaved, setIsPrivateKeySaved] = useState<boolean>(false)
 	const [newWallet, setNewWallet] = useState<ethers.Wallet>()
+
 	const buildComponent = () => {
 		return (
 			<ModalBody
@@ -93,6 +95,9 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
 								try {
 									importWebwallet(newWallet.privateKey)
 									setSignIn(false)
+									trackAmplitudeEvent('Sign Up', {
+										wallet: newWallet.address as string,
+									 })
 								} catch{
 									toast({
 										title: 'Error',
@@ -116,7 +121,7 @@ function CreateNewWallet({ setSignInMethod, setSignIn, inited, loading, exportWa
 		const newWallet = ethers.Wallet.createRandom()
 		setNewWallet(newWallet)
 	}, [])
-
+	const { trackAmplitudeEvent } = useContext(AmplitudeContext)!
 	return buildComponent()
 }
 
