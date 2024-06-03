@@ -21,6 +21,7 @@ import { Close } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import CommentsTextEditor from 'src/libraries/ui/RichTextEditor/commentTextEditor'
 import { getAvatar } from 'src/libraries/utils'
+import { AmplitudeContext } from 'src/libraries/utils/amplitude'
 import { formatAddress, getFieldString } from 'src/libraries/utils/formatting'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import {
@@ -243,6 +244,16 @@ function Discussions() {
 												return
 											}
 
+											const isFirstCommentByAdminOrReviewer = comments?.findIndex((comment) => comment.role === 'admin' || comment.role === 'reviewer') === -1
+											if(isFirstCommentByAdminOrReviewer) {
+												const time = Math.floor((Date.now() - proposal?.createdAtS! * 1000) / (1000 * 60))
+												trackAmplitudeEvent('TAT', {
+													proposalId: proposal?.id,
+													programName: grant?.title,
+													tat: time ?? 1,
+												})
+											}
+
 											const ret = await addComment(
 												text,
 												isCommentPrivate,
@@ -271,14 +282,22 @@ function Discussions() {
 				</Flex>
 				{
 					!scwAddress && (
-						<Text
+						<Button
 							variant='body'
 							mt={4}
 							w='100%'
+							isLoading={webwallet ? !scwAddress : false}
+							loadingText='Loading your wallet'
+							onClick={
+								() => {
+									setSignInTitle('postComment')
+									setSignIn(true)
+								}
+							}
 							textAlign='center'
 							color='gray.600'>
 							~ Sign in to post comments! ~
-						</Text>
+						</Button>
 					)
 				}
 				<Box my={4} />
@@ -430,7 +449,8 @@ function Discussions() {
 
 	const ref = useRef<HTMLTextAreaElement>(null)
 
-	const { scwAddress } = useContext(WebwalletContext)!
+	const { scwAddress, webwallet } = useContext(WebwalletContext)!
+	const { trackAmplitudeEvent } = useContext(AmplitudeContext)!
 	const { grant, role } = useContext(GrantsProgramContext)!
 	logger.info({ grant, role }, 'GRANT AND ROLE')
 	const {

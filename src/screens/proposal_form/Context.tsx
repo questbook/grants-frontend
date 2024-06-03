@@ -38,7 +38,9 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 					twitter,
 					setTwitter,
 					referral,
-					setReferral
+					setReferral,
+					newsletter,
+					setNewsLetter
 				}
 			}>
 			{children}
@@ -53,6 +55,7 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 	const [telegram, setTelegram] = useState<string>('')
 	const [twitter, setTwitter] = useState<string>('')
 	const [referral, setReferral] = useState<{ type: string, value: string }>({ type: '', value: '' })
+	const [newsletter, setNewsLetter] = useState<string>('')
 	const [form, setForm] = useState<Form>(DEFAULT_FORM)
 
 	const router = useRouter()
