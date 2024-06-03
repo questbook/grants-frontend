@@ -10,6 +10,7 @@ import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import useFunctionCall from 'src/libraries/hooks/useFunctionCall'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
+import { AmplitudeContext } from 'src/libraries/utils/amplitude'
 import { getFieldString } from 'src/libraries/utils/formatting'
 import { getGnosisTansactionLink, getProposalUrl } from 'src/libraries/utils/multisig'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
@@ -500,7 +501,11 @@ function FundBuilderModal({
 				grant: grant?.id!,
 				to: tos?.[0]
 			}
-
+			await trackAmplitudeEvent('funds_disbursed', {
+				amount: amounts?.[0],
+				grant: grant?.title,
+				proposal: proposal?.id,
+			})
 			await executeMutation(DisburseRewardSafeMutation, args)
 			setSignerVerifiedState('transaction_initiated')
 			setPayoutInProcess(false)
@@ -512,6 +517,7 @@ function FundBuilderModal({
 	// const { call } = useFunctionCall({ chainId: workspacechainId, contractName: 'workspace' })
 	const { } = useFunctionCall({ chainId: workspacechainId, contractName: 'applications' })
 	const { scwAddress } = useContext(WebwalletContext)!
+	const { trackAmplitudeEvent } = useContext(AmplitudeContext)!
 	return buildComponent()
 }
 

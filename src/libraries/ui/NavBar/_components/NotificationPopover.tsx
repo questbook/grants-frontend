@@ -3,9 +3,9 @@ import { useMediaQuery } from 'react-responsive'
 import { Button, Flex, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Text } from '@chakra-ui/react'
 import { Bell, Desktop, QrScan } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
+import { AmplitudeContext } from 'src/libraries/utils/amplitude'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
-import { GrantsProgramContext, NotificationContext } from 'src/pages/_app'
-
+import { GrantsProgramContext, NotificationContext, WebwalletContext } from 'src/pages/_app'
 type Props =
 | {
     type: 'grant'
@@ -111,6 +111,10 @@ function NotificationPopover(props: Props) {
 			onButtonClick: () => {
 				const payload = getPayload()
 				if(payload) {
+					trackAmplitudeEvent('telegram_notifications', {
+						programName: grant?.title,
+						isSignedIn: scwAddress ? 'true' : 'false'
+					})
 					window.open(`https://t.me/${process.env.NOTIF_BOT_USERNAME}?start=${payload}`, '_blank')
 				}
 			}
@@ -123,6 +127,10 @@ function NotificationPopover(props: Props) {
 			onButtonClick: () => {
 				const payload = getPayload()
 				if(payload) {
+					trackAmplitudeEvent('telegram_notifications', {
+						programName: grant?.title,
+						isSignedIn: scwAddress ? 'true' : 'false'
+					})
 					setQrCodeText(`https://t.me/${process.env.NOTIF_BOT_USERNAME}?start=${payload}`)
 				}
 			}
@@ -143,6 +151,8 @@ function NotificationPopover(props: Props) {
 	const popoverRef = useRef<HTMLButtonElement>(null)
 	const { grant } = useContext(GrantsProgramContext)!
 	const { setQrCodeText } = useContext(NotificationContext)!
+	const { trackAmplitudeEvent } = useContext(AmplitudeContext)!
+	const { scwAddress } = useContext(WebwalletContext)!
 
 	return buildComponent()
 }
