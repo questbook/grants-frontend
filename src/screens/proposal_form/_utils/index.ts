@@ -3,6 +3,7 @@ import { logger } from 'ethers'
 import { getFromIPFS, isIpfsHash } from 'src/libraries/utils/ipfs'
 import { isSupportedAddress } from 'src/libraries/utils/validations'
 import { Form, Grant } from 'src/screens/proposal_form/_utils/types'
+import TonWeb from 'tonweb'
 
 function containsField(grant: Grant, field: string) {
 	return grant?.fields?.some((f) => f.id.endsWith(field))
@@ -72,4 +73,19 @@ const validateWalletAddress = async(address: string, callback: (isValid: boolean
 	}
 }
 
-export { containsField, containsCustomField, findField, getProjectDetails, validateEmail, validateWalletAddress, findFieldBySuffix, findCustomField }
+const validateTONWalletAddress = async(address: string, callback: (isValid: boolean) => void) => {
+	if(address) {
+		if(address === '') {
+			callback(false)
+		} else if(TonWeb.utils.Address.isValid(address)) {
+			callback(true)
+		} else {
+			callback(false)
+		}
+	} else {
+		callback(true)
+	}
+}
+
+
+export { containsField, containsCustomField, findField, getProjectDetails, validateEmail, validateWalletAddress, findFieldBySuffix, findCustomField, validateTONWalletAddress }

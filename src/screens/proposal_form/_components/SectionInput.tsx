@@ -157,7 +157,7 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 							mt={1}
 							ml='30%'
 							variant='metadata'
-							color='gray.500'>
+							color='red.500'>
 							{errorText}
 						</Text>
 					)

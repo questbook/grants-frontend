@@ -27,7 +27,7 @@ import SectionSelect from 'src/screens/proposal_form/_components/SectionSelect'
 import SelectArray from 'src/screens/proposal_form/_components/SelectArray'
 import SectionRadioButton from 'src/screens/proposal_form/_components/SelectRadioButton'
 import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposal'
-import { containsCustomField, containsField, findCustomField, findField, findFieldBySuffix, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
+import { containsCustomField, containsField, findCustomField, findField, findFieldBySuffix, validateEmail, validateTONWalletAddress, validateWalletAddress } from 'src/screens/proposal_form/_utils'
 import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, disabledSubmissions, disabledTonGrants, MILESTONE_INPUT_STYLE, SocialIntent, tonAPACGrants, tonGrants } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
 
@@ -1129,7 +1129,7 @@ function ProposalForm() {
 									onChange={
 										async(e) => {
 											onChange(e, 'applicantAddress')
-											await validateWalletAddress(e.target.value, (isValid) => {
+											await validateTONWalletAddress(e.target.value, (isValid) => {
 												setWalletAddressError(!isValid)
 											})
 										}
@@ -1762,7 +1762,7 @@ function ProposalForm() {
 									onChange={
 										async(e) => {
 											onChange(e, 'applicantAddress')
-											await validateWalletAddress(e.target.value, (isValid) => {
+											await validateTONWalletAddress(e.target.value, (isValid) => {
 												setWalletAddressError(!isValid)
 											})
 										}
