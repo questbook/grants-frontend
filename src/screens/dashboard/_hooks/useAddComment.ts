@@ -5,6 +5,7 @@ import { addCommentMutation } from 'src/generated/mutation/addComment'
 import { executeMutation } from 'src/graphql/apollo'
 import { useQuery } from 'src/libraries/hooks/useQuery'
 import logger from 'src/libraries/logger'
+import { AmplitudeContext } from 'src/libraries/utils/amplitude'
 import {
 	getKeyForApplication,
 	getSecureChannelFromPublicKey,
@@ -14,17 +15,17 @@ import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validation
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { getMemberPublicKeysQuery } from 'src/screens/dashboard/_data/getMemberPublicKeysQuery'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-
 interface Props {
   setStep: (step: number | undefined) => void
   setTransactionHash: (hash: string) => void
 }
 
 function useAddComment({ setStep, setTransactionHash }: Props) {
-	const { role } = useContext(GrantsProgramContext)!
+	const { role, grant } = useContext(GrantsProgramContext)!
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 
+	const { trackAmplitudeEvent } = useContext(AmplitudeContext)!
 	const proposal = useMemo(() => {
 		return proposals.find((p) => selectedProposals.has(p.id))
 	}, [proposals, selectedProposals])
@@ -139,7 +140,11 @@ function useAddComment({ setStep, setTransactionHash }: Props) {
 
 		if(tag === 'accept' || tag === 'reject' || tag === 'resubmit' || tag === 'review') {
 			const toState = tag === 'accept' ? 'approved' : tag === 'reject' ? 'rejected' : tag === 'review' ? 'review' : 'resubmit'
-
+			trackAmplitudeEvent('Proposal_Action', {
+				action: toState,
+				programName: grant?.title,
+				proposalId: proposal.id,
+			})
 			const methodArgs = {
 				id: proposal.id,
 				grant: proposal.grant.id,
