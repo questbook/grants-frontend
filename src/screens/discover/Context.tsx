@@ -3,6 +3,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from 'react
 import { SupportedPayouts } from '@questbook/supported-safes'
 import { useQuery } from 'src/libraries/hooks/useQuery'
 import logger from 'src/libraries/logger'
+import { AmplitudeContext } from 'src/libraries/utils/amplitude'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { DiscoverContextType, GrantProgramType, GrantType, RecentProposals, SectionGrants, StatsType, WorkspaceMemberType } from 'src/screens/discover/_utils/types'
@@ -31,6 +32,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	}
 
 	const { scwAddress } = useContext(WebwalletContext)!
+	const { trackAmplitudeEvent } = useContext(AmplitudeContext)!
 	const { inviteInfo } = useContext(ApiClientsContext)!
 
 	const [grantsForYou, setGrantsForYou] = useState<GrantType[]>([])
@@ -156,7 +158,13 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 	const getGrantsForYou = async() => {
 		if(!scwAddress) {
+			trackAmplitudeEvent('Not Signed In', { isSignedIn: false })
 			return 'no-scw-address'
+		}
+
+		if(scwAddress) {
+			// track the signed-in event with the scwAddress
+			trackAmplitudeEvent('Signed In', { isSignedIn: scwAddress })
 		}
 
 		const allWorkspaceMembers: {[key: number]: WorkspaceMemberType} = {}
@@ -410,7 +418,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 	useEffect(() => {
 		getStats().then(r => logger.info(r, 'Get Stats'))
-	}, [scwAddress, sectionGrants?.length])
+	}, [sectionGrants?.length])
 
 	useEffect(() => {
 		// if the window contains builderModal = true, then we will open the modal
