@@ -1,8 +1,6 @@
 import { createContext, ReactElement, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { hotjar } from 'react-hotjar'
 import { Biconomy } from '@biconomy/mexa'
 import { ChakraProvider } from '@chakra-ui/react'
-import { ChatWidget } from '@papercups-io/chat-widget'
 // import dynamic from 'next/dynamic';
 import {
 	Configuration,
@@ -258,10 +256,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		const _nonce = await getNonce(webwallet)
 		return _nonce
 	}, [webwallet])
-
-	useEffect(() => {
-		hotjar.initialize(3167823, 6)
-	}, [])
 
 	const initiateBiconomyUnsafe = useCallback(async(chainId: string) => {
 		if(!webwallet) {
@@ -757,7 +751,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 				</QueryClientProvider>
 			</WagmiProvider>
-			<ChatWidget
+			{/* <ChatWidget
 				token='5b3b08cf-8b27-4d4b-9c4e-2290f53e04f0'
 				inbox='cb5e60c6-dfe5-481d-9dde-3f13e83344cd'
 				title='Welcome to Questbook Support'
@@ -770,7 +764,35 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				requireEmailUpfront={false}
 				iconVariant='filled'
 				baseUrl='https://app.papercups.io'
-			/>
+			/> */}
+			<Script
+				dangerouslySetInnerHTML={
+					{ __html:
+					`
+  window.Papercups = {
+    config: {
+		token='5b3b08cf-8b27-4d4b-9c4e-2290f53e04f0'
+		inbox='cb5e60c6-dfe5-481d-9dde-3f13e83344cd'
+		title='Welcome to Questbook Support'
+		subtitle="Have a question? Please feel free to ask here - we'll respond ASAP, hopefully now!"
+		primaryColor='#1F1F33'
+		newMessagePlaceholder='Type your question ...'
+		showAgentAvailability={false}
+		agentAvailableText="We're online right now!"
+		agentUnavailableText="We're away at the moment."
+		requireEmailUpfront={false}
+		iconVariant='filled'
+		baseUrl='https://app.papercups.io'
+    },
+  }`
+					}
+				} />
+			<Script
+				type='text/javascript'
+				async
+				defer
+				src='https://app.papercups.io/widget.js' />
+
 			<Script src='https://scripts.simpleanalyticscdn.com/latest.js' />
 			<noscript>
 				<img
