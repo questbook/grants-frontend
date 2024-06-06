@@ -121,6 +121,18 @@ function Proposal() {
 									<Flex align='center'>
 										<Button
 											variant='link'
+											onClick={
+												() => {
+													copy(
+														getFieldString(decryptedProposal, 'applicantEmail') ?? '',
+													)
+													toast({
+														title: 'Copied!',
+														status: 'success',
+														duration: 3000,
+													})
+												}
+											}
 											rightIcon={
 												getFieldString(decryptedProposal, 'applicantEmail') ? (
 													<Flex

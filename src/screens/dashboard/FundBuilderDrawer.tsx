@@ -227,10 +227,27 @@ function FundBuilderDrawer() {
 			return
 		}
 
-		setTos(selectedProposalsData.map((p) => getFieldString(p, 'applicantAddress') ?? ''))
-		setMilestoneIndices(selectedProposalsData.map((p) => p.milestones.findIndex((m) => parseFloat(m?.amountPaid) === 0) !== -1 ? p.milestones.findIndex((m) => parseFloat(m?.amountPaid) === 0) : 0))
-		setAmounts(selectedProposalsData.map((p) => p.milestones.findIndex((m) => parseFloat(m?.amountPaid) === 0) !== -1 ? p.milestones.findIndex((m) => parseFloat(m?.amountPaid) === 0) : 0)?.map((mi, i) => selectedProposalsData[i]?.milestones[mi]?.amount ? parseInt(selectedProposalsData[i]?.milestones[mi]?.amount) : 0))
+		// if TOS is set, then don't change it (this is to prevent TOS getting re-rendered when proposals state changes)
+		if(tos?.length === selectedProposalsData.length && tos?.every((to) => to !== undefined)) {
+			return
+		} else {
+			setTos(selectedProposalsData.map((p) => getFieldString(p, 'applicantAddress') ?? ''))
+		}
+
+		if(amounts?.length === selectedProposalsData.length && amounts?.every((amt) => amt !== undefined && amt > 0)) {
+			return
+		} else {
+			setAmounts(selectedProposalsData.map((p) => p.milestones.findIndex((m) => parseFloat(m?.amountPaid) === 0) !== -1 ? p.milestones.findIndex((m) => parseFloat(m?.amountPaid) === 0) : 0)?.map((mi, i) => selectedProposalsData[i]?.milestones[mi]?.amount ? parseInt(selectedProposalsData[i]?.milestones[mi]?.amount) : 0))
+		}
+
+		if(milestoneIndices?.length === selectedProposalsData.length && milestoneIndices?.every((mi) => mi !== undefined)) {
+			return
+		} else {
+			setMilestoneIndices(selectedProposalsData.map((p) => p.milestones.findIndex((m) => parseFloat(m?.amountPaid) === 0) !== -1 ? p.milestones.findIndex((m) => parseFloat(m?.amountPaid) === 0) : 0))
+		}
+
 	}, [selectedProposalsData])
+
 
 	const isDisabled = useMemo(() => {
 		return !selectedProposalsData || !amounts?.every((amt) => amt !== undefined && amt > 0) || !tos?.every((to) => to !== undefined) || !milestoneIndices?.every((mi) => mi !== undefined) || !selectedTokenInfo
@@ -276,7 +293,7 @@ function FundBuilderDrawer() {
 					to,
 					applicationId: selectedProposalsData[i]?.id?.startsWith('0x') ? parseInt(selectedProposalsData[i]?.id, 16) : parseInt(selectedProposalsData[i]?.id?.slice(-2) ?? '0', 16),
 					selectedMilestone: milestoneIndices?.[i],
-					selectedToken: { tokenName: selectedTokenInfo?.tokenName as string, info: selectedTokenInfo?.info },
+					selectedToken: { tokenName: selectedTokenInfo?.tokenName as string, info: selectedTokenInfo?.info, isNative: selectedTokenInfo?.isNative ?? false, decimals: selectedTokenInfo?.info?.decimals },
 					amount: amounts?.[i],
 				}
 			})

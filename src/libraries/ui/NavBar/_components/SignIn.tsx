@@ -23,20 +23,21 @@ interface Props {
 function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen, onClose, setSignIn }: Props) {
 	// const [signInMethod, setSignInMethod] = useState<'newWallet' | 'existingWallet' | 'choosing'>('choosing')
 	const { signInMethod, setSignInMethod } = useContext(SignInMethodContext)!
-	const { importWebwallet, setScwAddress, setWebwallet, webwallet } = useContext(WebwalletContext)!
+	const { importWebwallet, setScwAddress, setWebwallet, webwallet, isEOA, setIsEOA } = useContext(WebwalletContext)!
 	const { isConnected, address, connector } = useAccount()
 	const { disconnect } = useDisconnect()
 	const accountData = useAccountEffect({
 		onDisconnect() {
-			setWebwallet(undefined)
-			setScwAddress(undefined)
-			localStorage.removeItem('isEOA')
-			localStorage.removeItem('scwAddress')
-			localStorage.removeItem('webwalletPrivateKey')
-			localStorage.removeItem('authToken')
-			setSignInMethod('choosing')
+			if(isEOA) {
+				setWebwallet(undefined)
+				setScwAddress(undefined)
+				localStorage.removeItem('isEOA')
+				localStorage.removeItem('scwAddress')
+				localStorage.removeItem('webwalletPrivateKey')
+				localStorage.removeItem('authToken')
+				setSignInMethod('choosing')
+			}
 		}
-
 	})
 	logger.info('Account data', accountData)
 
@@ -58,7 +59,7 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 	useEffect(() => {
 		const authToken = localStorage.getItem('authToken')
 		const scwAddress = localStorage.getItem('scwAddress')
-		if(isConnected && address && authToken && !webwallet) {
+		if(isConnected && address && authToken && !webwallet && isEOA) {
 			logger.info('Setting webwallet')
 			setWebwallet({
 				address: address,
@@ -67,12 +68,14 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 				mnemonic: address,
 				...connector,
 			} as never as Wallet)
+			localStorage.setItem('isEOA', 'true')
+			setIsEOA(true)
 			setScwAddress(address)
 			setSignIn(false)
 
 		}
 
-		if(isConnected && address && scwAddress && (address !== scwAddress)) {
+		if(isConnected && address && scwAddress && (address !== scwAddress) && isEOA) {
 			logger.info('Disconnecting')
 			setWebwallet(undefined)
 			setScwAddress(undefined)
@@ -117,6 +120,8 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 					setScwAddress(address)
 					setWebwallet(wallet as never as Wallet)
 					setSignIn(false)
+					setIsEOA(true)
+					localStorage.setItem('isEOA', 'true')
 				}
 
 

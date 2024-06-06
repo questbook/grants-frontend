@@ -26,7 +26,8 @@ import usetonWallet from 'src/screens/dashboard/_hooks/useTonWallet'
 import getToken from 'src/screens/dashboard/_utils/tonWalletUtils'
 import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
 import TonWeb from 'tonweb'
-import { useAccount } from 'wagmi'
+import { useAccount, useEnsAddress } from 'wagmi'
+
 interface Props {
 	payWithSafe: boolean
 }
@@ -204,7 +205,7 @@ function FundBuilderModal({
 
 	const { safeObj } = useSafeContext()!
 	const { grant } = useContext(GrantsProgramContext)!
-	const { proposals, selectedProposals } = useContext(DashboardContext)!
+	const { proposals, selectedProposals, refreshProposals } = useContext(DashboardContext)!
 	const {
 		isModalOpen,
 		setIsModalOpen,
@@ -258,9 +259,12 @@ function FundBuilderModal({
 	})
 	const selectedMode = (payWithSafe === true && safeObj !== undefined) ? Safe : Wallets[0]
 
+
 	const proposal = useMemo(() => {
 		return proposals.find(p => selectedProposals.has(p.id))
 	}, [proposals, selectedProposals])
+
+	const { data: ensAddress } = useEnsAddress({ name: tos?.[0] ?? getFieldString(proposal, 'applicantAddress'), chainId: 1 })
 
 	const milestones = useMemo(() => {
 		return proposal?.milestones || []
@@ -280,12 +284,24 @@ function FundBuilderModal({
 		}
 
 		setAmounts([proposal?.milestones?.[0]?.amount ? parseInt(proposal?.milestones?.[0]?.amount) : 0])
-		setTos([getFieldString(proposal, 'applicantAddress') ?? tos?.[0]])
+		if(tos?.[0]?.includes('ens') || getFieldString(proposal, 'applicantAddress')?.includes('.eth')) {
+			setTos([ensAddress ?? getFieldString(proposal, 'applicantAddress') ?? tos?.[0]])
+		} else {
+			setTos([getFieldString(proposal, 'applicantAddress') ?? tos?.[0]])
+		}
+
+
 		setMilestoneIndices([proposal?.milestones?.findIndex((milestone) => parseFloat(milestone?.amountPaid) === 0) > -1 ? proposal?.milestones?.findIndex((milestone) => parseFloat(milestone?.amountPaid) === 0) : 0])
 	}, [proposal])
 
+	useEffect(() => {
+		if(ensAddress) {
+			setTos([ensAddress])
+		}
+	}, [ensAddress])
+
 	const isDisabled = useMemo(() => {
-		return !proposal || amounts?.[0] === undefined || !tos?.[0] || milestoneIndices?.[0] === undefined || amounts?.[0] <= 0
+		return !proposal || amounts?.[0] === undefined || !tos?.[0] || milestoneIndices?.[0] === undefined || amounts?.[0] <= 0 || (tos?.[0]?.includes('ens') && !ensAddress)
 	}, [amounts, tos, milestoneIndices])
 
 	useEffect(() => {
@@ -403,13 +419,12 @@ function FundBuilderModal({
 				await executeMutation(reSubmitProposalMutation, methodArgs)
 			}
 
-
 			const temp = [{
 				from: safeObj?.safeAddress?.toString(),
 				to: tos?.[0],
 				applicationId: proposal?.id?.startsWith('0x') ? parseInt(proposal?.id, 16) : parseInt(proposal?.id?.slice(-2) ?? '0', 16),
 				selectedMilestone: milestoneIndices?.[0],
-				selectedToken: { tokenName: selectedTokenInfo?.tokenName, info: selectedTokenInfo?.info },
+				selectedToken: { tokenName: selectedTokenInfo?.tokenName, info: selectedTokenInfo?.info, isNative: selectedTokenInfo?.isNative ?? false, decimals: selectedTokenInfo?.info?.decimals },
 				amount: amounts?.[0],
 			}]
 
@@ -491,8 +506,8 @@ function FundBuilderModal({
 				grant: grant?.id!,
 				to: tos?.[0]
 			}
-
 			await executeMutation(DisburseRewardSafeMutation, args)
+			await refreshProposals(true)
 			setSignerVerifiedState('transaction_initiated')
 			setPayoutInProcess(false)
 		}

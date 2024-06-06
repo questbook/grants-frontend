@@ -55,7 +55,7 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 										logger.info('Connect wallet initiated')
 										try {
 											logger.info('Inside try block')
-											const connector = connectors.find((x) => x.id === wallet.id)
+											const connector = connectors.find((x) => x.id === wallet.id || x.type?.toLowerCase() === wallet?.id?.toLowerCase())
 											logger.info({ connector }, 'connector')
 											setSelectedConnector(connector)
 											// setConnectClicked(true)
@@ -71,6 +71,8 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 														status: 'info',
 														duration: 3000
 													})
+												} else {
+													connect({ connector })
 												}
 											} else {
 												toast({

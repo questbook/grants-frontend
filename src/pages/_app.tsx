@@ -215,7 +215,8 @@ export const WebwalletContext = createContext<{
 	switchNetwork: (newNetwork?: SupportedChainId) => void
 	scwAddress?: string
 	setScwAddress: (scwAddress?: string) => void
-
+	isEOA?: boolean
+	setIsEOA: (isEOA?: boolean) => void
 	waitForScwAddress: Promise<string>
 
 	nonce?: string
@@ -252,6 +253,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [role, setRole] = useState<Roles>('community')
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 	const [glyph, setGlyph] = useState<boolean>(false)
+	const [isEOA, setIsEOA] = useState<boolean>(false)
 	const [scwAddress, setScwAddress] = useState<string>()
 	const [loadingScw, setLoadingScw] = useState<boolean>(true)
 	const [biconomyDaoObjs, setBiconomyDaoObjs] = useState<{ [key: string]: typeof BiconomyContext }>()
@@ -635,6 +637,16 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				}
 
 				setGlyph(newGlyph as boolean)
+			},
+			isEOA: isEOA,
+			setIsEOA: (newIsEOA?: boolean) => {
+				if(newIsEOA) {
+					localStorage.setItem('isEOA', newIsEOA.toString())
+				} else {
+					localStorage.removeItem('isEOA')
+				}
+
+				setIsEOA(newIsEOA as boolean)
 			},
 			dashboardStep,
 			setDashboardStep,

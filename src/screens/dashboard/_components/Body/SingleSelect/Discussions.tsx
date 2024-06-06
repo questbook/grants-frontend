@@ -36,10 +36,13 @@ import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { CommentType, TagType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { Roles } from 'src/types'
+import { useEnsName } from 'wagmi'
+
 
 function Discussions() {
 	const { setSignIn } = useContext(SignInContext)!
 	const { setSignInTitle } = useContext(SignInTitleContext)!
+
 	const buildComponents = () => {
 		return (
 			<Flex
@@ -98,7 +101,7 @@ function Discussions() {
 							<Text
 								variant='body'
 								fontWeight='500'>
-								{currentMember?.fullName ?? formatAddress(scwAddress ?? '')}
+								{ensName ?? currentMember?.fullName ?? formatAddress(scwAddress ?? '')}
 							</Text>
 							<RoleTag
 								role={(role as Roles)}
@@ -433,6 +436,7 @@ function Discussions() {
 
 	const { scwAddress } = useContext(WebwalletContext)!
 	const { grant, role } = useContext(GrantsProgramContext)!
+	const { data: ensName } = useEnsName({ address: scwAddress as `0x${string}` })
 	logger.info({ grant, role }, 'GRANT AND ROLE')
 	const {
 		proposals,
@@ -551,7 +555,10 @@ function Discussions() {
 				{ comment: comment?.sender, proposalId: proposal?.applicantId },
 				'COMMENT 1',
 			)
-			if(
+			const { data } = useEnsName({ address: comment.sender as `0x${string}` })
+			if(data) {
+				return data
+			} else if(
 				comment.role === 'builder' &&
 				comment.sender?.toLowerCase() === proposal?.applicantId?.toLowerCase()
 			) {

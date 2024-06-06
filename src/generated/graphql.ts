@@ -320,7 +320,8 @@ export enum ApplicationState {
   Rejected = 'rejected',
   Resubmit = 'resubmit',
   Submitted = 'submitted',
-  Review = 'review'
+  Review = 'review',
+  Cancelled = 'cancelled'
 }
 
 export type BlockChangedFilter = {

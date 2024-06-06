@@ -28,6 +28,7 @@ import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposa
 import { containsCustomField, containsField, findCustomField, findField, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
 import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, MILESTONE_INPUT_STYLE, SocialIntent } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
+import { useEnsName } from 'wagmi'
 
 
 function ProposalForm() {
@@ -439,8 +440,9 @@ function ProposalForm() {
 						{
 							containsField(grant, 'applicantName') && (
 								<SectionInput
-									label='Full Name'
+									label='ENS'
 									placeholder='Ryan Adams'
+									defaultValue={ensName ?? ''}
 									value={findField(form, 'applicantName').value}
 									onChange={
 										(e) => {
@@ -561,7 +563,7 @@ function ProposalForm() {
 
 						{/* Proposal Details */}
 						<SectionHeader mt={8}>
-							Proposal
+							Project
 						</SectionHeader>
 						{
 							containsCustomField(grant, 'Which Category does your submission belong') && (
@@ -587,7 +589,7 @@ function ProposalForm() {
 						{
 							containsField(grant, 'projectName') && (
 								<SectionInput
-									label='Title'
+									label='Project Name'
 									placeholder='Name of your proposal'
 									maxLength={80}
 									value={findField(form, 'projectName').value}
@@ -697,9 +699,9 @@ function ProposalForm() {
 							} />
 
 						<SectionInput
-							label='Funding Asked'
+							label='Funding Requested'
 							isDisabled
-							placeholder='12000 USD'
+							placeholder='12000 USDC'
 							value={`${fundingAsk} ${chainInfo?.label}`}
 						/>
 
@@ -771,7 +773,30 @@ function ProposalForm() {
 									} />
 							)
 						}
-
+						{
+							containsField(grant, 'Have you read the round details?') && (
+								<>
+									<SectionSelection
+										label='Have you read the round details?'
+										options={['Yes', 'No']}
+										placeholder='Yes / No'
+										value={findCustomField(form, 'Have you read the round details?').value}
+										onChange={
+											(e) => {
+												onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Have you read the round details?').id)
+											}
+										} />
+									<Text
+										cursor='pointer'
+										onClick={() => window.open('https://www.notion.so/ensgrants/Large-Grants-1900eb105c2f4eeb90dec42e468b19d0')}
+										fontSize='14px'
+										color='gray.500'
+										mt={2}>
+										https://www.notion.so/ensgrants/Large-Grants-1900eb105c2f4eeb90dec42e468b19d0
+									</Text>
+								</>
+							)
+						}
 
 						<Button
 							mt={10}
@@ -823,6 +848,7 @@ function ProposalForm() {
 	const { safeObj } = useSafeContext()!
 	const { setSignIn } = useContext(SignInContext)!
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
+	const { data: ensName } = useEnsName({ address: scwAddress as `0x${string}` })
 	logger.info({ scwAddress, webwallet }, 'Webwallet context')
 	const [qrCodeText, setQrCodeText] = useState<string>('')
 
@@ -853,6 +879,16 @@ function ProposalForm() {
 		const val = getRewardAmountMilestones(chainInfo?.decimals ?? 0, { milestones: form.milestones.map((m) => ({ ...m, amount: m.amount ? m.amount.toString() : '0' })) })
 		return val
 	}, [form])
+
+	useEffect(() => {
+		if(ensName) {
+			const copy = { ...form }
+			if(findField(copy, 'applicantName').value === '') {
+				findField(copy, 'applicantName').value = ensName
+				setForm(copy)
+			}
+		}
+	}, [ensName])
 
 	const isDisabled = useMemo(() => {
 		if(!form) {

@@ -95,7 +95,17 @@ const VerifySignerModal = ({
 													onClick={
 														async() => {
 															setVerifying(wallet.id)
-															const connector = connectors.find((x) => x.id === wallet.id)!
+															const connector = connectors.find((x) => x.id === wallet.id || x.type?.toLowerCase() === wallet?.id?.toLowerCase())!
+															if(!connector) {
+																toast({
+																	title: 'Connector not found!',
+																	status: 'error',
+																	duration: 3000
+																})
+																return
+															}
+
+															logger.info('connectors', connector)
 															// swallow error here so we don't fail the remaining logic
 															const isConnected = await connector.isAuthorized().catch(() => false)
 
@@ -306,11 +316,13 @@ const VerifySignerModal = ({
 					status: 'success',
 				})
 			} else {
-				toast({
-					title: 'The first selected wallet is not an owner!',
-					status: 'error',
-					duration: 3000
-				})
+				if(networkType === NetworkType.EVM && address) {
+					toast({
+						title: 'The first selected wallet is not an owner!',
+						status: 'error',
+						duration: 3000
+					})
+				}
 			}
 
 			setWalletClicked(false)
