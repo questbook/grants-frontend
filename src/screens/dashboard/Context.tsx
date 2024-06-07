@@ -625,7 +625,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 			setSelectedProposals(initialSelectionSet)
 		}
 
-		if(proposals.length > 0 && proposalId !== undefined && !proposals?.map((p) => p.id).includes(proposalId as string)) {
+		if(proposals.length > 0 && proposalId !== undefined && !proposals?.map((p) => p.id).includes(proposalId as string) && proposalId !== proposals[0].id) {
 			if(role === 'builder' || role === 'community') {
 				setRole(proposals?.find((p) => p.applicantId?.toLowerCase() === scwAddress?.toLowerCase()) ? 'builder' : 'community')
 			}
