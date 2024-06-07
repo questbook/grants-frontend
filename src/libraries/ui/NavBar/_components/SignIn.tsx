@@ -110,7 +110,7 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 				//  localStorage.setItem('authToken', data)
 				const tokenId = localStorage.getItem('authTokenId')
 				if(data && tokenId) {
-					const tokenData = await verifyToken(tokenId, data)
+					const tokenData = await verifyToken(tokenId, data, true)
 					localStorage.removeItem('authTokenId')
 					if(tokenData) {
 						localStorage.setItem('authToken', tokenData) // Storing the verified token directly
@@ -166,7 +166,7 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 			if(token) {
 				// const sign = await webwallet.signMessage(token?.nonce)
 				await signMessage({
-					message: token?.nonce,
+					message: `Welcome to Questbook\n\nClick to sign in and accept the Questbook Terms of Service (https://questbook.app/termsofservice) and Privacy Policy (https://questbook.app/privacypolicy).\n\nThis request does not trigger any transaction or cost any fees.\n\n\n\nWallet Address: ${address}\n\nNonce: ${token?.nonce}`,
 				})
 			}
 		}

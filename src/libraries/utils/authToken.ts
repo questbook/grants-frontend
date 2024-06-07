@@ -13,8 +13,8 @@ export const generateToken = async(address: string) => {
 	return generate.generateToken.record
 }
 
-export const verifyToken = async(id: string, sign: string) => {
-	const verify = await executeMutation(verifyTokenMutation, { id, sign })
+export const verifyToken = async(id: string, sign: string, isEOA?: boolean) => {
+	const verify = await executeMutation(verifyTokenMutation, { id, sign, isEOA: isEOA || false })
 	if(!verify?.verifyToken?.accessToken) {
 		throw new Error('Unable to verify token')
 	}
