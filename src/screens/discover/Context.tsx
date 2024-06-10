@@ -37,12 +37,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	const [grantProgram, setGrantProgram] = useState<GrantProgramType>()
 	const [sectionGrants, setSectionGrants] = useState<SectionGrants>()
 	const [recentProposals, setRecentProposals] = useState<RecentProposals>()
-	const [grantsAllocated, setGrantsAllocated] = useState<{
-		total: number
-		arbitrum1: number
-		arbitrum2: number
-		individualGrants: {id: string, amount: number}[]
-	}>({
+	const [grantsAllocated, setGrantsAllocated] = useState<DiscoverContextType['grantsAllocated']>({
 		total: 0,
 		arbitrum1: 0,
 		arbitrum2: 0,
@@ -271,19 +266,22 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 			return total
 		}
 
-		function sumAllocationForIndividualGrants(data: any): {id: string, amount: number}[] {
+		function sumAllocationForIndividualGrants(data: any): DiscoverContextType['grantsAllocated']['individualGrants'] {
 			const grants = []
 			for(const grant of data.grants) {
 				let total = 0
+				let totalPaid = 0
 				for(const app of grant.applications) {
 					for(const milestone of app.milestones) {
 						total += milestone.amount
+						totalPaid += milestone.amountPaid
 					}
 				}
 
 				grants.push({
 					id: grant.id,
-					amount: total
+					amount: total,
+					amountPaid: totalPaid
 				})
 			}
 

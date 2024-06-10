@@ -260,13 +260,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 												usdAmount !== undefined && (
 													<Text fontWeight='500'>
 														$
-														{
-															usdAmount !== 0 ?
-																parseFloat(grant?.totalGrantFundingDisbursedUSD) > allocated ?
-																	nFormatter((usdAmount - (parseFloat(grant?.totalGrantFundingDisbursedUSD) - allocated)).toFixed(0), 0)
-																	: nFormatter((usdAmount - (allocated - parseFloat(grant?.totalGrantFundingDisbursedUSD))).toFixed(0), 0)
-																: nFormatter(usdAmount.toFixed(0), 0)
-														}
+														{ nFormatter(Math.max(0, (usdAmount !== 0 ? usdAmount - Math.abs(parseFloat(grant?.totalGrantFundingDisbursedUSD) - allocated) : usdAmount)).toFixed(0), 0) }
 													</Text>
 												)
 											}
