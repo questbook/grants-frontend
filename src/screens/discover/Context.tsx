@@ -41,10 +41,12 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		total: number
 		arbitrum1: number
 		arbitrum2: number
+		individualGrants: {id: string, amount: number}[]
 	}>({
 		total: 0,
 		arbitrum1: 0,
 		arbitrum2: 0,
+		individualGrants: []
 	})
 	const [sectionSubGrants, setSectionSubGrants] = useState<GrantType[]>([])
 
@@ -269,6 +271,25 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 			return total
 		}
 
+		function sumAllocationForIndividualGrants(data: any): {id: string, amount: number}[] {
+			const grants = []
+			for(const grant of data.grants) {
+				let total = 0
+				for(const app of grant.applications) {
+					for(const milestone of app.milestones) {
+						total += milestone.amount
+					}
+				}
+
+				grants.push({
+					id: grant.id,
+					amount: total
+				})
+			}
+
+			return grants
+		}
+
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const funds: any = await getFunds()
@@ -276,10 +297,12 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		const total = sumAmounts(funds.sections[0])
 		const arbitrum1 = sumArbitrum(funds.sections[0], '1.0')
 		const arbitrum2 = sumArbitrum(funds.sections[0], '2.0')
+		const individualGrants = sumAllocationForIndividualGrants(funds.sections[0])
 		setGrantsAllocated({
 			total,
 			arbitrum1,
-			arbitrum2
+			arbitrum2,
+			individualGrants
 		})
 		return total
 	}

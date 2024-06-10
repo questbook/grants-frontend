@@ -2,7 +2,7 @@ import { gql } from '@apollo/client'
 export const getFundsAllocated = gql`query getSectionGrants {
     sections(filter: { _id: "Arbitrum" }) {
       grants(sort: NUMBEROFAPPLICATIONS_DESC) {
-        _id
+        id: _id
         title
         applications(filter: {
           state: "approved"

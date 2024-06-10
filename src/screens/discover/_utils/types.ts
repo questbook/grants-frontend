@@ -28,6 +28,7 @@ export type DiscoverContextType = {
         total: number
         arbitrum1: number
         arbitrum2: number
+        individualGrants: { id: string, amount: number }[]
     }
     sectionSubGrants: GrantType[]
 }

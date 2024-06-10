@@ -260,7 +260,13 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 												usdAmount !== undefined && (
 													<Text fontWeight='500'>
 														$
-														{nFormatter(usdAmount?.toFixed(0), 0)}
+														{
+															usdAmount !== 0 ?
+																parseFloat(grant?.totalGrantFundingDisbursedUSD) > allocated ?
+																	nFormatter((usdAmount - (parseFloat(grant?.totalGrantFundingDisbursedUSD) - allocated)).toFixed(0), 0)
+																	: nFormatter((usdAmount - (allocated - parseFloat(grant?.totalGrantFundingDisbursedUSD))).toFixed(0), 0)
+																: nFormatter(usdAmount.toFixed(0), 0)
+														}
 													</Text>
 												)
 											}
@@ -321,12 +327,16 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 		</Box>
 	)
 
-	const { safeBalances } = useContext(DiscoverContext)!
+	const { safeBalances, grantsAllocated } = useContext(DiscoverContext)!
 
 	const router = useRouter()
 
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	logger.info({ isQbAdmin }, 'isQbAdmin')
+
+	const allocated = useMemo(() => {
+		return grantsAllocated.individualGrants.find((g) => g.id === grant.id)?.amount ?? 0
+	}, [grant, grantsAllocated])
 
 	const usdAmount = useMemo(() => {
 		return safeBalances[`${grant.workspace.safe?.chainId}-${grant.workspace.safe?.address}`]
