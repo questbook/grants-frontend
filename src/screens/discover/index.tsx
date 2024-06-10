@@ -328,7 +328,7 @@ function Discover() {
 						minWidth='100%'
 						p={4}
 						w='100%'
-						h='100vh'
+						h='auto'
 						bgColor='white'
 					>
 
@@ -572,18 +572,18 @@ The Selects will join us at Zo House BLR for a week of intense collaboration and
 							<Container
 
 								minWidth='100%'
-								p={4}
 								w='100%'
 								h='100vh'
 								bgColor='white'
 							>
 								<Flex
-
 									width='100%'
 									my={4}
 									mt={isMobile ? '' : '12'}
-									justify='space-between'
+									justify='space-around'
 									direction='row'
+									flexWrap='wrap'
+									gap={12}
 								>
 									{
 										sectionGrants && sectionGrants.length > 0
@@ -594,11 +594,10 @@ The Selects will join us at Zo House BLR for a week of intense collaboration and
 														direction='column'
 														key={index}
 														align='center'
-														p={8}
-														width='100%'
+														gap={4}
 													>
 														<Text
-															fontSize='2xl'
+															fontSize='md'
 															variant='heading1'
 															fontWeight='500'
 														>
@@ -607,7 +606,7 @@ The Selects will join us at Zo House BLR for a week of intense collaboration and
 														<Box mt={4} />
 														<QRCode
 															fgColor='#4D9CD4'
-															style={{ height: 'auto', maxWidth: '100%', width: '50%' }}
+															style={{ height: 'auto', maxWidth: '100%', width: 'auto' }}
 															value={`https://zo.questbook.app/dashboard/?grantId=${grant?.id}&chainId=10&role=community`}
 														/>
 													</Flex>
