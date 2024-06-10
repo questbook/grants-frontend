@@ -467,6 +467,7 @@ function Discover() {
 																	fundsAllocated={grantsAllocated?.arbitrum2 ?? 0}
 																	fundsPaidOut={grants?.reduce((acc, grant) => acc + parseFloat(grant?.totalGrantFundingDisbursedUSD), 0)}
 																	safeBalances={grants?.map(grant => safeBalances[`${grant.workspace.safe?.chainId}-${grant.workspace.safe?.address}`] ?? 0).reduce((a, b) => a + b, 0) ?? 0}
+																	availableBalance={(Math.max(0, (grants?.map(grant => safeBalances[`${grant.workspace.safe?.chainId}-${grant.workspace.safe?.address}`] ?? 0).reduce((a, b) => a + b, 0) ?? 0) - Math.abs((grants?.reduce((acc, grant) => acc + parseFloat(grant?.totalGrantFundingDisbursedUSD), 0) ?? 0) - (grantsAllocated?.arbitrum2 ?? 0))))}
 																/>
 															)
 														}
@@ -829,6 +830,7 @@ function Discover() {
 																		fundsAllocated={grantsAllocated?.arbitrum1 ?? 0}
 																		fundsPaidOut={grants?.reduce((acc, grant) => acc + parseFloat(grant?.totalGrantFundingDisbursedUSD), 0)}
 																		safeBalances={grants?.map(grant => safeBalances[`${grant.workspace.safe?.chainId}-${grant.workspace.safe?.address}`] ?? 0).reduce((a, b) => a + b, 0) ?? 0}
+																		availableBalance={(Math.max(0, (grants?.map(grant => safeBalances[`${grant.workspace.safe?.chainId}-${grant.workspace.safe?.address}`] ?? 0).reduce((a, b) => a + b, 0) ?? 0) - Math.abs((grants?.reduce((acc, grant) => acc + parseFloat(grant?.totalGrantFundingDisbursedUSD), 0) ?? 0) - (grantsAllocated?.arbitrum1 ?? 0))))}
 																	/>
 																)
 															}

@@ -10,12 +10,14 @@ function SubSectionBanner({
     fundsAllocated,
     fundsPaidOut,
     safeBalances,
+    availableBalance
 }: {
     totalProposals: number
     totalProposalsAccepted: number
     fundsAllocated: number
     fundsPaidOut: number
     safeBalances: number
+    availableBalance: number
 }) {
 
 
@@ -96,6 +98,9 @@ function SubSectionBanner({
                                 || 0
                             }
                             title='Funds Paid Out' />
+					<TitleCards
+                            data={formatNumber(availableBalance) || 0}
+                            title='Funds Available' />
 					<TitleCards
                             data={formatNumber(safeBalances) || 0}
                             title='left in mutlisig' />
