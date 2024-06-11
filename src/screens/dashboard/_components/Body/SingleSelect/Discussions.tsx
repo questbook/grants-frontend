@@ -424,6 +424,7 @@ function Discussions() {
 										<Text
 											wordBreak='break-word'
 											{...props}
+											fontSize='16px'
 											lineHeight='base'
 											className='public-DraftStyleDefault-block public-DraftStyleDefault-ltr'
 										/>
