@@ -15,6 +15,9 @@ const linkifyPlugin = createLinkifyPlugin({
 				{...props}
 				variant='link'
 				color='accent.azure'
+				wordBreak='break-all'
+				whiteSpace='break-spaces'
+				textAlign='left'
 				fontWeight='400'
 				onClick={() => window.open(props.href, '_blank')}
 			/>
