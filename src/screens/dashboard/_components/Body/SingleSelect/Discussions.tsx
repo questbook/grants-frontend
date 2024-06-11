@@ -9,6 +9,7 @@ import {
 	Flex,
 	IconButton,
 	Image,
+	List,
 	Text,
 	Tooltip,
 	useToken,
@@ -306,7 +307,11 @@ function Discussions() {
 		)
 	}
 
+
 	const renderComment = (comment: CommentType, index: number) => {
+		// setEditorState(EditorState.createWithContent(convertFromRaw(mdToDraftjs(comment ?? ''))))
+		// const [editorState, setEditorState] = useState<EditorState> EditorState.createEmpty(),)
+
 		logger.info('Render comment (RENDER COMMENT)', comment)
 		const member = comment.workspace.members.find(
 			(member) => member.actorId.toLowerCase() === comment.sender?.toLowerCase(),
@@ -330,6 +335,7 @@ function Discussions() {
 			<Flex
 				key={index}
 				align='start'
+				overflowWrap='break-word'
 				mt={index === 0 ? 0 : 4}>
 				<Image
 					borderRadius='3xl'
@@ -346,7 +352,9 @@ function Discussions() {
 				<Flex
 					ml={3}
 					direction='column'>
-					<Flex align='center'>
+					<Flex
+						align='center'
+						mb={1}>
 						<Text fontWeight='500'>
 							{getCommentDisplayName(comment)}
 						</Text>
@@ -383,6 +391,7 @@ function Discussions() {
 
 					<Markdown
 						remarkPlugins={[remarkGfm]}
+						className='DraftEditor-root DraftEditor-editorContainer public-DraftEditor-content markdown-body'
 						components={
 							{
 								a: props => {
@@ -391,6 +400,7 @@ function Discussions() {
 											display='inline-block'
 											wordBreak='break-all'
 											color='accent.azure'
+											fontSize='16px'
 											variant='body'
 											cursor='pointer'
 											_hover={
@@ -412,17 +422,92 @@ function Discussions() {
 								p: ({ ...props }) => {
 									return (
 										<Text
-											{...props}
-											variant='body'
-											fontSize='14px'
-											mt={2}
-											style={
-												{
-													fontStyle: hasAccess ? 'normal' : 'italic',
-												}
-											}
-											whiteSpace='pre-line'
 											wordBreak='break-word'
+											{...props}
+											lineHeight='base'
+											className='public-DraftStyleDefault-block public-DraftStyleDefault-ltr'
+										/>
+									)
+								},
+								ul: ({ ...props }) => {
+									return (
+										<List
+											{...props}
+											as='ul'
+										/>
+									)
+								}
+								,
+								li: ({ ...props }) => {
+									return (
+										<li
+											{...props}
+											className='public-DraftStyleDefault-unorderedListItem public-DraftStyleDefault-reset public-DraftStyleDefault-depth0 public-DraftStyleDefault-listLTR'
+										/>
+									)
+								},
+
+
+								h1: ({ ...props }) => {
+									return (
+										<Text
+											fontSize='20px'
+											fontWeight={600}
+											lineHeight={1.2}
+											mb={2}
+											mt={2}
+											{...props}
+											as='h1'
+
+										/>
+									)
+								},
+								h2: ({ ...props }) => {
+									return (
+										<Text
+
+											{...props}
+											as='h2'
+											fontSize='18px'
+											fontWeight={600}
+											lineHeight={1.2}
+											mb={2}
+											mt={2}
+										/>
+									)
+								},
+
+								h3: ({ ...props }) => {
+									return (
+										<Text
+
+											{...props}
+											as='h3'
+											fontSize='16px'
+											fontWeight={600}
+											lineHeight={1.2}
+											mb={2}
+											mt={2}
+										/>
+									)
+								},
+
+
+								h4: ({ ...props }) => {
+									return (
+										<Text
+											{...props}
+											variant='h4'
+											mt={2}
+										/>
+									)
+								},
+								h5: ({ ...props }) => {
+									return (
+										<Text
+											{...props}
+											variant='h5'
+											mt={2}
 										/>
 									)
 								},
@@ -438,11 +523,11 @@ function Discussions() {
 											alt='comment-image'
 										/>
 									)
-								}
+								},
 							}
 						}
 					>
-						{comment.message}
+						{comment?.message ? comment?.message.replace(/\n/g, '\n\n') : ''}
 					</Markdown>
 				</Flex>
 			</Flex>

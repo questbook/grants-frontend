@@ -14,7 +14,6 @@ import { GetGrantProgramDetails } from 'src/screens/discover/data/getGrantProgra
 import { getProposalNameAndAuthorsQuery } from 'src/screens/discover/data/getProposalNameAndAuthors'
 import { getSectionGrantsQuery } from 'src/screens/discover/data/getSectionGrants'
 import { getSectionSubGrantsQuery } from 'src/screens/discover/data/getSectionSubGrants'
-import { getStatsQuery } from 'src/screens/discover/data/getStats'
 import { GetWorkspacesAndBuilderGrants } from 'src/screens/discover/data/getWorkspaceAndBuilderGrants'
 import { Roles } from 'src/types'
 
@@ -73,10 +72,6 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 	const { fetchMore: fetchMoreProposalAuthorsAndName } = useQuery({
 		query: getProposalNameAndAuthorsQuery,
-	})
-
-	const { fetchMore: fetchStats } = useQuery({
-		query: getStatsQuery,
 	})
 
 	const { fetchMore: fetchFundsAllocated } = useQuery({
@@ -367,11 +362,6 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	}
 
 	const getStats = async() => {
-		const results: any = await fetchStats()
-		logger.info({ results }, 'Stats')
-		if(!results?.stats) {
-			return 'no-stats'
-		}
 
 		const funds: any = await fetchFundsAllocated()
 		logger.info({ funds }, 'Funds')
@@ -391,9 +381,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 		// iterate over all sections and sum the amounts
 		const total = funds.sections.reduce((acc: number, cur: any) => acc + sumAmounts(cur), 0)
-
-		const statsCount = results?.stats
-		setStats({ builders: statsCount?.builders + 52000, proposals: statsCount?.proposals + 1540, funds: total + 786298 })
+		setStats({ builders: 52000, proposals: 4000, funds: total + 786298 })
 
 		return 'stats-fetched'
 	}
