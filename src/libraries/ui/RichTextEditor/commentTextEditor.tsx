@@ -1,4 +1,5 @@
 import React, { KeyboardEvent, useRef } from 'react'
+import { IoMdClose } from 'react-icons/io'
 import { MdOutlinePreview } from 'react-icons/md'
 import Markdown from 'react-markdown'
 import { Button, Flex, Image, List, Text } from '@chakra-ui/react'
@@ -53,6 +54,8 @@ function CommentsTextEditor({
 	input,
 	preview,
 	setPreview,
+	editMode,
+	setEditMode,
 }: {
 	placeholder: string | undefined
 	value: EditorState
@@ -61,6 +64,9 @@ function CommentsTextEditor({
 	input: string
 	preview: boolean
 	setPreview: (value: boolean) => void
+	editMode: { isEditing: boolean, commentId: string}
+	setEditMode: (isEditing: boolean, commentId: string) => void
+
 }) {
 	const ref = useRef(null)
 	const imageUploadRef = useRef(null)
@@ -190,7 +196,9 @@ function CommentsTextEditor({
 							m={2}
 							p={2}
 							alignItems='center'
+							gap={2}
 						>
+
 							<Button
 								variant='link'
 								color='gray.500'
@@ -199,6 +207,18 @@ function CommentsTextEditor({
 							>
 								Exit Preview
 							</Button>
+							{
+								editMode?.isEditing && (
+									<Button
+										variant='link'
+										color='gray.500'
+										leftIcon={<IoMdClose />}
+										onClick={() => setEditMode(false, '')}
+									>
+										Cancel Edit
+									</Button>
+								)
+							}
 
 						</Flex>
 						<Markdown
@@ -353,6 +373,7 @@ function CommentsTextEditor({
 								m={2}
 								p={2}
 								alignItems='center'
+								gap={2}
 							>
 
 
@@ -365,19 +386,36 @@ function CommentsTextEditor({
 											_hover={{ color: 'black.100' }} />
 									) : <Loader />
 								}
-								{
-									input?.length > 0 && (
-										<Button
-											variant='link'
-											color='gray.500'
-											ml='auto'
-											onClick={() => setPreview(!preview)}
-											leftIcon={<MdOutlinePreview />}
-										>
-											Preview
-										</Button>
-									)
-								}
+								<Flex
+									ml='auto'
+									gap={6}>
+									{
+										input?.length > 0 && (
+											<Button
+												variant='link'
+												color='gray.500'
+												ml='auto'
+												onClick={() => setPreview(!preview)}
+												leftIcon={<MdOutlinePreview />}
+											>
+												Preview
+											</Button>
+										)
+									}
+									{
+										editMode?.isEditing && (
+											<Button
+												variant='link'
+												color='gray.500'
+												ml='auto'
+												leftIcon={<IoMdClose />}
+												onClick={() => setEditMode(false, '')}
+											>
+												Cancel Edit
+											</Button>
+										)
+									}
+								</Flex>
 
 
 							</Flex>

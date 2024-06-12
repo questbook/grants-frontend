@@ -1,6 +1,6 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import Markdown from 'react-markdown'
-import { LockIcon } from '@chakra-ui/icons'
+import { EditIcon, LockIcon } from '@chakra-ui/icons'
 import {
 	Box,
 	Button,
@@ -34,6 +34,7 @@ import {
 import QuickReplyButton from 'src/screens/dashboard/_components/QuickReplyButton'
 import RoleTag from 'src/screens/dashboard/_components/RoleTag'
 import useAddComment from 'src/screens/dashboard/_hooks/useAddComment'
+import useEditComment from 'src/screens/dashboard/_hooks/useEditComment'
 import useProposalTags from 'src/screens/dashboard/_hooks/useQuickReplies'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { CommentType, TagType } from 'src/screens/dashboard/_utils/types'
@@ -182,6 +183,7 @@ function Discussions() {
 							<Flex>
 
 								<Flex
+									id='comment-box'
 									w={['100%', '100%']}
 								>
 									<CommentsTextEditor
@@ -191,6 +193,19 @@ function Discussions() {
 										placeholder='Type your comment here'
 										preview={preview}
 										setPreview={setPreview}
+										editMode={editComments}
+										setEditMode={
+											(isEditing: boolean, commentId: string) => {
+												setEditComments({
+													isEditing,
+													commentId,
+												})
+												setText('')
+												setEditorState(EditorState.createEmpty())
+												setPreview(false)
+											}
+
+										}
 									/>
 								</Flex>
 
@@ -261,27 +276,53 @@ function Discussions() {
 												})
 											}
 
-											const ret = await addComment(
-												text,
-												isCommentPrivate,
-												selectedTag?.id,
-											)
-											if(ret) {
-												setText('')
-												setEditorState(EditorState.createEmpty())
-												logger.info('Setting selected tag to undefined after posting comment')
-												setSelectedTag(undefined)
-												refreshComments(true)
-												refreshProposals(true)
-												setStep(undefined)
-												localStorage.removeItem(
-													`comment-${grant?.id}-${proposal?.id}`,
+											if(editComments?.commentId) {
+												const ret = await editComment(
+													editComments.commentId,
+													text,
+													isCommentPrivate,
+													selectedTag?.id,
 												)
+												if(ret) {
+													setText('')
+													setEditComments({
+														isEditing: false,
+														commentId: '',
+													})
+													setEditorState(EditorState.createEmpty())
+													logger.info('Setting selected tag to undefined after posting comment')
+													setSelectedTag(undefined)
+													refreshComments(true)
+													refreshProposals(true)
+													setStep(undefined)
+													localStorage.removeItem(
+														`comment-${grant?.id}-${proposal?.id}`,
+													)
+												}
+											} else {
+
+												const ret = await addComment(
+													text,
+													isCommentPrivate,
+													selectedTag?.id,
+												)
+												if(ret) {
+													setText('')
+													setEditorState(EditorState.createEmpty())
+													logger.info('Setting selected tag to undefined after posting comment')
+													setSelectedTag(undefined)
+													refreshComments(true)
+													refreshProposals(true)
+													setStep(undefined)
+													localStorage.removeItem(
+														`comment-${grant?.id}-${proposal?.id}`,
+													)
+												}
 											}
 										}
 									}
 								>
-									Post
+									{editComments?.commentId ? 'Save' : 'Post'}
 								</Button>
 							</Flex>
 						</Flex>
@@ -353,9 +394,11 @@ function Discussions() {
 				/>
 				<Flex
 					ml={3}
+					width='100%'
 					direction='column'>
 					<Flex
 						align='center'
+						width='100%'
 						mb={1}>
 						<Text fontWeight='500'>
 							{getCommentDisplayName(comment)}
@@ -365,12 +408,12 @@ function Discussions() {
 							isBuilder={proposal?.applicantId?.toLowerCase() === comment?.sender?.toLowerCase()}
 						/>
 						{
-							comment?.timestamp && (
+							comment?.createdAt && (
 								<Text
 									ml={2}
 									variant='body'
 									color='gray.500'>
-									{formatTime(comment?.timestamp)}
+									{formatTime(comment?.createdAt)}
 								</Text>
 							)
 						}
@@ -387,6 +430,44 @@ function Discussions() {
 										ml={2}
 										color='gray.500' />
 								</Tooltip>
+							)
+						}
+						{
+							(comment?.sender?.toLowerCase() === scwAddress?.toLowerCase() &&
+							role === 'builder') &&
+							(
+								<EditIcon
+									ml={2}
+									color='gray.500'
+									cursor='pointer'
+									onClick={
+										() => {
+											setEditComments({
+												isEditing: true,
+												commentId: comment.id,
+											})
+											setText(comment?.message ?? '')
+											setEditorState(EditorState.createWithContent(convertFromRaw(mdToDraftjs(comment?.message ?? ''))))
+											const commentBox = document.getElementById('comment-box')
+											if(commentBox) {
+												commentBox.scrollIntoView({ behavior: 'smooth' })
+											}
+										}
+									}
+								/>
+							)
+						}
+						{
+							comment?.timestamp && comment?.createdAt !== comment?.timestamp && (
+								<Text
+									ml='auto'
+									variant='body'
+									fontSize='12px'
+									color='gray.500'>
+									Edited on
+									{' '}
+									{formatTime(comment.timestamp)}
+								</Text>
 							)
 						}
 					</Flex>
@@ -560,7 +641,17 @@ function Discussions() {
 	const [text, setText] = useState<string>('')
 	const [editorState, setEditorState] = useState(() => EditorState.createEmpty())
 	const [preview, setPreview] = useState(false)
+	const [editComments, setEditComments] = useState({
+		isEditing: false,
+		commentId: '',
+	})
 	const { addComment } = useAddComment({
+		setStep,
+		setTransactionHash,
+	})
+	const {
+		editComment
+	} = useEditComment({
 		setStep,
 		setTransactionHash,
 	})
@@ -576,6 +667,7 @@ function Discussions() {
 		// setText(comment ?? '')
 		setEditorState(EditorState.createWithContent(convertFromRaw(mdToDraftjs(comment ?? ''))))
 	}, [grant, proposal])
+
 
 	useEffect(() => {
 		if(ref.current) {

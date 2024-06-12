@@ -386,7 +386,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		logger.info(commentMap, 'Comment map')
 		for(const key in commentMap) {
 			const comments = commentMap[key]
-			const sortedComments = comments.sort((a, b) => (a.timestamp ?? 0) - (b.timestamp ?? 0))
+			const sortedComments = comments.sort((a, b) => (a.createdAt ?? 0) - (b.createdAt ?? 0))
 			commentMap[key] = sortedComments
 		}
 
