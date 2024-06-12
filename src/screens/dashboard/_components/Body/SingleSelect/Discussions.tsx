@@ -393,6 +393,8 @@ function Discussions() {
 				<Flex
 					ml={3}
 					width='100%'
+					overflowWrap='break-word'
+					overflowX='auto'
 					direction='column'>
 					<Flex
 						align='center'
