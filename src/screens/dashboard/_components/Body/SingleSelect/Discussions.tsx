@@ -433,8 +433,8 @@ function Discussions() {
 							)
 						}
 						{
-							(comment?.sender?.toLowerCase() === scwAddress?.toLowerCase() &&
-							role === 'builder') &&
+							comment.sender?.toLowerCase() === scwAddress?.toLowerCase() &&
+							(role === 'builder') &&
 							(
 								<EditIcon
 									ml={2}
@@ -455,19 +455,6 @@ function Discussions() {
 										}
 									}
 								/>
-							)
-						}
-						{
-							comment?.timestamp && comment?.createdAt !== comment?.timestamp && (
-								<Text
-									ml='auto'
-									variant='body'
-									fontSize='12px'
-									color='gray.500'>
-									Edited on
-									{' '}
-									{formatTime(comment.timestamp)}
-								</Text>
 							)
 						}
 					</Flex>
