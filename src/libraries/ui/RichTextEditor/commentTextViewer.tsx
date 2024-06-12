@@ -36,12 +36,14 @@ function CommentTextViewer({
 	value: EditorState
 	onChange: (editorState: EditorState) => void
 }) {
-
+	const [updatedEditorState, setUpdatedEditorState] = React.useState(editorState)
 	// Let this onChange function be there.
 	// It is required for the linkify plugin to work.
 	const onChange = (state: EditorState) => {
 		setEditorState(state)
+		setUpdatedEditorState(state)
 	}
+
 
 	function getBlockStyle(block: ContentBlock) {
 		switch (block.getType()) {
@@ -51,6 +53,8 @@ function CommentTextViewer({
 			return 'RichEditor-h2'
 		case 'header-three':
 			return 'RichEditor-h3'
+		case 'link':
+			return 'RichEditor-link'
 		default:
 			return ''
 		}
@@ -59,7 +63,7 @@ function CommentTextViewer({
 	return (
 		<Editor
 			blockStyleFn={getBlockStyle}
-			editorState={editorState}
+			editorState={updatedEditorState}
 			onChange={onChange}
 			editorKey='foobar'
 			spellCheck={false}

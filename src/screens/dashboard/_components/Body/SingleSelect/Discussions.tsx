@@ -472,7 +472,7 @@ function Discussions() {
 
 					<CommentTextViewer
 						value={EditorState.createWithContent(convertFromRaw(markdownToDraft(comment?.message ?? '')))}
-						onChange={() => { }}
+						onChange={() => {}}
 					/>
 				</Flex>
 			</Flex>
