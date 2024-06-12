@@ -457,6 +457,19 @@ function Discussions() {
 								/>
 							)
 						}
+						{
+							comment?.updatedAt && (comment?.createdAt !== comment?.updatedAt) && (
+								<Text
+									ml='auto'
+									variant='body'
+									fontSize='12px'
+									color='gray.500'>
+									Edited on
+									{' '}
+									{formatTime(comment?.updatedAt)}
+								</Text>
+							)
+						}
 					</Flex>
 
 					<Markdown

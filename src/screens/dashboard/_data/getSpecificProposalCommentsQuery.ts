@@ -8,6 +8,7 @@ export const getSpecificProposalCommentsQuery = gql`query getComments($grantId: 
       isPrivate
       commentsPublicHash
       createdAt
+      updatedAt
       commentsEncryptedData {
         id:_id
         data

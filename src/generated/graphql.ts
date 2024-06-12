@@ -6004,7 +6004,7 @@ export type GetCommentsQueryVariables = Exact<{
 }>;
 
 
-export type GetCommentsQuery = { __typename?: 'Query', comments: Array<{ __typename?: 'Comment', id: string, isPrivate: boolean, commentsPublicHash?: string | null, createdAt: number, commentsEncryptedData?: Array<{ __typename?: 'PIIData', id: string, data: string }> | null, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, publicKey?: string | null, accessLevel: WorkspaceMemberAccessLevel }> }, application: { __typename?: 'GrantApplication', id: string, applicantPublicKey?: string | null, applicantId: string } }> };
+export type GetCommentsQuery = { __typename?: 'Query', comments: Array<{ __typename?: 'Comment', id: string, isPrivate: boolean, commentsPublicHash?: string | null, createdAt: number, updatedAt?: number, commentsEncryptedData?: Array<{ __typename?: 'PIIData', id: string, data: string }> | null, workspace: { __typename?: 'Workspace', supportedNetworks: Array<SupportedNetwork>, members: Array<{ __typename?: 'WorkspaceMember', actorId: string, fullName?: string | null, profilePictureIpfsHash?: string | null, publicKey?: string | null, accessLevel: WorkspaceMemberAccessLevel }> }, application: { __typename?: 'GrantApplication', id: string, applicantPublicKey?: string | null, applicantId: string } }> };
 
 export type GetGrantDetailsForSeoQueryVariables = Exact<{
   grantId: Scalars['ID'];

@@ -371,6 +371,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 						timestamp: action.updatedAtS,
 						sender: action.updatedBy,
 						createdAt: action.updatedAtS,
+						updatedAt: action.updatedAtS,
 						role: proposal.grant.workspace.members.map((m: { actorId: String }) => m.actorId).includes(action.updatedBy.toLowerCase()) ? 'admin' : 'builder',
 						message: typeof action.feedback === 'string' && action?.feedback?.length !== 0 ? action.feedback : (action?.feedback === null || action?.feedback?.length === 0) ? '' : (action.feedback ?? '{}').message,
 					}
