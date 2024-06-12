@@ -1,5 +1,7 @@
 import React, { KeyboardEvent, useRef } from 'react'
-import { Button, Flex } from '@chakra-ui/react'
+import { MdOutlinePreview } from 'react-icons/md'
+import Markdown from 'react-markdown'
+import { Button, Flex, Image, List, Text } from '@chakra-ui/react'
 import Editor, { composeDecorators } from '@draft-js-plugins/editor'
 import createFocusPlugin from '@draft-js-plugins/focus'
 import createImagePlugin from '@draft-js-plugins/image'
@@ -12,6 +14,7 @@ import {
 	EditorState,
 	getDefaultKeyBinding,
 	RichUtils } from 'draft-js'
+import remarkGfm from 'remark-gfm'
 import {
 	ImageAdd,
 } from 'src/generated/icons'
@@ -47,16 +50,21 @@ function CommentsTextEditor({
 	value: editorState,
 	onChange: setEditorState,
 	readOnly,
+	input,
+	preview,
+	setPreview,
 }: {
 	placeholder: string | undefined
 	value: EditorState
 	onChange: (editorState: EditorState) => void
 	readOnly?: boolean
+	input: string
+	preview: boolean
+	setPreview: (value: boolean) => void
 }) {
 	const ref = useRef(null)
 	const imageUploadRef = useRef(null)
 	const [uploadingImage, setUploadingImage] = React.useState(false)
-
 	const [focused, setFocused] = React.useState(false)
 
 	const onChange = (state: EditorState) => {
@@ -174,67 +182,252 @@ function CommentsTextEditor({
 			w='100%'
 			borderRadius='5px'
 		>
-			<Flex
-				justify='start'
-				m={2}
-				p={2}
-				alignItems='center'
-			>
+			{
+				preview ? (
+					<>
+						<Flex
+							justify='end'
+							m={2}
+							p={2}
+							alignItems='center'
+						>
+							<Button
+								variant='link'
+								color='gray.500'
+								onClick={() => setPreview(false)}
+								leftIcon={<MdOutlinePreview />}
+							>
+								Exit Preview
+							</Button>
+
+						</Flex>
+						<Markdown
+							remarkPlugins={[remarkGfm]}
+							className='DraftEditor-root DraftEditor-editorContainer public-DraftEditor-content markdown-body richTextContainerPreview'
+							components={
+								{
+									a: props => {
+										return (
+											<Text
+												display='inline-block'
+												wordBreak='break-all'
+												color='accent.azure'
+												fontSize='16px'
+												variant='body'
+												cursor='pointer'
+												_hover={
+													{
+														textDecoration: 'underline',
+													}
+												}
+												onClick={
+													() => {
+														window.open(props.href, '_blank')
+													}
+												}
+											>
+												{props.href}
+											</Text>
+
+										)
+									},
+									p: ({ ...props }) => {
+										return (
+											<Text
+												wordBreak='break-word'
+												{...props}
+												fontSize='16px'
+												lineHeight={1.375}
+												className='public-DraftStyleDefault-block public-DraftStyleDefault-ltr'
+											/>
+										)
+									},
+									ul: ({ ...props }) => {
+										return (
+											<List
+												{...props}
+												as='ul'
+												className='public-DraftStyleDefault-ul'
+											/>
+										)
+									}
+									,
+									li: ({ ...props }) => {
+										return (
+											<li
+												{...props}
+												className='public-DraftStyleDefault-unorderedListItem public-DraftStyleDefault-reset public-DraftStyleDefault-depth0 public-DraftStyleDefault-listLTR'
+											/>
+										)
+									},
 
 
-				{
-					!uploadingImage ? (
-						<ImageAdd
-							cursor='pointer'
-							onClick={openInput}
-							color='gray.500'
-							_hover={{ color: 'black.100' }} />
-					) : <Loader />
-				}
-			</Flex>
-			<div
-				style={
-					{ minHeight: '100px',
-						height: 'auto',
-						position: 'relative',
-					}
-				}
-				className={focused ? 'richTextContainer focus' : 'richTextContainer'}
-				onClick={
-					() => {
-						if(focused || !ref || !ref.current) {
-							return
-						}
+									h1: ({ ...props }) => {
+										return (
+											<Text
+												fontSize='20px'
+												fontWeight={600}
+												lineHeight={1.2}
+												mb='14px'
+												mt='14px'
+												{...props}
+												as='h1'
 
-						(ref.current as HTMLElement)?.focus()
-					}
-				}
-			>
-				<Editor
-					blockStyleFn={getBlockStyle}
-					ref={ref}
-					editorState={editorState}
-					handleKeyCommand={handleKeyCommand}
-					keyBindingFn={mapKeyToEditorCommand}
-					onChange={onChange}
-					placeholder={renderPlaceholder() ? placeholder : ''}
-					editorKey='foobar'
-					spellCheck={false}
-					onFocus={() => setFocused(true)}
-					onBlur={() => setFocused(false)}
-					plugins={plugins}
-					readOnly={readOnly}
-				/>
-			</div>
+											/>
+										)
+									},
+									h2: ({ ...props }) => {
+										return (
+											<Text
 
-			<input
-				style={{ display: 'none' }}
-				ref={imageUploadRef}
-				type='file'
-				name='myImage'
-				onChange={handleImageUpload}
-				accept='image/jpg, image/jpeg, image/png'
-			/>
+												{...props}
+												as='h2'
+												fontSize='18px'
+												fontWeight={600}
+												lineHeight={1.2}
+												mb='14px'
+												mt='14px'
+											/>
+										)
+									},
+
+									h3: ({ ...props }) => {
+										return (
+											<Text
+
+												{...props}
+												as='h3'
+												fontSize='16px'
+												fontWeight={600}
+												lineHeight={1.2}
+												mb='14px'
+												mt='14px'
+											/>
+										)
+									},
+
+
+									h4: ({ ...props }) => {
+										return (
+											<Text
+												{...props}
+												variant='h4'
+												mt={2}
+											/>
+										)
+									},
+									h5: ({ ...props }) => {
+										return (
+											<Text
+												{...props}
+												variant='h5'
+												mt={2}
+											/>
+										)
+									},
+									img: ({ ...props }) => {
+										return (
+											<Image
+												{...props}
+												fallback={<></>}
+												fallbackStrategy='onError'
+												w='40%'
+												mt={2}
+												src={props.src}
+												alt='comment-image'
+											/>
+										)
+									},
+								}
+							}
+						>
+							{input?.replace(/\n/g, '\n\n')}
+						</Markdown>
+					</>
+				) :
+
+					(
+						<>
+							{' '}
+							<Flex
+								m={2}
+								p={2}
+								alignItems='center'
+							>
+
+
+								{
+									!uploadingImage ? (
+										<ImageAdd
+											cursor='pointer'
+											onClick={openInput}
+											color='gray.500'
+											_hover={{ color: 'black.100' }} />
+									) : <Loader />
+								}
+								{
+									input?.length > 0 && (
+										<Button
+											variant='link'
+											color='gray.500'
+											ml='auto'
+											onClick={() => setPreview(!preview)}
+											leftIcon={<MdOutlinePreview />}
+										>
+											Preview
+										</Button>
+									)
+								}
+
+
+							</Flex>
+							<div
+								style={
+									{ minHeight: '100px',
+										height: 'auto',
+										position: 'relative',
+									}
+								}
+								className={focused ? 'richTextContainer focus' : 'richTextContainer'}
+								onClick={
+									() => {
+										if(focused || !ref || !ref.current) {
+											return
+										}
+
+										(ref.current as HTMLElement)?.focus()
+									}
+								}
+							>
+								<Editor
+									blockStyleFn={getBlockStyle}
+									ref={ref}
+									editorState={editorState}
+									handleKeyCommand={handleKeyCommand}
+									keyBindingFn={mapKeyToEditorCommand}
+									onChange={onChange}
+									placeholder={renderPlaceholder() ? placeholder : ''}
+									editorKey='foobar'
+									spellCheck={false}
+									onFocus={() => setFocused(true)}
+									onBlur={() => setFocused(false)}
+									plugins={plugins}
+									readOnly={readOnly}
+								/>
+							</div>
+
+							<input
+								style={{ display: 'none' }}
+								ref={imageUploadRef}
+								type='file'
+								name='myImage'
+								onChange={handleImageUpload}
+								accept='image/jpg, image/jpeg, image/png'
+							/>
+						</>
+					)
+			}
+
 		</Flex>
 	)
 }

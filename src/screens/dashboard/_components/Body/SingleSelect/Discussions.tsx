@@ -187,7 +187,11 @@ function Discussions() {
 									<CommentsTextEditor
 										value={editorState}
 										onChange={setEditorState}
-										placeholder='Type your comment here' />
+										input={text ?? ''}
+										placeholder='Type your comment here'
+										preview={preview}
+										setPreview={setPreview}
+									/>
 								</Flex>
 
 								{
@@ -246,6 +250,7 @@ function Discussions() {
 												return
 											}
 
+											setPreview(false)
 											const isFirstCommentByAdminOrReviewer = comments?.findIndex((comment) => comment.role === 'admin' || comment.role === 'reviewer') === -1
 											if(isFirstCommentByAdminOrReviewer) {
 												const time = Math.floor((Date.now() - proposal?.createdAtS! * 1000) / (1000 * 60))
@@ -309,9 +314,6 @@ function Discussions() {
 
 
 	const renderComment = (comment: CommentType, index: number) => {
-		// setEditorState(EditorState.createWithContent(convertFromRaw(mdToDraftjs(comment ?? ''))))
-		// const [editorState, setEditorState] = useState<EditorState> EditorState.createEmpty(),)
-
 		logger.info('Render comment (RENDER COMMENT)', comment)
 		const member = comment.workspace.members.find(
 			(member) => member.actorId.toLowerCase() === comment.sender?.toLowerCase(),
@@ -425,7 +427,7 @@ function Discussions() {
 											wordBreak='break-word'
 											{...props}
 											fontSize='16px'
-											lineHeight='base'
+											lineHeight={1.375}
 											className='public-DraftStyleDefault-block public-DraftStyleDefault-ltr'
 										/>
 									)
@@ -435,6 +437,7 @@ function Discussions() {
 										<List
 											{...props}
 											as='ul'
+											className='public-DraftStyleDefault-ul'
 										/>
 									)
 								}
@@ -455,8 +458,8 @@ function Discussions() {
 											fontSize='20px'
 											fontWeight={600}
 											lineHeight={1.2}
-											mb={2}
-											mt={2}
+											mb='14px'
+											mt='14px'
 											{...props}
 											as='h1'
 
@@ -472,8 +475,8 @@ function Discussions() {
 											fontSize='18px'
 											fontWeight={600}
 											lineHeight={1.2}
-											mb={2}
-											mt={2}
+											mb='14px'
+											mt='14px'
 										/>
 									)
 								},
@@ -487,8 +490,8 @@ function Discussions() {
 											fontSize='16px'
 											fontWeight={600}
 											lineHeight={1.2}
-											mb={2}
-											mt={2}
+											mb='14px'
+											mt='14px'
 										/>
 									)
 								},
@@ -518,7 +521,7 @@ function Discussions() {
 											{...props}
 											fallback={<></>}
 											fallbackStrategy='onError'
-											w='50%'
+											w='40%'
 											mt={2}
 											src={props.src}
 											alt='comment-image'
@@ -556,7 +559,7 @@ function Discussions() {
 	const [selectedTag, setSelectedTag] = useState<TagType>()
 	const [text, setText] = useState<string>('')
 	const [editorState, setEditorState] = useState(() => EditorState.createEmpty())
-
+	const [preview, setPreview] = useState(false)
 	const { addComment } = useAddComment({
 		setStep,
 		setTransactionHash,
