@@ -1,5 +1,4 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
-import Markdown from 'react-markdown'
 import { EditIcon, LockIcon } from '@chakra-ui/icons'
 import {
 	Box,
@@ -9,18 +8,17 @@ import {
 	Flex,
 	IconButton,
 	Image,
-	List,
 	Text,
 	Tooltip,
 	useToken,
 } from '@chakra-ui/react'
 import autosize from 'autosize'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
-import { draftjsToMd, mdToDraftjs } from 'draftjs-md-converter'
-import remarkGfm from 'remark-gfm'
+import { draftToMarkdown, markdownToDraft } from 'markdown-draft-js'
 import { Close } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import CommentsTextEditor from 'src/libraries/ui/RichTextEditor/commentTextEditor'
+import CommentTextViewer from 'src/libraries/ui/RichTextEditor/commentTextViewer'
 import { getAvatar } from 'src/libraries/utils'
 import { AmplitudeContext } from 'src/libraries/utils/amplitude'
 import { formatAddress, getFieldString } from 'src/libraries/utils/formatting'
@@ -163,7 +161,7 @@ function Discussions() {
 														} else {
 															logger.info('Selecting tag')
 															setSelectedTag(tag)
-															setEditorState(EditorState.createWithContent(convertFromRaw(mdToDraftjs(tag.commentString))))
+															setEditorState(EditorState.createWithContent(convertFromRaw(markdownToDraft(tag.commentString))))
 														}
 													}
 												}
@@ -447,7 +445,7 @@ function Discussions() {
 												commentId: comment.id,
 											})
 											setText(comment?.message ?? '')
-											setEditorState(EditorState.createWithContent(convertFromRaw(mdToDraftjs(comment?.message ?? ''))))
+											setEditorState(EditorState.createWithContent(convertFromRaw(markdownToDraft(comment?.message ?? ''))))
 											const commentBox = document.getElementById('comment-box')
 											if(commentBox) {
 												commentBox.scrollIntoView({ behavior: 'smooth' })
@@ -472,148 +470,10 @@ function Discussions() {
 						}
 					</Flex>
 
-					<Markdown
-						remarkPlugins={[remarkGfm]}
-						className='DraftEditor-root DraftEditor-editorContainer public-DraftEditor-content markdown-body'
-						components={
-							{
-								a: props => {
-									return (
-										<Text
-											display='inline-block'
-											wordBreak='break-all'
-											color='accent.azure'
-											fontSize='16px'
-											variant='body'
-											cursor='pointer'
-											_hover={
-												{
-													textDecoration: 'underline',
-												}
-											}
-											onClick={
-												() => {
-													window.open(props.href, '_blank')
-												}
-											}
-										>
-											{props.href}
-										</Text>
-
-									)
-								},
-								p: ({ ...props }) => {
-									return (
-										<Text
-											wordBreak='break-word'
-											{...props}
-											fontSize='16px'
-											lineHeight={1.375}
-											className='public-DraftStyleDefault-block public-DraftStyleDefault-ltr'
-										/>
-									)
-								},
-								ul: ({ ...props }) => {
-									return (
-										<List
-											{...props}
-											as='ul'
-											className='public-DraftStyleDefault-ul'
-										/>
-									)
-								}
-								,
-								li: ({ ...props }) => {
-									return (
-										<li
-											{...props}
-											className='public-DraftStyleDefault-unorderedListItem public-DraftStyleDefault-reset public-DraftStyleDefault-depth0 public-DraftStyleDefault-listLTR'
-										/>
-									)
-								},
-
-
-								h1: ({ ...props }) => {
-									return (
-										<Text
-											fontSize='20px'
-											fontWeight={600}
-											lineHeight={1.2}
-											mb='14px'
-											mt='14px'
-											{...props}
-											as='h1'
-
-										/>
-									)
-								},
-								h2: ({ ...props }) => {
-									return (
-										<Text
-
-											{...props}
-											as='h2'
-											fontSize='18px'
-											fontWeight={600}
-											lineHeight={1.2}
-											mb='14px'
-											mt='14px'
-										/>
-									)
-								},
-
-								h3: ({ ...props }) => {
-									return (
-										<Text
-
-											{...props}
-											as='h3'
-											fontSize='16px'
-											fontWeight={600}
-											lineHeight={1.2}
-											mb='14px'
-											mt='14px'
-										/>
-									)
-								},
-
-
-								h4: ({ ...props }) => {
-									return (
-										<Text
-											{...props}
-											variant='h4'
-											mt={2}
-										/>
-									)
-								},
-								h5: ({ ...props }) => {
-									return (
-										<Text
-											{...props}
-											variant='h5'
-											mt={2}
-										/>
-									)
-								},
-								img: ({ ...props }) => {
-									return (
-										<Image
-											{...props}
-											fallback={<></>}
-											fallbackStrategy='onError'
-											w='40%'
-											mt={2}
-											src={props.src}
-											alt='comment-image'
-										/>
-									)
-								},
-							}
-						}
-					>
-						{comment?.message ? comment?.message.replace(/\n/g, '\n\n') : ''}
-					</Markdown>
+					<CommentTextViewer
+						value={EditorState.createWithContent(convertFromRaw(markdownToDraft(comment?.message ?? '')))}
+						onChange={() => { }}
+					/>
 				</Flex>
 			</Flex>
 		)
@@ -665,7 +525,7 @@ function Discussions() {
 			`comment-${grant?.id}-${proposal?.id}`,
 		)
 		// setText(comment ?? '')
-		setEditorState(EditorState.createWithContent(convertFromRaw(mdToDraftjs(comment ?? ''))))
+		setEditorState(EditorState.createWithContent(convertFromRaw(markdownToDraft(comment ?? ''))))
 	}, [grant, proposal])
 
 
@@ -690,7 +550,7 @@ function Discussions() {
 	})
 
 	useEffect(() => {
-		const content = draftjsToMd(convertToRaw(editorState.getCurrentContent()))
+		const content = draftToMarkdown(convertToRaw(editorState.getCurrentContent()))
 		setText(content)
 	}, [editorState])
 

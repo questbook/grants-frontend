@@ -1,8 +1,7 @@
 import React, { KeyboardEvent, useRef } from 'react'
 import { IoMdClose } from 'react-icons/io'
 import { MdOutlinePreview } from 'react-icons/md'
-import Markdown from 'react-markdown'
-import { Button, Flex, Image, List, Text } from '@chakra-ui/react'
+import { Button, Flex } from '@chakra-ui/react'
 import Editor, { composeDecorators } from '@draft-js-plugins/editor'
 import createFocusPlugin from '@draft-js-plugins/focus'
 import createImagePlugin from '@draft-js-plugins/image'
@@ -15,12 +14,12 @@ import {
 	EditorState,
 	getDefaultKeyBinding,
 	RichUtils } from 'draft-js'
-import remarkGfm from 'remark-gfm'
 import {
 	ImageAdd,
 } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
+import CommentTextViewer from 'src/libraries/ui/RichTextEditor/commentTextViewer'
 import Loader from 'src/libraries/ui/RichTextEditor/loader'
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/libraries/utils/ipfs'
 import 'draft-js/dist/Draft.css'
@@ -221,148 +220,29 @@ function CommentsTextEditor({
 							}
 
 						</Flex>
-						<Markdown
-							remarkPlugins={[remarkGfm]}
-							className='DraftEditor-root DraftEditor-editorContainer public-DraftEditor-content markdown-body richTextContainerPreview'
-							components={
-								{
-									a: props => {
-										return (
-											<Text
-												display='inline-block'
-												wordBreak='break-all'
-												color='accent.azure'
-												fontSize='16px'
-												variant='body'
-												cursor='pointer'
-												_hover={
-													{
-														textDecoration: 'underline',
-													}
-												}
-												onClick={
-													() => {
-														window.open(props.href, '_blank')
-													}
-												}
-											>
-												{props.href}
-											</Text>
-
-										)
-									},
-									p: ({ ...props }) => {
-										return (
-											<Text
-												wordBreak='break-word'
-												{...props}
-												fontSize='16px'
-												lineHeight={1.375}
-												className='public-DraftStyleDefault-block public-DraftStyleDefault-ltr'
-											/>
-										)
-									},
-									ul: ({ ...props }) => {
-										return (
-											<List
-												{...props}
-												as='ul'
-												className='public-DraftStyleDefault-ul'
-											/>
-										)
+						<div
+							style={
+								{ minHeight: '100px',
+									height: 'auto',
+									position: 'relative',
+								}
+							}
+							className='richTextContainer'
+							onClick={
+								() => {
+									if(focused || !ref || !ref.current) {
+										return
 									}
-									,
-									li: ({ ...props }) => {
-										return (
-											<li
-												{...props}
-												className='public-DraftStyleDefault-unorderedListItem public-DraftStyleDefault-reset public-DraftStyleDefault-depth0 public-DraftStyleDefault-listLTR'
-											/>
-										)
-									},
 
-
-									h1: ({ ...props }) => {
-										return (
-											<Text
-												fontSize='20px'
-												fontWeight={600}
-												lineHeight={1.2}
-												mb='14px'
-												mt='14px'
-												{...props}
-												as='h1'
-
-											/>
-										)
-									},
-									h2: ({ ...props }) => {
-										return (
-											<Text
-
-												{...props}
-												as='h2'
-												fontSize='18px'
-												fontWeight={600}
-												lineHeight={1.2}
-												mb='14px'
-												mt='14px'
-											/>
-										)
-									},
-
-									h3: ({ ...props }) => {
-										return (
-											<Text
-
-												{...props}
-												as='h3'
-												fontSize='16px'
-												fontWeight={600}
-												lineHeight={1.2}
-												mb='14px'
-												mt='14px'
-											/>
-										)
-									},
-
-
-									h4: ({ ...props }) => {
-										return (
-											<Text
-												{...props}
-												variant='h4'
-												mt={2}
-											/>
-										)
-									},
-									h5: ({ ...props }) => {
-										return (
-											<Text
-												{...props}
-												variant='h5'
-												mt={2}
-											/>
-										)
-									},
-									img: ({ ...props }) => {
-										return (
-											<Image
-												{...props}
-												fallback={<></>}
-												fallbackStrategy='onError'
-												w='40%'
-												mt={2}
-												src={props.src}
-												alt='comment-image'
-											/>
-										)
-									},
+									(ref.current as HTMLElement)?.focus()
 								}
 							}
 						>
-							{input?.replace(/\n/g, '\n\n')}
-						</Markdown>
+							<CommentTextViewer
+								value={editorState}
+								onChange={setEditorState}
+							/>
+						</div>
 					</>
 				) :
 
