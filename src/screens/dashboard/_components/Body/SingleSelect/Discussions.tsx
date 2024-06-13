@@ -436,7 +436,7 @@ function Discussions() {
 						}
 						{
 							comment.sender?.toLowerCase() === scwAddress?.toLowerCase() &&
-							(role === 'builder') &&
+							(role === 'builder') && comment?.tag === 'undefined' &&
 							(
 								<EditIcon
 									ml={2}
@@ -459,20 +459,20 @@ function Discussions() {
 								/>
 							)
 						}
-						{
-							comment?.updatedAt && (comment?.createdAt !== comment?.updatedAt) && (
-								<Text
-									ml='auto'
-									variant='body'
-									fontSize='12px'
-									color='gray.500'>
-									Edited on
-									{' '}
-									{formatTime(comment?.updatedAt)}
-								</Text>
-							)
-						}
 					</Flex>
+					{
+						comment?.updatedAt && (comment?.createdAt !== comment?.updatedAt) && (
+							<Text
+								ml='auto'
+								variant='body'
+								fontSize='12px'
+								color='gray.500'>
+								Edited on
+								{' '}
+								{formatTime(comment?.updatedAt)}
+							</Text>
+						)
+					}
 
 					<div className='richTextContainerPreview'>
 						<Markdown
