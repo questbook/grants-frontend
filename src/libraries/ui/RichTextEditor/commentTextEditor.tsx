@@ -2,7 +2,7 @@ import React, { KeyboardEvent, useRef } from 'react'
 import { IoMdClose } from 'react-icons/io'
 import { MdOutlinePreview } from 'react-icons/md'
 import Markdown from 'react-markdown'
-import { Button, Flex, Image, Text } from '@chakra-ui/react'
+import { Button, Flex, Image, List, Text } from '@chakra-ui/react'
 import Editor, { composeDecorators } from '@draft-js-plugins/editor'
 import createFocusPlugin from '@draft-js-plugins/focus'
 import createImagePlugin from '@draft-js-plugins/image'
@@ -261,6 +261,7 @@ function CommentsTextEditor({
 
 											)
 										},
+
 										p: ({ ...props }) => {
 											return (
 												<Text
@@ -270,6 +271,89 @@ function CommentsTextEditor({
 													mt={2}
 													whiteSpace='pre-line'
 													wordBreak='break-word'
+												/>
+											)
+										},
+										ul: ({ ...props }) => {
+											return (
+												<List
+													{...props}
+													as='ul'
+													className='public-DraftStyleDefault-ul'
+												/>
+											)
+										}
+										,
+										li: ({ ...props }) => {
+											return (
+												<li
+													{...props}
+													className='public-DraftStyleDefault-unorderedListItem public-DraftStyleDefault-reset public-DraftStyleDefault-depth0 public-DraftStyleDefault-listLTR'
+												/>
+											)
+										},
+
+
+										h1: ({ ...props }) => {
+											return (
+												<Text
+													fontSize='20px'
+													fontWeight={600}
+													lineHeight={1.2}
+													mb='14px'
+													mt='14px'
+													{...props}
+													as='h1'
+
+												/>
+											)
+										},
+										h2: ({ ...props }) => {
+											return (
+												<Text
+
+													{...props}
+													as='h2'
+													fontSize='18px'
+													fontWeight={600}
+													lineHeight={1.2}
+													mb='14px'
+													mt='14px'
+												/>
+											)
+										},
+
+										h3: ({ ...props }) => {
+											return (
+												<Text
+
+													{...props}
+													as='h3'
+													fontSize='16px'
+													fontWeight={600}
+													lineHeight={1.2}
+													mb='14px'
+													mt='14px'
+												/>
+											)
+										},
+
+
+										h4: ({ ...props }) => {
+											return (
+												<Text
+													{...props}
+													variant='h4'
+													mt={2}
+												/>
+											)
+										},
+										h5: ({ ...props }) => {
+											return (
+												<Text
+													{...props}
+													variant='h5'
+													mt={2}
 												/>
 											)
 										},
@@ -289,7 +373,7 @@ function CommentsTextEditor({
 									}
 								}
 							>
-								{input?.replace(/\\n/g, '\n\n')}
+								{input?.replace(/\n/g, '\n\n')}
 							</Markdown>
 						</div>
 					</>
@@ -369,6 +453,7 @@ function CommentsTextEditor({
 							>
 								<Editor
 									blockStyleFn={getBlockStyle}
+									stripPastedStyles={true}
 									ref={ref}
 									editorState={editorState}
 									handleKeyCommand={handleKeyCommand}
