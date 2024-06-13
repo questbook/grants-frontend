@@ -476,7 +476,6 @@ function Discussions() {
 
 					<Markdown
 						remarkPlugins={[remarkGfm]}
-						className='richTextContainerPreview'
 						components={
 							{
 								a: props => {

@@ -146,7 +146,8 @@ function Proposal() {
 									<Text fontWeight='500'>
 										{getFieldString(decryptedProposal, 'applicantName')}
 									</Text>
-									<Flex align='center'>
+									<Flex
+										align='center'>
 										<Button
 											variant='link'
 											rightIcon={
@@ -168,6 +169,16 @@ function Proposal() {
 											}
 										>
 											<Text
+												onClick={
+													() => {
+														copy(getFieldString(decryptedProposal, 'applicantEmail') ?? '')
+														toast({
+															title: 'Copied!',
+															status: 'success',
+															duration: 3000,
+														})
+													}
+												}
 												fontWeight='400'
 												variant='v2_body'
 												color='gray.500'>
@@ -207,7 +218,7 @@ function Proposal() {
 														fontWeight='400'
 														variant='v2_body'
 														color='gray.500'>
-														{getFieldString(proposal, 'applicantAddress') ?? ''}
+														{getFieldString(proposal, 'applicantAddress')}
 													</Text>
 												</Button>
 											)
