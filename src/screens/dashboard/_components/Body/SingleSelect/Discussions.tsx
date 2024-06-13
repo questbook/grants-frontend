@@ -461,7 +461,8 @@ function Discussions() {
 						}
 					</Flex>
 					{
-						comment?.updatedAt && (comment?.createdAt !== comment?.updatedAt) && (
+						comment?.timestamp &&
+						(comment?.timestamp - comment?.createdAt) > 10 && (
 							<Text
 								ml='auto'
 								variant='body'
@@ -469,7 +470,7 @@ function Discussions() {
 								color='gray.500'>
 								Edited on
 								{' '}
-								{formatTime(comment?.updatedAt)}
+								{formatTime(comment?.createdAt)}
 							</Text>
 						)
 					}

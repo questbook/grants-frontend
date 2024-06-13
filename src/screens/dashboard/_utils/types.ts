@@ -30,6 +30,7 @@ export type DashboardContextType = {
   setSortBy: (sortBy: 'updatedAtS' | 'createdAtS') => void
   builderInfo: string | undefined
   fundsAllocated: { allocated: number, disbursed: number }
+  isProposalListLoading: boolean
 };
 
 // export interface TokenInfo {

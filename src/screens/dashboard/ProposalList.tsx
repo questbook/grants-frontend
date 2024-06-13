@@ -260,6 +260,18 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 					})
 				}
 				{proposalCount === 0 && <Empty />}
+				{
+					isProposalListLoading && (
+						<Button
+							my={4}
+							isLoading={true}
+							loadingText='Loading Proposals, please wait.'
+							variant='link'
+							cursor='default'
+						/>
+					)
+				}
+
 			</Flex>
 		</Flex>
 	)
@@ -268,7 +280,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 	const { proposalId } = router.query
 
 	const { role, grant } = useContext(GrantsProgramContext)!
-	const { proposals, selectedProposals, setSelectedProposals, filterState, setFilterState, sortBy, setSortBy } = useContext(DashboardContext)!
+	const { proposals, selectedProposals, setSelectedProposals, filterState, setFilterState, sortBy, setSortBy, isProposalListLoading } = useContext(DashboardContext)!
 
 	const [isFilterClicked, setIsFilterClicked] = useState<boolean>(false)
 

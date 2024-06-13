@@ -89,6 +89,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 	const [showSubmitReviewPanel, setShowSubmitReviewPanel] = useState<boolean>(false)
 	const [areCommentsLoading, setAreCommentsLoading] = useState<boolean>(false)
 	const [filterState, setFilterState] = useState<ApplicationState>()
+	const [isProposalListLoading, setIsProposalListLoading] = useState<boolean>(true)
 	const [sortBy, setSortBy] = useState<'updatedAtS' | 'createdAtS'>('updatedAtS')
 	const [builderInfo, setBuilderInfo] = useState<string>()
 	const [fundsAllocated, setFundsAllocated] = useState<{
@@ -423,11 +424,18 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 			//make sure the proposal is not already in the proposals array
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			proposalData.push(...results?.grantApplications?.filter((p: { id: string}) => !proposals.map((p: any) => p?.id).includes(p.id)) ?? [])
-			setProposals([...proposals as [], ...proposalData])
+			// if it more than 400 then wait till all the proposals are fetched
+			if(proposalData.length > 400 && proposalData.length < results?.grantApplications?.length) {
+				shouldContinue = true
+				break
+			} else {
+				setProposals([...proposals as [], ...proposalData])
+			}
+
 			skip += first
 		} while(shouldContinue)
 
-
+		setIsProposalListLoading(false)
 		// append the proposals to the existing proposals
 		// await getFetchCommentsInBackground()
 
@@ -825,6 +833,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 					setSortBy,
 					fundsAllocated,
 					builderInfo,
+					isProposalListLoading,
 				}
 			}>
 			{children}
