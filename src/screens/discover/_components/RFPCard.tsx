@@ -320,7 +320,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 	logger.info({ isQbAdmin }, 'isQbAdmin')
 
 	const usdAmount = useMemo(() => {
-		return safeBalances[`${grant.workspace.safe?.chainId}-${grant.workspace.safe?.address}`]
+		return safeBalances[`${grant.workspace.safe?.chainId}-${grant.workspace.safe?.address}`] ?? 0
 	}, [grant, safeBalances])
 
 	// const isOpen = useMemo(() => {
