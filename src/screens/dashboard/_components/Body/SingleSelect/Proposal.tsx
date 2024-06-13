@@ -147,7 +147,10 @@ function Proposal() {
 										{getFieldString(decryptedProposal, 'applicantName')}
 									</Text>
 									<Flex
-										align='center'>
+										alignContent='flex-start'
+										flexDirection='column'
+										overflowWrap='break-word'
+										align='flex-start'>
 										<Button
 											variant='link'
 											rightIcon={
@@ -215,6 +218,16 @@ function Proposal() {
 													}
 												>
 													<Text
+														onClick={
+															() => {
+																copy(getFieldString(proposal, 'applicantAddress') ?? '')
+																toast({
+																	title: 'Copied!',
+																	status: 'success',
+																	duration: 3000,
+																})
+															}
+														}
 														fontWeight='400'
 														variant='v2_body'
 														color='gray.500'>
