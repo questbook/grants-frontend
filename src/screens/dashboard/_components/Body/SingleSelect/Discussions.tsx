@@ -473,72 +473,73 @@ function Discussions() {
 						}
 					</Flex>
 
+					<div className='richTextContainerPreview'>
+						<Markdown
+							remarkPlugins={[remarkGfm]}
+							className='DraftEditor-root DraftEditor-editorContainer public-DraftEditor-content markdown-body '
+							components={
+								{
+									a: props => {
+										return (
+											<Text
+												display='inline-block'
+												wordBreak='break-all'
+												color='accent.azure'
+												fontSize='14px'
+												variant='body'
+												cursor='pointer'
+												_hover={
+													{
+														textDecoration: 'underline',
+													}
+												}
+												onClick={
+													() => {
+														window.open(props.href, '_blank')
+													}
+												}
+											>
+												{props.href}
+											</Text>
 
-					<Markdown
-						remarkPlugins={[remarkGfm]}
-						components={
-							{
-								a: props => {
-									return (
-										<Text
-											display='inline-block'
-											wordBreak='break-all'
-											color='accent.azure'
-											fontSize='14px'
-											variant='body'
-											cursor='pointer'
-											_hover={
-												{
-													textDecoration: 'underline',
+										)
+									},
+									p: ({ ...props }) => {
+										return (
+											<Text
+												{...props}
+												variant='body'
+												fontSize='14px'
+												mt={2}
+												style={
+													{
+														fontStyle: hasAccess ? 'normal' : 'italic',
+													}
 												}
-											}
-											onClick={
-												() => {
-													window.open(props.href, '_blank')
-												}
-											}
-										>
-											{props.href}
-										</Text>
-
-									)
-								},
-								p: ({ ...props }) => {
-									return (
-										<Text
-											{...props}
-											variant='body'
-											fontSize='14px'
-											mt={2}
-											style={
-												{
-													fontStyle: hasAccess ? 'normal' : 'italic',
-												}
-											}
-											whiteSpace='pre-line'
-											wordBreak='break-word'
-										/>
-									)
-								},
-								img: ({ ...props }) => {
-									return (
-										<Image
-											{...props}
-											fallback={<></>}
-											fallbackStrategy='onError'
-											w='50%'
-											mt={2}
-											src={props.src}
-											alt='comment-image'
-										/>
-									)
+												whiteSpace='pre-line'
+												wordBreak='break-word'
+											/>
+										)
+									},
+									img: ({ ...props }) => {
+										return (
+											<Image
+												{...props}
+												fallback={<></>}
+												fallbackStrategy='onError'
+												w='50%'
+												mt={2}
+												src={props.src}
+												alt='comment-image'
+											/>
+										)
+									}
 								}
 							}
-						}
-					>
-						{comment.message?.replace(/\\n/g, '\n\n')}
-					</Markdown>
-
+						>
+							{comment.message?.replace(/\\n/g, '\n\n')}
+						</Markdown>
+					</div>
 				</Flex>
 			</Flex>
 		)

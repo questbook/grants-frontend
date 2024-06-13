@@ -226,21 +226,14 @@ function CommentsTextEditor({
 								{ minHeight: '100px',
 									height: 'auto',
 									position: 'relative',
+									paddingInlineStart: '18px',
 								}
 							}
-							className='richTextContainer'
-							onClick={
-								() => {
-									if(focused || !ref || !ref.current) {
-										return
-									}
-
-									(ref.current as HTMLElement)?.focus()
-								}
-							}
+							className='richTextContainerPreview'
 						>
 							<Markdown
 								remarkPlugins={[remarkGfm]}
+								className='DraftEditor-root DraftEditor-editorContainer public-DraftEditor-content markdown-body '
 								components={
 									{
 										a: props => {
