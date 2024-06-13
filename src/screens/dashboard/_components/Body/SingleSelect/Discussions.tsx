@@ -645,15 +645,19 @@ function Discussions() {
 				{ comment: comment?.sender, proposalId: proposal?.applicantId },
 				'COMMENT 1',
 			)
-			const { data } = useEnsName({ address: comment.sender as `0x${string}` })
-			if(data) {
-				return data
-			} else if(
-				comment.role === 'builder' &&
+			try {
+				const { data } = useEnsName({ address: comment?.sender as `0x${string}` })
+				if(data) {
+					return data
+				} else if(
+					comment.role === 'builder' &&
 				comment.sender?.toLowerCase() === proposal?.applicantId?.toLowerCase()
-			) {
-				return getFieldString(proposal, 'applicantName')
-			} else {
+				) {
+					return getFieldString(proposal, 'applicantName')
+				} else {
+					return formatAddress(comment.sender ?? '')
+				}
+			} catch(e) {
 				return formatAddress(comment.sender ?? '')
 			}
 		}

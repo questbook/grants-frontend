@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { IoMdLogOut } from 'react-icons/io'
 import { ChevronDownIcon } from '@chakra-ui/icons'
 import {
 	Box,
@@ -212,7 +213,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 	const popoverRef = useRef<HTMLButtonElement>(null)
 	const { t } = useTranslation()
 	const { grant, role } = useContext(GrantsProgramContext)!
-	const { webwallet, scwAddress, loadingScw } = useContext(WebwalletContext)!
+	const { webwallet, scwAddress, loadingScw, setScwAddress, setWebwallet } = useContext(WebwalletContext)!
 	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const router = useRouter()
 	useEffect(() => {
@@ -248,6 +249,21 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 			title: t('account_details.menu.use_another_wallet'),
 			description: 'Use your another private key to sign in',
 			onClick: () => openModal?.('import')
+		},
+		{
+			icon: <IoMdLogOut
+				color='#EF6436' />,
+			title: t('Sign Out'), // 'Sign out
+			description: 'Sign out from your wallet',
+			onClick: () => {
+				setWebwallet(undefined)
+				setScwAddress(undefined)
+				localStorage.removeItem('isEOA')
+				localStorage.removeItem('scwAddress')
+				localStorage.removeItem('webwalletPrivateKey')
+				localStorage.removeItem('authToken')
+				window.location.reload()
+			}
 		},
 		// {
 		// 	icon: <Settings boxSize='18px' />,

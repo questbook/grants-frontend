@@ -1,16 +1,19 @@
 
-import { useEffect, useMemo, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { Flex, Text, VStack } from '@chakra-ui/react'
 import { useSafeContext } from 'src/contexts/safeContext'
+import { Wallet } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import { availableWallets, solanaWallets, tonWallets } from 'src/libraries/utils/constants'
 import getErrorMessage from 'src/libraries/utils/error'
+import { WebwalletContext } from 'src/pages/_app'
 import ConnectWalletButton from 'src/screens/dashboard/_components/FundBuilder/ConnectWalletButton'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import usetonWallet from 'src/screens/dashboard/_hooks/useTonWallet'
 import { SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
 import { Connector, useAccount, useConnect, useSwitchChain } from 'wagmi'
+
 
 interface Props {
 	signerVerifiedState: SignerVerifiedState
@@ -39,65 +42,23 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 				alignItems='stretch'
 			>
 				{
-					isEvmChain ?
-						availableWallets.map(wallet => (
-							<ConnectWalletButton
-								id={wallet.id}
-								maxW='100%'
-								key={wallet.id}
-								icon={wallet.icon}
-								name={wallet.name}
-								verifying={verifying}
-								isDisabled={verifying !== undefined && verifying !== wallet.id}
-								onClick={
-									async() => {
-										setVerifying(wallet.id)
-										logger.info('Connect wallet initiated')
-										try {
-											logger.info('Inside try block')
-											const connector = connectors.find((x) => x.id === wallet.id || x.type?.toLowerCase() === wallet?.id?.toLowerCase())
-											logger.info({ connector }, 'connector')
-											setSelectedConnector(connector)
-											// setConnectClicked(true)
-											if(connector) {
-												logger.info('Connector found', connector)
-												// swallow error here so we don't fail the remaining logic
-												const isConnected = await connector.isAuthorized().catch(() => false)
-												logger.info({ isConnected }, 'isConnected')
-												if(!isConnected) {
-													connect({ connector })
-													toast({
-														title: 'Connecting to wallet',
-														status: 'info',
-														duration: 3000
-													})
-												} else {
-													connect({ connector })
-												}
-											} else {
-												toast({
-													title: 'Connector not found!',
-													status: 'error',
-													duration: 3000
-												})
-												setVerifying(undefined)
-											}
-											// eslint-disable-next-line @typescript-eslint/no-explicit-any
-										} catch(e: any) {
-											setVerifying(undefined)
-											const message = getErrorMessage(e)
-											toast({
-												title: message,
-												status: 'error',
-												duration: 5000
-											})
-										}
-
-										logger.info(10)
-									}
-								} />
-						)) : (
-							isTonChain ? (tonWallets.map(wallet => (
+					isEOA && isConnected ? (
+						<ConnectWalletButton
+							id='web3'
+							maxW='100%'
+							icon={<Wallet />}
+							name='Wallet'
+							verifying={verifying}
+							isDisabled={verifying !== undefined && verifying !== 'web3'}
+							onClick={
+								async() => {
+									setVerifying('web3')
+									await initiateOwnerVerification()
+								}
+							} />
+					)
+						: isEvmChain ?
+							availableWallets.map(wallet => (
 								<ConnectWalletButton
 									id={wallet.id}
 									maxW='100%'
@@ -109,13 +70,52 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 									onClick={
 										async() => {
 											setVerifying(wallet.id)
-											await connectTonWallet()
+											logger.info('Connect wallet initiated')
+											try {
+												logger.info('Inside try block')
+												const connector = connectors.find((x) => x.id === wallet.id || x.type?.toLowerCase() === wallet?.id?.toLowerCase())
+												logger.info({ connector }, 'connector')
+												setSelectedConnector(connector)
+												// setConnectClicked(true)
+												if(connector) {
+													logger.info('Connector found', connector)
+													// swallow error here so we don't fail the remaining logic
+													const isConnected = await connector.isAuthorized().catch(() => false)
+													logger.info({ isConnected }, 'isConnected')
+													if(!isConnected) {
+														connect({ connector })
+														toast({
+															title: 'Connecting to wallet',
+															status: 'info',
+															duration: 3000
+														})
+													} else {
+														connect({ connector })
+													}
+												} else {
+													toast({
+														title: 'Connector not found!',
+														status: 'error',
+														duration: 3000
+													})
+													setVerifying(undefined)
+												}
+											// eslint-disable-next-line @typescript-eslint/no-explicit-any
+											} catch(e: any) {
+												setVerifying(undefined)
+												const message = getErrorMessage(e)
+												toast({
+													title: message,
+													status: 'error',
+													duration: 5000
+												})
+											}
+
+											logger.info(10)
 										}
 									} />
-							)
-							))
-								:
-								solanaWallets.map(wallet => (
+							)) : (
+								isTonChain ? (tonWallets.map(wallet => (
 									<ConnectWalletButton
 										id={wallet.id}
 										maxW='100%'
@@ -125,15 +125,33 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 										verifying={verifying}
 										isDisabled={verifying !== undefined && verifying !== wallet.id}
 										onClick={
-											() => {
+											async() => {
 												setVerifying(wallet.id)
-												phantomWallet?.connect()
+												await connectTonWallet()
 											}
 										} />
 								)
-								)
+								))
+									:
+									solanaWallets.map(wallet => (
+										<ConnectWalletButton
+											id={wallet.id}
+											maxW='100%'
+											key={wallet.id}
+											icon={wallet.icon}
+											name={wallet.name}
+											verifying={verifying}
+											isDisabled={verifying !== undefined && verifying !== wallet.id}
+											onClick={
+												() => {
+													setVerifying(wallet.id)
+													phantomWallet?.connect()
+												}
+											} />
+									)
+									)
 
-						)
+							)
 				}
 			</VStack>
 		</Flex>
@@ -145,6 +163,7 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 	const { phantomWallet, phantomWalletConnected } = usePhantomWallet()
 	const { connectTonWallet, tonWalletAddress, tonWalletConnected } = usetonWallet()
 	const { address, chainId: chain, isConnected, connector } = useAccount()
+	const { isEOA } = useContext(WebwalletContext)!
 	const toast = useCustomToast()
 	logger.info({ address, chain, isConnected }, 'Account info')
 	const [verifying, setVerifying] = useState<string>()
@@ -190,7 +209,7 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 			return
 		}
 
-		const isConnected = selectedConnector ? await selectedConnector.isAuthorized().catch(() => false) : false
+		const isConnected = isEOA ? await connector?.isAuthorized().catch(() => false) : selectedConnector ? await selectedConnector.isAuthorized().catch(() => false) : false
 		if(isConnected || phantomWalletConnected) {
 			setSignerVerifiedState('verifying')
 		}
@@ -207,7 +226,11 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 	}
 
 	const switchNetworkIfNeeded = async() => {
-		const isConnected = selectedConnector ? await selectedConnector.isAuthorized().catch(() => false) : false
+		const isConnected =
+
+		isEOA ?
+			await connector?.isAuthorized().catch(() => false) :
+			selectedConnector ? await selectedConnector.isAuthorized().catch(() => false) : false
 		if(isConnected && chain !== safeObj?.chainId) {
 			try {
 				const toChainId = safeObj?.chainId
@@ -252,7 +275,6 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 	useEffect(() => {
 		logger.info({ selectedConnector }, 'Selected connector')
 	}, [selectedConnector])
-
 
 	return buildComponent()
 }
