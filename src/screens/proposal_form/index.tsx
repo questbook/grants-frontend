@@ -17,15 +17,13 @@ import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
-import SectionDropDown from 'src/screens/proposal_form/_components/SectionDropDown'
 import SectionHeader from 'src/screens/proposal_form/_components/SectionHeader'
 import SectionInput from 'src/screens/proposal_form/_components/SectionInput'
 import SectionRichTextEditor from 'src/screens/proposal_form/_components/SectionRichTextEditor'
 import SectionSelect from 'src/screens/proposal_form/_components/SectionSelect'
-import SectionSelection from 'src/screens/proposal_form/_components/SectionSelection'
 import SelectArray from 'src/screens/proposal_form/_components/SelectArray'
 import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposal'
-import { containsCustomField, containsField, findCustomField, findField, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
+import { containsField, findField, findFieldBySuffix, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
 import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, MILESTONE_INPUT_STYLE, SocialIntent } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
 import { useEnsName } from 'wagmi'
@@ -440,9 +438,8 @@ function ProposalForm() {
 						{
 							containsField(grant, 'applicantName') && (
 								<SectionInput
-									label='ENS'
+									label='Full Name'
 									placeholder='Ryan Adams'
-									defaultValue={ensName ?? ''}
 									value={findField(form, 'applicantName').value}
 									onChange={
 										(e) => {
@@ -501,7 +498,7 @@ function ProposalForm() {
 							containsField(grant, 'applicantAddress') && (
 								<SectionInput
 									label='Wallet Address'
-									placeholder='Wallet to receive funds on EVM based chain'
+									placeholder='Wallet to receive funds on EVM based chain / Solana / TON'
 									value={findField(form, 'applicantAddress').value}
 									onChange={
 										async(e) => {
@@ -563,33 +560,12 @@ function ProposalForm() {
 
 						{/* Proposal Details */}
 						<SectionHeader mt={8}>
-							Project
+							Proposal
 						</SectionHeader>
-						{
-							containsCustomField(grant, 'Which Category does your submission belong') && (
-								<SectionDropDown
-									label='Which Category does your submission belong'
-									width='-moz-fit-content'
-									options={
-										[
-											'Infrastructure - Core technical implementations used by Web3 developers or enable the Ethereum network.',
-											'Tools - Utilities that improve the way we interact with Web3 and Ethereum.',
-											'Education - Information and resources that foster a better understanding of Ethereum or Web3.'
-										]
-									}
-									placeholder='Which Category does your submission belong'
-									value={findCustomField(form, 'Which Category does your submission belong').value}
-									onChange={
-										(e) => {
-											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Which Category does your submission belong').id)
-										}
-									} />
-							)
-						}
 						{
 							containsField(grant, 'projectName') && (
 								<SectionInput
-									label='Project Name'
+									label='Title'
 									placeholder='Name of your proposal'
 									maxLength={80}
 									value={findField(form, 'projectName').value}
@@ -600,7 +576,6 @@ function ProposalForm() {
 									} />
 							)
 						}
-
 						{
 							containsField(grant, 'tldr') && (
 								<SectionInput
@@ -611,20 +586,6 @@ function ProposalForm() {
 									onChange={
 										(e) => {
 											onChange(e, 'tldr')
-										}
-									} />
-							)
-						}
-
-						{
-							containsCustomField(grant, 'Website') && (
-								<SectionInput
-									label='Website'
-									placeholder='link to your project'
-									value={findCustomField(form, 'Website').value}
-									onChange={
-										(e) => {
-											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Website').id)
 										}
 									} />
 							)
@@ -699,12 +660,11 @@ function ProposalForm() {
 							} />
 
 						<SectionInput
-							label='Funding Requested'
+							label='Funding Asked'
 							isDisabled
-							placeholder='12000 USDC'
+							placeholder='12000 USD'
 							value={`${fundingAsk} ${chainInfo?.label}`}
 						/>
-
 
 						{/* Render custom Fields */}
 						{
@@ -716,95 +676,37 @@ function ProposalForm() {
 						}
 
 						{
-							containsCustomField(grant, 'Have you launched a token?') && (
-								<SectionInput
-									label='Have you launched a token?'
-									placeholder='Yes / No'
-									value={findCustomField(form, 'Have you launched a token?').value}
-									onChange={
-										(e) => {
-											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Have you launched a token?').id)
-										}
-									} />
-							)
-						}
+							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1).startsWith('customField')).map((field) => {
+								const id = field.id.substring(field.id.indexOf('.') + 1)
+								const modifiedId = id.substring(id.indexOf('-') + 1)
+								const title = field.title.substring(field.title.indexOf('-') + 1)
+									.split('\\s')
+									.join(' ')
 
-						{
-							containsCustomField(grant, 'How is your submission exceptionally useful to users or developers of Web3/Ethereum?') && (
-								<SectionInput
-									label='How is your submission exceptionally useful to users or developers of Web3/Ethereum?'
-									type='textarea'
-									placeholder='Communicate why your submission is useful. This is the, "why," or value add. you will substantiate this with data in the following question.)'
-									value={findCustomField(form, 'How is your submission exceptionally useful to users or developers of Web3/Ethereum?').value}
-									onChange={
-										(e) => {
-											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'How is your submission exceptionally useful to users or developers of Web3/Ethereum?').id)
-										}
-									} />
-							)
-						}
+								// console.log('hasan', { id, field: findFieldBySuffix(form, modifiedId, id)})
 
-						{
-							containsCustomField(grant, 'Substantiating the previous question, provide data or demonstrate the exceptional value, reach or impact this submission has had') && (
-								<SectionInput
-									label='Substantiating the previous question, provide data or demonstrate the exceptional value, reach or impact this submission has had'
-									type='textarea'
-									placeholder='Draw from many sources such as Dune dashboards, twitter and tweets, number of downloads, etc. Links to resources are encouraged and likely required to successfully communicate this.'
-									value={findCustomField(form, 'Substantiating the previous question, provide data or demonstrate the exceptional value, reach or impact this submission has had').value}
-									onChange={
-										(e) => {
-											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Substantiating the previous question, provide data or demonstrate the exceptional value, reach or impact this submission has had').id)
-										}
-									} />
-							)
-						}
-
-						{
-							containsCustomField(grant, 'Have you ensured your submission is complete?') && (
-								<SectionSelection
-									label='Have you ensured your submission is complete?'
-									options={['Yes', 'No']}
-									placeholder='Yes / No'
-									value={findCustomField(form, 'Have you ensured your submission is complete?').value}
-									onChange={
-										(e) => {
-											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Have you ensured your submission is complete?').id)
-										}
-									} />
-							)
-						}
-						{
-							containsField(grant, 'Have you read the round details?') && (
-								<>
-									<SectionSelection
-										label='Have you read the round details?'
-										options={['Yes', 'No']}
-										placeholder='Yes / No'
-										value={findCustomField(form, 'Have you read the round details?').value}
+								return (
+									<SectionInput
+										key={field.id}
+										label={title}
+										value={findFieldBySuffix(form, modifiedId, id).value}
 										onChange={
 											(e) => {
-												onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Have you read the round details?').id)
+												onChange(e, findFieldBySuffix(form, modifiedId, id).id)
 											}
 										} />
-									<Text
-										cursor='pointer'
-										onClick={() => window.open('https://www.notion.so/ensgrants/Large-Grants-1900eb105c2f4eeb90dec42e468b19d0')}
-										fontSize='14px'
-										color='gray.500'
-										mt={2}>
-										https://www.notion.so/ensgrants/Large-Grants-1900eb105c2f4eeb90dec42e468b19d0
-									</Text>
-								</>
-							)
+								)
+							})
 						}
+
 
 						<Button
 							mt={10}
 							ml='auto'
 							variant='primaryLarge'
+							isDisabled={isDisabled}
 							isLoading={webwallet ? !scwAddress : false}
 							loadingText='Loading your wallet'
-							isDisabled={isDisabled}
 							onClick={
 								(e) => {
 									e.preventDefault()
