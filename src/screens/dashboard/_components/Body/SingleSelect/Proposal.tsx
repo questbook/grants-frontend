@@ -19,7 +19,6 @@ import NotificationPopover from 'src/libraries/ui/NavBar/_components/Notificatio
 import TextViewer from 'src/libraries/ui/RichTextEditor/textViewer'
 import { getAvatar } from 'src/libraries/utils'
 import {
-	formatAddress,
 	getFieldString,
 	getFieldStrings,
 	getRewardAmountMilestones,
@@ -208,11 +207,7 @@ function Proposal() {
 														fontWeight='400'
 														variant='v2_body'
 														color='gray.500'>
-														{
-															formatAddress(
-																getFieldString(proposal, 'applicantAddress') ?? '',
-															)
-														}
+														{getFieldString(proposal, 'applicantAddress') ?? ''}
 													</Text>
 												</Button>
 											)

@@ -61,15 +61,23 @@ function CommentTextViewer({
 	}
 
 	return (
-		<Editor
-			blockStyleFn={getBlockStyle}
-			editorState={updatedEditorState}
-			onChange={onChange}
-			editorKey='foobar'
-			spellCheck={false}
-			plugins={plugins}
-			readOnly
-		/>
+		<div
+			style={
+				{
+					fontSize: '14px'
+				}
+			}
+		>
+			<Editor
+				blockStyleFn={getBlockStyle}
+				editorState={updatedEditorState}
+				onChange={onChange}
+				editorKey='foobar'
+				spellCheck={false}
+				plugins={plugins}
+				readOnly
+			/>
+		</div>
 	)
 }
 

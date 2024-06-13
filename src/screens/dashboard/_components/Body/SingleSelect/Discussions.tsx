@@ -1,4 +1,5 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import Markdown from 'react-markdown'
 import { EditIcon, LockIcon } from '@chakra-ui/icons'
 import {
 	Box,
@@ -15,10 +16,10 @@ import {
 import autosize from 'autosize'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import { draftToMarkdown, markdownToDraft } from 'markdown-draft-js'
+import remarkGfm from 'remark-gfm'
 import { Close } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import CommentsTextEditor from 'src/libraries/ui/RichTextEditor/commentTextEditor'
-import CommentTextViewer from 'src/libraries/ui/RichTextEditor/commentTextViewer'
 import { getAvatar } from 'src/libraries/utils'
 import { AmplitudeContext } from 'src/libraries/utils/amplitude'
 import { formatAddress, getFieldString } from 'src/libraries/utils/formatting'
@@ -472,10 +473,73 @@ function Discussions() {
 						}
 					</Flex>
 
-					<CommentTextViewer
-						value={EditorState.createWithContent(convertFromRaw(markdownToDraft(comment?.message ?? '')))}
-						onChange={() => {}}
-					/>
+
+					<Markdown
+						remarkPlugins={[remarkGfm]}
+						className='richTextContainerPreview'
+						components={
+							{
+								a: props => {
+									return (
+										<Text
+											display='inline-block'
+											wordBreak='break-all'
+											color='accent.azure'
+											fontSize='14px'
+											variant='body'
+											cursor='pointer'
+											_hover={
+												{
+													textDecoration: 'underline',
+												}
+											}
+											onClick={
+												() => {
+													window.open(props.href, '_blank')
+												}
+											}
+										>
+											{props.href}
+										</Text>
+
+									)
+								},
+								p: ({ ...props }) => {
+									return (
+										<Text
+											{...props}
+											variant='body'
+											fontSize='14px'
+											mt={2}
+											style={
+												{
+													fontStyle: hasAccess ? 'normal' : 'italic',
+												}
+											}
+											whiteSpace='pre-line'
+											wordBreak='break-word'
+										/>
+									)
+								},
+								img: ({ ...props }) => {
+									return (
+										<Image
+											{...props}
+											fallback={<></>}
+											fallbackStrategy='onError'
+											w='50%'
+											mt={2}
+											src={props.src}
+											alt='comment-image'
+										/>
+									)
+								}
+							}
+						}
+					>
+						{comment.message?.replace(/\\n/g, '\n\n')}
+					</Markdown>
+
 				</Flex>
 			</Flex>
 		)
@@ -552,8 +616,21 @@ function Discussions() {
 	})
 
 	useEffect(() => {
-		const content = draftToMarkdown(convertToRaw(editorState.getCurrentContent()))
+		const content = draftToMarkdown(convertToRaw(editorState.getCurrentContent()), {
+			entityItems: {
+			  image: {
+					open: function() {
+				  return ''
+					},
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					close: function(entity: any) {
+				  return `![${entity['data'].alt}](${entity['data'].src})`
+					},
+			  },
+			},
+		  })
 		setText(content)
+		logger.info({ content }, 'CONTENT')
 	}, [editorState])
 
 	useEffect(() => {

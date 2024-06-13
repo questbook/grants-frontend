@@ -1,7 +1,8 @@
 import React, { KeyboardEvent, useRef } from 'react'
 import { IoMdClose } from 'react-icons/io'
 import { MdOutlinePreview } from 'react-icons/md'
-import { Button, Flex } from '@chakra-ui/react'
+import Markdown from 'react-markdown'
+import { Button, Flex, Image, Text } from '@chakra-ui/react'
 import Editor, { composeDecorators } from '@draft-js-plugins/editor'
 import createFocusPlugin from '@draft-js-plugins/focus'
 import createImagePlugin from '@draft-js-plugins/image'
@@ -14,12 +15,12 @@ import {
 	EditorState,
 	getDefaultKeyBinding,
 	RichUtils } from 'draft-js'
+import remarkGfm from 'remark-gfm'
 import {
 	ImageAdd,
 } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
-import CommentTextViewer from 'src/libraries/ui/RichTextEditor/commentTextViewer'
 import Loader from 'src/libraries/ui/RichTextEditor/loader'
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/libraries/utils/ipfs'
 import 'draft-js/dist/Draft.css'
@@ -238,10 +239,65 @@ function CommentsTextEditor({
 								}
 							}
 						>
-							<CommentTextViewer
-								value={editorState}
-								onChange={setEditorState}
-							/>
+							<Markdown
+								remarkPlugins={[remarkGfm]}
+								components={
+									{
+										a: props => {
+											return (
+												<Text
+													display='inline-block'
+													wordBreak='break-all'
+													color='accent.azure'
+													fontSize='14px'
+													variant='body'
+													cursor='pointer'
+													_hover={
+														{
+															textDecoration: 'underline',
+														}
+													}
+													onClick={
+														() => {
+															window.open(props.href, '_blank')
+														}
+													}
+												>
+													{props.href}
+												</Text>
+
+											)
+										},
+										p: ({ ...props }) => {
+											return (
+												<Text
+													{...props}
+													variant='body'
+													fontSize='14px'
+													mt={2}
+													whiteSpace='pre-line'
+													wordBreak='break-word'
+												/>
+											)
+										},
+										img: ({ ...props }) => {
+											return (
+												<Image
+													{...props}
+													fallback={<></>}
+													fallbackStrategy='onError'
+													w='50%'
+													mt={2}
+													src={props.src}
+													alt='comment-image'
+												/>
+											)
+										}
+									}
+								}
+							>
+								{input?.replace(/\\n/g, '\n\n')}
+							</Markdown>
 						</div>
 					</>
 				) :
@@ -304,6 +360,7 @@ function CommentsTextEditor({
 									{ minHeight: '100px',
 										height: 'auto',
 										position: 'relative',
+										fontSize: '14px'
 									}
 								}
 								className={focused ? 'richTextContainer focus' : 'richTextContainer'}
