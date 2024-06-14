@@ -367,6 +367,8 @@ function TextEditor({
 				display={readOnly ? 'none' : 'flex'}
 				justify='start'
 				border='1px solid #C1BDB7'
+				flexWrap={['wrap', 'nowrap']}
+				gap={4}
 				m={2}
 				p={2}
 				alignItems='center'

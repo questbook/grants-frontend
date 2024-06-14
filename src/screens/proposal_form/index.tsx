@@ -438,8 +438,9 @@ function ProposalForm() {
 						{
 							containsField(grant, 'applicantName') && (
 								<SectionInput
-									label='Full Name'
+									label='ENS'
 									placeholder='Ryan Adams'
+									defaultValue={ensName ?? ''}
 									value={findField(form, 'applicantName').value}
 									onChange={
 										(e) => {
@@ -560,13 +561,13 @@ function ProposalForm() {
 
 						{/* Proposal Details */}
 						<SectionHeader mt={8}>
-							Proposal
+							Project
 						</SectionHeader>
 						{
 							containsField(grant, 'projectName') && (
 								<SectionInput
-									label='Title'
-									placeholder='Name of your proposal'
+									label='Project Name'
+									placeholder='Name of your Project'
 									maxLength={80}
 									value={findField(form, 'projectName').value}
 									onChange={
@@ -580,7 +581,7 @@ function ProposalForm() {
 							containsField(grant, 'tldr') && (
 								<SectionInput
 									label='tl;dr'
-									placeholder='Explain your proposal in one sentence'
+									placeholder='Explain your project in one sentence'
 									maxLength={120}
 									value={findField(form, 'tldr').value}
 									onChange={
@@ -660,9 +661,9 @@ function ProposalForm() {
 							} />
 
 						<SectionInput
-							label='Funding Asked'
+							label='Funding Requested'
 							isDisabled
-							placeholder='12000 USD'
+							placeholder='12000 USDC'
 							value={`${fundingAsk} ${chainInfo?.label}`}
 						/>
 
@@ -699,7 +700,14 @@ function ProposalForm() {
 							})
 						}
 
-
+						<Text
+							mt={10}
+							fontSize='sm'
+							w='100%'
+							color='gray.500'
+						>
+							{'*Please ensure that all fields are filled correctly before submitting the proposal. Please fill them with \'N/A\' or \'-\' if not applicable'}
+						</Text>
 						<Button
 							mt={10}
 							ml='auto'

@@ -12,14 +12,15 @@ function SectionSelect({ label, flexProps, ...props }: Props) {
 				{...flexProps}
 				mt={8}
 				w='100%'
-				align='end'>
+				direction={['column', 'row']}
+				align={['stretch', 'end']}>
 				<Text
 					mr={8}
 					pb={2}
 					variant='subheading'
-					w='calc(30% - 32px)'
+					w={['100%', 'calc(30% - 32px)']}
 					fontWeight='500'
-					textAlign='right'>
+					textAlign={['left', 'right']}>
 					{label}
 				</Text>
 				<NumberInput
@@ -29,6 +30,7 @@ function SectionSelect({ label, flexProps, ...props }: Props) {
 					textAlign='left'
 					borderColor='gray.300'
 					fontSize='20px'
+					max={10}
 					lineHeight='28px'
 					color='black.100'
 					_placeholder={
