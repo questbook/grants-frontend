@@ -460,7 +460,7 @@ function Discussions() {
 							)
 						}
 					</Flex>
-					{
+					{/* {
 						comment?.timestamp &&
 						(comment?.timestamp - comment?.createdAt) > 10 && (
 							<Text
@@ -468,12 +468,10 @@ function Discussions() {
 								variant='body'
 								fontSize='12px'
 								color='gray.500'>
-								Edited on
-								{' '}
-								{formatTime(comment?.createdAt)}
+								Edited
 							</Text>
 						)
-					}
+					} */}
 
 					<div className='richTextContainerPreview'>
 						<Markdown
@@ -678,7 +676,7 @@ function Discussions() {
 		)
 		// setText(comment ?? '')
 		setEditorState(EditorState.createWithContent(convertFromRaw(markdownToDraft(comment ?? ''))))
-	}, [grant, proposal])
+	}, [grant])
 
 
 	useEffect(() => {

@@ -408,7 +408,6 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
 		logger.info({ proposals }, 'Proposals (GET PROPOSALS)')
 		const proposalData: Proposals = []
-
 		const first = 50
 		let skip = 10
 		let shouldContinue = true
@@ -424,10 +423,8 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 			//make sure the proposal is not already in the proposals array
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			proposalData.push(...results?.grantApplications?.filter((p: { id: string}) => !proposals.map((p: any) => p?.id).includes(p.id)) ?? [])
-			// if it more than 400 then wait till all the proposals are fetched
-			if(proposalData.length > 400 && proposalData.length < results?.grantApplications?.length) {
+			if(skip > 200 && proposals.length < results?.grantApplications?.length) {
 				shouldContinue = true
-				break
 			} else {
 				setProposals([...proposals as [], ...proposalData])
 			}
@@ -435,6 +432,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 			skip += first
 		} while(shouldContinue)
 
+		setProposals([...proposals as [], ...proposalData])
 		setIsProposalListLoading(false)
 		// append the proposals to the existing proposals
 		// await getFetchCommentsInBackground()
