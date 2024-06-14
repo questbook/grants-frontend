@@ -93,6 +93,8 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 					<Flex
 						justifyContent='space-between'
 						alignItems='flex-start'
+						gap={4}
+						flexWrap='wrap'
 					>
 						<Image
 							src={grant.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)}
@@ -230,7 +232,8 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 				>
 					<Grid
 						mt={0}
-						templateColumns='repeat(4, 1fr)'
+						templateColumns={['repeat(2, 1fr)', 'repeat(4, 1fr)']}
+						gap={2}
 						pt={2}
 						px={2}
 						justifyContent='space-between'

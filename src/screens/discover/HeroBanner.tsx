@@ -127,7 +127,7 @@ function HeroBanner({
 						<Text
 							fontWeight='500'
 							fontSize={isMobile ? '32px' : '64px'}
-							lineHeight='48px'
+							lineHeight={isMobile ? '41.6px' : '48px'}
 							padding={
 								isMobile ? [0, 0] :
 									[10, 5]
