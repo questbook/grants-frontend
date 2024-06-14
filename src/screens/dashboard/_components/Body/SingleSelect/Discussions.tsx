@@ -377,146 +377,157 @@ function Discussions() {
 						}
 					</Flex>
 
-					<Markdown
-						remarkPlugins={[remarkGfm]}
-						className='DraftEditor-root DraftEditor-editorContainer public-DraftEditor-content markdown-body'
-						components={
-							{
-								a: props => {
-									return (
-										<Text
-											display='inline-block'
-											wordBreak='break-all'
-											color='accent.azure'
-											fontSize='16px'
-											variant='body'
-											cursor='pointer'
-											_hover={
-												{
-													textDecoration: 'underline',
+					<div className='richTextContainerPreview'>
+						<Markdown
+							remarkPlugins={[remarkGfm]}
+							className='DraftEditor-root DraftEditor-editorContainer public-DraftEditor-content markdown-body '
+							components={
+								{
+									a: props => {
+										return (
+											<Text
+												display='inline-block'
+												wordBreak='break-all'
+												color='accent.azure'
+												fontSize='14px'
+												variant='body'
+												cursor='pointer'
+												_hover={
+													{
+														textDecoration: 'underline',
+													}
 												}
-											}
-											onClick={
-												() => {
-													window.open(props.href, '_blank')
+												onClick={
+													() => {
+														window.open(props.href, '_blank')
+													}
 												}
-											}
-										>
-											{props.href}
-										</Text>
+											>
+												{props.href}
+											</Text>
 
-									)
-								},
-								p: ({ ...props }) => {
-									return (
-										<Text
-											wordBreak='break-word'
-											{...props}
-											lineHeight='base'
-											className='public-DraftStyleDefault-block public-DraftStyleDefault-ltr'
-										/>
-									)
-								},
-								ul: ({ ...props }) => {
-									return (
-										<List
-											{...props}
-											as='ul'
-										/>
-									)
+										)
+									},
+
+									p: ({ ...props }) => {
+										return (
+											<Text
+												{...props}
+												variant='body'
+												fontSize='14px'
+												mt={2}
+												style={
+													{
+														fontStyle: hasAccess ? 'normal' : 'italic',
+													}
+												}
+												whiteSpace='pre-line'
+												wordBreak='break-word'
+											/>
+										)
+									},
+									ul: ({ ...props }) => {
+										return (
+											<List
+												{...props}
+												as='ul'
+												className='public-DraftStyleDefault-ul'
+											/>
+										)
+									}
+									,
+									li: ({ ...props }) => {
+										return (
+											<li
+												{...props}
+												className='public-DraftStyleDefault-unorderedListItem public-DraftStyleDefault-reset public-DraftStyleDefault-depth0 public-DraftStyleDefault-listLTR'
+											/>
+										)
+									},
+
+
+									h1: ({ ...props }) => {
+										return (
+											<Text
+												fontSize='20px'
+												fontWeight={600}
+												lineHeight={1.2}
+												mb='14px'
+												mt='14px'
+												{...props}
+												as='h1'
+
+											/>
+										)
+									},
+									h2: ({ ...props }) => {
+										return (
+											<Text
+
+												{...props}
+												as='h2'
+												fontSize='18px'
+												fontWeight={600}
+												lineHeight={1.2}
+												mb='14px'
+												mt='14px'
+											/>
+										)
+									},
+
+									h3: ({ ...props }) => {
+										return (
+											<Text
+
+												{...props}
+												as='h3'
+												fontSize='16px'
+												fontWeight={600}
+												lineHeight={1.2}
+												mb='14px'
+												mt='14px'
+											/>
+										)
+									},
+
+
+									h4: ({ ...props }) => {
+										return (
+											<Text
+												{...props}
+												variant='h4'
+												mt={2}
+											/>
+										)
+									},
+									h5: ({ ...props }) => {
+										return (
+											<Text
+												{...props}
+												variant='h5'
+												mt={2}
+											/>
+										)
+									},
+									img: ({ ...props }) => {
+										return (
+											<Image
+												{...props}
+												fallback={<></>}
+												fallbackStrategy='onError'
+												w='50%'
+												mt={2}
+												src={props.src}
+												alt='comment-image'
+											/>
+										)
+									}
 								}
-								,
-								li: ({ ...props }) => {
-									return (
-										<li
-											{...props}
-											className='public-DraftStyleDefault-unorderedListItem public-DraftStyleDefault-reset public-DraftStyleDefault-depth0 public-DraftStyleDefault-listLTR'
-										/>
-									)
-								},
-
-
-								h1: ({ ...props }) => {
-									return (
-										<Text
-											fontSize='20px'
-											fontWeight={600}
-											lineHeight={1.2}
-											mb={2}
-											mt={2}
-											{...props}
-											as='h1'
-
-										/>
-									)
-								},
-								h2: ({ ...props }) => {
-									return (
-										<Text
-
-											{...props}
-											as='h2'
-											fontSize='18px'
-											fontWeight={600}
-											lineHeight={1.2}
-											mb={2}
-											mt={2}
-										/>
-									)
-								},
-
-								h3: ({ ...props }) => {
-									return (
-										<Text
-
-											{...props}
-											as='h3'
-											fontSize='16px'
-											fontWeight={600}
-											lineHeight={1.2}
-											mb={2}
-											mt={2}
-										/>
-									)
-								},
-
-
-								h4: ({ ...props }) => {
-									return (
-										<Text
-											{...props}
-											variant='h4'
-											mt={2}
-										/>
-									)
-								},
-								h5: ({ ...props }) => {
-									return (
-										<Text
-											{...props}
-											variant='h5'
-											mt={2}
-										/>
-									)
-								},
-								img: ({ ...props }) => {
-									return (
-										<Image
-											{...props}
-											fallback={<></>}
-											fallbackStrategy='onError'
-											w='50%'
-											mt={2}
-											src={props.src}
-											alt='comment-image'
-										/>
-									)
-								},
 							}
-						}
-					>
-						{comment?.message ? comment?.message.replace(/\n/g, '\n\n') : ''}
-					</Markdown>
+						>
+							{comment.message?.replace(/\n/g, '\n\n')}
+						</Markdown>
+					</div>
 				</Flex>
 			</Flex>
 		)

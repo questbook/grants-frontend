@@ -21,9 +21,10 @@ import SectionHeader from 'src/screens/proposal_form/_components/SectionHeader'
 import SectionInput from 'src/screens/proposal_form/_components/SectionInput'
 import SectionRichTextEditor from 'src/screens/proposal_form/_components/SectionRichTextEditor'
 import SectionSelect from 'src/screens/proposal_form/_components/SectionSelect'
+import SectionSelection from 'src/screens/proposal_form/_components/SectionSelection'
 import SelectArray from 'src/screens/proposal_form/_components/SelectArray'
 import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposal'
-import { containsField, findField, findFieldBySuffix, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
+import { containsField, findCustomField, findField, findFieldBySuffix, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
 import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, MILESTONE_INPUT_STYLE, SocialIntent } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
 import { useEnsName } from 'wagmi'
@@ -499,7 +500,7 @@ function ProposalForm() {
 							containsField(grant, 'applicantAddress') && (
 								<SectionInput
 									label='Wallet Address'
-									placeholder='Wallet to receive funds on EVM based chain / Solana / TON'
+									placeholder='Wallet to receive funds on EVM based chain'
 									value={findField(form, 'applicantAddress').value}
 									onChange={
 										async(e) => {
@@ -677,7 +678,13 @@ function ProposalForm() {
 						}
 
 						{
-							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1).startsWith('customField')).map((field) => {
+							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1).startsWith('customField')
+						&& !['Have you read the round details?']?.some((el) => field.id?.substring(field.id.indexOf('.') + 1).includes(el))
+							)?.sort((a, b) => {
+								const aId = a.id.substring(a.id.indexOf('.customField') + 12)?.split('-')[0]
+								const bId = b.id.substring(b.id.indexOf('.customField') + 12)?.split('-')[0]
+								return parseInt(aId) - parseInt(bId)
+							}).map((field) => {
 								const id = field.id.substring(field.id.indexOf('.') + 1)
 								const modifiedId = id.substring(id.indexOf('-') + 1)
 								const title = field.title.substring(field.title.indexOf('-') + 1)
@@ -699,6 +706,31 @@ function ProposalForm() {
 								)
 							})
 						}
+						{
+							containsField(grant, 'Have you read the round details?') && (
+								<>
+									<SectionSelection
+										label='Have you read the round details?'
+										options={['Yes', 'No']}
+										placeholder='Yes / No'
+										value={findCustomField(form, 'Have you read the round details?').value}
+										onChange={
+											(e) => {
+												onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Have you read the round details?').id)
+											}
+										} />
+									<Text
+										cursor='pointer'
+										onClick={() => window.open('https://www.notion.so/ensgrants/Large-Grants-1900eb105c2f4eeb90dec42e468b19d0')}
+										fontSize='14px'
+										color='gray.500'
+										mt={2}>
+										https://www.notion.so/ensgrants/Large-Grants-1900eb105c2f4eeb90dec42e468b19d0
+									</Text>
+								</>
+							)
+						}
+
 
 						<Text
 							mt={10}

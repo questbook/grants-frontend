@@ -197,6 +197,7 @@ function CommentsTextEditor({
 					{ minHeight: '100px',
 						height: 'auto',
 						position: 'relative',
+						fontSize: '14px'
 					}
 				}
 				className={focused ? 'richTextContainer focus' : 'richTextContainer'}
