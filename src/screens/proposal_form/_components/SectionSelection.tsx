@@ -24,6 +24,7 @@ function SectionSelection({ label, flexProps, options, ...props }: Props & { opt
 					align={['stretch', 'end']}>
 					<Text
 						mr={8}
+						pb={[2, 0]}
 						variant='subheading'
 						w={['100%', 'calc(30% - 32px)']}
 						fontWeight='500'

@@ -33,7 +33,7 @@ function SectionDropDown({ label, flexProps, options, ...props }: Props & { opti
 					</Text>
 					<Select
 						{...props}
-						fontSize='14px'
+						fontSize='16px'
 						color='black.100'
 						variant='flushed'
 						colorScheme='blue'
