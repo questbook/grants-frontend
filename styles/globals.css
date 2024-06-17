@@ -147,6 +147,77 @@ a {
   resize: vertical;
 }
 
+
+
+.richTextContainer {
+  width: 100%;
+  min-width: 0px;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  position: relative;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  appearance: none;
+  transition-property: var(--chakra-transition-property-common);
+  transition-duration: var(--chakra-transition-duration-normal);
+  /* padding-top: 8px;
+  padding-bottom: 8px; */
+  min-height: 30vh;
+  line-height: var(--chakra-lineHeights-short);
+  vertical-align: top;
+  font-size: var(--chakra-fontSizes-md);
+  -webkit-padding-start: var(--chakra-space-4);
+  padding-inline-start: var(--chakra-space-4);
+  -webkit-padding-end: var(--chakra-space-4);
+  padding-inline-end: var(--chakra-space-4);
+  /* height: var(--chakra-sizes-10); */
+  /* border-radius: 0 0 var(--chakra-radii-md) var(--chakra-radii-md); */
+  height: 30vh;
+  /* border: 1px solid #C1BDB7; */
+  border-top: none;
+  background: #FFFFFF;
+  color: #122224;
+  overflow-y: auto;
+  resize: vertical;
+}
+
+
+.richTextContainerPreview {
+  white-space: normal;
+  min-height: fit-content;
+  height: 'auto';
+  padding-left: 0%;
+  width: 100%;
+  min-width: 0px;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  position: relative;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  appearance: none;
+  transition-property: var(--chakra-transition-property-common);
+  transition-duration: var(--chakra-transition-duration-normal);
+  /* padding-top: 8px;
+  padding-bottom: 8px; */
+  line-height: var(--chakra-lineHeights-short);
+  vertical-align: top;
+  font-size: var(--chakra-fontSizes-sm);
+  -webkit-padding-start: var(--chakra-space-4);
+  padding-inline-start: var(--chakra-space-0);
+  -webkit-padding-end: var(--chakra-space-4);
+  padding-inline-end: var(--chakra-space-4);
+  /* height: var(--chakra-sizes-10); */
+  /* border-radius: 0 0 var(--chakra-radii-md) var(--chakra-radii-md); */
+  /* border: 1px solid #C1BDB7; */
+  border-top: none;
+  background: #FFFFFF;
+  color: #122224;
+  overflow-y: auto;
+}
+
+
 .richTextContainer.focus {
   border-color: #8850EA;
 }
@@ -246,3 +317,37 @@ a {
 }
 
 @keyframes spinner {to{transform:rotate(1turn)}}
+
+.markdown-body {
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  margin: 0;
+  font-size: 14px;
+  word-wrap: break-word;
+}
+
+.markdown-body .octicon {
+  display: inline-block;
+  fill: currentColor;
+  vertical-align: text-bottom;
+}
+
+.markdown-body h1:hover .anchor .octicon-link:before,
+.markdown-body h2:hover .anchor .octicon-link:before,
+.markdown-body h3:hover .anchor .octicon-link:before,
+.markdown-body h4:hover .anchor .octicon-link:before,
+.markdown-body h5:hover .anchor .octicon-link:before,
+
+.markdown-body details,
+.markdown-body figcaption,
+.markdown-body figure {
+  display: block;
+}
+
+.markdown-body summary {
+  display: list-item;
+}
+
+.markdown-body [hidden] {
+  display: none !important;
+}
