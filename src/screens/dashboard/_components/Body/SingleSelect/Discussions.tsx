@@ -393,6 +393,9 @@ function Discussions() {
 				/>
 				<Flex
 					ml={3}
+					overflowWrap='break-word'
+					overflowX='auto'
+					width={'100%'}
 					direction='column'>
 					<Flex
 						align='center'
@@ -434,7 +437,7 @@ function Discussions() {
 					<div className='richTextContainerPreview'>
 						<Markdown
 							remarkPlugins={[remarkGfm]}
-							className='DraftEditor-root DraftEditor-editorContainer public-DraftEditor-content markdown-body '
+							className='DraftEditor-root DraftEditor-editorContainer public-DraftEditor-content markdown-body'
 							components={
 								{
 									a: props => {
