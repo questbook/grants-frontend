@@ -2,7 +2,6 @@ import { createContext, ReactElement, ReactNode, useCallback, useEffect, useMemo
 import { hotjar } from 'react-hotjar'
 import { Biconomy } from '@biconomy/mexa'
 import { ChakraProvider } from '@chakra-ui/react'
-import { ChatWidget } from '@papercups-io/chat-widget'
 // import dynamic from 'next/dynamic';
 import {
 	Configuration,
@@ -42,12 +41,6 @@ import { GrantProgramContextType, GrantType, MinimalWorkspace, NotificationConte
 import { BiconomyWalletClient } from 'src/types/gasless'
 import { createConfig, http, WagmiProvider } from 'wagmi'
 import { arbitrum, aurora, base, celo, iotex, mainnet, optimism, polygon, sepolia } from 'wagmi/chains'
-// import { InjectedConnector } from 'wagmi/connectors/injected'
-// import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
-// import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
-// import { infuraProvider } from 'wagmi/providers/infura'
-// import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
-// import { publicProvider } from 'wagmi/providers/public'
 import { injected, walletConnect } from 'wagmi/connectors'
 import 'styles/globals.css'
 import 'draft-js/dist/Draft.css'
@@ -66,32 +59,33 @@ const client = createConfig({
 	chains: [mainnet, base, polygon, arbitrum, optimism, celo, aurora, iotex, sepolia],
 	ssr: true,
 	connectors: [
-	  injected(),
-	  walletConnect({ projectId: '1a646363ec322c7ba5b21240860f2aec', qrModalOptions: {
-			themeVariables: {
-				'--wcm-z-index': '10000',
+		injected(),
+		walletConnect({
+			projectId: '1a646363ec322c7ba5b21240860f2aec', qrModalOptions: {
+				themeVariables: {
+					'--wcm-z-index': '10000',
+				},
+				enableExplorer: false,
 			},
-			enableExplorer: false,
-	  },
-		showQrModal: true,
-	  	metadata: {
-			name: 'Questbook',
-			url: 'https://questbook.app',
-			description: 'Discover Opportunities in Web 3.0 and Earn in Crypto',
-			icons: ['https://questbook.app/favicon.svg'],
-		}
+			showQrModal: true,
+			metadata: {
+				name: 'Questbook',
+				url: 'https://questbook.app',
+				description: 'Discover Opportunities in Web 3.0 and Earn in Crypto',
+				icons: ['https://questbook.app/favicon.svg'],
+			}
 		}),
 	],
 	transports: {
-	  [mainnet.id]: http(),
-	  [base.id]: http(),
-	  [polygon.id]: http(),
-	  [arbitrum.id]: http(),
-	  [optimism.id]: http(),
-	  [celo.id]: http(),
-	  [aurora.id]: http(),
-	  [iotex.id]: http(),
-	  [sepolia.id]: http(),
+		[mainnet.id]: http(),
+		[base.id]: http(),
+		[polygon.id]: http(),
+		[arbitrum.id]: http(),
+		[optimism.id]: http(),
+		[celo.id]: http(),
+		[aurora.id]: http(),
+		[iotex.id]: http(),
+		[sepolia.id]: http(),
 	},
 })
 
@@ -703,23 +697,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 					rel='shortcut icon'
 					href={favIcon.src}
 					type='image/x-icon' />
-				<script
-					async
-					src='https://www.googletagmanager.com/gtag/js?id=G-N9KVED0HQZ'
-				/>
-				<script
-					// eslint-disable-next-line react/no-danger
-					dangerouslySetInnerHTML={
-						{
-							__html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '[Tracking ID]', { page_path: window.location.pathname });
-            `,
-						}
-					}
-				/>
 			</Head>
 			<WagmiProvider config={client}>
 				<QueryClientProvider client={queryClient}>
@@ -757,28 +734,28 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 				</QueryClientProvider>
 			</WagmiProvider>
-			<ChatWidget
-				token='5b3b08cf-8b27-4d4b-9c4e-2290f53e04f0'
-				inbox='cb5e60c6-dfe5-481d-9dde-3f13e83344cd'
-				title='Welcome to Questbook Support'
-				subtitle="Have a question? Please feel free to ask here - we'll respond ASAP, hopefully now!"
-				primaryColor='#1F1F33'
-				newMessagePlaceholder='Type your question ...'
-				showAgentAvailability={false}
-				agentAvailableText="We're online right now!"
-				agentUnavailableText="We're away at the moment."
-				requireEmailUpfront={false}
-				iconVariant='filled'
-				baseUrl='https://app.papercups.io'
+			<Script
+				dangerouslySetInnerHTML={
+					{
+						__html: `
+					(function(d,t) {
+					  var BASE_URL="https://app.chatwoot.com";
+					  var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+					  g.src=BASE_URL+"/packs/js/sdk.js";
+					  g.defer = true;
+					  g.async = true;
+					  s.parentNode.insertBefore(g,s);
+					  g.onload=function(){
+						window.chatwootSDK.run({
+						  websiteToken: 'T2oYSeuvqynieT54cApd4DNU',
+						  baseUrl: BASE_URL
+						})
+					  }
+					})(document,"script");
+					`
+					}
+				}
 			/>
-			<Script src='https://scripts.simpleanalyticscdn.com/latest.js' />
-			<noscript>
-				<img
-					src='https://queue.simpleanalyticscdn.com/noscript.gif'
-					alt=''
-					referrerPolicy='no-referrer-when-downgrade'
-				/>
-			</noscript>
 		</>
 	)
 }
