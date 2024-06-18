@@ -161,11 +161,15 @@ export const getRewardAmount = (decimals: number | undefined, application: {
 }
 
 export const getRewardAmountMilestones = (decimals: number, application: {milestones: Pick<ApplicationMilestone, 'amount'>[]}) => {
-	let sum = BigNumber.from(0)
+	try {
+		let sum = BigNumber.from(0)
 
-	application?.milestones?.forEach(
-		(milestone) => sum = sum.add(milestone.amount))
-	return parseInt(ethers.utils.formatUnits(sum.toString(), decimals)).toLocaleString('en-US')?.split('.')[0]
+		application?.milestones?.forEach(
+			(milestone) => sum = sum.add(milestone.amount))
+		return parseInt(ethers.utils.formatUnits(sum.toString(), decimals)).toLocaleString('en-US')?.split('.')[0]
+	} catch(e) {
+		return '0'
+	}
 }
 
 export function titleCase(str: string) {

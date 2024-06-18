@@ -1,5 +1,4 @@
 import { createContext, ReactElement, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { hotjar } from 'react-hotjar'
 import { Biconomy } from '@biconomy/mexa'
 import { ChakraProvider } from '@chakra-ui/react'
 // import dynamic from 'next/dynamic';
@@ -252,10 +251,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		const _nonce = await getNonce(webwallet)
 		return _nonce
 	}, [webwallet])
-
-	useEffect(() => {
-		hotjar.initialize(3167823, 6)
-	}, [])
 
 	const initiateBiconomyUnsafe = useCallback(async(chainId: string) => {
 		if(!webwallet) {
@@ -731,7 +726,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 							</NotificationContext.Provider>
 						</ApiClientsContext.Provider>
 					</AmplitudeProvider>
-
 				</QueryClientProvider>
 			</WagmiProvider>
 			<Script
