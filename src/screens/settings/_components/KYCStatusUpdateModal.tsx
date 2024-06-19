@@ -59,12 +59,12 @@ function KYCStatusUpdateModal({
 						placeholder='Select a status'
 						onChange={
 							(e) => {
-								setOptions(e.target.value as 'verified' | 'pending' | 'rejected')
+								setOptions(e.target.value as 'completed' | 'pending' | 'rejected')
 							}
 						}
 					>
 						<option value='completed'>
-							Verified
+							completed
 						</option>
 						<option value='pending'>
 							Pending
@@ -119,7 +119,7 @@ function KYCStatusUpdateModal({
 
 	const { refreshWorkspace, workspace } = useContext(SettingsFormContext)!
 
-	const [options, setOptions] = useState<'verified' | 'pending' | 'rejected'>('pending')
+	const [options, setOptions] = useState<'completed' | 'pending' | 'rejected'>('pending')
 	const customToast = useCustomToast()
 
 	return buildComponent()
