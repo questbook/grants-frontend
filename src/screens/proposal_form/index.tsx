@@ -1847,6 +1847,7 @@ function ProposalForm() {
 								<SectionInput
 									label='Education & Working experience & achievements of the founder and/or chief creator of Mini-app* will not be shown publicly)'
 									placeholder=''
+									type='textarea'
 									value={findCustomField(form, 'Education & Working experience & achievements of the founder and/or chief creator of Mini-app').value}
 									onChange={
 										(e) => {
@@ -1997,17 +1998,16 @@ function ProposalForm() {
 						{
 							(
 								<>
+
 									<SelectArray
 										label='Milestones'
-										allowMultiple={false}
+										allowMultiple={grant?.payoutType === 'milestones' || (containsField(grant, 'isMultipleMilestones') ?? false)}
 										config={
 											form?.milestones?.map((milestone, index) => {
 												return [
 													{
 														...MILESTONE_INPUT_STYLE[0],
 														value: milestone?.title,
-														isDisabled: true,
-														type: 'prefilled',
 														// isDisabled: index < (grant?.milestones?.length || 0),
 														onChange: (e) => {
 															const copy = { ...form }
@@ -2017,8 +2017,7 @@ function ProposalForm() {
 													},
 													{
 														...MILESTONE_INPUT_STYLE[1],
-														value: index === 0 ? 0 : milestone?.amount > 0 ? milestone?.amount : '',
-														isDisabled: index === 0,
+														value: milestone?.amount > 0 ? milestone?.amount : '',
 														onChange: (e) => {
 															if(e.target.value?.includes('.')) {
 																return
@@ -2045,7 +2044,10 @@ function ProposalForm() {
 										}
 										onRemove={
 											(index) => {
-												logger.info({ index, form }, 'Splicing')
+												const copy = { ...form }
+												logger.info({ index, copy }, 'Splicing')
+												copy.milestones.splice(index, 1)
+												setForm(copy)
 											}
 										} />
 
@@ -2083,7 +2085,7 @@ function ProposalForm() {
 										mx='auto'
 										fontSize='sm'
 										color='black.500'>
-										{'The total fund will be < $50,000 and depended on the decision of the Foundation by installments. Grants don’t mean that the Foundation sees your project as a promised success in the future. You need to think about your long-term plan of funding by yourself.'}
+										{'The total fund will be < $50,000 and depended on the decision of the Foundation by installments. Grants don\'t mean that the Foundation sees your project as a promised success in the future. You need to think about your long-term plan of funding by yourself.'}
 									</Text>
 								</>
 							)
@@ -2288,7 +2290,7 @@ function ProposalForm() {
 			}
 		}
 
-		if((grant?.id === '661cb739ccf6446509caa385' || grant?.id === tonAPACGrants) && (fundingAsk) > parseInt(grant?.reward?.committed)) {
+		if((grant?.id === '661cb739ccf6446509caa385') && (fundingAsk) > parseInt(grant?.reward?.committed)) {
 			return true
 		}
 
@@ -2310,7 +2312,7 @@ function ProposalForm() {
 		}
 
 		for(const milestone of milestones) {
-			if((milestone.title === '' || !milestone.amount) && grant?.id !== tonAPACGrants) {
+			if((milestone.title === '' || !milestone.amount)) {
 				logger.info({ index: milestone.index }, 'Milestone is empty')
 				return true
 			}
