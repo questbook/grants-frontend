@@ -10,7 +10,7 @@ const seoConfig = {
 		site: '@questbookapp',
 		cardType: 'summary_large_image',
 		title: 'Questbook Grant',
-		image: 'https://ipfs.io/ipfs/QmYmqtS1nYGFUu6pGY4rcm9mwQLj4W2Qbm9a2uY7FXwMej',
+		image: 'https://gateway.pinata.cloud/ipfs/QmYmqtS1nYGFUu6pGY4rcm9mwQLj4W2Qbm9a2uY7FXwMej',
 	},
 	openGraph: {
 		type: 'website',
@@ -23,13 +23,13 @@ const seoConfig = {
 		site_name: 'Questbook',
 		images: [
 			{
-				url: 'https://ipfs.io/ipfs/QmYmqtS1nYGFUu6pGY4rcm9mwQLj4W2Qbm9a2uY7FXwMej',
+				url: 'https://gateway.pinata.cloud/ipfs/QmYmqtS1nYGFUu6pGY4rcm9mwQLj4W2Qbm9a2uY7FXwMej',
 				width: 1240,
 				height: 480,
 				alt: 'Questbook Grant',
 			},
 			{
-				url: 'https://ipfs.io/ipfs/QmYmqtS1nYGFUu6pGY4rcm9mwQLj4W2Qbm9a2uY7FXwMej',
+				url: 'https://gateway.pinata.cloud/ipfs/QmYmqtS1nYGFUu6pGY4rcm9mwQLj4W2Qbm9a2uY7FXwMej',
 				width: 1012,
 				height: 506,
 				alt: 'Questbook Grant',
