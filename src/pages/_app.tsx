@@ -225,10 +225,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		return _nonce
 	}, [webwallet])
 
-	useEffect(() => {
-		hotjar.initialize(3167823, 6)
-	}, [])
-
 	const initiateBiconomyUnsafe = useCallback(async(chainId: string) => {
 		if(!webwallet) {
 			throw new Error('Attempted init without webwallet')
