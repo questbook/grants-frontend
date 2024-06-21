@@ -704,6 +704,26 @@ function ProposalForm() {
 							placeholder='12000 USDC'
 							value={`${fundingAsk} ${chainInfo?.label}`}
 						/>
+						{
+							(form?.milestones?.reduce((acc, curr) => acc + curr.amount, 0) > parseInt(grant?.reward?.committed as string))
+						&& (
+
+							<Text
+								fontWeight='500'
+								color='red.500'
+								fontSize='14px'
+								mt={4}
+							>
+								Funding requested in milestones exceeds the total funding committed -
+								{' '}
+								{' '}
+								{grant?.reward?.committed}
+								{' '}
+								{chainInfo?.label}
+							</Text>
+
+						)
+						}
 
 						{/* Render custom Fields */}
 						{
@@ -836,6 +856,7 @@ function ProposalForm() {
 						>
 							{'*Please ensure that all fields are filled correctly before submitting the proposal. Please fill them with \'N/A\' or \'-\' if not applicable'}
 						</Text>
+
 						<Button
 							mt={10}
 							ml='auto'
@@ -934,14 +955,21 @@ function ProposalForm() {
 			return true
 		}
 
+
 		const optionalFields = ['projectDetails', 'fundingAsk', 'fundingBreakdown', 'projectGoals', 'projectLink']
 		const { fields, members, details, milestones } = form
+		const fundingAsk = milestones.reduce((acc, curr) => acc + curr.amount, 0)
 		for(const field of fields) {
 			if(field.value === '' && !optionalFields.includes(field.id)) {
 				logger.info({ field }, 'Field is empty')
 				return true
 			}
 		}
+
+		if((fundingAsk) > parseInt(grant?.reward?.committed ?? '0')) {
+			return true
+		}
+
 
 		if(disabledGrants?.includes(grant?.id as string) && type === 'submit') {
 			logger.info('Grant is disabled')
