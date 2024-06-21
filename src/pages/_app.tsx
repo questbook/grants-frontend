@@ -1,8 +1,6 @@
 import { createContext, ReactElement, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { hotjar } from 'react-hotjar'
 import { Biconomy } from '@biconomy/mexa'
 import { ChakraProvider } from '@chakra-ui/react'
-import { ChatWidget } from '@papercups-io/chat-widget'
 // import dynamic from 'next/dynamic';
 import {
 	Configuration,
@@ -669,23 +667,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 					rel='shortcut icon'
 					href={favIcon.src}
 					type='image/x-icon' />
-				<script
-					async
-					src='https://www.googletagmanager.com/gtag/js?id=G-N9KVED0HQZ'
-				/>
-				<script
-					// eslint-disable-next-line react/no-danger
-					dangerouslySetInnerHTML={
-						{
-							__html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '[Tracking ID]', { page_path: window.location.pathname });
-            `,
-						}
-					}
-				/>
 			</Head>
 			<WagmiConfig client={client}>
 				<AmplitudeProvider>
@@ -720,28 +701,28 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 					</ApiClientsContext.Provider>
 				</AmplitudeProvider>
 			</WagmiConfig>
-			<ChatWidget
-				token='5b3b08cf-8b27-4d4b-9c4e-2290f53e04f0'
-				inbox='cb5e60c6-dfe5-481d-9dde-3f13e83344cd'
-				title='Welcome to Questbook Support'
-				subtitle="Have a question? Please feel free to ask here - we'll respond ASAP, hopefully now!"
-				primaryColor='#1F1F33'
-				newMessagePlaceholder='Type your question ...'
-				showAgentAvailability={false}
-				agentAvailableText="We're online right now!"
-				agentUnavailableText="We're away at the moment."
-				requireEmailUpfront={false}
-				iconVariant='filled'
-				baseUrl='https://app.papercups.io'
+			<Script
+				dangerouslySetInnerHTML={
+					{
+						__html: `
+					(function(d,t) {
+					  var BASE_URL="https://app.chatwoot.com";
+					  var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+					  g.src=BASE_URL+"/packs/js/sdk.js";
+					  g.defer = true;
+					  g.async = true;
+					  s.parentNode.insertBefore(g,s);
+					  g.onload=function(){
+						window.chatwootSDK.run({
+						  websiteToken: 'T2oYSeuvqynieT54cApd4DNU',
+						  baseUrl: BASE_URL
+						})
+					  }
+					})(document,"script");
+					`
+					}
+				}
 			/>
-			<Script src='https://scripts.simpleanalyticscdn.com/latest.js' />
-			<noscript>
-				<img
-					src='https://queue.simpleanalyticscdn.com/noscript.gif'
-					alt=''
-					referrerPolicy='no-referrer-when-downgrade'
-				/>
-			</noscript>
 		</>
 	)
 }

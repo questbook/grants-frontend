@@ -238,6 +238,10 @@ function Discover() {
 			'text': 'Axelar'
 		},
 		{
+			'logo': 'QmNrd1rxQx5BZzWFWY5ZSaFPhNXyijUSRCTLMVveHpK8LF',
+			'text': 'ENS'
+		},
+		{
 			'logo': 'QmRmLRwFw6xQgJc2Mam45tYj9zLimLkjoXrR3Lvw6m2EEf',
 			'text': 'TON Foundation'
 		},
