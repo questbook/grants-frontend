@@ -235,6 +235,10 @@ function Discover() {
 			'text': 'Compound'
 		},
 		{
+			'logo': 'QmNrd1rxQx5BZzWFWY5ZSaFPhNXyijUSRCTLMVveHpK8LF',
+			'text': 'ENS'
+		},
+		{
 			'logo': 'QmWX8As9og6mLaiPhCaR3NqkinXMDymMaqf43qyVSE5hp8',
 			'text': 'Reclaim Protocol'
 		},
