@@ -6,7 +6,7 @@ import SetupNotificationModal from 'src/libraries/ui/SetupNotificationModal'
 import { copyGrantLink } from 'src/libraries/utils/copy'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
-import { disabledTonGrants, subdomains, tonGrants } from 'src/screens/proposal_form/_utils/constants'
+import { disabledTonGrants, ensGrants, subdomains, tonGrants } from 'src/screens/proposal_form/_utils/constants'
 
 function Empty() {
 	const buildComponent = () => {
@@ -144,7 +144,9 @@ function Empty() {
 											const domain = href[2]
 											const chainId = getSupportedChainIdFromSupportedNetwork(grant?.workspace.supportedNetworks[0])
 
-											const URL = `${protocol}//${domain}/proposal_form/?grantId=${grant?.id}&chainId=${chainId}&newTab=true`
+											const URL =
+											grant?.id === ensGrants ? `https://ens.questbook.app/proposal_form/?grantId=${grant?.id}&chainId=${chainId}&newTab=true` :
+												`${protocol}//${domain}/proposal_form/?grantId=${grant?.id}&chainId=${chainId}&newTab=true`
 
 											window.open(URL, '_blank')
 										}

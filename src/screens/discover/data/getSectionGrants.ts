@@ -6,7 +6,7 @@ query getSectionGrants {
   sections(filter: {
     _operators:{
       _id: {
-        in: ["Axelar", "Arbitrum", "Compound", "TON Foundation", "Alchemix", "iExec", "Reclaim Protocol","Solana Ecosystem", "Elastos", "Haberdashery"]
+        in: ["Axelar", "Arbitrum", "Compound", "TON Foundation", "ENS", "Alchemix", "iExec", "Reclaim Protocol","Solana Ecosystem", "Elastos", "Haberdashery"]
       }
     }
   }) {

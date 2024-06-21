@@ -13,4 +13,5 @@ export const disabledSubmissions = ['65eb4d301080cbb3447f4b4f']
 export const subdomains = [{ name: 'starknet', grants: ['661667585afea0acb56c9f08'] }, { name: 'polygon', grants: ['65eb4d301080cbb3447f4b4f'] }]
 export const tonGrants = '65c7836df27e2e1702d2d279'
 export const tonAPACGrants = '663d2b4c7d71679fa9959bf6'
+export const ensGrants = '6619151a3a7a91313846ed80'
 export const SocialIntent = ['Just submitted my grant application on @questbookapp! Hoping to make a difference. Check it out and support if you can!', 'Applied for a grant through @questbookapp today! Fingers crossed for positive outcomes. Take a peek at my project and show your support!', 'Thrilled to share that I\'ve applied for a grant via @questbookapp! Excited about the potential impact. Check out my application and help spread the word!', 'Big news! I\'ve just applied for a grant on @questbookapp. Feeling hopeful about the possibilities! Take a look and consider showing your support!', 'Hey friends! Just took a big step and applied for a grant on @questbookapp. Feeling optimistic about the opportunity. Check out my application and show your support.']
