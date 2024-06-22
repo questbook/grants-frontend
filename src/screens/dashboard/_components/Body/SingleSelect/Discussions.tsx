@@ -395,7 +395,7 @@ function Discussions() {
 					ml={3}
 					overflowWrap='break-word'
 					overflowX='auto'
-					width={'100%'}
+					width='100%'
 					direction='column'>
 					<Flex
 						align='center'

@@ -410,7 +410,7 @@ function FundBuilderModal({
 				to: tos?.[0],
 				applicationId: proposal?.id?.startsWith('0x') ? parseInt(proposal?.id, 16) : parseInt(proposal?.id?.slice(-2) ?? '0', 16),
 				selectedMilestone: milestoneIndices?.[0],
-				selectedToken: { tokenName: selectedTokenInfo?.tokenName, info: selectedTokenInfo?.info },
+				selectedToken: { tokenName: selectedTokenInfo?.tokenName, info: selectedTokenInfo?.info, isNative: selectedTokenInfo?.isNative ?? false, decimals: selectedTokenInfo?.info?.decimals },
 				amount: amounts?.[0],
 			}]
 

@@ -71,6 +71,8 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 														status: 'info',
 														duration: 3000
 													})
+												} else {
+													connect({ connector })
 												}
 											} else {
 												toast({
@@ -213,11 +215,11 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 				logger.info(chains, 'Chains')
 				if(!toChainId || !chains.find((x) => x.id === toChainId)) {
 					toast({
-						title: 'Chain not supported',
+						title: 'Invalid chain id Please switch to correct chain',
 						status: 'error',
 						duration: 3000
 					})
-					return
+					return ''
 				}
 
 				await switchChain({ chainId: toChainId })
