@@ -1,15 +1,18 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import ReactLinkify from 'react-linkify'
+import Markdown from 'react-markdown'
 import {
 	Box,
 	Button,
 	CircularProgress,
 	Flex,
 	Image,
+	List,
 	Text,
 } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import { ContentState, convertFromRaw, EditorState } from 'draft-js'
+import remarkGfm from 'remark-gfm'
 import { defaultChainId } from 'src/constants/chains'
 import { Mail, ShareForward } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
@@ -375,39 +378,167 @@ function Proposal() {
 									<Text color='gray.500'>
 										{title}
 									</Text>
-									<ReactLinkify
-										componentDecorator={
-											(
-												decoratedHref: string,
-												decoratedText: string,
-												key: number,
-											) => (
-												<Text
-													display='inline-block'
-													wordBreak='break-all'
-													color='accent.azure'
-													cursor='pointer'
-													_hover={
-														{
-															textDecoration: 'underline',
-														}
+									<div className='richTextContainerPreview'>
+										<Markdown
+											remarkPlugins={[remarkGfm]}
+											className='DraftEditor-root DraftEditor-editorContainer public-DraftEditor-content markdown-body '
+											components={
+												{
+													a: props => {
+														return (
+															<Text
+																display='inline-block'
+																wordBreak='break-all'
+																color='accent.azure'
+																fontSize='15px'
+																variant='body'
+																cursor='pointer'
+																_hover={
+																	{
+																		textDecoration: 'underline',
+																	}
+																}
+																onClick={
+																	() => {
+																		window.open(props.href, '_blank')
+																	}
+																}
+															>
+																{props.href}
+															</Text>
+
+														)
+													},
+
+													p: ({ ...props }) => {
+														return (
+															<Text
+																{...props}
+																variant='body'
+																fontSize='15px'
+																mt={2}
+																whiteSpace='pre-line'
+																wordBreak='break-word'
+															/>
+														)
+													},
+													ul: ({ ...props }) => {
+														return (
+															<List
+																{...props}
+																as='ul'
+																className='public-DraftStyleDefault-ul'
+															/>
+														)
 													}
-													key={key}
-													onClick={
-														() => {
-															window.open(decoratedHref, '_blank')
-														}
+													,
+													li: ({ ...props }) => {
+														return (
+															<li
+																{...props}
+																className='public-DraftStyleDefault-unorderedListItem public-DraftStyleDefault-reset public-DraftStyleDefault-depth0 public-DraftStyleDefault-listLTR'
+															/>
+														)
+													},
+
+
+													h1: ({ ...props }) => {
+														return (
+															<Text
+																fontSize='20px'
+																fontWeight={600}
+																lineHeight={1.2}
+																mb='14px'
+																mt='14px'
+																{...props}
+																as='h1'
+
+															/>
+														)
+													},
+													h2: ({ ...props }) => {
+														return (
+															<Text
+
+																{...props}
+																as='h2'
+																fontSize='18px'
+																fontWeight={600}
+																lineHeight={1.2}
+																mb='14px'
+																mt='14px'
+															/>
+														)
+													},
+
+													h3: ({ ...props }) => {
+														return (
+															<Text
+
+																{...props}
+																as='h3'
+																fontSize='16px'
+																fontWeight={600}
+																lineHeight={1.2}
+																mb='14px'
+																mt='14px'
+															/>
+														)
+													},
+
+
+													h4: ({ ...props }) => {
+														return (
+															<Text
+																{...props}
+																variant='h4'
+																mt={2}
+															/>
+														)
+													},
+													h5: ({ ...props }) => {
+														return (
+															<Text
+																{...props}
+																variant='h5'
+																mt={2}
+															/>
+														)
+													},
+													code: ({ ...props }) => {
+														return (
+															<Text
+																{...props}
+																as='code'
+																fontStyle='normal'
+																fontFamily='body'
+																variant='body'
+																fontSize='15px'
+																mt={2}
+																whiteSpace='pre-line'
+																wordBreak='break-word'
+															/>
+														)
+													},
+													img: ({ ...props }) => {
+														return (
+															<Image
+																{...props}
+																fallback={<></>}
+																fallbackStrategy='onError'
+																w='50%'
+																mt={2}
+																src={props.src}
+																alt='comment-image'
+															/>
+														)
 													}
-												>
-													{decoratedText}
-												</Text>
-											)
-										}
-									>
-										<Text mt={1}>
+												}
+											}
+										>
 											{value}
-										</Text>
-									</ReactLinkify>
+										</Markdown>
+									</div>
 								</Flex>
 							)
 						})
