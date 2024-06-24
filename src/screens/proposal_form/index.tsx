@@ -2000,7 +2000,7 @@ function ProposalForm() {
 								<>
 
 									<SelectArray
-										label='Milestones'
+										label='Milestones*'
 										allowMultiple={grant?.payoutType === 'milestones' || (containsField(grant, 'isMultipleMilestones') ?? false)}
 										config={
 											form?.milestones?.map((milestone, index) => {
@@ -2012,6 +2012,29 @@ function ProposalForm() {
 														onChange: (e) => {
 															const copy = { ...form }
 															copy.milestones[index] = { ...copy.milestones[index], title: e.target.value }
+															setForm(copy)
+														}
+													},
+													{
+														...MILESTONE_INPUT_STYLE[2],
+														value: milestone?.details,
+														type: 'textarea',
+														// isDisabled: index < (grant?.milestones?.length || 0),
+														onChange: (e) => {
+															const copy = { ...form }
+															copy.milestones[index] = { ...copy.milestones[index], details: e.target.value }
+															setForm(copy)
+														}
+													},
+													{
+														...MILESTONE_INPUT_STYLE[3],
+														value: milestone?.deadline,
+														type: 'date',
+														label: 'Deadline',
+														// isDisabled: index < (grant?.milestones?.length || 0),
+														onChange: (e) => {
+															const copy = { ...form }
+															copy.milestones[index] = { ...copy.milestones[index], deadline: e.target.value }
 															setForm(copy)
 														}
 													},
@@ -2200,8 +2223,11 @@ function ProposalForm() {
 										setSignIn(true)
 										return
 									} else {
-										setNetworkTransactionModalStep(0)
-										submitProposal(form)
+										const check = formCheck()
+										if(check) {
+											setNetworkTransactionModalStep(0)
+											submitProposal(form)
+										}
 									}
 								}
 							}>
