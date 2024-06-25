@@ -31,7 +31,8 @@ import { DOMAIN_CACHE_KEY } from 'src/libraries/ui/NavBar/_utils/constants'
 import QRCodeModal from 'src/libraries/ui/QRCodeModal'
 import { delay } from 'src/libraries/utils'
 import { generateToken, verifyToken } from 'src/libraries/utils/authToken'
-import { addAuthorizedUser, bicoDapps, getNonce, jsonRpcProviders, networksMapping } from 'src/libraries/utils/gasless'
+import { addAuthorizedUser, getNonce, networksMapping } from 'src/libraries/utils/gasless'
+import { getSCWAddress } from 'src/libraries/utils/getSCWAddress'
 import { extractInviteInfo, InviteInfo } from 'src/libraries/utils/invite'
 import logger from 'src/libraries/utils/logger'
 import getSeo from 'src/libraries/utils/seo'
@@ -272,81 +273,48 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 		chainId = networksMapping[chainId]
 
-		const _biconomy = new Biconomy(
-			jsonRpcProviders[chainId],
-			{
-				apiKey: bicoDapps[chainId].apiKey,
-				debug: true
-			}
-		)
-		_logger.info('initializing biconomy')
+		const _biconomyWalletClient = null
+		const scwAddress = await new Promise<string>(async(resolve, reject) => {
+			// Directly proceed with wallet existence check without Biconomy
 
-		let _biconomyWalletClient: BiconomyWalletClient
-		let readyCalled = false
-		const scwAddress = await new Promise<string>((resolve, reject) => {
-			_biconomy.onEvent(_biconomy.READY, async() => {
+			try {
+				const webwalletAddress = webwallet.address
 
-				if(readyCalled) {
-					_logger.warn('ready called multiple times')
-					return
+				// Simulate the checkIfWalletExists method
+				const result = await getSCWAddress(webwalletAddress)
+
+				_logger.info({ result }, 'checkIfWalletExists')
+				let walletAddress = result.walletAddress
+				_logger.info({ walletAddress }, 'already deployed')
+				if(!result.doesWalletExist) {
+					// Simulate wallet deployment if it doesn't exist
+					// walletAddress = await deploySCW(webwallet, _biconomyWalletClient, chainId, nonce!);
+					walletAddress = webwalletAddress
+					_logger.info({ walletAddress }, 'scw deployed')
 				}
 
-				_logger.info({ clientExists: !!_biconomy.biconomyWalletClient }, 'biconomy ready')
-				readyCalled = true
+				const authToken = localStorage.getItem('authToken')
+				const jwtRegex = new RegExp('^[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+\\.[A-Za-z0-9-_.+/=]*$')
+				if(!authToken?.match(jwtRegex)) {
+					const token = await generateToken(walletAddress)
+					if(token) {
+						const sign = await webwallet.signMessage(token?.nonce)
+						const tokenData = await verifyToken(token?.id, sign)
 
-				try {
-					do {
-						_biconomyWalletClient = _biconomy.biconomyWalletClient
-						if(!_biconomyWalletClient) {
-							_logger.warn('biconomyWalletClient does not exist')
-							await delay(500)
-						}
-					} while(!_biconomyWalletClient)
-
-					const result = await _biconomyWalletClient
-						.checkIfWalletExists({ eoa: webwallet.address })
-
-					logger.info({ result }, 'checkIfWalletExists')
-					let walletAddress = result.walletAddress
-					logger.info({ walletAddress }, 'already deployed')
-					if(!result.doesWalletExist) {
-						// walletAddress = await deploySCW(webwallet, _biconomyWalletClient, chainId, nonce!)
-						walletAddress = webwallet.address
-						_logger.info({ walletAddress }, 'scw deployed')
-					}
-
-					const authToken = localStorage.getItem('authToken')
-					const jwtRegex = new RegExp('^[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+\\.[A-Za-z0-9-_.+/=]*$')
-					if(!authToken?.match(jwtRegex)) {
-						const token = await generateToken(walletAddress)
-						if(token) {
-							const sign = await webwallet.signMessage(token?.nonce)
-							const tokenData = await verifyToken(token?.id, sign)
-
-							if(tokenData) {
-								localStorage.setItem('authToken', tokenData) // Storing the verified token directly
-							}
+						if(tokenData) {
+							localStorage.setItem('authToken', tokenData) // Storing the verified token directly
 						}
 					}
-
-
-					resolve(walletAddress)
-				} catch(err) {
-					_logger.error({ err }, 'error in scw deployment')
-					reject(err)
 				}
-			})
 
-			_biconomy.onEvent(_biconomy.ERROR, (err: Error) => {
-				_logger.error({ err }, 'biconomy error')
+				resolve(walletAddress)
+			} catch(err) {
+				_logger.error({ err }, 'error in scw deployment')
 				reject(err)
-			})
+			}
 		})
-
 		_logger.info({ scwAddress }, 'got scw address')
 
-		setBiconomyWalletClients(prev => ({ ...prev, [chainId]: _biconomyWalletClient }))
-		setBiconomyDaoObjs(prev => ({ ...prev, [chainId]: _biconomy }))
 
 		// only switch the chainId if it's the most recently requested one
 		// this prevents race conditions when inititialisation of multiple chains is requested
@@ -360,7 +328,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			switchNetwork(chain)
 		}
 
-		return { biconomyDaoObj: _biconomy, biconomyWalletClient: _biconomyWalletClient! }
+		return { biconomyDaoObj: '', biconomyWalletClient: _biconomyWalletClient! }
 	}, [webwallet, nonce])
 
 	const initiateBiconomy = useCallback(
