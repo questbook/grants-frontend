@@ -187,6 +187,7 @@ export const BiconomyContext = createContext<{
 	setBiconomyWalletClients: (biconomyWalletClients?: { [key: string]: BiconomyWalletClient }) => void
 		} | null>(null)
 
+
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [network, switchNetwork] = useState<SupportedChainId>(defaultChainId)
 	const [webwallet, setWebwallet] = useState<Wallet | null>()
