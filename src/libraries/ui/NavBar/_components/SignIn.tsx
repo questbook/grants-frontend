@@ -79,7 +79,6 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 	useEffect(() => {
 		const authToken = localStorage.getItem('authToken')
 		const isEOA = localStorage.getItem('isEOA')
-		logger.info('Is EOA', isConnected, isEOA, authToken)
 		const timer = setTimeout(() => {
 			if(!isConnected && isEOA && authToken) {
 				setIsEOA(false)
@@ -98,7 +97,6 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 		mutation: {
 			async onSuccess(data, variables, context) {
 				logger.info('Sign message success', data, variables, context)
-				logger.info('Sign message success', data)
 
 				//  localStorage.setItem('isEOA', data)
 				//  localStorage.setItem('authToken', data)
@@ -110,7 +108,6 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 						localStorage.setItem('authToken', tokenData) // Storing the verified token directly
 					}
 
-					logger.info('Token signed', tokenData)
 					setScwAddress(address)
 					setWebwallet({
 						address: address,
