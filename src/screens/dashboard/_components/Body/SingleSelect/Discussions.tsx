@@ -669,7 +669,8 @@ function Discussions() {
 					return formatAddress(comment.sender ?? '')
 				}
 			} catch(e) {
-				return formatAddress(comment.sender ?? '')
+				return comment.role === 'builder' &&
+				comment.sender?.toLowerCase() === proposal?.applicantId?.toLowerCase() ? getFieldString(proposal, 'applicantName') : formatAddress(comment.sender ?? '')
 			}
 		}
 	}
