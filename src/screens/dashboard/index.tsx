@@ -65,7 +65,7 @@ function Dashboard(props: DynamicData) {
 								{disabledGrants?.includes(grant?.id as string) && <Banner /> }
 								<Flex
 									h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
-									overflowY='clip'>
+									overflowY='auto'>
 									{
 										(dashboardStep === false) && (
 											<ProposalList
@@ -90,7 +90,7 @@ function Dashboard(props: DynamicData) {
 								{disabledGrants?.includes(grant?.id as string) && <Banner /> }
 								<Flex
 									h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
-									overflowY='clip'>
+									overflowY='auto'>
 									<ProposalList />
 									<Body />
 									<ActionList />
