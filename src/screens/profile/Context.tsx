@@ -29,12 +29,16 @@ const ProfileProvider = ({ children }: {children: ReactNode}) => {
 		return (
 			<ProfileContext.Provider
 				value={
-					{ isLoading, proposals, builder, refresh: (refresh: boolean) => {
-						if(refresh) {
-							getBuilderDetails()
-							getBuilderProposals()
-						}
-					},
+					{ isLoading, proposals, builder,
+						isQrModalOpen, setIsQrModalOpen,
+						qrCode, setQrCode,
+						providerName, setProviderName,
+						refresh: (refresh: boolean) => {
+							if(refresh) {
+								getBuilderDetails()
+								getBuilderProposals()
+							}
+						},
 					}
 				}>
 				{children}
@@ -46,6 +50,9 @@ const ProfileProvider = ({ children }: {children: ReactNode}) => {
 	const [proposals, setProposals] = useState<BuilderProposals[] | undefined>(undefined)
 	const [builder, setBuilder] = useState<BuilderInfoType | undefined>(undefined)
 	const [isBuilderInfoLoading, setBuilderInfoLoading] = useState<boolean>(true)
+	const [isQrModalOpen, setIsQrModalOpen] = useState<boolean>(false)
+	const [qrCode, setQrCode] = useState<string>('')
+	const [providerName, setProviderName] = useState<string>('')
 
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 
@@ -72,6 +79,23 @@ const ProfileProvider = ({ children }: {children: ReactNode}) => {
 			setBuilder(results.getProfile)
 		}
 
+		if(providerName?.length > 0) {
+			if((providerName === 'compound' && results?.getProfile?.compound?.identifier !== undefined) ||
+				(providerName === 'axelar' && results?.getProfile?.axelar?.identifier) ||
+				(providerName === 'polygon' && results?.getProfile?.polygon?.identifier) ||
+				(providerName === 'ens' && results?.getProfile?.ens?.identifier) ||
+				(providerName === 'github' && results?.getProfile?.github?.identifier) ||
+				(providerName === 'twitter' && results?.getProfile?.twitter?.identifier) ||
+				(providerName === 'arbitrum' && results?.getProfile?.arbitrum?.identifier)) {
+				logger.info('Setting Builder Info', results?.getProfile[providerName])
+				setIsQrModalOpen(false)
+				setQrCode('')
+				setProviderName('')
+				logger.info('Closing Modal', results?.getProfile?.[providerName]?.claimData)
+			}
+		}
+
+
 		setBuilderInfoLoading(false)
 	}
 
@@ -97,7 +121,15 @@ const ProfileProvider = ({ children }: {children: ReactNode}) => {
 
 	useEffect(() => {
 		getBuilderDetails().then(r => logger.info(r, 'Get Builder Details'))
-	}, [scwAddress])
+		if(isQrModalOpen && providerName.length > 0) {
+		  // poll builder info every 5 seconds
+		  const interval = setInterval(() => {
+				getBuilderDetails().then(r => logger.info(r, 'Get Builder Details'))
+			}, 5000)
+			return () => clearInterval(interval)
+		}
+
+	}, [scwAddress, isQrModalOpen, providerName])
 
 	useEffect(() => {
 		getBuilderProposals().then(r => logger.info(r, 'Get Builder Proposal'))

@@ -136,56 +136,6 @@ function ProfileModal() {
 									color='#7E7E8F'
 								/>
 							</Flex>
-							<Flex
-								direction='column'
-							>
-								<Text
-									fontWeight='500'
-									color='#07070C'
-									fontSize='18px'
-									mt={2}
-								>
-									Github
-								</Text>
-
-								<Input
-									placeholder='Enter your Github username'
-									mt={2}
-									value={formData.github}
-									onChange={(e) => setFormData({ ...formData, github: e.target.value })}
-									borderRadius='8px'
-									border='1px solid #7E7E8F'
-									padding='16px'
-									fontSize='16px'
-									fontWeight='400'
-									color='#7E7E8F'
-								/>
-							</Flex>
-							<Flex
-								direction='column'
-							>
-								<Text
-									fontWeight='500'
-									color='#07070C'
-									fontSize='18px'
-									mt={2}
-								>
-									Twitter/X
-								</Text>
-
-								<Input
-									placeholder='Enter your Twitter/X username'
-									mt={2}
-									value={formData.twitter}
-									onChange={(e) => setFormData({ ...formData, twitter: e.target.value })}
-									borderRadius='8px'
-									border='1px solid #7E7E8F'
-									padding='16px'
-									fontSize='16px'
-									fontWeight='400'
-									color='#7E7E8F'
-								/>
-							</Flex>
 							<Button
 								mt={4}
 								bgColor='#77AC06'
@@ -202,8 +152,6 @@ function ProfileModal() {
 										const variables = {
 											username: formData.name,
 											telegram: formData.telegram,
-											github: formData.github,
-											twitter: formData.twitter,
 											imageURL: logoIpfsHash,
 											address: scwAddress
 										}
@@ -265,13 +213,9 @@ function ProfileModal() {
 	const [formData, setFormData] = useState<{
         name: string
         telegram: string
-        github: string
-        twitter: string
     }>({
     	name: '',
     	telegram: '',
-    	github: '',
-    	twitter: ''
     })
 
 	const ref = useRef(null)
@@ -292,8 +236,6 @@ function ProfileModal() {
 			setFormData({
 				name: builder.username,
 				telegram: builder.telegram,
-				github: builder.github,
-				twitter: builder.twitter
 			})
 			setImageFile({ file: null, hash: builder.imageURL })
 		}

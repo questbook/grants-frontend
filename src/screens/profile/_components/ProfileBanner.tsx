@@ -1,9 +1,14 @@
-import { FaGithub, FaTelegram, FaTwitter } from 'react-icons/fa'
+import { useContext } from 'react'
+import { FaExternalLinkAlt, FaGithub, FaTelegram, FaTwitter } from 'react-icons/fa'
 import { useMediaQuery } from 'react-responsive'
 import { Box, Flex, Image, Text } from '@chakra-ui/react'
+import { logger } from 'ethers'
 import { getAvatar } from 'src/libraries/utils'
 import { titleCase } from 'src/libraries/utils/formatting'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
+import { WebwalletContext } from 'src/pages/_app'
+import { ProfileContext } from 'src/screens/profile/Context'
+import { generateProof } from 'src/screens/profile/hooks/generateProof'
 
 
 function ProfileBanner({
@@ -20,6 +25,7 @@ function ProfileBanner({
 	telegram: string
 }) {
 
+	logger.info(github, 'ProfileBanner')
 
 	const buildComponent = () => {
 
@@ -93,6 +99,65 @@ function ProfileBanner({
 			)
 		}
 
+		const VerifySocial = (provider: string) => {
+			if(scwAddress !== builder?.address || isMobile) {
+				return null
+			}
+
+			return (
+				<Flex
+					cursor='pointer'
+					gap='5px'
+					onClick={
+
+						async() => {
+							if(provider && scwAddress) {
+								const proof = await generateProof(provider, scwAddress)
+								if(proof.error) {
+									return
+								}
+
+								setQrCode(proof.requestUrl)
+								setProviderName(provider)
+								setIsQrModalOpen(true)
+							}
+						}
+
+					}
+					alignItems='center'
+				>
+					{
+						provider === 'github' ? (
+							<FaGithub
+								color='#7E7E8F'
+							/>
+						) : provider === 'twitter' ? (
+							<FaTwitter
+								color='#7E7E8F'
+							/>
+						) : (
+							<FaTelegram
+								color='#7E7E8F'
+							/>
+						)
+					}
+					<Text
+						color='#7E7E8F'
+						fontSize='16px'
+						fontStyle='normal'
+						fontWeight='500'
+						lineHeight='130%'
+					>
+						Verify using reclaim
+					</Text>
+					<FaExternalLinkAlt
+						color='#7E7E8F'
+						fontSize='16px'
+					/>
+				</Flex>
+			)
+		}
+
 		return (
 			<Flex
 				bgColor='#F7F5F2'
@@ -129,8 +194,8 @@ function ProfileBanner({
 					<Flex
 						mt='12px'
 						gap='20px'>
-						{github && social('github', github)}
-						{twitter && social('twitter', twitter)}
+						{/* {github ? social('github', github) : VerifySocial('github')} */}
+						{twitter ? social('twitter', twitter) : VerifySocial('twitter')}
 						{telegram && social('telegram', telegram)}
 					</Flex>
 				</Box>
@@ -138,7 +203,10 @@ function ProfileBanner({
 		)
 	}
 
+	const { setIsQrModalOpen, setQrCode, setProviderName, builder } = useContext(ProfileContext)!
+	const { scwAddress } = useContext(WebwalletContext)!
 	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
+
 	return buildComponent()
 }
 

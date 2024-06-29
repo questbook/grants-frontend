@@ -17,7 +17,7 @@ import {
 } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import { useRouter } from 'next/router'
-import { AddUser, ArrowRight, Key, Pencil } from 'src/generated/icons'
+import { AddUser, ArrowRight, Discover, Key, Pencil } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
 import { getAvatar } from 'src/libraries/utils'
@@ -206,6 +206,14 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 	}, [grant, scwAddress])
 
 	const menuItems = [
+		{
+			icon: <Discover
+				boxSize='18px'
+				color='#0A84FF' />,
+			title: t('Builder Profile'),
+			description : 'Create or update your profile',
+			onClick: () => router.push(`/profile/${scwAddress}`)
+		},
 		{
 			icon: <Key
 				boxSize='18px'
