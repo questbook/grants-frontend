@@ -78,7 +78,6 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 									textAlign='left'
 									placeholder={props?.placeholder}
 									borderColor='gray.300'
-									borderBottom='1px solid'
 									fontSize='20px'
 									value={value}
 									lineHeight='28px'

@@ -1974,7 +1974,7 @@ function ProposalForm() {
 						{
 							(
 
-								grant?.fields?.filter((field) => ['How does your project implement the TON blockchain and which parts will be on-chain?', 'If you already developed the Telegram mini-app, Indicate your current traction (MAU, DAU, retention, TVL or other relevant metrics). We prefer on-chain data with their specific smart contract links for everyone to verify. The more relevant metrics you provide, the better.', 'Who are your competitors? Are there any similar existing solutions on TON? If yes, mention similar solutions and elaborate on your product\'s advantages.', 'Who is your target user? Please describe your user acquisition strategy', 'Overview of the technology stack to be used']?.
+								grant?.fields?.filter((field) => ['How does your project implement the TON blockchain and which parts will be on-chain?', 'If you already developed the Telegram mini-app, Indicate your current traction (MAU, DAU, retention, TVL or other relevant metrics). We prefer on-chain data with their specific smart contract links for everyone to verify. The more relevant metrics you provide, the better.', 'Who are your competitors? Are there any similar existing solutions on TON? If yes, mention similar solutions and elaborate on your product\'s advantages.', 'Who is your target user? Please describe your user acquisition strategy', 'Overview of the technology stack to be used', 'Describe the features for the product in detail']?.
 									some((title) => field.title.substring(field.title.indexOf('-') + 1).includes(title))).map((field) => {
 									const id = field.id.substring(field.id.indexOf('.') + 1)
 									const modifiedId = id.substring(id.indexOf('-') + 1)
