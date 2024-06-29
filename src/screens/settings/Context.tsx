@@ -51,7 +51,7 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 	const [listAllGrants, setListAllGrants] = useState<boolean>(false)
 	const [allGrantsAdminTable, setAllGrantsAdminTable] = useState<adminTable>([])
 
-	const { grant, setGrant } = useContext(GrantsProgramContext)!
+	const { grant, setGrant, setRole } = useContext(GrantsProgramContext)!
 
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 
@@ -156,7 +156,22 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 			return undefined
 		}
 
+		if(!scwAddress) {
+			logger.info('No SCW Address')
+			return undefined
+		}
+
 		const grant = JSON.parse(rawGrant)
+
+		if(scwAddress) {
+			logger.info({ scwAddress }, 'SCW Address')
+			for(const member of grant?.workspace?.members ?? []) {
+				if(member.actorId.toLowerCase() === scwAddress.toLowerCase()) {
+					logger.info({ member }, 'Member (ROLE)')
+					setRole(member.accessLevel === 'reviewer' ? 'reviewer' : 'admin')
+				}
+			}
+		}
 
 		return grant
 	}
@@ -281,7 +296,7 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 				setGrant(_grant)
 			}
 		}
-	}, [grant])
+	}, [grant, scwAddress, chainId])
 
 	return providerComponent()
 }
