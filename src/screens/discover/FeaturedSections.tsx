@@ -1,5 +1,5 @@
 import { Container, Flex, Image, Text } from '@chakra-ui/react'
-import { logger } from 'ethers'
+import logger from 'src/libraries/logger'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { SectionGrants } from 'src/screens/discover/_utils/types'
 

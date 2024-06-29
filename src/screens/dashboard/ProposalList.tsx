@@ -15,7 +15,7 @@ import FilterTag from 'src/screens/dashboard/_components/FilterTag'
 import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { disabledGrants, disabledSubmissions, disabledTonGrants, ensGrants } from 'src/screens/proposal_form/_utils/constants'
+import { disabledGrants, disabledSubmissions, disabledTonGrants, subdomainProposals } from 'src/screens/proposal_form/_utils/constants'
 
 function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boolean) => void }) {
 	const buildComponent = () => (
@@ -60,9 +60,9 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 									const protocol = href[0]
 									const domain = href[2]
 									const chainId = getSupportedChainIdFromSupportedNetwork(grant?.workspace.supportedNetworks[0])
-
-									const URL =
-									grant?.id === ensGrants ? `https://ens.questbook.app/proposal_form/?grantId=${grant?.id}&chainId=${chainId}&newTab=true` :
+									const id = subdomainProposals.find((s) => s.grants.includes(grant?.id as string)) ?? { name: 'www' }
+									const URL = subdomainProposals.map((s) => s.grants).flat().includes(grant?.id as string)
+										? `https://${id.name}.questbook.app/proposal_form/?grantId=${grant?.id}&chainId=${chainId}&newTab=true` :
 										`${protocol}//${domain}/proposal_form/?grantId=${grant?.id}&chainId=${chainId}&newTab=true`
 
 									window.open(URL, '_blank')
