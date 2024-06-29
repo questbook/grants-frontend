@@ -1,6 +1,6 @@
 import { ContentState, convertFromRaw, EditorState } from 'draft-js'
 import { getFromIPFS, isIpfsHash } from 'src/libraries/utils/ipfs'
-import { isSupportedAddress } from 'src/libraries/utils/validations'
+import { isValidAxelarAddress } from 'src/libraries/utils/validations'
 import { Form, Grant } from 'src/screens/proposal_form/_utils/types'
 
 function containsField(grant: Grant, field: string) {
@@ -50,7 +50,7 @@ const validateWalletAddress = async(address: string, callback: (isValid: boolean
 	if(address) {
 		if(address === '') {
 			callback(false)
-		} else if(await isSupportedAddress(address)) {
+		} else if(isValidAxelarAddress(address)) {
 			callback(true)
 		} else {
 			callback(false)

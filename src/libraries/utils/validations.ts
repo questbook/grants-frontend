@@ -1,6 +1,7 @@
 import { SupportedNetwork as SupportedValidatorNetwork } from '@questbook/service-validator-client/dist/api'
 import { PublicKey } from '@solana/web3.js'
 import axios from 'axios'
+import { bech32 } from 'bech32'
 import { ethers } from 'ethers'
 import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import { SupportedNetwork } from 'src/generated/graphql'
@@ -35,6 +36,32 @@ const isSupportedAddress = async(address: string) => {
 	const isValidTon = await isValidTonAddress(address)
 	logger.info({ eth: isValidEthereumAddress(address), sol: isValidSolanaAddress(address), ton: isValidTon }, 'isValidSafeAddress')
 	return isValidEthereumAddress(address) || isValidSolanaAddress(address) || isValidTon
+}
+
+const isValidAxelarAddress = (address: string) => {
+	const AXLAR_PREFIX = 'axelar'
+	const EXPECTED_LENGTH = 45
+
+	// Check the prefix and length
+	if(!address.startsWith(AXLAR_PREFIX) || address.length !== EXPECTED_LENGTH) {
+	  return false
+	}
+
+	try {
+	  // Decode the address
+	  const { prefix, words } = bech32.decode(address)
+
+	  // Verify the prefix
+	  if(prefix !== AXLAR_PREFIX) {
+			return false
+	  }
+
+	  // Re-encode the address to check for validity
+	  const reencoded = bech32.encode(prefix, words)
+	  return reencoded === address
+	} catch(error) {
+	  return false
+	}
 }
 
 const isValidEmail = (email: string) => {
@@ -80,6 +107,7 @@ export {
 	isValidEthereumAddress,
 	isValidSolanaAddress,
 	isSupportedAddress,
+	isValidAxelarAddress,
 	isValidEmail,
 	getSupportedChainIdFromWorkspace,
 	getSupportedValidatorNetworkFromChainId,
