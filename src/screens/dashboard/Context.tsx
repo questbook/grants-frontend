@@ -168,9 +168,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 			logger.info({ totalAllocated }, 'Funds allocated (GET FUNDS ALLOCATED)')
 			setFundsAllocated({
 				allocated: totalAllocated,
-				disbursed: result?.grantApplications?.reduce((acc: number, grantApplication: { grant: { fundTransfers: { amount: number }[] } }) => {
-					return acc + grantApplication.grant.fundTransfers.reduce((acc: number, fundTransfer: { amount: number }) => acc + fundTransfer.amount, 0)
-				}, 0)
+				disbursed: result?.grantApplications[0]?.grant?.totalGrantFundingDisbursedUSD
 			})
 		}
 

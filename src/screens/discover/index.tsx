@@ -240,6 +240,10 @@ function Discover() {
 			'text': 'TON Foundation'
 		},
 		{
+			'logo': 'QmNrd1rxQx5BZzWFWY5ZSaFPhNXyijUSRCTLMVveHpK8LF',
+			'text': 'ENS'
+		},
+		{
 			'logo': 'QmcfHdWQxZtQRWYdn2kwy8FShmnhSKQChD2XGJsvuX6LAb',
 			'text': 'Alchemix'
 		},
@@ -388,7 +392,6 @@ function Discover() {
 					</Box>
 					<HeroBanner
 						grants={(sectionGrants && sectionGrants.length > 0 ? sectionGrants : []) as []}
-
 						safeBalances={Object.values(safeBalances).reduce((a, b) => a + b, 0) ?? 0}
 						grantsAllocated={grantsAllocated ?? 0}
 					/>
@@ -591,6 +594,7 @@ function Discover() {
 								<Flex
 									gap='24px'
 									overflowX='auto'
+									style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
 									p={0}
 									justifyContent='flex-start'>
 
@@ -605,7 +609,7 @@ function Discover() {
 												borderRadius='8px'
 												border='1px solid #EFEEEB'
 												background='#FFF'
-												padding='16px'
+												padding='8px 32px'
 												cursor='pointer'
 												onClick={
 													() => {
@@ -624,7 +628,7 @@ function Discover() {
 													fontWeight='700'
 													lineHeight='normal'
 													color='#07070C'
-
+													width={isMobile ? '100%' : '100%'}
 												>
 													{banner.text}
 												</Text>

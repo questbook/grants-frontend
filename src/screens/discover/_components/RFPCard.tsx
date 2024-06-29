@@ -10,6 +10,7 @@ import logger from 'src/libraries/logger'
 import { getAvatar } from 'src/libraries/utils'
 import { nFormatter, titleCase } from 'src/libraries/utils/formatting'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
+import { useTokenPrice } from 'src/screens/dashboard/_hooks/useTokenPrice'
 import StateButton from 'src/screens/discover/_components/stateButton'
 import { GrantType } from 'src/screens/discover/_utils/types'
 import { DiscoverContext } from 'src/screens/discover/Context'
@@ -265,7 +266,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						<GridItem>
 							<Flex direction='column'>
 								<Text fontWeight='500'>
-									{grant?.totalGrantFundingDisbursedUSD === '0' ? '-' : `$${nFormatter(grant?.totalGrantFundingDisbursedUSD, 0, grant.id === '0xe92b011b2ecb97dbe168c802d582037e28036f9b')}`}
+									{grant?.totalGrantFundingDisbursedUSD === '0' ? '-' : `$${nFormatter(totalGrantFundingDisbursedUSD, 0, grant.id === '0xe92b011b2ecb97dbe168c802d582037e28036f9b')}`}
 								</Text>
 								<Text
 									mt={1}
@@ -318,6 +319,8 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 	const usdAmount = useMemo(() => {
 		return safeBalances[`${grant.workspace.safe?.chainId}-${grant.workspace.safe?.address}`]
 	}, [grant, safeBalances])
+	const tokenPriceInUSD = useTokenPrice()
+	const totalGrantFundingDisbursedUSD = parseFloat(grant.totalGrantFundingDisbursedUSD) === 0 ? '0' : (parseFloat(grant.totalGrantFundingDisbursedUSD) * tokenPriceInUSD).toFixed(0)
 
 	// const isOpen = useMemo(() => {
 	// 	return grant.acceptingApplications === true && grant.deadline ? grant.deadline > new Date().toISOString() : false

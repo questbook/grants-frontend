@@ -2,8 +2,9 @@
 import { Flex, Image, Text, useMediaQuery } from '@chakra-ui/react'
 import { logger } from 'ethers'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
-import { SectionGrants } from 'src/screens/discover/_utils/types'
 // import { useRouter } from 'next/router'
+import { useTokenPrice } from 'src/screens/dashboard/_hooks/useTokenPrice'
+import { SectionGrants } from 'src/screens/discover/_utils/types'
 
 function HeroBanner({
 	grants,
@@ -15,8 +16,7 @@ function HeroBanner({
 	grantsAllocated: number
 }) {
 	logger.info({ grants, safeBalances }, 'HeroBanner')
-
-
+	const tokenPriceInUSD = useTokenPrice()
 	const totalProposals = () => {
 		let total = 0;
 		(grants && grants?.length > 0) ? grants.map((section) => {
@@ -57,8 +57,7 @@ function HeroBanner({
 			const grants = section[sectionName].grants.map((grant) => grant.totalGrantFundingDisbursedUSD)
 			total += grants.reduce((a: number, b: number) => a + b, 0)
 		}) : 0
-
-		return formatNumber(total)
+		return formatNumber(total * tokenPriceInUSD)
 	}
 
 	const TitleCards = ({ data, title }: {
@@ -147,7 +146,7 @@ function HeroBanner({
 							data={totalProposalsAccepted() || 0}
 							title='Accepted' />
 						<TitleCards
-							data={formatNumber(grantsAllocated)}
+							data={formatNumber(grantsAllocated * tokenPriceInUSD)}
 							title='Funds Allocated' />
 						<TitleCards
 							data={totalProposalsPaidOut() || 0}
