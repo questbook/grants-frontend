@@ -1,6 +1,6 @@
 /* eslint-disable indent */
 import { Flex, Image, Text, useMediaQuery } from '@chakra-ui/react'
-import { logger } from 'ethers'
+import logger from 'src/libraries/logger'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { SectionGrants } from 'src/screens/discover/_utils/types'
 // import { useRouter } from 'next/router'

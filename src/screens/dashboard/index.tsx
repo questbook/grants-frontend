@@ -71,7 +71,7 @@ function Dashboard(props: DynamicData) {
 								}
 								<Flex
 									h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
-									overflowY='clip'>
+									overflowY='auto'>
 									{
 										(dashboardStep === false) && (
 											<ProposalList
@@ -102,7 +102,7 @@ function Dashboard(props: DynamicData) {
 								}
 								<Flex
 									h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
-									overflowY='clip'>
+									overflowY='auto'>
 									<ProposalList />
 									<Body />
 									<ActionList />
