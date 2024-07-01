@@ -536,7 +536,7 @@ function Discussions() {
 		)
 		// setText(comment ?? '')
 		setEditorState(EditorState.createWithContent(convertFromRaw(mdToDraftjs(comment ?? ''))))
-	}, [grant, proposal])
+	}, [grant])
 
 	useEffect(() => {
 		if(ref.current) {

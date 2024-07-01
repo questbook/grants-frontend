@@ -5,9 +5,11 @@ query adminTable($id: String!){
       applicantId
       state
       synapsStatus
+      synapsId
       synapsType
       synapsCountry
       synapsName
+      helloSignId
       helloSignStatus
       notes
       milestones{

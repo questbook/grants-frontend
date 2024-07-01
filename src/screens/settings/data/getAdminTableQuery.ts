@@ -6,7 +6,9 @@ export const getAdminTableQuery = gql`query adminTable($id: String!){
         applicantId
         state
         synapsStatus
+        synapsId 
         helloSignStatus
+        helloSignId
         synapsCountry
         synapsType
         synapsName

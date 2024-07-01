@@ -18,7 +18,7 @@ import { DashboardContext } from 'src/screens/dashboard/Context'
 function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boolean) => void }) {
 	const buildComponent = () => (
 		<Flex
-			w={['100%', '100%', '25%', '25%']}
+			w={['100%', '100%', '100%', '25%']}
 			h='100%'
 			bg='white'
 			direction='column'
@@ -86,6 +86,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 			<Flex
 				my={4}
 				align='center'
+				gap={2}
 				px={5}>
 				{
 					(role === 'admin' && selectedProposals?.size > 0) && (
@@ -111,25 +112,31 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 						</Checkbox>
 					)
 				}
-
-				<Button
+				<Flex
 					ml='auto'
-					variant='link'
-					rightIcon={isFilterClicked ? <Flex /> : <Filter />}
-					onClick={
-						() => {
-							setIsFilterClicked(!isFilterClicked)
-						}
-					}>
-					<Text>
-						{isFilterClicked ? 'Done' : 'Filter'}
-					</Text>
-				</Button>
+					gap={2}
+				>
+					<Button
+						ml='auto'
+						variant='link'
+						rightIcon={isFilterClicked ? <Flex /> : <Filter />}
+						onClick={
+							() => {
+								setIsFilterClicked(!isFilterClicked)
+							}
+						}>
+						<Text>
+							{isFilterClicked ? 'Done' : 'Filter'}
+						</Text>
+					</Button>
+				</Flex>
+
 			</Flex>
+
 
 			<Grid
 				display={isFilterClicked ? 'grid' : 'none'}
-				minH='80px'
+				minH='120px'
 				px={3}
 				m={2}
 				overflowX='scroll'
@@ -140,10 +147,10 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 						}
 					}
 				}
-				templateColumns='repeat(2, 1fr)'
+				templateColumns='repeat(2, 0fr)'
 				gap={1}>
 				{
-					(['approved', 'submitted', 'rejected', 'resubmit'] as ApplicationState[]).map(state => {
+					(['approved', 'submitted', 'rejected', 'resubmit', 'review'] as ApplicationState[]).map(state => {
 						return (
 							<GridItem
 								// colSpan={index > 1 ? 2 : 1}
@@ -188,11 +195,13 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 								ref={cardRefs[index]}
 								proposal={proposal}
 								step={step}
-								setStep={setStep} />
+								setStep={setStep}
+							/>
 						)
 					})
 				}
 				{proposalCount === 0 && <Empty />}
+
 			</Flex>
 		</Flex>
 	)
@@ -220,7 +229,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 			})
 		}
 
-		if(filterState !== undefined) {
+		if(filterState !== undefined && filterState !== 'completed') {
 			allProposals = allProposals.filter(proposal => proposal.state === filterState)
 		}
 
@@ -243,12 +252,12 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 
 		if(proposalId && typeof proposalId === 'string') {
 			// Scroll to the proposal
-			const proposalIndex = proposals.findIndex((_) => _.id === proposalId)
+			const proposalIndex = filteredProposals.findIndex((_) => _.id === proposalId)
 			if(proposalIndex !== -1) {
 				cardRefs[proposalIndex].current?.scrollIntoView({ behavior: 'smooth' })
 			}
 		}
-	}, [proposals, proposalId])
+	}, [proposals, proposalId, filteredProposals])
 
 	return buildComponent()
 }

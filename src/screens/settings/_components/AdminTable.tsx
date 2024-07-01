@@ -131,18 +131,21 @@ function AdminTable() {
 					<Td
 						w='5%'
 						cursor='pointer'
-						// onClick={
-						// 	() => {
-						// 		if(row?.state === 'approved') {
-						// 			setShowKYCStatusUpdateModal({
-						// 				...showKYCStatusUpdateModal,
-						// 				isOpen: true,
-						// 				grantId: row.id,
-						// 				type: 'kyc'
-						// 			})
-						// 		}
-						// 	}
-						// }
+						onClick={
+							() => {
+								if(row?.state === 'approved' && row.synapsStatus !== 'completed' && !listAllGrants) {
+									setShowKYCStatusUpdateModal({
+										...showKYCStatusUpdateModal,
+										isOpen: true,
+										grantId: row.id,
+										type: 'kyc',
+										synapsId: row.synapsId ?? '0x',
+										synapsType: row.synapsType as 'KYC' | 'KYB',
+										editId: !!(!row.synapsId && (row.synapsStatus !== 'completed'))
+									})
+								}
+							}
+						}
 					>
 						{
 							row.synapsStatus?.length > 0 ? (
@@ -202,18 +205,20 @@ function AdminTable() {
 					<Td
 						w='5%'
 						cursor='pointer'
-						onClick={
-							() => {
-								if(row?.state === 'approved' && !listAllGrants) {
-									setShowKYCStatusUpdateModal({
-										...showKYCStatusUpdateModal,
-										isOpen: true,
-										grantId: row.id,
-										type: 'hellosign'
-									})
-								}
-							}
-						}
+						// onClick={
+						// 	() => {
+						// 		if(row?.state === 'approved' && row.helloSignStatus !== 'completed' && !listAllGrants) {
+						// 			setShowKYCStatusUpdateModal({
+						// 				...showKYCStatusUpdateModal,
+						// 				isOpen: true,
+						// 				grantId: row.id,
+						// 				type: 'hellosign',
+						// 				docuSignId: row.helloSignId ?? '0x',
+						// 				editId: (!!(!row.helloSignId && (row.helloSignStatus !== 'completed' || !row.helloSignStatus)))
+						// 			})
+						// 		}
+						// 	}
+						// }
 					>
 						{
 							row.helloSignStatus?.length > 0 ? (
@@ -466,6 +471,10 @@ function AdminTable() {
 						})
 					}
 					grantId={showKYCStatusUpdateModal.grantId}
+					synapsId={showKYCStatusUpdateModal.synapsId}
+					synapsType={showKYCStatusUpdateModal.synapsType}
+					docuSignId={showKYCStatusUpdateModal.docuSignId}
+					editId={showKYCStatusUpdateModal.editId}
 				/>
 			 </Flex>
 		)
@@ -476,10 +485,18 @@ function AdminTable() {
         type: 'kyc' | 'hellosign'
         isOpen: boolean
         grantId: string
+		synapsId: string
+		synapsType: 'KYC' | 'KYB'
+		docuSignId: string
+		editId: boolean
     }>({
     	type: 'kyc',
     	isOpen: false,
-    	grantId: ''
+    	grantId: '',
+    	synapsId: '',
+    	synapsType: 'KYC',
+    	docuSignId: '',
+    	editId: false
     })
 	const [filter, setFilter] = useState<'all' | 'submitted' | 'approved' | 'rejected'>('all')
 	const [filteredMilestones, setFilteredMilestones] = useState([{
@@ -489,7 +506,6 @@ function AdminTable() {
 	const [tableData, setTableData] = useState<adminTable>([])
 	const { adminTable, workspace, listAllGrants, setListAllGrants, allGrantsAdminTable } = useContext(SettingsFormContext)!
 	const { grant } = useContext(GrantsProgramContext)!
-
 	const TableHeader = listAllGrants ? ['No', 'Grant Title', 'Proposal Name', 'Proposal Status', 'KYC/KYB Status', 'KYC/KYB Country', 'KYC/KYB Name', 'Grant Agreement Status', 'Milestone', 'Funding Status' ] : ['No', 'Proposal Name', 'Proposal Status', 'KYC/KYB Status', 'KYC/KYB Country', 'KYC/KYB Name', 'Grant Agreement Status', 'Milestone', 'Funding Status', 'Notes']
 
 	useEffect(() => {

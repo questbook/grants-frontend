@@ -8,7 +8,7 @@ import {
 	Select,
 	Text,
 } from '@chakra-ui/react'
-import { updateKYCStatusMutation } from 'src/generated/mutation'
+import { updateKYCStatusMutation } from 'src/generated/mutation/updateKYCStatus'
 import { executeMutation } from 'src/graphql/apollo'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import { SettingsFormContext } from 'src/screens/settings/Context'
@@ -19,15 +19,25 @@ interface Props {
 	isOpen: boolean
 	onClose: () => void
 	grantId: string
+	synapsId: string
+	synapsType: string
+	docuSignId: string
+	editId: boolean
 }
 
 function KYCStatusUpdateModal({
 	isOpen,
 	onClose,
 	type,
-	grantId
+	grantId,
+	synapsId,
+	synapsType,
+	docuSignId,
+	editId,
 }: Props) {
+
 	const buildComponent = () => {
+
 		return (
 			<Modal
 				isOpen={isOpen}
@@ -47,7 +57,7 @@ function KYCStatusUpdateModal({
 					<Text fontWeight='500'>
 						Update
 						{' '}
-						{type === 'kyc' ? 'KYC' : 'Grant Agreement'}
+						{type === 'kyc' ? 'Synaps' : 'Grant Agreement'}
 						{' '}
 						status
 					</Text>
@@ -64,7 +74,7 @@ function KYCStatusUpdateModal({
 						}
 					>
 						<option value='completed'>
-							completed
+							Completed
 						</option>
 						<option value='pending'>
 							Pending
@@ -73,6 +83,29 @@ function KYCStatusUpdateModal({
 							Rejected
 						</option>
 					</Select>
+
+					{
+						synapsType === null && editId && type === 'kyc' && (
+							<Select
+								w='100%'
+								mt={8}
+								placeholder='Select Synaps Type'
+								value={synapsTypeOption}
+								onChange={
+									(e) => {
+										setSynapsTypeOption(e.target.value as 'KYC' | 'KYB')
+									}
+								}
+							>
+								<option value='KYC'>
+									KYC
+								</option>
+								<option value='KYB'>
+									KYB
+								</option>
+							</Select>
+						)
+					}
 
 
 					<Button
@@ -85,7 +118,10 @@ function KYCStatusUpdateModal({
 									id: grantId,
 									type: type === 'kyc' ? 'synaps' : 'hellosign',
 									status: options,
-									workspace: workspace?.id
+									workspace: workspace?.id,
+									synapsId: type === 'kyc' && editId ? synapsId : undefined,
+									synapsType: type === 'kyc' && editId ? synapsTypeOption : undefined,
+									docuSignId: type === 'hellosign' && editId ? docuSignId : undefined,
 								})
 								if(data?.updateKYCStatus?.recordId) {
 									customToast({
@@ -120,6 +156,7 @@ function KYCStatusUpdateModal({
 	const { refreshWorkspace, workspace } = useContext(SettingsFormContext)!
 
 	const [options, setOptions] = useState<'completed' | 'pending' | 'rejected'>('pending')
+	const [synapsTypeOption, setSynapsTypeOption] = useState<'KYC' | 'KYB'>(synapsType === 'KYB' ? 'KYB' : 'KYC')
 	const customToast = useCustomToast()
 
 	return buildComponent()

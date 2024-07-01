@@ -31,10 +31,12 @@ export type adminTable = {
     name: { values: { value: string }[] }[]
     state: string
     synapsStatus: string
+    synapsId: string
     synapsType: string
     synapsCountry: string
     synapsName: string
     helloSignStatus: string
+    helloSignId: string
     milestones: { id: string, title: string, amount: number, amountPaid: number, milestoneState: string }[]
     notes: string
     fundTransfer: { application: { id: string }, status: string, amount: number, milestone: { id: string } }[]
