@@ -190,7 +190,7 @@ function Proposal() {
 											)
 										}
 										{
-											proposal?.helloSignId && (
+											proposal?.helloSignId && (role === 'admin' || role === 'reviewer') && (
 												<Button
 													variant='link'
 													ml='auto'
