@@ -109,8 +109,8 @@ function SetupProfile() {
 					<Button
 						mt={8}
 						variant='primaryLarge'
-						isLoading={!scwAddress}
-						loadingText='Loading your wallet'
+						isLoading={!scwAddress || isLoading}
+						loadingText={isLoading ? 'Creating Profile' : 'Loading your wallet'}
 						isDisabled={isDisabled}
 						onClick={onCreateClick}>
 						<Text color='white'>
@@ -151,6 +151,7 @@ function SetupProfile() {
 
 	const [name, setName] = useState<string>('')
 	const [email, setEmail] = useState<string>('')
+	const [isLoading, setIsLoading] = useState<boolean>(false)
 
 	const [imageFile, setImageFile] = useState<File | null>(null)
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
@@ -171,7 +172,7 @@ function SetupProfile() {
 		return inviteInfo?.workspaceId
 	}, [inviteInfo])
 
-	const { setupProfile, isBiconomyInitialised } = useSetupProfile(
+	const { setupProfile } = useSetupProfile(
 		{
 			workspaceId,
 			memberId: `${workspaceId}.${scwAddress}`,
@@ -182,10 +183,11 @@ function SetupProfile() {
 		})
 
 	const isDisabled = useMemo(() => {
-		return name === '' || email === '' || !isBiconomyInitialised
-	}, [name, email, isBiconomyInitialised])
+		return name === '' || email === ''
+	}, [name, email])
 
 	const onCreateClick = async() => {
+		setIsLoading(true)
 		if(inviteInfo?.role === undefined || !signature) {
 			return
 		}
@@ -202,9 +204,10 @@ function SetupProfile() {
 			chainId: inviteInfo?.chainId as SupportedChainId
 		}
 
-		setupProfile({
+		await setupProfile({
 			name, email, imageFile, role: inviteInfo.role, signature, inviteInfo: inviteinfo
 		})
+		setIsLoading(false)
 	}
 
 	const toast = useCustomToast()
