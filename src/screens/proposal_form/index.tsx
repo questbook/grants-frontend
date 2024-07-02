@@ -1431,6 +1431,7 @@ function ProposalForm() {
 									<SectionInput
 										key={field.id}
 										type='textarea'
+										maxLength={2000}
 										label={title === 'Indicate your current traction (MAU, DAU, retention, TVL or other relevant metrics) if your product is already live on TON or on a different chain' ? `${title}* The more relevant metrics you provide, the better.` : title}
 										value={findFieldBySuffix(form, modifiedId, id).value}
 										onChange={
@@ -1848,6 +1849,7 @@ function ProposalForm() {
 									label='Education & Working experience & achievements of the founder and/or chief creator of Mini-app* will not be shown publicly)'
 									placeholder=''
 									type='textarea'
+									maxLength={2000}
 									value={findCustomField(form, 'Education & Working experience & achievements of the founder and/or chief creator of Mini-app').value}
 									onChange={
 										(e) => {
@@ -1906,6 +1908,7 @@ function ProposalForm() {
 										<SectionInput
 											key={field.id}
 											type='textarea'
+											maxLength={2000}
 											label={
 												title?.includes('Any materials') ? title + '(you can send any screenshots to ton.asianpacific@gmail.com, will not be shown publicly)' :
 													title + '*'
@@ -1985,6 +1988,7 @@ function ProposalForm() {
 										<SectionInput
 											key={field.id}
 											type='textarea'
+											maxLength={2000}
 											label={title?.includes('If you already') || title?.includes('Who are') ? title : title + '*'}
 											value={findFieldBySuffix(form, modifiedId, id).value}
 											onChange={

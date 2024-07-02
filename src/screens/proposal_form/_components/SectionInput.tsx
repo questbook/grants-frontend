@@ -77,6 +77,7 @@ function SectionInput({ label, helperText, flexProps, errorText, ...props }: Pro
 									variant='filled'
 									textAlign='left'
 									placeholder={props?.placeholder}
+									maxLength={props?.maxLength}
 									borderColor='gray.300'
 									fontSize='20px'
 									value={value}
