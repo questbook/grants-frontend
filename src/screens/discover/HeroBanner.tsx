@@ -1,25 +1,19 @@
 /* eslint-disable indent */
-import { useMediaQuery } from 'react-responsive'
-import { Box, Flex, Image, Text } from '@chakra-ui/react'
+import { Flex, Image, Text, useMediaQuery } from '@chakra-ui/react'
 import { logger } from 'ethers'
-import { ArrowRight } from 'src/generated/icons'
-import { SectionGrants } from 'src/screens/discover/_utils/types'
 // import { useRouter } from 'next/router'
+import SubDomainConfig from 'src/constants/subdomain.json'
+import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
+import { SectionGrants } from 'src/screens/discover/_utils/types'
 
 function HeroBanner({
 	grants,
 	safeBalances,
 	grantsAllocated,
-	reclaimRef,
-	arbitrumRef,
-	arbitrum1Ref,
 }: {
 	grants: SectionGrants[]
 	safeBalances: number
 	grantsAllocated: number
-	reclaimRef: React.RefObject<HTMLDivElement>
-	arbitrumRef: React.RefObject<HTMLDivElement>
-	arbitrum1Ref: React.RefObject<HTMLDivElement>
 }) {
 	logger.info({ grants, safeBalances }, 'HeroBanner')
 
@@ -122,23 +116,24 @@ function HeroBanner({
 						flexDirection='row'
 						textColor='white'
 						position='relative'
-						width='full'>
+						width='full'
+						gap={2}
+						>
 						<Image
 							justifyContent='center'
-							h={isMobile ? '40px' : '80px'}
-							w={isMobile ? '40px' : '80px'}
-							src='https://cryptologos.cc/logos/arbitrum-arb-logo.png' />
+							h={isMobile ? '50px' : '90px'}
+							w={isMobile ? '50px' : '90px'}
+	  						src={getUrlForIPFSHash(`${SubDomainConfig.logo}`)} />
 						<Text
 							fontWeight='500'
 							fontSize={isMobile ? '32px' : '64px'}
-							lineHeight='48px'
-							mt={isMobile ? -1 : 0}
+							lineHeight={isMobile ? '41.6px' : '64px'}
 							padding={
 								isMobile ? [0, 0] :
 									[10, 5]
 							}
 							color='black'>
-							Arbitrum Grants
+							{SubDomainConfig.name}
 						</Text>
 					</Flex>
 
@@ -152,7 +147,7 @@ function HeroBanner({
 							data={totalProposals() || 0}
 							title='Proposals' />
 						<TitleCards
-							data={totalProposalsAccepted()}
+							data={totalProposalsAccepted() || 0}
 							title='Accepted' />
 						<TitleCards
 							data={formatNumber(grantsAllocated)}
@@ -166,68 +161,11 @@ function HeroBanner({
 
 					</Flex>
 				</Flex>
-				{
-					!isMobile && (
-						<Box
-							bgColor='white'
-							padding={[4, 4, 6, 4]}
-							borderRadius='8px'
-							border='1px solid #EFEEEB'
-							gap='16px'
-							// Fixed (403px)
-							width='30%'
-						>
-							<Text
-								fontWeight='600'
-								color='black.100'
-								fontSize='18px'
-								mb={4}
-							>
-								Listed grants
-							</Text>
-							{
-								['Arbitrum DDA 2.0', 'Arbitrum DDA 1.0', 'Reclaim Arbitrum Grants']?.map((grant: string, index: number) => (
-									<Flex
-										key={index}
-										gap={1}
-										mt={2}
-										cursor='pointer'
-										onClick={
-											() => {
-												if(grant === 'Reclaim Arbitrum Grants') {
-													reclaimRef.current?.scrollIntoView({ behavior: 'smooth' })
-												} else if(grant === 'Arbitrum DDA 1.0') {
-													arbitrum1Ref.current?.scrollIntoView({ behavior: 'smooth' })
-												} else {
-													arbitrumRef.current?.scrollIntoView({ behavior: 'smooth' })
-												}
-											}
-										}
-									>
-										<Text
-											fontWeight='500'
-											color='#7E7E8F'
-											fontSize='16px'
-										>
-											{grant}
-										</Text>
-										<ArrowRight
-											color='#7E7E8F'
-											boxSize='20px'
-										/>
-									</Flex>
-								))
-							}
-
-
-						</Box>
-					)
-				}
 			</Flex>
 		</Flex>
 
 	)
-	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
+	const isMobile = useMediaQuery(['(max-width:600px)'])[0]
 
 	return buildComponent()
 }

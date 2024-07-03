@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client'
 export const getGranteeList = gql`query getSectionGrants {
-    sections(filter: { _id: "Arbitrum" }) {
+    sections(filter: { _id: "Shido" }) {
        grants(sort: NUMBEROFAPPLICATIONS_DESC) {
          id: _id
          title

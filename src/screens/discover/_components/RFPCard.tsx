@@ -8,8 +8,10 @@ import SupportedChainId from 'src/generated/SupportedChainId'
 import { QBAdminsContext } from 'src/libraries/hooks/QBAdminsContext'
 import logger from 'src/libraries/logger'
 import { getAvatar } from 'src/libraries/utils'
+import { AmplitudeContext } from 'src/libraries/utils/amplitude'
 import { nFormatter, titleCase } from 'src/libraries/utils/formatting'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
+import { WebwalletContext } from 'src/pages/_app'
 import StateButton from 'src/screens/discover/_components/stateButton'
 import { GrantType } from 'src/screens/discover/_utils/types'
 import { DiscoverContext } from 'src/screens/discover/Context'
@@ -56,11 +58,8 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						return
 					}
 
-					// if it is clicked to open the program details on new tab
-					if([
-						'[object HTMLButtonElement]',
-						'[object HTMLImageElement]',
-					].includes(e.target.toString())) {
+					// return if clicked on the link button to open the program details
+					if(e.target.toString() === '[object HTMLButtonElement]') {
 						return
 					}
 
@@ -77,6 +76,10 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						params = { ...params, proposalId: grant.applications[0].id }
 					}
 
+					trackAmplitudeEvent('Grant_Program_Visits', {
+						programName: grant?.title,
+						isSignedIn: scwAddress ? 'true' : 'false'
+					})
 					router.push({
 						pathname: '/dashboard/',
 						query: params,
@@ -107,29 +110,19 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						/>
 						<Flex gap={2}>
 							{
-								grant?.subgrant ? (
+								disabledGrants?.includes(grant?.id as string) ? (
+									<StateButton
+										state='rejected'
+										title='Closed' />
+								) : (
 									<StateButton
 										state='approved'
 										title='Open' />
 								)
-									:
-									disabledGrants?.includes(grant?.id as string) ? (
-										<StateButton
-											state='rejected'
-											title='Closed' />
-									) : (
-										<StateButton
-											state='approved'
-											title='Open' />
-									)
 							}
-
-							{/* <Text
-							variant={isOpen ? 'openTag' : 'closedTag'}
-						>
-							{isOpen ? 'Open' : 'Closed'}
-						</Text> */}
-							<Button
+							{
+								grant?.link && (
+									<Button
 				 borderRadius='8px'
 				 bgColor='#F1EEE8'
 				 size='sm'
@@ -137,16 +130,27 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 				 textColor='#53514F'
 				 fontSize='14px'
 				 onClick={
-									() => {
-										/* @ts-ignore */
-										window.open(grant?.link, '_blank')
-									}
-								}
+											() => {
+												trackAmplitudeEvent('program_info', {
+													programName: grant?.title,
+													isSignedIn: scwAddress ? 'true' : 'false'
+												})
+												/* @ts-ignore */
+												window.open(grant?.link, '_blank')
+											}
+										}
 				 rightIcon={<ArrowForwardIcon />}
 
 				 >
-								Program Details
-							</Button>
+										Program Details
+									</Button>
+								)
+							}
+							{/* <Text
+							variant={isOpen ? 'openTag' : 'closedTag'}
+						>
+							{isOpen ? 'Open' : 'Closed'}
+						</Text> */}
 							{
 								role && (
 									<Text
@@ -260,7 +264,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 												usdAmount !== undefined && (
 													<Text fontWeight='500'>
 														$
-														{ nFormatter(Math.max(0, (usdAmount !== 0 ? usdAmount - Math.abs(parseFloat(grant?.totalGrantFundingDisbursedUSD) - allocated) : usdAmount)).toFixed(0), 0) }
+														{nFormatter(usdAmount?.toFixed(0), 0)}
 													</Text>
 												)
 											}
@@ -321,16 +325,13 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 		</Box>
 	)
 
-	const { safeBalances, grantsAllocated } = useContext(DiscoverContext)!
-
+	const { safeBalances } = useContext(DiscoverContext)!
+	const { trackAmplitudeEvent } = useContext(AmplitudeContext)!
+	const { scwAddress } = useContext(WebwalletContext)!
 	const router = useRouter()
 
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	logger.info({ isQbAdmin }, 'isQbAdmin')
-
-	const allocated = useMemo(() => {
-		return grantsAllocated.individualGrants.find((g) => g.id === grant.id)?.amount ?? 0
-	}, [grant, grantsAllocated])
 
 	const usdAmount = useMemo(() => {
 		return safeBalances[`${grant.workspace.safe?.chainId}-${grant.workspace.safe?.address}`]

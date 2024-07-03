@@ -400,11 +400,7 @@ function HelloSignModal({
 	useEffect(() => {
 		if(proposal?.helloSignId === null && grant?.workspace?.docuSign && proposal?.synapsId !== null) {
 			getHelloSignTemplates().then(async(data) => {
-				// filter and select only _arbitrum template
-				const filter = await data?.filter((doc: {
-                title: string
-                }) => doc.title.includes('_Arbitrum Grants (Domain)'))
-				setDocuSign(filter)
+				setDocuSign(data)
 			})
 		}
 	}, [proposal])

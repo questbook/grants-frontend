@@ -21,7 +21,6 @@ import useSetRubrics from 'src/screens/dashboard/_hooks/useSetRubrics'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import SafeGuardModal from 'src/screens/dashboard/SafeGuardModal'
-import SetupProfileModal from 'src/screens/dashboard/SetupProfileModal'
 import { GrantType, IReviewFeedback, ReviewType } from 'src/types'
 import { RubricItem } from 'src/types/gen'
 
@@ -145,11 +144,6 @@ function Reviews() {
 				<SafeGuardModal
 					isOpen={isSafeGuardModalOpen}
 					onClose={() => setIsSafeGuardModalOpen(false)} />
-
-				<SetupProfileModal
-					walletAddress={walletAddress ?? ''}
-					isOpen={walletAddress !== undefined}
-					onClose={() => setWalletAddress(undefined)} />
 
 			</Flex>
 		)
@@ -891,7 +885,7 @@ function Reviews() {
 	const [, setTransactionHash] = useState<string>('')
 
 	const [isSafeGuardModalOpen, setIsSafeGuardModalOpen] = useState<boolean>(false)
-	const [walletAddress, setWalletAddress] = useState<string>()
+	const [, setWalletAddress] = useState<string>()
 
 	const assignReviewerPopoverRef = useRef<HTMLButtonElement>(null)
 	const [searchMemberName, setSearchMemberName] = useState<string>('')

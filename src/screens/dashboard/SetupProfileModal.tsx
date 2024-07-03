@@ -1,252 +1,226 @@
-import { useContext, useEffect, useMemo, useState } from 'react'
-import { Button, Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react'
-import { ethers } from 'ethers'
+import { ReactElement, useContext, useMemo, useState } from 'react'
+import { Button, Flex, Text } from '@chakra-ui/react'
+import { generateInputForAuthorisation } from '@questbook/anon-authoriser'
+import { base58 } from 'ethers/lib/utils'
 import { useRouter } from 'next/router'
-import { defaultChainId } from 'src/constants/chains'
+import { defaultChainId, SupportedChainId } from 'src/constants/chains'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
+import useQBContract from 'src/libraries/hooks/useQBContract'
 import useSetupProfile from 'src/libraries/hooks/useSetupProfile'
-import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import ImageUpload from 'src/libraries/ui/ImageUpload'
-import { formatAddress, getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
-import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
-import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
-import Verify from 'src/screens/dashboard/_components/FundBuilder/Verify'
-import { useAccount, useSignMessage } from 'wagmi'
+import NavbarLayout from 'src/libraries/ui/navbarLayout'
+import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
+import { getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
+import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 
-interface Props {
-	walletAddress: string
-	isOpen: boolean
-	onClose: () => void
-}
+function SetupProfile() {
 
-function SetupProfileModal({ walletAddress, isOpen, onClose }: Props) {
 	const buildComponent = () => {
-		return (
-			<Modal
-				isOpen={isOpen}
-				size={isConnected ? '3xl' : 'lg'}
-				onClose={onClose}
-				isCentered
-				scrollBehavior='outside'>
-				<ModalOverlay />
-				<ModalContent>
-					<ModalCloseButton />
-					<ModalBody>
-						{
-							isConnected && (
-								<Flex
-									p={6}
-									direction='column'
-									align='center'
-									w='100%'>
-									<Text fontWeight='500'>
-										Setup
-										{' '}
-										Profile
-									</Text>
-									<ImageUpload
-										mt={6}
-										imageFile={imageFile}
-										setImageFile={setImageFile} />
-									<Flex
-										mt={6}
-										w='100%'
-										direction='column'
-										border='1px solid #E7E4DD'>
-										<Flex
-											p={4}
-											w='100%'
-											align='center'
-											borderBottom='1px solid #E7E4DD'>
-											<Text
-												minW='20%'
-												color='gray.600'>
-												Name
-											</Text>
-											<FlushedInput
-												placeholder='John Adams'
-												value={name}
-												onChange={(e) => setName(e.target.value)}
-												fontSize='16px'
-												fontWeight='400'
-												lineHeight='20px'
-												borderBottom={undefined}
-												variant='unstyled'
-												w='100%'
-												textAlign='left'
-												flexProps={
-													{
-														w: '100%',
-													}
-												} />
-										</Flex>
-										<Flex
-											p={4}
-											w='100%'
-											align='center'
-											borderBottom='1px solid #E7E4DD'>
-											<Text
-												minW='20%'
-												color='gray.600'>
-												In-app wallet
-											</Text>
-											<Text>
-												{scwAddress}
-											</Text>
-										</Flex>
-										<Flex
-											p={4}
-											w='100%'
-											align='center'>
-											<Text
-												minW='20%'
-												color='gray.600'>
-												Email
-											</Text>
-											<FlushedInput
-												placeholder={email.data === '' && email.state === 'loaded' ? 'name@sample.com' : 'Loading...'}
-												value={email.data}
-												isDisabled={email.state === 'loading'}
-												onChange={(e) => setEmail({ data: e.target.value, state: 'loaded' })}
-												fontSize='16px'
-												fontWeight='400'
-												lineHeight='20px'
-												borderBottom={undefined}
-												variant='unstyled'
-												w='100%'
-												textAlign='left'
-												flexProps={
-													{
-														w: '100%',
-													}
-												} />
-										</Flex>
-									</Flex>
+		return inviteInfo ? view() : errorView()
+	}
 
-									<Button
-										mt={8}
-										isDisabled={isDisabled}
-										variant='primaryLarge'
-										w='100%'
-										isLoading={networkTransactionModalStep !== undefined}
-										onClick={onClick}>
-										<Text
-											color='white'
-											fontWeight='500'>
-											Save
-										</Text>
-									</Button>
-								</Flex>
-							)
-						}
-						{
-							!isConnected && (
-								<Verify
-									signerVerifiedState='unverified'
-									setSignerVerifiedState={() => {}}
-									shouldVerify={false} />
-							)
-						}
-					</ModalBody>
-				</ModalContent>
-			</Modal>
+	const errorView = () => {
+		return (
+			<Flex
+				w='100%'
+				h='calc(100vh - 64px)'
+				justify='center'
+				align='center'>
+				<Text>
+					Oops, something went wrong. Please try again with the invite link
+				</Text>
+			</Flex>
 		)
 	}
 
-	const { grant } = useContext(GrantsProgramContext)!
+	const view = () => {
+		return (
+			<Flex
+				w='100%'
+				h='calc(100vh - 64px)'
+				justify='center'
+				align='center'>
+				<Flex
+					bg='white'
+					w='80%'
+					border='1px solid #E7E4DD'
+					boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
+					py={8}
+					direction='column'
+					align='center'
+					overflowY='auto'>
+					<Text
+						variant='heading3'
+						fontWeight='500'>
+						Setup your profile
+					</Text>
+					<Text mt={1}>
+						Others can you identify you better with a real name.
+					</Text>
+					<Flex
+						w='60%'
+						mt={8}
+						px={6}
+						py={8}
+						direction='column'
+						border='1px solid #E7E4DD'>
+						<ImageUpload
+							imageFile={{ file: imageFile }}
+							setImageFile={
+								(img) => {
+									setImageFile(img.file)
+								}
+							} />
+						<FlushedInput
+							w='100%'
+							flexProps={{ w: '100%', mt: 5 }}
+							placeholder='Full Name'
+							borderBottom='1px solid #E7E4DD'
+							maxLength={300}
+							textAlign='left'
+							fontSize='16px'
+							lineHeight='24px'
+							fontWeight='400'
+							value={name}
+							onChange={
+								(e) => {
+									setName(e.target.value)
+								}
+							} />
+
+						<FlushedInput
+							w='100%'
+							flexProps={{ w: '100%', mt: 5 }}
+							placeholder='Email address'
+							borderBottom='1px solid #E7E4DD'
+							textAlign='left'
+							fontSize='16px'
+							lineHeight='24px'
+							fontWeight='400'
+							value={email}
+							onChange={
+								(e) => {
+									setEmail(e.target.value)
+								}
+							} />
+					</Flex>
+
+					<Button
+						mt={8}
+						variant='primaryLarge'
+						isLoading={!scwAddress || isLoading}
+						loadingText={isLoading ? 'Creating Profile' : 'Loading your wallet'}
+						isDisabled={isDisabled}
+						onClick={onCreateClick}>
+						<Text color='white'>
+							Create
+						</Text>
+					</Button>
+				</Flex>
+				<NetworkTransactionFlowStepperModal
+					isOpen={networkTransactionModalStep !== undefined}
+					currentStepIndex={networkTransactionModalStep || 0}
+					viewTxnLink={getExplorerUrlForTxHash(inviteInfo?.chainId, transactionHash)}
+					onClose={
+						() => {
+							setNetworkTransactionModalStep(undefined)
+							setTransactionHash('')
+							setRole(inviteInfo?.role === 0 ? 'admin' : 'reviewer')
+							toast({
+								title: 'Profile created successfully',
+								status: 'success',
+								duration: 1000,
+								onCloseComplete: () => {
+									router.push({
+										pathname: '/dashboard',
+										query: { ...router.query, chainId: inviteInfo?.chainId }
+									})
+								}
+							})
+						}
+					} />
+			</Flex>
+		)
+	}
+
+	const { inviteInfo } = useContext(ApiClientsContext)!
+	const { setRole } = useContext(GrantsProgramContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
-	const toast = useCustomToast()
 	const router = useRouter()
 
-	const chainId = useMemo(() => {
-		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
-	}, [grant])
-
 	const [name, setName] = useState<string>('')
-	const [email, setEmail] = useState<{data: string, state: 'loading' | 'loaded'}>({ data: '', state: 'loaded' })
-	useEffect(() => {
-		logger.info(email, 'UpdateProfileModal: email')
-	}, [email])
-	const [imageFile, setImageFile] = useState<{file: File | null, hash?: string}>({ file: null })
+	const [email, setEmail] = useState<string>('')
+	const [isLoading, setIsLoading] = useState<boolean>(false)
 
+	const [imageFile, setImageFile] = useState<File | null>(null)
 	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
 	const [transactionHash, setTransactionHash] = useState<string>('')
 
-	useEffect(() => {
-		if(transactionHash !== '') {
-			toast({
-				duration: 5000,
-				title: 'Member details updated successfully',
-				action: () => {
-					window.open(getExplorerUrlForTxHash(chainId, transactionHash), '_blank')
-				},
-				actionText: 'Transaction Link',
-				status: 'success'
-			})
-		}
-	}, [transactionHash])
+	const workspaceRegistry = useQBContract('workspace', inviteInfo?.chainId)
+	const signature = useMemo(() => (
+		(scwAddress && inviteInfo?.privateKey)
+			? generateInputForAuthorisation(
+				scwAddress!,
+				workspaceRegistry.address,
+				inviteInfo.privateKey,
+			)
+			: undefined
+	), [scwAddress, workspaceRegistry.address, inviteInfo?.privateKey])
 
-	const { setupProfile, isBiconomyInitialised } = useSetupProfile(
+	const workspaceId = useMemo(() => {
+		return inviteInfo?.workspaceId
+	}, [inviteInfo])
+
+	const { setupProfile } = useSetupProfile(
 		{
-			workspaceId: grant?.workspace?.id,
-			memberId: `${grant?.workspace?.id}.${scwAddress}`,
-			chainId,
-			type: 'join-reviewer-guard',
+			workspaceId,
+			memberId: `${workspaceId}.${scwAddress}`,
+			chainId: inviteInfo?.chainId ?? defaultChainId,
+			type: 'join-using-link',
 			setNetworkTransactionModalStep,
 			setTransactionHash,
 		})
 
 	const isDisabled = useMemo(() => {
-		return name === '' || email.data === '' || !isBiconomyInitialised
-	}, [name, email, isBiconomyInitialised])
+		return name === '' || email === ''
+	}, [name, email])
 
-	const { address, isConnected } = useAccount()
-
-	const { signMessageAsync } = useSignMessage()
-
-	const onClick = async() => {
-		if(isDisabled || networkTransactionModalStep !== undefined || !address) {
+	const onCreateClick = async() => {
+		setIsLoading(true)
+		if(inviteInfo?.role === undefined || !signature) {
 			return
 		}
 
-		const message = 'Verification message'
-		const hashedMessage = ethers.utils.solidityKeccak256(['string'], [message])
-		const signature = await signMessageAsync({ message: hashedMessage })
-		if(!signature) {
-			return
+		const inviteinfo: {
+			role: number
+			privateKey: string
+			workspaceId: string
+			chainId: SupportedChainId
+		} = {
+			role: inviteInfo?.role,
+			privateKey: base58.encode(inviteInfo.privateKey),
+			workspaceId: inviteInfo?.workspaceId as string,
+			chainId: inviteInfo?.chainId as SupportedChainId
 		}
 
-		logger.info(signature, address)
-
-		const res = await setupProfile({
-			name,
-			email: email.data,
-			imageFile: imageFile.file,
-			role: 1,
-			signedMessage: signature,
-			walletAddress,
+		await setupProfile({
+			name, email, imageFile, role: inviteInfo.role, signature, inviteInfo: inviteinfo
 		})
-
-		logger.info({ res }, 'SetupProfileModal: setupProfile received')
-
-		if(res) {
-			onClose()
-			router.reload()
-		}
+		setIsLoading(false)
 	}
 
-	useEffect(() => {
-		if(isConnected && walletAddress) {
-			toast({
-				title: `Verified owner of wallet ${formatAddress(walletAddress)}. Setup your profile to submit the review`,
-				status: 'success',
-				position: 'top'
-			})
-		}
-	}, [isConnected])
+	const toast = useCustomToast()
 
 	return buildComponent()
 }
 
-export default SetupProfileModal
+SetupProfile.getLayout = function(page: ReactElement) {
+	return (
+		<NavbarLayout>
+			{page}
+		</NavbarLayout>
+	)
+}
+
+export default SetupProfile

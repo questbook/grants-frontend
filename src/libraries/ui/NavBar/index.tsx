@@ -5,7 +5,7 @@ import { SupportedPayouts } from '@questbook/supported-safes'
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
-import { Add, ArrowLeft, Pencil, Qb, Settings, ShareForward } from 'src/generated/icons'
+import { ArrowLeft, Pencil, Qb, Settings, ShareForward } from 'src/generated/icons'
 import { QBAdminsContext } from 'src/libraries/hooks/QBAdminsContext'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import logger from 'src/libraries/logger'
@@ -176,7 +176,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 				}
 
 				<Spacer />
-				{
+				{/* {
 					!isMobile[0] &&
 					(router.pathname === '/') && (
 						<Flex
@@ -211,8 +211,8 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 							</Text>
 						</Flex>
 					)
-				}
-				{
+				} */}
+				{/* {
 					isQbAdmin && window?.innerWidth > 600 &&
 					(router.pathname === '/') && (
 
@@ -238,7 +238,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 							Add new program
 						</Button>
 					)
-				}
+				} */}
 				<AccountDetails
 					openModal={
 						(type) => {
@@ -534,7 +534,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 
 	const { grant, role, isLoading } = useContext(GrantsProgramContext)!
 	const { dashboardStep, setDashboardStep, createingProposalStep, setCreatingProposalStep, glyph, setGlyph } = useContext(WebwalletContext)!
-	const { isQbAdmin } = useContext(QBAdminsContext)!
+	const { } = useContext(QBAdminsContext)!
 	const { signIn, setSignIn } = useContext(SignInContext)!
 	// const { searchString, setSearchString } = useContext(DAOSearchContext)!
 	const router = useRouter()

@@ -10,7 +10,7 @@ export type Section = Exclude<GetSectionGrantsQuery['sections'][0], null|undefin
 export type SectionGrants = {[key: string]: Section}[]
 export type RecentProposals = Exclude<GetSectionGrantsQuery['sections'][0], null|undefined>['grants'][number]['applications']
 
-export type GrantType = (BuilderGrants[number] | MemberGrants[number] | AllGrants[number] | Section['grants'][number]) & {role: Roles} & {subgrant?: boolean}
+export type GrantType = (BuilderGrants[number] | MemberGrants[number] | AllGrants[number] | Section['grants'][number]) & {role: Roles, link?: string}
 
 export type GrantProgramType = Exclude<GetGrantProgramDetailsQuery['grantProgram'], null | undefined>[number]
 
@@ -24,13 +24,7 @@ export type DiscoverContextType = {
     setSearch: (search: string) => void
     isLoading: boolean
     safeBalances: {[key: string]: number}
-    grantsAllocated: {
-        total: number
-        arbitrum1: number
-        arbitrum2: number
-        individualGrants: { id: string, amount: number }[]
-    }
-    sectionSubGrants: GrantType[]
+    grantsAllocated: number
 }
 
 export type FundTransfer = {

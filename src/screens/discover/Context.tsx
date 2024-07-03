@@ -9,10 +9,8 @@ import { DiscoverContextType, GrantProgramType, GrantType, RecentProposals, Sect
 import { getAllGrants } from 'src/screens/discover/data/getAllGrants'
 import { getAllGrantsForMembers } from 'src/screens/discover/data/getAllGrantsForMembers'
 import { getFundsAllocated } from 'src/screens/discover/data/getFundsAllocated'
-import { getGranteeList } from 'src/screens/discover/data/getGranteeList'
 import { GetGrantProgramDetails } from 'src/screens/discover/data/getGrantProgramDetails'
 import { getSectionGrantsQuery } from 'src/screens/discover/data/getSectionGrants'
-import { getSectionSubGrantsQuery } from 'src/screens/discover/data/getSectionSubGrants'
 import { GetWorkspacesAndBuilderGrants } from 'src/screens/discover/data/getWorkspaceAndBuilderGrants'
 import { Roles } from 'src/types'
 
@@ -23,7 +21,7 @@ const PAGE_SIZE = 40
 const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	const provider = () => {
 		return (
-			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram, search, setSearch, sectionGrants, recentProposals, isLoading, safeBalances, grantsAllocated, sectionSubGrants }}>
+			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram, search, setSearch, sectionGrants, recentProposals, isLoading, safeBalances, grantsAllocated }}>
 				{children}
 			</DiscoverContext.Provider>
 		)
@@ -37,13 +35,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	const [grantProgram, setGrantProgram] = useState<GrantProgramType>()
 	const [sectionGrants, setSectionGrants] = useState<SectionGrants>()
 	const [recentProposals, setRecentProposals] = useState<RecentProposals>()
-	const [grantsAllocated, setGrantsAllocated] = useState<DiscoverContextType['grantsAllocated']>({
-		total: 0,
-		arbitrum1: 0,
-		arbitrum2: 0,
-		individualGrants: []
-	})
-	const [sectionSubGrants, setSectionSubGrants] = useState<GrantType[]>([])
+	const [grantsAllocated, setGrantsAllocated] = useState<number>(0)
 
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 	const [search, setSearch] = useState<string>('')
@@ -73,13 +65,6 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		query: getFundsAllocated
 	})
 
-	const { fetchMore: getSubGrants } = useQuery({
-		query: getSectionSubGrantsQuery
-	})
-
-	const { fetchMore: getGrantees } = useQuery({
-		query: getGranteeList
-	})
 
 	const fetchSafeBalances = async(grants: GrantType[]) => {
 		const safes: GrantType['workspace']['safe'][] = []
@@ -107,7 +92,6 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 				return 0
 			}
 
-
 			const safe = new SupportedPayouts().getSafe(parseInt(safeObj.chainId), safeObj.address)
 			try {
 				logger.info({ safe }, 'Safe (DISCOVER CONTEXT)')
@@ -116,17 +100,12 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 				if(balances?.value) {
 					const total = balances?.value?.reduce((acc: number, cur: {usdValueAmount: number}) => acc + cur.usdValueAmount, 0)
-					localStorage.setItem(`safe-${safeObj.chainId}-${safeObj.address}`, total.toString())
 					logger.info({ balances, safe }, 'Total (DISCOVER CONTEXT)')
 					return total
 				} else {
 					return 0
 				}
 			} catch(e) {
-				if(localStorage.getItem(`safe-${safeObj.chainId}-${safeObj.address}`)) {
-					return parseInt(localStorage.getItem(`safe-${safeObj.chainId}-${safeObj.address}`) ?? '0')
-				}
-
 				logger.info({ safe }, 'Error (DISCOVER CONTEXT)')
 				return 0
 			}
@@ -146,7 +125,16 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 		logger.info({ safeBalances }, 'Safe balances (DISCOVER CONTEXT)')
 
-		setSafeBalances(safeBalances)
+		if(Object.values(safeBalances).some((b) => b > 0)) {
+			localStorage.setItem('safeBalances', JSON.stringify(safeBalances))
+			setSafeBalances(safeBalances)
+		} else {
+			const safeBalancesFromLocalStorage = localStorage.getItem('safeBalances')
+			if(safeBalancesFromLocalStorage) {
+				setSafeBalances(JSON.parse(safeBalancesFromLocalStorage))
+			}
+		}
+
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -249,59 +237,12 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 			return total
 		}
 
-		function sumArbitrum(data: any, type: string): number {
-			let total = 0
-
-			for(const grant of data.grants) {
-				if(grant.title.includes('Arbitrum') &&
-				type === '1.0' ? !grant.title.includes('2.0') : grant.title.includes('2.0')) {
-					for(const app of grant.applications) {
-						for(const milestone of app.milestones) {
-							total += milestone.amount
-						}
-					}
-				}
-			}
-
-			return total
-		}
-
-		function sumAllocationForIndividualGrants(data: any): DiscoverContextType['grantsAllocated']['individualGrants'] {
-			const grants = []
-			for(const grant of data.grants) {
-				let total = 0
-				let totalPaid = 0
-				for(const app of grant.applications) {
-					for(const milestone of app.milestones) {
-						total += milestone.amount
-						totalPaid += milestone.amountPaid
-					}
-				}
-
-				grants.push({
-					id: grant.id,
-					amount: total,
-					amountPaid: totalPaid
-				})
-			}
-
-			return grants
-		}
-
-
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const funds: any = await getFunds()
 		logger.info({ funds }, 'funds')
 		const total = sumAmounts(funds.sections[0])
-		const arbitrum1 = sumArbitrum(funds.sections[0], '1.0')
-		const arbitrum2 = sumArbitrum(funds.sections[0], '2.0')
-		const individualGrants = sumAllocationForIndividualGrants(funds.sections[0])
-		setGrantsAllocated({
-			total,
-			arbitrum1,
-			arbitrum2,
-			individualGrants
-		})
+		logger.info({ total }, 'totalFundsAllocated')
+		setGrantsAllocated(total)
 		return total
 	}
 
@@ -350,7 +291,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 		logger.info({ inviteInfo }, 'Invite Info')
 
-		const workspaceID = `${inviteInfo.workspaceId}`
+		const workspaceID = `${inviteInfo.workspaceId.toString(16)}`
 		logger.info({ workspaceID }, 'Workspace ID')
 		const results: any = await fetchGrantProgramData({ workspaceID }, true)
 		logger.info({ results }, 'Results grant program')
@@ -363,10 +304,9 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		setGrantProgram(results?.grantProgram[0])
 	}
 
+
 	const getSectionGrants = async() => {
 		const results: any = await fetchMoreSectionGrants()
-		const subgrantsResults: any = await getSubGrants()
-		const granteesResults: any = await getGrantees()
 		logger.info({ results }, 'Section Grants')
 
 		if(results?.sections?.length === 0) {
@@ -378,24 +318,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 		if(results?.sections?.length) {
 			allSectionGrants.push(...results?.sections.map((g: any) => ({ [g.sectionName]: { ...g } })))
-			recentProposals = granteesResults.sections.map((s: any) => s.grants.
-				filter((g: any) => g.applications.length > 0).map((g: any) => {
-					return g.applications.map((a: any) => {
-						return {
-							...a,
-							sectionName: s.sectionName,
-							grant: {
-								title: g.title,
-								id: g.id,
-								workspace: g.workspace
-							}
-						}
-					})
-				}).flat()).flat()
-		}
-
-		if(subgrantsResults?.grants?.length) {
-			setSectionSubGrants(subgrantsResults?.grants)
+			recentProposals = [...recentProposals, ...results.sections.map((s: any) => s.grants.map((g: any) => g.applications).flat()).flat()]
 		}
 
 		logger.info({ allSectionGrants, recentProposals }, 'All section grants (DISCOVER CONTEXT)')
@@ -431,7 +354,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 	useEffect(() => {
 		getSectionGrants().then(r => logger.info(r, 'Get Section Grants'))
-	}, [scwAddress])
+	}, [])
 
 	useEffect(() => {
 		if(inviteInfo) {
@@ -453,7 +376,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 			}
 		}
 
-		const allGrants = [...grantsForAll, ...grantsForYou, ...sGrants, ...sectionSubGrants]
+		const allGrants = [...grantsForAll, ...grantsForYou, ...sGrants]
 		fetchSafeBalances(allGrants)
 
 
