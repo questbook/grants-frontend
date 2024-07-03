@@ -22,7 +22,7 @@ function FeaturedSections(sections: {
 			borderRadius='8px'
 			border='1px solid #EFEEEB'
 			background='#FFF'
-			padding={['8px 24px', '14px 20px']}
+			padding={['8px 24px', '8px 24px']}
 			cursor='pointer'
 			onClick={
 				() => {
@@ -44,6 +44,7 @@ function FeaturedSections(sections: {
 				fontWeight='700'
 				lineHeight='normal'
 				color='#07070C'
+				width='100%'
 
 			>
 				{title}
@@ -75,6 +76,7 @@ function FeaturedSections(sections: {
 					gap='24px'
 					overflowX='auto'
 					p={0}
+					style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
 					justifyContent='flex-start'>
 
 					{
