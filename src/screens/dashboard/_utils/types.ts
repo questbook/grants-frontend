@@ -26,6 +26,8 @@ export type DashboardContextType = {
   refreshProposals: (refresh: boolean) => void
   filterState: ApplicationState | undefined
   setFilterState: (state: ApplicationState | undefined) => void
+  sortBy: 'updatedAtS' | 'createdAtS'
+  setSortBy: (sortBy: 'updatedAtS' | 'createdAtS') => void
   fundsAllocated: { allocated: number, disbursed: number }
 };
 
@@ -63,7 +65,6 @@ export type FundBuilderContextType = {
 
   signerVerifiedState: SignerVerifiedState
   setSignerVerifiedState: (state: SignerVerifiedState) => void
-
 };
 
 export type ModalContextType = {
@@ -73,8 +74,6 @@ export type ModalContextType = {
   setIsSendAnUpdateModalOpen: (isOpen: boolean) => void
   isLinkYourMultisigModalOpen: boolean
   setIsLinkYourMultisigModalOpen: (isOpen: boolean) => void
-  isHelloSignModalOpen: boolean
-  setIsHelloSignModalOpen: (isOpen: boolean) => void
 };
 
 export type ReviewData = {

@@ -83,6 +83,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 	const [showSubmitReviewPanel, setShowSubmitReviewPanel] = useState<boolean>(false)
 	const [areCommentsLoading, setAreCommentsLoading] = useState<boolean>(false)
 	const [filterState, setFilterState] = useState<ApplicationState>()
+	const [sortBy, setSortBy] = useState<'updatedAtS' | 'createdAtS'>('updatedAtS')
 	const [fundsAllocated, setFundsAllocated] = useState<{
 		allocated: number
 		disbursed: number
@@ -760,6 +761,8 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 					},
 					filterState,
 					setFilterState,
+					sortBy,
+					setSortBy,
 					fundsAllocated,
 				}
 			}>
@@ -811,9 +814,8 @@ const ModalProvider = ({ children }: { children: ReactNode }) => {
 	const [isSendAnUpdateModalOpen, setIsSendAnUpdateModalOpen] = useState<boolean>(false)
 	const [isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen] = useState<boolean>(false)
 	const [isFundingMethodModalOpen, setIsFundingMethodModalOpen] = useState<boolean>(false)
-	const [isHelloSignModalOpen, setIsHelloSignModalOpen] = useState<boolean>(false)
 	return (
-		<ModalContext.Provider value={{ isSendAnUpdateModalOpen, setIsSendAnUpdateModalOpen, isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen, isFundingMethodModalOpen, setIsFundingMethodModalOpen, isHelloSignModalOpen, setIsHelloSignModalOpen }}>
+		<ModalContext.Provider value={{ isSendAnUpdateModalOpen, setIsSendAnUpdateModalOpen, isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen, isFundingMethodModalOpen, setIsFundingMethodModalOpen }}>
 			{children}
 		</ModalContext.Provider>
 	)

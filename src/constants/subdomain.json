@@ -1,9 +1,9 @@
 {
-    "name": "Shido",
-    "id":"Shido",
-    "grants_name": "Shido",
-    "logo":"QmSMvCMqcgH2AxZbjSmCTVKerctRtjCBZPZfFwzsUTzHwN",
-    "info":"Shido Grant Program powers the future of Shido through an extensive program.\n\n Teams and Developers who want to build on Shido Network can access the allocated funding. \n\nApplications are officially open for grants. Shido actively funds and supports projects that are building on, or, fully integrating Shido Network in existing products and protocols. Shido Grant Program is funded by the Shido Growth Fund which is a special allocation of funds, for ambitious teams who want to build on Shido Network.",
+    "name": "Compound Grants",
+    "id":"Compound",
+    "grants_name": "Compound Grants",
+    "logo":"QmTkdKP8gFTmrM5UJYAtEahqtU7GQyDVaN9UHnNoEY6M3M",
+    "info":"The Compound grants, administered via DDA by Questbook and 3 domain allocators, went live on the 30th of November with a grants budget of $1M spread across four domains. The Questbook Compound Grants program is useful for anyone developing in domain specific projects on top of Compound, ranging from New Dapps and Ideas, Multi-chain/Cross-chain, Dev Tooling and Security Tooling.",
     "DA": [
         {
             "title": "shido",

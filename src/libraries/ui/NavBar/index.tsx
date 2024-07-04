@@ -176,7 +176,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 				}
 
 				<Spacer />
-				{/* {
+				{
 					!isMobile[0] &&
 					(router.pathname === '/') && (
 						<Flex
@@ -211,7 +211,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 							</Text>
 						</Flex>
 					)
-				} */}
+				}
 				{/* {
 					isQbAdmin && window?.innerWidth > 600 &&
 					(router.pathname === '/') && (

@@ -75,9 +75,9 @@ const client = createConfig({
 		showQrModal: true,
 	  	metadata: {
 			name: 'Questbook',
-			url: 'https://arbitrum.questbook.app',
+			url: 'https://compoundgrants.questbook.app',
 			description: 'Questbook',
-			icons: ['https://arbitrum.questbook.app/favicon.svg'],
+			icons: ['https://compoundgrants.questbook.app/favicon.svg'],
 		}
 		}),
 	],

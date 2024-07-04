@@ -20,7 +20,7 @@ function Banner() {
 					textAlign='center'
 					mx={2}
 				>
-					The domain is closed until further notice as the funds have been fully allocated.
+					The domain is closed until further notice.
 				</Text>
 
 			</Box>
