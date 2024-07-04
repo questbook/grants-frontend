@@ -28,7 +28,7 @@ import { getFromIPFS } from 'src/libraries/utils/ipfs'
 import { useEncryptPiiForApplication } from 'src/libraries/utils/pii'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
-import { GrantsProgramContext } from 'src/pages/_app'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
@@ -400,6 +400,7 @@ function Proposal() {
 
 	const { grant, role } = useContext(GrantsProgramContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
+	const { scwAddress } = useContext(WebwalletContext)!
 	const toast = useCustomToast()
 
 	const proposal = useMemo(() => {
@@ -422,8 +423,8 @@ function Proposal() {
 	}, [proposal?.grant, chainId])
 
 	const shouldShowPII = useMemo(() => {
-		return role !== 'community'
-	}, [])
+		return role !== 'community' && (role === 'builder' ? proposal?.applicantId === scwAddress : true)
+	}, [role, proposal?.applicantId, scwAddress])
 
 	const [decryptedProposal, setDecryptedProposal] = useState<
 		ProposalType | undefined
