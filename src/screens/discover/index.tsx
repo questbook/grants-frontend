@@ -537,11 +537,6 @@ function Discover() {
 																					twitter: ''
 																				},
 																				{
-																					image: 'QmQY4LV5zn3VMPde5r4VHrD75YiBZNx512widJsRACnBjR',
-																					title: 'aesop',
-																					twitter: 'aesopfloppy'
-																				},
-																				{
 																					image: 'QmRcPr3UoGmksuEnW5tWQcN6TBtRwgS255oDxzJ58MAQgF',
 																					title: 'Felix',
 																					twitter: ''
