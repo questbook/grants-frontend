@@ -1,16 +1,15 @@
 // components/Footer.tsx
-import { useMediaQuery } from 'react-responsive'
-import { Box, Flex, Grid, Image, Link, Stack, Text } from '@chakra-ui/react'
+import { Box, Flex, Grid, Link, Stack, Text } from '@chakra-ui/react'
+import { Questbook } from 'src/generated/icons'
 
 const Footer = () => {
-	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
 	return (
 		<Box
 			as='footer'
 			bg='#1f1f33'
 			color='white'
 			py={10}
-			pb={20}>
+			pb={10}>
 			<Flex
 				px={{ base: 4, md: 8 }}
 				justify='space-between'
@@ -25,10 +24,9 @@ const Footer = () => {
 					<Link
 						href='/'
 						aria-current='page'>
-						<Image
-							src='https://assets.website-files.com/62270ece7871d925a678b02a/6227186419f02e52cce93236_Questbook.svg'
-							alt='Questbook Logo'
-							loading='lazy' />
+						<Questbook
+							width='340px'
+							height='auto' />
 					</Link>
 					<Text
 						fontSize={{ base: 'sm', md: 'md' }}
@@ -38,17 +36,6 @@ const Footer = () => {
 						{' '}
 						for builders in web3
 					</Text>
-					{
-						!isMobile && (
-							<Text color='#b7f72b'>
-								&copy;
-								{' '}
-								{new Date().getFullYear()}
-								{' '}
-								Questbook. All rights reserved.
-							</Text>
-						)
-					}
 				</Stack>
 
 				<Grid
@@ -127,19 +114,22 @@ const Footer = () => {
 					</Stack>
 				</Grid>
 
-				{
-					isMobile && (
-						<Text
-							mt={8}
-							color='#b7f72b'>
-							&copy;
-							{' '}
-							{new Date().getFullYear()}
-							{' '}
-							Questbook. All rights reserved.
-						</Text>
-					)
-				}
+
+			</Flex>
+			<Flex
+				justifyContent='flex-start'
+				px={{ base: 4, md: 8 }}
+			>
+				<Text
+					mt={8}
+					color='white'>
+
+					{' '}
+					{new Date().getFullYear()}
+					<br />
+					{' '}
+					Questbook. All rights reserved.
+				</Text>
 			</Flex>
 		</Box>
 	)

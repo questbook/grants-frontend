@@ -1,6 +1,7 @@
 // This renders the list of proposals that show up as the first column
 
 import { createRef, useContext, useEffect, useMemo, useState } from 'react'
+import { useMediaQuery } from 'react-responsive'
 import { Button, Checkbox, Flex, Grid, GridItem, Text } from '@chakra-ui/react'
 import { Select } from 'chakra-react-select'
 import { useRouter } from 'next/router'
@@ -15,7 +16,7 @@ import FilterTag from 'src/screens/dashboard/_components/FilterTag'
 import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
 import { DashboardContext } from 'src/screens/dashboard/Context'
-import { disabledGrants, disabledSubmissions, disabledTonGrants, subdomainProposals } from 'src/screens/proposal_form/_utils/constants'
+import { disabledGrants, disabledSubmissions, disabledTonGrants, subdomainProposals, subdomains } from 'src/screens/proposal_form/_utils/constants'
 
 function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boolean) => void }) {
 	const buildComponent = () => (
@@ -42,7 +43,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 						ml={1}
 						display='inline-block'
 						color='black.300'>
-						{`(${proposalCount})`}
+						{role === 'community' && subdomains.filter((s) => s.isPrivate).map((s) => s.grants).flat().includes(grant?.id as string) ? '' : `(${proposalCount})`}
 					</Text>
 				</Text>
 				{
@@ -52,7 +53,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 							// w='103px'
 							// h='32px'
 							mr={4}
-							isDisabled={disabledTonGrants?.includes(grant?.id as string) || disabledGrants?.includes(grant?.id as string) || disabledSubmissions?.includes(grant?.id as string)}
+							isDisabled={disabledTonGrants?.includes(grant?.id as string) || disabledGrants?.includes(grant?.id as string) || disabledSubmissions?.includes(grant?.id as string) || subdomains.filter((s) => !s.isEnabled).map((s) => s.grants).flat().includes(grant?.id as string) }
 							fontSize={['10px', '10px', '12px', '12px']}
 							onClick={
 								() => {
@@ -262,6 +263,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 					})
 				}
 				{proposalCount === 0 && <Empty />}
+				{role === 'community' && proposalCount > 0 && subdomains.filter((s) => s.isEnabled).map((s) => s.grants).flat().includes(grant?.id as string) && (isMobile ? <Empty /> : '') }
 				{
 					isProposalListLoading && (
 						<Button
@@ -285,7 +287,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 	const { proposals, selectedProposals, setSelectedProposals, filterState, setFilterState, sortBy, setSortBy, isProposalListLoading } = useContext(DashboardContext)!
 
 	const [isFilterClicked, setIsFilterClicked] = useState<boolean>(false)
-
+	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
 	const [searchText, setSearchText] = useState<string>('')
 	const filteredProposals = useMemo(() => {
 		let allProposals = [...proposals]

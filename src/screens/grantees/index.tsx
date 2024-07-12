@@ -1,10 +1,11 @@
 import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { Box, Container, Flex, Link, Skeleton, Text } from '@chakra-ui/react'
+import { Box, Container, Flex, Skeleton, Text } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import SearchField from 'src/libraries/ui/SearchField'
 import { ApiClientsContext, SignInContext, SignInTitleContext } from 'src/pages/_app' //TODO - move to /libraries/zero-wallet/context
+import Footer from 'src/screens/discover/Footer'
 import RFPGrid from 'src/screens/grantees/_components/rfpGrid'
 import { inActiveProposals } from 'src/screens/grantees/_utils/constants'
 import { GranteeContext, GranteeProvider } from 'src/screens/grantees/Context'
@@ -158,28 +159,6 @@ function Grantee() {
 										</Box>
 									</Flex>
 								</Flex>
-								<Flex
-									flexDirection='column'
-									w='100%'
-									align='center'
-									justify='center'>
-									<Link
-										textAlign='center'
-										isExternal
-										variant='body'
-										color='accent.azure'
-										href='https://questbook.app/termsofservice.html'>
-										Questbook - Terms of Service
-									</Link>
-									<Link
-										textAlign='center'
-										isExternal
-										variant='body'
-										color='accent.azure'
-										href='https://questbook.app/privacypolicy.html'>
-										Privacy Policy
-									</Link>
-								</Flex>
 
 							</Container>
 						)
@@ -192,6 +171,7 @@ function Grantee() {
 								/>
 							)
 					}
+					<Footer />
 
 				</Flex>
 			</>
