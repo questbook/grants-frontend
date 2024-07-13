@@ -40,7 +40,9 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 						ml={1}
 						display='inline-block'
 						color='black.300'>
+						(
 						{proposalCount}
+						)
 					</Text>
 				</Text>
 				{
