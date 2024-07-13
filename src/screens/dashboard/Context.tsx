@@ -716,7 +716,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 	}, [grantId, chainId, scwAddress])
 	useEffect(() => {
 		if(grantId && typeof grantId === 'string' && subdomains.map((s) => s.grants).flat().includes(grantId as string)) {
-			if(role !== 'community' && grantId !== '661667585afea0acb56c9f08') {
+			if(role === 'admin' || role === 'reviewer') {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				getProposals().then((proposals: any) => {
 					getFetchBackgroundProposals(proposals ?? [])
@@ -744,12 +744,13 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
 	const refreshAllProposals = useCallback(async() => {
 		if(grantId && typeof grantId === 'string' && subdomains.map((s) => s.grants).flat().includes(grantId as string)) {
-			if(role !== 'community' && grantId !== '661667585afea0acb56c9f08') {
+			if(role === 'admin' || role === 'reviewer') {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				getProposals().then((proposals: any) => {
 					getFetchBackgroundProposals(proposals ?? [])
 				})
 			} else {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				getApplicantProposals().then((r) => logger.info({ r }, 'Get applicant proposals result'))
 			}
 		} else {

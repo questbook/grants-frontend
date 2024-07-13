@@ -40,7 +40,7 @@ function StatsBanner(stats: StatsType) {
 				justifyContent='space-evenly'>
 				{Fields(stats?.builders > 0 ? formatNumber(stats?.builders) : formatNumber(52000), 'Builders')}
 				{Fields(stats?.proposals > 0 ? formatNumber(stats?.proposals) : formatNumber(4000), 'Proposals')}
-				{Fields(stats?.funds > 0 ? formatFundsAmount(stats?.funds) : formatFundsAmount(6400000), 'Paid out')}
+				{Fields(stats?.funds > 0 ? formatFundsAmount(stats?.funds) : formatFundsAmount(6500000), 'Paid out')}
 			</Flex>
 		)
 	}
