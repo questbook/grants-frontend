@@ -40,7 +40,9 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 						ml={1}
 						display='inline-block'
 						color='black.300'>
-						{`(${proposalCount})`}
+						`($
+						{proposalCount}
+						)`
 					</Text>
 				</Text>
 				{
@@ -201,6 +203,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 					})
 				}
 				{proposalCount === 0 && <Empty />}
+				{proposalCount > 0 && role === 'community' && grant?.id === '661e3ca0f056dd981db4e4a5' && <Empty />}
 
 			</Flex>
 		</Flex>
