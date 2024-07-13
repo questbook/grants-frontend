@@ -311,6 +311,7 @@ function Discussions() {
 			<Flex
 				key={index}
 				align='start'
+				overflowWrap='break-word'
 				mt={index === 0 ? 0 : 4}>
 				<Image
 					borderRadius='3xl'
@@ -318,15 +319,18 @@ function Discussions() {
 					src={
 						comment.role === 'builder' || comment.role === 'community'
 							? getAvatar(false, comment.sender?.toLowerCase() ?? '')
-							: member?.profilePictureIpfsHash
-								? getUrlForIPFSHash(member.profilePictureIpfsHash)
-								: getAvatar(false, member?.actorId)
+							: comment.role === 'app' ? comment?.sender === 'helloSign' ? 'https://avatars.githubusercontent.com/u/25623857?s=280&v=4' : 'https://avatars.githubusercontent.com/u/63306624?s=280&v=4'
+								: member?.profilePictureIpfsHash
+									? getUrlForIPFSHash(member.profilePictureIpfsHash)
+									: getAvatar(false, member?.actorId)
 					}
 				/>
 				<Flex
 					ml={3}
 					direction='column'>
-					<Flex align='center'>
+					<Flex
+						align='center'
+						mb={1}>
 						<Text fontWeight='500'>
 							{getCommentDisplayName(comment)}
 						</Text>
