@@ -687,7 +687,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 	}, [grantId, chainId, scwAddress, webwallet, role])
 
 	const refreshAllProposals = useCallback(async() => {
-		if((role === 'admin' || role === 'reviewer' && grantId === '661e3ca0f056dd981db4e4a5') || grantId !== '661e3ca0f056dd981db4e4a5') {
+		if((role === 'admin' || role === 'reviewer' && subdomains?.includes(grantId as string)) || !subdomains?.includes(grantId as string)) {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			getProposals().then((proposals: any) => {
 				getFetchBackgroundProposals(proposals ?? [])

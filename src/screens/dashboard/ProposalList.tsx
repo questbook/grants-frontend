@@ -14,6 +14,7 @@ import FilterTag from 'src/screens/dashboard/_components/FilterTag'
 import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
 import { DashboardContext } from 'src/screens/dashboard/Context'
+import { subdomains } from 'src/screens/proposal_form/_utils/constants'
 
 function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boolean) => void }) {
 	const buildComponent = () => (
@@ -203,7 +204,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 					})
 				}
 				{proposalCount === 0 && <Empty />}
-				{proposalCount > 0 && role === 'community' && grant?.id === '661e3ca0f056dd981db4e4a5' && <Empty />}
+				{proposalCount > 0 && role === 'community' && subdomains?.includes(grant?.id as string) && <Empty />}
 
 			</Flex>
 		</Flex>

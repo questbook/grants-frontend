@@ -6,6 +6,7 @@ import SetupNotificationModal from 'src/libraries/ui/SetupNotificationModal'
 import { copyGrantLink } from 'src/libraries/utils/copy'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
+import { subdomains } from 'src/screens/proposal_form/_utils/constants'
 
 function Empty() {
 	const buildComponent = () => {
@@ -21,7 +22,7 @@ function Empty() {
 				<Text
 					variant='heading3'
 					fontWeight='500'>
-					{role === 'admin' ? 'Your invitation for proposals is live!' : grant?.id === '661e3ca0f056dd981db4e4a5' ? 'This is a Private Grant' : 'Be the first to submit a proposal'}
+					{role === 'admin' ? 'Your invitation for proposals is live!' : subdomains?.includes(grant?.id as string) ? 'This is a Private Grant' : 'Be the first to submit a proposal'}
 
 				</Text>
 
