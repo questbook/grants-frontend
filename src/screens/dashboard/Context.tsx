@@ -19,6 +19,7 @@ import { getSpecificApplicationActionQuery } from 'src/screens/dashboard/_data/g
 import { getSpecificProposalCommentsQuery } from 'src/screens/dashboard/_data/getSpecificProposalCommentsQuery'
 import { getSpecificProposalQuery } from 'src/screens/dashboard/_data/getSpecificProposalQuery'
 import { CommentMap, CommentType, DashboardContextType, FundBuilderContextType, ModalContextType, Proposals, ReviewInfo, SignerVerifiedState } from 'src/screens/dashboard/_utils/types'
+import { subdomains } from 'src/screens/proposal_form/_utils/constants'
 import { Roles } from 'src/types'
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined)
@@ -672,7 +673,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		getGrant().then((r) => logger.info({ r }, 'Get grant result'))
 	}, [grantId, chainId, scwAddress])
 	useEffect(() => {
-		if((role === 'admin' || role === 'reviewer' && grantId === '661e3ca0f056dd981db4e4a5') || grantId !== '661e3ca0f056dd981db4e4a5') {
+		if((role === 'admin' || role === 'reviewer' && subdomains?.includes(grantId as string)) || !subdomains?.includes(grantId as string)) {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			getProposals().then((proposals: any) => {
 				getFetchBackgroundProposals(proposals ?? [])
