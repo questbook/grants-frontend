@@ -187,7 +187,7 @@ function SetupProfileModal({ walletAddress, isOpen, onClose }: Props) {
 		}
 	}, [transactionHash])
 
-	const { setupProfile, isBiconomyInitialised } = useSetupProfile(
+	const { setupProfile } = useSetupProfile(
 		{
 			workspaceId: grant?.workspace?.id,
 			memberId: `${grant?.workspace?.id}.${scwAddress}`,
@@ -198,8 +198,8 @@ function SetupProfileModal({ walletAddress, isOpen, onClose }: Props) {
 		})
 
 	const isDisabled = useMemo(() => {
-		return name === '' || email.data === '' || !isBiconomyInitialised
-	}, [name, email, isBiconomyInitialised])
+		return name === '' || email.data === ''
+	}, [name, email])
 
 	const { address, isConnected } = useAccount()
 
