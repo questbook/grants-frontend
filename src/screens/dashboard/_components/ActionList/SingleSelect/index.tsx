@@ -10,6 +10,7 @@ import Payouts from 'src/screens/dashboard/_components/ActionList/SingleSelect/P
 import ReviewProposal from 'src/screens/dashboard/_components/ActionList/SingleSelect/ReviewProposal'
 import Reviews from 'src/screens/dashboard/_components/ActionList/SingleSelect/Reviews'
 import { DashboardContext, ModalContext } from 'src/screens/dashboard/Context'
+import { subdomainProposals } from 'src/screens/proposal_form/_utils/constants'
 
 function SingleSelect() {
 	const buildComponent = () => {
@@ -59,10 +60,16 @@ function SingleSelect() {
 												return
 											}
 
-											router.push({ pathname: '/proposal_form', query: {
-												proposalId: proposal?.id,
-												chainId,
-											} })
+											const id = subdomainProposals.find((s) => s.grants.includes(proposal?.grant?.id as string)) ?? { name: 'www' }
+
+											if(id) {
+												window.open(`https://${id.name}.questbook.app/proposal_form/?grantId=${proposal?.grant?.id}&chainId=${chainId}&newTab=true`, '_blank')
+											} else {
+												router.push({ pathname: '/proposal_form', query: {
+													proposalId: proposal?.id,
+													chainId,
+												} })
+											}
 										} else {
 											setIsFundingMethodModalOpen(true)
 										}
