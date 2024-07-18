@@ -60,7 +60,7 @@ function SingleSelect() {
 												return
 											}
 
-											const id = subdomainProposals.find((s) => s.grants.includes(proposal?.grant?.id as string)) ?? { name: 'www' }
+											const id = subdomainProposals.find((s) => s.grants.includes(proposal?.grant?.id as string))
 
 											if(id) {
 												window.open(`https://${id.name}.questbook.app/proposal_form/?grantId=${proposal?.grant?.id}&chainId=${chainId}&newTab=true`, '_blank')
