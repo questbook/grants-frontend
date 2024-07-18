@@ -25,7 +25,7 @@ function SingleSelect() {
 				direction='column'>
 				<Milestones />
 				<Divider />
-				<Reviews />
+				{subdomainProposals.find((s) => s.grants.includes(proposal?.grant?.id as string)) && (role !== 'reviewer' && role !== 'admin') ? null : <Reviews />}
 				<Divider />
 				<Payouts />
 				<Box mt='auto' />

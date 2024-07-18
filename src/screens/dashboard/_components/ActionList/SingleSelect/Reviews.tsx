@@ -647,7 +647,7 @@ function Reviews() {
 												async() => {
 													logger.info({ reviewType, isReviewPrivate, rubricItems }, 'setRubrics')
 													await setRubrics(reviewType, isReviewPrivate, rubricItems)
-													onClose()
+													await window.location.reload()
 												}
 											}>
 											<Text
