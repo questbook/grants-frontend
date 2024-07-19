@@ -533,12 +533,13 @@ function Proposal() {
 												}
 												,
 												li: ({ ...props }) => {
-													return (
+													return props && !props?.children?.toString()?.length ? '-' : (
 														<li
 															{...props}
 															className='public-DraftStyleDefault-unorderedListItem public-DraftStyleDefault-reset public-DraftStyleDefault-depth0 public-DraftStyleDefault-listLTR'
 														/>
 													)
+
 												},
 
 
