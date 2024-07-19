@@ -41,6 +41,7 @@ const Footer = () => {
 				<Grid
 					templateColumns='repeat(2, 1fr)'
 					gap={12}
+					p={1}
 					mt={{ base: 12, md: 0 }}
 					justifyContent={{ base: 'flex-start', md: 'flex-end' }}
 
