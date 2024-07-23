@@ -1,5 +1,5 @@
 import { Flex, Text } from '@chakra-ui/react'
-import { logger } from 'ethers'
+import logger from 'src/libraries/logger'
 import { formatFundsAmount, formatNumber } from 'src/libraries/utils/formatting'
 import { StatsType } from 'src/screens/discover/_utils/types'
 
@@ -40,7 +40,7 @@ function StatsBanner(stats: StatsType) {
 				justifyContent='space-evenly'>
 				{Fields(stats?.builders > 0 ? formatNumber(stats?.builders) : formatNumber(52000), 'Builders')}
 				{Fields(stats?.proposals > 0 ? formatNumber(stats?.proposals) : formatNumber(4000), 'Proposals')}
-				{Fields(stats?.funds > 0 ? formatFundsAmount(stats?.funds) : formatFundsAmount(6200000), 'Paid out')}
+				{Fields(stats?.funds > 0 ? formatFundsAmount(stats?.funds) : formatFundsAmount(6600000), 'Paid out')}
 			</Flex>
 		)
 	}

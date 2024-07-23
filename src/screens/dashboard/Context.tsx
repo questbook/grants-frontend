@@ -11,6 +11,7 @@ import { getFromIPFS } from 'src/libraries/utils/ipfs'
 import { getKeyForApplication, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { ApiClientsContext, GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { getApplicantProposalQuery } from 'src/screens/dashboard/_data/getApplicantProposalsQuery'
 import { getBuilderInfoQuery } from 'src/screens/dashboard/_data/getBuilderInfoQuery'
 import { getFundsAllocatedQuery } from 'src/screens/dashboard/_data/getFundsAllocatedQuery'
 import { getGrantsQuery } from 'src/screens/dashboard/_data/getGrantsQuery'
@@ -72,6 +73,10 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 
 	const { fetchMore: fetchSpecificApplicationActions } = useQuery({
 		query: getSpecificApplicationActionQuery,
+	})
+
+	const { fetchMore: fetchApplicantProposals } = useQuery({
+		query: getApplicantProposalQuery,
 	})
 
 	const { fetchMore: fetchBuilderInfo } = useQuery({
@@ -324,6 +329,46 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		logger.info(tempCommentMap, 'commentMap (COMMENT DECRYPT)')
 		return tempCommentMap
 	}
+
+	const getApplicantProposals = useCallback(async() => {
+		logger.info({ role, grantId, scwAddress }, 'Fetching proposals (GET PROPOSALS)')
+		// if(!webwallet) {
+		// 	return 'no-webwallet'
+		// }
+		if(!grantId || typeof grantId !== 'string' || !scwAddress) {
+			setIsProposalListLoading(false)
+			return 'no-grant-id'
+		}
+
+		logger.info({ proposals }, 'Proposals (GET PROPOSALS)')
+		const proposalData: Proposals = []
+
+		const first = 10
+		let skip = 0
+		let shouldContinue = true
+		do {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const results: any = await fetchApplicantProposals({ first, skip, grantID: grantId, applicantId: scwAddress }, true)
+			logger.info({ results }, 'Results (Proposals)')
+			if(results?.grantApplications?.length === 0) {
+				shouldContinue = false
+				break
+			}
+
+			//make sure the proposal is not already in the proposals array
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			proposalData.push(...results?.grantApplications?.filter((p: { id: string}) => !proposals.map((p: any) => p?.id).includes(p.id)) ?? [])
+			setProposals([...proposals as [], ...proposalData])
+			skip += first
+		} while(shouldContinue)
+
+		setIsProposalListLoading(false)
+
+		// append the proposals to the existing proposals
+		// await getFetchCommentsInBackground()
+
+		return 'proposals-fetched'
+	}, [role, grantId, scwAddress, webwallet])
 
 
 	const fetchPerProposalComments = useCallback(async() => {
@@ -671,11 +716,13 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 	}, [grantId, chainId, scwAddress])
 	useEffect(() => {
 		if(grantId && typeof grantId === 'string' && subdomains.map((s) => s.grants).flat().includes(grantId as string)) {
-			if(role !== 'community' && grantId !== '661667585afea0acb56c9f08') {
+			if(role === 'admin' || role === 'reviewer') {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				getProposals().then((proposals: any) => {
 					getFetchBackgroundProposals(proposals ?? [])
 				})
+			} else {
+				getApplicantProposals().then((r) => logger.info({ r }, 'Get applicant proposals result'))
 			}
 		} else {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -693,6 +740,26 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 			}
 		}
 	}, [grantId, chainId, scwAddress, webwallet, proposalId, role])
+
+
+	const refreshAllProposals = useCallback(async() => {
+		if(grantId && typeof grantId === 'string' && subdomains.map((s) => s.grants).flat().includes(grantId as string)) {
+			if(role === 'admin' || role === 'reviewer') {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				getProposals().then((proposals: any) => {
+					getFetchBackgroundProposals(proposals ?? [])
+				})
+			} else {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				getApplicantProposals().then((r) => logger.info({ r }, 'Get applicant proposals result'))
+			}
+		} else {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			getProposals().then((proposals: any) => {
+				getFetchBackgroundProposals(proposals ?? [])
+			})
+		}
+	}, [grantId, chainId, scwAddress, webwallet, role])
 
 	// useEffect(() => {
 	// 	logger.info(proposals.length > 0, 'test')
@@ -723,8 +790,8 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 				}
 			}, undefined, { shallow: true })
 		} else if(grantId && typeof grantId === 'string' && subdomains.map((s) => s.grants).flat().includes(grantId as string)) {
-			const id = subdomains.find((s) => s.grants.includes(grantId as string)) ?? { name: 'www' }
-			if(id.name !== 'polygon') {
+			const id = subdomains.find((s) => s.grants.includes(grantId as string)) ?? { name: 'www', isPrivate: false }
+			if(!id.isPrivate) {
 				window.location.replace(`https://${id.name}.questbook.app/dashboard?grantId=${grantId}&proposalId=${proposalId}&isRenderingProposalBody=true&role=${role}&chainId=${chainId}`)
 			}
 		}
@@ -822,7 +889,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 					},
 					refreshProposals: (refresh: boolean) => {
 						if(refresh) {
-							getProposals()
+							refreshAllProposals()
 						}
 					},
 					filterState,

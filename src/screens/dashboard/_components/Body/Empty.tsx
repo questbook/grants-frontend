@@ -6,7 +6,7 @@ import SetupNotificationModal from 'src/libraries/ui/SetupNotificationModal'
 import { copyGrantLink } from 'src/libraries/utils/copy'
 import { getSupportedChainIdFromSupportedNetwork, getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
-import { disabledTonGrants, ensGrants, subdomains, tonGrants } from 'src/screens/proposal_form/_utils/constants'
+import { disabledGrants, disabledSubmissions, disabledTonGrants, subdomainProposals, subdomains, tonGrants } from 'src/screens/proposal_form/_utils/constants'
 
 function Empty() {
 	const buildComponent = () => {
@@ -55,7 +55,10 @@ function Empty() {
 					<Text
 						variant='heading3'
 						fontWeight='500'>
-						{role === 'admin' ? 'Your invitation for proposals is live!' : 'Be the first to submit a proposal'}
+						{
+							role === 'admin' ? 'Your invitation for proposals is live!' :
+								subdomains.filter((s) => s.isPrivate).map((s) => s.grants).flat().includes(grant?.id as string) ? 'This is a private grant' : 'Be the first to submit a proposal'
+						}
 
 					</Text>
 
@@ -136,17 +139,18 @@ function Empty() {
 								<Button
 									variant='primaryMedium'
 									mt={6}
-									isDisabled={subdomains.map((s) => s.grants).flat().includes(grant?.id as string)}
+									isDisabled={disabledTonGrants?.includes(grant?.id as string) || disabledGrants?.includes(grant?.id as string) || disabledSubmissions?.includes(grant?.id as string) || subdomains.filter((s) => !s.isEnabled).map((s) => s.grants).flat().includes(grant?.id as string) }
 									onClick={
 										() => {
 											const href = window.location.href.split('/')
 											const protocol = href[0]
 											const domain = href[2]
 											const chainId = getSupportedChainIdFromSupportedNetwork(grant?.workspace.supportedNetworks[0])
-
-											const URL =
-											grant?.id === ensGrants ? `https://ens.questbook.app/proposal_form/?grantId=${grant?.id}&chainId=${chainId}&newTab=true` :
+											const id = subdomainProposals.find((s) => s.grants.includes(grant?.id as string)) ?? { name: 'www' }
+											const URL = subdomainProposals.map((s) => s.grants).flat().includes(grant?.id as string)
+												? `https://${id.name}.questbook.app/proposal_form/?grantId=${grant?.id}&chainId=${chainId}&newTab=true` :
 												`${protocol}//${domain}/proposal_form/?grantId=${grant?.id}&chainId=${chainId}&newTab=true`
+
 
 											window.open(URL, '_blank')
 										}

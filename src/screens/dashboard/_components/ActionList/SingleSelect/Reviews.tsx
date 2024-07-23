@@ -644,9 +644,10 @@ function Reviews() {
 											isDisabled={false}
 											isLoading={networkTransactionModalStep !== undefined}
 											onClick={
-												() => {
+												async() => {
 													logger.info({ reviewType, isReviewPrivate, rubricItems }, 'setRubrics')
-													setRubrics(reviewType, isReviewPrivate, rubricItems)
+													await setRubrics(reviewType, isReviewPrivate, rubricItems)
+													await window.location.reload()
 												}
 											}>
 											<Text

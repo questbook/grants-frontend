@@ -71,6 +71,8 @@ const Verify = ({ setSignerVerifiedState, shouldVerify = true }: Props) => {
 														status: 'info',
 														duration: 3000
 													})
+												} else {
+													connect({ connector })
 												}
 											} else {
 												toast({

@@ -1,6 +1,6 @@
 import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { Box, Button, Container, Flex, Image, Input, Link, Skeleton, Text } from '@chakra-ui/react'
+import { Box, Button, Container, Flex, Image, Input, Skeleton, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import SupportedChainId from 'src/generated/SupportedChainId'
 import { DAOSearchContext } from 'src/libraries/hooks/DAOSearchContext'
@@ -21,6 +21,7 @@ import ProposalCard from 'src/screens/discover/_components/ProposalCard'
 import RFPGrid from 'src/screens/discover/_components/rfpGrid'
 import { DiscoverContext, DiscoverProvider } from 'src/screens/discover/Context'
 import FeaturedSections from 'src/screens/discover/FeaturedSections'
+import Footer from 'src/screens/discover/Footer'
 import HeroBanner from 'src/screens/discover/HeroBanner'
 import StatsBanner from 'src/screens/discover/StatsBanner'
 import { Roles } from 'src/types'
@@ -414,30 +415,10 @@ function Discover() {
 								)
 							}
 						</Flex>
-						<Flex
-							flexDirection='column'
-							w='100%'
-							align='center'
-							justify='center'>
-							<Link
-								textAlign='center'
-								isExternal
-								variant='body'
-								color='accent.azure'
-								href='https://questbook.app/termsofservice.html'>
-								Questbook - Terms of Service
-							</Link>
-							<Link
-								textAlign='center'
-								isExternal
-								variant='body'
-								color='accent.azure'
-								href='https://questbook.app/privacypolicy.html'>
-								Privacy Policy
-							</Link>
-						</Flex>
+
 
 					</Container>
+					<Footer />
 					{
 						isQbAdmin && (
 							<>
