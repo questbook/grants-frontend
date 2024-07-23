@@ -74,6 +74,8 @@ export type ModalContextType = {
   setIsSendAnUpdateModalOpen: (isOpen: boolean) => void
   isLinkYourMultisigModalOpen: boolean
   setIsLinkYourMultisigModalOpen: (isOpen: boolean) => void
+  isHelloSignModalOpen: boolean
+  setIsHelloSignModalOpen: (isOpen: boolean) => void
 };
 
 export type ReviewData = {
