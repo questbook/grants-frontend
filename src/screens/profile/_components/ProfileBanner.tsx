@@ -175,7 +175,7 @@ function ProfileBanner({
 					mixBlendMode='hard-light'
 					objectFit='cover'
 					bgBlendMode='hard-light'
-					bgColor={'green.800'}
+					bgColor='green.800'
 				/>
 
 				<Flex

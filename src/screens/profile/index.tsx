@@ -49,7 +49,7 @@ function Profile() {
 			name: string
 			value: { badge: string, username: string }
 		}) => {
-			if(!value && (scwAddress !== builder?.address || (isMobile && scwAddress === builder?.address))) {
+			if(!value?.badge && (scwAddress !== builder?.address || (isMobile && scwAddress === builder?.address))) {
 				return null
 			}
 
@@ -69,8 +69,7 @@ function Profile() {
 							<Image
 								bgColor='white'
 								src={image ? getUrlForIPFSHash(image) : ''}
-								boxSize={isMobile ? '10' : '24'}
-								w='auto'
+								width={isMobile ? '10%' : '84px'}
 								alt={name}
 							/>
 						</Flex>
@@ -274,7 +273,7 @@ function Profile() {
 										mt={5}
 										w='100%'
 										gap='25px'
-										templateColumns={{ md: 'repeat(1, 1fr)', lg: 'repeat(3, 1fr)' }}
+										templateColumns={{ md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }}
 									>
 										{
 											supportedProviders.map(provider => {
