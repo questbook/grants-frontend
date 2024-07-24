@@ -90,7 +90,7 @@ const client = createConfig({
 		}),
 	],
 	transports: {
-		[mainnet.id]: http(),
+		[mainnet.id]: http('https://eth-mainnet.g.alchemy.com/v2/YDrkDJphw0YIie4xtZ9JGLotRHWomSLk'),
 		[base.id]: http(),
 		[polygon.id]: http(),
 		[arbitrum.id]: http(),
@@ -111,6 +111,9 @@ const config = getDefaultConfig({
 	chains: [mainnet, polygon, optimism, arbitrum, base, celo, aurora, iotex, zkSync, sepolia],
 	syncConnectedChain: true,
 	appDescription: 'Discover Opportunities in Web 3.0 and Earn in Crypto',
+	transports: {
+		[mainnet.id]: http('https://eth-mainnet.g.alchemy.com/v2/YDrkDJphw0YIie4xtZ9JGLotRHWomSLk'),
+	},
 	appUrl: 'https://ens.questbook.app',
 	ssr: true, // If your dApp uses server side rendering (SSR)
 
