@@ -16,8 +16,8 @@ function StateButton({ state, title, icon }: Props) {
 				transition='all .5s ease'
 				p='4px 10px 4px 10px'
 				borderRadius='3xl'
-				w={title.length + 3 + 'ch'}
-				py={2.5}
+				w={title.length + 2 + 'ch'}
+				py={2}
 				bg={config[state as keyof typeof config]?.bg + '4D'}
 				borderColor={config[state as keyof typeof config]?.bg + '66'}
 			>

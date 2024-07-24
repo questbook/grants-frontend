@@ -1,9 +1,9 @@
 import { ReactElement, useContext, useMemo } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { Box, Button, Container, Divider, Flex, Grid, GridItem, Image, Link, Skeleton, Text } from '@chakra-ui/react'
+import { ProjectDetails } from 'src/generated/icons'
 import BackButton from 'src/libraries/ui/BackButton'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
-import { titleCase } from 'src/libraries/utils/formatting'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { WebwalletContext } from 'src/pages/_app'
 import GrantStats from 'src/screens/profile/_components/GrantStats'
@@ -47,7 +47,7 @@ function Profile() {
 		}: {
 			image: string
 			name: string
-			value: string
+			value: { badge: string, username: string }
 		}) => {
 			if(!value && (scwAddress !== builder?.address || (isMobile && scwAddress === builder?.address))) {
 				return null
@@ -61,13 +61,15 @@ function Profile() {
 					<Flex
 						gap={4}
 						alignItems='center'
+						flexWrap={isMobile ? 'wrap' : 'nowrap'}
 					>
 						<Flex
+							width={isMobile ? '100%' : 'auto'}
 						>
 							<Image
 								bgColor='white'
 								src={image ? getUrlForIPFSHash(image) : ''}
-								boxSize='24'
+								boxSize={isMobile ? '10' : '24'}
 								w='auto'
 								alt={name}
 							/>
@@ -94,9 +96,9 @@ function Profile() {
 
 								</Text>
 								{
-									value && (
+									value?.badge && (
 										<StateButton
-											title={value}
+											title={value?.badge}
 											state='approved'
 											icon={false}
 										/>
@@ -104,34 +106,64 @@ function Profile() {
 									)
 								}
 							</Flex>
-							{
-								scwAddress === builder?.address && (
-									<Button
-										variant='unstyled'
-										w='fit-content'
-										onClick={
-											async() => {
-												if(scwAddress) {
-													setIsQrModalOpen(true)
-													const proof = await generateProof(name, scwAddress)
-													if(proof.error) {
-														setIsQrModalOpen(false)
-														return
-													}
-
-													setQrCode(proof.requestUrl)
-													setProviderName(name)
+							<Flex
+								gap={4}
+								alignItems='center'
+							>
+								{
+									value?.badge && (
+										<Button
+											borderRadius='3xl'
+											bgColor='#F1EEE8'
+											size='sm'
+											textColor='black'
+											fontSize='14px'
+											onClick={
+												() => {
+													window.open(value?.username, '_blank')
 												}
+
 											}
-										}>
-										<StateButton
-											title={!value ? 'Link ' + titleCase(name) : 'Re-Verify'}
-											state={!value ? 'approved' : 'resubmit'}
-											icon={!!value}
-										/>
-									</Button>
-								)
-							}
+											rightIcon={
+												<ProjectDetails
+													color='#53514F'
+
+												/>
+											}
+										>
+											View Badge
+										</Button>
+									)
+								}
+								{
+									scwAddress === builder?.address && (
+										<Button
+											variant='unstyled'
+											w='fit-content'
+											onClick={
+												async() => {
+													if(scwAddress) {
+														setIsQrModalOpen(true)
+														const proof = await generateProof(name, scwAddress)
+														if(proof.error) {
+															setIsQrModalOpen(false)
+															return
+														}
+
+														setQrCode(proof.requestUrl)
+														setProviderName(name)
+													}
+												}
+											}>
+											<StateButton
+												title={!value?.badge ? 'Link your account' : 'Re-Verify'}
+												state={!value?.badge ? 'approved' : 'resubmit'}
+												icon={!!value?.badge}
+											/>
+										</Button>
+									)
+								}
+							</Flex>
 						</Flex>
 
 
@@ -143,21 +175,37 @@ function Profile() {
 		const providerInfo = (provider: string) => {
 			switch (provider) {
 			case 'compound':
-				return builder?.compound?.extractedParameters?.badge_count || ''
+				// return builder?.compound?.extractedParameters?.badge_count || ''
+				return {
+					badge: builder?.compound?.extractedParameters?.badge_count || '',
+					username: `https://www.comp.xyz/u/${builder?.compound?.extractedParameters?.username}/summary`
+				}
 			case 'arbitrum':
-				return builder?.arbitrum?.extractedParameters?.badge_count || ''
+				return {
+					badge: builder?.arbitrum?.extractedParameters?.badge_count || '',
+					username: `https://forum.arbitrum.foundation/u/${builder?.compound?.extractedParameters?.username}/summary`
+				}
 			case 'axelar':
-				return builder?.axelar?.extractedParameters?.badge_count || ''
+				return {
+					badge: builder?.axelar?.extractedParameters?.badge_count || '',
+					username: `https://community.axelar.network/u/${builder?.axelar?.extractedParameters?.username}/summary`
+				}
 			case 'polygon':
-				return builder?.polygon?.extractedParameters?.badge_count || ''
+				return {
+					badge: builder?.polygon?.extractedParameters?.badge_count || '',
+					username: `https://forum.polygon.technology/u/${builder?.polygon?.extractedParameters?.username}/summary`
+				}
 			case 'ens':
-				return builder?.ens?.extractedParameters?.badge_count || ''
+				return {
+					badge: builder?.ens?.extractedParameters?.badge_count || '',
+					username: `https://discuss.ens.domains/u/${builder?.ens?.extractedParameters?.username}/summary`
+				}
 			case 'github':
-				return builder?.github?.extractedParameters?.username || ''
+				return { badge: '0', username: builder?.github?.extractedParameters?.username || '' }
 			case 'twitter':
-				return builder?.twitter?.extractedParameters?.username || ''
+				return { badge: '0', username: builder?.twitter?.extractedParameters?.username || '' }
 			default:
-				return ''
+				return { badge: '0', username: '' }
 			}
 		}
 
@@ -226,7 +274,7 @@ function Profile() {
 										mt={5}
 										w='100%'
 										gap='25px'
-										templateColumns={{ md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }}
+										templateColumns={{ md: 'repeat(1, 1fr)', lg: 'repeat(3, 1fr)' }}
 									>
 										{
 											supportedProviders.map(provider => {
@@ -234,8 +282,7 @@ function Profile() {
 													<DaoBadges
 														name={provider.name}
 														image={provider.icon}
-												  		value={providerInfo(provider.name) || ''}
-
+														value={providerInfo(provider.name) || { badge: '0', username: '' }}
 														key={provider.name}
 													/>
 												)

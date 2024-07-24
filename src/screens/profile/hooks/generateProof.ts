@@ -1,13 +1,14 @@
-import axios from 'axios'
+import { reclaimProof } from 'src/generated/mutation/reclaimProof'
+import { executeMutation } from 'src/graphql/apollo'
 
 export const generateProof = async(provider: string, address: string) => {
 	try {
-		const response = await axios.get(`https://m8aanm1noe.execute-api.ap-southeast-1.amazonaws.com/reclaim/generate?type=${provider}&address=${address}`)
-		if(response.data) {
+		const response = await executeMutation(reclaimProof, { type: provider, address })
+		if(response.generateProof) {
 			return {
-				requestUrl: response.data.requestUrl,
-				statusUrl: response.data.statusUrl,
-				sessionId: response.data.sessionId,
+				requestUrl: response.generateProof.requestUrl,
+				statusUrl: response.generateProof.statusUrl,
+				sessionId: response.generateProof.sessionId,
 				error: false
 			}
 		}

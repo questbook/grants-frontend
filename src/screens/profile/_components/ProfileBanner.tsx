@@ -171,15 +171,16 @@ function ProfileBanner({
 				<Image
 					src='/v2/images/profile-bg.png'
 					width='100%'
-					height='100%'
+					height='150px'
 				/>
 
 				<Flex
 					alignItems='center'
-					mt={-2}
+					flexDirection={isMobile ? 'column' : 'row'}
+					mt={isMobile ? 5 : '2'}
 					p={4}
 					borderRadius='md'
-					top='-100px'
+					top={isMobile ? '100px' : '-100px'}
 				>
 					<Avatar
 				  boxSize={isMobile ? 16 : 32}
