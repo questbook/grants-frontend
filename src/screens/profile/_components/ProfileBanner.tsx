@@ -172,6 +172,10 @@ function ProfileBanner({
 					src='/v2/images/profile-bg.png'
 					width='100%'
 					height='150px'
+					mixBlendMode='hard-light'
+					objectFit='cover'
+					bgBlendMode='hard-light'
+					bgColor={'green.800'}
 				/>
 
 				<Flex
