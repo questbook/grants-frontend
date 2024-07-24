@@ -10,7 +10,11 @@ export const timeAgo = (timestamp: string): String => {
 	const weeks = days / 7
 	const months = days / 30
 
-	if(days < 1) {
+	if(minutes < 1) {
+		return `${Math.floor(seconds)} second(s) ago`
+	} else if(hours < 1) {
+		return `${Math.floor(minutes)} minute(s) ago`
+	} else if(days < 1) {
 		return `${Math.floor(hours)} hour(s) ago`
 	} else if(days < 7) {
 		return `${Math.floor(days)} day(s) ago`

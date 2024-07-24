@@ -1,9 +1,8 @@
 import axios from 'axios'
-const url = `${process.env.API_ENDPOINT}/reclaim/generate`
 
 export const generateProof = async(provider: string, address: string) => {
 	try {
-		const response = await axios.get(`${url}?type=${provider}&address=${address}`)
+		const response = await axios.get(`https://m8aanm1noe.execute-api.ap-southeast-1.amazonaws.com/reclaim/generate?type=${provider}&address=${address}`)
 		if(response.data) {
 			return {
 				requestUrl: response.data.requestUrl,

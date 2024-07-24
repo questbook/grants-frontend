@@ -115,7 +115,7 @@ function ProfileModal() {
 									color='#7E7E8F'
 								/>
 								{
-									formData?.name !== '' && !isUsernameAvailable && (
+									!builder?._id && formData?.name !== '' && !isUsernameAvailable && (
 										<Text
 											color='red'
 											fontSize='12px'
@@ -189,7 +189,7 @@ function ProfileModal() {
 								bgColor='#77AC06'
 								_hover={{ bgColor: '#77AC06' }}
 								color='white'
-								isDisabled={formData.name === '' || !isUsernameAvailable}
+								isDisabled={formData.name === '' || (builder?._id ? false : !isUsernameAvailable)}
 								shadow='0px 1px 2px 0px rgba(22, 22, 22, 0.12)'
 								fontSize='16px'
 								fontWeight='600'
@@ -257,16 +257,16 @@ function ProfileModal() {
 	}
 
 	const maxImageSize = 2
-	const [imageFile, setImageFile] = useState<{file: File | null, hash?: string}>({ file: null, hash: undefined })
+	const [imageFile, setImageFile] = useState<{ file: File | null, hash?: string }>({ file: null, hash: undefined })
 	const [formData, setFormData] = useState<{
-        name: string
-        telegram: string
+		name: string
+		telegram: string
 		bio: string
-    }>({
-    	name: '',
-    	telegram: '',
-    	bio: ''
-    })
+	}>({
+		name: '',
+		telegram: '',
+		bio: ''
+	})
 
 	const ref = useRef(null)
 	const toast = useToast()
