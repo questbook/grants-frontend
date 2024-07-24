@@ -46,10 +46,26 @@ function ProofQrModal({
 						justifyContent='center'
 						mx='auto'
 						h='100%'>
-						<QRCode
-							fgColor='#4D9CD4'
-							style={{ height: '320px', maxWidth: '100%', width: '320px' }}
-							value={proofQr ?? ''} />
+						{
+							!proofQr && (
+								<Text
+									color='#7E7E8F'
+									fontSize='18px'
+									fontStyle='normal'
+									fontWeight='700'
+									lineHeight='135%'>
+									Generating QR code
+								</Text>
+							)
+						}
+						{
+							proofQr && (
+								<QRCode
+									fgColor='#4D9CD4'
+									style={{ height: '320px', maxWidth: '100%', width: '320px' }}
+									value={proofQr ?? ''} />
+							)
+						}
 						<Button
 							color='#699804'
 							textAlign='center'
@@ -62,15 +78,19 @@ function ProofQrModal({
 						>
 							Scan QR code with your phone camera
 						</Button>
-						<Text
-							color='#699804'
-							textAlign='center'
-							fontSize='18px'
-							fontStyle='normal'
-							fontWeight='700'
-							lineHeight='135%'>
-							Scan QR code with your phone camera
-						</Text>
+						{
+							proofQr && (
+								<Text
+									color='#699804'
+									textAlign='center'
+									fontSize='18px'
+									fontStyle='normal'
+									fontWeight='700'
+									lineHeight='135%'>
+									Scan QR code with your phone camera
+								</Text>
+							)
+						}
 
 
 					</Flex>

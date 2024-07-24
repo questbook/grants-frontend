@@ -77,7 +77,6 @@ function GrantStats({
 				<Flex
                         w='100%'
                         justifyContent='space-around'
-                        flexWrap='wrap'
                     >
 					<TitleCards
                             value={totalProposalsAccepted}

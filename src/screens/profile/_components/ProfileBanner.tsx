@@ -114,8 +114,10 @@ function ProfileBanner({
 
 						async() => {
 							if(provider && scwAddress) {
+								setIsQrModalOpen(true)
 								const proof = await generateProof(provider, scwAddress)
 								if(proof.error) {
+									setIsQrModalOpen(false)
 									return
 								}
 
@@ -202,7 +204,7 @@ function ProfileBanner({
 							/>
 						</Flex>
 						{
-							scwAddress === builder?.address && (
+							scwAddress === builder?.address && !isMobile && (
 								<Flex
 									float='right'
 									direction='column'
@@ -239,7 +241,7 @@ function ProfileBanner({
 						</HStack>
 						<Text
 							mt={4}
-							w='60%'
+							w={isMobile ? '100%' : '60%'}
 							color='gray.600'>
 							{bio}
 						</Text>

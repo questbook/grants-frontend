@@ -112,14 +112,15 @@ function Profile() {
 										onClick={
 											async() => {
 												if(scwAddress) {
+													setIsQrModalOpen(true)
 													const proof = await generateProof(name, scwAddress)
 													if(proof.error) {
+														setIsQrModalOpen(false)
 														return
 													}
 
 													setQrCode(proof.requestUrl)
 													setProviderName(name)
-													setIsQrModalOpen(true)
 												}
 											}
 										}>
@@ -166,7 +167,7 @@ function Profile() {
 				width='100vw'
 				direction='column'
 				justifyContent='flex-start'
-				px={8}
+				px={4}
 				py={4}
 				gap={2}
 			>
@@ -188,7 +189,12 @@ function Profile() {
 						<ProfileModal />
 						<ProofQrModal
 							isOpen={isQrModalOpen}
-							onClose={() => setIsQrModalOpen(false)}
+							onClose={
+								() => {
+									setQrCode('')
+									setIsQrModalOpen(false)
+								}
+							}
 							proofQr={qrCode}
 						/>
 						<ProfileBanner
@@ -264,14 +270,18 @@ function Profile() {
 									minWidth='100%'
 									p={4}
 									w='100%'>
-									<GrantStats
+									{
+										!isMobile && (
+											<GrantStats
 								  totalProposals={proposals?.length || 0}
 								  totalProposalsAccepted={proposals?.filter(proposal => proposal?.state === 'approved').length || 0}
 								  fundsPaidOut={proposals?.reduce((acc, proposal) => acc + proposal?.milestones.reduce((acc, milestone) => acc + parseFloat(milestone.amountPaid), 0), 0) || 0}
 								  fundsAllocated={proposals?.reduce((acc, proposal) => acc + proposal?.milestones.reduce((acc, milestone) => acc + parseFloat(milestone.amount), 0), 0) || 0}
 								  milestones={proposals?.reduce((acc, proposal) => acc + proposal?.milestones.length, 0) || 0}
 								  milestonesCompleted={proposals?.reduce((acc, proposal) => acc + proposal?.milestones.filter(milestone => parseFloat(milestone.amountPaid) > 0).length, 0) || 0}
-									/>
+											/>
+										)
+									}
 									<Text
 										variant='heading1'
 										fontWeight='500'
@@ -285,9 +295,8 @@ function Profile() {
 
 									<Grid
 										mt={5}
-
 										w='100%'
-										templateColumns={{ md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }}
+										templateColumns={{ md: 'repeat(1, 1fr)', lg: 'repeat(4, 1fr)' }}
 										gap={8}
 								 >
 										{
@@ -369,7 +378,7 @@ function Profile() {
 				</Flex>
 			</Flex>
 		)
-	}, [proposals, builder, isLoading, isMobile, isQrModalOpen, scwAddress])
+	}, [proposals, builder, isLoading, isMobile, isQrModalOpen, scwAddress, qrCode])
 
 
 	return buildComponent()
