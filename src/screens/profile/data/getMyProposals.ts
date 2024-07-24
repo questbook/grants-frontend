@@ -12,6 +12,12 @@ export const getMyProposals = gql`query getMyProposals($wallet: String!) {
         title
         workspace {
           logoIpfsHash
+          tokens {
+                    _id
+                    chainId
+                    decimal
+                    label
+                }
         }
       }
       state

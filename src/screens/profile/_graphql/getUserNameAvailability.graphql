@@ -1,0 +1,5 @@
+query getUsernameAvailablity($username: String!){
+  usernameCheck(username: $username) {
+     isAvailable
+  }
+}

@@ -21,8 +21,6 @@ const ProfileProvider = ({ children }: {children: ReactNode}) => {
 		if(!router.isReady) {
 			return
 		}
-
-		logger.info(address, 'Address')
 	}, [address, router.isReady])
 
 	const provider = () => {
@@ -63,7 +61,6 @@ const ProfileProvider = ({ children }: {children: ReactNode}) => {
 	const { fetchMore: fetchBuilder } = useQuery({
 		query: getBuilderInfo,
 	})
-
 
 	const getBuilderDetails = async() => {
 		if(!address) {

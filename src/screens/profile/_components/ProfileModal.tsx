@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from 'react'
-import { Button, Flex, Image, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Text, useToast } from '@chakra-ui/react'
+import { Button, Flex, Image, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Text, Textarea, useToast } from '@chakra-ui/react'
 import { logger } from 'ethers'
 import { ImageAdd } from 'src/generated/icons'
 import { createBuilderProfile } from 'src/generated/mutation/createBuilderProfile'
@@ -8,6 +8,7 @@ import { executeMutation } from 'src/graphql/apollo'
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/libraries/utils/ipfs'
 import { WebwalletContext } from 'src/pages/_app'
 import { ProfileContext } from 'src/screens/profile/Context'
+import useUsernameCheckAvailability from 'src/screens/profile/hooks/checkUsernameAvailablity'
 
 function ProfileModal() {
 	const buildComponent = () => {
@@ -25,7 +26,6 @@ function ProfileModal() {
 				scrollBehavior='outside'>
 				<ModalOverlay />
 				<ModalContent
-					borderRadius='8px'
 				>
 					<ModalHeader
 						fontSize='24px'
@@ -76,7 +76,6 @@ function ProfileModal() {
 											w='100%'
 											h='100%'
 											bg='gray.300'
-											borderRadius='2px'
 											alignItems='center'
 											justifyItems='center'
 											rounded='full'
@@ -99,17 +98,32 @@ function ProfileModal() {
 								</Text>
 
 								<Input
-									placeholder='Enter your full name'
+									placeholder='Enter your username'
+									disabled={!!builder?._id}
 									mt={2}
 									value={formData.name}
-									onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-									borderRadius='8px'
+									onChange={
+										(e) => {
+											setFormData({ ...formData, name: e.target.value })
+											setUsername(e.target.value)
+										}
+									}
 									border='1px solid #7E7E8F'
 									padding='16px'
 									fontSize='16px'
 									fontWeight='400'
 									color='#7E7E8F'
 								/>
+								{
+									formData?.name !== '' && !isUsernameAvailable && (
+										<Text
+											color='red'
+											fontSize='12px'
+										>
+											Username already taken
+										</Text>
+									)
+								}
 							</Flex>
 							<Flex
 								direction='column'
@@ -128,7 +142,6 @@ function ProfileModal() {
 									mt={2}
 									value={formData.telegram}
 									onChange={(e) => setFormData({ ...formData, telegram: e.target.value })}
-									borderRadius='8px'
 									border='1px solid #7E7E8F'
 									padding='16px'
 									fontSize='16px'
@@ -136,13 +149,47 @@ function ProfileModal() {
 									color='#7E7E8F'
 								/>
 							</Flex>
+							<Flex
+								direction='column'
+							>
+								<Text
+									fontWeight='500'
+									color='#07070C'
+									fontSize='18px'
+									mt={2}
+								>
+									Bio
+								</Text>
+
+								<Textarea
+									placeholder='short intro about yourself'
+									maxLength={300}
+									mt={2}
+									value={formData.bio}
+									border='1px solid #7E7E8F'
+									height='150px'
+									onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+									padding='16px'
+									fontSize='16px'
+									fontWeight='400'
+									color='#7E7E8F'
+								/>
+
+								<Text
+									fontSize='12px'
+									ml='auto'
+									color='#7E7E8F'
+								>
+									{formData?.bio?.length || 0}
+									/300
+								</Text>
+							</Flex>
 							<Button
 								mt={4}
 								bgColor='#77AC06'
 								_hover={{ bgColor: '#77AC06' }}
 								color='white'
-								isDisabled={formData.name === ''}
-								borderRadius='8px'
+								isDisabled={formData.name === '' || !isUsernameAvailable}
 								shadow='0px 1px 2px 0px rgba(22, 22, 22, 0.12)'
 								fontSize='16px'
 								fontWeight='600'
@@ -153,7 +200,8 @@ function ProfileModal() {
 											username: formData.name,
 											telegram: formData.telegram,
 											imageURL: logoIpfsHash,
-											address: scwAddress
+											address: scwAddress,
+											bio: formData.bio
 										}
 										const response = builder?._id ? await executeMutation(updateBuilderProfile, variables) : await executeMutation(createBuilderProfile, variables)
 										if(response) {
@@ -213,9 +261,11 @@ function ProfileModal() {
 	const [formData, setFormData] = useState<{
         name: string
         telegram: string
+		bio: string
     }>({
     	name: '',
     	telegram: '',
+    	bio: ''
     })
 
 	const ref = useRef(null)
@@ -226,16 +276,21 @@ function ProfileModal() {
 		}
 	}
 
+
 	const { builder, refresh } = useContext(ProfileContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
 	const { buildersProfileModal, setBuildersProfileModal } = useContext(WebwalletContext)!
+	const { setUsername, isUsernameAvailable } = useUsernameCheckAvailability()
 
 	logger.info('builder', builder)
+
+
 	useEffect(() => {
 		if(builder) {
 			setFormData({
 				name: builder.username,
 				telegram: builder.telegram,
+				bio: builder.bio
 			})
 			setImageFile({ file: null, hash: builder.imageURL })
 		}

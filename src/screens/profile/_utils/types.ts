@@ -6,6 +6,12 @@ export type BuilderProposals = {
     title: string
     workspace: {
       logoIpfsHash: string
+      tokens: {
+        _id: string
+        chainId: string
+        decimal: string
+        label: string
+      }[]
     }
   }
   state:
@@ -57,6 +63,9 @@ export type BuilderInfoType = {
   axelar: Proof
   polygon: Proof
   ens: Proof
+  bio: string
+  createdAt: string
+  updatedAt: string
 };
 
 export type GrantStatsType = {

@@ -4,9 +4,10 @@ import { Accept, Link, Reject, Resubmit, Time } from 'src/generated/icons'
 type Props = {
 	state: 'approved' | 'rejected' | 'resubmit' | 'submitted' | 'open' | 'review' | 'cancelled'
     title: string
+	icon: boolean
 }
 
-function StateButton({ state, title }: Props) {
+function StateButton({ state, title, icon }: Props) {
 	const buildComponent = () => {
 		return (
 			<Flex
@@ -14,21 +15,18 @@ function StateButton({ state, title }: Props) {
 				justify='center'
 				transition='all .5s ease'
 				p='4px 10px 4px 10px'
-				w='auto'
-				borderRadius='6px'
-				maxH='36px'
-				bg={
-					config[state as keyof typeof config]?.title === 'Accepted' || 	config[state as keyof typeof config]?.title === 'Not Responded Yet' ?
-						config[state as keyof typeof config]?.bg :
-						config[state as keyof typeof config]?.bg + '66'
-				}
+				borderRadius='3xl'
+				w={title.length + 3 + 'ch'}
+				py={2.5}
+				bg={config[state as keyof typeof config]?.bg + '4D'}
+				borderColor={config[state as keyof typeof config]?.bg + '66'}
 			>
+
+				{icon && config[state as keyof typeof config].icon}
 				<Text
 					variant='metadata'
 					fontWeight='500'
-					fontSize='12px'
-					lineHeight='16px'
-					color={config[state as keyof typeof config]?.title === 'Accepted' ? '#557B05' : config[state as keyof typeof config]?.title === 'Rejected' ? '#C50000' : 'black.100'}>
+					ml={icon ? 1 : 0}>
 					{title}
 				</Text>
 			</Flex>
@@ -37,7 +35,7 @@ function StateButton({ state, title }: Props) {
 
 	const [azure, carrot, orchid, jeans, gray] = useToken(
 		'colors',
-		['#C3F953', 'accent.carrot', 'accent.orchid', 'white', '#F1EEE8']
+		['accent.azure', 'accent.carrot', 'accent.orchid', 'white', '#F1EEE8']
 	)
 
 	const config = {
@@ -58,8 +56,8 @@ function StateButton({ state, title }: Props) {
 		},
 		submitted: {
 			icon: <Time />,
-			title: 'Not Responded Yet',
-			bg: jeans
+			title: 'Submitted',
+			bg: gray
 		},
 		open: {
 			icon: <Link />,

@@ -5,9 +5,12 @@ query getBuilderInfo($wallet: String!){
     _id
     telegram
     github
+    bio
     twitter
     username
     imageURL
     proofs
+    createdAt
+    updatedAt
   }
 }

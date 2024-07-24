@@ -1,5 +1,5 @@
 import axios from 'axios'
-const url = 'http://localhost:4000/reclaim/generate'
+const url = `${process.env.API_ENDPOINT}/reclaim/generate`
 
 export const generateProof = async(provider: string, address: string) => {
 	try {

@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 export const updateBuilderProfile = gql`
-mutation updateBuilderProfile($telegram: String, $github: String,$twitter: String, $username: String!, $imageURL: String, $address: String!) {
-    updateProfile(telegram: $telegram, github: $github, twitter: $twitter, username: $username, imageURL: $imageURL, address: $address) {
+mutation updateBuilderProfile($telegram: String, $imageURL: String, $address: String!, $bio: String) {
+    updateProfile(telegram: $telegram, imageURL: $imageURL, address: $address, bio: $bio) {
         recordId
         record {
             _id

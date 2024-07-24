@@ -248,31 +248,6 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 							mx={4}
 
 						>
-							 {
-								router.query.address === scwAddress && (
-									<Text
-										fontWeight='500'
-										fontSize='18px'
-										_hover={
-											{
-												color: '#557B05'
-											}
-										}
-										fontStyle='normal'
-										lineHeight='normal'
-										color='#07070C'
-										textAlign='center'
-										cursor='pointer'
-										onClick={
-											() => {
-												setBuildersProfileModal(true)
-											}
-										}
-									>
-										Edit Profile
-									</Text>
-								)
-							}
 							<Text
 								fontWeight='500'
 								fontSize='18px'
@@ -604,7 +579,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 	const { inited, loading, importWalletFromGD, exportWalletToGD } = useGoogleDriveWalletRecoveryReact({ googleClientID: '986000900135-tscgujbu2tjq4qk9duljom0oimnb79la.apps.googleusercontent.com' })
 
 	const { grant, role, isLoading } = useContext(GrantsProgramContext)!
-	const { dashboardStep, setDashboardStep, createingProposalStep, setCreatingProposalStep, glyph, setGlyph, scwAddress, setBuildersProfileModal } = useContext(WebwalletContext)!
+	const { dashboardStep, setDashboardStep, createingProposalStep, setCreatingProposalStep, glyph, setGlyph } = useContext(WebwalletContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { signIn, setSignIn } = useContext(SignInContext)!
 	// const { searchString, setSearchString } = useContext(DAOSearchContext)!

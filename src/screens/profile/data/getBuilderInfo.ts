@@ -9,6 +9,7 @@ export const getBuilderInfo = gql`query getBuilderInfo($wallet: String!){
       address
       telegram
       github
+      bio
       twitter
       username
       imageURL
@@ -16,5 +17,8 @@ export const getBuilderInfo = gql`query getBuilderInfo($wallet: String!){
       ens
       axelar
       polygon
+      arbitrum
+      createdAt
+      updatedAt
     }
 }`

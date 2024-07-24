@@ -31,7 +31,7 @@ function ProofQrModal({
 						color='#07070C'
 						alignItems='center'
 					>
-						Verify using zk proof
+						Verify using Reclaim
 						<ModalCloseButton
 							mt={1}
 						/>
@@ -88,6 +88,7 @@ function ProofQrModal({
 							cursor='pointer'
 							onClick={() => window.open('https://reclaimprotocol.org', '_blank')}
 							as='span'
+							fontSize='14px'
 							color='#4D9CD4'>
 							Reclaim Protocol
 						</Text>

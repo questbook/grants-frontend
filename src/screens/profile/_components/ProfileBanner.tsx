@@ -1,12 +1,14 @@
 import { useContext } from 'react'
 import { FaExternalLinkAlt, FaGithub, FaTelegram, FaTwitter } from 'react-icons/fa'
 import { useMediaQuery } from 'react-responsive'
-import { Box, Flex, Image, Text } from '@chakra-ui/react'
-import { logger } from 'ethers'
+import { EditIcon } from '@chakra-ui/icons'
+import { Avatar, Box, Button, Flex, HStack, Image, Text } from '@chakra-ui/react'
 import { getAvatar } from 'src/libraries/utils'
 import { titleCase } from 'src/libraries/utils/formatting'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { WebwalletContext } from 'src/pages/_app'
+import RoleTag from 'src/screens/dashboard/_components/RoleTag'
+import { timeAgo } from 'src/screens/profile/_utils/formatters'
 import { ProfileContext } from 'src/screens/profile/Context'
 import { generateProof } from 'src/screens/profile/hooks/generateProof'
 
@@ -16,16 +18,16 @@ function ProfileBanner({
 	name,
 	github,
 	twitter,
-	telegram
+	telegram,
+	bio
 }: {
 	imageURL: string
 	name: string
 	github: string
 	twitter: string
 	telegram: string
+	bio: string
 }) {
-
-	logger.info(github, 'ProfileBanner')
 
 	const buildComponent = () => {
 
@@ -148,11 +150,13 @@ function ProfileBanner({
 						fontWeight='500'
 						lineHeight='130%'
 					>
-						Verify using reclaim
+						Link your
+						{' '}
+						{titleCase(provider)}
 					</Text>
 					<FaExternalLinkAlt
 						color='#7E7E8F'
-						fontSize='16px'
+						fontSize='12px'
 					/>
 				</Flex>
 			)
@@ -160,51 +164,95 @@ function ProfileBanner({
 
 		return (
 			<Flex
-				bgColor='#F7F5F2'
-				padding='32px 48px'
-				gap='20px'
 				flexDirection='column'
-				alignContent='center'
-				alignItems='center'
-				borderRadius='0px 0px 48px 48px'
 				justifyContent='center'>
-				<Box
-					maxWidth={isMobile ? '100%' : '70%'}
+				<Image
+					src='/v2/images/profile-bg.png'
 					width='100%'
-					gap='12px'
-				>
+					height='100%'
+				/>
 
-					<Image
-						borderWidth='1px'
-						borderColor='black.100'
-						borderRadius='10.143px'
-						rounded='full'
-						mb={4}
-						src={imageURL === '' ? getAvatar(false, name) : getUrlForIPFSHash(imageURL)}
-						boxSize='120px' />
-					<Text
-						color='#07070C'
-						fontSize='42px'
-						fontStyle='normal'
-						fontWeight='700'
-						lineHeight='130%'
-					>
-						{name}
-					</Text>
-					<Flex
-						mt='12px'
-						gap='20px'>
-						{/* {github ? social('github', github) : VerifySocial('github')} */}
-						{twitter ? social('twitter', twitter) : VerifySocial('twitter')}
-						{telegram && social('telegram', telegram)}
-					</Flex>
-				</Box>
+				<Flex
+					alignItems='center'
+					mt={-2}
+					p={4}
+					borderRadius='md'
+					top='-100px'
+				>
+					<Avatar
+				  boxSize={isMobile ? 16 : 32}
+				  mt={-20}
+				  name='avatar'
+				  border='4px solid white'
+				  src={imageURL === '' ? getAvatar(false, name) : getUrlForIPFSHash(imageURL)}
+				  bg='pink.400'
+					/>
+					<Box
+						ml={4}
+						w='100%'>
+						<Flex alignItems='center'>
+							<Text
+								fontSize='2xl'
+								fontWeight='bold'>
+								{name}
+							</Text>
+							<RoleTag
+								role='builder'
+								isBuilder={true}
+							/>
+						</Flex>
+						{
+							scwAddress === builder?.address && (
+								<Flex
+									float='right'
+									direction='column'
+									alignItems='center'
+								>
+									<Button
+										variant='solid'
+										borderRadius='3xl'
+										leftIcon={<EditIcon />}
+										onClick={() => setBuildersProfileModal(true)}
+									>
+										Edit
+									</Button>
+									<Text
+										fontSize='smaller'
+										color='gray.600'
+									>
+										Last updated
+										{' '}
+										<br />
+										{' '}
+										{builder?.updatedAt && timeAgo(builder?.updatedAt)}
+									</Text>
+								</Flex>
+							)
+						}
+						<HStack
+							spacing={2}
+							gap={4}
+							mt={4}>
+							{github ? social('github', github) : VerifySocial('github')}
+							{twitter ? social('twitter', twitter) : VerifySocial('twitter')}
+							{telegram && social('telegram', telegram)}
+						</HStack>
+						<Text
+							mt={4}
+							w='60%'
+							color='gray.600'>
+							{bio}
+						</Text>
+					</Box>
+				</Flex>
+
+
 			</Flex>
 		)
 	}
 
 	const { setIsQrModalOpen, setQrCode, setProviderName, builder } = useContext(ProfileContext)!
-	const { scwAddress } = useContext(WebwalletContext)!
+	const { scwAddress, setBuildersProfileModal } = useContext(WebwalletContext)!
 	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
 
 	return buildComponent()

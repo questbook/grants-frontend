@@ -1,11 +1,8 @@
 /* eslint-disable indent */
 import { useMediaQuery } from 'react-responsive'
 import { Flex, Text } from '@chakra-ui/react'
-import { logger } from 'ethers'
 import { formatAmount } from 'src/screens/dashboard/_utils/formatters'
 import { GrantStatsType } from 'src/screens/profile/_utils/types'
-
-// import { useRouter } from 'next/router'
 
 function GrantStats({
     totalProposals,
@@ -15,9 +12,6 @@ function GrantStats({
     milestones,
     milestonesCompleted,
 }: GrantStatsType) {
-    logger.info(fundsAllocated, 'GrantStats')
-
-
     const TitleCards = ({ title, value, limit }: {
         title: string
         value: number | string
@@ -42,9 +36,7 @@ function GrantStats({
 		</Text>
 		<Text
                 fontWeight='500'
-                fontSize={isMobile ? '8px' : '16px'}
-                lineHeight='20px'
-                textTransform='uppercase'
+                fontSize={isMobile ? '8px' : '18px'}
                 color='#7E7E8F'
             >
 			{title}
@@ -60,24 +52,33 @@ function GrantStats({
             alignContent='stretch'
             justifyContent='flex-start'
             bgColor='#F7F5F2'
-           borderRadius='8px'
-
         >
 		<Flex
                 width='100%'
             >
 			<Flex
-                    flexDirection='column'
+                    flexDirection='row'
                     width='100%'
+                    padding='20px'
                     flexGrow={1}
+                    flexWrap={isMobile ? 'wrap' : 'nowrap'}
                 >
 
+
+				<Text
+                        fontWeight='400'
+                        alignSelf='center'
+                        w='50%'
+                        fontSize={isMobile ? '16px' : '34px'}
+                        lineHeight='31.2px'
+                        color='black'>
+					Grants
+				</Text>
 				<Flex
-                       mt={5}
-                       gap={isMobile ? '24px' : 5}
-                       mb={4}
-                       flexWrap='wrap'
-                       justifyContent='space-around'>
+                        w='100%'
+                        justifyContent='space-around'
+                        flexWrap='wrap'
+                    >
 					<TitleCards
                             value={totalProposalsAccepted}
                             limit={totalProposals}
@@ -90,7 +91,6 @@ function GrantStats({
                             value={milestonesCompleted}
                             limit={milestones}
                             title='Milestones Completed' />
-
 				</Flex>
 			</Flex>
 		</Flex>
