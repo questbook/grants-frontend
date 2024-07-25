@@ -139,7 +139,7 @@ function Empty() {
 								<Button
 									variant='primaryMedium'
 									mt={6}
-									isDisabled={disabledTonGrants?.includes(grant?.id as string) || disabledGrants?.includes(grant?.id as string) || disabledSubmissions?.includes(grant?.id as string) || subdomains.filter((s) => !s.isEnabled).map((s) => s.grants).flat().includes(grant?.id as string) }
+									isDisabled={!grant?.acceptingApplications || disabledTonGrants?.includes(grant?.id as string) || disabledGrants?.includes(grant?.id as string) || disabledSubmissions?.includes(grant?.id as string) || subdomains.filter((s) => !s.isEnabled).map((s) => s.grants).flat().includes(grant?.id as string) }
 									onClick={
 										() => {
 											const href = window.location.href.split('/')

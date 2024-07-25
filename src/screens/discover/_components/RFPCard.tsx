@@ -110,7 +110,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						/>
 						<Flex gap={2}>
 							{
-								disabledGrants?.includes(grant?.id as string) ? (
+								disabledGrants?.includes(grant?.id as string) || !grant?.acceptingApplications ? (
 									<StateButton
 										state='rejected'
 										title='Closed' />

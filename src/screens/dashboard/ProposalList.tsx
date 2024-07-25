@@ -53,7 +53,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 							// w='103px'
 							// h='32px'
 							mr={4}
-							isDisabled={disabledTonGrants?.includes(grant?.id as string) || disabledGrants?.includes(grant?.id as string) || disabledSubmissions?.includes(grant?.id as string) || subdomains.filter((s) => !s.isEnabled).map((s) => s.grants).flat().includes(grant?.id as string) }
+							isDisabled={!grant?.acceptingApplications || disabledTonGrants?.includes(grant?.id as string) || disabledGrants?.includes(grant?.id as string) || disabledSubmissions?.includes(grant?.id as string) || subdomains.filter((s) => !s.isEnabled).map((s) => s.grants).flat().includes(grant?.id as string) }
 							fontSize={['10px', '10px', '12px', '12px']}
 							onClick={
 								() => {

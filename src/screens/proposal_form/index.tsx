@@ -390,7 +390,7 @@ function ProposalForm() {
 						)
 					}
 					{
-						disabledGrants?.includes(grant?.id as string) &&
+						!grant?.acceptingApplications || disabledGrants?.includes(grant?.id as string) &&
 						type === 'submit' &&
 						(
 							<Flex
@@ -399,7 +399,7 @@ function ProposalForm() {
 								w='100%'
 								bg='gray.200'
 							>
-								<Banner message='The domain is closed until further notice.' />
+								<Banner message='This program is not accepting applications at the moment, please contact domain allocators for more details' />
 							</Flex>
 						)
 					}
@@ -2324,7 +2324,7 @@ function ProposalForm() {
 			return true
 		}
 
-		if((disabledGrants?.includes(grant?.id as string) || disabledTonGrants?.includes(grant?.id as string) || disabledSubmissions?.includes(grant?.id as string)) && type === 'submit') {
+		if((!grant?.acceptingApplications || disabledGrants?.includes(grant?.id as string) || disabledTonGrants?.includes(grant?.id as string) || disabledSubmissions?.includes(grant?.id as string)) && type === 'submit') {
 			logger.info('Grant is disabled')
 			return true
 		}

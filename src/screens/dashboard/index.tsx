@@ -59,9 +59,9 @@ function Dashboard(props: DynamicData) {
 					<>
 
 						{
-							disabledGrants?.includes(grant?.id as string) && (
+							!grant?.acceptingApplications || disabledGrants?.includes(grant?.id as string) && (
 								<Banner
-									message='The domain is closed until further notice.'
+									message='This program is not accepting applications at the moment, please contact domain allocators for more details'
 								/>
 							)
 						}
@@ -90,9 +90,9 @@ function Dashboard(props: DynamicData) {
 				!isLoading && (isMobile === false) && (
 					<>
 						{
-							disabledGrants?.includes(grant?.id as string) && (
+							!grant?.acceptingApplications || disabledGrants?.includes(grant?.id as string) && (
 								<Banner
-									message='The domain is closed until further notice.'
+									message='This program is not accepting applications at the moment, please contact domain allocators for more details'
 								/>
 							)
 						}
