@@ -52,6 +52,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 							variant='secondaryV2'
 							// w='103px'
 							// h='32px'
+							isDisabled={true}
 							mr={4}
 							fontSize={['10px', '10px', '12px', '12px']}
 							onClick={

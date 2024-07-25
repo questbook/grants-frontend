@@ -955,7 +955,6 @@ function ProposalForm() {
 			return true
 		}
 
-
 		const optionalFields = ['projectDetails', 'fundingAsk', 'fundingBreakdown', 'projectGoals', 'projectLink']
 		const { fields, members, details, milestones } = form
 		const fundingAsk = milestones.reduce((acc, curr) => acc + curr.amount, 0)

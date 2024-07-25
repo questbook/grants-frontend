@@ -192,7 +192,7 @@ function ProposalReview() {
 				rubrics[index] = {
 					title: rubricInputValues[index],
 					details: '',
-					maximumPoints: 5
+					maximumPoints: 3
 				}
 			})
 		}
