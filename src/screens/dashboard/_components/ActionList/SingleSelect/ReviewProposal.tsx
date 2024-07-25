@@ -118,8 +118,8 @@ function ReviewProposal() {
 					direction='row'
 					justify='start'>
 					{
-						Array.from(Array(item.rubric.maximumPoints).keys()).map((_, index) => {
-							const isSelected = item?.rating === index + 1
+						Array.from(Array(item.rubric.maximumPoints + 1).keys()).map((_, index) => {
+							const isSelected = item?.rating === index
 							return (
 								<Button
 									key={index}
@@ -149,12 +149,12 @@ function ReviewProposal() {
 											if(isReviewPending) {
 												const temp = { ...review }
 												if(temp?.items) {
-													temp.items[rubricIndex].rating = index + 1
+													temp.items[rubricIndex].rating = index
 													if(!temp.total) {
 														temp.total = 0
 													}
 
-													temp.total += index + 1
+													temp.total += index
 													setReview(temp)
 												}
 											}
@@ -163,9 +163,8 @@ function ReviewProposal() {
 									<Text
 										variant='body'
 										color={isSelected ? 'white' : 'black.100'}>
-										{index + 1}
+										{index}
 									</Text>
-
 								</Button>
 							)
 						})

@@ -1,5 +1,6 @@
 import copy from 'copy-to-clipboard'
-import { logger } from 'ethers'
+import logger from 'src/libraries/logger'
+
 
 const copyGrantLink = async(grantID: string, chainId: number) => {
 	const href = window.location.href.split('/')

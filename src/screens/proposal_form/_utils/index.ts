@@ -1,5 +1,5 @@
 import { ContentState, convertFromRaw, EditorState } from 'draft-js'
-import { logger } from 'ethers'
+import logger from 'src/libraries/logger'
 import { getFromIPFS, isIpfsHash } from 'src/libraries/utils/ipfs'
 import { isSupportedAddress } from 'src/libraries/utils/validations'
 import { Form, Grant } from 'src/screens/proposal_form/_utils/types'
