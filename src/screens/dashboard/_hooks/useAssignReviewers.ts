@@ -41,8 +41,7 @@ function useAssignReviewers({ setTransactionHash }: Props) {
 		const data = await executeMutation(assignReviewersMutation, variables)
 		// await call({ method: 'assignReviewers', args: [grant.workspace.id, proposal.id, grant.id, reviewers, active] })
 		setTransactionHash(data?.assignReviewers?.recordId)
-		refreshProposals(true)
-		window.location.reload()
+		await refreshProposals(true)
 	}
 
 	return { assignReviewers }

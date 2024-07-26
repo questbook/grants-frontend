@@ -395,6 +395,7 @@ function Reviews() {
 													})
 
 													await assignReviewers(selectedReviewers, active)
+													await onClose()
 												}
 											}>
 											<Text
@@ -594,7 +595,7 @@ function Reviews() {
 														cursor='pointer'
 														onClick={
 															() => {
-																const copy = [...rubricItems, { title: anotherRubricTitle, description: '', maximumPoints: 5 }]
+																const copy = [...rubricItems, { title: anotherRubricTitle, description: '', maximumPoints: 3 }]
 																setRubricItems(copy)
 																setAnotherRubricTitle(undefined)
 															}

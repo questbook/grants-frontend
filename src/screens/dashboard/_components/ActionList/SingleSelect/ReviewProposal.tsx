@@ -79,7 +79,12 @@ function ReviewProposal() {
 								disabled={review === undefined || review?.items?.some((item) => (item.rating === 0 && grant?.reviewType === 'rubrics') || (item.rating === -1 && grant?.reviewType === 'voting'))}
 								w='100%'
 								variant='primaryMedium'
-								onClick={submitReview}>
+								onClick={
+									async() => {
+										await submitReview()
+										await setShowSubmitReviewPanel(false)
+									}
+								}>
 								Submit Review
 							</Button>
 						</Flex>

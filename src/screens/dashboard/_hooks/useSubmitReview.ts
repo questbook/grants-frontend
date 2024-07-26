@@ -82,9 +82,7 @@ function useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash }:
 				}
 			}
 
-			window.location.reload()
-
-			refreshProposals(true)
+			await refreshProposals(true)
 
 		} catch(e) {
 			logger.error(e, 'useSubmitReview: (Error)')
