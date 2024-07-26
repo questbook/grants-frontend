@@ -36,13 +36,13 @@ function SingleSelect() {
 							px={5}
 							py={4}>
 							<Button
-								isDisabled={role === 'builder' ? proposal?.applicantId?.toLowerCase() !== scwAddress?.toLowerCase() || (proposal?.state !== 'submitted' && proposal?.state !== 'resubmit' && proposal?.state !== 'review') : false}
+								isDisabled={role === 'builder' ? proposal?.applicantId?.toLowerCase() !== scwAddress?.toLowerCase() || (proposal?.state !== 'submitted' && proposal?.state !== 'resubmit') : false}
 								w='100%'
 								variant='primaryMedium'
 								onClick={
 									() => {
 										if(role === 'builder') {
-											if(proposal?.state !== 'submitted' && proposal?.state !== 'resubmit' && proposal?.state !== 'review') {
+											if(proposal?.state !== 'submitted' && proposal?.state !== 'resubmit') {
 												toast({
 													title: 'Oops! This proposal is not in the right state to be resubmitted.',
 													description: `This proposal has already been ${proposal?.state}. It cannot be resubmitted.`,
@@ -63,7 +63,7 @@ function SingleSelect() {
 											const id = subdomainProposals.find((s) => s.grants.includes(proposal?.grant?.id as string))
 
 											if(id) {
-												window.open(`https://${id.name}.questbook.app/proposal_form/?grantId=${proposal?.grant?.id}&chainId=${chainId}&newTab=true`, '_blank')
+												window.open(`https://${id.name}.questbook.app/proposal_form/?proposalId=${proposal?.id}&chainId=${chainId}&newTab=true`, '_blank')
 											} else {
 												router.push({ pathname: '/proposal_form', query: {
 													proposalId: proposal?.id,
