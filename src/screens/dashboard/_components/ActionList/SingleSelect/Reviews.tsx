@@ -595,7 +595,7 @@ function Reviews() {
 														cursor='pointer'
 														onClick={
 															() => {
-																const copy = [...rubricItems, { title: anotherRubricTitle, description: '', maximumPoints: 3 }]
+																const copy = [...rubricItems, { title: anotherRubricTitle, description: '', maximumPoints: 5 }]
 																setRubricItems(copy)
 																setAnotherRubricTitle(undefined)
 															}
