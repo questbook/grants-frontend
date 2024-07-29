@@ -1,5 +1,4 @@
 import { useContext } from 'react'
-import { useMediaQuery } from 'react-responsive'
 import { Button, Flex, Image, Text } from '@chakra-ui/react'
 import { AmplitudeContext } from 'src/libraries/utils/amplitude'
 import { WebwalletContext } from 'src/pages/_app'
@@ -72,21 +71,18 @@ function HeroBanner() {
 					</Flex>
 
 				</Flex>
-				{
-					!isMobile && (
-						<Flex
-							flexShrink={0}
-							justifyContent='center'
-							height='420px'
-						>
-							<Image
-								mt={10}
-								h='-webkit-fit-content'
-								w='100%'
-								src='/v2/images/banner.png' />
-						</Flex>
-					)
-				}
+				<Flex
+					display={['none', 'flex']}
+					flexShrink={0}
+					justifyContent='center'
+					height='420px'
+				>
+					<Image
+						mt={10}
+						h='-webkit-fit-content'
+						w='100%'
+						src='/v2/images/banner.png' />
+				</Flex>
 				{/* {
 					!isMobile && (
 						<Flex
@@ -121,7 +117,6 @@ function HeroBanner() {
 		</Flex>
 	)
 	const { setBuildersModal } = useContext(DiscoverContext)!
-	const isMobile = useMediaQuery({ query:'(max-width:800px)' })
 	const { trackAmplitudeEvent } = useContext(AmplitudeContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
 

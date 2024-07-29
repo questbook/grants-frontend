@@ -391,11 +391,11 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	}, [search])
 
 	useEffect(() => {
-		getGrantsForYou().then(r => logger.info(r, 'Get Grants for you'))
+		getSectionGrants().then(r => logger.info(r, 'Get Section Grants'))
 	}, [scwAddress])
 
 	useEffect(() => {
-		getSectionGrants().then(r => logger.info(r, 'Get Section Grants'))
+		getGrantsForYou().then(r => logger.info(r, 'Get Grants for you'))
 	}, [scwAddress])
 
 	useEffect(() => {
@@ -403,10 +403,6 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 			fetchDetails()
 		}
 	}, [inviteInfo])
-
-	useEffect(() => {
-		getStats().then(r => logger.info(r, 'Get Stats'))
-	}, [sectionGrants?.length])
 
 	useEffect(() => {
 		// if the window contains builderModal = true, then we will open the modal
@@ -445,6 +441,10 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 
 	}, [grantsForAll, grantsForYou, sectionGrants])
+
+	useEffect(() => {
+		getStats().then(r => logger.info(r, 'Get Stats'))
+	}, [sectionGrants?.length])
 
 	return provider()
 }

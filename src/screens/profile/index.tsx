@@ -1,10 +1,12 @@
-import { ReactElement, useContext, useMemo } from 'react'
+import { ReactElement, useContext, useEffect, useMemo } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { Box, Button, Container, Divider, Flex, Grid, GridItem, Image, Link, Skeleton, Text } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 import { ProjectDetails } from 'src/generated/icons'
 import BackButton from 'src/libraries/ui/BackButton'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
+import { isValidEthereumAddress } from 'src/libraries/utils/validations'
 import { WebwalletContext } from 'src/pages/_app'
 import GrantStats from 'src/screens/profile/_components/GrantStats'
 import ProfileBanner from 'src/screens/profile/_components/ProfileBanner'
@@ -27,6 +29,15 @@ function Profile() {
 
 	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
 
+	const router = useRouter()
+
+	const { address } = router.query
+	useEffect(() => {
+		if(!router.isReady) {
+			return
+		}
+	}, [address, router.isReady])
+
 	const normalView = useMemo(() => {
 		const calculateLoadingHeight = () => {
 			// if scw is done loading and there's still no webwallet
@@ -38,6 +49,27 @@ function Profile() {
 			} else {
 				return '500px'
 			}
+		}
+
+		if(!address || !isValidEthereumAddress(address as string) || !isLoading && !builder) {
+			return (
+				<Flex
+					bg='white'
+					flexDirection='column'
+					w='100%'
+					mt={32}
+					align='center'
+					justify='center'>
+					<Text
+						fontSize='lg'
+						fontWeight='500'
+						align='center'
+						mt={12}
+						color='black'>
+						No Profile Found
+					</Text>
+				</Flex>
+			)
 		}
 
 		const DaoBadges = ({
@@ -135,7 +167,7 @@ function Profile() {
 									)
 								}
 								{
-									scwAddress === builder?.address && (
+									scwAddress && scwAddress === builder?.address && (
 										<Button
 											variant='unstyled'
 											w='fit-content'
@@ -245,7 +277,7 @@ function Profile() {
 							proofQr={qrCode}
 						/>
 						<ProfileBanner
-							name={builder?.username ?? scwAddress?.slice(0, 6) + '...' + scwAddress?.slice(-4)}
+							name={builder?.username ?? address?.slice(0, 6) + '...' + address?.slice(-4)}
 							imageURL={builder?.imageURL || ''}
 							github={builder?.github?.extractedParameters?.username || ''}
 							twitter={builder?.twitter?.extractedParameters?.username || ''}
@@ -424,7 +456,7 @@ function Profile() {
 				</Flex>
 			</Flex>
 		)
-	}, [proposals, builder, isLoading, isMobile, isQrModalOpen, scwAddress, qrCode])
+	}, [proposals, builder, isLoading, isMobile, isQrModalOpen, scwAddress, qrCode, address])
 
 
 	return buildComponent()

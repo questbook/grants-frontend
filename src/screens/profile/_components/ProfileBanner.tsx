@@ -102,7 +102,7 @@ function ProfileBanner({
 		}
 
 		const VerifySocial = (provider: string) => {
-			if(scwAddress !== builder?.address || isMobile) {
+			if(scwAddress && scwAddress !== builder?.address || isMobile || !scwAddress) {
 				return null
 			}
 
@@ -209,7 +209,7 @@ function ProfileBanner({
 							/>
 						</Flex>
 						{
-							scwAddress === builder?.address && !isMobile && (
+							scwAddress && scwAddress === builder?.address && !isMobile && (
 								<Flex
 									float='right'
 									direction='column'

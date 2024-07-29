@@ -186,9 +186,9 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 
 				<Spacer />
 				{
-					!isMobile[0] &&
 					(router.pathname === '/') && (
 						<Flex
+							display={['none', 'flex']}
 							gap={4}
 							align='center'
 							mx={4}
@@ -240,9 +240,9 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 					)
 				}
 				{
-					!isMobile[0] &&
 					(router.pathname === '/profile/[address]') && (
 						<Flex
+							display={['none', 'flex']}
 							gap={4}
 							align='center'
 							mx={4}
