@@ -51,7 +51,7 @@ function Profile() {
 			}
 		}
 
-		if(!scwAddress && (!address || !isValidEthereumAddress(address as string) || !isLoading)) {
+		if(!isValidEthereumAddress(address as string)) {
 			return (
 				<Flex
 					bg='white'
