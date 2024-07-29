@@ -220,3 +220,10 @@ export interface PhantomProvider {
 export type WindowWithSolana = Window & {
     solana?: PhantomProvider
 }
+
+export type BuilderProfile = {
+  _id: string
+  telegram: string
+  username: string
+  imageURL: string
+}

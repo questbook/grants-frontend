@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 import { SupportedPayouts } from '@questbook/supported-safes'
+import { getBuilderProfileQuery } from 'src/libraries/data/getBuilderProfileQuery'
 import { useQuery } from 'src/libraries/hooks/useQuery'
 import logger from 'src/libraries/logger'
 import { AmplitudeContext } from 'src/libraries/utils/amplitude'
@@ -30,7 +31,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		)
 	}
 
-	const { scwAddress } = useContext(WebwalletContext)!
+	const { scwAddress, setBuilderProfile } = useContext(WebwalletContext)!
 	const { trackAmplitudeEvent } = useContext(AmplitudeContext)!
 	const { inviteInfo } = useContext(ApiClientsContext)!
 
@@ -80,6 +81,10 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 	const { fetchMore: getSubGrants } = useQuery({
 		query: getSectionSubGrantsQuery
+	})
+
+	const { fetchMore: getBuilderData } = useQuery({
+		query: getBuilderProfileQuery
 	})
 
 
@@ -238,6 +243,26 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		logger.info({ grantsForYou }, 'All grants for you (DISCOVER CONTEXT)')
 		setGrantsForYou(grantsForYou)
 		setIsLoading(false)
+
+
+		const builderProfile = await getBuilderData({ wallet: `${scwAddress}` }, true) as {
+			getProfile: {
+				_id: string
+				telegram: string
+				username: string
+				imageURL: string
+			}
+		}
+		logger.info({ builderProfile }, 'Builder Profile')
+		if(builderProfile?.getProfile) {
+			setBuilderProfile({
+				_id: builderProfile.getProfile._id ?? '',
+				telegram: builderProfile.getProfile.telegram ?? '',
+				username: builderProfile.getProfile.username ?? '',
+				imageURL: builderProfile.getProfile.imageURL ?? '',
+			})
+		}
+
 		return 'grants-for-you-fetched'
 	}
 

@@ -44,7 +44,7 @@ const ProfileProvider = ({ children }: {children: ReactNode}) => {
 		)
 	}
 
-	const { scwAddress, setBuildersProfileModal } = useContext(WebwalletContext)!
+	const { scwAddress, setBuildersProfileModal, setBuilderProfile } = useContext(WebwalletContext)!
 	const [proposals, setProposals] = useState<BuilderProposals[] | undefined>(undefined)
 	const [builder, setBuilder] = useState<BuilderInfoType | undefined>(undefined)
 	const [isBuilderInfoLoading, setBuilderInfoLoading] = useState<boolean>(true)
@@ -74,6 +74,12 @@ const ProfileProvider = ({ children }: {children: ReactNode}) => {
 		logger.info(results, 'Get Builder')
 		if(results?.getProfile) {
 			setBuilder(results.getProfile)
+			setBuilderProfile({
+				_id: results.getProfile._id ?? '',
+				telegram: results.getProfile.telegram ?? '',
+				username: results.getProfile.username ?? '',
+				imageURL: results.getProfile.imageURL ?? '',
+			})
 		}
 
 		if(providerName?.length > 0) {

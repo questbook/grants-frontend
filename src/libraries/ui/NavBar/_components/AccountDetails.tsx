@@ -53,7 +53,11 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 							>
 								<Image
 									borderRadius='3xl'
-									src={member?.profilePictureIpfsHash ? getUrlForIPFSHash(member.profilePictureIpfsHash) : getAvatar(false, scwAddress ?? 'generic')}
+									src={
+										member?.profilePictureIpfsHash ? getUrlForIPFSHash(member.profilePictureIpfsHash) :
+											builderProfile?.imageURL ? getUrlForIPFSHash(builderProfile.imageURL) :
+												getAvatar(false, scwAddress ?? 'generic')
+									}
 									boxSize='24px'
 								/>
 							</Button>
@@ -185,7 +189,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 	const popoverRef = useRef<HTMLButtonElement>(null)
 	const { t } = useTranslation()
 	const { grant, role } = useContext(GrantsProgramContext)!
-	const { webwallet, scwAddress, loadingScw } = useContext(WebwalletContext)!
+	const { webwallet, scwAddress, loadingScw, builderProfile } = useContext(WebwalletContext)!
 	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const router = useRouter()
 	useEffect(() => {

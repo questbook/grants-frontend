@@ -48,13 +48,6 @@ query getSectionGrants {
         }
       }
       acceptingApplications
-      fundTransfers {
-        amount
-        type
-        tokenUSDValue
-        asset
-        tokenName
-      }
       workspace {
         id:_id
         title
@@ -64,17 +57,6 @@ query getSectionGrants {
         safe {
           chainId
           address
-        }
-      }
-      reward {
-        committed
-        id:_id
-        asset
-        token {
-          address
-          label
-          decimal
-          iconHash
         }
       }
       link

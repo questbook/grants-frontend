@@ -37,7 +37,7 @@ import logger from 'src/libraries/utils/logger'
 import getSeo from 'src/libraries/utils/seo'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import theme from 'src/theme'
-import { GrantProgramContextType, GrantType, MinimalWorkspace, NotificationContextType, Roles } from 'src/types'
+import { BuilderProfile, GrantProgramContextType, GrantType, MinimalWorkspace, NotificationContextType, Roles } from 'src/types'
 import { BiconomyWalletClient } from 'src/types/gasless'
 import { createConfig, http, WagmiProvider } from 'wagmi'
 import { arbitrum, aurora, base, celo, iotex, mainnet, optimism, polygon, sepolia } from 'wagmi/chains'
@@ -184,6 +184,8 @@ export const WebwalletContext = createContext<{
 	setGlyph: (glyph?: Boolean) => void
 	buildersProfileModal: boolean
 	setBuildersProfileModal: (buildersProfileModal: boolean) => void
+	builderProfile?: BuilderProfile
+	setBuilderProfile: (builderProfile?: BuilderProfile) => void
 	network?: SupportedChainId
 	switchNetwork: (newNetwork?: SupportedChainId) => void
 	scwAddress?: string
@@ -223,6 +225,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [grant, setGrant] = useState<GrantType>()
 	const [role, setRole] = useState<Roles>('community')
 	const [isLoading, setIsLoading] = useState<boolean>(true)
+	const [builderProfile, setBuilderProfile] = useState<BuilderProfile>()
 	const [glyph, setGlyph] = useState<boolean>(false)
 	const [buildersProfileModal, setBuildersProfileModal] = useState<boolean>(false)
 	const [scwAddress, setScwAddress] = useState<string>()
@@ -551,9 +554,19 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			loadingScw,
 			setLoadingScw,
 			importWebwallet,
-			exportWebwallet
+			exportWebwallet,
+			builderProfile,
+			setBuilderProfile: (newBuilderProfile?: BuilderProfile) => {
+				if(newBuilderProfile) {
+					localStorage.setItem('builderProfile', JSON.stringify(newBuilderProfile))
+				} else {
+					localStorage.removeItem('builderProfile')
+				}
+
+				setBuilderProfile(newBuilderProfile)
+			}
 		}),
-		[dashboardStep, createingProposalStep, setCreatingProposalStep, setDashboardStep, webwallet, setWebwallet, network, switchNetwork, scwAddress, setScwAddress, nonce, setNonce, loadingNonce, setLoadingNonce, loadingScw, setLoadingScw, glyph, setGlyph, buildersProfileModal, setBuildersProfileModal]
+		[dashboardStep, createingProposalStep, setCreatingProposalStep, setDashboardStep, webwallet, setWebwallet, network, switchNetwork, scwAddress, setScwAddress, nonce, setNonce, loadingNonce, setLoadingNonce, loadingScw, setLoadingScw, glyph, setGlyph, buildersProfileModal, setBuildersProfileModal, builderProfile, setBuilderProfile]
 	)
 
 	const biconomyDaoObjContextValue = useMemo(
