@@ -229,7 +229,7 @@ function ProfileBanner({
 								)
 							}
 							<Text
-								fontSize='smaller'
+								fontSize={['x-small', 'smaller']}
 								color='gray.600'
 							>
 								Last updated

@@ -151,6 +151,10 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 															_hover={{ textDecoration: 'underline', cursor: 'pointer' }}
 															onClick={
 																() => {
+																	if(item.title === 'Builder Profile' && loadingScw) {
+																		return
+																	}
+
 																	onClose()
 																	item.onClick()
 																}
@@ -159,7 +163,7 @@ function AccountDetails({ openModal, setIsUpdateProfileModalOpen, setSignIn }: P
 															fontWeight={500}
 															fontSize='14px'
 														>
-															{item.title}
+															{item.title === 'Builder Profile' && loadingScw ? 'Loading...' : item.title}
 														</Text>
 														<Text
 															paddingLeft={2}
