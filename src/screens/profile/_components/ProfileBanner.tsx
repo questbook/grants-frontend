@@ -1,6 +1,5 @@
 import { useContext } from 'react'
 import { FaExternalLinkAlt, FaGithub, FaTelegram, FaTwitter } from 'react-icons/fa'
-import { useMediaQuery } from 'react-responsive'
 import { EditIcon } from '@chakra-ui/icons'
 import { Avatar, Box, Button, Flex, HStack, Image, Text } from '@chakra-ui/react'
 import { getAvatar } from 'src/libraries/utils'
@@ -74,6 +73,7 @@ function ProfileBanner({
 					alignItems='center'
 				>
 					<Text
+						display={['none', 'block']}
 						color='#7E7E8F'
 						fontSize='16px'
 						fontStyle='normal'
@@ -209,13 +209,15 @@ function ProfileBanner({
 								isBuilder={true}
 							/>
 						</Flex>
-						{
-							scwAddress && scwAddress === builder?.address && !isMobile && (
-								<Flex
-									float='right'
-									direction='column'
-									alignItems='center'
-								>
+
+
+						<Flex
+							float='right'
+							direction='column'
+							alignItems='center'
+						>
+							{
+								scwAddress && scwAddress === builder?.address && (
 									<Button
 										variant='solid'
 										borderRadius='3xl'
@@ -224,19 +226,20 @@ function ProfileBanner({
 									>
 										Edit
 									</Button>
-									<Text
-										fontSize='smaller'
-										color='gray.600'
-									>
-										Last updated
-										{' '}
-										<br />
-										{' '}
-										{builder?.updatedAt && timeAgo(builder?.updatedAt)}
-									</Text>
-								</Flex>
-							)
-						}
+								)
+							}
+							<Text
+								fontSize='smaller'
+								color='gray.600'
+							>
+								Last updated
+								{' '}
+								<br />
+								{' '}
+								{builder?.updatedAt && timeAgo(builder?.updatedAt)}
+							</Text>
+						</Flex>
+
 						<HStack
 							spacing={2}
 							flexWrap={['wrap', 'nowrap']}
@@ -262,7 +265,6 @@ function ProfileBanner({
 
 	const { setIsQrModalOpen, setQrCode, setProviderName, builder } = useContext(ProfileContext)!
 	const { scwAddress, setBuildersProfileModal } = useContext(WebwalletContext)!
-	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
 
 	return buildComponent()
 }

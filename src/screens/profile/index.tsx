@@ -254,7 +254,7 @@ function Profile() {
 				<Flex
 					bg='white'
 					h='max-content'
-					p={[2, 4]}
+					p={[2, 5]}
 					direction='column'
 					gap={4.5}
 					border='1px solid #E7E4DD'

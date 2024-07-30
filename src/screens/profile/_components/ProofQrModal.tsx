@@ -85,6 +85,7 @@ function ProofQrModal({
 							)
 						}
 						<Button
+							variant='ghost'
 							color='#699804'
 							textAlign='center'
 							fontSize='18px'
@@ -92,7 +93,7 @@ function ProofQrModal({
 							fontWeight='700'
 							lineHeight='135%'
 							isLoading={true}
-							loadingText='Pending'
+							loadingText='Status: Pending'
 						>
 							Scan QR code with your phone camera
 						</Button>

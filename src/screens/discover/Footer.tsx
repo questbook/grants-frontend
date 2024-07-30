@@ -11,7 +11,7 @@ const Footer = () => {
 			py={10}
 			pb={10}>
 			<Flex
-				px={{ base: 4, md: 8 }}
+				px={{ base: 0, md: 8 }}
 				justify='space-between'
 				direction={{ base: 'column', md: 'row' }}
 				align='center'
@@ -25,7 +25,7 @@ const Footer = () => {
 						href='/'
 						aria-current='page'>
 						<Questbook
-							width='340px'
+							width={['300px', '340px']}
 							height='auto' />
 					</Link>
 					<Text
@@ -40,7 +40,7 @@ const Footer = () => {
 
 				<Grid
 					templateColumns='repeat(2, 1fr)'
-					gap={12}
+					gap={[4, 8]}
 					p={1}
 					mt={{ base: 12, md: 0 }}
 					justifyContent={{ base: 'flex-start', md: 'flex-end' }}
@@ -120,11 +120,12 @@ const Footer = () => {
 			<Flex
 				justifyContent='flex-start'
 				px={{ base: 4, md: 8 }}
+				gap={[4, 8]}
 			>
 				<Text
 					mt={8}
+					mb={2}
 					color='white'>
-
 					{' '}
 					{new Date().getFullYear()}
 					<br />
