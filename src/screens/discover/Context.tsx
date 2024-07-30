@@ -10,7 +10,6 @@ import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
 import { DiscoverContextType, GrantProgramType, GrantType, RecentProposals, SectionGrants, StatsType, WorkspaceMemberType } from 'src/screens/discover/_utils/types'
 import { getAllGrants } from 'src/screens/discover/data/getAllGrants'
 import { getAllGrantsForMembers } from 'src/screens/discover/data/getAllGrantsForMembers'
-import { getFundsAllocated } from 'src/screens/discover/data/getFundsAllocated'
 import { GetGrantProgramDetails } from 'src/screens/discover/data/getGrantProgramDetails'
 import { getProposalNameAndAuthorsQuery } from 'src/screens/discover/data/getProposalNameAndAuthors'
 import { getSectionGrantsQuery } from 'src/screens/discover/data/getSectionGrants'
@@ -75,9 +74,9 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		query: getProposalNameAndAuthorsQuery,
 	})
 
-	const { fetchMore: fetchFundsAllocated } = useQuery({
-		query: getFundsAllocated,
-	})
+	// const { fetchMore: fetchFundsAllocated } = useQuery({
+	// 	query: getFundsAllocated,
+	// })
 
 	const { fetchMore: getSubGrants } = useQuery({
 		query: getSectionSubGrantsQuery
@@ -336,20 +335,65 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		const allSectionGrants: SectionGrants = []
 		let recentProposals: RecentProposals = []
 		if(results?.sections?.length) {
-			// don't include the grants that are not in the topGrants
-			allSectionGrants.push(...results?.sections.map((g: any) => ({ [g.sectionName]: { ...g } })))
+			allSectionGrants.push(...results?.sections.map((g: any) => {
+				// Create a new grants array with modified applications
+				const modifiedGrants = g.grants.map((grant: any) => {
+					const modifiedApplications = grant.applications.map((app: any) => ({
+						...app,
+						grant: {
+							id: grant.id,
+							title: grant.title,
+							workspace: {
+								logoIpfsHash: grant.workspace.logoIpfsHash,
+								supportedNetworks: grant.workspace.supportedNetworks
+							},
+							reward: grant.reward
+						}
+					}))
+					return { ...grant, applications: modifiedApplications }
+				})
+				recentProposals = [...recentProposals, ...modifiedGrants.flatMap((g: any) => g.applications)]
+				return { [g.sectionName]: { ...g, grants: modifiedGrants } }
+			}))
+			// recentProposals = [...recentProposals, ...results.sections.map((s: any) => s.grants.map((g: any) => g.applications).flat()).flat()]
 
-			recentProposals = [...recentProposals, ...results.sections.map((s: any) => s.grants.map((g: any) => g.applications).flat()).flat()]
 		}
 
 		if(subgrantsResults?.grants?.length) {
 			const arbitrum = allSectionGrants.find((s: any) => Object.keys(s)[0] === 'Arbitrum')
 			if(arbitrum) {
-				allSectionGrants[allSectionGrants.indexOf(arbitrum)] = { Arbitrum: { ...arbitrum.Arbitrum, grants: [...arbitrum.Arbitrum.grants?.filter((g: any) => g.title?.includes('2.0')), ...subgrantsResults?.grants] } }
-			}
+				const modifiedSubgrants = subgrantsResults.grants.map((grant: any) => {
+					const modifiedApplications = grant.applications?.map((app: any) => ({
+						...app,
+						grant: {
+							id: grant.id,
+							title: grant.title,
+							workspace: {
+								logoIpfsHash: grant.workspace?.logoIpfsHash,
+								supportedNetworks: grant.workspace?.supportedNetworks
+							},
+							reward: grant.reward
+						}
+					})) || []
 
-			recentProposals = [...recentProposals, ...subgrantsResults?.grants.map((g: any) => g.applications).flat()]
+					// Add modified applications to recentProposals
+					recentProposals = [...recentProposals, ...modifiedApplications]
+
+					return { ...grant, applications: modifiedApplications }
+				})
+
+				allSectionGrants[allSectionGrants.indexOf(arbitrum)] = {
+					Arbitrum: {
+						...arbitrum.Arbitrum,
+						grants: [
+							...(arbitrum.Arbitrum.grants?.filter((g: any) => g.title?.includes('2.0')) || []),
+							...modifiedSubgrants
+						]
+					}
+				}
+			}
 		}
+
 
 		logger.info({ allSectionGrants, recentProposals }, 'All section grants (DISCOVER CONTEXT)')
 
@@ -388,24 +432,25 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 	const getStats = async() => {
 
-		const funds: any = await fetchFundsAllocated()
-		logger.info({ funds }, 'Funds')
-		function sumAmounts(data: any): number {
-			let total = 0
+		// const funds: any = await fetchFundsAllocated()
+		// logger.info({ funds }, 'Funds')
+		// function sumAmounts(data: any): number {
+		// 	let total = 0
 
-			for(const grant of data.grants) {
-				for(const app of grant.applications) {
-					for(const milestone of app.milestones) {
-						total += milestone.amount
-					}
-				}
-			}
+		// 	for(const grant of data.grants) {
+		// 		for(const app of grant.applications) {
+		// 			for(const milestone of app.milestones) {
+		// 				total += milestone.amount
+		// 			}
+		// 		}
+		// 	}
 
-			return total
-		}
+		// 	return total
+		// }
 
 		// iterate over all sections and sum the amounts
-		const total = funds.sections.reduce((acc: number, cur: any) => acc + sumAmounts(cur), 0)
+		// const total = funds.sections.reduce((acc: number, cur: any) => acc + sumAmounts(cur), 0)
+		const total = 6200000
 		setStats({ builders: 52000, proposals: 4000, funds: total + 786298 })
 
 		return 'stats-fetched'

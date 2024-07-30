@@ -5,7 +5,7 @@ export const getFundsAllocated = gql`query getSectionGrants {
         _id
         applications(filter: {
           state: "approved"
-        }, sort: UPDATEDATS_DESC, limit: 1000) {
+        }, sort: UPDATEDATS_DESC, limit: 10) {
           milestones {
             id: _id
             amount

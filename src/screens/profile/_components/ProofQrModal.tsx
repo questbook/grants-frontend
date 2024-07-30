@@ -1,4 +1,5 @@
 import QRCode from 'react-qr-code'
+import { useMediaQuery } from 'react-responsive'
 import { Button, Flex, Modal, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Text } from '@chakra-ui/react'
 
 
@@ -54,16 +55,33 @@ function ProofQrModal({
 									fontStyle='normal'
 									fontWeight='700'
 									lineHeight='135%'>
-									Generating QR code
+									{isMobile ? 'Generating Link' : 'Generating QR code'}
+
 								</Text>
 							)
 						}
 						{
-							proofQr && (
+							proofQr && !isMobile && (
 								<QRCode
 									fgColor='#4D9CD4'
 									style={{ height: '320px', maxWidth: '100%', width: '320px' }}
 									value={proofQr ?? ''} />
+							)
+						}
+						{
+							proofQr && isMobile && (
+								<Button
+									color='#699804'
+									textAlign='center'
+									fontSize='18px'
+									fontStyle='normal'
+									fontWeight='700'
+									lineHeight='135%'
+									onClick={() => window.open(proofQr)}
+								>
+									Generate Proof
+								</Button>
+
 							)
 						}
 						<Button
@@ -87,7 +105,10 @@ function ProofQrModal({
 									fontStyle='normal'
 									fontWeight='700'
 									lineHeight='135%'>
-									Scan QR code with your phone camera
+									{
+										isMobile ? '' :
+											'Scan QR code with your phone camera'
+									}
 								</Text>
 							)
 						}
@@ -118,6 +139,7 @@ function ProofQrModal({
 		)
 	}
 
+	const isMobile = useMediaQuery({ query: '(max-width:600px)' })
 	return buildComponent()
 }
 

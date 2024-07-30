@@ -102,7 +102,7 @@ function ProfileBanner({
 		}
 
 		const VerifySocial = (provider: string) => {
-			if(scwAddress && scwAddress !== builder?.address || isMobile || !scwAddress) {
+			if(scwAddress && scwAddress !== builder?.address || !scwAddress) {
 				return null
 			}
 
@@ -110,6 +110,7 @@ function ProfileBanner({
 				<Flex
 					cursor='pointer'
 					gap='5px'
+					flexWrap={['wrap', 'nowrap']}
 					onClick={
 
 						async() => {
@@ -180,14 +181,14 @@ function ProfileBanner({
 
 				<Flex
 					alignItems='center'
-					flexDirection={isMobile ? 'column' : 'row'}
-					mt={isMobile ? 5 : '2'}
+					flexDirection={['column', 'row']}
+					mt={[5, 2]}
 					p={4}
 					borderRadius='md'
-					top={isMobile ? '100px' : '-100px'}
+					top={['100px', '-100px']}
 				>
 					<Avatar
-				  boxSize={isMobile ? 16 : 32}
+				  boxSize={[16, 32]}
 				  mt={-20}
 				  name='avatar'
 				  border='4px solid white'
@@ -238,6 +239,7 @@ function ProfileBanner({
 						}
 						<HStack
 							spacing={2}
+							flexWrap={['wrap', 'nowrap']}
 							gap={4}
 							mt={4}>
 							{github ? social('github', github) : VerifySocial('github')}
@@ -246,7 +248,7 @@ function ProfileBanner({
 						</HStack>
 						<Text
 							mt={4}
-							w={isMobile ? '100%' : '60%'}
+							w={['100%', '60%']}
 							color='gray.600'>
 							{bio}
 						</Text>

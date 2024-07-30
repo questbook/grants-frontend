@@ -81,7 +81,7 @@ function Profile() {
 			name: string
 			value: { badge: string, username: string }
 		}) => {
-			if(!value?.badge && (scwAddress !== builder?.address || (isMobile && scwAddress === builder?.address))) {
+			if(!value?.badge && (scwAddress !== builder?.address)) {
 				return null
 			}
 
@@ -254,7 +254,7 @@ function Profile() {
 				<Flex
 					bg='white'
 					h='max-content'
-					p={8}
+					p={[2, 4]}
 					direction='column'
 					gap={4.5}
 					border='1px solid #E7E4DD'

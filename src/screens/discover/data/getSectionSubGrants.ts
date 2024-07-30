@@ -18,14 +18,8 @@ query getSectionSubGrants {
           id: _id
           amount
         }
-        grant {
-          id: _id
-          title
-          workspace {
-            logoIpfsHash
-            supportedNetworks
-          }
-          reward {
+      }
+      reward {
             id:_id
             asset
             committed
@@ -38,8 +32,6 @@ query getSectionSubGrants {
               iconHash
             }
           }
-        }
-      }
       acceptingApplications
       workspace {
         id:_id
