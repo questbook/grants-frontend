@@ -126,8 +126,8 @@ function Milestones() {
 	}, [proposal])
 
 
-	const { fetchMore } = useQuery({
-		query: getPayoutQuery
+	const { fetchMore: fetchPayouts } = useQuery({
+		query: getPayoutQuery,
 	})
 
 	const getPayouts = useCallback(async() => {
@@ -136,25 +136,30 @@ function Milestones() {
 			return 'no-proposal'
 		}
 
-		const first = 100
-		let skip = 0
+		try {
+			const first = 20
+			let skip = 0
 
-		const data: PayoutsType = []
-		let shouldContinue = true
-		do {
+			const data: PayoutsType = []
+			let shouldContinue = true
+			do {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			const results: any = await fetchMore({ first, skip, proposalID: proposal.id })
-			if(!results?.fundTransfers || results?.fundTransfers?.length === 0) {
-				shouldContinue = false
-				break
-			}
+				const results: any = await fetchPayouts({ first, skip, proposalID: proposal.id }, true)
+				if(!results?.fundTransfers || results?.fundTransfers?.length === 0) {
+					shouldContinue = false
+					break
+				}
 
-			data.push(...results?.fundTransfers)
-			skip += first
-		} while(shouldContinue)
+				data.push(...results?.fundTransfers)
+				skip += first
+			} while(shouldContinue)
 
-		setPayouts(data)
-		return 'payouts-fetched'
+			setPayouts(data)
+			return 'payouts-fetched'
+		} catch(error) {
+			logger.error({ error }, 'Error fetching payouts')
+			return 'payouts-fetched'
+		}
 	}, [proposal])
 
 	useEffect(() => {

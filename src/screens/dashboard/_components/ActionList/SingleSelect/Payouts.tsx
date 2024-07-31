@@ -206,29 +206,35 @@ function Payouts() {
 			return 'no-proposal'
 		}
 
-		const first = 100
-		let skip = 0
+		try {
 
-		const data: PayoutsType = []
-		let shouldContinue = true
-		do {
-			logger.info({ first, skip }, 'Variables')
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			const results: any = await fetchMore({ first, skip, proposalID: proposal.id })
-			logger.info({ results }, 'Payouts intermediate results')
-			if(!results?.fundTransfers || results?.fundTransfers?.length === 0) {
-				shouldContinue = false
-				break
-			}
+			const first = 20
+			let skip = 0
 
-			data.push(...results?.fundTransfers)
-			skip += first
-		} while(shouldContinue)
+			const data: PayoutsType = []
+			let shouldContinue = true
+			do {
+				logger.info({ first, skip }, 'Variables')
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				const results: any = await fetchMore({ first, skip, proposalID: proposal.id }, true)
+				logger.info({ results }, 'Payouts intermediate results')
+				if(!results?.fundTransfers || results?.fundTransfers?.length === 0) {
+					shouldContinue = false
+					break
+				}
+
+				data.push(...results?.fundTransfers)
+				skip += first
+			} while(shouldContinue)
 
 
-		logger.info({ data }, 'Payouts data')
-		setPayouts(data)
-		return 'payouts-fetched'
+			logger.info({ data }, 'Payouts data')
+			setPayouts(data)
+			return 'payouts-fetched'
+		} catch(error) {
+			logger.error({ error }, 'Error fetching payouts')
+			return 'no-proposal'
+		}
 	}, [proposal])
 
 	useEffect(() => {

@@ -159,21 +159,29 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 			return 'no-grant-id'
 		}
 
+		try {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const result: any = await fetchFundsAllocated({ id: grantId }, true)
-		if(result?.grantApplications) {
+			const result: any = await fetchFundsAllocated({ id: grantId }, true)
+			if(result?.grantApplications) {
 
-			const totalAllocated = result?.grantApplications?.reduce((acc: number, grantApplication: { milestones: { amount: number }[] }) => {
-				return acc + grantApplication.milestones.reduce((acc: number, milestone: { amount: number }) => acc + milestone.amount, 0)
-			}, 0)
-			logger.info({ totalAllocated }, 'Funds allocated (GET FUNDS ALLOCATED)')
+				const totalAllocated = result?.grantApplications?.reduce((acc: number, grantApplication: { milestones: { amount: number }[] }) => {
+					return acc + grantApplication.milestones.reduce((acc: number, milestone: { amount: number }) => acc + milestone.amount, 0)
+				}, 0)
+				logger.info({ totalAllocated }, 'Funds allocated (GET FUNDS ALLOCATED)')
+				setFundsAllocated({
+					allocated: totalAllocated,
+					disbursed: result?.grantApplications[0]?.grant?.totalGrantFundingDisbursedUSD
+				})
+			}
+
+			return 'funds-allocated-fetched'
+		} catch(e) {
+			logger.error(e)
 			setFundsAllocated({
-				allocated: totalAllocated,
-				disbursed: result?.grantApplications[0]?.grant?.totalGrantFundingDisbursedUSD
+				allocated: 0,
+				disbursed: 0
 			})
 		}
-
-		return 'funds-allocated-fetched'
 	}, [grantId])
 
 	const handleComments = async(allComments: CommentType[]) => {
