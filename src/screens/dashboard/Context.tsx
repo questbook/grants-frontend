@@ -468,6 +468,34 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 		return proposals
 	}, [role, grantId, scwAddress, webwallet])
 
+	const refreshSpecificProposal = async(proposalId: string) => {
+		if(!grantId || typeof grantId !== 'string') {
+			return 'no-grant-id'
+		}
+
+		if(!proposalId || typeof proposalId !== 'string') {
+			return 'no-proposal-id'
+		}
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const result: any = await fetchSpecificProposal({ grantID: grantId, proposalId }, true)
+		if(result?.grantApplications) {
+			const proposal = result?.grantApplications[0]
+			// find the proposal in the proposals array and update it
+			const index = proposals.findIndex(p => p.id === proposal.id)
+			// if found update the proposal
+			if(index !== -1) {
+				setProposals([...proposals.slice(0, index), proposal, ...proposals.slice(index + 1)])
+			} else {
+				// if not found add the proposal
+				setProposals([...proposals, proposal])
+			}
+		}
+
+		return 'proposal-refreshed'
+	}
+
+
 	// const getFetchCommentsInBackground = useCallback(async() => {
 	// 	logger.info({ role, grantId, scwAddress }, 'Fetching comments (GET COMMENTS)')
 	// 	// if(!webwallet) {
@@ -756,6 +784,11 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 					refreshProposals: (refresh: boolean) => {
 						if(refresh) {
 							getProposals()
+						}
+					},
+					refreshProposal: (proposalId: string) => {
+						if(proposalId) {
+							refreshSpecificProposal(proposalId)
 						}
 					},
 					filterState,

@@ -13,7 +13,7 @@ interface Props {
 
 function useAssignReviewers({ setTransactionHash }: Props) {
 	const { grant } = useContext(GrantsProgramContext)!
-	const { selectedProposals, proposals, refreshProposals } = useContext(DashboardContext)!
+	const { selectedProposals, proposals, refreshProposal } = useContext(DashboardContext)!
 
 	const proposal = useMemo(() => {
 		return proposals.find(p => selectedProposals.has(p.id))
@@ -41,7 +41,7 @@ function useAssignReviewers({ setTransactionHash }: Props) {
 		const data = await executeMutation(assignReviewersMutation, variables)
 		// await call({ method: 'assignReviewers', args: [grant.workspace.id, proposal.id, grant.id, reviewers, active] })
 		setTransactionHash(data?.assignReviewers?.recordId)
-		await refreshProposals(true)
+		await refreshProposal(proposal.id)
 	}
 
 	return { assignReviewers }

@@ -16,7 +16,7 @@ interface Props {
 function useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash }: Props) {
 	const { webwallet, scwAddress } = useContext(WebwalletContext)!
 	const { grant } = useContext(GrantsProgramContext)!
-	const { selectedProposals, proposals, review, refreshProposals } = useContext(DashboardContext)!
+	const { selectedProposals, proposals, review, refreshProposal } = useContext(DashboardContext)!
 
 	const chainId = useMemo(() => {
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId
@@ -82,7 +82,7 @@ function useSubmitReview({ setNetworkTransactionModalStep, setTransactionHash }:
 				}
 			}
 
-			await refreshProposals(true)
+			await refreshProposal(proposal.id)
 
 		} catch(e) {
 			logger.error(e, 'useSubmitReview: (Error)')
