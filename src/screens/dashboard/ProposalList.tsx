@@ -9,7 +9,7 @@ import logger from 'src/libraries/logger'
 import SearchField from 'src/libraries/ui/SearchField'
 import { getFieldString } from 'src/libraries/utils/formatting'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/libraries/utils/validations'
-import { GrantsProgramContext } from 'src/pages/_app'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import FilterTag from 'src/screens/dashboard/_components/FilterTag'
 import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
@@ -147,7 +147,12 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 				templateColumns='repeat(2, 1fr)'
 				gap={1}>
 				{
-					(['approved', 'submitted', 'rejected', 'resubmit', 'review'] as ApplicationState[]).map(state => {
+					(
+						['approved', 'submitted', 'rejected', 'resubmit', 'review', 'pendingReviews'] as ApplicationState[]).map(state => {
+						if(role !== 'admin' && role !== 'reviewer' && state === 'pendingReviews') {
+							return null
+						}
+
 						return (
 							<GridItem
 								// colSpan={index > 1 ? 2 : 1}
@@ -206,6 +211,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 
 	const { role, grant } = useContext(GrantsProgramContext)!
 	const { proposals, selectedProposals, setSelectedProposals, filterState, setFilterState } = useContext(DashboardContext)!
+	const { scwAddress } = useContext(WebwalletContext)!
 
 	const [isFilterClicked, setIsFilterClicked] = useState<boolean>(false)
 
@@ -224,8 +230,12 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 			})
 		}
 
-		if(filterState !== undefined) {
+		if(filterState !== undefined && filterState !== 'pendingReviews') {
 			allProposals = allProposals.filter(proposal => proposal.state === filterState)
+		}
+
+		if(filterState === 'pendingReviews' && (role === 'admin' || role === 'reviewer') && scwAddress) {
+			allProposals = allProposals.filter(proposal => proposal?.pendingReviewerAddresses?.map(addr => addr.toLowerCase()).includes(scwAddress.toLowerCase()) && !proposal?.doneReviewerAddresses?.map(addr => addr.toLowerCase()).includes(scwAddress.toLowerCase()))
 		}
 
 		return allProposals
@@ -247,12 +257,13 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 
 		if(proposalId && typeof proposalId === 'string') {
 			// Scroll to the proposal
-			const proposalIndex = proposals.findIndex((_) => _.id === proposalId)
+			const proposalIndex = filteredProposals.findIndex((_) => _.id === proposalId)
 			if(proposalIndex !== -1) {
 				cardRefs[proposalIndex].current?.scrollIntoView({ behavior: 'smooth' })
 			}
 		}
-	}, [proposals, proposalId])
+	}, [proposals, proposalId, filteredProposals])
+
 
 	return buildComponent()
 }
