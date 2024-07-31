@@ -73,7 +73,7 @@ function FilterTag({ state, isSelected = true, ...props }: Props) {
 		pendingReviews: {
 			icon: (color?: string) => <Time color={color ?? 'black.100'} />,
 			title: 'Pending Review',
-			bg: jeans
+			bg: vivid
 		}
 	}
 
