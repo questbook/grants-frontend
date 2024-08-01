@@ -320,27 +320,15 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 			allProposals = allProposals.sort((a, b) => {
 				// Calculate the total score of the proposal by summing up all review scores
 				//@ts-ignore
-
 				const getTotalScore = (proposal) => {
-					const uniqueReviewerIds = new Set<string>()
 					//@ts-ignore
-					return proposal.reviews.filter((review) => {
-						if(!uniqueReviewerIds.has(review.reviewer._id)) {
-							uniqueReviewerIds.add(review.reviewer._id)
-							return true
-						}
-
-						return false
-					})
+					return proposal.reviews.filter((review, index, self) => index === self.findIndex((r) => r.reviewer?.id === review.reviewer?.id)).reduce((acc: number, review) => {
 						//@ts-ignore
-						.reduce((acc: number, review) => {
-							//@ts-ignore
-							return acc + (review?.publicReviewDataHash?.items?.reduce((acc, item) => {
-								return acc + item.rating
-							}, 0) || 0)
-						}, 0)
+						return acc + review?.publicReviewDataHash?.items?.reduce((acc, item) => {
+							return acc + item.rating
+						}, 0) || 0
+					}, 0)
 				}
-
 
 				const aTotalScore = getTotalScore(a)
 				const bTotalScore = getTotalScore(b)
