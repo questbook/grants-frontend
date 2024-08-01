@@ -137,11 +137,11 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 								options={
 									[
 										{
-											label: 'By Scores Asc',
+											label: 'By Score (Asc)',
 											value: 'asc'
 										},
 										{
-											label: 'By Scores Desc',
+											label: 'By Score (Desc)',
 											value: 'desc'
 										}
 									]
