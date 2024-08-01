@@ -56,15 +56,39 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 					{getFieldString(proposal, 'projectName')}
 				</Text>
 				{
-					process.env.NODE_ENV === 'development' && (
-						<Text
-							ml={2}
-							variant='metadata'
-							color='black.300'>
-							{`(${proposal.id}) - ${proposal.state}`}
-						</Text>
+					(role === 'admin' || role === 'reviewer') && (
+						<Flex
+							align='center'
+							w='fit-content'
+							py={1}
+							px={2}
+							mt={0}
+							ml={3}
+							mr={2}
+							borderRadius='10px'
+							border='1px solid'
+							bg='#0A84FF66'
+							borderColor='#0A84FF66'
+						>
+
+							<Text
+								variant='metadata'
+								fontWeight='500'
+								fontSize='10px'
+							>
+								{
+								  proposal?.reviews?.reduce((acc: number, review) => {
+									//@ts-ignore
+										return acc + (review?.publicReviewDataHash?.items?.reduce((acc, item) => {
+									  return acc + item.rating
+										}, 0) || 0)
+								  }, 0)
+								}
+							</Text>
+						</Flex>
 					)
 				}
+
 				<Text
 					alignSelf='flex-start'
 					ml='auto'
@@ -72,7 +96,10 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 					variant='metadata'>
 					{formatTime(proposal.updatedAtS, true)}
 				</Text>
+
+
 			</Flex>
+
 			<Flex
 				align='center'
 				mt={2}>

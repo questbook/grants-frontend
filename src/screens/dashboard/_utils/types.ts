@@ -28,6 +28,8 @@ export type DashboardContextType = {
   filterState: ApplicationState | undefined
   setFilterState: (state: ApplicationState | undefined) => void
   fundsAllocated: { allocated: number, disbursed: number }
+  sortBy: 'asc' | 'desc' | undefined
+  setSortBy: (sortBy: 'asc' | 'desc') => void
 };
 
 // export interface TokenInfo {

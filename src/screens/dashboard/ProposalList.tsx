@@ -2,6 +2,7 @@
 
 import { createRef, useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Checkbox, Flex, Grid, GridItem, Text } from '@chakra-ui/react'
+import { Select } from 'chakra-react-select'
 import { useRouter } from 'next/router'
 import { ApplicationState } from 'src/generated/graphql'
 import { Filter } from 'src/generated/icons'
@@ -15,6 +16,7 @@ import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import { disabledGrants } from 'src/screens/proposal_form/_utils/constants'
+
 
 function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boolean) => void }) {
 	const buildComponent = () => (
@@ -116,19 +118,84 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 					)
 				}
 
-				<Button
+				<Flex
 					ml='auto'
-					variant='link'
-					rightIcon={isFilterClicked ? <Flex /> : <Filter />}
-					onClick={
-						() => {
-							setIsFilterClicked(!isFilterClicked)
-						}
-					}>
-					<Text>
-						{isFilterClicked ? 'Done' : 'Filter'}
-					</Text>
-				</Button>
+					gap={2}
+				>
+					{
+						(role === 'admin' || role === 'reviewer') && (
+							<Select
+								isSearchable={false}
+								variant='unstyled'
+								useBasicStyles
+								value={
+									{
+										label: 'Sort By',
+										value: sortBy
+									}
+								}
+								options={
+									[
+										{
+											label: 'By Scores Asc',
+											value: 'asc'
+										},
+										{
+											label: 'By Scores Desc',
+											value: 'desc'
+										}
+									]
+								}
+								onChange={(item) => setSortBy(item?.value as 'asc' | 'desc')}
+								chakraStyles={
+									{
+										container: (provided) => ({
+											...provided,
+											fontSize: '12px',
+											fontWeight: '400',
+											color: 'black.100',
+											borderRadius: '2px',
+										}),
+										valueContainer: (provided) => ({
+											...provided,
+
+											fontSize: '12px',
+										}),
+										menu: (provided) => ({
+											...provided,
+											fontSize: '12px',
+											fontWeight: '400',
+											borderRadius: '2px',
+										}),
+										option: (provided) => ({
+											...provided,
+											borderRadius: '2px',
+											padding: '5px 10px',
+											fontSize: '12px',
+											fontWeight: '400',
+										}),
+
+									}
+								}
+							/>
+						)
+					}
+
+
+					<Button
+						ml='auto'
+						variant='link'
+						rightIcon={isFilterClicked ? <Flex /> : <Filter />}
+						onClick={
+							() => {
+								setIsFilterClicked(!isFilterClicked)
+							}
+						}>
+						<Text>
+							{isFilterClicked ? 'Done' : 'Filter'}
+						</Text>
+					</Button>
+				</Flex>
 			</Flex>
 
 			<Grid
@@ -221,7 +288,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 	const { proposalId } = router.query
 
 	const { role, grant } = useContext(GrantsProgramContext)!
-	const { proposals, selectedProposals, setSelectedProposals, filterState, setFilterState } = useContext(DashboardContext)!
+	const { proposals, selectedProposals, setSelectedProposals, filterState, setFilterState, sortBy, setSortBy } = useContext(DashboardContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
 
 	const [isFilterClicked, setIsFilterClicked] = useState<boolean>(false)
@@ -249,8 +316,30 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 			allProposals = allProposals.filter(proposal => proposal?.pendingReviewerAddresses?.map(addr => addr.toLowerCase()).includes(scwAddress.toLowerCase()) && !proposal?.doneReviewerAddresses?.map(addr => addr.toLowerCase()).includes(scwAddress.toLowerCase()))
 		}
 
+		if(sortBy !== undefined && (sortBy === 'asc' || sortBy === 'desc')) {
+			allProposals = allProposals.sort((a, b) => {
+				// Calculate the total score of the proposal by summing up all review scores
+				//@ts-ignore
+				const getTotalScore = (proposal) => {
+					//@ts-ignore
+					return proposal.reviews.reduce((acc: number, review) => {
+						//@ts-ignore
+						return acc + review?.publicReviewDataHash?.items?.reduce((acc, item) => {
+							return acc + item.rating
+						}, 0) || 0
+					}, 0)
+				}
+
+				const aTotalScore = getTotalScore(a)
+				const bTotalScore = getTotalScore(b)
+
+				return sortBy === 'asc' ? aTotalScore - bTotalScore : bTotalScore - aTotalScore
+			})
+		}
+
+
 		return allProposals
-	}, [proposals, searchText, filterState])
+	}, [proposals, searchText, filterState, sortBy])
 
 	const proposalCount = useMemo(() => {
 		return grant?.numberOfApplications || 0
