@@ -77,12 +77,13 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 								fontSize='10px'
 							>
 								{
-								  proposal?.reviews?.reduce((acc: number, review) => {
-									//@ts-ignore
+									proposal?.reviews?.filter((review, index, self) => index === self.findIndex((r) => r.reviewer?.id === review.reviewer?.id)
+									).reduce((acc: number, review) => {
+										//@ts-ignore
 										return acc + (review?.publicReviewDataHash?.items?.reduce((acc, item) => {
-									  return acc + item.rating
+											return acc + item.rating
 										}, 0) || 0)
-								  }, 0)
+									}, 0)
 								}
 							</Text>
 						</Flex>
