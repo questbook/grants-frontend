@@ -148,7 +148,7 @@ function Discussions() {
 										return (
 											<QuickReplyButton
 												zIndex={10}
-												id={tag.id as 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review' | 'KYC' | 'KYB' | 'HelloSign'}
+												id={tag.id as 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review' | 'KYC' | 'KYB' | 'HelloSign' | 'cancelled'}
 												key={index}
 												tag={tag}
 												isSelected={tag.id === selectedTag?.id}
@@ -606,6 +606,8 @@ function Discussions() {
 			return 'On clicking “Post” the builder will be notified to complete KYB.'
 		case 'HelloSign':
 			return 'On clicking “Post” the builder will be notified to sign the document.'
+		case 'cancelled':
+			return 'On clicking “Post” the proposal will be cancelled.'
 		default:
 			return ''
 		}
@@ -682,7 +684,11 @@ function Discussions() {
 		HelloSign: {
 			title: 'send document to',
 			bg: azure
-		}
+		},
+		cancelled: {
+			title: 'cancel / withdraw',
+			bg: carrot
+		},
 	}
 
 	return buildComponents()

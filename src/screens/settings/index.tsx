@@ -575,6 +575,16 @@ function Settings() {
 	const { updateGrantProgram, txHash } = useUpdateGrantProgram(setCurrentStepIndex)
 
 	const handleOnClickSave = async() => {
+		if(!imageChanged) {
+			refreshWorkspace(true)
+			toast({
+				position: 'top',
+				title: 'Updated successfully',
+				status: 'success',
+			})
+			return
+		}
+
 		const logoIpfsHash = imageFile !== null ? (await uploadToIPFS(imageFile.file)).hash : ''
 		const newGrantProgramData = { ...grantProgramData, logoIpfsHash }
 		logger.info('newGrantProgramData', newGrantProgramData)
