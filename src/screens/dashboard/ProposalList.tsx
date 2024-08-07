@@ -16,6 +16,7 @@ import FilterTag from 'src/screens/dashboard/_components/FilterTag'
 import Empty from 'src/screens/dashboard/_components/ProposalList/Empty'
 import ProposalCard from 'src/screens/dashboard/_components/ProposalList/ProposalCard'
 import { DashboardContext } from 'src/screens/dashboard/Context'
+import { completedProposals } from 'src/screens/grantees/_utils/constants'
 import { disabledGrants, disabledSubmissions, disabledTonGrants, subdomainProposals, subdomains } from 'src/screens/proposal_form/_utils/constants'
 
 function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boolean) => void }) {
@@ -308,7 +309,7 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 		}
 
 		if(filterState === 'completed') {
-			allProposals = allProposals.filter(proposals => proposals.milestones.filter((milestone) => parseFloat(milestone.amountPaid) >= parseFloat(milestone.amount)).length === proposals.milestones.length)
+			allProposals = allProposals.filter(proposals => proposals.milestones.filter((milestone) => parseFloat(milestone.amountPaid) >= parseFloat(milestone.amount)).length === proposals.milestones.length || completedProposals.includes(proposals.id))
 		}
 
 		if(sortBy === 'createdAtS') {

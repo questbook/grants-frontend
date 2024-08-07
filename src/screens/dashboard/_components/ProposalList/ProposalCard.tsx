@@ -9,7 +9,7 @@ import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
 import StateButton from 'src/screens/discover/_components/stateButton'
-import { inActiveProposals } from 'src/screens/grantees/_utils/constants'
+import { completedProposals, inActiveProposals } from 'src/screens/grantees/_utils/constants'
 
 type Props = {
 	proposal: ProposalType
@@ -128,7 +128,7 @@ const ProposalCard = forwardRef<Props, 'div'>((props, ref) => {
 						)
 					}
 					{
-						(proposal?.state === 'approved') && (proposal.milestones.filter((milestone) => parseFloat(milestone.amountPaid) > 0).length === proposal.milestones.length) && (
+						(proposal?.state === 'approved') && ((proposal.milestones.filter((milestone) => parseFloat(milestone.amountPaid) > 0).length === proposal.milestones.length) || completedProposals?.includes(proposal?.id)) && (
 							<StateButton
 								state='approved'
 								title='Completed'
