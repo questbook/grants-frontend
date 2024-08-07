@@ -6,3 +6,7 @@ export const inActiveProposals = [
 	'0x27b',
 	'0x1de'
 ]
+
+export const completedProposals = [
+	'0x36d',
+]
