@@ -5,10 +5,10 @@ import { useQuery } from 'src/libraries/hooks/useQuery'
 import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
-import { WebwalletContext } from 'src/pages/_app'
+import { SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
 import ProofQrModal from 'src/screens/profile/_components/ProofQrModal'
 import { generateProof } from 'src/screens/profile/hooks/generateProof'
-import { getMigrationStatusQuery } from 'src/screens/recover_proposal/data/getMigrationStatusQuery'
+import { getMigrationStatusQuery } from 'src/screens/proposal_recovery/data/getMigrationStatusQuery'
 
 function RecoverProposal() {
 
@@ -126,10 +126,20 @@ function RecoverProposal() {
 					<Button
 						mt={8}
 						variant='primaryLarge'
-						isLoading={!scwAddress || isLoading}
+						isLoading={loadingScw || isLoading}
 						loadingText={isLoading ? 'Migrating proposal' : 'Loading your wallet'}
 						isDisabled={isDisabled}
-						onClick={onCreateClick}>
+						onClick={
+							() => {
+								if(!webwallet) {
+									setSignInTitle('builderProfile')
+									setSignIn(true)
+									return
+								} else {
+									onCreateClick()
+								}
+							}
+						}>
 						<Text color='white'>
 							Migrate to new wallet
 						</Text>
@@ -139,7 +149,9 @@ function RecoverProposal() {
 		)
 	}
 
-	const { scwAddress, webwallet } = useContext(WebwalletContext)!
+	const { setSignInTitle } = useContext(SignInTitleContext)!
+	const { setSignIn } = useContext(SignInContext)!
+	const { scwAddress, webwallet, loadingScw } = useContext(WebwalletContext)!
 	const toast = useCustomToast()
 
 	const [url, setURL] = useState<string>('')
