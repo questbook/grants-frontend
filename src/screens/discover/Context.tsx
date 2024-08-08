@@ -252,15 +252,21 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 				telegram: string
 				username: string
 				imageURL: string
+				address: string
 			}
 		}
 		logger.info({ builderProfile }, 'Builder Profile')
 		if(builderProfile?.getProfile) {
+			if(scwAddress?.toLowerCase() === builderProfile?.getProfile?.address?.toLowerCase()) {
+				localStorage.setItem('userAvatar', builderProfile?.getProfile?.imageURL)
+			}
+
 			setBuilderProfile({
 				_id: builderProfile.getProfile._id ?? '',
 				telegram: builderProfile.getProfile.telegram ?? '',
 				username: builderProfile.getProfile.username ?? '',
 				imageURL: builderProfile.getProfile.imageURL ?? '',
+				address: builderProfile?.getProfile?.address ?? '',
 			})
 		}
 

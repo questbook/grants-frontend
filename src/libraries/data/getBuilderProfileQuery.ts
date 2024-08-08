@@ -7,5 +7,6 @@ export const getBuilderProfileQuery = gql`query getBuilderInfo($wallet: String!)
       telegram
       username
       imageURL
+      address
     }
 }`

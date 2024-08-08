@@ -193,7 +193,7 @@ function ProfileBanner({
 				  name='avatar'
 				  border='4px solid white'
 				  src={imageURL === '' ? getAvatar(false, name) : getUrlForIPFSHash(imageURL)}
-				  bg='pink.400'
+				  background='transparent'
 					/>
 					<Box
 						ml={4}

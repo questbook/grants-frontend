@@ -74,11 +74,16 @@ const ProfileProvider = ({ children }: {children: ReactNode}) => {
 		logger.info(results, 'Get Builder')
 		if(results?.getProfile) {
 			setBuilder(results.getProfile)
+			if(scwAddress?.toLowerCase() === address?.toString()?.toLowerCase()) {
+				localStorage.setItem('userAvatar', results?.getProfile?.imageURL)
+			}
+
 			setBuilderProfile({
 				_id: results.getProfile._id ?? '',
 				telegram: results.getProfile.telegram ?? '',
 				username: results.getProfile.username ?? '',
 				imageURL: results.getProfile.imageURL ?? '',
+				address: results.getProfile.address ?? '',
 			})
 		}
 
@@ -132,7 +137,7 @@ const ProfileProvider = ({ children }: {children: ReactNode}) => {
 			return () => clearInterval(interval)
 		}
 
-	}, [scwAddress, isQrModalOpen, providerName])
+	}, [scwAddress, isQrModalOpen, providerName, address])
 
 	useEffect(() => {
 		getBuilderProposals().then(r => logger.info(r, 'Get Builder Proposal'))

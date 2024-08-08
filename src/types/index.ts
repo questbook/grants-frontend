@@ -226,4 +226,5 @@ export type BuilderProfile = {
   telegram: string
   username: string
   imageURL: string
+  address: string
 }
