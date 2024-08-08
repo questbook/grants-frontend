@@ -48,11 +48,14 @@ function Discover() {
 				<Text
 					mt='auto'
 					color='white'
+					px={0.5}
+					textAlign='center'
 					variant='heading1'>
 					gm Builder, Welcome to Questbook!
 				</Text>
 				<Button
 					mt={12}
+					w={['90%', 'auto']}
 					variant='primaryLarge'
 					onClick={onCreateOrViewProfileClick}
 					isLoading={loadingScw}
