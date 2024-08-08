@@ -98,7 +98,7 @@ function RecoverProposal() {
 						<FlushedInput
 							w='100%'
 							flexProps={{ w: '100%', mt: 5 }}
-							placeholder='your wallet address'
+							placeholder='Please Sign in to Questbook Account (to fetch your wallet address)'
 							borderBottom='1px solid #E7E4DD'
 							value={scwAddress}
 							textAlign='left'

@@ -5,6 +5,7 @@ import { createBuilderProfile } from 'src/generated/mutation/createBuilderProfil
 import { updateBuilderProfile } from 'src/generated/mutation/updateBuilderProfile'
 import { executeMutation } from 'src/graphql/apollo'
 import logger from 'src/libraries/logger'
+import { AmplitudeContext } from 'src/libraries/utils/amplitude'
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/libraries/utils/ipfs'
 import { WebwalletContext } from 'src/pages/_app'
 import { ProfileContext } from 'src/screens/profile/Context'
@@ -206,9 +207,13 @@ function ProfileModal() {
 										}
 										const response = builder?._id ? await executeMutation(updateBuilderProfile, variables) : await executeMutation(createBuilderProfile, variables)
 										if(response) {
+											if(!builder?._id) {
+												await trackAmplitudeEvent('new builder profile created', { username: formData.name, address: scwAddress })
+											}
+
 											await toast({
 												position: 'top',
-												title: builder?._id ? 'Profile updated successfully' : 'Profile submitted successfully',
+												title: builder?._id ? 'Profile updated successfully' : 'Profile created successfully',
 												status: 'info',
 												duration: 5000
 											})
@@ -282,7 +287,7 @@ function ProfileModal() {
 	const { scwAddress } = useContext(WebwalletContext)!
 	const { buildersProfileModal, setBuildersProfileModal } = useContext(WebwalletContext)!
 	const { setUsername, isUsernameAvailable } = useUsernameCheckAvailability()
-
+	const { trackAmplitudeEvent } = useContext(AmplitudeContext)!
 	logger.info('builder', builder)
 
 
