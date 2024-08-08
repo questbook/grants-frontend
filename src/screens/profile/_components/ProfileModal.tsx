@@ -208,7 +208,7 @@ function ProfileModal() {
 										const response = builder?._id ? await executeMutation(updateBuilderProfile, variables) : await executeMutation(createBuilderProfile, variables)
 										if(response) {
 											if(!builder?._id) {
-												await trackAmplitudeEvent('new builder profile created', { username: formData.name, address: scwAddress })
+												await trackAmplitudeEvent('new_builder_profile', { username: formData.name, address: scwAddress })
 											}
 
 											await toast({
