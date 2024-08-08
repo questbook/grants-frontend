@@ -29,10 +29,44 @@ import { Roles } from 'src/types'
 function Discover() {
 	const router = useRouter()
 	const { inviteInfo } = useContext(ApiClientsContext)!
-	const { webwallet, loadingScw } = useContext(WebwalletContext)!
+	const { webwallet, loadingScw, scwAddress, builderProfile } = useContext(WebwalletContext)!
 	const { setSignInTitle } = useContext(SignInTitleContext)!
 	const buildComponent = () => {
-		return inviteInfo ? inviteView() : normalView
+		return isBuilder ? builderView() : inviteInfo ? inviteView() : normalView
+	}
+
+
+	const builderView = () => {
+		return (
+			<Flex
+				w='100%'
+				h='100vh'
+				direction='column'
+				justify='center'
+				align='center'
+				bg='black.100'>
+				<Text
+					mt='auto'
+					color='white'
+					variant='heading1'>
+					gm Builder, Welcome to Questbook!
+				</Text>
+				<Button
+					mt={12}
+					variant='primaryLarge'
+					onClick={onCreateOrViewProfileClick}
+					isLoading={loadingScw}
+					loadingText='Loading...'
+				>
+					<Text color='white'>
+						{scwAddress && builderProfile?._id ? 'View Profile' : 'Create your Builder’s Profile Now!'}
+					</Text>
+				</Button>
+				<Image
+					mt='auto'
+					src='/Browser Mock.svg' />
+			</Flex>
+		)
 	}
 
 	const inviteView = () => {
@@ -150,7 +184,7 @@ function Discover() {
 
 	// const discoverRef = useRef<HTMLDivElement>(null)
 
-	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, recentProposals, isLoading, stats } = useContext(DiscoverContext)!
+	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, recentProposals, isLoading, stats, isBuilder } = useContext(DiscoverContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString } = useContext(DAOSearchContext)!
 	const { setSignIn } = useContext(SignInContext)!
@@ -541,6 +575,17 @@ function Discover() {
 	useEffect(() => {
 		logger.info('section update', unsavedSectionGrants)
 	}, [unsavedSectionGrants])
+
+
+	const onCreateOrViewProfileClick = () => {
+		if(!webwallet) {
+			setSignInTitle('builderProfile')
+			setSignIn(true)
+			return
+		}
+
+		router.push({ pathname: `/profile/${scwAddress}` })
+	}
 
 	const onGetStartedClick = () => {
 		if(!webwallet) {

@@ -173,8 +173,8 @@ export const SignInContext = createContext<{
 		} | null>(null)
 
 export const SignInTitleContext = createContext<{
-	signInTitle: 'admin' | 'reviewer' | 'default' | 'postComment' | 'submitProposal'
-	setSignInTitle: (signInTitle: 'admin' | 'reviewer' | 'default' | 'postComment' | 'submitProposal') => void
+	signInTitle: 'admin' | 'reviewer' | 'default' | 'postComment' | 'submitProposal' | 'builderProfile'
+	setSignInTitle: (signInTitle: 'admin' | 'reviewer' | 'default' | 'postComment' | 'submitProposal' | 'builderProfile') => void
 		} | null>(null)
 
 export const WebwalletContext = createContext<{
@@ -240,7 +240,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const [createingProposalStep, setCreatingProposalStep] = useState<number>(1)
 	const [biconomyLoading, setBiconomyLoading] = useState<{ [chainId: string]: boolean }>({})
 	const [signInMethod, setSignInMethod] = useState<'newWallet' | 'existingWallet' | 'choosing'>('choosing')
-	const [signInTitle, setSignInTitle] = useState<'admin' | 'reviewer' | 'default' | 'postComment' | 'submitProposal'>('default')
+	const [signInTitle, setSignInTitle] = useState<'admin' | 'reviewer' | 'default' | 'postComment' | 'submitProposal' | 'builderProfile'>('default')
 	const [signIn, setSignIn] = useState<boolean>(false)
 	// store the chainId that was most recently asked to be init
 	const mostRecentInitChainId = useRef<string>()

@@ -27,6 +27,7 @@ export type DiscoverContextType = {
     stats: StatsType
     buildersModal: boolean
     setBuildersModal: (value: boolean) => void
+    isBuilder: boolean
 }
 
 export type FundTransfer = {

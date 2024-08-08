@@ -18,7 +18,7 @@ function ProfileModal() {
 				size='xl'
 				onClose={
 					() => {
-						setBuildersProfileModal(false)
+						builder?._id ? setBuildersProfileModal(false) : null
 					}
 				}
 				closeOnEsc
@@ -36,6 +36,7 @@ function ProfileModal() {
 					>
 						{builder?._id ? 'Edit your Builder Profile' : 'Set up your Builder Profile'}
 						<ModalCloseButton
+							isDisabled={!builder?._id}
 							mt={1}
 						/>
 					</ModalHeader>
@@ -162,7 +163,7 @@ function ProfileModal() {
 								</Text>
 
 								<Textarea
-									placeholder='short intro about yourself'
+									placeholder='Short bio about yourself so that others can know you better'
 									maxLength={300}
 									mt={2}
 									value={formData.bio}

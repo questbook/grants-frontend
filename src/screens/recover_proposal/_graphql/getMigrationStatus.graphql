@@ -1,0 +1,5 @@
+query migrationStatus($id: MongoID!){
+  migration(_id: $id){
+	  	status
+  }
+}

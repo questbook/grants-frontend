@@ -7,6 +7,7 @@ import logger from 'src/libraries/logger'
 import { AmplitudeContext } from 'src/libraries/utils/amplitude'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { ApiClientsContext, WebwalletContext } from 'src/pages/_app'
+import { extractBuilderInfo } from 'src/screens/discover/_utils'
 import { DiscoverContextType, GrantProgramType, GrantType, RecentProposals, SectionGrants, StatsType, WorkspaceMemberType } from 'src/screens/discover/_utils/types'
 import { getAllGrants } from 'src/screens/discover/data/getAllGrants'
 import { getAllGrantsForMembers } from 'src/screens/discover/data/getAllGrantsForMembers'
@@ -24,7 +25,7 @@ const PAGE_SIZE = 25
 const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	const provider = () => {
 		return (
-			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram, search, setSearch, sectionGrants, recentProposals, isLoading, safeBalances, stats, buildersModal, setBuildersModal }}>
+			<DiscoverContext.Provider value={{ grantsForYou, grantsForAll, grantProgram, search, setSearch, sectionGrants, recentProposals, isLoading, safeBalances, stats, buildersModal, setBuildersModal, isBuilder }}>
 				{children}
 			</DiscoverContext.Provider>
 		)
@@ -45,6 +46,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 		funds: 0,
 	})
 
+	const [isBuilder, setIsBuilder] = useState<boolean>(false)
 	const [buildersModal, setBuildersModal] = useState<boolean>(false)
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 	const [search, setSearch] = useState<string>('')
@@ -473,6 +475,12 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 			fetchDetails()
 		}
 	}, [inviteInfo])
+
+	useEffect(() => {
+		const data = extractBuilderInfo()
+		setIsBuilder(data)
+	}, [])
+
 
 	useEffect(() => {
 		// if the window contains builderModal = true, then we will open the modal

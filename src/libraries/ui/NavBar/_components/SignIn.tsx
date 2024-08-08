@@ -38,6 +38,10 @@ function SignIn({ inited, loading, importWalletFromGD, exportWalletToGD, isOpen,
 			return 'To submit a proposal, sign in with wallet'
 		}
 
+		if(signInTitle === 'builderProfile') {
+			return 'To create a builder profile, sign in with wallet'
+		}
+
 		return 'To run a grant program, sign in with wallet'
 	}
 
