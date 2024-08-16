@@ -236,7 +236,7 @@ function RecoverProposal() {
 		}
 
 		return false
-	}, [url])
+	}, [url, error, isLoading, scwAddress])
 
 	const onCreateClick = async() => {
 		setIsLoading(true)
