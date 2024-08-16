@@ -377,7 +377,7 @@ function Discover() {
 							<Text
 								fontWeight='600'
 								color='black.100'
-								fontSize={isMobile ? '14px' : '16px'}
+								fontSize={['14px', '16px']}
 								mx={2}
 							>
 								{bannerText[bannerIndex].text}
@@ -413,13 +413,13 @@ function Discover() {
 						<Flex
 							w='100%'
 							my={4}
-							mt={isMobile ? '' : '12'}
+							mt={['0', '12']}
 							justify='space-between'
-							direction={isMobile ? 'column' : 'row'}>
+							direction={['column', 'row']}>
 
 							<Flex
 								direction='column'
-								px={isMobile ? 0 : 4}
+								px={['0', '4']}
 								w='100%'
 							>
 
@@ -605,13 +605,13 @@ function Discover() {
 							<Flex
 								w='100%'
 								my={4}
-								mt={isMobile ? '' : '12'}
+								mt={['0', '12']}
 								justify='space-between'
-								direction={isMobile ? 'column' : 'row'}>
+								direction={['column', 'row']}>
 
 								<Flex
 									direction='column'
-									px={isMobile ? 0 : 4}
+									px={['0', '4']}
 									w='100%'>
 									<Box
 										ref={reclaimRef}
@@ -646,7 +646,7 @@ function Discover() {
 														my={6}
 														key={index}
 														w='100%'
-														gap={isMobile ? '0' : '46px'}
+														gap={['0', '46px']}
 													>
 														<Flex
 															flexGrow={1}
@@ -772,13 +772,13 @@ function Discover() {
 							<Flex
 								w='100%'
 								my={4}
-								mt={isMobile ? '' : '12'}
+								mt={['0', '12']}
 								justify='space-between'
-								direction={isMobile ? 'column' : 'row'}>
+								direction={['column', 'row']}>
 
 								<Flex
 									direction='column'
-									px={isMobile ? 0 : 4}
+									px={['0', '4']}
 									w='100%'
 								>
 
@@ -970,13 +970,13 @@ function Discover() {
 							<Flex
 								w='100%'
 								my={4}
-								mt={isMobile ? '' : '12'}
+								mt={['0', '12']}
 								justify='space-between'
-								direction={isMobile ? 'column' : 'row'}>
+								direction={['column', 'row']}>
 
 								<Flex
 									direction='column'
-									px={isMobile ? 0 : 4}
+									px={['0', '4']}
 									w='100%'>
 									<Box
 										id='#granteeList'
@@ -1017,7 +1017,7 @@ function Discover() {
 														my={6}
 														key={index}
 														w='100%'
-														gap={isMobile ? '0' : '46px'}
+														gap={['0', '46px']}
 													>
 														<Flex
 															flexGrow={1}

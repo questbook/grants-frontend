@@ -34,11 +34,11 @@ function SubSectionBanner({
             flexDirection='column'
             bgColor='transparent'
             zIndex={99}
-            gap='8px'
+            gap={['2px', '8px']}
         >
 		<Text
                 fontWeight='700'
-                fontSize='24px'
+                fontSize={['16px', '20px']}
                 lineHeight='31.2px'
                 color='black'>
 			{data}

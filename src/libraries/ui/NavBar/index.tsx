@@ -177,9 +177,9 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 
 				<Spacer />
 				{
-					!isMobile[0] &&
 					(router.pathname === '/') && (
 						<Flex
+							display={['none', 'flex']}
 							gap={4}
 							align='center'
 							mx={4}
@@ -200,43 +200,34 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 								cursor='pointer'
 								onClick={
 									() => {
-										const element = document.getElementById('#granteeList')
-										if(element) {
-											element.scrollIntoView({ behavior: 'smooth' })
-										}
+										router.push('/grantees')
 									}
 								}
 							>
 								Grantee List
 							</Text>
+							<Button
+								variant='solid'
+								fontWeight='500'
+								bgColor='#77AC06'
+								color='white'
+								ml='auto'
+								marginRight={2}
+								borderRadius='8px'
+								_hover={
+									{
+										bgColor: '#699804',
+									}
+								}
+								leftIcon={<Add />}
+								onClick={
+									() => {
+										router.push('/request_proposal')
+									}
+								} >
+								Start a grant program
+							</Button>
 						</Flex>
-					)
-				}
-				{
-					isQbAdmin && window?.innerWidth > 600 &&
-					(router.pathname === '/') && (
-
-						<Button
-							variant='solid'
-							fontWeight='500'
-							bgColor='#77AC06'
-							color='white'
-							ml='auto'
-							borderRadius='8px'
-							_hover={
-								{
-									bgColor: '#699804',
-									boxShadow: '0px 1px 2px 0px #161616',
-								}
-							}
-							leftIcon={<Add />}
-							onClick={
-								() => {
-									router.push('/create_subgrant')
-								}
-							} >
-							Add new program
-						</Button>
 					)
 				}
 				<AccountDetails
@@ -534,7 +525,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 
 	const { grant, role, isLoading } = useContext(GrantsProgramContext)!
 	const { dashboardStep, setDashboardStep, createingProposalStep, setCreatingProposalStep, glyph, setGlyph } = useContext(WebwalletContext)!
-	const { isQbAdmin } = useContext(QBAdminsContext)!
+	const { } = useContext(QBAdminsContext)!
 	const { signIn, setSignIn } = useContext(SignInContext)!
 	// const { searchString, setSearchString } = useContext(DAOSearchContext)!
 	const router = useRouter()
