@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
+import { createContext, ReactNode, useEffect, useState } from 'react'
 import { useQuery } from 'src/libraries/hooks/useQuery'
 import logger from 'src/libraries/logger'
-import { WebwalletContext } from 'src/pages/_app'
 import { GranteeContextType, RecentProposals, SectionGrants } from 'src/screens/grantees/_utils/types'
 import { getSectionGrantsQuery } from 'src/screens/grantees/data/getSectionGrants'
 
@@ -18,8 +17,6 @@ const GranteeProvider = ({ children }: {children: ReactNode}) => {
 			</GranteeContext.Provider>
 		)
 	}
-
-	const { scwAddress } = useContext(WebwalletContext)!
 
 	const [sectionGrants, setSectionGrants] = useState<SectionGrants>()
 	const [recentProposals, setRecentProposals] = useState<RecentProposals>()
@@ -94,7 +91,7 @@ const GranteeProvider = ({ children }: {children: ReactNode}) => {
 
 	useEffect(() => {
 		getSectionGrants().then(r => logger.info(r, 'Get Section Grants'))
-	}, [scwAddress])
+	}, [])
 
 
 	return provider()
