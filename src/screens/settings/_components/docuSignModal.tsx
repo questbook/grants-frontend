@@ -8,9 +8,9 @@ import {
 	Text,
 	useToast,
 } from '@chakra-ui/react'
-import { logger } from 'ethers'
 import { updateDocuSign } from 'src/generated/mutation/updateDocuSign'
 import { executeMutation } from 'src/graphql/apollo'
+import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import { SettingsFormContext } from 'src/screens/settings/Context'
 

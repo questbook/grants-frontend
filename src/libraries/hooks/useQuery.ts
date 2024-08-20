@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { DocumentNode } from '@apollo/client'
-import { logger } from 'ethers'
 import client from 'src/graphql/apollo'
+import logger from 'src/libraries/logger'
 
 type UseQueryOptions = {
     query: DocumentNode

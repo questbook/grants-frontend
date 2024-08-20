@@ -1,6 +1,6 @@
 /* eslint-disable indent */
 import { Flex, Image, Text, useMediaQuery } from '@chakra-ui/react'
-import { logger } from 'ethers'
+import logger from 'src/libraries/logger'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 // import { useRouter } from 'next/router'
 import { useTokenPrice } from 'src/screens/dashboard/_hooks/useTokenPrice'
