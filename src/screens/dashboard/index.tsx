@@ -113,7 +113,11 @@ function Dashboard(props: DynamicData) {
 							(role === 'admin' || role === 'reviewer') && (subdomainProposals?.flatMap((s) => s.grants).includes(grant?.id as string)) && (
 								<Banner
 									message='Please visit the subdomain for KYC/KYB and funds disbursal'
-									link={`https://axelar.questbook.app/dashboard/?grantId=${grant?.id}&chainId=10&role=admin`}
+									link={
+										`https://${subdomainProposals?.filter(
+											(s) => s.grants?.includes(grant?.id as string)
+										)?.map((s => s.name))}.questbook.app/dashboard/?grantId=${grant?.id}&chainId=10&role=admin`
+									}
 									linkText='[View Subdomain]'
 								/>
 							)
