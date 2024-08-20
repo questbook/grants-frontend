@@ -45,7 +45,6 @@ function HeroBannerBox({
 	}) => (
 		<Flex
 			mt={2}
-			overflowX='hidden'
 		>
 			<Flex
 				w='100%'
@@ -55,13 +54,13 @@ function HeroBannerBox({
 					bgColor='white'
 					src={image ? getUrlForIPFSHash(image) : getAvatar(false, image ?? title) }
 					boxSize='16px' />
-				<Flex>
+				<Flex
+				>
 					<Text
 						ml={2}
-						fontSize={['12px', '16px']}
+						fontSize={['14px', '14px']}
 						variant='metadata'
 						textColor='white'
-						whiteSpace='nowrap'
 					>
 						{title}
 					</Text>

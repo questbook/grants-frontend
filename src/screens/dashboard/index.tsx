@@ -20,7 +20,7 @@ import FundBuilderModal from 'src/screens/dashboard/FundBuilderModal'
 import FundingMethod from 'src/screens/dashboard/FundingMethod'
 import ProposalList from 'src/screens/dashboard/ProposalList'
 import SendAnUpdateModal from 'src/screens/dashboard/SendAnUpdateModal'
-import { disabledGrants } from 'src/screens/proposal_form/_utils/constants'
+import { disabledGrants, subdomainProposals } from 'src/screens/proposal_form/_utils/constants'
 
 function Dashboard(props: DynamicData) {
 	const { title, description } = props
@@ -65,6 +65,19 @@ function Dashboard(props: DynamicData) {
 								/>
 							)
 						}
+						{
+							(role === 'admin' || role === 'reviewer') && (subdomainProposals?.flatMap((s) => s.grants).includes(grant?.id as string)) && (
+								<Banner
+									message='Please visit the subdomain for KYC/KYB and funds disbursal'
+									link={
+										`https://${subdomainProposals?.filter(
+											(s) => s.grants?.includes(grant?.id as string)
+										)?.map((s => s.name))}.questbook.app/dashboard/?grantId=${grant?.id}&chainId=10&role=admin`
+									}
+									linkText='[View Subdomain]'
+								/>
+							)
+						}
 						<Flex
 							h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
 							overflowY='auto'>
@@ -93,6 +106,15 @@ function Dashboard(props: DynamicData) {
 							!grant?.acceptingApplications || disabledGrants?.includes(grant?.id as string) && (
 								<Banner
 									message='This program is not accepting applications at the moment, please contact domain allocators for more details'
+								/>
+							)
+						}
+						{
+							(role === 'admin' || role === 'reviewer') && (subdomainProposals?.flatMap((s) => s.grants).includes(grant?.id as string)) && (
+								<Banner
+									message='Please visit the subdomain for KYC/KYB and funds disbursal'
+									link={`https://axelar.questbook.app/dashboard/?grantId=${grant?.id}&chainId=10&role=admin`}
+									linkText='[View Subdomain]'
 								/>
 							)
 						}
