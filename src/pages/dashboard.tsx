@@ -13,6 +13,16 @@ export default _
 export async function getServerSideProps(context: GetServerSidePropsContext) {
 	const { grantId, chainId: _chainId, proposalId } = context.query
 
+	// if the chainId is not provided, redirect to the same page with chainId=10 (optimism chain) as default to avoid parsing errors
+	if(_chainId === undefined) {
+		return {
+			redirect: {
+				destination: `${context.resolvedUrl}&chainId=10`,
+				permanent: true,
+			},
+		}
+	}
+
 	if(typeof grantId !== 'string' || typeof _chainId !== 'string' || (proposalId !== undefined && typeof proposalId !== 'string')) {
 		return {
 			parseError: true
