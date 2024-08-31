@@ -7,6 +7,7 @@ export const getSpecificProposalQuery = gql`query getProposals($grantID: String!
       applicantId
       applicantPublicKey
       state
+      synapsId
       fields {
         id:_id
         values {
@@ -23,6 +24,7 @@ export const getSpecificProposalQuery = gql`query getProposals($grantID: String!
           }
         }
       }
+      helloSignId
       pii {
         id:_id
         manager {

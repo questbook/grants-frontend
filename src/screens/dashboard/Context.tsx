@@ -949,11 +949,13 @@ const ModalProvider = ({ children }: { children: ReactNode }) => {
 	const [isSendAnUpdateModalOpen, setIsSendAnUpdateModalOpen] = useState<boolean>(false)
 	const [isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen] = useState<boolean>(false)
 	const [isFundingMethodModalOpen, setIsFundingMethodModalOpen] = useState<boolean>(false)
+	const [isHelloSignModalOpen, setIsHelloSignModalOpen] = useState<boolean>(false)
 	return (
-		<ModalContext.Provider value={{ isSendAnUpdateModalOpen, setIsSendAnUpdateModalOpen, isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen, isFundingMethodModalOpen, setIsFundingMethodModalOpen }}>
+		<ModalContext.Provider value={{ isSendAnUpdateModalOpen, setIsSendAnUpdateModalOpen, isLinkYourMultisigModalOpen, setIsLinkYourMultisigModalOpen, isFundingMethodModalOpen, setIsFundingMethodModalOpen, isHelloSignModalOpen, setIsHelloSignModalOpen }}>
 			{children}
 		</ModalContext.Provider>
 	)
 }
+
 
 export { DashboardContext, DashboardProvider, FundBuilderContext, FundBuilderProvider, ModalContext, ModalProvider }

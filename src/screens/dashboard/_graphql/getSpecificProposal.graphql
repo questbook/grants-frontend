@@ -6,6 +6,7 @@ query getProposals($grantID: String!, $proposalId: String!) {
     applicantId
     applicantPublicKey
     state
+    synapsId
     fields {
       id:_id
       values {
@@ -22,6 +23,7 @@ query getProposals($grantID: String!, $proposalId: String!) {
         }
       }
     }
+    helloSignId
     pii {
       id:_id
       manager {

@@ -1,9 +1,10 @@
+import { IoMdDocument } from 'react-icons/io'
 import { Button, ButtonProps, Flex, Text, TextProps, useToken } from '@chakra-ui/react'
-import { Accept, Chat, Reject, Resubmit, Time } from 'src/generated/icons'
+import { Accept, AddUser, Chat, Reject, Resubmit, Time } from 'src/generated/icons'
 import { TagType } from 'src/screens/dashboard/_utils/types'
 
 type Props = {
-	id: 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review' | 'cancelled'
+	id: 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review' | 'KYC' | 'KYB' | 'HelloSign' | 'cancelled'
     tag: TagType | undefined
     isSelected: boolean
     index: number
@@ -22,7 +23,7 @@ function QuickReplyButton({ tag, index, textProps, ...props }: Props) {
 				variant='outline'
 				justifyContent='start'
 				py={1}
-				px={2}
+				px={3}
 				borderRadius='18px'
 				maxH='36px'
 				leftIcon={ config[tag?.id as keyof typeof config].icon }
@@ -67,8 +68,23 @@ function QuickReplyButton({ tag, index, textProps, ...props }: Props) {
 		},
 		review: {
 			icon: <Time />,
-			title: 'Under Review',
+			title: 'Review',
 			bg: jeans
+		},
+		KYC: {
+			icon: <AddUser />,
+			title: 'Send KYC link',
+			bg: jeans
+		},
+		KYB: {
+			icon: <AddUser />,
+			title: 'Send KYB link',
+			bg: vivid
+		},
+		HelloSign: {
+			icon: <IoMdDocument />,
+			title: 'Send Agreement',
+			bg: azure
 		},
 		cancelled: {
 			icon: <Reject />,
