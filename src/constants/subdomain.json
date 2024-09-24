@@ -2,13 +2,13 @@
     "name": "Compound Grants",
     "id":"Compound",
     "grants_name": "Compound Grants",
-    "logo":"QmTkdKP8gFTmrM5UJYAtEahqtU7GQyDVaN9UHnNoEY6M3M",
+    "logo":"QmaTvGYbS3GtDdQmYKvnm5gkUX1aSf2ZVgrD8q7u1YG36P",
     "info":"The Compound grants, administered via DDA by Questbook and 3 domain allocators, went live on the 30th of November with a grants budget of $1M spread across four domains. The Questbook Compound Grants program is useful for anyone developing in domain specific projects on top of Compound, ranging from New Dapps and Ideas, Multi-chain/Cross-chain, Dev Tooling and Security Tooling.",
     "DA": [
         {
-            "title": "shido",
-            "twitter": "https://twitter.com/ShidoNetwork",
-            "image": "QmNrd1rxQx5BZzWFWY5ZSaFPhNXyijUSRCTLMVveHpK8LF"
+            "title": "Compound Grants",
+            "twitter": "https://twitter.com/Compound Grants",
+            "image": "QmaTvGYbS3GtDdQmYKvnm5gkUX1aSf2ZVgrD8q7u1YG36P"
         }
     ]
 }

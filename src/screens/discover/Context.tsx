@@ -36,7 +36,12 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	const [grantProgram, setGrantProgram] = useState<GrantProgramType>()
 	const [sectionGrants, setSectionGrants] = useState<SectionGrants>()
 	const [recentProposals, setRecentProposals] = useState<RecentProposals>()
-	const [grantsAllocated, setGrantsAllocated] = useState<number>(0)
+	const [grantsAllocated, setGrantsAllocated] = useState<DiscoverContextType['grantsAllocated']>({
+		total: 0,
+		compound1: 0,
+		compound2: 0,
+		individualGrants: []
+	})
 
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 	const [search, setSearch] = useState<string>('')
@@ -242,12 +247,59 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 			return total
 		}
 
+		function sumArbitrum(data: any, type: string): number {
+			let total = 0
+
+			for(const grant of data.grants) {
+				if(grant.title.includes('Compound') &&
+				type === '1.0' ? !grant.title.includes('Compound :') : grant.title.includes('Compound :')) {
+					for(const app of grant.applications) {
+						for(const milestone of app.milestones) {
+							total += milestone.amount
+						}
+					}
+				}
+			}
+
+			return total
+		}
+
+		function sumAllocationForIndividualGrants(data: any): DiscoverContextType['grantsAllocated']['individualGrants'] {
+			const grants = []
+			for(const grant of data.grants) {
+				let total = 0
+				let totalPaid = 0
+				for(const app of grant.applications) {
+					for(const milestone of app.milestones) {
+						total += milestone.amount
+						totalPaid += milestone.amountPaid
+					}
+				}
+
+				grants.push({
+					id: grant.id,
+					amount: total,
+					amountPaid: totalPaid
+				})
+			}
+
+			return grants
+		}
+
+
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const funds: any = await getFunds()
 		logger.info({ funds }, 'funds')
 		const total = sumAmounts(funds.sections[0])
-		logger.info({ total }, 'totalFundsAllocated')
-		setGrantsAllocated(total)
+		const compound1 = sumArbitrum(funds.sections[0], '1.0')
+		const compound2 = sumArbitrum(funds.sections[0], '2.0')
+		const individualGrants = sumAllocationForIndividualGrants(funds.sections[0])
+		setGrantsAllocated({
+			total,
+			compound1,
+			compound2,
+			individualGrants
+		})
 		return total
 	}
 
