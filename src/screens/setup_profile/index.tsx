@@ -171,7 +171,7 @@ function SetupProfile() {
 		return inviteInfo?.workspaceId
 	}, [inviteInfo])
 
-	const { setupProfile, isBiconomyInitialised } = useSetupProfile(
+	const { setupProfile } = useSetupProfile(
 		{
 			workspaceId,
 			memberId: `${workspaceId}.${scwAddress}`,
@@ -182,8 +182,8 @@ function SetupProfile() {
 		})
 
 	const isDisabled = useMemo(() => {
-		return name === '' || email === '' || !isBiconomyInitialised
-	}, [name, email, isBiconomyInitialised])
+		return name === '' || email === ''
+	}, [name, email])
 
 	const onCreateClick = async() => {
 		if(inviteInfo?.role === undefined || !signature) {

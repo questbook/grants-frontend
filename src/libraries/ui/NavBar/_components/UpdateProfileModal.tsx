@@ -198,7 +198,7 @@ function UpdateProfileModal({ isOpen, onClose }: Props) {
 		}
 	}, [transactionHash])
 
-	const { setupProfile, isBiconomyInitialised } = useSetupProfile(
+	const { setupProfile } = useSetupProfile(
 		{
 			workspaceId: grant?.workspace?.id,
 			memberId: member?.id,
@@ -209,8 +209,8 @@ function UpdateProfileModal({ isOpen, onClose }: Props) {
 		})
 
 	const isDisabled = useMemo(() => {
-		return name === '' || email.data === '' || !isBiconomyInitialised
-	}, [name, email, isBiconomyInitialised])
+		return name === '' || email.data === ''
+	}, [name, email])
 
 	const onClick = async() => {
 		if(isDisabled || networkTransactionModalStep !== undefined) {
