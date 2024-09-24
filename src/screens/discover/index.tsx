@@ -428,7 +428,7 @@ function Discover() {
 											fontSize='24px'
 											lineHeight='31.2px'
 										>
-											Domains
+											Compound Grants Program (2024-25)
 										</Text>
 
 									</Flex>
@@ -436,7 +436,7 @@ function Discover() {
 										(sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
 											const sectionName = Object.keys(section)[0]
 
-											const grants = section[sectionName].grants.filter((grant) => (grant.title.toLowerCase().includes(filterGrantName.trim().toLowerCase()) && (grant.title?.includes('Compound :')))).map(grant => ({ ...grant, role: 'community' as Roles }))
+											const grants = section[sectionName].grants.filter((grant) => (grant.title.toLowerCase().includes(filterGrantName.trim().toLowerCase()) && (grant.title?.includes('Domain')))).map(grant => ({ ...grant, role: 'community' as Roles }))
 											return (
 												<Flex
 													my={6}
@@ -511,7 +511,7 @@ function Discover() {
 																			textAlign='match-parent'
 																			color='#7E7E8F'
 																		>
-																			The Compound grants, administered via DDA by Questbook and 3 domain allocators, went live on the 30th of November with a grants budget of $1M spread across four domains. The Questbook Compound Grants program is useful for anyone developing in domain specific projects on top of Compound, ranging from New Dapps and Ideas, Multi-chain/Cross-chain, Dev Tooling and Security Tooling.
+																			The Compound Grants Program empowers innovative projects by providing funding to builders, researchers, and developers within the Compound ecosystem. It aims to support cutting-edge dapps, security tooling, cross-chain initiatives, and DAO operations, ensuring a transparent, decentralized, and efficient allocation of resources. Join us in driving forward the future of decentralized finance!
 																		</Text>
 																		<Text
 																			fontWeight='600'
@@ -625,7 +625,7 @@ function Discover() {
 												fontSize='24px'
 												lineHeight='31.2px'
 											>
-												Domains
+												Compound Grants Program (2023-24)
 											</Text>
 
 
@@ -635,7 +635,7 @@ function Discover() {
 											(sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
 												const sectionName = Object.keys(section)[0]
 
-												const grants = section[sectionName].grants.filter((grant) => (grant.title.toLowerCase().includes(filterGrantName.trim().toLowerCase()) && (!grant.title?.includes('Compound :')))).map(grant => ({ ...grant, role: 'community' as Roles }))
+												const grants = section[sectionName].grants.filter((grant) => (grant.title.toLowerCase().includes(filterGrantName.trim().toLowerCase()) && (!grant.title?.includes('Domain')))).map(grant => ({ ...grant, role: 'community' as Roles }))
 												return (
 													<Flex
 														my={6}
@@ -711,7 +711,7 @@ function Discover() {
 																			textAlign='match-parent'
 																			color='#7E7E8F'
 																		>
-																			The Compound grants, administered via DDA by Questbook and 4 domain allocators, went live on the 30th of November with a grants budget of $1.375M spread across four domains. The Questbook Compound Grants program is useful for anyone developing in domain specific projects on top of Compound, ranging from New Dapps and Ideas, Multi-chain/Cross-chain, DAO Expenses and Security Tooling.
+																			The Compound grants, administered via DDA by Questbook and 4 domain allocators, went live on the 30th of November with a grants budget of $1M spread across four domains. The Questbook Compound Grants program is useful for anyone developing in domain specific projects on top of Compound, ranging from New Dapps and Ideas, Multi-chain/Cross-chain, DAO Expenses and Security Tooling.
 																		</Text>
 																		<Text
 																			fontWeight='600'
