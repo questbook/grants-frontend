@@ -4,6 +4,7 @@ import logger from 'src/libraries/logger'
 import { getSupportedChainIdFromSupportedNetwork } from 'src/libraries/utils/validations'
 import RFPCard from 'src/screens/discover/_components/RFPCard'
 import { GrantType } from 'src/screens/discover/_utils/types'
+import { disabledGrants } from 'src/screens/proposal_form/_utils/constants'
 
 type RFPGridProps = {
 	type: 'all' | 'personal'
@@ -31,27 +32,48 @@ function RFPGrid({
 			gap={8}
 		>
 			{
-				grants?.filter((g) => g.title.toLowerCase().includes(filter?.toLowerCase() || '')).map((grant, index: number) => {
-					const workspaceChainId = getSupportedChainIdFromSupportedNetwork(grant.workspace.supportedNetworks[0])
+				grants?.
+					sort((a, b) => {
+						if(a.acceptingApplications && !b.acceptingApplications) {
+							return -1
+						}
 
-					const role = type === 'all' ? undefined : grant.role
-					logger.info('role', role, grant)
-					return (
-						<GridItem
+						if(!a.acceptingApplications && b.acceptingApplications) {
+							return 1
+						}
+
+						if(disabledGrants?.includes(a.id) && !disabledGrants?.includes(b.id)) {
+							return 1
+						}
+
+						if(!disabledGrants?.includes(a.id) && disabledGrants?.includes(b.id)) {
+							return -1
+						}
+
+						return 0
+					})
+					?.filter((g) => g.title.toLowerCase().includes(filter?.toLowerCase() || ''))
+					.map((grant, index: number) => {
+						const workspaceChainId = getSupportedChainIdFromSupportedNetwork(grant.workspace.supportedNetworks[0])
+
+						const role = type === 'all' ? undefined : grant.role
+						logger.info('role', role, grant)
+						return (
+							<GridItem
 						 key={index}>
-							<RFPCard
-								isVisible={unsavedDomainVisibleState?.[workspaceChainId!]?.[grant.workspace.id] ?? grant.workspace.isVisible}
-								onVisibilityUpdate={(visibleState) => onDaoVisibilityUpdate?.(grant.workspace.id, workspaceChainId!, visibleState)}
-								onSectionGrantsUpdate={() => onSectionGrantsUpdate?.(workspaceChainId!, grant.id)}
-								chainId={workspaceChainId}
-								grant={grant}
-								role={role}
-								changedVisibilityState={changedVisibilityState}
-							/>
+								<RFPCard
+									isVisible={unsavedDomainVisibleState?.[workspaceChainId!]?.[grant.workspace.id] ?? grant.workspace.isVisible}
+									onVisibilityUpdate={(visibleState) => onDaoVisibilityUpdate?.(grant.workspace.id, workspaceChainId!, visibleState)}
+									onSectionGrantsUpdate={() => onSectionGrantsUpdate?.(workspaceChainId!, grant.id)}
+									chainId={workspaceChainId}
+									grant={grant}
+									role={role}
+									changedVisibilityState={changedVisibilityState}
+								/>
 
-						</GridItem>
-					)
-				})
+							</GridItem>
+						)
+					})
 			}
 		</Grid>
 	)
