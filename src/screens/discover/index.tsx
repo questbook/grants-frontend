@@ -25,7 +25,6 @@ import GranteeListRFPGrid from 'src/screens/discover/_components/granteeList/rfp
 import RFPGrid from 'src/screens/discover/_components/rfpGrid'
 import { DiscoverContext, DiscoverProvider } from 'src/screens/discover/Context'
 import HeroBanner from 'src/screens/discover/HeroBanner'
-import SubSectionBanner from 'src/screens/discover/SubSectionBanner'
 import { Roles } from 'src/types'
 
 function Discover() {
@@ -450,18 +449,6 @@ function Discover() {
 														gap='46px'
 														flexDirection='column'
 													>
-														{
-															!isMobile && (
-																<SubSectionBanner
-																	totalProposals={grants?.reduce((acc, grant) => acc + grant.numberOfApplications, 0)}
-																	totalProposalsAccepted={grants?.reduce((acc, grant) => acc + grant.numberOfApplicationsSelected, 0)}
-																	fundsAllocated={grantsAllocated?.compound2 ?? 0}
-																	fundsPaidOut={grants?.reduce((acc, grant) => acc + parseFloat(grant?.totalGrantFundingDisbursedUSD), 0)}
-																	safeBalances={grants?.map(grant => safeBalances[`${grant.workspace.safe?.chainId}-${grant.workspace.safe?.address}`] ?? 0).reduce((a, b) => a + b, 0) ?? 0}
-																	availableBalance={(Math.max(0, (grants?.map(grant => safeBalances[`${grant.workspace.safe?.chainId}-${grant.workspace.safe?.address}`] ?? 0).reduce((a, b) => a + b, 0) ?? 0) - Math.abs((grants?.reduce((acc, grant) => acc + parseFloat(grant?.totalGrantFundingDisbursedUSD), 0) ?? 0) - (grantsAllocated?.compound2 ?? 0))))}
-																/>
-															)
-														}
 														<RFPGrid
 															type='all'
 															grants={grants}
@@ -650,18 +637,6 @@ function Discover() {
 															gap='46px'
 															flexDirection='column'
 														>
-															{
-																!isMobile && (
-																	<SubSectionBanner
-																		totalProposals={grants?.reduce((acc, grant) => acc + grant.numberOfApplications, 0)}
-																		totalProposalsAccepted={grants?.reduce((acc, grant) => acc + grant.numberOfApplicationsSelected, 0)}
-																		fundsAllocated={grantsAllocated?.compound1 ?? 0}
-																		fundsPaidOut={grants?.reduce((acc, grant) => acc + parseFloat(grant?.totalGrantFundingDisbursedUSD), 0)}
-																		safeBalances={grants?.map(grant => safeBalances[`${grant.workspace.safe?.chainId}-${grant.workspace.safe?.address}`] ?? 0).reduce((a, b) => a + b, 0) ?? 0}
-																		availableBalance={(Math.max(0, (grants?.map(grant => safeBalances[`${grant.workspace.safe?.chainId}-${grant.workspace.safe?.address}`] ?? 0).reduce((a, b) => a + b, 0) ?? 0) - Math.abs((grants?.reduce((acc, grant) => acc + parseFloat(grant?.totalGrantFundingDisbursedUSD), 0) ?? 0) - (grantsAllocated?.compound1 ?? 0))))}
-																	/>
-																)
-															}
 															<RFPGrid
 																type='all'
 																grants={grants}
