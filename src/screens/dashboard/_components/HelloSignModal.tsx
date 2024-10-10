@@ -266,7 +266,7 @@ function HelloSignModal({
 									return
 								} else {
 									const ret = await addComment(
-										`Successfully sent document to ${signers.filter((signer) => signer.role === 'Grantee')[0].name} at ${signers.filter((signer) => signer.role === 'Grantee')[0].email}`,
+										`Successfully sent document to ${signers.filter((signer) => (signer.role === 'Grantee' || signer.role === 'Founder' || signer?.role === 'Company/Individual'))[0].name} at ${signers.filter((signer) => signer.role === 'Grantee' || signer.role === 'Founder' || signer?.role === 'Company/Individual')[0].email}`,
 										true,
 										'helloSign',
 									)
@@ -278,7 +278,7 @@ function HelloSignModal({
 									}
 
 									await toast({
-										title: `Successfully sent document to ${signers.filter((signer) => signer.role === 'Grantee')[0].name} at ${signers.filter((signer) => signer.role === 'Grantee')[0].email}`,
+										title: `Successfully sent document to ${signers.filter((signer) => (signer.role === 'Grantee' || signer.role === 'Founder' || signer?.role === 'Company/Individual'))[0].name} at ${signers.filter((signer) => signer.role === 'Grantee' || signer.role === 'Founder' || signer?.role === 'Company/Individual')[0].email}`,
 										status: 'success',
 										duration: 5000,
 									})
@@ -384,9 +384,9 @@ function HelloSignModal({
 						name: string
 						}) => ({
 						role: signer.name,
-						name: signer?.name === 'Grantee' ? getFieldString(decryptedProposal, 'applicantName') as string : signer?.name === 'Subhash' ? 'Subhash Karri' : '',
-						email: signer?.name === 'Grantee' ? getFieldString(decryptedProposal, 'applicantEmail') as string : signer?.name === 'Subhash' ? 'Subhash@creatoros.co' : '',
-						isHidden: signer?.name !== 'Grantee',
+						name: signer?.name === 'Founder' || signer?.name === 'Company/Individual' ? getFieldString(decryptedProposal, 'applicantName') as string : signer?.name === 'Subhash' ? 'Subhash Karri' : '',
+						email: signer?.name === 'Founder' || signer?.name === 'Company/Individual' ? getFieldString(decryptedProposal, 'applicantEmail') as string : signer?.name === 'Subhash' ? 'Subhash@creatoros.co' : '',
+						isHidden: (signer?.name !== 'Founder' && signer?.name !== 'Company/Individual' && signer?.name !== 'Subhash')
 					})))
 
 
@@ -400,7 +400,11 @@ function HelloSignModal({
 	useEffect(() => {
 		if(proposal?.helloSignId === null && grant?.workspace?.docuSign && proposal?.synapsId !== null) {
 			getHelloSignTemplates().then(async(data) => {
-				setDocuSign(data)
+				// filter and select only _arbitrum template
+				const filter = await data?.filter((doc: {
+                title: string
+                }) => doc.title.includes('Compound Grants Program'))
+				setDocuSign(filter)
 			})
 		}
 	}, [proposal])
