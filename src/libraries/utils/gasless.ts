@@ -28,7 +28,7 @@ export const jsonRpcProviders: { [key: string]: ethers.providers.JsonRpcProvider
 {
 	'5': new ethers.providers.JsonRpcProvider('https://polygon-mainnet.g.alchemy.com/v2/zcWxjKH0Sif5PLp-b-vxP_M1JYF1aoPG'),
 	'137': new ethers.providers.JsonRpcProvider('https://polygon-mainnet.g.alchemy.com/v2/zcWxjKH0Sif5PLp-b-vxP_M1JYF1aoPG'),
-	'10': new ethers.providers.JsonRpcProvider('https://opt-mainnet.g.alchemy.com/v2/8iYVobmm24k85ejRIS0fd8sBzSVbQtZv'),
+	'10': new ethers.providers.JsonRpcProvider('https://opt-mainnet.g.alchemy.com/v2/YKJ826SHB7c7rV5dDzcubjX8LzYRVdvn'),
 	'42220': new ethers.providers.JsonRpcProvider('https://forno.celo.org/'),
 }
 
