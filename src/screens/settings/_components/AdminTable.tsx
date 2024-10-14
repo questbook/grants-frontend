@@ -31,8 +31,8 @@ function AdminTable() {
 
 
 			const csvDownload = tableData?.length > 0 ? tableData?.filter((row: {
-        state: string
-    }) => {
+				state: string
+			}) => {
 				if(filter === 'all') {
 					return true
 				} else if(filter === 'submitted') {
@@ -57,8 +57,6 @@ function AdminTable() {
 					'Proposal Name': row.name[0].values[0].value,
 					'Proposal Status': row.state,
 					'KYC/KYB Status': row?.state === 'approved' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? 'Verified' : row?.synapsStatus === 'rejected' ? 'Rejected' : 'Pending' : '',
-					'KYC/KYB Country': row?.synapsStatus !== '' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? row?.synapsCountry : 'N/A' : 'N/A',
-					'KYC/KYB Name': row?.synapsStatus !== '' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? row?.synapsName : 'N/A' : 'N/A',
 					'Synaps Type': row?.synapsStatus !== '' ? row?.synapsType : '',
 					'Grant Agreement Status': row?.state === 'approved' ? (row?.helloSignStatus === 'verified' || row?.helloSignStatus === 'completed') ? 'Verified' : row?.helloSignStatus === 'rejected' ? 'Rejected' : 'Pending' : '',
 					'Notes': row?.notes,
@@ -77,8 +75,8 @@ function AdminTable() {
 
 
 		const rowData = tableData?.filter((row: {
-        state: string
-    }) => {
+			state: string
+		}) => {
 			return filter === 'all' ? true : row?.state === filter
 		})?.map((row, index) => {
 			return (
@@ -163,75 +161,50 @@ function AdminTable() {
 
 						}
 					</Td>
-					<Td
-						w='5%'
-					>
-						{
-							row.synapsStatus?.length > 0 ? (
-								<StateButton
-									state={(row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed') && row?.synapsCountry?.length > 0 ? 'submitted' : row?.synapsStatus === 'rejected' ? 'rejected' : 'submitted'}
-									title={row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed' ? row?.synapsCountry ?? '-' : 'N/A'}
-								/>
-							)
-								: row?.state === 'approved' ? (
-									<StateButton
-										state='submitted'
-										title='Pending'
-									/>
-								) : '-'
-
-						}
-					</Td>
-					<Td
-						w='5%'
-					>
-						{
-							row.synapsStatus?.length > 0 ? (
-								<StateButton
-									state={(row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed') && row?.synapsName?.length > 0 ? 'submitted' : row?.synapsStatus === 'rejected' ? 'rejected' : 'submitted'}
-									title={row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed' ? row?.synapsName ?? '-' : 'N/A'}
-								/>
-							)
-								: row?.state === 'approved' ? (
-									<StateButton
-										state='submitted'
-										title='Pending'
-									/>
-								) : '-'
-
-						}
-					</Td>
 
 					<Td
 						w='5%'
 						cursor='pointer'
-						// onClick={
-						// 	() => {
-						// 		if(row?.state === 'approved' && row.helloSignStatus !== 'completed' && !listAllGrants) {
-						// 			setShowKYCStatusUpdateModal({
-						// 				...showKYCStatusUpdateModal,
-						// 				isOpen: true,
-						// 				grantId: row.id,
-						// 				type: 'hellosign',
-						// 				docuSignId: row.helloSignId ?? '0x',
-						// 				editId: (!!(!row.helloSignId && (row.helloSignStatus !== 'completed' || !row.helloSignStatus)))
-						// 			})
-						// 		}
-						// 	}
-						// }
+						gap={4}
+					// onClick={
+					// 	() => {
+					// 		if(row?.state === 'approved' && row.helloSignStatus !== 'completed' && !listAllGrants) {
+					// 			setShowKYCStatusUpdateModal({
+					// 				...showKYCStatusUpdateModal,
+					// 				isOpen: true,
+					// 				grantId: row.id,
+					// 				type: 'hellosign',
+					// 				docuSignId: row.helloSignId ?? '0x',
+					// 				editId: (!!(!row.helloSignId && (row.helloSignStatus !== 'completed' || !row.helloSignStatus)))
+					// 			})
+					// 		}
+					// 	}
+					// }
 					>
 						{
-							row.helloSignStatus?.length > 0 ? (
-								<StateButton
-									state={row?.helloSignStatus === 'verified' || row?.helloSignStatus === 'completed' ? 'approved' : row?.helloSignStatus === 'rejected' ? 'rejected' : 'submitted'}
-									title={row?.helloSignStatus === 'verified' || row?.helloSignStatus === 'completed' ? 'Verified' : row?.helloSignStatus === 'rejected' ? 'Rejected' : 'Pending'}
-								/>
-							) : row?.state === 'approved' ? (
-								<StateButton
-									state='submitted'
-									title='Pending'
-								/>
-							) : '-'
+							row.helloSignStatus?.length > 0 ?
+								row?.helloSignId && (row?.helloSignStatus !== 'completed' && row?.helloSignStatus !== 'rejected') ?
+									(
+										<Text
+											fontSize='sm'
+											color='blue.500'
+											mt={2}
+											onClick={() => window.open(`https://app.hellosign.com/home/manage?guid=${row?.helloSignId}`)}
+										>
+											View Agreement (Signature Pending)
+										</Text>
+									) :
+									(
+										<StateButton
+											state={row?.helloSignStatus === 'verified' || row?.helloSignStatus === 'completed' ? 'approved' : row?.helloSignStatus === 'rejected' ? 'rejected' : 'submitted'}
+											title={row?.helloSignStatus === 'verified' || row?.helloSignStatus === 'completed' ? 'Verified' : row?.helloSignStatus === 'rejected' ? 'Rejected' : 'Pending'}
+										/>
+									) :
+								row?.state === 'approved' ? (
+									<StateButton
+										state='submitted'
+										title='Pending' />
+								) : '-'
 						}
 					</Td>
 					<Td>
@@ -240,22 +213,22 @@ function AdminTable() {
 							size='sm'
 							value={
 								filteredMilestones?.find((milestone: {
-                                    id: string
-                                    value: string
-                                    //@ts-ignore
-                                }) => milestone?.id === row?.id)?.value || row?.milestones[0]?.id
+									id: string
+									value: string
+									//@ts-ignore
+								}) => milestone?.id === row?.id)?.value || row?.milestones[0]?.id
 							}
 							onChange={
 								(e) => {
 									const check = filteredMilestones?.find((milestone: {
-                                        id: string
-                                        value: string
-                                    }) => milestone?.id === row?.id)
+										id: string
+										value: string
+									}) => milestone?.id === row?.id)
 									if(check) {
 										const newFilteredMilestones = filteredMilestones?.map((milestone: {
-                                         id: string
-                                         value: string
-                                        }) => {
+											id: string
+											value: string
+										}) => {
 											if(milestone?.id === row?.id) {
 												return {
 													...milestone,
@@ -303,22 +276,22 @@ function AdminTable() {
 						{/* {row?.milestones[0] && */}
 						{
 							filteredMilestones?.find((milestone: {
-                            id: string
-                            value: string
-                        }) => milestone?.id === row?.id) ? (
-	                        <StateButton
+								id: string
+								value: string
+							}) => milestone?.id === row?.id) ? (
+								 <StateButton
 										key={index}
 										state={
 											row?.fundTransfer && row?.fundTransfer?.find((transfer) => transfer.milestone.id === filteredMilestones?.find((milestone: {
-                                id: string
-                                value: string
-                            }) => milestone?.id === row?.id)?.value)?.status === 'executed' ? 'approved' : 'submitted'
+											id: string
+											value: string
+										}) => milestone?.id === row?.id)?.value)?.status === 'executed' ? 'approved' : 'submitted'
 										}
 										title={
 											row?.fundTransfer && row?.fundTransfer?.find((transfer) => transfer.milestone.id === filteredMilestones?.find((milestone: {
-                                id: string
-                                value: string
-                            }) => milestone?.id === row?.id)?.value)?.status === 'executed' ? 'Executed' : 'Pending'
+											id: string
+											value: string
+										}) => milestone?.id === row?.id)?.value)?.status === 'executed' ? 'Executed' : 'Pending'
 										}
 									/>
 								) : (
@@ -367,7 +340,7 @@ function AdminTable() {
 		})
 
 		return (
-			 <Flex
+			<Flex
 				direction='column'
 				p='4'
 				w='100%'
@@ -437,7 +410,7 @@ function AdminTable() {
 				<TableContainer >
 					<Table
 						variant='simple'
-						size={listAllGrants ? 'lg' : 'sm'}>
+						size={listAllGrants ? 'md' : 'sm'}>
 						<Thead>
 							<Tr>
 								{
@@ -476,28 +449,28 @@ function AdminTable() {
 					docuSignId={showKYCStatusUpdateModal.docuSignId}
 					editId={showKYCStatusUpdateModal.editId}
 				/>
-			 </Flex>
+			</Flex>
 		)
 
 	}
 
 	const [showKYCStatusUpdateModal, setShowKYCStatusUpdateModal] = useState<{
-        type: 'kyc' | 'hellosign'
-        isOpen: boolean
-        grantId: string
+		type: 'kyc' | 'hellosign'
+		isOpen: boolean
+		grantId: string
 		synapsId: string
 		synapsType: 'KYC' | 'KYB'
 		docuSignId: string
 		editId: boolean
-    }>({
-    	type: 'kyc',
-    	isOpen: false,
-    	grantId: '',
-    	synapsId: '',
-    	synapsType: 'KYC',
-    	docuSignId: '',
-    	editId: false
-    })
+	}>({
+		type: 'kyc',
+		isOpen: false,
+		grantId: '',
+		synapsId: '',
+		synapsType: 'KYC',
+		docuSignId: '',
+		editId: false
+	})
 	const [filter, setFilter] = useState<'all' | 'submitted' | 'approved' | 'rejected'>('all')
 	const [filteredMilestones, setFilteredMilestones] = useState([{
 		id: '',
@@ -506,7 +479,7 @@ function AdminTable() {
 	const [tableData, setTableData] = useState<adminTable>([])
 	const { adminTable, workspace, listAllGrants, setListAllGrants, allGrantsAdminTable } = useContext(SettingsFormContext)!
 	const { grant } = useContext(GrantsProgramContext)!
-	const TableHeader = listAllGrants ? ['No', 'Grant Title', 'Proposal Name', 'Proposal Status', 'KYC/KYB Status', 'KYC/KYB Country', 'KYC/KYB Name', 'Grant Agreement Status', 'Milestone', 'Funding Status' ] : ['No', 'Proposal Name', 'Proposal Status', 'KYC/KYB Status', 'KYC/KYB Country', 'KYC/KYB Name', 'Grant Agreement Status', 'Milestone', 'Funding Status', 'Notes']
+	const TableHeader = listAllGrants ? ['No', 'Grant Title', 'Proposal Name', 'Proposal Status', 'KYC/KYB Status', 'Grant Agreement Status', 'Milestone', 'Funding Status'] : ['No', 'Proposal Name', 'Proposal Status', 'KYC/KYB Status', 'Grant Agreement Status', 'Milestone', 'Funding Status', 'Notes']
 
 	useEffect(() => {
 		setTableData(listAllGrants ? allGrantsAdminTable : adminTable)
