@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import { CSVLink } from 'react-csv'
+import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { Button, Flex, Select, Text, Textarea } from '@chakra-ui/react'
 import {
 	Switch,
@@ -185,14 +186,28 @@ function AdminTable() {
 							row.helloSignStatus?.length > 0 ?
 								row?.helloSignId && (row?.helloSignStatus !== 'completed' && row?.helloSignStatus !== 'rejected') ?
 									(
-										<Text
-											fontSize='sm'
-											color='blue.500'
-											mt={2}
-											onClick={() => window.open(`https://app.hellosign.com/home/manage?guid=${row?.helloSignId}`)}
+										<Button
+											size='sm'
+											colorScheme='blue'
+											variant='outline'
+											leftIcon={<ExternalLinkIcon />}
+											onClick={
+												() => {
+													const popupWindow = window.open(
+														`https://app.hellosign.com/sign/${row?.helloSignId}`,
+														'HelloSign',
+														'width=800,height=600,resizable=yes,scrollbars=yes,status=yes'
+													)
+													if(popupWindow) {
+														popupWindow.focus()
+													} else {
+														window.open(`https://app.hellosign.com/sign/${row?.helloSignId}`, '_blank')
+													}
+												}
+											}
 										>
-											View Agreement (Signature Pending)
-										</Text>
+											View Agreement
+										</Button>
 									) :
 									(
 										<StateButton
