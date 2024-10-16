@@ -11,10 +11,10 @@ import {
 	Text,
 	useToast,
 } from '@chakra-ui/react'
-import { logger } from 'ethers'
 import { defaultChainId } from 'src/constants/chains'
 import { sendDocuSign } from 'src/generated/mutation/sendDocuSign'
 import { executeMutation } from 'src/graphql/apollo'
+import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 import {
 	getFieldString,

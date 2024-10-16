@@ -174,6 +174,13 @@ function Discover() {
 
 	const [imageFile, setImageFile] = useState<{ file: File | null, hash?: string }>({ file: null })
 
+	const [randomBanner, setRandomBanner] = useState<{ logo: string, text: string } | null>(null)
+
+	useEffect(() => {
+		const bannerIndex = Math.floor(Math.random() * bannerText.length)
+		setRandomBanner(bannerText[bannerIndex])
+	}, [])
+
 	const onDaoVisibilityUpdate = (daoId: string, chainId: SupportedChainId, visibleState: boolean) => {
 		// check if any changes have been made for the chain id passed
 		if(unsavedDomainState[chainId]) {
@@ -248,20 +255,8 @@ function Discover() {
 			'text': 'Alchemix'
 		},
 		{
-			'logo': 'QmcZQwYXLgk9yam6RYafYNLYd52X8UggbsQAr6WdaYUtyb',
-			'text': 'Elastos'
-		},
-		{
-			'logo': 'QmYvzshiSC6DSpYAWDWv3WbVvm3CxtnqEtHg4JhFPProTx',
-			'text': 'iExec'
-		},
-		{
 			'logo': 'QmWX8As9og6mLaiPhCaR3NqkinXMDymMaqf43qyVSE5hp8',
 			'text': 'Reclaim Protocol'
-		},
-		{
-			'logo': 'QmWsnbRQV8vYCSkrVU8uvgQeSnkiD9MLZv2kmuKDUXh2VC',
-			'text': 'Solana Ecosystem'
 		},
 		{
 			'logo': 'QmTh5y94Hywn61bJQmZe7iFoPe8DsmHEHACCvatFrWyeLd',
@@ -341,55 +336,55 @@ function Discover() {
 		</Flex>
 	)
 	const normalView = useMemo(() => {
-		const bannerIndex = Math.floor(Math.random() * bannerText.length)
 		return (
 			<>
 				<Flex
 					direction='column'
 					w='100%'
 				>
-					<Box
-						bgColor='#B6F72B'
-						padding={[5, 5]}
-						justifyContent='center'
-						alignItems='center'
-						maxWidth='100%'
-						overscroll='auto'
-						maxHeight='400px'
-
-					>
-						<Flex
-							justifyContent='center'
-							alignItems='center'
-							cursor='pointer'
-							onClick={
-								() => {
-									window.open(`https://questbook.app/?grantId=${bannerText[bannerIndex].text}`, '_blank')
-								}
-							}
-						>
-
-							<Image
-								src={getUrlForIPFSHash(bannerText[bannerIndex].logo)}
-								boxSize='20px'
-							/>
-
-							<Text
-								fontWeight='600'
-								color='black.100'
-								fontSize={isMobile ? '14px' : '16px'}
-								mx={2}
+					{
+						randomBanner && (
+							<Box
+								bgColor='#B6F72B'
+								padding={[5, 5]}
+								justifyContent='center'
+								alignItems='center'
+								maxWidth='100%'
+								overscroll='auto'
+								maxHeight='400px'
 							>
-								{bannerText[bannerIndex].text}
-								{' '}
-								grants are also available on Questbook, check them now
-							</Text>
-							<ArrowRight
-								color='black.100'
-								boxSize='24px' />
-						</Flex>
-
-					</Box>
+								<Flex
+									justifyContent='center'
+									alignItems='center'
+									cursor='pointer'
+									onClick={
+										() => {
+											window.open(`https://questbook.app/?grantId=${randomBanner.text}`, '_blank')
+										}
+									}
+								>
+									<Image
+										src={getUrlForIPFSHash(randomBanner.logo)}
+										boxSize='20px'
+									/>
+									<Text
+										fontWeight='600'
+										color='black.100'
+										fontSize={['14px', '16px']}
+										mx={2}
+									>
+										{randomBanner.text}
+										{' '}
+										grants are also available on Questbook, check them now
+									</Text>
+									<ArrowRight
+										color='black.100'
+										boxSize='24px'
+									/>
+								</Flex>
+							</Box>
+						)
+					}
 					<HeroBanner
 						grants={(sectionGrants && sectionGrants.length > 0 ? sectionGrants : []) as []}
 						safeBalances={Object.values(safeBalances).reduce((a, b) => a + b, 0) ?? 0}
@@ -407,13 +402,13 @@ function Discover() {
 						<Flex
 							w='100%'
 							my={4}
-							mt={isMobile ? '' : '12'}
+							mt={['0', '12']}
 							justify='space-between'
 							direction={isMobile ? 'column' : 'row'}>
 
 							<Flex
 								direction='column'
-								px={isMobile ? 0 : 4}
+								px={['0', '4']}
 								w='100%'
 							>
 
@@ -449,7 +444,7 @@ function Discover() {
 													key={index}
 													w='100%'
 													gap='46px'
-													flexDirection={isMobile ? 'column' : 'row'}
+													flexDirection={['column', 'row']}
 												>
 
 													<Flex flexGrow={1}>
@@ -467,7 +462,7 @@ function Discover() {
 														(
 															<Flex
 																direction='column'
-																w={isMobile ? 'auto' : '408px'}
+																w={['auto', '408px']}
 																h='auto'
 																gap={5}
 
@@ -594,9 +589,16 @@ function Discover() {
 								<Flex
 									gap='24px'
 									overflowX='auto'
-									style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-									p={0}
-									justifyContent='flex-start'>
+									style={
+{
+										scrollbarWidth: 'none',
+										msOverflowStyle: 'none',
+									}
+}
+									p={4}
+									justifyContent='flex-start'
+									flexWrap='nowrap'
+									mb={4}>
 
 									{
 										bannerText.map((banner, index) => (
@@ -606,11 +608,16 @@ function Discover() {
 												justifyContent='center'
 												alignItems='center'
 												gap='16px'
-												borderRadius='8px'
-												border='1px solid #EFEEEB'
 												background='#FFF'
-												padding='8px 32px'
+												padding='12px 24px'
 												cursor='pointer'
+												transition='all 0.2s'
+												_hover={
+													{
+														// small transition like in the design
+														transform: 'scale(1.02)',
+													}
+												}
 												onClick={
 													() => {
 														window.open(`https://questbook.app/?grantId=${banner.text}`, '_blank')
@@ -620,15 +627,15 @@ function Discover() {
 												<Image
 													src={getUrlForIPFSHash(banner.logo)}
 													alt={banner.text}
-													width='20px'
-													height='20px'
+													width='24px'
+													height='24px'
 												/>
 												<Text
 													fontSize='16px'
-													fontWeight='700'
+													fontWeight='600'
 													lineHeight='normal'
 													color='#07070C'
-													width={isMobile ? '100%' : '100%'}
+													whiteSpace='nowrap'
 												>
 													{banner.text}
 												</Text>
@@ -746,7 +753,7 @@ function Discover() {
 				</Tooltip> */}
 			</>
 		)
-	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName, isMobile, safeBalances])
+	}, [randomBanner, isMobile, grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName])
 
 	useEffect(() => {
 		if(!inviteInfo) {

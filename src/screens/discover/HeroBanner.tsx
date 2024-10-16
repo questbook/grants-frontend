@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import { Flex, Image, Text, useMediaQuery } from '@chakra-ui/react'
+import { Flex, Image, Text } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 // import { useRouter } from 'next/router'
@@ -111,57 +111,56 @@ function HeroBanner({
 					flexGrow={1}
 				>
 					<Flex
-						flexDirection='row'
-						textColor='white'
-						position='relative'
-						width='full'>
+						alignItems='center'
+						mb={6}
+					>
 						<Image
-							justifyContent='center'
-							h={isMobile ? '50px' : '100px'}
-							w={isMobile ? '50px' : '100px'}
-	  						src={getUrlForIPFSHash('Qmd23bt7TM68CYB3qiTQMhgDBAu8nFYsHyReYy5f3an3Gm')} />
+							h={['50px', '80px']}
+							w={['50px', '80px']}
+							mr={4}
+							src={getUrlForIPFSHash('Qmd23bt7TM68CYB3qiTQMhgDBAu8nFYsHyReYy5f3an3Gm')}
+						/>
 						<Text
 							fontWeight='500'
-							fontSize={isMobile ? '32px' : '64px'}
-							lineHeight='48px'
-							padding={
-								isMobile ? [1, 4] :
-									[10, 5]
-							}
-							color='black'>
+							fontSize={['28px', '64px']}
+							lineHeight={['34px', '56px']}
+							color='black'
+						>
 							Axelar Grants
 						</Text>
 					</Flex>
 
 					<Flex
-						mt={5}
-						gap={isMobile ? '24px' : 5}
-						mb={4}
 						flexWrap='wrap'
-						justifyContent='flex-start'>
+						justifyContent='flex-start'
+						gap={6}
+					>
 						<TitleCards
 							data={totalProposals() || 0}
-							title='Proposals' />
+							title='Proposals'
+						/>
 						<TitleCards
 							data={totalProposalsAccepted() || 0}
-							title='Accepted' />
+							title='Accepted'
+						/>
 						<TitleCards
 							data={formatNumber(grantsAllocated * tokenPriceInUSD)}
-							title='Funds Allocated' />
+							title='Funds Allocated'
+						/>
 						<TitleCards
 							data={totalProposalsPaidOut() || 0}
-							title='Funds Paid Out' />
+							title='Funds Paid Out'
+						/>
 						<TitleCards
 							data={formatNumber(safeBalances) || formatNumber(0)}
-							title='left in mutlisig' />
-
+							title='Left in Multisig'
+						/>
 					</Flex>
 				</Flex>
 			</Flex>
 		</Flex>
 
 	)
-	const isMobile = useMediaQuery(['(max-width:600px)'])[0]
 
 	return buildComponent()
 }

@@ -1,5 +1,5 @@
 import { ApolloClient, DocumentNode, InMemoryCache } from '@apollo/client'
-import { logger } from 'ethers'
+import logger from 'src/libraries/logger'
 
 
 export const ENDPOINT_CLIENT = 'https://api-grants.questbook.app/graphql'

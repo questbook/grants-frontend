@@ -10,8 +10,6 @@ import logger from 'src/libraries/logger'
 import { getAvatar } from 'src/libraries/utils'
 import { nFormatter, titleCase } from 'src/libraries/utils/formatting'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
-import { useTokenPrice } from 'src/screens/dashboard/_hooks/useTokenPrice'
-import StateButton from 'src/screens/discover/_components/stateButton'
 import { GrantType } from 'src/screens/discover/_utils/types'
 import { DiscoverContext } from 'src/screens/discover/Context'
 
@@ -56,6 +54,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						return
 					}
 
+					// if clicked on the program details button open the link in new tab
 					if(e.target.toString() === '[object HTMLButtonElement]') {
 						return
 					}
@@ -76,8 +75,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 					router.push({
 						pathname: '/dashboard/',
 						query: params,
-					// eslint-disable-next-line camelcase
-					}, undefined, { shallow: true, unstable_skipClientCache: true })
+					})
 				}
 			}>
 			<Flex
@@ -93,6 +91,8 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 					<Flex
 						justifyContent='space-between'
 						alignItems='flex-start'
+						gap={4}
+						flexWrap='wrap'
 					>
 						<Image
 							src={grant.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)}
@@ -103,9 +103,6 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 							borderRadius='4px'
 						/>
 						<Flex gap={2}>
-							<StateButton
-								state='approved'
-								title='Open' />
 
 							{/* <Text
 							variant={isOpen ? 'openTag' : 'closedTag'}
@@ -113,28 +110,25 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 							{isOpen ? 'Open' : 'Closed'}
 						</Text> */}
 
-
-							{
-								grant?.link && (
-									<Button
+							<Button
 				 borderRadius='8px'
 				 bgColor='#F1EEE8'
 				 size='sm'
 				 _hover={{ bgColor: 'blue.600', color: 'white' }}
 				 textColor='#53514F'
+				 hidden={!grant?.link}
 				 fontSize='14px'
 				 onClick={
-											() => {
-												window.open(grant?.link, '_blank')
-											}
-										}
+									() => {
+										/* @ts-ignore */
+										window.open(grant?.link, '_blank')
+									}
+								}
 				 rightIcon={<ArrowForwardIcon />}
 
 				 >
-										Program Details
-									</Button>
-								)
-							}
+								Program Details
+							</Button>
 							{
 								role && (
 									<Text
@@ -227,7 +221,8 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 				>
 					<Grid
 						mt={0}
-						templateColumns='repeat(4, 1fr)'
+						templateColumns={['repeat(2, 1fr)', 'repeat(4, 1fr)']}
+						gap={2}
 						pt={2}
 						px={2}
 						justifyContent='space-between'
@@ -266,7 +261,7 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						<GridItem>
 							<Flex direction='column'>
 								<Text fontWeight='500'>
-									{grant?.totalGrantFundingDisbursedUSD === '0' ? '-' : `$${nFormatter(totalGrantFundingDisbursedUSD, 0, grant.id === '0xe92b011b2ecb97dbe168c802d582037e28036f9b')}`}
+									{grant?.totalGrantFundingDisbursedUSD === '0' ? '-' : `$${nFormatter(grant?.totalGrantFundingDisbursedUSD, 0, grant.id === '0xe92b011b2ecb97dbe168c802d582037e28036f9b')}`}
 								</Text>
 								<Text
 									mt={1}
@@ -317,10 +312,8 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 	logger.info({ isQbAdmin }, 'isQbAdmin')
 
 	const usdAmount = useMemo(() => {
-		return safeBalances[`${grant.workspace.safe?.chainId}-${grant.workspace.safe?.address}`]
+		return safeBalances[`${grant.workspace.safe?.chainId}-${grant.workspace.safe?.address}`] ?? 0
 	}, [grant, safeBalances])
-	const tokenPriceInUSD = useTokenPrice()
-	const totalGrantFundingDisbursedUSD = parseFloat(grant.totalGrantFundingDisbursedUSD) === 0 ? '0' : (parseFloat(grant.totalGrantFundingDisbursedUSD) * tokenPriceInUSD).toFixed(0)
 
 	// const isOpen = useMemo(() => {
 	// 	return grant.acceptingApplications === true && grant.deadline ? grant.deadline > new Date().toISOString() : false

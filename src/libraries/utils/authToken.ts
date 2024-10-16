@@ -1,6 +1,6 @@
-import { logger } from 'ethers'
 import { generateTokenMutation, verifyTokenMutation } from 'src/generated/mutation'
 import { executeMutation } from 'src/graphql/apollo'
+import logger from 'src/libraries/logger'
 
 export const generateToken = async(address: string) => {
 	const generate = await executeMutation(generateTokenMutation, { address })
