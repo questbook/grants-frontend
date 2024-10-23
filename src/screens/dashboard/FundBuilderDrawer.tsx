@@ -276,7 +276,7 @@ function FundBuilderDrawer() {
 					to,
 					applicationId: selectedProposalsData[i]?.id?.startsWith('0x') ? parseInt(selectedProposalsData[i]?.id, 16) : parseInt(selectedProposalsData[i]?.id?.slice(-2) ?? '0', 16),
 					selectedMilestone: milestoneIndices?.[i],
-					selectedToken: { tokenName: selectedTokenInfo?.tokenName as string, info: selectedTokenInfo?.info, isNative: selectedTokenInfo?.isNative ?? false, decimals: selectedTokenInfo?.info?.decimals },
+					selectedToken: { tokenName: selectedTokenInfo?.tokenName as string, info: selectedTokenInfo?.info },
 					amount: amounts?.[i],
 				}
 			})
