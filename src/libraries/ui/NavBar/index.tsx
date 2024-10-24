@@ -200,7 +200,10 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 								cursor='pointer'
 								onClick={
 									() => {
-										router.push('/grantees')
+										const granteeList = document.getElementById('#granteeList')
+										if(granteeList) {
+											granteeList.scrollIntoView({ behavior: 'smooth' })
+										}
 									}
 								}
 							>

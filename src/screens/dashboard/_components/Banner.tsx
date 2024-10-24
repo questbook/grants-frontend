@@ -1,6 +1,6 @@
 import { Box, Text } from '@chakra-ui/react'
 
-function Banner() {
+function Banner({ message }: { message: string }) {
 	const buildComponent = () => {
 		return (
 			<Box
@@ -20,7 +20,7 @@ function Banner() {
 					textAlign='center'
 					mx={2}
 				>
-					The domain is closed until further notice as the funds have been fully allocated.
+					{message}
 				</Text>
 
 			</Box>

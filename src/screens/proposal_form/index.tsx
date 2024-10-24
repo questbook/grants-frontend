@@ -724,6 +724,11 @@ function ProposalForm() {
 			return true
 		}
 
+		if(!grant?.acceptingApplications) {
+			logger.info('Grant is not accepting applications')
+			return true
+		}
+
 		const optionalFields = ['projectDetails', 'fundingAsk', 'fundingBreakdown', 'projectGoals', 'projectLink']
 		const { fields, members, details, milestones } = form
 		for(const field of fields) {

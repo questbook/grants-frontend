@@ -155,7 +155,7 @@ function Discover() {
 	const reclaimRef = useRef<HTMLDivElement>(null)
 	const arbitrumRef = useRef<HTMLDivElement>(null)
 	const arbitrum1Ref = useRef<HTMLDivElement>(null)
-	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, safeBalances, grantsAllocated, sectionSubGrants, recentProposals } = useContext(DiscoverContext)!
+	const { grantsForYou, grantsForAll, grantProgram, sectionGrants, safeBalances, grantsAllocated, recentProposals } = useContext(DiscoverContext)!
 	const { isQbAdmin } = useContext(QBAdminsContext)!
 	const { searchString } = useContext(DAOSearchContext)!
 	const { setSignIn } = useContext(SignInContext)!
@@ -257,10 +257,6 @@ function Discover() {
 		{
 			'logo': 'QmWX8As9og6mLaiPhCaR3NqkinXMDymMaqf43qyVSE5hp8',
 			'text': 'Reclaim Protocol'
-		},
-		{
-			'logo': 'QmWsnbRQV8vYCSkrVU8uvgQeSnkiD9MLZv2kmuKDUXh2VC',
-			'text': 'Solana Ecosystem'
 		},
 		{
 			'logo': 'QmTh5y94Hywn61bJQmZe7iFoPe8DsmHEHACCvatFrWyeLd',
@@ -630,16 +626,16 @@ function Discover() {
 												fontSize='24px'
 												lineHeight='31.2px'
 											>
-												Reclaim Arbitrum Grants
+												Arbitrum Stylus Sprint
 											</Text>
 
 										</Flex>
 
 										{
-											(sectionSubGrants && sectionSubGrants?.length > 0 && sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
-												logger.info('section', { section, sectionGrants })
+											(sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
+												const sectionName = Object.keys(section)[0]
 
-												const grants = sectionSubGrants.map(grant => ({ ...grant, role: 'community' as Roles }))
+												const grants = section[sectionName].grants.filter((grant) => (grant.title.toLowerCase().includes('stylus'))).map(grant => ({ ...grant, role: 'community' as Roles }))
 												return (
 													<Box
 														display='flex'
@@ -702,55 +698,8 @@ function Discover() {
 																				textAlign='match-parent'
 																				color='#7E7E8F'
 																			>
-																				The Reclaim Arbitrum Grant is for anyone that’s building a product for the Arbitrum ecosystem on top of Reclaim Protocol
+																				Coming Soon
 																			</Text>
-																			<Text
-																				fontWeight='600'
-																				lineHeight='23.4px'
-																				fontSize='18px'
-																				color='black.100'
-																				pb={2}
-																				px={3}
-																			>
-																				Program Manager
-																			</Text>
-																			<Box pb={2}>
-																				<UserCard
-																					image='0x0125215125'
-																					title='Srijith'
-																					twitter='Srijith_Padmesh'
-																					telegram='Srijith13' />
-																			</Box>
-
-																			<Text
-																				fontWeight='600'
-																				lineHeight='23.4px'
-																				fontSize='18px'
-
-																				color='black.100'
-																				pb={2}
-																				px={3}
-																			>
-																				Domain Allocator
-																			</Text>
-																			<Box
-																			>
-																				{
-																					[
-																						{
-																							image: '0x012521',
-																							title: 'Madhavan Malolan',
-																							twitter: 'madhavanmalolan'
-																						},
-																					].map((user, index) => (
-																						<UserCard
-																							key={index}
-																							image={user.image}
-																							title={user.title}
-																							twitter={user.twitter} />
-																					))
-																				}
-																			</Box>
 																		</Box>
 
 																	</Flex>
@@ -1235,7 +1184,7 @@ function Discover() {
 				</Tooltip> */}
 			</>
 		)
-	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName, isMobile, safeBalances, sectionSubGrants])
+	}, [grantsForYou, unsavedDomainState, unsavedSectionGrants, grantsForAll, sectionGrants, filterGrantName, isMobile, safeBalances])
 
 	useEffect(() => {
 		if(!inviteInfo) {

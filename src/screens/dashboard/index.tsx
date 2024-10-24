@@ -21,7 +21,7 @@ import FundBuilderModal from 'src/screens/dashboard/FundBuilderModal'
 import FundingMethod from 'src/screens/dashboard/FundingMethod'
 import ProposalList from 'src/screens/dashboard/ProposalList'
 import SendAnUpdateModal from 'src/screens/dashboard/SendAnUpdateModal'
-import { disabledGrants } from 'src/screens/proposal_form/_utils/constants'
+import { disabledGrants, NewGrants } from 'src/screens/proposal_form/_utils/constants'
 
 function Dashboard(props: DynamicData) {
 	const { title, description } = props
@@ -41,7 +41,7 @@ function Dashboard(props: DynamicData) {
 						<HeroBannerBox
 							title={grant?.title as string}
 							programDetails={grant?.link as string}
-							grantTicketSize={formatAmount(parseFloat(grant?.reward?.committed ?? '0'))}
+							grantTicketSize={(parseFloat(grant?.reward?.committed ?? '0')) + ' ' + grant?.reward?.token?.label}
 							reviewers={grant?.workspace?.members as []}
 							proposalCount={grant?.numberOfApplications as number}
 							proposalCountAccepted={grant?.numberOfApplicationsSelected as number}
@@ -62,7 +62,15 @@ function Dashboard(props: DynamicData) {
 					{
 						!isLoading && isMobile && (
 							<>
-								{disabledGrants?.includes(grant?.id as string) && <Banner /> }
+								{
+									!grant?.acceptingApplications || disabledGrants?.includes(grant?.id as string) && (
+										<Banner
+											message={
+												NewGrants?.includes(grant?.id) ? 'Coming Soon ! Stay Tuned for more updates' :
+													'The domain is closed until further notice as the funds have been fully allocated.'
+											} />
+									)
+								}
 								<Flex
 									h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
 									overflowY='auto'>
@@ -87,7 +95,15 @@ function Dashboard(props: DynamicData) {
 					{
 						!isLoading && (isMobile === false) && (
 							<>
-								{disabledGrants?.includes(grant?.id as string) && <Banner /> }
+								{
+									!grant?.acceptingApplications || disabledGrants?.includes(grant?.id as string) && (
+										<Banner
+											message={
+												NewGrants?.includes(grant?.id) ? 'Coming Soon ! Stay Tuned for more updates' :
+													'The domain is closed until further notice as the funds have been fully allocated.'
+											} />
+									)
+								}
 								<Flex
 									h={role === 'admin' || role === 'reviewer' ? 'calc(100vh - 64px)' : '100vh'}
 									overflowY='auto'>

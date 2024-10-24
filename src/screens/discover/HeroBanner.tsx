@@ -186,7 +186,7 @@ function HeroBanner({
 								Listed grants
 							</Text>
 							{
-								['Arbitrum DDA 2.0', 'Arbitrum DDA 1.0', 'Reclaim Arbitrum Grants']?.map((grant: string, index: number) => (
+								['Arbitrum DDA 2.0', 'Arbitrum DDA 1.0', 'Arbitrum Stylus Sprint']?.map((grant: string, index: number) => (
 									<Flex
 										key={index}
 										gap={1}
@@ -194,7 +194,7 @@ function HeroBanner({
 										cursor='pointer'
 										onClick={
 											() => {
-												if(grant === 'Reclaim Arbitrum Grants') {
+												if(grant === 'Arbitrum Stylus Sprint') {
 													reclaimRef.current?.scrollIntoView({ behavior: 'smooth' })
 												} else if(grant === 'Arbitrum DDA 1.0') {
 													arbitrum1Ref.current?.scrollIntoView({ behavior: 'smooth' })

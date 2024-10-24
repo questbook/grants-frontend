@@ -102,6 +102,7 @@ function Empty() {
 							<Button
 								variant='primaryMedium'
 								mt={6}
+								isDisabled={!grant?.acceptingApplications}
 								onClick={
 									() => {
 										const href = window.location.href.split('/')

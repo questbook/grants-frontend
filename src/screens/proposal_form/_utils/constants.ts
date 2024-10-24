@@ -8,3 +8,4 @@ export const MILESTONE_INPUT_STYLE = [{ placeholder: 'Add milestone', maxLength:
 export const customStepsHeader = ['Creating your proposal']
 export const customSteps = [ 'Validating form data', 'Uploading proposal data', 'Submitting your proposal']
 export const disabledGrants = ['0x4494cf7375aa61c9a483259737c14b3dba6c04e6', '0xbf93fc6825b5e9ba9a3d7fcf3d14cdfcf3b4c734', '0x650b4a0dc2aec18f55adb72f13c5d95631db04be', '0x706bc8efecb6002f00a052fe5688d0eb89ea45f4', '662f31c25488d5000f055a54', '662f323d5488d5000f055e6d', '662f32a15488d5000f0562b3']
+export const NewGrants = ['671a105a2047c84bb8a73770']
