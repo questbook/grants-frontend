@@ -87,8 +87,8 @@ function useFunctionCall({ chainId, contractName, setTransactionStep, setTransac
 			logger.info('Transaction sent', { tx })
 
 			if(tx) {
-				setTransactionStep?.(1)
 				const { receipt } = await getTransactionDetails(tx, chainId.toString())
+				setTransactionStep?.(1)
 				logger.info('Transaction executed. Waiting for block.', { receipt })
 				setTransactionHash?.(receipt?.transactionHash)
 				setTransactionStep?.(2)
