@@ -21,7 +21,7 @@ import FundBuilderModal from 'src/screens/dashboard/FundBuilderModal'
 import FundingMethod from 'src/screens/dashboard/FundingMethod'
 import ProposalList from 'src/screens/dashboard/ProposalList'
 import SendAnUpdateModal from 'src/screens/dashboard/SendAnUpdateModal'
-import { disabledGrants, subdomainProposals } from 'src/screens/proposal_form/_utils/constants'
+import { disabledGrants, NewGrants, subdomainProposals } from 'src/screens/proposal_form/_utils/constants'
 
 function Dashboard(props: DynamicData) {
 	const { title, description } = props
@@ -62,7 +62,7 @@ function Dashboard(props: DynamicData) {
 						{
 							!grant?.acceptingApplications || disabledGrants?.includes(grant?.id as string) && (
 								<Banner
-									message='This program is not accepting applications at the moment, please contact domain allocators for more details'
+									message={NewGrants.includes(grant?.id as string) ? 'Coming Soon ! Stay tuned for updates' : 'This program is not accepting applications at the moment, please contact domain allocators for more details'}
 								/>
 							)
 						}
@@ -106,7 +106,7 @@ function Dashboard(props: DynamicData) {
 						{
 							!grant?.acceptingApplications || disabledGrants?.includes(grant?.id as string) && (
 								<Banner
-									message='This program is not accepting applications at the moment, please contact domain allocators for more details'
+									message={NewGrants.includes(grant?.id as string) ? 'Coming Soon ! Stay tuned for updates' : 'This program is not accepting applications at the moment, please contact domain allocators for more details'}
 								/>
 							)
 						}
