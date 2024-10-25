@@ -254,7 +254,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 			for(const grant of data.grants) {
 				if(grant.title.includes('Arbitrum') &&
-				type === '1.0' ? !grant.title.includes('2.0') : grant.title.includes('2.0')) {
+				type === '1.0' ? !grant.title.includes('2.0') && !grant.title.includes('Stylus') : grant.title.includes('2.0')) {
 					for(const app of grant.applications) {
 						for(const milestone of app.milestones) {
 							total += milestone.amount

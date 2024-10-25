@@ -51,13 +51,13 @@ function Discover() {
 					mt='auto'
 					color='white'
 					variant='heading1'>
-					👋 gm, You’ve been invited to Questbook!
+					👋 gm, You&apos;ve been invited to Questbook!
 				</Text>
 				<Text
 					mt={3}
 					color='white'
 					variant='title'>
-					You’re invited to
+					You&apos;re invited to
 					{' '}
 					{grantProgram?.title}
 					{' '}
@@ -760,7 +760,7 @@ function Discover() {
 											(sectionGrants && sectionGrants?.length > 0) ? sectionGrants.map((section, index) => {
 												const sectionName = Object.keys(section)[0]
 
-												const grants = section[sectionName].grants.filter((grant) => (grant.title.toLowerCase().includes(filterGrantName.trim().toLowerCase()) && (!grant.title?.includes('2.0')))).map(grant => ({ ...grant, role: 'community' as Roles }))
+												const grants = section[sectionName].grants.filter((grant) => (grant.title.toLowerCase().includes(filterGrantName.trim().toLowerCase()) && (!grant.title?.includes('2.0') && !grant.title?.includes('Stylus')))).map(grant => ({ ...grant, role: 'community' as Roles }))
 												return (
 													<Flex
 														my={6}
