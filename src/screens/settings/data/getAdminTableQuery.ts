@@ -1,12 +1,13 @@
 import { gql } from '@apollo/client'
 export const getAdminTableQuery = gql`query adminTable($id: String!){
     grant(_id: $id){
-      applications(sort: UPDATEDATS_DESC){
+      applications(sort: UPDATEDATS_DESC, limit: 1000){
         id: _id
         applicantId
         state
         synapsStatus
         helloSignStatus
+        updatedAtS
         notes
         milestones{
           id: _id
@@ -35,12 +36,14 @@ export const getAdminTableQuery = gql`query adminTable($id: String!){
     }
     fundTransfers(filter: {
       grant: $id
-    }){
+      status: "executed"
+    }, limit: 1000){
       application{
         id: _id
       }
       status
       amount
+      transactionHash
       milestone{
         id: _id
       }

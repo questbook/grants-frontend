@@ -1,17 +1,18 @@
 query adminTable($id: String!){
   grant(_id: $id){
-   applications(sort: UPDATEDATS_DESC){
+   applications(sort: UPDATEDATS_DESC, limit: 1000){
       id: _id
       applicantId
       state
       synapsStatus
       helloSignStatus
+      updatedAtS
       notes
       milestones{
         id: _id
         title
         state
-        amount
+        amountw
         amountPaid
       }
       name: fieldFilterBySection(
@@ -39,6 +40,7 @@ query adminTable($id: String!){
       id: _id
     }
     status
+    transactionHash
     amount
     milestone{
       id: _id

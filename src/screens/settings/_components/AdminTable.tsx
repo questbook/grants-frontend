@@ -31,8 +31,8 @@ function AdminTable() {
 
 
 			const csvDownload = tableData?.length > 0 ? tableData?.filter((row: {
-        state: string
-    }) => {
+			state: string
+		}) => {
 				if(filter === 'all') {
 					return true
 				} else if(filter === 'submitted') {
@@ -42,26 +42,29 @@ function AdminTable() {
 				} else if(filter === 'rejected') {
 					return row?.state === 'rejected'
 				}
-			})?.map((row, index) => {
-				const milestones = row?.milestones?.map((milestone, index) => {
-					return {
-						[`Milestone ${index + 1}`]: milestone?.title?.length > 0 ? milestone?.title : 'N/A',
-						[`Funding Status: Milestone ${index + 1}`]: row?.fundTransfer && row?.fundTransfer?.find((transfer) => transfer.milestone.id === milestone.id)?.status === 'executed' ? 'Executed' : 'Pending',
-					}
-				})
+			})?.sort((a: {
+					updatedAtS: number
+				}, b: {
+					updatedAtS: number
+				}) => {
+				return a.updatedAtS - b.updatedAtS
+			}).map((row) => {
+				const milestones = row?.milestones?.
+					filter((v) => v.amountPaid > 0)?.
+					map((milestone, index) => {
+						return `Milestone ${index + 1} - ${milestone?.amount}`
+					})?.join('\n')
+
+				const fundingApproved = row?.milestones?.reduce((acc, milestone) => acc + milestone.amount, 0) || 0
+				const completedMilestones = row?.milestones?.filter((m) => m.amountPaid > 0).length || 0
+				const totalMilestones = row?.milestones?.length || 0
+
 				return {
-					'No': index + 1,
-					'Proposal Name': row.name[0].values[0].value,
-					'Proposal Status': row.state,
-					'KYC/KYB Status': row?.state === 'approved' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? 'Verified' : 'Pending' : '',
-					'Grant Agreement Status': row?.state === 'approved' ? row?.helloSignStatus === 'verified' || row?.helloSignStatus === 'completed' ? 'Verified' : row?.helloSignStatus === 'declined' ? 'Declined' : 'Pending' : '',
-					'Notes': row?.notes,
-					...milestones?.reduce((acc, curr) => {
-						return {
-							...acc,
-							...curr
-						}
-					}, {})
+					'Proposal Name': `${row.name[0].values[0].value}`,
+					'Proposal Link': `https://arbitrum.questbook.app/dashboard/?grantId=${grant?.id}&proposalId=${row.id}&chainId=10`,
+					'Funding Approved': `${Math.round(fundingApproved)}`,
+					'Milestones Completed': `${completedMilestones}/${totalMilestones}`,
+					'Milestones': `${milestones ? milestones : ''}`
 				}
 			}) : []
 

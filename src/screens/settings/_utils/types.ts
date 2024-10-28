@@ -29,7 +29,8 @@ export type adminTable = {
     helloSignStatus: string
     milestones: { id: string, title: string, amount: number, amountPaid: number, milestoneState: string }[]
     notes: string
-    fundTransfer: { application: { id: string }, status: string, amount: number, milestone: { id: string } }[]
+    fundTransfer: { application: { id: string }, status: string, amount: number, milestone: { id: string }, transactionHash: string }[]
+    updatedAtS: number
 } []
 
 
