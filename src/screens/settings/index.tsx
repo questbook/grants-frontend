@@ -20,10 +20,13 @@ import { formatAddress, getExplorerUrlForTxHash } from 'src/libraries/utils/form
 import { getUrlForIPFSHash, uploadToIPFS } from 'src/libraries/utils/ipfs'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext } from 'src/pages/_app'
+import { FundBuilderProvider } from 'src/screens/dashboard/Context'
 import AddMemberButton from 'src/screens/settings/_components/AddMemberButton'
 import AdminTable from 'src/screens/settings/_components/AdminTable'
 import DocuSignModal from 'src/screens/settings/_components/docuSignModal'
 import { DropdownIcon } from 'src/screens/settings/_components/DropdownIcon'
+import FundingBuilderModal from 'src/screens/settings/_components/FundingBuilderModal'
+import FundingModal from 'src/screens/settings/_components/FundingModal'
 import SynapsModel from 'src/screens/settings/_components/SynapsModal'
 import useUpdateGrantProgram from 'src/screens/settings/_hooks/useUpdateGrantProgram'
 import { WorkspaceMembers } from 'src/screens/settings/_utils/types'
@@ -534,6 +537,22 @@ function Settings() {
 					isOpen={isLinkYourDocuSignModalOpen}
 					onClose={() => setIsLinkYourDocuSignModalOpen(false)}
 				/>
+				{
+					proposals.length > 0 && selectedProposals.size > 0 && (
+						<FundingBuilderModal
+							payWithSafe={payWithSafe}
+							proposals={proposals}
+							selectedProposals={selectedProposals}
+						/>
+					)
+				}
+
+				{/* Drawers */}
+				<FundingModal
+					isOpen={isFundingMethodModalOpen}
+					onClose={() => setIsFundingMethodModalOpen(false)}
+					setPayWithSafe={setPayWithSafe}
+				/>
 			</Flex>
 		)
 	}
@@ -562,10 +581,11 @@ function Settings() {
 	const [isLinkYourSynapsModalOpen, setIsLinkYourSynapsModalOpen] = useState(false)
 	const [isLinkYourDocuSignModalOpen, setIsLinkYourDocuSignModalOpen] = useState(false)
 	const [revokeTxHash, setRevokeTxHash] = useState<string>('')
+	const [payWithSafe, setPayWithSafe] = useState<boolean>(true)
 
 	const [imageChanged, setImageChanged] = useState(false)
 
-	const { workspace, workspaceMembers, grantProgramData, setGrantProgramData, safeURL, refreshWorkspace, showAdminTable, setShowAdminTable } = useContext(SettingsFormContext)!
+	const { workspace, workspaceMembers, grantProgramData, setGrantProgramData, safeURL, refreshWorkspace, showAdminTable, setShowAdminTable, proposals, selectedProposals, isFundingMethodModalOpen, setIsFundingMethodModalOpen } = useContext(SettingsFormContext)!
 	const { grant, role } = useContext(GrantsProgramContext)!
 	logger.info({ role }, 'role')
 	const chainId = useMemo(() => {
@@ -661,7 +681,9 @@ Settings.getLayout = function(page: ReactElement) {
 			navbarConfig={{ showDomains: true, showLogo: false, showOpenDashboard: true, showAddMembers: true, bg: 'gray.100' }}
 		>
 			<SettingsFormProvider>
-				{page}
+				<FundBuilderProvider>
+					{page}
+				</FundBuilderProvider>
 			</SettingsFormProvider>
 		</NavbarLayout>
 	)

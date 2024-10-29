@@ -804,6 +804,7 @@ const DashboardProvider = ({ children }: { children: ReactNode }) => {
 			value={
 				{
 					proposals,
+					setProposals,
 					selectedProposals,
 					setSelectedProposals,
 					review,

@@ -7,6 +7,7 @@ import { getSafeURL } from 'src/libraries/utils/multisig'
 import { getKeyForMemberPii, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { Proposals } from 'src/screens/dashboard/_utils/types'
 import { adminTable, GrantProgramForm, SettingsFormContextType, WorkspaceMembers } from 'src/screens/settings/_utils/types'
 import { getWorkspaceDetailsQuery, getWorkspaceMembersByWorkspaceIdQuery } from 'src/screens/settings/data'
 import { getAdminTableQuery } from 'src/screens/settings/data/getAdminTableQuery'
@@ -23,6 +24,12 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 					workspaceMembers: workspaceMembers!,
 					grantProgramData: grantProgramData!,
 					setGrantProgramData: setGrantProgramData!,
+					setProposals: setProposals!,
+					setSelectedProposals: setSelectedProposals!,
+					isFundingMethodModalOpen: isFundingMethodModalOpen!,
+					setIsFundingMethodModalOpen: setIsFundingMethodModalOpen!,
+					proposals: proposals!,
+					selectedProposals: selectedProposals!,
 					safeURL: safeURL!,
 					refreshWorkspace: (refresh: boolean) => {
 						if(refresh) {
@@ -50,6 +57,9 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 	const [showAdminTable, setShowAdminTable] = useState<boolean>(false)
 	const [listAllGrants, setListAllGrants] = useState<boolean>(false)
 	const [allGrantsAdminTable, setAllGrantsAdminTable] = useState<adminTable>([])
+	const [proposals, setProposals] = useState<Proposals>([])
+	const [selectedProposals, setSelectedProposals] = useState<Set<string>>(new Set())
+	const [isFundingMethodModalOpen, setIsFundingMethodModalOpen] = useState<boolean>(false)
 
 	const { grant, setGrant, setRole } = useContext(GrantsProgramContext)!
 

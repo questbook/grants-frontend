@@ -14,6 +14,7 @@ export type CommentMap = {[key: string]: CommentType[]}
 export type DashboardContextType = {
   proposals: Proposals
   selectedProposals: Set<string>
+  setProposals: (proposals: Proposals) => void
   setSelectedProposals: (set: Set<string>) => void
   review: ReviewInfo | undefined
   setReview: (reviews: ReviewInfo) => void

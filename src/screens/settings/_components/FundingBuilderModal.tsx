@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Asset, AssetList } from '@chain-registry/types'
-import { InfoIcon } from '@chakra-ui/icons'
+import { ExternalLinkIcon, InfoIcon } from '@chakra-ui/icons'
 import { Box, Button, Flex, FormControl, FormLabel, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Switch, Text, Tooltip, useToast } from '@chakra-ui/react'
 import { StdFee } from '@cosmjs/amino'
 // import { useAccount, useBalance, useSendTokens, useStargateSigningClient } from 'graz'
@@ -35,17 +35,24 @@ import Verify from 'src/screens/dashboard/_components/FundBuilder/Verify'
 import usePhantomWallet from 'src/screens/dashboard/_hooks/usePhantomWallet'
 import usetonWallet from 'src/screens/dashboard/_hooks/useTonWallet'
 import getToken from 'src/screens/dashboard/_utils/tonWalletUtils'
-import { DashboardContext, FundBuilderContext } from 'src/screens/dashboard/Context'
+import { Proposals } from 'src/screens/dashboard/_utils/types'
+import { FundBuilderContext } from 'src/screens/dashboard/Context'
+import { SettingsFormContext } from 'src/screens/settings/Context'
 import TonWeb from 'tonweb'
 
 
 interface Props {
 	payWithSafe: boolean
+    proposals: Proposals
+    selectedProposals: Set<string>
 }
-function FundBuilderModal({
-	payWithSafe
+function FundingBuilderModal({
+	payWithSafe,
+	proposals,
+	selectedProposals,
 }: Props) {
 	const buildComponent = () => {
+		logger.info('proposals', grant)
 		return (
 			<Modal
 				isOpen={isModalOpen}
@@ -148,6 +155,21 @@ function FundBuilderModal({
 												</Text>
 											) : null
 									}
+									<Button
+										alignSelf='flex-end'
+										mr={4}
+										variant='outline'
+										colorScheme='blue'
+										size='sm'
+										leftIcon={<ExternalLinkIcon />}
+										onClick={
+											() => {
+												window.open(`${window.location.origin}/dashboard/?grantId=${grant?.id}&proposalId=${proposal?.id}&chainId=10`, '_blank')
+											}
+										}
+									>
+										View Proposal
+									</Button>
 									{
 										proposal && (
 											<Flex
@@ -155,6 +177,7 @@ function FundBuilderModal({
 												w='100%'
 												direction='column'
 												border='1px solid #E7E4DD'>
+
 												<PayFromChoose
 													selectedMode={selectedMode} />
 												<PayWithChoose selectedMode={selectedMode!} />
@@ -222,7 +245,16 @@ function FundBuilderModal({
 									}
 
 									<Box mt={proposal?.state === 'submitted' ? 2 : 8} />
-
+									<Text
+										alignSelf='flex-end'
+										fontSize='xs'
+										color='gray.500'
+										textAlign='right'
+										mr={4}
+										mb={2}
+									>
+										*Please verify payout address before initiating payment
+									</Text>
 									{
 										signerVerifiedState === 'verified' ? (
 											<Button
@@ -287,7 +319,6 @@ function FundBuilderModal({
 
 	const { safeObj } = useSafeContext()!
 	const { grant } = useContext(GrantsProgramContext)!
-	const { proposals, selectedProposals, refreshProposals } = useContext(DashboardContext)!
 	const {
 		isModalOpen,
 		setIsModalOpen,
@@ -308,7 +339,7 @@ function FundBuilderModal({
 	// const [selectedMode, setSelectedMode] = useState<{logo: string | undefined, value: string | undefined}>()
 	const [payoutInProcess, setPayoutInProcess] = useState(false)
 	const [safeAddress, setSafeAddress] = useState('')
-	const [batchTx, setBatchTx] = useState(false)
+	const [batchTx, setBatchTx] = useState(true)
 	const customToast = useCustomToast()
 	// const { connect: connectKeplr } = keplrConnect()
 	const chainContext = useChain('axelar')
@@ -373,6 +404,7 @@ function FundBuilderModal({
 	const milestones = useMemo(() => {
 		return proposal?.milestones || []
 	}, [proposal])
+
 	// const tonWalletInstance = new SupportedPayouts().getAllWallets()[0]
 	useEffect(() => {
 		if(!payWithSafe && selectedTokenInfo?.tokenName !== 'TON') {
@@ -414,6 +446,10 @@ function FundBuilderModal({
 		if(selectedMode?.value === 'Keplr Wallet') {
 			if(!address && status !== 'Connected') {
 				setIsModalOpen(false)
+				await toast({
+					title: 'Please connect your Keplr Wallet and try again',
+					status: 'error',
+				})
 				await connectKeplr()
 			} else if(address && status === 'Connected') {
 				try {
@@ -484,7 +520,6 @@ function FundBuilderModal({
 
 							// await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
 							await executeMutation(DisburseRewardsFromWalletMutation, args)
-							await refreshProposals(true)
 							await toast({
 								title: 'Transaction Successful',
 								status: 'success',
@@ -492,7 +527,7 @@ function FundBuilderModal({
 								duration: 5000,
 								position: 'top-right',
 							})
-
+							refreshWorkspace(true)
 						} else {
 
 
@@ -517,7 +552,6 @@ function FundBuilderModal({
 
 							// // await call({ method: 'disburseRewardFromSafe', args: methodArgs, shouldWaitForBlock: false })
 							await executeMutation(DisburseRewardSafeMutation, args)
-							await refreshProposals(true)
 							await toast({
 								title: 'Transaction Successful',
 								status: 'success',
@@ -661,8 +695,9 @@ function FundBuilderModal({
 	// const { call } = useFunctionCall({ chainId: workspacechainId, contractName: 'workspace' })
 	const { } = useFunctionCall({ chainId: workspacechainId, contractName: 'applications' })
 	const { scwAddress } = useContext(WebwalletContext)!
+	const { refreshWorkspace } = useContext(SettingsFormContext)!
 	const { trackAmplitudeEvent } = useContext(AmplitudeContext)!
 	return buildComponent()
 }
 
-export default FundBuilderModal
+export default FundingBuilderModal

@@ -72,30 +72,31 @@ function Milestones() {
 						{milestone?.title}
 					</Text>
 					{
-						payouts?.find(p => p.milestone?.id === milestone.id)?.status === 'executed' ? (
-							<Flex
-								align='center'
-								justify='center'
-								transition='all .5s ease'
-								w='fit-content'
-								mt={1}
-								py={1}
-								px={3}
-								borderRadius='18px'
-								maxH='36px'
-								border='1px solid'
-								bg='#0A84FF66'
-								borderColor='#0A84FF66'
-							>
-								<Accept />
-								<Text
-									variant='metadata'
-									fontWeight='500'
-									ml={1}>
-									Paid
-								</Text>
-							</Flex>
-						) : ''
+						(payouts?.find(p => p.milestone?.id === milestone.id)?.status === 'executed' || proposal &&
+							proposal?.milestones?.reduce((acc, m) => acc + parseFloat(m?.amountPaid ?? '0'), 0) >= proposal?.milestones?.reduce((acc, m) => acc + parseFloat(m?.amount ?? '0'), 0)) ? (
+								<Flex
+									align='center'
+									justify='center'
+									transition='all .5s ease'
+									w='fit-content'
+									mt={1}
+									py={1}
+									px={3}
+									borderRadius='18px'
+									maxH='36px'
+									border='1px solid'
+									bg='#0A84FF66'
+									borderColor='#0A84FF66'
+								>
+									<Accept />
+									<Text
+										variant='metadata'
+										fontWeight='500'
+										ml={1}>
+										Paid
+									</Text>
+								</Flex>
+							) : ''
 					}
 
 				</Flex>

@@ -1,4 +1,5 @@
 import { GetWorkspaceDetailsQuery, GetWorkspaceMembersByWorkspaceIdQuery } from 'src/generated/graphql'
+import { Proposals } from 'src/screens/dashboard/_utils/types'
 import { MinimalWorkspace } from 'src/types'
 
 export type SettingsFormContextType = {
@@ -14,6 +15,12 @@ export type SettingsFormContextType = {
     listAllGrants: boolean
     setListAllGrants: (list: boolean) => void
     allGrantsAdminTable: adminTable
+    setProposals: (proposals: Proposals) => void
+    setSelectedProposals: (proposals: Set<string>) => void
+    isFundingMethodModalOpen: boolean
+    setIsFundingMethodModalOpen: (open: boolean) => void
+    proposals: Proposals
+    selectedProposals: Set<string>
 }
 
 export type Workspace = GetWorkspaceDetailsQuery['workspace']
@@ -29,6 +36,7 @@ export type adminTable = {
     grantTitle?: string
     id: string
     name: { values: { value: string }[] }[]
+    author: { values: { value: string }[] }[]
     state: string
     synapsStatus: string
     synapsId: string

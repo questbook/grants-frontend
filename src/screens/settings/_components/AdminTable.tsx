@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 import { CSVLink } from 'react-csv'
 import { ExternalLinkIcon } from '@chakra-ui/icons'
-import { Button, Flex, Select, Text, Textarea } from '@chakra-ui/react'
+import { Button, Flex, Select, Text } from '@chakra-ui/react'
 import {
 	Switch,
 	Table,
@@ -13,19 +13,24 @@ import {
 	Tr,
 } from '@chakra-ui/react'
 import { ExportDownload } from 'src/generated/icons'
-import { addTableNotesMutation } from 'src/generated/mutation'
-import { executeMutation } from 'src/graphql/apollo'
+import { useQuery } from 'src/libraries/hooks/useQuery'
 import { GrantsProgramContext } from 'src/pages/_app'
+import { getSpecificProposalQuery } from 'src/screens/dashboard/_data/getSpecificProposalQuery'
+import { Proposals } from 'src/screens/dashboard/_utils/types'
 import StateButton from 'src/screens/discover/_components/stateButton'
 import KYCStatusUpdateModal from 'src/screens/settings/_components/KYCStatusUpdateModal'
 import { adminTable } from 'src/screens/settings/_utils/types'
 import { SettingsFormContext } from 'src/screens/settings/Context'
 
-
 function AdminTable() {
 
 
 	const buildComponent = () => {
+
+
+		const { fetchMore: fetchSpecificProposal } = useQuery({
+			query: getSpecificProposalQuery,
+		})
 
 
 		const downloadCSV = () => {
@@ -60,7 +65,6 @@ function AdminTable() {
 					'KYC/KYB Status': row?.state === 'approved' ? row?.synapsStatus === 'completed' || row?.synapsStatus === 'verified' ? 'Verified' : row?.synapsStatus === 'rejected' ? 'Rejected' : 'Pending' : '',
 					'Synaps Type': row?.synapsStatus !== '' ? row?.synapsType : '',
 					'Grant Agreement Status': row?.state === 'approved' ? (row?.helloSignStatus === 'verified' || row?.helloSignStatus === 'completed') ? 'Verified' : row?.helloSignStatus === 'rejected' ? 'Rejected' : 'Pending' : '',
-					'Notes': row?.notes,
 					...milestones?.reduce((acc, curr) => {
 						return {
 							...acc,
@@ -117,6 +121,22 @@ function AdminTable() {
 
 						>
 							{row.name[0].values[0].value?.length > 40 ? row.name[0].values[0].value.substring(0, 40) + '...' : row.name[0].values[0].value}
+						</Text>
+					</Td>
+					<Td>
+						<Text
+							fontSize='sm'
+							onClick={
+								() => {
+
+									window.open(`${window.location.origin}/dashboard/?grantId=${listAllGrants ? row?.grantId : grant?.id}&proposalId=${row.id}&chainId=10`, '_blank')
+
+								}
+							}
+							cursor='pointer'
+
+						>
+							{row?.author[0]?.values[0]?.value}
 						</Text>
 					</Td>
 					<Td
@@ -194,14 +214,14 @@ function AdminTable() {
 											onClick={
 												() => {
 													const popupWindow = window.open(
-														`https://app.hellosign.com/sign/${row?.helloSignId}`,
+														`https://app.hellosign.com/home/manage?guid=${row?.helloSignId}`,
 														'HelloSign',
 														'width=800,height=600,resizable=yes,scrollbars=yes,status=yes'
 													)
 													if(popupWindow) {
 														popupWindow.focus()
 													} else {
-														window.open(`https://app.hellosign.com/sign/${row?.helloSignId}`, '_blank')
+														window.open(`https://app.hellosign.com/home/manage?guid=${row?.helloSignId}`, '_blank')
 													}
 												}
 											}
@@ -222,133 +242,55 @@ function AdminTable() {
 								) : '-'
 						}
 					</Td>
-					<Td>
-						<Select
-							variant='unstyled'
-							size='sm'
-							value={
-								filteredMilestones?.find((milestone: {
-									id: string
-									value: string
-									//@ts-ignore
-								}) => milestone?.id === row?.id)?.value || row?.milestones[0]?.id
-							}
-							onChange={
-								(e) => {
-									const check = filteredMilestones?.find((milestone: {
-										id: string
-										value: string
-									}) => milestone?.id === row?.id)
-									if(check) {
-										const newFilteredMilestones = filteredMilestones?.map((milestone: {
-											id: string
-											value: string
-										}) => {
-											if(milestone?.id === row?.id) {
-												return {
-													...milestone,
-													value: e.target.value
-												}
-											} else {
-												return milestone
-											}
-										}
-										)
-										setFilteredMilestones(newFilteredMilestones as [])
-									} else {
-										const newFilteredMilestones = [...filteredMilestones, {
-											id: row?.id,
-											value: e.target.value
-										}]
-										setFilteredMilestones(newFilteredMilestones as [])
-									}
-
-
-								}
-							}
-						>
-							{
-								row?.milestones?.map((milestone, index) => {
-									return (
-										<option
-											key={index}
-											value={milestone.id}>
-											Milestone
-											{' '}
-											{index + 1}
-											:
-											{milestone.title?.length > 10 ? milestone.title.substring(0, 10) + '...' : milestone.title}
-										</option>
-									)
-								})
-							}
-						</Select>
+					<Td
+						textAlign='center'
+						fontSize='sm'
+					>
+						{row?.milestones?.length}
 
 
 					</Td>
 
-					<Td w='10%'>
-						{/* {row?.milestones[0] && */}
+					<Td
+						w='15%'
+					>
 						{
-							filteredMilestones?.find((milestone: {
-								id: string
-								value: string
-							}) => milestone?.id === row?.id) ? (
-								 <StateButton
-										key={index}
-										state={
-											row?.fundTransfer && row?.fundTransfer?.find((transfer) => transfer.milestone.id === filteredMilestones?.find((milestone: {
-											id: string
-											value: string
-										}) => milestone?.id === row?.id)?.value)?.status === 'executed' ? 'approved' : 'submitted'
+							!listAllGrants && row?.state === 'approved' && row?.milestones?.reduce((acc, curr) => acc + (curr?.amountPaid ?? '0'), 0) < row?.milestones?.reduce((acc, curr) => acc + (curr?.amount ?? '0'), 0) ? (
+								<Button
+									size='sm'
+									variant='outline'
+									w='100%'
+									colorScheme='blue'
+									transition='all 0.2s'
+									onClick={
+										async() => {
+											const result = await fetchSpecificProposal({ grantID: grant?.id, proposalId: row?.id }, true) as { grantApplications: Proposals[] }
+											if(result?.grantApplications) {
+												setProposals([...result?.grantApplications] as [])
+												setSelectedProposals(new Set([row?.id]))
+												setIsFundingMethodModalOpen(true)
+											}
+
+
 										}
-										title={
-											row?.fundTransfer && row?.fundTransfer?.find((transfer) => transfer.milestone.id === filteredMilestones?.find((milestone: {
-											id: string
-											value: string
-										}) => milestone?.id === row?.id)?.value)?.status === 'executed' ? 'Executed' : 'Pending'
-										}
+									}
+								>
+									Fund Builder
+								</Button>
+							) :
+								row?.state !== 'approved' ? (
+									<StateButton
+										state={row?.state === 'cancelled' ? 'rejected' : row?.state === 'submitted' ? 'submitted' : row?.state === 'rejected' ? 'rejected' : row?.state === 'resubmit' ? 'resubmit' : 'open'}
+										title={row?.state}
 									/>
 								) : (
 									<StateButton
-										key={index}
-										state={row?.fundTransfer && row?.fundTransfer?.find((transfer) => transfer.milestone.id === row?.milestones[0]?.id)?.status === 'executed' ? 'approved' : 'submitted'}
-										title={row?.fundTransfer && row?.fundTransfer?.find((transfer) => transfer.milestone.id === row?.milestones[0]?.id)?.status === 'executed' ? 'Executed' : 'Pending'}
+										state={row?.milestones?.reduce((acc, curr) => acc + (curr?.amountPaid ?? '0'), 0) >= row?.milestones?.reduce((acc, curr) => acc + (curr?.amount ?? '0'), 0) ? 'approved' : 'submitted'}
+										title={row?.milestones?.reduce((acc, curr) => acc + (curr?.amountPaid ?? '0'), 0) >= row?.milestones?.reduce((acc, curr) => acc + (curr?.amount ?? '0'), 0) ? 'Completed' : 'Pending'}
 									/>
 								)
 						}
-
 					</Td>
-					{
-						!listAllGrants && (
-							<Td
-								w='15%'
-							>
-								<Textarea
-									w='100%'
-									size='sm'
-									value={row?.notes}
-									onChange={
-										(e) => {
-											const newTableData = [...tableData]
-											newTableData[index].notes = e.target.value
-											setTableData(newTableData)
-										}
-									}
-									onBlur={
-										async() => {
-											await executeMutation(addTableNotesMutation, {
-												id: row.id,
-												notes: row?.notes,
-												workspace: workspace?.id
-											})
-										}
-									}
-								/>
-
-							</Td>
-						)
-					}
 
 				</Tr>
 			)
@@ -425,7 +367,7 @@ function AdminTable() {
 				<TableContainer >
 					<Table
 						variant='simple'
-						size={listAllGrants ? 'md' : 'sm'}>
+						size='md'>
 						<Thead>
 							<Tr>
 								{
@@ -487,18 +429,22 @@ function AdminTable() {
 		editId: false
 	})
 	const [filter, setFilter] = useState<'all' | 'submitted' | 'approved' | 'rejected'>('all')
-	const [filteredMilestones, setFilteredMilestones] = useState([{
-		id: '',
-		value: ''
-	}])
 	const [tableData, setTableData] = useState<adminTable>([])
-	const { adminTable, workspace, listAllGrants, setListAllGrants, allGrantsAdminTable } = useContext(SettingsFormContext)!
+	const { adminTable, listAllGrants, setListAllGrants, allGrantsAdminTable, setProposals, setSelectedProposals, setIsFundingMethodModalOpen } = useContext(SettingsFormContext)!
 	const { grant } = useContext(GrantsProgramContext)!
-	const TableHeader = listAllGrants ? ['No', 'Grant Title', 'Proposal Name', 'Proposal Status', 'KYC/KYB Status', 'Grant Agreement Status', 'Milestone', 'Funding Status'] : ['No', 'Proposal Name', 'Proposal Status', 'KYC/KYB Status', 'Grant Agreement Status', 'Milestone', 'Funding Status', 'Notes']
+	const TableHeader = listAllGrants ? ['No', 'Grant Title', 'Proposal Name', 'Author', 'Proposal Status', 'KYC/KYB Status', 'Grant Agreement Status', 'Milestone', 'Funding Status'] : ['No', 'Proposal Name', 'Author', 'Proposal Status', 'KYC/KYB Status', 'Grant Agreement Status', 'Milestone', 'Funding Status']
 
 	useEffect(() => {
 		setTableData(listAllGrants ? allGrantsAdminTable : adminTable)
 	}, [adminTable, allGrantsAdminTable, listAllGrants])
+
+
+	/*
+	const result: any = await fetchSpecificProposal({ grantID: grantId, proposalId }, true)
+				if(result?.grantApplications) {
+					proposals.push(...result?.grantApplications)
+				} */
+	// when fund builder is clicked, fetch the proposal and set it in the context selectedProposals
 
 
 	return buildComponent()
