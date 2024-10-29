@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from 'react'
-import { CSVLink } from 'react-csv'
 import { Button, Flex, Select, Text, Textarea } from '@chakra-ui/react'
 import {
 	Table,
@@ -10,6 +9,7 @@ import {
 	Thead,
 	Tr,
 } from '@chakra-ui/react'
+import { logger } from 'ethers'
 import { ExportDownload } from 'src/generated/icons'
 import { addTableNotesMutation } from 'src/generated/mutation'
 import { executeMutation } from 'src/graphql/apollo'
@@ -25,53 +25,100 @@ function AdminTable() {
 	const TableHeader = ['No', 'Proposal Name', 'Proposal Status', 'KYC/KYB Status', 'Grant Agreement Status', 'Milestone', 'Funding Status', 'Notes']
 
 	const buildComponent = () => {
+		logger.info({ tableData }, 'tableData')
 
+		const downloadTXT = () => {
+			if(!tableData?.length) {
+				return
+			}
 
-		const downloadCSV = () => {
+			const filteredData = tableData
+				.filter((row: { state: string }) => {
+					if(filter === 'all') {
+						return true
+					}
 
+					return row?.state === filter
+				})
+				.sort((a, b) => a.updatedAtS - b.updatedAtS)
 
-			const csvDownload = tableData?.length > 0 ? tableData?.filter((row: {
-			state: string
-		}) => {
-				if(filter === 'all') {
-					return true
-				} else if(filter === 'submitted') {
-					return row?.state === 'submitted'
-				} else if(filter === 'approved') {
-					return row?.state === 'approved'
-				} else if(filter === 'rejected') {
-					return row?.state === 'rejected'
-				}
-			})?.sort((a: {
-					updatedAtS: number
-				}, b: {
-					updatedAtS: number
-				}) => {
-				return a.updatedAtS - b.updatedAtS
-			}).map((row) => {
-				const milestones = row?.milestones?.
-					filter((v) => v.amountPaid > 0)?.
-					map((milestone, index) => {
-						return `Milestone ${index + 1} - ${milestone?.amount}`
-					})?.join('\n')
+			let content = `# ${grant?.title}\n\n`
+
+			content += '## Summary\n'
+			content += `- Total Proposals: ${tableData.length}\n`
+			content += `- Total Proposals Approved: ${filteredData.filter((row) => row.state === 'approved').length}\n`
+			content += `- Total Milestones: ${filteredData.reduce((acc, row) => acc + row.milestones.length, 0)}\n`
+			content += `- Total Milestones Completed: ${filteredData.reduce((acc, row) => acc + row.milestones.filter((m) => m.amountPaid > 0).length, 0)}\n\n`
+
+			content += '## Proposals\n\n'
+			filteredData.forEach((row) => {
+				content += `### [${row.name[0]?.values[0]?.value || 'Untitled'}](https://arbitrum.questbook.app/dashboard/?grantId=${grant?.id}&chainId=10&role=community&proposalId=${row.id})\n`
 
 				const fundingApproved = row?.milestones?.reduce((acc, milestone) => acc + milestone.amount, 0) || 0
+				content += `**Funding Approved:** ${fundingApproved}\n\n`
+
 				const completedMilestones = row?.milestones?.filter((m) => m.amountPaid > 0).length || 0
 				const totalMilestones = row?.milestones?.length || 0
+				content += `**Milestone Progress:** ${completedMilestones}/${totalMilestones}\n\n`
 
-				return {
-					'Proposal Name': `${row.name[0].values[0].value}`,
-					'Proposal Link': `https://arbitrum.questbook.app/dashboard/?grantId=${grant?.id}&proposalId=${row.id}&chainId=10`,
-					'Funding Approved': `${Math.round(fundingApproved)}`,
-					'Milestones Completed': `${completedMilestones}/${totalMilestones}`,
-					'Milestones': `${milestones ? milestones : ''}`
+				if(row?.milestones?.length && row?.milestones?.find((milestone) => milestone.amountPaid > 0)) {
+					content += '#### Milestones\n'
+					row.milestones.forEach((milestone, index) => {
+						if(milestone.amountPaid > 0) {
+							content += `- [Milestone ${index + 1}: ${milestone.amount} Paid](https://app.safe.global/arb1:${grant?.workspace?.safe?.address}/transactions/tx?id=multisig_${grant?.workspace?.safe?.address}_${row?.fundTransfer?.find((transfer) => transfer.milestone.id === milestone.id)?.transactionHash})\n`
+						}
+					})
+					content += '\n'
 				}
-			}) : []
+			})
 
-			return csvDownload
+			const element = document.createElement('a')
+			element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content))
+			element.setAttribute('download', `${grant?.title || 'protocol-ideas'}-${new Date().toISOString().split('T')[0]}.md`)
 
+			element.style.display = 'none'
+			document.body.appendChild(element)
+			element.click()
+			document.body.removeChild(element)
 		}
 
+		const downloadCSV = () => {
+			if(!tableData?.length) {
+				return
+			}
+
+			const filteredData = tableData
+				.filter((row: { state: string }) => {
+					if(filter === 'all') {
+						return true
+					}
+
+					return row?.state === filter
+				})
+				.sort((a, b) => a.updatedAtS - b.updatedAtS)
+
+			let csvContent = 'Proposal Name,Funding Approved,Funding Disbursed,Funding Left,Total Milestones,Completed Milestones,Remaining Milestones\n'
+
+			filteredData.forEach((row) => {
+				const proposalName = row.name[0]?.values[0]?.value?.replace(/,/g, ' ') || 'Untitled'
+				const fundingApproved = row?.milestones?.reduce((acc, milestone) => acc + milestone.amount, 0) || 0
+				const fundingDisbursed = row?.milestones?.reduce((acc, milestone) => acc + (milestone.amountPaid || 0), 0) || 0
+				const fundingLeft = fundingApproved - fundingDisbursed
+				const totalMilestones = row?.milestones?.length || 0
+				const completedMilestones = row?.milestones?.filter((m) => m.amountPaid > 0).length || 0
+				const remainingMilestones = totalMilestones - completedMilestones
+
+				csvContent += `${proposalName},${fundingApproved},${fundingDisbursed},${fundingLeft},${totalMilestones},${completedMilestones},${remainingMilestones}\n`
+			})
+
+			const element = document.createElement('a')
+			element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent))
+			element.setAttribute('download', `${grant?.title || 'protocol-ideas'}-${new Date().toISOString().split('T')[0]}.csv`)
+			element.style.display = 'none'
+			document.body.appendChild(element)
+			element.click()
+			document.body.removeChild(element)
+		}
 
 		const rowData = tableData?.filter((row: {
         state: string
@@ -326,18 +373,24 @@ function AdminTable() {
 						}
 					</Select>
 
-					<CSVLink
-						data={downloadCSV()}
-						filename={grant?.title ? `${grant?.title}-${new Date().toISOString()}.csv` : `admin-table-${new Date().toISOString()}.csv`}
-						target='_blank'>
+					<Flex gap={2}>
 						<Button
 							leftIcon={<ExportDownload />}
 							colorScheme='blue'
 							variant='outline'
-							size='sm'>
-							Export
+							size='sm'
+							onClick={downloadTXT}>
+							Export MD
 						</Button>
-					</CSVLink>
+						<Button
+							leftIcon={<ExportDownload />}
+							colorScheme='blue'
+							variant='outline'
+							size='sm'
+							onClick={downloadCSV}>
+							Export CSV
+						</Button>
+					</Flex>
 				</Flex>
 				<TableContainer >
 					<Table

@@ -178,13 +178,19 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 			return 'no-grant-in-query'
 		}
 
-		if(details?.fundTransfers) {
-			applications = details?.grant?.applications?.map((application: any) => {
-				const fundTransfer = details?.fundTransfers?.find((fundTransfer: any) => fundTransfer?.application?.id === application?.id)
-				logger.info({ fundTransfer }, 'Fund transfer')
+		if(details?.fundTransfers && details?.grant?.applications) {
+			applications = details.grant.applications.map((application: any) => {
+				// Map fund transfers for each milestone in the application
+				const fundTransfers = application.milestones.map((milestone: any) => {
+					return details.fundTransfers.filter((fundTransfer: any) => fundTransfer?.application?.id === application?.id &&
+						fundTransfer?.milestone?.id === milestone.id
+					)
+				}).flat()
+
+				logger.info({ fundTransfers }, 'Fund transfers for application milestones')
 				return {
 					...application,
-					fundTransfer: fundTransfer !== undefined ? [fundTransfer] : false
+					fundTransfer: fundTransfers
 				}
 			})
 		}

@@ -35,7 +35,7 @@ query adminTable($id: String!){
   }
    fundTransfers(filter: {
     grant: $id
-  }){
+  }, limit: 1000){
     application{
       id: _id
     }
