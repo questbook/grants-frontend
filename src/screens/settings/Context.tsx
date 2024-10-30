@@ -7,9 +7,10 @@ import { getSafeURL } from 'src/libraries/utils/multisig'
 import { getKeyForMemberPii, getSecureChannelFromPublicKey } from 'src/libraries/utils/pii'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
-import { adminTable, GrantProgramForm, SettingsFormContextType, WorkspaceMembers } from 'src/screens/settings/_utils/types'
+import { adminTable, FundTransfer, GrantProgramForm, SettingsFormContextType, WorkspaceMembers } from 'src/screens/settings/_utils/types'
 import { getWorkspaceDetailsQuery, getWorkspaceMembersByWorkspaceIdQuery } from 'src/screens/settings/data'
 import { getAdminTableQuery } from 'src/screens/settings/data/getAdminTableQuery'
+import { getPendingTxQuery } from 'src/screens/settings/data/getPendingTxQuery'
 
 const SettingsFormContext = createContext<SettingsFormContextType | undefined>(undefined)
 
@@ -33,6 +34,10 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 					adminTable: adminTable!,
 					showAdminTable: showAdminTable!,
 					setShowAdminTable: setShowAdminTable!,
+					pendingTx: pendingTx!,
+					setPendingTx: setPendingTx!,
+					showPendingTx: showPendingTx!,
+					setShowPendingTx: setShowPendingTx!
 				}
 			}>
 			{children}
@@ -44,6 +49,8 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 	const [safeURL, setSafeURL] = useState<string>('')
 	const [adminTable, setAdminTable] = useState<adminTable>([])
 	const [showAdminTable, setShowAdminTable] = useState<boolean>(false)
+	const [pendingTx, setPendingTx] = useState<FundTransfer[]>([])
+	const [showPendingTx, setShowPendingTx] = useState<boolean>(false)
 
 	const { grant, setGrant, setRole } = useContext(GrantsProgramContext)!
 
@@ -64,6 +71,19 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 	const { fetchMore: fetchMoreAdminTable } = useQuery({
 		query: getAdminTableQuery,
 	})
+
+	const { fetchMore: fetchPendingTx } = useQuery({
+		query: getPendingTxQuery,
+	})
+
+	const fetchPendingTxDetails = useCallback(async() => {
+		if(!grant?.id) {
+			return
+		}
+
+		const response: { fundTransfers: FundTransfer[] } = await fetchPendingTx({ id: grant?.id }) as { fundTransfers: FundTransfer[] }
+		setPendingTx(response?.fundTransfers ?? [])
+	}, [grant?.id])
 
 	const fetchGrantProgramDetails = useCallback(async() => {
 		try {
@@ -214,7 +234,11 @@ const SettingsFormProvider = ({ children }: {children: ReactNode}) => {
 		fetchWorkspaceMembersDetails().then((message) => {
 			logger.info({ message }, 'Fetch grant members message')
 		})
+		fetchPendingTxDetails().then((message) => {
+			logger.info({ message }, 'Fetch pending tx message')
+		})
 	}, [grant, chainId])
+
 
 	useEffect(() => {
 		if(!grant) {

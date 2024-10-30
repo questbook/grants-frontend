@@ -24,6 +24,7 @@ import AddMemberButton from 'src/screens/settings/_components/AddMemberButton'
 import AdminTable from 'src/screens/settings/_components/AdminTable'
 import DocuSignModal from 'src/screens/settings/_components/docuSignModal'
 import { DropdownIcon } from 'src/screens/settings/_components/DropdownIcon'
+import PendingTx from 'src/screens/settings/_components/PendingTx'
 import SynapsModel from 'src/screens/settings/_components/SynapsModel'
 import useUpdateGrantProgram from 'src/screens/settings/_hooks/useUpdateGrantProgram'
 import { WorkspaceMembers } from 'src/screens/settings/_utils/types'
@@ -66,7 +67,16 @@ function Settings() {
 						<Flex
 							gap={2}
 						>
-
+							{
+								(role === 'admin' || role === 'reviewer') && (
+									<Button
+										variant='primaryMedium'
+										onClick={() => setShowPendingTx(!showPendingTx)}
+									>
+										{showPendingTx ? 'Hide Tx Table' : 'Show Tx Table'}
+									</Button>
+								)
+							}
 							{
 								(role === 'admin' || role === 'reviewer') && (
 									<Button
@@ -89,6 +99,7 @@ function Settings() {
 					</Flex>
 					<Divider />
 					{/* Actions */}
+					{showPendingTx ? <PendingTx /> : ''}
 					{
 						showAdminTable ?
 							<AdminTable /> : (
@@ -566,7 +577,7 @@ function Settings() {
 
 	const [imageChanged, setImageChanged] = useState(false)
 
-	const { workspace, workspaceMembers, grantProgramData, setGrantProgramData, safeURL, refreshWorkspace, showAdminTable, setShowAdminTable } = useContext(SettingsFormContext)!
+	const { workspace, workspaceMembers, grantProgramData, setGrantProgramData, safeURL, refreshWorkspace, showAdminTable, setShowAdminTable, showPendingTx, setShowPendingTx } = useContext(SettingsFormContext)!
 	const { grant, role } = useContext(GrantsProgramContext)!
 	const chainId = useMemo(() => {
 		return getSupportedChainIdFromWorkspace(grant?.workspace) ?? defaultChainId

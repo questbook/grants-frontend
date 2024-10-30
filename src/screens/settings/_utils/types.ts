@@ -11,11 +11,15 @@ export type SettingsFormContextType = {
     showAdminTable: boolean
     setShowAdminTable: (show: boolean) => void
     adminTable: adminTable
+    pendingTx: FundTransfer[]
+    setPendingTx: (tx: FundTransfer[]) => void
+    showPendingTx: boolean
+    setShowPendingTx: (show: boolean) => void
 }
 
 export type Workspace = GetWorkspaceDetailsQuery['workspace']
 export type WorkspaceMembers = GetWorkspaceMembersByWorkspaceIdQuery['workspaceMembers']
-
+export type FundTransfer = { application: { id: string, name: { values: { value: string }[] }[] }, status: string, transactionHash: string, amount: number, milestone: { id: string, title: string } }
 export type SocialLinks = {
     name: string
     value: string
