@@ -18,33 +18,6 @@ import StateButton from 'src/screens/discover/_components/stateButton'
 import KYCStatusUpdateModal from 'src/screens/settings/_components/KYCStatusUpdateModal'
 import { adminTable } from 'src/screens/settings/_utils/types'
 import { SettingsFormContext } from 'src/screens/settings/Context'
-import {
-	Box,
-	Badge,
-	HStack,
-	IconButton,
-	Tooltip,
-	useColorModeValue,
-	Menu,
-	MenuButton,
-	MenuList,
-	MenuItem,
-	Heading,
-	Card,
-	CardHeader,
-	CardBody,
-	Tag,
-	Stat,
-	StatLabel,
-	StatNumber,
-	StatGroup,
-	Divider,
-	VStack,
-	Progress,
-	ExternalLinkIcon,
-	InfoIcon,
-} from '@chakra-ui/react'
-import { SettingsIcon, ChevronDownIcon } from '@chakra-ui/icons'
 
 
 function AdminTable() {
@@ -147,151 +120,317 @@ function AdminTable() {
 			document.body.removeChild(element)
 		}
 
-		const TableRow = ({ row, index }: { row: any; index: number }) => {
-			const totalFunding = row?.milestones?.reduce((acc, m) => acc + m.amount, 0) || 0
-			const fundingDisbursed = row?.milestones?.reduce((acc, m) => acc + (m.amountPaid || 0), 0) || 0
-			const completedMilestones = row?.milestones?.filter(m => m.amountPaid > 0).length || 0
-			const totalMilestones = row?.milestones?.length || 0
-
+		const rowData = tableData?.filter((row: {
+        state: string
+    }) => {
+			return filter === 'all' ? true : row?.state === filter
+		})?.map((row, index) => {
 			return (
 				<Tr
-					_hover={{ bg: 'gray.50' }}
-					transition="all 0.2s"
-					borderBottom="1px"
-					borderColor="gray.100"
+					key={index}
+					_hover={
+						{
+							bg: 'gray.100'
+						}
+					}
 				>
-					<Td>{index + 1}</Td>
 					<Td>
-						<HStack spacing={2}>
-							<Text
-								fontWeight="medium"
-								color="blue.600"
-								cursor="pointer"
-								_hover={{ color: 'blue.700', textDecoration: 'underline' }}
-								onClick={() => window.open(`${window.location.origin}/dashboard/?grantId=${grant?.id}&proposalId=${row.id}&chainId=10`, '_blank')}
-							>
-								{row.name[0].values[0].value}
-							</Text>
-							<IconButton
-								aria-label="Open proposal"
-								icon={<ExternalLinkIcon />}
-								size="xs"
-								variant="ghost"
-								color="gray.500"
-							/>
-						</HStack>
+						{index + 1}
 					</Td>
-
 					<Td>
+						<Text
+							fontSize='sm'
+							onClick={
+								() => {
+
+									window.open(`${window.location.origin}/dashboard/?grantId=${grant?.id}&proposalId=${row.id}&chainId=10`, '_blank')
+
+								}
+							}
+							cursor='pointer'
+
+						>
+							{row.name[0].values[0].value?.length > 40 ? row.name[0].values[0].value.substring(0, 40) + '...' : row.name[0].values[0].value}
+						</Text>
+					</Td>
+					<Td
+						w='5%'
+					>
 						<StateButton
-							state={row.state}
-							title={row.state.charAt(0).toUpperCase() + row.state.slice(1)}
+							state={row.state === 'approved' ? 'approved' : row.state === 'rejected' ? 'rejected' : 'submitted'}
+							title={row.state}
 						/>
 					</Td>
+					<Td
+						w='5%'
+						cursor='pointer'
+						// onClick={
+						// 	() => {
+						// 		if(row?.state === 'approved') {
+						// 			setShowKYCStatusUpdateModal({
+						// 				...showKYCStatusUpdateModal,
+						// 				isOpen: true,
+						// 				grantId: row.id,
+						// 				type: 'kyc'
+						// 			})
+						// 		}
+						// 	}
+						// }
+					>
+						{
+							row.synapsStatus?.length > 0 ? (
+								<StateButton
+									state={row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed' ? 'approved' : 'submitted'}
+									title={row?.synapsStatus === 'verified' || row?.synapsStatus === 'completed' ? 'Verified' : 'Pending'}
+								/>
+							)
+								: row?.state === 'approved' ? (
+									<StateButton
+										state='submitted'
+										title='Pending'
+									/>
+								) : '-'
 
+						}
+					</Td>
+
+					<Td
+						w='5%'
+						cursor='pointer'
+					>
+						{
+							row.helloSignStatus?.length > 0 ? (
+								<StateButton
+									state={row?.helloSignStatus === 'verified' || row?.helloSignStatus === 'completed' ? 'approved' : row?.helloSignStatus === 'declined' ? 'rejected' : 'submitted'}
+									title={row?.helloSignStatus === 'verified' || row?.helloSignStatus === 'completed' ? 'Verified' : row?.helloSignStatus === 'declined' ? 'Declined' : 'Pending'}
+								/>
+							) : row?.state === 'approved' ? (
+								<StateButton
+									state='submitted'
+									title='Pending'
+								/>
+							) : '-'
+						}
+					</Td>
 					<Td>
-						<StateButton
-							state={row?.synapsStatus === 'verified' ? 'approved' : 'submitted'}
-							title={row?.synapsStatus === 'verified' ? 'Verified' : 'Pending'}
+						<Select
+							variant='unstyled'
+							size='sm'
+							value={
+								filteredMilestones?.find((milestone: {
+                                    id: string
+                                    value: string
+                                    //@ts-ignore
+                                }) => milestone?.id === row?.id)?.value || row?.milestones[0]?.id
+							}
+							onChange={
+								(e) => {
+									const check = filteredMilestones?.find((milestone: {
+                                        id: string
+                                        value: string
+                                    }) => milestone?.id === row?.id)
+									if(check) {
+										const newFilteredMilestones = filteredMilestones?.map((milestone: {
+                                         id: string
+                                         value: string
+                                        }) => {
+											if(milestone?.id === row?.id) {
+												return {
+													...milestone,
+													value: e.target.value
+												}
+											} else {
+												return milestone
+											}
+										}
+										)
+										setFilteredMilestones(newFilteredMilestones as [])
+									} else {
+										const newFilteredMilestones = [...filteredMilestones, {
+											id: row?.id,
+											value: e.target.value
+										}]
+										setFilteredMilestones(newFilteredMilestones as [])
+									}
+
+
+								}
+							}
+						>
+							{
+								row?.milestones?.map((milestone, index) => {
+									return (
+										<option
+											key={index}
+											value={milestone.id}>
+											Milestone
+											{' '}
+											{index + 1}
+											:
+											{milestone.title?.length > 10 ? milestone.title.substring(0, 10) + '...' : milestone.title}
+										</option>
+									)
+								})
+							}
+						</Select>
+
+
+					</Td>
+
+					<Td w='10%'>
+						{/* {row?.milestones[0] && */}
+						{
+							filteredMilestones?.find((milestone: {
+                            id: string
+                            value: string
+                        }) => milestone?.id === row?.id) ? (
+	                        <StateButton
+										key={index}
+										state={
+											row?.fundTransfer && row?.fundTransfer?.find((transfer) => transfer.milestone.id === filteredMilestones?.find((milestone: {
+                                id: string
+                                value: string
+                            }) => milestone?.id === row?.id)?.value)?.status === 'executed' ? 'approved' : 'submitted'
+										}
+										title={
+											row?.fundTransfer && row?.fundTransfer?.find((transfer) => transfer.milestone.id === filteredMilestones?.find((milestone: {
+                                id: string
+                                value: string
+                            }) => milestone?.id === row?.id)?.value)?.status === 'executed' ? 'Executed' : 'Pending'
+										}
+									/>
+								) : (
+									<StateButton
+										key={index}
+										state={row?.fundTransfer && row?.fundTransfer?.find((transfer) => transfer.milestone.id === row?.milestones[0]?.id)?.status === 'executed' ? 'approved' : 'submitted'}
+										title={row?.fundTransfer && row?.fundTransfer?.find((transfer) => transfer.milestone.id === row?.milestones[0]?.id)?.status === 'executed' ? 'Executed' : 'Pending'}
+									/>
+								)
+						}
+
+					</Td>
+					<Td
+						w='15%'
+					>
+						<Textarea
+							w='100%'
+							size='sm'
+							value={row?.notes}
+							onChange={
+								(e) => {
+									const newTableData = [...tableData]
+									newTableData[index].notes = e.target.value
+									setTableData(newTableData)
+								}
+							}
+							onBlur={
+								async() => {
+									await executeMutation(addTableNotesMutation, {
+										id: row.id,
+										notes: row?.notes,
+										workspace: workspace?.id
+									})
+								}
+							}
 						/>
+
 					</Td>
 
-					<Td>
-						<StateButton
-							state={row?.helloSignStatus === 'verified' ? 'approved' : 'submitted'}
-							title={row?.helloSignStatus === 'verified' ? 'Verified' : 'Pending'}
-						/>
-					</Td>
-
-					<Td>
-						<HStack spacing={2}>
-							<Text fontWeight="medium">
-								{completedMilestones}/{totalMilestones}
-							</Text>
-							<Progress
-								value={(completedMilestones/totalMilestones) * 100}
-								size="sm"
-								width="100px"
-								borderRadius="full"
-								colorScheme={completedMilestones === totalMilestones ? 'green' : 'blue'}
-							/>
-						</HStack>
-					</Td>
-
-					<Td>
-						<HStack spacing={2}>
-							<Badge colorScheme="green">
-								${fundingDisbursed.toLocaleString()} paid
-							</Badge>
-							<Badge colorScheme="orange">
-								${(totalFunding - fundingDisbursed).toLocaleString()} left
-							</Badge>
-						</HStack>
-					</Td>
 				</Tr>
 			)
-		}
+		})
 
 		return (
-			<Card shadow="sm" borderRadius="lg">
-				<Box p={6}>
-					<VStack spacing={6} align="stretch">
-						<HStack justify="space-between">
-							<Heading size="md">Grant Proposals ({tableData.length})</Heading>
-							<HStack spacing={4}>
-								<Select
-									w="150px"
-									value={filter}
-									onChange={(e) => setFilter(e.target.value as any)}
-								>
-									{['All', 'Submitted', 'Approved', 'Rejected'].map((state) => (
-										<option key={state} value={state.toLowerCase()}>
-											{state}
-										</option>
-									))}
-								</Select>
-								<Button
-									leftIcon={<ExportDownload />}
-									colorScheme="blue"
-									variant="outline"
-									size="sm"
-									onClick={downloadTXT}
-								>
-									Export MD
-								</Button>
-								<Button
-									leftIcon={<ExportDownload />}
-									colorScheme="blue"
-									variant="outline"
-									size="sm"
-									onClick={downloadCSV}
-								>
-									Export CSV
-								</Button>
-							</HStack>
-						</HStack>
+			 <Flex
+				direction='column'
+				p='4'
+				w='100%'
+				h='100%'
+			>
 
-						<Table variant="simple">
-							<Thead>
-								<Tr bg="gray.50">
-									{TableHeader.map((header) => (
-										<Th key={header} py={4}>
-											{header}
-										</Th>
-									))}
-								</Tr>
-							</Thead>
-							<Tbody>
-								{tableData
-									?.filter(row => filter === 'all' ? true : row?.state === filter)
-									?.map((row, index) => (
-										<TableRow key={row.id} row={row} index={index} />
-									))}
-							</Tbody>
-						</Table>
-					</VStack>
-				</Box>
-			</Card>
+				<Flex
+					direction='row'
+					justify='space-between'
+					align='center'
+					mb='4'
+				>
+					<Select
+						w='auto'
+						variant='outline'
+						value={filter}
+						onChange={(e) => setFilter(e.target.value as 'all' | 'submitted' | 'approved' | 'rejected')}
+					>
+						{
+							['All', 'Submitted', 'Approved', 'Rejected']?.map((state, index) => {
+								return (
+									<option
+										key={index}
+										value={state.toLowerCase()}>
+										{state}
+									</option>
+								)
+							})
+						}
+					</Select>
+
+					<Flex gap={2}>
+						<Button
+							leftIcon={<ExportDownload />}
+							colorScheme='blue'
+							variant='outline'
+							size='sm'
+							onClick={downloadTXT}>
+							Export MD
+						</Button>
+						<Button
+							leftIcon={<ExportDownload />}
+							colorScheme='blue'
+							variant='outline'
+							size='sm'
+							onClick={downloadCSV}>
+							Export CSV
+						</Button>
+					</Flex>
+				</Flex>
+				<TableContainer >
+					<Table
+						variant='simple'
+						size='sm'>
+						<Thead>
+							<Tr>
+								{
+									TableHeader.map((header, index) => {
+										return (
+											<Th
+												p={4}
+												bg='gray.100'
+												key={index}
+											>
+												{header}
+											</Th>
+										)
+									})
+								}
+							</Tr>
+						</Thead>
+						<Tbody>
+							{rowData}
+						</Tbody>
+					</Table>
+				</TableContainer>
+
+				<KYCStatusUpdateModal
+					type={showKYCStatusUpdateModal.type}
+					isOpen={showKYCStatusUpdateModal.isOpen}
+					onClose={
+						() => setShowKYCStatusUpdateModal({
+							...showKYCStatusUpdateModal,
+							isOpen: false
+						})
+					}
+					grantId={showKYCStatusUpdateModal.grantId}
+				/>
+			 </Flex>
 		)
 
 	}
