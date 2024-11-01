@@ -1,20 +1,22 @@
 import { ChangeEvent, ReactElement, useContext, useEffect, useMemo, useState } from 'react'
-import { Alert, AlertIcon, AlertTitle, Button, Checkbox, Container, Divider, Flex, Image, Text } from '@chakra-ui/react'
+import QRCode from 'react-qr-code'
+import { Alert, AlertIcon, AlertTitle, Button, Checkbox, Container, Divider, Flex, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Text } from '@chakra-ui/react'
 import { convertToRaw } from 'draft-js'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
 import { useSafeContext } from 'src/contexts/safeContext'
-import { Doc } from 'src/generated/icons'
+import { Doc, Twitter } from 'src/generated/icons'
 import logger from 'src/libraries/logger'
 import BackButton from 'src/libraries/ui/BackButton'
 import NavbarLayout from 'src/libraries/ui/navbarLayout'
 import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
-import SetupNotificationModal from 'src/libraries/ui/SetupNotificationModal'
 import { getAvatar } from 'src/libraries/utils'
+import { AmplitudeContext } from 'src/libraries/utils/amplitude'
 import { chainNames } from 'src/libraries/utils/constants'
 import { getExplorerUrlForTxHash, getRewardAmountMilestones } from 'src/libraries/utils/formatting'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { getChainInfo } from 'src/libraries/utils/token'
+import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
 import SectionHeader from 'src/screens/proposal_form/_components/SectionHeader'
 import SectionInput from 'src/screens/proposal_form/_components/SectionInput'
@@ -24,7 +26,7 @@ import SectionSelect from 'src/screens/proposal_form/_components/SectionSelect'
 import SelectArray from 'src/screens/proposal_form/_components/SelectArray'
 import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposal'
 import { containsField, findField, findFieldBySuffix, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
-import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, MILESTONE_INPUT_STYLE } from 'src/screens/proposal_form/_utils/constants'
+import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, MILESTONE_INPUT_STYLE, SocialIntent } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
 
 
@@ -35,100 +37,262 @@ function ProposalForm() {
 
 
 	const successComponent = () => {
+		const getPayload = (props: {
+			type: 'grant' | 'proposal'
+			proposalId: string
+			grantId: string
+		}) => {
+			if(grant?.workspace) {
+				const key = `${props.type === 'grant' ? 'gp' : 'app'}-${props.type === 'grant' ? props.grantId : props.proposalId}-${getSupportedChainIdFromWorkspace(grant.workspace)}`
+				const payload = (Buffer.from(key).toString('base64')).replaceAll('=', '')
+				return payload
+			 } else if(typeof window !== 'undefined' && !grant) {
+				const params = new URLSearchParams(window.location.search)
+				const chainId = params.get('chainId')
+				const key = `${props.type === 'grant' ? 'gp' : 'app'}-${props.type === 'grant' ? props.grantId : props.proposalId}-${chainId}`
+				const payload = (Buffer.from(key).toString('base64')).replaceAll('=', '')
+				logger.info({ payload }, 'Telegram payload')
+				return payload
+			}
+
+			return undefined
+		}
+
 		return (
 			<Flex
 				w='100%'
 				h='calc(100vh - 64px)'
 				align='start'
 				justify='center'>
-				<Flex
-					w='90%'
-					h='calc(100vh - 100px)'
-					bg='white'
-					boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
-					overflowY='auto'
-					my={5}>
-					<Flex
-						direction='column'
-						bg='accent.columbia'
-						w='50%'
-						h='100%'
-						justify='center'
-						align='start'
-						pl='10%'>
-
-						<Image
-							src={grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)}
-							boxSize='20rem'
-						/>
-						<Text
-							mt={6}
-							variant='heading2'
-							fontWeight='500'>
-							Fantastic — we have received
-							your proposal.
-						</Text>
-					</Flex>
-					<Flex
-						bg='white'
-						w='50%'
-						h='100%'
-						direction='column'
-						align='start'
-						justify='center'
-						px='10%'>
-						<Text
-							fontWeight='500'
-							variant='subheading'>
-							Subscribe to notifications
-						</Text>
-						<Text mt={3}>
-							Get notified on Telegram when your proposal is viewed, and reviewed
-							by grant managers.
-						</Text>
-						<Flex
-							mt={12}
-							gap={6}>
-							<Button
-								variant='primaryLarge'
-								onClick={() => setIsSetupNotificationModalOpen(true)}>
-								<Text
-									color='white'
-									fontWeight='500'>
-									Subscribe
-								</Text>
-							</Button>
-							<Button
-								variant='link'
-								color='accent.azure'
-								onClick={
-									async() => {
-										setRole('builder')
-										const ret = await router.push({
-											pathname: '/dashboard',
-											query: {
-												grantId: grant?.id,
-												chainId: chainId,
-												role: 'builder',
-												proposalId,
-											}
-										})
-										if(ret) {
-											router.reload()
-										}
+				{formComponent()}
+				<Modal
+					isOpen={true}
+					size='xl'
+					onClose={
+						async() => {
+							if(isSetupNotificationModalOpen) {
+								setIsSetupNotificationModalOpen(false)
+							} else {
+								setRole('builder')
+								const ret = await router.push({
+									pathname: '/dashboard',
+									query: {
+										grantId: grant?.id,
+										chainId: chainId,
+										role: 'builder',
+										proposalId,
 									}
-								}>
-								I&apos;ll do it later
-							</Button>
-						</Flex>
+								})
+								if(ret) {
+									router.reload()
+								}
+							}
 
-						<SetupNotificationModal
-							isOpen={isSetupNotificationModalOpen}
-							onClose={() => setIsSetupNotificationModalOpen(false)}
-							type='proposal'
-							proposalId={proposalId!} />
-					</Flex>
-				</Flex>
+						}
+					}
+					closeOnEsc
+					isCentered
+					scrollBehavior='outside'>
+					<ModalOverlay />
+					<ModalContent
+						borderRadius='8px'
+					>
+						<ModalHeader
+							fontSize='24px'
+							fontWeight='700'
+							lineHeight='32.4px'
+							color='#07070C'
+							alignItems='center'
+						>
+							{isSetupNotificationModalOpen ? 'Subscribe to notifications' : 'Proposal Confirmation'}
+							<ModalCloseButton
+								mt={1}
+							/>
+						</ModalHeader>
+						<ModalBody>
+							{
+								isSetupNotificationModalOpen ?
+									(
+										<>
+											<Flex
+												direction='column'
+												alignContent='center'
+												alignItems='center'
+												w='100%'
+												gap='24px'
+												padding='60px 10px'
+												justifyContent='center'
+												mx='auto'
+												h='100%'>
+												<QRCode
+													fgColor='#4D9CD4'
+													style={{ height: '320px', maxWidth: '100%', width: '320px' }}
+													value={qrCodeText ?? ''} />
+												<Text
+
+													color='#699804'
+													textAlign='center'
+													fontSize='18px'
+													fontStyle='normal'
+													fontWeight='700'
+													lineHeight='135%'
+												>
+													Scan QR code with your phone camera
+												</Text>
+
+											</Flex>
+											<Button
+												w='100%'
+												bg='transparent'
+												border='1px solid #E1DED9'
+												mb={6}
+												variant='primaryLarge'
+												onClick={
+													() => {
+														trackAmplitudeEvent('telegram_notifications', {
+															programName: grant?.title,
+															telegramId: telegram ?? '',
+															isSignedIn: scwAddress ? 'true' : 'false'
+														})
+														window.open(qrCodeText, '_blank')
+													}
+												}
+											>
+												<Text
+													fontWeight='500'>
+													Open my desktop app
+												</Text>
+											</Button>
+										</>
+									) : (
+										<>
+											<Flex
+												direction='column'
+												alignContent='center'
+												alignItems='center'
+												w='100%'
+												gap='24px'
+												padding='60px 10px'
+												justifyContent='center'
+												mx='auto'
+												h='100%'>
+
+												<Image
+													src={grant?.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)}
+													boxSize='80px'
+												/>
+												<Text
+
+													color='#699804'
+													textAlign='center'
+													fontSize='18px'
+													fontStyle='normal'
+													fontWeight='700'
+													lineHeight='135%'
+												>
+													Fantastic — we have received your proposal.
+												</Text>
+												<Text
+													color='#7E7E8F'
+													textAlign='center'
+													fontSize='16px'
+													fontStyle='normal'
+													fontWeight='400'
+													lineHeight='150%'
+												>
+													Let the world know about this by sharing through your twitter and also subscribe to the notifications to get updates regarding your proposal.
+												</Text>
+
+											</Flex>
+											<Flex
+												mb={6}
+												gap={6}
+												flexDirection='column'
+											>
+												<Button
+													w='100%'
+													bg='#77AC06'
+													border='1px solid #E1DED9'
+													variant='primaryLarge'
+													onClick={
+														() => {
+															trackAmplitudeEvent('Social_Shares', {
+																programName: grant?.title,
+																telegramId: telegram ?? '',
+															})
+															window.open(`https://twitter.com/intent/tweet?text=${SocialIntent[Math.floor(Math.random() * SocialIntent.length)]}&url=${window.location.origin}/dashboard/?grantId=${grant?.id}%26chainId=${chainId}%26proposalId=${proposalId}`, '_blank')
+														}
+													}
+													leftIcon={<Twitter />}
+												>
+													<Text
+														color='white'
+														fontWeight='500'>
+														Share on Twitter
+													</Text>
+												</Button>
+												<Button
+													w='100%'
+													bg='transparent'
+													border='1px solid #E1DED9'
+													variant='primaryLarge'
+													onClick={
+														() => {
+															trackAmplitudeEvent('Social_Shares', {
+																programName: grant?.title,
+															})
+															const payload = getPayload({ type: 'proposal', proposalId: proposalId!, grantId: grant?.id! })
+															if(payload) {
+																setQrCodeText(`https://t.me/${process.env.NOTIF_BOT_USERNAME}?start=${payload}`)
+																setIsSetupNotificationModalOpen(true)
+															}
+														}
+													}
+
+												>
+													<Text
+														fontWeight='500'>
+														Subscribe to notifications
+													</Text>
+												</Button>
+												<Button
+													w='100%'
+													bg='transparent'
+													border='1px solid #E1DED9'
+													variant='primaryLarge'
+													onClick={
+														async() => {
+															setRole('builder')
+															const ret = await router.push({
+																pathname: '/dashboard',
+																query: {
+																	grantId: grant?.id,
+																	chainId: chainId,
+																	role: 'builder',
+																	proposalId,
+																}
+															})
+															if(ret) {
+																router.reload()
+															}
+														}
+													}
+
+												>
+													<Text
+														fontWeight='500'>
+														I&apos;ll do it later
+													</Text>
+												</Button>
+
+
+											</Flex>
+										</>
+									)
+							}
+						</ModalBody>
+					</ModalContent>
+				</Modal>
 			</Flex>
 		)
 	}
@@ -759,7 +923,8 @@ function ProposalForm() {
 	const { safeObj } = useSafeContext()!
 	const { setSignIn } = useContext(SignInContext)!
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
-
+	const { trackAmplitudeEvent } = useContext(AmplitudeContext)!
+	const [qrCodeText, setQrCodeText] = useState<string>('')
 
 	const router = useRouter()
 	const { newTab } = router.query
