@@ -46,13 +46,13 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 				</Text>
 				{
 					(role === 'community' || role === 'builder') &&
-					!disabledGrants?.includes(grant?.id as string) || !grant?.acceptingApplications &&
 					(
 						<Button
 							variant='secondaryV2'
 							// w='103px'
 							// h='32px'
 							mr={4}
+							isDisabled={!grant?.acceptingApplications || disabledGrants?.includes(grant?.id as string)}
 							fontSize={['10px', '10px', '12px', '12px']}
 							onClick={
 								() => {

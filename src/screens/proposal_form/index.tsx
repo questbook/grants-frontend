@@ -1,6 +1,6 @@
 import { ChangeEvent, ReactElement, useContext, useEffect, useMemo, useState } from 'react'
 import QRCode from 'react-qr-code'
-import { Alert, AlertIcon, AlertTitle, Button, Checkbox, Container, Divider, Flex, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Text } from '@chakra-ui/react'
+import { Alert, AlertIcon, AlertTitle, Button, Center, Checkbox, Container, Divider, Flex, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Spinner, Text, VStack } from '@chakra-ui/react'
 import { convertToRaw } from 'draft-js'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
@@ -31,7 +31,36 @@ import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_
 
 
 function ProposalForm() {
+	const [isLoading, setIsLoading] = useState(true)
+
+	const LoadingComponent = () => {
+		return (
+			<Center
+				h='calc(100vh - 64px)'
+				w='100%'>
+				<VStack spacing={4}>
+					<Spinner
+						thickness='4px'
+						speed='0.65s'
+						emptyColor='gray.200'
+						color='blue.500'
+						size='xl'
+					/>
+					<Text
+						color='gray.600'
+						fontSize='lg'>
+						Loading proposal form...
+					</Text>
+				</VStack>
+			</Center>
+		)
+	}
+
 	const buildComponent = () => {
+		if(isLoading) {
+			return <LoadingComponent />
+		}
+
 		return isExecuting !== undefined && !isExecuting && networkTransactionModalStep === undefined ? successComponent() : (error ? errorComponent() : formComponent())
 	}
 
@@ -941,6 +970,12 @@ function ProposalForm() {
 		setSignInTitle('submitProposal')
 	}, [])
 
+	useEffect(() => {
+		if(form && grant) {
+			setIsLoading(false)
+		}
+	}, [form, grant])
+
 	const chainInfo = useMemo(() => {
 		if(!grant || !chainId) {
 			return
@@ -1002,7 +1037,7 @@ function ProposalForm() {
 			return true
 		}
 
-		return false
+		return
 	}, [form])
 
 	const onChange = (e: ChangeEvent<HTMLInputElement>, id: string) => {
