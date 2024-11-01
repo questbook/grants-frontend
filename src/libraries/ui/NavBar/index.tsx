@@ -105,7 +105,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 
 				<Box ml={4} />
 				{
-					(shouldShowTitle && role === 'admin' && grant?.acceptingApplications) && (
+					(shouldShowTitle && role === 'admin') && (
 						<Pencil
 							cursor='pointer'
 							boxSize='20px'
@@ -373,7 +373,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 
 
 				{
-					(shouldShowTitle && role === 'admin' && grant?.acceptingApplications) && (
+					(shouldShowTitle && role === 'admin' && (
 						<Pencil
 							cursor='pointer'
 							boxSize='20px'
@@ -391,7 +391,7 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 
 								}
 							} />
-					)
+					))
 				}
 
 				{

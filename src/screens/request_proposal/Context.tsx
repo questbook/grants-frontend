@@ -1,8 +1,9 @@
-import { createContext, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import { defaultChainId } from 'src/constants/chains'
 import { useQuery } from 'src/libraries/hooks/useQuery'
 import logger from 'src/libraries/logger'
+import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
 import { getGrantDetailsByIdQuery } from 'src/screens/request_proposal/_data/getGrantDetailsByIdQuery'
 import { RFPForm, RFPFormContextType, RFPFormType } from 'src/screens/request_proposal/_utils/types'
 
@@ -32,6 +33,8 @@ const RFPFormProvider = ({ children }: {children: ReactNode}) => {
 	const [type, setType] = useState<RFPFormType>('submit')
 	const [executionType, setExecutionType] = useState<RFPFormType>()
 	const [grantId, setGrantId] = useState<string>('')
+	const { setRole } = useContext(GrantsProgramContext)!
+	const { scwAddress } = useContext(WebwalletContext)!
 
 	const router = useRouter()
 	const { grantId: _grantId, workspaceId: _workspaceId, chainId: _chainId } = router.query
@@ -120,6 +123,42 @@ const RFPFormProvider = ({ children }: {children: ReactNode}) => {
 		setRFPData(data)
 		return response
 	}, [chainId, grantId])
+
+
+	const getLocalGrant = () => {
+
+		const rawGrant = localStorage.getItem('cur-grant')
+
+		logger.info('Fetching grant from local storage')
+
+		if(!rawGrant) {
+			logger.info('No grant found in local storage')
+			return undefined
+		}
+
+		if(!scwAddress) {
+			logger.info('No SCW Address')
+			return undefined
+		}
+
+		const grant = JSON.parse(rawGrant)
+
+		if(scwAddress) {
+			logger.info({ scwAddress }, 'SCW Address')
+			for(const member of grant?.workspace?.members ?? []) {
+				if(member.actorId.toLowerCase() === scwAddress.toLowerCase()) {
+					logger.info({ member }, 'Member (ROLE)')
+					setRole(member.accessLevel === 'reviewer' ? 'reviewer' : 'admin')
+				}
+			}
+		}
+
+		return grant
+	}
+
+	useEffect(() => {
+		getLocalGrant()
+	}, [scwAddress])
 
 	useEffect(() => {
 		if(!grantId) {

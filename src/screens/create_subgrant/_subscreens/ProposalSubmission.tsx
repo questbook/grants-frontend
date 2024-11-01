@@ -1,9 +1,9 @@
 /* eslint-disable react/jsx-curly-brace-presence */
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { BsArrowLeft } from 'react-icons/bs'
 import { IoMdClose } from 'react-icons/io'
-import { Button, Flex, Icon, Input, Text } from '@chakra-ui/react'
+import { Button, Flex, Icon, Text } from '@chakra-ui/react'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { logger } from 'ethers'
 import { useRouter } from 'next/router'
@@ -18,16 +18,16 @@ import { RFPFormContext } from 'src/screens/create_subgrant/Context'
 import { ApplicantDetailsFieldType } from 'src/types'
 
 function ProposalSubmission() {
-	const uploaDocInputref = useRef(null)
+	//const uploaDocInputref = useRef(null)
 	// const startdateRef = useRef<HTMLInputElement>(null)
 	// const endDateRef = useRef<HTMLInputElement>(null)
 	const bigScreen = useMediaQuery('(min-width:601px)')
 
-	const openInput = () => {
+	/* const openInput = () => {
 		if(uploaDocInputref.current) {
 			(uploaDocInputref.current as HTMLInputElement).click()
 		}
-	}
+	} */
 
 	const buildComponent = () => {
 		return (
@@ -205,32 +205,6 @@ function ProposalSubmission() {
 							width='100%'
 							// flexProps={{ grow: 1, shrink: 1 }}
 						/>
-						<Text
-							display={rfpFormType === 'edit' ? 'none' : ''}
-							variant='subheading'
-							marginBottom={[-6, 0, 0, 0]}
-						>
-							Or
-						</Text>
-
-						<label htmlFor='upload-doc-id' />
-						<FlushedInput
-							id='upload-doc-id'
-							placeholder='Upload a doc'
-							display={rfpFormType === 'edit' ? 'none' : ''}
-							onClick={openInput}
-							value={rfpData?.doc ? rfpData?.doc[0] : ''}
-							onChange={(e) => handleFile(e)}
-							width='100%'
-						/>
-						<Input
-							id='upload-doc-id'
-							ref={uploaDocInputref}
-							type='file'
-							placeholder='Upload a file'
-							onChange={(e) => handleFile(e)}
-							style={{ height: '0.1px', width: '0.1px', opacity: 0 }}
-						/>
 					</Flex>
 					{/* CTA */}
 					<Button
@@ -391,11 +365,11 @@ function ProposalSubmission() {
 	}, [extraDetailsFieldsList])
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const handleFile = async(e: any) => {
+	/*const handleFile = async(e: any) => {
 		if(rfpFormType === 'edit') {
 			handleOnEdit('doc', e.target.files)
 		}
-	}
+	} */
 
 	const handleClickAddAnother = () => {
 		setDetailsCounter(detailsCounter + 1)

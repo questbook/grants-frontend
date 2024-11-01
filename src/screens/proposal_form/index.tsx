@@ -1,5 +1,5 @@
 import { ChangeEvent, ReactElement, useContext, useEffect, useMemo, useState } from 'react'
-import { Button, Container, Flex, Image, Text } from '@chakra-ui/react'
+import { Alert, AlertIcon, AlertTitle, Button, Checkbox, Container, Divider, Flex, Image, Text } from '@chakra-ui/react'
 import { convertToRaw } from 'draft-js'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
@@ -209,13 +209,29 @@ function ProposalForm() {
 							>
 								{grant?.title}
 							</Text>
-							{/* <Text
-								variant={isOpen ? 'openTag' : 'closedTag'}
+							 <Text
+								variant={grant?.acceptingApplications ? 'openTag' : 'closedTag'}
 							>
-								{isOpen}
-							</Text> */}
-						</Flex>
+								{grant?.acceptingApplications ? 'Open' : 'Closed'}
+							 </Text>
 
+						</Flex>
+						{
+							!grant?.acceptingApplications && (
+								<Alert
+									status='warning'
+									variant='subtle'
+									borderRadius='md'
+									mb={4}
+									mt={4}
+									maxW='450px'>
+									<AlertIcon />
+									<AlertTitle fontSize='sm'>
+										This grant is not accepting applications at this time
+									</AlertTitle>
+								</Alert>
+							)
+						}
 						{/* Grant Info */}
 						<Container
 							mt={4}
@@ -224,6 +240,7 @@ function ProposalForm() {
 							className='container'
 							width='max-content'
 						>
+
 							<Flex
 								direction={['column', 'row']}
 								justifyContent='space-between'
@@ -254,33 +271,48 @@ function ProposalForm() {
 										</Flex>
 									</Flex> */}
 								</Flex>
-								{/* <Divider
+								<Divider
 									orientation='vertical'
-									h='100%' /> */}
+									h='100%' />
+
+								{/* Documentation link card */}
 								{
 									grant?.link && (
-										<Flex alignItems='center'>
-											<Flex gap={4}>
-												<Doc />
-												<Flex direction='column'>
-													<Text
-														variant='title'
-														fontWeight='400'
-													>
-														Grant program details
-														{' '}
-													</Text>
-													<Text
-														variant='title'
-														fontWeight='500'
-														color='black.100'
-														cursor='pointer'
-														onClick={() => window.open(grant?.link!, '_blank')}
-													>
-														Read here
-													</Text>
-												</Flex>
+										<Flex
+											alignItems='center'
+											p={5}
+											flexDirection='column'
+											bg='white'
+											transition='all 0.2s ease-in-out'
+											onClick={() => window.open(grant?.link!, '_blank')}
+											role='button'
+											aria-label='View Program RFP'>
+
+											<Doc
+												boxSize='12'
+												color='gray.600'
+												mb={2}
+											/>
+
+											<Flex
+												direction='column'
+												align='center'
+												gap={1}>
+												<Text
+													variant='title'
+													fontSize='md'
+													fontWeight='600'
+													color='gray.800'>
+													Grant Program Details
+												</Text>
+												<Text
+													variant='body'
+													fontSize='sm'
+													color='blue.600'>
+													Click to view program RFP
+												</Text>
 											</Flex>
+
 										</Flex>
 									)
 								}
@@ -621,19 +653,58 @@ function ProposalForm() {
 							)
 						}
 						{
-							/* Optinal Referral Field (if it is not included in the form field) */
 							type === 'submit' && (
-								<SectionRadioButton
-									label='Subscribe to Questbook Newsletter'
-									placeholder='Select an option'
-									value={newsletter}
-									options={['Yes', 'No']}
-									onChange={
-										(e) => {
-											setNewsLetter(e.target.value)
-										}
-									}
-								 />
+								<Flex
+									w='100%'
+									mt={8}
+								>
+									<Flex
+										direction='column'
+										w='100%'>
+										<Flex
+											w='100%'
+											direction={['column', 'column', 'row']}
+											align={['flex-start', 'flex-start', 'center']}
+											gap={[2, 2, 8]}>
+											<Flex
+												direction='column'
+												w={['100%', '100%', 'calc(30% - 32px)']}>
+												<Text
+													mb={[1, 1, 0]}
+													variant='subheading'
+													fontWeight='500'
+													textAlign={['left', 'left', 'right']}
+													color='gray.700'>
+													Stay Updated
+												</Text>
+												<Text
+													fontSize='sm'
+													color='gray.500'
+													textAlign={['left', 'left', 'right']}>
+													Get the latest updates about grants
+												</Text>
+											</Flex>
+											<Checkbox
+												isChecked={newsletter === 'Yes'}
+												onChange={
+													(e) => {
+														setNewsLetter(e.target.checked ? 'Yes' : 'No')
+													}
+												}
+												size='lg'
+												colorScheme='blue'
+												aria-label='Subscribe to Questbook Newsletter'
+												_hover={{ cursor: 'pointer' }}
+											>
+												<Text
+													fontSize='sm'
+													color='gray.700'>
+													Subscribe to Questbook Newsletter
+												</Text>
+											</Checkbox>
+										</Flex>
+									</Flex>
+								</Flex>
 							)
 						}
 

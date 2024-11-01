@@ -341,6 +341,20 @@ function ProposalSubmission() {
 			})
 		}
 
+		if(result.grant.fields.map((f: { title: string }) => f.title).includes('applicantTelegram')) {
+			fields.fields.push({
+				...applicantDetailsList.find((d) => d.id === 'applicantTelegram'),
+				required: true
+			})
+		}
+
+		if(result.grant.fields.map((f: { title: string }) => f.title).includes('applicantTwitter')) {
+			fields.fields.push({
+				...applicantDetailsList.find((d) => d.id === 'applicantTwitter'),
+				required: true
+			})
+		}
+
 		logger.info({ fields }, 'ProposalForm: fetchGrant (fields)')
 		return fields.fields
 	}, [grantId, chainId])

@@ -7,7 +7,7 @@ import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 // import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 // import { getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
-import { SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
 import SelectDropdown from 'src/screens/request_proposal/_components/SelectDropdown'
 import StepIndicator from 'src/screens/request_proposal/_components/StepIndicator'
 import useCreateRFP from 'src/screens/request_proposal/_hooks/useCreateRFP'
@@ -159,14 +159,18 @@ function Payouts() {
 								}
 							} />
 						<Text variant='subheading'>
-							USD.
+							{grant?.reward?.token?.label}
 						</Text>
 					</Flex>
 					<Text
 						as='i'
 						color='black.300'
 					>
-						Note: You can payout in any token.
+						Note: You can payout in any token, but
+						{' '}
+						{grant?.reward?.token?.label}
+						{' '}
+						is the default token for this grant.
 					</Text>
 					{/* CTA */}
 					<Flex
@@ -222,7 +226,7 @@ function Payouts() {
 	const { setSignInTitle } = useContext(SignInTitleContext)!
 	// const [milestoneCounter, setMilestoneCounter] = useState(!rfpData?.milestones ? 0 : rfpData?.milestones.length)
 	const payoutTypeOptions = [{ value: 'in_one_go', label: 'In One Go' }, { value: 'milestones', label: 'Based on Milestones' }]
-
+	const { grant } = useContext(GrantsProgramContext)!
 	const { createRFP, currentStep: createStep } = useCreateRFP()
 	const { updateRFP, currentStep: updateStep } = useUpdateRFP()
 

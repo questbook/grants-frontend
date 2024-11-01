@@ -7,7 +7,7 @@ import logger from 'src/libraries/logger'
 import FlushedInput from 'src/libraries/ui/FlushedInput'
 // import NetworkTransactionFlowStepperModal from 'src/libraries/ui/NetworkTransactionFlowStepperModal'
 // import { getExplorerUrlForTxHash } from 'src/libraries/utils/formatting'
-import { SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
+import { GrantsProgramContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
 import SelectDropdown from 'src/screens/create_subgrant/_components/SelectDropdown'
 import StepIndicator from 'src/screens/create_subgrant/_components/StepIndicator'
 import useCreateRFP from 'src/screens/create_subgrant/_hooks/useCreateRFP'
@@ -159,7 +159,7 @@ function Payouts() {
 								}
 							} />
 						<Text variant='subheading'>
-							USD.
+							{grant?.reward?.token?.label}
 						</Text>
 					</Flex>
 					<Text
@@ -218,6 +218,7 @@ function Payouts() {
 
 	const { rfpData, setRFPData, rfpFormType } = useContext(RFPFormContext)!
 	const { scwAddress, webwallet, setCreatingProposalStep } = useContext(WebwalletContext)!
+	const { grant } = useContext(GrantsProgramContext)!
 	const { setSignIn } = useContext(SignInContext)!
 	const { setSignInTitle } = useContext(SignInTitleContext)!
 	// const [milestoneCounter, setMilestoneCounter] = useState(!rfpData?.milestones ? 0 : rfpData?.milestones.length)
