@@ -18,6 +18,7 @@ import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import { getChainInfo } from 'src/libraries/utils/token'
 import { getSupportedChainIdFromWorkspace } from 'src/libraries/utils/validations'
 import { GrantsProgramContext, SignInContext, SignInTitleContext, WebwalletContext } from 'src/pages/_app'
+import SectionDropDown from 'src/screens/proposal_form/_components/SectionDropDown'
 import SectionHeader from 'src/screens/proposal_form/_components/SectionHeader'
 import SectionInput from 'src/screens/proposal_form/_components/SectionInput'
 import SectionRadioButton from 'src/screens/proposal_form/_components/SectionRadioButton'
@@ -1255,7 +1256,7 @@ function ProposalForm() {
 								<SectionInput
 									label='Discord'
 									value={findCustomField(form, 'Discord').value}
-									placeholder='Discord username'
+									placeholder='@discordHandle'
 									onChange={
 										(e) => {
 											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Discord').id)
@@ -1267,39 +1268,27 @@ function ProposalForm() {
 
 						{
 							containsCustomField(grant, 'KYC/KYB Acknowledgment') && (
-								<Checkbox
-									isChecked={findCustomField(form, 'KYC/KYB Acknowledgment').value === 'Yes'}
+								<SectionRadioButton
+									label='KYC/KYB Acknowledgment'
+									options={['Yes', 'No']}
+									value={findCustomField(form, 'KYC/KYB Acknowledgment').value}
 									onChange={
 										(e) => {
-											onChange({
-												target: {
-													value: e.target.checked ? 'Yes' : 'No'
-												}
-											} as ChangeEvent<HTMLInputElement>, findCustomField(form, 'KYC/KYB Acknowledgment').id)
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'KYC/KYB Acknowledgment').id)
 										}
-									}
-									size='lg'
-									colorScheme='blue'
-									aria-label='KYC/KYB Acknowledgment'
-									_hover={{ cursor: 'pointer' }}
-								>
-									<Text
-										fontSize='sm'
-										color='gray.700'>
-										I acknowledge that I will need to complete KYC/KYB process
-									</Text>
-								</Checkbox>
+									} />
 							)
 						}
 						{
 							containsCustomField(grant, 'Track') && (
-								<SectionInput
-									label='Discord'
-									value={findCustomField(form, 'Discord').value}
-									placeholder='Discord username'
+								<SectionDropDown
+									label='Track'
+									width='-moz-fit-content'
+									options={['Open Application', 'RFP']}
+									value={findCustomField(form, 'Track').value}
 									onChange={
 										(e) => {
-											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Discord').id)
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Track').id)
 										}
 									} />
 							)
@@ -1453,32 +1442,32 @@ function ProposalForm() {
 						}
 
 						{
-							containsCustomField(grant, '(If applicable) Deployment Date') && (
+							containsCustomField(grant, 'Deployment Date') && (
 								<SectionInput
 									label='(If applicable) Deployment Date'
 									type='textarea'
-									value={findCustomField(form, '(If applicable) Deployment Date').value}
+									value={findCustomField(form, 'Deployment Date').value}
 									placeholder='Has your project been deployed on Arbitrum One, an Orbit chain, or Arbitrum Nova already? If so, what date was your first deployment? If not deployed on an Aribturm related chain, where and when was your project first deployed?'
 									maxLength={500}
 									onChange={
 										(e) => {
-											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, '(If applicable) Deployment Date').id)
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Deployment Date').id)
 										}
 									} />
 							)
 						}
 
 						{
-							containsCustomField(grant, '(If applicable) Previous Performance') && (
+							containsCustomField(grant, 'Previous Performance') && (
 								<SectionInput
 									label='(If applicable) Previous Performance'
 									type='textarea'
-									value={findCustomField(form, '(If applicable) Previous Performance').value}
+									value={findCustomField(form, 'Previous Performance').value}
 									placeholder=' Provide a list of dashboards that point to relevant data metrics such as transaction volume, TVL, daily active wallets, etc'
 									maxLength={500}
 									onChange={
 										(e) => {
-											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, '(If applicable) Previous Performance').id)
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Previous Performance').id)
 										}
 									} />
 							)
@@ -1553,7 +1542,7 @@ function ProposalForm() {
 						</SectionHeader>
 
 						<SelectArray
-							label='Milestones*'
+							label='Milestones'
 							allowMultiple={grant?.payoutType === 'milestones' || (containsField(grant, 'isMultipleMilestones') ?? false)}
 							config={
 								form?.milestones?.map((milestone, index) => {
@@ -1634,6 +1623,16 @@ function ProposalForm() {
 							placeholder='12000 ARB'
 							value={`${fundingAsk} ${chainInfo?.label}`}
 						/>
+						<Alert
+							status='info'
+							variant='left-accent'
+							mt={8}
+							mb={4}>
+							<AlertIcon />
+							<Text fontSize='sm'>
+								Note: Applicants requesting greater than 500k ARB may be sent to the Arbitrum DAO directly
+							</Text>
+						</Alert>
 
 						{
 							containsCustomField(grant, 'How will you ensure the long-term sustainability of your project after the end of the program?') && (
@@ -1651,14 +1650,14 @@ function ProposalForm() {
 							)
 						}
 						{
-							containsCustomField(grant, 'Do you acknowledge that, from the moment in which the grant is approved, you have up to 1 year to KYC/KYB and complete the deliverable specified in this grant? Yes/No') && (
+							containsCustomField(grant, 'Do you acknowledge that, from the moment in which the grant is approved, you have up to 1 year to KYC/KYB and complete the deliverable specified in this grant?') && (
 								<SectionRadioButton
-									label='Do you acknowledge that, from the moment in which the grant is approved, you have up to 1 year to KYC/KYB and complete the deliverable specified in this grant? Yes/No'
+									label='Do you acknowledge that, from the moment in which the grant is approved, you have up to 1 year to KYC/KYB and complete the deliverable specified in this grant?'
 									options={['Yes', 'No']}
-									value={findCustomField(form, 'Do you acknowledge that, from the moment in which the grant is approved, you have up to 1 year to KYC/KYB and complete the deliverable specified in this grant? Yes/No').value}
+									value={findCustomField(form, 'Do you acknowledge that, from the moment in which the grant is approved, you have up to 1 year to KYC/KYB and complete the deliverable specified in this grant?').value}
 									onChange={
 										(e) => {
-											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Do you acknowledge that, from the moment in which the grant is approved, you have up to 1 year to KYC/KYB and complete the deliverable specified in this grant? Yes/No').id)
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Do you acknowledge that, from the moment in which the grant is approved, you have up to 1 year to KYC/KYB and complete the deliverable specified in this grant?').id)
 										}
 									} />
 							)
@@ -1673,46 +1672,21 @@ function ProposalForm() {
 								</SectionHeader>
 							)
 						}
-
-						{
-							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1).startsWith('customField')).map((field) => {
-								const id = field.id.substring(field.id.indexOf('.') + 1)
-								const modifiedId = id.substring(id.indexOf('-') + 1)
-								const title = field.title.substring(field.title.indexOf('-') + 1)
-									.split('\\s')
-									.join(' ')
-
-								// console.log('hasan', { id, field: findFieldBySuffix(form, modifiedId, id)})
-
-								return (
-									<SectionInput
-										key={field.id}
-										label={title}
-										value={findFieldBySuffix(form, modifiedId, id).value}
-										onChange={
-											(e) => {
-												onChange(e, findFieldBySuffix(form, modifiedId, id).id)
-											}
-										} />
-								)
-							})
-						}
 						{
 							/* Optinal Referral Field (if it is not included in the form field) */
 							type === 'submit' &&
 							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('referral')
 							).length === 0 && (
-								<SectionRadioButton
+								<SectionDropDown
 									label='How did you find out about this program?'
-									placeholder='Select an option'
-									value={referral?.type}
+									width='-moz-fit-content'
 									options={['Questbook Twitter', 'Website', 'Someone referred me', 'Other']}
+									value={referral?.type}
 									onChange={
 										(e) => {
 											setReferral({ type: e.target.value, value: '' })
 										}
-									}
-								/>
+									} />
 							)
 						}
 						{
