@@ -25,8 +25,8 @@ import SectionRichTextEditor from 'src/screens/proposal_form/_components/Section
 import SectionSelect from 'src/screens/proposal_form/_components/SectionSelect'
 import SelectArray from 'src/screens/proposal_form/_components/SelectArray'
 import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposal'
-import { containsField, findField, findFieldBySuffix, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
-import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, MILESTONE_INPUT_STYLE, SocialIntent } from 'src/screens/proposal_form/_utils/constants'
+import { containsCustomField, containsField, findCustomField, findField, findFieldBySuffix, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
+import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, MILESTONE_INPUT_STYLE, SocialIntent, stylus } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
 
 
@@ -61,7 +61,7 @@ function ProposalForm() {
 			return <LoadingComponent />
 		}
 
-		return isExecuting !== undefined && !isExecuting && networkTransactionModalStep === undefined ? successComponent() : (error ? errorComponent() : formComponent())
+		return isExecuting !== undefined && !isExecuting && networkTransactionModalStep === undefined ? successComponent() : (error ? errorComponent() : grant?.id === stylus[0] ? customStylusComponent() : formComponent())
 	}
 
 
@@ -75,7 +75,7 @@ function ProposalForm() {
 				const key = `${props.type === 'grant' ? 'gp' : 'app'}-${props.type === 'grant' ? props.grantId : props.proposalId}-${getSupportedChainIdFromWorkspace(grant.workspace)}`
 				const payload = (Buffer.from(key).toString('base64')).replaceAll('=', '')
 				return payload
-			 } else if(typeof window !== 'undefined' && !grant) {
+			} else if(typeof window !== 'undefined' && !grant) {
 				const params = new URLSearchParams(window.location.search)
 				const chainId = params.get('chainId')
 				const key = `${props.type === 'grant' ? 'gp' : 'app'}-${props.type === 'grant' ? props.grantId : props.proposalId}-${chainId}`
@@ -402,11 +402,11 @@ function ProposalForm() {
 							>
 								{grant?.title}
 							</Text>
-							 <Text
+							<Text
 								variant={grant?.acceptingApplications ? 'openTag' : 'closedTag'}
 							>
 								{grant?.acceptingApplications ? 'Open' : 'Closed'}
-							 </Text>
+							</Text>
 
 						</Flex>
 						{
@@ -560,14 +560,14 @@ function ProposalForm() {
 											onChange(e, 'applicantTelegram')
 										}
 									}
-									 />
+								/>
 							)
 						}
 						{
 							/* Optinal Telegram Field (if it is not included in the form field) */
 							type === 'submit' &&
 							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('telegram')
-							|| field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('tg')
+								|| field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('tg')
 							).length === 0 && (
 								<SectionInput
 									label='Telegram'
@@ -592,7 +592,7 @@ function ProposalForm() {
 											onChange(e, 'applicantTwitter')
 										}
 									}
-									 />
+								/>
 							)
 						}
 						{
@@ -829,7 +829,890 @@ function ProposalForm() {
 											setReferral({ type: e.target.value, value: '' })
 										}
 									}
-								 />
+								/>
+							)
+						}
+						{
+							['Someone referred me', 'Website', 'Other']?.includes(referral?.type) && (
+								<SectionInput
+									label={referral?.type === 'Website' ? 'Which website?' : referral?.type === 'Other' ? 'Please specify' : 'Who referred you?'}
+									placeholder=''
+									value={referral?.value}
+									onChange={
+										(e) => {
+											setReferral({ ...referral, value: e.target.value })
+										}
+									} />
+							)
+						}
+						{
+							type === 'submit' && (
+								<Flex
+									w='100%'
+									mt={8}
+								>
+									<Flex
+										direction='column'
+										w='100%'>
+										<Flex
+											w='100%'
+											direction={['column', 'column', 'row']}
+											align={['flex-start', 'flex-start', 'center']}
+											gap={[2, 2, 8]}>
+											<Flex
+												direction='column'
+												w={['100%', '100%', 'calc(30% - 32px)']}>
+												<Text
+													mb={[1, 1, 0]}
+													variant='subheading'
+													fontWeight='500'
+													textAlign={['left', 'left', 'right']}
+													color='gray.700'>
+													Stay Updated
+												</Text>
+												<Text
+													fontSize='sm'
+													color='gray.500'
+													textAlign={['left', 'left', 'right']}>
+													Get the latest updates about grants
+												</Text>
+											</Flex>
+											<Checkbox
+												isChecked={newsletter === 'Yes'}
+												onChange={
+													(e) => {
+														setNewsLetter(e.target.checked ? 'Yes' : 'No')
+													}
+												}
+												size='lg'
+												colorScheme='blue'
+												aria-label='Subscribe to Questbook Newsletter'
+												_hover={{ cursor: 'pointer' }}
+											>
+												<Text
+													fontSize='sm'
+													color='gray.700'>
+													Subscribe to Questbook Newsletter
+												</Text>
+											</Checkbox>
+										</Flex>
+									</Flex>
+								</Flex>
+							)
+						}
+
+
+						<Button
+							mt={10}
+							ml='auto'
+							variant='primaryLarge'
+							isDisabled={isDisabled}
+							isLoading={webwallet ? !scwAddress : false}
+							loadingText='Loading your wallet'
+							onClick={
+								(e) => {
+									e.preventDefault()
+									if(!webwallet) {
+										setSignIn(true)
+										return
+									} else {
+										setNetworkTransactionModalStep(0)
+										submitProposal(form)
+									}
+								}
+							}>
+							<Text
+								color='white'
+								fontWeight='500'>
+								{type === 'submit' ? 'Submit' : 'Resubmit'}
+								{' '}
+								Proposal
+							</Text>
+						</Button>
+					</Flex>
+				</Flex>
+				<NetworkTransactionFlowStepperModal
+					isOpen={networkTransactionModalStep !== undefined}
+					currentStepIndex={networkTransactionModalStep || 0}
+					viewTxnLink={getExplorerUrlForTxHash(chainId, transactionHash)}
+					customSteps={customSteps}
+					customStepsHeader={customStepsHeader}
+					onClose={
+						() => {
+							setNetworkTransactionModalStep(undefined)
+						}
+					} />
+			</Flex>
+		)
+	}
+
+	const customStylusComponent = () => {
+		return (
+			<Flex
+				w='100%'
+				h='calc(100vh - 64px)'
+				align='start'
+				justify='center'>
+				<Flex
+					direction='column'
+					w='90%'
+					bg='white'
+					boxShadow='0px 2px 4px rgba(29, 25, 25, 0.1)'
+					overflowY='auto'
+					my={5}
+					px={6}
+					py={10}>
+					{
+						newTab !== 'true' && (
+							<Flex justify='start'>
+								<BackButton />
+							</Flex>
+						)
+					}
+					<Flex
+						mx='auto'
+						direction='column'
+						w='84%'
+						h='100%'
+						align='center'
+					>
+						<Text
+							w='100%'
+							textAlign='center'
+							variant='heading3'
+							fontWeight='500'
+							borderBottom='1px solid #E7E4DD'
+							pb={4}>
+							Submit Proposal
+						</Text>
+						{/* Grant Name */}
+						<Flex
+							gap={2}
+							alignItems='center'
+							direction={['column', 'row']}
+							pt={4}
+						>
+							<Text
+								variant='heading3'
+								fontWeight='500'
+							>
+								{grant?.title}
+							</Text>
+							<Text
+								variant={grant?.acceptingApplications ? 'openTag' : 'closedTag'}
+							>
+								{grant?.acceptingApplications ? 'Open' : 'Closed'}
+							</Text>
+
+						</Flex>
+						{
+							!grant?.acceptingApplications && (
+								<Alert
+									status='warning'
+									variant='subtle'
+									borderRadius='md'
+									mb={4}
+									mt={4}
+									maxW='450px'>
+									<AlertIcon />
+									<AlertTitle fontSize='sm'>
+										This grant is not accepting applications at this time
+									</AlertTitle>
+								</Alert>
+							)
+						}
+						{/* Grant Info */}
+						<Container
+							mt={4}
+							p={4}
+							// border='1px solid #E7E4DD'
+							className='container'
+							width='max-content'
+						>
+
+							<Flex
+								direction={['column', 'row']}
+								justifyContent='space-between'
+								width='max-content'
+								gap={2}
+							>
+								<Flex
+									alignItems='center'
+								>
+									{/* <Flex gap={4}>
+										<CalendarIcon />
+										<Flex direction='column'>
+											<Text
+												variant='title'
+												fontWeight='400'
+												color='black.100'
+											>
+												Accepting proposals until
+												{' '}
+											</Text>
+											<Text
+												variant='title'
+												fontWeight='500'
+												color='black.100'
+											>
+												{extractDateFromDateTime(grant?.deadline!)}
+											</Text>
+										</Flex>
+									</Flex> */}
+								</Flex>
+								<Divider
+									orientation='vertical'
+									h='100%' />
+
+								{/* Documentation link card */}
+								{
+									grant?.link && (
+										<Flex
+											alignItems='center'
+											p={5}
+											flexDirection='column'
+											bg='white'
+											transition='all 0.2s ease-in-out'
+											onClick={() => window.open(grant?.link!, '_blank')}
+											role='button'
+											aria-label='View Program RFP'>
+
+											<Doc
+												boxSize='12'
+												color='gray.600'
+												mb={2}
+											/>
+
+											<Flex
+												direction='column'
+												align='center'
+												gap={1}>
+												<Text
+													variant='title'
+													fontSize='md'
+													fontWeight='600'
+													color='gray.800'>
+													Grant Program Details
+												</Text>
+												<Text
+													variant='body'
+													fontSize='sm'
+													color='blue.600'>
+													Click to view program RFP
+												</Text>
+											</Flex>
+
+										</Flex>
+									)
+								}
+
+							</Flex>
+						</Container>
+
+						{/* Builder Details */}
+						<SectionHeader mt={8}>
+							Applicant Information
+						</SectionHeader>
+						{
+							containsField(grant, 'applicantName') && (
+								<SectionInput
+									label='Full Name'
+									placeholder='Ryan Adams'
+									value={findField(form, 'applicantName').value}
+									onChange={
+										(e) => {
+											onChange(e, 'applicantName')
+										}
+									} />
+							)
+						}
+						{
+							containsField(grant, 'teamMembers') && (
+								<SectionSelect
+									label='Team Members'
+									defaultValue={1}
+									min={1}
+									max={10}
+									value={form?.members?.length}
+									onChange={
+										(e) => {
+											const copy = { ...form }
+											const newLength = parseInt(e)
+											if(newLength > copy.members.length) {
+												copy.members = copy.members.concat(Array(newLength - copy.members.length).fill(''))
+											} else if(newLength < copy.members.length) {
+												copy.members = copy.members.slice(0, newLength)
+											}
+
+											findField(copy, 'teamMembers').value = newLength.toString()
+											setForm(copy)
+										}
+									} />
+							)
+						}
+
+						{
+							containsField(grant, 'teamMembers') && form.members?.map((member, index) => {
+								return (
+									<SectionInput
+										key={index}
+										label={`Member ${index + 1}`}
+										placeholder={`Bio about member ${index + 1}`}
+										maxLength={300}
+										value={member}
+										onChange={
+											(e) => {
+												const copy = { ...form }
+												copy.members[index] = e.target.value
+												setForm(copy)
+											}
+										} />
+								)
+							})
+						}
+						{
+							containsCustomField(grant, 'Project Links') && (
+								<SectionInput
+									label='Project Links'
+									value={findCustomField(form, 'Project Links').value}
+									placeholder='Website, GitHub, social media, MVP, etc.'
+									onChange={
+										(e) => {
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Project Links').id)
+										}
+									} />
+							)
+						}
+
+						<SectionHeader mt={8}>
+							Contact Information
+						</SectionHeader>
+						{
+							containsCustomField(grant, 'Point of Contact') && (
+								<SectionInput
+									label='Point of Contact'
+									value={findCustomField(form, 'Point of Contact').value}
+									placeholder='individual name'
+									onChange={
+										(e) => {
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'individual name').id)
+										}
+									} />
+							)
+						}
+
+						{
+							containsField(grant, 'applicantEmail') && (
+								<SectionInput
+									label='Email'
+									placeholder='name@sample.com'
+									value={findField(form, 'applicantEmail').value}
+									onChange={
+										(e) => {
+											onChange(e, 'applicantEmail')
+											validateEmail(e.target.value, (isValid) => {
+												setEmailError(!isValid)
+											})
+										}
+									}
+									isInvalid={emailError}
+									errorText='Invalid email address' />
+							)
+						}
+						{
+							containsField(grant, 'applicantTelegram') && (
+								<SectionInput
+									label='Telegram'
+									placeholder='@username'
+									value={findField(form, 'applicantTelegram').value}
+									onChange={
+										(e) => {
+											setTelegram(e.target.value)
+											onChange(e, 'applicantTelegram')
+										}
+									}
+								/>
+							)
+						}
+						{
+							containsField(grant, 'applicantTwitter') && (
+								<SectionInput
+									label='Twitter'
+									placeholder='@twitterHandle'
+									value={findField(form, 'applicantTwitter').value}
+									onChange={
+										(e) => {
+											setTwitter(e.target.value)
+											onChange(e, 'applicantTwitter')
+										}
+									}
+								/>
+							)
+						}
+
+						{
+							containsCustomField(grant, 'Discord') && (
+								<SectionInput
+									label='Discord'
+									value={findCustomField(form, 'Discord').value}
+									placeholder='Discord username'
+									onChange={
+										(e) => {
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Discord').id)
+										}
+									} />
+							)
+						}
+
+
+						{
+							containsCustomField(grant, 'KYC/KYB Acknowledgment') && (
+								<Checkbox
+									isChecked={findCustomField(form, 'KYC/KYB Acknowledgment').value === 'Yes'}
+									onChange={
+										(e) => {
+											onChange({
+												target: {
+													value: e.target.checked ? 'Yes' : 'No'
+												}
+											} as ChangeEvent<HTMLInputElement>, findCustomField(form, 'KYC/KYB Acknowledgment').id)
+										}
+									}
+									size='lg'
+									colorScheme='blue'
+									aria-label='KYC/KYB Acknowledgment'
+									_hover={{ cursor: 'pointer' }}
+								>
+									<Text
+										fontSize='sm'
+										color='gray.700'>
+										I acknowledge that I will need to complete KYC/KYB process
+									</Text>
+								</Checkbox>
+							)
+						}
+						{
+							containsCustomField(grant, 'Track') && (
+								<SectionInput
+									label='Discord'
+									value={findCustomField(form, 'Discord').value}
+									placeholder='Discord username'
+									onChange={
+										(e) => {
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Discord').id)
+										}
+									} />
+							)
+						}
+						{
+							findCustomField(form, 'Track').value === 'RFP' && (
+								<SectionInput
+									label='RFP Category: If applicable'
+									value={findCustomField(form, 'RFP Category').value}
+									placeholder='Category'
+									onChange={
+										(e) => {
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'RFP Category').id)
+										}
+									} />
+							)
+						}
+
+						{/* Proposal Details */}
+						<SectionHeader mt={8}>
+							Grant Information
+						</SectionHeader>
+						{
+							containsField(grant, 'projectName') && (
+								<SectionInput
+									label='Title'
+									placeholder='Name of your Project'
+									maxLength={80}
+									value={findField(form, 'projectName').value}
+									onChange={
+										(e) => {
+											onChange(e, 'projectName')
+										}
+									} />
+							)
+						}
+						{
+							containsField(grant, 'tldr') && (
+								<SectionInput
+									label='tl;dr'
+									placeholder='Explain your Project in one sentence'
+									maxLength={120}
+									value={findField(form, 'tldr').value}
+									onChange={
+										(e) => {
+											onChange(e, 'tldr')
+										}
+									} />
+							)
+						}
+
+						{
+							containsField(grant, 'projectDetails') && (
+								<SectionRichTextEditor
+									label='Details'
+									flexProps={{ align: 'start' }}
+									editorState={form.details}
+									placeholder={'Category/Idea: Describe in detail the idea/project for which you are applying for a grant and how it will utilize Stylus. [1000 characters max]\n\n\n Innovation & Novelty: Highlight what unique aspect or innovation your project brings to Arbitrum. [1000 characters max]\n\n\n What users and pain points in the market does this project solve for? Who is your intended target audience? [1000 characters max]'}
+									setEditorState={
+										(e) => {
+											const copy = { ...form }
+											copy.details = e
+											setForm(copy)
+										}
+									} />
+							)
+						}
+						{
+							containsCustomField(grant, 'Funding Breakdown & Spending Plan') && (
+								<SectionInput
+									label='Funding Breakdown & Spending Plan'
+									type='textarea'
+									value={findCustomField(form, 'Funding Breakdown & Spending Plan').value}
+									placeholder='Outline how the requested funds will be allocated'
+									maxLength={2000}
+									onChange={
+										(e) => {
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Funding Breakdown & Spending Plan').id)
+										}
+									} />
+							)
+						}
+
+						{
+							containsField(grant, 'applicantAddress') && (
+								<SectionInput
+									label='Funding Address'
+									placeholder='Enter the address where grant funds will be sent'
+									value={findField(form, 'applicantAddress').value}
+									onChange={
+										async(e) => {
+											onChange(e, 'applicantAddress')
+											await validateWalletAddress(e.target.value, (isValid) => {
+												setWalletAddressError(!isValid)
+											})
+										}
+									}
+									isInvalid={walletAddressError}
+									errorText={`Invalid address on ${chainNames?.get(safeObj?.chainId?.toString() ?? '') !== undefined ? chainNames.get(safeObj?.chainId?.toString() ?? '')?.toString() : 'EVM / Solana / TON based chain'}`} />
+							)
+						}
+
+						<SectionHeader mt={8}>
+							Team & Product Information
+						</SectionHeader>
+
+						{
+							containsCustomField(grant, 'Team Experience') && (
+								<SectionInput
+									label='Team Experience'
+									type='textarea'
+									value={findCustomField(form, 'Team Experience').value}
+									placeholder='Describe relevant technical experience as it would apply to Stylus and your proposed project. Include links for validation'
+									maxLength={1000}
+									onChange={
+										(e) => {
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Team Experience').id)
+										}
+									} />
+							)
+						}
+						{
+							containsCustomField	(grant, 'Has the current team already onboarded the key personnel required to complete the tasks or project for which they are applying for the grant?') && (
+								<SectionRadioButton
+									label='Has the current team already onboarded the key personnel required to complete the tasks or project for which they are applying for the grant?'
+									options={['Yes', 'No']}
+									value={findCustomField(form, 'Has the current team already onboarded the key personnel required to complete the tasks or project for which they are applying for the grant?').value}
+									onChange={
+										(e) => {
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Has the current team already onboarded the key personnel required to complete the tasks or project for which they are applying for the grant?').id)
+										}
+									}
+								/>
+							)
+						}
+
+						{
+							containsCustomField(grant, 'Project Stage') && (
+								<SectionInput
+									label='Project Stage'
+									type='textarea'
+									value={findCustomField(form, 'Project Stage').value}
+									placeholder='In which stage is the idea/project currently at (Ideation, Testnet, MVP, In-production)'
+									maxLength={300}
+									onChange={
+										(e) => {
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Project Stage').id)
+										}
+									} />
+							)
+						}
+
+						{
+							containsCustomField(grant, '(If applicable) Deployment Date') && (
+								<SectionInput
+									label='(If applicable) Deployment Date'
+									type='textarea'
+									value={findCustomField(form, '(If applicable) Deployment Date').value}
+									placeholder='Has your project been deployed on Arbitrum One, an Orbit chain, or Arbitrum Nova already? If so, what date was your first deployment? If not deployed on an Aribturm related chain, where and when was your project first deployed?'
+									maxLength={500}
+									onChange={
+										(e) => {
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, '(If applicable) Deployment Date').id)
+										}
+									} />
+							)
+						}
+
+						{
+							containsCustomField(grant, '(If applicable) Previous Performance') && (
+								<SectionInput
+									label='(If applicable) Previous Performance'
+									type='textarea'
+									value={findCustomField(form, '(If applicable) Previous Performance').value}
+									placeholder=' Provide a list of dashboards that point to relevant data metrics such as transaction volume, TVL, daily active wallets, etc'
+									maxLength={500}
+									onChange={
+										(e) => {
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, '(If applicable) Previous Performance').id)
+										}
+									} />
+							)
+						}
+						{
+							containsCustomField(grant, 'Have you previously received a grant from the Arbitrum DAO, Foundation, any Arbitrum ecosystem related program, or another blockchain ecosystem?') && (
+								<SectionInput
+									label='Have you previously received a grant from the Arbitrum DAO, Foundation, any Arbitrum ecosystem related program, or another blockchain ecosystem?'
+									type='textarea'
+									value={findCustomField(form, 'Have you previously received a grant from the Arbitrum DAO, Foundation, any Arbitrum ecosystem related program, or another blockchain ecosystem?').value}
+									placeholder='If yes, please provide a brief description, relevant results/learnings, and links for reference'
+									maxLength={750}
+									onChange={
+										(e) => {
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Have you previously received a grant from the Arbitrum DAO, Foundation, any Arbitrum ecosystem related program, or another blockchain ecosystem?').id)
+										}
+									} />
+							)
+						}
+
+						{
+							containsCustomField(grant, 'Comparable Projects') && (
+								<SectionInput
+									label='Comparable Projects'
+									type='textarea'
+									value={findCustomField(form, 'Comparable Projects').value}
+									placeholder='Do you have comparable projects/protocols within the Arbitrum ecosystem or other blockchains?'
+									maxLength={500}
+									onChange={
+										(e) => {
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Comparable Projects').id)
+										}
+									} />
+							)
+						}
+
+						{
+							containsCustomField(grant, 'Ecosystem Growth Potential') && (
+								<SectionInput
+									label='Ecosystem Growth Potential'
+									type='textarea'
+									value={findCustomField(form, 'Ecosystem Growth Potential').value}
+									placeholder='Describe how this project will attract or support new users, projects, or protocols to Arbitrum'
+									maxLength={750}
+									onChange={
+										(e) => {
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Ecosystem Growth Potential').id)
+										}
+									} />
+							)
+						}
+						{
+							containsCustomField(grant, 'How do you plan on implementing your project & have you done some due diligence on the feasibility of your idea with respect to the tools/frameworks currently available?') && (
+								<SectionInput
+									label='How do you plan on implementing your project & have you done some due diligence on the feasibility of your idea with respect to the tools/frameworks currently available?'
+									type='textarea'
+									value={findCustomField(form, 'How do you plan on implementing your project & have you done some due diligence on the feasibility of your idea with respect to the tools/frameworks currently available?').value}
+									placeholder='Please reference tools/frameworks you plan to use in implementing your project. Does not have to be an exhaustive list, but please include the most relevant'
+									maxLength={750}
+									onChange={
+										(e) => {
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'How do you plan on implementing your project & have you done some due diligence on the feasibility of your idea with respect to the tools/frameworks currently available?').id)
+										}
+									} />
+							)
+						}
+
+
+						{/* Proposal Details */}
+						<SectionHeader mt={8}>
+							Milestones
+						</SectionHeader>
+
+						<SelectArray
+							label='Milestones*'
+							allowMultiple={grant?.payoutType === 'milestones' || (containsField(grant, 'isMultipleMilestones') ?? false)}
+							config={
+								form?.milestones?.map((milestone, index) => {
+									return [
+										{
+											...MILESTONE_INPUT_STYLE[0],
+											value: milestone?.title,
+											// isDisabled: index < (grant?.milestones?.length || 0),
+											onChange: (e) => {
+												const copy = { ...form }
+												copy.milestones[index] = { ...copy.milestones[index], title: e.target.value }
+												setForm(copy)
+											}
+										},
+										{
+											...MILESTONE_INPUT_STYLE[2],
+											value: milestone?.details,
+											type: 'textarea',
+											placeholder: 'KPIs & Requirements',
+											// isDisabled: index < (grant?.milestones?.length || 0),
+											onChange: (e) => {
+												const copy = { ...form }
+												copy.milestones[index] = { ...copy.milestones[index], details: e.target.value }
+												setForm(copy)
+											}
+										},
+										{
+											...MILESTONE_INPUT_STYLE[3],
+											value: milestone?.deadline,
+											type: 'date',
+											label: 'Target Date',
+											// isDisabled: index < (grant?.milestones?.length || 0),
+											onChange: (e) => {
+												const copy = { ...form }
+												copy.milestones[index] = { ...copy.milestones[index], deadline: e.target.value }
+												setForm(copy)
+											}
+										},
+										{
+											...MILESTONE_INPUT_STYLE[1],
+											value: milestone?.amount > 0 ? milestone?.amount : '',
+											onChange: (e) => {
+												if(e.target.value?.includes('.')) {
+													return
+												} else {
+													try {
+														const copy = { ...form }
+														copy.milestones[index] = { ...copy.milestones[index], amount: parseInt(e.target.value) }
+														setForm(copy)
+													} catch(e) {
+														logger.error(e)
+													}
+												}
+											}
+										},
+									]
+								})
+							}
+							onAdd={
+								() => {
+									const copy = { ...form }
+									copy.milestones.push(DEFAULT_MILESTONE)
+									setForm(copy)
+								}
+							}
+							onRemove={
+								(index) => {
+									const copy = { ...form }
+									logger.info({ index, copy }, 'Splicing')
+									copy.milestones.splice(index, 1)
+									setForm(copy)
+								}
+							} />
+
+						<SectionInput
+							label='Funding Asked'
+							isDisabled
+							placeholder='12000 ARB'
+							value={`${fundingAsk} ${chainInfo?.label}`}
+						/>
+
+						{
+							containsCustomField(grant, 'How will you ensure the long-term sustainability of your project after the end of the program?') && (
+								<SectionInput
+									label='How will you ensure the long-term sustainability of your project after the end of the program?'
+									type='textarea'
+									placeholder='Consider what your team’s roadmap might look like after the last milestone is achieved. It is recommended to include the potential risks your team foresees and how your team can mitigate them.'
+									maxLength={1500}
+									value={findCustomField(form, 'How will you ensure the long-term sustainability of your project after the end of the program?').value}
+									onChange={
+										(e) => {
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'How will you ensure the long-term sustainability of your project after the end of the program?').id)
+										}
+									} />
+							)
+						}
+						{
+							containsCustomField(grant, 'Do you acknowledge that, from the moment in which the grant is approved, you have up to 1 year to KYC/KYB and complete the deliverable specified in this grant? Yes/No') && (
+								<SectionRadioButton
+									label='Do you acknowledge that, from the moment in which the grant is approved, you have up to 1 year to KYC/KYB and complete the deliverable specified in this grant? Yes/No'
+									options={['Yes', 'No']}
+									value={findCustomField(form, 'Do you acknowledge that, from the moment in which the grant is approved, you have up to 1 year to KYC/KYB and complete the deliverable specified in this grant? Yes/No').value}
+									onChange={
+										(e) => {
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Do you acknowledge that, from the moment in which the grant is approved, you have up to 1 year to KYC/KYB and complete the deliverable specified in this grant? Yes/No').id)
+										}
+									} />
+							)
+						}
+
+
+						{/* Render custom Fields */}
+						{
+							containsField(grant, 'customField0') && (
+								<SectionHeader mt={8}>
+									Other information
+								</SectionHeader>
+							)
+						}
+
+						{
+							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1).startsWith('customField')).map((field) => {
+								const id = field.id.substring(field.id.indexOf('.') + 1)
+								const modifiedId = id.substring(id.indexOf('-') + 1)
+								const title = field.title.substring(field.title.indexOf('-') + 1)
+									.split('\\s')
+									.join(' ')
+
+								// console.log('hasan', { id, field: findFieldBySuffix(form, modifiedId, id)})
+
+								return (
+									<SectionInput
+										key={field.id}
+										label={title}
+										value={findFieldBySuffix(form, modifiedId, id).value}
+										onChange={
+											(e) => {
+												onChange(e, findFieldBySuffix(form, modifiedId, id).id)
+											}
+										} />
+								)
+							})
+						}
+						{
+							/* Optinal Referral Field (if it is not included in the form field) */
+							type === 'submit' &&
+							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('referral')
+							).length === 0 && (
+								<SectionRadioButton
+									label='How did you find out about this program?'
+									placeholder='Select an option'
+									value={referral?.type}
+									options={['Questbook Twitter', 'Website', 'Someone referred me', 'Other']}
+									onChange={
+										(e) => {
+											setReferral({ type: e.target.value, value: '' })
+										}
+									}
+								/>
 							)
 						}
 						{

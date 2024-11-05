@@ -13,7 +13,7 @@ export default function useUpdateRFP() {
 	const [loading, setLoading] = React.useState(false)
 	const [currentStep, setCurrentStep] = React.useState<number>()
 	const [transactionHash, setTransactionHash] = React.useState<string>()
-	const { role } = useContext(GrantsProgramContext)!
+	const { role, grant } = useContext(GrantsProgramContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
 	const { rfpData, grantId, workspaceId, chainId, setExecutionType } = useContext(RFPFormContext)!
 	const { setCreatingProposalStep } = useContext(WebwalletContext)!
@@ -28,6 +28,15 @@ export default function useUpdateRFP() {
 				status: 'error'
 			})
 
+			return
+		}
+
+		if(!grant?.acceptingApplications) {
+			customToast({
+				title: 'Cannot update - Grant is closed',
+				description: 'This grant is closed and can no longer be modified. Only open grants can be updated.',
+				status: 'error'
+			})
 			return
 		}
 

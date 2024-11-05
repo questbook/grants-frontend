@@ -7,9 +7,19 @@ function containsField(grant: Grant, field: string) {
 	return grant?.fields?.some((f) => f.id.endsWith(field))
 }
 
+function containsCustomField(grant: Grant, field: string) {
+	return grant?.fields?.some((f) => f.id.substring(f.id.indexOf('.') + 1).includes(field))
+}
+
+
 function findField(form: Form, id: string) {
 	return form.fields.find((f) => f.id === id) ?? { id, value: '' }
 }
+
+function findCustomField(form: Form, field: string) {
+	return form.fields.find((f) => f.id.substring(f.id.indexOf('.') + 1).includes(field)) ?? { id: '', value: '' }
+}
+
 
 function findFieldBySuffix(form: Form, suffix: string, defaultId: string) {
 	// console.log('hasan', form.fields.find((f) => f.id.endsWith(suffix)))
@@ -60,4 +70,4 @@ const validateWalletAddress = async(address: string, callback: (isValid: boolean
 	}
 }
 
-export { containsField, findField, getProjectDetails, validateEmail, validateWalletAddress, findFieldBySuffix }
+export { containsField, containsCustomField, findField, findCustomField, getProjectDetails, validateEmail, validateWalletAddress, findFieldBySuffix }
