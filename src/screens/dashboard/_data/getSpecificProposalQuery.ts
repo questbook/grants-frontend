@@ -47,6 +47,8 @@ export const getSpecificProposalQuery = gql`query getProposals($grantID: String!
         feedbackDaoUpdatedAtS
         feedbackDev
         feedbackDevUpdatedAtS
+        details
+        deadline
       }
       feedbackDao
       feedbackDev

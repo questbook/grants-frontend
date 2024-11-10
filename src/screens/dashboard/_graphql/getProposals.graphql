@@ -49,6 +49,8 @@ query getProposals($first: Int, $skip: Int, $grantID: String!) {
       feedbackDaoUpdatedAtS
       feedbackDev
       feedbackDevUpdatedAtS
+      details
+      deadline
     }
     feedbackDao
     feedbackDev

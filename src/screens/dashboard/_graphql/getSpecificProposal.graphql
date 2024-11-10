@@ -46,6 +46,8 @@ query getProposals($grantID: String!, $proposalId: String!) {
       feedbackDaoUpdatedAtS
       feedbackDev
       feedbackDevUpdatedAtS
+      details
+      deadline
     }
     feedbackDao
     feedbackDev

@@ -1196,7 +1196,7 @@ function ProposalForm() {
 									placeholder='individual name'
 									onChange={
 										(e) => {
-											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'individual name').id)
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Point of Contact').id)
 										}
 									} />
 							)
@@ -1339,19 +1339,61 @@ function ProposalForm() {
 									} />
 							)
 						}
-
+						{
+							containsCustomField(grant, 'Requested Grant Size') && (
+								<SectionInput
+									label='Requested Grant Size'
+									value={findCustomField(form, 'Requested Grant Size').value}
+									placeholder='Amount'
+									onChange={
+										(e) => {
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Requested Grant Size').id)
+										}
+									} />
+							)
+						}
 						{
 							containsField(grant, 'projectDetails') && (
 								<SectionRichTextEditor
 									label='Details'
 									flexProps={{ align: 'start' }}
 									editorState={form.details}
-									placeholder={'Category/Idea: Describe in detail the idea/project for which you are applying for a grant and how it will utilize Stylus. [1000 characters max]\n\n\n Innovation & Novelty: Highlight what unique aspect or innovation your project brings to Arbitrum. [1000 characters max]\n\n\n What users and pain points in the market does this project solve for? Who is your intended target audience? [1000 characters max]'}
+									placeholder='Category/Idea: Describe in detail the idea/project for which you are applying for a grant and how it will utilize Stylus. [1000 characters max]'
 									setEditorState={
 										(e) => {
 											const copy = { ...form }
 											copy.details = e
 											setForm(copy)
+										}
+									} />
+							)
+						}
+						{
+							containsCustomField(grant, 'Innovation & Novelty: Highlight what unique aspect or innovation your project brings to Arbitrum') && (
+								<SectionInput
+									label='Innovation & Novelty: Highlight what unique aspect or innovation your project brings to Arbitrum'
+									type='textarea'
+									value={findCustomField(form, 'Innovation & Novelty: Highlight what unique aspect or innovation your project brings to Arbitrum').value}
+									placeholder='Highlight what unique aspect or innovation your project brings to Arbitrum'
+									maxLength={1000}
+									onChange={
+										(e) => {
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'Innovation & Novelty: Highlight what unique aspect or innovation your project brings to Arbitrum').id)
+										}
+									} />
+							)
+						}
+						{
+							containsCustomField(grant, 'What users and pain points in the market does this project solve for? Who is your intended target audience?') && (
+								<SectionInput
+									label='What users and pain points in the market does this project solve for? Who is your intended target audience?'
+									type='textarea'
+									value={findCustomField(form, 'What users and pain points in the market does this project solve for? Who is your intended target audience?').value}
+									placeholder='What users and pain points in the market does this project solve for? Who is your intended target audience?'
+									maxLength={1000}
+									onChange={
+										(e) => {
+											onChange(e as unknown as ChangeEvent<HTMLInputElement>, findCustomField(form, 'What users and pain points in the market does this project solve for? Who is your intended target audience?').id)
 										}
 									} />
 							)
@@ -1673,14 +1715,14 @@ function ProposalForm() {
 							)
 						}
 						{
-							/* Optinal Referral Field (if it is not included in the form field) */
+							/* Optional Referral Field (if it is not included in the form field) */
 							type === 'submit' &&
 							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('referral')
 							).length === 0 && (
 								<SectionDropDown
 									label='How did you find out about this program?'
 									width='-moz-fit-content'
-									options={['Questbook Twitter', 'Website', 'Someone referred me', 'Other']}
+									options={['Arbitrum Twitter', 'Stylus Sprint Blog Post', 'Questbook Twitter', 'Website', 'Someone referred me', 'Other']}
 									value={referral?.type}
 									onChange={
 										(e) => {
@@ -1860,6 +1902,10 @@ function ProposalForm() {
 		const optionalFields = ['projectDetails', 'fundingAsk', 'fundingBreakdown', 'projectGoals', 'projectLink']
 		const { fields, members, details, milestones } = form
 		for(const field of fields) {
+			if(field.id?.includes('RFP Category: If applicable') && field.value === '') {
+				continue
+			}
+
 			if(field.value === '' && !optionalFields.includes(field.id)) {
 				logger.info({ field }, 'Field is empty')
 				return true

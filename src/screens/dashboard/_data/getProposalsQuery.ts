@@ -50,6 +50,8 @@ export const getProposalsQuery = gql`query getProposals($first: Int, $skip: Int,
         feedbackDaoUpdatedAtS
         feedbackDev
         feedbackDevUpdatedAtS
+        details
+        deadline
       }
       feedbackDao
       feedbackDev
