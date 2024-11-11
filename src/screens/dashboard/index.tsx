@@ -21,7 +21,7 @@ import FundBuilderModal from 'src/screens/dashboard/FundBuilderModal'
 import FundingMethod from 'src/screens/dashboard/FundingMethod'
 import ProposalList from 'src/screens/dashboard/ProposalList'
 import SendAnUpdateModal from 'src/screens/dashboard/SendAnUpdateModal'
-import { disabledGrants, NewGrants } from 'src/screens/proposal_form/_utils/constants'
+import { disabledGrants } from 'src/screens/proposal_form/_utils/constants'
 
 function Dashboard(props: DynamicData) {
 	const { title, description } = props
@@ -65,10 +65,7 @@ function Dashboard(props: DynamicData) {
 								{
 									!grant?.acceptingApplications || disabledGrants?.includes(grant?.id as string) && (
 										<Banner
-											message={
-												NewGrants?.includes(grant?.id) ? 'Coming Soon ! Stay Tuned for more updates' :
-													'The domain is closed until further notice as the funds have been fully allocated.'
-											} />
+											message='The domain is closed until further notice as the funds have been fully allocated.' />
 									)
 								}
 								<Flex
@@ -98,10 +95,7 @@ function Dashboard(props: DynamicData) {
 								{
 									!grant?.acceptingApplications || disabledGrants?.includes(grant?.id as string) && (
 										<Banner
-											message={
-												NewGrants?.includes(grant?.id) ? 'Coming Soon ! Stay Tuned for more updates' :
-													'The domain is closed until further notice as the funds have been fully allocated.'
-											} />
+											message='The domain is closed until further notice as the funds have been fully allocated.' />
 									)
 								}
 								<Flex

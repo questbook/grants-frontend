@@ -13,7 +13,7 @@ import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
 import StateButton from 'src/screens/discover/_components/stateButton'
 import { GrantType } from 'src/screens/discover/_utils/types'
 import { DiscoverContext } from 'src/screens/discover/Context'
-import { disabledGrants, NewGrants } from 'src/screens/proposal_form/_utils/constants'
+import { disabledGrants } from 'src/screens/proposal_form/_utils/constants'
 
 type RFPCardProps = {
 	grant: GrantType
@@ -110,15 +110,9 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 						<Flex gap={2}>
 							{
 								!grant?.acceptingApplications || disabledGrants?.includes(grant?.id as string) ? (
-									NewGrants?.includes(grant?.id as string) ? (
-										<StateButton
-											state='submitted'
-											title='Coming Soon' />
-									) : (
-										<StateButton
-											state='rejected'
-											title='Closed' />
-									)
+									<StateButton
+										state='rejected'
+										title='Closed' />
 								) : (
 									<StateButton
 										state='approved'

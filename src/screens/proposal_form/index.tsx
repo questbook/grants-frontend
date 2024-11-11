@@ -1284,7 +1284,7 @@ function ProposalForm() {
 								<SectionDropDown
 									label='Track'
 									width='-moz-fit-content'
-									options={['Open Application', 'RFP']}
+									options={['Select Track', 'Open Application', 'RFP']}
 									value={findCustomField(form, 'Track').value}
 									onChange={
 										(e) => {
@@ -1296,7 +1296,7 @@ function ProposalForm() {
 						{
 							findCustomField(form, 'Track').value === 'RFP' && (
 								<SectionInput
-									label='RFP Category: If applicable'
+									label='RFP Category'
 									value={findCustomField(form, 'RFP Category').value}
 									placeholder='Category'
 									onChange={
@@ -1799,6 +1799,20 @@ function ProposalForm() {
 								</Flex>
 							)
 						}
+
+						<Alert
+							mt={10}
+							status='info'
+							variant='subtle'
+						>
+							<AlertIcon />
+							<Text
+								fontSize='sm'
+								color='black'
+							>
+								{'Please ensure that all fields are filled correctly before submitting the proposal. All the fields are mandatory. Please fill them with \'N/A\' or \'-\' if not applicable.'}
+							</Text>
+						</Alert>
 
 
 						<Button

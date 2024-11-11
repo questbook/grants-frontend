@@ -5,6 +5,7 @@ import { executeMutation } from 'src/graphql/apollo'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
 import getErrorMessage from 'src/libraries/utils/error'
 import { GrantsProgramContext, WebwalletContext } from 'src/pages/_app'
+import { stylus } from 'src/screens/proposal_form/_utils/constants'
 import { RFPFormContext } from 'src/screens/request_proposal/Context'
 import { ApplicantDetailsFieldType } from 'src/types'
 
@@ -13,7 +14,7 @@ export default function useUpdateRFP() {
 	const [loading, setLoading] = React.useState(false)
 	const [currentStep, setCurrentStep] = React.useState<number>()
 	const [transactionHash, setTransactionHash] = React.useState<string>()
-	const { role, grant } = useContext(GrantsProgramContext)!
+	const { role } = useContext(GrantsProgramContext)!
 	const { scwAddress } = useContext(WebwalletContext)!
 	const { rfpData, grantId, workspaceId, chainId, setExecutionType } = useContext(RFPFormContext)!
 	const { setCreatingProposalStep } = useContext(WebwalletContext)!
@@ -31,10 +32,10 @@ export default function useUpdateRFP() {
 			return
 		}
 
-		if(!grant?.acceptingApplications) {
+		if(stylus.includes(grantId)) {
 			customToast({
-				title: 'Cannot update - Grant is closed',
-				description: 'This grant is closed and can no longer be modified. Only open grants can be updated.',
+				title: 'Cannot update - Update is disabled',
+				description: 'Please contact admin to update the grant',
 				status: 'error'
 			})
 			return
