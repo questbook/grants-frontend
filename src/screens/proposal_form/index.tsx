@@ -1916,7 +1916,7 @@ function ProposalForm() {
 		const optionalFields = ['projectDetails', 'fundingAsk', 'fundingBreakdown', 'projectGoals', 'projectLink']
 		const { fields, members, details, milestones } = form
 		for(const field of fields) {
-			if(field.id?.includes('RFP Category: If applicable') && field.value === '') {
+			if(field.id?.includes('RFP Category') && field.value === '') {
 				continue
 			}
 
