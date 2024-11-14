@@ -698,8 +698,86 @@ function Discover() {
 																				textAlign='match-parent'
 																				color='#7E7E8F'
 																			>
-																				Coming Soon
+																				The Arbitrum DAO has launched the Stylus Sprint program to encourage early development of Stylus smart contracts and tooling as well as highlight the novel use cases only feasible with Stylus. The program offers up to $5 million in ARB funding to teams that build with Stylus, covering development costs such as hiring, training, audits, and infrastructure expenses.
 																			</Text>
+																			<Text
+																		fontWeight='600'
+																		lineHeight='23.4px'
+																		fontSize='18px'
+																		color='black.100'
+																		pb={2}
+																		px={3}
+																	>
+																		Program Manager
+                   </Text>
+																	<Box pb={2}>
+																		<UserCard
+																			image='0x0125215125'
+																			title='Pruitt - Entropy Advisors'
+																			twitter='0xPruitt'
+																			telegram='pruitt_m' />
+																	</Box>
+
+																	<Text
+																		fontWeight='600'
+																		lineHeight='23.4px'
+																		fontSize='18px'
+
+																		color='black.100'
+																		pb={2}
+																		px={3}
+																	>
+																		Domain Allocators
+																	</Text>
+																	<Box
+																	>
+																		{
+																			[
+																				{
+																					image: '0x012522',
+																					title: 'Offchain Labs',
+																					twitter: ''
+																				},
+																				{
+																					image: '0x012522',
+																					title: 'Arbitrum Foundation',
+																					twitter: ''
+																				},
+																				{
+																					image: '0x012523',
+																					title: 'Michael Lewellen - OpenZeppelin',
+																					twitter: ''
+																				},
+																				{
+																					image: '0x012524',
+																					title: 'Gustavo Gonzalez - OpenZeppelin',
+																					twitter: ''
+																				},
+																				{
+																					image: '0x012525',
+																					title: 'SEEDGov',
+																					twitter: ''
+																				},
+																				{
+																					image: '0x012526',
+																					title: 'JoJo',
+																					twitter: ''
+																				},
+																				{
+																					image: '0x012527',
+																					title: 'Entropy Advisors',
+																					twitter: ''
+																				},
+																			].map(
+																				(user, index) => (
+																				<UserCard
+																					key={index}
+																					image={user.image}
+																					title={user.title}
+																					twitter={user.twitter} />
+																			))
+																		}
+																	</Box>
 																		</Box>
 
 																	</Flex>
