@@ -40,7 +40,7 @@ function Dashboard(props: DynamicData) {
 							title={grant?.title as string}
 							programDetails={grant?.link as string}
 							// grantTicketSize={`${grant?.reward?.committed}`}
-							grantTicketSize={formatAmount(parseFloat(grant?.reward?.committed ?? '0'))}
+							grantTicketSize={`${parseFloat(grant?.reward?.committed ?? '0').toString()} ${grant?.reward?.token?.label}`}
 							reviewers={grant?.workspace?.members as []}
 							proposalCount={grant?.numberOfApplications as number}
 							proposalCountAccepted={grant?.numberOfApplicationsSelected as number}
