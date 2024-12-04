@@ -1,15 +1,18 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import ReactLinkify from 'react-linkify'
+import Markdown from 'react-markdown'
 import {
 	Box,
 	Button,
 	CircularProgress,
 	Flex,
 	Image,
+	List,
 	Text,
 } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import { ContentState, convertFromRaw, EditorState } from 'draft-js'
+import remarkGfm from 'remark-gfm'
 import { defaultChainId } from 'src/constants/chains'
 import { Mail, ShareForward } from 'src/generated/icons'
 import useCustomToast from 'src/libraries/hooks/useCustomToast'
@@ -32,6 +35,7 @@ import { GrantsProgramContext } from 'src/pages/_app'
 import { formatTime } from 'src/screens/dashboard/_utils/formatters'
 import { ProposalType } from 'src/screens/dashboard/_utils/types'
 import { DashboardContext } from 'src/screens/dashboard/Context'
+
 
 function Proposal() {
 	const buildComponent = () => {
@@ -332,19 +336,25 @@ function Proposal() {
 				}
 
 				{
-					grant?.fields
+					proposal?.fields
 						?.filter((field) => field.id
 							.substring(field.id.indexOf('.') + 1)
-							.startsWith('customField'),
+							.startsWith('customField')
 						)
-						.map((field, index) => {
+
+						?.sort((a, b) => {
+							const aId = a.id.substring(a.id.indexOf('.customField') + 12)?.split('-')[0]
+							const bId = b.id.substring(b.id.indexOf('.customField') + 12)?.split('-')[0]
+							return parseInt(aId) - parseInt(bId)
+						})?.map((field, index) => {
 							const id = field.id.substring(field.id.indexOf('.') + 1)
-							const title = field.title
-								.substring(field.title.indexOf('-') + 1)
+
+							const title = field.id
+								.substring(field.id.indexOf('-') + 1)
 								.split('\\s')
 								.join(' ')
 							const value = getFieldString(proposal, id)
-							if(value === undefined) {
+							if(value === undefined || value === '' || title === 'Have you ensured your submission is complete?') {
 								return <Flex key={index} />
 							}
 
@@ -357,39 +367,165 @@ function Proposal() {
 									<Text color='gray.500'>
 										{title}
 									</Text>
-									<ReactLinkify
-										componentDecorator={
-											(
-												decoratedHref: string,
-												decoratedText: string,
-												key: number,
-											) => (
-												<Text
-													display='inline-block'
-													wordBreak='break-all'
-													color='accent.azure'
-													cursor='pointer'
-													_hover={
-														{
-															textDecoration: 'underline',
-														}
-													}
-													key={key}
-													onClick={
-														() => {
-															window.open(decoratedHref, '_blank')
-														}
-													}
-												>
-													{decoratedText}
-												</Text>
-											)
+									<Markdown
+										remarkPlugins={[remarkGfm]}
+										className='DraftEditor-root DraftEditor-editorContainer public-DraftEditor-content markdown-body '
+										components={
+											{
+												a: props => {
+													return (
+														<Text
+															display='inline-block'
+															wordBreak='break-all'
+															color='accent.azure'
+															fontSize='15px'
+															variant='body'
+															cursor='pointer'
+															_hover={
+																{
+																	textDecoration: 'underline',
+																}
+															}
+															onClick={
+																() => {
+																	window.open(props.href, '_blank')
+																}
+															}
+														>
+															{props.href}
+														</Text>
+
+													)
+												},
+
+												p: ({ ...props }) => {
+													return (
+														<Text
+															{...props}
+															variant='body'
+															fontSize='15px'
+															mt={2}
+															whiteSpace='pre-line'
+															wordBreak='break-word'
+														/>
+													)
+												},
+												ul: ({ ...props }) => {
+													return (
+														<List
+															{...props}
+															as='ul'
+															className='public-DraftStyleDefault-ul'
+														/>
+													)
+												}
+												,
+												li: ({ ...props }) => {
+													return (
+														<li
+															{...props}
+															className='public-DraftStyleDefault-unorderedListItem public-DraftStyleDefault-reset public-DraftStyleDefault-depth0 public-DraftStyleDefault-listLTR'
+														/>
+													)
+												},
+
+
+												h1: ({ ...props }) => {
+													return (
+														<Text
+															fontSize='20px'
+															fontWeight={600}
+															lineHeight={1.2}
+															mb='14px'
+															mt='14px'
+															{...props}
+															as='h1'
+
+														/>
+													)
+												},
+												h2: ({ ...props }) => {
+													return (
+														<Text
+
+															{...props}
+															as='h2'
+															fontSize='18px'
+															fontWeight={600}
+															lineHeight={1.2}
+															mb='14px'
+															mt='14px'
+														/>
+													)
+												},
+
+												h3: ({ ...props }) => {
+													return (
+														<Text
+
+															{...props}
+															as='h3'
+															fontSize='16px'
+															fontWeight={600}
+															lineHeight={1.2}
+															mb='14px'
+															mt='14px'
+														/>
+													)
+												},
+
+
+												h4: ({ ...props }) => {
+													return (
+														<Text
+															{...props}
+															variant='h4'
+															mt={2}
+														/>
+													)
+												},
+												h5: ({ ...props }) => {
+													return (
+														<Text
+															{...props}
+															variant='h5'
+															mt={2}
+														/>
+													)
+												},
+												code: ({ ...props }) => {
+													return (
+														<Text
+															{...props}
+															as='code'
+															fontStyle='normal'
+															fontFamily='body'
+															variant='body'
+															fontSize='15px'
+															mt={2}
+															whiteSpace='pre-line'
+															wordBreak='break-word'
+														/>
+													)
+												},
+												img: ({ ...props }) => {
+													return (
+														<Image
+															{...props}
+															fallback={<></>}
+															fallbackStrategy='onError'
+															w='50%'
+															mt={2}
+															src={props.src}
+															alt='comment-image'
+														/>
+													)
+												}
+											}
 										}
 									>
-										<Text mt={1}>
-											{value}
-										</Text>
-									</ReactLinkify>
+										{value}
+									</Markdown>
 								</Flex>
 							)
 						})
@@ -398,7 +534,7 @@ function Proposal() {
 		)
 	}
 
-	const { grant, role } = useContext(GrantsProgramContext)!
+	const { role } = useContext(GrantsProgramContext)!
 	const { proposals, selectedProposals } = useContext(DashboardContext)!
 	const toast = useCustomToast()
 
