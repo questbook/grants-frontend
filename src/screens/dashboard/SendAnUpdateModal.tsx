@@ -45,12 +45,12 @@ function SendAnUpdateModal() {
 							proposalTags?.length > 0 && (
 								<Flex
 									mt={2}
-									gap={3}>
+									gap={1}>
 									{
 										proposalTags?.map((tag, index) => {
 											return (
 												<QuickReplyButton
-													id={tag.id as 'accept' | 'reject' | 'resubmit' | 'feedback'}
+													id={tag.id as 'accept' | 'reject' | 'resubmit' | 'feedback' | 'review'}
 													key={index}
 													tag={tag}
 													isSelected={selectedTag === tag.id}
