@@ -104,6 +104,7 @@ function SendAnUpdateModal() {
 									// TODO: Make batch comments private or public
 									const ret = await addComments(text, isCommentPrivate, selectedTag)
 									if(ret) {
+										setNetworkTransactionModalStep(undefined)
 										setIsSendAnUpdateModalOpen(false)
 										setText('')
 										setSelectedTag(undefined)
@@ -132,7 +133,6 @@ function SendAnUpdateModal() {
 	const [, setTransactionHash] = useState<string>('')
 
 	const { addComments } = useAddComments({ setStep: setNetworkTransactionModalStep, setTransactionHash })
-
 	const isDisabled = useMemo(() => {
 
 		return text === ''

@@ -93,14 +93,14 @@ function ProposalList({ step, setStep }: { step?: boolean, setStep?: (value: boo
 				{
 					(role === 'admin' && selectedProposals?.size > 0) && (
 						<Checkbox
-							isChecked={selectedProposals?.size !== undefined && proposals.every((_) => selectedProposals?.has(_.id))}
+							isChecked={selectedProposals?.size !== undefined && proposals.filter(p => filterState ? p.state === filterState : true).every((_) => selectedProposals?.has(_.id))}
 							onChange={
 								(e) => {
 									logger.info({ value: e.target.checked }, '(Proposal List) Select All Checkbox')
 									if(e.target.checked) {
-										setSelectedProposals(new Set<string>(proposals.map((_) => _.id)))
+										setSelectedProposals(new Set<string>(proposals.filter(p => filterState ? p.state === filterState : true).map((_) => _.id)))
 									} else {
-										setSelectedProposals(new Set<string>([proposals?.[0]?.id]))
+										setSelectedProposals(new Set<string>([proposals.filter(p => filterState ? p.state === filterState : true)[0]?.id]))
 									}
 
 									logger.info({ size: selectedProposals.size, proposalsLength: proposals.length, selectedProposals }, '(Proposal List) Select All Checkbox {size, proposalsLength, selectedProposals')
