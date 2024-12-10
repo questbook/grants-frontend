@@ -391,27 +391,30 @@ function ProposalForm() {
 							Submit Proposal
 						</Text>
 						{/* Grant Name */}
-						<Flex
-							gap={2}
-							alignItems='center'
-							direction={['column', 'row']}
-							pt={4}
-						>
-							<Text
-								variant='heading3'
-								fontWeight='500'
-							>
-								{grant?.title}
-							</Text>
-							<Text
-								variant={grant?.acceptingApplications ? 'openTag' : 'closedTag'}
-							>
-								{grant?.acceptingApplications ? 'Open' : 'Closed'}
-							</Text>
-
-						</Flex>
 						{
-							!grant?.acceptingApplications && (
+							type === 'submit' && (
+								<Flex
+									gap={2}
+									alignItems='center'
+									direction={['column', 'row']}
+									pt={4}
+								>
+									<Text
+										variant='heading3'
+										fontWeight='500'
+									>
+										{grant?.title}
+									</Text>
+									<Text
+										variant={grant?.acceptingApplications ? 'openTag' : 'closedTag'}
+									>
+										{grant?.acceptingApplications ? 'Open' : 'Closed'}
+									</Text>
+								</Flex>
+							)
+						}
+						{
+							!grant?.acceptingApplications && type === 'submit' && (
 								<Alert
 									status='warning'
 									variant='subtle'
@@ -1453,7 +1456,7 @@ function ProposalForm() {
 							)
 						}
 						{
-							containsCustomField	(grant, 'Has the current team already onboarded the key personnel required to complete the tasks or project for which they are applying for the grant?') && (
+							containsCustomField(grant, 'Has the current team already onboarded the key personnel required to complete the tasks or project for which they are applying for the grant?') && (
 								<SectionRadioButton
 									label='Has the current team already onboarded the key personnel required to complete the tasks or project for which they are applying for the grant?'
 									options={['Yes', 'No']}
