@@ -1911,7 +1911,7 @@ function ProposalForm() {
 			return true
 		}
 
-		if(!grant?.acceptingApplications) {
+		if(!grant?.acceptingApplications && type === 'submit') {
 			logger.info('Grant is not accepting applications')
 			return true
 		}
