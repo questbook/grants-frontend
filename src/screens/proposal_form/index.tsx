@@ -1,4 +1,5 @@
 import { ChangeEvent, ReactElement, useContext, useEffect, useMemo, useState } from 'react'
+import { FaRegClock } from 'react-icons/fa'
 import QRCode from 'react-qr-code'
 import { Alert, AlertIcon, AlertTitle, Button, Center, Checkbox, Container, Divider, Flex, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Spinner, Text, VStack } from '@chakra-ui/react'
 import { convertToRaw } from 'draft-js'
@@ -29,7 +30,6 @@ import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposa
 import { containsCustomField, containsField, findCustomField, findField, findFieldBySuffix, validateEmail, validateWalletAddress } from 'src/screens/proposal_form/_utils'
 import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, MILESTONE_INPUT_STYLE, SocialIntent, stylus } from 'src/screens/proposal_form/_utils/constants'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
-
 
 function ProposalForm() {
 	const [isLoading, setIsLoading] = useState(true)
@@ -113,6 +113,10 @@ function ProposalForm() {
 										proposalId,
 									}
 								})
+								if(type === 'submit') {
+									localStorage.removeItem(`form-${grant?.id}`)
+								}
+
 								if(ret) {
 									router.reload()
 								}
@@ -302,6 +306,10 @@ function ProposalForm() {
 																	proposalId,
 																}
 															})
+															if(type === 'submit') {
+																localStorage.removeItem(`form-${grant?.id}`)
+															}
+
 															if(ret) {
 																router.reload()
 															}
@@ -374,6 +382,40 @@ function ProposalForm() {
 							</Flex>
 						)
 					}
+					{
+						isDraft && type === 'submit' && (
+							<Flex
+								w='100%'
+								justify='flex-end'
+								mb={4}>
+								<Button
+									variant='outline'
+									colorScheme='red'
+									size='sm'
+									borderRadius={8}
+									leftIcon={<FaRegClock />}
+									px={4}
+									py={2}
+									_hover={
+										{
+											bg: 'red.50',
+											transform: 'translateY(-1px)',
+											boxShadow: 'sm'
+										}
+									}
+									transition='all 0.2s'
+									onClick={
+										() => {
+											localStorage.removeItem(`form-${grant?.id}`)
+											window.location.reload()
+										}
+									}>
+									Clear Draft
+								</Button>
+							</Flex>
+						)
+					}
+
 					<Flex
 						mx='auto'
 						direction='column'
@@ -970,6 +1012,39 @@ function ProposalForm() {
 						newTab !== 'true' && (
 							<Flex justify='start'>
 								<BackButton />
+							</Flex>
+						)
+					}
+					{
+						isDraft && type === 'submit' && (
+							<Flex
+								w='100%'
+								justify='flex-end'
+								mb={4}>
+								<Button
+									variant='outline'
+									colorScheme='red'
+									size='sm'
+									borderRadius={8}
+									leftIcon={<FaRegClock />}
+									px={4}
+									py={2}
+									_hover={
+										{
+											bg: 'red.50',
+											transform: 'translateY(-1px)',
+											boxShadow: 'sm'
+										}
+									}
+									transition='all 0.2s'
+									onClick={
+										() => {
+											localStorage.removeItem(`form-${grant?.id}`)
+											window.location.reload()
+										}
+									}>
+									Clear Draft
+								</Button>
 							</Flex>
 						)
 					}
@@ -1879,9 +1954,8 @@ function ProposalForm() {
 	const { submitProposal, proposalId, isExecuting } = useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash })
 	const [emailError, setEmailError] = useState<boolean>(false)
 	const [walletAddressError, setWalletAddressError] = useState<boolean>(false)
-
+	const [isDraft, setIsDraft] = useState<boolean>(false)
 	const [isSetupNotificationModalOpen, setIsSetupNotificationModalOpen] = useState<boolean>(false)
-
 	useEffect(() => {
 		setSignInTitle('submitProposal')
 	}, [])
@@ -1889,6 +1963,10 @@ function ProposalForm() {
 	useEffect(() => {
 		if(form && grant) {
 			setIsLoading(false)
+		}
+
+		if(localStorage.getItem(`form-${grant?.id}`) && JSON.parse(localStorage.getItem(`form-${grant?.id}`) ?? '{}').containsValue) {
+			setIsDraft(true)
 		}
 	}, [form, grant])
 

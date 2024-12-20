@@ -137,8 +137,8 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 		}
 		logger.info('grants', result)
 		try {
-			const cache = false
-			if(cache) {
+			const cache = await localStorage.getItem(`form-${grantId}`)
+			if(cache && type === 'submit') {
 				const formFromCache = JSON.parse(cache)
 				logger.info({ formFromCache }, 'ProposalForm: fetchGrant (formFromCache)')
 				setForm({ ...formFromCache, details: EditorState.createWithContent(convertFromRaw(formFromCache.details)) })
@@ -252,8 +252,14 @@ const ProposalFormProvider = ({ children }: { children: ReactNode }) => {
 			return
 		}
 
-		logger.info({ form }, 'ProposalForm: form changed')
-		localStorage.setItem(`form-${grant?.id}`, JSON.stringify({ ...form, details: convertToRaw(form.details.getCurrentContent()) }))
+		if(type === 'submit') {
+			localStorage.setItem(`form-${grant?.id}`, JSON.stringify({
+				...form,
+				details: convertToRaw(form.details.getCurrentContent()),
+				timestamp: Date.now(),
+				containsValue: form.details.getCurrentContent().getPlainText().length > 0 || form.milestones.some(milestone => milestone.amount > 0) || form.members.some(member => member.length > 0) || form.fields.some(field => field.value.length > 0)
+			}))
+		}
 	}, [form])
 
 	return providerComponent()
