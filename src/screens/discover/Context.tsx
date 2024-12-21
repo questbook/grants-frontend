@@ -14,7 +14,6 @@ import { getAllGrantsForMembers } from 'src/screens/discover/data/getAllGrantsFo
 import { GetGrantProgramDetails } from 'src/screens/discover/data/getGrantProgramDetails'
 import { getProposalNameAndAuthorsQuery } from 'src/screens/discover/data/getProposalNameAndAuthors'
 import { getSectionGrantsQuery } from 'src/screens/discover/data/getSectionGrants'
-import { getSectionSubGrantsQuery } from 'src/screens/discover/data/getSectionSubGrants'
 import { GetWorkspacesAndBuilderGrants } from 'src/screens/discover/data/getWorkspaceAndBuilderGrants'
 import { Roles } from 'src/types'
 
@@ -79,10 +78,6 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 	// const { fetchMore: fetchFundsAllocated } = useQuery({
 	// 	query: getFundsAllocated,
 	// })
-
-	const { fetchMore: getSubGrants } = useQuery({
-		query: getSectionSubGrantsQuery
-	})
 
 	const { fetchMore: getBuilderData } = useQuery({
 		query: getBuilderProfileQuery
@@ -333,7 +328,6 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 	const getSectionGrants = async() => {
 		const results: any = await fetchMoreSectionGrants()
-		const subgrantsResults: any = await getSubGrants()
 		logger.info({ results }, 'Section Grants')
 
 		if(results?.sections?.length === 0) {
@@ -367,37 +361,14 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 		}
 
-		if(subgrantsResults?.grants?.length) {
-			const arbitrum = allSectionGrants.find((s: any) => Object.keys(s)[0] === 'Arbitrum')
-			if(arbitrum) {
-				const modifiedSubgrants = subgrantsResults.grants.map((grant: any) => {
-					const modifiedApplications = grant.applications?.map((app: any) => ({
-						...app,
-						grant: {
-							id: grant.id,
-							title: grant.title,
-							workspace: {
-								logoIpfsHash: grant.workspace?.logoIpfsHash,
-								supportedNetworks: grant.workspace?.supportedNetworks
-							},
-							reward: grant.reward
-						}
-					})) || []
-
-					// Add modified applications to recentProposals
-					recentProposals = [...recentProposals, ...modifiedApplications]
-
-					return { ...grant, applications: modifiedApplications }
-				})
-
-				allSectionGrants[allSectionGrants.indexOf(arbitrum)] = {
-					Arbitrum: {
-						...arbitrum.Arbitrum,
-						grants: [
-							...(arbitrum.Arbitrum.grants?.filter((g: any) => g.title?.includes('2.0')) || []),
-							...modifiedSubgrants
-						]
-					}
+		const arbitrum = allSectionGrants.find((s: any) => Object.keys(s)[0] === 'Arbitrum')
+		if(arbitrum) {
+			allSectionGrants[allSectionGrants.indexOf(arbitrum)] = {
+				Arbitrum: {
+					...arbitrum.Arbitrum,
+					grants: [
+						...(arbitrum.Arbitrum.grants?.filter((g: any) => g.title?.includes('2.0') || g?.title?.includes('Stylus')) || [])
+					]
 				}
 			}
 		}
@@ -458,8 +429,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 		// iterate over all sections and sum the amounts
 		// const total = funds.sections.reduce((acc: number, cur: any) => acc + sumAmounts(cur), 0)
-		const total = 6200000
-		setStats({ builders: 52000, proposals: 4000, funds: total + 786298 })
+		setStats({ builders: 60000, proposals: 4500, funds: 8000000 })
 
 		return 'stats-fetched'
 	}

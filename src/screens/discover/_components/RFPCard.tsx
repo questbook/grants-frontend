@@ -15,7 +15,7 @@ import { WebwalletContext } from 'src/pages/_app'
 import StateButton from 'src/screens/discover/_components/stateButton'
 import { GrantType } from 'src/screens/discover/_utils/types'
 import { DiscoverContext } from 'src/screens/discover/Context'
-import { disabledGrants } from 'src/screens/proposal_form/_utils/constants'
+import { disabledGrants, NewGrants } from 'src/screens/proposal_form/_utils/constants'
 
 type RFPCardProps = {
 	grant: GrantType
@@ -102,18 +102,33 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 					>
 						<Image
 							src={grant.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)}
-							// my='8px'
 							w='56px'
 							h='56px'
 							objectFit='cover'
 							borderRadius='4px'
+							fallback={
+								<Image
+									src={`https://api.dicebear.com/7.x/identicon/svg?seed=${grant?.workspace?.title}&backgroundColor=ffffff&radius=8`}
+									alt={grant?.workspace?.title}
+									width='56px'
+									height='56px'
+									borderRadius='4px'
+								/>
+							}
 						/>
 						<Flex gap={2}>
 							{
 								disabledGrants?.includes(grant?.id as string) || !grant?.acceptingApplications ? (
-									<StateButton
-										state='rejected'
-										title='Closed' />
+									NewGrants.includes(grant?.id as string) ? (
+										<StateButton
+											state='submitted'
+											title='Coming Soon'
+										/>
+									) : (
+										<StateButton
+											state='rejected'
+											title='Closed' />
+									)
 								) : (
 									<StateButton
 										state='approved'

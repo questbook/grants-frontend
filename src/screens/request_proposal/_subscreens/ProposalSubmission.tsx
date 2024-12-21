@@ -208,13 +208,17 @@ function ProposalSubmission() {
 						<Text
 							display={rfpFormType === 'edit' ? 'none' : ''}
 							variant='subheading'
+							hidden
 							marginBottom={[-6, 0, 0, 0]}
 						>
 							Or
 						</Text>
 
-						<label htmlFor='upload-doc-id' />
+						<label
+							hidden
+							htmlFor='upload-doc-id' />
 						<FlushedInput
+							hidden
 							id='upload-doc-id'
 							placeholder='Upload a doc'
 							display={rfpFormType === 'edit' ? 'none' : ''}
