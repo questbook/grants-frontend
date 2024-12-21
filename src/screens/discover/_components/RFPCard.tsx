@@ -102,11 +102,19 @@ function RFPCard({ grant, chainId, role, onVisibilityUpdate, onSectionGrantsUpda
 					>
 						<Image
 							src={grant.workspace?.logoIpfsHash === config.defaultDAOImageHash ? getAvatar(true, grant?.workspace?.title) : getUrlForIPFSHash(grant?.workspace?.logoIpfsHash!)}
-							// my='8px'
 							w='56px'
 							h='56px'
 							objectFit='cover'
 							borderRadius='4px'
+							fallback={
+								<Image
+									src={`https://api.dicebear.com/7.x/identicon/svg?seed=${grant?.workspace?.title}&backgroundColor=ffffff&radius=8`}
+									alt={grant?.workspace?.title}
+									width='56px'
+									height='56px'
+									borderRadius='4px'
+								/>
+							}
 						/>
 						<Flex gap={2}>
 							{

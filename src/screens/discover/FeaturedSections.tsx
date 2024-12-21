@@ -1,3 +1,4 @@
+import Marquee from 'react-fast-marquee'
 import { Container, Flex, Image, Text } from '@chakra-ui/react'
 import logger from 'src/libraries/logger'
 import { getUrlForIPFSHash } from 'src/libraries/utils/ipfs'
@@ -19,11 +20,21 @@ function FeaturedSections(sections: {
 			justifyContent='center'
 			alignItems='center'
 			gap='16px'
-			borderRadius='8px'
-			border='1px solid #EFEEEB'
-			background='#FFF'
-			padding={['8px 24px', '8px 24px']}
+			border='1px solid rgba(239, 238, 235, 0.5)'
+			borderRadius='6px'
+			background='rgba(255, 255, 255, 0.95)'
+			backdropFilter='blur(8px)'
+			padding={['12px 24px', '14px 28px']}
 			cursor='pointer'
+			mx={3}
+			transition='all 0.2s ease-in-out'
+			_hover={
+				{
+					transform: 'translateY(-1px)',
+					boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+					border: '1px solid rgba(239, 238, 235, 0.9)'
+				}
+			}
 			onClick={
 				() => {
 					const element = document.getElementById(title)
@@ -34,70 +45,78 @@ function FeaturedSections(sections: {
 			}
 		>
 			<Image
-				src={getUrlForIPFSHash(logoIpfsHash)}
+				src={logoIpfsHash ? getUrlForIPFSHash(logoIpfsHash) : `https://api.dicebear.com/7.x/identicon/svg?seed=${title}&backgroundColor=ffffff&radius=8`}
 				alt={title}
-				width='20px'
-				height='20px'
+				width='40px'
+				height='40px'
+				objectFit='cover'
+				borderRadius='5px'
+				transition='all 0.2s ease-in-out'
+				fallback={
+					<Image
+						src={`https://api.dicebear.com/7.x/identicon/svg?seed=${title}&backgroundColor=ffffff&radius=8`}
+						alt={title}
+						width='40px'
+						height='40px'
+						borderRadius='5px'
+					/>
+				}
 			/>
 			<Text
 				fontSize='16px'
-				fontWeight='700'
+				fontWeight='600'
 				lineHeight='normal'
 				color='#07070C'
 				width='100%'
-
 			>
 				{title}
 			</Text>
 		</Flex>
 	)
 
-	const buildComponent = () => {
-		return (
-			<Container
-				bg='white'
-				className='domainGrid'
-				minWidth='100%'
-				p={4}
-				w='100%'>
-				<Text
-					color='#07070C'
-					fontSize='32px'
-					lineHeight='41.6px'
-					variant='heading3'
-					fontWeight='700'
-					mt={8}
-					mb={8}
-				>
-					Featured Grants
-				</Text>
+	return (
+		<Container
+			bg='white'
+			className='domainGrid'
+			minWidth='100%'
+			p={6}
+			w='100%'
+			position='relative'
+		>
+			<Text
+				color='#07070C'
+				fontSize={['28px', '32px']}
+				lineHeight={['36px', '41.6px']}
+				variant='heading3'
+				fontWeight='700'
+				mb={8}
+			>
+				Featured Grants
+			</Text>
 
-				<Flex
-					gap='24px'
-					overflowX='auto'
-					p={0}
-					style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-					justifyContent='flex-start'>
-
-					{
-						sections.sections.map((section, index) => {
-							const sectionName = Object.keys(section)[0]
-							const sectionLogo = section[sectionName].sectionLogoIpfsHash
-							return (
-								<Card
-									key={index}
-									title={sectionName}
-									logoIpfsHash={sectionLogo}
-								/>
-							)
-						})
-					}
-				</Flex>
-			</Container>
-		)
-	}
-
-	return buildComponent()
+			<Marquee
+				gradient={true}
+				gradientColor='rgba(255, 255, 255, 0.5)'
+				gradientWidth={50}
+				speed={25}
+				pauseOnHover={true}
+			>
+				{
+					sections.sections.map((section, index) => {
+						const sectionName = Object.keys(section)[0]
+						const sectionLogo = section[sectionName].sectionLogoIpfsHash
+						return (
+							<Card
+								key={index}
+								title={sectionName}
+								logoIpfsHash={sectionLogo}
+							/>
+						)
+					})
+				}
+			</Marquee>
+		</Container>
+	)
 }
 
 export default FeaturedSections

@@ -429,8 +429,7 @@ const DiscoverProvider = ({ children }: {children: ReactNode}) => {
 
 		// iterate over all sections and sum the amounts
 		// const total = funds.sections.reduce((acc: number, cur: any) => acc + sumAmounts(cur), 0)
-		const total = 6200000
-		setStats({ builders: 52000, proposals: 4000, funds: total + 786298 })
+		setStats({ builders: 60000, proposals: 4500, funds: 8000000 })
 
 		return 'stats-fetched'
 	}
