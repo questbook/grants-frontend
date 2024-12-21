@@ -33,11 +33,12 @@ function StatsBanner(stats: StatsType) {
 		return (
 			<Flex
 				bgColor='#C3F953'
+				// padding='32px 48px'
 				padding={['16px 24px', '32px 48px']}
 				gap='20px'
 				borderRadius='0px 0px 48px 48px'
 				justifyContent='space-evenly'>
-				{Fields(stats?.builders > 0 ? formatNumber(stats?.builders) : formatNumber(55000), 'Builders')}
+				{Fields(stats?.builders > 0 ? formatNumber(stats?.builders) : formatNumber(60000), 'Builders')}
 				{Fields(stats?.proposals > 0 ? formatNumber(stats?.proposals) : formatNumber(4500), 'Proposals')}
 				{Fields(stats?.funds > 0 ? formatFundsAmount(stats?.funds) : formatFundsAmount(8000000), 'Paid out')}
 			</Flex>

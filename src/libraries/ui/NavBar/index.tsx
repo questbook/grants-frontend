@@ -651,15 +651,24 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 
 	}
 
-	if(!isMobile[0]) {
-		return <MainNavBar />
-	} else if(requestProposal === true) {
-		return <SmallScreensRequestProposalNavBar />
-	} else if(dashboard === true) {
-		return <SmallScreensDashboardNavBar />
-	} else {
-		return <MainNavBar />
-	}
+	return (
+		<>
+			<Box display={{ base: 'none', md: 'block' }}>
+				<MainNavBar />
+			</Box>
+			<Box display={{ base: 'block', md: 'none' }}>
+				{
+					requestProposal ? (
+						<SmallScreensRequestProposalNavBar />
+					) : dashboard ? (
+						<SmallScreensDashboardNavBar />
+					) : (
+						<MainNavBar />
+					)
+				}
+			</Box>
+		</>
+	)
 }
 
 NavBar.defaultProps = {
