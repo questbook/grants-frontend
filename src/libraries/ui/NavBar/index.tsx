@@ -1,6 +1,6 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import React from 'react'
-import { Box, Button, Container, Flex, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Spacer, Text, useMediaQuery } from '@chakra-ui/react'
+import { Box, Button, Container, Flex, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Spacer, Text } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
 import { ethers } from 'ethers'
 import { useRouter } from 'next/router'
@@ -597,8 +597,6 @@ function NavBar({ bg = 'gray.100', requestProposal, dashboard }: Props) {
 	const shouldShowTitle = useMemo(() => {
 		return (router.pathname === '/dashboard' && !isLoading && grant)
 	}, [grant, isLoading, router.pathname])
-
-	const isMobile = useMediaQuery(['(max-width:600px)'])
 
 
 	useEffect(() => {
