@@ -22,6 +22,7 @@ const nextConfig = {
 		SOLANA_RPC: process.env.SOLANA_RPC,
 		UD_KEY: process.env.UD_KEY,
 		API_ENDPOINT: process.env.API_ENDPOINT,
+		BACKEND_URL: process.env.BACKEND_URL,
 		NOTIF_BOT_USERNAME: process.env.NOTIF_BOT_USERNAME,
 		INFURA_IPFS_PROJECT_ID: process.env.INFURA_IPFS_PROJECT_ID,
 		INFURA_IPFS_API_KEY: process.env.INFURA_IPFS_API_KEY,

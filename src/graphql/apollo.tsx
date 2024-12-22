@@ -2,7 +2,7 @@ import { ApolloClient, DocumentNode, InMemoryCache } from '@apollo/client'
 import logger from 'src/libraries/logger'
 
 
-export const ENDPOINT_CLIENT = 'https://api-grants.questbook.app/graphql'
+export const ENDPOINT_CLIENT = process.env.BACKEND_URL
 
 export const client = new ApolloClient({
 	uri: ENDPOINT_CLIENT,
