@@ -1,6 +1,9 @@
 import { ChangeEvent, ReactElement, useContext, useEffect, useMemo, useState } from 'react'
+import { FaLinkedin } from 'react-icons/fa'
 import QRCode from 'react-qr-code'
-import { Box, Button, Container, Flex, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Text } from '@chakra-ui/react'
+import { CheckCircleIcon, ExternalLinkIcon } from '@chakra-ui/icons'
+import { Box, Button, Checkbox, Container, Flex, Image, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Spinner, Text } from '@chakra-ui/react'
+import { ReclaimProofRequest } from '@reclaimprotocol/js-sdk'
 import { convertToRaw } from 'draft-js'
 import { useRouter } from 'next/router'
 import config from 'src/constants/config.json'
@@ -29,6 +32,7 @@ import SectionRadioButton from 'src/screens/proposal_form/_components/SelectRadi
 import useSubmitProposal from 'src/screens/proposal_form/_hooks/useSubmitProposal'
 import { containsCustomField, containsField, findCustomField, findField, findFieldBySuffix, validateEmail, validateTONWalletAddress, validateWalletAddress } from 'src/screens/proposal_form/_utils'
 import { customSteps, customStepsHeader, DEFAULT_MILESTONE, disabledGrants, disabledSubmissions, disabledTonGrants, MILESTONE_INPUT_STYLE, SocialIntent, tonAPACGrants, tonGrants } from 'src/screens/proposal_form/_utils/constants'
+import { Form } from 'src/screens/proposal_form/_utils/types'
 import { ProposalFormContext, ProposalFormProvider } from 'src/screens/proposal_form/Context'
 
 
@@ -864,22 +868,256 @@ function ProposalForm() {
 							)
 						}
 						{
-							/* Optinal Referral Field (if it is not included in the form field) */
 							type === 'submit' && (
-								<SectionRadioButton
-									label='Subscribe to Questbook Newsletter'
-									placeholder='Select an option'
-									value={newsletter}
-									options={['Yes', 'No']}
-									onChange={
-										(e) => {
-											setNewsLetter(e.target.value)
-										}
-									}
-								 />
+								<Flex
+									w='100%'
+									mt={8}
+								>
+									<Flex
+										direction='column'
+										w='100%'>
+										<Flex
+											w='100%'
+											direction={['column', 'column', 'row']}
+											align={['flex-start', 'flex-start', 'center']}
+											gap={[2, 2, 8]}>
+											<Flex
+												direction='column'
+												w={['100%', '100%', 'calc(30% - 32px)']}>
+												<Text
+													mb={[1, 1, 0]}
+													variant='subheading'
+													fontWeight='500'
+													textAlign={['left', 'left', 'right']}
+													color='gray.700'>
+													Stay Updated
+												</Text>
+												<Text
+													fontSize='sm'
+													color='gray.500'
+													textAlign={['left', 'left', 'right']}>
+													Get the latest updates about grants
+												</Text>
+											</Flex>
+											<Checkbox
+												isChecked={newsletter === 'Yes'}
+												onChange={
+													(e) => {
+														setNewsLetter(e.target.checked ? 'Yes' : 'No')
+													}
+												}
+												size='lg'
+												colorScheme='blue'
+												aria-label='Subscribe to Questbook Newsletter'
+												_hover={{ cursor: 'pointer' }}
+											>
+												<Text
+													fontSize='sm'
+													color='gray.700'>
+													Subscribe to Questbook Newsletter
+												</Text>
+											</Checkbox>
+										</Flex>
+									</Flex>
+								</Flex>
 							)
 						}
 
+						{/* Social Verification Section */}
+						{
+							Object.entries(getSocialLinks(form)).some(([, links]) => links.length > 0) && (
+								<>
+									<SectionHeader mt={8}>
+										Attach Proofs for
+									</SectionHeader>
+
+									<Flex
+										direction='column'
+										gap={4}
+										w='100%'
+										bg='gray.50'
+										p={6}
+										borderRadius='lg'>
+										{
+											Object.entries(getSocialLinks(form)).map(([platform, links]) => (
+												links.length > 0 && (
+													<Box key={platform}>
+														{
+															links.map((link, index) => (
+																<Flex
+																	key={index}
+																	justify='space-between'
+																	align='center'
+																	p={4}
+																	mb={3}
+																	border='1px solid'
+																	borderColor='gray.200'
+																	borderRadius='md'
+																	bg='white'
+																	transition='all 0.2s'>
+																	<Link
+																		href={link}
+																		isExternal
+																		maxW='70%'
+																		color='gray.700'
+																		_hover={{ color: 'blue.500' }}>
+																		<Flex
+																			align='center'
+																			gap={3}>
+																			{
+																				platform === 'twitter' ? (
+																					<Twitter
+																						boxSize={6}
+																						color='blue.400' />
+																				) : (
+																					<FaLinkedin
+																						size={24}
+																						color='#0077B5' />
+																				)
+																			}
+																			<Text
+																				fontSize='15px'
+																				fontWeight='500'
+																				isTruncated>
+																				{link}
+																			</Text>
+																		</Flex>
+																	</Link>
+																	{
+																		verifiedLinks[link] ? (
+																			<Flex
+																				align='center'
+																				gap={2}>
+																				<CheckCircleIcon color='green.500' />
+																				<Text
+																					color='green.500'
+																					fontWeight='500'>
+																					Verified
+																				</Text>
+																			</Flex>
+																		) : (
+																			<Button
+																				size='md'
+																				colorScheme='blue'
+																				leftIcon={<Alert />}
+																				onClick={
+																					() => {
+																						setVerificationType(platform)
+																						setVerificationValue(link)
+																						setIsVerificationModalOpen(true)
+																						// Start verification immediately
+																						getVerificationReq(platform, link)
+																					}
+																				}
+																				_hover={
+																					{
+																						transform: 'translateY(-1px)'
+																					}
+																				}>
+																				Verify
+																			</Button>
+																		)
+																	}
+																</Flex>
+															))
+														}
+													</Box>
+												)
+											))
+										}
+									</Flex>
+
+									{/* Verification Modal */}
+									<Modal
+										isOpen={isVerificationModalOpen}
+										onClose={
+											() => {
+												setIsVerificationModalOpen(false)
+												setRequestUrl('')
+												setProofs([])
+												setVerificationType('')
+												setVerificationValue('')
+												setIsVerifying(false)
+											}
+										}
+										isCentered>
+										<ModalOverlay />
+										<ModalContent>
+											<ModalHeader>
+												Verify
+												{' '}
+												{verificationType}
+											</ModalHeader>
+											<ModalCloseButton />
+											<ModalBody pb={6}>
+												<Flex
+													direction='column'
+													align='center'
+													gap={4}>
+													{
+														requestUrl ? (
+															<>
+																<QRCode
+																	value={requestUrl}
+																	size={200}
+																/>
+																<Text
+																	fontSize='14px'
+																	color='gray.600'
+																	textAlign='center'>
+																	Scan QR code to verify your
+																	{' '}
+																	{verificationType.toLowerCase()}
+																</Text>
+																<Button
+																	onClick={() => window.open(requestUrl, '_blank')}
+																	variant='outline'
+																	width='full'
+																	leftIcon={<ExternalLinkIcon />}>
+																	Open in Browser
+																</Button>
+																{
+																	isVerifying && (
+																		<Flex
+																			direction='column'
+																			align='center'
+																			mt={2}
+																			gap={2}>
+																			<Spinner
+																				size='sm'
+																				color='blue.500' />
+																			<Text
+																				fontSize='sm'
+																				color='gray.600'>
+																				Waiting for verification...
+																			</Text>
+																		</Flex>
+																	)
+																}
+															</>
+														) : (
+															<Flex
+																direction='column'
+																align='center'
+																gap={4}>
+																<Spinner
+																	size='md'
+																	color='blue.500' />
+																<Text
+																	fontSize='sm'
+																	color='gray.600'>
+																	Starting verification...
+																</Text>
+															</Flex>
+														)
+													}
+												</Flex>
+											</ModalBody>
+										</ModalContent>
+									</Modal>
+								</>
+							)
+						}
 
 						<Button
 							mt={10}
@@ -896,7 +1134,7 @@ function ProposalForm() {
 										return
 									} else {
 										setNetworkTransactionModalStep(0)
-										submitProposal(form)
+										submitProposal(form, proofs)
 									}
 								}
 							}>
@@ -996,7 +1234,7 @@ function ProposalForm() {
 							>
 								<Flex
 									alignItems='center'
-								 />
+								/>
 								{/* <Divider
 									orientation='vertical'
 									h='100%' /> */}
@@ -1478,7 +1716,7 @@ function ProposalForm() {
 							>
 								Follow the Grant Rules:
 								<a
-									href='https://ton-org.notion.site/TON-Grants-Rules-4548acab386a4fc7b086aba53333e917?pvs=4 '
+									href='https://ton-org.notion.site/TON-Grants-Rules-4548acab386a4fc7b086aba53333e917?pvs=4'
 									target='_blank'
 									style={{ textDecoration: 'underline', color: '#3B82F6' }}
 									rel='noreferrer'>
@@ -2267,19 +2505,26 @@ function ProposalForm() {
 	const { setSignIn } = useContext(SignInContext)!
 	const { scwAddress, webwallet } = useContext(WebwalletContext)!
 	const { trackAmplitudeEvent } = useContext(AmplitudeContext)!
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const [proofs, setProofs] = useState<any[]>([])
+	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
+	const [transactionHash, setTransactionHash] = useState<string>('')
+	const [emailError, setEmailError] = useState<boolean>(false)
+	const [walletAddressError, setWalletAddressError] = useState<boolean>(false)
+	const toast = useCustomToast()
+	const [isSetupNotificationModalOpen, setIsSetupNotificationModalOpen] = useState<boolean>(false)
+	const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false)
+	const [verificationType, setVerificationType] = useState('')
+	const [, setVerificationValue] = useState('')
+	const [requestUrl, setRequestUrl] = useState('')
+	const [isVerifying, setIsVerifying] = useState(false)
+	const [verifiedLinks, setVerifiedLinks] = useState<{[key: string]: boolean}>({})
 	const [qrCodeText, setQrCodeText] = useState<string>('')
 
 	const router = useRouter()
 	const { newTab } = router.query
 
-	const [networkTransactionModalStep, setNetworkTransactionModalStep] = useState<number>()
-	const [transactionHash, setTransactionHash] = useState<string>('')
 	const { submitProposal, proposalId, isExecuting } = useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash })
-	const [emailError, setEmailError] = useState<boolean>(false)
-	const [walletAddressError, setWalletAddressError] = useState<boolean>(false)
-	const toast = useCustomToast()
-
-	const [isSetupNotificationModalOpen, setIsSetupNotificationModalOpen] = useState<boolean>(false)
 
 	useEffect(() => {
 		setSignInTitle('submitProposal')
@@ -2298,12 +2543,77 @@ function ProposalForm() {
 		return val
 	}, [form])
 
+	const getSocialLinks = (form: Form) => {
+		const links = {
+		  twitter: [] as string[],
+		  linkedin: [] as string[]
+		}
+
+		// Check form fields
+		form.fields.forEach((field: { value: string, id: string }) => {
+		  const value = field.value?.toString() || ''
+		  if(value && field.id.toLowerCase().includes('twitter')) {
+				// Handle Twitter links/handles
+				if(value.includes('twitter.com') || value.includes('x.com')) {
+					const extracted = extractSocialLinks(value)
+					links.twitter.push(...extracted.twitter)
+				} else {
+					// Handle raw Twitter handle
+					const handle = value.startsWith('@') ? value.substring(1) : value
+					links.twitter.push(`https://twitter.com/${handle}`)
+				}
+		  } else if(value && field.id.toLowerCase().includes('linkedin')) {
+				const extracted = extractSocialLinks(value)
+				links.linkedin.push(...extracted.linkedin)
+		  }
+		})
+
+		if(twitter) {
+			twitter?.includes('twitter.com') || twitter?.includes('x.com') ? links.twitter.push(twitter) : twitter?.startsWith('@') ? links.twitter.push(`https://twitter.com/${twitter.substring(1)}`) : links.twitter.push(`https://twitter.com/${twitter}`)
+		}
+
+		// Check rich text details
+		const detailsContent = convertToRaw(form.details.getCurrentContent())
+		const detailsText = detailsContent.blocks.map(block => block.text).join('\n')
+		const detailsLinks = extractSocialLinks(detailsText)
+		links.twitter.push(...detailsLinks.twitter)
+		links.linkedin.push(...detailsLinks.linkedin)
+
+		// Remove duplicates
+		return {
+		  twitter: Array.from(new Set(links.twitter)),
+		  linkedin: Array.from(new Set(links.linkedin))
+		}
+	  }
+
+
+	  const extractSocialLinks = (text: string) => {
+		const urlRegex = /(https?:\/\/[^\s]+)/g
+		const matches = text.match(urlRegex) || []
+
+		return matches.reduce((acc, url) => {
+		  if(url.includes('twitter.com') || url.includes('x.com')) {
+				acc.twitter.push(url as never)
+		  } else if(url.includes('linkedin.com')) {
+				acc.linkedin.push(url as never)
+		  }
+
+		  return acc
+		}, { twitter: [], linkedin: [] })
+	  }
+
+
 	const isDisabled = useMemo(() => {
 		if(!form) {
 			logger.info('Form is not initialised')
 			return true
 		}
 
+		if(Object?.entries(getSocialLinks(form)).some(([, links]) => links.length > 0)) {
+			if(proofs.length === 0) {
+				return true
+			}
+		}
 
 		const optionalFields = ['projectDetails', 'fundingAsk', 'fundingBreakdown', 'projectGoals', 'projectLink']
 		const { fields, members, details, milestones } = form
@@ -2353,7 +2663,8 @@ function ProposalForm() {
 		}
 
 		return false
-	}, [form])
+	}, [form, proofs])
+
 
 	const formCheck = () => {
 		const { milestones } = form
@@ -2388,6 +2699,151 @@ function ProposalForm() {
 		const copy = { ...form }
 		findField(copy, id).value = e.target.value
 		setForm(copy)
+	}
+
+	// Verify proof by checking extracted parameters match target handle
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const verifyProof = (proof: any, verificationValue: string, verificationType: string) => {
+		if(!proof) {
+			return false
+		}
+
+		// Extract username/handle from the verification value
+		let targetHandle = verificationValue.toLowerCase()
+		if(targetHandle.includes('twitter.com/') || targetHandle.includes('x.com/')) {
+			targetHandle = targetHandle.split('/').pop()!
+		}
+
+		if(targetHandle.startsWith('@')) {
+			targetHandle = targetHandle.substring(1)
+		}
+
+		try {
+			const context = JSON.parse(proof.claimData.context)
+			const extractedParams = context.extractedParameters
+			logger.info({ extractedParams }, 'extractedParams')
+
+			if(verificationType === 'twitter') {
+				const proofHandle = extractedParams.screen_name.toLowerCase()
+				logger.info({ proofHandle }, 'proofHandle')
+				return proofHandle === targetHandle?.toLowerCase()
+			} else if(verificationType === 'linkedin') {
+				// LinkedIn verification logic here
+				return false
+			}
+		} catch(error) {
+			logger.error('Error parsing proof context:', error)
+			return false
+		}
+
+		return false
+	}
+
+	// Modify the getVerificationReq function
+	const getVerificationReq = async(type: string, value: string) => {
+	  const APP_ID = process.env.RECLAIM_APP_ID!
+	  const APP_SECRET = process.env.RECLAIM_APP_SECRET!
+	  if(!APP_ID || !APP_SECRET) {
+			toast({
+				title: 'Verification Failed',
+				description: 'Please try again later',
+				status: 'error',
+				duration: 5000,
+			})
+			return
+	  }
+
+	  // Get normalized verification value
+	  let normalizedValue = value
+
+	  if(type === 'twitter') {
+		// Handle Twitter URL or handle
+			if(value.includes('twitter.com/') || value.includes('x.com/')) {
+		  normalizedValue = value.split('/').pop()!
+			} else if(value.startsWith('@')) {
+		  normalizedValue = value.substring(1)
+			}
+	  } else if(type === 'linkedin') {
+		// Handle LinkedIn URL
+			if(!value.includes('linkedin.com/')) {
+		  // If not a URL, show error
+		  toast({
+					title: 'Invalid LinkedIn URL',
+					description: 'Please provide a valid LinkedIn profile URL',
+					status: 'error',
+					duration: 5000,
+		  })
+		  return
+			}
+
+			// Keep full LinkedIn URL as normalized value
+			normalizedValue = value
+	  }
+
+	  const PROVIDER_ID = type === 'twitter'
+			? 'e6fe962d-8b4e-4ce5-abcc-3d21c88bd64a'
+			: 'b16c6781-4411-4bde-b1e6-c041df573f95'
+
+	  const reclaimProofRequest = await ReclaimProofRequest.init(APP_ID, APP_SECRET, PROVIDER_ID)
+	  const url = await reclaimProofRequest.getRequestUrl()
+
+	  setRequestUrl(url)
+	  setIsVerifying(true)
+
+	  await reclaimProofRequest.startSession({
+			onSuccess: (verificationProofs) => {
+		  const isValid = verifyProof(verificationProofs, normalizedValue, type)
+		  if(isValid) {
+					setVerifiedLinks(prev => ({
+			  ...prev,
+			  [value]: true
+					}))
+					// Add proof object directly to array
+					setProofs(prev => {
+						const newProofs = [...prev]
+						newProofs.push(verificationProofs as never)
+						return newProofs
+					})
+
+					toast({
+			  title: 'Verification Successful',
+			  description: `Your ${type} account has been verified`,
+			  status: 'success',
+			  duration: 3000,
+					})
+
+					setTimeout(() => {
+			  setIsVerificationModalOpen(false)
+			  setRequestUrl('')
+			  setVerificationType('')
+			  setVerificationValue('')
+			  setIsVerifying(false)
+					}, 2000)
+		  } else {
+					toast({
+			  title: 'Account does not match',
+			  description: `The verified ${type} account does not match the provided ${type === 'twitter' ? 'handle' : 'profile'}`,
+			  status: 'error',
+			  duration: 5000,
+					})
+					setIsVerificationModalOpen(false)
+					setRequestUrl('')
+					setVerificationType('')
+					setVerificationValue('')
+					setIsVerifying(false)
+		  }
+			},
+			onError: (error) => {
+		  toast({
+					title: 'Verification Failed',
+					description: error.message || `Failed to verify ${type} account`,
+					status: 'error',
+					duration: 5000,
+		  })
+		  setRequestUrl('')
+		  setIsVerifying(false)
+			},
+	  })
 	}
 
 	return buildComponent()

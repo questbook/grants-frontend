@@ -52,7 +52,8 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 		query: walletAddressCheckerQuery,
 	})
 
-	const submitProposal = async(form: Form) => {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const submitProposal = async(form: Form, proofs?: any) => {
 		try {
 			if(!webwallet) {
 				customToast({
@@ -150,6 +151,7 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 					details: milestone?.details ?? undefined,
 					deadline: milestone?.deadline ?? undefined,
 				})),
+				proofs: proofs,
 			}
 
 			// Step - 3: Encrypt the PII Enabled fields
@@ -177,6 +179,7 @@ function useSubmitProposal({ setNetworkTransactionModalStep, setTransactionHash 
 				pii: data.pii,
 				id: proposal?.id,
 				state: 'submitted',
+				proofs: proofs,
 			}
 			setNetworkTransactionModalStep(2)
 			logger.info({ variables }, 'useSubmitProposal: (variables)')

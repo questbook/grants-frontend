@@ -151,6 +151,7 @@ export interface GrantApplicationRequest {
    * @maxItems 100
    */
   milestones: GrantProposedMilestone[];
+  proofs?: any;
 }
 /**
  * Maps ID of the field to the answer by the applicant

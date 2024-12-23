@@ -27,6 +27,8 @@ const nextConfig = {
 		INFURA_IPFS_PROJECT_ID: process.env.INFURA_IPFS_PROJECT_ID,
 		INFURA_IPFS_API_KEY: process.env.INFURA_IPFS_API_KEY,
 		AMPLITUDE_API_KEY: process.env.AMPLITUDE_API_KEY,
+		RECLAIM_APP_ID: process.env.RECLAIM_APP_ID,
+		RECLAIM_APP_SECRET: process.env.RECLAIM_APP_SECRET,
 	},
 	sentry: {
 		disableServerWebpackPlugin: true,

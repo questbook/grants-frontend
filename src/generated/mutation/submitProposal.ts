@@ -8,6 +8,7 @@ export const submitProposalMutation = gql`mutation createNewGrantApplication(
     $applicantPublicKey: String!,
     $fields:JSON!
     $pii: JSON
+    $proofs: [JSON]
     ){
     createNewGrantApplication(
       grant: $grant,
@@ -18,6 +19,7 @@ export const submitProposalMutation = gql`mutation createNewGrantApplication(
       applicantPublicKey: $applicantPublicKey,
       fields:$fields
       pii: $pii
+      proofs: $proofs
     ){
       record{
         _id
