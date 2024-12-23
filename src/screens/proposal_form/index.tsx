@@ -580,8 +580,8 @@ function ProposalForm() {
 									 />
 							)
 						}
-						{
-							/* Optinal Telegram Field (if it is not included in the form field) */
+
+						{/* Commenting out optional Telegram/Twitter fields for now
 							type === 'submit' &&
 							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('telegram')
 							|| field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('tg')
@@ -598,7 +598,6 @@ function ProposalForm() {
 							)
 						}
 						{
-							/* Optinal Twitter Field (if it is not included in the form field) */
 							type === 'submit' &&
 							grant?.fields?.filter((field) => field.id.substring(field.id.indexOf('.') + 1)?.toLowerCase().includes('twitter')).length === 0 && (
 								<SectionInput
@@ -611,7 +610,7 @@ function ProposalForm() {
 										}
 									} />
 							)
-						}
+						*/}
 						{
 							containsField(grant, 'applicantAddress') && (
 								<SectionInput
@@ -2610,7 +2609,7 @@ function ProposalForm() {
 		}
 
 		if(Object?.entries(getSocialLinks(form)).some(([, links]) => links.length > 0)) {
-			if(proofs.length === 0) {
+			if(proofs.length !== Object.entries(getSocialLinks(form)).length) {
 				return true
 			}
 		}
@@ -2728,8 +2727,8 @@ function ProposalForm() {
 				logger.info({ proofHandle }, 'proofHandle')
 				return proofHandle === targetHandle?.toLowerCase()
 			} else if(verificationType === 'linkedin') {
-				// LinkedIn verification logic here
-				return false
+				const proofHandle = extractedParams.publicIdentifier.toLowerCase()
+				return proofHandle === targetHandle?.toLowerCase()
 			}
 		} catch(error) {
 			logger.error('Error parsing proof context:', error)
@@ -2774,15 +2773,24 @@ function ProposalForm() {
 					duration: 5000,
 		  })
 		  return
+			} else if(value.includes('linkedin.com/in/')) {
+			// extract username from the URL
+				const username = value.split('/').pop()!
+
+				// Keep full LinkedIn URL as normalized value
+				normalizedValue = username
+			} else if(value.startsWith('@')) {
+				normalizedValue = value.substring(1)
+			} else {
+				normalizedValue = value
 			}
 
-			// Keep full LinkedIn URL as normalized value
-			normalizedValue = value
+
 	  }
 
 	  const PROVIDER_ID = type === 'twitter'
 			? 'e6fe962d-8b4e-4ce5-abcc-3d21c88bd64a'
-			: 'b16c6781-4411-4bde-b1e6-c041df573f95'
+			: '9bef24d6-ee0e-4a52-ae86-2f841159d750'
 
 	  const reclaimProofRequest = await ReclaimProofRequest.init(APP_ID, APP_SECRET, PROVIDER_ID)
 	  const url = await reclaimProofRequest.getRequestUrl()
